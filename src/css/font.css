@@ -1,0 +1,21 @@
+@font-face {
+	font-family: 'Mono'; font-style: normal; font-weight: 400;
+	src: url('~font/mono/regular.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Mono'; font-style: bold; font-weight: 600;
+	src: url('~font/mono/bold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Lcg'; font-style: normal; font-weight: 400;
+	src: url('~font/lcg/regular.otf') format('opentype');
+}
+@font-face {
+	font-family: 'Lcg'; font-style: italic; font-weight: 400;
+	src: url('~font/lcg/italic.otf') format('opentype');
+}
+@font-face {
+	font-family: 'Lcg'; font-style: bold; font-weight: 600;
+	src: url('~font/lcg/bold.otf') format('opentype');
+}

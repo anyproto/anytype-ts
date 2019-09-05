@@ -2,4 +2,5 @@
 .project
 .settings/
 node_modules/
-
+dist/main.js
+dist/main.js.map

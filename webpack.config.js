@@ -1,15 +1,26 @@
+const path = require('path');
+
 module.exports = {
     mode: 'development',
 
-    // Enable sourcemaps for debugging webpack's output.
     devtool: 'source-map',
     
-    entry: './src/app.tsx',
+    entry: './src/ts/app.tsx',
 
     resolve: {
-        // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [ '.ts', '.tsx', '.js', '.jsx' ]
+        extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
+        modules: [
+			path.resolve('./src/'),
+			path.resolve('./node_modules')
+		]
     },
+    
+    devServer: {
+		hot: true,
+	    inline: true,
+		contentBase: path.join(__dirname, 'dist'),
+		historyApiFallback: true
+	},
 
     module: {
         rules: [
@@ -22,11 +33,26 @@ module.exports = {
                     }
                 ]
             },
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             {
                 enforce: 'pre',
                 test: /\.js$/,
                 loader: 'source-map-loader'
+            },
+            {
+                test: /\.(eot|ttf|otf|woff|woff2)$/,
+                loader: 'url-loader?name=public/fonts/[name].[ext]'
+            },
+            {
+            	test: /\.(jpe?g|png|gif|svg)$/,
+                loader: 'url-loader?name=[path][name].[ext]'
+            },
+            {
+                test: /\.s?css$/,
+                use: [
+	                { loader: 'style-loader' },
+	                { loader: 'css-loader' },
+	                { loader: 'sass-loader' }
+                ]
             }
         ]
     },

@@ -1,0 +1,22 @@
+{
+	"defaultSeverity": "error",
+	"extends": [
+		"tslint-react"
+	],
+	"jsRules": {
+	},
+	"rules": {
+		"member-access": false,
+		"ordered-imports": false,
+		"quotemark": false,
+		"no-console": false,
+		"semicolon": false,
+		"jsx-no-lambda": false
+	},
+	"rulesDirectory": [],
+	"linterOptions": {
+		"exclude": [
+			"node_modules/**/*.ts"
+		]
+	}
+}
