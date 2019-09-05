@@ -2,10 +2,10 @@ import * as React from 'react';
 
 interface Props {
 	history: any;
-}
+};
 
 interface State { 
-}
+};
 
 class PageAuthCode extends React.Component<Props, State> {
     
@@ -15,8 +15,8 @@ class PageAuthCode extends React.Component<Props, State> {
 				Page auth/code
 			</div>
 		);
-    }
+    };
 
-}
+};
 
 export default PageAuthCode;

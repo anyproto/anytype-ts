@@ -8,8 +8,14 @@ const history = memoryHistory();
 import 'css/font.css';
 import 'css/common.css';
 
-import PageAuthCode from './component/page/auth/code';
-import PageAuthNotice from './component/page/auth/notice';
+import Page from './component/page';
+
+interface RouteElement {
+	id: string;	
+	path: string;
+};
+
+const Routes: Array<RouteElement> = require('json/route.json');
 
 class App extends React.Component<{}, {}> {
 	
@@ -21,20 +27,24 @@ class App extends React.Component<{}, {}> {
 					<nav>
 						<ul>
 							<li>
-								<Link to="/">Home</Link>
+								<Link to="/auth/code">auth/code</Link>
 							</li>
 							<li>
-								<Link to="/auth/notice">About</Link>
+								<Link to="/auth/notice">auth/notice</Link>
+							</li>
+							<li>
+								<Link to="/main/edit/123">main/edit/123</Link>
 							</li>
 						</ul>
 					</nav>
-					<Route path="/" exact render={() => <PageAuthCode history={history} />} />
-					<Route path="/auth/notice" exact render={() => <PageAuthNotice history={history} />} />
+					{Routes.map((item, i) => (
+						<Route path={item.path} exact key={i} component={Page} />
+					))}
 				</div>
 			</Router>
 		);
-    }
+    };
 
-}
+};
 
 ReactDOM.render(<App />, document.getElementById('root'));

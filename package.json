@@ -18,6 +18,7 @@
 	"homepage": "https://github.com/anytypeio/js-anytype#readme",
 	"devDependencies": {
 		"@types/history": "^4.7.3",
+		"@types/jquery": "^3.3.31",
 		"@types/react": "^16.9.2",
 		"@types/react-dom": "^16.9.0",
 		"@types/react-router-dom": "^4.3.5",
@@ -32,6 +33,7 @@
 		"css-loader": "^3.2.0",
 		"electron": "^6.0.7",
 		"history": "^4.9.0",
+		"jquery": "^3.4.1",
 		"json-loader": "^0.5.7",
 		"node-sass": "^4.12.0",
 		"object-assign": "^4.1.1",
