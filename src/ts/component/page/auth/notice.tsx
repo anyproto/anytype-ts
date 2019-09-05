@@ -1,22 +1,22 @@
 import * as React from 'react';
 
-interface Props {
+interface Props { 
 	history: any;
 }
 
 interface State { 
 }
 
-class PageAuthCode extends React.Component<Props, State> {
+class PageAuthNotice extends React.Component<Props, State> {
     
 	render () {
         return (
 			<div className="frame">
-				Page auth/code
+				Page auth/notice
 			</div>
 		);
     }
 
 }
 
-export default PageAuthCode;
+export default PageAuthNotice;

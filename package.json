@@ -17,8 +17,10 @@
 	},
 	"homepage": "https://github.com/anytypeio/js-anytype#readme",
 	"devDependencies": {
+		"@types/history": "^4.7.3",
 		"@types/react": "^16.9.2",
 		"@types/react-dom": "^16.9.0",
+		"@types/react-router-dom": "^4.3.5",
 		"source-map-loader": "^0.2.4",
 		"ts-loader": "^6.0.4",
 		"typescript": "^3.6.2",
@@ -29,10 +31,13 @@
 	"dependencies": {
 		"css-loader": "^3.2.0",
 		"electron": "^6.0.7",
+		"history": "^4.9.0",
+		"json-loader": "^0.5.7",
 		"node-sass": "^4.12.0",
 		"object-assign": "^4.1.1",
 		"react": "^16.9.0",
 		"react-dom": "^16.9.0",
+		"react-router-dom": "^5.0.1",
 		"sass-loader": "^8.0.0",
 		"style-loader": "^1.0.0",
 		"url-loader": "^2.1.0"
