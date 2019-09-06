@@ -5,13 +5,13 @@ import { Router, Route, Link } from 'react-router-dom';
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
 
-import 'css/font.css';
-import 'css/common.css';
+import 'scss/font.scss';
+import 'scss/common.scss';
 
-import 'css/component/input.css';
-import 'css/component/button.css';
+import 'scss/component/input.scss';
+import 'scss/component/button.scss';
 
-import 'css/page/auth.css';
+import 'scss/page/auth.scss';
 
 import Page from './component/page';
 
