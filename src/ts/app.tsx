@@ -8,12 +8,11 @@ const history = memoryHistory();
 import 'css/font.css';
 import 'css/common.css';
 
+import 'css/page/auth.css';
+
 import Page from './component/page';
 
-interface RouteElement {
-	id: string;	
-	path: string;
-};
+interface RouteElement { path: string; };
 
 const Routes: Array<RouteElement> = require('json/route.json');
 

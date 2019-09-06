@@ -20,20 +20,18 @@ const Components: any = {
 class Page extends React.Component<Props, {}> {
 
 	render () {
-		const { match, history } = this.props;
+		const { match } = this.props;
 		
-		let path: string = this.getRouteCode();
-		
+		const route = this.getRoute();
+		const path = [ route.page, route.action ].join('/');
 		const Component = Components[path];
+		
 		if (!Component) {
 			return <div>Page component "{path}" not found</div>;
 		};
-
-		let cn: string = path.replace('/', '-');
-		let className = [ 'page', 'page-' + cn ].join(' ');
 		
 		return (
-			<div className={className}>
+			<div className={this.getClass()}>
 				<Component ref="page" {...this.props} />
 			</div>
 		);
@@ -54,21 +52,26 @@ class Page extends React.Component<Props, {}> {
 		this.resize();
 	};
 	
-	getRouteCode () {
+	getRoute () {
 		const { match } = this.props;
 		
 		let a: string[] = match.path.split('/');
 		a.shift();
-		return a.length > 1 ? [ a[0], a[1] ].join('/') : 'index';
+		
+		return { page: a[0] || 'index', action: a[1] || 'index' };
+	};
+	
+	getClass () {
+		let route: any = this.getRoute();
+		return [ 
+			'page', 
+			'page-' + route.page, 
+			'page-' + route.page + '-' + route.action 
+		].join(' ');
 	};
 	
 	setBodyClass () {
-		let path: string = this.getRouteCode();
-		let cn: string = path.replace('/', '-');
-		let body: any = $('body');
-		let className: string = [ 'page', 'page-' + cn ].join(' ');
-		
-		body.attr({ class: className });
+		$('body').attr({ class: this.getClass() });
 	};
 	
 	resize () {

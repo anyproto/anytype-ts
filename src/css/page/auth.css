@@ -1,3 +1,13 @@
 .page-auth {
+	.frame { 
+		background: #fff; width: 672px; border-radius: 8px; padding: 40px 48px 32px 48px; position: fixed; left: 50%; top: 50%;
+		margin-left: -336px; z-index: 1;
+	}
 	
+	.frame {
+		.title { font-size: 36px; font-weight: 600; letter-spacing: -0.7px; color: #393834; line-height: 1.11; margin-bottom: 18px; }
+		.label.bold { font-size: 18px; font-weight: 600; line-height: 1.44; letter-spacing: -0.1px; margin: 2px 0px 17px 0px; }
+		
+		.input { height: 40px; border: solid 1px #d2d0c2; }
+	}
 }
