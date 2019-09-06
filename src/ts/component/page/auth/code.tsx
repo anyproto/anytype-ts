@@ -1,5 +1,8 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Title, Label, Error, Input, Button } from 'ts/component.tsx';
+
+const $ = require('jquery');
 
 interface Props {
 	history: any;
@@ -34,6 +37,11 @@ class PageAuthCode extends React.Component<Props, State> {
 
 	onSubmitCode (e: any) {
 		e.preventDefault();
+	};
+	
+	resize () {
+		let node = $(ReactDOM.findDOMNode(this));
+		node.css({ marginTop: -node.outerHeight() / 2 });
 	};
 
 };

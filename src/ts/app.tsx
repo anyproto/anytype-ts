@@ -8,6 +8,9 @@ const history = memoryHistory();
 import 'css/font.css';
 import 'css/common.css';
 
+import 'css/component/input.css';
+import 'css/component/button.css';
+
 import 'css/page/auth.css';
 
 import Page from './component/page';

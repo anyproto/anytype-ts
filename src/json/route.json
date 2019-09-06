@@ -1,4 +1,5 @@
 [
+	{ "path": "/" },
 	{ "path": "/auth/code" },
 	{ "path": "/auth/notice" },
 	{ "path": "/main/edit/:id?" }

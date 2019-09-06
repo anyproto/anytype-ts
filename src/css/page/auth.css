@@ -1,4 +1,4 @@
-.page-auth {
+.page-auth, .page-index-index {
 	.frame { 
 		background: #fff; width: 672px; border-radius: 8px; padding: 40px 48px 32px 48px; position: fixed; left: 50%; top: 50%;
 		margin-left: -336px; z-index: 1;

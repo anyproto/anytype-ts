@@ -12,16 +12,17 @@ interface Props {
 };
 
 const Components: any = {
-	"index": PageAuthCode,
+	"index/index": PageAuthCode,
+	
 	"auth/code": PageAuthCode,
 	"auth/notice": PageAuthNotice 
 };
 
 class Page extends React.Component<Props, {}> {
 
+	childRef: any; 
+
 	render () {
-		const { match } = this.props;
-		
 		const route = this.getRoute();
 		const path = [ route.page, route.action ].join('/');
 		const Component = Components[path];
@@ -32,19 +33,18 @@ class Page extends React.Component<Props, {}> {
 		
 		return (
 			<div className={this.getClass()}>
-				<Component ref="page" {...this.props} />
+				<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
 			</div>
 		);
 	};
 	
 	componentDidMount () {
 		let win = $(window);
-
-		this.resize();
 		win.unbind('resize orientationchange');
 		win.on('resize orientationchange', () => { this.resize(); });
 
 		this.setBodyClass();
+		this.resize();
 	};
 
 	componentDidUpdate () {
@@ -75,6 +75,9 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	resize () {
+		if (this.childRef.resize) {
+			this.childRef.resize();			
+		};
 	};
 	
 };
