@@ -11,7 +11,8 @@
 		"quotemark": false,
 		"no-console": false,
 		"semicolon": false,
-		"jsx-no-lambda": false
+		"jsx-no-lambda": false,
+		"jsx-no-multiline-js": false
 	},
 	"rulesDirectory": [],
 	"linterOptions": {

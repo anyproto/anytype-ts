@@ -20,7 +20,7 @@ const Components: any = {
 
 class Page extends React.Component<Props, {}> {
 
-	childRef: any; 
+	childRef: any;
 
 	render () {
 		const route = this.getRoute();

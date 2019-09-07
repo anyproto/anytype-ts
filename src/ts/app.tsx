@@ -25,7 +25,7 @@ class App extends React.Component<{}, {}> {
 		return (
 			<Router history={history}>
 				<div>
-					<div id="drag"></div>
+					<div id="drag" />
 					<nav>
 						<ul>
 							<li>
@@ -40,7 +40,7 @@ class App extends React.Component<{}, {}> {
 						</ul>
 					</nav>
 					{Routes.map((item, i) => (
-						<Route path={item.path} exact key={i} component={Page} />
+						<Route path={item.path} exact={true} key={i} component={Page} />
 					))}
 				</div>
 			</Router>

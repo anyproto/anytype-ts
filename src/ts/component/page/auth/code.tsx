@@ -13,11 +13,19 @@ interface State {
 };
 
 class PageAuthCode extends React.Component<Props, State> {
-    
+
+	codeRef: any;
+
 	state = {
 		error: ''
 	};
+	
+	constructor (props: any) {
+        super(props);
 
+		this.onSubmitCode = this.onSubmitCode.bind(this);
+	};
+	
 	render () {
 		const { error } = this.state;
 		
@@ -28,7 +36,7 @@ class PageAuthCode extends React.Component<Props, State> {
 				<Error text={error} />
 				
 				<form onSubmit={this.onSubmitCode}>
-					<Input ref="code" />
+					<Input ref={(ref: any) => this.codeRef = ref} />
 					<Button text="Confirm" type="input" className="orange" />
 				</form>
 			</div>
@@ -37,6 +45,10 @@ class PageAuthCode extends React.Component<Props, State> {
 
 	onSubmitCode (e: any) {
 		e.preventDefault();
+		
+		let code: string = this.codeRef.getValue();
+		
+		console.log('code', code);
 	};
 	
 	resize () {
