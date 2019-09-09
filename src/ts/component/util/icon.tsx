@@ -7,8 +7,6 @@ interface Props {
 	id?: string;
 	icon?: string;
 	className?: string;
-	toolTip?: string;
-	toolTipY?: string;
 	arrow?: boolean;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
@@ -17,10 +15,6 @@ interface Props {
 };
 
 class Icon extends React.Component<Props, {}> {
-	
-	public static defaultProps = {
-		toolTipY: 'bottom'
-	};
 	
 	render () {
 		let { id, icon, arrow, className, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
@@ -43,11 +37,7 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	onMouseEnter (e: any) {
-		let { toolTip, toolTipY, onMouseEnter } = this.props;
-		
-		if (toolTip) {
-			//Util.toolTipShow(toolTip, $(ReactDOM.findDOMNode(this)), toolTipY);
-		};
+		let { onMouseEnter } = this.props;
 		
 		if (onMouseEnter) {
 			onMouseEnter(e);
@@ -57,8 +47,6 @@ class Icon extends React.Component<Props, {}> {
 	onMouseLeave (e: any) {
 		let { onMouseLeave } = this.props;
 		
-		//Util.toolTipHide();
-		
 		if (onMouseLeave) {
 			onMouseLeave(e);
 		};
@@ -66,8 +54,6 @@ class Icon extends React.Component<Props, {}> {
 	
 	onMouseDown (e: any) {
 		let { onMouseDown } = this.props;
-		
-		//Util.toolTipHide();
 		
 		if (onMouseDown) {
 			onMouseDown(e);

@@ -11,3 +11,56 @@
 		.input { height: 40px; border: solid 1px #d2d0c2; }
 	}
 }
+
+.page-auth-code, .page-index-index {
+	.frame { padding-bottom: 48px; }
+	.frame {
+		.title { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; color: #393834; line-height: 1; margin-bottom: 18px; }
+		.label { margin-bottom: 4px; }
+		.input { width: 468px; margin-right: 16px; }
+		.button { width: 92px; }
+	}
+}
+
+.page-auth-notice {
+	.frame {
+		.button { margin-top: 24px; }
+	}
+}
+
+.page-auth-select {
+	.frame {
+		.title { font-size: 36px; }
+		.buttons { margin-top: 24px; }
+		.button { margin-right: 16px; }
+		.button:last-child { margin: 0px; }
+	}
+}
+
+.page-auth-register {
+	.frame {
+		.inputWithImage { background: #f7f5f0; padding: 48px 48px 30px 48px; margin: 24px 0px 32px 0px; }
+		.inputWithImage {
+			.input-text { 
+				font-size: 22px; font-weight: 600; line-height: 1.82; letter-spacing: -0.2px; margin-top: 11px;
+				height: 28px; padding: 0px; border: 0px;
+			}
+			.fileWrap { width: 64px; height: 64px; }
+		}
+		
+		.button { margin-right: 16px; }
+		.button:last-child { margin: 0px; }
+	}
+}
+
+.page-auth-login {
+	.frame {
+		.label { margin-bottom: 4px; }
+		.textArea { 
+			font-family: 'Mono'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px #d2d0c2; 
+			background-color: #fff; 
+		}
+		.button { margin-right: 16px; }
+		.button:last-child { margin: 0px; }
+	}
+}

@@ -8,8 +8,11 @@ const history = memoryHistory();
 import 'scss/font.scss';
 import 'scss/common.scss';
 
+import 'scss/component/cover.scss';
 import 'scss/component/input.scss';
 import 'scss/component/button.scss';
+import 'scss/component/icon.scss';
+import 'scss/component/textArea.scss';
 
 import 'scss/page/auth.scss';
 
@@ -28,15 +31,11 @@ class App extends React.Component<{}, {}> {
 					<div id="drag" />
 					<nav>
 						<ul>
-							<li>
-								<Link to="/auth/code">auth/code</Link>
-							</li>
-							<li>
-								<Link to="/auth/notice">auth/notice</Link>
-							</li>
-							<li>
-								<Link to="/main/edit/123">main/edit/123</Link>
-							</li>
+							{Routes.map((item, i) => (
+								<li key={i}>
+									<Link to={item.path}>{item.path}</Link>
+								</li>
+							))}
 						</ul>
 					</nav>
 					{Routes.map((item, i) => (

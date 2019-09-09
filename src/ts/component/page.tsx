@@ -3,6 +3,11 @@ import * as ReactDOM from 'react-dom';
 
 import PageAuthCode from './page/auth/code';
 import PageAuthNotice from './page/auth/notice';
+import PageAuthSelect from './page/auth/select';
+import PageAuthRegister from './page/auth/register';
+import PageAuthLogin from './page/auth/login';
+
+import PageMainIndex from './page/main/index';
 
 const $ = require('jquery');
 
@@ -12,10 +17,15 @@ interface Props {
 };
 
 const Components: any = {
-	"index/index": PageAuthCode,
+	'index/index':	 PageAuthCode,
 	
-	"auth/code": PageAuthCode,
-	"auth/notice": PageAuthNotice 
+	'auth/code':	 PageAuthCode,
+	'auth/notice':	 PageAuthNotice,
+	'auth/select':	 PageAuthSelect,
+	'auth/register': PageAuthRegister,
+	'auth/login':	 PageAuthLogin,
+	
+	'main/index':	 PageMainIndex,
 };
 
 class Page extends React.Component<Props, {}> {

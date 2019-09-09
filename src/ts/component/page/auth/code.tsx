@@ -23,7 +23,7 @@ class PageAuthCode extends React.Component<Props, State> {
 	constructor (props: any) {
         super(props);
 
-		this.onSubmitCode = this.onSubmitCode.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 	};
 	
 	render () {
@@ -35,7 +35,7 @@ class PageAuthCode extends React.Component<Props, State> {
 				<Label text="Enter your invitation code" />
 				<Error text={error} />
 				
-				<form onSubmit={this.onSubmitCode}>
+				<form onSubmit={this.onSubmit}>
 					<Input ref={(ref: any) => this.codeRef = ref} />
 					<Button text="Confirm" type="input" className="orange" />
 				</form>
@@ -43,12 +43,13 @@ class PageAuthCode extends React.Component<Props, State> {
 		);
     };
 
-	onSubmitCode (e: any) {
+	onSubmit (e: any) {
 		e.preventDefault();
 		
 		let code: string = this.codeRef.getValue();
 		
 		console.log('code', code);
+		this.props.history.push('/auth/notice');
 	};
 	
 	resize () {

@@ -6,13 +6,15 @@ const $ = require('jquery');
 
 interface Props { 
 	history: any;
-	resize(): void;
 };
 
-interface State { 
-};
+class PageAuthNotice extends React.Component<Props, {}> {
+	
+	constructor (props: any) {
+        super(props);
 
-class PageAuthNotice extends React.Component<Props, State> {
+		this.onSubmit = this.onSubmit.bind(this);
+	};
     
 	render () {
         return (
@@ -20,10 +22,16 @@ class PageAuthNotice extends React.Component<Props, State> {
 				<Label className="bold" text="Important notice" />
 				<Label text="Understanding how people use Anytype helps us improve the product. This version of Anytype includes the analytics code that protects your privacy. It doesn't record the actual document's content but still allows us to understand how you use Anytype. Stay subscribed to our mailing list, as we will soon announce a new release that enables you to opt-out." />
 						
-				<Button text="Start" className="orange" onClick={() => { this.setState({ step: 3 }); }} />
+				<Button text="Start" className="orange" onClick={this.onSubmit} />
 			</div>
 		);
     };
+
+	onSubmit (e: any) {
+		e.preventDefault();
+		
+		this.props.history.push('/auth/select');
+	};
 
 	resize () {
 		let node = $(ReactDOM.findDOMNode(this));

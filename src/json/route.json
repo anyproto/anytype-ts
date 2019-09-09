@@ -2,5 +2,9 @@
 	{ "path": "/" },
 	{ "path": "/auth/code" },
 	{ "path": "/auth/notice" },
+	{ "path": "/auth/select" },
+	{ "path": "/auth/register" },
+	{ "path": "/auth/login" },
+	{ "path": "/main/index" },
 	{ "path": "/main/edit/:id?" }
 ]
