@@ -15,6 +15,7 @@ import 'scss/component/icon.scss';
 import 'scss/component/textArea.scss';
 
 import 'scss/page/auth.scss';
+import 'scss/page/main/index.scss';
 
 import Page from './component/page';
 
