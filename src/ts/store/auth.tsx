@@ -13,4 +13,9 @@ class AuthStore {
 	
 };
 
-export default AuthStore;
+let authStore = new AuthStore();
+
+export {
+	AuthStore,
+	authStore
+};

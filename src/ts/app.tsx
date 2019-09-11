@@ -3,7 +3,8 @@ import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page } from './component';
-import { createStore } from './store';
+import { authStore } from './store';
+import { Dispatcher } from 'ts/lib';
 
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
@@ -22,7 +23,11 @@ import 'scss/page/main/index.scss';
 
 interface RouteElement { path: string; };
 const Routes: Array<RouteElement> = require('json/route.json');
-const rootStore = createStore();
+const rootStore = {
+	auth: authStore
+};
+
+Dispatcher.init();
 
 class App extends React.Component<{}, {}> {
 	

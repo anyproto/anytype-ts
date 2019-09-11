@@ -40,7 +40,9 @@ class PageAuthCode extends React.Component<Props, State> {
 				<Title text="Welcome to Anytype!" />
 				<Label text="Enter your invitation code" />
 				<Error text={error} />
-						
+				
+				Code: {authStore.code}
+				
 				<form onSubmit={this.onSubmit}>
 					<Input ref={(ref: any) => this.codeRef = ref} value={authStore.code} />
 					<Button text="Confirm" type="input" className="orange" />
