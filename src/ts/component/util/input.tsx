@@ -50,7 +50,7 @@ class Input extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { type, name, id, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept } = this.props;
+		const { id, type, name, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept } = this.props;
 		
 		let cn = [ 'input', 'input-' + type ];
 		if (className) {

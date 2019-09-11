@@ -40,7 +40,7 @@ module.exports = {
             },
             {
                 test: /\.(eot|ttf|otf|woff|woff2)$/,
-                loader: 'url-loader?name=public/fonts/[name].[ext]'
+                loader: 'url-loader?name=[name].[ext]'
             },
             {
             	test: /\.(jpe?g|png|gif|svg)$/,

@@ -14,7 +14,7 @@ interface State {
 
 class PageAuthLogin extends React.Component<Props, State> {
 
-	codeRef: any;
+	phraseRef: any;
 
 	state = {
 		error: ''
@@ -38,7 +38,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 					<Label text="Type your keychain phrase or private key" />
 					<Error text={error} />
 							
-					<TextArea ref="phrase" placeHolder="12 words separated by space" />
+					<TextArea ref={(ref: any) => this.phraseRef = ref} placeHolder="12 words separated by space" />
 					<div className="buttons">
 						<Button text="Sign in" className="orange" onClick={this.onSubmit} />
 						<Button text="Back" className="grey" onClick={this.onCancel} />

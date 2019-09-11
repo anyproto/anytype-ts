@@ -16,7 +16,8 @@ interface State {
 
 class PageAuthRegister extends React.Component<Props, State> {
 
-	codeRef: any;
+	fileRef: any;
+	nameRef: any;
 
 	state = {
 		error: '',
@@ -47,9 +48,9 @@ class PageAuthRegister extends React.Component<Props, State> {
 					<div className="inputWithImage">
 						<div className="fileWrap">
 							<IconUser name={name || 'T'} icon={preview} />
-							<Input ref="file" id="file" type="file" onChange={this.onFileChange} />
+							<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
 						</div>
-						<Input ref="name" placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
+						<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
 					</div>
 	
 					<div className="buttons">
@@ -67,6 +68,8 @@ class PageAuthRegister extends React.Component<Props, State> {
 	
 	onNameChange (e: any) {
 		e.preventDefault();
+		
+		let name = this.nameRef.getValue();
 	};
 
 	onSubmit (e: any) {
