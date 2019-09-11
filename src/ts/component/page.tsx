@@ -1,31 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-
-import PageAuthCode from './page/auth/code';
-import PageAuthNotice from './page/auth/notice';
-import PageAuthSelect from './page/auth/select';
-import PageAuthRegister from './page/auth/register';
-import PageAuthLogin from './page/auth/login';
-
-import PageMainIndex from './page/main/index';
+import { RouteComponentProps } from 'react-router';
+import { PageAuthCode, PageAuthNotice, PageAuthSelect, PageAuthRegister, PageAuthLogin, PageMainIndex } from '.';
 
 const $ = require('jquery');
 
-interface Props {
-	history: any;
-	match: any;
-};
-
-const Components: any = {
-	'index/index':	 PageAuthCode,
-	
-	'auth/code':	 PageAuthCode,
-	'auth/notice':	 PageAuthNotice,
-	'auth/select':	 PageAuthSelect,
-	'auth/register': PageAuthRegister,
-	'auth/login':	 PageAuthLogin,
-	
-	'main/index':	 PageMainIndex,
+interface Props extends RouteComponentProps<any> {
 };
 
 class Page extends React.Component<Props, {}> {
@@ -33,6 +13,18 @@ class Page extends React.Component<Props, {}> {
 	childRef: any;
 
 	render () {
+		const Components: any = {
+			'index/index':	 PageAuthCode,
+			
+			'auth/code':	 PageAuthCode,
+			'auth/notice':	 PageAuthNotice,
+			'auth/select':	 PageAuthSelect,
+			'auth/register': PageAuthRegister,
+			'auth/login':	 PageAuthLogin,
+			
+			'main/index':	 PageMainIndex,
+		};
+		
 		const route = this.getRoute();
 		const path = [ route.page, route.action ].join('/');
 		const Component = Components[path];
@@ -85,7 +77,7 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		if (this.childRef.resize) {
+		if (this.childRef && this.childRef.resize) {
 			this.childRef.resize();			
 		};
 	};

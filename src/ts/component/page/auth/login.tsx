@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Title, Label, Error, TextArea, Button } from 'ts/component.tsx';
+import { RouteComponentProps } from 'react-router';
+import { Title, Label, Error, TextArea, Button } from 'ts/component';
 
 const $ = require('jquery');
 
-interface Props {
-	history: any;
+interface Props extends RouteComponentProps<any> {
 };
 
 interface State {

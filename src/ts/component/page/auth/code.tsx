@@ -1,21 +1,26 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Title, Label, Error, Input, Button } from 'ts/component.tsx';
+import { Provider } from 'mobx-react';
+import { RouteComponentProps } from 'react-router';
+import { Title, Label, Error, Input, Button } from 'ts/component';
+import { observer, inject } from 'mobx-react';
+import { AuthStore } from 'ts/store';
 
 const $ = require('jquery');
 
-interface Props {
-	history: any;
+interface Props extends RouteComponentProps<any> {
+	auth?: AuthStore;
 };
 
 interface State {
 	error: string;
 };
 
+@inject('auth')
+@observer
 class PageAuthCode extends React.Component<Props, State> {
 
 	codeRef: any;
-
 	state = {
 		error: ''
 	};
@@ -28,15 +33,16 @@ class PageAuthCode extends React.Component<Props, State> {
 	
 	render () {
 		const { error } = this.state;
+		const authStore = this.props.auth as AuthStore;
 		
         return (
-			<div className="frame">
+			<div id="frame" className="frame">
 				<Title text="Welcome to Anytype!" />
 				<Label text="Enter your invitation code" />
 				<Error text={error} />
-				
+						
 				<form onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => this.codeRef = ref} />
+					<Input ref={(ref: any) => this.codeRef = ref} value={authStore.code} />
 					<Button text="Confirm" type="input" className="orange" />
 				</form>
 			</div>
@@ -46,10 +52,10 @@ class PageAuthCode extends React.Component<Props, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		let code: string = this.codeRef.getValue();
+		const authStore = this.props.auth as AuthStore;
+		const code: string = this.codeRef.getValue();
 		
-		console.log('code', code);
-		this.props.history.push('/auth/notice');
+		authStore.setCode(code);
 	};
 	
 	resize () {

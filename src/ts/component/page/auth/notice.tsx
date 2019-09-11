@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Label, Button } from 'ts/component';
 
 const $ = require('jquery');
 
-interface Props { 
-	history: any;
+interface Props extends RouteComponentProps<any> {
 };
 
 class PageAuthNotice extends React.Component<Props, {}> {
