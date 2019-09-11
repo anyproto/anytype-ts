@@ -1,4 +1,5 @@
 import { authStore } from 'ts/store';
+import { fifoPipe } from 'ts/lib';
 
 class Dispatcher {
 	

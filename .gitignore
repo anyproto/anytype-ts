@@ -5,3 +5,4 @@ node_modules/
 dist/main.js
 dist/main.js.map
 src/ts/protocol
+package-lock.json

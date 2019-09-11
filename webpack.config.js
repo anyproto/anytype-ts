@@ -15,6 +15,11 @@ module.exports = {
 		]
     },
     
+    node: {
+    	fs: 'empty',
+    	child_process: 'empty'
+    },
+    
     devServer: {
 		hot: true,
 	    inline: true,
@@ -30,6 +35,16 @@ module.exports = {
                 use: [
                     {
                         loader: 'ts-loader'
+                    }
+                ]
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        query: { presets:[ 'env' ] }
                     }
                 ]
             },
