@@ -30,12 +30,6 @@ const rootStore = {
 
 class App extends React.Component<{}, {}> {
 	
-	constructor (props: any) {
-		super(props);
-		
-		Dispatcher.init();		
-	};
-	
 	render () {
 		return (
 			<Router history={history}>
@@ -61,6 +55,10 @@ class App extends React.Component<{}, {}> {
 	};
 
 	componentDidMount () {
+		ipcRenderer.on('pipeEvent', (e: any, data: any) => {
+			Dispatcher.event(data);
+		});
+		
 		ipcRenderer.send('appLoaded', true);
 	};
 

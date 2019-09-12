@@ -7,12 +7,15 @@ class Dispatcher {
 	constructor () {
 	};
 	
-	init () {
-		ipcRenderer.on('pipeEvent', (e: any, data: any) => {
-			console.log('PipeEvent', e, data);
-			
-			authStore.setCode(JSON.stringify(data));
-		});
+	event (event: any) {
+		console.log('Dispatcher.event', event);
+		
+		authStore.setCode(event.data);
+	};
+	
+	cmd (data: any) {
+		console.log('Dispatcher.cmd', data);
+		ipcRenderer.send('pipeCmd', data);
 	};
 	
 };

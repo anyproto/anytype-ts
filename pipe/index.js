@@ -42,27 +42,31 @@ class Pipe {
 		childProcess.exec('rm -rf ' + JS_TMP);
 	};
 	
-	writer (msg) {
+	write (msg) {
 		let eventMsg = Event.create(msg);
 		let encoded = Event.encode(eventMsg).finish();
 
 		this.fifo.write(btoa(encoded.toString()));
+		
+		console.log('Pipe.write', msg);
 	};
 
-	reader (cb) {
+	read (cb) {
 		let rl = readline.createInterface({ input: fs.createReadStream(GO_TMP) });
 
 		rl.on('line', (line) => {
 			// b64 -> msg + remove \n at the end
 			const msg = atob(line.slice(0, -1));
 			cb(Event.decode(Buffer.from(msg)));
+			
+			console.log('Pipe.read', msg);
 		});
 	};
 
 	generateId () {
 		let chars = '0123456789ABCDEF'.split('');
 		let len = 32;
-		let arr = Array(len).fill(null).map(()=> chars[ Math.ceil(Math.random() * chars.length) - 1 ]);
+		let arr = Array(len).fill(null).map(() => chars[ Math.ceil(Math.random() * chars.length) - 1 ]);
 		return arr.join('');
 	};
 	

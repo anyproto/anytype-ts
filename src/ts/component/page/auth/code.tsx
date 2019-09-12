@@ -4,6 +4,7 @@ import { Provider } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Error, Input, Button } from 'ts/component';
 import { observer, inject } from 'mobx-react';
+import { Dispatcher } from 'ts/lib';
 
 const $ = require('jquery');
 
@@ -56,7 +57,7 @@ class PageAuthCode extends React.Component<Props, State> {
 		const authStore = this.props.auth;
 		const code: string = this.codeRef.getValue();
 		
-		authStore.setCode(code);
+		Dispatcher.cmd({ entity: 'auth', op: 'code', data: code });
 	};
 	
 	resize () {

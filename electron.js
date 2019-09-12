@@ -23,23 +23,21 @@ function createWindow () {
 	};
 	
 	let win = new BrowserWindow(param);
+	let pipe = null;
 	
 	win.loadURL('http://localhost:8080');
 	
 	ipcMain.on('appLoaded', () => {
-		console.log('appLoaded');
-		
-		let pipe = Pipe.start();
-		
-		pipe.reader((event) => {
+		pipe = Pipe.start();
+		pipe.read((event) => {
 			win.webContents.send('pipeEvent', event);
 		});
-
-		let i = 0;
-		let sendStandardEvent = () => {
-		    pipe.writer({ entity: "standard", op: "test", data: String(i) });
+	});
+	
+	ipcMain.on('pipeCmd', (e, data) => {
+		if (pipe) {
+			pipe.write(data);
 		};
-		setInterval(sendStandardEvent, 1000);
 	});
 	
 	ipcMain.on('appClose', () => {
