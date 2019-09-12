@@ -1,6 +1,5 @@
-import { AuthStore, authStore } from './auth';
+import { authStore } from './auth';
 
 export {
-	AuthStore,
 	authStore
 };

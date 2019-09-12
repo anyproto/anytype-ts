@@ -6,6 +6,7 @@ import { Page } from './component';
 import { authStore } from './store';
 import { Dispatcher } from 'ts/lib';
 
+const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
 
@@ -27,9 +28,13 @@ const rootStore = {
 	auth: authStore
 };
 
-Dispatcher.init();
-
 class App extends React.Component<{}, {}> {
+	
+	constructor (props: any) {
+		super(props);
+		
+		Dispatcher.init();		
+	};
 	
 	render () {
 		return (
@@ -53,7 +58,11 @@ class App extends React.Component<{}, {}> {
 				</Provider>
 			</Router>
 		);
-    };
+	};
+
+	componentDidMount () {
+		ipcRenderer.send('appLoaded', true);
+	};
 
 };
 

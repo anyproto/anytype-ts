@@ -1,5 +1,6 @@
 import { authStore } from 'ts/store';
-import { fifoPipe } from 'ts/lib';
+
+const { ipcRenderer } = window.require('electron');
 
 class Dispatcher {
 	
@@ -7,6 +8,11 @@ class Dispatcher {
 	};
 	
 	init () {
+		ipcRenderer.on('pipeEvent', (e: any, data: any) => {
+			console.log('PipeEvent', e, data);
+			
+			authStore.setCode(JSON.stringify(data));
+		});
 	};
 	
 };

@@ -4,12 +4,11 @@ import { Provider } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Error, Input, Button } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { AuthStore } from 'ts/store';
 
 const $ = require('jquery');
 
 interface Props extends RouteComponentProps<any> {
-	auth?: AuthStore;
+	auth?: any;
 };
 
 interface State {
@@ -33,7 +32,7 @@ class PageAuthCode extends React.Component<Props, State> {
 	
 	render () {
 		const { error } = this.state;
-		const authStore = this.props.auth as AuthStore;
+		const authStore = this.props.auth;
 		
         return (
 			<div id="frame" className="frame">
@@ -54,7 +53,7 @@ class PageAuthCode extends React.Component<Props, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const authStore = this.props.auth as AuthStore;
+		const authStore = this.props.auth;
 		const code: string = this.codeRef.getValue();
 		
 		authStore.setCode(code);
