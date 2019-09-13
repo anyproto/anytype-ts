@@ -1,13 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Error, Input, Button, IconUser } from 'ts/component';
+import { Frame, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
-const $ = require('jquery');
-
-interface Props extends RouteComponentProps<any> {
-};
-
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
 	preview: string;
@@ -38,22 +33,28 @@ class PageAuthRegister extends React.Component<Props, State> {
 		const { error, preview, name } = this.state;
 		
         return (
-			<div className="frame">
-				<Title text="Add your name and profile picture" />
-				<Error text={error} />
-	
-				<div className="inputWithImage">
-					<div className="fileWrap">
-						<IconUser name={name || 'T'} icon={preview} />
-						<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
+			<div>
+				<div className="cover c3" />
+				<Header />
+				<Footer />
+				
+				<Frame>
+					<Title text="Add name and profile picture" />
+					<Error text={error} />
+		
+					<div className="inputWithImage">
+						<div className="fileWrap">
+							<IconUser name={name || 'T'} icon={preview} />
+							<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
+						</div>
+						<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
 					</div>
-					<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
-				</div>
-	
-				<div className="buttons">
-					<Button text="Create profile" className="orange" onClick={this.onSubmit} />
-					<Button text="Back" className="grey" onClick={this.onCancel} />
-				</div>
+		
+					<div className="buttons">
+						<Button text="Create profile" className="orange" onClick={this.onSubmit} />
+						<Button text="Back" className="grey" onClick={this.onCancel} />
+					</div>
+				</Frame>
 			</div>
 		);
     };
@@ -79,12 +80,6 @@ class PageAuthRegister extends React.Component<Props, State> {
 		this.props.history.push('/auth/select');
 	};
 	
-	resize () {
-		let node = $(ReactDOM.findDOMNode(this));
-		
-		node.css({ marginTop: -node.outerHeight() / 2 });
-	};
-
 };
 
 export default PageAuthRegister;

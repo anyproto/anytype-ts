@@ -1,9 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-
-const $ = require('jquery');
+import { Frame, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
 interface Profile {
 	icon: string;
@@ -19,21 +16,23 @@ class PageAccountSelect extends React.Component<Props, State> {
 
 	state = {
 		list: [ 
-			{ icon: '', color: '', name: 'Anton Pronin' }, 
-			{ icon: '', color: '', name: 'James Simon' }, 
-			{ icon: '', color: '', name: 'Tony Leung' } 
+			{ icon: '', color: 'grey', name: 'Anton Pronin' }, 
+			{ icon: '', color: 'red', name: 'James Simon' }, 
+			{ icon: '', color: 'green', name: 'Tony Leung' } 
 		]
 	};
 
 	constructor (props: any) {
         super(props);
+
+		this.onSelect = this.onSelect.bind(this);
 	};
 	
 	render () {
 		const { list } = this.state;
 		
 		const Item = (item: Profile) => (
-			<div className="item">
+			<div className="item" onClick={this.onSelect}>
 				<IconUser {...item} />
 				<div className="name">{item.name}</div>
 			</div>
@@ -45,7 +44,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 				<Header />
 				<Footer />
 				
-				<div className="frame">
+				<Frame>
 					<Title text="Choose profile" />
 					
 					<div className="list">
@@ -53,7 +52,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 							<Item key={i} {...item} />	
 						))}
 					</div>
-				</div>
+				</Frame>
 			</div>
 		);
     };
@@ -64,13 +63,6 @@ class PageAccountSelect extends React.Component<Props, State> {
 		this.props.history.push('/main/index');
 	};
 	
-	resize () {
-		let node = $(ReactDOM.findDOMNode(this));
-		let frame = node.find('.frame');
-		
-		frame.css({ marginTop: -frame.outerHeight() / 2 });
-	};
-
 };
 
 export default PageAccountSelect;

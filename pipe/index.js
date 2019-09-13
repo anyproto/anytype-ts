@@ -35,9 +35,6 @@ class Pipe {
 			console.log('Fifo created:', this.fifo);
 			
 			let rl = readline.createInterface({ input: fs.createReadStream(GO_TMP) });
-			
-			console.log('ReadLine', rl);
-			
 			rl.on('line', (line) => {
 				let msg = atob(line.slice(0, -1));
 				msg = Event.decode(Buffer.from(msg));
@@ -49,10 +46,6 @@ class Pipe {
 	};
 	
 	stop () {
-		if (this.cp) {
-			this.cp.kill();
-		};
-		
 		childProcess.exec('rm -rf ' + JS_TMP);
 	};
 	

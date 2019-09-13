@@ -1,9 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Error, Input, Button, Smile } from 'ts/component';
-
-const $ = require('jquery');
+import { Frame, Title, Label, Error, Input, Button, Smile } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -31,10 +28,10 @@ class PageAuthSetup extends React.Component<Props, State> {
 				<div className="logo" />
 				<div className="copy">2018, Anytype</div>
 				
-				<div className="frame">
+				<Frame>
 					<Smile icon={':clock' + Icons[icon] + ':'} size={36} />
 					<Title text="Setting up the wallet..." />
-				</div>
+				</Frame>
 			</div>
 		);
     };
@@ -59,13 +56,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 	componentWillUnmount () {
 		clearInterval(this.i);
 		clearTimeout(this.t);
-	};
-
-	resize () {
-		let node = $(ReactDOM.findDOMNode(this));
-		let frame = node.find('.frame');
-		
-		frame.css({ marginTop: -frame.outerHeight() / 2 });
 	};
 
 };

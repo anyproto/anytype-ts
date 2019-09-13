@@ -13,6 +13,7 @@ import PageMainIndex from './page/main/index';
 import HeaderAuth from './header/auth';
 import FooterAuth from './footer/auth';
 
+import Frame from './util/frame';
 import Title from './util/title';
 import Label from './util/label';
 import Smile from './util/smile';
@@ -41,6 +42,7 @@ export {
 	Input,
 	TextArea,
 	Button,
+	Frame,
 	Title,
 	Label,
 	Smile,

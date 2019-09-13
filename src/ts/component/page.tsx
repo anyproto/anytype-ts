@@ -3,7 +3,8 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { 
 	PageAuthCode, PageAuthSelect, PageAuthRegister, PageAuthLogin, PageAuthPinSelect, PageAuthPinConfirm, 
-	PageAuthSetup, PageAuthAccountSelect, PageMainIndex } from '.';
+	PageAuthSetup, PageAuthAccountSelect, PageMainIndex 
+} from '.';
 
 const $ = require('jquery');
 
@@ -47,8 +48,8 @@ class Page extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		let win = $(window);
-		win.unbind('resize orientationchange');
-		win.on('resize orientationchange', () => { this.resize(); });
+		win.unbind('resize.page orientationchange.page');
+		win.on('resize.page orientationchange.page', () => { this.resize(); });
 
 		this.setBodyClass();
 		this.resize();

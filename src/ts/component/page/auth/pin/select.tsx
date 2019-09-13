@@ -1,9 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
-const $ = require('jquery');
 const SIZE = 6;
 
 interface Props extends RouteComponentProps<any> {};
@@ -41,7 +39,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 				<Header />
 				<Footer />
 				
-				<div className="frame">
+				<Frame>
 					<Title text="Choose pin code" />
 					<Label text="This is one password you need to remember. You will need this password to login on this device." />
 					<Error text={error} />
@@ -49,7 +47,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 					{inputs.map((item, i) => (
 						<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={i} onKeyUp={(e: any) => { this.onChange(e, item.id); }} />
 					))}
-				</div>
+				</Frame>
 			</div>
 		);
     };
@@ -59,29 +57,34 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	};
 
 	onChange (e: any, id: number) {
+		let k = e.key;
 		let { code } = this.state;
+		let input = this.refObj[id];
+		let prev = this.refObj[id - 1];
+		let next = this.refObj[id + 1];
+		let v = input.getValue();
 		
-		code += this.refObj[id].getValue();
+		code += v;
+		input.setType(v ? 'password' : 'text');
 		this.setState({ code: code });
-		
-		this.refObj[id].setType('password');
 			
-		if (this.refObj[id + 1]) {
-			this.refObj[id + 1].focus();
+		if (v && next) {
+			next.focus();
 		};
-
+		
+		if ((k == 'Backspace') && prev) {
+			prev.setValue('');
+			prev.setType('text');
+			prev.focus();
+		} else {
+			
+		};
+		
 		if (code.length == SIZE) {
 			this.props.history.push('/auth/pin-confirm');	
 		};			
 	};
 	
-	resize () {
-		let node = $(ReactDOM.findDOMNode(this));
-		let frame = node.find('.frame');
-		
-		frame.css({ marginTop: -frame.outerHeight() / 2 });
-	};
-
 };
 
 export default PageAuthPinSelect;

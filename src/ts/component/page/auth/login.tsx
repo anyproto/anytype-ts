@@ -1,9 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Error, TextArea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-
-const $ = require('jquery');
+import { Frame, Title, Label, Error, TextArea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -34,7 +31,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 				<Header />
 				<Footer />
 				
-				<div className="frame">
+				<Frame>
 					<Title text="Login with your keychain" />
 					<Label text="Type your keychain phrase or private key" />
 					<Error text={error} />
@@ -44,7 +41,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 						<Button text="Login" className="orange" onClick={this.onSubmit} />
 						<Button text="Back" className="grey" onClick={this.onCancel} />
 					</div>
-				</div>
+				</Frame>
 			</div>
 		);
     };
@@ -59,13 +56,6 @@ class PageAuthLogin extends React.Component<Props, State> {
 		this.props.history.push('/auth/select');		
 	};
 	
-	resize () {
-		let node = $(ReactDOM.findDOMNode(this));
-		let frame = node.find('.frame');
-		
-		frame.css({ marginTop: -frame.outerHeight() / 2 });
-	};
-
 };
 
 export default PageAuthLogin;

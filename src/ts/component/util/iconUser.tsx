@@ -17,7 +17,7 @@ interface Props {
 class IconUser extends React.Component<Props, {}> {
 	
 	public static defaultProps = {
-        color: 'blue'
+        color: 'grey'
     };
 	
 	constructor (props: any) {
@@ -39,7 +39,7 @@ class IconUser extends React.Component<Props, {}> {
 			text = '';
 			style.backgroundImage = 'url("' + icon + '")';
 		} else {
-			style.backgroundColor = color;
+			cn.push(color);
 		};
 		
 		return (

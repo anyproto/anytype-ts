@@ -1,12 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Provider } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Error, Input, Button } from 'ts/component';
+import { Frame, Title, Label, Error, Input, Button } from 'ts/component';
 import { observer, inject } from 'mobx-react';
 import { Dispatcher } from 'ts/lib';
-
-const $ = require('jquery');
 
 interface Props extends RouteComponentProps<any> {
 	auth?: any;
@@ -36,7 +32,7 @@ class PageAuthCode extends React.Component<Props, State> {
 		const authStore = this.props.auth;
 		
         return (
-			<div id="frame" className="frame">
+			<Frame>
 				<Title text="Welcome to Anytype!" />
 				<Label text="Enter your invitation code" />
 				<Error text={error} />
@@ -47,9 +43,9 @@ class PageAuthCode extends React.Component<Props, State> {
 					<Input ref={(ref: any) => this.codeRef = ref} value={authStore.code} />
 					<Button text="Confirm" type="input" className="orange" />
 				</form>
-			</div>
+			</Frame>
 		);
-    };
+	};
 
 	onSubmit (e: any) {
 		e.preventDefault();
@@ -59,11 +55,6 @@ class PageAuthCode extends React.Component<Props, State> {
 		
 		Dispatcher.cmd({ entity: 'auth', op: 'code', data: code });
 		//this.props.history.push('/auth/notice');
-	};
-	
-	resize () {
-		let node = $(ReactDOM.findDOMNode(this));
-		node.css({ marginTop: -node.outerHeight() / 2 });
 	};
 
 };
