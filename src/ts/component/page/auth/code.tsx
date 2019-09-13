@@ -58,6 +58,7 @@ class PageAuthCode extends React.Component<Props, State> {
 		const code: string = this.codeRef.getValue();
 		
 		Dispatcher.cmd({ entity: 'auth', op: 'code', data: code });
+		//this.props.history.push('/auth/notice');
 	};
 	
 	resize () {

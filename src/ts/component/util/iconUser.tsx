@@ -55,13 +55,7 @@ class IconUser extends React.Component<Props, {}> {
 		if (!s) {
 			return '';
 		};
-		
-		let a = s.split(' ') || [];
-		a = a.slice(0, 2);
-		for (let i = 0; i < a.length; ++i) {
-			a[i] = a[i].substr(0, 1);
-		};
-		return a.join('');
+		return s.trim().substr(0, 1);
 	};
 	
 	onMouseEnter (e: any) {

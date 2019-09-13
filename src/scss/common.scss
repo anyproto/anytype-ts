@@ -2,7 +2,7 @@
 html, body { height: 100%; }
 
 body {
-	font-family: 'Lcg'; font-size: 15px; line-height: 1.6; letter-spacing: -0.1px; color: #000;
+	font-family: 'Lcg'; font-size: 15px; line-height: 24px; letter-spacing: -0.08px; color: #000;
 	overflow-x: hidden; overflow-y: scroll; background: #fff;
 	-webkit-font-smoothing: antialiased;
 	overscroll-behavior: none;
@@ -29,3 +29,7 @@ input, textarea, select { font-family: 'Lcg'; }
 .fileWrap { 
 	.input-file { position: absolute; left: 0px; top: 0px; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 100; padding: 0px; } 
 }
+
+#commonHelp { position: fixed; right: 12px; bottom: 12px; cursor: pointer; z-index: 11; }
+
+nav { position: absolute; left: 50px; top: 50px; z-index: 100; }

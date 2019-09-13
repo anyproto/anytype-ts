@@ -25,6 +25,7 @@ interface Props {
 interface State {
 	value: string;
 	selected: boolean;
+	type: string;
 };
 
 class Input extends React.Component<Props, State> {
@@ -36,7 +37,8 @@ class Input extends React.Component<Props, State> {
 
 	state = {
 		value: '',
-		selected: false
+		selected: false,
+		type: ''
 	};
 	
 	constructor (props: any) {
@@ -50,8 +52,9 @@ class Input extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, type, name, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept } = this.props;
+		const { id, name, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept } = this.props;
 		
+		let type: string = this.state.type || this.props.type;
 		let cn = [ 'input', 'input-' + type ];
 		if (className) {
 			cn.push(className);
@@ -84,6 +87,7 @@ class Input extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this.setValue(this.props.value);
+		this.setState({ type: this.props.type });
 	};
 	
 	componentDidUpdate () {
@@ -142,6 +146,10 @@ class Input extends React.Component<Props, State> {
 	
 	getValue () {
 		return this.state.value;
+	};
+	
+	setType (v: string) {
+		this.setState({ type: v });
 	};
 	
 };

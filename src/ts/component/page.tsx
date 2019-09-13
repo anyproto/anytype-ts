@@ -1,7 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { PageAuthCode, PageAuthNotice, PageAuthSelect, PageAuthRegister, PageAuthLogin, PageMainIndex } from '.';
+import { 
+	PageAuthCode, PageAuthSelect, PageAuthRegister, PageAuthLogin, PageAuthPinSelect, PageAuthPinConfirm, 
+	PageAuthSetup, PageAuthAccountSelect, PageMainIndex } from '.';
 
 const $ = require('jquery');
 
@@ -14,15 +16,18 @@ class Page extends React.Component<Props, {}> {
 
 	render () {
 		const Components: any = {
-			'index/index':	 PageAuthCode,
+			'index/index':			 PageAuthSelect,
 			
-			'auth/code':	 PageAuthCode,
-			'auth/notice':	 PageAuthNotice,
-			'auth/select':	 PageAuthSelect,
-			'auth/register': PageAuthRegister,
-			'auth/login':	 PageAuthLogin,
+			'auth/code':			 PageAuthCode,
+			'auth/select':			 PageAuthSelect,
+			'auth/register':		 PageAuthRegister,
+			'auth/login':			 PageAuthLogin,
+			'auth/pin-select':		 PageAuthPinSelect,
+			'auth/pin-confirm':		 PageAuthPinConfirm,
+			'auth/setup':			 PageAuthSetup,
+			'auth/account-select':	 PageAuthAccountSelect,
 			
-			'main/index':	 PageMainIndex,
+			'main/index':			 PageMainIndex,
 		};
 		
 		const route = this.getRoute();
@@ -56,11 +61,14 @@ class Page extends React.Component<Props, {}> {
 	
 	getRoute () {
 		const { match } = this.props;
-		
 		let a: string[] = match.path.split('/');
+
 		a.shift();
-		
-		return { page: a[0] || 'index', action: a[1] || 'index' };
+		return { 
+			page: a[0] || 'index', 
+			action: a[1] || 'index',
+			id: a[2] || '',
+		};
 	};
 	
 	getClass () {

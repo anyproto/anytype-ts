@@ -11,9 +11,12 @@ const GO_TMP = '/var/tmp/.go_pipe';
 
 class Pipe {
 	
-	constructor () {
+	constructor (onMessage) {
 		this.cp = null;
 		this.fifo = null;
+		this.onMessage = onMessage;
+		
+		return this;
 	};
 	
 	start () {
@@ -27,11 +30,22 @@ class Pipe {
 				return;
 			};
 			
-			console.log('Fifo created: ' + JS_TMP);
 			this.fifo = new FIFO(JS_TMP);
+			
+			console.log('Fifo created:', this.fifo);
+			
+			let rl = readline.createInterface({ input: fs.createReadStream(GO_TMP) });
+			
+			console.log('ReadLine', rl);
+			
+			rl.on('line', (line) => {
+				let msg = atob(line.slice(0, -1));
+				msg = Event.decode(Buffer.from(msg));
+				
+				console.log('Pipe.read', msg);
+				this.onMessage(msg);
+			});
 		});
-		
-		return this;
 	};
 	
 	stop () {
@@ -51,18 +65,6 @@ class Pipe {
 		console.log('Pipe.write', msg);
 	};
 
-	read (cb) {
-		let rl = readline.createInterface({ input: fs.createReadStream(GO_TMP) });
-
-		rl.on('line', (line) => {
-			// b64 -> msg + remove \n at the end
-			const msg = atob(line.slice(0, -1));
-			cb(Event.decode(Buffer.from(msg)));
-			
-			console.log('Pipe.read', msg);
-		});
-	};
-
 	generateId () {
 		let chars = '0123456789ABCDEF'.split('');
 		let len = 32;
@@ -72,4 +74,4 @@ class Pipe {
 	
 };
 
-module.exports = new Pipe();
+module.exports = Pipe;

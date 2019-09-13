@@ -2,10 +2,13 @@
 	{ "path": "/" },
 	
 	{ "path": "/auth/code" },
-	{ "path": "/auth/notice" },
 	{ "path": "/auth/select" },
-	{ "path": "/auth/register" },
 	{ "path": "/auth/login" },
+	{ "path": "/auth/pin-select" },
+	{ "path": "/auth/pin-confirm" },
+	{ "path": "/auth/setup" },
+	{ "path": "/auth/account-select" },
+	{ "path": "/auth/register" },
 	
 	{ "path": "/main/index" },
 	{ "path": "/main/edit/:id?" }

@@ -38,25 +38,21 @@ class PageAuthRegister extends React.Component<Props, State> {
 		const { error, preview, name } = this.state;
 		
         return (
-			<div>
-				<div className="cover c1" />
-				<div id="frame" className="frame">
-					<Title text="Get Anytype ID" />
-					<Label text="This ID and your data will be encrypted and stored locally, and only you will have keys to decrypt it. " />
-					<Error text={error} />
+			<div className="frame">
+				<Title text="Add your name and profile picture" />
+				<Error text={error} />
 	
-					<div className="inputWithImage">
-						<div className="fileWrap">
-							<IconUser name={name || 'T'} icon={preview} />
-							<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
-						</div>
-						<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
+				<div className="inputWithImage">
+					<div className="fileWrap">
+						<IconUser name={name || 'T'} icon={preview} />
+						<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
 					</div>
+					<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
+				</div>
 	
-					<div className="buttons">
-						<Button text="Get ID" className="orange" onClick={this.onSubmit} />
-						<Button text="Back" className="grey" onClick={this.onCancel} />
-					</div>
+				<div className="buttons">
+					<Button text="Create profile" className="orange" onClick={this.onSubmit} />
+					<Button text="Back" className="grey" onClick={this.onCancel} />
 				</div>
 			</div>
 		);
@@ -85,9 +81,8 @@ class PageAuthRegister extends React.Component<Props, State> {
 	
 	resize () {
 		let node = $(ReactDOM.findDOMNode(this));
-		let frame = node.find('#frame');
 		
-		frame.css({ marginTop: -frame.outerHeight() / 2 });
+		node.css({ marginTop: -node.outerHeight() / 2 });
 	};
 
 };

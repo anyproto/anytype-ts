@@ -1,66 +1,74 @@
 .page-auth, .page-index-index {
-	.frame { 
-		background: #fff; width: 672px; border-radius: 8px; padding: 40px 48px 32px 48px; position: fixed; left: 50%; top: 50%;
-		margin-left: -336px; z-index: 1;
+	.logo { 
+		width: 60px; height: 13px; position: fixed; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
+		background-position: center center;  
 	}
 	
-	.frame {
-		.title { font-size: 36px; font-weight: 600; letter-spacing: -0.7px; color: #393834; line-height: 1.11; margin-bottom: 18px; }
-		.label.bold { font-size: 18px; font-weight: 600; line-height: 1.44; letter-spacing: -0.1px; margin: 2px 0px 17px 0px; }
-		
-		.input { height: 40px; border: solid 1px #d2d0c2; }
+	.copy { width: 120px; position: fixed; left: 50%; bottom: 12px; z-index: 1; text-align: center; margin-left: -60px; color: #fff; }
+	
+	.frame { 
+		width: 672px; position: fixed; left: 50%; top: 50%; margin-left: -336px; z-index: 1; background: #fff; border-radius: 8px;
+		padding: 36px 48px 32px 48px; 
 	}
+	.title { font-size: 36px; line-height: 40px; font-weight: 600; letter-spacing: -0.72px; color: #000; margin-bottom: 15px; }
+	.label { margin-bottom: 25px; }
+	.input { height: 40px; border: solid 1px #d2d0c2; }
+	
+	.textArea { 
+		font-family: 'Mono'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px #d2d0c2; 
+		background-color: #fff; 
+	}
+	
+	.button { margin-right: 16px; }
+	.button:last-child { margin: 0px; }
 }
 
-.page-auth-code, .page-index-index {
+.page-auth-select, .page-index-index {
+	.label { margin-bottom: 9px; }
+}
+
+.page-auth-login {
+	.label { margin-bottom: 9px; }
+}
+
+.page-auth-pin-select, .page-auth-pin-confirm {
+	.input { width: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
+	.input-password { font-size: 36px; }
+	.input:last-child { margin: 0px; }
+}
+
+.page-auth-setup {
+	.title { margin: 0px; }
+	.smile { width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; margin-bottom: 12px; }
+	.smile {
+		.emoji-mart-emoji { height: 36px; line-height: 36px; }
+		.emoji-mart-emoji { span { height: 36px; line-height: 36px; margin: -1px 0px 0px 2px; } }
+	}	
+}
+
+.page-auth-account-select {
 	.frame { padding-bottom: 48px; }
-	.frame {
-		.title { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; color: #393834; line-height: 1; margin-bottom: 18px; }
-		.label { margin-bottom: 4px; }
-		.input { width: 468px; margin-right: 16px; }
-		.button { width: 92px; vertical-align: top; }
-	}
-}
-
-.page-auth-notice {
-	.frame {
-		.button { margin-top: 24px; }
-	}
-}
-
-.page-auth-select {
-	.frame {
-		.title { font-size: 36px; }
-		.buttons { margin-top: 24px; }
-		.button { margin-right: 16px; }
-		.button:last-child { margin: 0px; }
+	.title { margin-bottom: 21px; }
+	.list { border-radius: 8px; border: 1px solid #e0ded2; }
+	.item { border-bottom: 1px solid #e0ded2; padding: 12px; cursor: pointer; }
+	.item:last-child { border: 0px; }
+	
+	.item {
+		.icon.user { width: 48px; height: 48px; line-height: 50px; font-size: 21px; letter-spacing: -0.16px; margin-right: 12px; }
+		.name { 
+			font-size: 18px; line-height: 26px; display: inline-block; vertical-align: middle; width: calc(100% - 60px); height: 26px; 
+			overflow: hidden; font-weight: 600;
+		}
 	}
 }
 
 .page-auth-register {
-	.frame {
-		.inputWithImage { background: #f7f5f0; padding: 48px 48px 30px 48px; margin: 24px 0px 32px 0px; }
-		.inputWithImage {
-			.input-text { 
-				font-size: 22px; font-weight: 600; line-height: 1.82; letter-spacing: -0.2px; margin-top: 11px;
-				height: 28px; padding: 0px; border: 0px;
-			}
-			.fileWrap { width: 64px; height: 64px; }
+	.inputWithImage { background: #f7f5f0; padding: 48px 48px 30px 48px; margin: 24px 0px 32px 0px; }
+	.inputWithImage {
+		.input-text { 
+			font-size: 22px; font-weight: 600; line-height: 1.82; letter-spacing: -0.2px; margin-top: 11px;
+			height: 28px; padding: 0px; border: 0px;
 		}
-		
-		.button { margin-right: 16px; }
-		.button:last-child { margin: 0px; }
-	}
-}
-
-.page-auth-login {
-	.frame {
-		.label { margin-bottom: 4px; }
-		.textArea { 
-			font-family: 'Mono'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px #d2d0c2; 
-			background-color: #fff; 
-		}
-		.button { margin-right: 16px; }
-		.button:last-child { margin: 0px; }
+		.fileWrap { width: 64px; height: 64px; }
 	}
 }

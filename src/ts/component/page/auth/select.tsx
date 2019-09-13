@@ -1,25 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Error, Input, Button } from 'ts/component';
+import { Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
 const $ = require('jquery');
 
-interface Props extends RouteComponentProps<any> {
-};
-
-interface State {
-	error: string;
-};
+interface Props extends RouteComponentProps<any> {};
+interface State {};
 
 class PageAuthSelect extends React.Component<Props, State> {
 
-	codeRef: any;
-
-	state = {
-		error: ''
-	};
-	
 	constructor (props: any) {
         super(props);
 
@@ -28,18 +18,19 @@ class PageAuthSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { error } = this.state;
-		
         return (
 			<div>
-				<div className="cover c1" />
-				<div id="frame" className="frame">
+				<div className="cover c3" />
+				<Header />
+				<Footer />
+				
+				<div className="frame">
 					<Title text="Organize everything" />
 					<Label text="With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." />
-							
+								
 					<div className="buttons">
-						<Button text="Get your ID" type="input" className="orange" onClick={this.onRegister} />
-						<Button text="Sign in" type="input" className="grey" onClick={this.onLogin} />
+						<Button text="Login" type="input" className="orange" onClick={this.onLogin} />
+						<Button text="Sign up" type="input" className="grey" onClick={this.onRegister} />
 					</div>
 				</div>
 			</div>
@@ -49,7 +40,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 	onRegister (e: any) {
 		e.preventDefault();
 		
-		this.props.history.push('/auth/register');
+		this.props.history.push('/auth/code');
 	};
 	
 	onLogin (e: any) {
@@ -60,7 +51,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 	
 	resize () {
 		let node = $(ReactDOM.findDOMNode(this));
-		let frame = node.find('#frame');
+		let frame = node.find('.frame');
 		
 		frame.css({ marginTop: -frame.outerHeight() / 2 });
 	};

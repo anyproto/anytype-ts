@@ -28,10 +28,13 @@ function createWindow () {
 	win.loadURL('http://localhost:8080');
 	
 	ipcMain.on('appLoaded', () => {
-		pipe = Pipe.start();
-		pipe.read((event) => {
+		console.log('appLoaded');
+		
+		pipe = new Pipe((event) => {
+			console.log('EVENT', event);
 			win.webContents.send('pipeEvent', event);
 		});
+		pipe.start();
 	});
 	
 	ipcMain.on('pipeCmd', (e, data) => {

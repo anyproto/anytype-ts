@@ -50,6 +50,7 @@
 		"child_process": "^1.0.2",
 		"css-loader": "^3.2.0",
 		"electron": "^6.0.8",
+		"emoji-mart": "^2.11.1",
 		"fifo-js": "^2.1.0",
 		"fs": "0.0.1-security",
 		"history": "^4.10.0",

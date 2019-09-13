@@ -18,6 +18,7 @@ import 'scss/component/input.scss';
 import 'scss/component/button.scss';
 import 'scss/component/icon.scss';
 import 'scss/component/textArea.scss';
+import 'scss/component/smile.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -55,11 +56,11 @@ class App extends React.Component<{}, {}> {
 	};
 
 	componentDidMount () {
+		ipcRenderer.send('appLoaded', true);
+		
 		ipcRenderer.on('pipeEvent', (e: any, data: any) => {
 			Dispatcher.event(data);
 		});
-		
-		ipcRenderer.send('appLoaded', true);
 	};
 
 };
