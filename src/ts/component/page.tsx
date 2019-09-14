@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { 
 	PageAuthSelect, PageAuthRegister, PageAuthLogin, PageAuthPinSelect, PageAuthPinConfirm, 
-	PageAuthSetup, PageAuthAccountSelect, PageMainIndex 
+	PageAuthSetup, PageAuthAccountSelect, PageAuthSuccess, PageMainIndex 
 } from '.';
 
 const $ = require('jquery');
@@ -26,6 +26,7 @@ class Page extends React.Component<Props, {}> {
 			'auth/pin-confirm':		 PageAuthPinConfirm,
 			'auth/setup':			 PageAuthSetup,
 			'auth/account-select':	 PageAuthAccountSelect,
+			'auth/success':			 PageAuthSuccess,
 			
 			'main/index':			 PageMainIndex,
 		};

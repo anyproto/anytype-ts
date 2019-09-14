@@ -5,8 +5,9 @@ import PageAuthPinSelect from './page/auth/pin/select';
 import PageAuthPinConfirm from './page/auth/pin/confirm';
 import PageAuthSetup from './page/auth/setup';
 import PageAuthAccountSelect from './page/auth/account/select';
-
 import PageAuthRegister from './page/auth/register';
+import PageAuthSuccess from './page/auth/success';
+
 import PageMainIndex from './page/main/index';
 
 import HeaderAuth from './header/auth';
@@ -35,6 +36,7 @@ export {
 	PageAuthSetup,
 	PageAuthAccountSelect,
 	PageAuthRegister,
+	PageAuthSuccess,
 	PageMainIndex,
 	HeaderAuth,
 	FooterAuth,

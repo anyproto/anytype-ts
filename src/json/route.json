@@ -8,6 +8,7 @@
 	{ "path": "/auth/setup/:id?" },
 	{ "path": "/auth/account-select" },
 	{ "path": "/auth/register" },
+	{ "path": "/auth/success" },
 	
 	{ "path": "/main/index" },
 	{ "path": "/main/edit/:id?" }

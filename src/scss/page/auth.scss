@@ -19,6 +19,12 @@
 		background-color: #fff; 
 	}
 	
+	.smile { width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; margin-bottom: 12px; }
+	.smile {
+		.emoji-mart-emoji { height: 36px; line-height: 36px; }
+		.emoji-mart-emoji { span { height: 36px; line-height: 36px; margin: -1px 0px 0px 2px; } }
+	}
+	
 	.button { margin-right: 16px; }
 	.button:last-child { margin: 0px; }
 }
@@ -39,11 +45,6 @@
 
 .page-auth-setup {
 	.title { margin: 0px; }
-	.smile { width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; margin-bottom: 12px; }
-	.smile {
-		.emoji-mart-emoji { height: 36px; line-height: 36px; }
-		.emoji-mart-emoji { span { height: 36px; line-height: 36px; margin: -1px 0px 0px 2px; } }
-	}	
 }
 
 .page-auth-account-select {
