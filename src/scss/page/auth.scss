@@ -63,12 +63,12 @@
 }
 
 .page-auth-register {
-	.inputWithImage { background: #f7f5f0; padding: 48px 48px 30px 48px; margin: 24px 0px 32px 0px; }
-	.inputWithImage {
-		.input-text { 
-			font-size: 22px; font-weight: 600; line-height: 1.82; letter-spacing: -0.2px; margin-top: 11px;
-			height: 28px; padding: 0px; border: 0px;
-		}
-		.fileWrap { width: 64px; height: 64px; }
+	.frame { white-space: nowrap; padding-bottom: 36px; }
+	.fileWrap { margin-right: 16px; width: 64px; height: 64px; display: inline-block; vertical-align: middle; }
+
+	.input-text { width: 346px; vertical-align: middle; margin-right: 16px; }
+	.button { vertical-align: middle; }	
+	.icon.user {
+		.image { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; }
 	}
 }

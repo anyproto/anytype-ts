@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Title, Label, Error, TextArea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, TextArea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -27,7 +27,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<div className="cover c3" />
+				<Cover num={3} />
 				<Header />
 				<Footer />
 				
@@ -48,7 +48,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 
 	onSubmit (e: any) {
 		e.preventDefault();
-		this.props.history.push('/auth/pin-select');
+		this.props.history.push('/auth/pin-select/login');
 	};
 	
 	onCancel (e: any) {

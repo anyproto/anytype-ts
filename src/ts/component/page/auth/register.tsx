@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -26,7 +26,6 @@ class PageAuthRegister extends React.Component<Props, State> {
 		this.onFileChange = this.onFileChange.bind(this);
 		this.onNameChange = this.onNameChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-		this.onCancel = this.onCancel.bind(this);
 	};
 	
 	render () {
@@ -34,7 +33,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<div className="cover c3" />
+				<Cover num={3} />
 				<Header />
 				<Footer />
 				
@@ -42,18 +41,13 @@ class PageAuthRegister extends React.Component<Props, State> {
 					<Title text="Add name and profile picture" />
 					<Error text={error} />
 		
-					<div className="inputWithImage">
-						<div className="fileWrap">
-							<IconUser name={name || 'T'} icon={preview} />
-							<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
-						</div>
-						<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
+					<div className="fileWrap">
+						<IconUser name={name || ''} icon={preview} />
+						<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
 					</div>
-		
-					<div className="buttons">
-						<Button text="Create profile" className="orange" onClick={this.onSubmit} />
-						<Button text="Back" className="grey" onClick={this.onCancel} />
-					</div>
+						
+					<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
+					<Button text="Create profile" className="orange" onClick={this.onSubmit} />
 				</Frame>
 			</div>
 		);
@@ -72,12 +66,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		this.props.history.push('/main/index');
-	};
-	
-	onCancel (e: any) {
-		e.preventDefault();
-		this.props.history.push('/auth/select');
+		this.props.history.push('/auth/pin-select/register');
 	};
 	
 };

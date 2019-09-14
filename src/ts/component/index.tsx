@@ -1,5 +1,4 @@
 import Page from './page';
-import PageAuthCode from './page/auth/code';
 import PageAuthSelect from './page/auth/select';
 import PageAuthLogin from './page/auth/login';
 import PageAuthPinSelect from './page/auth/pin/select';
@@ -14,6 +13,7 @@ import HeaderAuth from './header/auth';
 import FooterAuth from './footer/auth';
 
 import Frame from './util/frame';
+import Cover from './util/cover';
 import Title from './util/title';
 import Label from './util/label';
 import Smile from './util/smile';
@@ -28,7 +28,6 @@ import IconUser from './util/iconUser';
 
 export {
 	Page,
-	PageAuthCode,
 	PageAuthLogin,
 	PageAuthSelect,
 	PageAuthPinSelect,
@@ -43,6 +42,7 @@ export {
 	TextArea,
 	Button,
 	Frame,
+	Cover,
 	Title,
 	Label,
 	Smile,

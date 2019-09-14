@@ -1,21 +1,24 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { observer, inject } from 'mobx-react';
 
 const SIZE = 6;
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	authStore?: any;
+};
 
 interface State {
 	error: string;
-	code: string;
 };
 
+@inject('authStore')
+@observer
 class PageAuthPinSelect extends React.Component<Props, State> {
 	
 	refObj: any = {};
 	state = {
-		code: '',
 		error: ''
 	};
 
@@ -35,7 +38,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<div className="cover c3" />
+				<Cover num={3} />
 				<Header />
 				<Footer />
 				
@@ -57,32 +60,40 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	};
 
 	onChange (e: any, id: number) {
+		const { authStore, match } = this.props;
+		
 		let k = e.key;
-		let { code } = this.state;
 		let input = this.refObj[id];
 		let prev = this.refObj[id - 1];
 		let next = this.refObj[id + 1];
 		let v = input.getValue();
 		
-		code += v;
-		input.setType(v ? 'password' : 'text');
-		this.setState({ code: code });
-			
-		if (v && next) {
-			next.focus();
-		};
+		input.setType(input.getValue() ? 'password' : 'text');
 		
 		if ((k == 'Backspace') && prev) {
 			prev.setValue('');
 			prev.setType('text');
 			prev.focus();
-		} else {
-			
+		} else 
+		if (v && next) {
+			next.focus();	
 		};
 		
+		let code = this.getCode();
+		
+		authStore.setPin(code);
+		
 		if (code.length == SIZE) {
-			this.props.history.push('/auth/pin-confirm');	
+			this.props.history.push('/auth/pin-confirm/' + match.params.id);	
 		};			
+	};
+	
+	getCode () {
+		let c: string[] = [];
+		for (let i in this.refObj) {
+			c.push(this.refObj[i].getValue());
+		};
+		return c.join('');
 	};
 	
 };

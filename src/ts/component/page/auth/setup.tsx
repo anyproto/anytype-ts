@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Title, Label, Error, Input, Button, Smile } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -24,9 +24,9 @@ class PageAuthSetup extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<div className="cover c3" />
-				<div className="logo" />
-				<div className="copy">2018, Anytype</div>
+				<Cover num={3} />
+				<Header />
+				<Footer />
 				
 				<Frame>
 					<Smile icon={':clock' + Icons[icon] + ':'} size={36} />
@@ -37,6 +37,8 @@ class PageAuthSetup extends React.Component<Props, State> {
     };
 
 	componentDidMount () {
+		const { match } = this.props;
+		
 		this.i = window.setInterval(() => {
 			let { icon } = this.state;
 			
@@ -49,7 +51,12 @@ class PageAuthSetup extends React.Component<Props, State> {
 		}, 1000);
 		
 		this.t = window.setTimeout(() => {
-			this.props.history.push('/auth/account-select');
+			if (match.params.id == 'login') {
+				this.props.history.push('/auth/account-select');	
+			};
+			if (match.params.id == 'register') {
+				this.props.history.push('/auth/register');	
+			};
 		}, 3000);
 	};
 	

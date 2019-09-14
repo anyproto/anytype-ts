@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {};
@@ -17,7 +17,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 	render () {
         return (
 			<div>
-				<div className="cover c3" />
+				<Cover num={3} />
 				<Header />
 				<Footer />
 				
@@ -37,13 +37,13 @@ class PageAuthSelect extends React.Component<Props, State> {
 	onRegister (e: any) {
 		e.preventDefault();
 		
-		this.props.history.push('/auth/code');
+		this.props.history.push('/auth/setup/register');
 	};
 	
 	onLogin (e: any) {
 		e.preventDefault();
 		
-		this.props.history.push('/auth/login');
+		this.props.history.push('/auth/setup/login');
 	};
 	
 };

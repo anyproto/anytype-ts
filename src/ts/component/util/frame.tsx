@@ -23,7 +23,6 @@ class Frame extends React.Component<{}, {}> {
 	
 	resize () {
 		let node = $(ReactDOM.findDOMNode(this));
-		
 		node.css({ marginTop: -node.outerHeight() / 2 });	
 	};
 	

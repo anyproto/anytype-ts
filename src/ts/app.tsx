@@ -19,6 +19,7 @@ import 'scss/component/button.scss';
 import 'scss/component/icon.scss';
 import 'scss/component/textArea.scss';
 import 'scss/component/smile.scss';
+import 'scss/component/error.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -26,7 +27,7 @@ import 'scss/page/main/index.scss';
 interface RouteElement { path: string; };
 const Routes: Array<RouteElement> = require('json/route.json');
 const rootStore = {
-	auth: authStore
+	authStore: authStore
 };
 
 class App extends React.Component<{}, {}> {

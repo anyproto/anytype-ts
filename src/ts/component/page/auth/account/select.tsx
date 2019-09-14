@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 
 interface Profile {
 	icon: string;
@@ -40,7 +40,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<div className="cover c3" />
+				<Cover num={3} />
 				<Header />
 				<Footer />
 				

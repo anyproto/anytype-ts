@@ -16,6 +16,14 @@ interface Props {
 
 class Icon extends React.Component<Props, {}> {
 	
+	constructor (props: any) {
+        super(props);
+
+		this.onMouseDown = this.onMouseDown.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
+	};
+	
 	render () {
 		let { id, icon, arrow, className, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
 		let cn = [ 'icon' ];

@@ -7,7 +7,7 @@ class FooterAuth extends React.Component<{}, {}> {
         return (
 			<div>
 				<div className="copy">2018, Anytype</div>
-				<Icon id="commonHelp" className="help light" onMouseDown={() => { }} />
+				<Icon id="help" className="help light" onMouseDown={() => { }} />
 			</div>
 		);
     };

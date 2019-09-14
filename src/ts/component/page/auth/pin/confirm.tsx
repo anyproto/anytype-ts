@@ -1,21 +1,24 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { observer, inject } from 'mobx-react';
 
 const SIZE = 6;
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	authStore?: any;
+};
 
 interface State {
 	error: string;
-	code: string;
 };
 
+@inject('authStore')
+@observer
 class PageAuthPinConfirm extends React.Component<Props, State> {
 	
 	refObj: any = {};
 	state = {
-		code: '',
 		error: ''
 	};
 
@@ -35,7 +38,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<div className="cover c3" />
+				<Cover num={3} />
 				<Header />
 				<Footer />
 				
@@ -57,20 +60,46 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 	};
 
 	onChange (e: any, id: number) {
-		let { code } = this.state;
+		const { authStore, match } = this.props;
 		
-		code += this.refObj[id].getValue();
-		this.setState({ code: code });
+		let k = e.key;
+		let input = this.refObj[id];
+		let prev = this.refObj[id - 1];
+		let next = this.refObj[id + 1];
+		let v = input.getValue();
 		
-		this.refObj[id].setType('password');
-			
-		if (this.refObj[id + 1]) {
-			this.refObj[id + 1].focus();
+		input.setType(input.getValue() ? 'password' : 'text');
+		
+		if ((k == 'Backspace') && prev) {
+			prev.setValue('');
+			prev.setType('text');
+			prev.focus();
+		} else 
+		if (v && next) {
+			next.focus();	
 		};
-
+		
+		let code = this.getCode();
 		if (code.length == SIZE) {
-			this.props.history.push('/auth/setup');	
-		};		
+			if (code == authStore.pin) {
+				if (match.params.id == 'login') {
+					this.props.history.push('/auth/setup/login');					
+				};
+				if (match.params.id == 'register') {
+					this.props.history.push('/auth/success');					
+				};
+			} else {
+				this.setState({ error: 'Pin codes do not match' });
+			};
+		};
+	};
+	
+	getCode () {
+		let c: string[] = [];
+		for (let i in this.refObj) {
+			c.push(this.refObj[i].getValue());
+		};
+		return c.join('');
 	};
 	
 };

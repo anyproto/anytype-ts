@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { 
-	PageAuthCode, PageAuthSelect, PageAuthRegister, PageAuthLogin, PageAuthPinSelect, PageAuthPinConfirm, 
+	PageAuthSelect, PageAuthRegister, PageAuthLogin, PageAuthPinSelect, PageAuthPinConfirm, 
 	PageAuthSetup, PageAuthAccountSelect, PageMainIndex 
 } from '.';
 
@@ -19,7 +19,6 @@ class Page extends React.Component<Props, {}> {
 		const Components: any = {
 			'index/index':			 PageAuthSelect,
 			
-			'auth/code':			 PageAuthCode,
 			'auth/select':			 PageAuthSelect,
 			'auth/register':		 PageAuthRegister,
 			'auth/login':			 PageAuthLogin,
