@@ -1,68 +1,60 @@
-'use strict';
-
-const readline = require('readline');
-const childProcess = require('child_process');
-const fs = require('fs');
-const FIFO = require('fifo-js');
-const { Event } = require('./protocol/event/event.js');
-
-const JS_TMP = '/var/tmp/.js_pipe';
-const GO_TMP = '/var/tmp/.go_pipe';
+const bindings = require('bindings')('pipe');
+const protobuf = require('protobufjs');
 
 class Pipe {
 	
+	GenerateMnemonicMessage = null;
+	PrintMnemonicMessage = null;
+	onMessage = null;
+	
 	constructor (onMessage) {
-		this.cp = null;
-		this.fifo = null;
 		this.onMessage = onMessage;
-		
-		return this;
 	};
 	
 	start () {
-		this.stop();
-		
-		this.cp = childProcess.spawn('mkfifo', [ JS_TMP ]);
-		
-		this.cp.on('exit', (code, signal) => {
-			if (code != 0) {
-				throw new Error(`Fail to create fifo with code: ${code} signal: ${signal}`);
-				return;
+		bindings.setCallback((item) => {
+			let message = null;
+			try {
+				message = this.PrintMnemonicMessage.decode(this.toBuffer(item.data));
+				console.log('Got mnemonic: %s', message.mnemonic);
+			} catch(err) {
+				console.log(err);
 			};
 			
-			this.fifo = new FIFO(JS_TMP);
+			if (message) {
+				this.onMessage(message);
+			};
+		});
+		
+		protobuf.load('./electron/proto/service.proto', (err, root) => {
+			if (err) {
+				throw err;
+			};
 			
-			console.log('Fifo created:', this.fifo);
+			this.GenerateMnemonicMessage = root.lookupType('anytype.GenerateMnemonic');
+			this.PrintMnemonicMessage = root.lookupType('anytype.PrintMnemonic');
 			
-			let rl = readline.createInterface({ input: fs.createReadStream(GO_TMP) });
-			rl.on('line', (line) => {
-				let msg = atob(line.slice(0, -1));
-				msg = Event.decode(Buffer.from(msg));
-				
-				console.log('Pipe.read', msg);
-				this.onMessage(msg);
-			});
+			let buffer = this.GenerateMnemonicMessage.encode({ wordsCount: 12 }).finish();
+			bindings.callMethod('GenerateMnemonic', this.toArrayBuffer(buffer));
 		});
 	};
 	
-	stop () {
-		childProcess.exec('rm -rf ' + JS_TMP);
+	toArrayBuffer (buffer) {
+		let arrayBuffer = new ArrayBuffer(buffer.length);
+		let view = new Uint8Array(arrayBuffer);
+		for (let i = 0; i < buffer.length; ++i) {
+			view[i] = buffer[i];
+		};
+		return arrayBuffer;
 	};
 	
-	write (msg) {
-		let eventMsg = Event.create(msg);
-		let encoded = Event.encode(eventMsg).finish();
-
-		this.fifo.write(btoa(encoded.toString()));
-		
-		console.log('Pipe.write', msg);
-	};
-
-	generateId () {
-		let chars = '0123456789ABCDEF'.split('');
-		let len = 32;
-		let arr = Array(len).fill(null).map(() => chars[ Math.ceil(Math.random() * chars.length) - 1 ]);
-		return arr.join('');
+	toBuffer (arrayBuffer) {
+	    let buffer = Buffer.alloc(arrayBuffer.byteLength);
+	    let view = new Uint8Array(arrayBuffer);
+	    for (let i = 0; i < buffer.length; ++i) {
+	    	buffer[i] = view[i];
+	    };
+	    return buffer;
 	};
 	
 };

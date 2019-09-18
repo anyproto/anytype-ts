@@ -5,6 +5,7 @@
 	"main": "electron.js",
 	"scripts": {
 		"lint": "tslint -c tslint.json -p tsconfig.json",
+		"build:pipe": "./build.sh",
 		"start:watch": "webpack-dev-server --mode=development --env.NODE_ENV=development --history-api-fallback --cache",
 		"start:electron": "./node_modules/.bin/electron .",
 		"start:electron-wait-webpack": "wait-for-localhost 8080 && ./node_modules/.bin/electron .",
@@ -53,7 +54,6 @@
 		"css-loader": "^3.2.0",
 		"electron": "^6.0.8",
 		"emoji-mart": "^2.11.1",
-		"fifo-js": "^2.1.0",
 		"fs": "0.0.1-security",
 		"history": "^4.10.0",
 		"jquery": "^3.4.1",
