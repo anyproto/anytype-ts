@@ -1,0 +1,34 @@
+syntax="proto3";
+
+message Status {
+    string replyTo = 1;
+    oneof status {
+        bool success = 2;
+        LoginError loginError = 3;
+        SignupError signupError = 4;
+        DocumentError documentError = 5;
+        NetError netError = 6;
+        // ...
+    }
+
+    enum LoginError {
+        USER_NOT_FOUND = 0;
+        // ...
+    }
+
+    enum SignupError {
+        ALREADY_EXISTS = 0;
+        // ...
+    }
+
+    enum DocumentError {
+        DOC_NOT_FOUND = 0;
+        // ...
+    }  
+
+    enum NetError {
+        NOT_AVAILABLE = 0;
+        // ...
+    }        
+}
+

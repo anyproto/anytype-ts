@@ -50,7 +50,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		Dispatcher.cmd({ type: 'GenerateMnemonic', wordsCount: 12 });
+		Dispatcher.cmd('GenerateMnemonic', { wordsCount: 12 });
 		
 		//this.props.history.push('/auth/pin-select/login');
 	};

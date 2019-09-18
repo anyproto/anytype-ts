@@ -37,9 +37,9 @@ function createWindow () {
 		pipe.start();
 	});
 	
-	ipcMain.on('pipeCmd', (e, data) => {
+	ipcMain.on('pipeCmd', (e, type, data) => {
 		if (pipe) {
-			pipe.write(data);
+			pipe.write(type, data);
 		};
 	});
 	

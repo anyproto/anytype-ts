@@ -11,9 +11,9 @@ class Dispatcher {
 		console.log('Dispatcher.event', event);
 	};
 	
-	cmd (data: any) {
-		console.log('Dispatcher.cmd', data);
-		ipcRenderer.send('pipeCmd', data);
+	cmd (type: string, data: any) {
+		console.log('Dispatcher.cmd', type, data);
+		ipcRenderer.send('pipeCmd', type, data);
 	};
 	
 };
