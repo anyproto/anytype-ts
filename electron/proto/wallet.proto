@@ -1,0 +1,16 @@
+syntax = "proto3";
+package anytype;
+option go_package = "pb";
+
+message GenerateMnemonic {
+    int32 wordsCount = 1;
+}
+
+message PrintMnemonic {
+    string mnemonic = 1;
+}
+
+message WalletAccountAtResponse {
+    string seed    = 1;
+    string address = 2;
+}

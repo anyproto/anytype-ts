@@ -29,10 +29,6 @@
 	.button:last-child { margin: 0px; }
 }
 
-.page-auth-select, .page-index-index {
-	.label { margin-bottom: 9px; }
-}
-
 .page-auth-login {
 	.label { margin-bottom: 9px; }
 }
@@ -68,7 +64,7 @@
 	.fileWrap { margin-right: 16px; width: 64px; height: 64px; display: inline-block; vertical-align: middle; }
 
 	.input-text { width: 346px; vertical-align: middle; margin-right: 16px; }
-	.button { vertical-align: middle; }	
+	.button { vertical-align: middle; width: 134px; padding: 0px; }	
 	.icon.user {
 		.image { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; }
 	}

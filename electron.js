@@ -4,7 +4,7 @@ global.atob = require('atob');
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const spawn = require('child_process').spawn;
-const Pipe = require('./pipe');
+const Pipe = require('./electron/addon');
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
