@@ -3,7 +3,6 @@ const protobuf = require('protobufjs');
 
 class Pipe {
 	
-	cmd = null;
 	root = null;
 	onMessage = null;
 	
@@ -36,22 +35,18 @@ class Pipe {
 				throw err;
 			};
 			
-			this.isLoaded = true;
 			this.root = root;
 		});
 	};
 	
-	write (data) {
+	write (type, data) {
 		if (!this.root) {
 			return;
 		};
 		
-		let type = data.type;
-		let cmd = this.root.lookupType('anytype.' + data.type);
-		
-		delete(data.type);
-		
+		let cmd = this.root.lookupType('anytype.' + type);
 		let buffer = cmd.encode(data).finish();
+		
 		bindings.callMethod(type, this.toArrayBuffer(buffer));
 	};
 	

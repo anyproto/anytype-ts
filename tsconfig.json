@@ -8,7 +8,6 @@
         "jsx": "react",
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
-        "allowJs": true,
-        "typeRoots": [ "node_modules/@types", "src/ts/protocol" ]
+        "allowJs": true
     }
 }
