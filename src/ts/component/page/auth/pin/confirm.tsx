@@ -79,9 +79,9 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 			next.focus();	
 		};
 		
-		let code = this.getCode();
-		if (code.length == SIZE) {
-			if (code == authStore.pin) {
+		let pin = this.getPin();
+		if (pin.length == SIZE) {
+			if (pin == authStore.pin) {
 				if (match.params.id == 'login') {
 					this.props.history.push('/auth/setup/login');					
 				};
@@ -94,7 +94,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		};
 	};
 	
-	getCode () {
+	getPin () {
 		let c: string[] = [];
 		for (let i in this.refObj) {
 			c.push(this.refObj[i].getValue());

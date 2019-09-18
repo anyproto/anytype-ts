@@ -3,8 +3,8 @@ const protobuf = require('protobufjs');
 
 class Pipe {
 	
-	GenerateMnemonicMessage = null;
-	PrintMnemonicMessage = null;
+	cmd = null;
+	root = null;
 	onMessage = null;
 	
 	constructor (onMessage) {
@@ -13,10 +13,15 @@ class Pipe {
 	
 	start () {
 		bindings.setCallback((item) => {
+			if (!this.root) {
+				return;
+			};
+			
+			let cmd = this.root.lookupType('anytype.' + item.method);
 			let message = null;
 			try {
-				message = this.PrintMnemonicMessage.decode(this.toBuffer(item.data));
-				console.log('Got mnemonic: %s', message.mnemonic);
+				message = cmd.decode(this.toBuffer(item.data));
+				console.log('Got message: %s', message);
 			} catch(err) {
 				console.log(err);
 			};
@@ -31,12 +36,23 @@ class Pipe {
 				throw err;
 			};
 			
-			this.GenerateMnemonicMessage = root.lookupType('anytype.GenerateMnemonic');
-			this.PrintMnemonicMessage = root.lookupType('anytype.PrintMnemonic');
-			
-			let buffer = this.GenerateMnemonicMessage.encode({ wordsCount: 12 }).finish();
-			bindings.callMethod('GenerateMnemonic', this.toArrayBuffer(buffer));
+			this.isLoaded = true;
+			this.root = root;
 		});
+	};
+	
+	write (data) {
+		if (!this.root) {
+			return;
+		};
+		
+		let type = data.type;
+		let cmd = this.root.lookupType('anytype.' + data.type);
+		
+		delete(data.type);
+		
+		let buffer = cmd.encode(data).finish();
+		bindings.callMethod(type, this.toArrayBuffer(buffer));
 	};
 	
 	toArrayBuffer (buffer) {

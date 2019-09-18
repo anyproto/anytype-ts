@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, TextArea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Dispatcher } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -48,7 +49,10 @@ class PageAuthLogin extends React.Component<Props, State> {
 
 	onSubmit (e: any) {
 		e.preventDefault();
-		this.props.history.push('/auth/pin-select/login');
+		
+		Dispatcher.cmd({ type: 'GenerateMnemonic', wordsCount: 12 });
+		
+		//this.props.history.push('/auth/pin-select/login');
 	};
 	
 	onCancel (e: any) {
