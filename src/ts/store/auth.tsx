@@ -1,15 +1,9 @@
 import { observable, action } from 'mobx';
 
 class AuthStore {
-	@observable public code: string = '';
 	@observable public pin: string = '';
 	
 	constructor () {
-	};
-	
-	@action
-	setCode (v: string) {
-		this.code = v;
 	};
 	
 	@action

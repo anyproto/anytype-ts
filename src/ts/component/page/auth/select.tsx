@@ -10,8 +10,8 @@ class PageAuthSelect extends React.Component<Props, State> {
 	constructor (props: any) {
         super(props);
 
-		this.onRegister = this.onRegister.bind(this);
 		this.onLogin = this.onLogin.bind(this);
+		this.onRegister = this.onRegister.bind(this);
 	};
 	
 	render () {
@@ -34,16 +34,16 @@ class PageAuthSelect extends React.Component<Props, State> {
 		);
     };
 
+	onLogin (e: any) {
+		e.preventDefault();
+		
+		this.props.history.push('/auth/login');
+	};
+	
 	onRegister (e: any) {
 		e.preventDefault();
 		
 		this.props.history.push('/auth/setup/register');
-	};
-	
-	onLogin (e: any) {
-		e.preventDefault();
-		
-		this.props.history.push('/auth/setup/login');
 	};
 	
 };

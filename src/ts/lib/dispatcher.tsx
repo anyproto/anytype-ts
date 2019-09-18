@@ -9,8 +9,6 @@ class Dispatcher {
 	
 	event (event: any) {
 		console.log('Dispatcher.event', event);
-		
-		authStore.setCode(event.data);
 	};
 	
 	cmd (data: any) {
