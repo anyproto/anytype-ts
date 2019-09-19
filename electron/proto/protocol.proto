@@ -1,135 +1,48 @@
 syntax="proto3";
 package anytype;
-import "./status.proto";
+option go_package = "pb";
 
-message Package {
-    string id = 1;  
+import "status.proto";
+import "model.proto";
+
+// -------- Middle
+message Middle {
+    string id = 1;
     oneof message {
-        string data = 11;
-        bool success = 12;
-
-        Account account = 21;
-        State state = 22;
-        DocHeader docHeader = 23;
-        Document document = 24;
-        Block block = 25;
-        
-        // Request request = 26;
-        Status status = 27;
-
-        Login login = 28;
-        CreateWallet createWallet = 29;
-        CreateAccount createAccount = 30;
+        Status status = 11;
+        AccountFound accountFound = 12;
     }
 }
 
-/*message Request {
-    RequestType type = 1;
+message AccountFound {
+    Account account = 1;
 }
 
-enum RequestType {
-    CREATE_ACCOUNT = 0;
-}*/
-
-message CreateAccount {
-    string name = 1;
-    string icon = 2;
+// --------- Client
+message Client {
+    string id = 1;
+    oneof event {
+        WalletCreate walletCreate = 11;
+        WalletLogin walletLogin = 12;
+        AccountCreate accountCreate = 13;
+        AccountChosen accountChosen = 14;
+    }
 }
 
-message CreateWallet {}
+message WalletCreate {
+    string pin = 1;
+}
 
-message Login {
+message WalletLogin {
     string mnemonics = 1;
     string pin = 2;
 }
 
-message Signup {
+message AccountCreate {
     string name = 1;
     string icon = 2;
-    string pin = 3;
 }
 
-message Account {
+message AccountChosen {
     string id = 1;
-    string name = 2;
-    string icon = 3;
-}
-
-message State {
-    repeated DocHeader docHeaders = 1;
-    string currentDocId = 2;
-}
-
-message DocHeader {
-    string id = 1;
-    string name = 2;
-    string version = 3;
-    string icon = 4;
-}
-
-message Document {
-    DocHeader header = 1;
-    repeated Block blocks = 2;
-}
-
-message Text {
-    string content = 1;
-    repeated Mark marks = 2;
-    ContentType contentType = 3;
-} 
-
-message Mark {
-    MarkType type = 1;
-}
-
-message Block {
-    string id = 1;
-    oneof content {
-        Text text = 11;
-        // ...
-    }
-}
-
-enum StatusType {
-    SUCCESS = 0;
-    FAILURE = 1;
-    WRONG_MNEMONIC = 2;
-    NOT_FOUND = 3;
-    // ...
-}
-
-enum MarkType {
-    B = 0;
-    I = 1;
-    S = 2;
-    KBD = 3;
-    A = 4;
-}
-
-enum ContentType {
-	P = 0;
-	CODE = 1;
-	H_1 = 2;
-	H_2 = 3;
-	H_3 = 4;
-    H_4 = 5;
-	OL = 6;
-	UL = 7;
-	QUOTE = 8;
-	TOGGLE = 9;
-	CHECK =	 10;
-}
-
-enum BlockType {
-	H_GRID = 0;
-	V_GRID = 1;
-	EDITABLE = 2;
-	DIV = 3;
-	VIDEO = 4;
-	IMAGE = 5;
-	PAGE = 6;
-	NEW_PAGE = 7;
-	BOOK_MARK = 8;
-	FILE = 9;
-	DATA_VIEW = 10;
 }
