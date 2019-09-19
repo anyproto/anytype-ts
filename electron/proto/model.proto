@@ -1,0 +1,88 @@
+syntax="proto3";
+package anytype;
+option go_package = "pb";
+
+message Account {
+    string id = 1;
+    string name = 2;
+    string icon = 3;
+}
+
+message State {
+    repeated DocHeader docHeaders = 1;
+    string currentDocId = 2;
+}
+
+message DocHeader {
+    string id = 1;
+    string name = 2;
+    string version = 3;
+    string icon = 4;
+}
+
+message Document {
+    DocHeader header = 1;
+    repeated Block blocks = 2;
+}
+
+message Text {
+    string content = 1;
+    repeated Mark marks = 2;
+    ContentType contentType = 3;
+}
+
+message Mark {
+    MarkType type = 1;
+}
+
+message Block {
+    string id = 1;
+    oneof content {
+        Text text = 11;
+        // ...
+    }
+}
+
+enum StatusType {
+    SUCCESS = 0;
+    FAILURE = 1;
+    WRONG_MNEMONIC = 2;
+    NOT_FOUND = 3;
+    // ...
+}
+
+enum MarkType {
+    B = 0;
+    I = 1;
+    S = 2;
+    KBD = 3;
+    A = 4;
+}
+
+enum ContentType {
+	P = 0;
+	CODE = 1;
+	H_1 = 2;
+	H_2 = 3;
+	H_3 = 4;
+    H_4 = 5;
+	OL = 6;
+	UL = 7;
+	QUOTE = 8;
+	TOGGLE = 9;
+	CHECK =	 10;
+}
+
+enum BlockType {
+	H_GRID = 0;
+	V_GRID = 1;
+	EDITABLE = 2;
+	DIV = 3;
+	VIDEO = 4;
+	IMAGE = 5;
+	PAGE = 6;
+	NEW_PAGE = 7;
+	BOOK_MARK = 8;
+	FILE = 9;
+	DATA_VIEW = 10;
+}

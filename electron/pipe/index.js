@@ -3,8 +3,9 @@ const protobuf = require('protobufjs');
 
 class Pipe {
 	
-	root = null;
 	onMessage = null;
+	typeMiddle = null;
+	typeClient = null;
 	
 	constructor (onMessage) {
 		this.onMessage = onMessage;
@@ -12,60 +13,53 @@ class Pipe {
 	
 	start () {
 		bindings.setCallback((item) => {
-			if (!this.root) {
+			if (!this.typeMiddle) {
+				console.error('[Pipe.message] Protocol not loaded');
 				return;
 			};
 			
-			let cmd = this.root.lookupType('anytype.' + item.method);
 			let message = null;
 			try {
-				message = cmd.decode(this.toBuffer(item.data));
-				console.log('Got message: %s', message);
-			} catch(err) {
-				console.log(err);
+				message = this.typeMiddle.decode(item.data);
+			} catch (e) {
+				console.error(e);
 			};
 			
 			if (message) {
+				console.log('[Pipe.message] Message:', message);
 				this.onMessage(message);
 			};
 		});
 		
-		protobuf.load('./electron/proto/service.proto', (err, root) => {
+		protobuf.load('./electron/proto/protocol.proto', (err, root) => {
 			if (err) {
 				throw err;
 			};
 			
-			this.root = root;
+			this.typeMiddle = root.lookupType('anytype.Middle');
+			this.typeClient = root.lookupType('anytype.Client');
 		});
 	};
 	
 	write (type, data) {
-		if (!this.root) {
+		if (!this.typeClient) {
+			console.error('[Pipe.write] Protocol not loaded');
 			return;
 		};
 		
-		let cmd = this.root.lookupType('anytype.' + type);
-		let buffer = cmd.encode(data).finish();
+		let event = { id: '1', event: {} };
+		event[type] = data;
 		
-		bindings.callMethod(type, this.toArrayBuffer(buffer));
-	};
-	
-	toArrayBuffer (buffer) {
-		let arrayBuffer = new ArrayBuffer(buffer.length);
-		let view = new Uint8Array(arrayBuffer);
-		for (let i = 0; i < buffer.length; ++i) {
-			view[i] = buffer[i];
+		let buffer = null;
+		try {
+			buffer = this.typeClient.encode(event).finish();
+		} catch (e) {
+			console.error(e);
 		};
-		return arrayBuffer;
-	};
-	
-	toBuffer (arrayBuffer) {
-	    let buffer = Buffer.alloc(arrayBuffer.byteLength);
-	    let view = new Uint8Array(arrayBuffer);
-	    for (let i = 0; i < buffer.length; ++i) {
-	    	buffer[i] = view[i];
-	    };
-	    return buffer;
+		
+		if (buffer) {
+			bindings.callMethod(type, buffer);			
+		};
 	};
 	
 };

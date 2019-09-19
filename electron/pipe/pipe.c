@@ -4,7 +4,7 @@
 #define NAPI_EXPERIMENTAL
 #include <node_api.h>
 #include <stdio.h>
-#include "./lib.h"
+#include "lib.h"
 
 // An item that will be generated from the thread, passed into JavaScript, and
 // ultimately marked as resolved when the JavaScript passes it back into the
@@ -61,16 +61,12 @@ napi_value CallMethod(napi_env env, napi_callback_info info) {
   char *method = malloc(method_size+1);
   assert(napi_get_value_string_utf8(env, args[0], method, method_size+1, NULL) == napi_ok);
 
-    size_t data_size;
-
-  status = napi_get_arraybuffer_info(env, args[1], NULL, &data_size);
-  //printf(" status1 %d, data_size %zu",status, data_size);
-
+  size_t data_size;
+  status = napi_get_buffer_info(env, args[1], NULL, &data_size);
   assert(status == napi_ok);
 
   void* data = malloc(data_size+1);
-
-  status = napi_get_arraybuffer_info(env, args[1], &data, NULL);
+  status = napi_get_buffer_info(env, args[1], &data, NULL);
 
   //printf(" status2 %d", status);
 
@@ -152,7 +148,7 @@ static void ThreadFinished(napi_env env, void * data, void * context) {
 }
 
 // this func is sent to the go as a pointer and will be called from there
-static void RunCallback(char * method, char * data, int data_length) {
+static void CallJsProxy(char * method, char * data, int data_length) {
   // Pass the new item into JavaScript.
   ThreadItem * item = NULL;
 
@@ -211,7 +207,7 @@ static napi_value SetCallback(napi_env env, napi_callback_info info) {
     addon_data->tsfn) == napi_ok);
 
   adata = addon_data;
-  SetFunc(RunCallback);
+  SetClientFunc(CallJsProxy);
   return NULL;
 }
 
@@ -242,7 +238,7 @@ static napi_value GetData(napi_env env, napi_callback_info info) {
   assert(is_thread_item(env, ad->thread_item_constructor, jsthis));
   ThreadItem * item;
   assert(napi_ok == napi_unwrap(env, jsthis, (void ** ) & item));
-  assert(napi_ok == napi_create_external_arraybuffer(env, item->data, item->data_length, NULL, NULL, &data_property));
+  assert(napi_ok == napi_create_external_buffer(env, item->data_length, item->data, NULL, NULL, &data_property));
   return data_property;
 }
 
