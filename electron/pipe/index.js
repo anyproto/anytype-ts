@@ -6,6 +6,7 @@ class Pipe {
 	onMessage = null;
 	typeMiddle = null;
 	typeClient = null;
+	id = 0;
 	
 	constructor (onMessage) {
 		this.onMessage = onMessage;
@@ -14,19 +15,19 @@ class Pipe {
 	start () {
 		bindings.setCallback((item) => {
 			if (!this.typeMiddle) {
-				console.error('[Pipe.message] Protocol not loaded');
+				console.error('[Pipe.read] Protocol not loaded');
 				return;
 			};
 			
 			let message = null;
 			try {
 				message = this.typeMiddle.decode(item.data);
-			} catch (e) {
-				console.error(e);
+			} catch (err) {
+				console.error(err);
 			};
 			
 			if (message) {
-				console.log('[Pipe.message] Message:', message);
+				console.log('[Pipe.read]', message);
 				this.onMessage(message);
 			};
 		});
@@ -47,18 +48,19 @@ class Pipe {
 			return;
 		};
 		
-		let event = { id: '1', event: {} };
+		let event = { id: (++this.id).toString() };
 		event[type] = data;
 		
 		let buffer = null;
 		try {
 			buffer = this.typeClient.encode(event).finish();
-		} catch (e) {
-			console.error(e);
+		} catch (err) {
+			console.error(err);
 		};
 		
 		if (buffer) {
-			bindings.callMethod(type, buffer);			
+			console.log('[Pipe.write]', event);
+			bindings.callMethod(type, buffer);		
 		};
 	};
 	

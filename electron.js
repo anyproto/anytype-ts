@@ -1,9 +1,7 @@
-global.btoa = require('btoa');
-global.atob = require('atob');
-
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const spawn = require('child_process').spawn;
+const protobuf = require('protobufjs');
 const Pipe = require('./electron/pipe');
 
 function createWindow () {
@@ -31,8 +29,12 @@ function createWindow () {
 		console.log('appLoaded');
 		
 		pipe = new Pipe((event) => {
-			console.log('EVENT', event);
-			win.webContents.send('pipeEvent', event);
+			try {
+				console.log('EVENT', typeof(event), event.constructor.name, event);
+				win.webContents.send('pipeEvent', event);				
+			} catch (e) {
+				console.log(e);
+			};
 		});
 		pipe.start();
 	});
