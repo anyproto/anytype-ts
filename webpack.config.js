@@ -1,74 +1,77 @@
 const path = require('path');
 
 module.exports = {
-    mode: 'development',
+	mode: 'development',
 
-    devtool: 'source-map',
-    
-    entry: './src/ts/app.tsx',
+	devtool: 'source-map',
+	
+	entry: './src/ts/app.tsx',
 
-    resolve: {
-        extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
-        modules: [
+	resolve: {
+		extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
+		modules: [
 			path.resolve('./src/'),
 			path.resolve('./node_modules')
 		]
-    },
-    
-    node: {
-    	fs: 'empty',
-    	child_process: 'empty'
-    },
-    
-    devServer: {
+	},
+	
+	node: {
+		fs: 'empty',
+		child_process: 'empty'
+	},
+	
+	devServer: {
 		hot: true,
-	    inline: true,
+		inline: true,
 		contentBase: path.join(__dirname, 'dist'),
 		historyApiFallback: true
 	},
 
-    module: {
-        rules: [
-            {
-                test: /\.ts(x?)$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'ts-loader'
-                    }
-                ]
-            },
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'babel-loader',
-                        query: { presets:[ 'env' ] }
-                    }
-                ]
-            },
-            {
-                enforce: 'pre',
-                test: /\.js$/,
-                loader: 'source-map-loader'
-            },
-            {
-                test: /\.(eot|ttf|otf|woff|woff2)$/,
-                loader: 'url-loader?name=[path][name].[ext]'
-            },
-            {
-            	test: /\.(jpe?g|png|gif|svg)$/,
-                loader: 'url-loader?name=[path][name].[ext]'
-            },
-            {
-                test: /\.(s?)css$/,
-                use: [
-	                { loader: 'style-loader' },
-	                { loader: 'css-loader' },
-	                { loader: 'sass-loader' }
-                ]
-            }
-        ]
-    }
+	module: {
+		rules: [
+			{
+				test: /\.ts(x?)$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'ts-loader'
+					}
+				]
+			},
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'babel-loader',
+						query: { presets:[ 'env' ] }
+					}
+				]
+			},
+			{
+				enforce: 'pre',
+				test: /\.js$/,
+				loader: 'source-map-loader'
+			},
+			{
+				test: /\.(eot|ttf|otf|woff|woff2)$/,
+				loader: 'url-loader?name=[path][name].[ext]'
+			},
+			{
+				test: /\.(jpe?g|png|gif|svg)$/,
+				loader: 'url-loader?name=[path][name].[ext]'
+			},
+			{
+				test: /\.(s?)css$/,
+				use: [
+					{ loader: 'style-loader' },
+					{ loader: 'css-loader' },
+					{ loader: 'sass-loader' }
+				]
+			}
+		]
+	},
+	externals: {
+		bindings: 'require("bindings")'
+	}
 };

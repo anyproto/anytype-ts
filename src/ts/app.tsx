@@ -9,6 +9,7 @@ import { Dispatcher } from 'ts/lib';
 const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
+const bindings = require('bindings')('pipe');
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -57,13 +58,11 @@ class App extends React.Component<{}, {}> {
 	};
 
 	componentDidMount () {
-		ipcRenderer.send('appLoaded', true);
+		Dispatcher.init();
 		
-		ipcRenderer.on('pipeEvent', (e: any, data: any) => {
-			Dispatcher.event(data);
-		});
+		ipcRenderer.send('appLoaded', true);
 	};
-
+	
 };
 
 ReactDOM.render(<App />, document.getElementById('root'));

@@ -1,8 +1,5 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain } = require('electron');
-const spawn = require('child_process').spawn;
-const protobuf = require('protobufjs');
-const Pipe = require('./electron/pipe');
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -21,28 +18,12 @@ function createWindow () {
 	};
 	
 	let win = new BrowserWindow(param);
-	let pipe = null;
 	
 	win.loadURL('http://localhost:8080');
+	//win.loadFile('dist/index.html');
 	
 	ipcMain.on('appLoaded', () => {
 		console.log('appLoaded');
-		
-		pipe = new Pipe((event) => {
-			try {
-				console.log('EVENT', typeof(event), event.constructor.name, event);
-				win.webContents.send('pipeEvent', event);				
-			} catch (e) {
-				console.log(e);
-			};
-		});
-		pipe.start();
-	});
-	
-	ipcMain.on('pipeCmd', (e, type, data) => {
-		if (pipe) {
-			pipe.write(type, data);
-		};
 	});
 	
 	ipcMain.on('appClose', () => {
