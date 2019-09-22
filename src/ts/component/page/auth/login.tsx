@@ -2,12 +2,17 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, TextArea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { Dispatcher } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	commonStore ?: any;
+};
 interface State {
 	error: string;
 };
 
+@inject('commonStore')
+@observer
 class PageAuthLogin extends React.Component<Props, State> {
 
 	phraseRef: any;
@@ -48,8 +53,11 @@ class PageAuthLogin extends React.Component<Props, State> {
     };
 
 	onSubmit (e: any) {
+		const { commonStore } = this.props;
+		
 		e.preventDefault();
 		
+		commonStore.popupOpen('test', { key: 'value' });
 		Dispatcher.call('walletCreate', { pin: 'test' });
 		
 		//this.props.history.push('/auth/pin-select/login');

@@ -10,9 +10,12 @@ import PageAuthSuccess from './page/auth/success';
 
 import PageMainIndex from './page/main/index';
 
+import ListPopup from './list/popup';
+
 import HeaderAuth from './header/auth';
 import FooterAuth from './footer/auth';
 
+import Popup from './util/popup';
 import Frame from './util/frame';
 import Cover from './util/cover';
 import Title from './util/title';
@@ -38,11 +41,13 @@ export {
 	PageAuthRegister,
 	PageAuthSuccess,
 	PageMainIndex,
+	ListPopup,
 	HeaderAuth,
 	FooterAuth,
 	Input,
 	TextArea,
 	Button,
+	Popup,
 	Frame,
 	Cover,
 	Title,

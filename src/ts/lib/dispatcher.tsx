@@ -1,12 +1,10 @@
 import { authStore } from 'ts/store';
 
-const { ipcRenderer } = window.require('electron');
 const bindings = require('bindings')('pipe');
 const protobuf = require('protobufjs');
 
 class Dispatcher {
 	
-	root: any = null;
 	typeMiddle: any = null;
 	typeClient: any = null;
 	id: number = 0;

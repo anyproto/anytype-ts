@@ -4,13 +4,21 @@ import * as ReactDOM from 'react-dom';
 const $ = require('jquery');
 const raf = require('raf');
 
-class Frame extends React.Component<{}, {}> {
+interface Props {
+	id: string;
+	param?: any;
+};
+
+class Popup extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
 	render () {
+		const { id } = this.props;
+		let cn = [ 'popup', 'popup-' + id ];
+		
 		return (
-			<div className="frame">
+			<div className={cn.join(' ')}>
 				{this.props.children}
 			</div>
 		);
@@ -21,7 +29,7 @@ class Frame extends React.Component<{}, {}> {
 		this.resize();
 		this.unbind();
 		
-		$(window).on('resize.frame orientationchange.frame', () => { this.resize(); });
+		$(window).on('resize.popup orientationchange.popup', () => { this.resize(); });
 	};
 	
 	componentWillUnmount () {
@@ -29,7 +37,7 @@ class Frame extends React.Component<{}, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.frame orientationchange.frame');
+		$(window).unbind('resize.popup orientationchange.popup');
 	};
 	
 	resize () {
@@ -48,4 +56,4 @@ class Frame extends React.Component<{}, {}> {
 	
 };
 
-export default Frame;
+export default Popup;
