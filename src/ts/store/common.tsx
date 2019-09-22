@@ -35,12 +35,12 @@ class CommonStore {
 	@observable public menuList: MenuInterface[] = [];
 	
 	@computed
-	get popups(): any[] {
+	get popups(): PopupInterface[] {
 		return this.popupList;
 	}
 	
 	@computed
-	get menus(): any[] {
+	get menus(): MenuInterface[] {
 		return this.menuList;
 	}
 	

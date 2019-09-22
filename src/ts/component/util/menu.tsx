@@ -44,18 +44,18 @@ class Menu extends React.Component<MenuInterface, {}> {
 		this.position();
 	};
 	
-	componentWillUnmount () {
-	};
-	
 	position () {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { param } = this.props;
+		const { element, vertical, horizontal, offsetX, offsetY } = param;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		
-		let { element, vertical, horizontal, offsetX, offsetY } = param;
-		let el = $('#' + String(element || ''));
-		let ww = win.width();
-		let wh = win.scrollTop() + win.height();
+		const el = $('#' + element);
+		const ww = win.width();
+		const wh = win.scrollTop() + win.height();
 		
 		raf(() => {
 			const offset = el.offset();

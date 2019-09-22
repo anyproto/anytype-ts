@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { MenuItemVertical } from 'ts/component';
 import { observer, inject } from 'mobx-react';
 import { MenuInterface, MenuItemInterface } from 'ts/store/common';
 
@@ -15,6 +15,12 @@ const Config: any = require('json/config.json');
 @observer
 class MenuHelp extends React.Component<Props, {}> {
 	
+	constructor (props: any) {
+		super(props);
+		
+		this.click = this.click.bind(this);
+	};
+	
 	render () {
 		const items: MenuItemInterface[] = [
 			{ id: 'chat', name: 'Chat with Us' },
@@ -22,27 +28,20 @@ class MenuHelp extends React.Component<Props, {}> {
 			{ id: 'community', name: 'Join our Community' }
 		];
 		
-		const Item = (item: MenuItemInterface) => (
-			<div className="item" onMouseDown={(e) => { this.click(item); }}>
-				<Icon className={item.id} />
-				<div className="name">{item.name}</div>
-			</div>
-		);
-		
 		return (
 			<div className="items">
 				{items.map((item: MenuItemInterface, i) => (
-					<Item key={i} {...item} />
+					<MenuItemVertical key={i} {...item} click={this.click} />
 				))}
 			</div>
 		);
 	};
 	
-	click (item: any) {
-		const { id, commonStore } = this.props;
-		commonStore.menuClose(id);
+	click (e: any, id: string) {
+		const { commonStore } = this.props;
+		commonStore.menuClose(this.props.id);
 		
-		switch (item.id) {
+		switch (id) {
 			case 'chat':
 				Intercom('boot', {
 				    app_id: Config.intercom,
