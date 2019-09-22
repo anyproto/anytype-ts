@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { MenuInterface } from 'ts/store/common';
+import { MenuInterface, MenuDirection, MenuType } from 'ts/store/common';
 import { MenuHelp } from 'ts/component';
 
 const $ = require('jquery');
@@ -18,7 +18,11 @@ class Menu extends React.Component<MenuInterface, {}> {
 			help: MenuHelp
 		};
 		const Component = Components[id];
-		const cn = [ 'menu', 'menu-' + id, (type || 'vertical') ];
+		const cn = [ 
+			'menu', 
+			'menu-' + id, 
+			(type == MenuType.Horizontal ? 'horizontal' : 'vertical') 
+		];
 		
 		if (!Component) {
 			return <div />
@@ -26,7 +30,7 @@ class Menu extends React.Component<MenuInterface, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<Component />
+				<Component {...this.props} />
 			</div>
 		);
 	};
@@ -49,14 +53,9 @@ class Menu extends React.Component<MenuInterface, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let { element, vertical, horizontal, offsetX, offsetY } = param;
-		let el = $('#' + element);
+		let el = $('#' + String(element || ''));
 		let ww = win.width();
 		let wh = win.scrollTop() + win.height();
-		
-		offsetX = Number(offsetX) || 0;
-		offsetY = Number(offsetY) || 0;
-		vertical = vertical || 'bottom';
-		horizontal = horizontal || 'left';
 		
 		raf(() => {
 			const offset = el.offset();
@@ -68,17 +67,17 @@ class Menu extends React.Component<MenuInterface, {}> {
 			let x = offset.left;
 			let y = offset.top;
 			
-			if (vertical == 'top') {
+			if (vertical == MenuDirection.Top) {
 				y -= height + offsetY;
 			};
-			if (vertical == 'bottom') {
+			if (vertical == MenuDirection.Bottom) {
 				y += eh + offsetY;
 			};
 			
-			if (horizontal == 'left') {
+			if (horizontal == MenuDirection.Left) {
 				x += offsetX;
 			};
-			if (horizontal == 'right') {
+			if (horizontal == MenuDirection.Right) {
 				x -= width + offsetX - ew;
 			};
 			

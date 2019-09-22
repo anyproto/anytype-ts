@@ -34,11 +34,6 @@ import IconUser from './util/iconUser';
 
 import MenuHelp from './menu/help';
 
-export interface MenuItemInterface {
-	icon: string;
-	name: string;
-};
-
 export {
 	Page,
 	PageAuthLogin,
