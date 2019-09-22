@@ -14,6 +14,8 @@ const bindings = require('bindings')('pipe');
 import 'scss/font.scss';
 import 'scss/common.scss';
 
+import 'scss/component/header.scss';
+import 'scss/component/footer.scss';
 import 'scss/component/cover.scss';
 import 'scss/component/input.scss';
 import 'scss/component/button.scss';

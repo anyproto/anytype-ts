@@ -11,7 +11,7 @@ class Popup extends React.Component<PopupInterface, {}> {
 
 	render () {
 		const { id } = this.props;
-		let cn = [ 'popup', 'popup-' + id ];
+		const cn = [ 'popup', 'popup-' + id ];
 		
 		return (
 			<div className={cn.join(' ')} />

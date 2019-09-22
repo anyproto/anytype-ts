@@ -32,6 +32,13 @@ import Error from './util/error';
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
 
+import MenuHelp from './menu/help';
+
+export interface MenuItemInterface {
+	icon: string;
+	name: string;
+};
+
 export {
 	Page,
 	PageAuthLogin,
@@ -60,4 +67,5 @@ export {
 	Error,
 	Icon,
 	IconUser,
+	MenuHelp,
 };

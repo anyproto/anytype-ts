@@ -1,11 +1,4 @@
 .page-auth, .page-index-index {
-	.logo { 
-		width: 60px; height: 13px; position: fixed; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
-		background-position: center center;  
-	}
-	
-	.copy { width: 120px; position: fixed; left: 50%; bottom: 12px; z-index: 1; text-align: center; margin-left: -60px; color: #fff; }
-	
 	.frame { width: 672px; padding: 36px 48px 32px 48px; }
 	.title { font-size: 36px; line-height: 40px; font-weight: 600; letter-spacing: -0.72px; color: #000; margin-bottom: 15px; }
 	.label { margin-bottom: 25px; }

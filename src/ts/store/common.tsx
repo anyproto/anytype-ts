@@ -10,6 +10,11 @@ export interface PopupInterface {
 
 export interface MenuParam {
 	element: string;
+	type: string;
+	vertical?: string;
+	horizontal?: string;
+	offsetX: number;
+	offsetY: number;
 };
 
 export interface MenuInterface {
@@ -20,9 +25,6 @@ export interface MenuInterface {
 class CommonStore {
 	@observable public popupList: PopupInterface[] = [];
 	@observable public menuList: MenuInterface[] = [];
-	
-	constructor () {
-	};
 	
 	@computed
 	get popups(): any[] {
@@ -46,7 +48,15 @@ class CommonStore {
 	
 	@action
 	menuOpen (id: string, param: MenuParam) {
+		this.menuClose(id);
 		this.menuList.push({ id: id, param: param });
+	};
+	
+	@action
+	menuClose (id: string) {
+		this.menuList = this.menuList.filter((item: MenuInterface) => {
+			return item.id != id;
+		});
 	};
 	
 	@action
