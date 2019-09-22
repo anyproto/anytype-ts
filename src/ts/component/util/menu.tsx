@@ -13,12 +13,16 @@ class Menu extends React.Component<MenuInterface, {}> {
 
 	render () {
 		const { id, param } = this.props;
+		const { type } = param;
 		const Components: any = {
 			help: MenuHelp
 		};
 		const Component = Components[id];
-		const { type } = param;
 		const cn = [ 'menu', 'menu-' + id, (type || 'vertical') ];
+		
+		if (!Component) {
+			return <div />
+		};
 		
 		return (
 			<div className={cn.join(' ')}>
@@ -67,7 +71,6 @@ class Menu extends React.Component<MenuInterface, {}> {
 			if (vertical == 'top') {
 				y -= height + offsetY;
 			};
-			
 			if (vertical == 'bottom') {
 				y += eh + offsetY;
 			};
@@ -75,7 +78,6 @@ class Menu extends React.Component<MenuInterface, {}> {
 			if (horizontal == 'left') {
 				x += offsetX;
 			};
-			
 			if (horizontal == 'right') {
 				x -= width + offsetX - ew;
 			};

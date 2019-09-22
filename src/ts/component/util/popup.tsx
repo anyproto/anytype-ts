@@ -1,20 +1,36 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Icon } from 'ts/component';
 import { PopupInterface } from 'ts/store/common';
+import { observer, inject } from 'mobx-react';
 
 const $ = require('jquery');
 const raf = require('raf');
 
-class Popup extends React.Component<PopupInterface, {}> {
+interface Props extends PopupInterface {
+	commonStore?: any;
+};
+
+@inject('commonStore')
+@observer
+class Popup extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+
+	constructor (props: any) {
+		super(props);
+		
+		this.close = this.close.bind(this);
+	};
 
 	render () {
 		const { id } = this.props;
 		const cn = [ 'popup', 'popup-' + id ];
 		
 		return (
-			<div className={cn.join(' ')} />
+			<div className={cn.join(' ')}>
+				<Icon className="close" onMouseDown={this.close} />
+			</div>
 		);
 	};
 	
@@ -46,6 +62,11 @@ class Popup extends React.Component<PopupInterface, {}> {
 				marginLeft: -node.outerWidth() / 2
 			});			
 		});
+	};
+	
+	close () {
+		const { id, commonStore } = this.props;
+		commonStore.popupClose(id);
 	};
 	
 };

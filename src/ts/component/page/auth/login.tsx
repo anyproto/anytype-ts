@@ -57,7 +57,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 		
 		e.preventDefault();
 		
-		//commonStore.popupOpen('test');
+		commonStore.popupOpen('test');
 		Dispatcher.call('walletCreate', { pin: 'test' });
 		
 		//this.props.history.push('/auth/pin-select/login');
