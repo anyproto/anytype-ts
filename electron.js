@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -29,6 +29,10 @@ function createWindow () {
 	
 	ipcMain.on('appClose', () => {
 		app.quit();
+	});
+	
+	ipcMain.on('urlOpen', async (event, url) => {
+		shell.openExternal(url);
 	});
 };
 

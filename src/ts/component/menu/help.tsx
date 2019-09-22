@@ -6,6 +6,10 @@ interface Props {
 	commonStore?: any;
 };
 
+const { ipcRenderer } = window.require('electron');
+const Url: any = require('json/url.json');
+const Config: any = require('json/config.json');
+
 @inject('commonStore')
 @observer
 class MenuHelp extends React.Component<Props, {}> {
@@ -35,24 +39,14 @@ class MenuHelp extends React.Component<Props, {}> {
 	
 	click (item: any) {
 		const { commonStore } = this.props;
-		
 		commonStore.menuCloseAll();
-	};
-	
-	/*
-	click (item: any) {
-		let { profile } = this.state;
-		profile = profile || {};
-		
-		Analytics.event('menu_help_' + item.icon);
-		Action.commonMenuClose(this.props.id);
 		
 		switch (item.icon) {
 			case 'chat':
 				Intercom('boot', {
 				    app_id: Config.intercom,
-				    name: profile.name,
-				    user_id: profile.id
+				    name: 'test',
+				    user_id: 'test'
 				});
 				Intercom('show');
 				Intercom('onHide', () => {
@@ -61,15 +55,14 @@ class MenuHelp extends React.Component<Props, {}> {
 				break;
 				
 			case 'feature':
-				ipcRenderer.send('url', Config.url.feature);
+				ipcRenderer.send('urlOpen', Url.feature);
 				break;
 				
 			case 'community':
-				ipcRenderer.send('url', Config.url.community);
+				ipcRenderer.send('urlOpen', Url.community);
 				break;
 		};
 	};
-	*/
 	
 };
 

@@ -6,11 +6,10 @@ import { PopupInterface } from 'ts/store/common';
 interface Props {
 	commonStore?: any;
 };
-interface State {};
 
 @inject('commonStore')
 @observer
-class ListPopup extends React.Component<Props, State> {
+class ListPopup extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
