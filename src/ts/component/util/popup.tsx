@@ -18,9 +18,7 @@ class Popup extends React.Component<Props, {}> {
 		let cn = [ 'popup', 'popup-' + id ];
 		
 		return (
-			<div className={cn.join(' ')}>
-				{this.props.children}
-			</div>
+			<div className={cn.join(' ')} />
 		);
 	};
 	
@@ -44,9 +42,9 @@ class Popup extends React.Component<Props, {}> {
 		if (!this._isMounted) {
 			return;
 		};
-		
+
+		const node = $(ReactDOM.findDOMNode(this));		
 		raf(() => {
-			let node = $(ReactDOM.findDOMNode(this));
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
 				marginLeft: -node.outerWidth() / 2

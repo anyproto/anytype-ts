@@ -17,17 +17,18 @@ class ListPopup extends React.Component<Props, State> {
 	
 	render () {
 		const { commonStore } = this.props;
+		const { popups } = commonStore;
 		
 		let dimmer = null;
-		if (commonStore.popups.length) {
+		if (popups.length) {
 			dimmer = <div className="dimmer" onMouseDown={() => { commonStore.popupCloseAll(); }} />;
 		};
 		
 		return (
 			<div className="popups">
-				{commonStore.popups.map((item: any, i: number) => {
-					return <Popup key={i} {...item} />;
-				})}
+				{popups.map((item: any, i: number) => (
+					<Popup key={item.id} {...item} />
+				))}
 				{dimmer}
 			</div>
 		);

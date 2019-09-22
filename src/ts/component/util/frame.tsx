@@ -36,13 +36,13 @@ class Frame extends React.Component<{}, {}> {
 		if (!this._isMounted) {
 			return;
 		};
-		
+
+		const node = $(ReactDOM.findDOMNode(this));
 		raf(() => {
-			let node = $(ReactDOM.findDOMNode(this));
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
 				marginLeft: -node.outerWidth() / 2
-			});			
+			});
 		});
 	};
 	
