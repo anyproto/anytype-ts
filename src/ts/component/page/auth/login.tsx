@@ -44,7 +44,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 							
 					<TextArea ref={(ref: any) => this.phraseRef = ref} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
 					<div className="buttons">
-						<Button text="Login" className="orange" onClick={this.onSubmit} />
+						<Button id="button-login" text="Login" className="orange" onClick={this.onSubmit} />
 						<Button text="Back" className="grey" onClick={this.onCancel} />
 					</div>
 				</Frame>
@@ -57,7 +57,8 @@ class PageAuthLogin extends React.Component<Props, State> {
 		
 		e.preventDefault();
 		
-		commonStore.popupOpen('test', { key: 'value' });
+		//commonStore.popupOpen('test', { key: 'value' });
+		commonStore.menuOpen('test', { element: 'button-login' });
 		Dispatcher.call('walletCreate', { pin: 'test' });
 		
 		//this.props.history.push('/auth/pin-select/login');

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { Page, ListPopup } from './component';
+import { Page, ListPopup, ListMenu } from './component';
 import { commonStore, authStore } from './store';
 import { Dispatcher } from 'ts/lib';
 
@@ -23,6 +23,7 @@ import 'scss/component/smile.scss';
 import 'scss/component/error.scss';
 import 'scss/component/frame.scss';
 import 'scss/component/popup.scss';
+import 'scss/component/menu.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -42,6 +43,7 @@ class App extends React.Component<{}, {}> {
 				<Provider {...rootStore}>
 					<div>
 						<ListPopup />
+						<ListMenu />
 						<div id="drag" />
 						<nav>
 							<ul>
