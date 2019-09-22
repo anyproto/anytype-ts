@@ -30,7 +30,7 @@ class FooterAuth extends React.Component<Props, {}> {
 		const { commonStore } = this.props;
 		commonStore.menuOpen('help', { 
 			element: 'button-help',
-			offsetY: 4, 
+			offsetY: 4,
 			vertical: MenuDirection.Top,
 			horizontal: MenuDirection.Right 
 		});

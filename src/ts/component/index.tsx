@@ -17,6 +17,9 @@ import HeaderAuth from './header/auth';
 import FooterAuth from './footer/auth';
 
 import Menu from './util/menu';
+import MenuItemVertical from './menu/item/vertical';
+import MenuHelp from './menu/help';
+
 import Popup from './util/popup';
 import Frame from './util/frame';
 import Cover from './util/cover';
@@ -31,8 +34,6 @@ import Error from './util/error';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
-
-import MenuHelp from './menu/help';
 
 export {
 	Page,
@@ -53,6 +54,8 @@ export {
 	TextArea,
 	Button,
 	Menu,
+	MenuItemVertical,
+	MenuHelp,
 	Popup,
 	Frame,
 	Cover,
@@ -62,5 +65,4 @@ export {
 	Error,
 	Icon,
 	IconUser,
-	MenuHelp,
 };
