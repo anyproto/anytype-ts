@@ -43,6 +43,7 @@
 	},
 	"dependencies": {
 		"@babel/core": "^7.6.0",
+		"@types/intercom-web": "^2.8.7",
 		"@types/long": "^4.0.0",
 		"@types/node": "^12.7.5",
 		"babel-loader": "^8.0.6",

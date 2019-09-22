@@ -6,11 +6,10 @@ import { MenuInterface } from 'ts/store/common';
 interface Props {
 	commonStore?: any;
 };
-interface State {};
 
 @inject('commonStore')
 @observer
-class ListMenu extends React.Component<Props, State> {
+class ListMenu extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);

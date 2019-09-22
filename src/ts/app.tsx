@@ -31,7 +31,7 @@ import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 
 interface RouteElement { path: string; };
-const Routes: Array<RouteElement> = require('json/route.json');
+const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore: commonStore,
 	authStore: authStore
