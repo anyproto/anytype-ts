@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Menu } from 'ts/component';
 import { observer, inject } from 'mobx-react';
+import { MenuInterface } from 'ts/store/common';
 
 interface Props {
 	commonStore?: any;
@@ -13,25 +14,28 @@ class ListMenu extends React.Component<Props, State> {
 
 	constructor (props: any) {
 		super(props);
+		
+		this.close = this.close.bind(this);
 	};
 	
 	render () {
 		const { commonStore } = this.props;
 		const { menus } = commonStore;
-		
-		let dimmer = null;
-		if (menus.length) {
-			dimmer = <div className="dimmer" onMouseDown={() => { commonStore.menuCloseAll(); }} />;
-		};
+		const dimmer = <div className="dimmer" onMouseDown={this.close} />;
 		
 		return (
 			<div className="menus">
-				{menus.map((item: any, i: number) => (
+				{menus.map((item: MenuInterface, i: number) => (
 					<Menu key={item.id} {...item} />
 				))}
-				{dimmer}
+				{menus.length ? dimmer : ''}
 			</div>
 		);
+	};
+	
+	close () {
+		const { commonStore } = this.props;
+		commonStore.menuCloseAll();
 	};
 	
 };

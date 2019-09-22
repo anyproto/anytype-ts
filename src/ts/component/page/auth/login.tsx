@@ -5,7 +5,7 @@ import { Dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
-	commonStore ?: any;
+	commonStore?: any;
 };
 interface State {
 	error: string;
@@ -44,7 +44,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 							
 					<TextArea ref={(ref: any) => this.phraseRef = ref} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
 					<div className="buttons">
-						<Button id="button-login" text="Login" className="orange" onClick={this.onSubmit} />
+						<Button text="Login" className="orange" onClick={this.onSubmit} />
 						<Button text="Back" className="grey" onClick={this.onCancel} />
 					</div>
 				</Frame>
@@ -57,8 +57,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 		
 		e.preventDefault();
 		
-		//commonStore.popupOpen('test', {});
-		commonStore.menuOpen('test', { element: 'button-login' });
+		//commonStore.popupOpen('test');
 		Dispatcher.call('walletCreate', { pin: 'test' });
 		
 		//this.props.history.push('/auth/pin-select/login');

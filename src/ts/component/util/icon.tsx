@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-const $ = require('jquery');
-
 interface Props {
 	id?: string;
 	icon?: string;

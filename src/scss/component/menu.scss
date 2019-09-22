@@ -7,5 +7,28 @@
 		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); background: $colorBlack;
 	}
 	
-	.menu-test { width: 120px; height: 120px; }
+	.menu.vertical { width: 176px; }
+	.menu.vertical {
+		.item { 
+			padding: 6px 8px; font-size: 15px; letter-spacing: 0.2px; border-radius: 4px; position: relative; cursor: pointer; 
+			transition: background 0.2s ease-in-out, color 0.2s ease-in-out; width: 100%;
+		}
+		.item:hover { background: #56554f; }
+		.item.active { background: #000; }
+		
+		.icon { width: 24px; height: 24px; margin-right: 8px; }
+		.name { display: inline-block; vertical-align: middle; line-height: 1; margin-top: 2px; }
+	}
+	
+	.menu.menu-help { width: 224px; }
+	
+	.icon.chat { background-size: 18px 20px; background-image: url('~img/icon/menu/help/chat0.svg'); }
+	.icon.feature { background-size: 22px 21px; background-image: url('~img/icon/menu/help/feature0.svg'); }
+	.icon.community { background-size: 18px 16px; background-image: url('~img/icon/menu/help/community0.svg'); }
+	
+	.item:hover {
+		.icon.chat { background-image: url('~img/icon/menu/help/chat1.svg'); }
+		.icon.feature { background-image: url('~img/icon/menu/help/feature1.svg'); }
+		.icon.community { background-image: url('~img/icon/menu/help/community1.svg'); }
+	}
 }
