@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Icon, MenuItemInterface } from 'ts/component';
+import { Icon } from 'ts/component';
 import { observer, inject } from 'mobx-react';
+import { MenuInterface, MenuItemInterface } from 'ts/store/common';
 
-interface Props {
+interface Props extends MenuInterface {
 	commonStore?: any;
 };
 
@@ -16,14 +17,14 @@ class MenuHelp extends React.Component<Props, {}> {
 	
 	render () {
 		const items: MenuItemInterface[] = [
-			{ icon: 'chat', name: 'Chat with Us' },
-			{ icon: 'feature', name: 'Suggest a Feature' },
-			{ icon: 'community', name: 'Join our Community' }
+			{ id: 'chat', name: 'Chat with Us' },
+			{ id: 'feature', name: 'Suggest a Feature' },
+			{ id: 'community', name: 'Join our Community' }
 		];
 		
 		const Item = (item: MenuItemInterface) => (
 			<div className="item" onMouseDown={(e) => { this.click(item); }}>
-				<Icon className={item.icon} />
+				<Icon className={item.id} />
 				<div className="name">{item.name}</div>
 			</div>
 		);
@@ -38,10 +39,10 @@ class MenuHelp extends React.Component<Props, {}> {
 	};
 	
 	click (item: any) {
-		const { commonStore } = this.props;
-		commonStore.menuCloseAll();
+		const { id, commonStore } = this.props;
+		commonStore.menuClose(id);
 		
-		switch (item.icon) {
+		switch (item.id) {
 			case 'chat':
 				Intercom('boot', {
 				    app_id: Config.intercom,
@@ -49,9 +50,7 @@ class MenuHelp extends React.Component<Props, {}> {
 				    user_id: 'test'
 				});
 				Intercom('show');
-				Intercom('onHide', () => {
-					Intercom('shutdown');
-				});
+				Intercom('onHide', () => { Intercom('shutdown'); });
 				break;
 				
 			case 'feature':

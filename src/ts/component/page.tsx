@@ -8,7 +8,11 @@ import {
 
 const $ = require('jquery');
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends RouteComponentProps<any> {};
+interface Route {
+	page: string; 
+	action: string;
+	id: string;
 };
 
 class Page extends React.Component<Props, {}> {
@@ -60,7 +64,7 @@ class Page extends React.Component<Props, {}> {
 		this.resize();
 	};
 	
-	getRoute () {
+	getRoute (): Route {
 		const { match } = this.props;
 		let a: string[] = match.path.split('/');
 
@@ -73,7 +77,7 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	getClass () {
-		let route: any = this.getRoute();
+		let route: Route = this.getRoute();
 		return [ 
 			'page', 
 			'page-' + route.page, 
