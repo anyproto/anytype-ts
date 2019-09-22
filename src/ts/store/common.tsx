@@ -38,7 +38,13 @@ class CommonStore {
 	
 	@action
 	popupOpen (id: string, param: PopupParam) {
+		this.popupClose(id);
 		this.popupList.push({ id: id, param: param });
+	};
+	
+	@action
+	popupClose (id: string) {
+		this.popupList = this.popupList.filter((item: PopupInterface) => { return item.id != id; });
 	};
 	
 	@action
@@ -54,9 +60,7 @@ class CommonStore {
 	
 	@action
 	menuClose (id: string) {
-		this.menuList = this.menuList.filter((item: MenuInterface) => {
-			return item.id != id;
-		});
+		this.menuList = this.menuList.filter((item: MenuInterface) => { return item.id != id; });
 	};
 	
 	@action
