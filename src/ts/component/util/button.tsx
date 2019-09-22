@@ -18,7 +18,6 @@ interface EmptyProps {
 class Button extends React.Component<Props, {}> {
 
 	public static defaultProps = {
-        type: 'div',
 		subType: 'submit'
     };
 
@@ -35,14 +34,13 @@ class Button extends React.Component<Props, {}> {
 		switch (type) {
 		
 			default:
-			case 'div':
 				Component = () => { 
 					return (
 						<div id={id} className={cn.join(' ')} onMouseDown={onClick || onMouseDown}>
 							{icon ? <Icon className={icon} /> : ''}
 							<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 						</div>
-					); 
+					);
 				};
 				break;
 				
