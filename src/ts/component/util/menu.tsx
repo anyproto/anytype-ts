@@ -1,21 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { MenuInterface } from 'ts/store/common';
 
 const $ = require('jquery');
 const raf = require('raf');
-
-interface Param {
-	element: string;
-};
-
-interface Props {
-	id: string;
-	param?: Param;
-};
-
 const OFFSET = 4;
 
-class Menu extends React.Component<Props, {}> {
+class Menu extends React.Component<MenuInterface, {}> {
 
 	_isMounted: boolean = false;
 

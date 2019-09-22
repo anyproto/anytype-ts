@@ -1,15 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { PopupInterface } from 'ts/store/common';
 
 const $ = require('jquery');
 const raf = require('raf');
 
-interface Props {
-	id: string;
-	param?: any;
-};
-
-class Popup extends React.Component<Props, {}> {
+class Popup extends React.Component<PopupInterface, {}> {
 
 	_isMounted: boolean = false;
 

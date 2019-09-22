@@ -1,8 +1,25 @@
 import { observable, action, computed } from 'mobx';
 
+export interface PopupParam {
+};
+
+export interface PopupInterface {
+	id: string;
+	param: PopupParam;
+};
+
+export interface MenuParam {
+	element: string;
+};
+
+export interface MenuInterface {
+	id: string;
+	param: MenuParam;
+};
+
 class CommonStore {
-	@observable public popupList: any[] = [];
-	@observable public menuList: any[] = [];
+	@observable public popupList: PopupInterface[] = [];
+	@observable public menuList: MenuInterface[] = [];
 	
 	constructor () {
 	};
@@ -18,7 +35,7 @@ class CommonStore {
 	}
 	
 	@action
-	popupOpen (id: string, param: any) {
+	popupOpen (id: string, param: PopupParam) {
 		this.popupList.push({ id: id, param: param });
 	};
 	
@@ -28,7 +45,7 @@ class CommonStore {
 	};
 	
 	@action
-	menuOpen (id: string, param: any) {
+	menuOpen (id: string, param: MenuParam) {
 		this.menuList.push({ id: id, param: param });
 	};
 	
