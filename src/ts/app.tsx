@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { Page } from './component';
-import { authStore } from './store';
+import { Page, ListPopup } from './component';
+import { commonStore, authStore } from './store';
 import { Dispatcher } from 'ts/lib';
 
 const { ipcRenderer } = window.require('electron');
@@ -21,6 +21,8 @@ import 'scss/component/icon.scss';
 import 'scss/component/textArea.scss';
 import 'scss/component/smile.scss';
 import 'scss/component/error.scss';
+import 'scss/component/frame.scss';
+import 'scss/component/popup.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -28,6 +30,7 @@ import 'scss/page/main/index.scss';
 interface RouteElement { path: string; };
 const Routes: Array<RouteElement> = require('json/route.json');
 const rootStore = {
+	commonStore: commonStore,
 	authStore: authStore
 };
 
@@ -38,6 +41,7 @@ class App extends React.Component<{}, {}> {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div>
+						<ListPopup />
 						<div id="drag" />
 						<nav>
 							<ul>

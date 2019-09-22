@@ -21,6 +21,7 @@ function createWindow () {
 	
 	win.loadURL('http://localhost:8080');
 	//win.loadFile('dist/index.html');
+	win.toggleDevTools();
 	
 	ipcMain.on('appLoaded', () => {
 		console.log('appLoaded');
