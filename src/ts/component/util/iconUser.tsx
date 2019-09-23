@@ -3,7 +3,10 @@ import * as ReactDOM from 'react-dom';
 import { Icon, Label } from 'ts/component';
 import { AccountInterface } from 'ts/store/auth';
 
-interface Props extends AccountInterface {
+interface Props {
+	name?: string;
+	color?: string;
+	icon?: string;
 	className?: string;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;

@@ -66,8 +66,6 @@ class App extends React.Component<{}, {}> {
 	};
 
 	componentDidMount () {
-		dispatcher.init();
-		
 		ipcRenderer.send('appLoaded', true);
 	};
 	

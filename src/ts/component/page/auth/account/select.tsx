@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { authStore } from 'ts/store';
 import { AccountInterface } from 'ts/store/auth';
 
 interface Props extends RouteComponentProps<any> {
