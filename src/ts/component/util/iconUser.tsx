@@ -4,6 +4,7 @@ import { Icon, Label } from 'ts/component';
 import { AccountInterface } from 'ts/store/auth';
 
 interface Props extends AccountInterface {
+	className?: string;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -25,11 +26,15 @@ class IconUser extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { icon, name, color, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
+		const { className, icon, name, color, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
 		
 		let cn = [ 'icon', 'user' ];
 		let style: any = {};
 		let text = name || '';
+		
+		if (className) {
+			cn.push(className);
+		};
 		
 		if (icon) {
 			text = '';
