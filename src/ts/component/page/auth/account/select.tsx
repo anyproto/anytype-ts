@@ -1,26 +1,18 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { observer, inject } from 'mobx-react';
+import { authStore } from 'ts/store';
+import { AccountInterface } from 'ts/store/auth';
 
-interface Profile {
-	icon: string;
-	name: string;
+interface Props extends RouteComponentProps<any> {
+	authStore?: any;
 };
+interface State {};
 
-interface Props extends RouteComponentProps<any> {};
-interface State {
-	list: Profile[];
-};
-
+@inject('authStore')
+@observer
 class PageAccountSelect extends React.Component<Props, State> {
-
-	state = {
-		list: [ 
-			{ icon: '', color: 'grey', name: 'Anton Pronin' }, 
-			{ icon: '', color: 'red', name: 'James Simon' }, 
-			{ icon: '', color: 'green', name: 'Tony Leung' } 
-		]
-	};
 
 	constructor (props: any) {
         super(props);
@@ -29,9 +21,9 @@ class PageAccountSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { list } = this.state;
+		const { authStore } = this.props;
 		
-		const Item = (item: Profile) => (
+		const Item = (item: AccountInterface) => (
 			<div className="item" onClick={this.onSelect}>
 				<IconUser {...item} />
 				<div className="name">{item.name}</div>
@@ -48,7 +40,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 					<Title text="Choose profile" />
 					
 					<div className="list">
-						{list.map((item, i) => (
+						{authStore.accounts.map((item: AccountInterface, i: number) => (
 							<Item key={i} {...item} />	
 						))}
 					</div>

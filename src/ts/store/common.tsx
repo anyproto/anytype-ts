@@ -39,12 +39,12 @@ class CommonStore {
 	@computed
 	get popups(): PopupInterface[] {
 		return this.popupList;
-	}
+	};
 	
 	@computed
 	get menus(): MenuInterface[] {
 		return this.menuList;
-	}
+	};
 	
 	@action
 	popupOpen (id: string, param: PopupParam) {

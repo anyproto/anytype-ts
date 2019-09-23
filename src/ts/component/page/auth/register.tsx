@@ -42,7 +42,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 					<Error text={error} />
 		
 					<div className="fileWrap">
-						<IconUser name={name || ''} icon={preview} />
+						<IconUser id="" name={name || ''} icon={preview} />
 						<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
 					</div>
 						

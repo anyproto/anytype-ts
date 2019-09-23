@@ -4,7 +4,7 @@ import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu } from './component';
 import { commonStore, authStore } from './store';
-import { Dispatcher } from 'ts/lib';
+import { dispatcher } from 'ts/lib';
 
 const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
@@ -66,7 +66,7 @@ class App extends React.Component<{}, {}> {
 	};
 
 	componentDidMount () {
-		Dispatcher.init();
+		dispatcher.init();
 		
 		ipcRenderer.send('appLoaded', true);
 	};

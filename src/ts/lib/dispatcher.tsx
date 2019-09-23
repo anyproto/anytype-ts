@@ -1,4 +1,5 @@
 import { authStore } from 'ts/store';
+import { AccountInterface } from 'ts/store/auth';
 
 const bindings = require('bindings')('pipe');
 const protobuf = require('protobufjs');
@@ -42,8 +43,21 @@ class Dispatcher {
 				
 			if (event) {
 				console.log('[Dispatcher.event]', event);
+				this.event(event);
 			};
 		});
+	};
+	
+	event (event: any) {
+		for (let key in event) {
+			let value = event[key];
+			
+			switch (key) {
+				case 'accountFound':
+					authStore.accountAdd(value.account as AccountInterface);
+					break;
+			};
+		};
 	};
 	
 	call (type: string, data: any, callBack?: (message: any) => void) {
@@ -79,4 +93,4 @@ class Dispatcher {
 	
 };
 
-export default new Dispatcher();
+export let dispatcher = new Dispatcher();
