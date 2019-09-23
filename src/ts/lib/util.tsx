@@ -2,6 +2,10 @@ const loadImage = require('blueimp-load-image');
 
 class Util {
 	
+	toCamelCase (str: string) {
+		return str[0].toUpperCase() + str.slice(1, str.length);
+	};
+	
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {
 		if (!file) {
 			return;
