@@ -58,4 +58,7 @@
 	.icon.user {
 		.image { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; }
 	}
+	.icon.user.active {
+		.image { background-size: cover; }
+	}
 }
