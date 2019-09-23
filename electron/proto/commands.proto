@@ -1,0 +1,77 @@
+syntax="proto3";
+package anytype;
+option go_package = "pb";
+
+service ClientCommands {
+    rpc _WalletCreate (WalletCreate) returns (WalletCreateCallback);
+    rpc _WalletLogin (WalletLogin) returns (WalletLoginCallback);
+    rpc _AccountCreate (AccountCreate) returns (AccountCreateCallback);
+
+}
+
+message WalletCreate {
+   string pin = 1;
+}
+
+message WalletCreateCallback {
+    Error error = 1;
+
+    message Error {
+        Code code = 1;
+        string desc = 2;
+
+        enum Code {
+            NULL = 0;
+            UNKNOWN_ERROR = 1;
+            BAD_INPUT = 2;
+            // ...
+        }
+    }
+}
+
+message WalletLogin {
+    string mnemonics = 1;
+    string pin = 2;
+}
+
+message WalletLoginCallback {
+    Error error = 1;
+
+    message Error {
+        Code code = 1;
+        string desc = 2;
+
+        enum Code {
+            NULL = 0;
+            UNKNOWN_ERROR = 1;
+            BAD_INPUT = 2;
+            NETWORK_ERROR = 3;
+
+            FAILED_TO_FIND_BACKUP = 101;
+        }
+    }
+}
+
+message AccountCreate {
+    string name = 1;
+    string icon = 2;
+}
+
+message AccountCreateCallback {
+    Error error = 1;
+
+    message Error {
+        Code code = 1;
+        string desc = 2;
+
+        enum Code {
+            NULL = 0;
+            UNKNOWN_ERROR = 1;
+            // ...
+        }
+    }
+}
+
+message AccountChosen {
+    string id = 1;
+}

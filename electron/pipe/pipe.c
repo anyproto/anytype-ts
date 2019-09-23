@@ -4,7 +4,7 @@
 #define NAPI_EXPERIMENTAL
 #include <node_api.h>
 #include <stdio.h>
-#include "lib.h"
+#include "./lib.h"
 
 // An item that will be generated from the thread, passed into JavaScript, and
 // ultimately marked as resolved when the JavaScript passes it back into the
@@ -27,56 +27,6 @@ typedef struct {
 }
 AddonData;
 
-AddonData * adata;
-
-// Runs method in Go code
-napi_value CallMethod(napi_env env, napi_callback_info info) {
-  napi_status status;
-
-  size_t argc = 2;
-  napi_value args[2];
-  status = napi_get_cb_info(env, info, & argc, args, NULL, NULL);
-  assert(status == napi_ok);
-
-  if (argc < 2) {
-    napi_throw_type_error(env, NULL, "Wrong number of arguments");
-    return NULL;
-  }
-
-  napi_valuetype valuetype0;
-  status = napi_typeof(env, args[0], & valuetype0);
-  assert(status == napi_ok);
-
-  napi_valuetype valuetype1;
-  status = napi_typeof(env, args[1], & valuetype1);
-  assert(status == napi_ok);
-
-  if (valuetype0 != napi_string || valuetype1 != napi_object) {
-    napi_throw_type_error(env, NULL, "Wrong arguments2");
-    return NULL;
-  }
-
-  size_t method_size;
-  assert(napi_get_value_string_utf8(env, args[0], NULL, 0, &method_size) == napi_ok);
-  char *method = malloc(method_size+1);
-  assert(napi_get_value_string_utf8(env, args[0], method, method_size+1, NULL) == napi_ok);
-
-  size_t data_size;
-  status = napi_get_buffer_info(env, args[1], NULL, &data_size);
-  assert(status == napi_ok);
-
-  void* data = malloc(data_size+1);
-  status = napi_get_buffer_info(env, args[1], &data, NULL);
-
-  //printf(" status2 %d", status);
-
- // assert(status == napi_ok);
-  //napi_create_reference(env, args[1], 1, &value1ref);
-
-  Call(method, data, data_size);
-  return NULL;
-}
-
 // This function is responsible for converting the native data coming in from
 // the secondary thread to JavaScript values, and for calling the JavaScript
 // function. It may also be called with `env` and `js_cb` set to `NULL` when
@@ -97,20 +47,20 @@ static void CallJs(napi_env env, napi_value js_cb, void * context, void * data) 
     napi_value undefined, js_thread_item;
     // Retrieve the JavaScript `undefined` value. This will serve as the `this`
     // value for the function call.
-    assert(napi_get_undefined(env, & undefined) == napi_ok);
+    assert(napi_get_undefined(env, &undefined) == napi_ok);
 
     // Retrieve the constructor for the JavaScript class from which the item
     // holding the native data will be constructed.
     assert(napi_get_reference_value(env,
-      addon_data->thread_item_constructor, &
-      constructor) == napi_ok);
+      addon_data->thread_item_constructor,
+      &constructor) == napi_ok);
 
     // Construct a new instance of the JavaScript class to hold the native item.
     assert(napi_new_instance(env,
       constructor,
       0,
-      NULL, &
-      js_thread_item) == napi_ok);
+      NULL,
+      &js_thread_item) == napi_ok);
 
     // Associate the native item with the newly constructed JavaScript object.
     // We assume that the JavaScript side will eventually pass this JavaScript
@@ -125,15 +75,15 @@ static void CallJs(napi_env env, napi_value js_cb, void * context, void * data) 
     status = napi_call_function(env,
       undefined,
       js_cb,
-      1, &
-      js_thread_item,
+      1,
+      &js_thread_item,
       NULL);
-const napi_extended_error_info *result;                                                \
-			napi_get_last_error_info(env, &result);                                                \
-			printf("error : %s\n", result->error_message);              \
-//			napi_throw_type_error(env, NULL, err);
+    const napi_extended_error_info *result;                                                \
 
-      printf("napi_call_function status %d\n", status);
+	napi_get_last_error_info(env, &result);                                                \
+	printf("error : %s\n", result->error_message);              \
+
+    printf("napi_call_function status %d\n", status);
   }
 }
 
@@ -148,7 +98,7 @@ static void ThreadFinished(napi_env env, void * data, void * context) {
 }
 
 // this func is sent to the go as a pointer and will be called from there
-static void CallJsProxy(char * method, char * data, int data_length) {
+static void CallJsProxy(void * adata, char * method, char * data, int data_length) {
   // Pass the new item into JavaScript.
   ThreadItem * item = NULL;
 
@@ -156,20 +106,20 @@ static void CallJsProxy(char * method, char * data, int data_length) {
   item->method = method;
   item->data = data;
   item->data_length = (size_t) data_length;
+  AddonData * addon_data = (AddonData * ) adata;
 
-  assert(napi_call_threadsafe_function(adata->tsfn,
+  assert(napi_call_threadsafe_function(addon_data->tsfn,
     item,
-    napi_tsfn_blocking) == napi_ok);
+    napi_tsfn_nonblocking) == napi_ok);
 
 }
 
 // This binding can be called from JavaScript to start the asynchronous prime
 // generator.
-static napi_value SetCallback(napi_env env, napi_callback_info info) {
+static napi_value SetEventHandlerProxy(napi_env env, napi_callback_info info) {
   size_t argc = 1;
   napi_value js_cb, work_name;
   AddonData * addon_data;
-
   // The binding accepts one parameter - the JavaScript callback function to
   // call.
   assert(napi_get_cb_info(env,
@@ -177,7 +127,7 @@ static napi_value SetCallback(napi_env env, napi_callback_info info) {
     argc, &
     js_cb,
     NULL,
-    (void * ) & addon_data) == napi_ok);
+    (void * ) &addon_data) == napi_ok);
 
   // We do not create a second thread if one is already running.
   assert(addon_data->tsfn == NULL && "Work already in progress");
@@ -186,7 +136,7 @@ static napi_value SetCallback(napi_env env, napi_callback_info info) {
 
   // This string describes the asynchronous work.
   assert(napi_create_string_utf8(env,
-    "Thread-safe Function Round Trip Example",
+    "Event handler",
     NAPI_AUTO_LENGTH, &
     work_name) == napi_ok);
 
@@ -203,11 +153,11 @@ static napi_value SetCallback(napi_env env, napi_callback_info info) {
     addon_data,
     ThreadFinished,
     addon_data,
-    CallJs, &
-    addon_data->tsfn) == napi_ok);
+    CallJs,
+    &addon_data->tsfn) == napi_ok);
 
-  adata = addon_data;
-  SetClientFunc(CallJsProxy);
+  SetEventHandler((void*) addon_data);
+  SetProxyFunc(CallJsProxy);
   return NULL;
 }
 
@@ -218,7 +168,7 @@ is_thread_item(napi_env env, napi_ref constructor_ref, napi_value value) {
   assert(napi_get_reference_value(env,
     constructor_ref, &
     constructor) == napi_ok);
-  assert(napi_instanceof(env, value, constructor, & validate) == napi_ok);
+  assert(napi_instanceof(env, value, constructor, &validate) == napi_ok);
   return validate;
 }
 
@@ -234,10 +184,10 @@ static napi_value ThreadItemConstructor(napi_env env, napi_callback_info info) {
 static napi_value GetData(napi_env env, napi_callback_info info) {
   napi_value jsthis, data_property;
   AddonData * ad;
-  assert(napi_ok == napi_get_cb_info(env, info, 0, 0, & jsthis, (void * ) & ad));
+  assert(napi_ok == napi_get_cb_info(env, info, 0, 0, &jsthis, (void * ) &ad));
   assert(is_thread_item(env, ad->thread_item_constructor, jsthis));
   ThreadItem * item;
-  assert(napi_ok == napi_unwrap(env, jsthis, (void ** ) & item));
+  assert(napi_ok == napi_unwrap(env, jsthis, (void ** ) &item));
   assert(napi_ok == napi_create_external_buffer(env, item->data_length, item->data, NULL, NULL, &data_property));
   return data_property;
 }
@@ -246,11 +196,11 @@ static napi_value GetData(napi_env env, napi_callback_info info) {
 static napi_value GetMethod(napi_env env, napi_callback_info info) {
   napi_value jsthis, method_property;
   AddonData * ad;
-  assert(napi_ok == napi_get_cb_info(env, info, 0, 0, & jsthis, (void * ) & ad));
+  assert(napi_ok == napi_get_cb_info(env, info, 0, 0, &jsthis, (void * ) &ad));
   assert(is_thread_item(env, ad->thread_item_constructor, jsthis));
   ThreadItem * item;
-  assert(napi_ok == napi_unwrap(env, jsthis, (void ** ) & item));
-  assert(napi_ok == napi_create_string_utf8(env, item->method, NAPI_AUTO_LENGTH, & method_property));
+  assert(napi_ok == napi_unwrap(env, jsthis, (void ** ) &item));
+  assert(napi_ok == napi_create_string_utf8(env, item->method, NAPI_AUTO_LENGTH, &method_property));
   return method_property;
 }
 
@@ -259,6 +209,134 @@ static void addon_is_unloading(napi_env env, void * data, void * hint) {
   assert(napi_delete_reference(env,
     addon_data->thread_item_constructor) == napi_ok);
   free(data);
+}
+
+
+// Runs command in Go code
+static napi_value SendCommand(napi_env env, napi_callback_info info) {
+  AddonData * addon_data =
+    memset(malloc(sizeof( * addon_data)), 0, sizeof( * addon_data));
+
+  // Attach the addon data to the exports object to ensure that they are
+  // destroyed together.
+  /*assert(napi_wrap(env,
+    exports,
+    addon_data,
+    addon_is_unloading,
+    NULL,
+    NULL) == napi_ok);*/
+
+  napi_value thread_item_class;
+  napi_property_descriptor thread_item_properties[] = {
+    {
+      "method",
+      0,
+      0,
+      GetMethod,
+      0,
+      0,
+      napi_enumerable,
+      addon_data
+    },
+    {
+      "data",
+      0,
+      0,
+      GetData,
+      0,
+      0,
+      napi_enumerable,
+      addon_data
+    }
+  };
+
+  assert(napi_define_class(env,
+    "ThreadItem",
+    NAPI_AUTO_LENGTH,
+    ThreadItemConstructor,
+    addon_data,
+    2,
+    thread_item_properties, &
+    thread_item_class) == napi_ok);
+
+  assert(napi_create_reference(env,
+      thread_item_class,
+      1,
+      &(addon_data->thread_item_constructor)) ==
+    napi_ok);
+
+  napi_status status;
+
+  size_t argc = 3;
+  napi_value argv[3];
+  status = napi_get_cb_info(env, info, &argc, argv, NULL, NULL);
+  assert(status == napi_ok);
+
+  addon_data->js_accepts = true;
+
+  if (argc < 3) {
+    napi_throw_type_error(env, NULL, "Wrong number of arguments");
+    return NULL;
+  }
+
+  napi_valuetype valuetype0;
+
+  status = napi_typeof(env, argv[0], &valuetype0);
+  assert(status == napi_ok);
+//	printf("status0 %d, %d==%d\n", status, valuetype0, napi_string);
+
+  napi_valuetype valuetype1;
+  status = napi_typeof(env, argv[1], &valuetype1);
+  assert(status == napi_ok);
+	//printf("status1 %d, %d==%d\n", status, valuetype1, napi_object);
+
+  napi_valuetype valuetype2;
+  status = napi_typeof(env, argv[2], &valuetype2);
+ assert(status == napi_ok);
+	//printf("status2 %d, %d==%d \n", status, valuetype2, napi_function);
+
+  if (valuetype0 != napi_string || valuetype1 != napi_object || valuetype2 != napi_function ) {
+    napi_throw_type_error(env, NULL, "Wrong arguments");
+    return NULL;
+  }
+
+  size_t command_size;
+  assert(napi_get_value_string_utf8(env, argv[0], NULL, 0, &command_size) == napi_ok);
+  char *command = malloc(command_size+1);
+  assert(napi_get_value_string_utf8(env, argv[0], command, command_size+1, NULL) == napi_ok);
+
+  size_t data_size;
+  status = napi_get_buffer_info(env, argv[1], NULL, &data_size);
+  assert(status == napi_ok);
+
+  void* data = malloc(data_size+1);
+  status = napi_get_buffer_info(env, argv[1], &data, NULL);
+
+  char *name;
+  int size = asprintf(&name, "Callback for %s", command);
+  napi_value work_name;
+  assert(napi_create_string_utf8(env,
+    name,
+    size, &
+    work_name) == napi_ok);
+  	//printf("SendCommand: %s %s %p\n", command, data, &addon_data->tsfn );
+
+  assert(napi_create_threadsafe_function(env,
+    argv[2],
+    NULL,
+    work_name,
+    0,
+    1,
+    addon_data,
+    ThreadFinished,
+    addon_data,
+    CallJs,
+    &addon_data->tsfn) == napi_ok);
+
+  //napi_create_reference(env, args[1], 1, &value1ref);
+
+  Command(command, data, data_size, addon_data);
+  return NULL;
 }
 
 // Initialize an instance of this addon. This function may be called multiple
@@ -321,16 +399,16 @@ NAPI_MODULE_INIT( /*napi_env env, napi_value exports*/ ) {
 
   assert(napi_create_reference(env,
       thread_item_class,
-      1, &
-      (addon_data->thread_item_constructor)) ==
+      1,
+      &(addon_data->thread_item_constructor)) ==
     napi_ok);
 
   // Expose the two bindings this addon provides.
   napi_property_descriptor export_properties[] = {
     {
-      "callMethod",
+      "sendCommand",
       NULL,
-      CallMethod,
+      SendCommand,
       NULL,
       NULL,
       NULL,
@@ -338,9 +416,9 @@ NAPI_MODULE_INIT( /*napi_env env, napi_value exports*/ ) {
       NULL
     },
     {
-      "setCallback",
+      "setEventHandler",
       NULL,
-      SetCallback,
+      SetEventHandlerProxy,
       NULL,
       NULL,
       NULL,
