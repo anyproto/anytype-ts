@@ -1,0 +1,16 @@
+syntax="proto3";
+package anytype;
+option go_package = "pb";
+
+import "model.proto";
+
+// -------- Middle
+message Event {
+    oneof message {
+        AccountFound accountFound = 12;
+    }
+}
+
+message AccountFound {
+    Account account = 1;
+}

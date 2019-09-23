@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 
 export interface PopupParam {
+	onClose?(): void;
 };
 
 export interface PopupInterface {
@@ -18,6 +19,7 @@ export interface MenuParam {
 	horizontal: MenuDirection;
 	offsetX: number;
 	offsetY: number;
+	onClose?(): void;
 };
 
 export interface MenuInterface {
@@ -52,12 +54,20 @@ class CommonStore {
 	
 	@action
 	popupClose (id: string) {
+		const item: PopupInterface = this.popupList.find((item: PopupInterface) => { return item.id == id; });
+		
+		if (item && item.param.onClose) {
+			item.param.onClose();
+		};
+		
 		this.popupList = this.popupList.filter((item: PopupInterface) => { return item.id != id; });
 	};
 	
 	@action
 	popupCloseAll () {
-		this.popupList = [];
+		for (let item of this.popupList) {
+			this.popupClose(item.id);
+		};
 	};
 	
 	@action
@@ -76,12 +86,20 @@ class CommonStore {
 	
 	@action
 	menuClose (id: string) {
+		const item: MenuInterface = this.menuList.find((item: MenuInterface) => { return item.id == id; });
+		
+		if (item && item.param.onClose) {
+			item.param.onClose();
+		};
+		
 		this.menuList = this.menuList.filter((item: MenuInterface) => { return item.id != id; });
 	};
 	
 	@action
 	menuCloseAll () {
-		this.menuList = [];
+		for (let item of this.menuList) {
+			this.menuClose(item.id);
+		};
 	};
 	
 };

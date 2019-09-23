@@ -9,7 +9,7 @@
 .icon.help:hover { background-image: url('~img/icon/help/dark1.svg'); }
 
 .icon.help.light { background-image: url('~img/icon/help/light0.svg'); }
-.icon.help.light:hover { background-image: url('~img/icon/help/light1.svg'); }
+.icon.help.light:hover, .icon.help.light.active { background-image: url('~img/icon/help/light1.svg'); }
 
 .icon.user { 
 	width: 64px; height: 64px; border-radius: 100%; font-weight: 600; position: relative; overflow: hidden;

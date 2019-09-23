@@ -76,9 +76,11 @@ extern "C" {
 #endif
 
 
-extern void SetClientFunc(voidFunc p0);
+extern void SetProxyFunc(proxyFunc p0);
 
-extern void Call(char* p0, void* p1, int p2);
+extern void SetEventHandler(void* p0);
+
+extern void Command(char* p0, void* p1, int p2, void* p3);
 
 #ifdef __cplusplus
 }

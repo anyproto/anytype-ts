@@ -5,31 +5,37 @@ const protobuf = require('protobufjs');
 
 class Dispatcher {
 	
-	typeMiddle: any = null;
-	typeClient: any = null;
-	id: number = 0;
+	EventMessage: any = null;
+	rootCmd: any = null;
 	
 	constructor () {
-		protobuf.load('./electron/proto/protocol.proto', (err: string, root: any) => {
+		protobuf.load('./electron/proto/events.proto', (err: string, root: any) => {
 			if (err) {
 				throw err;
 			};
 			
-			this.typeMiddle = root.lookupType('anytype.Middle');
-			this.typeClient = root.lookupType('anytype.Client');
+			this.EventMessage = root.lookupType('anytype.Event');
+		});
+		
+		protobuf.load('./electron/proto/commands.proto', (err: string, root: any) => {
+			if (err) {
+				throw err;
+			};
+			
+			this.rootCmd = root;
 		});
 	};
 	
 	init () {
-		bindings.setCallback((item: any) => {
-			if (!this.typeMiddle) {
+		bindings.setEventHandler((item: any) => {
+			if (!this.EventMessage) {
 				console.error('[Dispatcher.event] Protocol not loaded');
 				return;
 			};
 				
 			let event = null;
 			try {
-				event = this.typeMiddle.decode(item.data);
+				event = this.EventMessage.decode(item.data);
 			} catch (err) {
 				console.error(err);
 			};
@@ -40,25 +46,34 @@ class Dispatcher {
 		});
 	};
 	
-	call (type: string, data: any) {
-		if (!this.typeClient) {
+	call (type: string, data: any, callBack?: (message: any) => void) {
+		if (!this.rootCmd) {
 			console.error('[Dispatcher.call] Protocol not loaded');
 			return;
 		};
 		
-		let event: any = { id: (++this.id).toString() };
-		event[type] = data;
-		
+		let cmdType = this.rootCmd.lookupType('anytype.' + type);
 		let buffer = null;
 		try {
-			buffer = this.typeClient.encode(event).finish();
+			buffer = cmdType.encode(event).finish();
 		} catch (err) {
 			console.error(err);
 		};
 		
 		if (buffer) {
-			console.log('[Dispatcher.call]', event);
-			bindings.callMethod(type, buffer);		
+			bindings.sendCommand(type, buffer, (item: any) => {
+				let message = null;
+				try {
+					message = this.rootCmd.lookupType('anytype.' + type + 'Callback').decode(item.data);
+				} catch (err) {
+					console.log(err);
+				};
+				
+				if (message && callBack) {
+					console.log('[Dispatcher.call]', JSON.stringify(message));
+					callBack(message);
+				};
+			});
 		};
 	};
 	
