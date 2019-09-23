@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { dispatcher } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -39,6 +40,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	componentDidMount () {
 		const { match } = this.props;
 		
+		this.clear();
 		this.i = window.setInterval(() => {
 			let { icon } = this.state;
 			
@@ -50,17 +52,24 @@ class PageAuthSetup extends React.Component<Props, State> {
 			this.setState({ icon: icon });
 		}, 1000);
 		
-		this.t = window.setTimeout(() => {
-			if (match.params.id == 'login') {
-				this.props.history.push('/auth/account-select');	
-			};
-			if (match.params.id == 'register') {
-				this.props.history.push('/auth/register');	
-			};
-		}, 3000);
+		if (match.params.id == 'register') {
+			dispatcher.call('WalletCreate', { pin: 'test' }, (message: any) => {
+				this.props.history.push('/auth/register');
+			});
+		};
+		
+		if (match.params.id == 'login') {
+			this.t = window.setTimeout(() => {
+				this.props.history.push('/auth/account-select');
+			}, 3000);
+		};
 	};
 	
 	componentWillUnmount () {
+		this.clear();
+	};
+	
+	clear () {
 		clearInterval(this.i);
 		clearTimeout(this.t);
 	};

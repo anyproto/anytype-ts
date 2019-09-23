@@ -1,13 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Label } from 'ts/component';
+import { AccountInterface } from 'ts/store/auth';
 
-const $ = require('jquery');
-
-interface Props {
-	color: string;
-	icon: string;
-	name: string;
+interface Props extends AccountInterface {
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -60,7 +56,6 @@ class IconUser extends React.Component<Props, {}> {
 	
 	onMouseEnter (e: any) {
 		let { onMouseEnter } = this.props;
-		let node = $(ReactDOM.findDOMNode(this));
 		
 		if (onMouseEnter) {
 			onMouseEnter(e);

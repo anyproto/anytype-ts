@@ -1,5 +1,5 @@
-import Dispatcher from './dispatcher';
+import { dispatcher } from './dispatcher';
 
 export {
-	Dispatcher
+	dispatcher
 };
