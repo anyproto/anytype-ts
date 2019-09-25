@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Icon, Cover, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
+import { dispatcher } from 'ts/lib';
 import { AccountInterface } from 'ts/store/auth';
 
 interface Props extends RouteComponentProps<any> {
@@ -17,13 +18,14 @@ class PageAccountSelect extends React.Component<Props, State> {
         super(props);
 
 		this.onSelect = this.onSelect.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 	
 	render () {
 		const { authStore } = this.props;
 		
-		const Item = (item: AccountInterface) => (
-			<div className="item" onClick={this.onSelect}>
+		const Item = (item: any) => (
+			<div className="item" onClick={(e) => { this.onSelect(e, item.index); }}>
 				<IconUser {...item} />
 				<div className="name">{item.name}</div>
 			</div>
@@ -40,18 +42,31 @@ class PageAccountSelect extends React.Component<Props, State> {
 					
 					<div className="list">
 						{authStore.accounts.map((item: AccountInterface, i: number) => (
-							<Item key={i} {...item} />	
+							<Item key={i} {...item} index={i} />	
 						))}
+						<div className="item add" onMouseDown={this.onAdd}>
+							<Icon className="plus" />
+							<div className="name">Add profile</div>
+						</div>
 					</div>
 				</Frame>
 			</div>
 		);
     };
 
-	onSelect (e: any) {
+	onSelect (e: any, index: number) {
+		const { authStore } = this.props;
+		
 		e.preventDefault();
 		
-		this.props.history.push('/main/index');
+		authStore.indexSet(index);
+		this.props.history.push('/auth/pin-select/select');
+	};
+	
+	onAdd (e: any) {
+		e.preventDefault();
+		
+		this.props.history.push('/auth/register/add');
 	};
 	
 };

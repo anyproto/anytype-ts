@@ -1,11 +1,25 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { dispatcher } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
-interface State {};
+interface Props extends RouteComponentProps<any> {
+	authStore?: any;
+};
+interface State {
+	error: string;
+};
 
+const Config: any = require('json/config.json');
+
+@inject('authStore')
+@observer
 class PageAuthSelect extends React.Component<Props, State> {
+
+	state = {
+		error: ''
+	};
 
 	constructor (props: any) {
         super(props);
@@ -15,6 +29,8 @@ class PageAuthSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { error } = this.state;
+		
         return (
 			<div>
 				<Cover num={3} />
@@ -24,6 +40,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 				<Frame>
 					<Title text="Organize everything" />
 					<Label text="With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." />
+					<Error text={error} />
 								
 					<div className="buttons">
 						<Button text="Login" type="input" className="orange" onClick={this.onLogin} />
@@ -41,9 +58,24 @@ class PageAuthSelect extends React.Component<Props, State> {
 	};
 	
 	onRegister (e: any) {
+		const { authStore } = this.props;
+		
 		e.preventDefault();
 		
-		this.props.history.push('/auth/setup/register');
+		let request = { 
+			rootPath: Config.root
+		};
+		dispatcher.call('walletCreate', request, (message: any) => {
+			if (message.error.code) {
+				let error = message.error.desc;
+				if (error) {
+					this.setState({ error: error });
+				};
+			} else {
+				authStore.phraseSet(message.mnemonic);
+				this.props.history.push('/auth/register/register');
+			};
+		});
 	};
 	
 };

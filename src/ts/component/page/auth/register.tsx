@@ -86,40 +86,10 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 
 	onSubmit (e: any) {
-		const { authStore } = this.props;
+		const { match } = this.props;
+		
 		e.preventDefault();
-		
-		let request = { 
-			username: authStore.name, 
-			avatarLocalPath: authStore.icon 
-		};
-		
-		dispatcher.call('accountCreate', request, (message: any) => {
-			if (message.error.code) {
-				let error = '';
-				switch (message.error.code) {
-					case Err.FAILED_TO_SET_AVATAR:
-						error = 'Please select profile picture';
-						break; 
-					default:
-						error = message.error.desc;
-						break;
-				};
-				if (error) {
-					this.setState({ error: error });
-				};
-			} else {
-				let account = message.account;
-				
-				authStore.accountSet({
-					id: account.id,
-					name: account.name,
-					icon: account.avatar,
-				});
-				
-				this.props.history.push('/auth/pin-select/register');				
-			};
-		});
+		this.props.history.push('/auth/setup/' + match.params.id);
 	};
 	
 };

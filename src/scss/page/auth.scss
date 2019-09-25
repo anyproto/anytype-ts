@@ -1,3 +1,5 @@
+@import "~scss/_vars";
+
 .page-auth, .page-index-index {
 	.frame { width: 672px; padding: 36px 48px 32px 48px; }
 	.title { font-size: 36px; line-height: 40px; font-weight: 600; letter-spacing: -0.72px; color: #000; margin-bottom: 15px; }
@@ -44,8 +46,17 @@
 		.icon.user { width: 48px; height: 48px; line-height: 50px; font-size: 21px; letter-spacing: -0.16px; margin-right: 12px; }
 		.name { 
 			font-size: 18px; line-height: 26px; display: inline-block; vertical-align: middle; width: calc(100% - 60px); height: 26px; 
-			overflow: hidden; font-weight: 600;
+			overflow: hidden; font-weight: 600; margin-top: 2px;
 		}
+	}
+	
+	.item.add {
+		.icon.plus { width: 48px; height: 48px; margin-right: 12px; background-size: 16px 16px; background-image: url('~img/icon/plus/account0.svg'); }
+		.name { color: #aca996; transition: $transitionFast; }
+	}
+	.item.add:hover {
+		.icon.plus { background-image: url('~img/icon/plus/account1.svg'); }
+		.name { color: #000; }
 	}
 }
 

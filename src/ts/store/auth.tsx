@@ -13,6 +13,8 @@ class AuthStore {
 	@observable public accountList: AccountInterface[] = [];
 	@observable public icon: string = '';
 	@observable public name: string = '';
+	@observable public phrase: string = '';
+	@observable public index: number = 0;
 	
 	@computed
 	get accounts(): AccountInterface[] {
@@ -22,6 +24,16 @@ class AuthStore {
 	@action
 	pinSet (v: string) {
 		this.pin = v;
+	};
+	
+	@action
+	phraseSet (v: string) {
+		this.phrase = v;
+	};
+	
+	@action
+	indexSet (v: number) {
+		this.index = v;
 	};
 	
 	@action
