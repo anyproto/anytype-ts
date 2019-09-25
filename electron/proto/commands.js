@@ -84,35 +84,35 @@ $root.anytype = (function() {
          */
 
         /**
-         * Callback as used by {@link anytype.ClientCommands#walletLogin}.
+         * Callback as used by {@link anytype.ClientCommands#walletRecover}.
          * @memberof anytype.ClientCommands
-         * @typedef WalletLoginCallback
+         * @typedef WalletRecoverCallback
          * @type {function}
          * @param {Error|null} error Error, if any
-         * @param {anytype.WalletLoginR} [response] WalletLoginR
+         * @param {anytype.WalletRecoverR} [response] WalletRecoverR
          */
 
         /**
-         * Calls WalletLogin.
-         * @function walletLogin
+         * Calls WalletRecover.
+         * @function walletRecover
          * @memberof anytype.ClientCommands
          * @instance
-         * @param {anytype.IWalletLoginQ} request WalletLoginQ message or plain object
-         * @param {anytype.ClientCommands.WalletLoginCallback} callback Node-style callback called with the error, if any, and WalletLoginR
+         * @param {anytype.IWalletRecoverQ} request WalletRecoverQ message or plain object
+         * @param {anytype.ClientCommands.WalletRecoverCallback} callback Node-style callback called with the error, if any, and WalletRecoverR
          * @returns {undefined}
          * @variation 1
          */
-        Object.defineProperty(ClientCommands.prototype.walletLogin = function walletLogin(request, callback) {
-            return this.rpcCall(walletLogin, $root.anytype.WalletLoginQ, $root.anytype.WalletLoginR, request, callback);
-        }, "name", { value: "WalletLogin" });
+        Object.defineProperty(ClientCommands.prototype.walletRecover = function walletRecover(request, callback) {
+            return this.rpcCall(walletRecover, $root.anytype.WalletRecoverQ, $root.anytype.WalletRecoverR, request, callback);
+        }, "name", { value: "WalletRecover" });
 
         /**
-         * Calls WalletLogin.
-         * @function walletLogin
+         * Calls WalletRecover.
+         * @function walletRecover
          * @memberof anytype.ClientCommands
          * @instance
-         * @param {anytype.IWalletLoginQ} request WalletLoginQ message or plain object
-         * @returns {Promise<anytype.WalletLoginR>} Promise
+         * @param {anytype.IWalletRecoverQ} request WalletRecoverQ message or plain object
+         * @returns {Promise<anytype.WalletRecoverR>} Promise
          * @variation 2
          */
 
@@ -191,6 +191,7 @@ $root.anytype = (function() {
          * Properties of a WalletCreateQ.
          * @memberof anytype
          * @interface IWalletCreateQ
+         * @property {string|null} [rootPath] WalletCreateQ rootPath
          * @property {string|null} [pin] WalletCreateQ pin
          */
 
@@ -208,6 +209,14 @@ $root.anytype = (function() {
                     if (properties[keys[i]] != null)
                         this[keys[i]] = properties[keys[i]];
         }
+
+        /**
+         * WalletCreateQ rootPath.
+         * @member {string} rootPath
+         * @memberof anytype.WalletCreateQ
+         * @instance
+         */
+        WalletCreateQ.prototype.rootPath = "";
 
         /**
          * WalletCreateQ pin.
@@ -241,8 +250,10 @@ $root.anytype = (function() {
         WalletCreateQ.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.rootPath);
             if (message.pin != null && message.hasOwnProperty("pin"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.pin);
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.pin);
             return writer;
         };
 
@@ -278,6 +289,9 @@ $root.anytype = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
+                    message.rootPath = reader.string();
+                    break;
+                case 2:
                     message.pin = reader.string();
                     break;
                 default:
@@ -315,6 +329,9 @@ $root.anytype = (function() {
         WalletCreateQ.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                if (!$util.isString(message.rootPath))
+                    return "rootPath: string expected";
             if (message.pin != null && message.hasOwnProperty("pin"))
                 if (!$util.isString(message.pin))
                     return "pin: string expected";
@@ -333,6 +350,8 @@ $root.anytype = (function() {
             if (object instanceof $root.anytype.WalletCreateQ)
                 return object;
             var message = new $root.anytype.WalletCreateQ();
+            if (object.rootPath != null)
+                message.rootPath = String(object.rootPath);
             if (object.pin != null)
                 message.pin = String(object.pin);
             return message;
@@ -351,8 +370,12 @@ $root.anytype = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
+                object.rootPath = "";
                 object.pin = "";
+            }
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                object.rootPath = message.rootPath;
             if (message.pin != null && message.hasOwnProperty("pin"))
                 object.pin = message.pin;
             return object;
@@ -379,7 +402,7 @@ $root.anytype = (function() {
          * @memberof anytype
          * @interface IWalletCreateR
          * @property {anytype.WalletCreateR.IError|null} [error] WalletCreateR error
-         * @property {string|null} [mnemonics] WalletCreateR mnemonics
+         * @property {string|null} [mnemonic] WalletCreateR mnemonic
          */
 
         /**
@@ -406,12 +429,12 @@ $root.anytype = (function() {
         WalletCreateR.prototype.error = null;
 
         /**
-         * WalletCreateR mnemonics.
-         * @member {string} mnemonics
+         * WalletCreateR mnemonic.
+         * @member {string} mnemonic
          * @memberof anytype.WalletCreateR
          * @instance
          */
-        WalletCreateR.prototype.mnemonics = "";
+        WalletCreateR.prototype.mnemonic = "";
 
         /**
          * Creates a new WalletCreateR instance using the specified properties.
@@ -439,8 +462,8 @@ $root.anytype = (function() {
                 writer = $Writer.create();
             if (message.error != null && message.hasOwnProperty("error"))
                 $root.anytype.WalletCreateR.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-            if (message.mnemonics != null && message.hasOwnProperty("mnemonics"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.mnemonics);
+            if (message.mnemonic != null && message.hasOwnProperty("mnemonic"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.mnemonic);
             return writer;
         };
 
@@ -479,7 +502,7 @@ $root.anytype = (function() {
                     message.error = $root.anytype.WalletCreateR.Error.decode(reader, reader.uint32());
                     break;
                 case 2:
-                    message.mnemonics = reader.string();
+                    message.mnemonic = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -521,9 +544,9 @@ $root.anytype = (function() {
                 if (error)
                     return "error." + error;
             }
-            if (message.mnemonics != null && message.hasOwnProperty("mnemonics"))
-                if (!$util.isString(message.mnemonics))
-                    return "mnemonics: string expected";
+            if (message.mnemonic != null && message.hasOwnProperty("mnemonic"))
+                if (!$util.isString(message.mnemonic))
+                    return "mnemonic: string expected";
             return null;
         };
 
@@ -544,8 +567,8 @@ $root.anytype = (function() {
                     throw TypeError(".anytype.WalletCreateR.error: object expected");
                 message.error = $root.anytype.WalletCreateR.Error.fromObject(object.error);
             }
-            if (object.mnemonics != null)
-                message.mnemonics = String(object.mnemonics);
+            if (object.mnemonic != null)
+                message.mnemonic = String(object.mnemonic);
             return message;
         };
 
@@ -564,12 +587,12 @@ $root.anytype = (function() {
             var object = {};
             if (options.defaults) {
                 object.error = null;
-                object.mnemonics = "";
+                object.mnemonic = "";
             }
             if (message.error != null && message.hasOwnProperty("error"))
                 object.error = $root.anytype.WalletCreateR.Error.toObject(message.error, options);
-            if (message.mnemonics != null && message.hasOwnProperty("mnemonics"))
-                object.mnemonics = message.mnemonics;
+            if (message.mnemonic != null && message.hasOwnProperty("mnemonic"))
+                object.mnemonic = message.mnemonic;
             return object;
         };
 
@@ -735,6 +758,7 @@ $root.anytype = (function() {
                     case 0:
                     case 1:
                     case 2:
+                    case 101:
                         break;
                     }
                 if (message.desc != null && message.hasOwnProperty("desc"))
@@ -767,6 +791,10 @@ $root.anytype = (function() {
                 case "BAD_INPUT":
                 case 2:
                     message.code = 2;
+                    break;
+                case "FAILED_TO_CREATE_LOCAL_REPO":
+                case 101:
+                    message.code = 101;
                     break;
                 }
                 if (object.desc != null)
@@ -816,12 +844,14 @@ $root.anytype = (function() {
              * @property {number} NULL=0 NULL value
              * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
              * @property {number} BAD_INPUT=2 BAD_INPUT value
+             * @property {number} FAILED_TO_CREATE_LOCAL_REPO=101 FAILED_TO_CREATE_LOCAL_REPO value
              */
             Error.Code = (function() {
                 var valuesById = {}, values = Object.create(valuesById);
                 values[valuesById[0] = "NULL"] = 0;
                 values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
                 values[valuesById[2] = "BAD_INPUT"] = 2;
+                values[valuesById[101] = "FAILED_TO_CREATE_LOCAL_REPO"] = 101;
                 return values;
             })();
 
@@ -831,25 +861,25 @@ $root.anytype = (function() {
         return WalletCreateR;
     })();
 
-    anytype.WalletLoginQ = (function() {
+    anytype.WalletRecoverQ = (function() {
 
         /**
-         * Properties of a WalletLoginQ.
+         * Properties of a WalletRecoverQ.
          * @memberof anytype
-         * @interface IWalletLoginQ
-         * @property {string|null} [mnemonics] WalletLoginQ mnemonics
-         * @property {string|null} [pin] WalletLoginQ pin
+         * @interface IWalletRecoverQ
+         * @property {string|null} [rootPath] WalletRecoverQ rootPath
+         * @property {string|null} [mnemonic] WalletRecoverQ mnemonic
          */
 
         /**
-         * Constructs a new WalletLoginQ.
+         * Constructs a new WalletRecoverQ.
          * @memberof anytype
-         * @classdesc Represents a WalletLoginQ.
-         * @implements IWalletLoginQ
+         * @classdesc Represents a WalletRecoverQ.
+         * @implements IWalletRecoverQ
          * @constructor
-         * @param {anytype.IWalletLoginQ=} [properties] Properties to set
+         * @param {anytype.IWalletRecoverQ=} [properties] Properties to set
          */
-        function WalletLoginQ(properties) {
+        function WalletRecoverQ(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -857,88 +887,88 @@ $root.anytype = (function() {
         }
 
         /**
-         * WalletLoginQ mnemonics.
-         * @member {string} mnemonics
-         * @memberof anytype.WalletLoginQ
+         * WalletRecoverQ rootPath.
+         * @member {string} rootPath
+         * @memberof anytype.WalletRecoverQ
          * @instance
          */
-        WalletLoginQ.prototype.mnemonics = "";
+        WalletRecoverQ.prototype.rootPath = "";
 
         /**
-         * WalletLoginQ pin.
-         * @member {string} pin
-         * @memberof anytype.WalletLoginQ
+         * WalletRecoverQ mnemonic.
+         * @member {string} mnemonic
+         * @memberof anytype.WalletRecoverQ
          * @instance
          */
-        WalletLoginQ.prototype.pin = "";
+        WalletRecoverQ.prototype.mnemonic = "";
 
         /**
-         * Creates a new WalletLoginQ instance using the specified properties.
+         * Creates a new WalletRecoverQ instance using the specified properties.
          * @function create
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @static
-         * @param {anytype.IWalletLoginQ=} [properties] Properties to set
-         * @returns {anytype.WalletLoginQ} WalletLoginQ instance
+         * @param {anytype.IWalletRecoverQ=} [properties] Properties to set
+         * @returns {anytype.WalletRecoverQ} WalletRecoverQ instance
          */
-        WalletLoginQ.create = function create(properties) {
-            return new WalletLoginQ(properties);
+        WalletRecoverQ.create = function create(properties) {
+            return new WalletRecoverQ(properties);
         };
 
         /**
-         * Encodes the specified WalletLoginQ message. Does not implicitly {@link anytype.WalletLoginQ.verify|verify} messages.
+         * Encodes the specified WalletRecoverQ message. Does not implicitly {@link anytype.WalletRecoverQ.verify|verify} messages.
          * @function encode
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @static
-         * @param {anytype.IWalletLoginQ} message WalletLoginQ message or plain object to encode
+         * @param {anytype.IWalletRecoverQ} message WalletRecoverQ message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        WalletLoginQ.encode = function encode(message, writer) {
+        WalletRecoverQ.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.mnemonics != null && message.hasOwnProperty("mnemonics"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.mnemonics);
-            if (message.pin != null && message.hasOwnProperty("pin"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.pin);
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.rootPath);
+            if (message.mnemonic != null && message.hasOwnProperty("mnemonic"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.mnemonic);
             return writer;
         };
 
         /**
-         * Encodes the specified WalletLoginQ message, length delimited. Does not implicitly {@link anytype.WalletLoginQ.verify|verify} messages.
+         * Encodes the specified WalletRecoverQ message, length delimited. Does not implicitly {@link anytype.WalletRecoverQ.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @static
-         * @param {anytype.IWalletLoginQ} message WalletLoginQ message or plain object to encode
+         * @param {anytype.IWalletRecoverQ} message WalletRecoverQ message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        WalletLoginQ.encodeDelimited = function encodeDelimited(message, writer) {
+        WalletRecoverQ.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a WalletLoginQ message from the specified reader or buffer.
+         * Decodes a WalletRecoverQ message from the specified reader or buffer.
          * @function decode
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {anytype.WalletLoginQ} WalletLoginQ
+         * @returns {anytype.WalletRecoverQ} WalletRecoverQ
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        WalletLoginQ.decode = function decode(reader, length) {
+        WalletRecoverQ.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.WalletLoginQ();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.WalletRecoverQ();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.mnemonics = reader.string();
+                    message.rootPath = reader.string();
                     break;
                 case 2:
-                    message.pin = reader.string();
+                    message.mnemonic = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -949,117 +979,116 @@ $root.anytype = (function() {
         };
 
         /**
-         * Decodes a WalletLoginQ message from the specified reader or buffer, length delimited.
+         * Decodes a WalletRecoverQ message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {anytype.WalletLoginQ} WalletLoginQ
+         * @returns {anytype.WalletRecoverQ} WalletRecoverQ
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        WalletLoginQ.decodeDelimited = function decodeDelimited(reader) {
+        WalletRecoverQ.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a WalletLoginQ message.
+         * Verifies a WalletRecoverQ message.
          * @function verify
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        WalletLoginQ.verify = function verify(message) {
+        WalletRecoverQ.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.mnemonics != null && message.hasOwnProperty("mnemonics"))
-                if (!$util.isString(message.mnemonics))
-                    return "mnemonics: string expected";
-            if (message.pin != null && message.hasOwnProperty("pin"))
-                if (!$util.isString(message.pin))
-                    return "pin: string expected";
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                if (!$util.isString(message.rootPath))
+                    return "rootPath: string expected";
+            if (message.mnemonic != null && message.hasOwnProperty("mnemonic"))
+                if (!$util.isString(message.mnemonic))
+                    return "mnemonic: string expected";
             return null;
         };
 
         /**
-         * Creates a WalletLoginQ message from a plain object. Also converts values to their respective internal types.
+         * Creates a WalletRecoverQ message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {anytype.WalletLoginQ} WalletLoginQ
+         * @returns {anytype.WalletRecoverQ} WalletRecoverQ
          */
-        WalletLoginQ.fromObject = function fromObject(object) {
-            if (object instanceof $root.anytype.WalletLoginQ)
+        WalletRecoverQ.fromObject = function fromObject(object) {
+            if (object instanceof $root.anytype.WalletRecoverQ)
                 return object;
-            var message = new $root.anytype.WalletLoginQ();
-            if (object.mnemonics != null)
-                message.mnemonics = String(object.mnemonics);
-            if (object.pin != null)
-                message.pin = String(object.pin);
+            var message = new $root.anytype.WalletRecoverQ();
+            if (object.rootPath != null)
+                message.rootPath = String(object.rootPath);
+            if (object.mnemonic != null)
+                message.mnemonic = String(object.mnemonic);
             return message;
         };
 
         /**
-         * Creates a plain object from a WalletLoginQ message. Also converts values to other types if specified.
+         * Creates a plain object from a WalletRecoverQ message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @static
-         * @param {anytype.WalletLoginQ} message WalletLoginQ
+         * @param {anytype.WalletRecoverQ} message WalletRecoverQ
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        WalletLoginQ.toObject = function toObject(message, options) {
+        WalletRecoverQ.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
             if (options.defaults) {
-                object.mnemonics = "";
-                object.pin = "";
+                object.rootPath = "";
+                object.mnemonic = "";
             }
-            if (message.mnemonics != null && message.hasOwnProperty("mnemonics"))
-                object.mnemonics = message.mnemonics;
-            if (message.pin != null && message.hasOwnProperty("pin"))
-                object.pin = message.pin;
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                object.rootPath = message.rootPath;
+            if (message.mnemonic != null && message.hasOwnProperty("mnemonic"))
+                object.mnemonic = message.mnemonic;
             return object;
         };
 
         /**
-         * Converts this WalletLoginQ to JSON.
+         * Converts this WalletRecoverQ to JSON.
          * @function toJSON
-         * @memberof anytype.WalletLoginQ
+         * @memberof anytype.WalletRecoverQ
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        WalletLoginQ.prototype.toJSON = function toJSON() {
+        WalletRecoverQ.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return WalletLoginQ;
+        return WalletRecoverQ;
     })();
 
-    anytype.WalletLoginR = (function() {
+    anytype.WalletRecoverR = (function() {
 
         /**
-         * Properties of a WalletLoginR.
+         * Properties of a WalletRecoverR.
          * @memberof anytype
-         * @interface IWalletLoginR
-         * @property {anytype.WalletLoginR.IError|null} [error] WalletLoginR error
-         * @property {anytype.IAccounts|null} [accounts] WalletLoginR accounts
+         * @interface IWalletRecoverR
+         * @property {anytype.WalletRecoverR.IError|null} [error] WalletRecoverR error
          */
 
         /**
-         * Constructs a new WalletLoginR.
+         * Constructs a new WalletRecoverR.
          * @memberof anytype
-         * @classdesc Represents a WalletLoginR.
-         * @implements IWalletLoginR
+         * @classdesc Represents a WalletRecoverR.
+         * @implements IWalletRecoverR
          * @constructor
-         * @param {anytype.IWalletLoginR=} [properties] Properties to set
+         * @param {anytype.IWalletRecoverR=} [properties] Properties to set
          */
-        function WalletLoginR(properties) {
+        function WalletRecoverR(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -1067,88 +1096,75 @@ $root.anytype = (function() {
         }
 
         /**
-         * WalletLoginR error.
-         * @member {anytype.WalletLoginR.IError|null|undefined} error
-         * @memberof anytype.WalletLoginR
+         * WalletRecoverR error.
+         * @member {anytype.WalletRecoverR.IError|null|undefined} error
+         * @memberof anytype.WalletRecoverR
          * @instance
          */
-        WalletLoginR.prototype.error = null;
+        WalletRecoverR.prototype.error = null;
 
         /**
-         * WalletLoginR accounts.
-         * @member {anytype.IAccounts|null|undefined} accounts
-         * @memberof anytype.WalletLoginR
-         * @instance
-         */
-        WalletLoginR.prototype.accounts = null;
-
-        /**
-         * Creates a new WalletLoginR instance using the specified properties.
+         * Creates a new WalletRecoverR instance using the specified properties.
          * @function create
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @static
-         * @param {anytype.IWalletLoginR=} [properties] Properties to set
-         * @returns {anytype.WalletLoginR} WalletLoginR instance
+         * @param {anytype.IWalletRecoverR=} [properties] Properties to set
+         * @returns {anytype.WalletRecoverR} WalletRecoverR instance
          */
-        WalletLoginR.create = function create(properties) {
-            return new WalletLoginR(properties);
+        WalletRecoverR.create = function create(properties) {
+            return new WalletRecoverR(properties);
         };
 
         /**
-         * Encodes the specified WalletLoginR message. Does not implicitly {@link anytype.WalletLoginR.verify|verify} messages.
+         * Encodes the specified WalletRecoverR message. Does not implicitly {@link anytype.WalletRecoverR.verify|verify} messages.
          * @function encode
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @static
-         * @param {anytype.IWalletLoginR} message WalletLoginR message or plain object to encode
+         * @param {anytype.IWalletRecoverR} message WalletRecoverR message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        WalletLoginR.encode = function encode(message, writer) {
+        WalletRecoverR.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.error != null && message.hasOwnProperty("error"))
-                $root.anytype.WalletLoginR.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-            if (message.accounts != null && message.hasOwnProperty("accounts"))
-                $root.anytype.Accounts.encode(message.accounts, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.anytype.WalletRecoverR.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
         /**
-         * Encodes the specified WalletLoginR message, length delimited. Does not implicitly {@link anytype.WalletLoginR.verify|verify} messages.
+         * Encodes the specified WalletRecoverR message, length delimited. Does not implicitly {@link anytype.WalletRecoverR.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @static
-         * @param {anytype.IWalletLoginR} message WalletLoginR message or plain object to encode
+         * @param {anytype.IWalletRecoverR} message WalletRecoverR message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        WalletLoginR.encodeDelimited = function encodeDelimited(message, writer) {
+        WalletRecoverR.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a WalletLoginR message from the specified reader or buffer.
+         * Decodes a WalletRecoverR message from the specified reader or buffer.
          * @function decode
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {anytype.WalletLoginR} WalletLoginR
+         * @returns {anytype.WalletRecoverR} WalletRecoverR
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        WalletLoginR.decode = function decode(reader, length) {
+        WalletRecoverR.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.WalletLoginR();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.WalletRecoverR();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.error = $root.anytype.WalletLoginR.Error.decode(reader, reader.uint32());
-                    break;
-                case 2:
-                    message.accounts = $root.anytype.Accounts.decode(reader, reader.uint32());
+                    message.error = $root.anytype.WalletRecoverR.Error.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1159,122 +1175,108 @@ $root.anytype = (function() {
         };
 
         /**
-         * Decodes a WalletLoginR message from the specified reader or buffer, length delimited.
+         * Decodes a WalletRecoverR message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {anytype.WalletLoginR} WalletLoginR
+         * @returns {anytype.WalletRecoverR} WalletRecoverR
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        WalletLoginR.decodeDelimited = function decodeDelimited(reader) {
+        WalletRecoverR.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a WalletLoginR message.
+         * Verifies a WalletRecoverR message.
          * @function verify
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        WalletLoginR.verify = function verify(message) {
+        WalletRecoverR.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.error != null && message.hasOwnProperty("error")) {
-                var error = $root.anytype.WalletLoginR.Error.verify(message.error);
+                var error = $root.anytype.WalletRecoverR.Error.verify(message.error);
                 if (error)
                     return "error." + error;
-            }
-            if (message.accounts != null && message.hasOwnProperty("accounts")) {
-                var error = $root.anytype.Accounts.verify(message.accounts);
-                if (error)
-                    return "accounts." + error;
             }
             return null;
         };
 
         /**
-         * Creates a WalletLoginR message from a plain object. Also converts values to their respective internal types.
+         * Creates a WalletRecoverR message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {anytype.WalletLoginR} WalletLoginR
+         * @returns {anytype.WalletRecoverR} WalletRecoverR
          */
-        WalletLoginR.fromObject = function fromObject(object) {
-            if (object instanceof $root.anytype.WalletLoginR)
+        WalletRecoverR.fromObject = function fromObject(object) {
+            if (object instanceof $root.anytype.WalletRecoverR)
                 return object;
-            var message = new $root.anytype.WalletLoginR();
+            var message = new $root.anytype.WalletRecoverR();
             if (object.error != null) {
                 if (typeof object.error !== "object")
-                    throw TypeError(".anytype.WalletLoginR.error: object expected");
-                message.error = $root.anytype.WalletLoginR.Error.fromObject(object.error);
-            }
-            if (object.accounts != null) {
-                if (typeof object.accounts !== "object")
-                    throw TypeError(".anytype.WalletLoginR.accounts: object expected");
-                message.accounts = $root.anytype.Accounts.fromObject(object.accounts);
+                    throw TypeError(".anytype.WalletRecoverR.error: object expected");
+                message.error = $root.anytype.WalletRecoverR.Error.fromObject(object.error);
             }
             return message;
         };
 
         /**
-         * Creates a plain object from a WalletLoginR message. Also converts values to other types if specified.
+         * Creates a plain object from a WalletRecoverR message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @static
-         * @param {anytype.WalletLoginR} message WalletLoginR
+         * @param {anytype.WalletRecoverR} message WalletRecoverR
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        WalletLoginR.toObject = function toObject(message, options) {
+        WalletRecoverR.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults) {
+            if (options.defaults)
                 object.error = null;
-                object.accounts = null;
-            }
             if (message.error != null && message.hasOwnProperty("error"))
-                object.error = $root.anytype.WalletLoginR.Error.toObject(message.error, options);
-            if (message.accounts != null && message.hasOwnProperty("accounts"))
-                object.accounts = $root.anytype.Accounts.toObject(message.accounts, options);
+                object.error = $root.anytype.WalletRecoverR.Error.toObject(message.error, options);
             return object;
         };
 
         /**
-         * Converts this WalletLoginR to JSON.
+         * Converts this WalletRecoverR to JSON.
          * @function toJSON
-         * @memberof anytype.WalletLoginR
+         * @memberof anytype.WalletRecoverR
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        WalletLoginR.prototype.toJSON = function toJSON() {
+        WalletRecoverR.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        WalletLoginR.Error = (function() {
+        WalletRecoverR.Error = (function() {
 
             /**
              * Properties of an Error.
-             * @memberof anytype.WalletLoginR
+             * @memberof anytype.WalletRecoverR
              * @interface IError
-             * @property {anytype.WalletLoginR.Error.Code|null} [code] Error code
+             * @property {anytype.WalletRecoverR.Error.Code|null} [code] Error code
              * @property {string|null} [desc] Error desc
              */
 
             /**
              * Constructs a new Error.
-             * @memberof anytype.WalletLoginR
+             * @memberof anytype.WalletRecoverR
              * @classdesc Represents an Error.
              * @implements IError
              * @constructor
-             * @param {anytype.WalletLoginR.IError=} [properties] Properties to set
+             * @param {anytype.WalletRecoverR.IError=} [properties] Properties to set
              */
             function Error(properties) {
                 if (properties)
@@ -1285,8 +1287,8 @@ $root.anytype = (function() {
 
             /**
              * Error code.
-             * @member {anytype.WalletLoginR.Error.Code} code
-             * @memberof anytype.WalletLoginR.Error
+             * @member {anytype.WalletRecoverR.Error.Code} code
+             * @memberof anytype.WalletRecoverR.Error
              * @instance
              */
             Error.prototype.code = 0;
@@ -1294,7 +1296,7 @@ $root.anytype = (function() {
             /**
              * Error desc.
              * @member {string} desc
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @instance
              */
             Error.prototype.desc = "";
@@ -1302,21 +1304,21 @@ $root.anytype = (function() {
             /**
              * Creates a new Error instance using the specified properties.
              * @function create
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @static
-             * @param {anytype.WalletLoginR.IError=} [properties] Properties to set
-             * @returns {anytype.WalletLoginR.Error} Error instance
+             * @param {anytype.WalletRecoverR.IError=} [properties] Properties to set
+             * @returns {anytype.WalletRecoverR.Error} Error instance
              */
             Error.create = function create(properties) {
                 return new Error(properties);
             };
 
             /**
-             * Encodes the specified Error message. Does not implicitly {@link anytype.WalletLoginR.Error.verify|verify} messages.
+             * Encodes the specified Error message. Does not implicitly {@link anytype.WalletRecoverR.Error.verify|verify} messages.
              * @function encode
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @static
-             * @param {anytype.WalletLoginR.IError} message Error message or plain object to encode
+             * @param {anytype.WalletRecoverR.IError} message Error message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -1331,11 +1333,11 @@ $root.anytype = (function() {
             };
 
             /**
-             * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.WalletLoginR.Error.verify|verify} messages.
+             * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.WalletRecoverR.Error.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @static
-             * @param {anytype.WalletLoginR.IError} message Error message or plain object to encode
+             * @param {anytype.WalletRecoverR.IError} message Error message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -1346,18 +1348,18 @@ $root.anytype = (function() {
             /**
              * Decodes an Error message from the specified reader or buffer.
              * @function decode
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {anytype.WalletLoginR.Error} Error
+             * @returns {anytype.WalletRecoverR.Error} Error
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
             Error.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.WalletLoginR.Error();
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.WalletRecoverR.Error();
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
@@ -1378,10 +1380,10 @@ $root.anytype = (function() {
             /**
              * Decodes an Error message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {anytype.WalletLoginR.Error} Error
+             * @returns {anytype.WalletRecoverR.Error} Error
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -1394,7 +1396,7 @@ $root.anytype = (function() {
             /**
              * Verifies an Error message.
              * @function verify
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1420,15 +1422,15 @@ $root.anytype = (function() {
             /**
              * Creates an Error message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {anytype.WalletLoginR.Error} Error
+             * @returns {anytype.WalletRecoverR.Error} Error
              */
             Error.fromObject = function fromObject(object) {
-                if (object instanceof $root.anytype.WalletLoginR.Error)
+                if (object instanceof $root.anytype.WalletRecoverR.Error)
                     return object;
-                var message = new $root.anytype.WalletLoginR.Error();
+                var message = new $root.anytype.WalletRecoverR.Error();
                 switch (object.code) {
                 case "NULL":
                 case 0:
@@ -1451,9 +1453,9 @@ $root.anytype = (function() {
             /**
              * Creates a plain object from an Error message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @static
-             * @param {anytype.WalletLoginR.Error} message Error
+             * @param {anytype.WalletRecoverR.Error} message Error
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
@@ -1466,7 +1468,7 @@ $root.anytype = (function() {
                     object.desc = "";
                 }
                 if (message.code != null && message.hasOwnProperty("code"))
-                    object.code = options.enums === String ? $root.anytype.WalletLoginR.Error.Code[message.code] : message.code;
+                    object.code = options.enums === String ? $root.anytype.WalletRecoverR.Error.Code[message.code] : message.code;
                 if (message.desc != null && message.hasOwnProperty("desc"))
                     object.desc = message.desc;
                 return object;
@@ -1475,7 +1477,7 @@ $root.anytype = (function() {
             /**
              * Converts this Error to JSON.
              * @function toJSON
-             * @memberof anytype.WalletLoginR.Error
+             * @memberof anytype.WalletRecoverR.Error
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
@@ -1485,7 +1487,7 @@ $root.anytype = (function() {
 
             /**
              * Code enum.
-             * @name anytype.WalletLoginR.Error.Code
+             * @name anytype.WalletRecoverR.Error.Code
              * @enum {string}
              * @property {number} NULL=0 NULL value
              * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
@@ -1502,7 +1504,7 @@ $root.anytype = (function() {
             return Error;
         })();
 
-        return WalletLoginR;
+        return WalletRecoverR;
     })();
 
     anytype.AccountCreateQ = (function() {
@@ -1511,8 +1513,8 @@ $root.anytype = (function() {
          * Properties of an AccountCreateQ.
          * @memberof anytype
          * @interface IAccountCreateQ
-         * @property {string|null} [name] AccountCreateQ name
-         * @property {string|null} [icon] AccountCreateQ icon
+         * @property {string|null} [username] AccountCreateQ username
+         * @property {string|null} [avatarLocalPath] AccountCreateQ avatarLocalPath
          */
 
         /**
@@ -1531,20 +1533,20 @@ $root.anytype = (function() {
         }
 
         /**
-         * AccountCreateQ name.
-         * @member {string} name
+         * AccountCreateQ username.
+         * @member {string} username
          * @memberof anytype.AccountCreateQ
          * @instance
          */
-        AccountCreateQ.prototype.name = "";
+        AccountCreateQ.prototype.username = "";
 
         /**
-         * AccountCreateQ icon.
-         * @member {string} icon
+         * AccountCreateQ avatarLocalPath.
+         * @member {string} avatarLocalPath
          * @memberof anytype.AccountCreateQ
          * @instance
          */
-        AccountCreateQ.prototype.icon = "";
+        AccountCreateQ.prototype.avatarLocalPath = "";
 
         /**
          * Creates a new AccountCreateQ instance using the specified properties.
@@ -1570,10 +1572,10 @@ $root.anytype = (function() {
         AccountCreateQ.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.name != null && message.hasOwnProperty("name"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
-            if (message.icon != null && message.hasOwnProperty("icon"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.icon);
+            if (message.username != null && message.hasOwnProperty("username"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.username);
+            if (message.avatarLocalPath != null && message.hasOwnProperty("avatarLocalPath"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.avatarLocalPath);
             return writer;
         };
 
@@ -1609,10 +1611,10 @@ $root.anytype = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.name = reader.string();
+                    message.username = reader.string();
                     break;
                 case 2:
-                    message.icon = reader.string();
+                    message.avatarLocalPath = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1649,12 +1651,12 @@ $root.anytype = (function() {
         AccountCreateQ.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.name != null && message.hasOwnProperty("name"))
-                if (!$util.isString(message.name))
-                    return "name: string expected";
-            if (message.icon != null && message.hasOwnProperty("icon"))
-                if (!$util.isString(message.icon))
-                    return "icon: string expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            if (message.avatarLocalPath != null && message.hasOwnProperty("avatarLocalPath"))
+                if (!$util.isString(message.avatarLocalPath))
+                    return "avatarLocalPath: string expected";
             return null;
         };
 
@@ -1670,10 +1672,10 @@ $root.anytype = (function() {
             if (object instanceof $root.anytype.AccountCreateQ)
                 return object;
             var message = new $root.anytype.AccountCreateQ();
-            if (object.name != null)
-                message.name = String(object.name);
-            if (object.icon != null)
-                message.icon = String(object.icon);
+            if (object.username != null)
+                message.username = String(object.username);
+            if (object.avatarLocalPath != null)
+                message.avatarLocalPath = String(object.avatarLocalPath);
             return message;
         };
 
@@ -1691,13 +1693,13 @@ $root.anytype = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                object.name = "";
-                object.icon = "";
+                object.username = "";
+                object.avatarLocalPath = "";
             }
-            if (message.name != null && message.hasOwnProperty("name"))
-                object.name = message.name;
-            if (message.icon != null && message.hasOwnProperty("icon"))
-                object.icon = message.icon;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            if (message.avatarLocalPath != null && message.hasOwnProperty("avatarLocalPath"))
+                object.avatarLocalPath = message.avatarLocalPath;
             return object;
         };
 
@@ -1722,6 +1724,7 @@ $root.anytype = (function() {
          * @memberof anytype
          * @interface IAccountCreateR
          * @property {anytype.AccountCreateR.IError|null} [error] AccountCreateR error
+         * @property {anytype.IAccount|null} [account] AccountCreateR account
          */
 
         /**
@@ -1746,6 +1749,14 @@ $root.anytype = (function() {
          * @instance
          */
         AccountCreateR.prototype.error = null;
+
+        /**
+         * AccountCreateR account.
+         * @member {anytype.IAccount|null|undefined} account
+         * @memberof anytype.AccountCreateR
+         * @instance
+         */
+        AccountCreateR.prototype.account = null;
 
         /**
          * Creates a new AccountCreateR instance using the specified properties.
@@ -1773,6 +1784,8 @@ $root.anytype = (function() {
                 writer = $Writer.create();
             if (message.error != null && message.hasOwnProperty("error"))
                 $root.anytype.AccountCreateR.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.account != null && message.hasOwnProperty("account"))
+                $root.anytype.Account.encode(message.account, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -1809,6 +1822,9 @@ $root.anytype = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.error = $root.anytype.AccountCreateR.Error.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.account = $root.anytype.Account.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1850,6 +1866,11 @@ $root.anytype = (function() {
                 if (error)
                     return "error." + error;
             }
+            if (message.account != null && message.hasOwnProperty("account")) {
+                var error = $root.anytype.Account.verify(message.account);
+                if (error)
+                    return "account." + error;
+            }
             return null;
         };
 
@@ -1870,6 +1891,11 @@ $root.anytype = (function() {
                     throw TypeError(".anytype.AccountCreateR.error: object expected");
                 message.error = $root.anytype.AccountCreateR.Error.fromObject(object.error);
             }
+            if (object.account != null) {
+                if (typeof object.account !== "object")
+                    throw TypeError(".anytype.AccountCreateR.account: object expected");
+                message.account = $root.anytype.Account.fromObject(object.account);
+            }
             return message;
         };
 
@@ -1886,10 +1912,14 @@ $root.anytype = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.error = null;
+                object.account = null;
+            }
             if (message.error != null && message.hasOwnProperty("error"))
                 object.error = $root.anytype.AccountCreateR.Error.toObject(message.error, options);
+            if (message.account != null && message.hasOwnProperty("account"))
+                object.account = $root.anytype.Account.toObject(message.account, options);
             return object;
         };
 
@@ -2055,6 +2085,9 @@ $root.anytype = (function() {
                     case 0:
                     case 1:
                     case 2:
+                    case 101:
+                    case 102:
+                    case 103:
                         break;
                     }
                 if (message.desc != null && message.hasOwnProperty("desc"))
@@ -2087,6 +2120,18 @@ $root.anytype = (function() {
                 case "BAD_INPUT":
                 case 2:
                     message.code = 2;
+                    break;
+                case "FAILED_TO_START_NODE":
+                case 101:
+                    message.code = 101;
+                    break;
+                case "FAILED_TO_SET_NAME":
+                case 102:
+                    message.code = 102;
+                    break;
+                case "FAILED_TO_SET_AVATAR":
+                case 103:
+                    message.code = 103;
                     break;
                 }
                 if (object.desc != null)
@@ -2136,12 +2181,18 @@ $root.anytype = (function() {
              * @property {number} NULL=0 NULL value
              * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
              * @property {number} BAD_INPUT=2 BAD_INPUT value
+             * @property {number} FAILED_TO_START_NODE=101 FAILED_TO_START_NODE value
+             * @property {number} FAILED_TO_SET_NAME=102 FAILED_TO_SET_NAME value
+             * @property {number} FAILED_TO_SET_AVATAR=103 FAILED_TO_SET_AVATAR value
              */
             Error.Code = (function() {
                 var valuesById = {}, values = Object.create(valuesById);
                 values[valuesById[0] = "NULL"] = 0;
                 values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
                 values[valuesById[2] = "BAD_INPUT"] = 2;
+                values[valuesById[101] = "FAILED_TO_START_NODE"] = 101;
+                values[valuesById[102] = "FAILED_TO_SET_NAME"] = 102;
+                values[valuesById[103] = "FAILED_TO_SET_AVATAR"] = 103;
                 return values;
             })();
 
@@ -2157,7 +2208,7 @@ $root.anytype = (function() {
          * Properties of an AccountSelectQ.
          * @memberof anytype
          * @interface IAccountSelectQ
-         * @property {string|null} [id] AccountSelectQ id
+         * @property {number|Long|null} [index] AccountSelectQ index
          */
 
         /**
@@ -2176,12 +2227,12 @@ $root.anytype = (function() {
         }
 
         /**
-         * AccountSelectQ id.
-         * @member {string} id
+         * AccountSelectQ index.
+         * @member {number|Long} index
          * @memberof anytype.AccountSelectQ
          * @instance
          */
-        AccountSelectQ.prototype.id = "";
+        AccountSelectQ.prototype.index = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
          * Creates a new AccountSelectQ instance using the specified properties.
@@ -2207,8 +2258,8 @@ $root.anytype = (function() {
         AccountSelectQ.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.id != null && message.hasOwnProperty("id"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.index != null && message.hasOwnProperty("index"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.index);
             return writer;
         };
 
@@ -2244,7 +2295,7 @@ $root.anytype = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.id = reader.string();
+                    message.index = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2281,9 +2332,9 @@ $root.anytype = (function() {
         AccountSelectQ.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.id != null && message.hasOwnProperty("id"))
-                if (!$util.isString(message.id))
-                    return "id: string expected";
+            if (message.index != null && message.hasOwnProperty("index"))
+                if (!$util.isInteger(message.index) && !(message.index && $util.isInteger(message.index.low) && $util.isInteger(message.index.high)))
+                    return "index: integer|Long expected";
             return null;
         };
 
@@ -2299,8 +2350,15 @@ $root.anytype = (function() {
             if (object instanceof $root.anytype.AccountSelectQ)
                 return object;
             var message = new $root.anytype.AccountSelectQ();
-            if (object.id != null)
-                message.id = String(object.id);
+            if (object.index != null)
+                if ($util.Long)
+                    (message.index = $util.Long.fromValue(object.index)).unsigned = false;
+                else if (typeof object.index === "string")
+                    message.index = parseInt(object.index, 10);
+                else if (typeof object.index === "number")
+                    message.index = object.index;
+                else if (typeof object.index === "object")
+                    message.index = new $util.LongBits(object.index.low >>> 0, object.index.high >>> 0).toNumber();
             return message;
         };
 
@@ -2318,9 +2376,16 @@ $root.anytype = (function() {
                 options = {};
             var object = {};
             if (options.defaults)
-                object.id = "";
-            if (message.id != null && message.hasOwnProperty("id"))
-                object.id = message.id;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.index = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.index = options.longs === String ? "0" : 0;
+            if (message.index != null && message.hasOwnProperty("index"))
+                if (typeof message.index === "number")
+                    object.index = options.longs === String ? String(message.index) : message.index;
+                else
+                    object.index = options.longs === String ? $util.Long.prototype.toString.call(message.index) : options.longs === Number ? new $util.LongBits(message.index.low >>> 0, message.index.high >>> 0).toNumber() : message.index;
             return object;
         };
 
@@ -2345,6 +2410,7 @@ $root.anytype = (function() {
          * @memberof anytype
          * @interface IAccountSelectR
          * @property {anytype.AccountSelectR.IError|null} [error] AccountSelectR error
+         * @property {anytype.IAccount|null} [account] AccountSelectR account
          */
 
         /**
@@ -2369,6 +2435,14 @@ $root.anytype = (function() {
          * @instance
          */
         AccountSelectR.prototype.error = null;
+
+        /**
+         * AccountSelectR account.
+         * @member {anytype.IAccount|null|undefined} account
+         * @memberof anytype.AccountSelectR
+         * @instance
+         */
+        AccountSelectR.prototype.account = null;
 
         /**
          * Creates a new AccountSelectR instance using the specified properties.
@@ -2396,6 +2470,8 @@ $root.anytype = (function() {
                 writer = $Writer.create();
             if (message.error != null && message.hasOwnProperty("error"))
                 $root.anytype.AccountSelectR.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.account != null && message.hasOwnProperty("account"))
+                $root.anytype.Account.encode(message.account, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -2432,6 +2508,9 @@ $root.anytype = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.error = $root.anytype.AccountSelectR.Error.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.account = $root.anytype.Account.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2473,6 +2552,11 @@ $root.anytype = (function() {
                 if (error)
                     return "error." + error;
             }
+            if (message.account != null && message.hasOwnProperty("account")) {
+                var error = $root.anytype.Account.verify(message.account);
+                if (error)
+                    return "account." + error;
+            }
             return null;
         };
 
@@ -2493,6 +2577,11 @@ $root.anytype = (function() {
                     throw TypeError(".anytype.AccountSelectR.error: object expected");
                 message.error = $root.anytype.AccountSelectR.Error.fromObject(object.error);
             }
+            if (object.account != null) {
+                if (typeof object.account !== "object")
+                    throw TypeError(".anytype.AccountSelectR.account: object expected");
+                message.account = $root.anytype.Account.fromObject(object.account);
+            }
             return message;
         };
 
@@ -2509,10 +2598,14 @@ $root.anytype = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.error = null;
+                object.account = null;
+            }
             if (message.error != null && message.hasOwnProperty("error"))
                 object.error = $root.anytype.AccountSelectR.Error.toObject(message.error, options);
+            if (message.account != null && message.hasOwnProperty("account"))
+                object.account = $root.anytype.Account.toObject(message.account, options);
             return object;
         };
 
@@ -2678,6 +2771,10 @@ $root.anytype = (function() {
                     case 0:
                     case 1:
                     case 2:
+                    case 101:
+                    case 102:
+                    case 103:
+                    case 104:
                         break;
                     }
                 if (message.desc != null && message.hasOwnProperty("desc"))
@@ -2710,6 +2807,22 @@ $root.anytype = (function() {
                 case "BAD_INPUT":
                 case 2:
                     message.code = 2;
+                    break;
+                case "FAILED_TO_CREATE_LOCAL_REPO":
+                case 101:
+                    message.code = 101;
+                    break;
+                case "LOCAL_REPO_EXISTS_BUT_CORRUPTED":
+                case 102:
+                    message.code = 102;
+                    break;
+                case "FAILED_TO_RUN_NODE":
+                case 103:
+                    message.code = 103;
+                    break;
+                case "FAILED_TO_FIND_ACCOUNT_INFO":
+                case 104:
+                    message.code = 104;
                     break;
                 }
                 if (object.desc != null)
@@ -2759,12 +2872,20 @@ $root.anytype = (function() {
              * @property {number} NULL=0 NULL value
              * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
              * @property {number} BAD_INPUT=2 BAD_INPUT value
+             * @property {number} FAILED_TO_CREATE_LOCAL_REPO=101 FAILED_TO_CREATE_LOCAL_REPO value
+             * @property {number} LOCAL_REPO_EXISTS_BUT_CORRUPTED=102 LOCAL_REPO_EXISTS_BUT_CORRUPTED value
+             * @property {number} FAILED_TO_RUN_NODE=103 FAILED_TO_RUN_NODE value
+             * @property {number} FAILED_TO_FIND_ACCOUNT_INFO=104 FAILED_TO_FIND_ACCOUNT_INFO value
              */
             Error.Code = (function() {
                 var valuesById = {}, values = Object.create(valuesById);
                 values[valuesById[0] = "NULL"] = 0;
                 values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
                 values[valuesById[2] = "BAD_INPUT"] = 2;
+                values[valuesById[101] = "FAILED_TO_CREATE_LOCAL_REPO"] = 101;
+                values[valuesById[102] = "LOCAL_REPO_EXISTS_BUT_CORRUPTED"] = 102;
+                values[valuesById[103] = "FAILED_TO_RUN_NODE"] = 103;
+                values[valuesById[104] = "FAILED_TO_FIND_ACCOUNT_INFO"] = 104;
                 return values;
             })();
 
@@ -2782,7 +2903,7 @@ $root.anytype = (function() {
          * @interface IAccount
          * @property {string|null} [id] Account id
          * @property {string|null} [name] Account name
-         * @property {string|null} [icon] Account icon
+         * @property {string|null} [avatar] Account avatar
          */
 
         /**
@@ -2817,12 +2938,12 @@ $root.anytype = (function() {
         Account.prototype.name = "";
 
         /**
-         * Account icon.
-         * @member {string} icon
+         * Account avatar.
+         * @member {string} avatar
          * @memberof anytype.Account
          * @instance
          */
-        Account.prototype.icon = "";
+        Account.prototype.avatar = "";
 
         /**
          * Creates a new Account instance using the specified properties.
@@ -2852,8 +2973,8 @@ $root.anytype = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
             if (message.name != null && message.hasOwnProperty("name"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
-            if (message.icon != null && message.hasOwnProperty("icon"))
-                writer.uint32(/* id 3, wireType 2 =*/26).string(message.icon);
+            if (message.avatar != null && message.hasOwnProperty("avatar"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.avatar);
             return writer;
         };
 
@@ -2895,7 +3016,7 @@ $root.anytype = (function() {
                     message.name = reader.string();
                     break;
                 case 3:
-                    message.icon = reader.string();
+                    message.avatar = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2938,9 +3059,9 @@ $root.anytype = (function() {
             if (message.name != null && message.hasOwnProperty("name"))
                 if (!$util.isString(message.name))
                     return "name: string expected";
-            if (message.icon != null && message.hasOwnProperty("icon"))
-                if (!$util.isString(message.icon))
-                    return "icon: string expected";
+            if (message.avatar != null && message.hasOwnProperty("avatar"))
+                if (!$util.isString(message.avatar))
+                    return "avatar: string expected";
             return null;
         };
 
@@ -2960,8 +3081,8 @@ $root.anytype = (function() {
                 message.id = String(object.id);
             if (object.name != null)
                 message.name = String(object.name);
-            if (object.icon != null)
-                message.icon = String(object.icon);
+            if (object.avatar != null)
+                message.avatar = String(object.avatar);
             return message;
         };
 
@@ -2981,14 +3102,14 @@ $root.anytype = (function() {
             if (options.defaults) {
                 object.id = "";
                 object.name = "";
-                object.icon = "";
+                object.avatar = "";
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
             if (message.name != null && message.hasOwnProperty("name"))
                 object.name = message.name;
-            if (message.icon != null && message.hasOwnProperty("icon"))
-                object.icon = message.icon;
+            if (message.avatar != null && message.hasOwnProperty("avatar"))
+                object.avatar = message.avatar;
             return object;
         };
 
@@ -4804,6 +4925,7 @@ $root.anytype = (function() {
          * Properties of an Event.
          * @memberof anytype
          * @interface IEvent
+         * @property {anytype.IAccountAdd|null} [accountAdd] Event accountAdd
          * @property {anytype.IBlockCreate|null} [blockCreate] Event blockCreate
          * @property {anytype.IBlockUpdate|null} [blockUpdate] Event blockUpdate
          * @property {anytype.IBlockRemove|null} [blockRemove] Event blockRemove
@@ -4823,6 +4945,14 @@ $root.anytype = (function() {
                     if (properties[keys[i]] != null)
                         this[keys[i]] = properties[keys[i]];
         }
+
+        /**
+         * Event accountAdd.
+         * @member {anytype.IAccountAdd|null|undefined} accountAdd
+         * @memberof anytype.Event
+         * @instance
+         */
+        Event.prototype.accountAdd = null;
 
         /**
          * Event blockCreate.
@@ -4853,12 +4983,12 @@ $root.anytype = (function() {
 
         /**
          * Event message.
-         * @member {"blockCreate"|"blockUpdate"|"blockRemove"|undefined} message
+         * @member {"accountAdd"|"blockCreate"|"blockUpdate"|"blockRemove"|undefined} message
          * @memberof anytype.Event
          * @instance
          */
         Object.defineProperty(Event.prototype, "message", {
-            get: $util.oneOfGetter($oneOfFields = ["blockCreate", "blockUpdate", "blockRemove"]),
+            get: $util.oneOfGetter($oneOfFields = ["accountAdd", "blockCreate", "blockUpdate", "blockRemove"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -4886,12 +5016,14 @@ $root.anytype = (function() {
         Event.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
+            if (message.accountAdd != null && message.hasOwnProperty("accountAdd"))
+                $root.anytype.AccountAdd.encode(message.accountAdd, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.blockCreate != null && message.hasOwnProperty("blockCreate"))
-                $root.anytype.BlockCreate.encode(message.blockCreate, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                $root.anytype.BlockCreate.encode(message.blockCreate, writer.uint32(/* id 102, wireType 2 =*/818).fork()).ldelim();
             if (message.blockUpdate != null && message.hasOwnProperty("blockUpdate"))
-                $root.anytype.BlockUpdate.encode(message.blockUpdate, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.anytype.BlockUpdate.encode(message.blockUpdate, writer.uint32(/* id 103, wireType 2 =*/826).fork()).ldelim();
             if (message.blockRemove != null && message.hasOwnProperty("blockRemove"))
-                $root.anytype.BlockRemove.encode(message.blockRemove, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                $root.anytype.BlockRemove.encode(message.blockRemove, writer.uint32(/* id 104, wireType 2 =*/834).fork()).ldelim();
             return writer;
         };
 
@@ -4927,12 +5059,15 @@ $root.anytype = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
+                    message.accountAdd = $root.anytype.AccountAdd.decode(reader, reader.uint32());
+                    break;
+                case 102:
                     message.blockCreate = $root.anytype.BlockCreate.decode(reader, reader.uint32());
                     break;
-                case 2:
+                case 103:
                     message.blockUpdate = $root.anytype.BlockUpdate.decode(reader, reader.uint32());
                     break;
-                case 3:
+                case 104:
                     message.blockRemove = $root.anytype.BlockRemove.decode(reader, reader.uint32());
                     break;
                 default:
@@ -4971,7 +5106,17 @@ $root.anytype = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             var properties = {};
+            if (message.accountAdd != null && message.hasOwnProperty("accountAdd")) {
+                properties.message = 1;
+                {
+                    var error = $root.anytype.AccountAdd.verify(message.accountAdd);
+                    if (error)
+                        return "accountAdd." + error;
+                }
+            }
             if (message.blockCreate != null && message.hasOwnProperty("blockCreate")) {
+                if (properties.message === 1)
+                    return "message: multiple values";
                 properties.message = 1;
                 {
                     var error = $root.anytype.BlockCreate.verify(message.blockCreate);
@@ -5014,6 +5159,11 @@ $root.anytype = (function() {
             if (object instanceof $root.anytype.Event)
                 return object;
             var message = new $root.anytype.Event();
+            if (object.accountAdd != null) {
+                if (typeof object.accountAdd !== "object")
+                    throw TypeError(".anytype.Event.accountAdd: object expected");
+                message.accountAdd = $root.anytype.AccountAdd.fromObject(object.accountAdd);
+            }
             if (object.blockCreate != null) {
                 if (typeof object.blockCreate !== "object")
                     throw TypeError(".anytype.Event.blockCreate: object expected");
@@ -5045,6 +5195,11 @@ $root.anytype = (function() {
             if (!options)
                 options = {};
             var object = {};
+            if (message.accountAdd != null && message.hasOwnProperty("accountAdd")) {
+                object.accountAdd = $root.anytype.AccountAdd.toObject(message.accountAdd, options);
+                if (options.oneofs)
+                    object.message = "accountAdd";
+            }
             if (message.blockCreate != null && message.hasOwnProperty("blockCreate")) {
                 object.blockCreate = $root.anytype.BlockCreate.toObject(message.blockCreate, options);
                 if (options.oneofs)
@@ -5075,6 +5230,534 @@ $root.anytype = (function() {
         };
 
         return Event;
+    })();
+
+    anytype.AccountAdd = (function() {
+
+        /**
+         * Properties of an AccountAdd.
+         * @memberof anytype
+         * @interface IAccountAdd
+         * @property {anytype.AccountAdd.IError|null} [error] AccountAdd error
+         * @property {number|Long|null} [index] AccountAdd index
+         * @property {anytype.IAccount|null} [account] AccountAdd account
+         */
+
+        /**
+         * Constructs a new AccountAdd.
+         * @memberof anytype
+         * @classdesc Represents an AccountAdd.
+         * @implements IAccountAdd
+         * @constructor
+         * @param {anytype.IAccountAdd=} [properties] Properties to set
+         */
+        function AccountAdd(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AccountAdd error.
+         * @member {anytype.AccountAdd.IError|null|undefined} error
+         * @memberof anytype.AccountAdd
+         * @instance
+         */
+        AccountAdd.prototype.error = null;
+
+        /**
+         * AccountAdd index.
+         * @member {number|Long} index
+         * @memberof anytype.AccountAdd
+         * @instance
+         */
+        AccountAdd.prototype.index = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * AccountAdd account.
+         * @member {anytype.IAccount|null|undefined} account
+         * @memberof anytype.AccountAdd
+         * @instance
+         */
+        AccountAdd.prototype.account = null;
+
+        /**
+         * Creates a new AccountAdd instance using the specified properties.
+         * @function create
+         * @memberof anytype.AccountAdd
+         * @static
+         * @param {anytype.IAccountAdd=} [properties] Properties to set
+         * @returns {anytype.AccountAdd} AccountAdd instance
+         */
+        AccountAdd.create = function create(properties) {
+            return new AccountAdd(properties);
+        };
+
+        /**
+         * Encodes the specified AccountAdd message. Does not implicitly {@link anytype.AccountAdd.verify|verify} messages.
+         * @function encode
+         * @memberof anytype.AccountAdd
+         * @static
+         * @param {anytype.IAccountAdd} message AccountAdd message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountAdd.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.error != null && message.hasOwnProperty("error"))
+                $root.anytype.AccountAdd.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.index != null && message.hasOwnProperty("index"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.index);
+            if (message.account != null && message.hasOwnProperty("account"))
+                $root.anytype.Account.encode(message.account, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AccountAdd message, length delimited. Does not implicitly {@link anytype.AccountAdd.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof anytype.AccountAdd
+         * @static
+         * @param {anytype.IAccountAdd} message AccountAdd message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountAdd.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AccountAdd message from the specified reader or buffer.
+         * @function decode
+         * @memberof anytype.AccountAdd
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {anytype.AccountAdd} AccountAdd
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountAdd.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountAdd();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.error = $root.anytype.AccountAdd.Error.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.index = reader.int64();
+                    break;
+                case 3:
+                    message.account = $root.anytype.Account.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AccountAdd message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof anytype.AccountAdd
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {anytype.AccountAdd} AccountAdd
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountAdd.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AccountAdd message.
+         * @function verify
+         * @memberof anytype.AccountAdd
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AccountAdd.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.error != null && message.hasOwnProperty("error")) {
+                var error = $root.anytype.AccountAdd.Error.verify(message.error);
+                if (error)
+                    return "error." + error;
+            }
+            if (message.index != null && message.hasOwnProperty("index"))
+                if (!$util.isInteger(message.index) && !(message.index && $util.isInteger(message.index.low) && $util.isInteger(message.index.high)))
+                    return "index: integer|Long expected";
+            if (message.account != null && message.hasOwnProperty("account")) {
+                var error = $root.anytype.Account.verify(message.account);
+                if (error)
+                    return "account." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an AccountAdd message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof anytype.AccountAdd
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {anytype.AccountAdd} AccountAdd
+         */
+        AccountAdd.fromObject = function fromObject(object) {
+            if (object instanceof $root.anytype.AccountAdd)
+                return object;
+            var message = new $root.anytype.AccountAdd();
+            if (object.error != null) {
+                if (typeof object.error !== "object")
+                    throw TypeError(".anytype.AccountAdd.error: object expected");
+                message.error = $root.anytype.AccountAdd.Error.fromObject(object.error);
+            }
+            if (object.index != null)
+                if ($util.Long)
+                    (message.index = $util.Long.fromValue(object.index)).unsigned = false;
+                else if (typeof object.index === "string")
+                    message.index = parseInt(object.index, 10);
+                else if (typeof object.index === "number")
+                    message.index = object.index;
+                else if (typeof object.index === "object")
+                    message.index = new $util.LongBits(object.index.low >>> 0, object.index.high >>> 0).toNumber();
+            if (object.account != null) {
+                if (typeof object.account !== "object")
+                    throw TypeError(".anytype.AccountAdd.account: object expected");
+                message.account = $root.anytype.Account.fromObject(object.account);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AccountAdd message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof anytype.AccountAdd
+         * @static
+         * @param {anytype.AccountAdd} message AccountAdd
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AccountAdd.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.error = null;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.index = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.index = options.longs === String ? "0" : 0;
+                object.account = null;
+            }
+            if (message.error != null && message.hasOwnProperty("error"))
+                object.error = $root.anytype.AccountAdd.Error.toObject(message.error, options);
+            if (message.index != null && message.hasOwnProperty("index"))
+                if (typeof message.index === "number")
+                    object.index = options.longs === String ? String(message.index) : message.index;
+                else
+                    object.index = options.longs === String ? $util.Long.prototype.toString.call(message.index) : options.longs === Number ? new $util.LongBits(message.index.low >>> 0, message.index.high >>> 0).toNumber() : message.index;
+            if (message.account != null && message.hasOwnProperty("account"))
+                object.account = $root.anytype.Account.toObject(message.account, options);
+            return object;
+        };
+
+        /**
+         * Converts this AccountAdd to JSON.
+         * @function toJSON
+         * @memberof anytype.AccountAdd
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AccountAdd.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        AccountAdd.Error = (function() {
+
+            /**
+             * Properties of an Error.
+             * @memberof anytype.AccountAdd
+             * @interface IError
+             * @property {anytype.AccountAdd.Error.Code|null} [code] Error code
+             * @property {string|null} [desc] Error desc
+             */
+
+            /**
+             * Constructs a new Error.
+             * @memberof anytype.AccountAdd
+             * @classdesc Represents an Error.
+             * @implements IError
+             * @constructor
+             * @param {anytype.AccountAdd.IError=} [properties] Properties to set
+             */
+            function Error(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Error code.
+             * @member {anytype.AccountAdd.Error.Code} code
+             * @memberof anytype.AccountAdd.Error
+             * @instance
+             */
+            Error.prototype.code = 0;
+
+            /**
+             * Error desc.
+             * @member {string} desc
+             * @memberof anytype.AccountAdd.Error
+             * @instance
+             */
+            Error.prototype.desc = "";
+
+            /**
+             * Creates a new Error instance using the specified properties.
+             * @function create
+             * @memberof anytype.AccountAdd.Error
+             * @static
+             * @param {anytype.AccountAdd.IError=} [properties] Properties to set
+             * @returns {anytype.AccountAdd.Error} Error instance
+             */
+            Error.create = function create(properties) {
+                return new Error(properties);
+            };
+
+            /**
+             * Encodes the specified Error message. Does not implicitly {@link anytype.AccountAdd.Error.verify|verify} messages.
+             * @function encode
+             * @memberof anytype.AccountAdd.Error
+             * @static
+             * @param {anytype.AccountAdd.IError} message Error message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Error.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.code != null && message.hasOwnProperty("code"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                if (message.desc != null && message.hasOwnProperty("desc"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.desc);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.AccountAdd.Error.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof anytype.AccountAdd.Error
+             * @static
+             * @param {anytype.AccountAdd.IError} message Error message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Error.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes an Error message from the specified reader or buffer.
+             * @function decode
+             * @memberof anytype.AccountAdd.Error
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {anytype.AccountAdd.Error} Error
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Error.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountAdd.Error();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.code = reader.int32();
+                        break;
+                    case 2:
+                        message.desc = reader.string();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes an Error message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof anytype.AccountAdd.Error
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {anytype.AccountAdd.Error} Error
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Error.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies an Error message.
+             * @function verify
+             * @memberof anytype.AccountAdd.Error
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Error.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.code != null && message.hasOwnProperty("code"))
+                    switch (message.code) {
+                    default:
+                        return "code: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 101:
+                    case 102:
+                    case 103:
+                    case 104:
+                        break;
+                    }
+                if (message.desc != null && message.hasOwnProperty("desc"))
+                    if (!$util.isString(message.desc))
+                        return "desc: string expected";
+                return null;
+            };
+
+            /**
+             * Creates an Error message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof anytype.AccountAdd.Error
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {anytype.AccountAdd.Error} Error
+             */
+            Error.fromObject = function fromObject(object) {
+                if (object instanceof $root.anytype.AccountAdd.Error)
+                    return object;
+                var message = new $root.anytype.AccountAdd.Error();
+                switch (object.code) {
+                case "NULL":
+                case 0:
+                    message.code = 0;
+                    break;
+                case "UNKNOWN_ERROR":
+                case 1:
+                    message.code = 1;
+                    break;
+                case "BAD_INPUT":
+                case 2:
+                    message.code = 2;
+                    break;
+                case "FAILED_TO_CREATE_LOCAL_REPO":
+                case 101:
+                    message.code = 101;
+                    break;
+                case "LOCAL_REPO_EXISTS_BUT_CORRUPTED":
+                case 102:
+                    message.code = 102;
+                    break;
+                case "FAILED_TO_RUN_NODE":
+                case 103:
+                    message.code = 103;
+                    break;
+                case "FAILED_TO_FIND_ACCOUNT_INFO":
+                case 104:
+                    message.code = 104;
+                    break;
+                }
+                if (object.desc != null)
+                    message.desc = String(object.desc);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from an Error message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof anytype.AccountAdd.Error
+             * @static
+             * @param {anytype.AccountAdd.Error} message Error
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Error.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.code = options.enums === String ? "NULL" : 0;
+                    object.desc = "";
+                }
+                if (message.code != null && message.hasOwnProperty("code"))
+                    object.code = options.enums === String ? $root.anytype.AccountAdd.Error.Code[message.code] : message.code;
+                if (message.desc != null && message.hasOwnProperty("desc"))
+                    object.desc = message.desc;
+                return object;
+            };
+
+            /**
+             * Converts this Error to JSON.
+             * @function toJSON
+             * @memberof anytype.AccountAdd.Error
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Error.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Code enum.
+             * @name anytype.AccountAdd.Error.Code
+             * @enum {string}
+             * @property {number} NULL=0 NULL value
+             * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+             * @property {number} BAD_INPUT=2 BAD_INPUT value
+             * @property {number} FAILED_TO_CREATE_LOCAL_REPO=101 FAILED_TO_CREATE_LOCAL_REPO value
+             * @property {number} LOCAL_REPO_EXISTS_BUT_CORRUPTED=102 LOCAL_REPO_EXISTS_BUT_CORRUPTED value
+             * @property {number} FAILED_TO_RUN_NODE=103 FAILED_TO_RUN_NODE value
+             * @property {number} FAILED_TO_FIND_ACCOUNT_INFO=104 FAILED_TO_FIND_ACCOUNT_INFO value
+             */
+            Error.Code = (function() {
+                var valuesById = {}, values = Object.create(valuesById);
+                values[valuesById[0] = "NULL"] = 0;
+                values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                values[valuesById[2] = "BAD_INPUT"] = 2;
+                values[valuesById[101] = "FAILED_TO_CREATE_LOCAL_REPO"] = 101;
+                values[valuesById[102] = "LOCAL_REPO_EXISTS_BUT_CORRUPTED"] = 102;
+                values[valuesById[103] = "FAILED_TO_RUN_NODE"] = 103;
+                values[valuesById[104] = "FAILED_TO_FIND_ACCOUNT_INFO"] = 104;
+                return values;
+            })();
+
+            return Error;
+        })();
+
+        return AccountAdd;
     })();
 
     anytype.BlockCreate = (function() {

@@ -46,12 +46,13 @@ class Dispatcher {
 			throw '[Dispatcher.call] Service not found: ' + type;
 		};
 		
+		console.log('[Dispatcher.call]', type, data);
 		this.service[type](data, (message: any) => {
 			if (!callBack) {
 				return;
 			};
 			
-			console.log('[Dispatcher.call]', message);
+			console.log('[Dispatcher.call] message', message);
 			callBack(message);
 		});
 	};
