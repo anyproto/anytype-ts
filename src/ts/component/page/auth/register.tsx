@@ -3,7 +3,12 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { Util } from 'ts/lib';
+import { dispatcher, Util } from 'ts/lib';
+
+const { dialog } = window.require('electron').remote;
+const Err: any = {
+	FAILED_TO_SET_AVATAR: 103
+};
 
 interface Props extends RouteComponentProps<any> {
 	authStore?: any;
@@ -17,18 +22,17 @@ interface State {
 @observer
 class PageAuthRegister extends React.Component<Props, State> {
 
-	fileRef: any;
 	nameRef: any;
 
 	state = {
 		error: '',
-		preview: ''
+		preview: '',
 	};
 	
 	constructor (props: any) {
-        super(props);
+		super(props);
 
-		this.onFileChange = this.onFileChange.bind(this);
+		this.onFileClick = this.onFileClick.bind(this);
 		this.onNameChange = this.onNameChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 	};
@@ -37,7 +41,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 		const { error, preview } = this.state;
 		const { authStore } = this.props;
 		
-        return (
+		return (
 			<div>
 				<Cover num={3} />
 				<Header />
@@ -47,9 +51,8 @@ class PageAuthRegister extends React.Component<Props, State> {
 					<Title text="Add name and profile picture" />
 					<Error text={error} />
 		
-					<div className="fileWrap">
+					<div className="fileWrap" onMouseDown={this.onFileClick}>
 						<IconUser icon={preview} className={preview ? 'active' : ''} />
-						<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
 					</div>
 						
 					<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
@@ -57,18 +60,24 @@ class PageAuthRegister extends React.Component<Props, State> {
 				</Frame>
 			</div>
 		);
-    };
+	};
 
-	onFileChange (e: any) {
-		if (!e.target.files.length) {
-			return;
-		};
+	onFileClick (e: any) {
+		const { authStore } = this.props;
 		
-		let icon = e.target.files[0];
-		
-		Util.loadPreviewBase64(icon, {}, (image: string, param: any) => {
-			this.setState({ preview: image });
-		});
+		dialog.showOpenDialog({ properties: [ 'openFile' ] }, (files: any) => {
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+
+			let path = files[0];
+			let file = Util.makeFileFromPath(path);
+			
+			authStore.iconSet(path);
+			Util.loadPreviewBase64(file, {}, (image: string, param: any) => {
+				this.setState({ preview: image });
+			});
+	    });
 	};
 	
 	onNameChange (e: any) {
@@ -77,9 +86,40 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 
 	onSubmit (e: any) {
+		const { authStore } = this.props;
 		e.preventDefault();
 		
-		this.props.history.push('/auth/pin-select/register');
+		let request = { 
+			username: authStore.name, 
+			avatarLocalPath: authStore.icon 
+		};
+		
+		dispatcher.call('accountCreate', request, (message: any) => {
+			if (message.error.code) {
+				let error = '';
+				switch (message.error.code) {
+					case Err.FAILED_TO_SET_AVATAR:
+						error = 'Please select profile picture';
+						break; 
+					default:
+						error = message.error.desc;
+						break;
+				};
+				if (error) {
+					this.setState({ error: error });
+				};
+			} else {
+				let account = message.account;
+				
+				authStore.accountSet({
+					id: account.id,
+					name: account.name,
+					icon: account.avatar,
+				});
+				
+				this.props.history.push('/auth/pin-select/register');				
+			};
+		});
 	};
 	
 };

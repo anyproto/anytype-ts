@@ -1,9 +1,22 @@
-const loadImage = require('blueimp-load-image');
+const loadImage = window.require('blueimp-load-image');
+const fs = window.require('fs');
+const readChunk = window.require('read-chunk');
+const fileType = window.require('file-type');
 
 class Util {
 	
 	toCamelCase (str: string) {
 		return str[0].toUpperCase() + str.slice(1, str.length);
+	};
+	
+	makeFileFromPath (path: string) {
+		let fn = path.split('/');
+		let stat = fs.statSync(path);
+		let buffer = readChunk.sync(path, 0, stat.size);
+		let type = fileType(buffer);
+		let file = new File([ new Blob([ buffer ]) ], fn[fn.length - 1], { type: type.mime });
+		
+		return file;
 	};
 	
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {
