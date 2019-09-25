@@ -53,15 +53,11 @@ class PageAuthSetup extends React.Component<Props, State> {
 		}, 1000);
 		
 		if (match.params.id == 'register') {
-<<<<<<< HEAD
 			let request = { 
 				rootPath: './repo', 
 				pin: 'test' 
 			};
 			dispatcher.call('walletCreate', request, (message: any) => {
-=======
-			dispatcher.call('walletCreate', { pin: 'test' }, (message: any) => {
->>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 				this.props.history.push('/auth/register');
 			});
 		};

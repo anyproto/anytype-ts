@@ -9,10 +9,7 @@ export interface AccountInterface {
 
 class AuthStore {
 	@observable public pin: string = '';
-<<<<<<< HEAD
 	@observable public account: AccountInterface = null;
-=======
->>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 	@observable public accountList: AccountInterface[] = [];
 	@observable public icon: string = '';
 	@observable public name: string = '';
@@ -33,14 +30,11 @@ class AuthStore {
 	};
 	
 	@action
-<<<<<<< HEAD
 	accountSet (account: AccountInterface) {
 		this.account = account as AccountInterface;
 	};
 	
 	@action
-=======
->>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 	iconSet (v: string) {
 		this.icon = v;
 	};

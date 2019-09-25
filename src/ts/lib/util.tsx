@@ -1,11 +1,7 @@
-<<<<<<< HEAD
 const loadImage = window.require('blueimp-load-image');
 const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
-=======
-const loadImage = require('blueimp-load-image');
->>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 
 class Util {
 	
@@ -13,7 +9,6 @@ class Util {
 		return str[0].toUpperCase() + str.slice(1, str.length);
 	};
 	
-<<<<<<< HEAD
 	makeFileFromPath (path: string) {
 		let fn = path.split('/');
 		let stat = fs.statSync(path);
@@ -24,8 +19,6 @@ class Util {
 		return file;
 	};
 	
-=======
->>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {
 		if (!file) {
 			return;
