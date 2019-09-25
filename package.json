@@ -56,7 +56,10 @@
 		"css-loader": "^3.2.0",
 		"electron": "^6.0.10",
 		"emoji-mart": "^2.11.1",
+<<<<<<< HEAD
 		"file-type": "^12.3.0",
+=======
+>>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 		"fs": "0.0.1-security",
 		"history": "^4.10.1",
 		"jquery": "^3.4.1",

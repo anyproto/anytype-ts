@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
+<<<<<<< HEAD
 import { dispatcher, Util } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
@@ -10,6 +11,10 @@ const Err: any = {
 	FAILED_TO_SET_AVATAR: 103
 };
 
+=======
+import { Util } from 'ts/lib';
+
+>>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 interface Props extends RouteComponentProps<any> {
 	authStore?: any;
 };
@@ -26,7 +31,11 @@ class PageAuthRegister extends React.Component<Props, State> {
 
 	state = {
 		error: '',
+<<<<<<< HEAD
 		preview: '',
+=======
+		preview: ''
+>>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 	};
 	
 	constructor (props: any) {
@@ -51,8 +60,14 @@ class PageAuthRegister extends React.Component<Props, State> {
 					<Title text="Add name and profile picture" />
 					<Error text={error} />
 		
+<<<<<<< HEAD
 					<div className="fileWrap" onMouseDown={this.onFileClick}>
 						<IconUser icon={preview} className={preview ? 'active' : ''} />
+=======
+					<div className="fileWrap">
+						<IconUser icon={preview} className={preview ? 'active' : ''} />
+						<Input ref={(ref: any) => this.fileRef = ref} id="file" type="file" onChange={this.onFileChange} />
+>>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 					</div>
 						
 					<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
@@ -62,6 +77,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 		);
 	};
 
+<<<<<<< HEAD
 	onFileClick (e: any) {
 		const { authStore } = this.props;
 		
@@ -78,6 +94,18 @@ class PageAuthRegister extends React.Component<Props, State> {
 				this.setState({ preview: image });
 			});
 	    });
+=======
+	onFileChange (e: any) {
+		if (!e.target.files.length) {
+			return;
+		};
+		
+		let icon = e.target.files[0];
+		
+		Util.loadPreviewBase64(icon, {}, (image: string, param: any) => {
+			this.setState({ preview: image });
+		});
+>>>>>>> b88246a9dee7d9528caff15946c67e5cb8f72001
 	};
 	
 	onNameChange (e: any) {
