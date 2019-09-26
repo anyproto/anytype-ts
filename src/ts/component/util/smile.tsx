@@ -3,7 +3,8 @@ import { Emoji } from 'emoji-mart';
 
 interface Props {
 	icon: string;
-	size: number;
+	size?: number;
+	className?: string;
 };
 
 class Smile extends React.Component<Props, {}> {
@@ -13,10 +14,15 @@ class Smile extends React.Component<Props, {}> {
 	};
 	
 	render() {
-		const { icon, size } = this.props;
+		const { icon, size, className } = this.props;
+		
+		let cn = [ 'smile' ];
+		if (className) {
+			cn.push(className);
+		};
 		
 		return (
-			<div className="smile" {...this.props}>
+			<div className={cn.join(' ')}>
 				{icon ? <Emoji emoji={icon} set="apple" size={size} /> : ''}
 			</div>
 		);

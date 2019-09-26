@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -33,6 +33,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 		
         return (
 			<div>
+				<Smile className="dn" icon=":clock12:" size={36} />
 				<Cover num={3} />
 				<Header />
 				<Footer />
@@ -65,7 +66,8 @@ class PageAuthSelect extends React.Component<Props, State> {
 		let request = { 
 			rootPath: Config.root
 		};
-		dispatcher.call('walletCreate', request, (message: any) => {
+		
+		dispatcher.call('walletCreate', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
 				let error = message.error.desc;
 				if (error) {

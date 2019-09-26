@@ -20,9 +20,9 @@ class Page extends React.Component<Props, {}> {
 	childRef: any;
 
 	render () {
+		const { match } = this.props;
 		const Components: any = {
-			'index/index':			 PageAuthSelect,
-			
+			'/':					 PageAuthSelect,
 			'auth/select':			 PageAuthSelect,
 			'auth/register':		 PageAuthRegister,
 			'auth/login':			 PageAuthLogin,
@@ -35,8 +35,7 @@ class Page extends React.Component<Props, {}> {
 			'main/index':			 PageMainIndex,
 		};
 		
-		const route = this.getRoute();
-		const path = [ route.page, route.action ].join('/');
+		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
 		
 		if (!Component) {
@@ -64,24 +63,16 @@ class Page extends React.Component<Props, {}> {
 		this.resize();
 	};
 	
-	getRoute (): Route {
-		const { match } = this.props;
-		let a: string[] = match.path.split('/');
-
-		a.shift();
-		return { 
-			page: a[0] || 'index', 
-			action: a[1] || 'index',
-			id: a[2] || '',
-		};
-	};
-	
 	getClass () {
-		let route: Route = this.getRoute();
+		const { match } = this.props;
+		
+		let page = match.params.page || 'index';
+		let action = match.params.action || 'index';
+		
 		return [ 
 			'page', 
-			'page-' + route.page, 
-			'page-' + route.page + '-' + route.action 
+			'page-' + page, 
+			'page-' + page + '-' + action 
 		].join(' ');
 	};
 	

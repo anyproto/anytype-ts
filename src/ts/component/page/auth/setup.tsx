@@ -16,9 +16,6 @@ const Config: any = require('json/config.json');
 const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
 ];
-const Err: any = {
-	FAILED_TO_SET_AVATAR: 103
-};
 
 @inject('authStore')
 @observer
@@ -42,7 +39,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				
 				<Frame>
 					<Smile icon={':clock' + Icons[icon] + ':'} size={36} />
-					<Title text="Setting up the wallet..." />
+					<Title text="Setting up the account..." />
 					<Error text={error} />
 				</Frame>
 			</div>
@@ -51,6 +48,9 @@ class PageAuthSetup extends React.Component<Props, State> {
 
 	componentDidMount () {
 		const { authStore, match } = this.props;
+		const isRegister = match.params.id == 'register';
+		const isAdd = match.params.id == 'add';
+		const isSelect = match.params.id == 'select';
 		
 		this.clear();
 		this.i = window.setInterval(() => {
@@ -64,17 +64,17 @@ class PageAuthSetup extends React.Component<Props, State> {
 			this.setState({ icon: icon });
 		}, 1000);
 		
-		if ((match.params.id == 'register') || (match.params.id == 'add')) {
+		if (isRegister || isAdd) {
 			let request = { 
 				username: authStore.name, 
 				avatarLocalPath: authStore.icon 
 			};
 		
-			dispatcher.call('accountCreate', request, (message: any) => {
+			dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {
 				if (message.error.code) {
 					let error = '';
 					switch (message.error.code) {
-						case Err.FAILED_TO_SET_AVATAR:
+						case errorCode.FAILED_TO_SET_AVATAR:
 							error = 'Please select profile picture';
 							break; 
 						default:
@@ -94,23 +94,23 @@ class PageAuthSetup extends React.Component<Props, State> {
 						icon: account.avatar,
 					});
 					
-					if (match.params.id == 'register') {
+					if (isRegister) {
 						this.props.history.push('/auth/success');
 					};
 					
-					if (match.params.id == 'add') {
+					if (isAdd) {
 						this.props.history.push('/auth/pin-select/add');
 					};
 				};
 			});
 		};
 		
-		if (match.params.id == 'select') {
+		if (isSelect) {
 			let request = { 
 				index: authStore.index 
 			};
 			
-			dispatcher.call('accountSelect', request, (message: any) => {
+			dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
 				console.log(message);
 			});
 		};

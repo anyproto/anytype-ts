@@ -41,26 +41,28 @@ class Dispatcher {
 		};
 	};
 	
-	call (type: string, data: any, callBack?: (message: any) => void) {
+	call (type: string, data: any, callBack?: (errorCode: any, message: any) => void) {
 		if (!this.service[type]) {
 			throw '[Dispatcher.call] Service not found: ' + type;
 		};
 		
-		console.log('[Dispatcher.call]', type, data);
+		const errorCode = com.anytype[Util.toUpperCamelCase(type) + 'R'].Error.Code;
+		
+		console.log('[Dispatcher.call]', type, data, errorCode);
 		this.service[type](data, (message: any) => {
 			if (!callBack) {
 				return;
 			};
 			
 			console.log('[Dispatcher.call] message', message);
-			callBack(message);
+			callBack(errorCode, message);
 		});
 	};
 	
 	napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) { 
 		let buffer = inputObj.encode(request).finish();
 		
-		bindings.sendCommand(Util.toCamelCase(method.name), buffer, (item: any) => {
+		bindings.sendCommand(method.name, buffer, (item: any) => {
 			let message = null;
 			try {
 				message = outputObj.decode(item.data);

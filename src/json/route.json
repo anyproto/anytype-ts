@@ -1,15 +1,4 @@
 [
 	{ "path": "/" },
-	
-	{ "path": "/auth/select" },
-	{ "path": "/auth/login" },
-	{ "path": "/auth/pin-select/:id?" },
-	{ "path": "/auth/pin-confirm/:id?" },
-	{ "path": "/auth/setup/:id?" },
-	{ "path": "/auth/account-select" },
-	{ "path": "/auth/register/:id?" },
-	{ "path": "/auth/success" },
-	
-	{ "path": "/main/index" },
-	{ "path": "/main/edit/:id?" }
+	{ "path": "/:page/:action/:id?" }
 ]

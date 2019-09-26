@@ -12,9 +12,6 @@ interface State {
 };
 
 const Config: any = require('json/config.json');
-const Err: any = {
-	BAD_INPUT: 2
-};
 
 @inject('authStore')
 @observer
@@ -67,11 +64,11 @@ class PageAuthLogin extends React.Component<Props, State> {
 			mnemonic: this.phraseRef.getValue()
 		};
 			
-		dispatcher.call('walletRecover', request, (message: any) => {
+		dispatcher.call('walletRecover', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
 				let error = '';
 				switch (message.error.code) {
-					case Err.BAD_INPUT:
+					case errorCode.BAD_INPUT:
 						error = 'Invalid mnemonic phrase';
 						break; 
 					default:

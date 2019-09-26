@@ -47,15 +47,6 @@ class App extends React.Component<{}, {}> {
 						<ListPopup />
 						<ListMenu />
 						<div id="drag" />
-						<nav>
-							<ul>
-								{Routes.map((item, i) => (
-									<li key={i}>
-										<Link to={item.path}>{item.path}</Link>
-									</li>
-								))}
-							</ul>
-						</nav>
 						{Routes.map((item, i) => (
 							<Route path={item.path} exact={true} key={i} component={Page} />
 						))}

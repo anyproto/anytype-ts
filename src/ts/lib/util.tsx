@@ -5,8 +5,21 @@ const fileType = window.require('file-type');
 
 class Util {
 	
+	toUpperCamelCase (str: string) {
+		return this.toCamelCase('_' + str);
+	};
+	
+		
 	toCamelCase (str: string) {
-		return str[0].toUpperCase() + str.slice(1, str.length);
+		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (str, p1, p2, offset, s) => {
+			return p1.toUpperCase();
+		});
+	};
+	
+	fromCamelCase (str: string, symbol: string) {
+		return str.replace(/([A-Z]{1})/g, (str, p1, p2, offset, s) => {
+			return symbol + p1.toLowerCase();
+		});
 	};
 	
 	makeFileFromPath (path: string) {
