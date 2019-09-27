@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { keyBoard } from 'ts/lib';
 
 const $ = require('jquery');
 
@@ -14,6 +15,8 @@ interface Props {
 	className?: string;
 	onChange?(e: any): void;
 	onKeyUp?(e: any): void;
+	onFocus?(e: any, value: string): void;
+	onBlur?(e: any, value: string): void;
 };
 
 interface State {
@@ -37,6 +40,8 @@ class TextArea extends React.Component<Props, State> {
 		
 		this.onChange = this.onChange.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 	};
 	
 	render () {
@@ -59,6 +64,8 @@ class TextArea extends React.Component<Props, State> {
 				readOnly={readOnly}
 				onChange={this.onChange}
 				onKeyUp={this.onKeyUp}
+				onFocus={this.onFocus}
+				onBlur={this.onBlur}
 				maxLength={maxLength ? maxLength : undefined}
 			/>
 		);
@@ -90,6 +97,22 @@ class TextArea extends React.Component<Props, State> {
 		if (this.props.onKeyUp) {
 			this.props.onKeyUp(e);
 		};
+	};
+	
+	onFocus (e: any) {
+		if (this.props.onFocus) {
+			this.props.onFocus(e, this.state.value);
+		};
+		
+		keyBoard.setFocus(true);
+	};
+	
+	onBlur (e: any) {
+		if (this.props.onBlur) {
+			this.props.onBlur(e, this.state.value);
+		};
+		
+		keyBoard.setFocus(false);
 	};
 	
 	focus () {

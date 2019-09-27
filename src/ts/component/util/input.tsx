@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { keyBoard } from 'ts/lib';
 
 const $ = require('jquery');
 
@@ -124,12 +125,16 @@ class Input extends React.Component<Props, State> {
 		if (this.props.onFocus) {
 			this.props.onFocus(e, this.state.value);
 		};
+		
+		keyBoard.setFocus(true);
 	};
 	
 	onBlur (e: any) {
 		if (this.props.onBlur) {
 			this.props.onBlur(e, this.state.value);
 		};
+		
+		keyBoard.setFocus(false);
 	};
 	
 	focus () {

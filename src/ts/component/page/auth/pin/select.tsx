@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Key } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const SIZE = 6;
@@ -62,7 +63,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	onChange (e: any, id: number) {
 		const { authStore, match } = this.props;
 		
-		let k = e.key;
+		let k = e.which;
 		let input = this.refObj[id];
 		let prev = this.refObj[id - 1];
 		let next = this.refObj[id + 1];
@@ -70,7 +71,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 		
 		input.setType(input.getValue() ? 'password' : 'text');
 		
-		if ((k == 'Backspace') && prev) {
+		if ((k == Key.backSpace) && prev) {
 			prev.setValue('');
 			prev.setType('text');
 			prev.focus();
@@ -79,16 +80,14 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 			next.focus();	
 		};
 		
-		let code = this.getCode();
-		
-		authStore.pinSet(code);
-		
-		if (code.length == SIZE) {
+		let pin = this.getPin();
+		if (pin.length == SIZE) {
+			authStore.pinSet(pin);
 			this.props.history.push('/auth/pin-confirm/' + match.params.id);
 		};			
 	};
 	
-	getCode () {
+	getPin () {
 		let c: string[] = [];
 		for (let i in this.refObj) {
 			c.push(this.refObj[i].getValue());

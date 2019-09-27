@@ -4,7 +4,7 @@ import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu } from './component';
 import { commonStore, authStore } from './store';
-import { dispatcher, Storage } from 'ts/lib';
+import { dispatcher, keyBoard, Storage } from 'ts/lib';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -57,11 +57,15 @@ class App extends React.Component<{}, {}> {
 	};
 
 	componentDidMount () {
-		ipcRenderer.send('appLoaded', true);
-		//this.init();
+		this.init();
 	};
 	
 	init () {
+		ipcRenderer.send('appLoaded', true);
+		keyBoard.init(history);
+		
+		return;
+		
 		let phrase = Storage.get('phrase');
 		if (!phrase) {
 			return;
