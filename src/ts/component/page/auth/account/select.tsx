@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Icon, Cover, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { dispatcher } from 'ts/lib';
+import { dispatcher, Storage } from 'ts/lib';
 import { AccountInterface } from 'ts/store/auth';
 
 interface Props extends RouteComponentProps<any> {
@@ -59,6 +59,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		
 		e.preventDefault();
 		
+		Storage.set('account', index);
 		authStore.indexSet(index);
 		this.props.history.push('/auth/pin-select/select');
 	};

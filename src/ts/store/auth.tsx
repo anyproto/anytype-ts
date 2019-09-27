@@ -9,7 +9,7 @@ export interface AccountInterface {
 
 class AuthStore {
 	@observable public pin: string = '';
-	@observable public account: AccountInterface = null;
+	@observable public accountItem: AccountInterface = null;
 	@observable public accountList: AccountInterface[] = [];
 	@observable public icon: string = '';
 	@observable public name: string = '';
@@ -19,6 +19,11 @@ class AuthStore {
 	@computed
 	get accounts(): AccountInterface[] {
 		return this.accountList;
+	};
+	
+	@computed
+	get account(): AccountInterface {
+		return this.accountItem;
 	};
 	
 	@action
@@ -43,7 +48,7 @@ class AuthStore {
 	
 	@action
 	accountSet (account: AccountInterface) {
-		this.account = account as AccountInterface;
+		this.accountItem = account as AccountInterface;
 	};
 	
 	@action

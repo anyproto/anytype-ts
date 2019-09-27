@@ -1,8 +1,8 @@
 {
 	'targets': [
 		{
-			'target_name': 'pipe',
-			'sources': [ 'pipe.c' ],
+			'target_name': 'addon',
+			'sources': [ 'addon.c' ],
 			'libraries': [ '<!(pwd)/lib.so' ]
 		}
 	]

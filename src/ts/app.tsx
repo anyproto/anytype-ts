@@ -4,12 +4,7 @@ import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu } from './component';
 import { commonStore, authStore } from './store';
-import { dispatcher } from 'ts/lib';
-
-const { ipcRenderer } = window.require('electron');
-const memoryHistory = require('history').createMemoryHistory;
-const history = memoryHistory();
-const bindings = require('bindings')('pipe');
+import { dispatcher, Storage } from 'ts/lib';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -31,6 +26,11 @@ import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 
 interface RouteElement { path: string; };
+
+const { ipcRenderer } = window.require('electron');
+const memoryHistory = require('history').createMemoryHistory;
+const history = memoryHistory();
+const Config: any = require('json/config.json');
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore: commonStore,
@@ -58,6 +58,16 @@ class App extends React.Component<{}, {}> {
 
 	componentDidMount () {
 		ipcRenderer.send('appLoaded', true);
+		this.init();
+	};
+	
+	init () {
+		let phrase = Storage.get('phrase');
+		if (!phrase) {
+			return;
+		};
+		
+		history.push('/auth/setup/init');
 	};
 	
 };

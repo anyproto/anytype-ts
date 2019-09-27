@@ -71,10 +71,9 @@ class PageAuthRegister extends React.Component<Props, State> {
 			};
 
 			let path = files[0];
-			let file = Util.makeFileFromPath(path);
 			
 			authStore.iconSet(path);
-			Util.loadPreviewBase64(file, {}, (image: string, param: any) => {
+			Util.loadPreviewBase64(Util.makeFileFromPath(path), {}, (image: string, param: any) => {
 				this.setState({ preview: image });
 			});
 	    });

@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
+import { observer, inject } from 'mobx-react';
 
 const $ = require('jquery');
 
-interface Props {
-	history: any;
+interface Props extends RouteComponentProps<any> {
+	authStore?: any;
 };
 
 interface State {
@@ -13,6 +15,8 @@ interface State {
 	cover: number;
 };
 
+@inject('authStore')
+@observer
 class PageMainIndex extends React.Component<Props, State> {
 	
 	state = {
@@ -28,9 +32,9 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { authStore } = this.props;
 		const { coverSelector, cover } = this.state;
 		
-		let profile = { name: 'Razor' };
 		let covers = [ {}, {}, {} ];
 		let Cover = () => (<div/>);
 		
@@ -59,7 +63,7 @@ class PageMainIndex extends React.Component<Props, State> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						{profile ? 'Hi, ' + profile.name : ''}
+						{authStore.account ? 'Hi, ' + authStore.account.name : ''}
 					</div>
 					{coverSelector}
 				</div>

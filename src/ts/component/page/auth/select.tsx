@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher } from 'ts/lib';
+import { dispatcher, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -74,6 +74,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 					this.setState({ error: error });
 				};
 			} else {
+				Storage.set('phrase', message.mnemonic);
 				authStore.phraseSet(message.mnemonic);
 				this.props.history.push('/auth/register/register');
 			};

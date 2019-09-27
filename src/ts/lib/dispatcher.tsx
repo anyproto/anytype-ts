@@ -3,7 +3,7 @@ import { AccountInterface } from 'ts/store/auth';
 import { Util } from 'ts/lib';
 
 const com = require('proto/commands.js');
-const bindings = require('bindings')('pipe');
+const bindings = require('bindings')('addon');
 const protobuf = require('protobufjs');
 
 class Dispatcher {
@@ -34,7 +34,7 @@ class Dispatcher {
 			let value = event[key];
 			
 			switch (key) {
-				case 'accountFound':
+				case 'accountAdd':
 					authStore.accountAdd(value.account as AccountInterface);
 					break;
 			};
@@ -46,7 +46,7 @@ class Dispatcher {
 			throw '[Dispatcher.call] Service not found: ' + type;
 		};
 		
-		const errorCode = com.anytype[Util.toUpperCamelCase(type) + 'R'].Error.Code;
+		const errorCode = com.anytype[Util.toUpperCamelCase(type) + 'Response'].Error.Code;
 		
 		console.log('[Dispatcher.call]', type, data, errorCode);
 		this.service[type](data, (message: any) => {

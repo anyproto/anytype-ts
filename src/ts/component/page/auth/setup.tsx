@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher } from 'ts/lib';
+import { dispatcher, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -22,7 +22,6 @@ const Icons: number[] = [
 class PageAuthSetup extends React.Component<Props, State> {
 
 	i: number = 0;
-	t: number = 0;
 	state = {
 		icon: 0,
 		error: '',
@@ -48,9 +47,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 
 	componentDidMount () {
 		const { authStore, match } = this.props;
-		const isRegister = match.params.id == 'register';
-		const isAdd = match.params.id == 'add';
-		const isSelect = match.params.id == 'select';
 		
 		this.clear();
 		this.i = window.setInterval(() => {
@@ -64,55 +60,19 @@ class PageAuthSetup extends React.Component<Props, State> {
 			this.setState({ icon: icon });
 		}, 1000);
 		
-		if (isRegister || isAdd) {
-			let request = { 
-				username: authStore.name, 
-				avatarLocalPath: authStore.icon 
-			};
-		
-			dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {
-				if (message.error.code) {
-					let error = '';
-					switch (message.error.code) {
-						case errorCode.FAILED_TO_SET_AVATAR:
-							error = 'Please select profile picture';
-							break; 
-						default:
-							error = message.error.desc;
-							break;
-					};
-					if (error) {
-						this.setState({ error: error });
-					};
-				} else
-				if (message.account) {
-					let account = message.account;
-					
-					authStore.accountSet({
-						id: account.id,
-						name: account.name,
-						icon: account.avatar,
-					});
-					
-					if (isRegister) {
-						this.props.history.push('/auth/success');
-					};
-					
-					if (isAdd) {
-						this.props.history.push('/auth/pin-select/add');
-					};
-				};
-			});
-		};
-		
-		if (isSelect) {
-			let request = { 
-				index: authStore.index 
-			};
-			
-			dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
-				console.log(message);
-			});
+		switch (match.params.id) {
+			case 'init': 
+				this.init(); 
+				break;
+			case 'register': 
+				this.register();
+				break;
+			case 'add': 
+				this.add();
+				break;
+			case 'select': 
+				this.select();
+				break;
 		};
 	};
 	
@@ -120,9 +80,144 @@ class PageAuthSetup extends React.Component<Props, State> {
 		this.clear();
 	};
 	
+	init () {
+		const { authStore, history } = this.props;
+		
+		let phrase = Storage.get('phrase');
+		if (!phrase) {
+			return;
+		};
+			
+		let account = Storage.get('account');
+		let request: any = { 
+			rootPath: Config.root, 
+			mnemonic: phrase
+		};
+			
+		dispatcher.call('walletRecover', request, (errorCode: any, message: any) => {
+			if (message.error.code) {
+				return;
+			};
+				
+			if (account !== false) {
+				request = { 
+					index: Number(account) 
+				};
+					
+				dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
+					if (message.error.code) {
+						return;
+					};
+					
+					let account = message.account;
+					authStore.accountSet({
+						id: account.id,
+						name: account.name,
+						icon: account.avatar,
+					});
+						
+					history.push('/main/index');
+				});
+			} else {
+				history.push('/auth/account-select');				
+			};
+		});
+	};
+	
+	register () {
+		const { authStore, history } = this.props;
+		
+		let request = { 
+			username: authStore.name, 
+			avatarLocalPath: authStore.icon 
+		};
+		
+		dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {
+			if (message.error.code) {
+				let error = '';
+				switch (message.error.code) {
+					case errorCode.FAILED_TO_SET_AVATAR:
+						error = 'Please select profile picture';
+						break; 
+					default:
+						error = message.error.description;
+						break;
+				};
+				if (error) {
+					this.setState({ error: error });
+				};
+			} else
+			if (message.account) {
+				let account = message.account;
+				
+				authStore.accountSet({
+					id: account.id,
+					name: account.name,
+					icon: account.avatar,
+				});
+				
+				history.push('/auth/success');
+			};
+		});
+	};
+	
+	add () {
+		const { authStore, history } = this.props;
+		
+		let request = { 
+			username: authStore.name, 
+			avatarLocalPath: authStore.icon 
+		};
+		
+		dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {
+			if (message.error.code) {
+				let error = '';
+				switch (message.error.code) {
+					case errorCode.FAILED_TO_SET_AVATAR:
+						error = 'Please select profile picture';
+						break; 
+					default:
+						error = message.error.description;
+						break;
+				};
+				if (error) {
+					this.setState({ error: error });
+				};
+			} else
+			if (message.account) {
+				let account = message.account;
+				
+				authStore.accountSet({
+					id: account.id,
+					name: account.name,
+					icon: account.avatar,
+				});
+				
+				history.push('/auth/pin-select/add');
+			};
+		});
+	};
+	
+	select () {
+		const { authStore, history } = this.props;
+		let request = { 
+			index: authStore.index 
+		};
+			
+		dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
+			if (message.error.code) {
+				let error = message.error.description;
+				if (error) {
+					this.setState({ error: error });
+				};
+			} else {
+				history.push('/main/index');
+			};
+		});
+	};
+	
 	clear () {
 		clearInterval(this.i);
-		clearTimeout(this.t);
 	};
 
 };
