@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { MenuInterface, MenuDirection, MenuType } from 'ts/store/common';
+import { I } from 'ts/lib';
 import { MenuHelp } from 'ts/component';
 
 const $ = require('jquery');
 const raf = require('raf');
 const BORDER = 12;
 
-class Menu extends React.Component<MenuInterface, {}> {
+class Menu extends React.Component<I.MenuInterface, {}> {
 
 	_isMounted: boolean = false;
 
@@ -21,7 +21,7 @@ class Menu extends React.Component<MenuInterface, {}> {
 		const cn = [ 
 			'menu', 
 			'menu-' + id, 
-			(type == MenuType.Horizontal ? 'horizontal' : 'vertical') 
+			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical') 
 		];
 		
 		if (!Component) {
@@ -67,17 +67,17 @@ class Menu extends React.Component<MenuInterface, {}> {
 			let x = offset.left;
 			let y = offset.top;
 			
-			if (vertical == MenuDirection.Top) {
+			if (vertical == I.MenuDirection.Top) {
 				y -= height + offsetY;
 			};
-			if (vertical == MenuDirection.Bottom) {
+			if (vertical == I.MenuDirection.Bottom) {
 				y += eh + offsetY;
 			};
 			
-			if (horizontal == MenuDirection.Left) {
+			if (horizontal == I.MenuDirection.Left) {
 				x += offsetX;
 			};
-			if (horizontal == MenuDirection.Right) {
+			if (horizontal == I.MenuDirection.Right) {
 				x -= width + offsetX - ew;
 			};
 			

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Menu } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { MenuInterface } from 'ts/store/common';
+import { I } from 'ts/lib';
 
 interface Props {
 	commonStore?: any;
@@ -24,7 +24,7 @@ class ListMenu extends React.Component<Props, {}> {
 		
 		return (
 			<div className="menus">
-				{menus.map((item: MenuInterface, i: number) => (
+				{menus.map((item: I.MenuInterface, i: number) => (
 					<Menu key={item.id} {...item} />
 				))}
 				{menus.length ? dimmer : ''}

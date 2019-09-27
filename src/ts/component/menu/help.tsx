@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { MenuInterface, MenuItemInterface } from 'ts/store/common';
+import { I } from 'ts/lib';
 
-interface Props extends MenuInterface {
+interface Props extends I.MenuInterface {
 	commonStore?: any;
 };
 
@@ -22,7 +22,7 @@ class MenuHelp extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const items: MenuItemInterface[] = [
+		const items: I.MenuItemInterface[] = [
 			{ id: 'chat', name: 'Chat with Us' },
 			{ id: 'feature', name: 'Suggest a Feature' },
 			{ id: 'community', name: 'Join our Community' }
@@ -30,7 +30,7 @@ class MenuHelp extends React.Component<Props, {}> {
 		
 		return (
 			<div className="items">
-				{items.map((item: MenuItemInterface, i) => (
+				{items.map((item: I.MenuItemInterface, i) => (
 					<MenuItemVertical key={i} {...item} click={this.click} />
 				))}
 			</div>

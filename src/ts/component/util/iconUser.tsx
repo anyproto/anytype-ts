@@ -1,25 +1,34 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Label } from 'ts/component';
-import { AccountInterface } from 'ts/store/auth';
+import { dispatcher, I } from 'ts/lib';
 
 interface Props {
 	name?: string;
 	color?: string;
 	icon?: string;
 	className?: string;
+	image?: I.ImageInterface;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 };
 
-class IconUser extends React.Component<Props, {}> {
+interface State {
+	icon: string;
+};
+
+class IconUser extends React.Component<Props, State> {
 	
 	public static defaultProps = {
         color: 'grey'
     };
-	
+
+	state = {
+		icon: '',
+	};
+
 	constructor (props: any) {
 		super(props);
 		
@@ -29,8 +38,9 @@ class IconUser extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { className, icon, name, color, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
+		const { className, name, color, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
 		
+		let icon = this.state.icon || this.props.icon || '';
 		let cn = [ 'icon', 'user' ];
 		let style: any = {};
 		let text = name || '';
@@ -53,6 +63,25 @@ class IconUser extends React.Component<Props, {}> {
 				<div className="arrow" />
 			</div>
 		);
+	};
+	
+	componentDidMount () {
+		const { image } = this.props;
+		
+		if (image) {
+			let request = {
+				id: image.id,
+				size: I.ImageSize.LARGE
+			};
+			
+			dispatcher.call('imageGetBlob', request, (errorCode: any, message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
+				this.setState({ icon: 'data:image/jpeg;base64,' + message.blob.toString('base64') });
+			});
+		};
 	};
 	
 	shortName (s: string): string {

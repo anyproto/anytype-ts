@@ -110,6 +110,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 					};
 					
 					let account = message.account;
+					
 					authStore.accountSet({
 						id: account.id,
 						name: account.name,

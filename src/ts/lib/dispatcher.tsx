@@ -1,6 +1,5 @@
 import { authStore } from 'ts/store';
-import { AccountInterface } from 'ts/store/auth';
-import { Util } from 'ts/lib';
+import { Util, I } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
@@ -33,9 +32,19 @@ class Dispatcher {
 		for (let key in event) {
 			let value = event[key];
 			
+			if (value.error && value.error.code) {
+				continue;
+			};
+			
 			switch (key) {
 				case 'accountAdd':
-					authStore.accountAdd(value.account as AccountInterface);
+					let account = value.account;
+					
+					authStore.accountAdd({
+						id: account.id,
+						name: account.username,
+						icon: account.avatar,
+					});
 					break;
 			};
 		};

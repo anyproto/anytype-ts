@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { PopupInterface } from 'ts/store/common';
+import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const $ = require('jquery');
 const raf = require('raf');
 
-interface Props extends PopupInterface {
+interface Props extends I.PopupInterface {
 	commonStore?: any;
 };
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { MenuItemInterface } from 'ts/store/common';
+import { I } from 'ts/lib';
 
-interface Props extends MenuItemInterface {
+interface Props extends I.MenuItemInterface {
 	click?(e: any, id: string): void;
 };
 

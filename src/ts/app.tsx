@@ -58,7 +58,7 @@ class App extends React.Component<{}, {}> {
 
 	componentDidMount () {
 		ipcRenderer.send('appLoaded', true);
-		this.init();
+		//this.init();
 	};
 	
 	init () {

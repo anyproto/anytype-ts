@@ -1,66 +1,35 @@
 import { observable, action, computed } from 'mobx';
-
-export interface PopupParam {
-	onClose?(): void;
-};
-
-export interface PopupInterface {
-	id: string;
-	param: PopupParam;
-};
-
-export enum MenuType { Vertical = 1, Horizontal };
-export enum MenuDirection { Top = 1, Bottom, Left, Right };
-
-export interface MenuParam {
-	element: string;
-	type: MenuType;
-	vertical: MenuDirection;
-	horizontal: MenuDirection;
-	offsetX: number;
-	offsetY: number;
-	onClose?(): void;
-};
-
-export interface MenuInterface {
-	id: string;
-	param: MenuParam;
-};
-
-export interface MenuItemInterface {
-	id: string;
-	name: string;
-};
+import { I } from 'ts/lib';
 
 class CommonStore {
-	@observable public popupList: PopupInterface[] = [];
-	@observable public menuList: MenuInterface[] = [];
+	@observable public popupList: I.PopupInterface[] = [];
+	@observable public menuList: I.MenuInterface[] = [];
 	
 	@computed
-	get popups(): PopupInterface[] {
+	get popups(): I.PopupInterface[] {
 		return this.popupList;
 	};
 	
 	@computed
-	get menus(): MenuInterface[] {
+	get menus(): I.MenuInterface[] {
 		return this.menuList;
 	};
 	
 	@action
-	popupOpen (id: string, param: PopupParam) {
+	popupOpen (id: string, param: I.PopupParam) {
 		this.popupClose(id);
 		this.popupList.push({ id: id, param: param });
 	};
 	
 	@action
 	popupClose (id: string) {
-		const item: PopupInterface = this.popupList.find((item: PopupInterface) => { return item.id == id; });
+		const item: I.PopupInterface = this.popupList.find((item: I.PopupInterface) => { return item.id == id; });
 		
 		if (item && item.param.onClose) {
 			item.param.onClose();
 		};
 		
-		this.popupList = this.popupList.filter((item: PopupInterface) => { return item.id != id; });
+		this.popupList = this.popupList.filter((item: I.PopupInterface) => { return item.id != id; });
 	};
 	
 	@action
@@ -71,7 +40,7 @@ class CommonStore {
 	};
 	
 	@action
-	menuOpen (id: string, param: MenuParam) {
+	menuOpen (id: string, param: I.MenuParam) {
 		param.element = String(param.element || '');
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
@@ -86,13 +55,13 @@ class CommonStore {
 	
 	@action
 	menuClose (id: string) {
-		const item: MenuInterface = this.menuList.find((item: MenuInterface) => { return item.id == id; });
+		const item: I.MenuInterface = this.menuList.find((item: I.MenuInterface) => { return item.id == id; });
 		
 		if (item && item.param.onClose) {
 			item.param.onClose();
 		};
 		
-		this.menuList = this.menuList.filter((item: MenuInterface) => { return item.id != id; });
+		this.menuList = this.menuList.filter((item: I.MenuInterface) => { return item.id != id; });
 	};
 	
 	@action

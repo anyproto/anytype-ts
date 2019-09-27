@@ -1,28 +1,22 @@
 import { observable, action, computed } from 'mobx';
-
-export interface AccountInterface {
-	id: string;
-	name: string;
-	color?: string;
-	icon?: string;
-};
+import { I } from 'ts/lib';
 
 class AuthStore {
 	@observable public pin: string = '';
-	@observable public accountItem: AccountInterface = null;
-	@observable public accountList: AccountInterface[] = [];
+	@observable public accountItem: I.AccountInterface = null;
+	@observable public accountList: I.AccountInterface[] = [];
 	@observable public icon: string = '';
 	@observable public name: string = '';
 	@observable public phrase: string = '';
 	@observable public index: number = 0;
 	
 	@computed
-	get accounts(): AccountInterface[] {
+	get accounts(): I.AccountInterface[] {
 		return this.accountList;
 	};
 	
 	@computed
-	get account(): AccountInterface {
+	get account(): I.AccountInterface {
 		return this.accountItem;
 	};
 	
@@ -42,13 +36,13 @@ class AuthStore {
 	};
 	
 	@action
-	accountAdd (account: AccountInterface) {
+	accountAdd (account: I.AccountInterface) {
 		this.accountList.push(account);
 	};
 	
 	@action
-	accountSet (account: AccountInterface) {
-		this.accountItem = account as AccountInterface;
+	accountSet (account: I.AccountInterface) {
+		this.accountItem = account as I.AccountInterface;
 	};
 	
 	@action

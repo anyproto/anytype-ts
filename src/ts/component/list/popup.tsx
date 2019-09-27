@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Popup } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { PopupInterface } from 'ts/store/common';
+import { I } from 'ts/lib';
 
 interface Props {
 	commonStore?: any;
@@ -24,7 +24,7 @@ class ListPopup extends React.Component<Props, {}> {
 		
 		return (
 			<div className="popups">
-				{popups.map((item: PopupInterface, i: number) => (
+				{popups.map((item: I.PopupInterface, i: number) => (
 					<Popup key={item.id} {...item} />
 				))}
 				{popups.length ? dimmer : ''}

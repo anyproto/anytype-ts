@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { MenuDirection } from 'ts/store/common';
+import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props {
@@ -48,8 +48,8 @@ class FooterAuth extends React.Component<Props, State> {
 		commonStore.menuOpen('help', { 
 			element: 'button-help',
 			offsetY: 4,
-			vertical: MenuDirection.Top,
-			horizontal: MenuDirection.Right,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
 			onClose: () => {
 				this.setState({ help: false });
 			}
