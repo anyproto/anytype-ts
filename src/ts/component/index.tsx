@@ -1,14 +1,4 @@
 import Page from './page';
-import PageAuthSelect from './page/auth/select';
-import PageAuthLogin from './page/auth/login';
-import PageAuthPinSelect from './page/auth/pin/select';
-import PageAuthPinConfirm from './page/auth/pin/confirm';
-import PageAuthSetup from './page/auth/setup';
-import PageAuthAccountSelect from './page/auth/account/select';
-import PageAuthRegister from './page/auth/register';
-import PageAuthSuccess from './page/auth/success';
-
-import PageMainIndex from './page/main/index';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -18,6 +8,7 @@ import FooterAuth from './footer/auth';
 
 import Menu from './util/menu';
 import MenuItemVertical from './menu/item/vertical';
+import MenuMain from './menu/main';
 import MenuHelp from './menu/help';
 
 import Popup from './util/popup';
@@ -37,15 +28,6 @@ import IconUser from './util/iconUser';
 
 export {
 	Page,
-	PageAuthLogin,
-	PageAuthSelect,
-	PageAuthPinSelect,
-	PageAuthPinConfirm,
-	PageAuthSetup,
-	PageAuthAccountSelect,
-	PageAuthRegister,
-	PageAuthSuccess,
-	PageMainIndex,
 	ListPopup,
 	ListMenu,
 	HeaderAuth,
@@ -55,6 +37,7 @@ export {
 	Button,
 	Menu,
 	MenuItemVertical,
+	MenuMain,
 	MenuHelp,
 	Popup,
 	Frame,

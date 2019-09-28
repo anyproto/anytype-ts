@@ -64,6 +64,7 @@ class App extends React.Component<{}, {}> {
 		ipcRenderer.send('appLoaded', true);
 		keyBoard.init(history);
 		
+		history.push('/main/edit/123');
 		return;
 		
 		let phrase = Storage.get('phrase');

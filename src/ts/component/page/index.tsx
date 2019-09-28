@@ -1,19 +1,22 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { 
-	PageAuthSelect, PageAuthRegister, PageAuthLogin, PageAuthPinSelect, PageAuthPinConfirm, 
-	PageAuthSetup, PageAuthAccountSelect, PageAuthSuccess, PageMainIndex 
-} from '.';
+
+import PageAuthSelect from './auth/select';
+import PageAuthLogin from './auth/login';
+import PageAuthPinSelect from './auth/pin/select';
+import PageAuthPinConfirm from './auth/pin/confirm';
+import PageAuthSetup from './auth/setup';
+import PageAuthAccountSelect from './auth/account/select';
+import PageAuthRegister from './auth/register';
+import PageAuthSuccess from './auth/success';
+
+import PageMainIndex from './main/index';
+import PageMainEdit from './main/edit';
 
 const $ = require('jquery');
 
 interface Props extends RouteComponentProps<any> {};
-interface Route {
-	page: string; 
-	action: string;
-	id: string;
-};
 
 class Page extends React.Component<Props, {}> {
 
@@ -33,6 +36,7 @@ class Page extends React.Component<Props, {}> {
 			'auth/success':			 PageAuthSuccess,
 			
 			'main/index':			 PageMainIndex,
+			'main/edit':			 PageMainEdit,
 		};
 		
 		const path = [ match.params.page, match.params.action ].join('/');

@@ -43,7 +43,7 @@ class MenuHelp extends React.Component<Props, {}> {
 		
 		switch (id) {
 			case 'chat':
-				Intercom('boot', {
+				Intercom('boot', { 
 				    app_id: Config.intercom,
 				    name: 'test',
 				    user_id: 'test'
