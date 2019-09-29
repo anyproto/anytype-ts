@@ -33,7 +33,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<Smile className="dn" icon=":clock12:" size={36} />
+				<Smile icon=":clock12:" size={36} />
 				<Cover num={3} />
 				<Header />
 				<Footer />
@@ -69,7 +69,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 		
 		dispatcher.call('walletCreate', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
-				let error = message.error.desc;
+				let error = message.error.description;
 				if (error) {
 					this.setState({ error: error });
 				};

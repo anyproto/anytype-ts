@@ -18,36 +18,32 @@ class MenuHelp extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.click = this.click.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
 		const items: I.MenuItemInterface[] = [
-			{ id: 'chat', name: 'Chat with Us' },
-			{ id: 'feature', name: 'Suggest a Feature' },
-			{ id: 'community', name: 'Join our Community' }
+			{ icon: 'chat', name: 'Chat with Us' },
+			{ icon: 'feature', name: 'Suggest a Feature' },
+			{ icon: 'community', name: 'Join our Community' }
 		];
 		
 		return (
 			<div className="items">
 				{items.map((item: I.MenuItemInterface, i) => (
-					<MenuItemVertical key={i} {...item} click={this.click} />
+					<MenuItemVertical key={i} {...item} onClick={this.onClick} />
 				))}
 			</div>
 		);
 	};
 	
-	click (e: any, id: string) {
+	onClick (e: any, id: string) {
 		const { commonStore } = this.props;
 		commonStore.menuClose(this.props.id);
 		
 		switch (id) {
 			case 'chat':
-				Intercom('boot', { 
-				    app_id: Config.intercom,
-				    name: 'test',
-				    user_id: 'test'
-				});
+				Intercom('boot', { app_id: Config.intercom, name: 'test', user_id: 'test' });
 				Intercom('show');
 				Intercom('onHide', () => { Intercom('shutdown'); });
 				break;

@@ -8,6 +8,7 @@ import FooterAuth from './footer/auth';
 
 import Menu from './util/menu';
 import MenuItemVertical from './menu/item/vertical';
+import MenuItemMain from './menu/item/main';
 import MenuMain from './menu/main';
 import MenuHelp from './menu/help';
 
@@ -37,6 +38,7 @@ export {
 	Button,
 	Menu,
 	MenuItemVertical,
+	MenuItemMain,
 	MenuMain,
 	MenuHelp,
 	Popup,

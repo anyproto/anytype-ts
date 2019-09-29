@@ -21,6 +21,10 @@
 	.button:last-child { margin: 0px; }
 }
 
+.page-auth-select, .page-index-index {
+	.smile { opacity: 0; }
+}
+
 .page-auth-login {
 	.label { margin-bottom: 9px; }
 }

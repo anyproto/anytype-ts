@@ -72,7 +72,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 						error = 'Invalid mnemonic phrase';
 						break; 
 					default:
-						error = message.error.desc;
+						error = message.error.description;
 						break;
 				};
 				if (error) {

@@ -28,7 +28,22 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 
 	render () {
+		const { match } = this.props;
 		const { icon, error } = this.state;
+		
+		let title = '';
+		switch (match.params.id) {
+			case 'init':
+				title = 'Logging in...'; 
+				break;
+			case 'register':
+			case 'add': 
+				title = 'Creating profile...';
+				break;
+			case 'select': 
+				title = 'Selecting profile...';
+				break;
+		};
 		
         return (
 			<div>
@@ -38,7 +53,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				
 				<Frame>
 					<Smile icon={':clock' + Icons[icon] + ':'} size={36} />
-					<Title text="Setting up the account..." />
+					<Title text={title} />
 					<Error text={error} />
 				</Frame>
 			</div>
@@ -64,9 +79,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 			case 'init': 
 				this.init(); 
 				break;
-			case 'register': 
-				this.register();
-				break;
+			case 'register':
 			case 'add': 
 				this.add();
 				break;
@@ -115,6 +128,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 						id: account.id,
 						name: account.name,
 						icon: account.avatar,
+						color: account.color
 					});
 						
 					history.push('/main/index');
@@ -125,45 +139,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 		});
 	};
 	
-	register () {
-		const { authStore, history } = this.props;
-		
-		let request = { 
-			username: authStore.name, 
-			avatarLocalPath: authStore.icon 
-		};
-		
-		dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {
-			if (message.error.code) {
-				let error = '';
-				switch (message.error.code) {
-					case errorCode.FAILED_TO_SET_AVATAR:
-						error = 'Please select profile picture';
-						break; 
-					default:
-						error = message.error.description;
-						break;
-				};
-				if (error) {
-					this.setState({ error: error });
-				};
-			} else
-			if (message.account) {
-				let account = message.account;
-				
-				authStore.accountSet({
-					id: account.id,
-					name: account.name,
-					icon: account.avatar,
-				});
-				
-				history.push('/auth/success');
-			};
-		});
-	};
-	
 	add () {
-		const { authStore, history } = this.props;
+		const { authStore, history, match } = this.props;
 		
 		let request = { 
 			username: authStore.name, 
@@ -192,9 +169,16 @@ class PageAuthSetup extends React.Component<Props, State> {
 					id: account.id,
 					name: account.name,
 					icon: account.avatar,
+					color: account.color,
 				});
 				
-				history.push('/auth/pin-select/add');
+				if (match.params.id == 'register') {
+					history.push('/auth/success');
+				};
+				
+				if (match.params.id == 'add') {
+					history.push('/auth/pin-select/add');
+				};
 			};
 		});
 	};

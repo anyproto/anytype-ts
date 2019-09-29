@@ -21,6 +21,8 @@ class KeyBoard {
 	keyUp (e: any) {
 		let k = e.which;
 		
+		//console.log('keyup', e.shiftKey, e.ctrlKey, e.metaKey);
+		
 		if (!this.focus) {
 			if (k == Key.backSpace) {
 				e.preventDefault();
@@ -30,6 +32,7 @@ class KeyBoard {
 	};
 	
 	keyDown (e: any) {
+		//console.log('keydown', e.shiftKey, e.ctrlKey, e.metaKey);
 	};
 	
 	setFocus (v: boolean) {
@@ -39,7 +42,7 @@ class KeyBoard {
 };
 
 export enum Key {
-	backSpace = 8
+	backSpace =	 8,
 };
 
 export let keyBoard: KeyBoard = new KeyBoard();

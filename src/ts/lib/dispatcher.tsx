@@ -44,6 +44,7 @@ class Dispatcher {
 						id: account.id,
 						name: account.username,
 						icon: account.avatar,
+						color: account.color
 					});
 					break;
 			};

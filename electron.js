@@ -1,5 +1,7 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const path = require('path');
+const os = require('os');
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -18,6 +20,10 @@ function createWindow () {
 	};
 	
 	let win = new BrowserWindow(param);
+	
+	BrowserWindow.addDevToolsExtension(
+		path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.1.2_0')
+	);
 	
 	win.loadURL('http://localhost:8080');
 	//win.loadFile('dist/index.html');

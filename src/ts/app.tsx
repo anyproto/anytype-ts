@@ -24,6 +24,7 @@ import 'scss/component/menu.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
+import 'scss/page/main/edit.scss';
 
 interface RouteElement { path: string; };
 
@@ -64,7 +65,6 @@ class App extends React.Component<{}, {}> {
 		ipcRenderer.send('appLoaded', true);
 		keyBoard.init(history);
 		
-		history.push('/main/edit/123');
 		return;
 		
 		let phrase = Storage.get('phrase');

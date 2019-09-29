@@ -15,7 +15,6 @@ import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 
 const $ = require('jquery');
-
 interface Props extends RouteComponentProps<any> {};
 
 class Page extends React.Component<Props, {}> {
