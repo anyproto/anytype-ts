@@ -21,6 +21,8 @@ class PageMainEdit extends React.Component<Props, State> {
         return (
 			<div>
 				<MenuMain />
+				<div className="editor">
+				</div>
 			</div>
 		);
 	};

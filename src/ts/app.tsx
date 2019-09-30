@@ -65,8 +65,6 @@ class App extends React.Component<{}, {}> {
 		ipcRenderer.send('appLoaded', true);
 		keyBoard.init(history);
 		
-		return;
-		
 		let phrase = Storage.get('phrase');
 		if (!phrase) {
 			return;

@@ -55,7 +55,7 @@ class PageAuthLogin extends React.Component<Props, State> {
     };
 
 	onSubmit (e: any) {
-		const { authStore } = this.props;
+		const { authStore, history } = this.props;
 		
 		e.preventDefault();
 		
@@ -80,7 +80,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 				};
 			} else {
 				authStore.phraseSet(request.mnemonic);
-				this.props.history.push('/auth/account-select');
+				history.push('/auth/account-select');
 			};
 		});
 	};

@@ -24,7 +24,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		const { authStore } = this.props;
 		
 		const Item = (item: any) => (
-			<div className="item" onClick={(e) => { this.onSelect(e, item.index); }}>
+			<div className="item" onClick={(e) => { this.onSelect(e, item.id); }}>
 				<IconUser {...item} />
 				<div className="name">{item.name}</div>
 			</div>
@@ -41,7 +41,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 					
 					<div className="list">
 						{authStore.accounts.map((item: I.AccountInterface, i: number) => (
-							<Item key={i} {...item} index={i} />	
+							<Item key={i} {...item} />	
 						))}
 						<div className="item add" onMouseDown={this.onAdd}>
 							<Icon className="plus" />
@@ -53,19 +53,18 @@ class PageAccountSelect extends React.Component<Props, State> {
 		);
     };
 
-	onSelect (e: any, index: number) {
-		const { authStore } = this.props;
+	onSelect (e: any, id: string) {
+		const { authStore, history } = this.props;
 		
 		e.preventDefault();
 		
-		Storage.set('account', index);
-		authStore.indexSet(index);
-		this.props.history.push('/auth/pin-select/select');
+		Storage.set('account', id);
+		authStore.accountIdSet(id);
+		history.push('/auth/pin-select/select');
 	};
 	
 	onAdd (e: any) {
 		e.preventDefault();
-		
 		this.props.history.push('/auth/register/add');
 	};
 	

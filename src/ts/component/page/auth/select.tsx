@@ -54,12 +54,11 @@ class PageAuthSelect extends React.Component<Props, State> {
 
 	onLogin (e: any) {
 		e.preventDefault();
-		
 		this.props.history.push('/auth/login');
 	};
 	
 	onRegister (e: any) {
-		const { authStore } = this.props;
+		const { authStore, history } = this.props;
 		
 		e.preventDefault();
 		
@@ -76,7 +75,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 			} else {
 				Storage.set('phrase', message.mnemonic);
 				authStore.phraseSet(message.mnemonic);
-				this.props.history.push('/auth/register/register');
+				history.push('/auth/register/register');
 			};
 		});
 	};

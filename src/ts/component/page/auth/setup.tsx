@@ -114,7 +114,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				
 			if (account !== false) {
 				request = { 
-					index: Number(account) 
+					id: account 
 				};
 					
 				dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
@@ -186,7 +186,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	select () {
 		const { authStore, history } = this.props;
 		let request = { 
-			index: authStore.index 
+			id: authStore.accountId 
 		};
 			
 		dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {

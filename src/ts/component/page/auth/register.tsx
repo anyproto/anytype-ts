@@ -85,10 +85,10 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 
 	onSubmit (e: any) {
-		const { match } = this.props;
+		const { match, history } = this.props;
 		
 		e.preventDefault();
-		this.props.history.push('/auth/setup/' + match.params.id);
+		history.push('/auth/setup/' + match.params.id);
 	};
 	
 };

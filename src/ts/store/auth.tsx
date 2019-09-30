@@ -2,13 +2,13 @@ import { observable, action, computed } from 'mobx';
 import { I } from 'ts/lib';
 
 class AuthStore {
-	@observable public pin: string = '';
 	@observable public accountItem: I.AccountInterface = null;
 	@observable public accountList: I.AccountInterface[] = [];
+	@observable public pin: string = '';
 	@observable public icon: string = '';
 	@observable public name: string = '';
 	@observable public phrase: string = '';
-	@observable public index: number = 0;
+	@observable public accountId: string = '';
 	
 	@computed
 	get accounts(): I.AccountInterface[] {
@@ -31,8 +31,8 @@ class AuthStore {
 	};
 	
 	@action
-	indexSet (v: number) {
-		this.index = v;
+	accountIdSet (v: string) {
+		this.accountId = v;
 	};
 	
 	@action

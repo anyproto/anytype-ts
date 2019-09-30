@@ -4,27 +4,27 @@ class Cache {
 
 	cache: any = {};
 	
-	set (key: string, value: string): void {
+	set (key: string, value: string, ttl?: number): void {
 		this.clear();
 		this.cache[key] = {
 			value: value,
-			time: (new Date()).getTime()
+			ttl: (new Date()).getTime() + (ttl || TTL)
 		};
 	};
 	
 	get (key: string): string {
 		let item = this.cache[key];
-		if (item && (item.time >= (new Date()).getTime() - TTL)) {
+		if (item && (item.ttl >= (new Date()).getTime())) {
 			return String(item.value || '');
 		} else {
 			return '';	
 		};
 	};
 	
-	clear () {
+	clear (): void {
 		for (let k in this.cache) {
 			let item = this.cache[k];
-			if (item.time < (new Date()).getTime() - TTL) {
+			if (item.ttl < (new Date()).getTime()) {
 				console.log('[Cache] clear', k);
 				delete(this.cache[k]);
 			};

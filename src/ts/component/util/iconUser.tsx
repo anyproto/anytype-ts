@@ -65,7 +65,7 @@ class IconUser extends React.Component<Props, State> {
 		const { image } = this.props;
 		
 		if (image) {
-			let key = 'image' + image.id;
+			let key = [ 'image', image.id, I.ImageSize.LARGE ].join('.');
 			let s = cache.get(key);
 			
 			if (s) {
@@ -84,7 +84,7 @@ class IconUser extends React.Component<Props, State> {
 				};
 
 				s = message.blob.toString('base64');
-				cache.set('image' + image.id, s);
+				cache.set(key, s);
 				this.setState({ icon: 'data:image/jpeg;base64,' + s });
 			});
 		};

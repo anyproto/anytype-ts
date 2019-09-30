@@ -2225,7 +2225,7 @@ $root.anytype = (function() {
          * Properties of an AccountSelectRequest.
          * @memberof anytype
          * @interface IAccountSelectRequest
-         * @property {number|Long|null} [index] AccountSelectRequest index
+         * @property {string|null} [id] AccountSelectRequest id
          */
 
         /**
@@ -2244,12 +2244,12 @@ $root.anytype = (function() {
         }
 
         /**
-         * AccountSelectRequest index.
-         * @member {number|Long} index
+         * AccountSelectRequest id.
+         * @member {string} id
          * @memberof anytype.AccountSelectRequest
          * @instance
          */
-        AccountSelectRequest.prototype.index = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+        AccountSelectRequest.prototype.id = "";
 
         /**
          * Creates a new AccountSelectRequest instance using the specified properties.
@@ -2275,8 +2275,8 @@ $root.anytype = (function() {
         AccountSelectRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.index != null && message.hasOwnProperty("index"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.index);
+            if (message.id != null && message.hasOwnProperty("id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
             return writer;
         };
 
@@ -2312,7 +2312,7 @@ $root.anytype = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.index = reader.int64();
+                    message.id = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2349,9 +2349,9 @@ $root.anytype = (function() {
         AccountSelectRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.index != null && message.hasOwnProperty("index"))
-                if (!$util.isInteger(message.index) && !(message.index && $util.isInteger(message.index.low) && $util.isInteger(message.index.high)))
-                    return "index: integer|Long expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
             return null;
         };
 
@@ -2367,15 +2367,8 @@ $root.anytype = (function() {
             if (object instanceof $root.anytype.AccountSelectRequest)
                 return object;
             var message = new $root.anytype.AccountSelectRequest();
-            if (object.index != null)
-                if ($util.Long)
-                    (message.index = $util.Long.fromValue(object.index)).unsigned = false;
-                else if (typeof object.index === "string")
-                    message.index = parseInt(object.index, 10);
-                else if (typeof object.index === "number")
-                    message.index = object.index;
-                else if (typeof object.index === "object")
-                    message.index = new $util.LongBits(object.index.low >>> 0, object.index.high >>> 0).toNumber();
+            if (object.id != null)
+                message.id = String(object.id);
             return message;
         };
 
@@ -2393,16 +2386,9 @@ $root.anytype = (function() {
                 options = {};
             var object = {};
             if (options.defaults)
-                if ($util.Long) {
-                    var long = new $util.Long(0, 0, false);
-                    object.index = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
-                } else
-                    object.index = options.longs === String ? "0" : 0;
-            if (message.index != null && message.hasOwnProperty("index"))
-                if (typeof message.index === "number")
-                    object.index = options.longs === String ? String(message.index) : message.index;
-                else
-                    object.index = options.longs === String ? $util.Long.prototype.toString.call(message.index) : options.longs === Number ? new $util.LongBits(message.index.low >>> 0, message.index.high >>> 0).toNumber() : message.index;
+                object.id = "";
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
             return object;
         };
 
@@ -2910,6 +2896,685 @@ $root.anytype = (function() {
         })();
 
         return AccountSelectResponse;
+    })();
+
+    anytype.AccountStartRequest = (function() {
+
+        /**
+         * Properties of an AccountStartRequest.
+         * @memberof anytype
+         * @interface IAccountStartRequest
+         * @property {string|null} [id] AccountStartRequest id
+         */
+
+        /**
+         * Constructs a new AccountStartRequest.
+         * @memberof anytype
+         * @classdesc Represents an AccountStartRequest.
+         * @implements IAccountStartRequest
+         * @constructor
+         * @param {anytype.IAccountStartRequest=} [properties] Properties to set
+         */
+        function AccountStartRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AccountStartRequest id.
+         * @member {string} id
+         * @memberof anytype.AccountStartRequest
+         * @instance
+         */
+        AccountStartRequest.prototype.id = "";
+
+        /**
+         * Creates a new AccountStartRequest instance using the specified properties.
+         * @function create
+         * @memberof anytype.AccountStartRequest
+         * @static
+         * @param {anytype.IAccountStartRequest=} [properties] Properties to set
+         * @returns {anytype.AccountStartRequest} AccountStartRequest instance
+         */
+        AccountStartRequest.create = function create(properties) {
+            return new AccountStartRequest(properties);
+        };
+
+        /**
+         * Encodes the specified AccountStartRequest message. Does not implicitly {@link anytype.AccountStartRequest.verify|verify} messages.
+         * @function encode
+         * @memberof anytype.AccountStartRequest
+         * @static
+         * @param {anytype.IAccountStartRequest} message AccountStartRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountStartRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && message.hasOwnProperty("id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AccountStartRequest message, length delimited. Does not implicitly {@link anytype.AccountStartRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof anytype.AccountStartRequest
+         * @static
+         * @param {anytype.IAccountStartRequest} message AccountStartRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountStartRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AccountStartRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof anytype.AccountStartRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {anytype.AccountStartRequest} AccountStartRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountStartRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountStartRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AccountStartRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof anytype.AccountStartRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {anytype.AccountStartRequest} AccountStartRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountStartRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AccountStartRequest message.
+         * @function verify
+         * @memberof anytype.AccountStartRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AccountStartRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            return null;
+        };
+
+        /**
+         * Creates an AccountStartRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof anytype.AccountStartRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {anytype.AccountStartRequest} AccountStartRequest
+         */
+        AccountStartRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.anytype.AccountStartRequest)
+                return object;
+            var message = new $root.anytype.AccountStartRequest();
+            if (object.id != null)
+                message.id = String(object.id);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AccountStartRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof anytype.AccountStartRequest
+         * @static
+         * @param {anytype.AccountStartRequest} message AccountStartRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AccountStartRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.id = "";
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            return object;
+        };
+
+        /**
+         * Converts this AccountStartRequest to JSON.
+         * @function toJSON
+         * @memberof anytype.AccountStartRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AccountStartRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return AccountStartRequest;
+    })();
+
+    anytype.AccountStartResponse = (function() {
+
+        /**
+         * Properties of an AccountStartResponse.
+         * @memberof anytype
+         * @interface IAccountStartResponse
+         * @property {anytype.AccountStartResponse.IError|null} [error] AccountStartResponse error
+         * @property {anytype.IAccount|null} [account] AccountStartResponse account
+         */
+
+        /**
+         * Constructs a new AccountStartResponse.
+         * @memberof anytype
+         * @classdesc Represents an AccountStartResponse.
+         * @implements IAccountStartResponse
+         * @constructor
+         * @param {anytype.IAccountStartResponse=} [properties] Properties to set
+         */
+        function AccountStartResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AccountStartResponse error.
+         * @member {anytype.AccountStartResponse.IError|null|undefined} error
+         * @memberof anytype.AccountStartResponse
+         * @instance
+         */
+        AccountStartResponse.prototype.error = null;
+
+        /**
+         * AccountStartResponse account.
+         * @member {anytype.IAccount|null|undefined} account
+         * @memberof anytype.AccountStartResponse
+         * @instance
+         */
+        AccountStartResponse.prototype.account = null;
+
+        /**
+         * Creates a new AccountStartResponse instance using the specified properties.
+         * @function create
+         * @memberof anytype.AccountStartResponse
+         * @static
+         * @param {anytype.IAccountStartResponse=} [properties] Properties to set
+         * @returns {anytype.AccountStartResponse} AccountStartResponse instance
+         */
+        AccountStartResponse.create = function create(properties) {
+            return new AccountStartResponse(properties);
+        };
+
+        /**
+         * Encodes the specified AccountStartResponse message. Does not implicitly {@link anytype.AccountStartResponse.verify|verify} messages.
+         * @function encode
+         * @memberof anytype.AccountStartResponse
+         * @static
+         * @param {anytype.IAccountStartResponse} message AccountStartResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountStartResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.error != null && message.hasOwnProperty("error"))
+                $root.anytype.AccountStartResponse.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.account != null && message.hasOwnProperty("account"))
+                $root.anytype.Account.encode(message.account, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AccountStartResponse message, length delimited. Does not implicitly {@link anytype.AccountStartResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof anytype.AccountStartResponse
+         * @static
+         * @param {anytype.IAccountStartResponse} message AccountStartResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountStartResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AccountStartResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof anytype.AccountStartResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {anytype.AccountStartResponse} AccountStartResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountStartResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountStartResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.error = $root.anytype.AccountStartResponse.Error.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.account = $root.anytype.Account.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AccountStartResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof anytype.AccountStartResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {anytype.AccountStartResponse} AccountStartResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountStartResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AccountStartResponse message.
+         * @function verify
+         * @memberof anytype.AccountStartResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AccountStartResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.error != null && message.hasOwnProperty("error")) {
+                var error = $root.anytype.AccountStartResponse.Error.verify(message.error);
+                if (error)
+                    return "error." + error;
+            }
+            if (message.account != null && message.hasOwnProperty("account")) {
+                var error = $root.anytype.Account.verify(message.account);
+                if (error)
+                    return "account." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an AccountStartResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof anytype.AccountStartResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {anytype.AccountStartResponse} AccountStartResponse
+         */
+        AccountStartResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.anytype.AccountStartResponse)
+                return object;
+            var message = new $root.anytype.AccountStartResponse();
+            if (object.error != null) {
+                if (typeof object.error !== "object")
+                    throw TypeError(".anytype.AccountStartResponse.error: object expected");
+                message.error = $root.anytype.AccountStartResponse.Error.fromObject(object.error);
+            }
+            if (object.account != null) {
+                if (typeof object.account !== "object")
+                    throw TypeError(".anytype.AccountStartResponse.account: object expected");
+                message.account = $root.anytype.Account.fromObject(object.account);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AccountStartResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof anytype.AccountStartResponse
+         * @static
+         * @param {anytype.AccountStartResponse} message AccountStartResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AccountStartResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.error = null;
+                object.account = null;
+            }
+            if (message.error != null && message.hasOwnProperty("error"))
+                object.error = $root.anytype.AccountStartResponse.Error.toObject(message.error, options);
+            if (message.account != null && message.hasOwnProperty("account"))
+                object.account = $root.anytype.Account.toObject(message.account, options);
+            return object;
+        };
+
+        /**
+         * Converts this AccountStartResponse to JSON.
+         * @function toJSON
+         * @memberof anytype.AccountStartResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AccountStartResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        AccountStartResponse.Error = (function() {
+
+            /**
+             * Properties of an Error.
+             * @memberof anytype.AccountStartResponse
+             * @interface IError
+             * @property {anytype.AccountStartResponse.Error.Code|null} [code] Error code
+             * @property {string|null} [description] Error description
+             */
+
+            /**
+             * Constructs a new Error.
+             * @memberof anytype.AccountStartResponse
+             * @classdesc Represents an Error.
+             * @implements IError
+             * @constructor
+             * @param {anytype.AccountStartResponse.IError=} [properties] Properties to set
+             */
+            function Error(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Error code.
+             * @member {anytype.AccountStartResponse.Error.Code} code
+             * @memberof anytype.AccountStartResponse.Error
+             * @instance
+             */
+            Error.prototype.code = 0;
+
+            /**
+             * Error description.
+             * @member {string} description
+             * @memberof anytype.AccountStartResponse.Error
+             * @instance
+             */
+            Error.prototype.description = "";
+
+            /**
+             * Creates a new Error instance using the specified properties.
+             * @function create
+             * @memberof anytype.AccountStartResponse.Error
+             * @static
+             * @param {anytype.AccountStartResponse.IError=} [properties] Properties to set
+             * @returns {anytype.AccountStartResponse.Error} Error instance
+             */
+            Error.create = function create(properties) {
+                return new Error(properties);
+            };
+
+            /**
+             * Encodes the specified Error message. Does not implicitly {@link anytype.AccountStartResponse.Error.verify|verify} messages.
+             * @function encode
+             * @memberof anytype.AccountStartResponse.Error
+             * @static
+             * @param {anytype.AccountStartResponse.IError} message Error message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Error.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.code != null && message.hasOwnProperty("code"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                if (message.description != null && message.hasOwnProperty("description"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.AccountStartResponse.Error.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof anytype.AccountStartResponse.Error
+             * @static
+             * @param {anytype.AccountStartResponse.IError} message Error message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Error.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes an Error message from the specified reader or buffer.
+             * @function decode
+             * @memberof anytype.AccountStartResponse.Error
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {anytype.AccountStartResponse.Error} Error
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Error.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountStartResponse.Error();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.code = reader.int32();
+                        break;
+                    case 2:
+                        message.description = reader.string();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes an Error message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof anytype.AccountStartResponse.Error
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {anytype.AccountStartResponse.Error} Error
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Error.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies an Error message.
+             * @function verify
+             * @memberof anytype.AccountStartResponse.Error
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Error.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.code != null && message.hasOwnProperty("code"))
+                    switch (message.code) {
+                    default:
+                        return "code: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 101:
+                    case 102:
+                    case 103:
+                    case 104:
+                        break;
+                    }
+                if (message.description != null && message.hasOwnProperty("description"))
+                    if (!$util.isString(message.description))
+                        return "description: string expected";
+                return null;
+            };
+
+            /**
+             * Creates an Error message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof anytype.AccountStartResponse.Error
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {anytype.AccountStartResponse.Error} Error
+             */
+            Error.fromObject = function fromObject(object) {
+                if (object instanceof $root.anytype.AccountStartResponse.Error)
+                    return object;
+                var message = new $root.anytype.AccountStartResponse.Error();
+                switch (object.code) {
+                case "NULL":
+                case 0:
+                    message.code = 0;
+                    break;
+                case "UNKNOWN_ERROR":
+                case 1:
+                    message.code = 1;
+                    break;
+                case "BAD_INPUT":
+                case 2:
+                    message.code = 2;
+                    break;
+                case "LOCAL_REPO_DOESNT_EXIST":
+                case 101:
+                    message.code = 101;
+                    break;
+                case "LOCAL_REPO_EXISTS_BUT_CORRUPTED":
+                case 102:
+                    message.code = 102;
+                    break;
+                case "FAILED_TO_RUN_NODE":
+                case 103:
+                    message.code = 103;
+                    break;
+                case "FAILED_TO_FIND_ACCOUNT_INFO":
+                case 104:
+                    message.code = 104;
+                    break;
+                }
+                if (object.description != null)
+                    message.description = String(object.description);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from an Error message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof anytype.AccountStartResponse.Error
+             * @static
+             * @param {anytype.AccountStartResponse.Error} message Error
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Error.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.code = options.enums === String ? "NULL" : 0;
+                    object.description = "";
+                }
+                if (message.code != null && message.hasOwnProperty("code"))
+                    object.code = options.enums === String ? $root.anytype.AccountStartResponse.Error.Code[message.code] : message.code;
+                if (message.description != null && message.hasOwnProperty("description"))
+                    object.description = message.description;
+                return object;
+            };
+
+            /**
+             * Converts this Error to JSON.
+             * @function toJSON
+             * @memberof anytype.AccountStartResponse.Error
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Error.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Code enum.
+             * @name anytype.AccountStartResponse.Error.Code
+             * @enum {string}
+             * @property {number} NULL=0 NULL value
+             * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+             * @property {number} BAD_INPUT=2 BAD_INPUT value
+             * @property {number} LOCAL_REPO_DOESNT_EXIST=101 LOCAL_REPO_DOESNT_EXIST value
+             * @property {number} LOCAL_REPO_EXISTS_BUT_CORRUPTED=102 LOCAL_REPO_EXISTS_BUT_CORRUPTED value
+             * @property {number} FAILED_TO_RUN_NODE=103 FAILED_TO_RUN_NODE value
+             * @property {number} FAILED_TO_FIND_ACCOUNT_INFO=104 FAILED_TO_FIND_ACCOUNT_INFO value
+             */
+            Error.Code = (function() {
+                var valuesById = {}, values = Object.create(valuesById);
+                values[valuesById[0] = "NULL"] = 0;
+                values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                values[valuesById[2] = "BAD_INPUT"] = 2;
+                values[valuesById[101] = "LOCAL_REPO_DOESNT_EXIST"] = 101;
+                values[valuesById[102] = "LOCAL_REPO_EXISTS_BUT_CORRUPTED"] = 102;
+                values[valuesById[103] = "FAILED_TO_RUN_NODE"] = 103;
+                values[valuesById[104] = "FAILED_TO_FIND_ACCOUNT_INFO"] = 104;
+                return values;
+            })();
+
+            return Error;
+        })();
+
+        return AccountStartResponse;
     })();
 
     anytype.IpfsGetFileRequest = (function() {

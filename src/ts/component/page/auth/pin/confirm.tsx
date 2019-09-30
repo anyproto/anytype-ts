@@ -61,7 +61,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 	};
 
 	onChange (e: any, id: number) {
-		const { authStore, match } = this.props;
+		const { authStore, match, history } = this.props;
 		const isAdd = match.params.id == 'add';
 		const isSelect = match.params.id == 'select';
 		
@@ -86,11 +86,11 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		if (pin.length == SIZE) {
 			if (pin == authStore.pin) {
 				if (isSelect) {
-					this.props.history.push('/auth/setup/select');
+					history.push('/auth/setup/select');
 				};
 				
 				if (isAdd) {
-					this.props.history.push('/main/index');
+					history.push('/main/index');
 				};
 			} else {
 				this.setState({ error: 'Pin codes do not match' });
