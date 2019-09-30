@@ -9,7 +9,6 @@ interface Props {
 	text?: string;
 	className?: string;
 	onClick?(e: any): void;
-	onMouseDown?(e: any): void;
 };
 
 interface EmptyProps {
@@ -22,7 +21,7 @@ class Button extends React.Component<Props, {}> {
     };
 
 	render () {
-		const { id, type, subType, icon, text, className, onClick, onMouseDown } = this.props;
+		const { id, type, subType, icon, text, className, onClick } = this.props;
 
 		let Component: React.ReactType<EmptyProps>;
 		let cn = [ 'button' ];
@@ -36,7 +35,7 @@ class Button extends React.Component<Props, {}> {
 			default:
 				Component = () => { 
 					return (
-						<div id={id} className={cn.join(' ')} onMouseDown={onClick || onMouseDown}>
+						<div id={id} className={cn.join(' ')} onMouseDown={onClick}>
 							{icon ? <Icon className={icon} /> : ''}
 							<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 						</div>
@@ -47,7 +46,7 @@ class Button extends React.Component<Props, {}> {
 			case 'input':
 				Component = () => { 
 					return (
-						<input id={id} type={subType} className={cn.join(' ')} onMouseDown={onClick || onMouseDown} value={text} />
+						<input id={id} type={subType} className={cn.join(' ')} onMouseDown={onClick} value={text} />
 					);
 				};
 				break;

@@ -14,7 +14,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 	};
 
 	render () {
-        return (
+		return (
 			<div>
 				<Cover num={3} />
 				<Header />
@@ -28,7 +28,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 				</Frame>
 			</div>
 		);
-    };
+	};
 
 	onSubmit (e: any) {
 		e.preventDefault();

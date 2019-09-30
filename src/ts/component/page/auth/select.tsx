@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { dispatcher, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -33,7 +33,6 @@ class PageAuthSelect extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<Smile icon=":clock12:" size={36} />
 				<Cover num={3} />
 				<Header />
 				<Footer />
@@ -73,7 +72,6 @@ class PageAuthSelect extends React.Component<Props, State> {
 					this.setState({ error: error });
 				};
 			} else {
-				Storage.set('phrase', message.mnemonic);
 				authStore.phraseSet(message.mnemonic);
 				history.push('/auth/register/register');
 			};

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
+import { Util } from 'ts/lib';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -15,10 +16,13 @@ import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 
 const $ = require('jquery');
+const raf = require('raf');
+
 interface Props extends RouteComponentProps<any> {};
 
 class Page extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
 	childRef: any;
 
 	render () {
@@ -46,19 +50,19 @@ class Page extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={this.getClass()}>
+			<div className={this.getClass('page')}>
 				<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
 			</div>
 		);
 	};
 	
 	componentDidMount () {
-		let win = $(window);
-		win.unbind('resize.page orientationchange.page');
-		win.on('resize.page orientationchange.page', () => { this.resize(); });
-
+		this._isMounted = true;
 		this.setBodyClass();
 		this.resize();
+		this.unbind();
+		
+		$(window).on('resize.page', () => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -66,27 +70,41 @@ class Page extends React.Component<Props, {}> {
 		this.resize();
 	};
 	
-	getClass () {
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.unbind();
+	};
+	
+	unbind () {
+		$(window).unbind('resize.page');
+	};
+	
+	getClass (prefix: string) {
 		const { match } = this.props;
 		
 		let page = match.params.page || 'index';
 		let action = match.params.action || 'index';
 		
 		return [ 
-			'page', 
-			'page-' + page, 
-			'page-' + page + '-' + action 
+			Util.toCamelCase([ prefix, page ].join('-')),
+			Util.toCamelCase([ prefix, page, action ].join('-')) 
 		].join(' ');
 	};
 	
 	setBodyClass () {
-		$('body').attr({ class: this.getClass() });
+		$('body').attr({ class: this.getClass('body') });
 	};
 	
 	resize () {
-		if (this.childRef && this.childRef.resize) {
-			this.childRef.resize();			
-		};
+		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+
+			if (this.childRef && this.childRef.resize) {
+				this.childRef.resize();			
+			};			
+		});
 	};
 	
 };

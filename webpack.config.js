@@ -16,11 +16,6 @@ module.exports = {
 		]
 	},
 	
-	node: {
-		fs: 'empty',
-		child_process: 'empty'
-	},
-	
 	devServer: {
 		hot: true,
 		inline: true,

@@ -30,7 +30,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 			</div>
 		);
 		
-        return (
+		return (
 			<div>
 				<Cover num={3} />
 				<Header />
@@ -58,7 +58,6 @@ class PageAccountSelect extends React.Component<Props, State> {
 		
 		e.preventDefault();
 		
-		Storage.set('account', id);
 		authStore.accountIdSet(id);
 		history.push('/auth/pin-select/select');
 	};

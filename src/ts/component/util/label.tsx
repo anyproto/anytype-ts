@@ -8,13 +8,15 @@ interface Props {
 class Label extends React.Component<Props, {}> {
 
 	render () {
-		let className = [ 'label' ];
-		if (this.props.className) {
-			className.push(this.props.className);
+		const { text, className } = this.props;
+		
+		let cn = [ 'label' ];
+		if (className) {
+			cn.push(className);
 		};
 		
 		return (
-			<div className={className.join(' ')} dangerouslySetInnerHTML={{ __html: this.props.text }} />
+			<div className={cn.join(' ')} dangerouslySetInnerHTML={{ __html: text }} />
 		);
 	};
 	

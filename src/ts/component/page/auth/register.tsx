@@ -51,15 +51,25 @@ class PageAuthRegister extends React.Component<Props, State> {
 					<Title text="Add name and profile picture" />
 					<Error text={error} />
 		
-					<div className="fileWrap" onMouseDown={this.onFileClick}>
-						<IconUser icon={preview} className={preview ? 'active' : ''} />
-					</div>
-						
-					<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
-					<Button text="Create profile" className="orange" onClick={this.onSubmit} />
+					<form onSubmit={this.onSubmit}>
+						<div className="fileWrap" onMouseDown={this.onFileClick}>
+							<IconUser icon={preview} className={preview ? 'active' : ''} />
+						</div>
+					
+						<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
+						<Button type="input" text="Create profile" className="orange" />
+					</form>
 				</Frame>
 			</div>
 		);
+	};
+	
+	componentDidMount () {
+		this.nameRef.focus();
+	};
+	
+	componentDidUpdate () {
+		this.nameRef.focus();
 	};
 
 	onFileClick (e: any) {
@@ -85,10 +95,23 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 
 	onSubmit (e: any) {
-		const { match, history } = this.props;
+		const { match, history, authStore } = this.props;
 		
 		e.preventDefault();
-		history.push('/auth/setup/' + match.params.id);
+		this.nameRef.setError(false);
+
+		let error = '';
+		
+		if (!authStore.name) {
+			error = 'Name cannot be blank';
+			this.nameRef.setError(true);
+		};
+		
+		if (!error) {
+			history.push('/auth/setup/' + match.params.id);	
+		} else {
+			this.setState({ error: error });
+		};
 	};
 	
 };

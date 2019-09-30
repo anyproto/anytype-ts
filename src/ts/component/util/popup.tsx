@@ -48,24 +48,25 @@ class Popup extends React.Component<Props, {}> {
 		this.resize();
 		this.unbind();
 		
-		$(window).on('resize.popup orientationchange.popup', () => { this.resize(); });
+		$(window).on('resize.popup', () => { this.resize(); });
 	};
 	
 	componentWillUnmount () {
+		this._isMounted = false;
 		this.unbind();
 	};
 	
 	unbind () {
-		$(window).unbind('resize.popup orientationchange.popup');
+		$(window).unbind('resize.popup');
 	};
 	
 	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));		
 		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+					
+			const node = $(ReactDOM.findDOMNode(this));
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
 				marginLeft: -node.outerWidth() / 2

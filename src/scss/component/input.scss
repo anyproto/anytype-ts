@@ -1,6 +1,10 @@
+@import "~scss/_vars";
+
 .input {
 	background: none; height: 30px; border-radius: 0px; color: #000; padding: 0px 12px; font-size: 15px; width: 100%;
 	letter-spacing: -0.1px;
 }
 .input.readOnly { background: #f7f5f0; cursor: default; }
 .input::placeholder { color: #d2d0c2; }
+
+.input.withError { border-color: $colorRed !important; }

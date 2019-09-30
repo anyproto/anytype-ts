@@ -1,5 +1,5 @@
 import { observable, action, computed } from 'mobx';
-import { I } from 'ts/lib';
+import { I, Storage } from 'ts/lib';
 
 class AuthStore {
 	@observable public accountItem: I.AccountInterface = null;
@@ -28,21 +28,13 @@ class AuthStore {
 	@action
 	phraseSet (v: string) {
 		this.phrase = v;
+		Storage.set('phrase', v);
 	};
 	
 	@action
 	accountIdSet (v: string) {
 		this.accountId = v;
-	};
-	
-	@action
-	accountAdd (account: I.AccountInterface) {
-		this.accountList.push(account);
-	};
-	
-	@action
-	accountSet (account: I.AccountInterface) {
-		this.accountItem = account as I.AccountInterface;
+		Storage.set('accountId', v);
 	};
 	
 	@action
@@ -53,6 +45,16 @@ class AuthStore {
 	@action
 	nameSet (v: string) {
 		this.name = v;
+	};
+	
+	@action
+	accountAdd (account: I.AccountInterface) {
+		this.accountList.push(account);
+	};
+	
+	@action
+	accountSet (account: I.AccountInterface) {
+		this.accountItem = account as I.AccountInterface;
 	};
 	
 };

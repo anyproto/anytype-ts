@@ -135,7 +135,7 @@ class TextArea extends React.Component<Props, State> {
 	
 	setError (v: boolean) {
 		let node = $(ReactDOM.findDOMNode(this));
-		v ? node.addClass('with-error') : node.removeClass('with-error');
+		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 	
 };

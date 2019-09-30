@@ -23,7 +23,8 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		let { id, icon, arrow, className, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
+		const { id, icon, arrow, className, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
+		
 		let cn = [ 'icon' ];
 		let style: any = {};
 		

@@ -13,7 +13,7 @@ class Smile extends React.Component<Props, {}> {
 		size: 18
 	};
 	
-	render() {
+	render () {
 		const { icon, size, className } = this.props;
 		
 		let cn = [ 'smile' ];
@@ -23,7 +23,7 @@ class Smile extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				{icon ? <Emoji emoji={icon} set="apple" size={size} /> : ''}
+				{icon ? <Emoji emoji={icon} set="apple" size={size} backgroundImageFn={() => ''} /> : ''}
 			</div>
 		);
 	};

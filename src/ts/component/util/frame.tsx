@@ -21,24 +21,25 @@ class Frame extends React.Component<{}, {}> {
 		this.resize();
 		this.unbind();
 		
-		$(window).on('resize.frame orientationchange.frame', () => { this.resize(); });
+		$(window).on('resize.frame', () => { this.resize(); });
 	};
 	
 	componentWillUnmount () {
+		this._isMounted = false;
 		this.unbind();
 	};
 	
 	unbind () {
-		$(window).unbind('resize.frame orientationchange.frame');
+		$(window).unbind('resize.frame');
 	};
 	
 	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(ReactDOM.findDOMNode(this));
 		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+			
+			const node = $(ReactDOM.findDOMNode(this));
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
 				marginLeft: -node.outerWidth() / 2

@@ -101,7 +101,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 			return;
 		};
 			
-		let account = Storage.get('account');
+		let accountId = Storage.get('accountId');
 		let request: any = { 
 			rootPath: Config.root, 
 			mnemonic: phrase
@@ -112,9 +112,9 @@ class PageAuthSetup extends React.Component<Props, State> {
 				return;
 			};
 				
-			if (account !== false) {
+			if (accountId !== false) {
 				request = { 
-					id: account 
+					id: accountId 
 				};
 					
 				dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
@@ -185,6 +185,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	
 	select () {
 		const { authStore, history } = this.props;
+		
 		let request = { 
 			id: authStore.accountId 
 		};

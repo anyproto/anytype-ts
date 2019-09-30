@@ -31,7 +31,6 @@ interface RouteElement { path: string; };
 const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
-const Config: any = require('json/config.json');
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore: commonStore,
@@ -66,11 +65,9 @@ class App extends React.Component<{}, {}> {
 		keyBoard.init(history);
 		
 		let phrase = Storage.get('phrase');
-		if (!phrase) {
-			return;
+		if (phrase) {
+			//history.push('/auth/setup/init');
 		};
-		
-		history.push('/auth/setup/init');
 	};
 	
 };

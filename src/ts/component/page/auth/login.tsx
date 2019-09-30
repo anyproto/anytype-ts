@@ -44,32 +44,41 @@ class PageAuthLogin extends React.Component<Props, State> {
 					<Label text="Type your keychain phrase or private key" />
 					<Error text={error} />
 							
-					<TextArea ref={(ref: any) => this.phraseRef = ref} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
-					<div className="buttons">
-						<Button text="Login" className="orange" onClick={this.onSubmit} />
-						<Button text="Back" className="grey" onClick={this.onCancel} />
-					</div>
+					<form onSubmit={this.onSubmit}>
+						<TextArea ref={(ref: any) => this.phraseRef = ref} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
+						<div className="buttons">
+							<Button type="input" text="Login" className="orange" />
+							<Button text="Back" className="grey" onClick={this.onCancel} />
+						</div>
+					</form>
 				</Frame>
 			</div>
 		);
-    };
+	};
+
+	componentDidMount () {
+		this.phraseRef.focus();
+	};
 
 	onSubmit (e: any) {
 		const { authStore, history } = this.props;
 		
 		e.preventDefault();
+
+		this.phraseRef.setError(false);
 		
 		let request = { 
 			rootPath: Config.root, 
 			mnemonic: this.phraseRef.getValue()
 		};
-			
+		
 		dispatcher.call('walletRecover', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
 				let error = '';
 				switch (message.error.code) {
 					case errorCode.BAD_INPUT:
 						error = 'Invalid mnemonic phrase';
+						this.phraseRef.setError(true);
 						break; 
 					default:
 						error = message.error.description;
