@@ -13,6 +13,8 @@ import MenuMain from './menu/main';
 import MenuHelp from './menu/help';
 
 import Popup from './util/popup';
+import PopupProfile from './popup/profile';
+
 import Frame from './util/frame';
 import Cover from './util/cover';
 import Title from './util/title';
@@ -42,6 +44,7 @@ export {
 	MenuMain,
 	MenuHelp,
 	Popup,
+	PopupProfile,
 	Frame,
 	Cover,
 	Title,

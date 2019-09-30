@@ -3,12 +3,12 @@ import * as React from 'react';
 class HeaderAuth extends React.Component<{}, {}> {
 
 	render () {
-        return (
+		return (
 			<div className="header">
 				<div className="logo" />
 			</div>
 		);
-    };
+	};
 
 };
 

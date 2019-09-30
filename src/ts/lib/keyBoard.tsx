@@ -7,14 +7,14 @@ class KeyBoard {
 	
 	init (history: any) {
 		this.history = history;
-		this.clear();
+		this.unbind();
 		
 		let win = $(window); 
 		win.on('keydown.common', (e: any) => { this.keyDown(e); })
 		win.on('keyup.common', (e: any) => { this.keyUp(e); });
 	};
 	
-	clear () {
+	unbind () {
 		$(window).unbind('keyup.common keydown.common');
 	};
 	

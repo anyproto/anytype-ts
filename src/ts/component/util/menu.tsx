@@ -25,7 +25,7 @@ class Menu extends React.Component<I.MenuInterface, {}> {
 		];
 		
 		if (!Component) {
-			return <div />
+			return <div>Component {id} not found</div>
 		};
 		
 		return (

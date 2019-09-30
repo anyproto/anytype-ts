@@ -39,12 +39,12 @@ class FooterAuth extends React.Component<Props, State> {
 				<Icon id="button-help" className={cn.join(' ')} onMouseDown={this.onHelp} />
 			</div>
 		);
-    };
+	};
 
 	onHelp () {
-		this.setState({ help: true });
-		
 		const { commonStore } = this.props;
+		
+		this.setState({ help: true });
 		commonStore.menuOpen('help', { 
 			element: 'button-help',
 			offsetY: 4,

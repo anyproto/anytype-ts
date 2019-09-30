@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Label } from 'ts/component';
-import { dispatcher, I } from 'ts/lib';
+import { dispatcher, I, cache } from 'ts/lib';
 
 interface Props {
 	name?: string;
@@ -31,10 +31,6 @@ class IconUser extends React.Component<Props, State> {
 
 	constructor (props: any) {
 		super(props);
-		
-		this.onMouseDown = this.onMouseDown.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
@@ -57,7 +53,7 @@ class IconUser extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} className={cn.join(' ')}>
+			<div onMouseDown={onMouseDown} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} className={cn.join(' ')}>
 				<div className="image" style={style} />
 				<div className="txt">{this.shortName(text)}</div>
 				<div className="arrow" />
@@ -69,6 +65,14 @@ class IconUser extends React.Component<Props, State> {
 		const { image } = this.props;
 		
 		if (image) {
+			let key = 'image' + image.id;
+			let s = cache.get(key);
+			
+			if (s) {
+				this.setState({ icon: 'data:image/jpeg;base64,' + s });
+				return;
+			};
+			
 			let request = {
 				id: image.id,
 				size: I.ImageSize.LARGE
@@ -78,8 +82,10 @@ class IconUser extends React.Component<Props, State> {
 				if (message.error.code) {
 					return;
 				};
-				
-				this.setState({ icon: 'data:image/jpeg;base64,' + message.blob.toString('base64') });
+
+				s = message.blob.toString('base64');
+				cache.set('image' + image.id, s);
+				this.setState({ icon: 'data:image/jpeg;base64,' + s });
 			});
 		};
 	};
@@ -89,30 +95,6 @@ class IconUser extends React.Component<Props, State> {
 			return '';
 		};
 		return s.trim().substr(0, 1);
-	};
-	
-	onMouseEnter (e: any) {
-		let { onMouseEnter } = this.props;
-		
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
-	};
-	
-	onMouseLeave (e: any) {
-		let { onMouseLeave } = this.props;
-		
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
-	};
-	
-	onMouseDown (e: any) {
-		let { onMouseDown } = this.props;
-		
-		if (onMouseDown) {
-			onMouseDown(e);
-		};
 	};
 	
 };

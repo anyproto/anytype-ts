@@ -1,4 +1,4 @@
-export enum ImageSize { LARGE = 0, SMALL, THUMB };
+export enum ImageSize { LARGE, SMALL, THUMB };
 export enum MenuType { Vertical = 1, Horizontal };
 export enum MenuDirection { Top = 1, Bottom, Left, Right };
 

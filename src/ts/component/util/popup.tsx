@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
+import { Icon, PopupProfile } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -26,10 +26,19 @@ class Popup extends React.Component<Props, {}> {
 	render () {
 		const { id } = this.props;
 		const cn = [ 'popup', 'popup-' + id ];
+		const Components: any = {
+			profile: PopupProfile
+		};
+		const Component = Components[id];
+		
+		if (!Component) {
+			return <div>Component {id} not found</div>
+		};
 		
 		return (
 			<div className={cn.join(' ')}>
 				<Icon className="close" onMouseDown={this.close} />
+				<Component {...this.props} />
 			</div>
 		);
 	};
