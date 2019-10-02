@@ -5,6 +5,7 @@ import { dispatcher, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
+	commonStore?: any;
 	authStore?: any;
 };
 interface State {
@@ -13,6 +14,7 @@ interface State {
 
 const Config: any = require('json/config.json');
 
+@inject('commonStore')
 @inject('authStore')
 @observer
 class PageAuthSelect extends React.Component<Props, State> {
@@ -29,11 +31,13 @@ class PageAuthSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { commonStore } = this.props;
+		const { cover } = commonStore;
 		const { error } = this.state;
 		
         return (
 			<div>
-				<Cover num={3} />
+				<Cover num={cover} />
 				<Header />
 				<Footer />
 				
@@ -52,14 +56,11 @@ class PageAuthSelect extends React.Component<Props, State> {
     };
 
 	onLogin (e: any) {
-		e.preventDefault();
 		this.props.history.push('/auth/login');
 	};
 	
 	onRegister (e: any) {
 		const { authStore, history } = this.props;
-		
-		e.preventDefault();
 		
 		let request = { 
 			rootPath: Config.root

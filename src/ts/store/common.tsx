@@ -1,9 +1,17 @@
 import { observable, action, computed } from 'mobx';
-import { I } from 'ts/lib';
+import { I, Storage } from 'ts/lib';
+
+const COVER = 3;
 
 class CommonStore {
 	@observable public popupList: I.PopupInterface[] = [];
 	@observable public menuList: I.MenuInterface[] = [];
+	@observable public coverId: number = 0;
+	
+	@computed
+	get cover(): number {
+		return this.coverId || Storage.get('cover') || COVER;
+	};
 	
 	@computed
 	get popups(): I.PopupInterface[] {
@@ -13,6 +21,12 @@ class CommonStore {
 	@computed
 	get menus(): I.MenuInterface[] {
 		return this.menuList;
+	};
+	
+	@action
+	coverSet (v: number) {
+		this.coverId = v;
+		Storage.set('cover', v);
 	};
 	
 	@action

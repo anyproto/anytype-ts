@@ -5,7 +5,8 @@ import { dispatcher, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
-	authStore?: any
+	commonStore?: any;
+	authStore?: any;
 };
 interface State {
 	icon: number;
@@ -17,6 +18,7 @@ const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
 ];
 
+@inject('commonStore')
 @inject('authStore')
 @observer
 class PageAuthSetup extends React.Component<Props, State> {
@@ -28,7 +30,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { match } = this.props;
+		const { commonStore, match } = this.props;
+		const { cover } = commonStore;
 		const { icon, error } = this.state;
 		
 		let title = '';
@@ -47,7 +50,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<Cover num={3} />
+				<Cover num={cover} />
 				<Header />
 				<Footer />
 				
@@ -185,9 +188,10 @@ class PageAuthSetup extends React.Component<Props, State> {
 	
 	select () {
 		const { authStore, history } = this.props;
+		const { account } = authStore; 
 		
 		let request = { 
-			id: authStore.accountId 
+			id: account.id 
 		};
 			
 		dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {

@@ -4,6 +4,7 @@ import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 
 import HeaderAuth from './header/auth';
+import HeaderMainIndex from './header/main/index';
 import FooterAuth from './footer/auth';
 
 import Menu from './util/menu';
@@ -11,6 +12,7 @@ import MenuItemVertical from './menu/item/vertical';
 import MenuItemMain from './menu/item/main';
 import MenuMain from './menu/main';
 import MenuHelp from './menu/help';
+import MenuCover from './menu/cover';
 
 import Popup from './util/popup';
 import PopupProfile from './popup/profile';
@@ -34,6 +36,7 @@ export {
 	ListPopup,
 	ListMenu,
 	HeaderAuth,
+	HeaderMainIndex,
 	FooterAuth,
 	Input,
 	TextArea,
@@ -43,6 +46,7 @@ export {
 	MenuItemMain,
 	MenuMain,
 	MenuHelp,
+	MenuCover,
 	Popup,
 	PopupProfile,
 	Frame,

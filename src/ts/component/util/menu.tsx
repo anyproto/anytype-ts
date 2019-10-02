@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
-import { MenuHelp } from 'ts/component';
+import { MenuHelp, MenuCover } from 'ts/component';
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -15,7 +15,8 @@ class Menu extends React.Component<I.MenuInterface, {}> {
 		const { id, param } = this.props;
 		const { type } = param;
 		const Components: any = {
-			help: MenuHelp
+			help: MenuHelp,
+			cover: MenuCover,
 		};
 		const Component = Components[id];
 		const cn = [ 

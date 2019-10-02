@@ -16,10 +16,11 @@ class PopupProfile extends React.Component<Props, {}> {
 	
 	render () {
 		const { authStore } = this.props;
+		const { account } = authStore;
 		
 		return (
 			<div>
-				{authStore.account ? <IconUser name={authStore.account.name} image={authStore.account.icon} /> : ''}
+				{authStore.account ? <IconUser name={account.name} image={account.icon} /> : ''}
 			</div>
 		);
 	};

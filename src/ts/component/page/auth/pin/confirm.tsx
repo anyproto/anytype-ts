@@ -7,6 +7,7 @@ import { observer, inject } from 'mobx-react';
 const SIZE = 6;
 
 interface Props extends RouteComponentProps<any> {
+	commonStore?: any;
 	authStore?: any;
 };
 
@@ -14,6 +15,7 @@ interface State {
 	error: string;
 };
 
+@inject('commonStore')
 @inject('authStore')
 @observer
 class PageAuthPinConfirm extends React.Component<Props, State> {
@@ -24,12 +26,14 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 	};
 
 	constructor (props: any) {
-        super(props);
+		super(props);
 
 		this.onChange = this.onChange.bind(this);
 	};
 	
 	render () {
+		const { commonStore } = this.props;
+		const { cover } = commonStore;
 		const { error } = this.state;
 		
 		let inputs = [];
@@ -39,7 +43,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<Cover num={3} />
+				<Cover num={cover} />
 				<Header />
 				<Footer />
 				

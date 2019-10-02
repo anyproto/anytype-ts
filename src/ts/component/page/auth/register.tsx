@@ -6,11 +6,9 @@ import { observer, inject } from 'mobx-react';
 import { dispatcher, Util } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
-const Err: any = {
-	FAILED_TO_SET_AVATAR: 103
-};
 
 interface Props extends RouteComponentProps<any> {
+	commonStore?: any;
 	authStore?: any;
 };
 interface State {
@@ -18,6 +16,7 @@ interface State {
 	preview: string;
 };
 
+@inject('commonStore')
 @inject('authStore')
 @observer
 class PageAuthRegister extends React.Component<Props, State> {
@@ -38,12 +37,13 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { commonStore } = this.props;
+		const { cover } = commonStore;
 		const { error, preview } = this.state;
-		const { authStore } = this.props;
 		
 		return (
 			<div>
-				<Cover num={3} />
+				<Cover num={cover} />
 				<Header />
 				<Footer />
 				
@@ -95,9 +95,10 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 
 	onSubmit (e: any) {
+		e.preventDefault();
+		
 		const { match, history, authStore } = this.props;
 		
-		e.preventDefault();
 		this.nameRef.setError(false);
 
 		let error = '';

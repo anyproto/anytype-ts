@@ -7,6 +7,7 @@ import { observer, inject } from 'mobx-react';
 const SIZE = 6;
 
 interface Props extends RouteComponentProps<any> {
+	commonStore?: any;
 	authStore?: any;
 };
 
@@ -14,6 +15,7 @@ interface State {
 	error: string;
 };
 
+@inject('commonStore')
 @inject('authStore')
 @observer
 class PageAuthPinSelect extends React.Component<Props, State> {
@@ -30,6 +32,8 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { commonStore } = this.props;
+		const { cover } = commonStore;
 		const { error } = this.state;
 		
 		let inputs = [];
@@ -39,7 +43,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<Cover num={3} />
+				<Cover num={cover} />
 				<Header />
 				<Footer />
 				
@@ -59,7 +63,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	componentDidMount () {
 		this.refObj[1].focus();
 	};
-
+	
 	onChange (e: any, id: number) {
 		const { authStore, match, history } = this.props;
 		

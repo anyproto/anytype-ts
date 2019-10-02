@@ -14,6 +14,10 @@ export interface AccountInterface {
 	icon?: ImageInterface;
 };
 
+export interface DocumentInterface {
+	id: string;	
+};
+
 export interface PopupParam {
 	onClose?(): void;
 };

@@ -3,4 +3,11 @@
 		width: 60px; height: 13px; position: fixed; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
 		background-position: center center;  
 	}
+	
+	.menu { position: fixed; top: 6px; right: 12px; z-index: 1; color: #fff; }
+	.menu {
+		.item { display: inline-block; vertical-align: middle; margin-right: 16px; cursor: pointer; }
+		.item:hover { text-decoration: underline; }
+		.item:last-child { margin-right: 0px; }
+	}
 }

@@ -8,7 +8,6 @@ class AuthStore {
 	@observable public icon: string = '';
 	@observable public name: string = '';
 	@observable public phrase: string = '';
-	@observable public accountId: string = '';
 	
 	@computed
 	get accounts(): I.AccountInterface[] {
@@ -32,12 +31,6 @@ class AuthStore {
 	};
 	
 	@action
-	accountIdSet (v: string) {
-		this.accountId = v;
-		Storage.set('accountId', v);
-	};
-	
-	@action
 	iconSet (v: string) {
 		this.icon = v;
 	};
@@ -54,6 +47,7 @@ class AuthStore {
 	
 	@action
 	accountSet (account: I.AccountInterface) {
+		Storage.set('accountId', account.id);
 		this.accountItem = account as I.AccountInterface;
 	};
 	

@@ -31,6 +31,22 @@
 	}
 	
 	.menu.menu-help { width: 224px; }
+	
+	.menu.menu-cover { background: #fff; width: 288px; padding: 16px 16px 8px 16px; }
+	.menu.menu-cover {
+		.item { 
+			width: 80px; height: 48px; display: inline-block; vertical-align: top; margin: 0px 8px 8px 0px; 
+			cursor: pointer; text-align: center; line-height: 48px; padding: 0px;
+		}
+		.item {
+			.cover { position: static; width: 100%; height: 100%; }
+			.icon { 
+				width: 20px; height: 20px; background: url('~img/icon/cover/active.svg'); position: absolute; left: 50%; top: 50%;
+				margin: -10px 0px 0px -10px; 
+			}
+		}
+		.item:nth-child(3n + 3) { margin-right: 0px; }
+	}
 }
 
 .menu-main {

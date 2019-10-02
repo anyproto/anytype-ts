@@ -9,12 +9,13 @@ interface Props {
 
 @inject('commonStore')
 @observer
-class HeaderAuth extends React.Component<Props, {}> {
-	
+class HeaderMainIndex extends React.Component<Props, {}> {
+
 	constructor (props: any) {
 		super(props);
 		
 		this.onCover = this.onCover.bind(this);
+		this.onProfile = this.onProfile.bind(this);
 	};
 
 	render () {
@@ -23,6 +24,7 @@ class HeaderAuth extends React.Component<Props, {}> {
 				<Icon className="logo" />
 				<div className="menu">
 					<div id="button-cover" className="item" onMouseDown={this.onCover}>Change cover</div>
+					<div className="item" onMouseDown={this.onProfile}>Settings</div>
 				</div>
 			</div>
 		);
@@ -38,7 +40,12 @@ class HeaderAuth extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left
 		});
 	};
+	
+	onProfile (e: any) {
+		const { commonStore } = this.props;
+		commonStore.popupOpen('profile', {});
+	};
 
 };
 
-export default HeaderAuth;
+export default HeaderMainIndex;

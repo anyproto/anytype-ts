@@ -24,7 +24,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		const { authStore } = this.props;
 		
 		const Item = (item: any) => (
-			<div className="item" onClick={(e) => { this.onSelect(e, item.id); }}>
+			<div className="item" onClick={(e) => { this.onSelect(e, item as I.AccountInterface); }}>
 				<IconUser {...item} />
 				<div className="name">{item.name}</div>
 			</div>
@@ -53,17 +53,14 @@ class PageAccountSelect extends React.Component<Props, State> {
 		);
     };
 
-	onSelect (e: any, id: string) {
+	onSelect (e: any, account: I.AccountInterface) {
 		const { authStore, history } = this.props;
 		
-		e.preventDefault();
-		
-		authStore.accountIdSet(id);
+		authStore.accountSet(account);
 		history.push('/auth/pin-select/select');
 	};
 	
 	onAdd (e: any) {
-		e.preventDefault();
 		this.props.history.push('/auth/register/add');
 	};
 	
