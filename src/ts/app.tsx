@@ -45,7 +45,7 @@ class App extends React.Component<{}, {}> {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div>
-						<ListPopup />
+						<ListPopup history={history} />
 						<ListMenu />
 						<div id="drag" />
 						

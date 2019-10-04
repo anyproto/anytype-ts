@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { I } from 'ts/lib';
 
 interface Props {
+	history: any;
 	commonStore?: any;
 };
 
@@ -18,14 +19,14 @@ class ListPopup extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { commonStore } = this.props;
+		const { history, commonStore } = this.props;
 		const { popups } = commonStore;
 		const dimmer = <div className="dimmer" onMouseDown={this.close} />;
 		
 		return (
 			<div className="popups">
 				{popups.map((item: I.PopupInterface, i: number) => (
-					<Popup key={item.id} {...item} />
+					<Popup history={history} key={item.id} {...item} />
 				))}
 				{popups.length ? dimmer : ''}
 			</div>

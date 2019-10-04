@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Util } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -18,8 +19,12 @@ import PageMainEdit from './main/edit';
 const $ = require('jquery');
 const raf = require('raf');
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	commonStore?: any;
+};
 
+@inject('commonStore')
+@observer
 class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
@@ -57,10 +62,13 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { commonStore } = this.props;
+		
 		this._isMounted = true;
 		this.setBodyClass();
 		this.resize();
 		this.unbind();
+		commonStore.popupCloseAll();
 		
 		$(window).on('resize.page', () => { this.resize(); });
 	};

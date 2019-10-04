@@ -8,6 +8,7 @@ const $ = require('jquery');
 const raf = require('raf');
 
 interface Props extends I.PopupInterface {
+	history: any;
 	commonStore?: any;
 };
 
