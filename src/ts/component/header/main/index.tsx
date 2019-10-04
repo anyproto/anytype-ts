@@ -32,7 +32,6 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	
 	onCover (e: any) {
 		const { commonStore } = this.props;
-		
 		commonStore.menuOpen('cover', { 
 			element: 'button-cover',
 			offsetY: 4,
