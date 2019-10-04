@@ -33,7 +33,7 @@ class PopupProfile extends React.Component<Props, {}> {
 	onLogout (e: any) {
 		const { authStore, history } = this.props;
 		
-		authStore.logout();		
+		authStore.logout();
 		history.push('/');
 	};
 	
