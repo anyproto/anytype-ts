@@ -147,7 +147,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		const { authStore, history, match } = this.props;
 		
 		let request = { 
-			username: authStore.name, 
+			name: authStore.name, 
 			avatarLocalPath: authStore.icon 
 		};
 		

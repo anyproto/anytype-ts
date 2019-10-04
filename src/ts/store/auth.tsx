@@ -51,6 +51,12 @@ class AuthStore {
 		this.accountItem = account as I.AccountInterface;
 	};
 	
+	@action
+	logout () {
+		Storage.set('phrase', '');
+		Storage.set('accountId', '');
+	};
+	
 };
 
 export let authStore: AuthStore = new AuthStore();

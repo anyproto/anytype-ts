@@ -31,10 +31,10 @@ class PopupProfile extends React.Component<Props, {}> {
 	};
 	
 	onLogout (e: any) {
-		Storage.delete('phrase');
-		Storage.delete('account');
+		const { authStore, history } = this.props;
 		
-		this.props.history.push('/');
+		authStore.logout();		
+		history.push('/');
 	};
 	
 };
