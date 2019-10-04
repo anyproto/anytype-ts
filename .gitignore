@@ -7,3 +7,5 @@ dist/main.js.map
 src/ts/protocol
 package-lock.json
 build
+addon
+protobuf
