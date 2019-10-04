@@ -11,7 +11,7 @@ export interface AccountInterface {
 	id: string;
 	name: string;
 	color?: string;
-	icon?: ImageInterface;
+	avatar?: ImageInterface;
 };
 
 export interface DocumentInterface {

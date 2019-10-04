@@ -42,14 +42,7 @@ class Dispatcher {
 				
 			switch (key) {
 				case 'accountAdd':
-					let account = value.account;
-					
-					authStore.accountAdd({
-						id: account.id,
-						name: account.name,
-						icon: account.avatar,
-						color: account.color
-					});
+					authStore.accountAdd(value.account);
 					break;
 			};
 		};

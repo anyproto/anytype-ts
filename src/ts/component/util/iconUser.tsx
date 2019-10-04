@@ -8,7 +8,7 @@ interface Props {
 	color?: string;
 	icon?: string;
 	className?: string;
-	image?: I.ImageInterface;
+	avatar?: I.ImageInterface;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -62,32 +62,37 @@ class IconUser extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { image } = this.props;
+		this.load();
+	};
+	
+	load () {
+		const { avatar } = this.props;
+		if (!avatar) {
+			return;
+		};
 		
-		if (image) {
-			let key = [ 'image', image.id, I.ImageSize.LARGE ].join('.');
-			let s = cache.get(key);
+		let key = [ 'image', avatar.id, I.ImageSize.LARGE ].join('.');
+		let s = cache.get(key);
 			
-			if (s) {
-				this.setState({ icon: 'data:image/jpeg;base64,' + s });
+		if (s) {
+			this.setState({ icon: 'data:image/jpeg;base64,' + s });
+			return;
+		};
+			
+		let request = {
+			id: avatar.id,
+			size: I.ImageSize.LARGE
+		};
+			
+		dispatcher.call('imageGetBlob', request, (errorCode: any, message: any) => {
+			if (message.error.code) {
 				return;
 			};
-			
-			let request = {
-				id: image.id,
-				size: I.ImageSize.LARGE
-			};
-			
-			dispatcher.call('imageGetBlob', request, (errorCode: any, message: any) => {
-				if (message.error.code) {
-					return;
-				};
 
-				s = message.blob.toString('base64');
-				cache.set(key, s);
-				this.setState({ icon: 'data:image/jpeg;base64,' + s });
-			});
-		};
+			s = message.blob.toString('base64');
+			cache.set(key, s);
+			this.setState({ icon: 'data:image/jpeg;base64,' + s });
+		});
 	};
 	
 	shortName (s: string): string {

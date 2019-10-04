@@ -114,28 +114,21 @@ class PageAuthSetup extends React.Component<Props, State> {
 			if (message.error.code) {
 				return;
 			};
-				
-			if (accountId !== false) {
+			
+			if (accountId) {
 				request = { 
 					rootPath: Config.root,
 					id: accountId
 				};
-					
+				
 				dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
 					if (message.error.code) {
 						return;
+					} else
+					if (message.account) {
+						authStore.accountSet(message.account);
+						history.push('/main/index');
 					};
-					
-					let account = message.account;
-					
-					authStore.accountSet({
-						id: account.id,
-						name: account.name,
-						icon: account.avatar,
-						color: account.color
-					});
-						
-					history.push('/main/index');
 				});
 			} else {
 				history.push('/auth/account-select');				
@@ -167,14 +160,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				};
 			} else
 			if (message.account) {
-				let account = message.account;
-				
-				authStore.accountSet({
-					id: account.id,
-					name: account.name,
-					icon: account.avatar,
-					color: account.color,
-				});
+				authStore.accountSet(message.account);
 				
 				if (match.params.id == 'register') {
 					history.push('/auth/success');

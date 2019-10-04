@@ -15,12 +15,6 @@ if [ "$token" = "" ]; then
   exit 1
 fi;
 
-function gh_curl() {
-  curl -H "Authorization: token $TOKEN" \
-       -H "Accept: application/vnd.github.v3.raw" \
-       $@
-}
-
 parser=".[0].assets | map(select(.name == \"$FILE\"))[0].id"
 asset_id=`curl -H "Authorization: token $token" -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases | jq "$parser"`
 
@@ -29,11 +23,9 @@ if [ "$asset_id" = "" ]; then
   exit 1
 fi;
 
-url="https://$token:@$GITHUB/repos/$REPO/releases/assets/$asset_id"
-
 printf "Found asset: $asset_id\n"
 echo -n "Downloading file... "
-curl -sL -H 'Accept: application/octet-stream' $url > $FILE
+curl -sL -H 'Accept: application/octet-stream' https://$token:@$GITHUB/repos/$REPO/releases/assets/$asset_id > $FILE
 printf "Done\n"
 
 echo -n "Uncompressing... "

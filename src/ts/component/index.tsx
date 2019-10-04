@@ -6,6 +6,7 @@ import ListMenu from './list/menu';
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
 import FooterAuth from './footer/auth';
+import FooterMainIndex from './footer/main/index';
 
 import Menu from './util/menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -38,6 +39,7 @@ export {
 	HeaderAuth,
 	HeaderMainIndex,
 	FooterAuth,
+	FooterMainIndex,
 	Input,
 	TextArea,
 	Button,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { IconUser, Cover, HeaderMainIndex as Header } from 'ts/component';
+import { IconUser, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
 import { dispatcher, I } from 'ts/lib';
 
@@ -30,17 +30,19 @@ class PageMainIndex extends React.Component<Props, State> {
 	
 	render () {
 		const { authStore, commonStore } = this.props;
+		const { account } = authStore;
 		const { cover } = commonStore;
 		
 		return (
 			<div>
 				<Cover num={cover} />
 				<Header />
+				<Footer />
 				
 				<div id="body" className="wrapper">
 					<div className="title">
 						{authStore.account ? 'Hi, ' + authStore.account.name : ''}
-						{authStore.account ? <IconUser name={authStore.account.name} image={authStore.account.icon} onClick={this.onProfile} /> : ''}
+						{authStore.account ? <IconUser {...account} onClick={this.onProfile} /> : ''}
 					</div>
 					<div className="documents">
 					</div>
