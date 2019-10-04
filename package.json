@@ -5,7 +5,6 @@
 	"main": "electron.js",
 	"scripts": {
 		"lint": "tslint -c tslint.json -p tsconfig.json",
-		"build:addon": "./build.sh",
 		"start:watch": "webpack-dev-server --mode=development --env.NODE_ENV=development --history-api-fallback --cache",
 		"start:electron": "./node_modules/.bin/electron .",
 		"start:electron-wait-webpack": "wait-for-localhost 8080 && ./node_modules/.bin/electron .",
