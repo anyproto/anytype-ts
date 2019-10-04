@@ -53,8 +53,9 @@ class AuthStore {
 	
 	@action
 	logout () {
-		Storage.set('phrase', '');
 		Storage.set('accountId', '');
+		this.accountItem = null;
+		this.phraseSet('');
 	};
 	
 };

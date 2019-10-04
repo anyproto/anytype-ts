@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 REPO="anytypeio/go-anytype-middleware"
-FILE="js_v0.0.5_darwin-amd64.tar.gz"
+FILE="addon.tar.gz"
 GITHUB="api.github.com"
 
 echo -n "GitHub auth token: "
@@ -15,7 +15,7 @@ if [ "$token" = "" ]; then
   exit 1
 fi;
 
-parser=".[0].assets | map(select(.name == \"$FILE\"))[0].id"
+parser=".[0].assets | map(select(.name | match(\"js_\";\"i\")))[0].id"
 asset_id=`curl -H "Authorization: token $token" -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases | jq "$parser"`
 
 if [ "$asset_id" = "" ]; then

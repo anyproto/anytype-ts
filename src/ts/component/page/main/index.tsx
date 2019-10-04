@@ -41,8 +41,8 @@ class PageMainIndex extends React.Component<Props, State> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						{authStore.account ? 'Hi, ' + authStore.account.name : ''}
-						{authStore.account ? <IconUser {...account} onClick={this.onProfile} /> : ''}
+						{account ? 'Hi, ' + account.name : ''}
+						{account ? <IconUser {...account} onClick={this.onProfile} /> : ''}
 					</div>
 					<div className="documents">
 					</div>

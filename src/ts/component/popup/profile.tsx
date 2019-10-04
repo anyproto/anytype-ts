@@ -24,7 +24,7 @@ class PopupProfile extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				{authStore.account ? <IconUser {...account} /> : ''}
+				{account ? <IconUser {...account} /> : ''}
 				<Button className="orange" text="Logout" onClick={this.onLogout} />
 			</div>
 		);
