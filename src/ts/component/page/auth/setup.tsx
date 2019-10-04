@@ -117,7 +117,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 				
 			if (accountId !== false) {
 				request = { 
-					id: accountId 
+					rootPath: Config.root,
+					id: accountId
 				};
 					
 				dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {

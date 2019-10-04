@@ -68,7 +68,7 @@ class App extends React.Component<{}, {}> {
 		
 		let phrase = Storage.get('phrase');
 		if (phrase) {
-			//history.push('/auth/setup/init');
+			history.push('/auth/setup/init');
 		};
 	};
 	

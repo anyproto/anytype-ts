@@ -13,36 +13,40 @@ class Dispatcher {
 		com.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
 		this.service = com.anytype.ClientCommands.create(() => {}, false, false);
 		
-		bindings.setEventHandler((item: any) => {
-			let event = null;
-			try {
-				event = com.anytype.Event.decode(item.data);
-			} catch (err) {
-				console.error(err);
-			};
-				
-			if (event) {
-				console.log('[Dispatcher.event]', event);
-				this.event(event);
-			};
-		});
+		bindings.setEventHandler((item: any) => { this.event(item); });
 	};
 	
-	event (event: any) {
+	event (item: any) {
+		let event = null;
+		try {
+			event = com.anytype.Event.decode(item.data);
+		} catch (err) {
+			console.error(err);
+		};
+
+		if (!event) {
+			return;
+		};
+		
+		console.log('[Dispatcher.event]', event);
+		
 		for (let key in event) {
 			let value = event[key];
+			if (!value || ('object' != typeof(value))) {
+				continue;
+			};
 			
 			if (value.error && value.error.code) {
 				continue;
 			};
-			
+				
 			switch (key) {
 				case 'accountAdd':
 					let account = value.account;
 					
 					authStore.accountAdd({
 						id: account.id,
-						name: account.username,
+						name: account.name,
 						icon: account.avatar,
 						color: account.color
 					});

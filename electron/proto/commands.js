@@ -117,6 +117,39 @@ $root.anytype = (function() {
          */
 
         /**
+         * Callback as used by {@link anytype.ClientCommands#accountRecover}.
+         * @memberof anytype.ClientCommands
+         * @typedef AccountRecoverCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {anytype.AccountRecoverResponse} [response] AccountRecoverResponse
+         */
+
+        /**
+         * Calls AccountRecover.
+         * @function accountRecover
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.IAccountRecoverRequest} request AccountRecoverRequest message or plain object
+         * @param {anytype.ClientCommands.AccountRecoverCallback} callback Node-style callback called with the error, if any, and AccountRecoverResponse
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(ClientCommands.prototype.accountRecover = function accountRecover(request, callback) {
+            return this.rpcCall(accountRecover, $root.anytype.AccountRecoverRequest, $root.anytype.AccountRecoverResponse, request, callback);
+        }, "name", { value: "AccountRecover" });
+
+        /**
+         * Calls AccountRecover.
+         * @function accountRecover
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.IAccountRecoverRequest} request AccountRecoverRequest message or plain object
+         * @returns {Promise<anytype.AccountRecoverResponse>} Promise
+         * @variation 2
+         */
+
+        /**
          * Callback as used by {@link anytype.ClientCommands#accountCreate}.
          * @memberof anytype.ClientCommands
          * @typedef AccountCreateCallback
@@ -2219,6 +2252,637 @@ $root.anytype = (function() {
         return AccountCreateResponse;
     })();
 
+    anytype.AccountRecoverRequest = (function() {
+
+        /**
+         * Properties of an AccountRecoverRequest.
+         * @memberof anytype
+         * @interface IAccountRecoverRequest
+         */
+
+        /**
+         * Constructs a new AccountRecoverRequest.
+         * @memberof anytype
+         * @classdesc Represents an AccountRecoverRequest.
+         * @implements IAccountRecoverRequest
+         * @constructor
+         * @param {anytype.IAccountRecoverRequest=} [properties] Properties to set
+         */
+        function AccountRecoverRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Creates a new AccountRecoverRequest instance using the specified properties.
+         * @function create
+         * @memberof anytype.AccountRecoverRequest
+         * @static
+         * @param {anytype.IAccountRecoverRequest=} [properties] Properties to set
+         * @returns {anytype.AccountRecoverRequest} AccountRecoverRequest instance
+         */
+        AccountRecoverRequest.create = function create(properties) {
+            return new AccountRecoverRequest(properties);
+        };
+
+        /**
+         * Encodes the specified AccountRecoverRequest message. Does not implicitly {@link anytype.AccountRecoverRequest.verify|verify} messages.
+         * @function encode
+         * @memberof anytype.AccountRecoverRequest
+         * @static
+         * @param {anytype.IAccountRecoverRequest} message AccountRecoverRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountRecoverRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AccountRecoverRequest message, length delimited. Does not implicitly {@link anytype.AccountRecoverRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof anytype.AccountRecoverRequest
+         * @static
+         * @param {anytype.IAccountRecoverRequest} message AccountRecoverRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountRecoverRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AccountRecoverRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof anytype.AccountRecoverRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {anytype.AccountRecoverRequest} AccountRecoverRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountRecoverRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountRecoverRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AccountRecoverRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof anytype.AccountRecoverRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {anytype.AccountRecoverRequest} AccountRecoverRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountRecoverRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AccountRecoverRequest message.
+         * @function verify
+         * @memberof anytype.AccountRecoverRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AccountRecoverRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            return null;
+        };
+
+        /**
+         * Creates an AccountRecoverRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof anytype.AccountRecoverRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {anytype.AccountRecoverRequest} AccountRecoverRequest
+         */
+        AccountRecoverRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.anytype.AccountRecoverRequest)
+                return object;
+            return new $root.anytype.AccountRecoverRequest();
+        };
+
+        /**
+         * Creates a plain object from an AccountRecoverRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof anytype.AccountRecoverRequest
+         * @static
+         * @param {anytype.AccountRecoverRequest} message AccountRecoverRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AccountRecoverRequest.toObject = function toObject() {
+            return {};
+        };
+
+        /**
+         * Converts this AccountRecoverRequest to JSON.
+         * @function toJSON
+         * @memberof anytype.AccountRecoverRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AccountRecoverRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return AccountRecoverRequest;
+    })();
+
+    anytype.AccountRecoverResponse = (function() {
+
+        /**
+         * Properties of an AccountRecoverResponse.
+         * @memberof anytype
+         * @interface IAccountRecoverResponse
+         * @property {anytype.AccountRecoverResponse.IError|null} [error] AccountRecoverResponse error
+         */
+
+        /**
+         * Constructs a new AccountRecoverResponse.
+         * @memberof anytype
+         * @classdesc Represents an AccountRecoverResponse.
+         * @implements IAccountRecoverResponse
+         * @constructor
+         * @param {anytype.IAccountRecoverResponse=} [properties] Properties to set
+         */
+        function AccountRecoverResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AccountRecoverResponse error.
+         * @member {anytype.AccountRecoverResponse.IError|null|undefined} error
+         * @memberof anytype.AccountRecoverResponse
+         * @instance
+         */
+        AccountRecoverResponse.prototype.error = null;
+
+        /**
+         * Creates a new AccountRecoverResponse instance using the specified properties.
+         * @function create
+         * @memberof anytype.AccountRecoverResponse
+         * @static
+         * @param {anytype.IAccountRecoverResponse=} [properties] Properties to set
+         * @returns {anytype.AccountRecoverResponse} AccountRecoverResponse instance
+         */
+        AccountRecoverResponse.create = function create(properties) {
+            return new AccountRecoverResponse(properties);
+        };
+
+        /**
+         * Encodes the specified AccountRecoverResponse message. Does not implicitly {@link anytype.AccountRecoverResponse.verify|verify} messages.
+         * @function encode
+         * @memberof anytype.AccountRecoverResponse
+         * @static
+         * @param {anytype.IAccountRecoverResponse} message AccountRecoverResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountRecoverResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.error != null && message.hasOwnProperty("error"))
+                $root.anytype.AccountRecoverResponse.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AccountRecoverResponse message, length delimited. Does not implicitly {@link anytype.AccountRecoverResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof anytype.AccountRecoverResponse
+         * @static
+         * @param {anytype.IAccountRecoverResponse} message AccountRecoverResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AccountRecoverResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AccountRecoverResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof anytype.AccountRecoverResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {anytype.AccountRecoverResponse} AccountRecoverResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountRecoverResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountRecoverResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.error = $root.anytype.AccountRecoverResponse.Error.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AccountRecoverResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof anytype.AccountRecoverResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {anytype.AccountRecoverResponse} AccountRecoverResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AccountRecoverResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AccountRecoverResponse message.
+         * @function verify
+         * @memberof anytype.AccountRecoverResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AccountRecoverResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.error != null && message.hasOwnProperty("error")) {
+                var error = $root.anytype.AccountRecoverResponse.Error.verify(message.error);
+                if (error)
+                    return "error." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an AccountRecoverResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof anytype.AccountRecoverResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {anytype.AccountRecoverResponse} AccountRecoverResponse
+         */
+        AccountRecoverResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.anytype.AccountRecoverResponse)
+                return object;
+            var message = new $root.anytype.AccountRecoverResponse();
+            if (object.error != null) {
+                if (typeof object.error !== "object")
+                    throw TypeError(".anytype.AccountRecoverResponse.error: object expected");
+                message.error = $root.anytype.AccountRecoverResponse.Error.fromObject(object.error);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AccountRecoverResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof anytype.AccountRecoverResponse
+         * @static
+         * @param {anytype.AccountRecoverResponse} message AccountRecoverResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AccountRecoverResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.error = null;
+            if (message.error != null && message.hasOwnProperty("error"))
+                object.error = $root.anytype.AccountRecoverResponse.Error.toObject(message.error, options);
+            return object;
+        };
+
+        /**
+         * Converts this AccountRecoverResponse to JSON.
+         * @function toJSON
+         * @memberof anytype.AccountRecoverResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AccountRecoverResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        AccountRecoverResponse.Error = (function() {
+
+            /**
+             * Properties of an Error.
+             * @memberof anytype.AccountRecoverResponse
+             * @interface IError
+             * @property {anytype.AccountRecoverResponse.Error.Code|null} [code] Error code
+             * @property {string|null} [description] Error description
+             */
+
+            /**
+             * Constructs a new Error.
+             * @memberof anytype.AccountRecoverResponse
+             * @classdesc Represents an Error.
+             * @implements IError
+             * @constructor
+             * @param {anytype.AccountRecoverResponse.IError=} [properties] Properties to set
+             */
+            function Error(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Error code.
+             * @member {anytype.AccountRecoverResponse.Error.Code} code
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @instance
+             */
+            Error.prototype.code = 0;
+
+            /**
+             * Error description.
+             * @member {string} description
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @instance
+             */
+            Error.prototype.description = "";
+
+            /**
+             * Creates a new Error instance using the specified properties.
+             * @function create
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @static
+             * @param {anytype.AccountRecoverResponse.IError=} [properties] Properties to set
+             * @returns {anytype.AccountRecoverResponse.Error} Error instance
+             */
+            Error.create = function create(properties) {
+                return new Error(properties);
+            };
+
+            /**
+             * Encodes the specified Error message. Does not implicitly {@link anytype.AccountRecoverResponse.Error.verify|verify} messages.
+             * @function encode
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @static
+             * @param {anytype.AccountRecoverResponse.IError} message Error message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Error.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.code != null && message.hasOwnProperty("code"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                if (message.description != null && message.hasOwnProperty("description"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.AccountRecoverResponse.Error.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @static
+             * @param {anytype.AccountRecoverResponse.IError} message Error message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Error.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes an Error message from the specified reader or buffer.
+             * @function decode
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {anytype.AccountRecoverResponse.Error} Error
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Error.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountRecoverResponse.Error();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.code = reader.int32();
+                        break;
+                    case 2:
+                        message.description = reader.string();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes an Error message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {anytype.AccountRecoverResponse.Error} Error
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Error.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies an Error message.
+             * @function verify
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Error.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.code != null && message.hasOwnProperty("code"))
+                    switch (message.code) {
+                    default:
+                        return "code: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 101:
+                    case 102:
+                    case 103:
+                    case 104:
+                    case 105:
+                        break;
+                    }
+                if (message.description != null && message.hasOwnProperty("description"))
+                    if (!$util.isString(message.description))
+                        return "description: string expected";
+                return null;
+            };
+
+            /**
+             * Creates an Error message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {anytype.AccountRecoverResponse.Error} Error
+             */
+            Error.fromObject = function fromObject(object) {
+                if (object instanceof $root.anytype.AccountRecoverResponse.Error)
+                    return object;
+                var message = new $root.anytype.AccountRecoverResponse.Error();
+                switch (object.code) {
+                case "NULL":
+                case 0:
+                    message.code = 0;
+                    break;
+                case "UNKNOWN_ERROR":
+                case 1:
+                    message.code = 1;
+                    break;
+                case "BAD_INPUT":
+                case 2:
+                    message.code = 2;
+                    break;
+                case "NO_ACCOUNTS_FOUND":
+                case 101:
+                    message.code = 101;
+                    break;
+                case "NEED_TO_RECOVER_WALLET_FIRST":
+                case 102:
+                    message.code = 102;
+                    break;
+                case "FAILED_TO_CREATE_LOCAL_REPO":
+                case 103:
+                    message.code = 103;
+                    break;
+                case "LOCAL_REPO_EXISTS_BUT_CORRUPTED":
+                case 104:
+                    message.code = 104;
+                    break;
+                case "FAILED_TO_RUN_NODE":
+                case 105:
+                    message.code = 105;
+                    break;
+                }
+                if (object.description != null)
+                    message.description = String(object.description);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from an Error message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @static
+             * @param {anytype.AccountRecoverResponse.Error} message Error
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Error.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.code = options.enums === String ? "NULL" : 0;
+                    object.description = "";
+                }
+                if (message.code != null && message.hasOwnProperty("code"))
+                    object.code = options.enums === String ? $root.anytype.AccountRecoverResponse.Error.Code[message.code] : message.code;
+                if (message.description != null && message.hasOwnProperty("description"))
+                    object.description = message.description;
+                return object;
+            };
+
+            /**
+             * Converts this Error to JSON.
+             * @function toJSON
+             * @memberof anytype.AccountRecoverResponse.Error
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Error.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Code enum.
+             * @name anytype.AccountRecoverResponse.Error.Code
+             * @enum {string}
+             * @property {number} NULL=0 NULL value
+             * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+             * @property {number} BAD_INPUT=2 BAD_INPUT value
+             * @property {number} NO_ACCOUNTS_FOUND=101 NO_ACCOUNTS_FOUND value
+             * @property {number} NEED_TO_RECOVER_WALLET_FIRST=102 NEED_TO_RECOVER_WALLET_FIRST value
+             * @property {number} FAILED_TO_CREATE_LOCAL_REPO=103 FAILED_TO_CREATE_LOCAL_REPO value
+             * @property {number} LOCAL_REPO_EXISTS_BUT_CORRUPTED=104 LOCAL_REPO_EXISTS_BUT_CORRUPTED value
+             * @property {number} FAILED_TO_RUN_NODE=105 FAILED_TO_RUN_NODE value
+             */
+            Error.Code = (function() {
+                var valuesById = {}, values = Object.create(valuesById);
+                values[valuesById[0] = "NULL"] = 0;
+                values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                values[valuesById[2] = "BAD_INPUT"] = 2;
+                values[valuesById[101] = "NO_ACCOUNTS_FOUND"] = 101;
+                values[valuesById[102] = "NEED_TO_RECOVER_WALLET_FIRST"] = 102;
+                values[valuesById[103] = "FAILED_TO_CREATE_LOCAL_REPO"] = 103;
+                values[valuesById[104] = "LOCAL_REPO_EXISTS_BUT_CORRUPTED"] = 104;
+                values[valuesById[105] = "FAILED_TO_RUN_NODE"] = 105;
+                return values;
+            })();
+
+            return Error;
+        })();
+
+        return AccountRecoverResponse;
+    })();
+
     anytype.AccountSelectRequest = (function() {
 
         /**
@@ -2226,6 +2890,7 @@ $root.anytype = (function() {
          * @memberof anytype
          * @interface IAccountSelectRequest
          * @property {string|null} [id] AccountSelectRequest id
+         * @property {string|null} [rootPath] AccountSelectRequest rootPath
          */
 
         /**
@@ -2250,6 +2915,14 @@ $root.anytype = (function() {
          * @instance
          */
         AccountSelectRequest.prototype.id = "";
+
+        /**
+         * AccountSelectRequest rootPath.
+         * @member {string} rootPath
+         * @memberof anytype.AccountSelectRequest
+         * @instance
+         */
+        AccountSelectRequest.prototype.rootPath = "";
 
         /**
          * Creates a new AccountSelectRequest instance using the specified properties.
@@ -2277,6 +2950,8 @@ $root.anytype = (function() {
                 writer = $Writer.create();
             if (message.id != null && message.hasOwnProperty("id"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.rootPath);
             return writer;
         };
 
@@ -2313,6 +2988,9 @@ $root.anytype = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.id = reader.string();
+                    break;
+                case 2:
+                    message.rootPath = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2352,6 +3030,9 @@ $root.anytype = (function() {
             if (message.id != null && message.hasOwnProperty("id"))
                 if (!$util.isString(message.id))
                     return "id: string expected";
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                if (!$util.isString(message.rootPath))
+                    return "rootPath: string expected";
             return null;
         };
 
@@ -2369,6 +3050,8 @@ $root.anytype = (function() {
             var message = new $root.anytype.AccountSelectRequest();
             if (object.id != null)
                 message.id = String(object.id);
+            if (object.rootPath != null)
+                message.rootPath = String(object.rootPath);
             return message;
         };
 
@@ -2385,10 +3068,14 @@ $root.anytype = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.id = "";
+                object.rootPath = "";
+            }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
+            if (message.rootPath != null && message.hasOwnProperty("rootPath"))
+                object.rootPath = message.rootPath;
             return object;
         };
 
@@ -2778,6 +3465,7 @@ $root.anytype = (function() {
                     case 102:
                     case 103:
                     case 104:
+                    case 105:
                         break;
                     }
                 if (message.description != null && message.hasOwnProperty("description"))
@@ -2826,6 +3514,10 @@ $root.anytype = (function() {
                 case "FAILED_TO_FIND_ACCOUNT_INFO":
                 case 104:
                     message.code = 104;
+                    break;
+                case "LOCAL_REPO_NOT_EXISTS_AND_MNEMONIC_NOT_SET":
+                case 105:
+                    message.code = 105;
                     break;
                 }
                 if (object.description != null)
@@ -2879,6 +3571,7 @@ $root.anytype = (function() {
              * @property {number} LOCAL_REPO_EXISTS_BUT_CORRUPTED=102 LOCAL_REPO_EXISTS_BUT_CORRUPTED value
              * @property {number} FAILED_TO_RUN_NODE=103 FAILED_TO_RUN_NODE value
              * @property {number} FAILED_TO_FIND_ACCOUNT_INFO=104 FAILED_TO_FIND_ACCOUNT_INFO value
+             * @property {number} LOCAL_REPO_NOT_EXISTS_AND_MNEMONIC_NOT_SET=105 LOCAL_REPO_NOT_EXISTS_AND_MNEMONIC_NOT_SET value
              */
             Error.Code = (function() {
                 var valuesById = {}, values = Object.create(valuesById);
@@ -2889,6 +3582,7 @@ $root.anytype = (function() {
                 values[valuesById[102] = "LOCAL_REPO_EXISTS_BUT_CORRUPTED"] = 102;
                 values[valuesById[103] = "FAILED_TO_RUN_NODE"] = 103;
                 values[valuesById[104] = "FAILED_TO_FIND_ACCOUNT_INFO"] = 104;
+                values[valuesById[105] = "LOCAL_REPO_NOT_EXISTS_AND_MNEMONIC_NOT_SET"] = 105;
                 return values;
             })();
 
@@ -8787,7 +9481,6 @@ $root.anytype = (function() {
          * Properties of an AccountAdd.
          * @memberof anytype
          * @interface IAccountAdd
-         * @property {anytype.AccountAdd.IError|null} [error] AccountAdd error
          * @property {number|Long|null} [index] AccountAdd index
          * @property {anytype.IAccount|null} [account] AccountAdd account
          */
@@ -8806,14 +9499,6 @@ $root.anytype = (function() {
                     if (properties[keys[i]] != null)
                         this[keys[i]] = properties[keys[i]];
         }
-
-        /**
-         * AccountAdd error.
-         * @member {anytype.AccountAdd.IError|null|undefined} error
-         * @memberof anytype.AccountAdd
-         * @instance
-         */
-        AccountAdd.prototype.error = null;
 
         /**
          * AccountAdd index.
@@ -8855,12 +9540,10 @@ $root.anytype = (function() {
         AccountAdd.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.error != null && message.hasOwnProperty("error"))
-                $root.anytype.AccountAdd.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.index != null && message.hasOwnProperty("index"))
-                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.index);
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.index);
             if (message.account != null && message.hasOwnProperty("account"))
-                $root.anytype.Account.encode(message.account, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                $root.anytype.Account.encode(message.account, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -8896,12 +9579,9 @@ $root.anytype = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.error = $root.anytype.AccountAdd.Error.decode(reader, reader.uint32());
-                    break;
-                case 2:
                     message.index = reader.int64();
                     break;
-                case 3:
+                case 2:
                     message.account = $root.anytype.Account.decode(reader, reader.uint32());
                     break;
                 default:
@@ -8939,11 +9619,6 @@ $root.anytype = (function() {
         AccountAdd.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.error != null && message.hasOwnProperty("error")) {
-                var error = $root.anytype.AccountAdd.Error.verify(message.error);
-                if (error)
-                    return "error." + error;
-            }
             if (message.index != null && message.hasOwnProperty("index"))
                 if (!$util.isInteger(message.index) && !(message.index && $util.isInteger(message.index.low) && $util.isInteger(message.index.high)))
                     return "index: integer|Long expected";
@@ -8967,11 +9642,6 @@ $root.anytype = (function() {
             if (object instanceof $root.anytype.AccountAdd)
                 return object;
             var message = new $root.anytype.AccountAdd();
-            if (object.error != null) {
-                if (typeof object.error !== "object")
-                    throw TypeError(".anytype.AccountAdd.error: object expected");
-                message.error = $root.anytype.AccountAdd.Error.fromObject(object.error);
-            }
             if (object.index != null)
                 if ($util.Long)
                     (message.index = $util.Long.fromValue(object.index)).unsigned = false;
@@ -9003,7 +9673,6 @@ $root.anytype = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                object.error = null;
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
                     object.index = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
@@ -9011,8 +9680,6 @@ $root.anytype = (function() {
                     object.index = options.longs === String ? "0" : 0;
                 object.account = null;
             }
-            if (message.error != null && message.hasOwnProperty("error"))
-                object.error = $root.anytype.AccountAdd.Error.toObject(message.error, options);
             if (message.index != null && message.hasOwnProperty("index"))
                 if (typeof message.index === "number")
                     object.index = options.longs === String ? String(message.index) : message.index;
@@ -9033,278 +9700,6 @@ $root.anytype = (function() {
         AccountAdd.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
-
-        AccountAdd.Error = (function() {
-
-            /**
-             * Properties of an Error.
-             * @memberof anytype.AccountAdd
-             * @interface IError
-             * @property {anytype.AccountAdd.Error.Code|null} [code] Error code
-             * @property {string|null} [description] Error description
-             */
-
-            /**
-             * Constructs a new Error.
-             * @memberof anytype.AccountAdd
-             * @classdesc Represents an Error.
-             * @implements IError
-             * @constructor
-             * @param {anytype.AccountAdd.IError=} [properties] Properties to set
-             */
-            function Error(properties) {
-                if (properties)
-                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                        if (properties[keys[i]] != null)
-                            this[keys[i]] = properties[keys[i]];
-            }
-
-            /**
-             * Error code.
-             * @member {anytype.AccountAdd.Error.Code} code
-             * @memberof anytype.AccountAdd.Error
-             * @instance
-             */
-            Error.prototype.code = 0;
-
-            /**
-             * Error description.
-             * @member {string} description
-             * @memberof anytype.AccountAdd.Error
-             * @instance
-             */
-            Error.prototype.description = "";
-
-            /**
-             * Creates a new Error instance using the specified properties.
-             * @function create
-             * @memberof anytype.AccountAdd.Error
-             * @static
-             * @param {anytype.AccountAdd.IError=} [properties] Properties to set
-             * @returns {anytype.AccountAdd.Error} Error instance
-             */
-            Error.create = function create(properties) {
-                return new Error(properties);
-            };
-
-            /**
-             * Encodes the specified Error message. Does not implicitly {@link anytype.AccountAdd.Error.verify|verify} messages.
-             * @function encode
-             * @memberof anytype.AccountAdd.Error
-             * @static
-             * @param {anytype.AccountAdd.IError} message Error message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            Error.encode = function encode(message, writer) {
-                if (!writer)
-                    writer = $Writer.create();
-                if (message.code != null && message.hasOwnProperty("code"))
-                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
-                if (message.description != null && message.hasOwnProperty("description"))
-                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
-                return writer;
-            };
-
-            /**
-             * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.AccountAdd.Error.verify|verify} messages.
-             * @function encodeDelimited
-             * @memberof anytype.AccountAdd.Error
-             * @static
-             * @param {anytype.AccountAdd.IError} message Error message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            Error.encodeDelimited = function encodeDelimited(message, writer) {
-                return this.encode(message, writer).ldelim();
-            };
-
-            /**
-             * Decodes an Error message from the specified reader or buffer.
-             * @function decode
-             * @memberof anytype.AccountAdd.Error
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @param {number} [length] Message length if known beforehand
-             * @returns {anytype.AccountAdd.Error} Error
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            Error.decode = function decode(reader, length) {
-                if (!(reader instanceof $Reader))
-                    reader = $Reader.create(reader);
-                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.AccountAdd.Error();
-                while (reader.pos < end) {
-                    var tag = reader.uint32();
-                    switch (tag >>> 3) {
-                    case 1:
-                        message.code = reader.int32();
-                        break;
-                    case 2:
-                        message.description = reader.string();
-                        break;
-                    default:
-                        reader.skipType(tag & 7);
-                        break;
-                    }
-                }
-                return message;
-            };
-
-            /**
-             * Decodes an Error message from the specified reader or buffer, length delimited.
-             * @function decodeDelimited
-             * @memberof anytype.AccountAdd.Error
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {anytype.AccountAdd.Error} Error
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            Error.decodeDelimited = function decodeDelimited(reader) {
-                if (!(reader instanceof $Reader))
-                    reader = new $Reader(reader);
-                return this.decode(reader, reader.uint32());
-            };
-
-            /**
-             * Verifies an Error message.
-             * @function verify
-             * @memberof anytype.AccountAdd.Error
-             * @static
-             * @param {Object.<string,*>} message Plain object to verify
-             * @returns {string|null} `null` if valid, otherwise the reason why it is not
-             */
-            Error.verify = function verify(message) {
-                if (typeof message !== "object" || message === null)
-                    return "object expected";
-                if (message.code != null && message.hasOwnProperty("code"))
-                    switch (message.code) {
-                    default:
-                        return "code: enum value expected";
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 101:
-                    case 102:
-                    case 103:
-                    case 104:
-                        break;
-                    }
-                if (message.description != null && message.hasOwnProperty("description"))
-                    if (!$util.isString(message.description))
-                        return "description: string expected";
-                return null;
-            };
-
-            /**
-             * Creates an Error message from a plain object. Also converts values to their respective internal types.
-             * @function fromObject
-             * @memberof anytype.AccountAdd.Error
-             * @static
-             * @param {Object.<string,*>} object Plain object
-             * @returns {anytype.AccountAdd.Error} Error
-             */
-            Error.fromObject = function fromObject(object) {
-                if (object instanceof $root.anytype.AccountAdd.Error)
-                    return object;
-                var message = new $root.anytype.AccountAdd.Error();
-                switch (object.code) {
-                case "NULL":
-                case 0:
-                    message.code = 0;
-                    break;
-                case "UNKNOWN_ERROR":
-                case 1:
-                    message.code = 1;
-                    break;
-                case "BAD_INPUT":
-                case 2:
-                    message.code = 2;
-                    break;
-                case "FAILED_TO_CREATE_LOCAL_REPO":
-                case 101:
-                    message.code = 101;
-                    break;
-                case "LOCAL_REPO_EXISTS_BUT_CORRUPTED":
-                case 102:
-                    message.code = 102;
-                    break;
-                case "FAILED_TO_RUN_NODE":
-                case 103:
-                    message.code = 103;
-                    break;
-                case "FAILED_TO_FIND_ACCOUNT_INFO":
-                case 104:
-                    message.code = 104;
-                    break;
-                }
-                if (object.description != null)
-                    message.description = String(object.description);
-                return message;
-            };
-
-            /**
-             * Creates a plain object from an Error message. Also converts values to other types if specified.
-             * @function toObject
-             * @memberof anytype.AccountAdd.Error
-             * @static
-             * @param {anytype.AccountAdd.Error} message Error
-             * @param {$protobuf.IConversionOptions} [options] Conversion options
-             * @returns {Object.<string,*>} Plain object
-             */
-            Error.toObject = function toObject(message, options) {
-                if (!options)
-                    options = {};
-                var object = {};
-                if (options.defaults) {
-                    object.code = options.enums === String ? "NULL" : 0;
-                    object.description = "";
-                }
-                if (message.code != null && message.hasOwnProperty("code"))
-                    object.code = options.enums === String ? $root.anytype.AccountAdd.Error.Code[message.code] : message.code;
-                if (message.description != null && message.hasOwnProperty("description"))
-                    object.description = message.description;
-                return object;
-            };
-
-            /**
-             * Converts this Error to JSON.
-             * @function toJSON
-             * @memberof anytype.AccountAdd.Error
-             * @instance
-             * @returns {Object.<string,*>} JSON object
-             */
-            Error.prototype.toJSON = function toJSON() {
-                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-            };
-
-            /**
-             * Code enum.
-             * @name anytype.AccountAdd.Error.Code
-             * @enum {string}
-             * @property {number} NULL=0 NULL value
-             * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
-             * @property {number} BAD_INPUT=2 BAD_INPUT value
-             * @property {number} FAILED_TO_CREATE_LOCAL_REPO=101 FAILED_TO_CREATE_LOCAL_REPO value
-             * @property {number} LOCAL_REPO_EXISTS_BUT_CORRUPTED=102 LOCAL_REPO_EXISTS_BUT_CORRUPTED value
-             * @property {number} FAILED_TO_RUN_NODE=103 FAILED_TO_RUN_NODE value
-             * @property {number} FAILED_TO_FIND_ACCOUNT_INFO=104 FAILED_TO_FIND_ACCOUNT_INFO value
-             */
-            Error.Code = (function() {
-                var valuesById = {}, values = Object.create(valuesById);
-                values[valuesById[0] = "NULL"] = 0;
-                values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
-                values[valuesById[2] = "BAD_INPUT"] = 2;
-                values[valuesById[101] = "FAILED_TO_CREATE_LOCAL_REPO"] = 101;
-                values[valuesById[102] = "LOCAL_REPO_EXISTS_BUT_CORRUPTED"] = 102;
-                values[valuesById[103] = "FAILED_TO_RUN_NODE"] = 103;
-                values[valuesById[104] = "FAILED_TO_FIND_ACCOUNT_INFO"] = 104;
-                return values;
-            })();
-
-            return Error;
-        })();
 
         return AccountAdd;
     })();
