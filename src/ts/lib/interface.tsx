@@ -15,7 +15,9 @@ export interface AccountInterface {
 };
 
 export interface DocumentInterface {
-	id: string;	
+	id: string;
+	name: string;
+	icon: string;
 };
 
 export interface PopupParam {

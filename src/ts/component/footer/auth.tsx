@@ -7,17 +7,9 @@ interface Props {
 	commonStore?: any;
 };
 
-interface State {
-	help: boolean;
-};
-
 @inject('commonStore')
 @observer
-class FooterAuth extends React.Component<Props, State> {
-	
-	state = {
-		help: false
-	};
+class FooterAuth extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -26,17 +18,12 @@ class FooterAuth extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { help } = this.state;
+		const { commonStore } = this.props;
 		
-		let cn = [ 'help', 'light' ];
-		if (help) {
-			cn.push('active');
-		};
-		
-        return (
+		return (
 			<div className="footer">
 				<div className="copy">2018, Anytype</div>
-				<Icon id="button-help" className={cn.join(' ')} onMouseDown={this.onHelp} />
+				<Icon id="button-help" className={'help light ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
 			</div>
 		);
 	};
@@ -44,15 +31,11 @@ class FooterAuth extends React.Component<Props, State> {
 	onHelp () {
 		const { commonStore } = this.props;
 		
-		this.setState({ help: true });
 		commonStore.menuOpen('help', { 
 			element: 'button-help',
 			offsetY: 4,
 			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			onClose: () => {
-				this.setState({ help: false });
-			}
+			horizontal: I.MenuDirection.Right
 		});
 	};
 

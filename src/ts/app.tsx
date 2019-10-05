@@ -26,6 +26,8 @@ import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
 
+import 'scss/popup/settings.scss';
+
 interface RouteElement { path: string; };
 
 const { ipcRenderer } = window.require('electron');

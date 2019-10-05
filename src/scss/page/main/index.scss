@@ -7,18 +7,17 @@
 	.title {
 		.rightMenu { position: absolute; right: 0px; top: 0px; }
 		.icon { width: 40px; height: 40px; vertical-align: top; margin-right: 8px; border-radius: 100%; cursor: pointer; }
-		.icon:hover { background-color: rgba(0, 0, 0, 0.2); }
+		.icon:hover, .icon.active { background-color: rgba(0, 0, 0, 0.2); }
 		.icon:last-child { margin-right: 0px; }
 		.icon.user { line-height: 40px; }
 		.icon.settings { background-size: 18px 18px; background-image: url('~img/icon/settings.svg'); }
 		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); }
 	}
 	
-	#documents { position: absolute; width: 100%; left: 50%; }
 	#documents {
 		.item { 
 			width: 208px; height: 112px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
-			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer;
+			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer; user-select: none;
 		}
 		
 		.item {

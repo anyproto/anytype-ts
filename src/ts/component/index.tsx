@@ -2,6 +2,7 @@ import Page from './page';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
+import ListIndex from './list/index';
 
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
@@ -36,6 +37,7 @@ export {
 	Page,
 	ListPopup,
 	ListMenu,
+	ListIndex,
 	HeaderAuth,
 	HeaderMainIndex,
 	FooterAuth,

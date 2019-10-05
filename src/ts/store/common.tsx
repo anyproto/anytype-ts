@@ -35,6 +35,10 @@ class CommonStore {
 		this.popupList.push({ id: id, param: param });
 	};
 	
+	popupIsOpen (id: string): boolean {
+		return this.popupList.find((item: I.PopupInterface) => { return item.id == id; }) ? true : false;
+	};
+	
 	@action
 	popupClose (id: string) {
 		const item: I.PopupInterface = this.popupList.find((item: I.PopupInterface) => { return item.id == id; });
@@ -65,6 +69,10 @@ class CommonStore {
 		
 		this.menuClose(id);
 		this.menuList.push({ id: id, param: param });
+	};
+	
+	menuIsOpen (id: string): boolean {
+		return this.menuList.find((item: I.MenuInterface) => { return item.id == id; }) ? true : false;
 	};
 	
 	@action

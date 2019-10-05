@@ -1,35 +1,26 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, IconUser, Smile, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
+import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
+import { documentStore } from 'ts/store';
 
 const $ = require('jquery');
 const raf = require('raf');
-
-const ITEM_WIDTH = 224;
-const ITEM_HEIGHT = 112;
-const MARGIN = 16;
+const Constant: any = require('json/constant.json');
 
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 	authStore?: any;
-	documentStore?: any;
 };
-
-interface State {};
 
 @inject('commonStore')
 @inject('authStore')
-@inject('documentStore')
 @observer
-class PageMainIndex extends React.Component<Props, State> {
+class PageMainIndex extends React.Component<Props, {}> {
 	
-	_isMounted: boolean = false;
-	state = {
-	};
+	listRef: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -40,43 +31,13 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { commonStore, authStore, documentStore } = this.props;
+		const { commonStore, authStore } = this.props;
 		const { account } = authStore;
 		const { cover } = commonStore;
-		const { documents } = documentStore;
-		const length = documents.length;
 		
 		if (!account) {
 			return <div />;
 		};
-		
-		const Item = SortableElement((item: any) => {
-			return (
-				<div className="item" >
-					<Smile icon={item.icon} size={24} />
-					<div className="name">{item.name}</div>
-				</div>
-			);
-		});
-		
-		const ItemAdd = SortableElement((item: any) => {
-			return (
-				<div className="item add" onClick={this.onAdd}>
-					<Icon />
-				</div>
-			);
-		});
-		
-		const List = SortableContainer((item: any) => {
-			return (
-				<div id="documents"> 
-					{item.list.map((item: any, i: number) => (
-						<Item key={item.id} {...item} index={i} />
-					))}
-					<ItemAdd index={length + 1} disabled={true} />
-				</div>
-			);
-		});
 		
 		return (
 			<div>
@@ -88,23 +49,19 @@ class PageMainIndex extends React.Component<Props, State> {
 					<div className="title">
 						Hi, {account.name}
 						<div className="rightMenu">
-							<Icon className="settings" onClick={this.onSettings} />
-							<Icon className="profile" />
+							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} onClick={this.onSettings} />
+							<Icon className={'profile ' + (commonStore.popupIsOpen('profile') ? 'active' : '')} />
 							<IconUser {...account} onClick={this.onProfile} />
 						</div>
 					</div>
 					
-					<List axis="xy" list={documents} helperContainer={() => { return $('#documents').get(0); }} />
+					<ListIndex ref={(ref) => { this.listRef = ref; }} onAdd={this.onAdd} />
 				</div>
 			</div>
 		);
 	};
 	
 	componentDidMount () {
-		this._isMounted = true;
-		
-		const { documentStore } = this.props;
-		
 		let items: any[] = [
 			{ icon: ':wave:', name: 'Get started' },
 			{ icon: ':bulb:', name: 'Ideas' },
@@ -121,14 +78,6 @@ class PageMainIndex extends React.Component<Props, State> {
 		};
 	};
 	
-	componentDidUpdate () {
-		this.resize();
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;	
-	};
-	
 	onSettings (e: any) {
 		const { commonStore } = this.props;
 		commonStore.popupOpen('settings', {});
@@ -140,8 +89,6 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 	
 	onAdd (e: any) {
-		const { documentStore } = this.props;
-		
 		documentStore.documentAdd({
 			id: String(documentStore.documents.length + 1),
 			name: 'Untitled',
@@ -150,26 +97,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 	
 	resize () {
-		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
-			
-			let win = $(window);
-			let wh = win.height();
-			let ww = win.width();
-			let node = $(ReactDOM.findDOMNode(this));
-			let body = node.find('#body');
-			let documents = node.find('#documents');
-			let width = Math.floor((ww - MARGIN * 2) / ITEM_WIDTH) * ITEM_WIDTH;
-			
-			body.css({ width: width });
-			documents.css({ 
-				width: width, 
-				top: wh - (ITEM_HEIGHT * 2 + MARGIN * 2), 
-				marginLeft: -width / 2 + MARGIN
-			});
-		});
+		this.listRef.resize();
 	};
 
 };

@@ -1,0 +1,33 @@
+@import "~scss/_vars";
+
+.popup-settings { width: 672px; height: 496px; padding: 33px 48px 44px 48px; }
+.popup-settings {
+	.icon.close { width: 14px; height: 14px; cursor: pointer; background-image: url('~img/icon/popup/close0.svg'); margin-bottom: 24px; }
+	.icon.close:hover { background-image: url('~img/icon/popup/close1.svg'); }
+	.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; color: #2c2b27; font-weight: 600; margin-bottom: 15px; }
+		
+	.rows { margin-bottom: 20px; }
+	.row { padding: 22px 0px; border-bottom: 1px solid #e0ded2; cursor: pointer; position: relative; }
+	.row {
+		.icon { width: 20px; height: 20px; margin: -2px 12px 0px 0px; }
+		.icon.wallpaper { background-size: 18px 18px; background-image: url('~img/icon/popup/settings/wallpaper.svg'); }
+		.icon.phrase { background-size: 18px 18px; background-image: url('~img/icon/popup/settings/phrase.svg'); }
+		.icon.pin { background-size: 16px 20px; background-image: url('~img/icon/popup/settings/pin.svg'); }
+		.icon.notify { background-size: 18px 20px; background-image: url('~img/icon/popup/settings/notify.svg'); }
+		
+		.label { color: #2c2b27; display: inline-block; vertical-align: middle; }
+		.icon.arrow { 
+			width: 9px; height: 12px; background-image: url('~img/icon/popup/settings/arrow0.svg'); position: absolute; right: 0px;
+			top: 50%; margin: -6px 0px 0px 0px; 
+		}
+		
+		.switches {
+		}
+	}
+	.row:hover {
+		.icon.arrow { background-image: url('~img/icon/popup/settings/arrow1.svg'); }
+	}
+	
+	.logout { color: #ff6745; cursor: pointer; transition: $transitionFast; }
+	.logout:hover { color: #000; }
+}
