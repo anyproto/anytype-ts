@@ -14,6 +14,7 @@
 		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); }
 	}
 	
+	#documents { width: calc(100% + 16px); }
 	#documents {
 		.item { 
 			width: 208px; height: 112px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;

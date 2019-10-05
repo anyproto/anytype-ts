@@ -8,21 +8,21 @@ import { dispatcher, I, Util} from 'ts/lib';
 interface Props {
 	documentStore?: any;
 	onAdd?(e: any): void;
+	helperContainer?(): any;
 };
-
-const $ = require('jquery');
-const raf = require('raf');
-const Constant: any = require('json/constant.json');
 
 @inject('documentStore')
 @observer
 class ListIndex extends React.Component<Props, {}> {
 	
-	_isMounted: boolean = false;
-	scrollY: number = 0;
+	constructor (props: any) {
+		super(props);
+		
+		this.onSortEnd = this.onSortEnd.bind(this);
+	};
 	
 	render () {
-		const { documentStore, onAdd } = this.props;
+		const { documentStore, onAdd, helperContainer } = this.props;
 		const { documents } = documentStore;
 		const length = documents.length;
 		
@@ -45,7 +45,7 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const List = SortableContainer((item: any) => {
 			return (
-				<div id="documents"> 
+				<div>
 					{item.list.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
 					))}
@@ -55,48 +55,15 @@ class ListIndex extends React.Component<Props, {}> {
 		});
 		
 		return (
-			<List axis="xy" list={documents} helperContainer={() => { return $('#documents').get(0); }} />
+			<List axis="xy" list={documents} helperContainer={helperContainer} onSortEnd={this.onSortEnd} />
 		);
 	};
 	
-	componentDidMount () {
-		this._isMounted = true;
+	onSortEnd (result: any) {
+		const { oldIndex, newIndex } = result;
+		const { documentStore } = this.props;
 		
-		$(window).unbind('scroll.list').on('scroll.list', () => { this.scroll(); });
-	};
-	
-	componentDidUpdate () {
-		this.resize();
-		window.scrollTo(0, this.scrollY);
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-	
-	scroll () {
-		this.scrollY = $(window).scrollTop();
-	};
-	
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		let size = Constant.index.document;
-		let win = $(window);
-		let wh = win.height();
-		let ww = win.width();
-		let node = $(ReactDOM.findDOMNode(this));
-		let body = $('#body');
-		let cnt = Math.floor((ww -  size.margin * 2) / (size.width + size.margin));
-		let width = cnt * (size.width + size.margin);
-			
-		body.css({ width: width - size.margin });
-		node.css({  
-			width: width,
-			marginTop: wh - 130 - (size.height * 2 + size.margin * 2)
-		});
+		documentStore.documentSort(oldIndex, newIndex);
 	};
 	
 };

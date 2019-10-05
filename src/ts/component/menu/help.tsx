@@ -33,7 +33,7 @@ class MenuHelp extends React.Component<Props, {}> {
 		return (
 			<div className="items">
 				{items.map((item: I.MenuItemInterface, i) => (
-					<MenuItemVertical key={i} {...item} onClick={this.onClick} />
+					<MenuItemVertical key={item.icon} {...item} onClick={this.onClick} />
 				))}
 			</div>
 		);

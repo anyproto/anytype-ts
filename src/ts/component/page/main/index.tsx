@@ -55,7 +55,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 						</div>
 					</div>
 					
-					<ListIndex ref={(ref) => { this.listRef = ref; }} onAdd={this.onAdd} />
+					<div id="documents"> 
+						<ListIndex ref={(ref) => { this.listRef = ref; }} onAdd={this.onAdd} helperContainer={() => { return $('#documents').get(0); }} />
+					</div>
 				</div>
 			</div>
 		);
@@ -76,6 +78,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 			items[i].id = String(i + 1);
 			documentStore.documentAdd(items[i]);			
 		};
+		
+		this.resize();
 	};
 	
 	onSettings (e: any) {
@@ -97,7 +101,18 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		this.listRef.resize();
+		let size = Constant.index.document;
+		let win = $(window);
+		let wh = win.height();
+		let ww = win.width();
+		let node = $(ReactDOM.findDOMNode(this));
+		let body = node.find('#body');
+		let documents = node.find('#documents');
+		let cnt = Math.floor((ww -  size.margin * 2) / (size.width + size.margin));
+		let width = cnt * (size.width + size.margin);
+			
+		body.css({ width: width - size.margin });
+		documents.css({ marginTop: wh - 130 - (size.height * 2 + size.margin * 2) });
 	};
 
 };

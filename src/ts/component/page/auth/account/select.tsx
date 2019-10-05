@@ -52,7 +52,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 					
 					<div className="list">
 						{authStore.accounts.map((item: I.AccountInterface, i: number) => (
-							<Item key={i} {...item} />	
+							<Item key={item.id} {...item} />	
 						))}
 						<div className="item add" onMouseDown={this.onAdd}>
 							<Icon className="plus" />

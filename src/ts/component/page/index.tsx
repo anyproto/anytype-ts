@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Util } from 'ts/lib';
+import { commonStore } from 'ts/store';
 import { observer, inject } from 'mobx-react';
 
 import PageAuthSelect from './auth/select';
@@ -23,8 +24,6 @@ interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 };
 
-@inject('commonStore')
-@observer
 class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
@@ -62,8 +61,6 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { commonStore } = this.props;
-		
 		this._isMounted = true;
 		this.setBodyClass();
 		this.resize();
