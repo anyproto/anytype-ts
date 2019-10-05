@@ -24,6 +24,8 @@ interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 };
 
+@inject('commonStore')
+@observer
 class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
@@ -61,11 +63,15 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { commonStore } = this.props;
+		
 		this._isMounted = true;
 		this.setBodyClass();
 		this.resize();
 		this.unbind();
+		
 		commonStore.popupCloseAll();
+		commonStore.menuCloseAll();
 		
 		$(window).on('resize.page', () => { this.resize(); });
 	};
@@ -73,6 +79,9 @@ class Page extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		this.setBodyClass();
 		this.resize();
+		
+		commonStore.popupCloseAll();
+		commonStore.menuCloseAll();
 	};
 	
 	componentWillUnmount () {

@@ -45,6 +45,10 @@ class AuthStore {
 		this.accountList.push(account);
 	};
 	
+	accountClear () {
+		this.accountList = [];
+	};
+	
 	@action
 	accountSet (account: I.AccountInterface) {
 		Storage.set('accountId', account.id);

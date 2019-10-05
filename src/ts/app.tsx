@@ -28,6 +28,8 @@ import 'scss/page/main/edit.scss';
 
 import 'scss/popup/settings.scss';
 
+import 'scss/menu/account.scss';
+
 interface RouteElement { path: string; };
 
 const { ipcRenderer } = window.require('electron');
@@ -48,7 +50,7 @@ class App extends React.Component<{}, {}> {
 				<Provider {...rootStore}>
 					<div>
 						<ListPopup history={history} />
-						<ListMenu />
+						<ListMenu history={history} />
 						<div id="drag" />
 						
 						{Routes.map((item: RouteElement, i: number) => (

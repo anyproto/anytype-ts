@@ -4,6 +4,7 @@ import { observer, inject } from 'mobx-react';
 import { I } from 'ts/lib';
 
 interface Props {
+	history: any;
 	commonStore?: any;
 };
 
@@ -18,14 +19,14 @@ class ListMenu extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { commonStore } = this.props;
+		const { history, commonStore } = this.props;
 		const { menus } = commonStore;
 		const dimmer = <div className="dimmer" onMouseDown={this.close} />;
 		
 		return (
 			<div className="menus">
 				{menus.map((item: I.MenuInterface, i: number) => (
-					<Menu key={item.id} {...item} />
+					<Menu history={history} key={item.id} {...item} />
 				))}
 				{menus.length ? dimmer : ''}
 			</div>

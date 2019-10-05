@@ -1,0 +1,32 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menu-account { width: 288px; background: #fff; border-radius: 12px; color: #2c2b27; padding: 0px; }
+	.menu.menu-account {
+		.item { padding: 12px; } 
+		.item {
+			.icon.user { width: 40px; height: 40px; line-height: 40px; vertical-align: top; margin-right: 8px; }
+			.info { display: inline-block; vertical-align: top; width: calc(100% - 48px); }
+			.name { font-weight: bold; }
+			.description { font-size: 13px; line-height: 18px; color: #aca996; }
+			.icon.check { margin: -2px 4px 0px 0px; display: none; width: 12px; height: 12px; background-image: url('~img/icon/menu/account/check.svg'); }
+		}
+		.item.active {
+			.icon.check { display: inline-block; }
+			.description { color: #2c2b27; }
+		}
+		
+		.item:first-child { border-radius: 12px 12px 0px 0px; }
+		.item:last-child { border-radius: 0px 0px 12px 12px; }	
+		.item:hover, .item.active { background: #f7f5f0; }
+		
+		.item.add {
+			.icon.plus { width: 40px; height: 40px; margin-right: 8px; background-size: 16px 16px; background-image: url('~img/icon/plus/account0.svg'); }
+			.name { color: #aca996; transition: $transitionFast; }
+		}
+		.item.add:hover {
+			.icon.plus { background-image: url('~img/icon/plus/account1.svg'); }
+			.name { color: #000; }
+		}
+	}	
+}

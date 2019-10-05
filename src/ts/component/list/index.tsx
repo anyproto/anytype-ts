@@ -55,7 +55,13 @@ class ListIndex extends React.Component<Props, {}> {
 		});
 		
 		return (
-			<List axis="xy" list={documents} helperContainer={helperContainer} onSortEnd={this.onSortEnd} />
+			<List 
+				axis="xy" 
+				transitionDuration={150}
+				list={documents} 
+				helperContainer={helperContainer} 
+				onSortEnd={this.onSortEnd} 
+			/>
 		);
 	};
 	

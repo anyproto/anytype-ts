@@ -7,7 +7,6 @@ import { dispatcher, I, Util} from 'ts/lib';
 import { documentStore } from 'ts/store';
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant: any = require('json/constant.json');
 
 interface Props extends RouteComponentProps<any> {
@@ -26,6 +25,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onSettings = this.onSettings.bind(this);
+		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 	};
@@ -50,7 +50,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 						Hi, {account.name}
 						<div className="rightMenu">
 							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} onClick={this.onSettings} />
-							<Icon className={'profile ' + (commonStore.popupIsOpen('profile') ? 'active' : '')} />
+							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} onClick={this.onAccount} />
 							<IconUser {...account} onClick={this.onProfile} />
 						</div>
 					</div>
@@ -64,6 +64,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		
 		let items: any[] = [
 			{ icon: ':wave:', name: 'Get started' },
 			{ icon: ':bulb:', name: 'Ideas' },
@@ -74,6 +75,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			{ icon: ':wastebasket:', name: 'Archive' },
 		];
 		
+		documentStore.documentClear();
 		for (let i = 0; i < items.length; ++i) {
 			items[i].id = String(i + 1);
 			documentStore.documentAdd(items[i]);			
@@ -85,6 +87,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 	onSettings (e: any) {
 		const { commonStore } = this.props;
 		commonStore.popupOpen('settings', {});
+	};
+	
+	onAccount () {
+		const { commonStore } = this.props;
+		
+		commonStore.menuOpen('account', { 
+			element: 'button-account',
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right
+		});
 	};
 	
 	onProfile (e: any) {

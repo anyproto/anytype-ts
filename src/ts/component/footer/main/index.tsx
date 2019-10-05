@@ -20,7 +20,7 @@ class FooterMainIndex extends React.Component<Props, {}> {
 	render () {
 		const { commonStore } = this.props;
 		
-        return (
+		return (
 			<div className="footer">
 				<Icon id="button-help" className={'help light ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
 			</div>

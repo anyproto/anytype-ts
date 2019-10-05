@@ -14,6 +14,7 @@ import MenuItemVertical from './menu/item/vertical';
 import MenuItemMain from './menu/item/main';
 import MenuMain from './menu/main';
 import MenuHelp from './menu/help';
+import MenuAccount from './menu/account';
 
 import Popup from './util/popup';
 import PopupProfile from './popup/profile';
@@ -50,6 +51,7 @@ export {
 	MenuItemMain,
 	MenuMain,
 	MenuHelp,
+	MenuAccount,
 	Popup,
 	PopupProfile,
 	PopupSettings,

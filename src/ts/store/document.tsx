@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 
 class DocumentStore {
 	@observable public documentItem: I.DocumentInterface = null;
-	@observable.shallow public documentList: I.DocumentInterface[] = [];
+	@observable public documentList: I.DocumentInterface[] = [];
 	
 	@computed
 	get documents(): I.DocumentInterface[] {
@@ -19,6 +19,11 @@ class DocumentStore {
 	@action
 	documentAdd (document: I.DocumentInterface) {
 		this.documentList.push(document as I.DocumentInterface);
+	};
+	
+	@action
+	documentClear () {
+		this.documentList = [];
 	};
 	
 	@action

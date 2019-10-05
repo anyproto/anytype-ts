@@ -1,13 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
-import { MenuHelp } from 'ts/component';
+import { MenuHelp, MenuAccount } from 'ts/component';
 
 const $ = require('jquery');
 const raf = require('raf');
 const BORDER = 12;
 
-class Menu extends React.Component<I.MenuInterface, {}> {
+interface Props extends I.MenuInterface {
+	history: any;
+};
+
+class Menu extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -16,6 +20,7 @@ class Menu extends React.Component<I.MenuInterface, {}> {
 		const { type } = param;
 		const Components: any = {
 			help: MenuHelp,
+			account: MenuAccount,
 		};
 		const Component = Components[id];
 		const cn = [ 
