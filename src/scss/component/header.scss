@@ -1,13 +1,26 @@
+@import "~scss/_vars";
+
+.header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 10; }
 .header {
 	.logo { 
-		width: 60px; height: 13px; position: fixed; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
+		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 14px; background: url('~img/logo.svg') no-repeat;
 		background-position: center center;  
 	}
 	
-	.menu { position: fixed; top: 6px; right: 12px; z-index: 1; color: #fff; }
+	.menu { position: fixed; top: 6px; right: 16px; z-index: 1; color: #fff; }
 	.menu {
-		.item { display: inline-block; vertical-align: middle; margin-right: 16px; cursor: pointer; }
-		.item:hover { text-decoration: underline; }
+		.item { 
+			display: inline-block; vertical-align: middle; margin-right: 16px; cursor: pointer; transition: $transitionFast;
+			font-weight: bold; 
+		}
+		.item:hover { color: #000; }
 		.item:last-child { margin-right: 0px; }
+
+		.item {
+			.icon.new { margin: -4px 7px 0px 0px; width: 16px; height: 16px; background-image: url('~img/icon/plus/new0.svg'); }
+		}
+		.item:hover {
+			.icon.new { background-image: url('~img/icon/plus/new1.svg'); }
+		}
 	}
 }

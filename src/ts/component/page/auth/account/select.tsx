@@ -5,12 +5,14 @@ import { observer, inject } from 'mobx-react';
 import { dispatcher, Storage, I } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
+	commonStore?: any;
 	authStore?: any;
 };
 interface State {
 	error: string;
 };
 
+@inject('commonStore')
 @inject('authStore')
 @observer
 class PageAccountSelect extends React.Component<Props, State> {
@@ -27,7 +29,8 @@ class PageAccountSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { authStore } = this.props;
+		const { commonStore, authStore } = this.props;
+		const { cover } = commonStore;
 		const { error } = this.state;
 		
 		const Item = (item: any) => (
@@ -39,7 +42,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Cover num={3} />
+				<Cover num={cover} />
 				<Header />
 				<Footer />
 				
@@ -64,10 +67,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 	componentDidMount () {
 		dispatcher.call('accountRecover', {}, (errorCode: any, message: any) => {
 			if (message.error.code) {
-				let error = message.error.description;
-				if (error) {
-					this.setState({ error: error });
-				};
+				this.setState({ error: message.error.description });
 			} else {
 				
 			};

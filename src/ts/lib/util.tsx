@@ -1,9 +1,18 @@
+//import EmojiData from 'emoji-mart/data/apple.json';
+
 const loadImage = window.require('blueimp-load-image');
 const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
+const EmojiData = require('emoji-mart/data/apple.json');
 
 class Util {
+	
+	icons: any[] = [];
+	
+	constructor () {
+		this.icons = Object.keys(EmojiData.emojis);
+	};
 	
 	toUpperCamelCase (str: string) {
 		return this.toCamelCase('_' + str);
@@ -80,6 +89,19 @@ class Util {
 				error('Failed to get canvas.toDataURL()');
 			};
 		});
+	};
+	
+	rand (min: number, max: number): number {
+		if (max && (max != min)) {
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		} else {
+			return Math.floor(Math.random() * (min + 1));
+		};
+		return 0;
+	};
+	
+	randomSmile () {
+		return this.icons[this.rand(0, this.icons.length - 1)];
 	};
 		
 };

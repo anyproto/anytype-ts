@@ -16,6 +16,11 @@ class DocumentStore {
 	};
 	
 	@action
+	documentAdd (document: I.DocumentInterface) {
+		this.documentList.push(document as I.DocumentInterface);
+	};
+	
+	@action
 	documentSet (document: I.DocumentInterface) {
 		this.documentItem = document as I.DocumentInterface;
 	};

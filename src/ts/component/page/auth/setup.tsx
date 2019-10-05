@@ -9,7 +9,8 @@ interface Props extends RouteComponentProps<any> {
 	authStore?: any;
 };
 interface State {
-	icon: number;
+	icon: string;
+	index: number;
 	error: string;
 };
 
@@ -25,7 +26,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 
 	i: number = 0;
 	state = {
-		icon: 0,
+		icon: '',
+		index: 0,
 		error: '',
 	};
 
@@ -55,7 +57,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Smile icon={':clock' + Icons[icon] + ':'} size={36} />
+					<Smile icon={icon} size={36} />
 					<Title text={title} />
 					<Error text={error} />
 				</Frame>
@@ -67,16 +69,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 		const { authStore, match } = this.props;
 		
 		this.clear();
-		this.i = window.setInterval(() => {
-			let { icon } = this.state;
-			
-			icon++;
-			if (icon >= Icons.length) {
-				icon = 0;
-			};
-			
-			this.setState({ icon: icon });
-		}, 1000);
+		this.setClock();
+		this.i = window.setInterval(() => { this.setClock(); }, 1000);
 		
 		switch (match.params.id) {
 			case 'init': 
@@ -96,6 +90,17 @@ class PageAuthSetup extends React.Component<Props, State> {
 		this.clear();
 	};
 	
+	setClock () {
+		let { index } = this.state;
+			
+		index++;
+		if (index >= Icons.length) {
+			index = 0;
+		};
+			
+		this.setState({ icon: ':clock' + Icons[index] + ':', index: index });
+	};
+	
 	init () {
 		const { authStore, history } = this.props;
 		
@@ -112,9 +117,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 			
 		dispatcher.call('walletRecover', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
-				return;
-			};
-			
+				this.setError(message.error.description);
+			} else 
 			if (accountId) {
 				request = { 
 					rootPath: Config.root,
@@ -123,7 +127,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				
 				dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
 					if (message.error.code) {
-						return;
+						this.setError(message.error.description);
 					} else
 					if (message.account) {
 						authStore.accountSet(message.account);
@@ -146,18 +150,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		
 		dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
-				let error = '';
-				switch (message.error.code) {
-					case errorCode.FAILED_TO_SET_AVATAR:
-						error = 'Please select profile picture';
-						break; 
-					default:
-						error = message.error.description;
-						break;
-				};
-				if (error) {
-					this.setState({ error: error });
-				};
+				this.setError(message.error.description);
 			} else
 			if (message.account) {
 				authStore.accountSet(message.account);
@@ -183,14 +176,20 @@ class PageAuthSetup extends React.Component<Props, State> {
 			
 		dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
-				let error = message.error.description;
-				if (error) {
-					this.setState({ error: error });
-				};
+				this.setError(message.error.description);
 			} else {
 				history.push('/main/index');
 			};
 		});
+	};
+	
+	setError (v: string) {
+		if (!v) {
+			return;
+		};
+		
+		this.clear();
+		this.setState({ icon: ':skull_and_crossbones:', error: v });
 	};
 	
 	clear () {

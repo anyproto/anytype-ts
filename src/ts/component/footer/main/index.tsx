@@ -35,7 +35,6 @@ class FooterMainIndex extends React.Component<Props, State> {
 		
         return (
 			<div className="footer">
-				<div className="copy">2018, Anytype</div>
 				<Icon id="button-help" className={cn.join(' ')} onMouseDown={this.onHelp} />
 			</div>
 		);

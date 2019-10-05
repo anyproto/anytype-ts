@@ -55,7 +55,8 @@ class Dispatcher {
 		
 		const errorCode = com.anytype[Util.toUpperCamelCase(type) + 'Response'].Error.Code;
 		
-		console.log('[Dispatcher.call]', type, data, errorCode);
+		console.log('[Dispatcher.call]', type, data);
+		console.log(errorCode);
 		this.service[type](data, (message: any) => {
 			if (!callBack) {
 				return;

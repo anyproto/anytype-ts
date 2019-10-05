@@ -82,19 +82,8 @@ class PageAuthLogin extends React.Component<Props, State> {
 		
 		dispatcher.call('walletRecover', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
-				let error = '';
-				switch (message.error.code) {
-					case errorCode.BAD_INPUT:
-						error = 'Invalid mnemonic phrase';
-						this.phraseRef.setError(true);
-						break; 
-					default:
-						error = message.error.description;
-						break;
-				};
-				if (error) {
-					this.setState({ error: error });
-				};
+				this.phraseRef.setError(true);
+				this.setState({ error: message.error.description });
 			} else {
 				authStore.phraseSet(request.mnemonic);
 				history.push('/auth/account-select');

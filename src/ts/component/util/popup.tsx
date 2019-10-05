@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, PopupProfile } from 'ts/component';
+import { PopupProfile, PopupSettings } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -20,15 +20,14 @@ class Popup extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
-		
-		this.close = this.close.bind(this);
 	};
 
 	render () {
 		const { id } = this.props;
 		const cn = [ 'popup', 'popup-' + id ];
 		const Components: any = {
-			profile: PopupProfile
+			profile: PopupProfile,
+			settings: PopupSettings,
 		};
 		const Component = Components[id];
 		
@@ -38,7 +37,6 @@ class Popup extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<Icon className="close" onMouseDown={this.close} />
 				<Component {...this.props} />
 			</div>
 		);
@@ -73,11 +71,6 @@ class Popup extends React.Component<Props, {}> {
 				marginLeft: -node.outerWidth() / 2
 			});			
 		});
-	};
-	
-	close () {
-		const { id, commonStore } = this.props;
-		commonStore.popupClose(id);
 	};
 	
 };

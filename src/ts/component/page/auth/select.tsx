@@ -68,10 +68,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 		
 		dispatcher.call('walletCreate', request, (errorCode: any, message: any) => {
 			if (message.error.code) {
-				let error = message.error.description;
-				if (error) {
-					this.setState({ error: error });
-				};
+				this.setState({ error: message.error.description });
 			} else {
 				authStore.phraseSet(message.mnemonic);
 				history.push('/auth/register/register');

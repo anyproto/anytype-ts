@@ -56,7 +56,6 @@ class IconUser extends React.Component<Props, State> {
 			<div onMouseDown={onMouseDown} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} className={cn.join(' ')}>
 				<div className="image" style={style} />
 				<div className="txt">{this.shortName(text)}</div>
-				<div className="arrow" />
 			</div>
 		);
 	};

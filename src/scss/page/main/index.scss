@@ -1,4 +1,46 @@
 @import "~scss/_vars";
 
 .pageMainIndex {
+	.wrapper { position: relative; z-index: 1; padding: 90px 0px 0px 0px; margin: 0px auto; }
+	
+	.title { font-size: 36px; line-height: 40px; letter-spacing: -0.72px; color: #fff; font-weight: 600; position: relative; }
+	.title {
+		.rightMenu { position: absolute; right: 0px; top: 0px; }
+		.icon { width: 40px; height: 40px; vertical-align: top; margin-right: 8px; border-radius: 100%; cursor: pointer; }
+		.icon:hover { background-color: rgba(0, 0, 0, 0.2); }
+		.icon:last-child { margin-right: 0px; }
+		.icon.user { line-height: 40px; }
+		.icon.settings { background-size: 18px 18px; background-image: url('~img/icon/settings.svg'); }
+		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); }
+	}
+	
+	#documents { position: absolute; width: 100%; left: 50%; }
+	#documents {
+		.item { 
+			width: 208px; height: 112px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
+			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer;
+		}
+		
+		.item {
+			.smile { width: 48px; height: 48px; border-radius: 100%; background-color: #f7f5f0; line-height: 48px; }
+			.smile {
+				.emoji-mart-emoji { height: 32px; line-height: 32px; }
+				.emoji-mart-emoji { span { height: 32px; line-height: 32px; margin: -1px 0px 0px 2px; } }
+			}
+			.name { 
+				font-size: 15px; line-height: 1.33; height: 1.33em; letter-spacing: -0.1px; width: 100%;
+				overflow: hidden; word-break: break-word; position: absolute; left: 0px; bottom: 16px; padding: 0px 16px;
+			}
+		}
+		
+		.item.add { background: rgba(255,255,255,0.6); transition: background 0.2s ease-in-out; }
+		.item.add {
+			.icon { 
+				width: 16px; height: 16px; background-image: url('~img/icon/plus/document.svg');
+				position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; 
+			}
+		}
+		.item.add:hover { background-color: #fff; }
+	}
+	
 }
