@@ -18,7 +18,6 @@ class Util {
 		return this.toCamelCase('_' + str);
 	};
 	
-		
 	toCamelCase (str: string) {
 		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (str, p1, p2, offset, s) => {
 			return p1.toUpperCase();
