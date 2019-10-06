@@ -55,8 +55,9 @@ class MenuAccount extends React.Component<Props, {}> {
 		});
 		
 		authStore.accountClear();
-		authStore.accountAdd({ id: '1', icon: '', name: 'Anton Pronkin' });
-		authStore.accountAdd({ id: '2', icon: '', name: 'James Simon' });
+		for (let i = 0; i < 50; ++i) {
+			authStore.accountAdd({ id: String(i + 1), icon: '', name: 'Anton Pronkin' });
+		};
 	};
 	
 	onSelect (e: any, id: string) {

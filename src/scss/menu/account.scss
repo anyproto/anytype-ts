@@ -1,8 +1,9 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menu-account { width: 288px; background: #fff; border-radius: 12px; color: #2c2b27; padding: 0px; }
+	.menu.menu-account { width: 288px; background: #fff; border-radius: 12px; color: #2c2b27; padding: 0px; overflow: hidden; }
 	.menu.menu-account {
+		.items { overflow-x: hidden; overflow-y: auto; max-height: 330px; }
 		.item { padding: 12px; } 
 		.item {
 			.icon.user { width: 40px; height: 40px; line-height: 40px; vertical-align: top; margin-right: 8px; }
@@ -15,9 +16,6 @@
 			.icon.check { display: inline-block; }
 			.description { color: #2c2b27; }
 		}
-		
-		.item:first-child { border-radius: 12px 12px 0px 0px; }
-		.item:last-child { border-radius: 0px 0px 12px 12px; }	
 		.item:hover, .item.active { background: #f7f5f0; }
 		
 		.item.add {

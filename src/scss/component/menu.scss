@@ -4,7 +4,8 @@
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 10; background: rgba(0,0,0,0); }
 	.menu { 
 		border-radius: 4px; color: #fff; position: absolute; z-index: 11; text-align: left; padding: 4px; 
-		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); background: $colorBlack;
+		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); background: $colorBlack; 
+		transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
 	}
 	
 	.menu.vertical { width: 176px; }

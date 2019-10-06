@@ -46,6 +46,7 @@ class Popup extends React.Component<Props, {}> {
 		this._isMounted = true;
 		this.resize();
 		this.unbind();
+		this.animate();
 		
 		$(window).on('resize.popup', () => { this.resize(); });
 	};
@@ -57,6 +58,19 @@ class Popup extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('resize.popup');
+	};
+	
+	animate () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.css({ opacity: 0, transform: 'scale3d(0.9,0.9,1)' });
+		raf(() => { 
+			node.css({ opacity: 1, transform: 'scale3d(1,1,1)' }); 
+		});
 	};
 	
 	resize () {

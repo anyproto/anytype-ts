@@ -43,6 +43,7 @@ class Menu extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.position();
+		this.animate();
 		this.unbind();
 		
 		$(window).on('resize.menu', () => { this.position(); });
@@ -59,6 +60,19 @@ class Menu extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('resize.menu');
+	};
+	
+	animate () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.css({ opacity: 0, transform: 'scale3d(0.9,0.9,1)' });
+		raf(() => { 
+			node.css({ opacity: 1, transform: 'scale3d(1,1,1)' }); 
+		});
 	};
 	
 	position () {
