@@ -28,24 +28,19 @@ class Dispatcher {
 			return;
 		};
 		
-		console.log('[Dispatcher.event]', event);
+		let data = event[event.message];
+		console.log('[Dispatcher.event]', event.message, data);
 		
-		for (let key in event) {
-			let value = event[key];
-			if (!value || ('object' != typeof(value))) {
-				continue;
-			};
-			
-			if (value.error && value.error.code) {
-				continue;
-			};
-				
-			switch (key) {
-				case 'accountAdd':
-					authStore.accountAdd(value.account);
-					break;
-			};
+		if (data.error && data.error.code) {
+			return;
 		};
+		
+		switch (event.message) {
+			case 'accountAdd':
+				authStore.accountAdd(data.account);
+				break;
+		};
+		
 	};
 	
 	call (type: string, data: any, callBack?: (errorCode: any, message: any) => void) {

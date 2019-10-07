@@ -1,3 +1,5 @@
+import { commonStore } from 'ts/store';
+
 const $ = require('jquery');
 
 class KeyBoard {
@@ -27,7 +29,12 @@ class KeyBoard {
 			if (k == Key.backSpace) {
 				e.preventDefault();
 				this.history.goBack();
-			};			
+			};
+			
+			if (k == Key.escape) {
+				e.preventDefault();
+				commonStore.popupCloseAll();
+			};	
 		};
 	};
 	
@@ -43,6 +50,7 @@ class KeyBoard {
 
 export enum Key {
 	backSpace =	 8,
+	escape = 27,
 };
 
 export let keyBoard: KeyBoard = new KeyBoard();

@@ -43,7 +43,7 @@
 				.icon.arrow { background-image: url('~img/icon/popup/settings/arrow1.svg'); }
 			}
 			
-			.logout { color: #ff6745; cursor: pointer; transition: color 0.2s ease-in-out; }
+			.logout { color: #ff6745; cursor: pointer; }
 			.logout:hover { color: $colorBlack; }
 		}
 		
@@ -57,7 +57,7 @@
 		
 		.phrase {
 			.label { margin-bottom: 25px; }
-			.textArea { border-radius: 4px; font-family: 'Mono'; padding: 24px 32px; }
+			.textArea { border-radius: 4px; padding: 24px 32px; }
 		}
 		
 		.pinSelect, .pinConfirm {

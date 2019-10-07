@@ -40,6 +40,7 @@ class MenuAccount extends React.Component<Props, {}> {
 				{accounts.map((item: I.AccountInterface, i: number) => (
 					<Item key={item.id} {...item} index={i} />
 				))}
+				
 				<div className="item add" onClick={this.onAdd}>
 					<Icon className="plus" />
 					<div className="name">Add profile</div>
@@ -51,13 +52,7 @@ class MenuAccount extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { authStore } = this.props;
 		
-		dispatcher.call('accountRecover', {}, (errorCode: any, message: any) => {
-		});
-		
-		authStore.accountClear();
-		for (let i = 0; i < 50; ++i) {
-			authStore.accountAdd({ id: String(i + 1), icon: '', name: 'Anton Pronkin' });
-		};
+		dispatcher.call('accountRecover', {}, (errorCode: any, message: any) => {});
 	};
 	
 	onSelect (e: any, id: string) {

@@ -20,6 +20,10 @@ export interface DocumentInterface {
 	icon: string;
 };
 
+export interface BlockInterface {
+	id: string;
+};
+
 export interface PopupParam {
 	onClose?(): void;
 };
