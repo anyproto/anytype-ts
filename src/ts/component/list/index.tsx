@@ -7,6 +7,7 @@ import { dispatcher, I, Util} from 'ts/lib';
 
 interface Props {
 	documentStore?: any;
+	onSelect?(e: any, id: string): void;
 	onAdd?(e: any): void;
 	helperContainer?(): any;
 };
@@ -22,13 +23,13 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { documentStore, onAdd, helperContainer } = this.props;
+		const { documentStore, onSelect, onAdd, helperContainer } = this.props;
 		const { documents } = documentStore;
 		const length = documents.length;
 		
 		const Item = SortableElement((item: any) => {
 			return (
-				<div className="item" >
+				<div className="item" onClick={(e: any) => { onSelect(e, item.id); }}>
 					<Smile icon={item.icon} size={24} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -58,6 +59,7 @@ class ListIndex extends React.Component<Props, {}> {
 			<List 
 				axis="xy" 
 				transitionDuration={150}
+				pressDelay={50}
 				list={documents} 
 				helperContainer={helperContainer} 
 				onSortEnd={this.onSortEnd} 

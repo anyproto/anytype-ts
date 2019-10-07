@@ -22,6 +22,7 @@ export interface DocumentInterface {
 
 export interface BlockInterface {
 	id: string;
+	parentId: string;
 };
 
 export interface PopupParam {

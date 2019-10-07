@@ -1,5 +1,5 @@
 import { observable, action, computed } from 'mobx';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 
 class EditorStore {
 	@observable public blockList: I.BlockInterface[] = [];

@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup-settings { width: 672px; height: 518px; padding: 33px 48px 44px 48px; }
-	.popup-settings {
+	.popupSettings { width: 672px; height: 518px; padding: 33px 48px 44px 48px; }
+	.popupSettings {
 		.icon { transition: none; }
 	
 		.icon.close { width: 16px; height: 16px; cursor: pointer; background-image: url('~img/icon/popup/close0.svg'); margin-bottom: 24px; }

@@ -102,6 +102,25 @@ class Util {
 	randomSmile () {
 		return this.icons[this.rand(0, this.icons.length - 1)];
 	};
+	
+	// Wrap list into tree by fieldParent
+	wrapTree (rootId: string, list: any[], fieldParent?: string, fieldList?: string) {
+		list = list || [];
+		fieldParent = fieldParent || 'parentId';
+		fieldList = fieldList || 'children';
+		
+		let ret = [];
+		for (let item of list) {
+			if (rootId != item[fieldParent]) {
+				continue;
+			};
+			
+			let obj = Object.assign({}, item);
+			obj[fieldList] = this.wrapTree(obj.id, list, fieldParent, fieldList);
+			ret.push(obj);
+		};
+		return ret;
+ 	};
 		
 };
 

@@ -27,6 +27,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onSettings = this.onSettings.bind(this);
 		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 	};
 	
@@ -56,7 +57,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 					</div>
 					
 					<div id="documents"> 
-						<ListIndex ref={(ref) => { this.listRef = ref; }} onAdd={this.onAdd} helperContainer={() => { return $('#documents').get(0); }} />
+						<ListIndex 
+							ref={(ref) => { this.listRef = ref; }}
+							onSelect={this.onSelect} 
+							onAdd={this.onAdd}
+							helperContainer={() => { return $('#documents').get(0); }} 
+						/>
 					</div>
 				</div>
 			</div>
@@ -103,6 +109,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 	onProfile (e: any) {
 		const { commonStore } = this.props;
 		commonStore.popupOpen('profile', {});
+	};
+	
+	onSelect (e: any, id: string) {
+		const { history } = this.props;
+		history.push('/main/edit/' + id);
 	};
 	
 	onAdd (e: any) {

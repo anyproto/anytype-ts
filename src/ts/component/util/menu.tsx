@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { MenuHelp, MenuAccount } from 'ts/component';
 
 const $ = require('jquery');
@@ -23,9 +23,10 @@ class Menu extends React.Component<Props, {}> {
 			account: MenuAccount,
 		};
 		const Component = Components[id];
+		
 		const cn = [ 
 			'menu', 
-			'menu-' + id, 
+			Util.toCamelCase('menu-' + id), 
 			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical') 
 		];
 		

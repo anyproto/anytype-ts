@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { PopupProfile, PopupSettings } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const $ = require('jquery');
@@ -24,12 +24,15 @@ class Popup extends React.Component<Props, {}> {
 
 	render () {
 		const { id } = this.props;
-		const cn = [ 'popup', 'popup-' + id ];
 		const Components: any = {
 			profile: PopupProfile,
 			settings: PopupSettings,
 		};
 		const Component = Components[id];
+		const cn = [ 
+			'popup', 
+			Util.toCamelCase('popup-' + id) 
+		];
 		
 		if (!Component) {
 			return <div>Component {id} not found</div>

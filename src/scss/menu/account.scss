@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menu-account { width: 288px; background: #fff; border-radius: 12px; color: $colorBlack; padding: 0px; overflow: hidden; }
-	.menu.menu-account {
+	.menu.menuAccount { width: 288px; background: #fff; border-radius: 12px; color: $colorBlack; padding: 0px; overflow: hidden; }
+	.menu.menuAccount {
 		.items { overflow-x: hidden; overflow-y: auto; max-height: 330px; }
 		.item { padding: 12px; } 
 		.item {
