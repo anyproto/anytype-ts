@@ -1,10 +1,14 @@
+@import "~scss/_vars";
+
 * { padding: 0px; margin: 0px; border: 0px; box-sizing: border-box; }
 html, body { height: 100%; }
 
 body {
-	font-family: 'Lcg'; font-size: 15px; line-height: 24px; letter-spacing: -0.08px; color: #000;
+	font-family: 'Lcg'; font-size: 15px; line-height: 24px; letter-spacing: -0.08px; color: $colorBlack;
 	overflow-x: hidden; overflow-y: scroll; background: #fff;
 	-webkit-font-smoothing: antialiased;
+	backface-visibility: hidden;
+	transform-style: flat;
 	overscroll-behavior: none;
 }
 body.over { overflow-y: hidden; }
@@ -32,4 +36,4 @@ input, textarea, select { font-family: 'Lcg'; }
 	.input-file { position: absolute; left: 0px; top: 0px; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 100; padding: 0px; } 
 }
 
-a { color: #000; }
+a { color: $colorBlack; }

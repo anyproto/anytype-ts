@@ -1,17 +1,17 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup-settings { width: 672px; height: 496px; padding: 33px 48px 44px 48px; }
+	.popup-settings { width: 672px; height: 518px; padding: 33px 48px 44px 48px; }
 	.popup-settings {
 		.icon { transition: none; }
 	
-		.icon.close { width: 14px; height: 16px; cursor: pointer; background-image: url('~img/icon/popup/close0.svg'); margin-bottom: 24px; }
+		.icon.close { width: 16px; height: 16px; cursor: pointer; background-image: url('~img/icon/popup/close0.svg'); margin-bottom: 24px; }
 		.icon.close:hover { background-image: url('~img/icon/popup/close1.svg'); }
 		
 		.icon.back { width: 10px; height: 16px; cursor: pointer; background-image: url('~img/icon/popup/back0.svg'); margin-bottom: 24px; }
 		.icon.back:hover { background-image: url('~img/icon/popup/back1.svg'); }
 		
-		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; color: #2c2b27; font-weight: 600; margin-bottom: 15px; }
+		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; margin-bottom: 15px; }
 		.inputs { margin-bottom: 32px; }
 		
 		.index {
@@ -25,7 +25,7 @@
 				.icon.pin { background-size: 16px 20px; background-image: url('~img/icon/popup/settings/pin.svg'); }
 				.icon.notify { background-size: 18px 20px; background-image: url('~img/icon/popup/settings/notify.svg'); }
 				
-				.label { color: #2c2b27; display: inline-block; vertical-align: middle; }
+				.label { display: inline-block; vertical-align: middle; }
 				.icon.arrow { 
 					width: 9px; height: 12px; background-image: url('~img/icon/popup/settings/arrow0.svg'); position: absolute; right: 0px;
 					top: 50%; margin: -6px 0px 0px 0px; 
@@ -43,8 +43,8 @@
 				.icon.arrow { background-image: url('~img/icon/popup/settings/arrow1.svg'); }
 			}
 			
-			.logout { color: #ff6745; cursor: pointer; transition: $transitionFast; }
-			.logout:hover { color: #000; }
+			.logout { color: #ff6745; cursor: pointer; transition: color 0.2s ease-in-out; }
+			.logout:hover { color: $colorBlack; }
 		}
 		
 		.wallpaper {
@@ -57,7 +57,7 @@
 		
 		.phrase {
 			.label { margin-bottom: 25px; }
-			.textArea { border-radius: 4px; }
+			.textArea { border-radius: 4px; font-family: 'Mono'; padding: 24px 32px; }
 		}
 		
 		.pinSelect, .pinConfirm {

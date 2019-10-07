@@ -1,21 +1,22 @@
 @import "~scss/_vars";
 
 .menus {
-	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 10; background: rgba(0,0,0,0); }
+	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 20; background: rgba(0,0,0,0); }
 	.menu { 
-		border-radius: 4px; color: #fff; position: absolute; z-index: 11; text-align: left; padding: 4px; 
-		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); background: $colorBlack; 
-		transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+		border-radius: 4px; color: #fff; position: absolute; z-index: 21; text-align: left; padding: 4px; 
+		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); background: $colorBlack; opacity: 0; transform: scale3d(0.9,0.9,1);
+		transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 	}
+	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
 	
 	.menu.vertical { width: 176px; }
 	.menu.vertical {
 		.item { 
 			padding: 6px 8px; font-size: 15px; letter-spacing: 0.2px; border-radius: 4px; position: relative; cursor: pointer; 
-			transition: background 0.2s ease-in-out, color 0.2s ease-in-out; width: 100%;
+			transition: background 0.2s ease-in-out; width: 100%;
 		}
 		.item:hover { background: #56554f; }
-		.item.active { background: #000; }
+		.item.active { background: $colorBlack; }
 		
 		.icon { width: 24px; height: 24px; margin-right: 8px; }
 		.name { display: inline-block; vertical-align: middle; line-height: 1; margin-top: 2px; }

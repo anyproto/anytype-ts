@@ -13,7 +13,7 @@
 			display: inline-block; vertical-align: middle; margin-right: 16px; cursor: pointer; transition: $transitionFast;
 			font-weight: bold; 
 		}
-		.item:hover { color: #000; }
+		.item:hover { color: $colorBlack; }
 		.item:last-child { margin-right: 0px; }
 
 		.item {

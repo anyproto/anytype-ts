@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .input {
-	background: none; height: 30px; border-radius: 0px; color: #000; padding: 0px 12px; font-size: 15px; width: 100%;
+	background: none; height: 30px; border-radius: 0px; color: $colorBlack; padding: 0px 12px; font-size: 15px; width: 100%;
 	letter-spacing: -0.1px;
 }
 .input.readOnly { background: #f7f5f0; cursor: default; }

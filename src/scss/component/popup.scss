@@ -4,8 +4,9 @@
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 100; background: rgba(0,0,0,0.2); }
 	.popup { 
 		position: fixed; left: 50%; top: 50%; z-index: 101; background: #fff; border-radius: 8px; 
-		transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out; 
+		opacity: 0; transform: scale3d(0.9,0.9,1); transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; 
 	}
+	.popup.show { opacity: 1; transform: scale3d(1,1,1); }
 	
 	.popup-profile { width: 640px; height: 480px; }
 }

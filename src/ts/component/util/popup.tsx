@@ -61,15 +61,13 @@ class Popup extends React.Component<Props, {}> {
 	};
 	
 	animate () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		node.css({ opacity: 0, transform: 'scale3d(0.9,0.9,1)' });
-		raf(() => { 
-			node.css({ opacity: 1, transform: 'scale3d(1,1,1)' }); 
+		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+			
+			const node = $(ReactDOM.findDOMNode(this)); 
+			node.addClass('show'); 
 		});
 	};
 	
