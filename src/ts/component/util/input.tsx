@@ -162,6 +162,14 @@ class Input extends React.Component<Props, State> {
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 	
+	addClass (v: string) {
+		$(ReactDOM.findDOMNode(this)).addClass(v);
+	};
+	
+	removeClass (v: string) {
+		$(ReactDOM.findDOMNode(this)).removeClass(v);
+	};
+	
 };
 
 export default Input;

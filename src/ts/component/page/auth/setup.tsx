@@ -120,6 +120,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 				this.setError(message.error.description);
 			} else 
 			if (accountId) {
+				authStore.phraseSet(phrase);
+				
 				request = { 
 					rootPath: Config.root,
 					id: accountId

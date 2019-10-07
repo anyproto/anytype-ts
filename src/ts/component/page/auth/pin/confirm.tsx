@@ -4,7 +4,7 @@ import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header,
 import { Key } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
-const SIZE = 6;
+const Constant: any = require('json/constant.json');
 
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
@@ -37,7 +37,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		const { error } = this.state;
 		
 		let inputs = [];
-		for (let i = 1; i <= SIZE; ++i) {
+		for (let i = 1; i <= Constant.pinSize; ++i) {
 			inputs.push({ id: i });
 		};
 		
@@ -52,7 +52,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 					<Label text="This is one password you need to remember. You will need this password to login on this device." />
 					<Error text={error} />
 					
-					{inputs.map((item, i) => (
+					{inputs.map((item: any, i: number) => (
 						<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={i} onKeyUp={(e: any) => { this.onChange(e, item.id); }} />
 					))}
 				</Frame>
@@ -87,7 +87,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		};
 		
 		let pin = this.getPin();
-		if (pin.length == SIZE) {
+		if (pin.length == Constant.pinSize) {
 			if (pin == authStore.pin) {
 				if (isSelect) {
 					history.push('/auth/setup/select');

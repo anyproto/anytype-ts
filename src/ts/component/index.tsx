@@ -26,6 +26,7 @@ import Title from './util/title';
 import Label from './util/label';
 import Smile from './util/smile';
 
+import Switch from './util/switch';
 import Input from './util/input';
 import TextArea from './util/textArea';
 import Button from './util/button';
@@ -43,6 +44,7 @@ export {
 	HeaderMainIndex,
 	FooterAuth,
 	FooterMainIndex,
+	Switch,
 	Input,
 	TextArea,
 	Button,

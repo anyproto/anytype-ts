@@ -21,6 +21,7 @@ import 'scss/component/error.scss';
 import 'scss/component/frame.scss';
 import 'scss/component/popup.scss';
 import 'scss/component/menu.scss';
+import 'scss/component/switch.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';

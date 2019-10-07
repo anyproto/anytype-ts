@@ -1,0 +1,16 @@
+@import "~scss/_vars";
+
+.switch { 
+	width: 28px; height: 16px; background: #e0ded2; border-radius: 16px; position: relative; cursor: pointer; 
+	transition: $transitionFast; display: inline-block; vertical-align: middle;
+}
+.switch {
+	.inner { 
+		width: 12px; height: 12px; border-radius: 100%; background: #fff; position: absolute; left: 2px; top: 2px;
+		transition: $transitionFast;
+	}	
+}
+.switch.active { background: #6c6a5f; }
+.switch.active {
+	.inner { left: auto; right: 2px; }
+}
