@@ -58,6 +58,10 @@ class Dispatcher {
 				if (!callBack) {
 					return;
 				};
+				
+				message.error = message.error || {};
+				message.error.code = Number(message.error.code) || 0;
+				message.error.description = String(message.error.code || ''); 
 			
 				console.log('[Dispatcher.call] message', message);
 				callBack(errorCode, message);
