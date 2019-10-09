@@ -44,11 +44,11 @@
 		"webpack-dev-server": "^3.8.2"
 	},
 	"dependencies": {
-		"@babel/core": "^7.6.2",
+		"@babel/core": "^7.6.3",
 		"@types/intercom-web": "^2.8.7",
 		"@types/long": "^4.0.0",
 		"@types/mobx-devtools-mst": "^0.9.0",
-		"@types/node": "^12.7.11",
+		"@types/node": "^12.7.12",
 		"@types/react-beautiful-dnd": "^11.0.3",
 		"array-move": "^2.1.0",
 		"babel-loader": "^8.0.6",
@@ -56,7 +56,7 @@
 		"bindings": "^1.5.0",
 		"blueimp-load-image": "^2.24.0",
 		"css-loader": "^3.2.0",
-		"electron": "^6.0.11",
+		"electron": "^6.0.12",
 		"emoji-mart": "^2.11.1",
 		"file-type": "^12.3.0",
 		"fs": "0.0.1-security",
