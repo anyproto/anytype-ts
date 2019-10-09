@@ -52,14 +52,19 @@ class Dispatcher {
 		
 		console.log('[Dispatcher.call]', type, data);
 		console.log(errorCode);
-		this.service[type](data, (message: any) => {
-			if (!callBack) {
-				return;
-			};
+		
+		try {
+			this.service[type](data, (message: any) => {
+				if (!callBack) {
+					return;
+				};
 			
-			console.log('[Dispatcher.call] message', message);
-			callBack(errorCode, message);
-		});
+				console.log('[Dispatcher.call] message', message);
+				callBack(errorCode, message);
+			});			
+		} catch (e) {
+			console.error(e);
+		};
 	};
 	
 	napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) { 
