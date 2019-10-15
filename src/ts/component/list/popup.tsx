@@ -25,7 +25,7 @@ class ListPopup extends React.Component<Props, {}> {
 		
 		return (
 			<div className="popups">
-				{popups.map((item: I.PopupInterface, i: number) => (
+				{popups.map((item: I.Popup, i: number) => (
 					<Popup history={history} key={item.id} {...item} />
 				))}
 				{popups.length ? dimmer : ''}

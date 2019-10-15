@@ -4,8 +4,8 @@ import { I, Storage } from 'ts/lib';
 const COVER = 3;
 
 class CommonStore {
-	@observable public popupList: I.PopupInterface[] = [];
-	@observable public menuList: I.MenuInterface[] = [];
+	@observable public popupList: I.Popup[] = [];
+	@observable public menuList: I.Menu[] = [];
 	@observable public coverId: number = 0;
 	
 	@computed
@@ -14,12 +14,12 @@ class CommonStore {
 	};
 	
 	@computed
-	get popups(): I.PopupInterface[] {
+	get popups(): I.Popup[] {
 		return this.popupList;
 	};
 	
 	@computed
-	get menus(): I.MenuInterface[] {
+	get menus(): I.Menu[] {
 		return this.menuList;
 	};
 	
@@ -36,18 +36,18 @@ class CommonStore {
 	};
 	
 	popupIsOpen (id: string): boolean {
-		return this.popupList.find((item: I.PopupInterface) => { return item.id == id; }) ? true : false;
+		return this.popupList.find((item: I.Popup) => { return item.id == id; }) ? true : false;
 	};
 	
 	@action
 	popupClose (id: string) {
-		const item: I.PopupInterface = this.popupList.find((item: I.PopupInterface) => { return item.id == id; });
+		const item: I.Popup = this.popupList.find((item: I.Popup) => { return item.id == id; });
 		
 		if (item && item.param.onClose) {
 			item.param.onClose();
 		};
 		
-		this.popupList = this.popupList.filter((item: I.PopupInterface) => { return item.id != id; });
+		this.popupList = this.popupList.filter((item: I.Popup) => { return item.id != id; });
 	};
 	
 	@action
@@ -72,18 +72,18 @@ class CommonStore {
 	};
 	
 	menuIsOpen (id: string): boolean {
-		return this.menuList.find((item: I.MenuInterface) => { return item.id == id; }) ? true : false;
+		return this.menuList.find((item: I.Menu) => { return item.id == id; }) ? true : false;
 	};
 	
 	@action
 	menuClose (id: string) {
-		const item: I.MenuInterface = this.menuList.find((item: I.MenuInterface) => { return item.id == id; });
+		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
 		
 		if (item && item.param.onClose) {
 			item.param.onClose();
 		};
 		
-		this.menuList = this.menuList.filter((item: I.MenuInterface) => { return item.id != id; });
+		this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
 	};
 	
 	@action

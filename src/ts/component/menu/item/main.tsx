@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Smile } from 'ts/component';
 import { I } from 'ts/lib';
 
-interface Props extends I.MenuItemInterface {};
+interface Props extends I.MenuItem {};
 
 class MenuItemMain extends React.Component<Props, {}> {
 

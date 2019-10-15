@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
-interface Props extends I.MenuItemInterface {
+interface Props extends I.MenuItem {
 	onClick?(e: any, id: string): void;
 };
 

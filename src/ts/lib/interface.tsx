@@ -2,25 +2,43 @@ export enum ImageSize { LARGE, SMALL, THUMB };
 export enum MenuType { Vertical = 1, Horizontal };
 export enum MenuDirection { Top = 1, Bottom, Left, Right };
 
-export interface ImageInterface {
+export interface Image {
 	id: string;
 	sizes: ImageSize[];
 };
 
-export interface AccountInterface {
+export interface Account {
 	id: string;
 	name: string;
 	color?: string;
-	avatar?: ImageInterface;
+	avatar?: Image;
 };
 
-export interface DocumentInterface {
+export interface Property {
+	id: string;
+	name: string;
+};
+
+export interface View {
+	id: string;
+	name: string;
+};
+
+export interface Unit {};
+
+export interface UnitDb extends Unit {
+	properties: Property[];
+	views: View[];
+	data: any[];
+}; 
+
+export interface Document {
 	id: string;
 	name: string;
 	icon: string;
 };
 
-export interface BlockInterface {
+export interface Block {
 	id: string;
 	parentId: string;
 };
@@ -29,7 +47,7 @@ export interface PopupParam {
 	onClose?(): void;
 };
 
-export interface PopupInterface {
+export interface Popup {
 	id: string;
 	param: PopupParam;
 };
@@ -44,12 +62,12 @@ export interface MenuParam {
 	onClose?(): void;
 };
 
-export interface MenuInterface {
+export interface Menu {
 	id: string;
 	param: MenuParam;
 };
 
-export interface MenuItemInterface {
+export interface MenuItem {
 	icon: string;
 	name: string;
 };

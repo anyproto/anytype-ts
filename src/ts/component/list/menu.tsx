@@ -25,7 +25,7 @@ class ListMenu extends React.Component<Props, {}> {
 		
 		return (
 			<div className="menus">
-				{menus.map((item: I.MenuInterface, i: number) => (
+				{menus.map((item: I.Menu, i: number) => (
 					<Menu history={history} key={item.id} {...item} />
 				))}
 				{menus.length ? dimmer : ''}

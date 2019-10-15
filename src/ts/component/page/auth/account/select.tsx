@@ -34,7 +34,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		const { error } = this.state;
 		
 		const Item = (item: any) => (
-			<div className="item" onClick={(e) => { this.onSelect(e, item as I.AccountInterface); }}>
+			<div className="item" onClick={(e) => { this.onSelect(e, item as I.Account); }}>
 				<IconUser {...item} />
 				<div className="name">{item.name}</div>
 			</div>
@@ -51,7 +51,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 					<Error text={error} />
 					
 					<div className="list">
-						{authStore.accounts.map((item: I.AccountInterface, i: number) => (
+						{authStore.accounts.map((item: I.Account, i: number) => (
 							<Item key={item.id} {...item} />	
 						))}
 						<div className="item add" onMouseDown={this.onAdd}>
@@ -74,7 +74,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		});
 	};
 
-	onSelect (e: any, account: I.AccountInterface) {
+	onSelect (e: any, account: I.Account) {
 		const { authStore, history } = this.props;
 		
 		authStore.accountSet(account);

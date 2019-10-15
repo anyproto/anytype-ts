@@ -8,7 +8,7 @@ interface Props {
 	color?: string;
 	icon?: string;
 	className?: string;
-	avatar?: I.ImageInterface;
+	avatar?: I.Image;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -70,11 +70,14 @@ class IconUser extends React.Component<Props, State> {
 			return;
 		};
 		
+		let set = (s: string) => {
+			this.setState({ icon: 'data:image/jpeg;base64,' + s });
+		};
 		let key = [ 'image', avatar.id, I.ImageSize.LARGE ].join('.');
 		let s = cache.get(key);
 			
 		if (s) {
-			this.setState({ icon: 'data:image/jpeg;base64,' + s });
+			set(s);
 			return;
 		};
 			
@@ -90,7 +93,7 @@ class IconUser extends React.Component<Props, State> {
 
 			s = message.blob.toString('base64');
 			cache.set(key, s);
-			this.setState({ icon: 'data:image/jpeg;base64,' + s });
+			set(s);
 		});
 	};
 	

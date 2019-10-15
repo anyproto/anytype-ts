@@ -7,7 +7,7 @@ import { observer, inject } from 'mobx-react';
 const $ = require('jquery');
 const raf = require('raf');
 
-interface Props extends I.PopupInterface {
+interface Props extends I.Popup {
 	history: any;
 	commonStore?: any;
 };

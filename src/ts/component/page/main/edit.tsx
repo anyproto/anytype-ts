@@ -41,7 +41,7 @@ class PageMainEdit extends React.Component<Props, State> {
 			<div>
 				<MenuMain />
 				<div className="editor">
-					{tree.map((item: I.BlockInterface, i: number) => ( 
+					{tree.map((item: I.Block, i: number) => ( 
 						<Block key={item.id} {...item} />
 					))}
 				</div>

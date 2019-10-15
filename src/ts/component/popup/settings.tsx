@@ -7,7 +7,7 @@ import { observer, inject } from 'mobx-react';
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
-interface Props extends I.PopupInterface {
+interface Props extends I.Popup {
 	history: any;
 	commonStore?: any;
 	authStore?: any;

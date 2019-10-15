@@ -7,7 +7,7 @@ const $ = require('jquery');
 const raf = require('raf');
 const BORDER = 12;
 
-interface Props extends I.MenuInterface {
+interface Props extends I.Menu {
 	history: any;
 };
 

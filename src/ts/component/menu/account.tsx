@@ -3,7 +3,7 @@ import { Icon, IconUser } from 'ts/component';
 import { observer, inject } from 'mobx-react';
 import { I, dispatcher } from 'ts/lib';
 
-interface Props extends I.MenuInterface {
+interface Props extends I.Menu {
 	history: any;
 	authStore?: any;
 };
@@ -37,7 +37,7 @@ class MenuAccount extends React.Component<Props, {}> {
 		
 		return (
 			<div className="items">
-				{accounts.map((item: I.AccountInterface, i: number) => (
+				{accounts.map((item: I.Account, i: number) => (
 					<Item key={item.id} {...item} index={i} />
 				))}
 				

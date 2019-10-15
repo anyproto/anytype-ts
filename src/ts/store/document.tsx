@@ -3,16 +3,16 @@ import { I } from 'ts/lib';
 import arrayMove from 'array-move';
 
 class DocumentStore {
-	@observable public documentList: I.DocumentInterface[] = [];
+	@observable public documentList: I.Document[] = [];
 	
 	@computed
-	get documents(): I.DocumentInterface[] {
+	get documents(): I.Document[] {
 		return this.documentList;
 	};
 	
 	@action
-	documentAdd (document: I.DocumentInterface) {
-		this.documentList.push(document as I.DocumentInterface);
+	documentAdd (document: I.Document) {
+		this.documentList.push(document as I.Document);
 	};
 	
 	@action

@@ -2,16 +2,16 @@ import { observable, action, computed } from 'mobx';
 import { I, Util } from 'ts/lib';
 
 class EditorStore {
-	@observable public blockList: I.BlockInterface[] = [];
+	@observable public blockList: I.Block[] = [];
 	
 	@computed
-	get blocks(): I.BlockInterface[] {
+	get blocks(): I.Block[] {
 		return this.blockList;
 	};
 	
 	@action
-	blockAdd (block: I.BlockInterface) {
-		this.blockList.push(block as I.BlockInterface);
+	blockAdd (block: I.Block) {
+		this.blockList.push(block as I.Block);
 	};
 	
 	@action

@@ -2,20 +2,20 @@ import { observable, action, computed } from 'mobx';
 import { I, Storage } from 'ts/lib';
 
 class AuthStore {
-	@observable public accountItem: I.AccountInterface = null;
-	@observable public accountList: I.AccountInterface[] = [];
+	@observable public accountItem: I.Account = null;
+	@observable public accountList: I.Account[] = [];
 	@observable public pin: string = '';
 	@observable public icon: string = '';
 	@observable public name: string = '';
 	@observable public phrase: string = '';
 	
 	@computed
-	get accounts(): I.AccountInterface[] {
+	get accounts(): I.Account[] {
 		return this.accountList;
 	};
 	
 	@computed
-	get account(): I.AccountInterface {
+	get account(): I.Account {
 		return this.accountItem;
 	};
 	
@@ -41,7 +41,7 @@ class AuthStore {
 	};
 	
 	@action
-	accountAdd (account: I.AccountInterface) {
+	accountAdd (account: I.Account) {
 		this.accountList.push(account);
 	};
 	
@@ -50,9 +50,9 @@ class AuthStore {
 	};
 	
 	@action
-	accountSet (account: I.AccountInterface) {
+	accountSet (account: I.Account) {
 		Storage.set('accountId', account.id);
-		this.accountItem = account as I.AccountInterface;
+		this.accountItem = account as I.Account;
 	};
 	
 	@action
