@@ -57,7 +57,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Smile icon={icon} size={36} />
+					<Smile className="c64" icon={icon} size={36} />
 					<Title text={title} />
 					<Error text={error} />
 				</Frame>

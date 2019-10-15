@@ -22,9 +22,11 @@ import 'scss/component/frame.scss';
 import 'scss/component/popup.scss';
 import 'scss/component/menu.scss';
 import 'scss/component/switch.scss';
+import 'scss/component/title.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
+import 'scss/page/main/folder.scss';
 import 'scss/page/main/edit.scss';
 
 import 'scss/popup/settings.scss';

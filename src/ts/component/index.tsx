@@ -1,11 +1,14 @@
 import Page from './page';
 
+import UnitDb from './unit/db';
+
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListIndex from './list/index';
 
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
+import HeaderMainFolder from './header/main/folder';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
 
@@ -37,11 +40,13 @@ import IconUser from './util/iconUser';
 
 export {
 	Page,
+	UnitDb,
 	ListPopup,
 	ListMenu,
 	ListIndex,
 	HeaderAuth,
 	HeaderMainIndex,
+	HeaderMainFolder,
 	FooterAuth,
 	FooterMainIndex,
 	Switch,

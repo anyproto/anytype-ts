@@ -29,7 +29,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Smile icon=":tada:" size={36} />
+					<Smile className="c64" icon=":tada:" size={36} />
 					<Title text="Congratulations!" />
 					<Label text="You've created your first profile! It is stored on your device and nobody will know about it until you share it!" />
 					<Button className="orange" text="Let's start!" onClick={this.onSubmit} />

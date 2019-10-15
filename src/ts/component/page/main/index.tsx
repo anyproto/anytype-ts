@@ -113,7 +113,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onSelect (e: any, id: string) {
 		const { history } = this.props;
-		history.push('/main/edit/' + id);
+		history.push('/main/folder/' + id);
 	};
 	
 	onAdd (e: any) {

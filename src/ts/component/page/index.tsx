@@ -15,6 +15,7 @@ import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
 
 import PageMainIndex from './main/index';
+import PageMainFolder from './main/folder';
 import PageMainEdit from './main/edit';
 
 const $ = require('jquery');
@@ -45,6 +46,7 @@ class Page extends React.Component<Props, {}> {
 			'auth/success':			 PageAuthSuccess,
 			
 			'main/index':			 PageMainIndex,
+			'main/folder':			 PageMainFolder,
 			'main/edit':			 PageMainEdit,
 		};
 		
