@@ -6,13 +6,13 @@ import { observer, inject } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
 
 interface Props {
-	documentStore?: any;
+	blockStore?: any;
 	onSelect?(e: any, id: string): void;
 	onAdd?(e: any): void;
 	helperContainer?(): any;
 };
 
-@inject('documentStore')
+@inject('blockStore')
 @observer
 class ListIndex extends React.Component<Props, {}> {
 	
@@ -23,9 +23,9 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { documentStore, onSelect, onAdd, helperContainer } = this.props;
-		const { documents } = documentStore;
-		const length = documents.length;
+		const { blockStore, onSelect, onAdd, helperContainer } = this.props;
+		const { blocks } = blockStore;
+		const length = blocks.length;
 		
 		const Item = SortableElement((item: any) => {
 			return (
@@ -60,7 +60,7 @@ class ListIndex extends React.Component<Props, {}> {
 				axis="xy" 
 				transitionDuration={150}
 				pressDelay={50}
-				list={documents} 
+				list={blocks} 
 				helperContainer={helperContainer} 
 				onSortEnd={this.onSortEnd} 
 			/>
@@ -69,9 +69,9 @@ class ListIndex extends React.Component<Props, {}> {
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { documentStore } = this.props;
+		const { blockStore } = this.props;
 		
-		documentStore.documentSort(oldIndex, newIndex);
+		blockStore.documentSort(oldIndex, newIndex);
 	};
 	
 };

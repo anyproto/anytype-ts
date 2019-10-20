@@ -42,8 +42,9 @@ class PopupSettings extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { authStore } = this.props;
+		const { authStore, commonStore } = this.props;
 		const { account } = authStore;
+		const { cover } = commonStore;
 		const { page } = this.state;
 		
 		let content = null;
@@ -109,7 +110,7 @@ class PopupSettings extends React.Component<Props, {}> {
 				};
 				
 				const Item = (item: any) => (
-					<div className="item" onClick={() => { this.onCover(item.id); }}>
+					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item.id); }}>
 						<Cover num={item.id} />
 					</div>
 				);
@@ -121,7 +122,7 @@ class PopupSettings extends React.Component<Props, {}> {
 						
 						<div className="covers">
 							{covers.map((item: any, i: number) => (
-								<Item key={i} {...item} />
+								<Item key={i} {...item} active={item.id == cover} />
 							))}
 						</div>
 					</div>

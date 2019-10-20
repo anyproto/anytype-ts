@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
-interface Props extends I.UnitDb {};
+interface Props extends I.BlockDb {};
 
-class UnitDb extends React.Component<Props, {}> {
+class BlockDb extends React.Component<Props, {}> {
 
 	render () {
 		const { views, data, properties } = this.props;
@@ -21,7 +21,7 @@ class UnitDb extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<div className="unitDb">
+			<div className="blockDb">
 				<div className="views">
 					{views.map((item: I.View, i: number) => (
 						<View key={i} {...item} />
@@ -45,4 +45,4 @@ class UnitDb extends React.Component<Props, {}> {
 	
 };
 
-export default UnitDb;
+export default BlockDb;

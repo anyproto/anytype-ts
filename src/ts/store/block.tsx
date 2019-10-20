@@ -1,7 +1,8 @@
 import { observable, action, computed } from 'mobx';
-import { I, Util } from 'ts/lib';
+import { I } from 'ts/lib';
+import arrayMove from 'array-move';
 
-class EditorStore {
+class BlockStore {
 	@observable public blockList: I.Block[] = [];
 	
 	@computed
@@ -19,6 +20,11 @@ class EditorStore {
 		this.blockList = [];
 	};
 	
+	@action
+	blockSort (oldIndex: number, newIndex: number) {
+		this.blockList = arrayMove(this.blockList, oldIndex, newIndex);
+	};
+	
 };
 
-export let editorStore: EditorStore = new EditorStore();
+export let blockStore: BlockStore = new BlockStore();

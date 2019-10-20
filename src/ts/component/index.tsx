@@ -1,6 +1,6 @@
 import Page from './page';
 
-import UnitDb from './unit/db';
+import BlockDb from './block/db';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -12,14 +12,14 @@ import HeaderMainFolder from './header/main/folder';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
 
-import Menu from './util/menu';
+import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
 import MenuItemMain from './menu/item/main';
 import MenuMain from './menu/main';
 import MenuHelp from './menu/help';
 import MenuAccount from './menu/account';
 
-import Popup from './util/popup';
+import Popup from './popup';
 import PopupProfile from './popup/profile';
 import PopupSettings from './popup/settings';
 
@@ -40,7 +40,7 @@ import IconUser from './util/iconUser';
 
 export {
 	Page,
-	UnitDb,
+	BlockDb,
 	ListPopup,
 	ListMenu,
 	ListIndex,

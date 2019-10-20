@@ -5,13 +5,13 @@ import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
-	editorStore?: any;
+	blockStore?: any;
 };
 
 interface State {
 };
 
-@inject('editorStore')
+@inject('blockStore')
 @observer
 class PageMainEdit extends React.Component<Props, State> {
 	
@@ -23,8 +23,8 @@ class PageMainEdit extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { editorStore } = this.props;
-		const { blocks } = editorStore;
+		const { blockStore } = this.props;
+		const { blocks } = blockStore;
 		const tree = Util.wrapTree('', blocks);
 		
 		const Block = (item: any) => (
@@ -50,25 +50,25 @@ class PageMainEdit extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { editorStore } = this.props;
+		const { blockStore } = this.props;
 		
-		editorStore.blockClear();
+		blockStore.blockClear();
 		for (let i = 0; i < 100; ++i) {
-			editorStore.blockAdd({
+			blockStore.blockAdd({
 				id: String(i + 1),
 				parentId: '',
 			});
 		};
 		
 		for (let i = 0; i < 100; ++i) {
-			editorStore.blockAdd({
+			blockStore.blockAdd({
 				id: String(i + 101),
 				parentId: String(Util.rand(0, 100)),
 			});
 		};
 		
 		for (let i = 0; i < 100; ++i) {
-			editorStore.blockAdd({
+			blockStore.blockAdd({
 				id: String(i + 201),
 				parentId: String(Util.rand(101, 201)),
 			});

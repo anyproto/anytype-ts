@@ -24,24 +24,18 @@ export interface View {
 	name: string;
 };
 
-export interface Unit {};
-
-export interface UnitDb extends Unit {
-	properties: Property[];
-	views: View[];
-	data: any[];
-}; 
-
-export interface Document {
+export interface Block {
 	id: string;
+	parentId?: string;
 	name: string;
 	icon: string;
 };
 
-export interface Block {
-	id: string;
-	parentId: string;
-};
+export interface BlockDb extends Block {
+	properties: Property[];
+	views: View[];
+	data: any[];
+}; 
 
 export interface PopupParam {
 	onClose?(): void;

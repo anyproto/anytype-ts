@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
-import { documentStore } from 'ts/store';
+import { blockStore } from 'ts/store';
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
@@ -81,10 +81,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 			{ icon: ':wastebasket:', name: 'Archive' },
 		];
 		
-		documentStore.documentClear();
+		blockStore.blockClear();
 		for (let i = 0; i < items.length; ++i) {
 			items[i].id = String(i + 1);
-			documentStore.documentAdd(items[i]);			
+			blockStore.blockAdd(items[i]);			
 		};
 		
 		this.resize();
@@ -117,8 +117,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		documentStore.documentAdd({
-			id: String(documentStore.documents.length + 1),
+		blockStore.blockAdd({
+			id: String(blockStore.blocks.length + 1),
 			name: 'Untitled',
 			icon: Util.randomSmile(),
 		});

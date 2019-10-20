@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu } from './component';
-import { commonStore, authStore, documentStore, editorStore } from './store';
+import { commonStore, authStore, blockStore } from './store';
 import { dispatcher, keyBoard, Storage } from 'ts/lib';
 
 import 'scss/font.scss';
@@ -29,7 +29,7 @@ import 'scss/page/main/index.scss';
 import 'scss/page/main/folder.scss';
 import 'scss/page/main/edit.scss';
 
-import 'scss/unit/db.scss';
+import 'scss/block/db.scss';
 
 import 'scss/popup/settings.scss';
 
@@ -44,8 +44,7 @@ const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore: commonStore,
 	authStore: authStore,
-	documentStore: documentStore,
-	editorStore: editorStore,
+	blockStore: blockStore,
 };
 
 class App extends React.Component<{}, {}> {

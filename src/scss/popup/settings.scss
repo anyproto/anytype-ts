@@ -48,11 +48,14 @@
 		}
 		
 		.wallpaper {
+			.covers { margin-left: -4px; width: 596px; }
 			.item { 
-				width: 132px; height: 72px; display: inline-block; vertical-align: top; margin: 0px 16px 16px 0px; cursor: pointer; 
+				width: 140px; height: 88px; display: inline-block; vertical-align: top; margin: 0px 8px 8px 0px; cursor: pointer;
+				position: relative; border: 2px solid #fff; transition: $transitionFast; border-radius: 4px;
 			}
 			.item:nth-child(4n + 4) { margin-right: 0px; }
-			.cover { position: static; }
+			.item:hover, .item.active { border: 2px solid $colorOrange; }
+			.cover { position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); }
 		}
 		
 		.phrase {
@@ -66,7 +69,7 @@
 				width: 40px; height: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px;
 				border: 1px solid #e0ded2; 
 			}
-			.input.active { box-shadow: 0px 0px 0px 1px #ffb522 inset; border-color: #ffb522; }
+			.input.active { box-shadow: 0px 0px 0px 1px $colorOrange inset; border-color: $colorOrange; }
 			.input-password { font-size: 36px; }
 			.input:last-child { margin: 0px; }
 		}

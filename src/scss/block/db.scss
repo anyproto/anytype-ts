@@ -1,0 +1,20 @@
+@import "~scss/_vars";
+
+.blocks {
+	.blockDb {
+		.icon.plus { width: 12px; height: 12px; }
+		.icon.plus.dark { background-image: url('~img/icon/unit/db/plus/dark0.svg'); }
+		.icon.plus.dark:hover { background-image: url('~img/icon/unit/db/plus/dark1.svg'); }
+		
+		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: #aca996; font-weight: bold; }
+		.views {
+			.item { margin-right: 20px; display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; }
+			.item:last-child { margin: 0px; }
+			.item:hover { color: $colorBlack; }
+			
+			.icon.plus { margin-top: -4px; }
+		}
+		
+		.row { border-bottom: 1px solid #e0ded2; height: 32px; }
+	}	
+}
