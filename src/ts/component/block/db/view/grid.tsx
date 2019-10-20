@@ -27,6 +27,9 @@ class ViewGrid extends React.Component<Props, {}> {
 				{properties.map((item: any, i: number) => (
 					<CellHead key={item.id} {...item} />
 				))}
+				<th className="cellHead">
+					<Icon className="plus" />
+				</th>
 			</tr>
 		);
 		
@@ -35,6 +38,7 @@ class ViewGrid extends React.Component<Props, {}> {
 				{properties.map((property: any, i: number) => (
 					<CellBody key={property.id} property={...property} data={data[item.index][property.id]} />
 				))}
+				<td className="cellBody">&nbsp;</td>
 			</tr>
 		);
 		
@@ -47,6 +51,11 @@ class ViewGrid extends React.Component<Props, {}> {
 					{data.map((item: any, i: number) => (
 						<RowBody key={i} index={i} {...item} />
 					))}
+					<tr>
+						<td className="cellBody" colSpan={properties.length + 1}>
+							<Icon className="plus" />
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		);

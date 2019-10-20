@@ -2,13 +2,14 @@
 
 .blocks {
 	.blockDb {
-		.icon.plus { width: 12px; height: 12px; }
-		.icon.plus.dark { background-image: url('~img/icon/unit/db/plus/dark0.svg'); }
-		.icon.plus.dark:hover { background-image: url('~img/icon/unit/db/plus/dark1.svg'); }
+		.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/block/db/plus/light0.svg'); cursor: pointer; }
+		.icon.plus:hover { background-image: url('~img/icon/block/db/plus/dark1.svg'); }
+		.icon.plus.dark { background-image: url('~img/icon/block/db/plus/dark0.svg'); }
+		.icon.plus.dark:hover { background-image: url('~img/icon/block/db/plus/dark1.svg'); }
 		
-		.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/property/0.svg'); }
-		.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/property/1.svg'); }
-		.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/property/2.svg'); }
+		.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/block/db/property/0.svg'); }
+		.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/db/property/1.svg'); }
+		.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/block/db/property/2.svg'); }
 			
 		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: #aca996; font-weight: bold; margin-bottom: 16px; }
 		.views {
