@@ -71,6 +71,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		
+		dispatcher.call('blockOpen', { id: 'dashboard' }, (errorCode: any, message: any) => {
+		});
+		
 		let items: any[] = [
 			{ icon: ':wave:', name: 'Get started' },
 			{ icon: ':bulb:', name: 'Ideas' },
@@ -79,6 +82,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			{ icon: ':mortar_board:', name: 'Education' },
 			{ icon: ':poop:', name: 'Other' },
 			{ icon: ':wastebasket:', name: 'Archive' },
+			{ icon: ':family:', name: 'Contacts' },
 		];
 		
 		blockStore.blockClear();

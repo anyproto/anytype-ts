@@ -1,4 +1,4 @@
-import { authStore } from 'ts/store';
+import { authStore, blockStore } from 'ts/store';
 import { Util, I } from 'ts/lib';
 
 const com = require('proto/commands.js');
@@ -36,8 +36,12 @@ class Dispatcher {
 		};
 		
 		switch (event.message) {
+			
 			case 'accountAdd':
 				authStore.accountAdd(data.account);
+				break;
+				
+			case 'blockShow':
 				break;
 		};
 		
@@ -45,7 +49,8 @@ class Dispatcher {
 	
 	call (type: string, data: any, callBack?: (errorCode: any, message: any) => void) {
 		if (!this.service[type]) {
-			throw '[Dispatcher.call] Service not found: ' + type;
+			console.error('[Dispatcher.call] Service not found: ', type);
+			return;
 		};
 		
 		const errorCode = com.anytype[Util.toUpperCamelCase(type) + 'Response'].Error.Code;

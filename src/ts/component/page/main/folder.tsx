@@ -1,23 +1,17 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { BlockDb, Smile, HeaderMainFolder as Header } from 'ts/component';
-import { I, Util } from 'ts/lib'; 
+import { dispatcher, I } from 'ts/lib'; 
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	blockStore?: any;
 };
 
-interface State {
-};
-
 @inject('blockStore')
 @observer
-class PageMainFolder extends React.Component<Props, State> {
+class PageMainFolder extends React.Component<Props, {}> {
 	
-	state = {
-	};
-
 	constructor (props: any) {
 		super(props);
 	};
@@ -51,7 +45,7 @@ class PageMainFolder extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Header />
+				<Header {...this.props} />
 				
 				<div className="wrapper">
 					<div className="title">
@@ -65,6 +59,13 @@ class PageMainFolder extends React.Component<Props, State> {
 				</div>
 			</div>
 		);
+	};
+	
+	componentDidMount () {
+		const { match } = this.props;
+		
+		dispatcher.call('blockOpen', { id: match.params.id }, (errorCode: any, message: any) => {
+		});	
 	};
 	
 };

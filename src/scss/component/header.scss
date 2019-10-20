@@ -23,4 +23,20 @@
 			.icon.new { background-image: url('~img/icon/plus/new1.svg'); }
 		}
 	}
+	
+	.path { padding-left: 140px; }
+	.path {
+		.item { display: inline-block; vertical-align: middle; color: #6c6a5f; margin-right: 4px; cursor: pointer; }
+		.item {
+			.icon.home { width: 24px; height: 24px; background-size: 20px 18px; margin-right: 4px; background-image: url('~img/icon/home.svg'); }
+			.icon.arrow { width: 6px; height: 10px; background-image: url('~img/icon/path.svg'); }
+			.smile { margin-right: 4px; }
+			.name { display: inline-block; vertical-align: middle; margin-right: 6px; padding-top: 2px; line-height: 22px; }
+		}
+		.item:last-child {
+			.icon.arrow { display: none; }
+		}
+	}
 }
+
+.headerMainFolder { padding: 9px 140px 9px 0px; }

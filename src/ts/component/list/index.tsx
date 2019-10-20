@@ -71,7 +71,7 @@ class ListIndex extends React.Component<Props, {}> {
 		const { oldIndex, newIndex } = result;
 		const { blockStore } = this.props;
 		
-		blockStore.documentSort(oldIndex, newIndex);
+		blockStore.blockSort(oldIndex, newIndex);
 	};
 	
 };
