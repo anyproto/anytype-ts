@@ -24,22 +24,23 @@ class PageMainFolder extends React.Component<Props, {}> {
 			id: '',
 			name: '',
 			icon: '',
+			view: '1',
 			views: [
-				{ id: '1', name: 'All' },
-				{ id: '2', name: 'Team' },
-				{ id: '3', name: 'Friends' }
+				{ id: '1', name: 'All', type: I.ViewType.Grid },
+				{ id: '2', name: 'Team', type: I.ViewType.Grid },
+				{ id: '3', name: 'Friends', type: I.ViewType.Grid }
 			],
 			properties: [
-				{ id: '1', name: 'Id' },
-				{ id: '2', name: 'Name' },
-				{ id: '3', name: 'E-mail' },
+				{ id: '1', name: 'Id', type: I.PropertyType.Number },
+				{ id: '2', name: 'Name', type: I.PropertyType.Title },
+				{ id: '3', name: 'E-mail', type: I.PropertyType.Text },
 			],
 			data: [
-				{ id: '1', name: 'Anton Pronkin' },
-				{ id: '2', name: 'Roman Khafizianov' },
-				{ id: '3', name: 'Zhanna Sharipova' },
-				{ id: '4', name: 'Anton Barulenkov' },
-				{ id: '5', name: 'Kirill' },
+				{ '1': '1', '2': 'Anton Pronkin', '3': 'pronkin@gmail.com' },
+				{ '1': '2', '2': 'Roman Khafizianov', '3': 'khafizianov@gmail.com' },
+				{ '1': '3', '2': 'Zhanna Sharipova', '3': 'sharipova@gmail.com' },
+				{ '1': '4', '2': 'Anton Barulenkov', '3': 'barulenkov@gmail.com' },
+				{ '1': '5', '2': 'Kirill', '3': 'kirill@gmail.com' },
 			]
 		};
 		

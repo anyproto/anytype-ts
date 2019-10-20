@@ -11,9 +11,6 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-interface EmptyProps {
-};
-
 class Button extends React.Component<Props, {}> {
 
 	public static defaultProps = {
@@ -23,7 +20,7 @@ class Button extends React.Component<Props, {}> {
 	render () {
 		const { id, type, subType, icon, text, className, onClick } = this.props;
 
-		let Component: React.ReactType<EmptyProps>;
+		let Component: React.ReactType<{}>;
 		let cn = [ 'button' ];
 		
 		if (className) {

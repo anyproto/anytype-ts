@@ -24,7 +24,7 @@
 		}
 	}
 	
-	.path { padding-left: 140px; }
+	.path { padding-left: 140px; white-space: nowrap; }
 	.path {
 		.item { display: inline-block; vertical-align: middle; color: #6c6a5f; margin-right: 4px; cursor: pointer; }
 		.item {

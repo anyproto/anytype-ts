@@ -6,15 +6,36 @@
 		.icon.plus.dark { background-image: url('~img/icon/unit/db/plus/dark0.svg'); }
 		.icon.plus.dark:hover { background-image: url('~img/icon/unit/db/plus/dark1.svg'); }
 		
-		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: #aca996; font-weight: bold; }
+		.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/property/0.svg'); }
+		.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/property/1.svg'); }
+		.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/property/2.svg'); }
+			
+		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: #aca996; font-weight: bold; margin-bottom: 16px; }
 		.views {
 			.item { margin-right: 20px; display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; }
 			.item:last-child { margin: 0px; }
-			.item:hover { color: $colorBlack; }
+			.item:hover, .item.active { color: $colorBlack; }
 			
 			.icon.plus { margin-top: -4px; }
 		}
 		
-		.row { border-bottom: 1px solid #e0ded2; height: 32px; }
+		.viewGrid { 
+			border-collapse: collapse; min-width: 100%; border-top: 1px solid #e0ded2; border-bottom: 1px solid #e0ded2; 
+		}
+		.viewGrid {
+			.cellHead { 
+				text-align: left; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #aca996; font-weight: 400;
+				padding: 10px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2;
+			}
+			.cellHead:last-child { border-right: 0px; }
+			.cellHead {
+				.icon { margin-right: 5px; }
+			}
+			
+			.cellBody { 
+				padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; font-size: 13px; line-height: 18px; 
+			}
+			.cellBody:last-child { border-right: 0px; }
+		}
 	}	
 }
