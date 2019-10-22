@@ -1,0 +1,12 @@
+@import "~scss/_vars";
+
+.blocks {
+	.blockText {
+		.p {  }
+		.h1 { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; }
+		.h2 { font-size: 21px; line-height: 28px; letter-spacing: -0.16px; }
+		.h3 { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; }
+		.h4 {  }
+		.quote { font-size: 13px; line-height: 22px; letter-spacing: 0.08px; }
+	}	
+}

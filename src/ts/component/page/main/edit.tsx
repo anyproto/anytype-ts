@@ -46,8 +46,80 @@ class PageMainEdit extends React.Component<Props, {}> {
 		
 		let list: I.Block[] = [
 			{ 
-				header: { id: '3', type: 2, name: '', icon: '' },
+				header: { id: '1', type: 2, name: '', icon: '' },
 				content: contentDataView,
+			},
+			{ 
+				header: { id: '2', type: 3, name: '', icon: '' },
+				content: {
+					text: 'test content',
+					style: 0,
+					marks: [],
+					toggleable: false,
+					markerType: 0,
+					checkable: false,
+					checked: false,
+				},
+			},
+			{ 
+				header: { id: '3', type: 3, name: '', icon: '' },
+				content: {
+					text: 'test content',
+					style: 1,
+					marks: [],
+					toggleable: false,
+					markerType: 0,
+					checkable: false,
+					checked: false,
+				},
+			},
+			{ 
+				header: { id: '4', type: 3, name: '', icon: '' },
+				content: {
+					text: 'test content',
+					style: 2,
+					marks: [],
+					toggleable: false,
+					markerType: 0,
+					checkable: false,
+					checked: false,
+				},
+			},
+			{ 
+				header: { id: '5', type: 3, name: '', icon: '' },
+				content: {
+					text: 'test content',
+					style: 3,
+					marks: [],
+					toggleable: false,
+					markerType: 0,
+					checkable: false,
+					checked: false,
+				},
+			},
+			{ 
+				header: { id: '6', type: 3, name: '', icon: '' },
+				content: {
+					text: 'test content',
+					style: 4,
+					marks: [],
+					toggleable: false,
+					markerType: 0,
+					checkable: false,
+					checked: false,
+				},
+			},
+			{ 
+				header: { id: '7', type: 3, name: '', icon: '' },
+				content: {
+					text: 'test content',
+					style: 5,
+					marks: [],
+					toggleable: false,
+					markerType: 0,
+					checkable: false,
+					checked: false,
+				},
 			},
 		];
 		

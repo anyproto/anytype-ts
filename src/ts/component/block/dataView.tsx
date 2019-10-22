@@ -6,10 +6,10 @@ import ViewGrid from './dataView/view/grid';
 
 interface Props extends I.BlockDataView {};
 interface State {
-	view: number;
+	view: string;
 };
 
-class BlockDataView extends React.Component<Props, {}> {
+class BlockDataView extends React.Component<Props, State> {
 
 	state = {
 		view: ''

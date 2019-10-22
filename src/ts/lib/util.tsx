@@ -1,5 +1,3 @@
-//import EmojiData from 'emoji-mart/data/apple.json';
-
 const loadImage = window.require('blueimp-load-image');
 const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
