@@ -15,13 +15,13 @@ export interface View {
 	type: ViewType;
 };
 
-export interface ContentDataView {
+export interface ContentDataview {
 	view: string;
 	properties: Property[];
 	views: View[];
 	data: any[];
 };
 
-export interface BlockDataView extends I.Block {
-	content: ContentDataView;
+export interface BlockDataview extends I.Block {
+	content: ContentDataview;
 };

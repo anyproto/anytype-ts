@@ -5,7 +5,7 @@ import { I } from 'ts/lib';
 
 interface Props extends I.Block {};
 
-import BlockDataView from './dataView';
+import BlockDataview from './dataview';
 import BlockText from './text';
 
 class Block extends React.Component<Props, {}> {
@@ -20,9 +20,9 @@ class Block extends React.Component<Props, {}> {
 		let BlockComponent: React.ReactType<{}>;
 		
 		switch (type) {
-			case I.BlockType.DataView:
-				cn.push('blockDataView');
-				BlockComponent = BlockDataView;
+			case I.BlockType.Dataview:
+				cn.push('blockDataview');
+				BlockComponent = BlockDataview;
 				break;
 				
 			case I.BlockType.Text:

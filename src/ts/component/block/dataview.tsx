@@ -2,14 +2,14 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
-import ViewGrid from './dataView/view/grid';
+import ViewGrid from './dataview/view/grid';
 
-interface Props extends I.BlockDataView {};
+interface Props extends I.BlockDataview {};
 interface State {
 	view: string;
 };
 
-class BlockDataView extends React.Component<Props, State> {
+class BlockDataview extends React.Component<Props, State> {
 
 	state = {
 		view: ''
@@ -61,4 +61,4 @@ class BlockDataView extends React.Component<Props, State> {
 	
 };
 
-export default BlockDataView;
+export default BlockDataview;

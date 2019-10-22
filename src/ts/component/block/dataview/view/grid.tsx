@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
-interface Props extends I.BlockDataView {};
+interface Props extends I.BlockDataview {};
 
 class ViewGrid extends React.Component<Props, {}> {
 

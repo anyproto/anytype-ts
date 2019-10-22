@@ -1,7 +1,7 @@
 export enum BlockType {
-	DashBoard	 = 0,
+	Dashboard	 = 0,
 	Page		 = 1,
-	DataView	 = 2,
+	Dataview	 = 2,
 	
 	Text		 = 3,
 	File		 = 4,

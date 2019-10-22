@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I, keyBoard } from 'ts/lib';
 
-import ViewGrid from './dataView/view/grid';
+import ViewGrid from './dataview/view/grid';
 
 interface Props extends I.BlockText {};
 
@@ -29,7 +29,6 @@ class BlockText extends React.Component<Props, {}> {
 				{text}
 			</div>
 		);
-		let cn = '';
 		
 		switch (style) {
 			default:

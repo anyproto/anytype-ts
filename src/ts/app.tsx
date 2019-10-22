@@ -28,7 +28,7 @@ import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
 
-import 'scss/block/dataView.scss';
+import 'scss/block/dataview.scss';
 import 'scss/block/text.scss';
 
 import 'scss/popup/settings.scss';

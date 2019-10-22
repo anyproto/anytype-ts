@@ -3,7 +3,7 @@ import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
 import { BlockType, Permissions, BlockHeader, Block } from './block';
-import { ViewType, PropertyType, Property, View, ContentDataView, BlockDataView } from './block/dataView';
+import { ViewType, PropertyType, Property, View, ContentDataview, BlockDataview } from './block/dataview';
 import { TextStyle, MarkerType, MarkType, Range, Mark, ContentText, BlockText } from './block/text';
 
 export {
@@ -29,8 +29,8 @@ export {
 	PropertyType, 
 	Property, 
 	View, 
-	ContentDataView,
-	BlockDataView,
+	ContentDataview,
+	BlockDataview,
 	
 	TextStyle, 
 	MarkerType, 

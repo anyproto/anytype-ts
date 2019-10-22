@@ -23,7 +23,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 		const { blockStore, match } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks.find((item: I.Block) => { return item.header.id == match.params.id; });
-		const contentDataView: I.ContentDataView = {
+		const contentDataview: I.ContentDataview = {
 			view: '1',
 			views: [
 				{ id: '1', name: 'All', type: I.ViewType.Grid },
@@ -47,7 +47,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 		let list: I.Block[] = [
 			{ 
 				header: { id: '1', type: 2, name: '', icon: '' },
-				content: contentDataView,
+				content: contentDataview,
 			},
 			{ 
 				header: { id: '2', type: 3, name: '', icon: '' },
