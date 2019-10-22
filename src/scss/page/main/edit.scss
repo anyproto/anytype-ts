@@ -1,7 +1,9 @@
 @import "~scss/_vars";
 
 .pageMainEdit {
-	.block { width: 240px; min-height: 24px; border: 1px solid red; margin: 1px; }
+	.wrapper { padding: 94px; }
+	
+	.block { width: 100%; min-height: 24px; border: 1px solid red; margin: 1px; }
 	.block {
 		.children { padding-left: 20px; }
 	}

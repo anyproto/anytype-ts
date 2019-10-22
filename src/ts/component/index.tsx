@@ -1,6 +1,6 @@
 import Page from './page';
 
-import BlockDb from './block/db';
+import Block from './block';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -40,7 +40,7 @@ import IconUser from './util/iconUser';
 
 export {
 	Page,
-	BlockDb,
+	Block,
 	ListPopup,
 	ListMenu,
 	ListIndex,

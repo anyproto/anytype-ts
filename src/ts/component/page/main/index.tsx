@@ -74,21 +74,21 @@ class PageMainIndex extends React.Component<Props, {}> {
 		dispatcher.call('blockOpen', { id: 'dashboard' }, (errorCode: any, message: any) => {
 		});
 		
-		let items: any[] = [
-			{ icon: ':wave:', name: 'Get started' },
-			{ icon: ':bulb:', name: 'Ideas' },
-			{ icon: ':inbox_tray:', name: 'Projects' },
-			{ icon: ':alien:', name: 'Secrets' },
-			{ icon: ':mortar_board:', name: 'Education' },
-			{ icon: ':poop:', name: 'Other' },
-			{ icon: ':wastebasket:', name: 'Archive' },
-			{ icon: ':family:', name: 'Contacts' },
+		let items: I.BlockHeader[] = [
+			{ id: '', type: 1, icon: ':wave:', name: 'Get started' },
+			{ id: '', type: 1, icon: ':bulb:', name: 'Ideas' },
+			{ id: '', type: 1, icon: ':inbox_tray:', name: 'Projects' },
+			{ id: '', type: 1, icon: ':alien:', name: 'Secrets' },
+			{ id: '', type: 1, icon: ':mortar_board:', name: 'Education' },
+			{ id: '', type: 1, icon: ':poop:', name: 'Other' },
+			{ id: '', type: 1, icon: ':wastebasket:', name: 'Archive' },
+			{ id: '', type: 1, icon: ':family:', name: 'Contacts' },
 		];
 		
 		blockStore.blockClear();
 		for (let i = 0; i < items.length; ++i) {
 			items[i].id = String(i + 1);
-			blockStore.blockAdd(items[i]);			
+			blockStore.blockAdd({ header: items[i], content: {} });			
 		};
 		
 		this.resize();
@@ -117,14 +117,18 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onSelect (e: any, id: string) {
 		const { history } = this.props;
-		history.push('/main/folder/' + id);
+		history.push('/main/edit/' + id);
 	};
 	
 	onAdd (e: any) {
 		blockStore.blockAdd({
-			id: String(blockStore.blocks.length + 1),
-			name: 'Untitled',
-			icon: Util.randomSmile(),
+			header: {
+				id: String(blockStore.blocks.length + 1),
+				type: 1,
+				name: 'Untitled',
+				icon: Util.randomSmile(),				
+			},
+			content: {}
 		});
 	};
 	

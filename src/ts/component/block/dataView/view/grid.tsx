@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
-interface Props extends I.BlockDb {};
+interface Props extends I.BlockDataView {};
 
 class ViewGrid extends React.Component<Props, {}> {
 
 	render () {
-		const { data, properties } = this.props;
+		const { header, content } = this.props;
+		const { data, properties } = content;
 		
 		const CellHead = (item: any) => (
 			<th className={'cellHead c' + item.type}>

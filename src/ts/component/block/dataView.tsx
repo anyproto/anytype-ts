@@ -2,23 +2,24 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
-import ViewGrid from './db/view/grid';
+import ViewGrid from './dataView/view/grid';
 
-interface Props extends I.BlockDb {};
+interface Props extends I.BlockDataView {};
 interface State {
 	view: number;
 };
 
-class BlockDb extends React.Component<Props, {}> {
+class BlockDataView extends React.Component<Props, {}> {
 
 	state = {
 		view: ''
 	};
 
 	render () {
-		const { views, data, properties } = this.props;
-		const view = this.state.view || this.props.view;
-		const viewItem = views.find((item) => { return item.id == view; });
+		const { header, content } = this.props;
+		const { views, data, properties } = content;
+		const view = this.state.view || content.view;
+		const viewItem = views.find((item: any) => { return item.id == view; });
 		
 		const ViewItem = (item: any) => (
 			<div className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { this.onView(e, item.id); }}>
@@ -36,7 +37,7 @@ class BlockDb extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className="blockDb">
+			<div>
 				<div className="views">
 					{views.map((item: I.View, i: number) => (
 						<ViewItem key={i} {...item} active={item.id == view} />
@@ -60,4 +61,4 @@ class BlockDb extends React.Component<Props, {}> {
 	
 };
 
-export default BlockDb;
+export default BlockDataView;

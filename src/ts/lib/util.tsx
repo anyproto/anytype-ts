@@ -109,9 +109,12 @@ class Util {
 		fieldParent = fieldParent || 'parentId';
 		fieldList = fieldList || 'children';
 		
-		let ret = [];
+		let ret: any = [];
 		for (let item of list) {
-			if (rootId != item[fieldParent]) {
+			if (!item.id || (rootId != item[fieldParent])) {
+				continue;
+			};
+			if (ret.find((el: any) => { return el.id == item.id })) {
 				continue;
 			};
 			

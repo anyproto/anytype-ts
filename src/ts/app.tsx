@@ -26,10 +26,9 @@ import 'scss/component/title.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
-import 'scss/page/main/folder.scss';
 import 'scss/page/main/edit.scss';
 
-import 'scss/block/db.scss';
+import 'scss/block/dataView.scss';
 
 import 'scss/popup/settings.scss';
 
