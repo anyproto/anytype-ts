@@ -1,9 +1,14 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I, keyBoard } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 
-interface Props extends I.BlockText {};
+interface Props extends I.BlockText {
+	blockStore?: any;
+};
 
+@inject('blockStore')
+@observer
 class BlockText extends React.Component<Props, {}> {
 
 	constructor (props: any) {
@@ -16,10 +21,19 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { header, content } = this.props;
-		const { text, style } = content;
 		
-		let html = this.marksToHtml();
+		const { blockStore, header } = this.props;
+		const { blocks } = blockStore;
+		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		
+		if (!block) {
+			return <div />;
+		};
+		
+		const { content } = block;
+		const { text, marks, style } = content;
+		
+		let html = this.marksToHtml(text, marks);
 		let Content = (
 			<div 
 			contentEditable 
@@ -29,8 +43,7 @@ class BlockText extends React.Component<Props, {}> {
 			onFocus={this.onFocus}
 			onBlur={this.onBlur}
 			dangerouslySetInnerHTML={{ __html: html }}
-			>
-			</div>
+			/>
 		);
 		
 		switch (style) {
@@ -79,10 +92,7 @@ class BlockText extends React.Component<Props, {}> {
 		);
 	};
 	
-	marksToHtml () {
-		const { content } = this.props;
-		const { text, marks, style } = content;
-		
+	marksToHtml (text: string, marks: I.Mark[]) {
 		let r = text.split('');
 		let tag = [ 's', 'kbd', 'i', 'b', 'a' ];
 		

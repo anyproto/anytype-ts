@@ -22,127 +22,6 @@ class PageMainEdit extends React.Component<Props, {}> {
 	render () {
 		const { blockStore, match } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.header.id == match.params.id; });
-		const contentDataview: I.ContentDataview = {
-			view: '1',
-			views: [
-				{ id: '1', name: 'All', type: I.ViewType.Grid },
-				{ id: '2', name: 'Team', type: I.ViewType.Grid },
-				{ id: '3', name: 'Friends', type: I.ViewType.Grid }
-			],
-			properties: [
-				{ id: '1', name: 'Id', type: I.PropertyType.Number },
-				{ id: '2', name: 'Name', type: I.PropertyType.Title },
-				{ id: '3', name: 'E-mail', type: I.PropertyType.Text },
-			],
-			data: [
-				{ '1': '1', '2': 'Anton Pronkin', '3': 'pronkin@gmail.com' },
-				{ '1': '2', '2': 'Roman Khafizianov', '3': 'khafizianov@gmail.com' },
-				{ '1': '3', '2': 'Zhanna Sharipova', '3': 'sharipova@gmail.com' },
-				{ '1': '4', '2': 'Anton Barulenkov', '3': 'barulenkov@gmail.com' },
-				{ '1': '5', '2': 'Kirill', '3': 'kirill@gmail.com' },
-			]
-		};
-		
-		let list: I.Block[] = [
-			{ 
-				header: { id: '1', type: 2, name: '', icon: '' },
-				content: contentDataview,
-			},
-			{ 
-				header: { id: '2', type: 3, name: '', icon: '' },
-				content: {
-					text: 'test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test contenttest content test content test content test content test content test content test content test content test content test content test content test contenttest content test content test content test content test content test content test content test content',
-					style: 0,
-					marks: [
-						{
-							range: { from: 5, to: 10 },
-							type: 0
-						},
-						{
-							range: { from: 15, to: 20 },
-							type: 1
-						},
-						{
-							range: { from: 25, to: 30 },
-							type: 2
-						},
-						{
-							range: { from: 35, to: 40 },
-							type: 3
-						},
-						{
-							range: { from: 45, to: 50 },
-							type: 4
-						}
-					],
-					toggleable: false,
-					markerType: 0,
-					checkable: false,
-					checked: false,
-				},
-			},
-			{ 
-				header: { id: '3', type: 3, name: '', icon: '' },
-				content: {
-					text: 'test content',
-					style: 1,
-					marks: [],
-					toggleable: false,
-					markerType: 0,
-					checkable: false,
-					checked: false,
-				},
-			},
-			{ 
-				header: { id: '4', type: 3, name: '', icon: '' },
-				content: {
-					text: 'test content',
-					style: 2,
-					marks: [],
-					toggleable: false,
-					markerType: 0,
-					checkable: false,
-					checked: false,
-				},
-			},
-			{ 
-				header: { id: '5', type: 3, name: '', icon: '' },
-				content: {
-					text: 'test content',
-					style: 3,
-					marks: [],
-					toggleable: false,
-					markerType: 0,
-					checkable: false,
-					checked: false,
-				},
-			},
-			{ 
-				header: { id: '6', type: 3, name: '', icon: '' },
-				content: {
-					text: 'test content',
-					style: 4,
-					marks: [],
-					toggleable: false,
-					markerType: 0,
-					checkable: false,
-					checked: false,
-				},
-			},
-			{ 
-				header: { id: '7', type: 3, name: '', icon: '' },
-				content: {
-					text: 'test content',
-					style: 5,
-					marks: [],
-					toggleable: false,
-					markerType: 0,
-					checkable: false,
-					checked: false,
-				},
-			},
-		];
 		
 		return (
 			<div>
@@ -151,10 +30,10 @@ class PageMainEdit extends React.Component<Props, {}> {
 					<div className="editor">
 						<div className="blocks">
 							<div className="title">
-								<Smile icon={block.header.icon} />
-								{block.header.name}
+								<Smile icon=":family:" />
+								Contacts
 							</div>
-							{list.map((item: I.Block, i: number) => ( 
+							{blocks.map((item: I.Block, i: number) => ( 
 								<Block key={item.header.id} {...item} />
 							))}
 						</div>
@@ -165,6 +44,34 @@ class PageMainEdit extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { blockStore } = this.props;
+		
+		let c = '';
+		setInterval(() => {
+			c += ' test content';
+			
+			let marks = [];
+			for (let i = 0; i < 5; ++i) {
+				let r = Util.rand(0, c.length - 1);
+				marks.push({
+					range: { from: r, to: r + 10 },
+					type: Util.rand(0, 4)
+				});
+			};
+			
+			blockStore.blockUpdate({ 
+				header: { id: String(Util.rand(2, 100)), type: 3, name: '', icon: '' },
+				content: {
+					text: c,
+					style: 0,
+					marks: marks,
+					toggleable: false,
+					markerType: 0,
+					checkable: false,
+					checked: false,
+				}
+			});
+		}, 100);
 	};
 	
 };

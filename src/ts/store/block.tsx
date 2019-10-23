@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, set } from 'mobx';
 import { I } from 'ts/lib';
 import arrayMove from 'array-move';
 
@@ -13,6 +13,16 @@ class BlockStore {
 	@action
 	blockAdd (block: I.Block) {
 		this.blockList.push(block as I.Block);
+	};
+	
+	@action
+	blockUpdate (block: I.Block) {
+		let item = this.blockList.find((item: I.Block) => { return item.header.id == block.header.id; });
+		if (!item) {
+			return;
+		};
+		
+		set(item, block);
 	};
 	
 	@action

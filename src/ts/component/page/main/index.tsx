@@ -117,6 +117,55 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onSelect (e: any, id: string) {
 		const { history } = this.props;
+		
+		const contentDataview: I.ContentDataview = {
+			view: '1',
+			views: [
+				{ id: '1', name: 'All', type: I.ViewType.Grid },
+				{ id: '2', name: 'Team', type: I.ViewType.Grid },
+				{ id: '3', name: 'Friends', type: I.ViewType.Grid }
+			],
+			properties: [
+				{ id: '1', name: 'Id', type: I.PropertyType.Number },
+				{ id: '2', name: 'Name', type: I.PropertyType.Title },
+				{ id: '3', name: 'E-mail', type: I.PropertyType.Text },
+			],
+			data: [
+				{ '1': '1', '2': 'Anton Pronkin', '3': 'pronkin@gmail.com' },
+				{ '1': '2', '2': 'Roman Khafizianov', '3': 'khafizianov@gmail.com' },
+				{ '1': '3', '2': 'Zhanna Sharipova', '3': 'sharipova@gmail.com' },
+				{ '1': '4', '2': 'Anton Barulenkov', '3': 'barulenkov@gmail.com' },
+				{ '1': '5', '2': 'Kirill', '3': 'kirill@gmail.com' },
+			]
+		};
+		
+		let list: I.Block[] = [
+			{ 
+				header: { id: '1', type: 2, name: '', icon: '' },
+				content: contentDataview,
+			}
+		];
+		
+		for (let i = 2; i < 100; ++i) {
+			list.push({ 
+				header: { id: String(i), type: 3, name: '', icon: '' },
+				content: {
+					text: 'test content',
+					style: 5,
+					marks: [],
+					toggleable: false,
+					markerType: 0,
+					checkable: false,
+					checked: false,
+				},
+			});
+		};
+		
+		blockStore.blockClear();
+		for (let block of list) {
+			blockStore.blockAdd(block);
+		};
+		
 		history.push('/main/edit/' + id);
 	};
 	
