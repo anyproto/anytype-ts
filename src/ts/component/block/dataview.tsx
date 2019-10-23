@@ -23,8 +23,6 @@ class BlockDataview extends React.Component<Props, State> {
 	
 	constructor (props: any) {
 		super(props);
-		
-		this.onButtonProperty = this.onButtonProperty.bind(this);
 	};
 
 	render () {
@@ -67,17 +65,6 @@ class BlockDataview extends React.Component<Props, State> {
 	
 	onView (e: any, id: string) {
 		this.setState({ view: id });
-	};
-	
-	onButtonProperty () {
-		const { commonStore } = this.props;
-		
-		commonStore.menuOpen('help', { 
-			element: 'button-property',
-			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left
-		});
 	};
 	
 };

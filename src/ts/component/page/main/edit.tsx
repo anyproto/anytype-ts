@@ -68,7 +68,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					style: Util.rand(0, 5),
 					marks: marks,
 					toggleable: false,
-					markerType: 0,
+					marker: 0,
 					checkable: false,
 					checked: false,
 				}

@@ -9,13 +9,13 @@ const $ = require('jquery');
 
 interface Props extends I.Menu {};
 interface State {
-	items: I.Property[];
+	items: any[];
 };
 
-class MenuPropertyList extends React.Component<Props, State> {
+class MenuFilter extends React.Component<Props, State> {
 	
 	state = {
-		items: [] as I.Property[]
+		items: [] as any[]
 	};
 	
 	constructor (props: any) {
@@ -75,4 +75,4 @@ class MenuPropertyList extends React.Component<Props, State> {
 	
 };
 
-export default MenuPropertyList;
+export default MenuFilter;

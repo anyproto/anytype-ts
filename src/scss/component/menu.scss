@@ -10,6 +10,9 @@
 	
 	.menu.vertical { width: 176px; }
 	.menu.vertical {
+		.title { font-size: 13px; line-height: 22px; margin: 0px; padding: 6px 8px; font-weight: 500; }
+	
+		.items { background: inherit; }
 		.item { 
 			padding: 6px 8px; font-size: 15px; letter-spacing: 0.2px; border-radius: 4px; position: relative; cursor: pointer; 
 			transition: background 0.2s ease-in-out; width: 100%; background: inherit;

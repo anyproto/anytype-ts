@@ -16,11 +16,11 @@ export enum MarkerType {
 };
 
 export enum MarkType {
-	S		 = 0,
-	KBD		 = 1,
-	I		 = 2,
-	B		 = 3,
-	A		 = 4,
+	Strike	 = 0,
+	Code	 = 1,
+	Italic	 = 2,
+	Bold	 = 3,
+	Link	 = 4,
 };
 
 export interface Range {
@@ -37,8 +37,8 @@ export interface ContentText {
 	text: string;
 	style: TextStyle;
 	marks: Mark[];
+	marker: MarkerType;
 	toggleable: boolean;
-	markerType: MarkerType;
 	checkable: boolean;
 	checked: boolean;
 };

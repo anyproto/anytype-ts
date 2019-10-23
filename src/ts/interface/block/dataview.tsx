@@ -15,6 +15,9 @@ export interface View {
 	type: ViewType;
 };
 
+export interface Filter {
+};
+
 export interface ContentDataview {
 	view: string;
 	properties: Property[];

@@ -36,6 +36,7 @@ import 'scss/popup/settings.scss';
 
 import 'scss/menu/account.scss';
 import 'scss/menu/property.scss';
+import 'scss/menu/view.scss';
 
 interface RouteElement { path: string; };
 

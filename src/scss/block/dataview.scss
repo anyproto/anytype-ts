@@ -10,6 +10,8 @@
 		.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/0.svg'); }
 		.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/property/1.svg'); }
 		.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/block/dataview/property/2.svg'); }
+		
+		.icon.view.c0 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/grid0.svg'); }
 			
 		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: #aca996; font-weight: bold; margin-bottom: 16px; }
 		.views {
@@ -37,12 +39,11 @@
 				.icon.more { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/more0.svg'); }
 				
 				.icon.view { margin-right: 4px; }
-				.icon.view.c0 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/grid0.svg'); }
 				
 				.name { display: inline-block; vertical-align: middle; }
 			}
 			
-			.item:hover {
+			.item:hover, .item.active {
 				.icon.plus { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
 				.icon.arrow { background-image: url('~img/icon/block/dataview/button/arrow1.svg'); }
 				.icon.property { background-image: url('~img/icon/block/dataview/button/property1.svg'); }

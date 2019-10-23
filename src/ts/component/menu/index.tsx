@@ -9,6 +9,9 @@ const BORDER = 12;
 import MenuHelp from './help';
 import MenuAccount from './account';
 import MenuPropertyList from './property/list';
+import MenuFilter from './filter';
+import MenuSort from './sort';
+import MenuView from './view';
 
 interface Props extends I.Menu {
 	history: any;
@@ -21,13 +24,17 @@ class Menu extends React.Component<Props, {}> {
 	render () {
 		const { id, param } = this.props;
 		const { type } = param;
+		
 		const Components: any = {
 			help: MenuHelp,
 			account: MenuAccount,
 			propertyList: MenuPropertyList,
+			filter: MenuFilter,
+			sort: MenuSort,
+			view: MenuView,
 		};
-		const Component = Components[id];
 		
+		const Component = Components[id];
 		const cn = [ 
 			'menu', 
 			Util.toCamelCase('menu-' + id), 
@@ -87,8 +94,13 @@ class Menu extends React.Component<Props, {}> {
 				return;
 			};
 
-			const win = $(window);
 			const el = $('#' + element);
+			if (!el.length) {
+				console.error('[Menu.position] element not found', element);
+				return;
+			};
+
+			const win = $(window);			
 			const node = $(ReactDOM.findDOMNode(this));
 			const ww = win.width();
 			const wh = win.scrollTop() + win.height();			

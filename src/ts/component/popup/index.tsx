@@ -26,10 +26,12 @@ class Popup extends React.Component<Props, {}> {
 
 	render () {
 		const { id } = this.props;
+		
 		const Components: any = {
 			profile: PopupProfile,
 			settings: PopupSettings,
 		};
+		
 		const Component = Components[id];
 		const cn = [ 
 			'popup', 
