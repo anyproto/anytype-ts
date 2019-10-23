@@ -12,15 +12,18 @@ class KeyBoard {
 		this.unbind();
 		
 		let win = $(window); 
-		win.on('keydown.common', (e: any) => { this.keyDown(e); })
-		win.on('keyup.common', (e: any) => { this.keyUp(e); });
+		win.on('keydown.common', (e: any) => { this.keyDownWindow(e); })
+		win.on('keyup.common', (e: any) => { this.keyUpWindow(e); });
 	};
 	
 	unbind () {
 		$(window).unbind('keyup.common keydown.common');
 	};
 	
-	keyUp (e: any) {
+	keyDownWindow (e: any) {
+	};
+	
+	keyUpWindow (e: any) {
 		let k = e.which;
 		
 		//console.log('keyup', e.shiftKey, e.ctrlKey, e.metaKey);
@@ -34,12 +37,20 @@ class KeyBoard {
 			if (k == Key.escape) {
 				e.preventDefault();
 				commonStore.popupCloseAll();
-			};	
+			};
 		};
 	};
 	
-	keyDown (e: any) {
-		//console.log('keydown', e.shiftKey, e.ctrlKey, e.metaKey);
+	keyDownBlock (e: any) {
+		let k = e.which;
+	};
+	
+	keyUpBlock (e: any) {
+		let k = e.which;
+		
+		if (k == Key.enter) {
+			e.preventDefault();
+		};
 	};
 	
 	setFocus (v: boolean) {
@@ -49,8 +60,9 @@ class KeyBoard {
 };
 
 export enum Key {
-	backSpace =	 8,
-	escape = 27,
+	backSpace	 = 8,
+	enter		 = 13,
+	escape		 = 27,
 };
 
 export let keyBoard: KeyBoard = new KeyBoard();

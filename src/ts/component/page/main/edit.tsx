@@ -52,9 +52,30 @@ class PageMainEdit extends React.Component<Props, {}> {
 			{ 
 				header: { id: '2', type: 3, name: '', icon: '' },
 				content: {
-					text: 'test content',
+					text: 'test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test content test contenttest content test content test content test content test content test content test content test content test content test content test content test contenttest content test content test content test content test content test content test content test content',
 					style: 0,
-					marks: [],
+					marks: [
+						{
+							range: { from: 5, to: 10 },
+							type: 0
+						},
+						{
+							range: { from: 15, to: 20 },
+							type: 1
+						},
+						{
+							range: { from: 25, to: 30 },
+							type: 2
+						},
+						{
+							range: { from: 35, to: 40 },
+							type: 3
+						},
+						{
+							range: { from: 45, to: 50 },
+							type: 4
+						}
+					],
 					toggleable: false,
 					markerType: 0,
 					checkable: false,
