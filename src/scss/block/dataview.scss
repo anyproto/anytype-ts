@@ -1,15 +1,15 @@
 @import "~scss/_vars";
 
 .blocks {
-	.blockDataview {
-		.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/block/db/plus/light0.svg'); cursor: pointer; }
-		.icon.plus:hover { background-image: url('~img/icon/block/db/plus/dark1.svg'); }
-		.icon.plus.dark { background-image: url('~img/icon/block/db/plus/dark0.svg'); }
-		.icon.plus.dark:hover { background-image: url('~img/icon/block/db/plus/dark1.svg'); }
+	.block.blockDataview {
+		.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/block/dataview/plus/light0.svg'); cursor: pointer; }
+		.icon.plus:hover { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
+		.icon.plus.dark { background-image: url('~img/icon/block/dataview/plus/dark0.svg'); }
+		.icon.plus.dark:hover { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
 		
-		.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/block/db/property/0.svg'); }
-		.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/db/property/1.svg'); }
-		.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/block/db/property/2.svg'); }
+		.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/0.svg'); }
+		.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/property/1.svg'); }
+		.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/block/dataview/property/2.svg'); }
 			
 		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: #aca996; font-weight: bold; margin-bottom: 16px; }
 		.views {
@@ -18,6 +18,40 @@
 			.item:hover, .item.active { color: $colorBlack; }
 			
 			.icon.plus { margin-top: -4px; }
+		}
+		
+		.buttons { display: flex; margin-bottom: 8px; font-weight: 500; color: #aca996; }
+		.buttons {
+			.side { width: 50%; }
+			.side.right { text-align: right; }
+			.item { display: inline-block; vertical-align: middle; cursor: pointer; transition: $transitionFast; margin-right: 16px; }
+			.item:last-child { margin: 0px; }
+			.item:hover, .item.active { color: #000; }
+			
+			.item {
+				.icon { margin: -2px 6px 0px 0px; }
+				.icon.arrow { width: 8px; height: 4px; background-image: url('~img/icon/block/dataview/button/arrow0.svg'); }
+				.icon.property { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/property0.svg'); }
+				.icon.filter { width: 14px; height: 16px; background-image: url('~img/icon/block/dataview/button/filter0.svg'); }
+				.icon.sort { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/sort0.svg'); }
+				.icon.more { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/more0.svg'); }
+				
+				.icon.view { margin-right: 4px; }
+				.icon.view.c0 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/grid0.svg'); }
+				
+				.name { display: inline-block; vertical-align: middle; }
+			}
+			
+			.item:hover {
+				.icon.plus { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
+				.icon.arrow { background-image: url('~img/icon/block/dataview/button/arrow1.svg'); }
+				.icon.property { background-image: url('~img/icon/block/dataview/button/property1.svg'); }
+				.icon.filter { background-image: url('~img/icon/block/dataview/button/filter1.svg'); }
+				.icon.sort { background-image: url('~img/icon/block/dataview/button/sort1.svg'); }
+				.icon.more { background-image: url('~img/icon/block/dataview/button/more1.svg'); }
+				
+				.icon.view.c0 { background-image: url('~img/icon/block/dataview/button/view/grid1.svg'); }
+			}
 		}
 		
 		.viewGrid { 

@@ -1,7 +1,10 @@
 @import "~scss/_vars";
 
 .blocks {
-	.blockText {
+	.block.blockText { word-wrap: break-word; }
+	.block.blockText {
+		.value { -webkit-user-modify: read-write-plaintext-only; }
+		
 		.p {  }
 		.h1 { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
 		.h2 { font-size: 21px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }

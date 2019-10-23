@@ -1,22 +1,34 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 
+import Buttons from './dataview/buttons';
 import ViewGrid from './dataview/view/grid';
 
-interface Props extends I.BlockDataview {};
+interface Props extends I.BlockDataview {
+	commonStore?: any;
+};
 interface State {
 	view: string;
 };
 
+@inject('commonStore')
+@observer
 class BlockDataview extends React.Component<Props, State> {
 
 	state = {
 		view: ''
 	};
+	
+	constructor (props: any) {
+		super(props);
+		
+		this.onButtonProperty = this.onButtonProperty.bind(this);
+	};
 
 	render () {
-		const { header, content } = this.props;
+		const { commonStore, header, content } = this.props;
 		const { views, data, properties } = content;
 		const view = this.state.view || content.view;
 		const viewItem = views.find((item: any) => { return item.id == view; });
@@ -47,9 +59,7 @@ class BlockDataview extends React.Component<Props, State> {
 					</div>
 				</div>
 				
-				<div className="buttons">
-				</div>
-				
+				<Buttons viewType={viewItem.type} />
 				<ViewComponent {...this.props} />
 			</div>
 		);
@@ -57,6 +67,17 @@ class BlockDataview extends React.Component<Props, State> {
 	
 	onView (e: any, id: string) {
 		this.setState({ view: id });
+	};
+	
+	onButtonProperty () {
+		const { commonStore } = this.props;
+		
+		commonStore.menuOpen('help', { 
+			element: 'button-property',
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left
+		});
 	};
 	
 };

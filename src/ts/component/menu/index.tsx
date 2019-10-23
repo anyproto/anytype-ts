@@ -1,11 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
-import { MenuHelp, MenuAccount } from 'ts/component';
 
 const $ = require('jquery');
 const raf = require('raf');
 const BORDER = 12;
+
+import MenuHelp from './help';
+import MenuAccount from './account';
+import MenuPropertyList from './property/list';
 
 interface Props extends I.Menu {
 	history: any;
@@ -21,6 +24,7 @@ class Menu extends React.Component<Props, {}> {
 		const Components: any = {
 			help: MenuHelp,
 			account: MenuAccount,
+			propertyList: MenuPropertyList,
 		};
 		const Component = Components[id];
 		

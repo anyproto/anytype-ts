@@ -16,13 +16,8 @@ import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
 import MenuItemMain from './menu/item/main';
 import MenuMain from './menu/main';
-import MenuHelp from './menu/help';
-import MenuAccount from './menu/account';
 
 import Popup from './popup';
-import PopupProfile from './popup/profile';
-import PopupSettings from './popup/settings';
-
 import Frame from './util/frame';
 import Cover from './util/cover';
 import Title from './util/title';
@@ -57,11 +52,7 @@ export {
 	MenuItemVertical,
 	MenuItemMain,
 	MenuMain,
-	MenuHelp,
-	MenuAccount,
 	Popup,
-	PopupProfile,
-	PopupSettings,
 	Frame,
 	Cover,
 	Title,

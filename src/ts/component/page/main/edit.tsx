@@ -12,9 +12,6 @@ interface Props extends RouteComponentProps<any> {
 @observer
 class PageMainEdit extends React.Component<Props, {}> {
 	
-	state = {
-	};
-
 	constructor (props: any) {
 		super(props);
 	};
@@ -30,7 +27,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					<div className="editor">
 						<div className="blocks">
 							<div className="title">
-								<Smile icon=":family:" />
+								<Smile icon=":family:" className="c48" />
 								Contacts
 							</div>
 							{blocks.map((item: I.Block, i: number) => ( 
@@ -46,12 +43,17 @@ class PageMainEdit extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { blockStore } = this.props;
 		
-		let c = '';
+		/*
 		setInterval(() => {
-			c += ' test content';
+			let c = '';
+			let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+			let l = chars.length;
+			for (let i = 0; i < Util.rand(500, 3000); ++i) {
+				c += chars.charAt(Math.floor(Math.random() * l));
+			};
 			
 			let marks = [];
-			for (let i = 0; i < 5; ++i) {
+			for (let i = 0; i < 20; ++i) {
 				let r = Util.rand(0, c.length - 1);
 				marks.push({
 					range: { from: r, to: r + 10 },
@@ -60,10 +62,10 @@ class PageMainEdit extends React.Component<Props, {}> {
 			};
 			
 			blockStore.blockUpdate({ 
-				header: { id: String(Util.rand(2, 100)), type: 3, name: '', icon: '' },
+				header: { id: String(Util.rand(2, 1000)), type: 3, name: '', icon: '' },
 				content: {
 					text: c,
-					style: 0,
+					style: Util.rand(0, 5),
 					marks: marks,
 					toggleable: false,
 					markerType: 0,
@@ -72,6 +74,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 				}
 			});
 		}, 100);
+		*/
 	};
 	
 };

@@ -28,12 +28,14 @@ import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
 
+import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
 import 'scss/block/text.scss';
 
 import 'scss/popup/settings.scss';
 
 import 'scss/menu/account.scss';
+import 'scss/menu/property.scss';
 
 interface RouteElement { path: string; };
 

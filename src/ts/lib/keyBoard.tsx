@@ -21,12 +21,7 @@ class KeyBoard {
 	};
 	
 	keyDownWindow (e: any) {
-	};
-	
-	keyUpWindow (e: any) {
 		let k = e.which;
-		
-		//console.log('keyup', e.shiftKey, e.ctrlKey, e.metaKey);
 		
 		if (!this.focus) {
 			if (k == Key.backSpace) {
@@ -41,16 +36,21 @@ class KeyBoard {
 		};
 	};
 	
-	keyDownBlock (e: any) {
+	keyUpWindow (e: any) {
 		let k = e.which;
+		//console.log('keyup', e.shiftKey, e.ctrlKey, e.metaKey);
 	};
 	
-	keyUpBlock (e: any) {
+	keyDownBlock (e: any) {
 		let k = e.which;
 		
 		if (k == Key.enter) {
 			e.preventDefault();
 		};
+	};
+	
+	keyUpBlock (e: any) {
+		let k = e.which;
 	};
 	
 	setFocus (v: boolean) {

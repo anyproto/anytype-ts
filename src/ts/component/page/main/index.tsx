@@ -146,12 +146,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 			}
 		];
 		
-		for (let i = 2; i < 100; ++i) {
+		for (let i = 2; i < 10; ++i) {
 			list.push({ 
 				header: { id: String(i), type: 3, name: '', icon: '' },
 				content: {
 					text: 'test content',
-					style: 5,
+					style: Util.rand(0, 5),
 					marks: [],
 					toggleable: false,
 					markerType: 0,

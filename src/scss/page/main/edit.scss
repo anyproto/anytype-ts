@@ -2,9 +2,6 @@
 
 .pageMainEdit {
 	.wrapper { padding: 94px; }
-	
-	.block { width: 100%; min-height: 24px; border: 1px solid red; margin: 1px; }
-	.block {
-		.children { padding-left: 20px; }
-	}
+	.title { line-height: 48px; margin-bottom: 18px; }
+	.smile { margin-right: 8px; }
 }

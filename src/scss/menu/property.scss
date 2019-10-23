@@ -1,0 +1,16 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuPropertyList { width: 176px; background: #fff; color: $colorBlack; overflow: hidden; }
+	.menu.menuPropertyList {
+		.item {
+			.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/0.svg'); }
+			.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/property/1.svg'); }
+			.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/block/dataview/property/2.svg'); }
+		
+			.switch { position: absolute; right: 6px; top: 50%; margin-top: -8px; }
+		}
+		
+		.item:hover, .item.active { background: #f7f5f0; }
+	}	
+}

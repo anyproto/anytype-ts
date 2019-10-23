@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { PopupProfile, PopupSettings } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const $ = require('jquery');
 const raf = require('raf');
+
+import PopupProfile from './profile';
+import PopupSettings from './settings';
 
 interface Props extends I.Popup {
 	history: any;

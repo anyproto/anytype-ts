@@ -11,6 +11,8 @@ interface Props extends I.BlockText {
 @observer
 class BlockText extends React.Component<Props, {}> {
 
+	editorRef: any = null;
+
 	constructor (props: any) {
 		super(props);
 		
@@ -34,60 +36,63 @@ class BlockText extends React.Component<Props, {}> {
 		const { text, marks, style } = content;
 		
 		let html = this.marksToHtml(text, marks);
-		let Content = (
-			<div 
-			contentEditable 
-			suppressContentEditableWarning
+		let editor = (
+			<div
+			className="value"
+			ref={(ref: any) => { this.editorRef = ref; }}
+			contentEditable={true}
+			suppressContentEditableWarning={true}
 			onKeyDown={this.onKeyDown}
 			onKeyUp={this.onKeyUp}
 			onFocus={this.onFocus}
 			onBlur={this.onBlur}
 			dangerouslySetInnerHTML={{ __html: html }}
-			/>
+			>
+			</div>
 		);
 		
 		switch (style) {
 			default:
 			case I.TextStyle.p:
-				Content = (
-					<div className="p">{Content}</div>
+				editor = (
+					<div className="p">{editor}</div>
 				);
 				break;
 				
 			case I.TextStyle.h1:
-				Content = (
-					<div className="h1">{Content}</div>
+				editor = (
+					<div className="h1">{editor}</div>
 				);
 				break;
 				
 			case I.TextStyle.h2:
-				Content = (
-					<div className="h2">{Content}</div>
+				editor = (
+					<div className="h2">{editor}</div>
 				);
 				break;
 				
 			case I.TextStyle.h3:
-				Content = (
-					<div className="h3">{Content}</div>
+				editor = (
+					<div className="h3">{editor}</div>
 				);
 				break;
 				
 			case I.TextStyle.h4:
-				Content = (
-					<div className="h4">{Content}</div>
+				editor = (
+					<div className="h4">{editor}</div>
 				);
 				break;
 				
 			case I.TextStyle.quote:
-				Content = (
-					<div className="quote">{Content}</div>
+				editor = (
+					<div className="quote">{editor}</div>
 				);
 				break;
 		};
 		
 		return (
 			<div>
-				{Content}
+				{editor}
 			</div>
 		);
 	};
@@ -105,7 +110,6 @@ class BlockText extends React.Component<Props, {}> {
 				r[range.to - 1] += '</' + t + '>';
 			};
 		};
-		
 		return r.join('');
 	};
 	
