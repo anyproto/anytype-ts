@@ -23,7 +23,7 @@ class Menu extends React.Component<Props, {}> {
 
 	render () {
 		const { id, param } = this.props;
-		const { type } = param;
+		const { type, vertical, horizontal } = param;
 		
 		const Components: any = {
 			help: MenuHelp,
@@ -34,11 +34,14 @@ class Menu extends React.Component<Props, {}> {
 			view: MenuView,
 		};
 		
+		const menuId = Util.toCamelCase('menu-' + id);
 		const Component = Components[id];
 		const cn = [ 
 			'menu', 
-			Util.toCamelCase('menu-' + id), 
-			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical') 
+			menuId, 
+			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
+			'v' + vertical,
+			'h' + horizontal
 		];
 		
 		if (!Component) {
@@ -46,8 +49,10 @@ class Menu extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')}>
-				<Component {...this.props} />
+			<div id={menuId} className={cn.join(' ')}>
+				<div className="content">
+					<Component {...this.props} />
+				</div>
 			</div>
 		);
 	};

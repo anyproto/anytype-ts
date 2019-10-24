@@ -1,7 +1,9 @@
 import { observable, action, computed } from 'mobx';
-import { I, Storage } from 'ts/lib';
+import { I, Storage, Util } from 'ts/lib';
 
+const $ = require('jquery');
 const COVER = 3;
+const TIMEOUT = 200;
 
 class CommonStore {
 	@observable public popupList: I.Popup[] = [];
@@ -43,11 +45,28 @@ class CommonStore {
 	popupClose (id: string) {
 		const item: I.Popup = this.popupList.find((item: I.Popup) => { return item.id == id; });
 		
-		if (item && item.param.onClose) {
+		if (!item) {
+			return;
+		};
+		
+		if (item.param.onClose) {
 			item.param.onClose();
 		};
 		
-		this.popupList = this.popupList.filter((item: I.Popup) => { return item.id != id; });
+		const el = $('#' + Util.toCamelCase('popup-' + id));
+		const dimmer = $('#dimmer');
+		
+		if (el.length) {
+			el.removeClass('show');
+		};
+		
+		if (this.popupList.length == 1) {
+			dimmer.removeClass('show');
+		};
+		
+		setTimeout(() => {
+			this.popupList = this.popupList.filter((item: I.Popup) => { return item.id != id; });
+		}, TIMEOUT);
 	};
 	
 	@action
@@ -79,11 +98,22 @@ class CommonStore {
 	menuClose (id: string) {
 		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
 		
-		if (item && item.param.onClose) {
+		if (!item) {
+			return;
+		};
+		
+		if (item.param.onClose) {
 			item.param.onClose();
 		};
 		
-		this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
+		const el = $('#' + Util.toCamelCase('menu-' + id));
+		if (el.length) {
+			el.removeClass('show');
+		};
+		
+		setTimeout(() => {
+			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });			
+		}, TIMEOUT);
 	};
 	
 	@action

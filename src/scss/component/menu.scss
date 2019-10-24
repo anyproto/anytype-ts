@@ -4,9 +4,22 @@
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 20; background: rgba(0,0,0,0); }
 	.menu { 
 		border-radius: 4px; color: #fff; position: absolute; z-index: 21; text-align: left; padding: 4px; 
-		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); background: $colorBlack; opacity: 0; transition: opacity 0.2s ease-in-out;
+		box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); background: $colorBlack; opacity: 0; transform: scale3d(0.8,0.8,1);
+		transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; 
 	}
-	.menu.show { opacity: 1; }
+	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
+	
+	.menu.v1.h3 { transform-origin: 0% 100%; } /* top left */
+	.menu.v2.h3 { transform-origin: 0% 0%; } /* bottom left */
+	.menu.v1.h4 { transform-origin: 100% 0%; } /* top right */
+	.menu.v2.h4 { transform-origin: 100% 100%; } /* bottom right */
+	
+	.menu {
+		.content { opacity: 0; transition-delay: 0.05s; transition: opacity 0.2s ease-in-out; }
+	}
+	.menu.show {
+		.content { opacity: 1; }
+	}
 	
 	.menu.vertical { width: 176px; }
 	.menu.vertical {

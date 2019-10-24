@@ -22,16 +22,31 @@ class Buttons extends React.Component<Props, {}> {
 		const { commonStore, viewType } = this.props;
 		
 		const items: any[] = [
-			{ id: 'property', name: 'Property', menu: 'propertyList' },
-			{ id: 'filter', name: 'Filter', menu: 'filter' },
-			{ id: 'sort', name: 'Sort', menu: 'sort' },
-			{ id: 'view', className: 'view c' + viewType, arrow: true, menu: 'view' },
-			{ id: 'more', menu: 'more' }
+			{ 
+				id: 'property', name: 'Property', menu: 'propertyList', 
+				active: commonStore.menuIsOpen('propertyList') 
+			},
+			{ 
+				id: 'filter', name: 'Filter', menu: 'filter', 
+				active: commonStore.menuIsOpen('filter') 
+			},
+			{ 
+				id: 'sort', name: 'Sort', menu: 'sort', 
+				active: commonStore.menuIsOpen('sort') 
+			},
+			{ 
+				id: 'view', className: 'view c' + viewType, arrow: true, menu: 'view', 
+				active: commonStore.menuIsOpen('view') 
+			},
+			{ 
+				id: 'more', menu: 'more', active: commonStore.menuIsOpen('more') 
+			}
 		];
 		
 		const Item = (item: any) => {
 			let cn = [ 'item', item.id, String(item.className || '') ];
-			if (commonStore.menuIsOpen(item.menu)) {
+			
+			if (item.active) {
 				cn.push('active');
 			};
 			

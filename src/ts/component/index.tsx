@@ -24,6 +24,7 @@ import Title from './util/title';
 import Label from './util/label';
 import Smile from './util/smile';
 
+import Dimmer from './util/dimmer';
 import Switch from './util/switch';
 import Input from './util/input';
 import TextArea from './util/textArea';
@@ -44,6 +45,7 @@ export {
 	HeaderMainFolder,
 	FooterAuth,
 	FooterMainIndex,
+	Dimmer,
 	Switch,
 	Input,
 	TextArea,

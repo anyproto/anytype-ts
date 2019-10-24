@@ -32,19 +32,19 @@ class Popup extends React.Component<Props, {}> {
 			settings: PopupSettings,
 		};
 		
+		const popupId = Util.toCamelCase('popup-' + id);
 		const Component = Components[id];
-		const cn = [ 
-			'popup', 
-			Util.toCamelCase('popup-' + id) 
-		];
+		const cn = [ 'popup', popupId ];
 		
 		if (!Component) {
 			return <div>Component {id} not found</div>
 		};
 		
 		return (
-			<div className={cn.join(' ')}>
-				<Component {...this.props} />
+			<div id={popupId} className={cn.join(' ')}>
+				<div className="content">
+					<Component {...this.props} />
+				</div>
 			</div>
 		);
 	};
