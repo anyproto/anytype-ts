@@ -25,6 +25,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { id } = this.props;
 		const { items } = this.state;
 		
 		const Item = SortableElement((item: any) => (
@@ -46,14 +47,14 @@ class MenuPropertyList extends React.Component<Props, State> {
 		});
 		
 		return (
-				<List 
-					axis="y" 
-					transitionDuration={150}
-					pressDelay={50}
-					onSortEnd={this.onSortEnd}
-					helperClass="dragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
-				/>
+			<List 
+				axis="y" 
+				transitionDuration={150}
+				pressDelay={50}
+				onSortEnd={this.onSortEnd}
+				helperClass="dragging"
+				helperContainer={() => { return $('#menuPropertyList').get(0); }}
+			/>
 		);
 	};
 	

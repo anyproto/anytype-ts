@@ -57,7 +57,7 @@ class CommonStore {
 		const dimmer = $('#dimmer');
 		
 		if (el.length) {
-			el.removeClass('show');
+			el.css({ transform: '' }).removeClass('show');
 		};
 		
 		if (this.popupList.length == 1) {
@@ -108,7 +108,7 @@ class CommonStore {
 		
 		const el = $('#' + Util.toCamelCase('menu-' + id));
 		if (el.length) {
-			el.removeClass('show');
+			el.css({ transform: '' }).removeClass('show');
 		};
 		
 		setTimeout(() => {

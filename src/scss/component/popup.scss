@@ -14,7 +14,7 @@
 	.popup.show { opacity: 1; transform: scale3d(1,1,1); }
 	
 	.popup {
-		.content { opacity: 0; transition-delay: 0.05s; transition: opacity 0.2s ease-in-out; }
+		.content { opacity: 0; transition: opacity 0.2s ease-in-out; transition-delay: 0.1s; }
 	}
 	.popup.show {
 		.content { opacity: 1; }

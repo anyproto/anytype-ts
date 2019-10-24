@@ -19,6 +19,7 @@
 		.item { 
 			width: 208px; height: 112px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
 			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer; user-select: none;
+			transition: all 0.15s ease-in-out;
 		}
 		
 		.item {
@@ -27,6 +28,7 @@
 				overflow: hidden; word-break: break-word; position: absolute; left: 0px; bottom: 16px; padding: 0px 16px;
 			}
 		}
+		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		
 		.item.add { background: rgba(255,255,255,0.6); transition: background 0.2s ease-in-out; }
 		.item.add {

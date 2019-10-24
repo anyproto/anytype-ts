@@ -74,7 +74,8 @@ class Popup extends React.Component<Props, {}> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
-			node.addClass('show'); 
+			node.addClass('show');
+			setTimeout(() => { node.css({ transform: 'none' }); }, 200);
 		});
 	};
 	

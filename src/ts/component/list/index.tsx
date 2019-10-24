@@ -61,6 +61,7 @@ class ListIndex extends React.Component<Props, {}> {
 				transitionDuration={150}
 				pressDelay={50}
 				list={blocks} 
+				helperClass="dragging"
 				helperContainer={helperContainer} 
 				onSortEnd={this.onSortEnd} 
 			/>
