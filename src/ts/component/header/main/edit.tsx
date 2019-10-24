@@ -9,7 +9,7 @@ interface Props extends RouteComponentProps<any> {
 
 @inject('authStore')
 @observer
-class HeaderMainFolder extends React.Component<Props, {}> {
+class HeaderMainEdit extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -59,9 +59,9 @@ class HeaderMainFolder extends React.Component<Props, {}> {
 	};
 	
 	onPath (e: any, id: string) {
-		this.props.history.push('/main/folder/' + id);
+		this.props.history.push('/main/edit/' + id);
 	};
 	
 };
 
-export default HeaderMainFolder;
+export default HeaderMainEdit;

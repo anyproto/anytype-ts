@@ -60,7 +60,7 @@ class CommonStore {
 			el.css({ transform: '' }).removeClass('show');
 		};
 		
-		if (this.popupList.length == 1) {
+		if (dimmer.length && (this.popupList.length == 1)) {
 			dimmer.removeClass('show');
 		};
 		

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { MenuMain, Block, Smile } from 'ts/component';
+import { MenuMain, Block, Smile, HeaderMainEdit as Header } from 'ts/component';
 import { I, Util } from 'ts/lib'; 
 import { observer, inject } from 'mobx-react';
 
@@ -22,12 +22,13 @@ class PageMainEdit extends React.Component<Props, {}> {
 		
 		return (
 			<div>
+				<Header {...this.props} />
 				<MenuMain />
 				<div className="wrapper">
 					<div className="editor">
 						<div className="blocks">
 							<div className="title">
-								<Smile icon=":family:" className="c48" />
+								<Smile id="main-icon" canEdit={true} size={24} icon=":family:" className="c48" />
 								Contacts
 							</div>
 							{blocks.map((item: I.Block, i: number) => ( 

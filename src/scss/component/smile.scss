@@ -17,3 +17,6 @@
 	.emoji-mart-emoji { font-size: 36px; height: 1em; line-height: 1em; }
 	.emoji-mart-emoji { span { height: 36px; line-height: 36px; margin: -1px 0px 0px 2px; } }
 }
+
+.smile.canEdit { cursor: pointer; transition: background-color 0.2s ease-in-out; }
+.smile.canEdit.c48:hover, .smile.canEdit.c64:hover { background-color: #ebe9e0; }

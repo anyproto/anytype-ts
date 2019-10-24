@@ -12,6 +12,7 @@ import MenuPropertyList from './property/list';
 import MenuFilter from './filter';
 import MenuSort from './sort';
 import MenuView from './view';
+import MenuSmile from './smile';
 
 interface Props extends I.Menu {
 	history: any;
@@ -32,6 +33,7 @@ class Menu extends React.Component<Props, {}> {
 			filter: MenuFilter,
 			sort: MenuSort,
 			view: MenuView,
+			smile: MenuSmile,
 		};
 		
 		const menuId = Util.toCamelCase('menu-' + id);

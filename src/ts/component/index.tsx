@@ -8,7 +8,7 @@ import ListIndex from './list/index';
 
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
-import HeaderMainFolder from './header/main/folder';
+import HeaderMainEdit from './header/main/edit';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
 
@@ -42,7 +42,7 @@ export {
 	ListIndex,
 	HeaderAuth,
 	HeaderMainIndex,
-	HeaderMainFolder,
+	HeaderMainEdit,
 	FooterAuth,
 	FooterMainIndex,
 	Dimmer,

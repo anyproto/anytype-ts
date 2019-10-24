@@ -37,6 +37,8 @@ import 'scss/popup/settings.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/property.scss';
 import 'scss/menu/view.scss';
+import 'scss/menu/smile.scss';
+import 'emoji-mart/css/emoji-mart.css';
 
 interface RouteElement { path: string; };
 

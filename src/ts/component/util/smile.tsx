@@ -1,31 +1,76 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
+import { commonStore } from 'ts/store';
+import { I } from 'ts/lib';
 
 interface Props {
+	id?: string;
 	icon: string;
 	size?: number;
 	className?: string;
+	canEdit?: boolean;
 };
 
-class Smile extends React.Component<Props, {}> {
+interface State {
+	icon: string;
+};
+
+class Smile extends React.Component<Props, State> {
 	
 	private static defaultProps = {
 		size: 18
 	};
 	
-	render () {
-		const { icon, size, className } = this.props;
+	state = {
+		icon: ''
+	};
+	
+	constructor (props: any) {
+		super(props);
 		
+		this.onClick = this.onClick.bind(this);
+	};
+	
+	render () {
+		const { id, size, className, canEdit } = this.props;
+		
+		let icon = this.state.icon || this.props.icon;
 		let cn = [ 'smile' ];
 		if (className) {
 			cn.push(className);
 		};
+		if (canEdit) {
+			cn.push('canEdit');
+		};
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div id={'button-' + id} className={cn.join(' ')} onClick={this.onClick}>
 				{icon ? <Emoji emoji={icon} set="apple" size={size} backgroundImageFn={() => ''} /> : ''}
 			</div>
 		);
+	};
+	
+	onClick (e: any) {
+		const { id, canEdit } = this.props;
+		
+		if (!id || !canEdit) {
+			return;
+		};
+		
+		commonStore.menuOpen('smile', { 
+			element: 'button-' + id,
+			type: I.MenuType.Vertical,
+			offsetX: 52,
+			offsetY: -48,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				onSelect: (item: any) => {
+					console.log('SELECT', item);
+					this.setState({ icon: item.id });
+				}
+			}
+		});
 	};
 	
 };
