@@ -3,6 +3,7 @@ const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
 const EmojiData = require('emoji-mart/data/apple.json');
+const Constant = require('json/constant.json');
 
 class Util {
 	
@@ -121,7 +122,91 @@ class Util {
 			ret.push(obj);
 		};
 		return ret;
- 	};
+	};
+
+	date (format: string, timestamp: number) {
+		timestamp = Number(timestamp) || 0;
+		let a, jsdate = new Date(timestamp ? timestamp * 1000 : null);
+		let pad = (n: number, c: number) => {
+			let s = String(n);
+			if ((s = s + '').length < c ) {
+				++c;
+				let m = c - s.length;
+				return new Array(m).join('0') + s;
+			} else {
+				return s;
+			};
+			return false;
+		};
+		let f: any = {
+			// Day
+			d: () => {
+			   return pad(f.j(), 2);
+			},
+			D: () => {
+				let t = f.l(); return t.substr(0,3);
+			},
+			j: () => {
+				return jsdate.getDate();
+			},
+			// Month
+			F: () => {
+				return Constant.month[f.n()];
+			},
+			m: () => {
+				return pad(f.n(), 2);
+			},
+			M: () => {
+				return f.F().substr(0, 3);
+			},
+			n: () => {
+				return jsdate.getMonth() + 1;
+			},
+			// Year
+			Y: () => {
+				return jsdate.getFullYear();
+			},
+			y: () => {
+				return (jsdate.getFullYear() + '').slice(2);
+			},
+			// Time
+			a: () => {
+				return jsdate.getHours() > 11 ? 'pm' : 'am';
+			},
+			A: () => {
+				return jsdate.getHours() > 11 ? 'PM' : 'AM';
+			},
+			g: () => {
+				return jsdate.getHours() % 12 || 12;
+			},
+			h: () => {
+				return pad(f.g(), 2);
+			},
+			H: () => {
+				return pad(jsdate.getHours(), 2);
+			},
+			i: () => {
+				return pad(jsdate.getMinutes(), 2);
+			},
+			s: () => {
+				return pad(jsdate.getSeconds(), 2);
+			},
+			w: () => {
+				return jsdate.getDay();
+			}
+		};
+		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {
+			let ret = null;
+			if (t != s) {
+				ret = s;
+			} else if (f[s]) {
+				ret = f[s]();
+			} else {
+				ret = s;
+			};
+			return ret;
+		});
+	};
 		
 };
 

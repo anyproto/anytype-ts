@@ -4,6 +4,7 @@ import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 import Controls from './dataview/controls';
+
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';

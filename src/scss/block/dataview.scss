@@ -55,29 +55,37 @@
 		.content {
 			.view { border-top: 1px solid #e0ded2; }
 			
+			.cell { font-size: 13px; line-height: 18px; letter-spacing: -0.08px; }
+			
+			/* Title */
+			.cell.c0 { font-weight: 500; }
+			
 			.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
 			.viewGrid {
-				.cellHead { 
+				.head { 
 					text-align: left; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #aca996; font-weight: 400;
 					padding: 7px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2;
 				}
-				.cellHead:last-child { border-right: 0px; }
-				.cellHead {
+				.head:last-child { border-right: 0px; }
+				.head {
 					.icon { margin-right: 5px; }
 				}
 				
-				.cellBody { 
-					padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; font-size: 13px; line-height: 18px; 
-				}
-				.cellBody:last-child { border-right: 0px; }
+				.cell { padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; }
+				.cell:last-child { border-right: 0px; }
 			}
 			
 			.viewGallery { padding: 16px 0px; }
 			.viewGallery {
+				.cell:last-child { margin: 0px; }
+			
+				/* Title */
+				.cell.c0 { font-size: 15px; letter-spacing: -0.08px; margin-bottom: 9px; }
+			
 				.card { 
 					width: 260px; height: 112px; border: 1px solid #dfddd0; border-radius: 12px; padding: 16px; 
 					margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;
-				} 
+				}
 			}
 		}
 	}	

@@ -130,13 +130,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 				{ id: '1', name: 'Id', type: I.PropertyType.Number },
 				{ id: '2', name: 'Name', type: I.PropertyType.Title },
 				{ id: '3', name: 'E-mail', type: I.PropertyType.Text },
+				{ id: '4', name: 'Date', type: I.PropertyType.Date },
 			],
 			data: [
-				{ '1': '1', '2': 'Anton Pronkin', '3': 'pronkin@gmail.com' },
-				{ '1': '2', '2': 'Roman Khafizianov', '3': 'khafizianov@gmail.com' },
-				{ '1': '3', '2': 'Zhanna Sharipova', '3': 'sharipova@gmail.com' },
-				{ '1': '4', '2': 'Anton Barulenkov', '3': 'barulenkov@gmail.com' },
-				{ '1': '5', '2': 'Kirill', '3': 'kirill@gmail.com' },
+				{ '1': '1', '2': 'Anton Pronkin', '3': 'pronkin@gmail.com', '4': 1420200660 },
+				{ '1': '2', '2': 'Roman Khafizianov', '3': 'khafizianov@gmail.com', '4': 1420200660 },
+				{ '1': '3', '2': 'Zhanna Sharipova', '3': 'sharipova@gmail.com', '4': 1420200660 },
+				{ '1': '4', '2': 'Anton Barulenkov', '3': 'barulenkov@gmail.com', '4': 1420200660 },
+				{ '1': '5', '2': 'Kirill', '3': 'kirill@gmail.com', '4': 1420200660 },
 			]
 		};
 		

@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
+import Cell from '../cell';
+
 interface Props extends I.BlockDataview {};
 
 class ViewGrid extends React.Component<Props, {}> {
@@ -11,15 +13,15 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { data, properties } = content;
 		
 		const CellHead = (item: any) => (
-			<th className={'cellHead c' + item.type}>
+			<th className={'head c' + item.type}>
 				<Icon className={'property c' + item.type} />
 				{item.name}
 			</th>
 		);
 		
 		const CellBody = (item: any) => (
-			<td className={'cellBody c' + item.property.type}>
-				{item.data}
+			<td className={'cell c' + item.property.type}>
+				<Cell {...item} />
 			</td>
 		);
 		
@@ -28,7 +30,7 @@ class ViewGrid extends React.Component<Props, {}> {
 				{properties.map((item: any, i: number) => (
 					<CellHead key={item.id} {...item} />
 				))}
-				<th className="cellHead">
+				<th className="head">
 					<Icon className="plus" />
 				</th>
 			</tr>
@@ -39,7 +41,7 @@ class ViewGrid extends React.Component<Props, {}> {
 				{properties.map((property: any, i: number) => (
 					<CellBody key={property.id} property={...property} data={data[item.index][property.id]} />
 				))}
-				<td className="cellBody">&nbsp;</td>
+				<td className="cell">&nbsp;</td>
 			</tr>
 		);
 		
