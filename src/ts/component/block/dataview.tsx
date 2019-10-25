@@ -5,6 +5,8 @@ import { observer, inject } from 'mobx-react';
 
 import Buttons from './dataview/buttons';
 import ViewGrid from './dataview/view/grid';
+import ViewBoard from './dataview/view/board';
+import ViewGallery from './dataview/view/gallery';
 
 interface Props extends I.BlockDataview {
 	commonStore?: any;
@@ -43,6 +45,14 @@ class BlockDataview extends React.Component<Props, State> {
 			default:
 			case I.ViewType.Grid:
 				ViewComponent = ViewGrid;
+				break;
+				
+			case I.ViewType.Board:
+				ViewComponent = ViewBoard;
+				break;
+				
+			case I.ViewType.Gallery:
+				ViewComponent = ViewGallery;
 				break;
 		};
 		

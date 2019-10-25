@@ -16,6 +16,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		
 		this.onHome = this.onHome.bind(this);
 		this.onPath = this.onPath.bind(this);
+		this.onBack = this.onBack.bind(this);
+		this.onForward = this.onForward.bind(this);
 	};
 
 	render () {
@@ -45,6 +47,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		return (
 			<div className="header headerMainFolder">
 				<div className="path">
+					<Icon className="back" onClick={this.onBack} />
+					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
 					{path.map((item: any, i: any) => (
 						<PathItem key={i} {...item} />
@@ -60,6 +64,14 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	
 	onPath (e: any, id: string) {
 		this.props.history.push('/main/edit/' + id);
+	};
+	
+	onBack (e: any) {
+		this.props.history.goBack();
+	};
+	
+	onForward (e: any) {
+		this.props.history.goForward();
 	};
 	
 };

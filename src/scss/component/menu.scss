@@ -5,7 +5,7 @@
 	.menu { 
 		border-radius: 4px; color: #fff; position: absolute; z-index: 21; text-align: left; padding: 4px; 
 		box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.3); background: $colorBlack; opacity: 0; transform: scale3d(0.8,0.8,1);
-		transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; 
+		transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out; 
 	}
 	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
 	
@@ -15,7 +15,7 @@
 	.menu.v2.h4 { transform-origin: 100% 0%; } /* bottom right */
 	
 	.menu {
-		.content { background: inherit; opacity: 0; transition: opacity 0.2s ease-in-out; transition-delay: 0.1s; }
+		.content { background: inherit; opacity: 0; transition: opacity 0.15s ease-in-out; transition-delay: 0.1s; }
 	}
 	.menu.show {
 		.content { opacity: 1; }

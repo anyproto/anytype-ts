@@ -11,6 +11,15 @@
 .icon.help.light { background-image: url('~img/icon/help/light0.svg'); }
 .icon.help.light:hover, .icon.help.light.active { background-image: url('~img/icon/help/light1.svg'); }
 
+.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/0.svg'); }
+.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/property/1.svg'); }
+.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/block/dataview/property/2.svg'); }
+		
+.icon.view.c0 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/grid0.svg'); }
+.icon.view.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/board0.svg'); }
+.icon.view.c2 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/gallery0.svg'); }
+.icon.view.c3 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/list0.svg'); }
+
 .icon.user { 
 	width: 64px; height: 64px; border-radius: 100%; font-weight: 500; position: relative; overflow: hidden;
 	text-transform: uppercase; font-size: 22px; color: #fff; text-align: center; line-height: 62px;

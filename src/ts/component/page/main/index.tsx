@@ -121,9 +121,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const contentDataview: I.ContentDataview = {
 			view: '1',
 			views: [
-				{ id: '1', name: 'All', type: I.ViewType.Grid },
-				{ id: '2', name: 'Team', type: I.ViewType.Grid },
-				{ id: '3', name: 'Friends', type: I.ViewType.Grid }
+				{ id: '1', name: 'Grid', type: I.ViewType.Grid },
+				{ id: '2', name: 'Board', type: I.ViewType.Board },
+				{ id: '3', name: 'Gallery', type: I.ViewType.Gallery },
+				{ id: '4', name: 'List', type: I.ViewType.List },
 			],
 			properties: [
 				{ id: '1', name: 'Id', type: I.PropertyType.Number },

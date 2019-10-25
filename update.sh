@@ -34,6 +34,7 @@ echo -n "Uncompressing... "
 tar -zxf $FILE
 printf "Done\n"
 
+mkdir -p build
 mv addon/*.* build/
 rm -rf addon
 

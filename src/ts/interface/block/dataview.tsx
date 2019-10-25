@@ -1,6 +1,6 @@
 import { I } from 'ts/lib';
 
-export enum ViewType { Grid };
+export enum ViewType { Grid, Board, Gallery, List };
 export enum PropertyType { Title, Text, Number };
 
 export interface Property {

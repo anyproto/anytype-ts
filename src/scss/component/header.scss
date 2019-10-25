@@ -24,7 +24,7 @@
 		}
 	}
 	
-	.path { padding-left: 140px; white-space: nowrap; }
+	.path { white-space: nowrap; }
 	.path {
 		.item { display: inline-block; vertical-align: middle; color: #6c6a5f; margin-right: 4px; cursor: pointer; }
 		.item {
@@ -37,6 +37,11 @@
 			.icon.arrow { display: none; }
 		}
 	}
+	
+	.icon.back { margin-right: 12px; }
+	.icon.forward { margin-right: 14px; transform: rotateZ(180deg); }
+	.icon.back, .icon.forward { width: 16px; height: 18px; background-image: url('~img/icon/back0.svg'); cursor: pointer; }
+	.icon.back:hover, .icon.forward:hover { background-image: url('~img/icon/back1.svg'); }
 }
 
-.headerMainFolder { padding: 9px 140px 9px 0px; }
+.headerMainFolder { padding: 9px 0px 9px 80px; }

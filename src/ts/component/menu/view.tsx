@@ -18,6 +18,9 @@ class MenuView extends React.Component<Props, {}> {
 		
 		const items: any[] = [
 			{ id: I.ViewType.Grid, name: 'Grid' },
+			{ id: I.ViewType.Board, name: 'Board' },
+			{ id: I.ViewType.Gallery, name: 'Gallery' },
+			{ id: I.ViewType.List, name: 'List' },
 		];
 		
 		const Item = (item: any) => (
