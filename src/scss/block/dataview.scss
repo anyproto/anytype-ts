@@ -71,6 +71,14 @@
 				}
 				.cellBody:last-child { border-right: 0px; }
 			}
+			
+			.viewGallery { padding: 16px 0px; }
+			.viewGallery {
+				.card { 
+					width: 260px; height: 112px; border: 1px solid #dfddd0; border-radius: 12px; padding: 16px; 
+					margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;
+				} 
+			}
 		}
 	}	
 }
