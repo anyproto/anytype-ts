@@ -20,14 +20,15 @@ class Block extends React.Component<Props, {}> {
 		let BlockComponent: React.ReactType<{}>;
 		
 		switch (type) {
-			case I.BlockType.Dataview:
-				cn.push('blockDataview');
-				BlockComponent = BlockDataview;
-				break;
-				
+			default:
 			case I.BlockType.Text:
 				cn.push('blockText');
 				BlockComponent = BlockText;
+				break;
+			
+			case I.BlockType.Dataview:
+				cn.push('blockDataview');
+				BlockComponent = BlockDataview;
 				break;
 		};
 		
@@ -42,9 +43,6 @@ class Block extends React.Component<Props, {}> {
 		this._isMounted = true;
 	};
 
-	componentDidUpdate () {
-	};
-	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};

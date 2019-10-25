@@ -3,10 +3,11 @@ import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
-import Buttons from './dataview/buttons';
+import Controls from './dataview/controls';
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
+import ViewList from './dataview/view/list';
 
 interface Props extends I.BlockDataview {
 	commonStore?: any;
@@ -25,6 +26,8 @@ class BlockDataview extends React.Component<Props, State> {
 	
 	constructor (props: any) {
 		super(props);
+		
+		this.onView = this.onView.bind(this);
 	};
 
 	render () {
@@ -54,21 +57,18 @@ class BlockDataview extends React.Component<Props, State> {
 			case I.ViewType.Gallery:
 				ViewComponent = ViewGallery;
 				break;
+			
+			case I.ViewType.List:
+				ViewComponent = ViewList;
+				break;
 		};
 		
 		return (
 			<div>
-				<div className="views">
-					{views.map((item: I.View, i: number) => (
-						<ViewItem key={i} {...item} active={item.id == view} />
-					))}
-					<div className="item">
-						<Icon className="plus dark" />
-					</div>
+				<Controls {...this.props} view={view} viewType={viewItem.type} onView={this.onView} />
+				<div className="content">
+					<ViewComponent {...this.props} />
 				</div>
-				
-				<Buttons viewType={viewItem.type} />
-				<ViewComponent {...this.props} />
 			</div>
 		);
 	};

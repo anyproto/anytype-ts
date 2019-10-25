@@ -3,25 +3,28 @@ import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
-interface Props {
+interface Props extends I.BlockDataview {
 	commonStore?: any;
+	view: string;
 	viewType: I.ViewType;
+	onView(e: any, id: string): void;
 };
 
 @inject('commonStore')
 @observer
-class Buttons extends React.Component<Props, {}> {
+class Controls extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
-		
-		this.onMenu = this.onMenu.bind(this);
+
+		this.onButton = this.onButton.bind(this);
 	};
 
 	render () {
-		const { commonStore, viewType } = this.props;
+		const { commonStore, view, viewType, content, onView } = this.props;
+		const { views } = content;
 		
-		const items: any[] = [
+		const buttons: any[] = [
 			{ 
 				id: 'property', name: 'Property', menu: 'propertyList', 
 				active: commonStore.menuIsOpen('propertyList') 
@@ -43,7 +46,13 @@ class Buttons extends React.Component<Props, {}> {
 			}
 		];
 		
-		const Item = (item: any) => {
+		const ViewItem = (item: any) => (
+			<div className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { onView(e, item.id); }}>
+				{item.name}
+			</div>
+		);
+		
+		const ButtonItem = (item: any) => {
 			let cn = [ 'item', item.id, String(item.className || '') ];
 			
 			if (item.active) {
@@ -51,7 +60,7 @@ class Buttons extends React.Component<Props, {}> {
 			};
 			
 			return (
-				<div id={'button-' + item.id} className={cn.join(' ')} onClick={(e: any) => { this.onMenu(e, item.id, item.menu); }}>
+				<div id={'button-' + item.id} className={cn.join(' ')} onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}>
 					<Icon className={cn.join(' ')} />
 					{item.name ? <div className="name">{item.name}</div> : ''}
 					{item.arrow ? <Icon className="arrow" /> : ''}
@@ -60,23 +69,34 @@ class Buttons extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className="buttons">
-				<div className="side left">
+			<div className="controls">
+				<div className="views">
+					{views.map((item: I.View, i: number) => (
+						<ViewItem key={i} {...item} active={item.id == view} />
+					))}
 					<div className="item">
-						<Icon className="plus" />
-						<div className="name">New</div>
+						<Icon className="plus dark" />
 					</div>
 				</div>
-				<div className="side right">
-					{items.map((item: any, i: number) => (
-						<Item key={item.id} {...item} />
-					))}
+				
+				<div className="buttons">
+					<div className="side left">
+						<div className="item">
+							<Icon className="plus" />
+							<div className="name">New</div>
+						</div>
+					</div>
+					<div className="side right">
+						{buttons.map((item: any, i: number) => (
+							<ButtonItem key={item.id} {...item} />
+						))}
+					</div>
 				</div>
 			</div>
 		);
 	};
 	
-	onMenu (e: any, id: string, menu: string) {
+	onButton (e: any, id: string, menu: string) {
 		const { commonStore, viewType } = this.props;
 		
 		commonStore.menuOpen(menu, { 
@@ -92,4 +112,4 @@ class Buttons extends React.Component<Props, {}> {
 
 };
 
-export default Buttons;
+export default Controls;
