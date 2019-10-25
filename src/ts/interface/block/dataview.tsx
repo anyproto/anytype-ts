@@ -2,6 +2,7 @@ import { I } from 'ts/lib';
 
 export enum ViewType { Grid, Board, Gallery, List };
 export enum PropertyType { Title, Text, Number, Date };
+export enum SortType { Asc, Desc };
 
 export interface Property {
 	id: string;
@@ -9,13 +10,19 @@ export interface Property {
 	type: PropertyType;
 };
 
+export interface Sort {
+	propertyId: string;
+	type: SortType;
+};
+
+export interface Filter {
+};
+
 export interface View {
 	id: string;
 	name: string;
 	type: ViewType;
-};
-
-export interface Filter {
+	sort: Sort[];
 };
 
 export interface ContentDataview {

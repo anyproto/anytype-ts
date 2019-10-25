@@ -105,6 +105,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		commonStore.menuOpen('account', { 
 			element: 'button-account',
 			offsetY: 4,
+			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right
 		});
@@ -121,10 +122,16 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const contentDataview: I.ContentDataview = {
 			view: '1',
 			views: [
-				{ id: '1', name: 'Grid', type: I.ViewType.Grid },
-				{ id: '2', name: 'Board', type: I.ViewType.Board },
-				{ id: '3', name: 'Gallery', type: I.ViewType.Gallery },
-				{ id: '4', name: 'List', type: I.ViewType.List },
+				{ 
+					id: '1', name: 'Grid', type: I.ViewType.Grid,
+					sort: [
+						{ propertyId: '1', type: I.SortType.Asc },
+						{ propertyId: '2', type: I.SortType.Desc },
+					]
+				},
+				{ id: '2', name: 'Board', type: I.ViewType.Board, sort: [] },
+				{ id: '3', name: 'Gallery', type: I.ViewType.Gallery, sort: [] },
+				{ id: '4', name: 'List', type: I.ViewType.List, sort: [] },
 			],
 			properties: [
 				{ id: '1', name: 'Id', type: I.PropertyType.Number },

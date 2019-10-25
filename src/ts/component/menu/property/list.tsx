@@ -53,7 +53,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 				pressDelay={50}
 				onSortEnd={this.onSortEnd}
 				helperClass="dragging"
-				helperContainer={() => { return $('#menuPropertyList').get(0); }}
+				helperContainer={() => { return  $(ReactDOM.findDOMNode(this)).get(0); }}
 			/>
 		);
 	};

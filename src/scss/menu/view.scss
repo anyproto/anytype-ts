@@ -1,11 +1,10 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuView { width: 176px; background: #fff; color: $colorBlack; overflow: hidden; }
+	.menu.menuView { width: 176px; }
 	.menu.menuView {
 		.item {
 			.icon.view { width: 14px; height: 12px; }
 		}
-		.item:hover, .item.active { background: #f7f5f0; }
 	}	
 }

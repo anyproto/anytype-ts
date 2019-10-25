@@ -30,6 +30,7 @@ import Input from './util/input';
 import TextArea from './util/textArea';
 import Button from './util/button';
 import Error from './util/error';
+import Select from './util/select';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
@@ -50,6 +51,7 @@ export {
 	Input,
 	TextArea,
 	Button,
+	Select,
 	Menu,
 	MenuItemVertical,
 	MenuItemMain,

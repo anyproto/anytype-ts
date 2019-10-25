@@ -24,7 +24,7 @@ class Menu extends React.Component<Props, {}> {
 
 	render () {
 		const { id, param } = this.props;
-		const { type, vertical, horizontal } = param;
+		const { type, vertical, horizontal, light } = param;
 		
 		const Components: any = {
 			help: MenuHelp,
@@ -45,6 +45,9 @@ class Menu extends React.Component<Props, {}> {
 			'v' + vertical,
 			'h' + horizontal
 		];
+		if (light) {
+			cn.push('light');
+		};
 		
 		if (!Component) {
 			return <div>Component {id} not found</div>

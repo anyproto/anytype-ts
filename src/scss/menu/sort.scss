@@ -1,0 +1,11 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuSort { width: 352px; }
+	.menu.menuSort {
+		.item {
+			.select { margin-right: 16px; }
+			.select:last-child { margin: 0px; }
+		}
+	}
+}

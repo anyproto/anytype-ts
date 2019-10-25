@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuAccount { width: 288px; background: #fff; border-radius: 12px; color: $colorBlack; padding: 0px; overflow: hidden; }
+	.menu.menuAccount { width: 288px; border-radius: 12px; padding: 0px; overflow: hidden; }
 	.menu.menuAccount {
 		.items { overflow-x: hidden; overflow-y: auto; max-height: 330px; }
 		.item { padding: 12px; } 
@@ -16,7 +16,6 @@
 			.icon.check { display: inline-block; }
 			.description { color: $colorBlack; }
 		}
-		.item:hover, .item.active { background: #f7f5f0; }
 		
 		.item.add {
 			.icon.plus { width: 40px; height: 40px; margin-right: 8px; background-size: 16px 16px; background-image: url('~img/icon/plus/account0.svg'); }

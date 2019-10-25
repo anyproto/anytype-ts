@@ -23,6 +23,7 @@ import 'scss/component/popup.scss';
 import 'scss/component/menu.scss';
 import 'scss/component/switch.scss';
 import 'scss/component/title.scss';
+import 'scss/component/select.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -38,6 +39,8 @@ import 'scss/menu/account.scss';
 import 'scss/menu/property.scss';
 import 'scss/menu/view.scss';
 import 'scss/menu/smile.scss';
+import 'scss/menu/sort.scss';
+import 'scss/menu/help.scss';
 import 'emoji-mart/css/emoji-mart.css';
 
 interface RouteElement { path: string; };

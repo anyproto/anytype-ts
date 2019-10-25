@@ -97,16 +97,28 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { commonStore, viewType } = this.props;
+		const { commonStore, viewType, content } = this.props;
+		const { properties } = content;
+		
+		let data: any = {};
+		
+		switch (menu) {
+			case 'view':
+				data.viewType = viewType;
+				break;
+				
+			case 'sort':
+				data.properties = properties;
+				break;
+		};
 		
 		commonStore.menuOpen(menu, { 
 			element: 'button-' + id,
 			offsetY: 4,
+			light: true,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			data: {
-				viewType: viewType
-			}
+			horizontal: I.MenuDirection.Right,
+			data: data
 		});
 	};
 
