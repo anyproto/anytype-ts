@@ -32,6 +32,9 @@ import 'scss/page/main/edit.scss';
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
 import 'scss/block/text.scss';
+import 'scss/block/image.scss';
+import 'scss/block/video.scss';
+import 'scss/block/file.scss';
 
 import 'scss/popup/settings.scss';
 

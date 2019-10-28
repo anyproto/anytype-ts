@@ -102,12 +102,11 @@ class BlockText extends React.Component<Props, {}> {
 		let tag = [ 's', 'kbd', 'i', 'b', 'a' ];
 		
 		for (let mark of marks) {
-			let range = mark.range;
 			let t = tag[mark.type];
 			
-			if (r[range.from] && r[range.to - 1]) {
-				r[range.from] = '<' + t + '>' + r[range.from];
-				r[range.to - 1] += '</' + t + '>';
+			if (r[mark.range.from] && r[mark.range.to - 1]) {
+				r[mark.range.from] = '<' + t + '>' + r[mark.range.from];
+				r[mark.range.to - 1] += '</' + t + '>';
 			};
 		};
 		return r.join('');

@@ -55,13 +55,15 @@
 		.content {
 			.view { border-top: 1px solid #e0ded2; }
 			
+			.card { height: 112px; border: 1px solid #dfddd0; border-radius: 12px; padding: 16px; }
+			
 			.cell { font-size: 13px; line-height: 18px; letter-spacing: -0.08px; }
 			
 			/* Title */
 			.cell.c0 { font-weight: 500; }
 			
-			.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
-			.viewGrid {
+			.view.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
+			.view.viewGrid {
 				.head { 
 					text-align: left; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #aca996; font-weight: 400;
 					padding: 7px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2;
@@ -75,8 +77,8 @@
 				.cell:last-child { border-right: 0px; }
 			}
 			
-			.viewGallery { padding: 16px 0px; }
-			.viewGallery {
+			.view.viewGallery { padding: 16px 0px; }
+			.view.viewGallery {
 				.cell:last-child { margin: 0px; }
 			
 				/* Title */
@@ -88,6 +90,28 @@
 				.card { 
 					width: 260px; height: 112px; border: 1px solid #dfddd0; border-radius: 12px; padding: 16px; 
 					margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;
+				}
+			}
+			
+			.view.viewBoard {
+				.columns { display: flex; }
+				.column { width: 240px; margin-right: 24px; }
+				.column {
+					.head { padding: 10px 4px; }
+				}
+				
+				.card { width: 100%; margin-bottom: 8px; }
+				
+				.card.add { 
+					height: auto; text-align: center; padding: 10px 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
+				}
+				.card.add {
+					.icon { vertical-align: top; }
+				}
+				
+				.card.add:hover { border-color: $colorBlack; }
+				.card.add:hover {
+					.icon { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
 				}
 			}
 		}

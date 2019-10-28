@@ -41,7 +41,7 @@ class Switch extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')} onMouseDown={this.onChange}>
+			<div id={id} className={cn.join(' ')} onClick={this.onChange}>
 				<div className="inner" />
 			</div>
 		);
