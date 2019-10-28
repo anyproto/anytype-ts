@@ -20,16 +20,10 @@ class ViewBoard extends React.Component<Props, {}> {
 		const { data, properties } = content;
 		const group = properties.find((item) => { return item.id == GROUP; });
 		
-		const CellItem = (item: any) => (
-			<div className={'cell c' + item.property.type}>
-				<Cell {...item} />
-			</div>
-		);
-		
 		const Card = (item: any) => (
 			<div className="card">
 				{properties.map((property: any, i: number) => (
-					<CellItem key={property.id} property={...property} data={data[item.index][property.id]} />
+					<Cell key={property.id} property={...property} data={data[item.index][property.id]} />
 				))}
 			</div>
 		);

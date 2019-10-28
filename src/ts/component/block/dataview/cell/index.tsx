@@ -30,9 +30,9 @@ class Cell extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div className={'cell c' + property.type}>
 				<CellComponent {...this.props} />
-			</React.Fragment>
+			</div>
 		);
 	};
 	

@@ -73,8 +73,8 @@
 					.icon { margin-right: 5px; }
 				}
 				
-				.cell { padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; }
-				.cell:last-child { border-right: 0px; }
+				td.cell { padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; }
+				td.cell:last-child { border-right: 0px; }
 			}
 			
 			.view.viewGallery { padding: 16px 0px; }
@@ -113,6 +113,14 @@
 				.card.add:hover {
 					.icon { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
 				}
+			}
+			
+			.view.viewList {
+				.item { 
+					width: 352px; display: inline-block; vertical-align: top; border-bottom: 1px solid #e0ded2;
+					margin-right: 16px; padding: 16px 0px; 
+				}
+				
 			}
 		}
 	}	
