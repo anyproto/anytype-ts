@@ -30,9 +30,18 @@ class MenuPropertyList extends React.Component<Props, State> {
 		
 		const Item = SortableElement((item: any) => (
 			<div className="item">
-				<Icon className={'property c' + item.type} />
+				<Icon className="dnd" />
+				<Icon className={'property dark c' + item.type} />
 				<div className="name">{item.name}</div>
-				<Switch />
+				<Switch className="green" />
+			</div>
+		));
+		
+		const ItemAdd = SortableElement((item: any) => (
+			<div className="item add">
+				<Icon className="dnd" />
+				<Icon className="plus" />
+				<div className="name">New property</div>
 			</div>
 		));
 		
@@ -42,6 +51,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 					{items.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
 					))}
+					<ItemAdd index={items.length + 1} disabled={true} />
 				</div>
 			);
 		});
@@ -59,13 +69,11 @@ class MenuPropertyList extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		this.setState({ 
-			items: [
-				{ id: '1', name: 'Id', type: I.PropertyType.Number },
-				{ id: '2', name: 'Name', type: I.PropertyType.Title },
-				{ id: '3', name: 'E-mail', type: I.PropertyType.Text }
-			]
-		});
+		const { param } = this.props;
+		const { data } = param;
+		const { properties } = data;
+		
+		this.setState({ items: properties });
 	};
 	
 	onSortEnd (result: any) {

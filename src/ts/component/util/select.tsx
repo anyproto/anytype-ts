@@ -11,16 +11,22 @@ interface Option {
 };
 
 interface Props {
+	initial?: string;
 	value: string;
 	options: Option[];
 	onChange? (id: string): void;
 };
+
 interface State {
 	value: string;
 	options: Option[];
 };
 
 class Select extends React.Component<Props, State> {
+	
+	private static defaultProps = {
+		initial: ''
+	};
 	
 	state = {
 		value: '',
@@ -54,7 +60,7 @@ class Select extends React.Component<Props, State> {
 		return (
 			<div className="select">
 				{current ? (
-					<div className="current" onMouseDown={this.show}>
+					<div className="current" onClick={this.show}>
 						{current.icon ? <Icon className={current.icon} /> : ''}
 						<div className="name">{current.name}</div>
 						<Icon className="arrow" />
@@ -70,17 +76,19 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		let { value, options } = this.props;
+		let { value, options, initial } = this.props;
 		let opts = [];
 		
-		opts.unshift({ id: '', name: 'Select' });
-
-		if (!value) {
-			value = opts[0].id;
+		if (initial) {
+			opts.unshift({ id: '', name: initial });			
 		};
-		
+
 		for (let option of options) {
 			opts.push(option);
+		};
+		
+		if (!value && opts.length) {
+			value = opts[0].id;
 		};
 		
 		this.setState({ value: value, options: opts });

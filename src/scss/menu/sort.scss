@@ -3,9 +3,13 @@
 .menus {
 	.menu.menuSort { width: 352px; }
 	.menu.menuSort {
+		.item { padding: 4px 16px; }
 		.item {
-			.select { margin-right: 16px; }
+			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/block/dataview/plus/light0.svg'); }
+			.icon.property { width: 16px; margin-right: 8px; }
+			.select { margin-right: 8px; }
 			.select:last-child { margin: 0px; }
 		}
+		.item.add { color: #aca996; }
 	}
 }

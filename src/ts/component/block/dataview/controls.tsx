@@ -97,8 +97,9 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { commonStore, viewType, content } = this.props;
-		const { properties } = content;
+		const { commonStore, view, viewType, content } = this.props;
+		const { properties, views } = content;
+		const viewItem = views.find((item: any) => { return item.id == view; });
 		
 		let data: any = {};
 		
@@ -108,6 +109,11 @@ class Controls extends React.Component<Props, {}> {
 				break;
 				
 			case 'sort':
+				data.sort = viewItem.sort;
+				data.properties = properties;
+				break;
+				
+			case 'propertyList':
 				data.properties = properties;
 				break;
 		};

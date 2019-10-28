@@ -19,6 +19,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		const { header, content } = this.props;
 		const { data, properties } = content;
 		const group = properties.find((item) => { return item.id == GROUP; });
+		const columns = this.getColumns();
 		
 		const Card = (item: any) => (
 			<div className="card">
@@ -44,8 +45,6 @@ class ViewBoard extends React.Component<Props, {}> {
 			</div>
 		);
 		
-		let columns = this.getColumns();
-		
 		return (
 			<div className="view viewBoard">
 				<div className="columns">
@@ -58,8 +57,8 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): Column[] {
-		const { header, content } = this.props;
-		const { data, properties } = content;
+		const { content } = this.props;
+		const { data } = content;
 		
 		let groupBy = GROUP;
 		let r: Column[] = [];
@@ -70,12 +69,8 @@ class ViewBoard extends React.Component<Props, {}> {
 				col = { value: item[groupBy], list: [] }
 				r.push(col);
 			};
-			
 			col.list.push(item);
 		};
-		
-		console.log(r);
-		
 		return r;
 	};
 	

@@ -1,10 +1,14 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuView { width: 176px; }
+	.menu.menuView { width: 208px; }
 	.menu.menuView {
 		.item {
 			.icon.view { width: 14px; height: 12px; }
+			.icon.view.c0 { background-image: url('~img/icon/menu/view/grid.svg'); }
+			.icon.view.c1 { background-image: url('~img/icon/menu/view/board.svg'); }
+			.icon.view.c2 { background-image: url('~img/icon/menu/view/gallery.svg'); }
+			.icon.view.c3 { background-image: url('~img/icon/menu/view/list.svg'); }
 		}
 	}	
 }

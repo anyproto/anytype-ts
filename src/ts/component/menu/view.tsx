@@ -17,10 +17,10 @@ class MenuView extends React.Component<Props, {}> {
 		const { viewType } = data;
 		
 		const items: any[] = [
-			{ id: I.ViewType.Grid, name: 'Grid' },
-			{ id: I.ViewType.Board, name: 'Board' },
-			{ id: I.ViewType.Gallery, name: 'Gallery' },
 			{ id: I.ViewType.List, name: 'List' },
+			{ id: I.ViewType.Grid, name: 'Grid' },
+			{ id: I.ViewType.Board, name: 'Kanban' },
+			{ id: I.ViewType.Gallery, name: 'Gallery' }
 		];
 		
 		const Item = (item: any) => (

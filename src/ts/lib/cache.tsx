@@ -17,7 +17,7 @@ class Cache {
 		if (item && (item.ttl >= (new Date()).getTime())) {
 			return String(item.value || '');
 		} else {
-			return '';	
+			return '';
 		};
 	};
 	

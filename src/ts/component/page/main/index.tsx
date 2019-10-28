@@ -138,13 +138,21 @@ class PageMainIndex extends React.Component<Props, {}> {
 				{ id: '2', name: 'Name', type: I.PropertyType.Title },
 				{ id: '3', name: 'E-mail', type: I.PropertyType.Text },
 				{ id: '4', name: 'Date', type: I.PropertyType.Date },
+				{ id: '5', name: 'Select', type: I.PropertyType.Select },
+				{ id: '6', name: 'Multiple', type: I.PropertyType.Multiple },
+				{ id: '7', name: 'Account', type: I.PropertyType.Account },
+				{ id: '8', name: 'File', type: I.PropertyType.File },
+				{ id: '9', name: 'Bool', type: I.PropertyType.Bool },
+				{ id: '10', name: 'Link', type: I.PropertyType.Link },
+				{ id: '11', name: 'E-mail', type: I.PropertyType.Email },
+				{ id: '12', name: 'Phone', type: I.PropertyType.Phone },
 			],
 			data: [
-				{ '1': '1', '2': 'Anton Pronkin', '3': 'pronkin@gmail.com', '4': 1420200661 },
-				{ '1': '2', '2': 'Roman Khafizianov', '3': 'khafizianov@gmail.com', '4': 1420200661 },
-				{ '1': '3', '2': 'Zhanna Sharipova', '3': 'sharipova@gmail.com', '4': 1420200662 },
-				{ '1': '4', '2': 'Anton Barulenkov', '3': 'barulenkov@gmail.com', '4': 1420200662 },
-				{ '1': '5', '2': 'Kirill', '3': 'kirill@gmail.com', '4': 1420200663 },
+				{ '1': '1', '2': 'Anton Pronkin', '3': 'pronkin@gmail.com', '4': 1420200661, '5': 'select1' },
+				{ '1': '2', '2': 'Roman Khafizianov', '3': 'khafizianov@gmail.com', '4': 1420200661, '5': 'select2' },
+				{ '1': '3', '2': 'Zhanna Sharipova', '3': 'sharipova@gmail.com', '4': 1420200662, '5': 'select3' },
+				{ '1': '4', '2': 'Anton Barulenkov', '3': 'barulenkov@gmail.com', '4': 1420200662, '5': 'select4' },
+				{ '1': '5', '2': 'Kirill', '3': 'kirill@gmail.com', '4': 1420200663, '5': 'select5' },
 			]
 		};
 		

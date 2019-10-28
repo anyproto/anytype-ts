@@ -21,6 +21,8 @@ class MenuSort extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onAdd = this.onAdd.bind(this);
+		this.onDelete = this.onDelete.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
@@ -31,19 +33,29 @@ class MenuSort extends React.Component<Props, State> {
 		
 		const { items } = this.state;
 		const typeOptions = [
-			{ id: String(I.SortType.Asc), name: 'Ascending' },
-			{ id: String(I.SortType.Desc), name: 'Descending' },
+			{ id: String(I.SortType.Asc), name: 'From A to Z' },
+			{ id: String(I.SortType.Desc), name: 'From Z to A' },
 		];
 		let propertyOptions: any[] = [];
 		
 		for (let property of properties) {
-			propertyOptions.push({ id: property.id, name: property.name, icon: 'property c' + property.type });
+			propertyOptions.push({ id: property.id, name: property.name, icon: 'property dark c' + property.type });
 		};
 		
 		const Item = SortableElement((item: any) => (
 			<div className="item">
+				<Icon className="dnd" />
 				<Select options={propertyOptions} value={item.propertyId} />
 				<Select options={typeOptions} value={String(item.type)} />
+				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
+			</div>
+		));
+		
+		const ItemAdd = SortableElement((item: any) => (
+			<div className="item add" onClick={this.onAdd}>
+				<Icon className="dnd" />
+				<Icon className="plus" />
+				<div className="name">Add a sort</div>
 			</div>
 		));
 		
@@ -51,8 +63,9 @@ class MenuSort extends React.Component<Props, State> {
 			return (
 				<div className="items">
 					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} index={i} />
+						<Item key={i} {...item} id={i} index={i} />
 					))}
+					<ItemAdd index={items.length + 1} disabled={true} />
 				</div>
 			);
 		});
@@ -70,12 +83,24 @@ class MenuSort extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		this.setState({ 
-			items: [
-				{ propertyId: '1', type: I.SortType.Asc },
-				{ propertyId: '2', type: I.SortType.Asc },
-			]
-		});
+		const { param } = this.props;
+		const { data } = param;
+		const { sort } = data;
+		
+		this.setState({ items: sort });
+	};
+	
+	onAdd (e: any) {
+		let { items } = this.state;
+		
+		items.push({ propertyId: '', sort: I.SortType.Asc });
+		this.setState({ items: items });
+	};
+	
+	onDelete (e: any, id: number) {
+		const { items } = this.state;
+
+		this.setState({ items: items.filter((item: any, i: number) => { console.log(i, id); return i != id; }) });
 	};
 	
 	onSortEnd (result: any) {
