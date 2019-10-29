@@ -3,7 +3,21 @@ import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
 import { BlockType, Permissions, BlockHeader, Block } from './block';
-import { ViewType, View, PropertyType, Property, SortType, Sort, ContentDataview, BlockDataview } from './block/dataview';
+
+import { 
+	ViewType,
+	View,  
+	PropertyType, 
+	Property,
+	SortType,
+	Sort, 
+	FilterTypeCondition,
+	FilterTypeEquality,
+	Filter,
+	ContentDataview,
+	BlockDataview,
+} from './block/dataview';
+
 import { TextStyle, MarkerType, MarkType, Range, Mark, ContentText, BlockText } from './block/text';
 
 export {
@@ -31,6 +45,9 @@ export {
 	Property,
 	SortType,
 	Sort, 
+	FilterTypeCondition,
+	FilterTypeEquality,
+	Filter,
 	ContentDataview,
 	BlockDataview,
 	

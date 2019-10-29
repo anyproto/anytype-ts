@@ -109,7 +109,12 @@ class Controls extends React.Component<Props, {}> {
 				break;
 				
 			case 'sort':
-				data.sort = viewItem.sort;
+				data.sorts = viewItem.sorts;
+				data.properties = properties;
+				break;
+				
+			case 'filter':
+				data.filters = viewItem.filters;
 				data.properties = properties;
 				break;
 				

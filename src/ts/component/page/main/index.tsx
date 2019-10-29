@@ -124,14 +124,18 @@ class PageMainIndex extends React.Component<Props, {}> {
 			views: [
 				{ 
 					id: '1', name: 'Grid', type: I.ViewType.Grid,
-					sort: [
+					sorts: [
 						{ propertyId: '1', type: I.SortType.Asc },
 						{ propertyId: '2', type: I.SortType.Desc },
+					],
+					filters: [
+						{ propertyId: '1', condition: I.FilterTypeCondition.None, equality: I.FilterTypeEquality.Equal, value: '' },
+						{ propertyId: '1', condition: I.FilterTypeCondition.And, equality: I.FilterTypeEquality.Equal, value: '' },
 					]
 				},
-				{ id: '2', name: 'Board', type: I.ViewType.Board, sort: [] },
-				{ id: '3', name: 'Gallery', type: I.ViewType.Gallery, sort: [] },
-				{ id: '4', name: 'List', type: I.ViewType.List, sort: [] },
+				{ id: '2', name: 'Board', type: I.ViewType.Board, sorts: [], filters: [] },
+				{ id: '3', name: 'Gallery', type: I.ViewType.Gallery, sorts: [], filters: [] },
+				{ id: '4', name: 'List', type: I.ViewType.List, sorts: [], filters: [] },
 			],
 			properties: [
 				{ id: '1', name: 'Id', type: I.PropertyType.Number },

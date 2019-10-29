@@ -23,6 +23,8 @@ export enum PropertyType {
 };
 
 export enum SortType { Asc, Desc };
+export enum FilterTypeCondition { None, And, Or };
+export enum FilterTypeEquality { Equal, NotEqual, In, NotIn, Greater, Lesser, Like, NotLike };
 
 export interface Property {
 	id: string;
@@ -36,13 +38,18 @@ export interface Sort {
 };
 
 export interface Filter {
+	propertyId: string;
+	condition: FilterTypeCondition;
+	equality: FilterTypeEquality;
+	value: any;
 };
 
 export interface View {
 	id: string;
 	name: string;
 	type: ViewType;
-	sort: Sort[];
+	sorts: Sort[];
+	filters: Filter[];
 };
 
 export interface ContentDataview {

@@ -43,6 +43,7 @@ import 'scss/menu/property.scss';
 import 'scss/menu/view.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/sort.scss';
+import 'scss/menu/filter.scss';
 import 'scss/menu/help.scss';
 import 'emoji-mart/css/emoji-mart.css';
 

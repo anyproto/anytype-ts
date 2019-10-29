@@ -1,0 +1,15 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuFilter { width: 446px; }
+	.menu.menuFilter {
+		.item { padding: 4px 16px; }
+		.item {
+			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/block/dataview/plus/light0.svg'); }
+			.icon.property { width: 16px; margin-right: 8px; }
+			.select { margin-right: 8px; }
+			.select:last-child { margin: 0px; }
+		}
+		.item.add { color: #aca996; }
+	}
+}

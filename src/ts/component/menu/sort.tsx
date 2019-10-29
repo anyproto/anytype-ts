@@ -36,8 +36,8 @@ class MenuSort extends React.Component<Props, State> {
 			{ id: String(I.SortType.Asc), name: 'From A to Z' },
 			{ id: String(I.SortType.Desc), name: 'From Z to A' },
 		];
-		let propertyOptions: any[] = [];
 		
+		let propertyOptions: any[] = [];
 		for (let property of properties) {
 			propertyOptions.push({ id: property.id, name: property.name, icon: 'property dark c' + property.type });
 		};
@@ -85,9 +85,9 @@ class MenuSort extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { sort } = data;
+		const { sorts } = data;
 		
-		this.setState({ items: sort });
+		this.setState({ items: sorts });
 	};
 	
 	onAdd (e: any) {
