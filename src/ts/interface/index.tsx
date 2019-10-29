@@ -14,6 +14,7 @@ import {
 	FilterTypeCondition,
 	FilterTypeEquality,
 	Filter,
+	Cell,
 	ContentDataview,
 	BlockDataview,
 } from './block/dataview';
@@ -48,6 +49,7 @@ export {
 	FilterTypeCondition,
 	FilterTypeEquality,
 	Filter,
+	Cell,
 	ContentDataview,
 	BlockDataview,
 	

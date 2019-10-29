@@ -62,6 +62,18 @@
 			/* Title */
 			.cell.c0 { font-weight: 500; }
 			
+			/* Multiple */
+			
+			.cell.c5 {
+				.tag { margin: 0px 6px 6px 0px; }
+			}
+			
+			/* Link, Email, Phone */
+			.cell.c9, .cell.c10, .cell.c11 {
+				a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }
+				a:hover { border-color: $colorBlack; }
+			}
+			
 			.view.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
 			.view.viewGrid {
 				.head { 
@@ -73,7 +85,7 @@
 					.icon { margin: -2px 5px 0px 0px; }
 				}
 				
-				td.cell { padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; }
+				td.cell { padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; vertical-align: top; }
 				td.cell:last-child { border-right: 0px; }
 			}
 			

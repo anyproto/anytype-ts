@@ -3,11 +3,11 @@ import { I } from 'ts/lib';
 
 import CellText from './text';
 import CellDate from './date';
+import CellLink from './link';
+import CellSelect from './select';
+import CellMultiple from './multiple';
 
-interface Props {
-	property: I.Property;
-	data: any;
-};
+interface Props extends I.Cell {};
 
 class Cell extends React.Component<Props, {}> {
 
@@ -26,6 +26,20 @@ class Cell extends React.Component<Props, {}> {
 				
 			case I.PropertyType.Date:
 				CellComponent = CellDate;
+				break;
+				
+			case I.PropertyType.Select:
+				CellComponent = CellSelect;
+				break;
+				
+			case I.PropertyType.Multiple:
+				CellComponent = CellMultiple;
+				break;
+				
+			case I.PropertyType.Link:
+			case I.PropertyType.Email:
+			case I.PropertyType.Phone:
+				CellComponent = CellLink;
 				break;
 		};
 		

@@ -1,20 +1,19 @@
 import * as React from 'react';
+import { Tag } from 'ts/component';
 import { I } from 'ts/lib';
 
 interface Props extends I.Cell {};
 
-class CellText extends React.Component<Props, {}> {
+class CellSelect extends React.Component<Props, {}> {
 
 	render () {
 		const { data } = this.props;
 		
 		return (
-			<React.Fragment>
-				{data}
-			</React.Fragment>
+			<Tag text={data} />
 		);
 	};
 	
 };
 
-export default CellText;
+export default CellSelect;

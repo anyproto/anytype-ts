@@ -1,0 +1,17 @@
+.tag {
+	padding: 0px 4px; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; border-radius: 3px; white-space: nowrap;
+	display: inline-block; vertical-align: middle; cursor: pointer; max-width: 100%;
+}
+.tag {
+	.inner { display: inline-block; width: 100%; overflow: hidden; vertical-align: top; }
+}
+.tag.grey { color: #aca996; background: #f7f5f0; }
+.tag.yellow { color: #b3a211; background: #fff7ad; }
+.tag.orange { color: #d3720d; background: #ffeec2; }
+.tag.red { color: #e1320a; background: #ffe5de; }
+.tag.pink { color: #d90a50; background: #fee2eb; }
+.tag.purple { color: #b740cd; background: #f7e6fa; }
+.tag.blue { color: #3e58e9; background: #e6e8f9; }
+.tag.ice { color: #1092d9; background: #d3f0fe; }
+.tag.teal { color: #0fb194; background: #dbf4f0; }
+.tag.lime { color: #80b822; background: #e6f5ce; }

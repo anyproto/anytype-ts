@@ -23,6 +23,7 @@ import Cover from './util/cover';
 import Title from './util/title';
 import Label from './util/label';
 import Smile from './util/smile';
+import Tag from './util/tag';
 
 import Dimmer from './util/dimmer';
 import Switch from './util/switch';
@@ -52,6 +53,7 @@ export {
 	TextArea,
 	Button,
 	Select,
+	Tag,
 	Menu,
 	MenuItemVertical,
 	MenuItemMain,

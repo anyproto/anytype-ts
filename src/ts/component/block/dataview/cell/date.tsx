@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { I, Util } from 'ts/lib';
 
-interface Props {
-	property: I.Property;
-	data: any;
-};
+interface Props extends I.Cell {};
 
-class CellText extends React.Component<Props, {}> {
+class CellDate extends React.Component<Props, {}> {
 
 	render () {
 		const { data } = this.props;
@@ -21,4 +18,4 @@ class CellText extends React.Component<Props, {}> {
 	
 };
 
-export default CellText;
+export default CellDate;

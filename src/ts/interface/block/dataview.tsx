@@ -52,6 +52,11 @@ export interface View {
 	filters: Filter[];
 };
 
+export interface Cell {
+	property: Property;
+	data: any;
+};
+
 export interface ContentDataview {
 	view: string;
 	properties: Property[];
