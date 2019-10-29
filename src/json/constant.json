@@ -9,6 +9,21 @@
 		}
 	},
 	
+	"propertyName": {
+		"0": "Title",
+		"1": "Description",
+		"2": "Number",
+		"3": "Select",
+		"4": "Multiple select",
+		"5": "Date",
+		"6": "Assign",
+		"7": "File & Media",
+		"8": "Checkbox",
+		"9": "URL",
+		"10": "E-mail",
+		"11": "Phone"
+	},
+	
 	"month": {
 		"1": "January",
 		"2": "February",

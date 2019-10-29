@@ -1,5 +1,5 @@
 export enum MenuType { Vertical = 1, Horizontal };
-export enum MenuDirection { Top = 1, Bottom, Left, Right };
+export enum MenuDirection { Top = 1, Bottom, Left, Right, Center };
 
 export interface MenuParam {
 	element: string;

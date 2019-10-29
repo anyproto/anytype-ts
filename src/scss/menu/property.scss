@@ -10,4 +10,16 @@
 		}
 		.item.add { color: #aca996; }
 	}
+	
+	.menu.menuPropertyEdit { width: 208px; }
+	.menu.menuPropertyEdit {
+		.wrap { padding: 8px 16px; }
+		.line { height: 1px; margin: 8px 0px; background: #dfddd0; }
+		.input { border: 1px solid #dfddd0; font-size: 13px; }
+		
+		.icon.arrow { 
+			width: 6px; height: 10px; position: absolute; right: 16px; top: 50%; margin: -5px 0px 0px 0px; 
+			background-image: url('~img/icon/menu/arrow.svg'); 
+		}
+	}
 }

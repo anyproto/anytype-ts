@@ -9,6 +9,7 @@ const BORDER = 12;
 import MenuHelp from './help';
 import MenuAccount from './account';
 import MenuPropertyList from './property/list';
+import MenuPropertyEdit from './property/edit';
 import MenuFilter from './filter';
 import MenuSort from './sort';
 import MenuView from './view';
@@ -30,6 +31,7 @@ class Menu extends React.Component<Props, {}> {
 			help: MenuHelp,
 			account: MenuAccount,
 			propertyList: MenuPropertyList,
+			propertyEdit: MenuPropertyEdit,
 			filter: MenuFilter,
 			sort: MenuSort,
 			view: MenuView,
@@ -132,6 +134,9 @@ class Menu extends React.Component<Props, {}> {
 			};
 			
 			if (horizontal == I.MenuDirection.Left) {
+				x += offsetX;
+			};
+			if (horizontal == I.MenuDirection.Center) {
 				x += offsetX;
 			};
 			if (horizontal == I.MenuDirection.Right) {

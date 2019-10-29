@@ -25,7 +25,7 @@ class ListMenu extends React.Component<Props, {}> {
 		return (
 			<div className="menus">
 				{menus.map((item: I.Menu, i: number) => (
-					<Menu history={history} key={item.id} {...item} />
+					<Menu history={history} key={i} {...item} />
 				))}
 				{menus.length ? <Dimmer onClick={this.onClose} /> : ''}
 			</div>

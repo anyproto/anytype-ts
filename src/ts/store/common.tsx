@@ -9,6 +9,7 @@ class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
 	@observable public coverId: number = 0;
+	t: number = 0;
 	
 	@computed
 	get cover(): number {
@@ -64,7 +65,8 @@ class CommonStore {
 			dimmer.removeClass('show');
 		};
 		
-		setTimeout(() => {
+		window.clearTimeout(this.t);
+		this.t = window.setTimeout(() => {
 			this.popupList = this.popupList.filter((item: I.Popup) => { return item.id != id; });
 		}, TIMEOUT);
 	};
@@ -86,8 +88,9 @@ class CommonStore {
 			throw 'Element is not defined';
 		};
 		
-		this.menuClose(id);
-		this.menuList.push({ id: id, param: param });
+		this.menuClose(id, () => {
+			this.menuList.push({ id: id, param: param });			
+		});
 	};
 	
 	menuIsOpen (id: string): boolean {
@@ -95,10 +98,13 @@ class CommonStore {
 	};
 	
 	@action
-	menuClose (id: string) {
+	menuClose (id: string, callBack?: () => void) {
 		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
 		
 		if (!item) {
+			if (callBack) {
+				callBack();
+			};
 			return;
 		};
 		
@@ -111,8 +117,13 @@ class CommonStore {
 			el.css({ transform: '' }).removeClass('show');
 		};
 		
-		setTimeout(() => {
-			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });			
+		window.clearTimeout(this.t);
+		this.t = window.setTimeout(() => {
+			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
+			
+			if (callBack) {
+				callBack();
+			};
 		}, TIMEOUT);
 	};
 	

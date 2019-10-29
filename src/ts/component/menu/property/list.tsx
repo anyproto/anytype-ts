@@ -3,15 +3,20 @@ import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
 import { I } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 import arrayMove from 'array-move';
 
 const $ = require('jquery');
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {
+	commonStore?: any;
+};
 interface State {
 	items: I.Property[];
 };
 
+@inject('commonStore')
+@observer
 class MenuPropertyList extends React.Component<Props, State> {
 	
 	state = {
@@ -21,6 +26,8 @@ class MenuPropertyList extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onAdd = this.onAdd.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
@@ -29,7 +36,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 		const { items } = this.state;
 		
 		const Item = SortableElement((item: any) => (
-			<div className="item">
+			<div id={'property-' + item.id} className="item" onClick={(e: any) => { this.onEdit(e, item.id); }}>
 				<Icon className="dnd" />
 				<Icon className={'property dark c' + item.type} />
 				<div className="name">{item.name}</div>
@@ -38,7 +45,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 		));
 		
 		const ItemAdd = SortableElement((item: any) => (
-			<div className="item add">
+			<div id="property-add" className="item add" onClick={this.onAdd}>
 				<Icon className="dnd" />
 				<Icon className="plus" />
 				<div className="name">New property</div>
@@ -74,6 +81,44 @@ class MenuPropertyList extends React.Component<Props, State> {
 		const { properties } = data;
 		
 		this.setState({ items: properties });
+	};
+	
+	onAdd (e: any) {
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const { properties } = data;
+		
+		commonStore.menuOpen('propertyEdit', { 
+			element: 'property-add',
+			offsetX: 8,
+			offsetY: 4,
+			light: true,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				properties: properties,
+				property: ''
+			}
+		});
+	};
+	
+	onEdit (e: any, id: string) {
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const { properties } = data;
+		
+		commonStore.menuOpen('propertyEdit', { 
+			element: 'property-' + id,
+			offsetX: 8,
+			offsetY: 4,
+			light: true,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				properties: properties,
+				property: id
+			}
+		});
 	};
 	
 	onSortEnd (result: any) {
