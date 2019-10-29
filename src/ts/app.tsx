@@ -19,8 +19,7 @@ import 'scss/component/textArea.scss';
 import 'scss/component/smile.scss';
 import 'scss/component/error.scss';
 import 'scss/component/frame.scss';
-import 'scss/component/popup.scss';
-import 'scss/component/menu.scss';
+
 import 'scss/component/switch.scss';
 import 'scss/component/title.scss';
 import 'scss/component/select.scss';
@@ -37,8 +36,10 @@ import 'scss/block/image.scss';
 import 'scss/block/video.scss';
 import 'scss/block/file.scss';
 
+import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
 
+import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/property.scss';
 import 'scss/menu/view.scss';

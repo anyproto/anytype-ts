@@ -27,7 +27,7 @@ class MenuPropertyType extends React.Component<Props, {}> {
 		const propertyItem = properties.find((item: any) => { return item.id == property; });
 		
 		const Item = (item: any) => (
-			<div className={'item ' + (item.type == propertyItem.type ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
+			<div className={'item ' + (propertyItem && (item.type == propertyItem.type) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
 				<Icon className={'property dark c' + item.type} />
 				<div className="name">{Constant.propertyName[item.type]}</div>
 			</div>
