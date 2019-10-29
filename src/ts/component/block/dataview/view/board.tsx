@@ -24,7 +24,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		const Card = (item: any) => (
 			<div className="card">
 				{properties.map((property: any, i: number) => (
-					<Cell key={property.id} property={...property} data={data[item.index][property.id]} />
+					<Cell key={property.id} id={item.index} property={...property} data={item.data[property.id]} />
 				))}
 			</div>
 		);
@@ -32,11 +32,11 @@ class ViewBoard extends React.Component<Props, {}> {
 		const Column = (item: any) => (
 			<div className="column">
 				<div className="head">
-					<Cell property={group} data={item.value} />
+					<Cell id={0} property={group} data={item.value} />
 				</div>
 				<div className="list">
 					{item.list.map((child: any, i: number) => (
-						<Card key={i} index={i} {...child} />
+						<Card key={i} data={...child} />
 					))}
 					<div className="card add">
 						<Icon className="plus" />
@@ -63,8 +63,12 @@ class ViewBoard extends React.Component<Props, {}> {
 		let groupBy = GROUP;
 		let r: Column[] = [];
 		
-		for (let item of data) {
+		for (let i in data) {
+			let item = data[i];
 			let col = r.find((col) => { return col.value == item[groupBy]; });
+			
+			item.index = i;
+			
 			if (!col) {
 				col = { value: item[groupBy], list: [] }
 				r.push(col);

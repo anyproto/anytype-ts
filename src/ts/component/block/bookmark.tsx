@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { Icon, Input } from 'ts/component';
 import { I, keyBoard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -9,7 +9,7 @@ interface Props extends I.BlockText {
 
 @inject('blockStore')
 @observer
-class BlockImage extends React.Component<Props, {}> {
+class BlockBookmark extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -29,10 +29,11 @@ class BlockImage extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
+				<Input />
 			</React.Fragment>
 		);
 	};
 	
 };
 
-export default BlockImage;
+export default BlockBookmark;

@@ -21,7 +21,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const CellBody = (item: any) => (
 			<td className={'cell c' + item.property.type}>
-				<Cell {...item} />
+				<Cell {...item} id={item.index} />
 			</td>
 		);
 		
@@ -39,7 +39,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowBody = (item: any) => (
 			<tr className="row">
 				{properties.map((property: any, i: number) => (
-					<CellBody key={property.id} property={...property} data={data[item.index][property.id]} />
+					<CellBody key={property.id} index={item.index} property={...property} data={data[item.index][property.id]} />
 				))}
 				<td className="cell">&nbsp;</td>
 			</tr>

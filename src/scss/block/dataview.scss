@@ -55,7 +55,7 @@
 		.content {
 			.view { border-top: 1px solid #e0ded2; }
 			
-			.card { height: 112px; border: 1px solid #dfddd0; border-radius: 12px; padding: 16px; }
+			.card { min-height: 112px; border: 1px solid #dfddd0; border-radius: 12px; padding: 16px; }
 			
 			.cell { font-size: 13px; line-height: 18px; letter-spacing: -0.08px; }
 			
@@ -78,7 +78,7 @@
 			.view.viewGrid {
 				.head { 
 					text-align: left; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #aca996; font-weight: 400;
-					padding: 7px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2;
+					padding: 7px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; white-space: nowrap;
 				}
 				.head:last-child { border-right: 0px; }
 				.head {
@@ -100,7 +100,7 @@
 				.cell.c3 { color: #6c6a5f; }
 			
 				.card { 
-					width: 260px; height: 112px; border: 1px solid #dfddd0; border-radius: 12px; padding: 16px; 
+					width: 260px; border: 1px solid #dfddd0; border-radius: 12px; padding: 16px; 
 					margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;
 				}
 			}
@@ -115,7 +115,7 @@
 				.card { width: 100%; margin-bottom: 8px; }
 				
 				.card.add { 
-					height: auto; text-align: center; padding: 10px 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
+					min-height: 0px; text-align: center; padding: 10px 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
 				}
 				.card.add {
 					.icon { vertical-align: top; }

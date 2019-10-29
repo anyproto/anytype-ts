@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { I, Util } from 'ts/lib';
 import { Icon } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { observer, inject } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {
+	commonStore?: any;
+};
 
+@inject('commonStore')
+@observer
 class MenuView extends React.Component<Props, {}> {
 	
 	constructor(props: any) {
@@ -43,6 +47,7 @@ class MenuView extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, id: number) {
+		const { commonStore } = this.props;
 		commonStore.menuClose(this.props.id);
 	};
 	

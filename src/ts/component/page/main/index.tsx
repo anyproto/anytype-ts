@@ -187,7 +187,15 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		for (let i = 10; i < 15; ++i) {
 			list.push({ 
-				header: { id: String(i), type: 5, name: '', icon: '' },
+				header: { id: String(i), type: I.BlockType.Image, name: '', icon: '' },
+				content: {
+				},
+			});
+		};
+		
+		for (let i = 15; i < 20; ++i) {
+			list.push({ 
+				header: { id: String(i), type: I.BlockType.Bookmark, name: '', icon: '' },
 				content: {
 				},
 			});

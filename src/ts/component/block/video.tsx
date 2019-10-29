@@ -28,8 +28,8 @@ class BlockVideo extends React.Component<Props, {}> {
 		const { content } = block;
 		
 		return (
-			<div>
-			</div>
+			<React.Fragment>
+			</React.Fragment>
 		);
 	};
 	

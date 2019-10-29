@@ -53,6 +53,7 @@ export interface View {
 };
 
 export interface Cell {
+	id: number;
 	property: Property;
 	data: any;
 };

@@ -7,6 +7,7 @@ export enum BlockType {
 	File		 = 4,
 	Image		 = 5,
 	Video		 = 6,
+	Bookmark	 = 7,
 };
 
 export interface Permissions {

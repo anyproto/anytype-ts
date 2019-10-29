@@ -46,6 +46,7 @@ import 'scss/menu/smile.scss';
 import 'scss/menu/sort.scss';
 import 'scss/menu/filter.scss';
 import 'scss/menu/help.scss';
+import 'scss/menu/calendar.scss';
 import 'emoji-mart/css/emoji-mart.css';
 
 interface RouteElement { path: string; };

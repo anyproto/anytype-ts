@@ -44,7 +44,7 @@ class Smile extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div id={'button-' + id} className={cn.join(' ')} onClick={this.onClick}>
+			<div id={id} className={cn.join(' ')} onClick={this.onClick}>
 				{icon ? <Emoji emoji={icon} set="apple" size={size} backgroundImageFn={() => ''} /> : ''}
 			</div>
 		);
@@ -58,7 +58,7 @@ class Smile extends React.Component<Props, State> {
 		};
 		
 		commonStore.menuOpen('smile', { 
-			element: 'button-' + id,
+			element: id,
 			type: I.MenuType.Vertical,
 			offsetX: 52,
 			offsetY: -48,

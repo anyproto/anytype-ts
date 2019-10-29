@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { I, Util } from 'ts/lib';
 import { Icon, Input } from 'ts/component';
-import { commonStore } from 'ts/store';
 import { observer, inject } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {
+	commonStore?: any;
+};
 
 const Constant = require('json/constant.json');
 
+@inject('commonStore')
+@observer
 class MenuPropertyEdit extends React.Component<Props, {}> {
 	
 	constructor(props: any) {
@@ -17,7 +20,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param } = this.props;
+		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { properties, property } = data;
 		const propertyItem = properties.find((item: any) => { return item.id == property; });
@@ -60,7 +63,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 	};
 	
 	onType (e: any) {
-		const { param } = this.props;
+		const { commonStore, param } = this.props;
 		const { data } = param;
 		
 		commonStore.menuOpen('propertyType', { 

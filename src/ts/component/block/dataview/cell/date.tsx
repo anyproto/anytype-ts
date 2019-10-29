@@ -6,7 +6,7 @@ interface Props extends I.Cell {};
 class CellDate extends React.Component<Props, {}> {
 
 	render () {
-		const { data } = this.props;
+		const { property, data } = this.props;
 		const format = 'M d, Y';
 		
 		return (

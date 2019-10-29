@@ -15,7 +15,7 @@ class ViewList extends React.Component<Props, {}> {
 		const Card = (item: any) => (
 			<div className="item">
 				{properties.map((property: any, i: number) => (
-					<Cell key={property.id} property={...property} data={data[item.index][property.id]} />
+					<Cell key={property.id} id={item.index} property={...property} data={data[item.index][property.id]} />
 				))}
 			</div>
 		);

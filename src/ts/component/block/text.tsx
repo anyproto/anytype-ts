@@ -91,9 +91,9 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div>
+			<React.Fragment>
 				{editor}
-			</div>
+			</React.Fragment>
 		);
 	};
 	

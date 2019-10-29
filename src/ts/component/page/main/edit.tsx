@@ -5,9 +5,11 @@ import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
+	commonStore?: any;
 	blockStore?: any;
 };
 
+@inject('commonStore')
 @inject('blockStore')
 @observer
 class PageMainEdit extends React.Component<Props, {}> {
@@ -17,7 +19,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { blockStore, match } = this.props;
+		const { commonStore, blockStore, match } = this.props;
 		const { blocks } = blockStore;
 		
 		return (
@@ -28,7 +30,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					<div className="editor">
 						<div className="blocks">
 							<div className="title">
-								<Smile id="main-icon" canEdit={true} size={24} icon=":family:" className="c48" />
+								<Smile id="main-icon" canEdit={true} size={24} icon=":family:" className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 								Contacts
 							</div>
 							{blocks.map((item: I.Block, i: number) => ( 

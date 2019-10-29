@@ -65,12 +65,12 @@ class BlockDataview extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div>
+			<React.Fragment>
 				<Controls {...this.props} view={view} viewType={viewItem.type} onView={this.onView} />
 				<div className="content">
 					<ViewComponent {...this.props} />
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 	

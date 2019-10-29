@@ -8,6 +8,7 @@ import BlockText from './text';
 import BlockImage from './image';
 import BlockVideo from './video';
 import BlockFile from './file';
+import BlockBookmark from './bookmark';
 
 interface Props extends I.Block {};
 
@@ -42,6 +43,11 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.File:
 				cn.push('blockFile');
 				BlockComponent = BlockFile;
+				break;
+				
+			case I.BlockType.Bookmark:
+				cn.push('blockBookmark');
+				BlockComponent = BlockBookmark;
 				break;
 			
 			case I.BlockType.Dataview:

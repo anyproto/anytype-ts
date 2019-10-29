@@ -9,7 +9,6 @@ class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
 	@observable public coverId: number = 0;
-	t: number = 0;
 	
 	@computed
 	get cover(): number {
@@ -65,8 +64,7 @@ class CommonStore {
 			dimmer.removeClass('show');
 		};
 		
-		window.clearTimeout(this.t);
-		this.t = window.setTimeout(() => {
+		window.setTimeout(() => {
 			this.popupList = this.popupList.filter((item: I.Popup) => { return item.id != id; });
 		}, TIMEOUT);
 	};
@@ -117,8 +115,7 @@ class CommonStore {
 			el.css({ transform: '' }).removeClass('show');
 		};
 		
-		window.clearTimeout(this.t);
-		this.t = window.setTimeout(() => {
+		window.setTimeout(() => {
 			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
 			
 			if (callBack) {

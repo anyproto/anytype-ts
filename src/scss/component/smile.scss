@@ -20,3 +20,4 @@
 
 .smile.canEdit { cursor: pointer; transition: background-color 0.2s ease-in-out; }
 .smile.canEdit.c48:hover, .smile.canEdit.c64:hover { background-color: #ebe9e0; }
+.smile.canEdit.c48.active, .smile.canEdit.c64.active { background-color: #ebe9e0; }
