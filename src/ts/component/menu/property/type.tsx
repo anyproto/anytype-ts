@@ -31,7 +31,7 @@ class MenuPropertyType extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<div className="title">Property type</div>
+				<div className="title">Type of property</div>
 				<div className="items">
 					{properties.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
