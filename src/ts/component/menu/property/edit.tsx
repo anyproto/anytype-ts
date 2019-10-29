@@ -2,6 +2,7 @@ import * as React from 'react';
 import { I, Util } from 'ts/lib';
 import { Icon, Input } from 'ts/component';
 import { commonStore } from 'ts/store';
+import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
@@ -11,6 +12,8 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 	
 	constructor(props: any) {
 		super(props);
+		
+		this.onType = this.onType.bind(this);
 	};
 
 	render () {
@@ -22,7 +25,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 		let current = null;
 		if (property) {
 			current = (
-				<div className="item">
+				<div id="property-type" className={'item ' + (commonStore.menuIsOpen('propertyType') ? 'active' : '')} onClick={this.onType}>
 					<Icon className={'property dark c' + propertyItem.type} />
 					<div className="name">{Constant.propertyName[propertyItem.type]}</div>
 					<Icon className="arrow" />
@@ -30,7 +33,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 			);
 		} else {
 			current = (
-				<div className="item">
+				<div id="property-type" className={'item ' + (commonStore.menuIsOpen('propertyType') ? 'active' : '')} onClick={this.onType}>
 					<div className="name">Select type</div>
 					<Icon className="arrow" />
 				</div>
@@ -54,6 +57,27 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+	
+	onType (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		
+		commonStore.menuOpen('propertyType', { 
+			element: 'property-type',
+			offsetX: 208,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			light: true,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				onSelect: (id: string) => {
+					console.log('Type', id);
+				},
+				...data
+			}
+		});
 	};
 	
 };

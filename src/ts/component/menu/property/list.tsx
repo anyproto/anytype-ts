@@ -32,7 +32,6 @@ class MenuPropertyList extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id } = this.props;
 		const { items } = this.state;
 		
 		const Item = SortableElement((item: any) => (
@@ -109,7 +108,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 		
 		commonStore.menuOpen('propertyEdit', { 
 			element: 'property-' + id,
-			offsetX: 8,
+			offsetX: 0,
 			offsetY: 4,
 			light: true,
 			vertical: I.MenuDirection.Bottom,

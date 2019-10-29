@@ -10,6 +10,7 @@ import MenuHelp from './help';
 import MenuAccount from './account';
 import MenuPropertyList from './property/list';
 import MenuPropertyEdit from './property/edit';
+import MenuPropertyType from './property/type';
 import MenuFilter from './filter';
 import MenuSort from './sort';
 import MenuView from './view';
@@ -32,6 +33,7 @@ class Menu extends React.Component<Props, {}> {
 			account: MenuAccount,
 			propertyList: MenuPropertyList,
 			propertyEdit: MenuPropertyEdit,
+			propertyType: MenuPropertyType,
 			filter: MenuFilter,
 			sort: MenuSort,
 			view: MenuView,
@@ -129,6 +131,9 @@ class Menu extends React.Component<Props, {}> {
 			if (vertical == I.MenuDirection.Top) {
 				y -= height + offsetY;
 			};
+			if (vertical == I.MenuDirection.Center) {
+				y =  y - height / 2 + eh / 2 + offsetY;
+			};
 			if (vertical == I.MenuDirection.Bottom) {
 				y += eh + offsetY;
 			};
@@ -137,7 +142,7 @@ class Menu extends React.Component<Props, {}> {
 				x += offsetX;
 			};
 			if (horizontal == I.MenuDirection.Center) {
-				x += offsetX;
+				x = x + ew / 2 - width / 2 + offsetX;
 			};
 			if (horizontal == I.MenuDirection.Right) {
 				x -= width + offsetX - ew;
