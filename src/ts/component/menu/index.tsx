@@ -16,6 +16,7 @@ import MenuSort from './sort';
 import MenuView from './view';
 import MenuSmile from './smile';
 import MenuCalendar from './calendar';
+import MenuTag from './tag';
 
 interface Props extends I.Menu {
 	history: any;
@@ -40,6 +41,7 @@ class Menu extends React.Component<Props, {}> {
 			view: MenuView,
 			smile: MenuSmile,
 			calendar: MenuCalendar,
+			tag: MenuTag,
 		};
 		
 		const menuId = Util.toCamelCase('menu-' + id);

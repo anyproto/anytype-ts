@@ -5,17 +5,18 @@
 	.menu.menuCalendar {
 		.day { 
 			display: inline-block; vertical-align: top; width: 28px; height: 28px; text-align: center; font-size: 13px; line-height: 30px;
-			cursor: pointer; border-radius: 4px; letter-spacing: 0.1px; transition: background 0.2s ease-in-out;
+			cursor: pointer; border-radius: 4px; letter-spacing: 0.1px;
 		}
-		.day:hover { background: #ebe9e0; }
+		.day:hover { background: $colorOrange; color: #fff; font-weight: 500; }
 		
 		.day.th { color: #aca996; cursor: default; }
-		.day.th:hover { background: none; }
+		.day.th:hover { background: none; font-weight: 400; }
 		
-		.day.active { background: $colorOrange; }
-		.day.active:hover { background: $colorOrange; }
+		.day.active { color: #f55522; font-weight: 500; }
+		.day.active:hover { background: $colorOrange; color: #fff; font-weight: 500; }
 		
 		.day.dis { color: #aca996; }
+		.day.dis:hover { color: #fff; }
 		
 		.month { height: 28px; line-height: 28px; font-size: 13px; letter-spacing: 0.1px; position: relative; margin-bottom: 4px; }
 		.month { 
@@ -23,7 +24,7 @@
 			.icons { position: absolute; right: 0px; top: 0px; }
 			.icon.arrow { 
 				cursor: pointer; width: 28px; height: 28px; background-image: url('~img/arrow/calendar.svg');
-				background-size: 6px 10px; border-radius: 4px; margin: 0px;
+				background-size: 8px 12px; border-radius: 4px; margin: 0px;
 			}
 			.icon.arrow:hover { background-color: #ebe9e0; }
 			.icon.arrow.right { transform: rotateZ(180deg); }

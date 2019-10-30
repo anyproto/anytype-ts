@@ -63,20 +63,31 @@ class Cell extends React.Component<Props, {}> {
 	
 	onClick () {
 		const { commonStore, id, property, data } = this.props;
+		const element = [ 'cell', property.id, id ].join('-');
+		
+		let param: any = { 
+			element: element,
+			offsetY: 4,
+			light: true,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: { value: data }
+		};
 		
 		switch (property.type) {
 			case I.PropertyType.Date:
-				commonStore.menuOpen('calendar', { 
-					element: [ 'cell', property.id, id ].join('-'),
-					offsetY: 4,
-					light: true,
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Center,
-					data: {
-						value: data,
-						onChange: (value: number) => { console.log('value', value); }
-					}
-				});
+				param.data.onChange = (value: number) => {
+					console.log('value', value); 
+				};
+				
+				commonStore.menuOpen('calendar', param);
+				break;
+				
+			case I.PropertyType.Select:
+			case I.PropertyType.Multiple:
+				param.data.values = property.values;
+			
+				commonStore.menuOpen('tag', param);
 				break;
 		};
 	};

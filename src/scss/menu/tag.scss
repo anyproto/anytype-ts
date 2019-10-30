@@ -1,0 +1,11 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuTag { width: 228px; }
+	.menu.menuTag {
+		.form { padding: 0px 10px; }
+		.line { height: 1px; margin: 8px 0px; background: #dfddd0; }
+		.input { padding: 0px; font-size: 13px; height: 18px; }
+		.item { padding: 5px 10px; }
+	}	
+}

@@ -13,13 +13,13 @@ import 'scss/component/header.scss';
 import 'scss/component/footer.scss';
 import 'scss/component/cover.scss';
 import 'scss/component/input.scss';
+import 'scss/component/inputWithFile.scss';
 import 'scss/component/button.scss';
 import 'scss/component/icon.scss';
 import 'scss/component/textArea.scss';
 import 'scss/component/smile.scss';
 import 'scss/component/error.scss';
 import 'scss/component/frame.scss';
-
 import 'scss/component/switch.scss';
 import 'scss/component/title.scss';
 import 'scss/component/select.scss';
@@ -48,6 +48,7 @@ import 'scss/menu/sort.scss';
 import 'scss/menu/filter.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/calendar.scss';
+import 'scss/menu/tag.scss';
 import 'emoji-mart/css/emoji-mart.css';
 
 interface RouteElement { path: string; };

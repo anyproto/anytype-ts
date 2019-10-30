@@ -30,6 +30,7 @@ export interface Property {
 	id: string;
 	name: string;
 	type: PropertyType;
+	values?: any[];
 };
 
 export interface Sort {

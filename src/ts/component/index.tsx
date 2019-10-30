@@ -28,6 +28,7 @@ import Tag from './util/tag';
 import Dimmer from './util/dimmer';
 import Switch from './util/switch';
 import Input from './util/input';
+import InputWithFile from './util/inputWithFile';
 import TextArea from './util/textArea';
 import Button from './util/button';
 import Error from './util/error';
@@ -50,6 +51,7 @@ export {
 	Dimmer,
 	Switch,
 	Input,
+	InputWithFile,
 	TextArea,
 	Button,
 	Select,

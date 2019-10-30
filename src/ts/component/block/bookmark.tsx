@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Input } from 'ts/component';
+import { Icon, InputWithFile } from 'ts/component';
 import { I, keyBoard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -29,7 +29,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<Input />
+				<InputWithFile />
 			</React.Fragment>
 		);
 	};
