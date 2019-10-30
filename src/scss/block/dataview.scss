@@ -7,6 +7,9 @@
 		.icon.plus.dark { background-image: url('~img/icon/block/dataview/plus/dark0.svg'); }
 		.icon.plus.dark:hover { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
 		
+		.icon.checkBox { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/bool0.svg'); }
+		.icon.checkBox.active { background-image: url('~img/icon/block/dataview/bool1.svg'); }
+		
 		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: #aca996; font-weight: bold; margin-bottom: 16px; }
 		.views {
 			.item { margin-right: 20px; display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; }
@@ -67,6 +70,8 @@
 			.cell.c5 {
 				.tag { margin: 0px 6px 6px 0px; }
 			}
+			
+			.cell.c8 { cursor: pointer; }
 			
 			/* Link, Email, Phone */
 			.cell.c9, .cell.c10, .cell.c11 {

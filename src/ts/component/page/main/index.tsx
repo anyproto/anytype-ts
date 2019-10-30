@@ -154,7 +154,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			data: [
 				{ 
 					'1': '1', '2': 'Anton Pronkin', '4': 'pronkin@gmail.com', '5': 1420200661, '6': 'select1', '11': 'http://anytype.io', 
-					'12': '+7 (1234) 5678910', '7': [ 'value1', 'value2', 'value3' ] 
+					'12': '+7 (1234) 5678910', '7': [ 'value1', 'value2', 'value3' ], '10': true
 				},
 				{ '1': '2', '2': 'Roman Khafizianov', '4': 'khafizianov@gmail.com', '5': 1420200661, '6': 'select2', '11': 'ftp://anytype.io' },
 				{ '1': '3', '2': 'Zhanna Sharipova', '4': 'sharipova@gmail.com', '5': 1420200662, '6': 'select3', '11': 'telnet://anytype.io' },

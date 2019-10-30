@@ -7,6 +7,7 @@ import CellDate from './date';
 import CellLink from './link';
 import CellSelect from './select';
 import CellMultiple from './multiple';
+import CellBool from './bool';
 
 interface Props extends I.Cell {
 	commonStore?: any;
@@ -45,6 +46,10 @@ class Cell extends React.Component<Props, {}> {
 				
 			case I.PropertyType.Multiple:
 				CellComponent = CellMultiple;
+				break;
+				
+			case I.PropertyType.Bool:
+				CellComponent = CellBool;
 				break;
 				
 			case I.PropertyType.Link:
@@ -89,6 +94,9 @@ class Cell extends React.Component<Props, {}> {
 			
 				commonStore.menuOpen('tag', param);
 				break;
+				
+			case I.PropertyType.Bool:
+				break; 
 		};
 	};
 	
