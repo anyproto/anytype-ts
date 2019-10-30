@@ -11,11 +11,10 @@ export enum BlockType {
 };
 
 export interface Permissions {
-	editable: boolean;
-	removable: boolean;
-	readable: boolean;
-	draggable: boolean;
-	droppable: boolean;
+	edit: boolean;
+	remove: boolean;
+	drag: boolean;
+	dropOn: boolean;
 }
 
 export interface BlockHeader {

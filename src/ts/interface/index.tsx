@@ -20,6 +20,7 @@ import {
 } from './block/dataview';
 
 import { TextStyle, MarkerType, MarkType, Range, Mark, ContentText, BlockText } from './block/text';
+import { ContentMedia, BlockMedia } from './block/media';
 
 export {
 	ImageSize, 
@@ -60,4 +61,7 @@ export {
 	Mark, 
 	ContentText, 
 	BlockText,
+	
+	ContentMedia, 
+	BlockMedia,
 }

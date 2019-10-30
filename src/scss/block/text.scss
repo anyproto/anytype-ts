@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockText { word-wrap: break-word; }
+	.block.blockText { word-wrap: break-word; display: flex; }
 	.block.blockText {
 		.value { -webkit-user-modify: read-write-plaintext-only; }
 		
@@ -11,5 +11,39 @@
 		.h3 { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; font-weight: 600; }
 		.h4 { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; }
 		.quote { font-size: 13px; line-height: 22px; letter-spacing: 0.08px; }
-	}	
+		
+		.markers {
+			.marker { 
+				width: 24px; height: 24px; line-height: 24px; text-align: center; margin-right: 4px; display: inline-block;
+				vertical-align: top; position: relative; 
+			}
+			.marker {
+				.icon { position: absolute; left: 50%; top: 50%; }
+			}
+			
+			.marker.bullet.c1 {
+			}
+			.marker.bullet.c2 {
+				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; margin: -3px 0px 0px -3px; }
+			}
+			
+			.marker.toggle { cursor: pointer; }
+			.marker.toggle {
+				.icon { width: 6px; height: 10px; background-image: url('~img/icon/marker/toggle.svg'); margin: -5px 0px 0px -3px; }
+			}
+			.marker.toggle.active {
+				.icon { transform: rotateZ(90deg); }
+			}
+			
+			.marker.check { cursor: pointer; }
+			.marker.check {
+				.icon {
+					width: 18px; height: 18px; background-image: url('~img/icon/marker/check0.svg'); margin: -9px 0px 0px -9px;
+				}
+			}
+			.marker.check.active {
+				.icon { background-image: url('~img/icon/marker/check1.svg'); }
+			}
+		}
+	}
 }

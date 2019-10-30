@@ -12,9 +12,7 @@ interface Props {
 	icon?: string;
 	textUrl?: string;
 	textFile?: string;
-	accept?: string;
 	withFile?: boolean;
-	preventSmall?: boolean;
 	onChangeUrl? (e: any, url: string): void;
 	onChangeFile? (e: any, file: any): void;
 };
@@ -51,7 +49,7 @@ class InputWithFile extends React.Component<Props, State> {
 	
 	render () {
 		const { focused, small } = this.state;
-		const { icon, textUrl, textFile, accept, withFile, preventSmall } = this.props;
+		const { icon, textUrl, textFile, withFile } = this.props;
 
 		let cn = [ 'inputWithFile' ];		
 		let placeHolder = textUrl;
@@ -112,12 +110,6 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	resize () {
-		const { preventSmall } = this.props;
-		
-		if (preventSmall) {
-			return;
-		};
-		
 		let node = $(ReactDOM.findDOMNode(this));
 		let text = node.find('#text');
 		let width = text.width();

@@ -7,11 +7,20 @@ interface Props extends I.BlockText {
 	blockStore?: any;
 };
 
+interface State {
+	checked: boolean;
+	toggled: boolean;
+};
+
 @inject('blockStore')
 @observer
 class BlockText extends React.Component<Props, {}> {
 
 	editorRef: any = null;
+	state = {
+		checked: false,
+		toggled: false
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -20,34 +29,49 @@ class BlockText extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onToggle = this.onToggle.bind(this);
+		this.onCheck = this.onCheck.bind(this);
 	};
 
 	render () {
-		
 		const { blockStore, header } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		const { toggled, checked } = this.state;
 		
 		if (!block) {
 			return <div />;
 		};
 		
 		const { content } = block;
-		const { text, marks, style } = content;
+		const { text, marks, style, marker, toggleable, checkable } = content;
 		
 		let html = this.marksToHtml(text, marks);
 		let editor = (
 			<div
-			className="value"
-			ref={(ref: any) => { this.editorRef = ref; }}
-			contentEditable={true}
-			suppressContentEditableWarning={true}
-			onKeyDown={this.onKeyDown}
-			onKeyUp={this.onKeyUp}
-			onFocus={this.onFocus}
-			onBlur={this.onBlur}
-			dangerouslySetInnerHTML={{ __html: html }}
+				className="value"
+				ref={(ref: any) => { this.editorRef = ref; }}
+				contentEditable={true}
+				suppressContentEditableWarning={true}
+				onKeyDown={this.onKeyDown}
+				onKeyUp={this.onKeyUp}
+				onFocus={this.onFocus}
+				onBlur={this.onBlur}
+				dangerouslySetInnerHTML={{ __html: html }}
 			>
+			</div>
+		);
+		
+		let Marker = (item: any) => (
+			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
+				<Icon />
+			</div>
+		);
+		let markers = (
+			<div className="markers">
+				{marker ? <Marker className={'bullet c' + marker} active={false} /> : ''}
+				{toggleable ? <Marker className="toggle" active={toggled} onClick={this.onToggle} /> : ''}
+				{checkable ? <Marker className="check" active={checked} onClick={this.onCheck} /> : ''}
 			</div>
 		);
 		
@@ -92,9 +116,25 @@ class BlockText extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
+				{markers}
 				{editor}
 			</React.Fragment>
 		);
+	};
+	
+	componentDidMount () {
+		const { blockStore, header } = this.props;
+		const { blocks } = blockStore;
+		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		
+		if (!block) {
+			return;
+		};
+		
+		const { content } = block;
+		const { checked } = content;
+		
+		this.setState({ checked: checked });
 	};
 	
 	marksToHtml (text: string, marks: I.Mark[]) {
@@ -126,6 +166,14 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onBlur (e: any) {
 		keyBoard.setFocus(false);
+	};
+	
+	onToggle (e: any) {
+		this.setState({ toggled: !this.state.toggled });
+	};
+	
+	onCheck (e: any) {
+		this.setState({ checked: !this.state.checked });
 	};
 	
 };
