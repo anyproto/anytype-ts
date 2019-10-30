@@ -10,7 +10,9 @@ import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
 
-interface Props extends I.Block {};
+interface Props extends I.Block {
+	number: number;
+};
 
 class Block extends React.Component<Props, {}> {
 

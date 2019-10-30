@@ -1,8 +1,9 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockText { word-wrap: break-word; display: flex; }
+	.block.blockText { word-wrap: break-word; }
 	.block.blockText {
+		.wrap { flex: auto; }
 		.value { -webkit-user-modify: read-write-plaintext-only; }
 		
 		.p {  }
@@ -19,13 +20,9 @@
 			}
 			.marker {
 				.icon { position: absolute; left: 50%; top: 50%; display: block; }
-				.number { display: none; vertical-align: middle; line-height: 1; }
 			}
 			
-			.marker.bullet.c1 {
-				.icon { display: none; }
-				.number { display: inline-block; }
-			}
+			.marker.bullet.c1 { width: auto; min-width: 24px; padding: 0px 2px; }
 			.marker.bullet.c2 {
 				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; margin: -3px 0px 0px -3px; }
 			}

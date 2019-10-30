@@ -1,10 +1,12 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, keyBoard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockText {
 	blockStore?: any;
+	number: number;
 };
 
 interface State {
@@ -34,7 +36,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, header } = this.props;
+		const { blockStore, header, number } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
 		const { toggled, checked } = this.state;
@@ -46,21 +48,15 @@ class BlockText extends React.Component<Props, {}> {
 		const { content } = block;
 		const { text, marks, style, marker, toggleable, checkable } = content;
 		
-		let css: any = {};
 		let markers: any[] = [];
-		
 		if (marker) {
-			markers.push({ className: 'bullet c' + marker, active: false, onClick: () => {} });
+			markers.push({ type: marker, className: 'bullet c' + marker, active: false, onClick: () => {} });
 		};
 		if (toggleable) {
-			markers.push({ className: 'toggle', active: toggled, onClick: this.onToggle });
+			markers.push({ type: 0, className: 'toggle', active: toggled, onClick: this.onToggle });
 		};
 		if (checkable) {
-			markers.push({ className: 'check', active: checked, onClick: this.onCheck });
-		};
-		
-		if (markers.length) {
-			css.width = 'calc(100% - ' + (28 * markers.length) + 'px)';			
+			markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
 		};
 		
 		let html = this.marksToHtml(text, marks);
@@ -81,8 +77,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let Marker = (item: any) => (
 			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				<Icon />
-				<div className="number">1</div>
+				{item.type && number ? <div className="txt">{number}</div> : <Icon />}
 			</div>
 		);
 		
@@ -126,16 +121,16 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div className="flex">
 				<div className="markers">
 					{markers.map((item: any, i: number) => (
-						<Marker key={i} className={item.className} active={item.active} onClick={item.onClick} />
+						<Marker key={i} {...item} />
 					))}
 				</div>
-				<div style={css} className="wrap">
+				<div className="wrap">
 					{editor}
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 	

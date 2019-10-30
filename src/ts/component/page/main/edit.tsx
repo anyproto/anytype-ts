@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { MenuMain, Block, Smile, HeaderMainEdit as Header } from 'ts/component';
 import { I, Util } from 'ts/lib'; 
@@ -8,6 +9,8 @@ interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 	blockStore?: any;
 };
+
+const $ = require('jquery');
 
 @inject('commonStore')
 @inject('blockStore')
@@ -22,6 +25,8 @@ class PageMainEdit extends React.Component<Props, {}> {
 		const { commonStore, blockStore, match } = this.props;
 		const { blocks } = blockStore;
 		
+		let n = 0;
+		
 		return (
 			<div>
 				<Header {...this.props} />
@@ -33,9 +38,17 @@ class PageMainEdit extends React.Component<Props, {}> {
 								<Smile id="main-icon" canEdit={true} size={24} icon=":family:" className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 								Contacts
 							</div>
-							{blocks.map((item: I.Block, i: number) => ( 
-								<Block key={item.header.id} {...item} />
-							))}
+							{blocks.map((item: I.Block, i: number) => { 
+								if (item.header.type == I.BlockType.Text) {
+									if (item.content.marker == I.MarkerType.Number) {
+										n++;
+									} else {
+										n = 0;
+									};
+								};
+								
+								return <Block key={item.header.id} {...item} number={n} />
+							})}
 						</div>
 					</div>
 				</div>
@@ -44,8 +57,6 @@ class PageMainEdit extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { blockStore } = this.props;
-		
 		/*
 		setInterval(() => {
 			let c = '';
@@ -71,13 +82,16 @@ class PageMainEdit extends React.Component<Props, {}> {
 					style: Util.rand(0, 5),
 					marks: marks,
 					toggleable: false,
-					marker: 0,
+					marker: 1,
 					checkable: false,
 					checked: false,
 				}
 			});
 		}, 100);
 		*/
+	};
+	
+	componentDidUpdate () {
 	};
 	
 };
