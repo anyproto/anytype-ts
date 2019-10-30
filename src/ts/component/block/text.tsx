@@ -46,6 +46,23 @@ class BlockText extends React.Component<Props, {}> {
 		const { content } = block;
 		const { text, marks, style, marker, toggleable, checkable } = content;
 		
+		let css: any = {};
+		let markers: any[] = [];
+		
+		if (marker) {
+			markers.push({ className: 'bullet c' + marker, active: false, onClick: () => {} });
+		};
+		if (toggleable) {
+			markers.push({ className: 'toggle', active: toggled, onClick: this.onToggle });
+		};
+		if (checkable) {
+			markers.push({ className: 'check', active: checked, onClick: this.onCheck });
+		};
+		
+		if (markers.length) {
+			css.width = 'calc(100% - ' + (28 * markers.length) + 'px)';			
+		};
+		
 		let html = this.marksToHtml(text, marks);
 		let editor = (
 			<div
@@ -65,13 +82,7 @@ class BlockText extends React.Component<Props, {}> {
 		let Marker = (item: any) => (
 			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
 				<Icon />
-			</div>
-		);
-		let markers = (
-			<div className="markers">
-				{marker ? <Marker className={'bullet c' + marker} active={false} /> : ''}
-				{toggleable ? <Marker className="toggle" active={toggled} onClick={this.onToggle} /> : ''}
-				{checkable ? <Marker className="check" active={checked} onClick={this.onCheck} /> : ''}
+				<div className="number">1</div>
 			</div>
 		);
 		
@@ -116,8 +127,14 @@ class BlockText extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				{markers}
-				{editor}
+				<div className="markers">
+					{markers.map((item: any, i: number) => (
+						<Marker key={i} className={item.className} active={item.active} onClick={item.onClick} />
+					))}
+				</div>
+				<div style={css} className="wrap">
+					{editor}
+				</div>
 			</React.Fragment>
 		);
 	};

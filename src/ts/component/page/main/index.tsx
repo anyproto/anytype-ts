@@ -176,7 +176,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					text: 'test content',
 					style: Util.rand(0, 5),
 					marks: [],
-					marker: I.MarkerType.Bullet,
+					marker: Util.rand(1, 2),
 					toggleable: true,
 					checkable: true,
 					checked: false,
