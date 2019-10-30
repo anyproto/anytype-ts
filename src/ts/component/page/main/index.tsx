@@ -169,12 +169,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 			}
 		];
 		
-		for (let i = 2; i < 10; ++i) {
+		let s = 0;
+		for (let i = 2; i <= 8; ++i) {
 			list.push({ 
-				header: { id: String(i), type: 3, name: '', icon: '' },
+				header: { id: String(i), type: I.BlockType.Text, name: '', icon: '' },
 				content: {
-					text: 'test content',
-					style: Util.rand(0, 5),
+					text: 'Сontent for block: ' + s,
+					style: s,
 					marks: [],
 					marker: Util.rand(1, 2),
 					toggleable: true,
@@ -182,25 +183,26 @@ class PageMainIndex extends React.Component<Props, {}> {
 					checked: false,
 				},
 			});
+			s++;
 		};
 		
 		list.push({ 
-			header: { id: '11', type: I.BlockType.Image, name: '', icon: '' },
+			header: { id: '9', type: I.BlockType.Image, name: '', icon: '' },
 			content: {},
 		});
 		
 		list.push({ 
-			header: { id: '12', type: I.BlockType.File, name: '', icon: '' },
+			header: { id: '10', type: I.BlockType.File, name: '', icon: '' },
 			content: {},
 		});
 		
 		list.push({ 
-			header: { id: '13', type: I.BlockType.Video, name: '', icon: '' },
+			header: { id: '11', type: I.BlockType.Video, name: '', icon: '' },
 			content: {},
 		});
 		
 		list.push({ 
-			header: { id: '14', type: I.BlockType.Bookmark, name: '', icon: '' },
+			header: { id: '12', type: I.BlockType.Bookmark, name: '', icon: '' },
 			content: {},
 		});
 		

@@ -6,7 +6,8 @@ export enum TextStyle {
 	h2		 = 2,
 	h3		 = 3,
 	h4		 = 4,
-	quote	 = 5
+	quote	 = 5,
+	code	 = 6
 };
 
 export enum MarkerType {
