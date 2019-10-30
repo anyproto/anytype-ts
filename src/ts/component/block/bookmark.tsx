@@ -29,7 +29,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<InputWithFile />
+				<InputWithFile icon="bookmark" withFile={false} />
 			</React.Fragment>
 		);
 	};

@@ -184,21 +184,25 @@ class PageMainIndex extends React.Component<Props, {}> {
 			});
 		};
 		
-		for (let i = 10; i < 15; ++i) {
-			list.push({ 
-				header: { id: String(i), type: I.BlockType.Image, name: '', icon: '' },
-				content: {
-				},
-			});
-		};
+		list.push({ 
+			header: { id: '11', type: I.BlockType.Image, name: '', icon: '' },
+			content: {},
+		});
 		
-		for (let i = 15; i < 20; ++i) {
-			list.push({ 
-				header: { id: String(i), type: I.BlockType.Bookmark, name: '', icon: '' },
-				content: {
-				},
-			});
-		};
+		list.push({ 
+			header: { id: '12', type: I.BlockType.File, name: '', icon: '' },
+			content: {},
+		});
+		
+		list.push({ 
+			header: { id: '13', type: I.BlockType.Video, name: '', icon: '' },
+			content: {},
+		});
+		
+		list.push({ 
+			header: { id: '14', type: I.BlockType.Bookmark, name: '', icon: '' },
+			content: {},
+		});
 		
 		blockStore.blockClear();
 		for (let block of list) {

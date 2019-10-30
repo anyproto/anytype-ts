@@ -38,7 +38,7 @@ class Controls extends React.Component<Props, {}> {
 				active: commonStore.menuIsOpen('dataviewSort') 
 			},
 			{ 
-				id: 'view', className: 'view c' + viewType, arrow: true, menu: 'view', 
+				id: 'view', className: 'view c' + viewType, arrow: true, menu: 'dataviewView', 
 				active: commonStore.menuIsOpen('dataviewView') 
 			},
 			{ 

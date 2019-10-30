@@ -1,3 +1,44 @@
 @import "~scss/_vars";
 
-.inputWithFile {}
+.inputWithFile {
+	line-height: 24px; padding: 11px; border-radius: 4px; border: solid 1px #d2d0c2; color: #adaa95;
+	transition: background 0.2s ease-in-out; white-space: nowrap; overflow: hidden;
+}
+.inputWithFile:hover { background: #f7f5f0; }
+.inputWithFile {
+	.txt { line-height: 23px; padding-top: 1px; height: 24px; overflow: hidden; width: calc(100% - 30px); }
+	.fileWrap { display: inline-block; vertical-align: top; }
+	.fileWrap .border { border-bottom: 1px solid #d2d0c2; display: inline-block; line-height: 1; transition: $transitionFast; }
+	.fileWrap:hover {  }
+	.fileWrap:hover .border { border-color: #000; cursor: pointer; color: #000; }
+
+	.urlToggle { cursor: text; display: inline-block; }
+
+	#form { display: inline-block; vertical-align: top; }
+	#url { height: 23px; vertical-align: top; padding: 0px; }
+
+	.icon { width: 24px; height: 24px; margin: 0px 6px 0px 0px; transition: none; vertical-align: top; }
+	.icon.image { background-size: 20px 18px; background-image: url('~img/icon/add/image.svg'); }
+	.icon.video { background-size: 22px 18px; background-image: url('~img/icon/add/video.svg'); }
+	.icon.file { background-size: 18px 22px; background-image: url('~img/icon/add/file.svg'); }
+	.icon.bookmark { background-size: 16px 20px; background-image: url('~img/icon/add/bookMark.svg'); }
+}
+.inputWithFile.noFile {
+	.urlToggle { width: 100%; }
+	#form { width: 100%; }
+}
+.inputWithFile.noFile.isSmall .txt { height: 24px; }
+
+.inputWithFile.focused {
+	.fileWrap { display: none; }
+	#form { width: 100%; }
+}
+
+.inputWithFile.small {
+	.fileWrap { display: block; }
+	.txt { height: 48px; }
+}
+
+.inputWithFile.isSmall.isFocused {
+	.txt { display: inline-block; }
+}

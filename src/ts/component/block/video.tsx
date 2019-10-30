@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { InputWithFile } from 'ts/component';
 import { I, keyBoard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -29,6 +29,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
+				<InputWithFile icon="video" textFile="Upload a video" />
 			</React.Fragment>
 		);
 	};
