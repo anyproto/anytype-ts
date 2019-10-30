@@ -105,8 +105,9 @@ class MenuPropertyList extends React.Component<Props, State> {
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { properties } = data;
+		const property = properties.find((item: any) => { return item.id == id; });
 		
-		commonStore.menuOpen('propertyEdit', { 
+		commonStore.menuOpen('dataviewPropertyEdit', { 
 			element: 'property-' + id,
 			offsetX: 0,
 			offsetY: 4,
@@ -115,7 +116,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 			horizontal: I.MenuDirection.Center,
 			data: {
 				properties: properties,
-				property: id
+				property: property
 			}
 		});
 	};

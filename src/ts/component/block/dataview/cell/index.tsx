@@ -93,12 +93,12 @@ class Cell extends React.Component<Props, {}> {
 					console.log('value', value); 
 				};
 				
-				commonStore.menuOpen('calendar', param);
+				commonStore.menuOpen('dataviewCalendar', param);
 				break;
 				
 			case I.PropertyType.Select:
 			case I.PropertyType.Multiple:
-				commonStore.menuOpen('tag', param);
+				commonStore.menuOpen('dataviewTagList', param);
 				break;
 				
 			case I.PropertyType.Account:

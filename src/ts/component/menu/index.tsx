@@ -17,7 +17,8 @@ import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewView from './dataview/view';
 import MenuDataviewCalendar from './dataview/calendar';
-import MenuDataviewTag from './dataview/tag';
+import MenuDataviewTagList from './dataview/tag/list';
+import MenuDataviewTagEdit from './dataview/tag/edit';
 import MenuDataviewAccount from './dataview/account';
 
 interface Props extends I.Menu {
@@ -40,11 +41,12 @@ class Menu extends React.Component<Props, {}> {
 			dataviewPropertyList: MenuDataviewPropertyList,
 			dataviewPropertyEdit: MenuDataviewPropertyEdit,
 			dataviewPropertyType: MenuDataviewPropertyType,
+			dataviewTagList: MenuDataviewTagList,
+			dataviewTagEdit: MenuDataviewTagEdit,
 			dataviewFilter: MenuDataviewFilter,
 			dataviewSort: MenuDataviewSort,
 			dataviewView: MenuDataviewView,
 			dataviewCalendar: MenuDataviewCalendar,
-			dataviewTag: MenuDataviewTag,
 			dataviewAccount: MenuDataviewAccount,
 		};
 		

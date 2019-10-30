@@ -18,7 +18,7 @@ interface State {
 
 @inject('commonStore')
 @observer
-class MenuTag extends React.Component<Props, State> {
+class MenuTagList extends React.Component<Props, State> {
 	
 	filterRef: any = null;
 	state = {
@@ -42,7 +42,7 @@ class MenuTag extends React.Component<Props, State> {
 		let filtered = items.filter((item: any) => { return filter ? item.match(regExp) : true; });
 		
 		const Item = SortableElement((item: any) => (
-			<div className="item" onClick={(e: any) => { this.onSelect(e, item.id); }}>
+			<div id={'tag-' + item.id} className="item" onClick={(e: any) => { this.onSelect(e, item.id); }}>
 				<Icon className="dnd" />
 				<Tag text={item.text} />
 			</div>
@@ -86,8 +86,23 @@ class MenuTag extends React.Component<Props, State> {
 	};
 	
 	onSelect (e: any, id: number) {
-		const { commonStore } = this.props;
-		commonStore.menuClose(this.props.id);
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const { values } = data;
+		
+		//commonStore.menuClose(this.props.id);
+		
+		commonStore.menuOpen('dataviewTagEdit', { 
+			element: 'tag-' + id,
+			offsetX: 0,
+			offsetY: 4,
+			light: true,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				value: values[id]
+			}
+		});
 	};
 	
 	onSubmit (e: any) {
@@ -115,4 +130,4 @@ class MenuTag extends React.Component<Props, State> {
 	
 };
 
-export default MenuTag;
+export default MenuTagList;

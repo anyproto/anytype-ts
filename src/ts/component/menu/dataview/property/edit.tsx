@@ -22,15 +22,14 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 	render () {
 		const { commonStore, param } = this.props;
 		const { data } = param;
-		const { properties, property } = data;
-		const propertyItem = properties.find((item: any) => { return item.id == property; });
+		const { property } = data;
 		
 		let current = null;
 		if (property) {
 			current = (
 				<div id="property-type" className={'item ' + (commonStore.menuIsOpen('propertyType') ? 'active' : '')} onClick={this.onType}>
-					<Icon className={'property dark c' + propertyItem.type} />
-					<div className="name">{Constant.propertyName[propertyItem.type]}</div>
+					<Icon className={'property dark c' + property.type} />
+					<div className="name">{Constant.propertyName[property.type]}</div>
 					<Icon className="arrow" />
 				</div>
 			);
@@ -46,7 +45,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 		return (
 			<div>
 				<div className="wrap">
-					<Input value={propertyItem ? propertyItem.name : ''} placeHolder="Property name"  />
+					<Input value={property ? property.name : ''} placeHolder="Property name"  />
 				</div>
 				{current}
 				<div className="line" />
@@ -66,7 +65,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		
-		commonStore.menuOpen('propertyType', { 
+		commonStore.menuOpen('dataviewPropertyType', { 
 			element: 'property-type',
 			offsetX: 208,
 			offsetY: 4,
