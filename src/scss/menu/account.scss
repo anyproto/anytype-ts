@@ -6,9 +6,9 @@
 		.items { overflow-x: hidden; overflow-y: auto; max-height: 330px; }
 		.item { padding: 12px; } 
 		.item {
-			.icon.user { width: 40px; height: 40px; line-height: 40px; vertical-align: top; margin-right: 8px; }
+			.icon.user { vertical-align: top; margin-right: 8px; }
 			.info { display: inline-block; vertical-align: top; width: calc(100% - 48px); }
-			.name { font-weight: 500; line-height: 24px; }
+			.name { font-size: 15px !important; font-weight: 500; line-height: 24px; }
 			.description { font-size: 13px; line-height: 18px; color: #aca996; margin-top: -2px; }
 			.icon.check { margin: -2px 4px 0px 0px; display: none; width: 12px; height: 12px; background-image: url('~img/icon/menu/account/check.svg'); }
 		}

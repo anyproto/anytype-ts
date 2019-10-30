@@ -26,23 +26,23 @@ class Controls extends React.Component<Props, {}> {
 		
 		const buttons: any[] = [
 			{ 
-				id: 'property', name: 'Property', menu: 'propertyList', 
-				active: commonStore.menuIsOpen('propertyList') 
+				id: 'property', name: 'Property', menu: 'dataviewPropertyList', 
+				active: commonStore.menuIsOpen('dataviewPropertyList') 
 			},
 			{ 
-				id: 'filter', name: 'Filter', menu: 'filter', 
-				active: commonStore.menuIsOpen('filter') 
+				id: 'filter', name: 'Filter', menu: 'dataviewFilter', 
+				active: commonStore.menuIsOpen('dataviewFilter') 
 			},
 			{ 
-				id: 'sort', name: 'Sort', menu: 'sort', 
-				active: commonStore.menuIsOpen('sort') 
+				id: 'sort', name: 'Sort', menu: 'dataviewSort', 
+				active: commonStore.menuIsOpen('dataviewSort') 
 			},
 			{ 
 				id: 'view', className: 'view c' + viewType, arrow: true, menu: 'view', 
-				active: commonStore.menuIsOpen('view') 
+				active: commonStore.menuIsOpen('dataviewView') 
 			},
 			{ 
-				id: 'more', menu: 'more', active: commonStore.menuIsOpen('more') 
+				id: 'more', menu: 'more', active: commonStore.menuIsOpen('dataviewMore') 
 			}
 		];
 		
@@ -104,21 +104,21 @@ class Controls extends React.Component<Props, {}> {
 		let data: any = {};
 		
 		switch (menu) {
-			case 'view':
+			case 'dataviewView':
 				data.viewType = viewType;
 				break;
 				
-			case 'sort':
+			case 'dataviewSort':
 				data.sorts = viewItem.sorts;
 				data.properties = properties;
 				break;
 				
-			case 'filter':
+			case 'dataviewFilter':
 				data.filters = viewItem.filters;
 				data.properties = properties;
 				break;
 				
-			case 'propertyList':
+			case 'dataviewPropertyList':
 				data.properties = properties;
 				break;
 		};

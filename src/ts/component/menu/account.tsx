@@ -25,7 +25,7 @@ class MenuAccount extends React.Component<Props, {}> {
 		
 		const Item = (item: any) => (
 			<div className={'item ' + (item.index == 0 ? 'active' : '')} onClick={(e) => { this.onSelect(e, item.id); }}>
-				<IconUser {...item} />
+				<IconUser className="c40" {...item} />
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">

@@ -66,11 +66,16 @@
 			.cell.c0 { font-weight: 500; }
 			
 			/* Multiple */
-			
 			.cell.c5 {
 				.tag { margin: 0px 6px 6px 0px; }
 			}
 			
+			/* Account */
+			.cell.c6 {
+				.icon.user { margin-right: 5px; }
+			}
+			
+			/* Bool */
 			.cell.c8 { cursor: pointer; }
 			
 			/* Link, Email, Phone */

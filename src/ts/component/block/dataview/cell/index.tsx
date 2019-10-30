@@ -8,6 +8,7 @@ import CellLink from './link';
 import CellSelect from './select';
 import CellMultiple from './multiple';
 import CellBool from './bool';
+import CellAccount from './account';
 
 interface Props extends I.Cell {
 	commonStore?: any;
@@ -52,6 +53,10 @@ class Cell extends React.Component<Props, {}> {
 				CellComponent = CellBool;
 				break;
 				
+			case I.PropertyType.Account:
+				CellComponent = CellAccount;
+				break;
+				
 			case I.PropertyType.Link:
 			case I.PropertyType.Email:
 			case I.PropertyType.Phone:
@@ -76,7 +81,10 @@ class Cell extends React.Component<Props, {}> {
 			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
-			data: { value: data }
+			data: { 
+				value: data, 
+				values: property.values 
+			}
 		};
 		
 		switch (property.type) {
@@ -90,9 +98,11 @@ class Cell extends React.Component<Props, {}> {
 				
 			case I.PropertyType.Select:
 			case I.PropertyType.Multiple:
-				param.data.values = property.values;
-			
 				commonStore.menuOpen('tag', param);
+				break;
+				
+			case I.PropertyType.Account:
+				commonStore.menuOpen('dataviewAccount', param);
 				break;
 				
 			case I.PropertyType.Bool:

@@ -39,17 +39,19 @@ import 'scss/block/file.scss';
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
 
+import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
-import 'scss/menu/property.scss';
-import 'scss/menu/view.scss';
 import 'scss/menu/smile.scss';
-import 'scss/menu/sort.scss';
-import 'scss/menu/filter.scss';
 import 'scss/menu/help.scss';
-import 'scss/menu/calendar.scss';
-import 'scss/menu/tag.scss';
-import 'emoji-mart/css/emoji-mart.css';
+
+import 'scss/menu/dataview/sort.scss';
+import 'scss/menu/dataview/filter.scss';
+import 'scss/menu/dataview/property.scss';
+import 'scss/menu/dataview/view.scss';
+import 'scss/menu/dataview/calendar.scss';
+import 'scss/menu/dataview/tag.scss';
+import 'scss/menu/dataview/account.scss';
 
 interface RouteElement { path: string; };
 

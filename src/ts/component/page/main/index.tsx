@@ -140,12 +140,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 			properties: [
 				{ id: '1', name: 'Id', type: I.PropertyType.Number },
 				{ id: '2', name: 'Name', type: I.PropertyType.Title },
-				{ id: '3', name: 'Date', type: I.PropertyType.Date },
 				{ id: '4', name: 'E-mail', type: I.PropertyType.Email },
 				{ id: '5', name: 'Date', type: I.PropertyType.Date },
 				{ id: '6', name: 'Select', type: I.PropertyType.Select, values: [ 'select1', 'select2', 'select3' ] },
 				{ id: '7', name: 'Multiple', type: I.PropertyType.Multiple, values: [ 'multiple1', 'multiple2', 'multiple3', 'multiple4', 'multiple5' ] },
-				{ id: '8', name: 'Account', type: I.PropertyType.Account },
+				{ id: '8', name: 'Account', type: I.PropertyType.Account, values: [ { name: 'Anton Barulenkov' }, { 'name': 'Zhanna Sharipova' } ] },
 				{ id: '9', name: 'File', type: I.PropertyType.File },
 				{ id: '10', name: 'Bool', type: I.PropertyType.Bool },
 				{ id: '11', name: 'Link', type: I.PropertyType.Link },
@@ -154,7 +153,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			data: [
 				{ 
 					'1': '1', '2': 'Anton Pronkin', '4': 'pronkin@gmail.com', '5': 1420200661, '6': 'select1', '11': 'http://anytype.io', 
-					'12': '+7 (1234) 5678910', '7': [ 'value1', 'value2', 'value3' ], '10': true
+					'12': '+7 (1234) 5678910', '7': [ 'value1', 'value2', 'value3' ], '10': true, '8': { name: 'Anton Barulenkov' }
 				},
 				{ '1': '2', '2': 'Roman Khafizianov', '4': 'khafizianov@gmail.com', '5': 1420200661, '6': 'select2', '11': 'ftp://anytype.io' },
 				{ '1': '3', '2': 'Zhanna Sharipova', '4': 'sharipova@gmail.com', '5': 1420200662, '6': 'select3', '11': 'telnet://anytype.io' },
