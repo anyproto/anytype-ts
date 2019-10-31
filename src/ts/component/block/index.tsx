@@ -1,17 +1,19 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { Block as Child, Icon } from 'ts/component';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
 import BlockImage from './image';
+import BlockIcon from './icon';
 import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
 
 interface Props extends I.Block {
+	index: number;
 	number: number;
 };
 
@@ -33,13 +35,13 @@ class Block extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { header, content, children } = this.props;
+		const { header, content, children, index } = this.props;
 		const { id, type } = header;
 		const { style, toggleable } = content;
 		const { toggled } = this.state;
 		
 		let n = 0;
-		let cn = [ 'block' ];
+		let cn = [ 'block', 'index' + index ];
 		let BlockComponent: React.ReactType<{}>;
 		
 		switch (type) {
@@ -61,6 +63,11 @@ class Block extends React.Component<Props, State> {
 			case I.BlockType.Image:
 				cn.push('blockImage');
 				BlockComponent = BlockImage;
+				break;
+				
+			case I.BlockType.Icon:
+				cn.push('blockIcon');
+				BlockComponent = BlockIcon;
 				break;
 				
 			case I.BlockType.Video:
@@ -95,16 +102,9 @@ class Block extends React.Component<Props, State> {
 						
 					<div className={[ 'children', (toggled ? 'active' : '') ].join('')}>
 						{children.map((item: any, i: number) => {
-							if (item.header.type == I.BlockType.Text) {
-								if (item.content.marker == I.MarkerType.Number) {
-									n++;
-								} else {
-									n = 0;
-								};
-							};
-										
+							n = Util.incrementBlockNumber(item, n);
 							return (
-								<Child key={item.header.id} {...item} number={n} />
+								<Child key={item.header.id} {...item} number={n} index={i} />
 							);
 						})}
 					</div>

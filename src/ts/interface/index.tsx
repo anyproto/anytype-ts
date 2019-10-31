@@ -20,6 +20,7 @@ import {
 } from './block/dataview';
 
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
+import { ContentIcon, BlockIcon } from './block/icon';
 import { TextStyle, MarkerType, MarkType, Range, Mark, ContentText, BlockText } from './block/text';
 import { ContentUploadState, ContentMedia, BlockMedia } from './block/media';
 
@@ -58,6 +59,9 @@ export {
 	LayoutStyle, 
 	ContentLayout, 
 	BlockLayout,
+	
+	ContentIcon, 
+	BlockIcon,
 	
 	TextStyle, 
 	MarkerType, 

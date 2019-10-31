@@ -1,3 +1,5 @@
+import { I } from 'ts/lib';
+
 const loadImage = window.require('blueimp-load-image');
 const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
@@ -100,6 +102,13 @@ class Util {
 	
 	randomSmile () {
 		return this.icons[this.rand(0, this.icons.length - 1)];
+	};
+	
+	incrementBlockNumber (item: I.Block, n: number) {
+		if (item.header.type != I.BlockType.Text) {
+			return n;
+		};
+		return item.content.marker == I.MarkerType.Number ? n + 1 : 0;
 	};
 	
 	date (format: string, timestamp: number) {

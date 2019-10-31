@@ -1,11 +1,22 @@
-.block { 
-	border: 1px solid red; margin: 1px; padding: 1px 0px; word-break: break-word; display: flex; flex: auto; 
-}
-.block {
-	.wrapMenu { width: 50px; }
-	.wrapContent { width: calc(100% - 50px); }
-	
-	.icon.dnd { width: 24px; height: 24px; background-size: 7px 12px; background-image: url('~img/icon/dnd.svg'); }
-}
+@import "~scss/_vars";
 
-.block.blockLayout.c0 > .wrapContent > .children { display: flex; }
+.blocks {
+	.block { 
+		border-bottom: 1px solid red; padding: 1px 0px; word-break: break-word; display: flex; flex: auto; 
+	}
+	.block {
+		.wrapMenu { width: 50px; }
+		.wrapContent { width: calc(100% - 50px); }
+		
+		.icon.dnd { width: 24px; height: 24px; background-size: 7px 12px; background-image: url('~img/icon/dnd.svg'); }
+	}
+	
+	/* Row */
+	.block.blockLayout.c0 > .wrapMenu { display: none; }
+	.block.blockLayout.c0 > .wrapContent { width: 100%; }
+	.block.blockLayout.c0 > .wrapContent > .children { display: flex; }
+	
+	/* Column */
+	.block.blockLayout.c1 > .wrapMenu { display: none; }
+	.block.blockLayout.c1 > .wrapContent { width: 100%; }	
+}

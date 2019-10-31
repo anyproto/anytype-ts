@@ -164,13 +164,33 @@ class PageMainIndex extends React.Component<Props, {}> {
 			]
 		};
 		
-		let list: I.Block[] = [
-			{ 
-				header: { id: String(idx++), type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
-				content: contentDataview,
-				children: []
-			}
-		];
+		let list: I.Block[] = [];
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Icon, name: '', icon: '', parentId: '' },
+			content: { icon: ':family:' },
+			children: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
+			content: {
+				text: 'Contacts',
+				style: I.TextStyle.title,
+				marks: [] as I.Mark[],
+				marker: 0,
+				toggleable: false,
+				checkable: false,
+				checked: false,
+			},
+			children: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
+			content: contentDataview,
+			children: []
+		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '' },
@@ -179,19 +199,19 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '2' },
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
 			content: { style: I.LayoutStyle.Column },
 			children: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '2' },
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
 			content: { style: I.LayoutStyle.Column },
 			children: []
 		});
 		
 		let s = 0;
-		for (let i = 4; i <= 10; ++i) {
+		for (let i = 0; i <= 10; ++i) {
 			let b = { 
 				header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
 				content: {
@@ -213,14 +233,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 			let b = { 
 				header: { 
 					id: String(idx++),
-					parentId: String(Util.rand(3, 5)), 
+					parentId: String(Util.rand(5, 7)), 
 					type: I.BlockType.Text, 
 					name: '', 
 					icon: '' 
 				},
 				content: {
 					text: 'Contrary to popular belief, Lorem Ipsum is not simply random text.',
-					style: 0,
+					style: I.TextStyle.p,
 					marks: [] as I.Mark[],
 					marker: Util.rand(0, 2),
 					toggleable: Boolean(Util.rand(0, 1)),

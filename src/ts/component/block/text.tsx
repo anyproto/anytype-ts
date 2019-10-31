@@ -89,6 +89,12 @@ class BlockText extends React.Component<Props, {}> {
 				);
 				break;
 				
+			case I.TextStyle.title:
+				editor = (
+					<div className="title">{editor}</div>
+				);
+				break;
+				
 			case I.TextStyle.h1:
 				editor = (
 					<div className="h1">{editor}</div>
