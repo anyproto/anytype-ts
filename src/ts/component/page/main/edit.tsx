@@ -33,11 +33,11 @@ class PageMainEdit extends React.Component<Props, {}> {
 				<MenuMain />
 				<div className="wrapper">
 					<div className="editor">
+						<div className="title">
+							<Smile id="main-icon" canEdit={true} size={24} icon=":family:" className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+							Contacts
+						</div>
 						<div className="blocks">
-							<div className="title">
-								<Smile id="main-icon" canEdit={true} size={24} icon=":family:" className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
-								Contacts
-							</div>
 							{tree.map((item: I.Block, i: number) => { 
 								if (item.header.type == I.BlockType.Text) {
 									if (item.content.marker == I.MarkerType.Number) {
