@@ -2,12 +2,13 @@ export enum BlockType {
 	Dashboard	 = 0,
 	Page		 = 1,
 	Dataview	 = 2,
+	Layout		 = 3,
 	
-	Text		 = 3,
-	File		 = 4,
-	Image		 = 5,
-	Video		 = 6,
-	Bookmark	 = 7,
+	Text		 = 4,
+	File		 = 5,
+	Image		 = 6,
+	Video		 = 7,
+	Bookmark	 = 8,
 };
 
 export interface Permissions {
@@ -19,6 +20,7 @@ export interface Permissions {
 
 export interface BlockHeader {
 	id: string;
+	parentId: string;
 	type: BlockType;
 	name: string;
 	icon: string;
@@ -28,4 +30,5 @@ export interface BlockHeader {
 export interface Block {
 	header: BlockHeader;
 	content: any;
+	children: Block[];
 };

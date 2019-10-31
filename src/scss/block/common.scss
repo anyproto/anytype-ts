@@ -1,1 +1,9 @@
-.block { border: 1px solid red; margin: 1px; padding: 1px 0px; word-break: break-word; }
+.block { 
+	border: 1px solid red; margin: 1px; padding: 1px 0px; word-break: break-word; display: flex; flex: auto; 
+}
+.block {
+	.wrapMenu { width: 50px; }
+	.wrapContent { width: calc(100% - 50px); }
+}
+
+.block.blockLayout.c0 > .wrapContent > .children { display: flex; }

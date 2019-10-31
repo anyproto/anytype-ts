@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I } from 'ts/lib';
+import { Block as Child } from 'ts/component';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -19,9 +20,11 @@ class Block extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { header, content } = this.props;
+		const { header, content, children } = this.props;
 		const { id, type } = header;
+		const { style } = content;
 		
+		let n = 0;
 		let cn = [ 'block' ];
 		let BlockComponent: React.ReactType<{}>;
 		
@@ -30,6 +33,11 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				cn.push('blockText');
 				BlockComponent = BlockText;
+				break;
+				
+			case I.BlockType.Layout:
+				cn.push('blockLayout c' + style);
+				BlockComponent = () => (<div/>);
 				break;
 				
 			case I.BlockType.Image:
@@ -59,8 +67,28 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')}>
-				<BlockComponent {...this.props} />
+			<div id={'block-' + id} className={cn.join(' ')}>
+				<div className="wrapMenu"></div>
+					
+				<div className="wrapContent">
+					<BlockComponent {...this.props} />
+						
+					<div className="children">
+						{children.map((item: any, i: number) => {
+							if (item.header.type == I.BlockType.Text) {
+								if (item.content.marker == I.MarkerType.Number) {
+									n++;
+								} else {
+									n = 0;
+								};
+							};
+										
+							return (
+								<Child key={item.header.id} {...item} number={n} />
+							);
+						})}
+					</div>
+				</div>
 			</div>
 		);
 	};

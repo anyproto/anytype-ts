@@ -23,7 +23,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 	
 	render () {
 		const { commonStore, blockStore, match } = this.props;
-		const { blocks } = blockStore;
+		const { tree } = blockStore;
 		
 		let n = 0;
 		
@@ -38,7 +38,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 								<Smile id="main-icon" canEdit={true} size={24} icon=":family:" className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 								Contacts
 							</div>
-							{blocks.map((item: I.Block, i: number) => { 
+							{tree.map((item: I.Block, i: number) => { 
 								if (item.header.type == I.BlockType.Text) {
 									if (item.content.marker == I.MarkerType.Number) {
 										n++;
@@ -54,6 +54,22 @@ class PageMainEdit extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+	
+	wrapBlockTree (rootId: string, list: I.Block[]) {
+		let ret: any = [];
+		for (let item of list) {
+			if (!item.header.id || (rootId != item.header.parentId)) {
+				continue;
+			};
+			if (ret.find((el: any) => { return el.header.id == item.header.id })) {
+				continue;
+			};
+			
+			item.children = this.wrapBlockTree(item.header.id, list);
+			ret.push(item);
+		};
+		return ret;
 	};
 	
 	componentDidMount () {

@@ -19,8 +19,9 @@ import {
 	BlockDataview,
 } from './block/dataview';
 
+import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { TextStyle, MarkerType, MarkType, Range, Mark, ContentText, BlockText } from './block/text';
-import { ContentMedia, BlockMedia } from './block/media';
+import { ContentUploadState, ContentMedia, BlockMedia } from './block/media';
 
 export {
 	ImageSize, 
@@ -54,6 +55,10 @@ export {
 	ContentDataview,
 	BlockDataview,
 	
+	LayoutStyle, 
+	ContentLayout, 
+	BlockLayout,
+	
 	TextStyle, 
 	MarkerType, 
 	MarkType, 
@@ -62,6 +67,7 @@ export {
 	ContentText, 
 	BlockText,
 	
+	ContentUploadState,
 	ContentMedia, 
 	BlockMedia,
 }

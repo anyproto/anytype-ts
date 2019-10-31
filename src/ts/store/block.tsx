@@ -6,8 +6,30 @@ class BlockStore {
 	@observable public blockList: I.Block[] = [];
 	
 	@computed
-	get blocks(): I.Block[] {
+	get blocks (): I.Block[] {
 		return this.blockList;
+	};
+	
+	
+	@computed
+	get tree (): I.Block[] {
+		return this.getTree('', this.blockList);
+	};
+	
+	getTree (rootId: string, list: I.Block[]) {
+		let ret: any = [];
+		for (let item of list) {
+			if (!item.header.id || (rootId != item.header.parentId)) {
+				continue;
+			};
+			if (ret.find((el: any) => { return el.header.id == item.header.id })) {
+				continue;
+			};
+			
+			item.children = this.getTree(item.header.id, list);
+			ret.push(item);
+		};
+		return ret;
 	};
 	
 	@action

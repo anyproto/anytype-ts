@@ -75,20 +75,20 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		let items: I.BlockHeader[] = [
-			{ id: '', type: 1, icon: ':wave:', name: 'Get started' },
-			{ id: '', type: 1, icon: ':bulb:', name: 'Ideas' },
-			{ id: '', type: 1, icon: ':inbox_tray:', name: 'Projects' },
-			{ id: '', type: 1, icon: ':alien:', name: 'Secrets' },
-			{ id: '', type: 1, icon: ':mortar_board:', name: 'Education' },
-			{ id: '', type: 1, icon: ':poop:', name: 'Other' },
-			{ id: '', type: 1, icon: ':wastebasket:', name: 'Archive' },
-			{ id: '', type: 1, icon: ':family:', name: 'Contacts' },
+			{ id: '', type: 1, icon: ':wave:', name: 'Get started', parentId: '' },
+			{ id: '', type: 1, icon: ':bulb:', name: 'Ideas', parentId: '' },
+			{ id: '', type: 1, icon: ':inbox_tray:', name: 'Projects', parentId: '' },
+			{ id: '', type: 1, icon: ':alien:', name: 'Secrets', parentId: '' },
+			{ id: '', type: 1, icon: ':mortar_board:', name: 'Education', parentId: '' },
+			{ id: '', type: 1, icon: ':poop:', name: 'Other', parentId: '' },
+			{ id: '', type: 1, icon: ':wastebasket:', name: 'Archive', parentId: '' },
+			{ id: '', type: 1, icon: ':family:', name: 'Contacts', parentId: '' },
 		];
 		
 		blockStore.blockClear();
 		for (let i = 0; i < items.length; ++i) {
 			items[i].id = String(i + 1);
-			blockStore.blockAdd({ header: items[i], content: {} });			
+			blockStore.blockAdd({ header: items[i], content: {}, children: [] });			
 		};
 		
 		this.resize();
@@ -118,6 +118,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onSelect (e: any, id: string) {
 		const { history } = this.props;
+		
+		let idx = 1;
 		
 		const contentDataview: I.ContentDataview = {
 			view: '1',
@@ -164,46 +166,94 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		let list: I.Block[] = [
 			{ 
-				header: { id: '1', type: 2, name: '', icon: '' },
+				header: { id: String(idx++), type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
 				content: contentDataview,
+				children: []
 			}
 		];
 		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '' },
+			content: { style: I.LayoutStyle.Row },
+			children: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '2' },
+			content: { style: I.LayoutStyle.Column },
+			children: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '2' },
+			content: { style: I.LayoutStyle.Column },
+			children: []
+		});
+		
 		let s = 0;
-		for (let i = 2; i <= 8; ++i) {
-			list.push({ 
-				header: { id: String(i), type: I.BlockType.Text, name: '', icon: '' },
+		for (let i = 4; i <= 10; ++i) {
+			let b = { 
+				header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
 				content: {
-					text: 'Сontent for block: ' + s,
+					text: 'Сontent for block: ' + i,
 					style: s,
-					marks: [],
+					marks: [] as I.Mark[],
 					marker: Util.rand(1, 2),
 					toggleable: true,
 					checkable: true,
 					checked: false,
 				},
-			});
+				children: [] as I.Block[]
+			};
+			list.push(b);
 			s++;
 		};
 		
+		for (let c = 0; c < 30; ++c) {
+			let b = { 
+				header: { 
+					id: String(idx++),
+					parentId: String(Util.rand(3, 4)), 
+					type: I.BlockType.Text, 
+					name: '', 
+					icon: '' 
+				},
+				content: {
+					text: 'Сontent for child: ' + c,
+					style: 0,
+					marks: [] as I.Mark[],
+					marker: Util.rand(0, 2),
+					toggleable: Boolean(Util.rand(0, 1)),
+					checkable: Boolean(Util.rand(0, 1)),
+					checked: Boolean(Util.rand(0, 1)),
+				},
+				children: [] as I.Block[]
+			};
+			list.push(b);
+		};
+		
 		list.push({ 
-			header: { id: '9', type: I.BlockType.Image, name: '', icon: '' },
+			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
 			content: {},
+			children: []
 		});
 		
 		list.push({ 
-			header: { id: '10', type: I.BlockType.File, name: '', icon: '' },
+			header: { id: String(idx++), type: I.BlockType.File, name: '', icon: '', parentId: '' },
 			content: {},
+			children: []
 		});
 		
 		list.push({ 
-			header: { id: '11', type: I.BlockType.Video, name: '', icon: '' },
+			header: { id: String(idx++), type: I.BlockType.Video, name: '', icon: '', parentId: '' },
 			content: {},
+			children: []
 		});
 		
 		list.push({ 
-			header: { id: '12', type: I.BlockType.Bookmark, name: '', icon: '' },
+			header: { id: String(idx++), type: I.BlockType.Bookmark, name: '', icon: '', parentId: '' },
 			content: {},
+			children: []
 		});
 		
 		blockStore.blockClear();
@@ -220,9 +270,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 				id: String(blockStore.blocks.length + 1),
 				type: 1,
 				name: 'Untitled',
-				icon: Util.randomSmile(),				
+				icon: Util.randomSmile(),
+				parentId: ''			
 			},
-			content: {}
+			content: {},
+			children: []
 		});
 	};
 	

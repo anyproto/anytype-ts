@@ -33,11 +33,33 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const { link } = content;
+		const { link, uploadState } = content;
+		
+		let element = null;
+		switch (uploadState) {
+			default:
+			case I.ContentUploadState.Empty:
+				element = (
+					<InputWithFile icon="image" textFile="Upload a picture" />
+				);
+				break;
+				
+			case I.ContentUploadState.Loading:
+				element = (
+					<div />
+				);
+				break;
+				
+			case I.ContentUploadState.Done:
+				element = (
+					<div />
+				);
+				break;
+		};
 		
 		return (
 			<React.Fragment>
-				<InputWithFile icon="image" textFile="Upload a picture" />
+				{element}
 			</React.Fragment>
 		);
 	};

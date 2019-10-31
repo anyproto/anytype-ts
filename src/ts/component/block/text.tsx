@@ -150,6 +150,9 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	marksToHtml (text: string, marks: I.Mark[]) {
+		text = String(text || '');
+		marks = marks || [];
+		
 		let r = text.split('');
 		let tag = [ 's', 'kbd', 'i', 'b', 'a' ];
 		

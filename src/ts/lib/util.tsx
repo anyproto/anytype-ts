@@ -102,28 +102,6 @@ class Util {
 		return this.icons[this.rand(0, this.icons.length - 1)];
 	};
 	
-	// Wrap list into tree by fieldParent
-	wrapTree (rootId: string, list: any[], fieldParent?: string, fieldList?: string) {
-		list = list || [];
-		fieldParent = fieldParent || 'parentId';
-		fieldList = fieldList || 'children';
-		
-		let ret: any = [];
-		for (let item of list) {
-			if (!item.id || (rootId != item[fieldParent])) {
-				continue;
-			};
-			if (ret.find((el: any) => { return el.id == item.id })) {
-				continue;
-			};
-			
-			let obj = Object.assign({}, item);
-			obj[fieldList] = this.wrapTree(obj.id, list, fieldParent, fieldList);
-			ret.push(obj);
-		};
-		return ret;
-	};
-
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 		let a, jsdate = new Date(timestamp ? timestamp * 1000 : null);
