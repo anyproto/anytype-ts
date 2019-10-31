@@ -195,8 +195,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 			let b = { 
 				header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
 				content: {
-					text: 'Сontent for block: ' + i,
-					style: s,
+					text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+					style: I.TextStyle.p,
 					marks: [] as I.Mark[],
 					marker: Util.rand(1, 2),
 					toggleable: true,
@@ -213,13 +213,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 			let b = { 
 				header: { 
 					id: String(idx++),
-					parentId: String(Util.rand(3, 4)), 
+					parentId: String(Util.rand(3, 5)), 
 					type: I.BlockType.Text, 
 					name: '', 
 					icon: '' 
 				},
 				content: {
-					text: 'Сontent for child: ' + c,
+					text: 'Contrary to popular belief, Lorem Ipsum is not simply random text.',
 					style: 0,
 					marks: [] as I.Mark[],
 					marker: Util.rand(0, 2),

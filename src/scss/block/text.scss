@@ -13,6 +13,7 @@
 		.h4 { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; }
 		.quote { font-size: 13px; line-height: 22px; letter-spacing: 0.08px; }
 		
+		.markers { white-space: nowrap; }
 		.markers {
 			.marker { 
 				width: 24px; height: 24px; line-height: 24px; text-align: center; margin-right: 4px; display: inline-block;
@@ -45,5 +46,10 @@
 				.icon { background-image: url('~img/icon/marker/check1.svg'); }
 			}
 		}
+	}
+	
+	.block.blockText.canToggle {
+		.children { display: none; }
+		.children.active { display: block; }
 	}
 }

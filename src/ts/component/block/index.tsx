@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I } from 'ts/lib';
-import { Block as Child } from 'ts/component';
+import { Block as Child, Icon } from 'ts/component';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -15,14 +15,28 @@ interface Props extends I.Block {
 	number: number;
 };
 
-class Block extends React.Component<Props, {}> {
+interface State {
+	toggled: boolean;
+}; 
+
+class Block extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
+	state = {
+		toggled: false
+	};
+	
+	constructor (props: any) {
+		super(props);
+		
+		this.onToggle = this.onToggle.bind(this);
+	};
 
 	render () {
 		const { header, content, children } = this.props;
 		const { id, type } = header;
-		const { style } = content;
+		const { style, toggleable } = content;
+		const { toggled } = this.state;
 		
 		let n = 0;
 		let cn = [ 'block' ];
@@ -32,12 +46,16 @@ class Block extends React.Component<Props, {}> {
 			default:
 			case I.BlockType.Text:
 				cn.push('blockText');
-				BlockComponent = BlockText;
+				if (toggleable) {
+					cn.push('canToggle');
+				};
+				
+				BlockComponent = () => <BlockText toggled={toggled} onToggle={this.onToggle} {...this.props} />;
 				break;
 				
 			case I.BlockType.Layout:
 				cn.push('blockLayout c' + style);
-				BlockComponent = () => (<div/>);
+				BlockComponent = () => <div/>;
 				break;
 				
 			case I.BlockType.Image:
@@ -68,12 +86,14 @@ class Block extends React.Component<Props, {}> {
 		
 		return (
 			<div id={'block-' + id} className={cn.join(' ')}>
-				<div className="wrapMenu"></div>
+				<div className="wrapMenu">
+					<Icon className="dnd" />
+				</div>
 					
 				<div className="wrapContent">
 					<BlockComponent {...this.props} />
 						
-					<div className="children">
+					<div className={[ 'children', (toggled ? 'active' : '') ].join('')}>
 						{children.map((item: any, i: number) => {
 							if (item.header.type == I.BlockType.Text) {
 								if (item.content.marker == I.MarkerType.Number) {
@@ -99,6 +119,10 @@ class Block extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+	
+	onToggle (e: any) {
+		this.setState({ toggled: !this.state.toggled });
 	};
 	
 };

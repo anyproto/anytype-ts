@@ -4,6 +4,8 @@
 .block {
 	.wrapMenu { width: 50px; }
 	.wrapContent { width: calc(100% - 50px); }
+	
+	.icon.dnd { width: 24px; height: 24px; background-size: 7px 12px; background-image: url('~img/icon/dnd.svg'); }
 }
 
 .block.blockLayout.c0 > .wrapContent > .children { display: flex; }

@@ -7,11 +7,12 @@ import { observer, inject } from 'mobx-react';
 interface Props extends I.BlockText {
 	blockStore?: any;
 	number: number;
+	toggled: boolean;
+	onToggle (e: any): void;
 };
 
 interface State {
 	checked: boolean;
-	toggled: boolean;
 };
 
 @inject('blockStore')
@@ -20,8 +21,7 @@ class BlockText extends React.Component<Props, {}> {
 
 	editorRef: any = null;
 	state = {
-		checked: false,
-		toggled: false
+		checked: false
 	};
 
 	constructor (props: any) {
@@ -36,10 +36,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, header, number } = this.props;
+		const { blockStore, header, number, toggled } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
-		const { toggled, checked } = this.state;
+		const { checked } = this.state;
 		
 		if (!block) {
 			return <div />;
@@ -184,7 +184,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onToggle (e: any) {
-		this.setState({ toggled: !this.state.toggled });
+		this.props.onToggle(e);
 	};
 	
 	onCheck (e: any) {
