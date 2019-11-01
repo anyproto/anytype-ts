@@ -143,6 +143,11 @@ class Block extends React.Component<Props, State> {
 				cn.push('blockDataview');
 				BlockComponent = BlockDataview;
 				break;
+				
+			case I.BlockType.Div:
+				cn.push('blockDiv');
+				BlockComponent = () => <div className="div" />;
+				break;
 		};
 		
 		let wrapMenu = (

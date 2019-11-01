@@ -253,6 +253,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Div, name: '', icon: '', parentId: '' },
+			content: {},
+			children: []
+		});
+		
+		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
 			content: {},
 			children: []

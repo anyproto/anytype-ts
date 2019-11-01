@@ -22,10 +22,10 @@ let getStyles = (props: any) => {
 			break;
 	};
 	
-	width = width + 'px';
-	const transform = `translate3d(${x}px, ${y}px, 0px)`;
-	
-	return { transform, width };
+	return {
+		transform: `translate3d(${x}px, ${y}px, 0px)`,
+		width: `${width}px`
+	};
 };
 
 interface Props {

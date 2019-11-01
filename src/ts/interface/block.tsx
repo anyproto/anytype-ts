@@ -10,6 +10,7 @@ export enum BlockType {
 	Video		 = 7,
 	Bookmark	 = 8,
 	Icon		 = 9,
+	Div			 = 10,
 };
 
 export interface Permissions {

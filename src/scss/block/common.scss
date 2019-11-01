@@ -1,17 +1,24 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block { 
-		border-bottom: 1px solid red; padding: 1px 0px; word-break: break-word; display: flex; flex: auto; 
-	}
+	.block { padding: 1px 0px; word-break: break-word; display: flex; flex: auto; }
 	.block {
 		.wrapMenu { width: 50px; }
 		.wrapContent { width: calc(100% - 50px); position: relative; }
 		.flex { position: relative; z-index: 1; }
-		.icon.dnd { width: 24px; height: 24px; background-size: 7px 12px; background-image: url('~img/icon/dnd.svg'); }
+		.icon.dnd { 
+			width: 24px; height: 24px; background-size: 7px 12px; background-image: url('~img/icon/dnd.svg');
+			opacity: 0; cursor: move;
+		}
 	}
 	
+	.block:hover  > .wrapMenu > .icon.dnd { opacity: 1; }
+	
 	.block.isOver > .wrapContent > .dropTarget { background: rgba(0,200,0,0.3); }
+	
+	.block.blockDiv {
+		.div { height: 1px; background: #d2d0c2; margin: 8px 0px; }
+	}
 	
 	/* Row */
 	.block.blockLayout.c0 { padding: 0px; }
