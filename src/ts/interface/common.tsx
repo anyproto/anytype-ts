@@ -12,6 +12,6 @@ export interface Account {
 	avatar?: Image;
 };
 
-export enum DndItem {
+export enum DragItem {
 	Block = 'Block',
 };

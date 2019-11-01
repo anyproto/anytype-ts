@@ -33,10 +33,10 @@ class PageMainEdit extends React.Component<Props, {}> {
 			<div>
 				<DndProvider backend={backend}>
 					<DragLayer />
-				
+					
 					<Header {...this.props} />
 					<MenuMain />
-					
+						
 					<div className="wrapper">
 						<div className="editor">
 							<div className="blocks">
@@ -52,55 +52,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 		);
 	};
 	
-	wrapBlockTree (rootId: string, list: I.Block[]) {
-		let ret: any = [];
-		for (let item of list) {
-			if (!item.header.id || (rootId != item.header.parentId)) {
-				continue;
-			};
-			if (ret.find((el: any) => { return el.header.id == item.header.id })) {
-				continue;
-			};
-			
-			item.children = this.wrapBlockTree(item.header.id, list);
-			ret.push(item);
-		};
-		return ret;
-	};
-	
 	componentDidMount () {
-		/*
-		setInterval(() => {
-			let c = '';
-			let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-			let l = chars.length;
-			for (let i = 0; i < Util.rand(500, 3000); ++i) {
-				c += chars.charAt(Math.floor(Math.random() * l));
-			};
-			
-			let marks = [];
-			for (let i = 0; i < 20; ++i) {
-				let r = Util.rand(0, c.length - 1);
-				marks.push({
-					range: { from: r, to: r + 10 },
-					type: Util.rand(0, 4)
-				});
-			};
-			
-			blockStore.blockUpdate({ 
-				header: { id: String(Util.rand(2, 1000)), type: 3, name: '', icon: '' },
-				content: {
-					text: c,
-					style: Util.rand(0, 5),
-					marks: marks,
-					toggleable: false,
-					marker: 1,
-					checkable: false,
-					checked: false,
-				}
-			});
-		}, 100);
-		*/
 	};
 	
 	componentDidUpdate () {

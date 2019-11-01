@@ -1,4 +1,4 @@
-import { ImageSize, Image, Account, DndItem } from './common';
+import { ImageSize, Image, Account, DragItem } from './common';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
@@ -28,7 +28,7 @@ export {
 	ImageSize, 
 	Image, 
 	Account,
-	DndItem,
+	DragItem,
 	
 	PopupParam, 
 	Popup,

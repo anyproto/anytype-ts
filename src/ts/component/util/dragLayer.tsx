@@ -1,21 +1,31 @@
 import * as React from 'react';
 import { DragLayer } from 'react-dnd';
 import { flow, throttle } from 'lodash';
+import WithThrottle from 'react-with-throttle';
+import { Block } from 'ts/component';
+import { I, Util } from 'ts/lib';
 
 let getStyles = (props: any) => {
-	const { initialOffset, currentOffset, mouseOffset } = props;
+	const { item, itemType, initialOffset, currentOffset, mouseOffset } = props;
 
 	if (!initialOffset || !currentOffset) {
 		return { display: 'none' };
 	};
 
-	const { x, y } = mouseOffset;
+	let { x, y } = mouseOffset;
+	let width = item.bounds.width;
+	
+	switch (itemType) {
+		case I.DragItem.Block:
+			x += 42;
+			width -= 50;
+			break;
+	};
+	
+	width = width + 'px';
 	const transform = `translate3d(${x}px, ${y}px, 0px)`;
-	const width = '100px';
-	const height = '100px';
-	const border = '1px solid red';
-
-	return { transform, width, height, border };
+	
+	return { transform, width };
 };
 
 interface Props {
@@ -28,16 +38,47 @@ class CustomDragLayer extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
+		
+		this.renderContent = this.renderContent.bind(this);
+	};
+	
+	renderContent (props: any) {
+		const { item, itemType } = props;
+		
+		let n = 0;
+		let content = null;
+		switch (itemType) {
+			case I.DragItem.Block:
+				content = (
+					<div className="blocks">
+						{item.list.map((item: any, i: number) => {
+							n = Util.incrementBlockNumber(item, n);
+							return <Block key={item.header.id} {...item} number={n} index={i} />
+						})}
+					</div>
+				);
+				break;
+		};
+		
+		return (
+			<div className="dragLayer" style={getStyles(props)}>
+				{content}
+			</div>
+		);
 	};
 	
 	render () {
-		const { item, itemType, isDragging } = this.props;
+		const { isDragging } = this.props;
 
 		if (!isDragging) {
 			return null;
 		};
 		
-		return <div className="dragLayer" style={getStyles(this.props)} />;
+		return (
+			<WithThrottle value={this.props} wait={30}>
+				{this.renderContent}
+			</WithThrottle>
+		);
 	};
 	
 };

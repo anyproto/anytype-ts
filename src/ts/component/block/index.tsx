@@ -29,11 +29,19 @@ interface State {
 	toggled: boolean;
 };
 
+const $ = require('jquery');
 const { FILE } = NativeTypes;
 
 const source = {
 	beginDrag (props: any, monitor: any, component: any) {
+		const position = monitor.getClientOffset();
+		
+		let node = $(ReactDOM.findDOMNode(component));
+		let bounds = node.get(0).getBoundingClientRect();
+		
 		return ({
+			bounds,
+			list: [ props ]
 		});
 	},
 
@@ -145,7 +153,11 @@ class Block extends React.Component<Props, State> {
 		
 		let wrapContent = (
 			<div className="wrapContent">
-				<BlockComponent {...this.props} />
+				{connectDropTarget(
+					<div className="dropTarget">
+						<BlockComponent {...this.props} />
+					</div>
+				)}
 					
 				<div className={[ 'children', (toggled ? 'active' : '') ].join('')}>
 					{children.map((item: any, i: number) => {
@@ -155,10 +167,6 @@ class Block extends React.Component<Props, State> {
 				</div>
 			</div>
 		);
-		
-		if (canDrop) {
-			wrapContent = connectDropTarget(wrapContent);
-		};
 		
 		return (
 			<div id={'block-' + id} className={cn.join(' ')}>
@@ -185,6 +193,6 @@ class Block extends React.Component<Props, State> {
 };
 
 export default flow([
-	DragSource(I.DndItem.Block, source, sourceCollect),
-	DropTarget([ I.DndItem.Block, FILE ], target, targetCollect),
+	DragSource(I.DragItem.Block, source, sourceCollect),
+	DropTarget([ I.DragItem.Block, FILE ], target, targetCollect),
 ])(Block);
