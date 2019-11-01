@@ -1,8 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { I, Util } from 'ts/lib';
 import { Block as Child, Icon } from 'ts/component';
+
+import { DropTarget, DragSource } from 'react-dnd';
+import { NativeTypes, getEmptyImage } from 'react-dnd-html5-backend';
+import { flow } from 'lodash';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -15,11 +18,52 @@ import BlockBookmark from './bookmark';
 interface Props extends I.Block {
 	index: number;
 	number: number;
+	connectDragSource: any;
+	connectDropTarget: any;
+	connectDragPreview: any;
+	isDragging: boolean;
+	isOver: boolean;
 };
 
 interface State {
 	toggled: boolean;
-}; 
+};
+
+const { FILE } = NativeTypes;
+
+const source = {
+	beginDrag (props: any, monitor: any, component: any) {
+		return ({
+		});
+	},
+
+	endDrag (props: any, monitor: any) {
+	}
+};
+
+const sourceCollect = (connect: any, monitor: any) => ({
+	connectDragPreview: connect.dragPreview(),
+	connectDragSource: connect.dragSource(),
+	isDragging: monitor.isDragging()
+});
+
+const target  = {
+	drop (props: any, monitor: any, component: any) {
+	},
+
+	hover (props: any, monitor: any, component: any) {
+		const item = monitor.getItem();
+		const itemType = monitor.getItemType();
+		const position = monitor.getClientOffset();
+	}
+};
+
+const targetCollect = (connect: any, monitor: any) => {
+	return {
+		connectDropTarget: connect.dropTarget(),
+		isOver: monitor.isOver()
+	};
+};
 
 class Block extends React.Component<Props, State> {
 
@@ -35,15 +79,16 @@ class Block extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { header, content, children, index } = this.props;
+		const { header, content, children, index, connectDragSource, connectDropTarget, isDragging, isOver } = this.props;
 		const { id, type } = header;
 		const { style, toggleable } = content;
 		const { toggled } = this.state;
 		
 		let n = 0;
-		let cn = [ 'block', 'index' + index ];
-		let BlockComponent: React.ReactType<{}>;
+		let canDrop = true;
+		let cn = [ 'block', 'index' + index, (isOver ? 'isOver' : '') ];
 		
+		let BlockComponent: React.ReactType<{}>;
 		switch (type) {
 			default:
 			case I.BlockType.Text:
@@ -56,6 +101,7 @@ class Block extends React.Component<Props, State> {
 				break;
 				
 			case I.BlockType.Layout:
+				canDrop = false;
 				cn.push('blockLayout c' + style);
 				BlockComponent = () => <div/>;
 				break;
@@ -91,30 +137,41 @@ class Block extends React.Component<Props, State> {
 				break;
 		};
 		
+		let wrapMenu = (
+			<div className="wrapMenu">
+				{connectDragSource(<div className="icon dnd" />)}
+			</div>
+		);
+		
+		let wrapContent = (
+			<div className="wrapContent">
+				<BlockComponent {...this.props} />
+					
+				<div className={[ 'children', (toggled ? 'active' : '') ].join('')}>
+					{children.map((item: any, i: number) => {
+						n = Util.incrementBlockNumber(item, n);
+						return <Child key={item.header.id} {...item} number={n} index={i} />;
+					})}
+				</div>
+			</div>
+		);
+		
+		if (canDrop) {
+			wrapContent = connectDropTarget(wrapContent);
+		};
+		
 		return (
 			<div id={'block-' + id} className={cn.join(' ')}>
-				<div className="wrapMenu">
-					<Icon className="dnd" />
-				</div>
-					
-				<div className="wrapContent">
-					<BlockComponent {...this.props} />
-						
-					<div className={[ 'children', (toggled ? 'active' : '') ].join('')}>
-						{children.map((item: any, i: number) => {
-							n = Util.incrementBlockNumber(item, n);
-							return (
-								<Child key={item.header.id} {...item} number={n} index={i} />
-							);
-						})}
-					</div>
-				</div>
+				{wrapMenu}
+				{wrapContent}
 			</div>
 		);
 	};
 	
 	componentDidMount () {
 		this._isMounted = true;
+		
+		this.props.connectDragPreview(getEmptyImage(), {});
 	};
 
 	componentWillUnmount () {
@@ -127,4 +184,7 @@ class Block extends React.Component<Props, State> {
 	
 };
 
-export default Block;
+export default flow([
+	DragSource(I.DndItem.Block, source, sourceCollect),
+	DropTarget([ I.DndItem.Block, FILE ], target, targetCollect),
+])(Block);

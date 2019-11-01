@@ -1,6 +1,7 @@
 import Page from './page';
 
 import Block from './block';
+import DragLayer from './util/dragLayer';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -40,6 +41,7 @@ import IconUser from './util/iconUser';
 export {
 	Page,
 	Block,
+	DragLayer,
 	ListPopup,
 	ListMenu,
 	ListIndex,

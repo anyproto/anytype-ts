@@ -6,17 +6,23 @@
 	}
 	.block {
 		.wrapMenu { width: 50px; }
-		.wrapContent { width: calc(100% - 50px); }
-		
+		.wrapContent { width: calc(100% - 50px); position: relative; }
+		.flex { position: relative; z-index: 1; }
 		.icon.dnd { width: 24px; height: 24px; background-size: 7px 12px; background-image: url('~img/icon/dnd.svg'); }
+		
+		.dropTarget { position: absolute; z-index: 2; left: 0px; top: 0px; width: 100%; height: 100%; }
 	}
+	
+	.block.isOver { background: rgba(0,200,0,0.3); }
 	
 	/* Row */
 	.block.blockLayout.c0 > .wrapMenu { display: none; }
 	.block.blockLayout.c0 > .wrapContent { width: 100%; }
 	.block.blockLayout.c0 > .wrapContent > .children { display: flex; }
+	.block.blockLayout.c0 > .wrapContent > .dropTarget { display: none; }
 	
 	/* Column */
 	.block.blockLayout.c1 > .wrapMenu { display: none; }
-	.block.blockLayout.c1 > .wrapContent { width: 100%; }	
+	.block.blockLayout.c1 > .wrapContent { width: 100%; }
+	.block.blockLayout.c1 > .wrapContent > .dropTarget { display: none; }
 }

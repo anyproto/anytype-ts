@@ -11,3 +11,7 @@ export interface Account {
 	color?: string;
 	avatar?: Image;
 };
+
+export enum DndItem {
+	Block = 'Block',
+};

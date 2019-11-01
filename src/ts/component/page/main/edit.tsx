@@ -1,9 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { MenuMain, Block, Smile, HeaderMainEdit as Header } from 'ts/component';
+import { MenuMain, Block, Smile, HeaderMainEdit as Header, DragLayer } from 'ts/component';
 import { I, Util } from 'ts/lib'; 
 import { observer, inject } from 'mobx-react';
+import { DndProvider } from 'react-dnd';
+import backend from 'ts/lib/dndBackend';
 
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
@@ -29,19 +31,23 @@ class PageMainEdit extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<Header {...this.props} />
-				<MenuMain />
+				<DndProvider backend={backend}>
+					<DragLayer />
 				
-				<div className="wrapper">
-					<div className="editor">
-						<div className="blocks">
-							{tree.map((item: I.Block, i: number) => { 
-								n = Util.incrementBlockNumber(item, n);
-								return <Block key={item.header.id} {...item} number={n} index={i} />
-							})}
+					<Header {...this.props} />
+					<MenuMain />
+					
+					<div className="wrapper">
+						<div className="editor">
+							<div className="blocks">
+								{tree.map((item: I.Block, i: number) => { 
+									n = Util.incrementBlockNumber(item, n);
+									return <Block key={item.header.id} {...item} number={n} index={i} />
+								})}
+							</div>
 						</div>
 					</div>
-				</div>
+				</DndProvider>
 			</div>
 		);
 	};
