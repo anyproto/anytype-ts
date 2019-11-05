@@ -46,7 +46,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		let win = $(window);
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }));
+		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 10));
 	};
 	
 	onDragMove (e: any) {

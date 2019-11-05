@@ -5,6 +5,7 @@ import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const $ = require('jquery');
+const raf = require('raf');
 
 interface Props {
 	blockStore?: any;
@@ -19,6 +20,7 @@ interface State {
 @observer
 class DragLayer extends React.Component<Props, State> {
 	
+	_isMounted: boolean = false;
 	state = {
 		type: '',
 		ids: [] as string[]
@@ -62,23 +64,45 @@ class DragLayer extends React.Component<Props, State> {
 		);
 	};
 	
+	componentDidMount () {
+		this._isMounted = true;
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+	
 	show (type: string, ids: string[]) {
+		if (!this._isMounted) {
+			return;
+		};
+			
 		let node = $(ReactDOM.findDOMNode(this));
-		node.css({ display: 'none' });
+		node.removeClass('show');
 		
 		this.setState({ type: type, ids: ids });
 	};
 	
 	hide () {
+		if (!this._isMounted) {
+			return;
+		};
+			
 		let node = $(ReactDOM.findDOMNode(this));
-		node.css({ display: 'none' });
+		node.removeClass('show');
 		
 		this.setState({ type: '', ids: [] });
 	};
 	
 	move (x: number, y: number) {
-		let node = $(ReactDOM.findDOMNode(this));
-		node.css({ transform: `translate3d(${x}px, ${y}px, 0px)`, display: 'block' });
+		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+			
+			const node = $(ReactDOM.findDOMNode(this));
+			node.css({ transform: `translate3d(${x}px, ${y}px, 0px)` }).addClass('show');
+		});
 	};
 	
 };

@@ -1,4 +1,5 @@
 .dragLayer { position: fixed; z-index: 1000; left: 2px; top: 2px; display: none; }
+.dragLayer.show { display: block; }
 .dragLayer {
 	.blocks { margin: 0px !important; }
 	.blocks {
