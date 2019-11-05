@@ -48,12 +48,18 @@ class DragProvider extends React.Component<Props, {}> {
 		this.unbind();
 		this.setDragImage(e);
 		
+		$('.isDragging').removeClass('isDragging');
+		for (let id of this.ids) {
+			$('.selectable.c' + id).addClass('isDragging');
+		};
+		
 		let win = $(window);
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 20));
 		
 		if (this.props.dataset && this.props.dataset.selection) {
 			this.props.dataset.selection.set(this.ids);
+			this.props.dataset.selection.hide();
 			this.props.dataset.selection.setBlocked(true);
 		};
 	};

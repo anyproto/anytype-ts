@@ -14,7 +14,7 @@
 	}
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.isDragging { opacity: 0.3; }
+	.block > .wrapContent.isDragging { opacity: 0.3; }
 	.block > .wrapContent.isSelected > .dropTarget { background: #f7f5f0; }
 	
 	.block.blockDiv {

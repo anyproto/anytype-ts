@@ -149,13 +149,10 @@ class Block extends React.Component<Props, State> {
 	onDragStart (e: any) {
 		const { dataset, header } = this.props;
 		const { selection, onDragStart } = dataset;
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		node.addClass('isDragging');
 		
 		if (dataset) {
 			let ids = [ header.id ];
-			if (selection && selection.ids.length) {
+			if (selection && selection.ids.length && (selection.ids.indexOf(header.id) >= 0)) {
 				ids = selection.ids;
 			};
 			if (onDragStart) {

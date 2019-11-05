@@ -47,15 +47,14 @@ class SelectionProvider extends React.Component<Props, State> {
 	onMouseDown (e: any) {
 		e.stopPropagation();
 		
-		const node = $(ReactDOM.findDOMNode(this));
-		const rect = node.find('#rect');
-		
 		if (this.blocked) {
-			this.unbind();
-			rect.hide();
+			this.hide();
 			return;
 		};
-		
+
+		let node = $(ReactDOM.findDOMNode(this));
+		let rect = node.find('#rect');
+			
 		this.x = e.pageX;
 		this.y = e.pageY - $(window).scrollTop();
 		this.nodeList = $('.selectable');
@@ -77,15 +76,13 @@ class SelectionProvider extends React.Component<Props, State> {
 	};
 	
 	onMouseMove (e: any) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const rect = node.find('#rect');
-		
 		if (this.blocked) {
-			this.unbind();
-			rect.hide();
+			this.hide();
 			return;
 		};
-		
+
+		let node = $(ReactDOM.findDOMNode(this));
+		let rect = node.find('#rect');
 		let win = $(window);
 		let wh = win.height();
 		let st = win.scrollTop();
@@ -133,15 +130,19 @@ class SelectionProvider extends React.Component<Props, State> {
 	};
 	
 	onMouseUp (e: any) {
+		this.hide();
+		
+		if (!this.moved) {
+			this.clear();
+		};
+	};
+	
+	hide () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const rect = node.find('#rect');
 		
 		rect.hide();
 		this.unbind();
-		
-		if (!this.moved) {
-			this.clear();
-		};
 	};
 	
 	clear () {
@@ -162,9 +163,9 @@ class SelectionProvider extends React.Component<Props, State> {
 	};
 	
 	set (ids: string[]) {
-		$('.selectable.isSelected').removeClass('isSelected');
+		this.ids = ids.map((id: any) => { return id.toString(); });
 		
-		this.ids = ids;
+		$('.selectable.isSelected').removeClass('isSelected');
 		for (let id of this.ids) {
 			$('.selectable.c' + id).addClass('isSelected');
 		};
