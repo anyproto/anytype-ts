@@ -12,12 +12,14 @@ import ViewList from './dataview/view/list';
 
 interface Props extends I.BlockDataview {
 	commonStore?: any;
+	blockStore?: any;
 };
 interface State {
 	view: string;
 };
 
 @inject('commonStore')
+@inject('blockStore')
 @observer
 class BlockDataview extends React.Component<Props, State> {
 
@@ -32,7 +34,15 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { commonStore, header, content } = this.props;
+		const { commonStore, blockStore, header } = this.props;
+		const { blocks } = blockStore;
+		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		
+		if (!block) {
+			return null;
+		};
+
+		const { content } = block;		
 		const { views, data, properties } = content;
 		const view = this.state.view || content.view;
 		const viewItem = views.find((item: any) => { return item.id == view; });

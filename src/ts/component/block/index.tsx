@@ -49,8 +49,8 @@ class Block extends React.Component<Props, State> {
 		let canDrop = true;
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
-		
 		let BlockComponent: React.ReactType<{}>;
+		
 		switch (type) {
 			default:
 			case I.BlockType.Text:

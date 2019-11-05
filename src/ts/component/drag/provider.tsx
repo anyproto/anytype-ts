@@ -29,10 +29,10 @@ class DragProvider extends React.Component<Props, {}> {
 		const children = this.injectProps(this.props.children);
 		
 		return (
-			<div>
+			<React.Fragment>
 				<DragLayer ref={(ref: any) => { this.refLayer = ref; }} />
 				{children}
-			</div>
+			</React.Fragment>
 		);
 	};
 	
@@ -41,17 +41,10 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		console.log('[onDragStart]', type, ids);
 		
-		this.type = type;
-		this.ids = ids;
-		
+		this.set(type, ids);
 		this.refLayer.show(type, this.ids, component);
 		this.unbind();
 		this.setDragImage(e);
-		
-		$('.isDragging').removeClass('isDragging');
-		for (let id of this.ids) {
-			$('.selectable.c' + id).addClass('isDragging');
-		};
 		
 		let win = $(window);
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
@@ -75,6 +68,7 @@ class DragProvider extends React.Component<Props, {}> {
 		console.log('[onDragEnd]');
 		
 		$('.isDragging').removeClass('isDragging');
+		
 		this.refLayer.hide();
 		this.unbind();
 		
@@ -89,6 +83,16 @@ class DragProvider extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('dragend.drag drag.drag');	
+	};
+	
+	set (type: string, ids: string[]) {
+		this.type = type;
+		this.ids = ids.map((id: any) => { return id.toString(); });
+		
+		$('.selectable.isDragging').removeClass('isDragging');
+		for (let id of this.ids) {
+			$('.selectable.c' + id).addClass('isDragging');
+		};
 	};
 	
 	setDragImage (e: any) {

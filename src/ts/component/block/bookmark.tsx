@@ -21,7 +21,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
 		
 		if (!block) {
-			return <div />;
+			return null;
 		};
 		
 		const { content } = block;

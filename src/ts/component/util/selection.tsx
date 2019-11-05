@@ -6,11 +6,10 @@ interface Props {
 	className?: string;
 };
 
-interface State {};
-
 const $ = require('jquery');
+const THRESHOLD = 10;
 
-class SelectionProvider extends React.Component<Props, State> {
+class SelectionProvider extends React.Component<Props, {}> {
 
 	x: number = 0;
 	y: number = 0;
@@ -52,22 +51,10 @@ class SelectionProvider extends React.Component<Props, State> {
 			return;
 		};
 
-		let node = $(ReactDOM.findDOMNode(this));
-		let rect = node.find('#rect');
-			
 		this.x = e.pageX;
 		this.y = e.pageY - $(window).scrollTop();
 		this.nodeList = $('.selectable');
 		this.moved = false;
-		
-		rect.css({ 
-			transform: `translate3d(${this.x + 2}px, ${this.y + 2}px, 0px)`,
-			width: 0, 
-			height: 0 
-		});
-		rect.show();
-		
-		this.onMouseMove(e);
 		this.unbind();
 
 		let win = $(window);
@@ -81,47 +68,47 @@ class SelectionProvider extends React.Component<Props, State> {
 			return;
 		};
 
-		let node = $(ReactDOM.findDOMNode(this));
-		let rect = node.find('#rect');
 		let win = $(window);
 		let wh = win.height();
 		let st = win.scrollTop();
 		let cx = e.pageX;
-		let cy = e.pageY - $(window).scrollTop();
+		let cy = e.pageY - st;
+		let rect = {
+			x: (this.x < cx) ? this.x : cx,
+			y: (this.y < cy) ? this.y : cy,
+			width: Math.abs(cx - this.x),
+			height: Math.abs(cy - this.y)
+		};
 		
-		let x = this.x < cx ? this.x : cx;
-		let y = this.y < cy ? this.y : cy;
-		let width = Math.abs(cx - this.x);
-		let height = Math.abs(cy - this.y);
-		
-		if (width < 10 || height < 10) {
+		if ((rect.width < THRESHOLD) || (rect.height < THRESHOLD)) {
 			return;
 		};
 		
-		rect.css({ 
-			transform: `translate3d(${x}px, ${y}px, 0px)`,
-			width: width, 
-			height: height 
+		let node = $(ReactDOM.findDOMNode(this));
+		let el = node.find('#rect');
+		
+		el.css({ 
+			transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
+			width: rect.width, 
+			height: rect.height
 		});
+		el.show();
 		
-		this.clear();
+		this.ids = [];
 		this.moved = true;
-		
 		this.nodeList.each((i: number, item: any) => {
 			item = $(item);
 			
 			let offset = item.offset();
-			let w = item.width();
-			let h = item.height();
 			let { left, top } = offset;
+			let width = item.width();
+			let height = item.height();
 			
-			top -= st;
-			
-			if ((top < 0) || (top >= wh + st)) {
+			if ((top + height < st) || (top >= wh + st)) {
 				return;
 			};
 			
-			if (this.coordsCollide(x, y, width, height, left, top, w, h)) {
+			if (this.coordsCollide(rect.x, rect.y, rect.width, rect.height, left, top - st, width, height)) {
 				this.ids.push(item.data('id'));
 			};
 		});
@@ -139,9 +126,8 @@ class SelectionProvider extends React.Component<Props, State> {
 	
 	hide () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const rect = node.find('#rect');
 		
-		rect.hide();
+		node.find('#rect').hide();
 		this.unbind();
 	};
 	

@@ -37,7 +37,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { cover } = commonStore;
 		
 		if (!account) {
-			return <div />;
+			return null;
 		};
 		
 		return (

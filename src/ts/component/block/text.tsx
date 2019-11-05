@@ -42,7 +42,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { checked } = this.state;
 		
 		if (!block) {
-			return <div />;
+			return null;
 		};
 		
 		const { content } = block;
