@@ -17,6 +17,7 @@ class SelectionProvider extends React.Component<Props, State> {
 	ids: string[] = [];
 	nodeList: any = null;
 	blocked: boolean = false;
+	moved: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -44,6 +45,8 @@ class SelectionProvider extends React.Component<Props, State> {
 	};
 	
 	onMouseDown (e: any) {
+		e.stopPropagation();
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		const rect = node.find('#rect');
 		
@@ -56,6 +59,7 @@ class SelectionProvider extends React.Component<Props, State> {
 		this.x = e.pageX;
 		this.y = e.pageY - $(window).scrollTop();
 		this.nodeList = $('.selectable');
+		this.moved = false;
 		
 		rect.css({ 
 			transform: `translate3d(${this.x}px, ${this.y}px, 0px)`,
@@ -103,8 +107,8 @@ class SelectionProvider extends React.Component<Props, State> {
 			height: height 
 		});
 		
-		this.ids = [];
-		$('.selectable.isSelected').removeClass('isSelected');
+		this.clear();
+		this.moved = true;
 		
 		this.nodeList.each((i: number, item: any) => {
 			item = $(item);
@@ -120,7 +124,7 @@ class SelectionProvider extends React.Component<Props, State> {
 				return;
 			};
 			
-			if (x <= left && x + width >= left + w && y <= top && y + height >= top + h) {
+			if ((x <= left) && (x + width >= left + w) && (y <= top) && (y + height >= top + h)) {
 				item.addClass('isSelected');
 				this.ids.push(item.data('id'));
 			};
@@ -133,6 +137,15 @@ class SelectionProvider extends React.Component<Props, State> {
 		
 		rect.hide();
 		this.unbind();
+		
+		if (!this.moved) {
+			this.clear();
+		};
+	};
+	
+	clear () {
+		this.ids = [];
+		$('.selectable.isSelected').removeClass('isSelected');
 	};
 	
 	unbind () {
@@ -140,7 +153,6 @@ class SelectionProvider extends React.Component<Props, State> {
 	};
 	
 	setBlocked (v: boolean) {
-		console.log('block', v);
 		this.blocked = v;
 	};
 	
