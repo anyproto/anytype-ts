@@ -148,9 +148,9 @@ class Block extends React.Component<Props, State> {
 		};
 	};
 	
-	onDrop (e: any, type: string, id: string) {
+	onDrop (e: any, type: string, id: string, direction: string) {
 		if (this.props.dataset && this.props.dataset.onDrop) {
-			this.props.dataset.onDrop(e, type, id);			
+			this.props.dataset.onDrop(e, type, id, direction);			
 		};
 	};
 	

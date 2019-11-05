@@ -1,21 +1,24 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
 
 interface Props {
 	id: string;
 	type: string;
-	onDrop(e: any, type: string, id: string): void;
+	onDrop?(e: any, type: string, id: string, direction: string): void;
 };
 
-interface State {
-	isOver: boolean;
-};
+const $ = require('jquery');
 
-class DropTarget extends React.Component<Props, State> {
+class DropTarget extends React.Component<Props, {}> {
 	
-	state = {
-		isOver: false
+	private static defaultProps = {
+		offsetX: 0,
+		offsetY: 0
 	};
+	
+	_isMounted: boolean = false;
+	direction: string;
 	
 	constructor (props: any) {
 		super(props);
@@ -27,30 +30,88 @@ class DropTarget extends React.Component<Props, State> {
 	
 	render () {
 		const { children } = this.props;
-		const { isOver } = this.state;
-		
-		let cn = [ 'dropTarget', (isOver ? 'isOver' : '') ];
 		
 		return (
-			<div className={cn.join(' ')} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop}>
+			<div className="dropTarget" onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop}>
 				{children}
 			</div>
 		);
 	};
 	
+	componentDidMount () {
+		this._isMounted = true;
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+	
 	onDragOver (e: any) {
 		e.preventDefault();
-		this.setState({ isOver: true });
+		
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		let offset = node.offset();
+		let width = node.width();
+		let height = node.height();
+		let x = offset.left;
+		let y = offset.top;
+		let ex = e.pageX;
+		let ey = e.pageY;
+		
+		let rect = {
+			x: x + width * 0.15,
+			y: y + height * 0.15,
+			width: x + width * 0.60,
+			height: y + height * 0.85
+		};
+		
+		this.direction = '';
+		
+		if ((ey >= y) && (ey <= rect.y)) {
+			this.direction = 'top';
+		} else 
+		if ((ey >= rect.height) && (ey <= y + height)) {
+			this.direction = 'bottom';
+		} else
+		if ((ex >= x) && (ex < rect.x) && (ey > rect.y) && (ey < rect.height)) {
+			this.direction = 'left';
+		} else 
+		if ((ex > rect.width) && (ex <= x + width) && (ey > rect.y) && (ey < rect.height)) {
+			this.direction = 'right';
+		} else 
+		if ((ex > rect.x) && (ex < rect.width) && (ey > rect.y) && (ey < rect.height)) {
+			this.direction = 'middle';
+		};
+		
+		node.removeClass('top bottom left right middle');
+		node.addClass('isOver ' + this.direction);
 	};
 	
 	onDragLeave (e: any) {
 		e.preventDefault();
-		this.setState({ isOver: false });
+		
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.removeClass('isOver top bottom left right middle');
 	};
 	
 	onDrop (e: any) {
-		this.setState({ isOver: false });
-		this.props.onDrop(e, this.props.type, this.props.id);
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.removeClass('isOver top bottom left right middle');
+		
+		this.props.onDrop(e, this.props.type, this.props.id, this.direction);
 	};
 	
 };

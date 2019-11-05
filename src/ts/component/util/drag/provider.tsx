@@ -63,8 +63,8 @@ class DragProvider extends React.Component<Props, {}> {
 		this.unbind();
 	};
 	
-	onDrop (e: any, type: string, id: string) {
-		console.log('[onDrop]', type, id, this.type, this.ids);
+	onDrop (e: any, type: string, id: string, direction: string) {
+		console.log('[onDrop]', type, id, this.type, this.ids, direction);
 	};
 	
 	unbind () {
