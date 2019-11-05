@@ -4,7 +4,10 @@ import { DragLayer } from 'ts/component';
 import { I } from 'ts/lib';
 import { throttle } from 'lodash';
 
-interface Props {};
+interface Props {
+	onDragStart?(e: any): void;
+	onDragEnd?(e: any): void;
+};
 
 const $ = require('jquery');
 
@@ -35,18 +38,24 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDragStart (e: any, type: string, ids: string[], component: any) {
+		e.stopPropagation();
+		
 		console.log('[onDragStart]', type, ids);
 		
 		this.type = type;
 		this.ids = ids;
 		
-		this.refLayer.show(type, ids, component);
+		this.refLayer.show(type, this.ids, component);
 		this.unbind();
 		this.setDragImage(e);
 		
 		let win = $(window);
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 10));
+		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 20));
+		
+		if (this.props.onDragStart) {
+			this.props.onDragStart(e);
+		};
 	};
 	
 	onDragMove (e: any) {
@@ -59,8 +68,13 @@ class DragProvider extends React.Component<Props, {}> {
 	onDragEnd (e: any) {
 		console.log('[onDragEnd]');
 		
+		$('.isDragging').removeClass('isDragging');
 		this.refLayer.hide();
 		this.unbind();
+		
+		if (this.props.onDragEnd) {
+			this.props.onDragEnd(e);
+		};
 	};
 	
 	onDrop (e: any, type: string, id: string, direction: string) {
@@ -84,16 +98,16 @@ class DragProvider extends React.Component<Props, {}> {
 	injectProps (children: any) {
 		return React.Children.map(children, (child: any) => {
 			let children = child.props.children;
+			let dataset = child.props.dataset || {};
+			
 			if (children) {
 				child = React.cloneElement(child, { children: this.injectProps(children) });
 			};
 			
-			return React.cloneElement(child, {
-				dataset: {
-					onDragStart: this.onDragStart,
-					onDrop: this.onDrop,
-				}
-			});
+			dataset.onDragStart = this.onDragStart;
+			dataset.onDrop = this.onDrop;
+			
+			return React.cloneElement(child, { dataset: dataset });
 		});
 	};
 	

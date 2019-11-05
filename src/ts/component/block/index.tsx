@@ -15,12 +15,13 @@ interface Props extends I.Block {
 	index: number;
 	number: number;
 	dataset?: any;
-	isDragging?: boolean;
 };
 
 interface State {
 	toggled: boolean;
 };
+
+const $ = require('jquery');
 
 class Block extends React.Component<Props, State> {
 
@@ -38,14 +39,14 @@ class Block extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { header, content, childBlocks, index, isDragging } = this.props;
+		const { header, content, childBlocks, index } = this.props;
 		const { id, type } = header;
 		const { style, toggleable } = content;
 		const { toggled } = this.state;
 		
 		let n = 0;
 		let canDrop = true;
-		let cn = [ 'block', 'index' + index, (isDragging ? 'isDragging' : '') ];
+		let cn = [ 'block', 'index' + index, 'selectable' ];
 		
 		let BlockComponent: React.ReactType<{}>;
 		switch (type) {
@@ -113,7 +114,7 @@ class Block extends React.Component<Props, State> {
 					<BlockComponent {...this.props} />
 				</DropTarget>
 					
-				<div className={[ 'children', (toggled ? 'active' : '') ].join('')}>
+				<div className={[ 'children', (toggled ? 'active' : '') ].join(' ')}>
 					{childBlocks.map((item: any, i: number) => {
 						n = Util.incrementBlockNumber(item, n);
 						return <Child key={item.header.id} {...this.props} {...item} number={n} index={i} />;
@@ -123,7 +124,7 @@ class Block extends React.Component<Props, State> {
 		);
 		
 		return (
-			<div id={'block-' + id} className={cn.join(' ')}>
+			<div id={'block-' + id} className={cn.join(' ')} data-id={id}>
 				{wrapMenu}
 				{wrapContent}
 			</div>
@@ -143,8 +144,17 @@ class Block extends React.Component<Props, State> {
 	};
 	
 	onDragStart (e: any) {
-		if (this.props.dataset && this.props.dataset.onDragStart) {
-			this.props.dataset.onDragStart(e, I.DragItem.Block, [ this.props.header.id ], this);			
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('isDragging');
+		
+		if (this.props.dataset) {
+			let ids = [ this.props.header.id ];
+			if (this.props.dataset.selection && this.props.dataset.selection.ids.length) {
+				ids = this.props.dataset.selection.ids;
+			};
+			if (this.props.dataset.onDragStart) {
+				this.props.dataset.onDragStart(e, I.DragItem.Block, ids, this);				
+			};
 		};
 	};
 	

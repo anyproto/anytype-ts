@@ -2,9 +2,9 @@ import Page from './page';
 
 import Block from './block';
 
-import DragLayer from './util/drag/layer';
-import DragProvider from './util/drag/provider';
-import DropTarget from './util/drag/target';
+import DragLayer from './drag/layer';
+import DragProvider from './drag/provider';
+import DropTarget from './drag/target';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -28,6 +28,7 @@ import Title from './util/title';
 import Label from './util/label';
 import Smile from './util/smile';
 import Tag from './util/tag';
+import SelectionProvider from './util/selection';
 
 import Dimmer from './util/dimmer';
 import Switch from './util/switch';
@@ -67,6 +68,7 @@ export {
 	MenuItemVertical,
 	MenuItemMain,
 	MenuMain,
+	SelectionProvider,
 	Popup,
 	Frame,
 	Cover,

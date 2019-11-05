@@ -1,38 +1,41 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { MenuMain, Block, Smile, HeaderMainEdit as Header, DragLayer, DragProvider } from 'ts/component';
+import { MenuMain, Block, Smile, HeaderMainEdit as Header, DragProvider, SelectionProvider } from 'ts/component';
 import { I, Util } from 'ts/lib'; 
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
 	blockStore?: any;
 };
 
 const $ = require('jquery');
 
-@inject('commonStore')
 @inject('blockStore')
 @observer
 class PageMainEdit extends React.Component<Props, {}> {
+	
+	refSelection: any = null;
 	
 	constructor (props: any) {
 		super(props);
 	};
 	
 	render () {
-		const { commonStore, blockStore, match } = this.props;
+		const { blockStore } = this.props;
 		const { tree } = blockStore;
 		
 		let n = 0;
 		
 		return (
-			<div>
-				<DragProvider>
-					<Header {...this.props} />
-					<MenuMain />
-							
+			<DragProvider 
+				onDragStart={(e: any) => { this.refSelection.setBlocked(true); }} 
+				onDragEnd={(e: any) => { this.refSelection.setBlocked(false); }}
+			>
+				<Header {...this.props} />
+				<MenuMain />
+						
+				<SelectionProvider ref={(ref: any) => { this.refSelection = ref; }}>	
 					<div className="wrapper">
 						<div className="editor">
 							<div className="blocks">
@@ -43,8 +46,8 @@ class PageMainEdit extends React.Component<Props, {}> {
 							</div>
 						</div>
 					</div>
-				</DragProvider>
-			</div>
+				</SelectionProvider>
+			</DragProvider>
 		);
 	};
 	

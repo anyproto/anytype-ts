@@ -25,6 +25,7 @@ import 'scss/component/title.scss';
 import 'scss/component/select.scss';
 import 'scss/component/tag.scss';
 import 'scss/component/dragLayer.scss';
+import 'scss/component/selection.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
