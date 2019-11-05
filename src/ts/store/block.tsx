@@ -26,7 +26,7 @@ class BlockStore {
 				continue;
 			};
 			
-			item.children = this.getTree(item.header.id, list);
+			item.childBlocks = this.getTree(item.header.id, list);
 			ret.push(item);
 		};
 		return ret;

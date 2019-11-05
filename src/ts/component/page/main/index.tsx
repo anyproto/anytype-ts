@@ -88,7 +88,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		blockStore.blockClear();
 		for (let i = 0; i < items.length; ++i) {
 			items[i].id = String(i + 1);
-			blockStore.blockAdd({ header: items[i], content: {}, children: [] });			
+			blockStore.blockAdd({ header: items[i], content: {}, childBlocks: [] });			
 		};
 		
 		this.resize();
@@ -169,7 +169,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Icon, name: '', icon: '', parentId: '' },
 			content: { icon: ':family:' },
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
@@ -183,31 +183,31 @@ class PageMainIndex extends React.Component<Props, {}> {
 				checkable: false,
 				checked: false,
 			},
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
 			content: contentDataview,
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '' },
 			content: { style: I.LayoutStyle.Row },
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
 			content: { style: I.LayoutStyle.Column },
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
 			content: { style: I.LayoutStyle.Column },
-			children: []
+			childBlocks: []
 		});
 		
 		let s = 0;
@@ -223,7 +223,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					checkable: true,
 					checked: false,
 				},
-				children: [] as I.Block[]
+				childBlocks: [] as I.Block[]
 			};
 			list.push(b);
 			s++;
@@ -247,7 +247,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					checkable: Boolean(Util.rand(0, 1)),
 					checked: Boolean(Util.rand(0, 1)),
 				},
-				children: [] as I.Block[]
+				childBlocks: [] as I.Block[]
 			};
 			list.push(b);
 		};
@@ -255,31 +255,31 @@ class PageMainIndex extends React.Component<Props, {}> {
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Div, name: '', icon: '', parentId: '' },
 			content: {},
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
 			content: {},
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.File, name: '', icon: '', parentId: '' },
 			content: {},
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Video, name: '', icon: '', parentId: '' },
 			content: {},
-			children: []
+			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Bookmark, name: '', icon: '', parentId: '' },
 			content: {},
-			children: []
+			childBlocks: []
 		});
 		
 		blockStore.blockClear();
@@ -300,7 +300,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				parentId: ''			
 			},
 			content: {},
-			children: []
+			childBlocks: []
 		});
 	};
 	

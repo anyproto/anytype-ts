@@ -1,11 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
-import { Block as Child, Icon } from 'ts/component';
-
-import { DropTarget, DragSource } from 'react-dnd';
-import { NativeTypes, getEmptyImage } from 'react-dnd-html5-backend';
-import { flow } from 'lodash';
+import { Block as Child, Icon, DropTarget } from 'ts/component';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -18,59 +14,12 @@ import BlockBookmark from './bookmark';
 interface Props extends I.Block {
 	index: number;
 	number: number;
-	connectDragSource: any;
-	connectDropTarget: any;
-	connectDragPreview: any;
-	isDragging: boolean;
-	isOver: boolean;
+	dataset?: any;
+	isDragging?: boolean;
 };
 
 interface State {
 	toggled: boolean;
-};
-
-const $ = require('jquery');
-const { FILE } = NativeTypes;
-
-const source = {
-	beginDrag (props: any, monitor: any, component: any) {
-		const position = monitor.getClientOffset();
-		
-		let node = $(ReactDOM.findDOMNode(component));
-		let bounds = node.get(0).getBoundingClientRect();
-		
-		return ({
-			bounds,
-			list: [ props ]
-		});
-	},
-
-	endDrag (props: any, monitor: any) {
-	}
-};
-
-const sourceCollect = (connect: any, monitor: any) => ({
-	connectDragPreview: connect.dragPreview(),
-	connectDragSource: connect.dragSource(),
-	isDragging: monitor.isDragging()
-});
-
-const target  = {
-	drop (props: any, monitor: any, component: any) {
-	},
-
-	hover (props: any, monitor: any, component: any) {
-		const item = monitor.getItem();
-		const itemType = monitor.getItemType();
-		const position = monitor.getClientOffset();
-	}
-};
-
-const targetCollect = (connect: any, monitor: any) => {
-	return {
-		connectDropTarget: connect.dropTarget(),
-		isOver: monitor.isOver()
-	};
 };
 
 class Block extends React.Component<Props, State> {
@@ -84,17 +33,19 @@ class Block extends React.Component<Props, State> {
 		super(props);
 		
 		this.onToggle = this.onToggle.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
+		this.onDrop = this.onDrop.bind(this);
 	};
 
 	render () {
-		const { header, content, children, index, connectDragSource, connectDropTarget, isDragging, isOver } = this.props;
+		const { header, content, childBlocks, index, isDragging } = this.props;
 		const { id, type } = header;
 		const { style, toggleable } = content;
 		const { toggled } = this.state;
 		
 		let n = 0;
 		let canDrop = true;
-		let cn = [ 'block', 'index' + index, (isOver ? 'isOver' : '') ];
+		let cn = [ 'block', 'index' + index, (isDragging ? 'isDragging' : '') ];
 		
 		let BlockComponent: React.ReactType<{}>;
 		switch (type) {
@@ -152,22 +103,20 @@ class Block extends React.Component<Props, State> {
 		
 		let wrapMenu = (
 			<div className="wrapMenu">
-				{connectDragSource(<div className="icon dnd" />)}
+				<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} />
 			</div>
 		);
 		
 		let wrapContent = (
 			<div className="wrapContent">
-				{connectDropTarget(
-					<div className="dropTarget">
-						<BlockComponent {...this.props} />
-					</div>
-				)}
+				<DropTarget id={header.id} type={I.DragItem.Block} onDrop={this.onDrop}>
+					<BlockComponent {...this.props} />
+				</DropTarget>
 					
 				<div className={[ 'children', (toggled ? 'active' : '') ].join('')}>
-					{children.map((item: any, i: number) => {
+					{childBlocks.map((item: any, i: number) => {
 						n = Util.incrementBlockNumber(item, n);
-						return <Child key={item.header.id} {...item} number={n} index={i} />;
+						return <Child key={item.header.id} {...this.props} {...item} number={n} index={i} />;
 					})}
 				</div>
 			</div>
@@ -183,8 +132,6 @@ class Block extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		
-		this.props.connectDragPreview(getEmptyImage(), {});
 	};
 
 	componentWillUnmount () {
@@ -195,9 +142,18 @@ class Block extends React.Component<Props, State> {
 		this.setState({ toggled: !this.state.toggled });
 	};
 	
+	onDragStart (e: any) {
+		if (this.props.dataset && this.props.dataset.onDragStart) {
+			this.props.dataset.onDragStart(e, I.DragItem.Block, [ this.props.header.id ], this);			
+		};
+	};
+	
+	onDrop (e: any, type: string, id: string) {
+		if (this.props.dataset && this.props.dataset.onDrop) {
+			this.props.dataset.onDrop(e, type, id);			
+		};
+	};
+	
 };
 
-export default flow([
-	DragSource(I.DragItem.Block, source, sourceCollect),
-	DropTarget([ I.DragItem.Block, FILE ], target, targetCollect),
-])(Block);
+export default Block;

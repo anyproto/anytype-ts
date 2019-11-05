@@ -1,7 +1,10 @@
 import Page from './page';
 
 import Block from './block';
-import DragLayer from './util/dragLayer';
+
+import DragLayer from './util/drag/layer';
+import DragProvider from './util/drag/provider';
+import DropTarget from './util/drag/target';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -42,6 +45,8 @@ export {
 	Page,
 	Block,
 	DragLayer,
+	DragProvider,
+	DropTarget,
 	ListPopup,
 	ListMenu,
 	ListIndex,

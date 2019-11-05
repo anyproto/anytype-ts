@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { MenuMain, Block, Smile, HeaderMainEdit as Header, DragLayer } from 'ts/component';
+import { MenuMain, Block, Smile, HeaderMainEdit as Header, DragLayer, DragProvider } from 'ts/component';
 import { I, Util } from 'ts/lib'; 
 import { observer, inject } from 'mobx-react';
-import { DndProvider } from 'react-dnd';
-import backend from 'ts/lib/dndBackend';
 
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
@@ -31,12 +29,10 @@ class PageMainEdit extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<DndProvider backend={backend}>
-					<DragLayer />
-					
+				<DragProvider>
 					<Header {...this.props} />
 					<MenuMain />
-						
+							
 					<div className="wrapper">
 						<div className="editor">
 							<div className="blocks">
@@ -47,7 +43,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 							</div>
 						</div>
 					</div>
-				</DndProvider>
+				</DragProvider>
 			</div>
 		);
 	};

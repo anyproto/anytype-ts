@@ -13,8 +13,9 @@
 	}
 	
 	.block:hover  > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block.isDragging  > .wrapMenu > .icon.dnd { opacity: 1; }
 	
-	.block.isOver > .wrapContent > .dropTarget { background: rgba(0,200,0,0.3); }
+	.block > .wrapContent > .dropTarget.over { background: rgba(0,200,0,0.3); }
 	
 	.block.blockDiv {
 		.div { height: 1px; background: #d2d0c2; margin: 8px 0px; }

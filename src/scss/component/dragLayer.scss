@@ -1,5 +1,6 @@
-.dragLayer { position: fixed; z-index: 1000; left: 1px; top: 1px; }
+.dragLayer { position: fixed; z-index: 1000; left: 2px; top: 2px; display: none; }
 .dragLayer {
+	.blocks { margin: 0px !important; }
 	.blocks {
 		.block { background: #fff; box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2); border: 0px; }
 	}
