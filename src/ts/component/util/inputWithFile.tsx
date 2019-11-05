@@ -6,6 +6,7 @@ import { Util } from 'ts/lib';
 const { dialog } = window.require('electron').remote;
 
 const $ = require('jquery');
+const raf = require('raf');
 const SMALL_WIDTH = 220;
 
 interface Props {
@@ -29,6 +30,7 @@ class InputWithFile extends React.Component<Props, State> {
 		withFile: true,
 	};
 	
+	_isMounted: boolean = false;
 	state = {
 		focused: false,
 		small: false 
@@ -98,6 +100,7 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
 		this.resize();
 	};
 	
@@ -109,15 +112,24 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 	};
 	
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+	
 	resize () {
-		let node = $(ReactDOM.findDOMNode(this));
-		let text = node.find('#text');
-		let width = text.width();
-		let small = width < SMALL_WIDTH;
-		
-		if (small != this.state.small) {
-			this.setState({ small: small });	
-		};
+		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+			
+			const node = $(ReactDOM.findDOMNode(this));
+			const width = node.find('#text').width();
+			const small = width < SMALL_WIDTH ? true : false;
+			
+			if (small != this.state.small) {
+				this.setState({ small: small });	
+			};
+		});
 	};
 	
 	onFocus (e: any) {

@@ -72,14 +72,15 @@ class DragLayer extends React.Component<Props, State> {
 		this._isMounted = false;
 	};
 	
-	show (type: string, ids: string[]) {
+	show (type: string, ids: string[], component: any) {
 		if (!this._isMounted) {
 			return;
 		};
-			
-		let node = $(ReactDOM.findDOMNode(this));
-		node.removeClass('show');
 		
+		const comp = $(ReactDOM.findDOMNode(component));
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.removeClass('show').css({ width: comp.width() });
 		this.setState({ type: type, ids: ids });
 	};
 	

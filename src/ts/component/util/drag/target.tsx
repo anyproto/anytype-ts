@@ -8,13 +8,13 @@ interface Props {
 };
 
 interface State {
-	over: boolean;
+	isOver: boolean;
 };
 
 class DropTarget extends React.Component<Props, State> {
 	
 	state = {
-		over: false
+		isOver: false
 	};
 	
 	constructor (props: any) {
@@ -27,9 +27,9 @@ class DropTarget extends React.Component<Props, State> {
 	
 	render () {
 		const { children } = this.props;
-		const { over } = this.state;
+		const { isOver } = this.state;
 		
-		let cn = [ 'dropTarget', (over ? 'over' : '') ];
+		let cn = [ 'dropTarget', (isOver ? 'isOver' : '') ];
 		
 		return (
 			<div className={cn.join(' ')} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop}>
@@ -40,16 +40,16 @@ class DropTarget extends React.Component<Props, State> {
 	
 	onDragOver (e: any) {
 		e.preventDefault();
-		this.setState({ over: true });
+		this.setState({ isOver: true });
 	};
 	
 	onDragLeave (e: any) {
 		e.preventDefault();
-		this.setState({ over: false });
+		this.setState({ isOver: false });
 	};
 	
 	onDrop (e: any) {
-		this.setState({ over: false });
+		this.setState({ isOver: false });
 		this.props.onDrop(e, this.props.type, this.props.id);
 	};
 	

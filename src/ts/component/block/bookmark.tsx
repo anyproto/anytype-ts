@@ -13,7 +13,6 @@ class BlockBookmark extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
-		
 	};
 
 	render () {

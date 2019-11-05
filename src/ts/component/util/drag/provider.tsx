@@ -40,7 +40,7 @@ class DragProvider extends React.Component<Props, {}> {
 		this.type = type;
 		this.ids = ids;
 		
-		this.refLayer.show(type, ids);
+		this.refLayer.show(type, ids, component);
 		this.unbind();
 		this.setDragImage(e);
 		
@@ -85,9 +85,7 @@ class DragProvider extends React.Component<Props, {}> {
 		return React.Children.map(children, (child: any) => {
 			let children = child.props.children;
 			if (children) {
-				child = React.cloneElement(child, {
-					children: this.injectProps(children)
-				});
+				child = React.cloneElement(child, { children: this.injectProps(children) });
 			};
 			
 			return React.cloneElement(child, {
