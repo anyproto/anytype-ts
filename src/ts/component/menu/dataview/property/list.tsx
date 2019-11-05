@@ -35,10 +35,12 @@ class MenuPropertyList extends React.Component<Props, State> {
 		const { items } = this.state;
 		
 		const Item = SortableElement((item: any) => (
-			<div id={'property-' + item.id} className="item" onClick={(e: any) => { this.onEdit(e, item.id); }}>
+			<div id={'property-' + item.id} className="item">
 				<Icon className="dnd" />
-				<Icon className={'property dark c' + item.type} />
-				<div className="name">{item.name}</div>
+				<span onClick={(e: any) => { this.onEdit(e, item.id); }}>
+					<Icon className={'property dark c' + item.type} />
+					<div className="name">{item.name}</div>
+				</span>
 				<Switch className="green" />
 			</div>
 		));

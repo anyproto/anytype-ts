@@ -101,7 +101,9 @@ class Controls extends React.Component<Props, {}> {
 		const { properties, views } = content;
 		const viewItem = views.find((item: any) => { return item.id == view; });
 		
-		let data: any = {};
+		let data: any = { 
+			properties: properties 
+		};
 		
 		switch (menu) {
 			case 'dataviewView':
@@ -110,16 +112,13 @@ class Controls extends React.Component<Props, {}> {
 				
 			case 'dataviewSort':
 				data.sorts = viewItem.sorts;
-				data.properties = properties;
 				break;
 				
 			case 'dataviewFilter':
 				data.filters = viewItem.filters;
-				data.properties = properties;
 				break;
 				
 			case 'dataviewPropertyList':
-				data.properties = properties;
 				break;
 		};
 		

@@ -32,11 +32,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		];
 		
 		const PathItemHome = (item: any) => (
-			<div className="item" onClick={this.onHome}>
+			<DropTarget className="item" id="home" type={I.DragItem.Block} onClick={this.onHome} onDrop={this.onDrop}>
 				<Icon className="home" />
 				<div className="name">Home</div>
 				<Icon className="arrow" />
-			</div>
+			</DropTarget>
 		);
 		
 		const PathItem = (item: any) => (
