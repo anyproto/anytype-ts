@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Smile } from 'ts/component';
+import { Icon, Smile, DropTarget } from 'ts/component';
+import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	authStore?: any;
+	dataset?: any;
 };
 
 @inject('authStore')
@@ -18,6 +20,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onPath = this.onPath.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
+		this.onDrop = this.onDrop.bind(this);
 	};
 
 	render () {
@@ -37,11 +40,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		);
 		
 		const PathItem = (item: any) => (
-			<div className="item" onClick={(e: any) => { this.onPath(e, item.id); }}>
+			<DropTarget className="item" id={item.id} type={I.DragItem.Block} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
 				<Smile icon={item.icon} />
 				<div className="name">{item.name}</div>
 				<Icon className="arrow" />
-			</div>
+			</DropTarget>
 		);
 		
 		return (
@@ -72,6 +75,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	
 	onForward (e: any) {
 		this.props.history.goForward();
+	};
+	
+	onDrop (e: any, type: string, id: string, direction: string) {
+		if (this.props.dataset && this.props.dataset.onDrop) {
+			this.props.dataset.onDrop(e, type, id, direction);			
+		};
 	};
 	
 };

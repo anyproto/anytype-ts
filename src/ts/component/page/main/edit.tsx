@@ -48,12 +48,6 @@ class PageMainEdit extends React.Component<Props, {}> {
 		);
 	};
 	
-	componentDidMount () {
-	};
-	
-	componentDidUpdate () {
-	};
-	
 };
 
 export default PageMainEdit;

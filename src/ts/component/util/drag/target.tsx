@@ -5,17 +5,14 @@ import { I } from 'ts/lib';
 interface Props {
 	id: string;
 	type: string;
+	className?: string;
+	onClick?(e: any): void;
 	onDrop?(e: any, type: string, id: string, direction: string): void;
 };
 
 const $ = require('jquery');
 
 class DropTarget extends React.Component<Props, {}> {
-	
-	private static defaultProps = {
-		offsetX: 0,
-		offsetY: 0
-	};
 	
 	_isMounted: boolean = false;
 	direction: string;
@@ -29,10 +26,15 @@ class DropTarget extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { children } = this.props;
+		const { children, className, onClick } = this.props;
+		
+		let cn = [ 'dropTarget' ];
+		if (className) {
+			cn.push(className);
+		};
 		
 		return (
-			<div className="dropTarget" onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop}>
+			<div className={cn.join(' ')} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop} onClick={onClick}>
 				{children}
 			</div>
 		);
@@ -111,7 +113,9 @@ class DropTarget extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('isOver top bottom left right middle');
 		
-		this.props.onDrop(e, this.props.type, this.props.id, this.direction);
+		if (this.props.onDrop) {
+			this.props.onDrop(e, this.props.type, this.props.id, this.direction);			
+		};
 	};
 	
 };
