@@ -124,11 +124,21 @@ class SelectionProvider extends React.Component<Props, State> {
 				return;
 			};
 			
-			if ((x <= left) && (x + width >= left + w) && (y <= top) && (y + height >= top + h)) {
-				item.addClass('isSelected');
+			if (this.coordsCollide(x, y, width, height, left, top, w, h)) {
 				this.ids.push(item.data('id'));
 			};
 		});
+		
+		this.set(this.ids);
+	};
+	
+	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
+		return !(
+			(y1 + h1 < y2) ||
+			(y1 > y2 + h2) ||
+			(x1 + w1 < x2) || 
+			(x1 > x2 + w2)
+		);
 	};
 	
 	onMouseUp (e: any) {
@@ -154,6 +164,15 @@ class SelectionProvider extends React.Component<Props, State> {
 	
 	setBlocked (v: boolean) {
 		this.blocked = v;
+	};
+	
+	set (ids: string[]) {
+		$('.selectable.isSelected').removeClass('isSelected');
+		
+		this.ids = ids;
+		for (let id of this.ids) {
+			$('.selectable.c' + id).addClass('isSelected');
+		};
 	};
 	
 	injectProps (children: any) {

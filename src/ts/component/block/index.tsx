@@ -36,6 +36,7 @@ class Block extends React.Component<Props, State> {
 		this.onToggle = this.onToggle.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onMenu = this.onMenu.bind(this);
 	};
 
 	render () {
@@ -46,7 +47,8 @@ class Block extends React.Component<Props, State> {
 		
 		let n = 0;
 		let canDrop = true;
-		let cn = [ 'block', 'index' + index, 'selectable' ];
+		let canSelect = true;
+		let cn = [ 'block', 'index' + index ];
 		
 		let BlockComponent: React.ReactType<{}>;
 		switch (type) {
@@ -62,6 +64,7 @@ class Block extends React.Component<Props, State> {
 				
 			case I.BlockType.Layout:
 				canDrop = false;
+				canSelect = false;
 				cn.push('blockLayout c' + style);
 				BlockComponent = () => <div/>;
 				break;
@@ -104,12 +107,12 @@ class Block extends React.Component<Props, State> {
 		
 		let wrapMenu = (
 			<div className="wrapMenu">
-				<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} />
+				<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onClick={this.onMenu} />
 			</div>
 		);
 		
 		let wrapContent = (
-			<div className="wrapContent">
+			<div className={[ 'wrapContent', (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id}>
 				<DropTarget id={header.id} type={I.DragItem.Block} onDrop={this.onDrop}>
 					<BlockComponent {...this.props} />
 				</DropTarget>
@@ -124,7 +127,7 @@ class Block extends React.Component<Props, State> {
 		);
 		
 		return (
-			<div id={'block-' + id} className={cn.join(' ')} data-id={id}>
+			<div id={'block-' + id} className={cn.join(' ')}>
 				{wrapMenu}
 				{wrapContent}
 			</div>
@@ -144,23 +147,38 @@ class Block extends React.Component<Props, State> {
 	};
 	
 	onDragStart (e: any) {
+		const { dataset, header } = this.props;
+		const { selection, onDragStart } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
+		
 		node.addClass('isDragging');
 		
-		if (this.props.dataset) {
-			let ids = [ this.props.header.id ];
-			if (this.props.dataset.selection && this.props.dataset.selection.ids.length) {
-				ids = this.props.dataset.selection.ids;
+		if (dataset) {
+			let ids = [ header.id ];
+			if (selection && selection.ids.length) {
+				ids = selection.ids;
 			};
-			if (this.props.dataset.onDragStart) {
-				this.props.dataset.onDragStart(e, I.DragItem.Block, ids, this);				
+			if (onDragStart) {
+				onDragStart(e, I.DragItem.Block, ids, this);				
 			};
 		};
 	};
 	
 	onDrop (e: any, type: string, id: string, direction: string) {
-		if (this.props.dataset && this.props.dataset.onDrop) {
-			this.props.dataset.onDrop(e, type, id, direction);			
+		const { dataset } = this.props;
+		const { onDrop } = dataset;
+		
+		if (dataset && onDrop) {
+			onDrop(e, type, id, direction);			
+		};
+	};
+	
+	onMenu (e: any) {
+		const { dataset, header } = this.props;
+		const { selection } = dataset;
+		
+		if (selection) {
+			selection.set([ header.id ]);
 		};
 	};
 	

@@ -13,5 +13,5 @@ export interface Account {
 };
 
 export enum DragItem {
-	Block = 'Block',
+	Block = 'block',
 };
