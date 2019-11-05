@@ -5,8 +5,7 @@ import { I } from 'ts/lib';
 import { throttle } from 'lodash';
 
 interface Props {
-	onDragStart?(e: any): void;
-	onDragEnd?(e: any): void;
+	dataset?: any;
 };
 
 const $ = require('jquery');
@@ -53,8 +52,9 @@ class DragProvider extends React.Component<Props, {}> {
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 20));
 		
-		if (this.props.onDragStart) {
-			this.props.onDragStart(e);
+		if (this.props.dataset && this.props.dataset.selection) {
+			this.props.dataset.selection.set(this.ids);
+			this.props.dataset.selection.setBlocked(true);
 		};
 	};
 	
@@ -72,8 +72,8 @@ class DragProvider extends React.Component<Props, {}> {
 		this.refLayer.hide();
 		this.unbind();
 		
-		if (this.props.onDragEnd) {
-			this.props.onDragEnd(e);
+		if (this.props.dataset && this.props.dataset.selection) {
+			this.props.dataset.selection.setBlocked(false);
 		};
 	};
 	

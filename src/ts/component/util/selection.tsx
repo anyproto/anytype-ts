@@ -62,7 +62,7 @@ class SelectionProvider extends React.Component<Props, State> {
 		this.moved = false;
 		
 		rect.css({ 
-			transform: `translate3d(${this.x}px, ${this.y}px, 0px)`,
+			transform: `translate3d(${this.x + 2}px, ${this.y + 2}px, 0px)`,
 			width: 0, 
 			height: 0 
 		});
@@ -132,15 +132,6 @@ class SelectionProvider extends React.Component<Props, State> {
 		this.set(this.ids);
 	};
 	
-	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
-		return !(
-			(y1 + h1 < y2) ||
-			(y1 > y2 + h2) ||
-			(x1 + w1 < x2) || 
-			(x1 > x2 + w2)
-		);
-	};
-	
 	onMouseUp (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const rect = node.find('#rect');
@@ -160,6 +151,10 @@ class SelectionProvider extends React.Component<Props, State> {
 	
 	unbind () {
 		$(window).unbind('mousemove.selection mouseup.selection');
+	};
+	
+	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
+		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 	
 	setBlocked (v: boolean) {

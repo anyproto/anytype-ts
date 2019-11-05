@@ -28,14 +28,11 @@ class PageMainEdit extends React.Component<Props, {}> {
 		let n = 0;
 		
 		return (
-			<DragProvider 
-				onDragStart={(e: any) => { this.refSelection.setBlocked(true); }} 
-				onDragEnd={(e: any) => { this.refSelection.setBlocked(false); }}
-			>
-				<Header {...this.props} />
-				<MenuMain />
-						
-				<SelectionProvider ref={(ref: any) => { this.refSelection = ref; }}>	
+			<SelectionProvider>
+				<DragProvider >
+					<Header {...this.props} />
+					<MenuMain />
+							
 					<div className="wrapper">
 						<div className="editor">
 							<div className="blocks">
@@ -46,8 +43,8 @@ class PageMainEdit extends React.Component<Props, {}> {
 							</div>
 						</div>
 					</div>
-				</SelectionProvider>
-			</DragProvider>
+				</DragProvider>
+			</SelectionProvider>
 		);
 	};
 	
