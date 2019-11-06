@@ -130,6 +130,7 @@ class Block extends React.Component<Props, State> {
 		
 		return (
 			<div id={'block-' + id} className={cn.join(' ')}>
+				<div className="id tag red">{id}</div>
 				{wrapMenu}
 				{wrapContent}
 			</div>
@@ -154,8 +155,11 @@ class Block extends React.Component<Props, State> {
 		
 		if (dataset) {
 			let ids = [ header.id ];
-			if (selection && selection.ids.length && (selection.ids.indexOf(header.id) >= 0)) {
-				ids = selection.ids;
+			if (selection) {
+				let selectedIds = selection.get();
+				if (selectedIds.length && (selectedIds.indexOf(header.id) >= 0)) {
+					ids = selectedIds;
+				};
 			};
 			if (onDragStart) {
 				onDragStart(e, I.DragItem.Block, ids, this);				

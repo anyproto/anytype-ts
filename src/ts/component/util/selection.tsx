@@ -17,7 +17,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 	x: number = 0;
 	y: number = 0;
-	ids: string[] = [];
+	lastIds: string[] = [];
 	nodeList: any = null;
 	blocked: boolean = false;
 	moved: boolean = false;
@@ -66,7 +66,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.nodeList = $('.selectable');
 		this.moved = false;
 		this.unbind();
-
+		this.lastIds = [];
+		
 		let win = $(window);
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, 20));
 		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
@@ -103,11 +104,48 @@ class SelectionProvider extends React.Component<Props, {}> {
 			height: rect.height
 		});
 		
-		this.ids = [];
 		this.moved = true;
+		this.checkNodes(e);
+	};
+	
+	onMouseUp (e: any) {
+		this.hide();
+		this.lastIds = [];
+		
+		if (!this.moved) {
+			if (!e.shiftKey) {
+				this.clear();	
+			} else {
+				this.checkNodes(e);
+			};
+		};
+	};
+	
+	onMouseLeave (e: any) {
+		this.onMouseUp(e);
+	};
+	
+	checkNodes (e: any) {
+		let win = $(window);
+		let wh = win.height();
+		let st = win.scrollTop();
+		let cx = e.pageX;
+		let cy = e.pageY - st;
+		let rect = {
+			x: (this.x < cx) ? this.x : cx,
+			y: (this.y < cy) ? this.y : cy,
+			width: Math.abs(cx - this.x),
+			height: Math.abs(cy - this.y)
+		};
+		
+		if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
+			this.clear();
+		};
+		
 		this.nodeList.each((i: number, item: any) => {
 			item = $(item);
 			
+			let id = String(item.data('id') || '');
 			let offset = item.offset();
 			let { left, top } = offset;
 			let width = item.width();
@@ -117,24 +155,23 @@ class SelectionProvider extends React.Component<Props, {}> {
 				return;
 			};
 			
-			if (this.coordsCollide(rect.x, rect.y, rect.width, rect.height, left, top - st, width, height)) {
-				this.ids.push(item.data('id'));
+			if (!this.coordsCollide(rect.x, rect.y, rect.width, rect.height, left, top - st, width, height)) {
+				return;
 			};
+			
+			if (e.shiftKey) {
+				item.addClass('isSelected');
+			} else
+			if ((e.ctrlKey || e.metaKey)) {
+				if (this.lastIds.indexOf(id) < 0) {
+					item.hasClass('isSelected') ? item.removeClass('isSelected') : item.addClass('isSelected');	
+				};
+			} else {
+				item.addClass('isSelected');
+			};
+			
+			this.lastIds.push(id);
 		});
-		
-		this.set(this.ids);
-	};
-	
-	onMouseUp (e: any) {
-		this.hide();
-		
-		if (!this.moved) {
-			this.clear();
-		};
-	};
-	
-	onMouseLeave (e: any) {
-		this.onMouseUp(e);
 	};
 	
 	hide () {
@@ -145,7 +182,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	clear () {
-		this.ids = [];
 		$('.selectable.isSelected').removeClass('isSelected');
 	};
 	
@@ -162,12 +198,25 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	set (ids: string[]) {
-		this.ids = ids.map((id: any) => { return id.toString(); });
+		ids = [ ...new Set(ids) ];
 		
-		$('.selectable.isSelected').removeClass('isSelected');
-		for (let id of this.ids) {
+		this.clear();
+		for (let id of ids) {
 			$('.selectable.c' + id).addClass('isSelected');
 		};
+	};
+	
+	get () {
+		let res = [] as string[];
+		
+		$('.selectable.isSelected').each((i: number, item: any) => {
+			item = $(item);
+			let id = String(item.data('id') || '');
+			
+			res.push(id);
+		});
+		
+		return res;
 	};
 	
 	injectProps (children: any) {

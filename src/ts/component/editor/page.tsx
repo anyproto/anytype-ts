@@ -33,7 +33,8 @@ class EditorPage extends React.Component<Props, {}> {
 					{tree.map((item: I.Block, i: number) => { 
 						n = Util.incrementBlockNumber(item, n);
 						return <Block 
-							key={item.header.id} {...item} number={n} index={i} 
+							key={item.header.id} {...item} number={n} index={i}
+							{...this.props}
 							onKeyDown={this.onKeyDown} 
 							onKeyUp={this.onKeyUp} 
 						/>
