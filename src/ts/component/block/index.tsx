@@ -228,7 +228,9 @@ class Block extends React.Component<Props, State> {
 		const { dataset } = this.props;
 		const { selection } = dataset;
 		
-		selection.setBlocked(true);
+		if (selection) {
+			selection.setBlocked(true);
+		};
 		this.unbind();
 		
 		let win = $(window);
@@ -247,13 +249,12 @@ class Block extends React.Component<Props, State> {
 		const offset = node.find('#block-' + prevBlock.header.id).offset();
 		
 		const dw = 1 / childBlocks.length;
-		const pw = prevBlock.fields.width || dw;
-		const cw = currentBlock.fields.width || dw;
-		const sum = pw + cw;
+		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		
-		let p = (e.pageX - offset.left - Constant.size.blockMenu) / (sum * Constant.size.editorPage);
-		p = Math.max(0.1, p);
-		p = Math.min(0.9, p);
+		let p = (e.pageX - offset.left - Constant.size.blockMenu);
+		p = Math.max(150, p);
+		p = Math.min(sum * Constant.size.editorPage - 150, p);
+		p = p / (sum * Constant.size.editorPage);
 		
 		prevBlock.fields.width = p * sum;
 		currentBlock.fields.width = (1 - p) * sum;
@@ -266,7 +267,9 @@ class Block extends React.Component<Props, State> {
 		const { dataset } = this.props;
 		const { selection } = dataset;
 		
-		selection.setBlocked(false);
+		if (selection) {
+			selection.setBlocked(false);	
+		};
 		this.unbind();
 	};
 	
