@@ -31,6 +31,7 @@ export interface BlockHeader {
 
 export interface Block {
 	header: BlockHeader;
+	fields: any;
 	content: any;
 	childBlocks: Block[];
 };

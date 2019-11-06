@@ -88,7 +88,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		blockStore.blockClear();
 		for (let i = 0; i < items.length; ++i) {
 			items[i].id = String(i + 1);
-			blockStore.blockAdd({ header: items[i], content: {}, childBlocks: [] });			
+			blockStore.blockAdd({ header: items[i], fields: {}, content: {}, childBlocks: [] });			
 		};
 		
 		this.resize();
@@ -168,12 +168,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Icon, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: { icon: ':family:' },
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: {
 				text: 'Contacts',
 				style: I.TextStyle.title,
@@ -188,24 +190,28 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: contentDataview,
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: { style: I.LayoutStyle.Row },
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
+			fields: {},
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
+			fields: {},
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
@@ -214,6 +220,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		for (let i = 0; i <= 10; ++i) {
 			let b = { 
 				header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
+				fields: {},
 				content: {
 					text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
 					style: I.TextStyle.p,
@@ -238,6 +245,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					name: '', 
 					icon: '' 
 				},
+				fields: {},
 				content: {
 					text: 'Contrary to popular belief, Lorem Ipsum is not simply random text.',
 					style: I.TextStyle.p,
@@ -254,30 +262,35 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Div, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: {},
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: {},
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.File, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: {},
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Video, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: {},
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Bookmark, name: '', icon: '', parentId: '' },
+			fields: {},
 			content: {},
 			childBlocks: []
 		});
@@ -299,6 +312,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				icon: Util.randomSmile(),
 				parentId: ''			
 			},
+			fields: {},
 			content: {},
 			childBlocks: []
 		});

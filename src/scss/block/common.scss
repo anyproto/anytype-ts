@@ -12,6 +12,13 @@
 			width: 24px; height: 24px; background-size: 7px 12px; background-image: url('~img/icon/dnd.svg');
 			opacity: 0; cursor: move; vertical-align: top;
 		}
+		
+		.colResize { width: 0px; position: relative; }
+		.colResize {
+			.inner { 
+				position: absolute; left: 25px; top: 0px; width: 2px; height: 100%; background: #ebe9e0; cursor: col-resize; z-index: 1; 
+			}
+		}
 	}
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }

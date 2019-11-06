@@ -1,5 +1,10 @@
 {
 	"pinSize": 6,
+	
+	"size": {
+		"editorPage": 800,
+		"blockMenu": 50
+	},
 
 	"index": {
 		"document": {

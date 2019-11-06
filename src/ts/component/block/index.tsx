@@ -1,7 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 import { Block as Child, Icon, DropTarget } from 'ts/component';
+import { throttle } from 'lodash';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -11,7 +13,10 @@ import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
 
+const Constant = require('json/constant.json');
+
 interface Props extends I.Block {
+	blockStore?: any;
 	index: number;
 	number: number;
 	dataset?: any;
@@ -25,6 +30,8 @@ interface State {
 
 const $ = require('jquery');
 
+@inject('blockStore')
+@observer
 class Block extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
@@ -39,19 +46,35 @@ class Block extends React.Component<Props, State> {
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onMenu = this.onMenu.bind(this);
+		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onResize = this.onResize.bind(this);
+		this.onResizeEnd = this.onResizeEnd.bind(this);
 	};
 
 	render () {
-		const { header, content, childBlocks, index } = this.props;
+		const { blockStore, header, content, childBlocks, index } = this.props;
+		const { blocks } = blockStore;
 		const { id, type } = header;
 		const { style, toggleable } = content;
 		const { toggled } = this.state;
+		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		
+		if (!block) {
+			return null;
+		};
+		
+		const { fields } = block;
 		
 		let n = 0;
 		let canDrop = true;
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
+		let css = {
+			width: (fields.width || 1) * 100 + '%' 
+		};
+		
 		let BlockComponent: React.ReactType<{}>;
+		let ColResize: React.ReactType<{ index: number }> = () => null;
 		
 		switch (type) {
 			default:
@@ -68,6 +91,15 @@ class Block extends React.Component<Props, State> {
 				canDrop = false;
 				canSelect = false;
 				cn.push('blockLayout c' + style);
+				
+				if (style == I.LayoutStyle.Row) {
+					ColResize = (item: any) => (
+						<div className="colResize" onMouseDown={(e: any) => { this.onResizeStart(e, item.index); }}>
+							<div className="inner" />
+						</div>
+					);
+				};
+				
 				BlockComponent = () => <div/>;
 				break;
 				
@@ -122,14 +154,19 @@ class Block extends React.Component<Props, State> {
 				<div className={[ 'children', (toggled ? 'active' : '') ].join(' ')}>
 					{childBlocks.map((item: any, i: number) => {
 						n = Util.incrementBlockNumber(item, n);
-						return <Child key={item.header.id} {...this.props} {...item} number={n} index={i} />;
+						return (
+							<React.Fragment key={item.header.id}>
+								{i > 0 ? <ColResize index={i} /> : ''}
+								<Child {...this.props} {...item} number={n} index={i} />
+							</React.Fragment>
+						);
 					})}
 				</div>
 			</div>
 		);
 		
 		return (
-			<div id={'block-' + id} className={cn.join(' ')}>
+			<div id={'block-' + id} className={cn.join(' ')} style={css}>
 				<div className="id tag red">{id}</div>
 				{wrapMenu}
 				{wrapContent}
@@ -183,6 +220,58 @@ class Block extends React.Component<Props, State> {
 		if (selection) {
 			selection.set([ header.id ]);
 		};
+	};
+	
+	onResizeStart (e: any, index: number) {
+		console.log('[onResizeStart]', index);
+		
+		const { dataset } = this.props;
+		const { selection } = dataset;
+		
+		selection.setBlocked(true);
+		this.unbind();
+		
+		let win = $(window);
+		win.on('mousemove.block', (e: any) => { this.onResize(e, index); });
+		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e); }));
+	};
+
+	onResize (e: any, index: number) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const { blockStore, childBlocks } = this.props;
+		const prevBlock = childBlocks[index - 1];
+		const currentBlock = childBlocks[index];
+		const offset = node.find('#block-' + prevBlock.header.id).offset();
+		
+		const dw = 1 / childBlocks.length;
+		const pw = prevBlock.fields.width || dw;
+		const cw = currentBlock.fields.width || dw;
+		const sum = pw + cw;
+		
+		let p = (e.pageX - offset.left - Constant.size.blockMenu) / (sum * Constant.size.editorPage);
+		p = Math.max(0.1, p);
+		p = Math.min(0.9, p);
+		
+		prevBlock.fields.width = p * sum;
+		currentBlock.fields.width = (1 - p) * sum;
+		
+		blockStore.blockUpdate(prevBlock);
+		blockStore.blockUpdate(currentBlock);
+	};
+
+	onResizeEnd (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+		
+		selection.setBlocked(false);
+		this.unbind();
+	};
+	
+	unbind () {
+		$(window).unbind('mousemove.block mouseup.block');
 	};
 	
 };
