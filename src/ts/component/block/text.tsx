@@ -9,9 +9,11 @@ interface Props extends I.BlockText {
 	blockStore?: any;
 	number: number;
 	toggled: boolean;
-	onToggle (e: any): void;
-	onKeyDown? (e: any, id: string, range: any): void;
-	onKeyUp? (e: any, id: string, range: any): void;
+	onToggle?(e: any): void;
+	onFocus?(e: any): void;
+	onBlur?(e: any): void;
+	onKeyDown?(e: any, id: string, range: any): void;
+	onKeyUp?(e: any, id: string, range: any): void;
 };
 
 interface State {
@@ -89,6 +91,8 @@ class BlockText extends React.Component<Props, {}> {
 			</div>
 		);
 		
+		let placeHolder = <span className="placeHolder">Type anything...</span>;
+		
 		switch (style) {
 			default:
 			case I.TextStyle.p:
@@ -142,6 +146,7 @@ class BlockText extends React.Component<Props, {}> {
 					))}
 				</div>
 				<div className="wrap">
+					{placeHolder}
 					{editor}
 				</div>
 			</div>
@@ -184,22 +189,30 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		const { header, onKeyDown } = this.props;
 		
+		this.placeHolderCheck();
 		onKeyDown(e, header.id, this.range);
 	};
 	
 	onKeyUp (e: any) {
 		const { header, onKeyUp } = this.props;
 		
+		this.placeHolderCheck();
 		onKeyUp(e, header.id, this.range);
 	};
 	
 	onFocus (e: any) {
+		const { onFocus } = this.props;
+		
 		this.rangeSave();
 		keyBoard.setFocus(true);
+		onFocus(e);
 	};
 	
 	onBlur (e: any) {
+		const { onBlur } = this.props;
+		
 		keyBoard.setFocus(false);
+		onBlur(e);
 	};
 	
 	onToggle (e: any) {
@@ -212,6 +225,14 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		this.rangeSave();
+	};
+	
+	placeHolderCheck () {
+		let node = $(ReactDOM.findDOMNode(this));
+		let value = node.find('.value').text();
+		let placeHolder = node.find('.placeHolder');
+		
+		value.length ? placeHolder.hide() : placeHolder.show();
 	};
 	
 	rangeSave () {

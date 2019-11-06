@@ -21,6 +21,8 @@
 		}
 	}
 	
+	.block.isResizing { cursor: col-resize; user-select: none; }
+	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block > .wrapContent.isDragging { opacity: 0.3; }
 	.block > .wrapContent.isSelected > .dropTarget { background: #f7f5f0; }

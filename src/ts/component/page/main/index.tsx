@@ -247,7 +247,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				},
 				fields: {},
 				content: {
-					text: 'Contrary to popular belief, Lorem Ipsum is not simply random text.',
+					text: '',
 					style: I.TextStyle.p,
 					marks: [] as I.Mark[],
 					marker: I.MarkerType.Number,

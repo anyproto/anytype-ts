@@ -1,5 +1,5 @@
 import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
 

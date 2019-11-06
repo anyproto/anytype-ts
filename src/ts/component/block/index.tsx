@@ -43,6 +43,8 @@ class Block extends React.Component<Props, State> {
 		super(props);
 		
 		this.onToggle = this.onToggle.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onMenu = this.onMenu.bind(this);
@@ -84,7 +86,7 @@ class Block extends React.Component<Props, State> {
 					cn.push('canToggle');
 				};
 				
-				BlockComponent = () => <BlockText toggled={toggled} onToggle={this.onToggle} {...this.props} />;
+				BlockComponent = () => <BlockText toggled={toggled} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
 				break;
 				
 			case I.BlockType.Layout:
@@ -100,7 +102,7 @@ class Block extends React.Component<Props, State> {
 					);
 				};
 				
-				BlockComponent = () => <div/>;
+				BlockComponent = () => null;
 				break;
 				
 			case I.BlockType.Image:
@@ -222,18 +224,30 @@ class Block extends React.Component<Props, State> {
 		};
 	};
 	
+	onFocus (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('isFocused');
+	};
+	
+	onBlur (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.removeClass('isFocused');
+	};
+	
 	onResizeStart (e: any, index: number) {
 		console.log('[onResizeStart]', index);
 		
 		const { dataset } = this.props;
 		const { selection } = dataset;
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (selection) {
 			selection.setBlocked(true);
 		};
 		this.unbind();
 		
-		let win = $(window);
+		node.addClass('isResizing');
 		win.on('mousemove.block', (e: any) => { this.onResize(e, index); });
 		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e); }));
 	};
@@ -266,11 +280,14 @@ class Block extends React.Component<Props, State> {
 	onResizeEnd (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset;
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (selection) {
 			selection.setBlocked(false);	
 		};
 		this.unbind();
+		
+		node.removeClass('isResizing');
 	};
 	
 	unbind () {
