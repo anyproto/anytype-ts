@@ -79,18 +79,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
-		let win = $(window);
-		let wh = win.height();
-		let st = win.scrollTop();
-		let cx = e.pageX;
-		let cy = e.pageY - st;
-		let rect = {
-			x: (this.x < cx) ? this.x : cx,
-			y: (this.y < cy) ? this.y : cy,
-			width: Math.abs(cx - this.x),
-			height: Math.abs(cy - this.y)
-		};
-		
+		let rect = this.getRect(e);
 		if ((rect.width < THRESHOLD) || (rect.height < THRESHOLD)) {
 			return;
 		};
@@ -113,7 +102,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		
 		if (!this.moved) {
-			if (!e.shiftKey) {
+			if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 				this.clear();	
 			} else {
 				this.checkNodes(e);
@@ -125,18 +114,23 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.onMouseUp(e);
 	};
 	
+	getRect (e: any) {
+		let cx = e.pageX;
+		let cy = e.pageY - $(window).scrollTop();
+		let rect = {
+			x: Math.min(this.x, cx),
+			y: Math.min(this.y, cy),
+			width: Math.abs(cx - this.x),
+			height: Math.abs(cy - this.y)
+		};
+		return rect;
+	};
+	
 	checkNodes (e: any) {
 		let win = $(window);
 		let wh = win.height();
 		let st = win.scrollTop();
-		let cx = e.pageX;
-		let cy = e.pageY - st;
-		let rect = {
-			x: (this.x < cx) ? this.x : cx,
-			y: (this.y < cy) ? this.y : cy,
-			width: Math.abs(cx - this.x),
-			height: Math.abs(cy - this.y)
-		};
+		let rect = this.getRect(e);
 		
 		if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
@@ -206,17 +200,16 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 	};
 	
-	get () {
-		let res = [] as string[];
+	get (): string[] {
+		let ids = [] as string[];
 		
 		$('.selectable.isSelected').each((i: number, item: any) => {
 			item = $(item);
-			let id = String(item.data('id') || '');
-			
-			res.push(id);
+			ids.push(String(item.data('id') || ''));
 		});
 		
-		return res;
+		ids = [ ...new Set(ids) ];
+		return ids;
 	};
 	
 	injectProps (children: any) {

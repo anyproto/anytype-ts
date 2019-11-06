@@ -10,7 +10,7 @@
 		.flex { position: relative; z-index: 1; }
 		.icon.dnd { 
 			width: 24px; height: 24px; background-size: 7px 12px; background-image: url('~img/icon/dnd.svg');
-			opacity: 0; cursor: move;
+			opacity: 0; cursor: move; vertical-align: top;
 		}
 	}
 	
