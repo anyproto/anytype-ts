@@ -1,5 +1,6 @@
 import Page from './page';
 
+import EditorPage from './editor/page';
 import Block from './block';
 
 import DragLayer from './drag/layer';
@@ -44,6 +45,7 @@ import IconUser from './util/iconUser';
 
 export {
 	Page,
+	EditorPage,
 	Block,
 	DragLayer,
 	DragProvider,

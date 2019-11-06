@@ -3,17 +3,22 @@ import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, keyBoard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
+import { getRange, setRange } from 'selection-ranges';
 
 interface Props extends I.BlockText {
 	blockStore?: any;
 	number: number;
 	toggled: boolean;
 	onToggle (e: any): void;
+	onKeyDown? (e: any, id: string, range: any): void;
+	onKeyUp? (e: any, id: string, range: any): void;
 };
 
 interface State {
 	checked: boolean;
 };
+
+const $ = require('jquery');
 
 @inject('blockStore')
 @observer
@@ -23,6 +28,7 @@ class BlockText extends React.Component<Props, {}> {
 	state = {
 		checked: false
 	};
+	range: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -33,6 +39,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onBlur = this.onBlur.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onCheck = this.onCheck.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 	};
 
 	render () {
@@ -70,6 +77,7 @@ class BlockText extends React.Component<Props, {}> {
 				onKeyUp={this.onKeyUp}
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
+				onSelect={this.onSelect}
 				dangerouslySetInnerHTML={{ __html: html }}
 			>
 			</div>
@@ -174,14 +182,19 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		keyBoard.keyDownBlock(e);
+		const { header, onKeyDown } = this.props;
+		
+		onKeyDown(e, header.id, this.range);
 	};
 	
 	onKeyUp (e: any) {
-		keyBoard.keyUpBlock(e);
+		const { header, onKeyUp } = this.props;
+		
+		onKeyUp(e, header.id, this.range);
 	};
 	
 	onFocus (e: any) {
+		this.rangeSave();
 		keyBoard.setFocus(true);
 	};
 	
@@ -195,6 +208,15 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onCheck (e: any) {
 		this.setState({ checked: !this.state.checked });
+	};
+	
+	onSelect (e: any) {
+		this.rangeSave();
+	};
+	
+	rangeSave () {
+		let node = $(ReactDOM.findDOMNode(this));
+		this.range = getRange(node.find('.value').get(0) as Element);
 	};
 	
 };

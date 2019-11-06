@@ -57,6 +57,7 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		
+		let win = $(window);
 		let offset = node.offset();
 		let width = node.width();
 		let height = node.height();

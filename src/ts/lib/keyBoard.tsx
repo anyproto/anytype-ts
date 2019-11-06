@@ -1,3 +1,4 @@
+import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -63,6 +64,8 @@ export enum Key {
 	backSpace	 = 8,
 	enter		 = 13,
 	escape		 = 27,
+	up			 = 38,
+	down		 = 40,
 };
 
 export let keyBoard: KeyBoard = new KeyBoard();

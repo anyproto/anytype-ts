@@ -76,7 +76,7 @@ class Dispatcher {
 		};
 	};
 	
-	napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) { 
+	napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) {
 		let buffer = inputObj.encode(request).finish();
 		
 		bindings.sendCommand(method.name, buffer, (item: any) => {

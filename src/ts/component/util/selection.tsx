@@ -1,14 +1,18 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props {
+	blockStore?: any;
 	className?: string;
 };
 
 const $ = require('jquery');
 const THRESHOLD = 10;
 
+@inject('blockStore')
+@observer
 class SelectionProvider extends React.Component<Props, {}> {
 
 	x: number = 0;
@@ -24,6 +28,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseUp = this.onMouseUp.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
@@ -36,7 +41,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onMouseDown={this.onMouseDown} onMouseLeave={this.onMouseUp}>
+			<div className={cn.join(' ')} onMouseDown={this.onMouseDown} onMouseLeave={this.onMouseLeave}>
 				<div id="rect" />
 				{children}
 			</div>
@@ -50,6 +55,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 			this.hide();
 			return;
 		};
+		
+		let node = $(ReactDOM.findDOMNode(this));
+		let el = node.find('#rect');
+		
+		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
 		this.x = e.pageX;
 		this.y = e.pageY - $(window).scrollTop();
@@ -92,7 +102,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			width: rect.width, 
 			height: rect.height
 		});
-		el.show();
 		
 		this.ids = [];
 		this.moved = true;
@@ -122,6 +131,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 		if (!this.moved) {
 			this.clear();
 		};
+	};
+	
+	onMouseLeave (e: any) {
+		this.onMouseUp(e);
 	};
 	
 	hide () {

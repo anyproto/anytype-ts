@@ -37,6 +37,9 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDragStart (e: any, type: string, ids: string[], component: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+		
 		e.stopPropagation();
 		
 		console.log('[onDragStart]', type, ids);
@@ -50,10 +53,10 @@ class DragProvider extends React.Component<Props, {}> {
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 20));
 		
-		if (this.props.dataset && this.props.dataset.selection) {
-			this.props.dataset.selection.set(this.ids);
-			this.props.dataset.selection.hide();
-			this.props.dataset.selection.setBlocked(true);
+		if (selection) {
+			selection.set(this.ids);
+			selection.hide();
+			selection.setBlocked(true);
 		};
 	};
 	
@@ -67,7 +70,7 @@ class DragProvider extends React.Component<Props, {}> {
 	onDragEnd (e: any) {
 		console.log('[onDragEnd]');
 		
-		$('.isDragging').removeClass('isDragging');
+		$('.selectable.isDragging').removeClass('isDragging');
 		
 		this.refLayer.hide();
 		this.unbind();

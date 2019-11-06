@@ -147,7 +147,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		
 		let request = { 
 			name: authStore.name, 
-			avatarLocalPath: authStore.icon 
+			avatar: authStore.icon 
 		};
 		
 		dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {
