@@ -31,6 +31,10 @@ class Util {
 		});
 	};
 	
+	objectCopy (o: any) {
+		return JSON.parse(JSON.stringify(o));
+	};
+	
 	makeFileFromPath (path: string) {
 		let fn = path.split('/');
 		let stat = fs.statSync(path);

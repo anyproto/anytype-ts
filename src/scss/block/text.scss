@@ -49,10 +49,6 @@
 		}
 	}
 	
-	.block.blockText.isFocused {
-		.placeHolder { display: block; }
-	}
-	
 	.block.blockText.canToggle {
 		.children { display: none; }
 		.children.active { display: block; }

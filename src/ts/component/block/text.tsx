@@ -203,6 +203,7 @@ class BlockText extends React.Component<Props, {}> {
 	onFocus (e: any) {
 		const { onFocus } = this.props;
 		
+		this.placeHolderCheck();
 		this.rangeSave();
 		keyBoard.setFocus(true);
 		onFocus(e);
@@ -210,7 +211,10 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onBlur (e: any) {
 		const { onBlur } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const placeHolder = node.find('.placeHolder');
 		
+		placeHolder.hide();
 		keyBoard.setFocus(false);
 		onBlur(e);
 	};
@@ -228,9 +232,9 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	placeHolderCheck () {
-		let node = $(ReactDOM.findDOMNode(this));
-		let value = node.find('.value').text();
-		let placeHolder = node.find('.placeHolder');
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('.value').text();
+		const placeHolder = node.find('.placeHolder');
 		
 		value.length ? placeHolder.hide() : placeHolder.show();
 	};

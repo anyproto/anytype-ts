@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -47,6 +47,29 @@ class KeyBoard {
 		
 		if (k == Key.enter) {
 			e.preventDefault();
+			
+			let b = { 
+				header: { 
+					id: String(blockStore.blocks.length + 1),
+					parentId: '', 
+					type: I.BlockType.Text, 
+					name: '', 
+					icon: '' 
+				},
+				fields: {},
+				content: {
+					text: '',
+					style: I.TextStyle.p,
+					marks: [] as I.Mark[],
+					marker: 0,
+					toggleable: false,
+					checkable: false,
+					checked: false,
+				},
+				childBlocks: [] as I.Block[]
+			};
+			
+			blockStore.blockAdd(b);
 		};
 	};
 	

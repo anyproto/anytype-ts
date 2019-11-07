@@ -112,7 +112,7 @@ class MenuFilter extends React.Component<Props, State> {
 	onDelete (e: any, id: number) {
 		const { items } = this.state;
 
-		this.setState({ items: items.filter((item: any, i: number) => { console.log(i, id); return i != id; }) });
+		this.setState({ items: items.filter((item: any, i: number) => { return i != id; }) });
 	};
 	
 	onSortEnd (result: any) {
