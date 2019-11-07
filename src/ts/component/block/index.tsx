@@ -20,8 +20,8 @@ interface Props extends I.Block {
 	index: number;
 	number: number;
 	dataset?: any;
-	onKeyDown? (e: any, id: string, range: any): void;
-	onKeyUp? (e: any, id: string, range: any): void;
+	onKeyDown? (e: any): void;
+	onKeyUp? (e: any): void;
 };
 
 interface State {

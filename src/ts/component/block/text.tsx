@@ -7,13 +7,14 @@ import { getRange, setRange } from 'selection-ranges';
 
 interface Props extends I.BlockText {
 	blockStore?: any;
+	editorStore?: any;
 	number: number;
 	toggled: boolean;
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onKeyDown?(e: any, id: string, range: any): void;
-	onKeyUp?(e: any, id: string, range: any): void;
+	onKeyDown?(e: any): void;
+	onKeyUp?(e: any): void;
 };
 
 interface State {
@@ -23,9 +24,11 @@ interface State {
 const $ = require('jquery');
 
 @inject('blockStore')
+@inject('editorStore')
 @observer
 class BlockText extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
 	editorRef: any = null;
 	state = {
 		checked: false
@@ -154,6 +157,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+		
 		const { blockStore, header } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
@@ -166,6 +171,14 @@ class BlockText extends React.Component<Props, {}> {
 		const { checked } = content;
 		
 		this.setState({ checked: checked });
+	};
+	
+	componentDidUpdate () {
+		this.rangeApply();
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 	
 	marksToHtml (text: string, marks: I.Mark[]) {
@@ -190,14 +203,14 @@ class BlockText extends React.Component<Props, {}> {
 		const { header, onKeyDown } = this.props;
 		
 		this.placeHolderCheck();
-		onKeyDown(e, header.id, this.range);
+		onKeyDown(e);
 	};
 	
 	onKeyUp (e: any) {
 		const { header, onKeyUp } = this.props;
 		
 		this.placeHolderCheck();
-		onKeyUp(e, header.id, this.range);
+		onKeyUp(e);
 	};
 	
 	onFocus (e: any) {
@@ -240,8 +253,27 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	rangeSave () {
-		let node = $(ReactDOM.findDOMNode(this));
-		this.range = getRange(node.find('.value').get(0) as Element);
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { header, editorStore } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		editorStore.rangeSave(header.id, getRange(node.find('.value').get(0) as Element));
+	};
+	
+	rangeApply () {
+		const { editorStore, header } = this.props;
+		const { focused, range } = editorStore;
+		
+		if (!this._isMounted || (focused != header.id)) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+
+		setRange(node.find('.value').get(0) as Element, range);
 	};
 	
 };

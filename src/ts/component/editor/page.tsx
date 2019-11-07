@@ -5,10 +5,12 @@ import { observer, inject } from 'mobx-react';
 
 interface Props {
 	blockStore?: any;
+	editorStore?: any;
 	dataset?: any;
 };
 
 @inject('blockStore')
+@inject('editorStore')
 @observer
 class EditorPage extends React.Component<Props, {}> {
 
@@ -59,15 +61,14 @@ class EditorPage extends React.Component<Props, {}> {
 		return ret;
 	};
 	
-	onKeyDown (e: any, id: string, range: any) {
-		range = range || {};
-		
-		const { blockStore, dataset } = this.props;
+	onKeyDown (e: any) {
+		const { blockStore, editorStore, dataset } = this.props;
+		const { focused, range } = editorStore;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		
-		const block = blocks.find((item: I.Block) => { return item.header.id == id; });
-		const index = blocks.findIndex((item: I.Block) => { return item.header.id == id; });
+		const block = blocks.find((item: I.Block) => { return item.header.id == focused; });
+		const index = blocks.findIndex((item: I.Block) => { return item.header.id == focused; });
 		
 		const { content } = block;
 		const { text } = content;
@@ -85,14 +86,14 @@ class EditorPage extends React.Component<Props, {}> {
 				window.getSelection().empty();
 				
 				this.direction = k == Key.up ? -1 : 1;
-				selection.set([ id ]);
+				selection.set([ focused ]);
 			};
 		};
 		
 		keyBoard.keyDownBlock(e);
 	};
 	
-	onKeyUp (e: any, id: string, range: any) {
+	onKeyUp (e: any) {
 		keyBoard.keyUpBlock(e);
 	};
 	

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu } from './component';
-import { commonStore, authStore, blockStore } from './store';
+import { commonStore, authStore, blockStore, editorStore } from './store';
 import { dispatcher, keyBoard, Storage } from 'ts/lib';
 
 import 'scss/font.scss';
@@ -65,6 +65,7 @@ const rootStore = {
 	commonStore: commonStore,
 	authStore: authStore,
 	blockStore: blockStore,
+	editorStore: editorStore,
 };
 
 class App extends React.Component<{}, {}> {
