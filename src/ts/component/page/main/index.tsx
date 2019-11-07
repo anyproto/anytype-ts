@@ -204,21 +204,21 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
-			fields: { width: 0.33 },
+			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
-			fields: { width: 0.33 },
+			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
-			fields: { width: 0.33 },
+			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});

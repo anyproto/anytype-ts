@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Block } from 'ts/component';
+import * as ReactDOM from 'react-dom';
+import { Block, Icon } from 'ts/component';
 import { I, keyBoard, Key, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
+import { throttle } from 'lodash';
 
 interface Props {
 	blockStore?: any;
@@ -9,29 +11,36 @@ interface Props {
 	dataset?: any;
 };
 
+const Constant = require('json/constant.json');
+const $ = require('jquery');
+
 @inject('blockStore')
 @inject('editorStore')
 @observer
 class EditorPage extends React.Component<Props, {}> {
 
 	direction: number = 0;
+	timeoutHover: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onMouseMove = this.onMouseMove.bind(this);
 	};
 
 	render () {
 		const { blockStore } = this.props;
 		const { blocks } = blockStore;
-		const tree = this.getTree('', blocks);
+		const tree = blockStore.getTree('', blocks);
 		
 		let n = 0;
 		return (
 			<div className="editor">
 				<div className="blocks">
+					<Icon id="add" className="add" />
+				
 					{tree.map((item: I.Block, i: number) => { 
 						n = Util.incrementBlockNumber(item, n);
 						return <Block 
@@ -46,19 +55,72 @@ class EditorPage extends React.Component<Props, {}> {
 		);
 	};
 	
-	getTree (rootId: string, list: I.Block[]) {
-		let ret: any = [];
-		for (let item of list) {
-			let obj = Util.objectCopy(item);
+	componentDidMount () {
+		const win = $(window);
+		
+		this.unbind();
+		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, 10));
+	};
+	
+	componentWillUnmount () {
+		this.unbind();
+	};
+	
+	unbind () {
+		$(window).unbind('mousemove.editor');
+	};
+	
+	onMouseMove (e: any) {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const container = $('.pageMainEdit');
+		const blocks = node.find('.block');
+		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const st = win.scrollTop();
+		const add = node.find('#add');
+		const { pageX, pageY } = e;
+		const offset = 100;
+		
+		let hovered: any = null;
 			
-			if (!obj.header.id || (rootId != obj.header.parentId)) {
-				continue;
+		blocks.each((i: number, item: any) => {
+			item = $(item);
+			
+			let rect = $(item).get(0).getBoundingClientRect() as DOMRect;
+			let { x, y, width, height } = rect;
+			y += st;
+
+			if ((pageX >= x) && (pageX <= x + width) && (pageY >= y) && (pageY <= y + height)) {
+				hovered = item;
 			};
-			
-			obj.childBlocks = this.getTree(obj.header.id, list);
-			ret.push(obj);
+		});
+		
+		
+		let rect = { x: 0, y: 0, width: 0, height: 0 };
+		if (hovered) {
+			rect = (hovered.get(0) as Element).getBoundingClientRect() as DOMRect; 
 		};
-		return ret;
+		
+		let { x, y, width, height } = rect;
+		y += st;
+		
+		window.clearTimeout(this.timeoutHover);
+		
+		if ((pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
+			let dir = pageY < (y + height / 2) ? 'top': 'bottom';
+			
+			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 });
+			blocks.addClass('showMenu').removeClass('isAdding top bottom');
+			
+			if (pageX <= x + 20) {
+				hovered.addClass('isAdding ' + dir);
+			};
+		} else {
+			this.timeoutHover = window.setTimeout(() => {
+				add.css({ opacity: 0 });
+				blocks.removeClass('showMenu isAdding top bottom');
+			}, 10);
+		};
 	};
 	
 	onKeyDown (e: any) {

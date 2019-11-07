@@ -1,5 +1,5 @@
 import { observable, action, computed, set } from 'mobx';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import arrayMove from 'array-move';
 
 class BlockStore {
@@ -33,6 +33,21 @@ class BlockStore {
 	@action
 	blockSort (oldIndex: number, newIndex: number) {
 		this.blockList = arrayMove(this.blockList, oldIndex, newIndex);
+	};
+	
+	getTree (rootId: string, list: I.Block[]) {
+		let ret: any = [];
+		for (let item of list) {
+			let obj = Util.objectCopy(item);
+			
+			if (!obj.header.id || (rootId != obj.header.parentId)) {
+				continue;
+			};
+			
+			obj.childBlocks = this.getTree(obj.header.id, list);
+			ret.push(obj);
+		};
+		return ret;
 	};
 	
 };

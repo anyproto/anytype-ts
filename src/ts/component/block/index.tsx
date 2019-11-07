@@ -294,12 +294,11 @@ class Block extends React.Component<Props, State> {
 		const { childBlocks } = this.props;
 		const prevBlock = childBlocks[index - 1];
 		const currentBlock = childBlocks[index];
-		
 		const dw = 1 / childBlocks.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		
-		x = Math.max(100, x);
-		x = Math.min(sum * (Constant.size.editorPage - 100), x);
+		x = Math.max(120, x);
+		x = Math.min(sum * (Constant.size.editorPage - 120), x);
 		x = x / (sum * Constant.size.editorPage);
 		
 		return { sum: sum, percent: x };
