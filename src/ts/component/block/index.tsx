@@ -71,12 +71,11 @@ class Block extends React.Component<Props, State> {
 		let canDrop = true;
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
-		let css = {
-			width: (fields.width || 1) * 100 + '%' 
-		};
-		
 		let BlockComponent: React.ReactType<{}>;
 		let ColResize: React.ReactType<{ index: number }> = () => null;
+		let css: any = {
+			width: (fields.width || 1) * 100 + '%'
+		};
 		
 		switch (type) {
 			default:
@@ -179,7 +178,7 @@ class Block extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 	};
-
+	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -235,59 +234,75 @@ class Block extends React.Component<Props, State> {
 	};
 	
 	onResizeStart (e: any, index: number) {
-		console.log('[onResizeStart]', index);
-		
-		const { dataset } = this.props;
+		const { dataset, childBlocks } = this.props;
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const prevBlock = childBlocks[index - 1];
+		const currentBlock = childBlocks[index];
+		const offset = node.find('#block-' + prevBlock.header.id).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setBlocked(true);
 		};
 		this.unbind();
-		
 		node.addClass('isResizing');
-		win.on('mousemove.block', (e: any) => { this.onResize(e, index); });
-		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e); }));
+		
+		this.onResize(e, index, offset);
+		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
+		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e, index, offset); }));
 	};
 
-	onResize (e: any, index: number) {
+	onResize (e: any, index: number, offset: number) {
 		e.preventDefault();
 		e.stopPropagation();
 		
+		const { childBlocks } = this.props;		
 		const node = $(ReactDOM.findDOMNode(this));
-		const { blockStore, childBlocks } = this.props;
 		const prevBlock = childBlocks[index - 1];
+		const prevNode = node.find('#block-' + prevBlock.header.id);
 		const currentBlock = childBlocks[index];
-		const offset = node.find('#block-' + prevBlock.header.id).offset();
+		const currentNode = node.find('#block-' + currentBlock.header.id);
+		const res = this.calcWidth(e.pageX - offset, index);
 		
-		const dw = 1 / childBlocks.length;
-		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
-		
-		let p = (e.pageX - offset.left - Constant.size.blockMenu);
-		p = Math.max(150, p);
-		p = Math.min(sum * Constant.size.editorPage - 150, p);
-		p = p / (sum * Constant.size.editorPage);
-		
-		prevBlock.fields.width = p * sum;
-		currentBlock.fields.width = (1 - p) * sum;
-		
-		blockStore.blockUpdate(prevBlock);
-		blockStore.blockUpdate(currentBlock);
+		prevNode.css({ width: (res.percent * res.sum * 100) + '%' });
+		currentNode.css({ width: ((1 - res.percent) * res.sum * 100) + '%' });
 	};
 
-	onResizeEnd (e: any) {
-		const { dataset } = this.props;
+	onResizeEnd (e: any, index: number, offset: number) {
+		const { dataset, blockStore, childBlocks } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
+		const prevBlock = childBlocks[index - 1];
+		const currentBlock = childBlocks[index];
+		const res = this.calcWidth(e.pageX - offset, index);
 		
 		if (selection) {
 			selection.setBlocked(false);	
 		};
 		this.unbind();
-		
 		node.removeClass('isResizing');
+		
+		prevBlock.fields.width = res.percent * res.sum;
+		currentBlock.fields.width = (1 - res.percent) * res.sum;
+		
+		blockStore.blockUpdate(prevBlock);
+		blockStore.blockUpdate(currentBlock);
+	};
+	
+	calcWidth (x: number, index: number) {
+		const { childBlocks } = this.props;
+		const prevBlock = childBlocks[index - 1];
+		const currentBlock = childBlocks[index];
+		
+		const dw = 1 / childBlocks.length;
+		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
+		
+		x = Math.max(100, x);
+		x = Math.min(sum * (Constant.size.editorPage - 100), x);
+		x = x / (sum * Constant.size.editorPage);
+		
+		return { sum: sum, percent: x };
 	};
 	
 	unbind () {

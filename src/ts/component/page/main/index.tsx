@@ -204,14 +204,21 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
-			fields: {},
+			fields: { width: 0.33 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
 		
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
-			fields: {},
+			fields: { width: 0.33 },
+			content: { style: I.LayoutStyle.Column },
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
+			fields: { width: 0.33 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
@@ -240,7 +247,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			let b = { 
 				header: { 
 					id: String(idx++),
-					parentId: String(Util.rand(5, 7)), 
+					parentId: String(Util.rand(5, 8)), 
 					type: I.BlockType.Text, 
 					name: '', 
 					icon: '' 

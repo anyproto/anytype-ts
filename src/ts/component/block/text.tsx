@@ -245,6 +245,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	placeHolderCheck () {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value').text();
 		const placeHolder = node.find('.placeHolder');
