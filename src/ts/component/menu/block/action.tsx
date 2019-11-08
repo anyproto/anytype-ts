@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {
 };
@@ -10,6 +11,8 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
+		
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -21,13 +24,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			{ type: 'kbd', name: 'Code' },
 		];
 		
-		const Item = (item: any) => (
-			<div className={'item ' + (item.active ? 'active' : '')} onMouseDown={item.onMouseDown}>
-				<Icon className={item.icon} />
-				<div className="name">{item.name}</div>
-			</div>
-		);
-		
 		return (
 			<React.Fragment>
 				<div className="section first">
@@ -38,7 +34,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					{markActions.map((action: any, i: number) => {
 						let cn = [ action.type ];
 							
-						return <Icon id={'icon-' + action.type} key={i} className={cn.join(' ')} />;
+						return <Icon id={'icon-' + action.type} key={i} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e); }} />;
 					})}
 				</div>
 					
@@ -48,6 +44,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				</div>
 			</React.Fragment>
 		);
+	};
+	
+	onClick (e: any) {
+		commonStore.menuClose(this.props.id);
 	};
 
 };
