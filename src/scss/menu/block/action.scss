@@ -1,0 +1,8 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuBlockAction { transform-origin: 50% 50% !important; }
+	.menu.menuBlockAction {
+		.section:first-child { padding-right: 22px; }
+	}
+}

@@ -13,34 +13,68 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onBlockSwitch = this.onBlockSwitch.bind(this);
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { content } = data;
+		const { style } = content;
+		
 		const markActions = [
-			{ type: 'b', name: 'Bold' },
-			{ type: 'i', name: 'Italic' },
-			{ type: 's', name: 'Strikethrough' },
-			{ type: 'a', name: 'Link' },
-			{ type: 'kbd', name: 'Code' },
+			{ icon: 'b', name: 'Bold' },
+			{ icon: 'i', name: 'Italic' },
+			{ icon: 's', name: 'Strikethrough' },
+			{ icon: 'a', name: 'Link' },
+			{ icon: 'kbd', name: 'Code' },
 		];
+		
+		let icon = '';
+		switch (style) {
+			default:
+			case I.TextStyle.p:
+				icon = 'p';
+				break;
+				
+			case I.TextStyle.h1:
+				icon = 'h1';
+				break;
+				
+			case I.TextStyle.h2:
+				icon = 'h2';
+				break;
+				
+			case I.TextStyle.h3:
+				icon = 'h3';
+				break;
+				
+			case I.TextStyle.h4:
+				icon = 'h4';
+				break;
+				
+			case I.TextStyle.quote:
+				icon = 'quote';
+				break;
+		};
 		
 		return (
 			<React.Fragment>
-				<div className="section first">
-					<Icon arrow className="" />
+				<div className="section">
+					<Icon id="button-switch" arrow={true} className={[ icon, 'blockSwitch', (commonStore.menuIsOpen('blockSwitch') ? 'active' : '') ].join(' ')} onClick={this.onBlockSwitch} />
 				</div>
 					
 				<div className="section">
 					{markActions.map((action: any, i: number) => {
-						let cn = [ action.type ];
+						let cn = [ action.icon ];
 							
-						return <Icon id={'icon-' + action.type} key={i} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e); }} />;
+						return <Icon key={i} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e); }} />;
 					})}
 				</div>
 					
 				<div className="section">
-					<Icon className="copy" />
-					<Icon className="remove" />
+					<Icon className="copy" onClick={(e: any) => { this.onClick(e); }} />
+					<Icon className="remove" onClick={(e: any) => { this.onClick(e); }} />
 				</div>
 			</React.Fragment>
 		);
@@ -48,6 +82,18 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	
 	onClick (e: any) {
 		commonStore.menuClose(this.props.id);
+	};
+	
+	onBlockSwitch (e: any) {
+		commonStore.menuOpen('blockSwitch', { 
+			element: 'button-switch',
+			type: I.MenuType.Vertical,
+			offsetX: 36,
+			offsetY: 0,
+			light: false,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left
+		});
 	};
 
 };

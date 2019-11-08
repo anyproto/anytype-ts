@@ -244,7 +244,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { commonStore, editorStore, header } = this.props;
+		const { commonStore, editorStore, header, content } = this.props;
 		
 		this.rangeSave();
 		
@@ -265,7 +265,10 @@ class BlockText extends React.Component<Props, {}> {
 				offsetY: -y,
 				light: false,
 				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Left
+				horizontal: I.MenuDirection.Left,
+				data: {
+					content: content
+				}
 			});
 		};
 	};

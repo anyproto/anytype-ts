@@ -11,6 +11,7 @@ import MenuAccount from './account';
 import MenuSmile from './smile';
 
 import MenuBlockAction from './block/action';
+import MenuBlockSwitch from './block/switch';
 
 import MenuDataviewPropertyList from './dataview/property/list';
 import MenuDataviewPropertyEdit from './dataview/property/edit';
@@ -41,6 +42,7 @@ class Menu extends React.Component<Props, {}> {
 			smile: MenuSmile,
 			
 			blockAction: MenuBlockAction,
+			blockSwitch: MenuBlockSwitch,
 			
 			dataviewPropertyList: MenuDataviewPropertyList,
 			dataviewPropertyEdit: MenuDataviewPropertyEdit,

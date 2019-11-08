@@ -47,6 +47,8 @@ import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
 
+import 'scss/menu/block/action.scss';
+
 import 'scss/menu/dataview/sort.scss';
 import 'scss/menu/dataview/filter.scss';
 import 'scss/menu/dataview/property.scss';
