@@ -3,7 +3,8 @@
 	
 	"size": {
 		"editorPage": 800,
-		"blockMenu": 50
+		"blockMenu": 50,
+		"menuBlockAction": 354
 	},
 
 	"index": {

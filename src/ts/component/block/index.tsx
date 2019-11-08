@@ -4,6 +4,7 @@ import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { Block as Child, Icon, DropTarget } from 'ts/component';
 import { throttle } from 'lodash';
+import { blockStore } from 'ts/store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -16,7 +17,6 @@ import BlockBookmark from './bookmark';
 const Constant = require('json/constant.json');
 
 interface Props extends I.Block {
-	blockStore?: any;
 	index: number;
 	number: number;
 	dataset?: any;
@@ -30,8 +30,6 @@ interface State {
 
 const $ = require('jquery');
 
-@inject('blockStore')
-@observer
 class Block extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
@@ -54,18 +52,10 @@ class Block extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { blockStore, header, content, childBlocks, index } = this.props;
-		const { blocks } = blockStore;
+		const { header, fields, content, childBlocks, index } = this.props;
 		const { id, type } = header;
 		const { style, toggleable } = content;
 		const { toggled } = this.state;
-		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
-		
-		if (!block) {
-			return null;
-		};
-		
-		const { fields } = block;
 		
 		let n = 0;
 		let canDrop = true;
@@ -155,6 +145,7 @@ class Block extends React.Component<Props, State> {
 				<div className={[ 'children', (toggled ? 'active' : '') ].join(' ')}>
 					{childBlocks.map((item: any, i: number) => {
 						n = Util.incrementBlockNumber(item, n);
+						
 						return (
 							<React.Fragment key={item.header.id}>
 								{i > 0 ? <ColResize index={i} /> : ''}
@@ -270,7 +261,7 @@ class Block extends React.Component<Props, State> {
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
-		const { dataset, blockStore, childBlocks } = this.props;
+		const { dataset, childBlocks } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
@@ -286,8 +277,15 @@ class Block extends React.Component<Props, State> {
 		prevBlock.fields.width = res.percent * res.sum;
 		currentBlock.fields.width = (1 - res.percent) * res.sum;
 		
-		blockStore.blockUpdate(prevBlock);
-		blockStore.blockUpdate(currentBlock);
+		blockStore.blockUpdate({
+			header: prevBlock.header,
+			fields: { width: res.percent * res.sum }
+		});
+		
+		blockStore.blockUpdate({
+			header: currentBlock.header,
+			fields: { width: (1 - res.percent) * res.sum }
+		});
 	};
 	
 	calcWidth (x: number, index: number) {

@@ -6,6 +6,7 @@ import { observer, inject } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 
 interface Props extends I.BlockText {
+	commonStore?: any;
 	blockStore?: any;
 	editorStore?: any;
 	number: number;
@@ -21,8 +22,10 @@ interface State {
 	checked: boolean;
 };
 
+const Constant = require('json/constant.json');
 const $ = require('jquery');
 
+@inject('commonStore')
 @inject('blockStore')
 @inject('editorStore')
 @observer
@@ -241,7 +244,30 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
+		const { commonStore, editorStore, header } = this.props;
+		
 		this.rangeSave();
+		
+		const { range } = editorStore;
+		
+		if (range && (range.start != range.end)) {
+			const node = $(ReactDOM.findDOMNode(this));
+			const offset = node.offset();
+			const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+			
+			const x = rect.x - offset.left + Constant.size.blockMenu - Constant.size.menuBlockAction / 2 + rect.width / 2;
+			const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
+			
+			commonStore.menuOpen('blockAction', { 
+				element: 'block-' + header.id,
+				type: I.MenuType.Horizontal,
+				offsetX: x,
+				offsetY: -y,
+				light: false,
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Left
+			});
+		};
 	};
 	
 	placeHolderCheck () {

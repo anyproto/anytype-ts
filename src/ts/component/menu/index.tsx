@@ -10,6 +10,8 @@ import MenuHelp from './help';
 import MenuAccount from './account';
 import MenuSmile from './smile';
 
+import MenuBlockAction from './block/action';
+
 import MenuDataviewPropertyList from './dataview/property/list';
 import MenuDataviewPropertyEdit from './dataview/property/edit';
 import MenuDataviewPropertyType from './dataview/property/type';
@@ -37,6 +39,8 @@ class Menu extends React.Component<Props, {}> {
 			help: MenuHelp,
 			account: MenuAccount,
 			smile: MenuSmile,
+			
+			blockAction: MenuBlockAction,
 			
 			dataviewPropertyList: MenuDataviewPropertyList,
 			dataviewPropertyEdit: MenuDataviewPropertyEdit,

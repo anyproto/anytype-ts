@@ -112,7 +112,7 @@ class EditorPage extends React.Component<Props, {}> {
 			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 });
 			blocks.addClass('showMenu').removeClass('isAdding top bottom');
 			
-			if (pageX <= x + 20) {
+			if (hovered && (pageX <= x + 20)) {
 				hovered.addClass('isAdding ' + dir);
 			};
 		} else {

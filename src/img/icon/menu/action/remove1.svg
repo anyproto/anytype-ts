@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="19px" viewBox="0 0 16 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Desktop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="elements-2" transform="translate(-384.000000, -990.000000)" fill="#ffbb2c" fill-rule="nonzero">
+            <g id="trash" transform="translate(384.000000, 990.000000)">
+                <path d="M3,6 L3,17 L13,17 L13,6 L15,6 L15,17 C15,18.1045695 14.1045695,19 13,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,6 L3,6 Z" id="Combined-Shape"></path>
+                <path d="M0,2 L16,2 L16,3 C16,3.55228475 15.5522847,4 15,4 L1,4 C0.44771525,4 6.76353751e-17,3.55228475 0,3 L0,2 Z" id="Rectangle-22-Copy"></path>
+                <path d="M5.99183206,0 L9.99183206,0 C10.5441168,-1.01453063e-16 10.9918321,0.44771525 10.9918321,1 L10.9918321,4 L4.99183206,4 L4.99183206,1 C4.99183206,0.44771525 5.43954731,1.01453063e-16 5.99183206,0 Z" id="Rectangle-23-Copy"></path>
+                <rect id="Rectangle-34" x="8.9921875" y="6" width="2" height="9"></rect>
+                <rect id="Rectangle-34" x="4.9921875" y="6" width="2" height="9"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

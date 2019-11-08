@@ -69,6 +69,7 @@
 		"json-loader": "^0.5.7",
 		"lodash": "^4.17.15",
 		"mobx": "^5.14.2",
+		"mobx-decorators": "^6.0.1",
 		"mobx-devtools-mst": "^0.9.21",
 		"mobx-react": "^6.1.4",
 		"mobx-state-tree": "^3.14.1",

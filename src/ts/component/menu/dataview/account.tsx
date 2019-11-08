@@ -46,17 +46,19 @@ class MenuAccount extends React.Component<Props, State> {
 		);
 		
 		return (
-			<div>
+			<React.Fragment>
 				<form className="form" onSubmit={this.onSubmit}>
 					<Input ref={(ref: any) => { this.filterRef = ref; }} onKeyUp={this.onKeyUp} placeHolder="Find a person..." />
 				</form>
+				
 				<div className="line" />
+				
 				<div className="items">
 					{filtered.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 	

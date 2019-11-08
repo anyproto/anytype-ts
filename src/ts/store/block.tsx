@@ -16,7 +16,7 @@ class BlockStore {
 	};
 	
 	@action
-	blockUpdate (block: I.Block) {
+	blockUpdate (block: any) {
 		let item = this.blockList.find((item: I.Block) => { return item.header.id == block.header.id; });
 		if (!item) {
 			return;
