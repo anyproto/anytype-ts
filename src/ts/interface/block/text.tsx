@@ -25,13 +25,13 @@ export enum MarkType {
 	Link	 = 4,
 };
 
-export interface Range {
+export interface TextRange {
 	from: number;
 	to: number;
 };
 
 export interface Mark {
-	range: Range;
+	range: TextRange;
 	type: MarkType;
 };
 

@@ -95,7 +95,6 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		});
 		
-		
 		let rect = { x: 0, y: 0, width: 0, height: 0 };
 		if (hovered) {
 			rect = (hovered.get(0) as Element).getBoundingClientRect() as DOMRect; 
@@ -106,7 +105,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		window.clearTimeout(this.timeoutHover);
 		
-		if ((pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
+		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
 			let dir = pageY < (y + height / 2) ? 'top': 'bottom';
 			
 			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 });

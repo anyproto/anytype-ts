@@ -293,8 +293,9 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const { header, editorStore } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
+		const range = getRange(node.find('.value').get(0) as Element) || { start: 0, end: 0 };
 		
-		editorStore.rangeSave(header.id, getRange(node.find('.value').get(0) as Element));
+		editorStore.rangeSave(header.id, { from: range.start, to: range.end });
 	};
 	
 	rangeApply () {
@@ -307,7 +308,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 
-		setRange(node.find('.value').get(0) as Element, range);
+		setRange(node.find('.value').get(0) as Element, { start: range.from, end: range.to });
 	};
 	
 };

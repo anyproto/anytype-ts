@@ -21,7 +21,7 @@ import {
 
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
-import { TextStyle, MarkerType, MarkType, Range, Mark, ContentText, BlockText } from './block/text';
+import { TextStyle, MarkerType, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { ContentUploadState, ContentMedia, BlockMedia } from './block/media';
 
 export {
@@ -67,7 +67,7 @@ export {
 	TextStyle, 
 	MarkerType, 
 	MarkType, 
-	Range, 
+	TextRange, 
 	Mark, 
 	ContentText, 
 	BlockText,

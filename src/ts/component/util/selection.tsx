@@ -1,9 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { getRange, setRange } from 'selection-ranges';
+import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props {
+	editorStore?: any;
 	blockStore?: any;
 	className?: string;
 };
@@ -11,6 +14,7 @@ interface Props {
 const $ = require('jquery');
 const THRESHOLD = 10;
 
+@inject('editorStore')
 @inject('blockStore')
 @observer
 class SelectionProvider extends React.Component<Props, {}> {
@@ -21,6 +25,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 	nodeList: any = null;
 	blocked: boolean = false;
 	moved: boolean = false;
+	focused: string = '';
+	range: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -69,7 +75,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		
 		let win = $(window);
-		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, 20));
+		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, 30));
 		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
 	};
 	
@@ -84,22 +90,33 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
+		this.checkNodes(e);
+		
 		let node = $(ReactDOM.findDOMNode(this));
 		let el = node.find('#rect');
+		let length = $('.selectable.isSelected').length;
+		let opacity = 1;
+		
+		if (length <= 1) {
+			rect.width = rect.height = 0;
+			opacity = 0;
+		};
 		
 		el.css({ 
 			transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
 			width: rect.width, 
-			height: rect.height
+			height: rect.height,
+			opacity: opacity
 		});
 		
 		this.moved = true;
-		this.checkNodes(e);
 	};
 	
 	onMouseUp (e: any) {
 		this.hide();
 		this.lastIds = [];
+		this.focused = '';
+		this.range = null;
 		
 		if (!this.moved) {
 			if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
@@ -127,6 +144,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	checkNodes (e: any) {
+		const { editorStore } = this.props;
+		const { focused, range } = editorStore;
+		
 		let win = $(window);
 		let wh = win.height();
 		let st = win.scrollTop();
@@ -166,6 +186,27 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			this.lastIds.push(id);
 		});
+		
+		let selected = $('.selectable.isSelected');
+		let value = selected.find('.value');
+		
+		if (!selected.length || !value.length) {
+			return;
+		};
+		
+		if (selected.length == 1) {
+			if (!this.focused || !this.range) {
+				this.focused = selected.data('id');
+				this.range = getRange(value.get(0) as Element) || { start: 0, end: 0 };
+			};
+			
+			setRange(value.get(0) as Element, this.range);
+			editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });
+			this.clear();
+		} else {
+			editorStore.rangeClear();
+			window.getSelection().empty();
+		};
 	};
 	
 	hide () {

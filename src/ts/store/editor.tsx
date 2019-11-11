@@ -2,23 +2,33 @@ import { observable, action, computed } from 'mobx';
 import { I } from 'ts/lib';
 
 class EditorStore {
-	@observable public focused: string = '';
-	@observable public range: any = { start: 0, end: 0 };
+	@observable public focusedId: string = '';
+	@observable public rangeObj: I.TextRange = { from: 0, to: 0 };
+	
+	@computed
+	get focused(): string {
+		return this.focusedId;
+	};
+	
+	@computed
+	get range(): I.TextRange {
+		return this.rangeObj;
+	};
 	
 	@action
-	rangeSave (id: string, range: any) {
-		range = range || {};
-		range.start = Number(range.start) || 0;
-		range.end = Number(range.end) || 0;
+	rangeSave (id: string, range: I.TextRange) {
+		range = range || { from: 0, to: 0 };
+		range.from = Number(range.from) || 0;
+		range.to = Number(range.to) || 0;
 		
-		this.focused = String(id || '');
-		this.range = range;
+		this.focusedId = String(id || '');
+		this.rangeObj = range;
 	};
 	
 	@action
 	rangeClear () {
-		this.focused = '';
-		this.range = { start: 0, end: 0 };
+		this.focusedId = '';
+		this.rangeObj = { from: 0, to: 0 };
 	};
 	
 };
