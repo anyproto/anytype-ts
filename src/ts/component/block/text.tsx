@@ -226,13 +226,14 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		const { onBlur } = this.props;
+		const { onBlur, editorStore } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const placeHolder = node.find('.placeHolder');
 		
 		placeHolder.hide();
 		keyBoard.setFocus(false);
 		onBlur(e);
+		editorStore.rangeClear();
 	};
 	
 	onToggle (e: any) {

@@ -8,6 +8,7 @@ const raf = require('raf');
 
 import PopupProfile from './profile';
 import PopupSettings from './settings';
+import PopupTree from './tree';
 
 interface Props extends I.Popup {
 	history: any;
@@ -30,6 +31,7 @@ class Popup extends React.Component<Props, {}> {
 		const Components: any = {
 			profile: PopupProfile,
 			settings: PopupSettings,
+			tree: PopupTree,
 		};
 		
 		const popupId = Util.toCamelCase('popup-' + id);

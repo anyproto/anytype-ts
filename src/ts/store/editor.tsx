@@ -15,6 +15,12 @@ class EditorStore {
 		this.range = range;
 	};
 	
+	@action
+	rangeClear () {
+		this.focused = '';
+		this.range = { start: 0, end: 0 };
+	};
+	
 };
 
 export let editorStore: EditorStore = new EditorStore();

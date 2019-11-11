@@ -28,7 +28,7 @@
 	.path {
 		.item { display: inline-block; vertical-align: middle; color: #6c6a5f; margin-right: 4px; cursor: pointer; }
 		.item {
-			.icon.home { width: 24px; height: 24px; background-size: 20px 18px; margin-right: 4px; background-image: url('~img/icon/home.svg'); }
+			.icon.home { margin-right: 4px; }
 			.icon.arrow { width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); }
 			.smile { margin-right: 4px; }
 			.name { display: inline-block; vertical-align: middle; margin-right: 6px; padding-top: 2px; line-height: 22px; }

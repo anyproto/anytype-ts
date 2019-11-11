@@ -1,0 +1,67 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupTree { width: 480px; margin: 0px 0px 0px -240px; }
+	.popup.popupTree {
+		.head { padding: 10px 15px; border-bottom: 1px solid #ebe9e0; }
+		.title { font-size: 18px; letter-spacing: -0.1px; margin: 0px; }
+		
+		.items { padding: 10px 8px; overflow-x: hidden; overflow-y: auto; }
+		.items {
+			.item { 
+				height: 28px; padding: 2px 8px 2px 0px; font-size: 15px; letter-spacing: 0.2px; width: 100%; 
+				border-radius: 4px; white-space: nowrap; margin-bottom: 2px; cursor: pointer; position: relative;
+			}
+			.item:hover, .item.selected { background-color: #ebe9e0; }
+			
+			.item.c1 { padding-left: 8px; }
+			.item.c2 { padding-left: 22px; }
+			.item.c3 { padding-left: 36px; }
+			.item.c4 { padding-left: 50px; }
+			.item.c5 { padding-left: 64px; }
+			.item.c6 { padding-left: 78px; }
+			
+			.item.withChildren {
+				.arrow { background-image: url('~img/arrow/menu0.svg'); }
+				.arrow:hover { background-image: url('~img/arrow/menu1.svg'); }
+				.arrow .dot { display: none; }
+			}
+			
+			.children { display: none; transition: $transitionFast; }
+			
+			.item {
+				.arrow { 
+					display: inline-block; vertical-align: middle; width: 20px; height: 20px; margin-right: 4px;
+					position: relative; background-size: 6px 10px; background-position: center center; background-repeat: no-repeat;
+				}
+				.dot { width: 2px; height: 2px; background-color: #aca996; position: absolute; left: 9px; top: 9px; }
+				.smile { 
+					display: inline-block; vertical-align: middle; width: 24px; height: 24px; text-align: center; margin-right: 4px;
+					line-height: 24px;
+				}
+				.name { display: inline-block; vertical-align: middle; width: calc(100% - 48px); line-height: 24px; overflow: hidden; }
+				.name {
+					.txt { margin-top: 1px; }
+				}
+				.children { margin-top: 4px; }
+			}
+			
+			.item.active {
+				.arrow { transform: rotate(90deg); }
+			}
+			
+			#itemroot {
+				.arrow { display: none; }
+			}
+			
+			#childrenroot { display: block; }
+		}
+		
+		.buttons { padding: 12px; border-top: 1px solid #ebe9e0; }
+		.buttons {
+			.button { height: 32px; line-height: 32px; }
+			.button.grey { box-shadow: 0px 0px; color: #aca996; }
+			.button.grey:hover { color: #000; }
+		}
+	}
+}

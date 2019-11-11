@@ -40,6 +40,7 @@ import 'scss/block/file.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
+import 'scss/popup/tree.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
