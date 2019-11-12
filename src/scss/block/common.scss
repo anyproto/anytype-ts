@@ -34,7 +34,8 @@
 	.block > .wrapContent.isSelected > .dropTarget { background: #f7f5f0; }
 	
 	.block.blockDiv {
-		.div { height: 1px; background: #d2d0c2; margin: 8px 0px; }
+		.dropTarget { padding: 8px 0px; }
+		.div { height: 1px; background: #d2d0c2; }
 	}
 	
 	/* Row */

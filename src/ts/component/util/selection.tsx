@@ -62,19 +62,19 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
+		let win = $(window);
 		let node = $(ReactDOM.findDOMNode(this));
 		let el = node.find('#rect');
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
 		this.x = e.pageX;
-		this.y = e.pageY - $(window).scrollTop();
+		this.y = e.pageY;
 		this.nodeList = $('.selectable');
 		this.moved = false;
 		this.unbind();
 		this.lastIds = [];
 		
-		let win = $(window);
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, 30));
 		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
 	};
@@ -133,7 +133,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	getRect (e: any) {
 		let cx = e.pageX;
-		let cy = e.pageY - $(window).scrollTop();
+		let cy = e.pageY;
 		let rect = {
 			x: Math.min(this.x, cx),
 			y: Math.min(this.y, cy),
@@ -147,9 +147,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const { editorStore } = this.props;
 		const { focused, range } = editorStore;
 		
-		let win = $(window);
-		let wh = win.height();
-		let st = win.scrollTop();
 		let rect = this.getRect(e);
 		
 		if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
@@ -165,11 +162,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			let width = item.width();
 			let height = item.height();
 			
-			if ((top + height < st) || (top >= wh + st)) {
-				return;
-			};
-			
-			if (!this.coordsCollide(rect.x, rect.y, rect.width, rect.height, left, top - st, width, height)) {
+			if (!this.coordsCollide(rect.x, rect.y, rect.width, rect.height, left, top, width, height)) {
 				return;
 			};
 			
@@ -200,7 +193,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				this.range = getRange(value.get(0) as Element) || { start: 0, end: 0 };
 			};
 			
-			setRange(value.get(0) as Element, this.range);
+			//setRange(value.get(0) as Element, this.range);
 			editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });
 			this.clear();
 		} else {

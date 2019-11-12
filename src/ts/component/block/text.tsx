@@ -51,10 +51,11 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, header, number, toggled } = this.props;
+		const { blockStore, editorStore, header, number, toggled } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
 		const { checked } = this.state;
+		const { focused, range } = editorStore;
 		
 		if (!block) {
 			return null;
@@ -177,7 +178,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		this.rangeApply();
+		const { editorStore } = this.props;
+		const { focused, range } = editorStore;
+		
+		this.rangeApply(focused, range);
 	};
 	
 	componentWillUnmount () {
@@ -249,9 +253,9 @@ class BlockText extends React.Component<Props, {}> {
 		
 		this.rangeSave();
 		
-		const { range } = editorStore;
+		const { focused, range } = editorStore;
 		
-		if (range && (range.start != range.end)) {
+		if (range && (range.from != range.to)) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
 			const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
@@ -267,6 +271,8 @@ class BlockText extends React.Component<Props, {}> {
 				light: false,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Left,
+				onClose: () => {
+				},
 				data: {
 					content: content
 				}
@@ -298,11 +304,9 @@ class BlockText extends React.Component<Props, {}> {
 		editorStore.rangeSave(header.id, { from: range.start, to: range.end });
 	};
 	
-	rangeApply () {
-		const { editorStore, header } = this.props;
-		const { focused, range } = editorStore;
-		
-		if (!this._isMounted || (focused != header.id)) {
+	rangeApply (focused: string, range: I.TextRange) {
+		const { header } = this.props;
+		if (!this._isMounted || !focused || (focused != header.id)) {
 			return;
 		};
 		

@@ -130,28 +130,47 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const block = blocks.find((item: I.Block) => { return item.header.id == focused; });
 		const index = blocks.findIndex((item: I.Block) => { return item.header.id == focused; });
-		
 		const { content } = block;
-		const { text } = content;
 		
+		const node = $(ReactDOM.findDOMNode(this));
+
+		let l = String(content.text || '').length;
 		let k = e.which;
 		
 		if (
-			((range.start == 0) && (k == Key.up)) ||
-			((range.end == text.length) && (k == Key.down))
+			((range.from == 0) && (k == Key.up)) ||
+			((range.to == l) && (k == Key.down))
 		) {
 			e.preventDefault();
 			e.stopPropagation();
 			
+			const dir = (k == Key.up) ? -1 : 1;
+			
 			if (e.shiftKey) {
 				window.getSelection().empty();
 				
-				this.direction = k == Key.up ? -1 : 1;
+				this.direction = dir;
 				selection.set([ focused ]);
+			} else {
+				let next = this.findNextBlock(focused, dir);
+				if (next && (next.header.type == I.BlockType.Text)) {
+					const l = String(next.content.text || '').length;
+					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
+					
+					editorStore.rangeSave(next.header.id, newRange);
+				};
 			};
 		};
 		
 		keyBoard.keyDownBlock(e);
+	};
+	
+	findNextBlock (id: string, dir: number) {
+		const { blockStore } = this.props;
+		const { blocks } = blockStore;
+		const idx = blocks.findIndex((item: I.Block) => { return item.header.id == id; });
+
+		return blocks[idx + dir] ? blocks[idx + dir] : null;
 	};
 	
 	onKeyUp (e: any) {

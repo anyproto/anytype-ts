@@ -51,7 +51,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		let win = $(window);
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 20));
+		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 30));
 		
 		if (selection) {
 			selection.set(this.ids);
