@@ -50,14 +50,23 @@ class BlockStore {
 		return ret;
 	};
 	
-	getNextBlock (id: string, dir: number): any {
+	getNextBlock (id: string, dir: number, check?: (item: I.Block) => any): any {
 		let idx = this.blockList.findIndex((item: I.Block) => { return item.header.id == id; });
-		
 		if (idx + dir < 0 || idx + dir > this.blockList.length - 1) {
 			return null;
 		};
 		
-		return this.blockList[idx + dir];
+		let ret = this.blockList[idx + dir];
+		
+		if (check && ret) {
+			if (check(ret)) {
+				return ret;
+			} else {
+				return this.getNextBlock(ret.header.id, dir, check);
+			};
+		} else {
+			return ret;
+		};
 	};
 	
 };
