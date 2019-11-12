@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, TextArea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Error, Textarea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -49,7 +49,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
-						<TextArea ref={(ref: any) => this.phraseRef = ref} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
+						<Textarea ref={(ref: any) => this.phraseRef = ref} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
 						<div className="buttons">
 							<Button type="input" text="Login" className="orange" />
 							<Button text="Back" className="grey" onClick={this.onCancel} />

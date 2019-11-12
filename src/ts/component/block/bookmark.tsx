@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, InputWithFile } from 'ts/component';
-import { I, keyBoard } from 'ts/lib';
+import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockText {

@@ -4,7 +4,7 @@ import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, editorStore } from './store';
-import { dispatcher, keyBoard, Storage } from 'ts/lib';
+import { dispatcher, keyboard, Storage } from 'ts/lib';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -16,7 +16,7 @@ import 'scss/component/input.scss';
 import 'scss/component/inputWithFile.scss';
 import 'scss/component/button.scss';
 import 'scss/component/icon.scss';
-import 'scss/component/textArea.scss';
+import 'scss/component/textarea.scss';
 import 'scss/component/smile.scss';
 import 'scss/component/error.scss';
 import 'scss/component/frame.scss';
@@ -97,7 +97,7 @@ class App extends React.Component<{}, {}> {
 	
 	init () {
 		ipcRenderer.send('appLoaded', true);
-		keyBoard.init(history);
+		keyboard.init(history);
 		
 		let phrase = Storage.get('phrase');
 		if (phrase) {

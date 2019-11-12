@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Block, Icon } from 'ts/component';
-import { I, keyBoard, Key, Util } from 'ts/lib';
+import { I, Key, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props {
+	commonStore?: any;
 	blockStore?: any;
 	editorStore?: any;
 	dataset?: any;
@@ -14,12 +15,12 @@ interface Props {
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@inject('blockStore')
+@inject('commonStore')
 @inject('editorStore')
+@inject('blockStore')
 @observer
 class EditorPage extends React.Component<Props, {}> {
 
-	direction: number = 0;
 	timeoutHover: number = 0;
 
 	constructor (props: any) {
@@ -82,7 +83,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const offset = 100;
 		
 		let hovered: any = null;
-			
+		
+		// Find hovered block by mouse coords
 		blocks.each((i: number, item: any) => {
 			item = $(item);
 			
@@ -123,15 +125,18 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const { blockStore, editorStore, dataset } = this.props;
+		const { blockStore, editorStore, commonStore, dataset } = this.props;
 		const { focused, range } = editorStore;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		
 		const block = blocks.find((item: I.Block) => { return item.header.id == focused; });
+		if (!block) {
+			return;
+		};
+		
 		const index = blocks.findIndex((item: I.Block) => { return item.header.id == focused; });
 		const { content } = block;
-		
 		const node = $(ReactDOM.findDOMNode(this));
 
 		let l = String(content.text || '').length;
@@ -142,17 +147,17 @@ class EditorPage extends React.Component<Props, {}> {
 			((range.to == l) && (k == Key.down))
 		) {
 			e.preventDefault();
-			e.stopPropagation();
 			
 			const dir = (k == Key.up) ? -1 : 1;
+			const next = blockStore.getNextBlock(focused, dir);
 			
 			if (e.shiftKey) {
-				window.getSelection().empty();
-				
-				this.direction = dir;
-				selection.set([ focused ]);
+				if (selection.get().length < 1) {
+					window.getSelection().empty();
+					selection.set([ focused ]);
+					commonStore.menuClose('blockAction');					
+				};
 			} else {
-				let next = this.findNextBlock(focused, dir);
 				if (next && (next.header.type == I.BlockType.Text)) {
 					const l = String(next.content.text || '').length;
 					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
@@ -162,19 +167,35 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		};
 		
-		keyBoard.keyDownBlock(e);
-	};
-	
-	findNextBlock (id: string, dir: number) {
-		const { blockStore } = this.props;
-		const { blocks } = blockStore;
-		const idx = blocks.findIndex((item: I.Block) => { return item.header.id == id; });
-
-		return blocks[idx + dir] ? blocks[idx + dir] : null;
+		if (k == Key.enter) {
+			e.preventDefault();
+			
+			let b = { 
+				header: { 
+					id: String(blockStore.blocks.length + 1),
+					parentId: '', 
+					type: I.BlockType.Text, 
+					name: '', 
+					icon: '' 
+				},
+				fields: {},
+				content: {
+					text: '',
+					style: I.TextStyle.p,
+					marks: [] as I.Mark[],
+					marker: 0,
+					toggleable: false,
+					checkable: false,
+					checked: false,
+				},
+				childBlocks: [] as I.Block[]
+			};
+			
+			blockStore.blockAdd(b);
+		};
 	};
 	
 	onKeyUp (e: any) {
-		keyBoard.keyUpBlock(e);
 	};
 	
 };

@@ -50,6 +50,16 @@ class BlockStore {
 		return ret;
 	};
 	
+	getNextBlock (id: string, dir: number): any {
+		let idx = this.blockList.findIndex((item: I.Block) => { return item.header.id == id; });
+		
+		if (idx + dir < 0 || idx + dir > this.blockList.length - 1) {
+			return null;
+		};
+		
+		return this.blockList[idx + dir];
+	};
+	
 };
 
 export let blockStore: BlockStore = new BlockStore();

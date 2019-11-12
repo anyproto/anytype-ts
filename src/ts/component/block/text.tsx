@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, keyBoard } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 
@@ -9,6 +9,7 @@ interface Props extends I.BlockText {
 	commonStore?: any;
 	blockStore?: any;
 	editorStore?: any;
+	dataset?: any;
 	number: number;
 	toggled: boolean;
 	onToggle?(e: any): void;
@@ -225,7 +226,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		this.placeHolderCheck();
 		this.rangeSave();
-		keyBoard.setFocus(true);
+		keyboard.setFocus(true);
 		onFocus(e);
 	};
 	
@@ -235,7 +236,7 @@ class BlockText extends React.Component<Props, {}> {
 		const placeHolder = node.find('.placeHolder');
 		
 		placeHolder.hide();
-		keyBoard.setFocus(false);
+		keyboard.setFocus(false);
 		onBlur(e);
 		editorStore.rangeClear();
 	};
@@ -255,7 +256,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const { focused, range } = editorStore;
 		
-		if (range && (range.from != range.to)) {
+		if (range && range.from && range.to && (range.from != range.to)) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
 			const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;

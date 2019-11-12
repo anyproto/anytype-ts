@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, IconUser, Switch, Button, Title, Label, Cover, TextArea, Input } from 'ts/component';
+import { Icon, IconUser, Switch, Button, Title, Label, Cover, Textarea, Input } from 'ts/component';
 import { I, Storage, Key } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -136,7 +136,7 @@ class PopupSettings extends React.Component<Props, {}> {
 						<Title text="Keychain phrase" />
 						<Label text="Your Keychain phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place." />
 						<div className="inputs">
-							<TextArea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
+							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
 						</div>
 						<Button text="I've written it down" className="orange" onClick={() => { this.onPage('index'); }} />
 					</div>

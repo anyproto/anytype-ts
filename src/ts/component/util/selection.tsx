@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange, setRange } from 'selection-ranges';
-import { I } from 'ts/lib';
+import { I, Key } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -21,8 +21,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 	x: number = 0;
 	y: number = 0;
+	dir: number = 0;
 	lastIds: string[] = [];
-	nodeList: any = null;
 	blocked: boolean = false;
 	moved: boolean = false;
 	focused: string = '';
@@ -31,10 +31,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseUp = this.onMouseUp.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
@@ -47,16 +48,64 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onMouseDown={this.onMouseDown} onMouseLeave={this.onMouseLeave}>
+			<div className={cn.join(' ')} onMouseDown={this.onMouseDown}>
 				<div id="rect" />
 				{children}
 			</div>
 		);
 	};
 	
-	onMouseDown (e: any) {
-		e.stopPropagation();
+	componentDidMount () {
+		this.unbind();
 		
+		let win = $(window); 
+		let doc = $(document);
+		
+		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
+		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
+		
+		doc.on('selectstart.selection selectionchange.selection', (e: any) => {
+			if (this.get().length <= 0) {
+				return;
+			};
+			
+			const sel = window.getSelection();
+			const range = sel.rangeCount >= 1 ? sel.getRangeAt(0) : null;
+
+			if (range && !range.collapsed) {
+				window.getSelection().empty();					
+			};
+		});
+	};
+	
+	componentWillUnmount () {
+		this.unbind();
+	};
+	
+	onKeyDown (e: any) {
+		const { blockStore } = this.props;
+		
+		const k = e.which;
+		const ids = this.get();
+		const dir = (k == Key.up) ? -1 : 1;
+		
+		if (e.shiftKey && (k == Key.up || k == Key.down) && (ids.length >= 1)) {
+			const idx = (dir < 0) ? 0 : ids.length - 1;
+			const next = blockStore.getNextBlock(ids[idx], dir);
+			const method = dir < 0 ? 'unshift' : 'push';
+				
+			if (next) {
+				ids[method](next.header.id);
+				this.set(ids);
+			};
+		};
+	};
+	
+	onKeyUp (e: any) {
+		let k = e.which;
+	};
+	
+	onMouseDown (e: any) {
 		if (this.blocked) {
 			this.hide();
 			return;
@@ -70,11 +119,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		this.x = e.pageX;
 		this.y = e.pageY;
-		this.nodeList = $('.selectable');
 		this.moved = false;
-		this.unbind();
 		this.lastIds = [];
 		
+		this.unbindMouse();
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, 30));
 		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
 	};
@@ -84,7 +132,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			this.hide();
 			return;
 		};
-
+		
 		let rect = this.getRect(e);
 		if ((rect.width < THRESHOLD) || (rect.height < THRESHOLD)) {
 			return;
@@ -117,18 +165,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		this.focused = '';
 		this.range = null;
+		this.unbindMouse();
 		
 		if (!this.moved) {
 			if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
-				this.clear();	
+				this.clear();
 			} else {
 				this.checkNodes(e);
 			};
 		};
-	};
-	
-	onMouseLeave (e: any) {
-		this.onMouseUp(e);
 	};
 	
 	getRect (e: any) {
@@ -146,14 +191,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 	checkNodes (e: any) {
 		const { editorStore } = this.props;
 		const { focused, range } = editorStore;
-		
-		let rect = this.getRect(e);
+		const rect = this.getRect(e);
+		const node = $(ReactDOM.findDOMNode(this));
+		const nodes = $('.selectable');
 		
 		if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
 		};
 		
-		this.nodeList.each((i: number, item: any) => {
+		nodes.each((i: number, item: any) => {
 			item = $(item);
 			
 			let id = String(item.data('id') || '');
@@ -180,10 +226,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 			this.lastIds.push(id);
 		});
 		
-		let selected = $('.selectable.isSelected');
-		let value = selected.find('.value');
+		const selected = $('.selectable.isSelected');
+		const value = selected.find('.value');
 		
 		if (!selected.length || !value.length) {
+			node.removeClass('isSelecting');
 			return;
 		};
 		
@@ -193,12 +240,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 				this.range = getRange(value.get(0) as Element) || { start: 0, end: 0 };
 			};
 			
-			//setRange(value.get(0) as Element, this.range);
+			node.removeClass('isSelecting');
 			editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });
 			this.clear();
 		} else {
 			editorStore.rangeClear();
 			window.getSelection().empty();
+			node.addClass('isSelecting');
 		};
 	};
 	
@@ -206,7 +254,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		node.find('#rect').hide();
-		this.unbind();
+		this.unbindMouse();
 	};
 	
 	clear () {
@@ -214,7 +262,18 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
+		this.unbindMouse();
+		this.unbindKeyboard();
+		
+		$(document).unbind('selectstart.selection selectionchange.selection');
+	};
+	
+	unbindMouse () {
 		$(window).unbind('mousemove.selection mouseup.selection');
+	};
+	
+	unbindKeyboard () {
+		$(window).unbind('keydown.selection keyup.selection');
 	};
 	
 	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
@@ -232,6 +291,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		for (let id of ids) {
 			$('.selectable.c' + id).addClass('isSelected');
 		};
+		
+		this.lastIds = ids;
 	};
 	
 	get (): string[] {

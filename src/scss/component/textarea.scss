@@ -1,9 +1,9 @@
 @import "~scss/_vars";
 
-.textArea {
+.textarea {
 	width: 100%; height: 100px; resize: none; font-size: 15px; border: 0px; background: #f7f5f0; padding: 20px;
 	line-height: 24px; letter-spacing: -0.12px; color: $colorBlack; display: block; font-family: 'Mono'; 
 }
-.textArea::placeholder { color: #d2d0c2; }
+.textarea::placeholder { color: #d2d0c2; }
 
-.textArea.withError { border-color: $colorRed !important; }
+.textarea.withError { border-color: $colorRed !important; }

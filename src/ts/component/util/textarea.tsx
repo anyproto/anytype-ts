@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { keyBoard } from 'ts/lib';
+import { keyboard } from 'ts/lib';
 
 const $ = require('jquery');
 
@@ -24,7 +24,7 @@ interface State {
 	selected: boolean;
 };
 
-class TextArea extends React.Component<Props, State> {
+class Textarea extends React.Component<Props, State> {
 
 	public static defaultProps = {
 		value: ''
@@ -48,7 +48,7 @@ class TextArea extends React.Component<Props, State> {
 		const { id, name, className, placeHolder, autoComplete, readOnly, maxLength } = this.props;
 		const { value } = this.state;
 		
-		let cn = [ 'textArea' ];
+		let cn = [ 'textarea' ];
 		if (className) {
 			cn.push(className);
 		};
@@ -104,7 +104,7 @@ class TextArea extends React.Component<Props, State> {
 			this.props.onFocus(e, this.state.value);
 		};
 		
-		keyBoard.setFocus(true);
+		keyboard.setFocus(true);
 	};
 	
 	onBlur (e: any) {
@@ -112,7 +112,7 @@ class TextArea extends React.Component<Props, State> {
 			this.props.onBlur(e, this.state.value);
 		};
 		
-		keyBoard.setFocus(false);
+		keyboard.setFocus(false);
 	};
 	
 	focus () {
@@ -140,4 +140,4 @@ class TextArea extends React.Component<Props, State> {
 	
 };
 
-export default TextArea;
+export default Textarea;

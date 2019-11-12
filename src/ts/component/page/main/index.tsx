@@ -225,46 +225,47 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		let s = 0;
 		for (let i = 0; i <= 10; ++i) {
+			let parentId = idx;
 			let b = { 
 				header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
 				fields: {},
 				content: {
-					text: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.',
+					text: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.',
 					style: I.TextStyle.p,
 					marks: [] as I.Mark[],
 					marker: I.MarkerType.Number,
-					toggleable: true,
-					checkable: true,
+					toggleable: false,
+					checkable: false,
 					checked: false,
 				},
 				childBlocks: [] as I.Block[]
 			};
 			list.push(b);
 			s++;
-		};
-		
-		for (let c = 0; c < 30; ++c) {
-			let b = { 
-				header: { 
-					id: String(idx++),
-					parentId: String(Util.rand(5, 8)), 
-					type: I.BlockType.Text, 
-					name: '', 
-					icon: '' 
-				},
-				fields: {},
-				content: {
-					text: '',
-					style: I.TextStyle.p,
-					marks: [] as I.Mark[],
-					marker: I.MarkerType.Number,
-					toggleable: Boolean(Util.rand(0, 1)),
-					checkable: Boolean(Util.rand(0, 1)),
-					checked: Boolean(Util.rand(0, 1)),
-				},
-				childBlocks: [] as I.Block[]
+			
+			for (let c = 0; c < 3; ++c) {
+				let b = { 
+					header: { 
+						id: String(idx++),
+						parentId: String(parentId), 
+						type: I.BlockType.Text, 
+						name: '', 
+						icon: '' 
+					},
+					fields: {},
+					content: {
+						text: '',
+						style: I.TextStyle.p,
+						marks: [] as I.Mark[],
+						marker: I.MarkerType.Number,
+						toggleable: false,
+						checkable: false,
+						checked: false,
+					},
+					childBlocks: [] as I.Block[]
+				};
+				list.push(b);
 			};
-			list.push(b);
 		};
 		
 		list.push({ 
