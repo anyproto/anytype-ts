@@ -73,7 +73,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			const sel = window.getSelection();
 			const range = sel.rangeCount >= 1 ? sel.getRangeAt(0) : null;
-
+			
 			if (range && !range.collapsed) {
 				window.getSelection().empty();					
 			};
@@ -224,7 +224,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		this.nodes.each((i: number, el: any) => {
-			
 			let item = $(el);
 			let id = String(item.data('id') || '');
 			let elRect = el.getBoundingClientRect() as DOMRect; 
@@ -254,16 +253,18 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		if ((selected.length == 1) && !e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			const value = selected.find('.value');
+			const el = value.get(0) as Element;
 			
 			if (value.length) {
 				if (!this.focused || !this.range) {
 					this.focused = selected.data('id');
-					this.range = getRange(value.get(0) as Element) || { start: 0, end: 0 };
+					this.range = getRange(el) || { start: 0, end: 0 };
 				};
-			
-				if (this.range.start && this.range.end) {
+				
+				if (this.range.start || this.range.end) {
 					this.clear();
-					editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });					
+					editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });
+					setRange(el, this.range);
 				};
 			};
 		} else {

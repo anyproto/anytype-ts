@@ -40,6 +40,7 @@ class DragProvider extends React.Component<Props, {}> {
 	onDragStart (e: any, type: string, ids: string[], component: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset;
+		const win = $(window);
 		
 		e.stopPropagation();
 		
@@ -50,7 +51,6 @@ class DragProvider extends React.Component<Props, {}> {
 		this.unbind();
 		this.setDragImage(e);
 		
-		let win = $(window);
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
 		

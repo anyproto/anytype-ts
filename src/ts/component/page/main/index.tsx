@@ -281,7 +281,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				text: 'select c.id, c.title, array_to_json(array(select row_to_json(row(id, install_url, zd_game, schema_package)) from (select distinct a.id, a.install_url, a.zd_game, a.schema_package from events e inner join applications a on a.id = e.acceptor_application_id where e.campaign_id = c.id) t)) as acceptors, array_to_json(array(select row_to_json(row(id, install_url, zd_game, schema_package)) from (select distinct a.id, a.install_url, a.zd_game, a.schema_package from events e inner join applications a on a.id = e.application_id where e.campaign_id = c.id) t)) as donors, array_to_json(array(select row_to_json(row(id, display_name, event_text)) from (select distinct l.id , l.display_name , t.event_text from events e inner join events_i18n t on t.id = e.id inner join languages l on l.id = cast(t.language_id AS bigint) where e.campaign_id = c.id and t.event_text is not null and char_length(t.event_text) > 0) t)) as texts, array_to_json(array(select row_to_json(row(id, display_name, background_image_key, cast(source_json as json))) from (select distinct s.id, l.display_name, s.background_image_key, s.source_json from events e inner join event_statics es on es.event_id = e.id inner join statics_i18n s on s.id = es.static_id inner join languages l on l.id = cast(s.language_id AS bigint) where e.campaign_id = c.id and es.active=true) t)) as images from campaigns c where c.status in (1,2) order by c.id desc limit 100',
 				style: I.TextStyle.code,
 				marks: [] as I.Mark[],
-				marker: I.MarkerType.Number,
+				marker: I.MarkerType.None,
 				toggleable: false,
 				checkable: false,
 				checked: false,

@@ -112,60 +112,45 @@ class BlockText extends React.Component<Props, {}> {
 		);
 		
 		let placeHolder = <span className="placeHolder">Type anything...</span>;
+		let cn = [ 'flex' ];
 		
 		switch (style) {
 			default:
 			case I.TextStyle.p:
-				editor = (
-					<div className="p">{editor}</div>
-				);
+				cn.push('p');
 				break;
 				
 			case I.TextStyle.title:
-				editor = (
-					<div className="title">{editor}</div>
-				);
+				cn.push('title');
 				break;
 				
 			case I.TextStyle.h1:
-				editor = (
-					<div className="h1">{editor}</div>
-				);
+				cn.push('h1');
 				break;
 				
 			case I.TextStyle.h2:
-				editor = (
-					<div className="h2">{editor}</div>
-				);
+				cn.push('h2');
 				break;
 				
 			case I.TextStyle.h3:
-				editor = (
-					<div className="h3">{editor}</div>
-				);
+				cn.push('h3');
 				break;
 				
 			case I.TextStyle.h4:
-				editor = (
-					<div className="h4">{editor}</div>
-				);
+				cn.push('h4');
 				break;
 				
 			case I.TextStyle.quote:
-				editor = (
-					<div className="quote">{editor}</div>
-				);
+				cn.push('quote');
 				break;
 				
 			case I.TextStyle.code:
-				editor = (
-					<div className="code">{editor}</div>
-				);
+				cn.push('code');
 				break;
 		};
 		
 		return (
-			<div className="flex">
+			<div className={cn.join(' ')}>
 				<div className="markers">
 					{markers.map((item: any, i: number) => (
 						<Marker key={i} {...item} />

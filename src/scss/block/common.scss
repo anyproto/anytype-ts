@@ -3,7 +3,7 @@
 .blocks {
 	.block { padding: 1px 0px; word-break: break-word; display: flex; flex: auto; position: relative; }
 	.block {
-		.id { position: absolute; left: 50px; top: 1px; z-index: 2; }
+		.id { position: absolute; left: 0px; top: 1px; z-index: 2; }
 		.wrapMenu { width: 50px; text-align: right; }
 		.wrapContent { width: calc(100% - 50px); position: relative; }
 		

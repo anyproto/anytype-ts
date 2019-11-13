@@ -84,6 +84,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const offset = 100;
 		
 		let hovered: any = null;
+		let rect = { x: 0, y: 0, width: 0, height: 0 };
 		
 		// Find hovered block by mouse coords
 		blocks.each((i: number, item: any) => {
@@ -98,7 +99,6 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		});
 		
-		let rect = { x: 0, y: 0, width: 0, height: 0 };
 		if (hovered) {
 			rect = (hovered.get(0) as Element).getBoundingClientRect() as DOMRect; 
 		};
