@@ -155,23 +155,20 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const { editorStore } = this.props;
+		const { focused, range } = editorStore;
+		
 		this.checkNodes(e);
 		
 		let node = $(ReactDOM.findDOMNode(this));
 		let el = node.find('#rect');
-		let length = node.find('.selectable.isSelected').length;
-		let opacity = 1;
-		
-		if (length <= 1) {
-			rect.width = rect.height = 0;
-			opacity = 0;
-		};
+		let selected = node.find('.selectable.isSelected');
 		
 		el.css({ 
 			transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
 			width: rect.width, 
 			height: rect.height,
-			opacity: opacity
+			opacity: selected.length ? 1 : 0.4
 		});
 		
 		this.moved = true;
@@ -226,10 +223,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			this.clear();
 		};
 		
-		if ((rect.width < THRESHOLD) || (rect.height < THRESHOLD)) {
-			return;
-		};
-		
 		this.nodes.each((i: number, el: any) => {
 			
 			let item = $(el);
@@ -255,20 +248,24 @@ class SelectionProvider extends React.Component<Props, {}> {
 		});
 		
 		const selected = node.find('.selectable.isSelected');
-		const value = selected.find('.value');
-
-		if (!selected.length || !value.length) {
+		if (!selected.length) {
 			return;
 		};
 		
 		if ((selected.length == 1) && !e.shiftKey && !(e.ctrlKey || e.metaKey)) {
-			if (!this.focused || !this.range) {
-				this.focused = selected.data('id');
-				this.range = getRange(value.get(0) as Element) || { start: 0, end: 0 };
-			};
+			const value = selected.find('.value');
 			
-			this.clear();
-			editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });	
+			if (value.length) {
+				if (!this.focused || !this.range) {
+					this.focused = selected.data('id');
+					this.range = getRange(value.get(0) as Element) || { start: 0, end: 0 };
+				};
+			
+				if (this.range.start && this.range.end) {
+					this.clear();
+					editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });					
+				};
+			};
 		} else {
 			if (focused && range.from && range.to) {
 				editorStore.rangeClear();
