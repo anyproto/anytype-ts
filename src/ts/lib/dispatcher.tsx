@@ -37,7 +37,7 @@ class Dispatcher {
 		
 		switch (event.message) {
 			
-			case 'accountAdd':
+			case 'accountShow':
 				authStore.accountAdd(data.account);
 				break;
 				

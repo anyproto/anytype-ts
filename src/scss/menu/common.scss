@@ -45,6 +45,7 @@
 		.item.active { background: $colorBlack; }
 		
 		.icon { width: 24px; height: 24px; margin-right: 8px; }
+		.icon.user.c40 { width: 40px; height: 40px; line-height: 40px; font-size: 18px; }
 		
 		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
 		.icon.delete { 
@@ -132,8 +133,8 @@
 	.icon.toggle { background-size: 18px 18px; background-image: url('~img/icon/menu/action/block/toggle0.svg'); }
 	.icon.toggle:hover, .icon.toggle.active { background-image: url('~img/icon/menu/action/block/toggle1.svg'); }
 	
-	.icon.check { background-size: 20px 20px; background-image: url('~img/icon/menu/action/block/check0.svg'); }
-	.icon.check:hover, .icon.check.active { background-image: url('~img/icon/menu/action/block/check1.svg'); }
+	.icon.checkbox { background-size: 20px 20px; background-image: url('~img/icon/menu/action/block/checkbox0.svg'); }
+	.icon.checkbox:hover, .icon.checkbox.active { background-image: url('~img/icon/menu/action/block/checkbox1.svg'); }
 	
 	.icon.newPage { background-size: 16px 20px; background-image: url('~img/icon/menu/action/block/newPage0.svg'); }
 	.icon.newPage:hover, .icon.block-newPage.active { background-image: url('~img/icon/menu/action/block/newPage1.svg'); }

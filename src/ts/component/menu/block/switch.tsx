@@ -26,7 +26,7 @@ class MenuBlockSwitch extends React.Component<Props, {}> {
 			{ icon: 'ul', name: 'Bulleted list' },
 			{ icon: 'ol', name: 'Numbered list' },
 			{ icon: 'toggle', name: 'Toggle' },
-			{ icon: 'check', name: 'Checkbox' },
+			{ icon: 'checkbox', name: 'Checkbox' },
 			{ icon: 'code', name: 'Code snippet' }
 		];
 		

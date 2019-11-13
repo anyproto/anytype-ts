@@ -85,23 +85,34 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	onKeyDown (e: any) {
 		const { blockStore } = this.props;
-		
 		const k = e.which;
-		const ids = this.get();
-		const dir = (k == Key.up) ? -1 : 1;
+		
+		let ids: any = this.get();
 		
 		if (e.shiftKey && (k == Key.up || k == Key.down) && (ids.length >= 1)) {
-			const idx = (dir < 0) ? 0 : ids.length - 1;
-			const id = ids[idx];
-			const next = blockStore.getNextBlock(id, dir, (item: any) => {
-				return item.header.type != I.BlockType.Layout;
-			});
-			const method = dir < 0 ? 'unshift' : 'push';
-				
-			if (next) {
-				ids[method](next.header.id);
-				this.set(ids);
+			let dir = (k == Key.up) ? -1 : 1;
+			let idx = (dir < 0) ? 0 : ids.length - 1;
+			let method = '';
+			
+			if (ids.length == 1) {
+				this.dir = dir;
 			};
+			
+			if (this.dir && (dir != this.dir)) {
+				method = dir < 0 ? 'pop' : 'shift';
+				ids[method]();
+			} else {
+				const next = blockStore.getNextBlock(ids[idx], dir, (item: any) => {
+					return item.header.type != I.BlockType.Layout;
+				});
+
+				method = dir < 0 ? 'unshift' : 'push';
+				if (next) {
+					ids[method](next.header.id);
+				};
+			};
+			
+			this.set(ids);
 		};
 	};
 	
