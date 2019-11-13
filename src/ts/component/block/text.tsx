@@ -5,6 +5,8 @@ import { I, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 
+import 'highlight.js/styles/github.css';
+
 interface Props extends I.BlockText {
 	commonStore?: any;
 	blockStore?: any;
@@ -23,6 +25,8 @@ interface State {
 	checked: boolean;
 };
 
+const low = window.require('lowlight');
+const rehype = require('rehype');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -62,8 +66,9 @@ class BlockText extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const { content } = block;
+		const { fields, content } = block;
 		const { text, marks, style, marker, toggleable, checkable } = content;
+		const { lang } = fields;
 		
 		let markers: any[] = [];
 		if (marker) {
@@ -76,7 +81,14 @@ class BlockText extends React.Component<Props, {}> {
 			markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
 		};
 		
-		let html = this.marksToHtml(text, marks);
+		let html = '';
+		if (style == I.TextStyle.code) {
+			let res = low.highlight(lang, text);
+			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
+		} else {
+			html = this.marksToHtml(text, marks);
+		};
+		
 		let editor = (
 			<div
 				className="value"
@@ -142,6 +154,12 @@ class BlockText extends React.Component<Props, {}> {
 			case I.TextStyle.quote:
 				editor = (
 					<div className="quote">{editor}</div>
+				);
+				break;
+				
+			case I.TextStyle.code:
+				editor = (
+					<div className="code">{editor}</div>
 				);
 				break;
 		};
