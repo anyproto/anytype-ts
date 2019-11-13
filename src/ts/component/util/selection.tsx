@@ -27,6 +27,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	moved: boolean = false;
 	focused: string = '';
 	range: any = null;
+	nodes: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -120,6 +121,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
+		this.nodes = node.find('.selectable');
 		this.x = e.pageX;
 		this.y = e.pageY;
 		this.moved = false;
@@ -196,13 +198,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const { focused, range } = editorStore;
 		const rect = this.getRect(e);
 		const node = $(ReactDOM.findDOMNode(this));
-		const nodes = node.find('.selectable');
 		
 		if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
 		};
 		
-		nodes.each((i: number, item: any) => {
+		this.nodes.each((i: number, item: any) => {
 			item = $(item);
 			
 			let id = String(item.data('id') || '');
@@ -233,7 +234,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const value = selected.find('.value');
 		
 		if (!selected.length || !value.length) {
-			node.removeClass('isSelecting');
 			return;
 		};
 		
@@ -243,13 +243,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 				this.range = getRange(value.get(0) as Element) || { start: 0, end: 0 };
 			};
 			
-			node.removeClass('isSelecting');
-			editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });
 			this.clear();
+			if ((this.focused != focused) && (this.range.start != range.from) && (this.range.end != range.to)) {
+				editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });	
+			};
 		} else {
-			editorStore.rangeClear();
+			if (focused && range.from && range.to) {
+				editorStore.rangeClear();
+			};
 			window.getSelection().empty();
-			node.addClass('isSelecting');
 		};
 	};
 	

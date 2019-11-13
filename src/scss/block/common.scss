@@ -31,7 +31,7 @@
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block > .wrapContent.isDragging { opacity: 0.3; }
-	.block > .wrapContent.isSelected > .dropTarget { background: #f7f5f0; }
+	.block > .wrapContent > .selectable.isSelected > .dropTarget { background: #f7f5f0; }
 	
 	.block.blockDiv {
 		.dropTarget { padding: 8px 0px; }

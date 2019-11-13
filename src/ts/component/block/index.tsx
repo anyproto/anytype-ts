@@ -137,10 +137,12 @@ class Block extends React.Component<Props, State> {
 		);
 		
 		let wrapContent = (
-			<div className={[ 'wrapContent', (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id}>
-				<DropTarget id={header.id} type={I.DragItem.Block} onDrop={this.onDrop}>
-					<BlockComponent {...this.props} />
-				</DropTarget>
+			<div className="wrapContent">
+				<div className={[ (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id}>
+					<DropTarget id={header.id} type={I.DragItem.Block} onDrop={this.onDrop}>
+						<BlockComponent {...this.props} />
+					</DropTarget>
+				</div>
 					
 				<div className={[ 'children', (toggled ? 'active' : '') ].join(' ')}>
 					{childBlocks.map((item: any, i: number) => {
