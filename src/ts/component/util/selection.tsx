@@ -269,9 +269,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 			
 			this.clear();
-			if ((this.focused != focused) && (this.range.start != range.from) && (this.range.end != range.to)) {
-				editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });	
-			};
+			editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });	
 		} else {
 			if (focused && range.from && range.to) {
 				editorStore.rangeClear();
