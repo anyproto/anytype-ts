@@ -44,9 +44,7 @@
 		.item:hover { background: #56554f; }
 		.item.active { background: $colorBlack; }
 		
-		.icon { width: 24px; height: 24px; margin-right: 8px; }
-		.icon.user.c40 { width: 40px; height: 40px; line-height: 40px; font-size: 18px; }
-		
+		.icon { margin-right: 8px; }
 		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
 		.icon.delete { 
 			width: 18px; height: 18px; background-size: 10px 10px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;

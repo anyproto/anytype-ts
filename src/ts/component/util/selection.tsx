@@ -188,6 +188,16 @@ class SelectionProvider extends React.Component<Props, {}> {
 				this.clear();
 			} else {
 				this.checkNodes(e);
+				
+				let target = $(e.target.closest('.selectable'));
+				if (target.length) {
+					if (e.shiftKey) {
+						target.addClass('isSelected');
+					} else 
+					if (e.ctrlKey || e.metaKey) {
+						target.hasClass('isSelected') ? target.removeClass('isSelected') : target.addClass('isSelected');
+					};
+				};
 			};
 		};
 	};
@@ -212,6 +222,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
+		};
+		
+		if ((rect.width < THRESHOLD) || (rect.height < THRESHOLD)) {
+			return;
 		};
 		
 		this.nodes.each((i: number, item: any) => {
@@ -243,12 +257,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		const selected = node.find('.selectable.isSelected');
 		const value = selected.find('.value');
-		
+
 		if (!selected.length || !value.length) {
 			return;
 		};
 		
-		if (selected.length == 1) {
+		if ((selected.length == 1) && !e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			if (!this.focused || !this.range) {
 				this.focused = selected.data('id');
 				this.range = getRange(value.get(0) as Element) || { start: 0, end: 0 };

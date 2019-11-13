@@ -30,7 +30,7 @@
 	.block.isAdding.bottom > .wrapContent > .dropTarget { box-shadow: 0px 2px $colorOrange; }
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block > .wrapContent.isDragging { opacity: 0.3; }
+	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }
 	.block > .wrapContent > .selectable.isSelected > .dropTarget { background: #f7f5f0; }
 	
 	.block.blockDiv {
