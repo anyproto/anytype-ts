@@ -9,6 +9,7 @@ interface Props {
 };
 
 const $ = require('jquery');
+const THROTTLE = 20;
 
 class DragProvider extends React.Component<Props, {}> {
 	
@@ -51,7 +52,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		let win = $(window);
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, 30));
+		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
 		
 		if (selection) {
 			selection.set(this.ids);
@@ -68,6 +69,9 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDragEnd (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+		
 		console.log('[onDragEnd]');
 		
 		$('.selectable.isDragging').removeClass('isDragging');
@@ -75,8 +79,8 @@ class DragProvider extends React.Component<Props, {}> {
 		this.refLayer.hide();
 		this.unbind();
 		
-		if (this.props.dataset && this.props.dataset.selection) {
-			this.props.dataset.selection.setBlocked(false);
+		if (selection) {
+			selection.setBlocked(false);
 		};
 	};
 	
@@ -100,6 +104,7 @@ class DragProvider extends React.Component<Props, {}> {
 	
 	setDragImage (e: any) {
 		let el = $('#emptyDragImage');
+		
 		if (!el.length) {
 			el = $('<div id="emptyDragImage">');
 			$('body').append(el);

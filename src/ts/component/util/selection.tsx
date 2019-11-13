@@ -13,6 +13,7 @@ interface Props {
 
 const $ = require('jquery');
 const THRESHOLD = 10;
+const THROTTLE = 20;
 
 @inject('editorStore')
 @inject('blockStore')
@@ -139,7 +140,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		
 		this.unbindMouse();
-		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, 30));
+		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
 	};
 	
@@ -219,6 +220,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const { focused, range } = editorStore;
 		const rect = this.getRect(e);
 		const node = $(ReactDOM.findDOMNode(this));
+		const scrollTop = $(window).scrollTop();
 		
 		if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
@@ -228,28 +230,25 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		this.nodes.each((i: number, item: any) => {
-			item = $(item);
+		this.nodes.each((i: number, el: any) => {
 			
+			let item = $(el);
 			let id = String(item.data('id') || '');
-			let offset = item.offset();
-			let { left, top } = offset;
-			let width = item.width();
-			let height = item.height();
+			let elRect = el.getBoundingClientRect() as DOMRect; 
 			
-			if (!this.coordsCollide(rect.x, rect.y, rect.width, rect.height, left, top, width, height)) {
+			elRect.y += scrollTop;
+			
+			if (!this.rectsCollide(rect, elRect)) {
 				return;
 			};
 			
-			if (e.shiftKey) {
-				item.addClass('isSelected');
-			} else
 			if ((e.ctrlKey || e.metaKey)) {
 				if (this.lastIds.indexOf(id) < 0) {
 					item.hasClass('isSelected') ? item.removeClass('isSelected') : item.addClass('isSelected');	
 				};
-			} else {
-				item.addClass('isSelected');
+			} else 
+			if (!item.hasClass('isSelected')) {
+				item.addClass('isSelected');	
 			};
 			
 			this.lastIds.push(id);
@@ -304,6 +303,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	unbindKeyboard () {
 		$(window).unbind('keydown.selection keyup.selection');
+	};
+	
+	rectsCollide (rect1: any, rect2: any) {
+		return this.coordsCollide(rect1.x, rect1.y, rect1.width, rect1.height, rect2.x, rect2.y, rect2.width, rect2.height);
 	};
 	
 	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {

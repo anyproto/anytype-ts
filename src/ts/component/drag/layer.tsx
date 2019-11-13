@@ -102,7 +102,11 @@ class DragLayer extends React.Component<Props, State> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
-			node.css({ transform: `translate3d(${x}px, ${y}px, 0px)` }).addClass('show');
+			
+			node.css({ transform: `translate3d(${x}px, ${y}px, 0px)` });
+			if (!node.hasClass('show')) {
+				node.addClass('show');
+			};
 		});
 	};
 	

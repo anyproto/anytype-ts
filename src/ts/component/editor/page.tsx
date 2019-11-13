@@ -14,6 +14,7 @@ interface Props {
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+const THROTTLE = 20;
 
 @inject('commonStore')
 @inject('editorStore')
@@ -47,8 +48,8 @@ class EditorPage extends React.Component<Props, {}> {
 						return <Block 
 							key={item.header.id} {...item} number={n} index={i}
 							{...this.props}
-							onKeyDown={this.onKeyDown} 
-							onKeyUp={this.onKeyUp} 
+							onKeyDown={throttle((e: any) => { this.onKeyDown(e); }, THROTTLE)} 
+							onKeyUp={throttle((e: any) => { this.onKeyUp(e); }, THROTTLE)} 
 						/>
 					})}
 				</div>
@@ -60,7 +61,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const win = $(window);
 		
 		this.unbind();
-		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, 10));
+		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 	};
 	
 	componentWillUnmount () {

@@ -38,12 +38,11 @@ class BlockStore {
 	getTree (rootId: string, list: I.Block[]) {
 		let ret: any = [];
 		for (let item of list) {
-			let obj = Util.objectCopy(item);
-			
-			if (!obj.header.id || (rootId != obj.header.parentId)) {
+			if (!item.header.id || (rootId != item.header.parentId)) {
 				continue;
 			};
 			
+			let obj = Util.objectCopy(item);
 			obj.childBlocks = this.getTree(obj.header.id, list);
 			ret.push(obj);
 		};
