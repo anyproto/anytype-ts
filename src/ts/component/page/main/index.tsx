@@ -259,21 +259,21 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
 			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
 			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '4' },
+			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
 			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
@@ -281,7 +281,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		let s = 0;
 		for (let i = 0; i <= 10; ++i) {
-			let parentId = idx;
+			let parentId = Util.rand(12, 15);
 			let b = { 
 				header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
 				fields: {},
@@ -310,7 +310,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					},
 					fields: {},
 					content: {
-						text: '',
+						text: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.',
 						style: I.TextStyle.p,
 						marks: [] as I.Mark[],
 						marker: I.MarkerType.Number,
