@@ -189,6 +189,62 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Div, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {},
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {
+				uploadState: I.ContentUploadState.Empty
+			},
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {
+				uploadState: I.ContentUploadState.Loading
+			},
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {
+				link: '/Users/andrewsimachev/Pictures/2de27c125f1f11e1b9f1123138140926_7.jpeg',
+				uploadState: I.ContentUploadState.Done
+			},
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.File, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {},
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Video, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {},
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Bookmark, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {},
+			childBlocks: []
+		});
+		
+		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: contentDataview,
@@ -287,61 +343,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 				checked: false,
 			},
 			childBlocks: [] as I.Block[]
-		});
-		
-		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Div, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {
-				uploadState: I.ContentUploadState.Empty
-			},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {
-				uploadState: I.ContentUploadState.Loading
-			},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {
-				uploadState: I.ContentUploadState.Done
-			},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.File, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Video, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Bookmark, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {},
-			childBlocks: []
 		});
 		
 		blockStore.blockClear();

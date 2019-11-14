@@ -73,6 +73,7 @@ class IconUser extends React.Component<Props, State> {
 		let set = (s: string) => {
 			this.setState({ icon: 'data:image/jpeg;base64,' + s });
 		};
+		
 		let key = [ 'image', avatar.id, I.ImageSize.Large ].join('.');
 		let s = cache.get(key);
 			

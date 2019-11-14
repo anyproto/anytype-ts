@@ -1,8 +1,28 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockImage {}
+	.block.blockImage.isResizing * { cursor: nwse-resize; }
+	
 	.block.blockImage {
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
-	}	
+		
+		.wrap { display: inline-block; position: relative; }
+		.img { max-width: 100%; display: block; }
+		
+		.icon.resize {
+			width: 18px; height: 18px; position: absolute; right: 4px; bottom: 4px;
+			background-image: url('~img/icon/resize0.svg'); opacity: 0; cursor: nwse-resize;
+		}
+		.icon.resize:hover { background-image: url('~img/icon/resize1.svg'); }
+				
+		.icon.dots {
+			width: 28px; height: 28px; border-radius: 4px; background-color: #393834; position: absolute; right: 4px; top: 4px;
+			background-image: url('~img/icon/dots0.svg'); opacity: 0; background-size: 16px 4px; cursor: pointer; z-index: 1;
+		}
+		.icon.dots:hover { background-image: url('~img/icon/dots1.svg'); }
+	}
+	.block.blockImage:hover {
+		.icon.resize { opacity: 1; }
+		.icon.dots { opacity: 1; }
+	}
 }

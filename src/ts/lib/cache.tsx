@@ -4,7 +4,7 @@ class Cache {
 
 	cache: any = {};
 	
-	set (key: string, value: string, ttl?: number): void {
+	set (key: string, value: any, ttl?: number): void {
 		this.clear();
 		this.cache[key] = {
 			value: value,
@@ -12,10 +12,10 @@ class Cache {
 		};
 	};
 	
-	get (key: string): string {
+	get (key: string): any {
 		let item = this.cache[key];
 		if (item && (item.ttl >= (new Date()).getTime())) {
-			return String(item.value || '');
+			return item.value;
 		} else {
 			return '';
 		};
