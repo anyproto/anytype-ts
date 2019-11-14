@@ -3,5 +3,6 @@
 .blocks {
 	.block.blockImage {}
 	.block.blockImage {
+		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 	}	
 }

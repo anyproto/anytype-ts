@@ -29,7 +29,7 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const Item = SortableElement((item: any) => {
 			return (
-				<div className="item" onClick={(e: any) => { onSelect(e, item.header.id); }}>
+				<div id={'item-' + item.header.id} className="item" onClick={(e: any) => { onSelect(e, item.header.id); }}>
 					<Smile className="c48" icon={item.header.icon} size={24} />
 					<div className="name">{item.header.name}</div>
 				</div>

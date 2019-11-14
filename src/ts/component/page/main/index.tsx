@@ -299,7 +299,27 @@ class PageMainIndex extends React.Component<Props, {}> {
 		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
 			fields: {},
-			content: {},
+			content: {
+				uploadState: I.ContentUploadState.Empty
+			},
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {
+				uploadState: I.ContentUploadState.Loading
+			},
+			childBlocks: []
+		});
+		
+		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {
+				uploadState: I.ContentUploadState.Done
+			},
 			childBlocks: []
 		});
 		
@@ -333,9 +353,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const id = String(blockStore.blocks.length + 1);
+		
 		blockStore.blockAdd({
 			header: {
-				id: String(blockStore.blocks.length + 1),
+				id: id,
 				type: 1,
 				name: 'Untitled',
 				icon: Util.randomSmile(),
@@ -344,6 +367,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 			fields: {},
 			content: {},
 			childBlocks: []
+		});
+		
+		// TODO: move this code to callback on middleware command
+		setTimeout(() => {
+			const item = node.find('#documents #item-' + id);
+			$('html, body').animate({ scrollTop: item.offset().top }, 150);
 		});
 	};
 	

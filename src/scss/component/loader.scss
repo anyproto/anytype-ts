@@ -1,0 +1,13 @@
+.loaderWrapper { width: 24px; height: 30px; margin: 0px auto; position: relative; padding: 6px 0px; }
+.loaderWrapper {
+	.loader, .loader:after { border-radius: 100%; width: 24px; height: 24px; }
+	.loader {
+		border: 2px solid rgba(0, 0, 0, 0.1); border-left: 2px solid #2c2b27; position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -12px;
+		transform: translateZ(0); animation: load8 1.2s infinite linear;
+	}
+}
+
+@keyframes load8 {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}

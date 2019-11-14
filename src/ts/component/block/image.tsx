@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InputWithFile } from 'ts/component';
+import { InputWithFile, Loader } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -46,7 +46,7 @@ class BlockImage extends React.Component<Props, {}> {
 				
 			case I.ContentUploadState.Loading:
 				element = (
-					<div />
+					<Loader />
 				);
 				break;
 				

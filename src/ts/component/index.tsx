@@ -29,6 +29,7 @@ import Title from './util/title';
 import Label from './util/label';
 import Smile from './util/smile';
 import Tag from './util/tag';
+import Loader from './util/loader';
 import SelectionProvider from './util/selection';
 
 import Dimmer from './util/dimmer';
@@ -66,6 +67,7 @@ export {
 	Button,
 	Select,
 	Tag,
+	Loader,
 	Menu,
 	MenuItemVertical,
 	MenuItemMain,
