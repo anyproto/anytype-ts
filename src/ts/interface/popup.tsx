@@ -1,4 +1,5 @@
 export interface PopupParam {
+	data?: any;
 	onClose?(): void;
 };
 

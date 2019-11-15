@@ -6,9 +6,9 @@ import { observer, inject } from 'mobx-react';
 const $ = require('jquery');
 const raf = require('raf');
 
-import PopupProfile from './profile';
 import PopupSettings from './settings';
 import PopupTree from './tree';
+import PopupPrompt from './prompt';
 
 interface Props extends I.Popup {
 	history: any;
@@ -29,9 +29,9 @@ class Popup extends React.Component<Props, {}> {
 		const { id } = this.props;
 		
 		const Components: any = {
-			profile: PopupProfile,
 			settings: PopupSettings,
 			tree: PopupTree,
+			prompt: PopupPrompt,
 		};
 		
 		const popupId = Util.toCamelCase('popup-' + id);

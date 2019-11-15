@@ -146,7 +146,7 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	setValue (v: string) {
-		this.setState({ value: v });
+		this.setState({ value: String(v || '') });
 	};
 	
 	getValue () {

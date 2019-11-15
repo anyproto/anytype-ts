@@ -1,0 +1,13 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupPrompt { width: 448px; height: 108px; margin: -54px 0px 0px -224px; padding: 16px; border-radius: 4px; }
+	.popup.popupPrompt {
+		.input { 
+			height: 32px; border: 1px solid #d2d0c2; padding: 0px 12px; font-size: 13px; line-height: 1.38; letter-spacing: 0.1px; color: #000;
+			width: 100%; margin-bottom: 12px; 
+		}
+		.row { font-size: 13px; line-height: 1.38; margin-bottom: 12px; }
+		.button { height: 32px; line-height: 32px; margin-right: 10px; }
+	}	
+}

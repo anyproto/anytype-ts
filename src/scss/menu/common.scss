@@ -89,20 +89,20 @@
 		.icon.community { background-image: url('~img/icon/menu/help/community1.svg'); }
 	}
 	
-	.icon.b { background-size: 12px 16px; background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
-	.icon.b:hover, .icon.b.active { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
+	.icon.bold { background-size: 12px 16px; background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
+	.icon.bold:hover, .icon.bold.active { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
 	
-	.icon.i { background-size: 10px 16px; background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
-	.icon.i:hover, .icon.i.active { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
+	.icon.italic { background-size: 10px 16px; background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
+	.icon.italic:hover, .icon.italic.active { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
 	
-	.icon.s { background-size: 16px 17px; background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
-	.icon.s:hover, .icon.s.active { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
+	.icon.strike { background-size: 16px 17px; background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
+	.icon.strike:hover, .icon.strike.active { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
 	
 	.icon.kbd { background-size: 20px 16px; background-image: url('~img/icon/menu/action/mark/kbd0.svg'); }
 	.icon.kbd:hover, .icon.kbd.active { background-image: url('~img/icon/menu/action/mark/kbd1.svg'); }
 	
-	.icon.a { background-size: 18px 18px; background-image: url('~img/icon/menu/action/mark/link0.svg'); }
-	.icon.a:hover, .icon.a.active { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
+	.icon.link { background-size: 18px 18px; background-image: url('~img/icon/menu/action/mark/link0.svg'); }
+	.icon.link:hover, .icon.link.active { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
 
 	.icon.p { background-size: 12px 16px; background-image: url('~img/icon/menu/action/block/p0.svg'); }
 	.icon.p:hover, .icon.p.active { background-image: url('~img/icon/menu/action/block/p1.svg'); }

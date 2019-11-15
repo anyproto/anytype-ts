@@ -23,10 +23,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { style } = content;
 		
 		const markActions = [
-			{ icon: 'b', name: 'Bold' },
-			{ icon: 'i', name: 'Italic' },
-			{ icon: 's', name: 'Strikethrough' },
-			{ icon: 'a', name: 'Link' },
+			{ icon: 'bold', name: 'Bold' },
+			{ icon: 'italic', name: 'Italic' },
+			{ icon: 'strike', name: 'Strikethrough' },
+			{ icon: 'link', name: 'Link' },
 			{ icon: 'kbd', name: 'Code' },
 		];
 		
@@ -68,20 +68,37 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					{markActions.map((action: any, i: number) => {
 						let cn = [ action.icon ];
 							
-						return <Icon key={i} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e); }} />;
+						return <Icon key={i} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action.icon); }} />;
 					})}
 				</div>
 					
 				<div className="section">
-					<Icon className="copy" onClick={(e: any) => { this.onClick(e); }} />
-					<Icon className="remove" onClick={(e: any) => { this.onClick(e); }} />
+					<Icon className="copy" onClick={(e: any) => { this.onClick(e, 'copy'); }} />
+					<Icon className="remove" onClick={(e: any) => { this.onClick(e, 'remove'); }} />
 				</div>
 			</React.Fragment>
 		);
 	};
 	
-	onClick (e: any) {
-		commonStore.menuClose(this.props.id);
+	onClick (e: any, id: string) {
+		switch (id) {
+			default:
+				commonStore.menuClose(this.props.id);
+				break;
+			
+			case 'link':
+				commonStore.popupOpen('prompt', {
+					data: {
+						placeHolder: 'Please enter URL',
+						onChange: (v: string) => {
+							console.log('value', v);
+							
+							commonStore.menuClose(this.props.id);
+						}
+					}
+				});
+				break;
+		};
 	};
 	
 	onBlockSwitch (e: any) {
