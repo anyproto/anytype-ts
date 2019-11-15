@@ -52,8 +52,7 @@ class Block extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, header, fields, content, childBlocks, index } = this.props;
-		const { type } = header;
+		const { id, type, fields, content, childBlocks, index } = this.props;
 		const { style, toggleable } = content;
 		const { toggled } = this.state;
 		
@@ -278,16 +277,6 @@ class Block extends React.Component<Props, State> {
 		
 		prevBlock.fields.width = res.percent * res.sum;
 		currentBlock.fields.width = (1 - res.percent) * res.sum;
-		
-		blockStore.blockUpdate({
-			header: prevBlock.header,
-			fields: { width: res.percent * res.sum }
-		});
-		
-		blockStore.blockUpdate({
-			header: currentBlock.header,
-			fields: { width: (1 - res.percent) * res.sum }
-		});
 	};
 	
 	calcWidth (x: number, index: number) {

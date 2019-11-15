@@ -114,7 +114,7 @@ class Util {
 	};
 	
 	incrementBlockNumber (item: I.Block, n: number) {
-		if (item.header.type != I.BlockType.Text) {
+		if (item.type != I.BlockType.Text) {
 			return n;
 		};
 		return item.content.marker == I.MarkerType.Number ? n + 1 : 0;

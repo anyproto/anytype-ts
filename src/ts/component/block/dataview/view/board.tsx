@@ -16,7 +16,7 @@ const GROUP = '4';
 class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
-		const { header, content } = this.props;
+		const { content } = this.props;
 		const { data, properties } = content;
 		const group = properties.find((item) => { return item.id == GROUP; });
 		const columns = this.getColumns();

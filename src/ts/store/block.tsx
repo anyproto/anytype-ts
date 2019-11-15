@@ -11,6 +11,11 @@ class BlockStore {
 	};
 	
 	@action
+	blocksSet (blocks: I.Block[]) {
+		this.blockList = blocks;
+	};
+	
+	@action
 	blockAdd (block: I.Block) {
 		this.blockList.push(block as I.Block);
 	};
@@ -35,10 +40,30 @@ class BlockStore {
 		this.blockList = arrayMove(this.blockList, oldIndex, newIndex);
 	};
 	
+	prepareTree (rootId: string, list: I.Block[]) {
+		for (let item of list) {
+			if (!item.childrenIds.length) {
+				continue;
+			};
+			
+			if (item.id == rootId) {
+				item.parentId = '';
+			};
+			
+			for (let id of item.childrenIds) {
+				let idx = list.findIndex((it: I.Block) => { return it.id == id; });
+				if (idx >= 0) {
+					list[idx].parentId = item.id;
+				};
+			};
+		};
+		return list;
+	};
+	
 	getTree (rootId: string, list: I.Block[]) {
 		let ret: any = [];
 		for (let item of list) {
-			if (!item.id || (rootId != item.header.parentId)) {
+			if (!item.id || (rootId != item.parentId)) {
 				continue;
 			};
 			

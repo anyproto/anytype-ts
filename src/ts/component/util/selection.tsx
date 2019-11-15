@@ -104,12 +104,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 				ids[method]();
 			} else {
 				const next = blockStore.getNextBlock(ids[idx], dir, (item: any) => {
-					return item.header.type != I.BlockType.Layout;
+					return item.type != I.BlockType.Layout;
 				});
 
 				method = dir < 0 ? 'unshift' : 'push';
 				if (next) {
-					ids[method](next.header.id);
+					ids[method](next.id);
 				};
 			};
 			

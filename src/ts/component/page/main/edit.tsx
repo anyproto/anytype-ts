@@ -8,6 +8,8 @@ interface Props extends RouteComponentProps<any> {};
 class PageMainEdit extends React.Component<Props, {}> {
 	
 	render () {
+		const { match } = this.props;
+		
 		return (
 			<SelectionProvider>
 				<DragProvider >
@@ -15,7 +17,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					<MenuMain />
 							
 					<div className="wrapper">
-						<EditorPage />
+						<EditorPage rootId={match.params.id} />
 					</div>
 				</DragProvider>
 			</SelectionProvider>

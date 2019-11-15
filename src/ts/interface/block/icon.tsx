@@ -1,7 +1,7 @@
 import { I } from 'ts/lib';
 
 export interface ContentIcon {
-	icon: string;
+	name: string;
 };
 
 export interface BlockIcon extends I.Block {

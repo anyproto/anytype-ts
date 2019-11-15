@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Block, Icon } from 'ts/component';
-import { I, Key, Util } from 'ts/lib';
+import { I, Key, Util, dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -10,6 +10,7 @@ interface Props {
 	blockStore?: any;
 	editorStore?: any;
 	dataset?: any;
+	rootId: string;
 };
 
 const Constant = require('json/constant.json');
@@ -33,11 +34,14 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore } = this.props;
+		const { blockStore, rootId } = this.props;
 		const { blocks } = blockStore;
-		const tree = blockStore.getTree('', blocks);
+		
+		const preparedTree = blockStore.prepareTree(rootId, blocks);
+		const tree = blockStore.getTree(rootId, preparedTree);
 		
 		let n = 0;
+		
 		return (
 			<div className="editor">
 				<div className="blocks">
@@ -58,14 +62,22 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { rootId } = this.props;
 		const win = $(window);
 		
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		
+		dispatcher.call('blockOpen', { id: rootId }, (errorCode: any, message: any) => {
+		});
 	};
 	
 	componentWillUnmount () {
+		const { rootId } = this.props;
+		
 		this.unbind();
+		dispatcher.call('blockClose', { id: rootId }, (errorCode: any, message: any) => {
+		});
 	};
 	
 	unbind () {
@@ -159,7 +171,7 @@ class EditorPage extends React.Component<Props, {}> {
 					commonStore.menuClose('blockAction');					
 				};
 			} else {
-				if (next && (next.header.type == I.BlockType.Text)) {
+				if (next && (next.type == I.BlockType.Text)) {
 					const l = String(next.content.text || '').length;
 					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
 					
@@ -173,12 +185,8 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			let b = {
 				id: String(blockStore.blocks.length + 1), 
-				header: { 
-					parentId: '', 
-					type: I.BlockType.Text, 
-					name: '', 
-					icon: '' 
-				},
+				parentId: '',
+				type: I.BlockType.Text,
 				fields: {},
 				content: {
 					text: '',

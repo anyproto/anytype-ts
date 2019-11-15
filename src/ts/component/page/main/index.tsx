@@ -70,20 +70,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		
 		dispatcher.call('blockOpen', { id: 'dashboard' }, (errorCode: any, message: any) => {
 		});
 		
 		let items: I.Block[] = [
-			{ id: '', header: { type: 1, icon: ':wave:', name: 'Get started', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
-			{ id: '', header: { type: 1, icon: ':bulb:', name: 'Ideas', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
-			{ id: '', header: { type: 1, icon: ':inbox_tray:', name: 'Projects', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
-			{ id: '', header: { type: 1, icon: ':alien:', name: 'Secrets', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
-			{ id: '', header: { type: 1, icon: ':mortar_board:', name: 'Education', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
-			{ id: '', header: { type: 1, icon: ':poop:', name: 'Other', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
-			{ id: '', header: { type: 1, icon: ':wastebasket:', name: 'Archive', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
-			{ id: '', header: { type: 1, icon: ':family:', name: 'Contacts', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
-			{ id: 'testpage', header: { type: 1, icon: ':deciduous_tree:', name: 'Test page', parentId: '' }, fields: {}, content: {}, childBlocks: [] }
+			{ id: 'testpage', type: I.BlockType.Page, fields: { icon: ':deciduous_tree:', name: 'Test page' }, content: {}, childrenIds: [], childBlocks: [] }
 		];
 		
 		blockStore.blockClear();
@@ -93,6 +84,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		this.resize();
+	};
+	
+	componentWillUnmount () {
+		dispatcher.call('blockClose', { id: 'dashboard' }, (errorCode: any, message: any) => {
+		});
 	};
 	
 	onSettings (e: any) {
@@ -119,263 +115,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onSelect (e: any, id: string) {
 		const { history } = this.props;
-		
-		let idx = 1;
-		
-		const contentDataview: I.ContentDataview = {
-			view: '1',
-			views: [
-				{ 
-					id: '1', name: 'Grid', type: I.ViewType.Grid,
-					sorts: [
-						{ propertyId: '1', type: I.SortType.Asc },
-						{ propertyId: '2', type: I.SortType.Desc },
-					],
-					filters: [
-						{ propertyId: '1', condition: I.FilterTypeCondition.None, equality: I.FilterTypeEquality.Equal, value: '' },
-						{ propertyId: '1', condition: I.FilterTypeCondition.And, equality: I.FilterTypeEquality.Equal, value: '' },
-					]
-				},
-				{ id: '2', name: 'Board', type: I.ViewType.Board, sorts: [], filters: [] },
-				{ id: '3', name: 'Gallery', type: I.ViewType.Gallery, sorts: [], filters: [] },
-				{ id: '4', name: 'List', type: I.ViewType.List, sorts: [], filters: [] },
-			],
-			properties: [
-				{ id: '1', name: 'Id', type: I.PropertyType.Number },
-				{ id: '2', name: 'Name', type: I.PropertyType.Title },
-				{ id: '4', name: 'E-mail', type: I.PropertyType.Email },
-				{ id: '5', name: 'Date', type: I.PropertyType.Date },
-				{ id: '6', name: 'Select', type: I.PropertyType.Select, values: [ 'select1', 'select2', 'select3' ] },
-				{ id: '7', name: 'Multiple', type: I.PropertyType.Multiple, values: [ 'multiple1', 'multiple2', 'multiple3', 'multiple4', 'multiple5' ] },
-				{ id: '8', name: 'Account', type: I.PropertyType.Account, values: [ { name: 'Anton Barulenkov' }, { 'name': 'Zhanna Sharipova' } ] },
-				{ id: '9', name: 'File', type: I.PropertyType.File },
-				{ id: '10', name: 'Bool', type: I.PropertyType.Bool },
-				{ id: '11', name: 'Link', type: I.PropertyType.Link },
-				{ id: '12', name: 'Phone', type: I.PropertyType.Phone },
-			],
-			data: [
-				{ 
-					'1': '1', '2': 'Anton Pronkin', '4': 'pronkin@gmail.com', '5': 1420200661, '6': 'select1', '11': 'http://anytype.io', 
-					'12': '+7 (1234) 5678910', '7': [ 'value1', 'value2', 'value3' ], '10': true, '8': { name: 'Anton Barulenkov' }
-				},
-				{ '1': '2', '2': 'Roman Khafizianov', '4': 'khafizianov@gmail.com', '5': 1420200661, '6': 'select2', '11': 'ftp://anytype.io' },
-				{ '1': '3', '2': 'Zhanna Sharipova', '4': 'sharipova@gmail.com', '5': 1420200662, '6': 'select3', '11': 'telnet://anytype.io' },
-				{ '1': '4', '2': 'Anton Barulenkov', '4': 'barulenkov@gmail.com', '5': 1420200662, '6': 'select4', '11': 'https://anytype.io' },
-				{ '1': '5', '2': 'Kirill', '4': 'kirill@gmail.com', '5': 1420200663, '6': 'select5' },
-			]
-		};
-		
-		let list: I.Block[] = [];
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Icon, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: { icon: ':family:' },
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Text, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {
-				text: 'Contacts',
-				style: I.TextStyle.title,
-				marks: [] as I.Mark[],
-				marker: 0,
-				toggleable: false,
-				checkable: false,
-				checked: false,
-			},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Div, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {},
-			childBlocks: []
-		});
-		
-		list.push({
-			id: String(idx++),
-			header: { type: I.BlockType.Image, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {
-				uploadState: I.ContentUploadState.Empty
-			},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Image, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {
-				uploadState: I.ContentUploadState.Loading
-			},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Image, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {
-				link: '/Users/andrewsimachev/Pictures/2de27c125f1f11e1b9f1123138140926_7.jpeg',
-				uploadState: I.ContentUploadState.Done
-			},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.File, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.File, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {
-				uploadState: I.ContentUploadState.Done
-			},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Video, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Bookmark, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: {},
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: contentDataview,
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Layout, name: '', icon: '', parentId: '' },
-			fields: {},
-			content: { style: I.LayoutStyle.Row },
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
-			fields: { width: 1 / 3 },
-			content: { style: I.LayoutStyle.Column },
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
-			fields: { width: 1 / 3 },
-			content: { style: I.LayoutStyle.Column },
-			childBlocks: []
-		});
-		
-		list.push({ 
-			id: String(idx++),
-			header: { type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
-			fields: { width: 1 / 3 },
-			content: { style: I.LayoutStyle.Column },
-			childBlocks: []
-		});
-		
-		let s = 0;
-		for (let i = 0; i <= 10; ++i) {
-			let parentId = Util.rand(12, 15);
-			let b = { 
-				id: String(idx++),
-				header: { type: I.BlockType.Text, name: '', icon: '', parentId: '' },
-				fields: {},
-				content: {
-					text: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.',
-					style: I.TextStyle.p,
-					marks: [] as I.Mark[],
-					marker: I.MarkerType.Number,
-					toggleable: false,
-					checkable: false,
-					checked: false,
-				},
-				childBlocks: [] as I.Block[]
-			};
-			list.push(b);
-			s++;
-			
-			for (let c = 0; c < 3; ++c) {
-				let b = { 
-					id: String(idx++),
-					header: { 
-						parentId: String(parentId), 
-						type: I.BlockType.Text, 
-						name: '', 
-						icon: '' 
-					},
-					fields: {},
-					content: {
-						text: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.',
-						style: I.TextStyle.p,
-						marks: [] as I.Mark[],
-						marker: I.MarkerType.Number,
-						toggleable: false,
-						checkable: false,
-						checked: false,
-					},
-					childBlocks: [] as I.Block[]
-				};
-				list.push(b);
-			};
-		};
-		
-		list.push({ 
-			id: String(idx++),
-			header: { 
-				parentId: '', 
-				type: I.BlockType.Text, 
-				name: '', 
-				icon: '' 
-			},
-			fields: { lang: 'sql' },
-			content: {
-				text: 'select c.id, c.title, array_to_json(array(select row_to_json(row(id, install_url, zd_game, schema_package)) from (select distinct a.id, a.install_url, a.zd_game, a.schema_package from events e inner join applications a on a.id = e.acceptor_application_id where e.campaign_id = c.id) t)) as acceptors, array_to_json(array(select row_to_json(row(id, install_url, zd_game, schema_package)) from (select distinct a.id, a.install_url, a.zd_game, a.schema_package from events e inner join applications a on a.id = e.application_id where e.campaign_id = c.id) t)) as donors, array_to_json(array(select row_to_json(row(id, display_name, event_text)) from (select distinct l.id , l.display_name , t.event_text from events e inner join events_i18n t on t.id = e.id inner join languages l on l.id = cast(t.language_id AS bigint) where e.campaign_id = c.id and t.event_text is not null and char_length(t.event_text) > 0) t)) as texts, array_to_json(array(select row_to_json(row(id, display_name, background_image_key, cast(source_json as json))) from (select distinct s.id, l.display_name, s.background_image_key, s.source_json from events e inner join event_statics es on es.event_id = e.id inner join statics_i18n s on s.id = es.static_id inner join languages l on l.id = cast(s.language_id AS bigint) where e.campaign_id = c.id and es.active=true) t)) as images from campaigns c where c.status in (1,2) order by c.id desc limit 100',
-				style: I.TextStyle.code,
-				marks: [] as I.Mark[],
-				marker: I.MarkerType.None,
-				toggleable: false,
-				checkable: false,
-				checked: false,
-			},
-			childBlocks: [] as I.Block[]
-		});
-		
-		blockStore.blockClear();
-		for (let block of list) {
-			blockStore.blockAdd(block);
-		};
-		
 		history.push('/main/edit/' + id);
 	};
 	
@@ -385,14 +124,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		blockStore.blockAdd({
 			id: id,
-			header: {
-				type: 1,
+			type: I.BlockType.Page,
+			fields: {
 				name: 'Untitled',
 				icon: Util.randomSmile(),
-				parentId: ''			
 			},
-			fields: {},
 			content: {},
+			childrenIds: [],
 			childBlocks: []
 		});
 		

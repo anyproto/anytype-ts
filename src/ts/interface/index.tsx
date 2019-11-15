@@ -2,7 +2,7 @@ import { ImageSize, Image, Account, DragItem } from './common';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
-import { BlockType, Permissions, BlockHeader, Block } from './block';
+import { BlockType, Permissions, Block } from './block';
 
 import { 
 	ViewType,
@@ -41,7 +41,6 @@ export {
 	
 	BlockType, 
 	Permissions, 
-	BlockHeader, 
 	Block,
 	
 	ViewType,

@@ -9,7 +9,7 @@ interface Props extends I.BlockDataview {};
 class ViewGrid extends React.Component<Props, {}> {
 
 	render () {
-		const { header, content } = this.props;
+		const { content } = this.props;
 		const { data, properties } = content;
 		
 		const CellHead = (item: any) => (

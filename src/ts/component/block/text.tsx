@@ -83,7 +83,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let html = '';
 		if (style == I.TextStyle.code) {
-			let res = low.highlight(lang, text);
+			let res = low.highlight(lang || 'js', text);
 			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
 		} else {
 			html = this.marksToHtml(text, marks);

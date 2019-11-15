@@ -41,6 +41,43 @@ class Dispatcher {
 				authStore.accountAdd(data.account);
 				break;
 				
+			case 'blockShowFullscreen':
+				let blocks: I.Block[] = [];
+			
+				for (let block of data.blocks) {
+					let type = block.content;
+					let content = block[block.content];
+					
+					let item = {
+						id: block.id,
+						type: type,
+						parentId: '',
+						childrenIds: block.childrenIds || [],
+						childBlocks: [] as I.Block[],
+						fields: block.fields || {},
+						content: {} as any,
+					};
+					
+					if (content) {
+						item.content = Util.objectCopy(content);
+						
+						if (type == I.BlockType.Text) {
+							let style = content.style;
+							item.content.style = style;
+						};
+						
+						if (type == I.BlockType.Layout) {
+							let style = content.style;
+							item.content.style = style;
+						};
+					};
+					
+					blocks.push(item);
+				};
+				
+				blockStore.blocksSet(blocks);
+				break;
+				
 			case 'blockShow':
 				break;
 		};
@@ -53,7 +90,8 @@ class Dispatcher {
 			return;
 		};
 		
-		const errorCode = com.anytype[Util.toUpperCamelCase(type) + 'Response'].Error.Code;
+		//const errorCode = com.anytype[Util.toUpperCamelCase(type)].Response.Error.Code;
+		const errorCode = {};
 		
 		console.log('[Dispatcher.call]', type, data);
 		console.log(errorCode);

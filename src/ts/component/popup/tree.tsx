@@ -30,7 +30,7 @@ class PopupTree extends React.Component<Props, {}> {
 		const tree = blockStore.getTree('', blocks); 
 		//const { type } = this.props;
 		
-		const root = { header: {id: 'root', name: 'Home', icon: 'Home', parentId: '' }, content: {}, fields: {}, childBlocks: tree };
+		const root = { id: 'root', content: {}, fields: { name: 'Home', icon: 'Home' }, childBlocks: tree };
 		const items = [ root ];
 		const titles: any = {
 			copy: 'Duplicate to',
@@ -46,7 +46,7 @@ class PopupTree extends React.Component<Props, {}> {
 						<div className="dot" />
 					</div>
 					<span onMouseDown={(e: any) => { this.click(e, item.id); }}>
-						{item.id == 'root' ? <Icon className="home" /> : <Smile icon={item.header.icon} />}
+						{item.id == 'root' ? <Icon className="home" /> : <Smile icon={item.fields.icon} />}
 						<div className="name">
 							<div className="txt">{item.header.name}</div>
 						</div>

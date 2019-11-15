@@ -23,11 +23,11 @@ class BlockIcon extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const { icon } = content;
+		const { name } = content;
 		
 		return (
 			<React.Fragment>
-				<Smile id={'block-icon-' + id} canEdit={true} size={24} icon={icon} className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+				<Smile id={'block-icon-' + id} canEdit={true} size={24} icon={name} className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};

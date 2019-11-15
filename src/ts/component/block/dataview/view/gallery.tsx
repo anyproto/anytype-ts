@@ -9,7 +9,7 @@ interface Props extends I.BlockDataview {};
 class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
-		const { header, content } = this.props;
+		const { content } = this.props;
 		const { data, properties } = content;
 		
 		const Card = (item: any) => (
