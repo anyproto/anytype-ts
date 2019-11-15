@@ -14,6 +14,7 @@ interface Props {
 	textUrl?: string;
 	textFile?: string;
 	withFile?: boolean;
+	accept?: string[];
 	onChangeUrl? (e: any, url: string): void;
 	onChangeFile? (e: any, file: any): void;
 };
@@ -174,12 +175,22 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	onClickFile (e: any) {
-		const { onChangeFile } = this.props;
+		const { onChangeFile, accept } = this.props;
 		
 		e.preventDefault();
 		e.stopPropagation();
 		
-		dialog.showOpenDialog({ properties: [ 'openFile' ] }, (files: any[]) => {
+		let options: any = { 
+			properties: [ 'openFile' ], 
+			filters: [  ] 
+		};
+		if (accept) {
+			options.filters = [
+				{ name: '', extensions: accept }
+			];
+		};
+		
+		dialog.showOpenDialog(null, options, (files: any[]) => {
 			if (files == undefined) {
 				return;
 			};

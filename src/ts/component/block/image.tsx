@@ -48,13 +48,14 @@ class BlockImage extends React.Component<Props, {}> {
 		
 		const { content } = block;
 		const { uploadState } = content;
+		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
 		
 		let element = null;
 		switch (uploadState) {
 			default:
 			case I.ContentUploadState.Empty:
 				element = (
-					<InputWithFile icon="image" textFile="Upload a picture" />
+					<InputWithFile icon="image" textFile="Upload a picture" accept={accept} />
 				);
 				break;
 				
