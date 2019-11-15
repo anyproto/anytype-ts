@@ -231,6 +231,15 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
+			header: { id: String(idx++), type: I.BlockType.File, name: '', icon: '', parentId: '' },
+			fields: {},
+			content: {
+				uploadState: I.ContentUploadState.Done
+			},
+			childBlocks: []
+		});
+		
+		list.push({ 
 			header: { id: String(idx++), type: I.BlockType.Video, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {},

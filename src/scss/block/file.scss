@@ -1,7 +1,36 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockFile {}
+	.block.blockFile { white-space: nowrap; }
 	.block.blockFile {
-	}	
+		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
+		
+		.name {
+			min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block; overflow: hidden;
+			vertical-align: top; padding-top: 1px; cursor: pointer;
+		}
+		.size {
+			max-width: 100px; font-size: 13px; height: 24px; line-height: 24px; letter-spacing: 0.1px; color: #6a6962; margin: 0px 8px;
+			display: inline-block; vertical-align: top; padding-top: 1px;
+		}
+		.download {
+			width: 80px; font-size: 15px; height: 24px; line-height: 24px; letter-spacing: 0.2px; color: #2dbcfe;
+			transition: $transitionFast; opacity: 0; padding-top: 1px; display: inline-block; cursor: pointer;
+		}
+		.download:hover { color: #1092d9; }
+
+		.icon.type { width: 24px; height: 24px; margin-right: 4px; background-size: 18px 22px; transition: none; vertical-align: top; }
+		.icon.unknown { background-image: url('~img/icon/file/unknown.svg'); }
+		.icon.image { background-image: url('~img/icon/file/image.svg'); }
+		.icon.video { background-image: url('~img/icon/file/video.svg'); }
+		.icon.text { background-image: url('~img/icon/file/text.svg'); }
+		.icon.archive { background-image: url('~img/icon/file/archive.svg'); }
+		.icon.audio { background-image: url('~img/icon/file/audio.svg'); }
+		.icon.pdf { background-image: url('~img/icon/file/pdf.svg'); }
+		.icon.presentation { background-image: url('~img/icon/file/presentation.svg'); }
+		.icon.table { background-image: url('~img/icon/file/table.svg'); }
+	}
+	.block.blockFile:hover {
+		.download { opacity: 1; }
+	}
 }

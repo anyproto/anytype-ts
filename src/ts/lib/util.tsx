@@ -6,6 +6,11 @@ const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
 const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
+const sprintf = window.require('sprintf-kit')({
+	d: require('sprintf-kit/modifiers/d'),
+	s: require('sprintf-kit/modifiers/s'),
+	f: require('sprintf-kit/modifiers/f'),
+});
 
 class Util {
 	
@@ -197,6 +202,28 @@ class Util {
 			};
 			return ret;
 		});
+	};
+	
+	round (v: number, l: number) {
+		let d = Math.pow(10, l);
+		return d > 0 ? Math.round(v * d) / d : Math.round(v);
+	};
+	
+	fileSize (v: number) {
+		v = Number(v) || 0;
+		let g = v / (1024 * 1024 * 1024);
+		let m = v / (1024 * 1024);
+		let k = v / 1024;
+		if (g > 1) {
+			v = sprintf('%f Gb', this.round(g, 2));
+		} else if (m > 1) {
+			v = sprintf('%f Mb', this.round(m, 2));
+		} else if (k > 1) {
+			v = sprintf('%f Kb', this.round(k, 2));
+		} else {
+			v = sprintf('%d b', this.round(v, 0));
+		};
+		return v;
 	};
 		
 };
