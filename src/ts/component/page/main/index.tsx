@@ -74,21 +74,22 @@ class PageMainIndex extends React.Component<Props, {}> {
 		dispatcher.call('blockOpen', { id: 'dashboard' }, (errorCode: any, message: any) => {
 		});
 		
-		let items: I.BlockHeader[] = [
-			{ id: '', type: 1, icon: ':wave:', name: 'Get started', parentId: '' },
-			{ id: '', type: 1, icon: ':bulb:', name: 'Ideas', parentId: '' },
-			{ id: '', type: 1, icon: ':inbox_tray:', name: 'Projects', parentId: '' },
-			{ id: '', type: 1, icon: ':alien:', name: 'Secrets', parentId: '' },
-			{ id: '', type: 1, icon: ':mortar_board:', name: 'Education', parentId: '' },
-			{ id: '', type: 1, icon: ':poop:', name: 'Other', parentId: '' },
-			{ id: '', type: 1, icon: ':wastebasket:', name: 'Archive', parentId: '' },
-			{ id: '', type: 1, icon: ':family:', name: 'Contacts', parentId: '' },
+		let items: I.Block[] = [
+			{ id: '', header: { type: 1, icon: ':wave:', name: 'Get started', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
+			{ id: '', header: { type: 1, icon: ':bulb:', name: 'Ideas', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
+			{ id: '', header: { type: 1, icon: ':inbox_tray:', name: 'Projects', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
+			{ id: '', header: { type: 1, icon: ':alien:', name: 'Secrets', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
+			{ id: '', header: { type: 1, icon: ':mortar_board:', name: 'Education', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
+			{ id: '', header: { type: 1, icon: ':poop:', name: 'Other', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
+			{ id: '', header: { type: 1, icon: ':wastebasket:', name: 'Archive', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
+			{ id: '', header: { type: 1, icon: ':family:', name: 'Contacts', parentId: '' }, fields: {}, content: {}, childBlocks: [] },
+			{ id: 'testpage', header: { type: 1, icon: ':deciduous_tree:', name: 'Test page', parentId: '' }, fields: {}, content: {}, childBlocks: [] }
 		];
 		
 		blockStore.blockClear();
 		for (let i = 0; i < items.length; ++i) {
-			items[i].id = String(i + 1);
-			blockStore.blockAdd({ header: items[i], fields: {}, content: {}, childBlocks: [] });			
+			items[i].id = items[i].id || String(i + 1);
+			blockStore.blockAdd(items[i]);
 		};
 		
 		this.resize();
@@ -167,14 +168,16 @@ class PageMainIndex extends React.Component<Props, {}> {
 		let list: I.Block[] = [];
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Icon, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Icon, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: { icon: ':family:' },
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Text, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {
 				text: 'Contacts',
@@ -189,14 +192,16 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Div, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Div, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {},
 			childBlocks: []
 		});
 		
-		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+		list.push({
+			id: String(idx++),
+			header: { type: I.BlockType.Image, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {
 				uploadState: I.ContentUploadState.Empty
@@ -205,7 +210,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Image, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {
 				uploadState: I.ContentUploadState.Loading
@@ -214,7 +220,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Image, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Image, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {
 				link: '/Users/andrewsimachev/Pictures/2de27c125f1f11e1b9f1123138140926_7.jpeg',
@@ -224,14 +231,16 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.File, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.File, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {},
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.File, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.File, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {
 				uploadState: I.ContentUploadState.Done
@@ -240,49 +249,56 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Video, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Video, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {},
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Bookmark, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Bookmark, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: {},
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Dataview, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: contentDataview,
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '' },
+			id: String(idx++),
+			header: { type: I.BlockType.Layout, name: '', icon: '', parentId: '' },
 			fields: {},
 			content: { style: I.LayoutStyle.Row },
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
+			id: String(idx++),
+			header: { type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
 			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
+			id: String(idx++),
+			header: { type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
 			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
 		});
 		
 		list.push({ 
-			header: { id: String(idx++), type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
+			id: String(idx++),
+			header: { type: I.BlockType.Layout, name: '', icon: '', parentId: '11' },
 			fields: { width: 1 / 3 },
 			content: { style: I.LayoutStyle.Column },
 			childBlocks: []
@@ -292,7 +308,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		for (let i = 0; i <= 10; ++i) {
 			let parentId = Util.rand(12, 15);
 			let b = { 
-				header: { id: String(idx++), type: I.BlockType.Text, name: '', icon: '', parentId: '' },
+				id: String(idx++),
+				header: { type: I.BlockType.Text, name: '', icon: '', parentId: '' },
 				fields: {},
 				content: {
 					text: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.',
@@ -310,8 +327,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 			
 			for (let c = 0; c < 3; ++c) {
 				let b = { 
+					id: String(idx++),
 					header: { 
-						id: String(idx++),
 						parentId: String(parentId), 
 						type: I.BlockType.Text, 
 						name: '', 
@@ -334,8 +351,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		list.push({ 
+			id: String(idx++),
 			header: { 
-				id: String(idx++),
 				parentId: '', 
 				type: I.BlockType.Text, 
 				name: '', 
@@ -367,8 +384,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const id = String(blockStore.blocks.length + 1);
 		
 		blockStore.blockAdd({
+			id: id,
 			header: {
-				id: id,
 				type: 1,
 				name: 'Untitled',
 				icon: Util.randomSmile(),

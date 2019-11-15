@@ -17,7 +17,7 @@ class BlockStore {
 	
 	@action
 	blockUpdate (block: any) {
-		let item = this.blockList.find((item: I.Block) => { return item.header.id == block.header.id; });
+		let item = this.blockList.find((item: I.Block) => { return item.id == block.id; });
 		if (!item) {
 			return;
 		};
@@ -38,19 +38,19 @@ class BlockStore {
 	getTree (rootId: string, list: I.Block[]) {
 		let ret: any = [];
 		for (let item of list) {
-			if (!item.header.id || (rootId != item.header.parentId)) {
+			if (!item.id || (rootId != item.header.parentId)) {
 				continue;
 			};
 			
 			let obj = Util.objectCopy(item);
-			obj.childBlocks = this.getTree(obj.header.id, list);
+			obj.childBlocks = this.getTree(obj.id, list);
 			ret.push(obj);
 		};
 		return ret;
 	};
 	
 	getNextBlock (id: string, dir: number, check?: (item: I.Block) => any): any {
-		let idx = this.blockList.findIndex((item: I.Block) => { return item.header.id == id; });
+		let idx = this.blockList.findIndex((item: I.Block) => { return item.id == id; });
 		if (idx + dir < 0 || idx + dir > this.blockList.length - 1) {
 			return null;
 		};
@@ -61,7 +61,7 @@ class BlockStore {
 			if (check(ret)) {
 				return ret;
 			} else {
-				return this.getNextBlock(ret.header.id, dir, check);
+				return this.getNextBlock(ret.id, dir, check);
 			};
 		} else {
 			return ret;

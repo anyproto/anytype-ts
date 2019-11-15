@@ -46,7 +46,7 @@ class EditorPage extends React.Component<Props, {}> {
 					{tree.map((item: I.Block, i: number) => { 
 						n = Util.incrementBlockNumber(item, n);
 						return <Block 
-							key={item.header.id} {...item} number={n} index={i}
+							key={item.id} {...item} number={n} index={i}
 							{...this.props}
 							onKeyDown={throttle((e: any) => { this.onKeyDown(e); }, THROTTLE)} 
 							onKeyUp={throttle((e: any) => { this.onKeyUp(e); }, THROTTLE)} 
@@ -131,12 +131,12 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		
-		const block = blocks.find((item: I.Block) => { return item.header.id == focused; });
+		const block = blocks.find((item: I.Block) => { return item.id == focused; });
 		if (!block) {
 			return;
 		};
 		
-		const index = blocks.findIndex((item: I.Block) => { return item.header.id == focused; });
+		const index = blocks.findIndex((item: I.Block) => { return item.id == focused; });
 		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 
@@ -163,7 +163,7 @@ class EditorPage extends React.Component<Props, {}> {
 					const l = String(next.content.text || '').length;
 					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
 					
-					editorStore.rangeSave(next.header.id, newRange);
+					editorStore.rangeSave(next.id, newRange);
 				};
 			};
 		};
@@ -171,9 +171,9 @@ class EditorPage extends React.Component<Props, {}> {
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			let b = { 
+			let b = {
+				id: String(blockStore.blocks.length + 1), 
 				header: { 
-					id: String(blockStore.blocks.length + 1),
 					parentId: '', 
 					type: I.BlockType.Text, 
 					name: '', 

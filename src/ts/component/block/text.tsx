@@ -56,9 +56,9 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, editorStore, header, number, toggled } = this.props;
+		const { blockStore, editorStore, id, number, toggled } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		const block = blocks.find((item: I.Block) => { return item.id == id; });
 		const { checked } = this.state;
 		const { focused, range } = editorStore;
 		
@@ -167,9 +167,9 @@ class BlockText extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { blockStore, header } = this.props;
+		const { blockStore, id } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		const block = blocks.find((item: I.Block) => { return item.id == id; });
 		
 		if (!block) {
 			return;
@@ -211,14 +211,14 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const { header, onKeyDown } = this.props;
+		const { onKeyDown } = this.props;
 		
 		this.placeHolderCheck();
 		onKeyDown(e);
 	};
 	
 	onKeyUp (e: any) {
-		const { header, onKeyUp } = this.props;
+		const { onKeyUp } = this.props;
 		
 		this.placeHolderCheck();
 		onKeyUp(e);
@@ -253,7 +253,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { commonStore, editorStore, header, content } = this.props;
+		const { commonStore, editorStore, id, content } = this.props;
 		
 		this.rangeSave();
 		
@@ -268,7 +268,7 @@ class BlockText extends React.Component<Props, {}> {
 			const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 			
 			commonStore.menuOpen('blockAction', { 
-				element: 'block-' + header.id,
+				element: 'block-' + id,
 				type: I.MenuType.Horizontal,
 				offsetX: x,
 				offsetY: -y,
@@ -301,16 +301,16 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { header, editorStore } = this.props;
+		const { id, editorStore } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('.value').get(0) as Element) || { start: 0, end: 0 };
 		
-		editorStore.rangeSave(header.id, { from: range.start, to: range.end });
+		editorStore.rangeSave(id, { from: range.start, to: range.end });
 	};
 	
 	rangeApply (focused: string, range: I.TextRange) {
-		const { header } = this.props;
-		if (!this._isMounted || !focused || (focused != header.id)) {
+		const { id } = this.props;
+		if (!this._isMounted || !focused || (focused != id)) {
 			return;
 		};
 		

@@ -41,19 +41,19 @@ class PopupTree extends React.Component<Props, {}> {
 		
 		const Item = (item: any) => (
 			<div>
-				<div id={'item' + item.header.id} className={'item c' + item.index + (item.childBlocks.length ? ' withChildren' : '')}>
+				<div id={'item' + item.id} className={'item c' + item.index + (item.childBlocks.length ? ' withChildren' : '')}>
 					<div className="arrow" onMouseDown={(e: any) => { this.toggle(e, item.id); }}>
 						<div className="dot" />
 					</div>
 					<span onMouseDown={(e: any) => { this.click(e, item.id); }}>
-						{item.header.id == 'root' ? <Icon className="home" /> : <Smile icon={item.header.icon} />}
+						{item.id == 'root' ? <Icon className="home" /> : <Smile icon={item.header.icon} />}
 						<div className="name">
 							<div className="txt">{item.header.name}</div>
 						</div>
 					</span>
 				</div>
 				{item.childBlocks.length ? (
-					<div id={'children' + item.header.id} className="children">
+					<div id={'children' + item.id} className="children">
 						{item.childBlocks.map((child: any, i: number) => {
 							let index = item.index + 1;
 							return <Item key={i} {...this.props} {...child} index={index} />;
@@ -71,7 +71,7 @@ class PopupTree extends React.Component<Props, {}> {
 				
 				<div className="items">
 					{items.map((item: any, i: number) => {
-						return <Item key={item.header.id} {...item} index={1} />;
+						return <Item key={item.id} {...item} index={1} />;
 					})}
 				</div>
 				

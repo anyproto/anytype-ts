@@ -21,7 +21,6 @@ export interface Permissions {
 }
 
 export interface BlockHeader {
-	id: string;
 	parentId: string;
 	type: BlockType;
 	name: string;
@@ -30,6 +29,7 @@ export interface BlockHeader {
 };
 
 export interface Block {
+	id: string;
 	header: BlockHeader;
 	fields: any;
 	content: any;

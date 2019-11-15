@@ -52,8 +52,8 @@ class Block extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { header, fields, content, childBlocks, index } = this.props;
-		const { id, type } = header;
+		const { id, header, fields, content, childBlocks, index } = this.props;
+		const { type } = header;
 		const { style, toggleable } = content;
 		const { toggled } = this.state;
 		
@@ -139,7 +139,7 @@ class Block extends React.Component<Props, State> {
 		let wrapContent = (
 			<div className="wrapContent">
 				<div className={[ (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id} data-type={type}>
-					<DropTarget id={header.id} type={I.DragItem.Block} onDrop={this.onDrop}>
+					<DropTarget id={id} type={I.DragItem.Block} onDrop={this.onDrop}>
 						<BlockComponent {...this.props} />
 					</DropTarget>
 				</div>
@@ -149,7 +149,7 @@ class Block extends React.Component<Props, State> {
 						n = Util.incrementBlockNumber(item, n);
 						
 						return (
-							<React.Fragment key={item.header.id}>
+							<React.Fragment key={item.id}>
 								{i > 0 ? <ColResize index={i} /> : ''}
 								<Child {...this.props} {...item} number={n} index={i} />
 							</React.Fragment>
@@ -181,14 +181,14 @@ class Block extends React.Component<Props, State> {
 	};
 	
 	onDragStart (e: any) {
-		const { dataset, header } = this.props;
+		const { dataset, id } = this.props;
 		const { selection, onDragStart } = dataset;
 		
 		if (dataset) {
-			let ids = [ header.id ];
+			let ids = [ id ];
 			if (selection) {
 				let selectedIds = selection.get();
-				if (selectedIds.length && (selectedIds.indexOf(header.id) >= 0)) {
+				if (selectedIds.length && (selectedIds.indexOf(id) >= 0)) {
 					ids = selectedIds;
 				};
 			};
@@ -208,11 +208,11 @@ class Block extends React.Component<Props, State> {
 	};
 	
 	onMenu (e: any) {
-		const { dataset, header } = this.props;
+		const { dataset, id } = this.props;
 		const { selection } = dataset;
 		
 		if (selection) {
-			selection.set([ header.id ]);
+			selection.set([ id ]);
 		};
 	};
 	
@@ -233,7 +233,7 @@ class Block extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
 		const currentBlock = childBlocks[index];
-		const offset = node.find('#block-' + prevBlock.header.id).offset().left + Constant.size.blockMenu;
+		const offset = node.find('#block-' + prevBlock.id).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setBlocked(true);
@@ -253,9 +253,9 @@ class Block extends React.Component<Props, State> {
 		const { childBlocks } = this.props;		
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
-		const prevNode = node.find('#block-' + prevBlock.header.id);
+		const prevNode = node.find('#block-' + prevBlock.id);
 		const currentBlock = childBlocks[index];
-		const currentNode = node.find('#block-' + currentBlock.header.id);
+		const currentNode = node.find('#block-' + currentBlock.id);
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		prevNode.css({ width: (res.percent * res.sum * 100) + '%' });

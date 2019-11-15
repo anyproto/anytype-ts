@@ -29,7 +29,7 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const Item = SortableElement((item: any) => {
 			return (
-				<div id={'item-' + item.header.id} className="item" onClick={(e: any) => { onSelect(e, item.header.id); }}>
+				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item.id); }}>
 					<Smile className="c48" icon={item.header.icon} size={24} />
 					<div className="name">{item.header.name}</div>
 				</div>
@@ -48,7 +48,7 @@ class ListIndex extends React.Component<Props, {}> {
 			return (
 				<div>
 					{item.list.map((item: any, i: number) => (
-						<Item key={item.header.id} {...item} index={i} />
+						<Item key={item.id} {...item} index={i} />
 					))}
 					<ItemAdd index={length + 1} disabled={true} />
 				</div>

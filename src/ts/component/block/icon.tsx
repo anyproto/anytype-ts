@@ -14,9 +14,9 @@ interface Props extends I.BlockMedia {
 class BlockIcon extends React.Component<Props, {}> {
 
 	render () {
-		const { commonStore, blockStore, header } = this.props;
+		const { commonStore, blockStore, id } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		const block = blocks.find((item: I.Block) => { return item.id == id; });
 		
 		if (!block) {
 			return null;
@@ -27,7 +27,7 @@ class BlockIcon extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<Smile id={'block-icon-' + header.id} canEdit={true} size={24} icon={icon} className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+				<Smile id={'block-icon-' + id} canEdit={true} size={24} icon={icon} className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};

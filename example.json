@@ -1,0 +1,53 @@
+[
+	{
+		"id": "1",
+		"fields": { "name": "Contacts", "icon": ":family:" },
+		"content": {
+			"type": "page",
+			"style": "0"
+		},
+		"childrenIds": [ "2", "3", "4" ]
+	},
+	
+	{
+		"id": "2",
+		"fields": { "name": "", "icon": "" },
+		"content": {
+			"type": "icon",
+			"icon": ":family:"
+		},
+		"childrenIds": []
+	},
+	
+	{
+		"id": "3",
+		"fields": { "name": "", "icon": "" },
+		"content": {
+			"type": "text",
+			"text": "Contacts",
+			"style": "title",
+			"marks": [],
+			"marker": 0,
+			"toggleable": false,
+			"checkable": false,
+			"checked": false
+		},
+		"childrenIds": []
+	},
+	
+	{
+		"id": "4",
+		"fields": { "name": "", "icon": "" },
+		"content": {
+			"type": "text",
+			"text": "Contacts",
+			"style": "p",
+			"marks": [],
+			"marker": 0,
+			"toggleable": false,
+			"checkable": false,
+			"checked": false
+		},
+		"childrenIds": []
+	}
+]

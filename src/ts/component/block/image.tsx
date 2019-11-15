@@ -38,9 +38,9 @@ class BlockImage extends React.Component<Props, {}> {
 
 	render () {
 		const { image } = this.state;
-		const { blockStore, header } = this.props;
+		const { blockStore, id } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		const block = blocks.find((item: I.Block) => { return item.id == id; });
 		
 		if (!block) {
 			return null;
@@ -93,7 +93,7 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	load () {
-		const { header, content } = this.props;
+		const { content } = this.props;
 		const { link, uploadState } = content;
 		
 		if (!link || (uploadState != I.ContentUploadState.Done)) {

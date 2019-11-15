@@ -34,9 +34,9 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { commonStore, blockStore, header } = this.props;
+		const { commonStore, blockStore, id } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.header.id == header.id; });
+		const block = blocks.find((item: I.Block) => { return item.id == id; });
 		
 		if (!block) {
 			return null;
