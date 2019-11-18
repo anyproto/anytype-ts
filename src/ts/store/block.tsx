@@ -11,11 +11,6 @@ class BlockStore {
 	};
 	
 	@action
-	blocksSet (blocks: I.Block[]) {
-		this.blockList = blocks;
-	};
-	
-	@action
 	blockAdd (block: I.Block) {
 		this.blockList.push(block as I.Block);
 	};
@@ -41,7 +36,8 @@ class BlockStore {
 	};
 	
 	prepareTree (rootId: string, list: I.Block[]) {
-		for (let item of list) {
+		let ret: any = Util.objectCopy(list); 
+		for (let item of ret) {
 			if (!item.childrenIds.length) {
 				continue;
 			};
@@ -51,13 +47,13 @@ class BlockStore {
 			};
 			
 			for (let id of item.childrenIds) {
-				let idx = list.findIndex((it: I.Block) => { return it.id == id; });
+				let idx = ret.findIndex((it: I.Block) => { return it.id == id; });
 				if (idx >= 0) {
-					list[idx].parentId = item.id;
+					ret[idx].parentId = item.id;
 				};
 			};
 		};
-		return list;
+		return ret;
 	};
 	
 	getTree (rootId: string, list: I.Block[]) {
@@ -91,6 +87,58 @@ class BlockStore {
 		} else {
 			return ret;
 		};
+	};
+	
+	prepareBlock (block: any): I.Block {
+		let type = block.content;
+		let content = block[block.content];
+					
+		let item: I.Block = {
+			id: block.id,
+			type: type,
+			parentId: '',
+			childrenIds: block.childrenIds || [],
+			childBlocks: [] as I.Block[],
+			fields: block.fields || {},
+			content: {} as any,
+		};
+					
+		if (content) {
+			item.content = Util.objectCopy(content);
+						
+			if (type == I.BlockType.Text) {
+				let style = content.style;
+				let marker = content.marker;
+				let marks: any = [];
+				
+				if (content.marks && content.marks.length) {
+					for (let mark of content.marks) {
+						let type = mark.type;
+						
+						marks.push({
+							type: type,
+							param: String(mark.param || ''),
+							range: {
+								from: Number(mark.range.from) || 0,
+								to: Number(mark.range.to) || 0,
+							}
+						});
+					};
+				};
+				
+				item.content.style = style;
+				item.content.marker = marker;
+				item.content.marks = marks;
+			};
+						
+			if (type == I.BlockType.Layout) {
+				let style = content.style;
+				
+				item.content.style = style;
+			};
+		};
+		
+		return item;
 	};
 	
 };

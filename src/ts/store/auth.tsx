@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, set } from 'mobx';
 import { I, Storage } from 'ts/lib';
 
 class AuthStore {

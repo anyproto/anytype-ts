@@ -42,40 +42,9 @@ class Dispatcher {
 				break;
 				
 			case 'blockShowFullscreen':
-				let blocks: I.Block[] = [];
-			
 				for (let block of data.blocks) {
-					let type = block.content;
-					let content = block[block.content];
-					
-					let item = {
-						id: block.id,
-						type: type,
-						parentId: '',
-						childrenIds: block.childrenIds || [],
-						childBlocks: [] as I.Block[],
-						fields: block.fields || {},
-						content: {} as any,
-					};
-					
-					if (content) {
-						item.content = Util.objectCopy(content);
-						
-						if (type == I.BlockType.Text) {
-							let style = content.style;
-							item.content.style = style;
-						};
-						
-						if (type == I.BlockType.Layout) {
-							let style = content.style;
-							item.content.style = style;
-						};
-					};
-					
-					blocks.push(item);
+					blockStore.blockAdd(blockStore.prepareBlock(block));
 				};
-				
-				blockStore.blocksSet(blocks);
 				break;
 				
 			case 'blockShow':
@@ -106,7 +75,7 @@ class Dispatcher {
 				message.error.code = Number(message.error.code) || 0;
 				message.error.description = String(message.error.description || ''); 
 			
-				console.log('[Dispatcher.call] message', message);
+				console.log('[Dispatcher.call] callBack', message);
 				callBack(errorCode, message);
 			});			
 		} catch (e) {

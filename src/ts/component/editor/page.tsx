@@ -36,7 +36,7 @@ class EditorPage extends React.Component<Props, {}> {
 	render () {
 		const { blockStore, rootId } = this.props;
 		const { blocks } = blockStore;
-		
+		const root = blocks.find((item: I.Block) => { return item.id == rootId; });
 		const preparedTree = blockStore.prepareTree(rootId, blocks);
 		const tree = blockStore.getTree(rootId, preparedTree);
 		
@@ -62,12 +62,13 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { rootId } = this.props;
+		const { blockStore, rootId } = this.props;
 		const win = $(window);
 		
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		
+		blockStore.blockClear();
 		dispatcher.call('blockOpen', { id: rootId }, (errorCode: any, message: any) => {
 		});
 	};
@@ -182,25 +183,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		if (k == Key.enter) {
 			e.preventDefault();
-			
-			let b = {
-				id: String(blockStore.blocks.length + 1), 
-				parentId: '',
-				type: I.BlockType.Text,
-				fields: {},
-				content: {
-					text: '',
-					style: I.TextStyle.p,
-					marks: [] as I.Mark[],
-					marker: 0,
-					toggleable: false,
-					checkable: false,
-					checked: false,
-				},
-				childBlocks: [] as I.Block[]
-			};
-			
-			blockStore.blockAdd(b);
 		};
 	};
 	

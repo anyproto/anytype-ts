@@ -3,10 +3,14 @@ import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
+	editorStore?: any;
 };
 
+@inject('editorStore')
+@observer
 class MenuBlockAction extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
@@ -33,27 +37,27 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		let icon = '';
 		switch (style) {
 			default:
-			case I.TextStyle.p:
+			case I.TextStyle.Paragraph:
 				icon = 'p';
 				break;
 				
-			case I.TextStyle.h1:
+			case I.TextStyle.Header1:
 				icon = 'h1';
 				break;
 				
-			case I.TextStyle.h2:
+			case I.TextStyle.Header2:
 				icon = 'h2';
 				break;
 				
-			case I.TextStyle.h3:
+			case I.TextStyle.Header3:
 				icon = 'h3';
 				break;
 				
-			case I.TextStyle.h4:
+			case I.TextStyle.Header4:
 				icon = 'h4';
 				break;
 				
-			case I.TextStyle.quote:
+			case I.TextStyle.Quote:
 				icon = 'quote';
 				break;
 		};
@@ -81,6 +85,11 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, id: string) {
+		const { editorStore } = this.props;
+		const { range } = editorStore;
+		
+		console.log('Range', range.from, range.to);
+		
 		switch (id) {
 			default:
 				commonStore.menuClose(this.props.id);

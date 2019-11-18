@@ -1,14 +1,14 @@
 import { I } from 'ts/lib';
 
 export enum TextStyle {
-	p		 = 0,
-	h1		 = 1,
-	h2		 = 2,
-	h3		 = 3,
-	h4		 = 4,
-	quote	 = 5,
-	code	 = 6,
-	title	 = 7,
+	Paragraph	 = 0,
+	Header1		 = 1,
+	Header2		 = 2,
+	Header3		 = 3,
+	Header4		 = 4,
+	Quote		 = 5,
+	Code		 = 6,
+	Title		 = 7,
 };
 
 export enum MarkerType {
@@ -33,6 +33,7 @@ export interface TextRange {
 export interface Mark {
 	range: TextRange;
 	type: MarkType;
+	param: string;
 };
 
 export interface ContentText {

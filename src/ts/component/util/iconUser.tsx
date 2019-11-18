@@ -66,7 +66,8 @@ class IconUser extends React.Component<Props, State> {
 	
 	load () {
 		const { avatar } = this.props;
-		if (!avatar) {
+		
+		if (!avatar || !avatar.id) {
 			return;
 		};
 		

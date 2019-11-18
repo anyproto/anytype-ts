@@ -4,7 +4,6 @@ import { Icon } from 'ts/component';
 import { I, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
-
 import 'highlight.js/styles/github.css';
 
 interface Props extends I.BlockText {
@@ -25,6 +24,7 @@ interface State {
 	checked: boolean;
 };
 
+const { ipcRenderer } = window.require('electron');
 const low = window.require('lowlight');
 const rehype = require('rehype');
 const Constant = require('json/constant.json');
@@ -81,14 +81,6 @@ class BlockText extends React.Component<Props, {}> {
 			markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
 		};
 		
-		let html = '';
-		if (style == I.TextStyle.code) {
-			let res = low.highlight(lang || 'js', text);
-			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
-		} else {
-			html = this.marksToHtml(text, marks);
-		};
-		
 		let editor = (
 			<div
 				className="value"
@@ -100,7 +92,6 @@ class BlockText extends React.Component<Props, {}> {
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onSelect={this.onSelect}
-				dangerouslySetInnerHTML={{ __html: html }}
 			>
 			</div>
 		);
@@ -116,35 +107,35 @@ class BlockText extends React.Component<Props, {}> {
 		
 		switch (style) {
 			default:
-			case I.TextStyle.p:
+			case I.TextStyle.Paragraph:
 				cn.push('p');
 				break;
 				
-			case I.TextStyle.title:
+			case I.TextStyle.Title:
 				cn.push('title');
 				break;
 				
-			case I.TextStyle.h1:
+			case I.TextStyle.Header1:
 				cn.push('h1');
 				break;
 				
-			case I.TextStyle.h2:
+			case I.TextStyle.Header2:
 				cn.push('h2');
 				break;
 				
-			case I.TextStyle.h3:
+			case I.TextStyle.Header3:
 				cn.push('h3');
 				break;
 				
-			case I.TextStyle.h4:
+			case I.TextStyle.Header4:
 				cn.push('h4');
 				break;
 				
-			case I.TextStyle.quote:
+			case I.TextStyle.Quote:
 				cn.push('quote');
 				break;
 				
-			case I.TextStyle.code:
+			case I.TextStyle.Code:
 				cn.push('code');
 				break;
 		};
@@ -179,6 +170,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { checked } = content;
 		
 		this.setState({ checked: checked });
+		this.setValue();
 	};
 	
 	componentDidUpdate () {
@@ -186,6 +178,33 @@ class BlockText extends React.Component<Props, {}> {
 		const { focused, range } = editorStore;
 		
 		this.rangeApply(focused, range);
+		this.setValue();
+	};
+	
+	setValue () {
+		const { blockStore, id } = this.props;
+		const { blocks } = blockStore;
+		const block = blocks.find((item: I.Block) => { return item.id == id; });
+		const { fields, content } = block;
+		const { text, style, marks } = content;
+		const { lang } = fields;
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('.value');
+		
+		let html = '';
+		if (style == I.TextStyle.Code) {
+			let res = low.highlight(String(lang || 'js'), text);
+			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
+		} else {
+			html = this.marksToHtml(text, marks);
+		};
+		
+		value.html(html);
+		value.find('a').unbind('click.link').on('click.link', function (e: any) {
+			e.preventDefault();
+			ipcRenderer.send('urlOpen', $(this).attr('href'));
+		});
 	};
 	
 	componentWillUnmount () {
@@ -193,6 +212,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	marksToHtml (text: string, marks: I.Mark[]) {
+		if (!marks || !marks.length) {
+			return text;
+		};
+		
 		text = String(text || '');
 		marks = marks || [];
 		
@@ -200,10 +223,16 @@ class BlockText extends React.Component<Props, {}> {
 		let tag = [ 's', 'kbd', 'i', 'b', 'a' ];
 		
 		for (let mark of marks) {
+			let type = mark.type || 0;
 			let t = tag[mark.type];
+			let attr = '';
+			
+			if ((type == I.MarkType.Link) && mark.param) {
+				attr = 'href="' + mark.param + '"';
+			};
 			
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
-				r[mark.range.from] = '<' + t + '>' + r[mark.range.from];
+				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + '>' + r[mark.range.from];
 				r[mark.range.to - 1] += '</' + t + '>';
 			};
 		};
@@ -241,7 +270,7 @@ class BlockText extends React.Component<Props, {}> {
 		placeHolder.hide();
 		keyboard.setFocus(false);
 		onBlur(e);
-		editorStore.rangeClear();
+		//editorStore.rangeClear();
 	};
 	
 	onToggle (e: any) {

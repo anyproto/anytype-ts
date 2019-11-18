@@ -4,7 +4,6 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
-import { blockStore } from 'ts/store';
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
@@ -12,10 +11,12 @@ const Constant: any = require('json/constant.json');
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 	authStore?: any;
+	blockStore?: any;
 };
 
 @inject('commonStore')
 @inject('authStore')
+@inject('blockStore')
 @observer
 class PageMainIndex extends React.Component<Props, {}> {
 	
@@ -70,24 +71,26 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		dispatcher.call('blockOpen', { id: 'dashboard' }, (errorCode: any, message: any) => {
-		});
+		const { blockStore } = this.props;
+		
+		blockStore.blockClear();
 		
 		let items: I.Block[] = [
 			{ id: 'testpage', type: I.BlockType.Page, fields: { icon: ':deciduous_tree:', name: 'Test page' }, content: {}, childrenIds: [], childBlocks: [] }
 		];
-		
-		blockStore.blockClear();
 		for (let i = 0; i < items.length; ++i) {
 			items[i].id = items[i].id || String(i + 1);
 			blockStore.blockAdd(items[i]);
 		};
 		
+		dispatcher.call('blockOpen', { id: 'home' }, (errorCode: any, message: any) => {
+		});
+		
 		this.resize();
 	};
 	
 	componentWillUnmount () {
-		dispatcher.call('blockClose', { id: 'dashboard' }, (errorCode: any, message: any) => {
+		dispatcher.call('blockClose', { id: 'home' }, (errorCode: any, message: any) => {
 		});
 	};
 	
@@ -119,6 +122,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
+		const { blockStore } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const id = String(blockStore.blocks.length + 1);
 		
