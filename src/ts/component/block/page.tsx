@@ -32,12 +32,12 @@ class BlockPage extends React.Component<Props, {}> {
 		const { icon, name } = fields;
 		
 		return (
-			<div onClick={this.onClick}>
-				<Smile id={'block-page-' + id} icon={icon} canEdit={true} />
-				<div className="name">
+			<React.Fragment>
+				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} icon={icon} canEdit={true} />
+				<div className="name" onClick={this.onClick}>
 					{name}
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 	

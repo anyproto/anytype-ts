@@ -80,15 +80,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		setTimeout(() => {
 			let items: I.Block[] = [
-				{ id: 'testpage', type: I.BlockType.Page, fields: { icon: ':deciduous_tree:', name: 'Test page' }, content: {}, childrenIds: [], childBlocks: [] }
+				{ id: 'testpage', type: I.BlockType.Page, fields: { icon: ':deciduous_tree:', name: 'Test page' }, content: {}, childrenIds: [], childBlocks: [] },
 			];
 			for (let i = 0; i < items.length; ++i) {
 				items[i].id = items[i].id || String(i + 1);
 				blockStore.blockAdd(items[i]);
 			};
+			this.resize();
 		}, 100);
-		
-		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -151,6 +150,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	resize () {
+		const { blockStore } = this.props;
+		const { blocks } = blockStore;
+		
 		let size = Constant.index.document;
 		let win = $(window);
 		let wh = win.height();
@@ -160,9 +162,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 		let documents = node.find('#documents');
 		let cnt = Math.floor((ww -  size.margin * 2) / (size.width + size.margin));
 		let width = cnt * (size.width + size.margin);
+		let height = size.height + size.margin;
+		
+		if (blocks.length + 1 > cnt) {
+			height *= 2;
+		};
 			
 		body.css({ width: width - size.margin });
-		documents.css({ marginTop: wh - 130 - (size.height * 2 + size.margin * 2) });
+		documents.css({ marginTop: wh - 130 - height });
 	};
 
 };

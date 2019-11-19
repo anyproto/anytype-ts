@@ -9,6 +9,8 @@ interface Props {
 	size?: number;
 	className?: string;
 	canEdit?: boolean;
+	offsetX?: number;
+	offsetY?: number;
 };
 
 interface State {
@@ -18,6 +20,8 @@ interface State {
 class Smile extends React.Component<Props, State> {
 	
 	private static defaultProps = {
+		offsetX: 0,
+		offsetY: 0,
 		size: 18
 	};
 	
@@ -51,7 +55,7 @@ class Smile extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any) {
-		const { id, canEdit } = this.props;
+		const { id, canEdit, offsetX, offsetY } = this.props;
 		
 		if (!id || !canEdit) {
 			return;
@@ -60,8 +64,8 @@ class Smile extends React.Component<Props, State> {
 		commonStore.menuOpen('smile', { 
 			element: id,
 			type: I.MenuType.Vertical,
-			offsetX: 52,
-			offsetY: -48,
+			offsetX: offsetX,
+			offsetY: offsetY,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
