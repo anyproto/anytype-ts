@@ -15,8 +15,6 @@ import BlockFile from './file';
 import BlockBookmark from './bookmark';
 import BlockPage from './page';
 
-const Constant = require('json/constant.json');
-
 interface Props extends I.Block {
 	index: number;
 	number: number;
@@ -26,6 +24,8 @@ interface Props extends I.Block {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
+const THROTTLE = 20;
 
 class Block extends React.Component<Props, {}> {
 
@@ -43,6 +43,8 @@ class Block extends React.Component<Props, {}> {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
+		this.onMouseMove = this.onMouseMove.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
@@ -77,7 +79,7 @@ class Block extends React.Component<Props, {}> {
 				
 				if (style == I.LayoutStyle.Row) {
 					ColResize = (item: any) => (
-						<div className="colResize" onMouseDown={(e: any) => { this.onResizeStart(e, item.index); }}>
+						<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={(e: any) => { this.onResizeStart(e, item.index); }}>
 							<div className="inner" />
 						</div>
 					);
@@ -141,7 +143,7 @@ class Block extends React.Component<Props, {}> {
 					</DropTarget>
 				</div>
 					
-				<div className="children">
+				<div className="children" onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave}>
 					{childBlocks.map((item: any, i: number) => {
 						n = Util.incrementBlockNumber(item, n);
 						
@@ -291,6 +293,41 @@ class Block extends React.Component<Props, {}> {
 		x = x / (sum * Constant.size.editorPage);
 		
 		return { sum: sum, percent: x };
+	};
+	
+	onMouseMove (e: any) {
+		const { childBlocks, type, content } = this.props;
+		const { style } = content;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (!childBlocks.length || (type != I.BlockType.Layout) || (style != I.LayoutStyle.Row)) {
+			return;
+		};
+		
+		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+		const p = (e.pageX - rect.x) / (Constant.size.editorPage + 50);
+		
+		let c = 0;
+		let num = 0;
+		
+		for (let i in childBlocks) {
+			let child = childBlocks[i];
+			
+			c += child.fields.width;
+			if ((p >= c - 0.1) && (p <= c + 0.1)) {
+				num = Number(i) + 1;
+				break;
+			};
+		};
+		
+		node.find('.colResize.active').removeClass('active');
+		if (num) {
+			node.find('.colResize.c' + num).addClass('active');
+		};
+	};
+	
+	onMouseLeave (e: any) {
+		$('.colResize.active').removeClass('active');
 	};
 	
 	unbind () {

@@ -15,7 +15,8 @@
 		}
 		.icon.dnd:hover { background-image: url('~img/icon/block/menu1.svg'); border: 2px solid $colorOrange; }
 		
-		.colResize { width: 0px; position: relative; }
+		.colResize { width: 0px; position: relative; opacity: 0; }
+		.colResize.active { opacity: 1; }
 		.colResize {
 			.inner { 
 				position: absolute; left: 25px; top: 0px; width: 2px; height: 100%; background: #ebe9e0; cursor: col-resize; z-index: 1; 
@@ -24,6 +25,7 @@
 	}
 	
 	.block.isResizing { cursor: col-resize; user-select: none; }
+	.block.isResizing > .wrapContent > .children > .colResize { opacity: 1; }
 	
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange; }
