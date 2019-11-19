@@ -40,41 +40,6 @@ class BlockStore {
 		this.blockList = arrayMove(this.blockList, oldIndex, newIndex);
 	};
 	
-	prepareTree (rootId: string, list: I.Block[]) {
-		let ret: any = Util.objectCopy(list); 
-		for (let item of ret) {
-			if (!item.childrenIds.length) {
-				continue;
-			};
-			
-			if (item.id == rootId) {
-				item.parentId = '';
-			};
-			
-			for (let id of item.childrenIds) {
-				let idx = ret.findIndex((it: I.Block) => { return it.id == id; });
-				if (idx >= 0) {
-					ret[idx].parentId = item.id;
-				};
-			};
-		};
-		return ret;
-	};
-	
-	getTree (rootId: string, list: I.Block[]) {
-		let ret: any = [];
-		for (let item of list) {
-			if (!item.id || (rootId != item.parentId)) {
-				continue;
-			};
-			
-			let obj = Util.objectCopy(item);
-			obj.childBlocks = this.getTree(obj.id, list);
-			ret.push(obj);
-		};
-		return ret;
-	};
-	
 	getNextBlock (id: string, dir: number, check?: (item: I.Block) => any): any {
 		let idx = this.blockList.findIndex((item: I.Block) => { return item.id == id; });
 		if (idx + dir < 0 || idx + dir > this.blockList.length - 1) {
@@ -92,6 +57,37 @@ class BlockStore {
 		} else {
 			return ret;
 		};
+	};
+	
+	prepareTree (rootId: string, list: I.Block[]) {
+		list = Util.objectCopy(list);
+		
+		let ret: any = [];
+		let map: any = {};
+		
+		for (let item of list) {
+			map[item.id] = item;
+		};
+		
+		for (let item of list) {
+			for (let id of item.childrenIds) {
+				if (!map[id]) {
+					continue;
+				};
+				
+				map[id].parentId = item.id;
+				
+				if (map[item.id]) {
+					map[item.id].childBlocks.push(map[id]);
+				};
+			};
+		};
+		
+		if (map[rootId]) {
+			ret = map[rootId].childBlocks;
+		};
+		
+		return ret;
 	};
 	
 	prepareBlock (block: any): I.Block {

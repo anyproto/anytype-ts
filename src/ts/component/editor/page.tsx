@@ -38,8 +38,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blockStore, rootId } = this.props;
 		const { blocks } = blockStore;
 		const root = blocks.find((item: I.Block) => { return item.id == rootId; });
-		const preparedTree = blockStore.prepareTree(rootId, blocks);
-		const tree = blockStore.getTree(rootId, preparedTree);
+		const tree = blockStore.prepareTree(rootId, blocks);
 		
 		let n = 0;
 		
