@@ -13,12 +13,17 @@ export enum BlockType {
 	Div			 = 'div',
 };
 
+export enum BlockPosition {
+	Before = 0,
+	After = 1,
+};
+
 export interface Permissions {
 	edit: boolean;
 	remove: boolean;
 	drag: boolean;
 	dropOn: boolean;
-}
+};
 
 export interface Block {
 	id: string;

@@ -2,7 +2,7 @@ import { ImageSize, Image, Account, DragItem } from './common';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
-import { BlockType, Permissions, Block } from './block';
+import { BlockType, BlockPosition, Permissions, Block } from './block';
 
 import { 
 	ViewType,
@@ -19,6 +19,7 @@ import {
 	BlockDataview,
 } from './block/dataview';
 
+import { PageStyle, ContentPage, BlockPage } from './block/page';
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
 import { TextStyle, MarkerType, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
@@ -39,7 +40,8 @@ export {
 	Menu, 
 	MenuItem,
 	
-	BlockType, 
+	BlockType,
+	BlockPosition,
 	Permissions, 
 	Block,
 	
@@ -55,6 +57,10 @@ export {
 	Cell,
 	ContentDataview,
 	BlockDataview,
+	
+	PageStyle, 
+	ContentPage, 
+	BlockPage,
 	
 	LayoutStyle, 
 	ContentLayout, 

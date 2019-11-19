@@ -26,8 +26,8 @@
 	.block.isResizing { cursor: col-resize; user-select: none; }
 	
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.isAdding.top > .wrapContent > .dropTarget { box-shadow: 0px -2px $colorOrange; }
-	.block.isAdding.bottom > .wrapContent > .dropTarget { box-shadow: 0px 2px $colorOrange; }
+	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange; }
+	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange; }
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }

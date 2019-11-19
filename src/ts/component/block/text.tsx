@@ -98,7 +98,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let Marker = (item: any) => (
 			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				{item.type && number ? <div className="txt">{number}</div> : <Icon />}
+				{item.type && number ? <div className="txt">{number + '.'}</div> : <Icon />}
 			</div>
 		);
 		
@@ -220,7 +220,7 @@ class BlockText extends React.Component<Props, {}> {
 		marks = marks || [];
 		
 		let r = text.split('');
-		let tag = [ 's', 'kbd', 'i', 'b', 'a' ];
+		let tag = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'span', 'span' ];
 		
 		for (let mark of marks) {
 			let type = mark.type || 0;
@@ -229,6 +229,12 @@ class BlockText extends React.Component<Props, {}> {
 			
 			if ((type == I.MarkType.Link) && mark.param) {
 				attr = 'href="' + mark.param + '"';
+			};
+			if ((type == I.MarkType.TextColor) && mark.param) {
+				attr = 'style="text-color:' + mark.param + '"';
+			};
+			if ((type == I.MarkType.BgColor) && mark.param) {
+				attr = 'style="background-color:' + mark.param + '"';
 			};
 			
 			if (r[mark.range.from] && r[mark.range.to - 1]) {

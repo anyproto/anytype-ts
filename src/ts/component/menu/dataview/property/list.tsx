@@ -68,7 +68,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 			<List 
 				axis="y" 
 				transitionDuration={150}
-				pressDelay={50}
+				pressDelay={100}
 				onSortEnd={this.onSortEnd}
 				helperClass="dragging"
 				helperContainer={() => { return  $(ReactDOM.findDOMNode(this)).get(0); }}

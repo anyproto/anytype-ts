@@ -5,6 +5,7 @@ import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, Foo
 import { observer, inject } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
 
+const com = require('proto/commands.js');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
@@ -75,16 +76,18 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		blockStore.blockClear();
 		
-		let items: I.Block[] = [
-			{ id: 'testpage', type: I.BlockType.Page, fields: { icon: ':deciduous_tree:', name: 'Test page' }, content: {}, childrenIds: [], childBlocks: [] }
-		];
-		for (let i = 0; i < items.length; ++i) {
-			items[i].id = items[i].id || String(i + 1);
-			blockStore.blockAdd(items[i]);
-		};
-		
 		dispatcher.call('blockOpen', { id: 'home' }, (errorCode: any, message: any) => {
 		});
+		
+		setTimeout(() => {
+			let items: I.Block[] = [
+				{ id: 'testpage', type: I.BlockType.Page, fields: { icon: ':deciduous_tree:', name: 'Test page' }, content: {}, childrenIds: [], childBlocks: [] }
+			];
+			for (let i = 0; i < items.length; ++i) {
+				items[i].id = items[i].id || String(i + 1);
+				blockStore.blockAdd(items[i]);
+			};
+		}, 100);
 		
 		this.resize();
 	};
@@ -123,25 +126,28 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onAdd (e: any) {
 		const { blockStore } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const id = String(blockStore.blocks.length + 1);
+		const { blocks } = blockStore;
+
+		let block: any = {};
+		let last = '';
 		
-		blockStore.blockAdd({
-			id: id,
-			type: I.BlockType.Page,
-			fields: {
-				name: 'Untitled',
-				icon: Util.randomSmile(),
-			},
-			content: {},
-			childrenIds: [],
-			childBlocks: []
+		if (blocks.length) {
+			last = blocks[blocks.length - 1].id;
+		};
+		
+		block[I.BlockType.Page] = com.anytype.model.Block.Content.Page.create({
+			style: I.PageStyle.Empty
 		});
+		block = com.anytype.model.Block.create(block);
 		
-		// TODO: move this code to callback on middleware command
-		setTimeout(() => {
-			const item = node.find('#documents #item-' + id);
-			$('html, body').animate({ scrollTop: item.offset().top }, 150);
+		let request = {
+			block: block,
+			contextId: 'home',
+			parentId: 'home',
+			targetId: last,
+			position: I.BlockPosition.After,
+		};
+		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
 		});
 	};
 	

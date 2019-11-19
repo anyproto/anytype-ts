@@ -14,7 +14,9 @@
 		.h4 { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; }
 		.quote { font-size: 13px; line-height: 22px; letter-spacing: 0.08px; }
 		.code { font-family: 'Mono'; line-height: 1.71; padding: 16px 24px; background: rgba(247,245,240,0.5); }
+		
 		a { cursor: pointer; }
+		kbd { display: inline-block; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; }
 		
 		.markers { white-space: nowrap; }
 		.markers {
@@ -26,7 +28,7 @@
 				.icon { position: absolute; left: 50%; top: 50%; display: block; }
 			}
 			
-			.marker.bullet.c1 { width: auto; min-width: 24px; padding: 0px 2px; }
+			.marker.bullet.c1 { width: auto; min-width: 24px; padding: 0px 2px; line-height: 22px; }
 			.marker.bullet.c2 {
 				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; margin: -3px 0px 0px -3px; }
 			}

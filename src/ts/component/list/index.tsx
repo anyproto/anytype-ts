@@ -59,7 +59,7 @@ class ListIndex extends React.Component<Props, {}> {
 			<List 
 				axis="xy" 
 				transitionDuration={150}
-				pressDelay={50}
+				pressDelay={100}
 				list={blocks} 
 				helperClass="dragging"
 				helperContainer={helperContainer} 

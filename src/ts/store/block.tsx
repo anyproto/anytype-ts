@@ -11,6 +11,11 @@ class BlockStore {
 	};
 	
 	@action
+	blocksSet (blocks: I.Block[]) {
+		this.blockList = blocks;
+	};
+	
+	@action
 	blockAdd (block: I.Block) {
 		this.blockList.push(block as I.Block);
 	};

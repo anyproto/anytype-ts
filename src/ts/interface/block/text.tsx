@@ -14,7 +14,7 @@ export enum TextStyle {
 export enum MarkerType {
 	None	 = 0,
 	Number	 = 1,
-	Bullet	 = 2
+	Bullet	 = 2,
 };
 
 export enum MarkType {
@@ -22,7 +22,10 @@ export enum MarkType {
 	Code	 = 1,
 	Italic	 = 2,
 	Bold	 = 3,
-	Link	 = 4,
+	Under	 = 4,
+	Link	 = 5,
+	TextColor = 6,
+	BgColor	 = 7,
 };
 
 export interface TextRange {

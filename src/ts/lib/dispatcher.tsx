@@ -42,9 +42,11 @@ class Dispatcher {
 				break;
 				
 			case 'blockShowFullscreen':
+				let blocks: I.Block[] = [];
 				for (let block of data.blocks) {
-					blockStore.blockAdd(blockStore.prepareBlock(block));
+					blocks.push(blockStore.prepareBlock(block));
 				};
+				blockStore.blocksSet(blocks);
 				break;
 				
 			case 'blockShow':
