@@ -14,6 +14,7 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 };
 
+const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const THROTTLE = 20;
@@ -37,7 +38,6 @@ class EditorPage extends React.Component<Props, {}> {
 	render () {
 		const { blockStore, rootId } = this.props;
 		const { blocks } = blockStore;
-		const root = blocks.find((item: I.Block) => { return item.id == rootId; });
 		const tree = blockStore.prepareTree(rootId, blocks);
 		
 		let n = 0;
@@ -183,10 +183,33 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		if (k == Key.enter) {
 			e.preventDefault();
+			
+			this.blockCreate(block);
 		};
 	};
 	
 	onKeyUp (e: any) {
+	};
+	
+	blockCreate (focused: I.Block) {
+		const { editorStore, rootId } = this.props;
+		const { range } = editorStore;
+		
+		let block: any = {};
+		block[I.BlockType.Text] = com.anytype.model.Block.Content.Text.create({
+			style: I.TextStyle.Paragraph
+		});
+		block = com.anytype.model.Block.create(block);
+			
+		let request = {
+			block: block,
+			contextId: rootId,
+			parentId: focused.parentId || rootId,
+			targetId: focused.id,
+			position: I.BlockPosition.After,
+		};
+		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
+		});
 	};
 	
 };

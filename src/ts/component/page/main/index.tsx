@@ -75,23 +75,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { blockStore } = this.props;
 		
 		blockStore.blockClear();
-		dispatcher.call('blockOpen', { id: 'home' }, (errorCode: any, message: any) => {
-		});
-		
-		setTimeout(() => {
-			let items: I.Block[] = [
-				{ id: 'testpage', type: I.BlockType.Page, fields: { icon: ':deciduous_tree:', name: 'Test page' }, content: {}, childrenIds: [], childBlocks: [] },
-			];
-			for (let i = 0; i < items.length; ++i) {
-				items[i].id = items[i].id || String(i + 1);
-				blockStore.blockAdd(items[i]);
-			};
+		dispatcher.call('blockOpen', { id: Constant.index.rootId }, (errorCode: any, message: any) => {
 			this.resize();
-		}, 100);
+		});
 	};
 	
 	componentWillUnmount () {
-		dispatcher.call('blockClose', { id: 'home' }, (errorCode: any, message: any) => {
+		dispatcher.call('blockClose', { id: Constant.index.rootId }, (errorCode: any, message: any) => {
 		});
 	};
 	
@@ -131,6 +121,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		if (blocks.length) {
 			last = blocks[blocks.length - 1].id;
+			
+			if (last == 'testpage') {
+				last = '';
+			};
 		};
 		
 		block[I.BlockType.Page] = com.anytype.model.Block.Content.Page.create({
@@ -140,8 +134,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		let request = {
 			block: block,
-			contextId: 'home',
-			parentId: 'home',
+			contextId: Constant.index.rootId,
+			parentId: Constant.index.rootId,
 			targetId: last,
 			position: I.BlockPosition.After,
 		};

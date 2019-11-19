@@ -12,6 +12,8 @@ interface Props {
 	helperContainer?(): any;
 };
 
+const Constant = require('json/constant.json');
+
 @inject('blockStore')
 @observer
 class ListIndex extends React.Component<Props, {}> {
@@ -25,6 +27,7 @@ class ListIndex extends React.Component<Props, {}> {
 	render () {
 		const { blockStore, onSelect, onAdd, helperContainer } = this.props;
 		const { blocks } = blockStore;
+		const tree = blockStore.prepareTree(Constant.index.rootId, blocks);
 		const length = blocks.length;
 		
 		const Item = SortableElement((item: any) => {
@@ -60,7 +63,7 @@ class ListIndex extends React.Component<Props, {}> {
 				axis="xy" 
 				transitionDuration={150}
 				pressDelay={100}
-				list={blocks} 
+				list={tree} 
 				helperClass="dragging"
 				helperContainer={helperContainer} 
 				onSortEnd={this.onSortEnd} 

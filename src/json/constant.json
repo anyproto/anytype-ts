@@ -8,6 +8,7 @@
 	},
 
 	"index": {
+		"rootId": "home",
 		"document": {
 			"width": 208,
 			"height": 112,

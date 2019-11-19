@@ -21,21 +21,21 @@
 		.markers { white-space: nowrap; }
 		.markers {
 			.marker { 
-				width: 24px; height: 24px; line-height: 24px; text-align: center; margin-right: 4px; display: inline-block;
+				width: 24px; height: 22px; line-height: 22px; text-align: center; margin-right: 4px; display: inline-block;
 				vertical-align: top; position: relative; 
 			}
 			.marker {
 				.icon { position: absolute; left: 50%; top: 50%; display: block; }
 			}
 			
-			.marker.bullet.c1 { width: auto; min-width: 24px; padding: 0px 2px; line-height: 22px; }
+			.marker.bullet.c1 { width: auto; min-width: 24px; padding: 0px 2px; }
 			.marker.bullet.c2 {
 				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; margin: -3px 0px 0px -3px; }
 			}
 			
 			.marker.toggle { cursor: pointer; }
 			.marker.toggle {
-				.icon { width: 6px; height: 10px; background-image: url('~img/icon/marker/toggle.svg'); margin: -5px 0px 0px -3px; }
+				.icon { width: 10px; height: 10px; background-size: 6px 10px; background-image: url('~img/icon/marker/toggle.svg'); margin: -5px 0px 0px -5px; }
 			}
 			
 			.marker.check { cursor: pointer; }
