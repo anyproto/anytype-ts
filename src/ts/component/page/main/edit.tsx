@@ -17,7 +17,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					<MenuMain />
 							
 					<div className="wrapper">
-						<EditorPage rootId={match.params.id} />
+						<EditorPage {...this.props} rootId={match.params.id} />
 					</div>
 				</DragProvider>
 			</SelectionProvider>

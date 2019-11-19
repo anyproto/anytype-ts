@@ -75,7 +75,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { blockStore } = this.props;
 		
 		blockStore.blockClear();
-		
 		dispatcher.call('blockOpen', { id: 'home' }, (errorCode: any, message: any) => {
 		});
 		

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Block, Icon } from 'ts/component';
 import { I, Key, Util, dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 	blockStore?: any;
 	editorStore?: any;

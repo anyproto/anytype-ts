@@ -25,18 +25,11 @@ interface Props extends I.Block {
 	onKeyUp? (e: any): void;
 };
 
-interface State {
-	toggled: boolean;
-};
-
 const $ = require('jquery');
 
-class Block extends React.Component<Props, State> {
+class Block extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	state = {
-		toggled: false
-	};
 	
 	constructor (props: any) {
 		super(props);
@@ -55,7 +48,6 @@ class Block extends React.Component<Props, State> {
 	render () {
 		const { id, type, fields, content, childBlocks, index } = this.props;
 		const { style, toggleable } = content;
-		const { toggled } = this.state;
 		
 		let n = 0;
 		let canDrop = true;
@@ -75,7 +67,7 @@ class Block extends React.Component<Props, State> {
 					cn.push('canToggle');
 				};
 				
-				BlockComponent = () => <BlockText toggled={toggled} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
+				BlockComponent = () => <BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
 				break;
 				
 			case I.BlockType.Layout:
@@ -149,7 +141,7 @@ class Block extends React.Component<Props, State> {
 					</DropTarget>
 				</div>
 					
-				<div className={[ 'children', (toggled ? 'active' : '') ].join(' ')}>
+				<div className="children">
 					{childBlocks.map((item: any, i: number) => {
 						n = Util.incrementBlockNumber(item, n);
 						
@@ -182,7 +174,9 @@ class Block extends React.Component<Props, State> {
 	};
 	
 	onToggle (e: any) {
-		this.setState({ toggled: !this.state.toggled });
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.hasClass('isToggled') ? node.removeClass('isToggled') : node.addClass('isToggled');
 	};
 	
 	onDragStart (e: any) {

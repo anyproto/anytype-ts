@@ -12,7 +12,6 @@ interface Props extends I.BlockText {
 	editorStore?: any;
 	dataset?: any;
 	number: number;
-	toggled: boolean;
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
@@ -56,7 +55,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, editorStore, id, number, toggled } = this.props;
+		const { blockStore, editorStore, id, number } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks.find((item: I.Block) => { return item.id == id; });
 		const { checked } = this.state;
@@ -75,7 +74,7 @@ class BlockText extends React.Component<Props, {}> {
 			markers.push({ type: marker, className: 'bullet c' + marker, active: false, onClick: () => {} });
 		};
 		if (toggleable) {
-			markers.push({ type: 0, className: 'toggle', active: toggled, onClick: this.onToggle });
+			markers.push({ type: 0, className: 'toggle', active: false, onClick: this.onToggle });
 		};
 		if (checkable) {
 			markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });

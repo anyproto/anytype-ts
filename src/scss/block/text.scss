@@ -37,9 +37,6 @@
 			.marker.toggle {
 				.icon { width: 6px; height: 10px; background-image: url('~img/icon/marker/toggle.svg'); margin: -5px 0px 0px -3px; }
 			}
-			.marker.toggle.active {
-				.icon { transform: rotateZ(90deg); }
-			}
 			
 			.marker.check { cursor: pointer; }
 			.marker.check {
@@ -53,8 +50,4 @@
 		}
 	}
 	
-	.block.blockText.canToggle {
-		.children { display: none; }
-		.children.active { display: block; }
-	}
 }

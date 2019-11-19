@@ -79,8 +79,9 @@ class DragLayer extends React.Component<Props, State> {
 		
 		const comp = $(ReactDOM.findDOMNode(component));
 		const node = $(ReactDOM.findDOMNode(this));
+		const rect = comp.get(0).getBoundingClientRect() as DOMRect;
 		
-		node.removeClass('show').css({ width: comp.width() });
+		node.removeClass('show').css({ width: rect.width });
 		this.setState({ type: type, ids: ids });
 	};
 	

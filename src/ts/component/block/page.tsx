@@ -6,6 +6,7 @@ import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Block {
 	blockStore?: any;
+	history?: any;
 };
 
 @inject('blockStore')
@@ -14,6 +15,8 @@ class BlockPage extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
+		
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render() {
@@ -29,13 +32,18 @@ class BlockPage extends React.Component<Props, {}> {
 		const { icon, name } = fields;
 		
 		return (
-			<div>
+			<div onClick={this.onClick}>
 				<Smile id={'block-page-' + id} icon={icon} canEdit={true} />
 				<div className="name">
 					{name}
 				</div>
 			</div>
 		);
+	};
+	
+	onClick () {
+		const { id } = this.props;
+		this.props.history.push('/main/edit/' + id);
 	};
 	
 };
