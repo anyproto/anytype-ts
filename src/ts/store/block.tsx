@@ -3,11 +3,22 @@ import { I, Util } from 'ts/lib';
 import arrayMove from 'array-move';
 
 class BlockStore {
+	@observable public rootId: string = '';
 	@observable public blockList: I.Block[] = [];
+	
+	@computed
+	get root (): string {
+		return this.rootId;
+	};
 	
 	@computed
 	get blocks (): I.Block[] {
 		return this.blockList;
+	};
+	
+	@action
+	rootSet (id: string) {
+		this.rootId = String(id || '');
 	};
 	
 	@action

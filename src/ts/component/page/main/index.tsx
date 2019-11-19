@@ -114,7 +114,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onAdd (e: any) {
 		const { blockStore } = this.props;
-		const { blocks } = blockStore;
+		const { blocks, root } = blockStore;
 
 		let block: any = {};
 		let last = '';
@@ -134,8 +134,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		let request = {
 			block: block,
-			contextId: Constant.index.rootId,
-			parentId: Constant.index.rootId,
+			contextId: root,
+			parentId: root,
 			targetId: last,
 			position: I.BlockPosition.After,
 		};
