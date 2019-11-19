@@ -7,6 +7,7 @@ import { observer, inject } from 'mobx-react';
 interface Props extends I.BlockMedia {
 	dataset?: any;
 	blockStore?: any;
+	width?: any;
 };
 
 interface State {
@@ -47,8 +48,12 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const { uploadState } = content;
+		let { localFilePath, uploadState } = content;
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
+		
+		if (localFilePath) {
+			uploadState = I.ContentUploadState.Done;
+		};
 		
 		let element = null;
 		switch (uploadState) {
@@ -94,9 +99,9 @@ class BlockImage extends React.Component<Props, {}> {
 	
 	load () {
 		const { content } = this.props;
-		const { link, uploadState } = content;
+		const { localFilePath, uploadState } = content;
 		
-		if (!link || (uploadState != I.ContentUploadState.Done)) {
+		if (!localFilePath/* || (uploadState != I.ContentUploadState.Done)*/) {
 			return;
 		};
 		
@@ -109,7 +114,7 @@ class BlockImage extends React.Component<Props, {}> {
 				size: { width: res.width, height: res.height, div: res.div } as any
 			});
 		};
-		let key = [ 'media', link ].join('.');
+		let key = [ 'media', localFilePath ].join('.');
 		let res = cache.get(key);
 		
 		if (res) {
@@ -117,7 +122,7 @@ class BlockImage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		fs.readFile(link, (err: any, res: any) => {
+		fs.readFile(localFilePath, (err: any, res: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -201,10 +206,9 @@ class BlockImage extends React.Component<Props, {}> {
 	
 	checkWidth (v: number) {
 		const { fields } = this.props;
-		const { width } = fields;
-		
-		const maxWidth = Math.floor((Constant.size.editorPage + Constant.size.blockMenu) * (width || 1) - Constant.size.blockMenu);
-		return Math.max(20, Math.min(maxWidth, v));
+		const width = fields.width || this.props.width || 1;
+		const max = Math.floor((Constant.size.editorPage + Constant.size.blockMenu) * width - Constant.size.blockMenu);
+		return Math.max(20, Math.min(max, v));
 	};
 	
 };

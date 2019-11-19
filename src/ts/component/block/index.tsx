@@ -13,6 +13,7 @@ import BlockIcon from './icon';
 import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
+import BlockPage from './page';
 
 const Constant = require('json/constant.json');
 
@@ -127,6 +128,11 @@ class Block extends React.Component<Props, State> {
 				cn.push('blockDiv');
 				BlockComponent = () => <div className="div" />;
 				break;
+				
+			case I.BlockType.Page:
+				cn.push('blockPage');
+				BlockComponent = BlockPage;
+				break;
 		};
 		
 		let wrapMenu = (
@@ -150,7 +156,7 @@ class Block extends React.Component<Props, State> {
 						return (
 							<React.Fragment key={item.id}>
 								{i > 0 ? <ColResize index={i} /> : ''}
-								<Child {...this.props} {...item} number={n} index={i} />
+								<Child {...this.props} {...item} width={fields.width || 1} number={n} index={i} />
 							</React.Fragment>
 						);
 					})}

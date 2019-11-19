@@ -92,6 +92,7 @@ class BlockStore {
 	prepareBlock (block: any): I.Block {
 		let type = block.content;
 		let content = block[block.content];
+		let fields = block.fields;
 					
 		let item: I.Block = {
 			id: block.id,
@@ -99,13 +100,25 @@ class BlockStore {
 			parentId: '',
 			childrenIds: block.childrenIds || [],
 			childBlocks: [] as I.Block[],
-			fields: block.fields || {},
+			fields: {} as any,
 			content: {} as any,
 		};
-					
+		
+		if (fields) {
+			for (let i in fields.fields) {
+				let field = fields.fields[i];
+				if (field.numberValue) {
+					item.fields[i] = field.numberValue;
+				};
+				if (field.stringValue) {
+					item.fields[i] = field.stringValue;
+				};
+			};
+		};
+		
 		if (content) {
 			item.content = Util.objectCopy(content);
-						
+			
 			if (type == I.BlockType.Text) {
 				let style = content.style;
 				let marker = content.marker;

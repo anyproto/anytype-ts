@@ -1,0 +1,11 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockPage { white-space: nowrap; }
+	.block.blockPage {
+		.name {
+			display: inline-block; vertical-align: top; height: 22px; letter-spacing: 0.1px; max-width: calc(100% - 28px); border-bottom: 1px solid #aca996;
+			padding-top: 1px; overflow: hidden;
+		}
+	}
+}

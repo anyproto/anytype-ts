@@ -4,7 +4,7 @@ export enum ContentUploadState { Empty, Loading, Done };
 
 export interface ContentMedia {
 	uploadState: ContentUploadState;
-	link: string;
+	localFilePath: string;
 };
 
 export interface BlockMedia extends I.Block {
