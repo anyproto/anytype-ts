@@ -127,10 +127,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 			};
 		};
 		
-		block.fields = com.anytype.model.Block.fields.create({ 
+		block.fields = { 
 			icon: Util.randomSmile(), 
 			name: 'Untitled' 
-		});
+		};
 		block[I.BlockType.Page] = com.anytype.model.Block.Content.Page.create({
 			style: I.PageStyle.Empty,
 		});
