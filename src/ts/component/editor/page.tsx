@@ -6,12 +6,13 @@ import { I, Key, Util, dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
-interface Props extends RouteComponentProps<any> {
+interface Props {
 	commonStore?: any;
 	blockStore?: any;
 	editorStore?: any;
 	dataset?: any;
 	rootId: string;
+	container: string;
 };
 
 const com = require('proto/commands.js');
@@ -36,9 +37,9 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore } = this.props;
-		const { blocks, root } = blockStore;
-		const tree = blockStore.prepareTree(root, blocks);
+		const { blockStore, rootId } = this.props;
+		const { blocks } = blockStore;
+		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		
 		let n = 0;
 		
@@ -86,11 +87,12 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
+		const { container } = this.props;
+		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const container = $('.pageMainEdit');
 		const blocks = node.find('.block');
-		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rectContainer = ($(container).get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#add');
 		const { pageX, pageY } = e;
@@ -141,15 +143,15 @@ class EditorPage extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		const { blockStore, editorStore, commonStore, dataset } = this.props;
 		const { focused, range } = editorStore;
-		const { blocks } = blockStore;
+		const { blocks, root } = blockStore;
 		const { selection } = dataset;
 		
-		const block = blocks.find((item: I.Block) => { return item.id == focused; });
+		const block = blocks[root].find((item: I.Block) => { return item.id == focused; });
 		if (!block) {
 			return;
 		};
 		
-		const index = blocks.findIndex((item: I.Block) => { return item.id == focused; });
+		const index = blocks[root].findIndex((item: I.Block) => { return item.id == focused; });
 		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 

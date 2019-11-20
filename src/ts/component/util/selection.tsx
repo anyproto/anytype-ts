@@ -9,6 +9,7 @@ interface Props {
 	editorStore?: any;
 	blockStore?: any;
 	className?: string;
+	container: string;
 };
 
 const $ = require('jquery');
@@ -51,7 +52,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} onMouseDown={this.onMouseDown}>
-				<div id="rect" />
 				{children}
 			</div>
 		);
@@ -129,7 +129,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		let win = $(window);
 		let node = $(ReactDOM.findDOMNode(this));
-		let el = node.find('#rect');
+		let el = $('#rect');
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
@@ -161,7 +161,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.checkNodes(e);
 		
 		let node = $(ReactDOM.findDOMNode(this));
-		let el = node.find('#rect');
+		let el = $('#rect');
 		let selected = node.find('.selectable.isSelected');
 		
 		el.css({ 
@@ -201,13 +201,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	getRect (e: any) {
+		const { container } = this.props;
+		
 		let cx = e.pageX;
 		let cy = e.pageY;
 		let rect = {
 			x: Math.min(this.x, cx),
 			y: Math.min(this.y, cy),
 			width: Math.abs(cx - this.x),
-			height: Math.abs(cy - this.y)
+			height: Math.abs(cy - this.y + $(window).scrollTop() + $(container).scrollTop())
 		};
 		return rect;
 	};
@@ -278,7 +280,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	hide () {
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		node.find('#rect').hide();
+		$('#rect').hide();
 		this.unbindMouse();
 	};
 	

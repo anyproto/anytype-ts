@@ -13,6 +13,7 @@ import ViewList from './dataview/view/list';
 interface Props extends I.BlockDataview {
 	commonStore?: any;
 	blockStore?: any;
+	rootId: string;
 };
 interface State {
 	view: string;
@@ -34,9 +35,9 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { commonStore, blockStore, id } = this.props;
+		const { commonStore, blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.id == id; });
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		
 		if (!block) {
 			return null;

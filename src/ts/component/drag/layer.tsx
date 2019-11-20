@@ -9,6 +9,7 @@ const raf = require('raf');
 
 interface Props {
 	blockStore?: any;
+	rootId: string;
 };
 
 interface State {
@@ -35,7 +36,7 @@ class DragLayer extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { blockStore } = this.props;
+		const { blockStore, rootId } = this.props;
 		const { blocks } = blockStore;
 		const { ids, type } = this.state;
 		
@@ -47,10 +48,10 @@ class DragLayer extends React.Component<Props, State> {
 				content = (
 					<div className="blocks">
 						{ids.map((id: string, i: number) => {
-							const block = blocks.find((el: I.Block) => { return el.id == id; });
+							const block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
 							
 							n = Util.incrementBlockNumber(block, n);
-							return <Block key={id} {...block} number={n} index={i} />
+							return <Block key={id} {...block} rootId={rootId} number={n} index={i} />
 						})}
 					</div>
 				);

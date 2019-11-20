@@ -8,6 +8,7 @@ interface Props extends I.BlockMedia {
 	dataset?: any;
 	blockStore?: any;
 	width?: any;
+	rootId: string;
 };
 
 interface State {
@@ -39,9 +40,9 @@ class BlockImage extends React.Component<Props, {}> {
 
 	render () {
 		const { image } = this.state;
-		const { blockStore, id } = this.props;
+		const { blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.id == id; });
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		
 		if (!block) {
 			return null;

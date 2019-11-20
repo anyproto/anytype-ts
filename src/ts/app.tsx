@@ -44,6 +44,7 @@ import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
 import 'scss/popup/tree.scss';
 import 'scss/popup/prompt.scss';
+import 'scss/popup/editor/page.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -84,6 +85,7 @@ class App extends React.Component<{}, {}> {
 						<ListPopup history={history} />
 						<ListMenu history={history} />
 						<div id="drag" />
+						<div id="rect" />
 						
 						{Routes.map((item: RouteElement, i: number) => (
 							<Route path={item.path} exact={true} key={i} component={Page} />

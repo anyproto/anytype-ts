@@ -7,6 +7,7 @@ import { dispatcher, I, Util} from 'ts/lib';
 
 interface Props {
 	blockStore?: any;
+	rootId: string;
 	onSelect?(e: any, id: string): void;
 	onAdd?(e: any): void;
 	helperContainer?(): any;
@@ -25,9 +26,9 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { blockStore, onSelect, onAdd, helperContainer } = this.props;
-		const { blocks, root } = blockStore;
-		const tree = blockStore.prepareTree(root, blocks);
+		const { blockStore, onSelect, onAdd, helperContainer, rootId } = this.props;
+		const { blocks } = blockStore;
+		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		const length = blocks.length;
 		
 		const Item = SortableElement((item: any) => {

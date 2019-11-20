@@ -7,6 +7,7 @@ import { getRange, setRange } from 'selection-ranges';
 import 'highlight.js/styles/github.css';
 
 interface Props extends I.BlockText {
+	rootId: string;
 	commonStore?: any;
 	blockStore?: any;
 	editorStore?: any;
@@ -55,9 +56,9 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, editorStore, id, number } = this.props;
+		const { blockStore, editorStore, id, number, rootId } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.id == id; });
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		const { checked } = this.state;
 		const { focused, range } = editorStore;
 		
@@ -157,9 +158,9 @@ class BlockText extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { blockStore, id } = this.props;
+		const { blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.id == id; });
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		
 		if (!block) {
 			return;
@@ -181,9 +182,9 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	setValue () {
-		const { blockStore, id } = this.props;
+		const { blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.id == id; });
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		const { fields, content } = block;
 		const { text, style, marks } = content;
 		const { lang } = fields;

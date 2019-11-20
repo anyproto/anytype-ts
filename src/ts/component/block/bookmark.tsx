@@ -5,6 +5,7 @@ import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockText {
 	blockStore?: any;
+	rootId: string;
 };
 
 @inject('blockStore')
@@ -16,9 +17,9 @@ class BlockBookmark extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, id } = this.props;
+		const { blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks.find((item: I.Block) => { return item.id == id; });
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		
 		if (!block) {
 			return null;

@@ -16,6 +16,7 @@ import BlockBookmark from './bookmark';
 import BlockPage from './page';
 
 interface Props extends I.Block {
+	rootId: string;
 	index: number;
 	number: number;
 	dataset?: any;
@@ -301,7 +302,6 @@ class Block extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!childBlocks.length || (type != I.BlockType.Layout) || (style != I.LayoutStyle.Row)) {
-			return;
 		};
 		
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;

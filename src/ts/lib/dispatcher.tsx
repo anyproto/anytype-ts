@@ -48,18 +48,20 @@ class Dispatcher {
 					blocks.push(blockStore.prepareBlock(block));
 				};
 
-				blockStore.rootSet(data.rootId);
-				blockStore.blocksSet(blocks);
+				if (!blockStore.rootId) {
+					blockStore.rootSet(data.rootId);	
+				};
+				blockStore.blocksSet(data.rootId, blocks);
 				break;
 			
 			case 'blockAdd':
 				for (let block of data.blocks) {
-					blockStore.blockAdd(blockStore.prepareBlock(block));
+					blockStore.blockAdd(data.contextId, blockStore.prepareBlock(block));
 				};
 				break;
 				
 			case 'blockUpdate':
-				blocks = Util.objectCopy(blockStore.blocks);
+				blocks = Util.objectCopy(blockStore.blocks)[data.contextId];
 				
 				for (let item of data.changes.changes) {
 					let change: any = item.change;
@@ -73,7 +75,7 @@ class Dispatcher {
 					};
 				};
 
-				blockStore.blocksSet(blocks);
+				blockStore.blocksSet(data.contextId, blocks);
 				break;
 				
 			case 'blockShow':

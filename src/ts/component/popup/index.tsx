@@ -9,6 +9,7 @@ const raf = require('raf');
 import PopupSettings from './settings';
 import PopupTree from './tree';
 import PopupPrompt from './prompt';
+import PopupEditorPage from './editor/page';
 
 interface Props extends I.Popup {
 	history: any;
@@ -32,6 +33,7 @@ class Popup extends React.Component<Props, {}> {
 			settings: PopupSettings,
 			tree: PopupTree,
 			prompt: PopupPrompt,
+			editorPage: PopupEditorPage,
 		};
 		
 		const popupId = Util.toCamelCase('popup-' + id);

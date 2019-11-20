@@ -34,9 +34,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { commonStore, authStore } = this.props;
+		const { commonStore, authStore, blockStore } = this.props;
 		const { account } = authStore;
 		const { cover } = commonStore;
+		const { root } = blockStore;
 		
 		if (!account) {
 			return null;
@@ -63,6 +64,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							ref={(ref) => { this.listRef = ref; }}
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
+							rootId={root}
 							helperContainer={() => { return $('#documents').get(0); }} 
 						/>
 					</div>
@@ -76,7 +78,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		blockStore.blockClear();
 		dispatcher.call('blockOpen', { id: Constant.index.rootId }, (errorCode: any, message: any) => {
-			this.resize();
 		});
 	};
 	
@@ -92,7 +93,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onAccount () {
 		const { commonStore } = this.props;
-		
 		commonStore.menuOpen('account', { 
 			element: 'button-account',
 			offsetY: 4,
@@ -103,13 +103,16 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
-		const { commonStore } = this.props;
-		commonStore.popupOpen('tree', {});
+		const { commonStore, blockStore } = this.props;
+		const { root } = blockStore;
+		commonStore.popupOpen('tree', { data: { id: root } });
 	};
 	
 	onSelect (e: any, id: string) {
-		const { history } = this.props;
-		history.push('/main/edit/' + id);
+		const { commonStore } = this.props;
+		commonStore.popupOpen('editorPage', {
+			data: { id: id }
+		});
 	};
 	
 	onAdd (e: any) {
@@ -120,7 +123,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		let last = '';
 		
 		if (blocks.length) {
-			last = blocks[blocks.length - 1].id;
+			last = blocks[root][blocks.length - 1].id;
 			
 			if (last == 'testpage') {
 				last = '';
@@ -149,7 +152,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	resize () {
 		const { blockStore } = this.props;
-		const { blocks } = blockStore;
+		const { blocks, root } = blockStore;
 		
 		let size = Constant.index.document;
 		let win = $(window);
@@ -162,7 +165,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		let width = cnt * (size.width + size.margin);
 		let height = size.height + size.margin;
 		
-		if (blocks.length + 1 > cnt) {
+		if ((blocks[root] || []).length + 1 > cnt) {
 			height *= 2;
 		};
 			

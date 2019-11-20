@@ -25,9 +25,11 @@ class PopupTree extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { blockStore } = this.props;
-		const { blocks, root } = blockStore;
-		const tree = blockStore.prepareTree(root, blocks); 
+		const { blockStore, param, } = this.props;
+		const { data } = param;
+		const { id } = data;
+		const { blocks } = blockStore;
+		const tree = blockStore.prepareTree(id, blocks[id] || []); 
 		//const { type } = this.props;
 		
 		const home = { id: 'root', content: {}, fields: { name: 'Home' }, childBlocks: tree };

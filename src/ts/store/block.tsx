@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 
 class BlockStore {
 	@observable public rootId: string = '';
-	@observable public blockList: I.Block[] = [];
+	@observable public blockObject: any = {};
 	
 	@computed
 	get root (): string {
@@ -13,7 +13,7 @@ class BlockStore {
 	
 	@computed
 	get blocks (): I.Block[] {
-		return this.blockList;
+		return this.blockObject;
 	};
 	
 	@action
@@ -22,18 +22,19 @@ class BlockStore {
 	};
 	
 	@action
-	blocksSet (blocks: I.Block[]) {
-		this.blockList = blocks;
+	blocksSet (rootId: string, blocks: I.Block[]) {
+		this.blockObject[rootId] = blocks;
 	};
 	
 	@action
-	blockAdd (block: I.Block) {
-		this.blockList.push(block as I.Block);
+	blockAdd (rootId: string, block: I.Block) {
+		this.blockObject[rootId] = this.blockObject[rootId] || [];
+		this.blockObject[rootId].push(block as I.Block);
 	};
 	
 	@action
-	blockUpdate (block: any) {
-		let item = this.blockList.find((item: I.Block) => { return item.id == block.id; });
+	blockUpdate (rootId: string, block: any) {
+		let item = (this.blockObject[rootId] || []).find((item: I.Block) => { return item.id == block.id; });
 		if (!item) {
 			return;
 		};
@@ -42,28 +43,28 @@ class BlockStore {
 	};
 	
 	@action
-	blockClear () {
-		this.blockList = [];
+	blockClear (rootId: string) {
+		this.blockObject[rootId] = [];
 	};
 	
 	@action
-	blockSort (oldIndex: number, newIndex: number) {
-		this.blockList = arrayMove(this.blockList, oldIndex, newIndex);
+	blockSort (rootId: string, oldIndex: number, newIndex: number) {
+		this.blockObject[rootId] = arrayMove(this.blockObject[rootId], oldIndex, newIndex);
 	};
 	
-	getNextBlock (id: string, dir: number, check?: (item: I.Block) => any): any {
-		let idx = this.blockList.findIndex((item: I.Block) => { return item.id == id; });
-		if (idx + dir < 0 || idx + dir > this.blockList.length - 1) {
+	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any): any {
+		let idx = this.blockObject[rootId].findIndex((item: I.Block) => { return item.id == id; });
+		if (idx + dir < 0 || idx + dir > this.blockObject[rootId].length - 1) {
 			return null;
 		};
 		
-		let ret = this.blockList[idx + dir];
+		let ret = this.blockObject[rootId][idx + dir];
 		
 		if (check && ret) {
 			if (check(ret)) {
 				return ret;
 			} else {
-				return this.getNextBlock(ret.id, dir, check);
+				return this.getNextBlock(rootId, ret.id, dir, check);
 			};
 		} else {
 			return ret;

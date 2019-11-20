@@ -6,6 +6,7 @@ import { throttle } from 'lodash';
 
 interface Props {
 	dataset?: any;
+	rootId: string;
 };
 
 const $ = require('jquery');
@@ -27,11 +28,12 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	render () {
+		const { rootId } = this.props;
 		const children = this.injectProps(this.props.children);
 		
 		return (
 			<React.Fragment>
-				<DragLayer ref={(ref: any) => { this.refLayer = ref; }} />
+				<DragLayer ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
 				{children}
 			</React.Fragment>
 		);
@@ -110,6 +112,7 @@ class DragProvider extends React.Component<Props, {}> {
 			$('body').append(el);
 		};
 		
+		el.css({ width: 1, height: 1, opacity: 0 });
 		e.dataTransfer.setDragImage(el.get(0), 0, 0);
 	};
 	
