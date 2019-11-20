@@ -26,12 +26,12 @@ class PopupTree extends React.Component<Props, {}> {
 	
 	render () {
 		const { blockStore } = this.props;
-		const { blocks } = blockStore;
-		const tree = blockStore.getTree('', blocks); 
+		const { blocks, root } = blockStore;
+		const tree = blockStore.prepareTree(root, blocks); 
 		//const { type } = this.props;
 		
-		const root = { id: 'root', content: {}, fields: { name: 'Home', icon: 'Home' }, childBlocks: tree };
-		const items = [ root ];
+		const home = { id: 'root', content: {}, fields: { name: 'Home' }, childBlocks: tree };
+		const items = [ home ];
 		const titles: any = {
 			copy: 'Duplicate to',
 			move: 'Move to',
@@ -48,7 +48,7 @@ class PopupTree extends React.Component<Props, {}> {
 					<span onMouseDown={(e: any) => { this.click(e, item.id); }}>
 						{item.id == 'root' ? <Icon className="home" /> : <Smile icon={item.fields.icon} />}
 						<div className="name">
-							<div className="txt">{item.header.name}</div>
+							<div className="txt">{item.fields.name}</div>
 						</div>
 					</span>
 				</div>
