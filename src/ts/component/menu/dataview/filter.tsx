@@ -86,7 +86,7 @@ class MenuFilter extends React.Component<Props, State> {
 			<List 
 				axis="y" 
 				transitionDuration={150}
-				pressDelay={100}
+				pressDelay={60}
 				onSortEnd={this.onSortEnd}
 				helperClass="dragging"
 				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}

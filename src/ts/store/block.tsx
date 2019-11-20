@@ -47,11 +47,6 @@ class BlockStore {
 		this.blockObject[rootId] = [];
 	};
 	
-	@action
-	blockSort (rootId: string, oldIndex: number, newIndex: number) {
-		this.blockObject[rootId] = arrayMove(this.blockObject[rootId], oldIndex, newIndex);
-	};
-	
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any): any {
 		let idx = this.blockObject[rootId].findIndex((item: I.Block) => { return item.id == id; });
 		if (idx + dir < 0 || idx + dir > this.blockObject[rootId].length - 1) {
@@ -82,7 +77,8 @@ class BlockStore {
 		};
 		
 		for (let item of list) {
-			for (let id of item.childrenIds) {
+			let childrenIds = item.childrenIds || [];
+			for (let id of childrenIds) {
 				if (!map[id]) {
 					continue;
 				};
@@ -120,10 +116,10 @@ class BlockStore {
 		if (fields) {
 			for (let i in fields.fields) {
 				let field = fields.fields[i];
-				if (field.numberValue) {
+				if (undefined !== field.numberValue) {
 					item.fields[i] = field.numberValue;
 				};
-				if (field.stringValue) {
+				if (undefined !== field.stringValue) {
 					item.fields[i] = field.stringValue;
 				};
 			};

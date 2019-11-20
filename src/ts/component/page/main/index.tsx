@@ -152,12 +152,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 			position: I.BlockPosition.After,
 		};
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
+			this.resize();
 		});
 	};
 	
 	resize () {
 		const { blockStore } = this.props;
 		const { blocks, root } = blockStore;
+		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		
 		let size = Constant.index.document;
 		let win = $(window);
@@ -170,7 +172,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		let width = cnt * (size.width + size.margin);
 		let height = size.height + size.margin;
 		
-		if ((blocks[root] || []).length + 1 > cnt) {
+		if (tree.length + 1 > cnt) {
 			height *= 2;
 		};
 			

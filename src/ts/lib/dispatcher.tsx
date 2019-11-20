@@ -51,9 +51,11 @@ class Dispatcher {
 				break;
 			
 			case 'blockAdd':
+				blocks = Util.objectCopy(blockStore.blocks)[data.contextId];
 				for (let block of data.blocks) {
-					blockStore.blockAdd(data.contextId, blockStore.prepareBlock(block));
+					blocks.push(data.contextId, blockStore.prepareBlock(block));
 				};
+				blockStore.blocksSet(data.contextId, blocks);
 				break;
 				
 			case 'blockUpdate':

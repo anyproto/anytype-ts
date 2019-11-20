@@ -26,6 +26,7 @@ const THROTTLE = 20;
 @observer
 class EditorPage extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
 	timeoutHover: number = 0;
 
 	constructor (props: any) {
@@ -63,6 +64,8 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+		
 		const { blockStore, rootId } = this.props;
 		const win = $(window);
 		
@@ -73,6 +76,8 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		this._isMounted = false;
+		
 		const { blockStore, rootId } = this.props;
 		
 		this.unbind();
@@ -86,6 +91,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { container } = this.props;
 		
 		const win = $(window);

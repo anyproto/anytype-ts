@@ -63,7 +63,7 @@ class ListIndex extends React.Component<Props, {}> {
 			<List 
 				axis="xy" 
 				transitionDuration={150}
-				pressDelay={100}
+				pressDelay={60}
 				list={tree} 
 				helperClass="dragging"
 				helperContainer={helperContainer} 
@@ -73,10 +73,7 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { blockStore } = this.props;
-		
-		blockStore.blockSort(oldIndex, newIndex);
+		console.log('[onSortEnd]');
 	};
 	
 };
