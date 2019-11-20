@@ -69,17 +69,16 @@ class EditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		
-		blockStore.blockClear();
-		dispatcher.call('blockOpen', { id: rootId }, (errorCode: any, message: any) => {
-		});
+		dispatcher.call('blockOpen', { id: rootId }, (errorCode: any, message: any) => {});
 	};
 	
 	componentWillUnmount () {
-		const { rootId } = this.props;
+		const { blockStore, rootId } = this.props;
 		
 		this.unbind();
-		dispatcher.call('blockClose', { id: rootId }, (errorCode: any, message: any) => {
-		});
+		
+		blockStore.blocksClear(rootId);
+		dispatcher.call('blockClose', { id: rootId }, (errorCode: any, message: any) => {});
 	};
 	
 	unbind () {

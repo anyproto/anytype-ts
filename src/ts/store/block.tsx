@@ -43,7 +43,7 @@ class BlockStore {
 	};
 	
 	@action
-	blockClear (rootId: string) {
+	blocksClear (rootId: string) {
 		this.blockObject[rootId] = [];
 	};
 	

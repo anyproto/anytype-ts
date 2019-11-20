@@ -76,14 +76,19 @@ class PageMainIndex extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { blockStore } = this.props;
 		
-		blockStore.blockClear();
-		dispatcher.call('blockOpen', { id: Constant.index.rootId }, (errorCode: any, message: any) => {
+		dispatcher.call('configGet', {}, (errorCode: any, message: any) => {
+			let home = message.homeBlockId;
+			
+			blockStore.rootSet(home);
+			dispatcher.call('blockOpen', { id: home }, (errorCode: any, message: any) => {});
 		});
 	};
 	
 	componentWillUnmount () {
-		dispatcher.call('blockClose', { id: Constant.index.rootId }, (errorCode: any, message: any) => {
-		});
+		const { blockStore } = this.props;
+		const { root } = blockStore;
+		
+		dispatcher.call('blockClose', { id: root }, (errorCode: any, message: any) => {});
 	};
 	
 	onSettings (e: any) {
@@ -170,7 +175,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 			
 		body.css({ width: width - size.margin });
-		documents.css({ marginTop: wh - 130 - height });
+		documents.css({ marginTop: wh - 134 - height });
 	};
 
 };

@@ -47,10 +47,6 @@ class Dispatcher {
 				for (let block of data.blocks) {
 					blocks.push(blockStore.prepareBlock(block));
 				};
-
-				if (!blockStore.rootId) {
-					blockStore.rootSet(data.rootId);	
-				};
 				blockStore.blocksSet(data.rootId, blocks);
 				break;
 			
