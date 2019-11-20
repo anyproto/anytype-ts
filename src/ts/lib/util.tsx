@@ -109,7 +109,7 @@ class Util {
 		return 0;
 	};
 	
-	randomSmile () {
+	randomSmile (): string {
 		return this.icons[this.rand(0, this.icons.length - 1)];
 	};
 	

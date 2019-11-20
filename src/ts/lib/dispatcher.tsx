@@ -73,8 +73,6 @@ class Dispatcher {
 					};
 				};
 
-				console.log(JSON.stringify(blocks, null, 5));
-				
 				blockStore.blocksSet(blocks);
 				break;
 				
