@@ -42,10 +42,10 @@ class PopupTree extends React.Component<Props, {}> {
 		const Item = (item: any) => (
 			<div>
 				<div id={'item' + item.id} className={'item c' + item.index + (item.childBlocks.length ? ' withChildren' : '')}>
-					<div className="arrow" onMouseDown={(e: any) => { this.toggle(e, item.id); }}>
+					<div className="arrow" onMouseDown={(e: any) => { this.onToggle(e, item.id); }}>
 						<div className="dot" />
 					</div>
-					<span onMouseDown={(e: any) => { this.click(e, item.id); }}>
+					<span onMouseDown={(e: any) => { this.onClick(e, item.id); }}>
 						{item.id == 'root' ? <Icon className="home" /> : <Smile icon={item.fields.icon} />}
 						<div className="name">
 							<div className="txt">{item.fields.name}</div>
@@ -83,7 +83,7 @@ class PopupTree extends React.Component<Props, {}> {
 		);
 	};
 	
-	toggle (e: any, id: string) {
+	onToggle (e: any, id: string) {
 		let node = $(ReactDOM.findDOMNode(this));
 		let item = node.find('#item' + id);
 		let children = node.find('#children' + id);
@@ -113,7 +113,7 @@ class PopupTree extends React.Component<Props, {}> {
 		}, 215);
 	};
 	
-	click (e: any, id: string) {
+	onClick (e: any, id: string) {
 		let node = $(ReactDOM.findDOMNode(this));
 		node.find('.item.selected').removeClass('selected');
 		node.find('#item' + id).addClass('selected');
@@ -121,13 +121,11 @@ class PopupTree extends React.Component<Props, {}> {
 	
 	onConfirm (e: any) {
 		const { commonStore } = this.props;
-	
 		commonStore.popupClose(this.props.id);	
 	};
 	
 	onCancel (e: any) {
 		const { commonStore } = this.props;
-		
 		commonStore.popupClose(this.props.id);
 	};
 	

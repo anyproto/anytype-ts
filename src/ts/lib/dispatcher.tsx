@@ -35,6 +35,8 @@ class Dispatcher {
 			return;
 		};
 		
+		let blocks: any = [];
+		
 		switch (event.message) {
 			
 			case 'accountShow':
@@ -42,12 +44,37 @@ class Dispatcher {
 				break;
 				
 			case 'blockShowFullscreen':
-				let blocks: I.Block[] = [];
 				for (let block of data.blocks) {
 					blocks.push(blockStore.prepareBlock(block));
 				};
 
-				blockStore.rootSet(data.rootId);				
+				blockStore.rootSet(data.rootId);
+				blockStore.blocksSet(blocks);
+				break;
+			
+			case 'blockAdd':
+				for (let block of data.blocks) {
+					blockStore.blockAdd(blockStore.prepareBlock(block));
+				};
+				break;
+				
+			case 'blockUpdate':
+				blocks = Util.objectCopy(blockStore.blocks);
+				
+				for (let item of data.changes.changes) {
+					let change: any = item.change;
+					let ids = item.id;
+					
+					for (let id of ids) {
+						let idx = blocks.findIndex((it: any) => { return it.id == id; });
+						if (idx >= 0) {
+							blocks[idx][change] = item[change][change];	
+						};
+					};
+				};
+
+				console.log(JSON.stringify(blocks, null, 5));
+				
 				blockStore.blocksSet(blocks);
 				break;
 				
