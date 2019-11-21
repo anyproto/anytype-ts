@@ -90,9 +90,10 @@ class Dispatcher {
 		
 		//const errorCode = com.anytype[Util.toUpperCamelCase(type)].Response.Error.Code;
 		const errorCode = {};
+		const tc = '[Dispatcher.call] ' + type + ' time';
 		
 		console.log('[Dispatcher.call]', type, data);
-		console.log(errorCode);
+		let t0 = performance.now();
 		
 		try {
 			this.service[type](data, (message: any) => {
@@ -108,9 +109,11 @@ class Dispatcher {
 					console.error('[Dispatcher.call] code:', message.error.code, 'description:', message.error.description);
 					return;
 				};
-			
-				console.log('[Dispatcher.call] callBack', message);
+				
 				callBack(errorCode, message);
+				
+				let t1 = performance.now();
+				console.log('[Dispatcher.call] callBack', type, message, Math.ceil(t1 - t0) + 'ms');
 			});			
 		} catch (e) {
 			console.error(e);

@@ -13,6 +13,7 @@ interface Props {
 	dataset?: any;
 	rootId: string;
 	container: string;
+	addOffsetY: number;
 };
 
 const com = require('proto/commands.js');
@@ -95,12 +96,13 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { container } = this.props;
+		const { container, addOffsetY } = this.props;
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('.block');
-		const rectContainer = ($(container).get(0) as Element).getBoundingClientRect() as DOMRect;
+		const containerEl = $(container);
+		const rectContainer = (containerEl.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#add');
 		const { pageX, pageY } = e;
@@ -134,7 +136,7 @@ class EditorPage extends React.Component<Props, {}> {
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
 			let dir = pageY < (y + height / 2) ? 'top': 'bottom';
 			
-			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 });
+			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 + containerEl.scrollTop() + Number(addOffsetY) });
 			blocks.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (hovered && (pageX <= x + 20)) {
@@ -149,17 +151,17 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const { blockStore, editorStore, commonStore, dataset } = this.props;
+		const { blockStore, editorStore, commonStore, dataset, rootId } = this.props;
 		const { focused, range } = editorStore;
-		const { blocks, root } = blockStore;
+		const { blocks } = blockStore;
 		const { selection } = dataset;
 		
-		const block = blocks[root].find((item: I.Block) => { return item.id == focused; });
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == focused; });
 		if (!block) {
 			return;
 		};
 		
-		const index = blocks[root].findIndex((item: I.Block) => { return item.id == focused; });
+		const index = blocks[rootId].findIndex((item: I.Block) => { return item.id == focused; });
 		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 
@@ -173,7 +175,7 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 			
 			const dir = (k == Key.up) ? -1 : 1;
-			const next = blockStore.getNextBlock(focused, dir);
+			const next = blockStore.getNextBlock(rootId, focused, dir);
 			
 			if (e.shiftKey) {
 				if (selection.get().length < 1) {

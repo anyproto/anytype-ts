@@ -10,6 +10,7 @@ interface Props {
 	blockStore?: any;
 	className?: string;
 	container: string;
+	rootId: string;
 };
 
 const $ = require('jquery');
@@ -85,7 +86,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const { blockStore } = this.props;
+		const { blockStore, rootId } = this.props;
 		const k = e.which;
 		
 		let ids: any = this.get();
@@ -103,7 +104,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				method = dir < 0 ? 'pop' : 'shift';
 				ids[method]();
 			} else {
-				const next = blockStore.getNextBlock(ids[idx], dir, (item: any) => {
+				const next = blockStore.getNextBlock(rootId, ids[idx], dir, (item: any) => {
 					return item.type != I.BlockType.Layout;
 				});
 
@@ -209,7 +210,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			x: Math.min(this.x, cx),
 			y: Math.min(this.y, cy),
 			width: Math.abs(cx - this.x),
-			height: Math.abs(cy - this.y + $(window).scrollTop() + $(container).scrollTop())
+			height: Math.abs(cy - this.y)
 		};
 		return rect;
 	};

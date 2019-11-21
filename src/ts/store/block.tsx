@@ -116,10 +116,10 @@ class BlockStore {
 		if (fields) {
 			for (let i in fields.fields) {
 				let field = fields.fields[i];
-				if (undefined !== field.numberValue) {
+				if (field.numberValue) {
 					item.fields[i] = field.numberValue;
 				};
-				if (undefined !== field.stringValue) {
+				if (field.stringValue) {
 					item.fields[i] = field.stringValue;
 				};
 			};

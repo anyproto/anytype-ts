@@ -3,11 +3,4 @@
 .pageMainEdit {
 	.wrapper { width: 800px; margin: 0px auto; padding: 100px 0px; }
 	.blocks { margin-left: -50px; }
-	
-	.icon.add { 
-		width: 20px; height: 20px; border-radius: 100%; border: solid 1px #d2d0c2; position: absolute; z-index: 5; cursor: pointer; user-select: none;
-		background-size: 10px 10px; background-image: url('~img/icon/block/add0.svg'); opacity: 0;
-		transition: opacity 0.2s ease-in-out, background 0.2s ease-in-out, border-color 0.2s ease-in-out; 
-	}
-	.icon.add:hover { background-image: url('~img/icon/block/add1.svg'); background-color: $colorOrange; border-color: $colorOrange; }
 }

@@ -297,11 +297,16 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { childBlocks, type, content } = this.props;
 		const { style } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!childBlocks.length || (type != I.BlockType.Layout) || (style != I.LayoutStyle.Row)) {
+			return;
 		};
 		
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
@@ -314,6 +319,7 @@ class Block extends React.Component<Props, {}> {
 			let child = childBlocks[i];
 			
 			c += child.fields.width;
+			
 			if ((p >= c - 0.1) && (p <= c + 0.1)) {
 				num = Number(i) + 1;
 				break;

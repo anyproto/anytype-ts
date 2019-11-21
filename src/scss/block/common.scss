@@ -3,7 +3,7 @@
 .blocks {
 	.block { padding: 1px 0px; word-break: break-word; display: flex; flex: auto; position: relative; }
 	.block {
-		.id { position: absolute; left: 0px; top: 1px; z-index: 2; }
+		.id { position: absolute; left: 0px; top: 1px; z-index: 2; opacity: 0.3; }
 		.wrapMenu { width: 50px; text-align: right; }
 		.wrapContent { width: calc(100% - 50px); position: relative; }
 		
@@ -28,8 +28,8 @@
 	.block.isResizing > .wrapContent > .children > .colResize { opacity: 1; }
 	
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange; }
-	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange; }
+	.block.isAdding.top > .wrapContent { box-shadow: 0px -2px $colorOrange; }
+	.block.isAdding.bottom > .wrapContent { box-shadow: 0px 2px $colorOrange; }
 	
 	.block.canToggle > .wrapContent > .children { display: none; }
 	.block.isToggled > .wrapContent > .children { display: block; }

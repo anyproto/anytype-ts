@@ -11,13 +11,13 @@ class PageMainEdit extends React.Component<Props, {}> {
 		const { match } = this.props;
 		
 		return (
-			<SelectionProvider container=".pageMainEdit">
+			<SelectionProvider container=".pageMainEdit" rootId={match.params.id}>
 				<DragProvider rootId={match.params.id}>
 					<Header {...this.props} />
 					<MenuMain />
 							
 					<div className="wrapper">
-						<EditorPage rootId={match.params.id} container=".pageMainEdit" />
+						<EditorPage rootId={match.params.id} container=".pageMainEdit" addOffsetY={0} />
 					</div>
 				</DragProvider>
 			</SelectionProvider>

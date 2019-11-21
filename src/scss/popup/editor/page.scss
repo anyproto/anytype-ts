@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupEditorPage { width: 1010px; height: calc(100% - 20px); padding: 40px; }
+	.popup.popupEditorPage { width: 880px; height: calc(100% - 20px); padding: 40px; }
 	.popup.popupEditorPage {
 		.content { max-height: 100%; overflow-x: hidden; overflow-y: auto; }
 		.header { position: absolute; padding: 0px; }
