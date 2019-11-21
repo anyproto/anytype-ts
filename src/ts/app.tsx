@@ -6,6 +6,8 @@ import { Page, ListPopup, ListMenu, Progress } from './component';
 import { commonStore, authStore, blockStore, editorStore } from './store';
 import { dispatcher, keyboard, Storage } from 'ts/lib';
 
+//import i18n from 'ts/lib/i18n';
+
 import 'scss/font.scss';
 import 'scss/common.scss';
 
@@ -89,7 +91,7 @@ class App extends React.Component<{}, {}> {
 						<Progress />
 						<div id="drag" />
 						<div id="rect" />
-						
+							
 						{Routes.map((item: RouteElement, i: number) => (
 							<Route path={item.path} exact={true} key={i} component={Page} />
 						))}

@@ -17,6 +17,7 @@ class Util {
 	icons: any[] = [];
 	
 	constructor () {
+		console.log('EmojiData', EmojiData);
 		this.icons = Object.keys(EmojiData.emojis);
 	};
 	
@@ -29,13 +30,13 @@ class Util {
 	};
 	
 	toCamelCase (str: string) {
-		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (str, p1, p2, offset, s) => {
+		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (str: string, p1: string, p2: string, offset: number, s: string) => {
 			return p1.toUpperCase();
 		});
 	};
 	
 	fromCamelCase (str: string, symbol: string) {
-		return str.replace(/([A-Z]{1})/g, (str, p1, p2, offset, s) => {
+		return str.replace(/([A-Z]{1})/g, (str: string, p1: string, p2: string, offset: number, s: string) => {
 			return symbol + p1.toLowerCase();
 		});
 	};

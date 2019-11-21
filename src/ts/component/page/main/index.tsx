@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { dispatcher, I, Util} from 'ts/lib';
+import { dispatcher, I, Util, translate} from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
@@ -37,11 +37,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { commonStore, authStore, blockStore } = this.props;
 		const { account } = authStore;
 		const { cover } = commonStore;
-		const { root } = blockStore;
+		const { blocks, root } = blockStore;
 		
 		if (!account) {
 			return null;
 		};
+		
+		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		
 		return (
 			<div>
@@ -51,7 +53,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						Hi, {account.name}
+						{Util.sprintf(translate('indexHi'), account.name)}
+						
 						<div className="rightMenu">
 							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} onClick={this.onSettings} />
 							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} onClick={this.onAccount} />
@@ -82,6 +85,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 			blockStore.rootSet(home);
 			dispatcher.call('blockOpen', { id: home }, (errorCode: any, message: any) => {});
 		});
+	};
+	
+	componentDidUpdate () {
+		this.resize();
 	};
 	
 	componentWillUnmount () {
