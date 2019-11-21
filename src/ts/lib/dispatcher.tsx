@@ -43,7 +43,7 @@ class Dispatcher {
 				authStore.accountAdd(data.account);
 				break;
 				
-			case 'blockShowFullscreen':
+			case 'blockShow':
 				for (let block of data.blocks) {
 					blocks.push(blockStore.prepareBlock(block));
 				};

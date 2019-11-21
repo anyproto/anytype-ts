@@ -99,10 +99,10 @@ class BlockStore {
 	};
 	
 	prepareBlock (block: any): I.Block {
-		let type = block.content;
-		let content = block[block.content];
+		let type = block.content.content;
+		let content = block.content[type];
 		let fields = block.fields;
-					
+		
 		let item: I.Block = {
 			id: block.id,
 			type: type,
@@ -133,10 +133,9 @@ class BlockStore {
 				let marker = content.marker;
 				let marks: any = [];
 				
-				if (content.marks && content.marks.length) {
-					for (let mark of content.marks) {
+				if (content.marks && content.marks.marks.length) {
+					for (let mark of content.marks.marks) {
 						let type = mark.type;
-						
 						marks.push({
 							type: type,
 							param: String(mark.param || ''),
