@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Textarea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher } from 'ts/lib';
+import { dispatcher, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -11,8 +11,6 @@ interface Props extends RouteComponentProps<any> {
 interface State {
 	error: string;
 };
-
-const Config: any = require('json/config.json');
 
 @inject('commonStore')
 @inject('authStore')
@@ -76,7 +74,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 		this.phraseRef.setError(false);
 		
 		let request = { 
-			rootPath: Config.root, 
+			rootPath: Storage.get('rootPath'), 
 			mnemonic: this.phraseRef.getValue()
 		};
 		

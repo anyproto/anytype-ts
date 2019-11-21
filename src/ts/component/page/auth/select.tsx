@@ -12,8 +12,6 @@ interface State {
 	error: string;
 };
 
-const Config: any = require('json/config.json');
-
 @inject('commonStore')
 @inject('authStore')
 @observer
@@ -63,7 +61,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 		const { authStore, history } = this.props;
 		
 		let request = { 
-			rootPath: Config.root
+			rootPath: Storage.get('rootPath')
 		};
 		
 		dispatcher.call('walletCreate', request, (errorCode: any, message: any) => {

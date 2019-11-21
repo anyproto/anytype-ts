@@ -107,6 +107,10 @@ class App extends React.Component<{}, {}> {
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
 		
+		ipcRenderer.on('userDataPath', (e, userDataPath) => {
+			Storage.set('rootPath', userDataPath + '/data');
+		});
+		
 		let phrase = Storage.get('phrase');
 		if (phrase) {
 			history.push('/auth/setup/init');

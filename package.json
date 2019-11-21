@@ -1,7 +1,7 @@
 {
 	"name": "anytype",
 	"version": "1.0.0",
-	"description": "",
+	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
 		"lint": "tslint -c tslint.json -p tsconfig.json",
@@ -9,7 +9,15 @@
 		"start:watch": "webpack-dev-server --mode=development --env.NODE_ENV=development --history-api-fallback --cache",
 		"start:electron": "./node_modules/.bin/electron .",
 		"start:electron-wait-webpack": "wait-for-localhost 8080 && ./node_modules/.bin/electron .",
-		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack"
+		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack",
+		"build": "webpack --mode=development --env.NODE_ENV=development",
+		"build:prod": "webpack --mode=production --env.NODE_ENV=production -p --config webpack.config.js",
+		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos",
+		"dist:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --windows",
+		"dist:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
+		"publish:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
+		"publish:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
+		"publish:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always"
 	},
 	"repository": {
 		"type": "git",
@@ -27,10 +35,8 @@
 		"@types/react": "^16.9.11",
 		"@types/react-dom": "^16.9.4",
 		"@types/react-router-dom": "^4.3.5",
-		"electron-dl": "^1.14.0",
-		"electron-log": "^3.0.9",
-		"electron-updater": "^4.2.0",
-		"electron-util": "^0.12.3",
+		"electron": "^6.1.4",
+		"electron-builder": "^21.2.0",
 		"file-loader": "^4.2.0",
 		"npm-run-all": "^4.1.5",
 		"source-map-loader": "^0.2.4",
@@ -59,7 +65,10 @@
 		"bindings": "^1.5.0",
 		"blueimp-load-image": "^2.24.0",
 		"css-loader": "^3.2.0",
-		"electron": "^6.1.4",
+		"electron-dl": "^1.14.0",
+		"electron-log": "^3.0.9",
+		"electron-updater": "^4.2.0",
+		"electron-util": "^0.12.3",
 		"emoji-mart": "^2.11.1",
 		"file-type": "^12.4.0",
 		"fs": "0.0.1-security",
@@ -93,5 +102,65 @@
 		"sprintf-kit": "^2.0.0",
 		"style-loader": "^1.0.0",
 		"url-loader": "^2.2.0"
+	},
+	"build": {
+		"appId": "com.anytype.anytype",
+		"compression": "normal",
+		"productName": "Anytype",
+		"protocols": [
+			{
+				"name": "Anytype",
+				"role": "Editor",
+				"schemes": [
+					"anytype"
+				]
+			}
+		],
+		"asarUnpack": [
+		],
+		"extraResources": [],
+		"files": [
+			"electron.js",
+			"!dist/*",
+			"dist/index.html",
+			"dist/main.js",
+			"build"
+		],
+		"mac": {
+			"icon": "electron/icon.icns",
+			"type": "distribution",
+			"target": [
+				"dmg",
+				"zip"
+			],
+			"category": "public.app-category.productivity",
+			"artifactName": "${productName}-${version}-${env.GIT_COMMIT}-${env.DATE}.${ext}",
+			"publish": [
+				{
+					"provider": "spaces",
+					"name": "anytype",
+					"region": "ams3"
+				}
+			]
+		},
+		"win": {
+			"target": "nsis",
+			"icon": "electron/icon.ico"
+		},
+		"linux": {
+			"icon": "electron/icon.png",
+			"target": [
+				"snap",
+				"AppImage"
+			],
+			"description": "Anytype"
+		},
+		"publish": [
+			{
+				"provider": "spaces",
+				"name": "anytype",
+				"region": "ams3"
+			}
+		]
 	}
 }

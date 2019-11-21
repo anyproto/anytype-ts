@@ -14,7 +14,6 @@ interface State {
 	error: string;
 };
 
-const Config: any = require('json/config.json');
 const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
 ];
@@ -108,10 +107,11 @@ class PageAuthSetup extends React.Component<Props, State> {
 		if (!phrase) {
 			return;
 		};
-			
+		
+		let path = Storage.get('rootPath');
 		let accountId = Storage.get('accountId');
 		let request: any = { 
-			rootPath: Config.root, 
+			rootPath: path, 
 			mnemonic: phrase
 		};
 			
@@ -123,7 +123,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				authStore.phraseSet(phrase);
 				
 				request = { 
-					rootPath: Config.root,
+					rootPath: path,
 					id: accountId
 				};
 				

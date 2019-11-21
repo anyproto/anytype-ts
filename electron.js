@@ -1,7 +1,9 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { is, appMenu } = require('electron-util');
 const path = require('path');
 const os = require('os');
+const userDataPath = app.getPath('userData');
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -27,12 +29,16 @@ function createWindow () {
 	);
 	*/
 	
-	win.loadURL('http://localhost:8080');
-	//win.loadFile('dist/index.html');
-	win.toggleDevTools();
+	if (is.development) {
+		win.loadURL('http://localhost:8080');
+		win.toggleDevTools();
+	} else {
+		win.loadFile('dist/index.html');
+	};
 	
 	ipcMain.on('appLoaded', () => {
 		console.log('appLoaded');
+		win.webContents.send('userDataPath', userDataPath);
 	});
 	
 	ipcMain.on('appClose', () => {
