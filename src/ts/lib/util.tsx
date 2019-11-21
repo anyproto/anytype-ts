@@ -20,6 +20,10 @@ class Util {
 		this.icons = Object.keys(EmojiData.emojis);
 	};
 	
+	sprintf (...args: any[]) {
+		return sprintf.apply(this, args);
+	};
+	
 	toUpperCamelCase (str: string) {
 		return this.toCamelCase('_' + str);
 	};

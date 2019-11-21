@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { Page, ListPopup, ListMenu } from './component';
+import { Page, ListPopup, ListMenu, Progress } from './component';
 import { commonStore, authStore, blockStore, editorStore } from './store';
 import { dispatcher, keyboard, Storage } from 'ts/lib';
 
@@ -27,6 +27,7 @@ import 'scss/component/tag.scss';
 import 'scss/component/dragLayer.scss';
 import 'scss/component/selection.scss';
 import 'scss/component/loader.scss';
+import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 
 import 'scss/page/auth.scss';
@@ -85,6 +86,7 @@ class App extends React.Component<{}, {}> {
 					<div>
 						<ListPopup history={history} />
 						<ListMenu history={history} />
+						<Progress />
 						<div id="drag" />
 						<div id="rect" />
 						

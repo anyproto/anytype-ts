@@ -5,15 +5,15 @@ import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, Foo
 import { observer, inject } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
 
-const com = require('proto/commands.js');
-const $ = require('jquery');
-const Constant: any = require('json/constant.json');
-
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 	authStore?: any;
 	blockStore?: any;
 };
+
+const com = require('proto/commands.js');
+const $ = require('jquery');
+const Constant: any = require('json/constant.json');
 
 @inject('commonStore')
 @inject('authStore')

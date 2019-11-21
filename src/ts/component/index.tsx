@@ -30,6 +30,7 @@ import Label from './util/label';
 import Smile from './util/smile';
 import Tag from './util/tag';
 import Loader from './util/loader';
+import Progress from './util/progress';
 import SelectionProvider from './util/selection';
 
 import Dimmer from './util/dimmer';
@@ -68,6 +69,7 @@ export {
 	Select,
 	Tag,
 	Loader,
+	Progress,
 	Menu,
 	MenuItemVertical,
 	MenuItemMain,

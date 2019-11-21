@@ -9,6 +9,12 @@ class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
 	@observable public coverId: number = 0;
+	@observable public progressObj: I.Progress = null;
+	
+	@computed
+	get progress(): I.Progress {
+		return this.progressObj;
+	};
 	
 	@computed
 	get cover(): number {
@@ -29,6 +35,16 @@ class CommonStore {
 	coverSet (v: number) {
 		this.coverId = v;
 		Storage.set('cover', v);
+	};
+	
+	@action
+	progressSet (v: I.Progress) {
+		this.progressObj = v;
+	};
+	
+	@action
+	progressClear () {
+		this.progressObj = null;
 	};
 	
 	@action

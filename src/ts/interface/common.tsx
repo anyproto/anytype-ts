@@ -15,3 +15,9 @@ export interface Account {
 export enum DragItem {
 	Block = 'block',
 };
+
+export interface Progress {
+	status: string;
+	current?: number;
+	total?: number;
+};
