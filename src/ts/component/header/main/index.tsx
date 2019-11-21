@@ -38,7 +38,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 		const { commonStore, blockStore } = this.props;
 		const { root } = blockStore;
 		
-		commonStore.progressSet({ status: 'Creating page...' });
+		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
 		let block: any = {};
 		block.fields = { 
@@ -58,7 +58,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 			position: I.BlockPosition.After,
 		};
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
-			commonStore.progressClear();
+			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			commonStore.popupOpen('editorPage', {
 				data: { id: message.blockId }
 			});

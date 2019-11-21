@@ -9,7 +9,7 @@ class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
 	@observable public coverId: number = 0;
-	@observable public progressObj: I.Progress = null;
+	@observable public progressObj: I.Progress = { status: '', current: 0, total: 0 };
 	
 	@computed
 	get progress(): I.Progress {
@@ -44,7 +44,7 @@ class CommonStore {
 	
 	@action
 	progressClear () {
-		this.progressObj = null;
+		this.progressObj = { status: '', current: 0, total: 0 };
 	};
 	
 	@action
