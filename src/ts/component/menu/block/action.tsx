@@ -21,17 +21,18 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param } = this.props;
+		const { editorStore, param } = this.props;
 		const { data } = param;
 		const { content } = data;
 		const { style } = content;
+		const { range } = editorStore;
 		
 		const markActions = [
-			{ icon: 'bold', name: 'Bold' },
-			{ icon: 'italic', name: 'Italic' },
-			{ icon: 'strike', name: 'Strikethrough' },
-			{ icon: 'link', name: 'Link' },
-			{ icon: 'kbd', name: 'Code' },
+			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
+			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
+			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
+			{ type: I.MarkType.Link, icon: 'link', name: 'Link' },
+			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code' },
 		];
 		
 		let icon = '';
@@ -71,7 +72,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				<div className="section">
 					{markActions.map((action: any, i: number) => {
 						let cn = [ action.icon ];
-							
+						if (this.checkActiveMark(action.type)) {
+							cn.push('active');
+						};
 						return <Icon key={i} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action.icon); }} />;
 					})}
 				</div>
@@ -82,6 +85,22 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				</div>
 			</React.Fragment>
 		);
+	};
+	
+	checkActiveMark (type: number) {
+		const { editorStore, param } = this.props;
+		const { data } = param;
+		const { content } = data;
+		const { range } = editorStore;
+		const marks = content.marks.filter((it: I.Mark) => { return it.type == type; });
+		
+		for (let mark of marks) {
+			if (range.from >= mark.range.from && range.to <= mark.range.to) {
+				return true;
+			};
+		};
+		
+		return false;
 	};
 	
 	onClick (e: any, id: string) {

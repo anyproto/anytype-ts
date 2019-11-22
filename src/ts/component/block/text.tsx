@@ -294,7 +294,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const { focused, range } = editorStore;
 		
-		if (range && range.from && range.to && (range.from != range.to)) {
+		if (range && range.to && (range.from != range.to)) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
 			const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
