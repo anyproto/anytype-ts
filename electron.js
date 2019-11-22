@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const { is, appMenu } = require('electron-util');
 const path = require('path');
 const os = require('os');
-const userDataPath = app.getPath('userData');
+const dataPath = app.getPath('userData');
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -38,7 +38,7 @@ function createWindow () {
 	
 	ipcMain.on('appLoaded', () => {
 		console.log('appLoaded');
-		win.webContents.send('userDataPath', userDataPath);
+		win.webContents.send('dataPath', dataPath);
 	});
 	
 	ipcMain.on('appClose', () => {

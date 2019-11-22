@@ -70,11 +70,12 @@ class PageAuthLogin extends React.Component<Props, State> {
 		e.preventDefault();
 		
 		const { authStore, history } = this.props;
+		const { path } = authStore;
 		
 		this.phraseRef.setError(false);
 		
 		let request = { 
-			rootPath: Storage.get('rootPath'), 
+			rootPath: path, 
 			mnemonic: this.phraseRef.getValue()
 		};
 		

@@ -102,13 +102,13 @@ class PageAuthSetup extends React.Component<Props, State> {
 	
 	init () {
 		const { authStore, history } = this.props;
+		const { path } = authStore;
 		
 		let phrase = Storage.get('phrase');
 		if (!phrase) {
 			return;
 		};
 		
-		let path = Storage.get('rootPath');
 		let accountId = Storage.get('accountId');
 		let request: any = { 
 			rootPath: path, 

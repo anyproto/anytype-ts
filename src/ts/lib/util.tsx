@@ -17,7 +17,6 @@ class Util {
 	icons: any[] = [];
 	
 	constructor () {
-		console.log('EmojiData', EmojiData);
 		this.icons = Object.keys(EmojiData.emojis);
 	};
 	

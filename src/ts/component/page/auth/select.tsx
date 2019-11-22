@@ -59,9 +59,10 @@ class PageAuthSelect extends React.Component<Props, State> {
 	
 	onRegister (e: any) {
 		const { authStore, history } = this.props;
+		const { path } = authStore;
 		
 		let request = { 
-			rootPath: Storage.get('rootPath')
+			rootPath: path
 		};
 		
 		dispatcher.call('walletCreate', request, (errorCode: any, message: any) => {

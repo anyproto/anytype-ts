@@ -2,6 +2,7 @@ import { observable, action, computed, set } from 'mobx';
 import { I, Storage } from 'ts/lib';
 
 class AuthStore {
+	@observable public dataPath: string = '';
 	@observable public accountItem: I.Account = null;
 	@observable public accountList: I.Account[] = [];
 	@observable public pin: string = '';
@@ -17,6 +18,17 @@ class AuthStore {
 	@computed
 	get account(): I.Account {
 		return this.accountItem;
+	};
+	
+	@computed
+	get path(): string {
+		return this.dataPath || Storage.get('dataPath') || '';
+	};
+	
+	@action
+	pathSet (v: string) {
+		this.dataPath = v;
+		Storage.set('dataPath', v);
 	};
 	
 	@action

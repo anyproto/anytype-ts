@@ -5,6 +5,7 @@ import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu, Progress } from './component';
 import { commonStore, authStore, blockStore, editorStore } from './store';
 import { dispatcher, keyboard, Storage } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 
 //import i18n from 'ts/lib/i18n';
 
@@ -67,6 +68,9 @@ import 'scss/menu/dataview/tag.scss';
 import 'scss/menu/dataview/account.scss';
 
 interface RouteElement { path: string; };
+interface Props {
+	commonStore?: any;
+};
 
 const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
@@ -79,7 +83,7 @@ const rootStore = {
 	editorStore: editorStore,
 };
 
-class App extends React.Component<{}, {}> {
+class App extends React.Component<Props, {}> {
 	
 	render () {
 		return (
@@ -106,17 +110,18 @@ class App extends React.Component<{}, {}> {
 	};
 	
 	init () {
+		const phrase = Storage.get('phrase');
+		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
 		
-		ipcRenderer.on('userDataPath', (e, userDataPath) => {
-			Storage.set('rootPath', userDataPath + '/data');
+		ipcRenderer.on('dataPath', (e, dataPath) => {
+			authStore.pathSet(dataPath + '/data');
+			
+			if (phrase) {
+				history.push('/auth/setup/init');
+			};
 		});
-		
-		let phrase = Storage.get('phrase');
-		if (phrase) {
-			history.push('/auth/setup/init');
-		};
 	};
 	
 };
