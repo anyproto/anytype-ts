@@ -17,6 +17,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onMark = this.onMark.bind(this);
 		this.onBlockSwitch = this.onBlockSwitch.bind(this);
 	};
 
@@ -75,7 +76,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						if (this.checkActiveMark(action.type)) {
 							cn.push('active');
 						};
-						return <Icon key={i} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action.icon); }} />;
+						return <Icon key={i} className={cn.join(' ')} onClick={(e: any) => { this.onMark(e, action.type); }} />;
 					})}
 				</div>
 					
@@ -103,18 +104,15 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		return false;
 	};
 	
-	onClick (e: any, id: string) {
+	onMark (e: any, type: number) {
 		const { editorStore } = this.props;
 		const { range } = editorStore;
 		
-		console.log('Range', range.from, range.to);
+		console.log('Type', type, 'Range', range.from, range.to);
+		commonStore.menuClose(this.props.id);
 		
-		switch (id) {
-			default:
-				commonStore.menuClose(this.props.id);
-				break;
-			
-			case 'link':
+		switch (type) {
+			case I.MarkType.Link:
 				commonStore.popupOpen('prompt', {
 					data: {
 						placeHolder: 'Please enter URL',
@@ -127,6 +125,13 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				});
 				break;
 		};
+	};
+	
+	onClick (e: any, id: string) {
+		const { editorStore } = this.props;
+		const { range } = editorStore;
+
+		commonStore.menuClose(this.props.id);
 	};
 	
 	onBlockSwitch (e: any) {
