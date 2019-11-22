@@ -45,7 +45,7 @@ class Dispatcher {
 				
 			case 'blockShow':
 				for (let block of data.blocks) {
-					blocks.push(blockStore.prepareBlock(block));
+					blocks.push(blockStore.prepareBlockFromProto(block));
 				};
 				blockStore.blocksSet(data.rootId, blocks);
 				break;
@@ -53,7 +53,7 @@ class Dispatcher {
 			case 'blockAdd':
 				blocks = Util.objectCopy(blockStore.blocks)[data.contextId];
 				for (let block of data.blocks) {
-					blocks.push(data.contextId, blockStore.prepareBlock(block));
+					blocks.push(data.contextId, blockStore.prepareBlockFromProto(block));
 				};
 				blockStore.blocksSet(data.contextId, blocks);
 				break;
@@ -107,7 +107,6 @@ class Dispatcher {
 				
 				if (message.error.code) {
 					console.error('[Dispatcher.call] code:', message.error.code, 'description:', message.error.description);
-					return;
 				};
 				
 				callBack(errorCode, message);

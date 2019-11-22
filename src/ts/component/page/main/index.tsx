@@ -133,39 +133,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		const { blockStore } = this.props;
-		const { blocks, root } = blockStore;
-
-		let block: any = {};
-		let last = '';
-		
-		if (blocks.length) {
-			last = blocks[root][blocks.length - 1].id;
-			
-			if (last == 'testpage') {
-				last = '';
-			};
-		};
-		
-		block.fields = { 
-			icon: Util.randomSmile(), 
-			name: 'Untitled' 
-		};
-		block[I.BlockType.Page] = com.anytype.model.Block.Content.Page.create({
-			style: I.PageStyle.Empty,
-		});
-		block = com.anytype.model.Block.create(block);
-		
-		let request = {
-			block: block,
-			contextId: root,
-			parentId: root,
-			targetId: last,
-			position: I.BlockPosition.After,
-		};
-		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
-			this.resize();
-		});
 	};
 	
 	resize () {

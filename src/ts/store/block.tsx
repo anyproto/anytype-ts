@@ -2,6 +2,8 @@ import { observable, action, computed, set } from 'mobx';
 import { I, Util } from 'ts/lib';
 import arrayMove from 'array-move';
 
+const com = require('proto/commands.js');
+
 class BlockStore {
 	@observable public rootId: string = '';
 	@observable public blockObject: any = {};
@@ -98,7 +100,7 @@ class BlockStore {
 		return ret;
 	};
 	
-	prepareBlock (block: any): I.Block {
+	prepareBlockFromProto (block: any): I.Block {
 		let type = block.content.content;
 		let content = block.content[type];
 		let fields = block.fields;
@@ -160,6 +162,21 @@ class BlockStore {
 		};
 		
 		return item;
+	};
+	
+	prepareBlockToProto (data: any) {
+		let fields = {
+			fields: data.fields || {},
+		};
+		let content: any = {};
+		content[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
+		
+		let block: any = {
+			fields: com.google.protobuf.Struct.create(fields),
+			content: com.anytype.model.Block.Core.create(content),
+		};
+		
+		return com.anytype.model.Block.create(block);
 	};
 	
 };

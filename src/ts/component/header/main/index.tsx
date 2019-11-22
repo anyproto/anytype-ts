@@ -40,29 +40,33 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
-		let block: any = {};
-		block.fields = { 
-			icon: Util.randomSmile(), 
-			name: 'Untitled' 
-		};
-		block[I.BlockType.Page] = com.anytype.model.Block.Content.Page.create({
-			style: I.PageStyle.Empty,
-		});
-		block = com.anytype.model.Block.create(block);
-		
 		let request = {
-			block: block,
+			block: blockStore.prepareBlockToProto({
+				type: I.BlockType.Page,
+				fields: { 
+					icon: Util.randomSmile(), 
+					name: 'Untitled',
+				},
+				content: {
+					style: I.PageStyle.Empty,
+				},
+			}),
 			contextId: root,
 			parentId: root,
 			targetId: '',
 			position: I.BlockPosition.After,
 		};
+		
+		console.log(request);
+		
+		/*
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			commonStore.popupOpen('editorPage', {
 				data: { id: message.blockId }
 			});
 		});
+		*/
 	};
 	
 };
