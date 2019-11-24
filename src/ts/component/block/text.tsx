@@ -350,7 +350,6 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-
 		setRange(node.find('.value').get(0) as Element, { start: range.from, end: range.to });
 	};
 	

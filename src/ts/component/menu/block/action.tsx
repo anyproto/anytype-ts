@@ -106,9 +106,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	
 	onMark (e: any, type: number) {
 		const { editorStore } = this.props;
-		const { range } = editorStore;
+		const { focused, range } = editorStore;
 		
-		console.log('Type', type, 'Range', range.from, range.to);
+		console.log('type', type, 'focused', focused, 'range', range.from, range.to);
 		commonStore.menuClose(this.props.id);
 		
 		switch (type) {
@@ -118,8 +118,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						placeHolder: 'Please enter URL',
 						onChange: (v: string) => {
 							console.log('value', v);
-							
-							commonStore.menuClose(this.props.id);
 						}
 					}
 				});
