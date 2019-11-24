@@ -71,8 +71,6 @@ class Dispatcher {
 				break;
 				
 			case 'blockUpdate':
-				data.contextId = "12D3KooWEK9YDzRGVSz1uMtNP3EFV78avqDp8fMbcBLvcnk7nsGT";
-			
 				blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
 				if (!blocks.length) {
 					break;

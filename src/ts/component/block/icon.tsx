@@ -15,7 +15,7 @@ interface Props extends I.BlockMedia {
 class BlockIcon extends React.Component<Props, {}> {
 
 	render () {
-		const { commonStore, blockStore, id, rootId } = this.props;
+		const { commonStore, blockStore, rootId, id } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		
