@@ -114,7 +114,7 @@ class Util {
 	};
 	
 	randomSmile (): string {
-		return this.icons[this.rand(0, this.icons.length - 1)];
+		return ':' + this.icons[this.rand(0, this.icons.length - 1)] + ':';
 	};
 	
 	incrementBlockNumber (item: I.Block, n: number) {

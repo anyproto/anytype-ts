@@ -13,7 +13,13 @@ class Dispatcher {
 		com.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
 		this.service = com.anytype.ClientCommands.create(() => {}, false, false);
 		
-		bindings.setEventHandler((item: any) => { this.event(item); });
+		bindings.setEventHandler((item: any) => {
+			try {
+				this.event(item);
+			} catch (e) {
+				console.error(e);
+			};
+		});
 	};
 	
 	event (item: any) {
@@ -51,28 +57,38 @@ class Dispatcher {
 				break;
 			
 			case 'blockAdd':
-				blocks = Util.objectCopy(blockStore.blocks)[data.contextId];
-				for (let block of data.blocks) {
-					blocks.push(data.contextId, blockStore.prepareBlockFromProto(block));
+				blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
+				if (!blocks || !blocks.length) {
+					break;
 				};
+				
+				for (let block of data.blocks) {
+					let item = blockStore.prepareBlockFromProto(block);
+					blocks.push(item);
+				};
+				
 				blockStore.blocksSet(data.contextId, blocks);
 				break;
 				
 			case 'blockUpdate':
-				blocks = Util.objectCopy(blockStore.blocks)[data.contextId];
+				data.contextId = "12D3KooWEK9YDzRGVSz1uMtNP3EFV78avqDp8fMbcBLvcnk7nsGT";
+			
+				blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
+				if (!blocks.length) {
+					break;
+				};
 				
 				for (let item of data.changes.changes) {
-					let change: any = item.change;
-					let ids = item.id;
+					let idx = blocks.findIndex((it: any) => { return it.id == item.id; });
+					let change: any = {};
 					
-					for (let id of ids) {
-						let idx = blocks.findIndex((it: any) => { return it.id == id; });
-						if (idx >= 0) {
-							blocks[idx][change] = item[change][change];	
-						};
+					if (item.childrenIds && item.childrenIds.childrenIds) {
+						change.childrenIds = item.childrenIds.childrenIds;
 					};
+					
+					blocks[idx] = Object.assign(blocks[idx], change);
 				};
-
+				
 				blockStore.blocksSet(data.contextId, blocks);
 				break;
 				

@@ -59,9 +59,11 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 		
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
+			/*
 			commonStore.popupOpen('editorPage', {
 				data: { id: message.blockId }
 			});
+			*/
 		});
 	};
 	
