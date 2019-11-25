@@ -125,7 +125,7 @@ class Menu extends React.Component<Props, {}> {
 				return;
 			};
 
-			const el = $('#' + element);
+			const el = $('#' + $.escapeSelector(element));
 			if (!el.length) {
 				console.error('[Menu.position] element not found', element);
 				return;

@@ -69,7 +69,7 @@ class CommonStore {
 			item.param.onClose();
 		};
 		
-		const el = $('#' + Util.toCamelCase('popup-' + id));
+		const el = $('#' + $.escapeSelector(Util.toCamelCase('popup-' + id)));
 		const dimmer = $('#dimmer');
 		
 		if (el.length) {
@@ -126,7 +126,7 @@ class CommonStore {
 			item.param.onClose();
 		};
 		
-		const el = $('#' + Util.toCamelCase('menu-' + id));
+		const el = $('#' + $.escapeSelector(Util.toCamelCase('menu-' + id)));
 		if (el.length) {
 			el.css({ transform: '' }).removeClass('show');
 		};

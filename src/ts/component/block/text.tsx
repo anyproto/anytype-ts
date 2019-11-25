@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, keyboard, Util } from 'ts/lib';
+import { I, keyboard, Util, dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import 'highlight.js/styles/github.css';
@@ -24,6 +24,7 @@ interface State {
 	checked: boolean;
 };
 
+const com = require('proto/commands.js');
 const { ipcRenderer } = window.require('electron');
 const low = window.require('lowlight');
 const rehype = require('rehype');
@@ -42,6 +43,7 @@ class BlockText extends React.Component<Props, {}> {
 		checked: false
 	};
 	range: any = null;
+	timeoutKeyUp: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -207,6 +209,13 @@ class BlockText extends React.Component<Props, {}> {
 		});
 	};
 	
+	getValue () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('.value');
+		
+		return String(value.text());
+	};
+	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -257,6 +266,28 @@ class BlockText extends React.Component<Props, {}> {
 		
 		this.placeHolderCheck();
 		onKeyUp(e);
+		
+		window.clearTimeout(this.timeoutKeyUp);
+		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdate(); }, 500);
+	};
+	
+	blockUpdate () {
+		const { blockStore, onKeyUp, id, rootId } = this.props;
+		const { blocks } = blockStore;
+		
+		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+		
+		block.content.text = this.getValue();
+		
+		let request = {
+			contextId: rootId,
+			changes: com.anytype.Changes.create({
+				changes: blockStore.prepareBlockToProto(block)
+			}),
+		};
+			
+		dispatcher.call('blockUpdate', request, (errorCode: any, message: any) => {
+		});
 	};
 	
 	onFocus (e: any) {

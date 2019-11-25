@@ -176,6 +176,10 @@ class BlockStore {
 			content: com.anytype.model.Block.Core.create(content),
 		};
 		
+		if (data.id) {
+			block.id = data.id;
+		};
+		
 		return com.anytype.model.Block.create(block);
 	};
 	

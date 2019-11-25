@@ -31,6 +31,8 @@ const THROTTLE = 20;
 class Block extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	refObj: any = {};
+	refComponent: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -56,7 +58,7 @@ class Block extends React.Component<Props, {}> {
 		let canDrop = true;
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
-		let BlockComponent: React.ReactType<{}>;
+		let BlockComponent: any = null;
 		let ColResize: React.ReactType<{ index: number }> = () => null;
 		let css: any = {
 			width: (fields.width || 1) * 100 + '%'
@@ -70,7 +72,9 @@ class Block extends React.Component<Props, {}> {
 					cn.push('canToggle');
 				};
 				
-				BlockComponent = () => <BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
+				BlockComponent = () => (
+					<BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />
+				);
 				break;
 				
 			case I.BlockType.Layout:
@@ -86,12 +90,14 @@ class Block extends React.Component<Props, {}> {
 					);
 				};
 				
-				BlockComponent = () => null;
+				BlockComponent = (): any => null;
 				break;
 				
 			case I.BlockType.Image:
 				cn.push('blockImage');
-				BlockComponent = BlockImage;
+				BlockComponent = () => (
+					<BlockImage ref={(ref: any) => { this.refComponent = ref; }} {...this.props} />
+				);
 				break;
 				
 			case I.BlockType.Icon:
@@ -151,7 +157,7 @@ class Block extends React.Component<Props, {}> {
 						return (
 							<React.Fragment key={item.id}>
 								{i > 0 ? <ColResize index={i} /> : ''}
-								<Child {...this.props} {...item} width={fields.width || 1} number={n} index={i} />
+								<Child ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} width={fields.width || 1} number={n} index={i} />
 							</React.Fragment>
 						);
 					})}
@@ -262,6 +268,9 @@ class Block extends React.Component<Props, {}> {
 		
 		prevNode.css({ width: (res.percent * res.sum * 100) + '%' });
 		currentNode.css({ width: ((1 - res.percent) * res.sum * 100) + '%' });
+		
+		this.callChildMethod(prevBlock.id, 'resize');
+		this.callChildMethod(currentBlock.id, 'resize');
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
@@ -329,6 +338,20 @@ class Block extends React.Component<Props, {}> {
 		node.find('.colResize.active').removeClass('active');
 		if (num) {
 			node.find('.colResize.c' + num).addClass('active');
+		};
+	};
+	
+	callChildMethod (id: string, method: string, args?: any[]) {
+		console.log(1, id, this.refObj[id]);
+		if (this.refObj[id]) {
+			console.log(2, this.refObj[id].refComponent);	
+		};
+		if (this.refObj[id].refComponent) {
+			console.log(3, this.refObj[id].refComponent[method]);			
+		};
+		if (this.refObj[id] && this.refObj[id].refComponent && this.refObj[id].refComponent[method]) {
+			this.refObj[id].refComponent[method].apply(this.refObj[id].refComponent, args);
+			console.log('resizeing');
 		};
 	};
 	

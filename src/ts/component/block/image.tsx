@@ -36,6 +36,7 @@ class BlockImage extends React.Component<Props, {}> {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -199,6 +200,19 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		node.removeClass('isResizing');
+	};
+	
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const image = node.find('.img');
+		const { size } = this.state;
+		
+		let width = this.checkWidth(size.width);
+		let height = width / size.div;
+		
+		console.log(width, height);
+		
+		image.css({ width: width, height: height });
 	};
 	
 	unbind () {
