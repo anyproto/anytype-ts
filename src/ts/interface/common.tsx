@@ -1,5 +1,9 @@
 export enum ImageSize { Large, Small, Thumb };
 
+export interface Avatar {
+	image: Image;
+};
+
 export interface Image {
 	id: string;
 	sizes: ImageSize[];

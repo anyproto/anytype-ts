@@ -213,7 +213,7 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		
-		return String(value.text());
+		return String(value.text() || '');
 	};
 	
 	componentWillUnmount () {
@@ -272,22 +272,28 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	blockUpdate () {
-		const { blockStore, onKeyUp, id, rootId } = this.props;
+		const { blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
 		
 		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+		let value = this.getValue();
+		let text = String(block.content.text || '');
 		
-		block.content.text = this.getValue();
+		if (value == text) {
+			return;
+		};
+		
+		let change = Util.objectCopy(block);
+		change.content.text = this.getValue();
 		
 		let request = {
 			contextId: rootId,
 			changes: com.anytype.Changes.create({
-				changes: blockStore.prepareBlockToProto(block)
+				changes: blockStore.prepareBlockToProto(change),
 			}),
 		};
 			
-		dispatcher.call('blockUpdate', request, (errorCode: any, message: any) => {
-		});
+		dispatcher.call('blockUpdate', request, (errorCode: any, message: any) => {});
 	};
 	
 	onFocus (e: any) {

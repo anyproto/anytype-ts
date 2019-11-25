@@ -11,6 +11,7 @@ interface Props {
 	canEdit?: boolean;
 	offsetX?: number;
 	offsetY?: number;
+	onSelect?(id: string): void;
 };
 
 interface State {
@@ -55,7 +56,7 @@ class Smile extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any) {
-		const { id, canEdit, offsetX, offsetY } = this.props;
+		const { id, canEdit, offsetX, offsetY, onSelect } = this.props;
 		
 		if (!id || !canEdit) {
 			return;
@@ -71,6 +72,7 @@ class Smile extends React.Component<Props, State> {
 			data: {
 				onSelect: (item: any) => {
 					this.setState({ icon: item.colons });
+					onSelect(item.colons);
 				}
 			}
 		});

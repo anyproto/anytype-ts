@@ -14,6 +14,7 @@ interface State {
 	error: string;
 };
 
+const com = require('proto/commands.js');
 const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
 ];
@@ -147,7 +148,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		
 		let request = { 
 			name: authStore.name, 
-			avatar: authStore.icon 
+			avatarLocalPath: authStore.icon 
 		};
 		
 		dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {

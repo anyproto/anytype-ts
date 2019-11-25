@@ -42,7 +42,7 @@ class MenuAccount extends React.Component<Props, {}> {
 		return (
 			<div className="items">
 				{accounts.map((item: I.Account, i: number) => (
-					<Item key={item.id} {...item} />
+					<Item key={i} {...item} />
 				))}
 				
 				<div className="item add" onClick={this.onAdd}>

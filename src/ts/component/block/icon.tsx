@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Smile } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, dispatcher, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockMedia {
@@ -9,10 +9,18 @@ interface Props extends I.BlockMedia {
 	rootId: string;
 };
 
+const com = require('proto/commands.js');
+
 @inject('commonStore')
 @inject('blockStore')
 @observer
 class BlockIcon extends React.Component<Props, {}> {
+
+	constructor (props: any) {
+		super(props);
+		
+		this.onSelect = this.onSelect.bind(this);
+	};
 
 	render () {
 		const { commonStore, blockStore, rootId, id } = this.props;
@@ -28,9 +36,32 @@ class BlockIcon extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<Smile id={'block-icon-' + id} canEdit={true} size={24} icon={name} offsetX={52} offsetY={-48} className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+				<Smile id={'block-icon-' + id} canEdit={true} size={24} icon={name} offsetX={52} offsetY={-48} onSelect={this.onSelect} className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 			</React.Fragment>
 		);
+	};
+	
+	onSelect (icon: string) {
+		const { blockStore, id, rootId } = this.props;
+		const { blocks } = blockStore;
+		
+		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+		
+		if (icon == block.fields.icon) {
+			return;
+		};
+		
+		let change = Util.objectCopy(block);
+		change.fields.icon = icon;
+		
+		let request = {
+			contextId: rootId,
+			changes: com.anytype.Changes.create({
+				changes: blockStore.prepareBlockToProto(change),
+			}),
+		};
+		
+		dispatcher.call('blockUpdate', request, (errorCode: any, message: any) => {});
 	};
 	
 };

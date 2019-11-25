@@ -1,4 +1,4 @@
-import { ImageSize, Image, Account, DragItem, Progress } from './common';
+import { ImageSize, Avatar, Image, Account, DragItem, Progress } from './common';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
@@ -26,7 +26,8 @@ import { TextStyle, MarkerType, MarkType, TextRange, Mark, ContentText, BlockTex
 import { ContentUploadState, ContentMedia, BlockMedia } from './block/media';
 
 export {
-	ImageSize, 
+	ImageSize,
+	Avatar, 
 	Image, 
 	Account,
 	DragItem,

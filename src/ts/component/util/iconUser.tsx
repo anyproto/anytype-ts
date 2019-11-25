@@ -8,7 +8,7 @@ interface Props {
 	color?: string;
 	icon?: string;
 	className?: string;
-	avatar?: I.Image;
+	avatar?: I.Avatar;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -66,8 +66,12 @@ class IconUser extends React.Component<Props, State> {
 	
 	load () {
 		const { avatar } = this.props;
+		if (!avatar) {
+			return;
+		};
 		
-		if (!avatar || !avatar.id) {
+		const { image } = avatar;
+		if (!image || !image.id) {
 			return;
 		};
 		
@@ -75,7 +79,7 @@ class IconUser extends React.Component<Props, State> {
 			this.setState({ icon: 'data:image/jpeg;base64,' + s });
 		};
 		
-		let key = [ 'image', avatar.id, I.ImageSize.Large ].join('.');
+		let key = [ 'image', image.id, I.ImageSize.Large ].join('.');
 		let s = cache.get(key);
 			
 		if (s) {
@@ -84,7 +88,7 @@ class IconUser extends React.Component<Props, State> {
 		};
 			
 		let request = {
-			id: avatar.id,
+			id: image.id,
 			size: I.ImageSize.Large
 		};
 			
