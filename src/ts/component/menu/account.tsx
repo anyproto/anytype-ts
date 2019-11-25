@@ -5,10 +5,14 @@ import { I, dispatcher } from 'ts/lib';
 
 interface Props extends I.Menu {
 	history: any;
+	commonStore?: any;
 	authStore?: any;
+	blockStore?: any;
 };
 
+@inject('commonStore')
 @inject('authStore')
+@inject('blockStore')
 @observer
 class MenuAccount extends React.Component<Props, {}> {
 	
@@ -57,6 +61,16 @@ class MenuAccount extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, id: string) {
+		const { blockStore, commonStore } = this.props;
+		
+		commonStore.menuClose(this.props.id);
+		
+		dispatcher.call('accountSelect', { id: id }, (errorCode: any, message: any) => {
+			dispatcher.call('configGet', {}, (errorCode: any, message: any) => {
+				blockStore.rootSet(message.homeBlockId);
+				dispatcher.call('blockOpen', { id: message.homeBlockId }, (errorCode: any, message: any) => {});
+			});
+		});
 	};
 	
 	onAdd (e: any) {
