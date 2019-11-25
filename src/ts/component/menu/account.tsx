@@ -55,9 +55,12 @@ class MenuAccount extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		const { authStore } = this.props;
+		const { accounts } = authStore;
 		
-		authStore.accountClear();
-		dispatcher.call('accountRecover', {}, (errorCode: any, message: any) => {});
+		if (!accounts.length) {
+			authStore.accountClear();
+			dispatcher.call('accountRecover', {}, (errorCode: any, message: any) => {});			
+		};
 	};
 	
 	onSelect (e: any, id: string) {

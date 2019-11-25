@@ -21,6 +21,8 @@ interface State {
 
 class IconUser extends React.Component<Props, State> {
 	
+	_isMounted: boolean = false;
+	
 	public static defaultProps = {
         color: 'grey'
     };
@@ -61,7 +63,12 @@ class IconUser extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
 		this.load();
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 	
 	load () {
@@ -93,7 +100,7 @@ class IconUser extends React.Component<Props, State> {
 		};
 			
 		dispatcher.call('imageGetBlob', request, (errorCode: any, message: any) => {
-			if (message.error.code) {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
