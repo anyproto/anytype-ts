@@ -1,5 +1,6 @@
 import { I } from 'ts/lib';
 
+const $ = require('jquery');
 const loadImage = window.require('blueimp-load-image');
 const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
@@ -229,7 +230,14 @@ class Util {
 		};
 		return v;
 	};
+	
+	scrollTop (top: number) {
+		$('html, body').stop().animate({ scrollTop: top }, 300, 'swing');	
+	};
 		
+	scrollTopEnd () {
+		this.scrollTop($(document).height() - $(window).height());
+	};
 };
 
 export default new Util();
