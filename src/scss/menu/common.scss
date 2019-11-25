@@ -55,6 +55,41 @@
 		.icon.trash { width: 16px; height: 16px; background-image: url('~img/icon/menu/trash.svg'); }
 		
 		.name { display: inline-block; vertical-align: middle; }
+		
+		.item:hover, .item.active {
+			.icon.copy { background-image: url('~img/icon/menu/action/copy1.svg'); }
+			.icon.undo { background-image: url('~img/icon/menu/action/undo1.svg'); }
+			.icon.redo { background-image: url('~img/icon/menu/action/redo1.svg'); }
+			.icon.remove { background-image: url('~img/icon/menu/action/remove1.svg'); }
+			.icon.restore { background-image: url('~img/icon/menu/action/restore1.svg'); }
+			.icon.move { background-image: url('~img/icon/menu/action/move1.svg'); }
+			.icon.download { background-image: url('~img/icon/menu/action/download1.svg'); }
+			.icon.replace { background-image: url('~img/icon/menu/action/replace1.svg'); }
+			
+			.icon.newPage { background-image: url('~img/icon/menu/add/newPage1.svg'); }
+			.icon.page { background-image: url('~img/icon/menu/add/page1.svg'); }
+			.icon.url { background-image: url('~img/icon/menu/add/page1.svg'); }
+			.icon.image { background-image: url('~img/icon/menu/add/image1.svg'); }
+			.icon.video { background-image: url('~img/icon/menu/add/video1.svg'); }
+			.icon.bookMark { background-image: url('~img/icon/menu/add/bookMark1.svg'); }
+			.icon.file { background-image: url('~img/icon/menu/add/file1.svg'); }
+			.icon.div { background-image: url('~img/icon/menu/add/div1.svg'); }
+			
+			.icon.p { background-image: url('~img/icon/menu/action/block/p1.svg'); }
+			.icon.code { background-image: url('~img/icon/menu/action/block/code1.svg'); }
+			.icon.h2 { background-image: url('~img/icon/menu/action/block/h21.svg'); }
+			.icon.h3 { background-image: url('~img/icon/menu/action/block/h31.svg'); }
+			.icon.h4 { background-image: url('~img/icon/menu/action/block/h41.svg'); }
+			.icon.ol { background-image: url('~img/icon/menu/action/block/ol1.svg'); }
+			.icon.ul { background-image: url('~img/icon/menu/action/block/ul1.svg'); }
+			.icon.quote { background-image: url('~img/icon/menu/action/block/quote1.svg'); }
+			.icon.toggle { background-image: url('~img/icon/menu/action/block/toggle1.svg'); }
+			.icon.checkbox { background-image: url('~img/icon/menu/action/block/checkbox1.svg'); }
+			
+			.icon.chat { background-image: url('~img/icon/menu/help/chat1.svg'); }
+			.icon.feature { background-image: url('~img/icon/menu/help/feature1.svg'); }
+			.icon.community { background-image: url('~img/icon/menu/help/community1.svg'); }
+		}
 	}
 	
 	.menu.horizontal {

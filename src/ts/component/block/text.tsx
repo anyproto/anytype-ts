@@ -169,9 +169,11 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const { checked } = content;
+		const { checkable, checked } = content;
 		
-		this.setState({ checked: checked });
+		if (checkable) {
+			this.setState({ checked: checked });	
+		};
 		this.setValue();
 	};
 	
@@ -179,8 +181,8 @@ class BlockText extends React.Component<Props, {}> {
 		const { editorStore } = this.props;
 		const { focused, range } = editorStore;
 		
-		this.rangeApply(focused, range);
 		this.setValue();
+		this.rangeApply(focused, range);
 	};
 	
 	setValue () {

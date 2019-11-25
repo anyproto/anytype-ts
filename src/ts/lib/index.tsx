@@ -4,6 +4,7 @@ import { cache } from './cache';
 import Storage from './storage';
 import Util from './util';
 import * as I from 'ts/interface';
+import { StructDecode, StructEncode } from './struct';
 
 const lang = require('json/lang.json');
 const translate = (key: string): string => {
@@ -19,4 +20,6 @@ export {
 	Util,
 	I,
 	translate,
+	StructDecode, 
+	StructEncode,
 };

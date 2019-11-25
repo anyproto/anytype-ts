@@ -1,5 +1,5 @@
 import { observable, action, computed, set } from 'mobx';
-import { I, Util } from 'ts/lib';
+import { I, Util, StructDecode, StructEncode  } from 'ts/lib';
 import arrayMove from 'array-move';
 
 const com = require('proto/commands.js');
@@ -116,15 +116,7 @@ class BlockStore {
 		};
 		
 		if (fields) {
-			for (let i in fields.fields) {
-				let field = fields.fields[i];
-				if (field.numberValue) {
-					item.fields[i] = field.numberValue;
-				};
-				if (field.stringValue) {
-					item.fields[i] = field.stringValue;
-				};
-			};
+			item.fields = StructDecode.decodeStruct(fields);
 		};
 		
 		if (content) {
@@ -165,14 +157,13 @@ class BlockStore {
 	};
 	
 	prepareBlockToProto (data: any) {
-		let fields = {
-			fields: data.fields || {},
-		};
+		let fields = (new StructEncode()).encodeStruct(data.fields || {});
 		let content: any = {};
+		
 		content[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
 		
 		let block: any = {
-			fields: com.google.protobuf.Struct.create(fields),
+			fields: fields,
 			content: com.anytype.model.Block.Core.create(content),
 		};
 		

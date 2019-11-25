@@ -140,12 +140,11 @@ class Dispatcher {
 			let message = null;
 			try {
 				message = outputObj.decode(item.data);
+				if (message) {
+					callBack(message);
+				};
 			} catch (err) {
-				console.log(err);
-			};
-			
-			if (message) {
-				callBack(message);
+				console.error(err);
 			};
 		});
 	};

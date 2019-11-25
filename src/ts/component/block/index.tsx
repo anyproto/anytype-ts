@@ -48,6 +48,7 @@ class Block extends React.Component<Props, {}> {
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -265,12 +266,14 @@ class Block extends React.Component<Props, {}> {
 		const currentBlock = childBlocks[index];
 		const currentNode = node.find('#block-' + currentBlock.id);
 		const res = this.calcWidth(e.pageX - offset, index);
+		const w1 = res.percent * res.sum;
+		const w2 = (1 - res.percent) * res.sum;
 		
-		prevNode.css({ width: (res.percent * res.sum * 100) + '%' });
-		currentNode.css({ width: ((1 - res.percent) * res.sum * 100) + '%' });
+		prevNode.css({ width: w1 * 100 + '%' });
+		currentNode.css({ width: w2 * 100 + '%' });
 		
-		this.callChildMethod(prevBlock.id, 'resize');
-		this.callChildMethod(currentBlock.id, 'resize');
+		this.callChildMethod(prevBlock.id, 'resize', [ w1 ]);
+		this.callChildMethod(currentBlock.id, 'resize', [ w2 ]);
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
@@ -342,16 +345,19 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	callChildMethod (id: string, method: string, args?: any[]) {
-		console.log(1, id, this.refObj[id]);
-		if (this.refObj[id]) {
-			console.log(2, this.refObj[id].refComponent);	
+		if (this.refObj[id] && this.refObj[id][method]) {
+			this.refObj[id][method].apply(this.refObj[id], args);
 		};
-		if (this.refObj[id].refComponent) {
-			console.log(3, this.refObj[id].refComponent[method]);			
+	};
+	
+	resize (width: number) {
+		if (this.refComponent && this.refComponent.resize) {
+			this.refComponent.resize(width);
 		};
-		if (this.refObj[id] && this.refObj[id].refComponent && this.refObj[id].refComponent[method]) {
-			this.refObj[id].refComponent[method].apply(this.refObj[id].refComponent, args);
-			console.log('resizeing');
+		for (let id in this.refObj) {
+			if (this.refObj[id].refComponent && this.refObj[id].refComponent.resize) {
+				this.refObj[id].refComponent.resize(width);
+			};
 		};
 	};
 	

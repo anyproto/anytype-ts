@@ -202,15 +202,13 @@ class BlockImage extends React.Component<Props, {}> {
 		node.removeClass('isResizing');
 	};
 	
-	resize () {
+	resize (w: number) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const image = node.find('.img');
 		const { size } = this.state;
 		
-		let width = this.checkWidth(size.width);
+		let width = this.checkWidth((Constant.size.editorPage - Constant.size.blockMenu) * w);
 		let height = width / size.div;
-		
-		console.log(width, height);
 		
 		image.css({ width: width, height: height });
 	};

@@ -69,13 +69,29 @@ class EditorPage extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { blockStore, rootId } = this.props;
+		const { blockStore, editorStore, rootId } = this.props;
 		const win = $(window);
 		
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		
 		dispatcher.call('blockOpen', { id: rootId }, (errorCode: any, message: any) => {});
+	};
+	
+	componentDidUpdate () {
+		const { blockStore, editorStore, rootId } = this.props;
+		const { blocks } = blockStore;
+		const { focused } = editorStore;
+		
+		const focusedBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.id == focused; });
+		const firstBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.type == I.BlockType.Text; });
+		
+		if (!focusedBlock && firstBlock) {
+			let text = String(firstBlock.content.text || '');
+			let length = text.length;
+			
+			editorStore.rangeSave(firstBlock.id, { from: length, to: length });
+		};
 	};
 	
 	componentWillUnmount () {
@@ -223,7 +239,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockCreate (focused: I.Block) {
-		const { blockStore, rootId } = this.props;
+		const { blockStore, editorStore, rootId } = this.props;
 		
 		let request = {
 			block: blockStore.prepareBlockToProto({
@@ -238,6 +254,7 @@ class EditorPage extends React.Component<Props, {}> {
 			position: I.BlockPosition.After,
 		};
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
+			editorStore.rangeSave(message.blockId, { from: 0, to: 0 });
 		});
 	};
 	
