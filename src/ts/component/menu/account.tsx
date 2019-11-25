@@ -25,10 +25,10 @@ class MenuAccount extends React.Component<Props, {}> {
 	
 	render () {
 		const { authStore } = this.props;
-		const { accounts } = authStore;
+		const { account, accounts } = authStore;
 		
 		const Item = (item: any) => (
-			<div className={'item ' + (item.index == 0 ? 'active' : '')} onClick={(e) => { this.onSelect(e, item.id); }}>
+			<div className={'item ' + (item.id == account.id ? 'active' : '')} onClick={(e) => { this.onSelect(e, item.id); }}>
 				<IconUser className="c40" {...item} />
 				<div className="info">
 					<div className="name">{item.name}</div>
@@ -42,7 +42,7 @@ class MenuAccount extends React.Component<Props, {}> {
 		return (
 			<div className="items">
 				{accounts.map((item: I.Account, i: number) => (
-					<Item key={item.id} {...item} index={i} />
+					<Item key={item.id} {...item} />
 				))}
 				
 				<div className="item add" onClick={this.onAdd}>
@@ -61,15 +61,21 @@ class MenuAccount extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, id: string) {
-		const { blockStore, commonStore } = this.props;
+		const { blockStore, commonStore, authStore } = this.props;
 		
 		commonStore.menuClose(this.props.id);
 		
 		dispatcher.call('accountSelect', { id: id }, (errorCode: any, message: any) => {
-			dispatcher.call('configGet', {}, (errorCode: any, message: any) => {
-				blockStore.rootSet(message.homeBlockId);
-				dispatcher.call('blockOpen', { id: message.homeBlockId }, (errorCode: any, message: any) => {});
-			});
+			if (message.error.code) {
+			} else
+			if (message.account) {
+				authStore.accountSet(message.account);
+				
+				dispatcher.call('configGet', {}, (errorCode: any, message: any) => {
+					blockStore.rootSet(message.homeBlockId);
+					dispatcher.call('blockOpen', { id: message.homeBlockId }, (errorCode: any, message: any) => {});
+				});
+			};
 		});
 	};
 	
