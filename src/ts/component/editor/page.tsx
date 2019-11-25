@@ -29,6 +29,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	timeoutHover: number = 0;
+	hovered: string =  '';
 
 	constructor (props: any) {
 		super(props);
@@ -36,6 +37,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 
 	render () {
@@ -48,7 +50,7 @@ class EditorPage extends React.Component<Props, {}> {
 		return (
 			<div className="editor">
 				<div className="blocks">
-					<Icon id="add" className="add" />
+					<Icon id="add" className="add" onClick={this.onAdd} />
 				
 					{tree.map((item: I.Block, i: number) => { 
 						n = Util.incrementBlockNumber(item, n);
@@ -125,7 +127,8 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 		
 		if (hovered) {
-			rect = (hovered.get(0) as Element).getBoundingClientRect() as DOMRect; 
+			rect = (hovered.get(0) as Element).getBoundingClientRect() as DOMRect;
+			this.hovered = hovered.data('id');
 		};
 		
 		let { x, y, width, height } = rect;
@@ -203,18 +206,32 @@ class EditorPage extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 	};
 	
-	blockCreate (focused: I.Block) {
-		const { editorStore, rootId } = this.props;
-		const { range } = editorStore;
+	onAdd (e: any) {
+		if (!this.hovered) {
+			return;
+		};
 		
-		let block: any = {};
-		block[I.BlockType.Text] = com.anytype.model.Block.Content.Text.create({
-			style: I.TextStyle.Paragraph
-		});
-		block = com.anytype.model.Block.create(block);
-			
+		const { blockStore, editorStore, rootId } = this.props;
+		const { blocks } = blockStore;
+		
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == this.hovered; });
+		if (!block) {
+			return;
+		};
+		
+		this.blockCreate(block);
+	};
+	
+	blockCreate (focused: I.Block) {
+		const { blockStore, rootId } = this.props;
+		
 		let request = {
-			block: block,
+			block: blockStore.prepareBlockToProto({
+				type: I.BlockType.Text,
+				content: {
+					style: I.TextStyle.Paragraph,
+				},
+			}),
 			contextId: rootId,
 			parentId: focused.parentId || rootId,
 			targetId: focused.id,

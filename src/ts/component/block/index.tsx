@@ -160,7 +160,7 @@ class Block extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<div id={'block-' + id} className={cn.join(' ')} style={css}>
+			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="id tag red">{id}</div>
 				{wrapMenu}
 				{wrapContent}
