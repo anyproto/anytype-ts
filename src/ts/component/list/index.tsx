@@ -29,7 +29,7 @@ class ListIndex extends React.Component<Props, {}> {
 		const { blockStore, onSelect, onAdd, helperContainer, rootId } = this.props;
 		const { blocks } = blockStore;
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
-		//const length = blocks.length;
+		const length = blocks.length;
 		
 		const Item = SortableElement((item: any) => {
 			return (

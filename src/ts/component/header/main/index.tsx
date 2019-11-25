@@ -8,6 +8,7 @@ interface Props {
 	blockStore?: any;
 };
 
+const $ = require('jquery');
 const com = require('proto/commands.js');
 
 @inject('commonStore')
@@ -64,6 +65,9 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 				data: { id: message.blockId }
 			});
 			*/
+			
+			let top = $(document).height() - $(window).height();
+			$('html, body').stop().animate({ scrollTop: top }, 300, 'swing');
 		});
 	};
 	
