@@ -68,11 +68,13 @@ class BlockText extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const { fields, content } = block;
-		const { text, marks, style, marker, toggleable, checkable } = content;
-		const { lang } = fields;
-		
+		let { fields, content } = block;
+		let { text, marks, style, marker, toggleable, checkable } = content;
+		let { lang } = fields;
 		let markers: any[] = [];
+		let placeHolder = 'Type anything...';
+		let cn = [ 'flex' ];
+		
 		if (marker) {
 			markers.push({ type: marker, className: 'bullet c' + marker, active: false, onClick: () => {} });
 		};
@@ -104,9 +106,6 @@ class BlockText extends React.Component<Props, {}> {
 			</div>
 		);
 		
-		let placeHolder = <span className="placeHolder">Type anything...</span>;
-		let cn = [ 'flex' ];
-		
 		switch (style) {
 			default:
 			case I.TextStyle.Paragraph:
@@ -115,6 +114,7 @@ class BlockText extends React.Component<Props, {}> {
 				
 			case I.TextStyle.Title:
 				cn.push('title');
+				placeHolder = Constant.untitled;
 				break;
 				
 			case I.TextStyle.Header1:
@@ -150,7 +150,7 @@ class BlockText extends React.Component<Props, {}> {
 					))}
 				</div>
 				<div className="wrap">
-					{placeHolder}
+					<span className="placeHolder">{placeHolder}</span>
 					{editor}
 				</div>
 			</div>
@@ -190,11 +190,16 @@ class BlockText extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		const { fields, content } = block;
-		const { text, style, marks } = content;
 		const { lang } = fields;
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
+		
+		let { text, style, marks } = content;
+		
+		if ((style == I.TextStyle.Title) && (text == Constant.untitled)) {
+			text = '';
+		};
 		
 		let html = '';
 		if (style == I.TextStyle.Code) {

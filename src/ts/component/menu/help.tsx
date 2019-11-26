@@ -9,8 +9,8 @@ interface Props extends I.Menu {
 };
 
 const { ipcRenderer } = window.require('electron');
-const Url: any = require('json/url.json');
-const Config: any = require('json/config.json');
+const Url = require('json/url.json');
+const Constant = require('json/constant.json');
 
 @inject('authStore')
 @observer
@@ -47,7 +47,7 @@ class MenuHelp extends React.Component<Props, {}> {
 		switch (id) {
 			case 'chat':
 				let param: any = {
-					app_id: Config.intercom,
+					app_id: Constant.intercom,
 					user_id: 'blank'
 				};
 				if (account) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Label } from 'ts/component';
-import { dispatcher, I, cache } from 'ts/lib';
+import { dispatcher, I, Util, cache } from 'ts/lib';
 
 interface Props {
 	name?: string;
@@ -9,6 +9,8 @@ interface Props {
 	icon?: string;
 	className?: string;
 	avatar?: I.Avatar;
+	tooltip?: string;
+	tooltipY?: I.MenuDirection;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -19,13 +21,16 @@ interface State {
 	icon: string;
 };
 
+const $ = require('jquery');
+
 class IconUser extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	
 	public static defaultProps = {
-        color: 'grey'
-    };
+		color: 'grey',
+		tooltipY: I.MenuDirection.Bottom,
+	};
 
 	state = {
 		icon: '',
@@ -33,10 +38,14 @@ class IconUser extends React.Component<Props, State> {
 
 	constructor (props: any) {
 		super(props);
+		
+		this.onMouseDown = this.onMouseDown.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
-		const { className, name, color, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
+		const { className, name, color, onClick } = this.props;
 		
 		let icon = this.state.icon || this.props.icon || '';
 		let cn = [ 'icon', 'user' ];
@@ -55,7 +64,7 @@ class IconUser extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div onMouseDown={onMouseDown} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} className={cn.join(' ')}>
+			<div onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} className={cn.join(' ')}>
 				<div className="image" style={style} />
 				<div className="txt">{this.shortName(text)}</div>
 			</div>
@@ -69,6 +78,7 @@ class IconUser extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		Util.tooltipHide();
 	};
 	
 	load () {
@@ -115,6 +125,39 @@ class IconUser extends React.Component<Props, State> {
 			return '';
 		};
 		return s.trim().substr(0, 1);
+	};
+	
+	onMouseEnter (e: any) {
+		const { tooltip, tooltipY, onMouseEnter } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (tooltip) {
+			Util.tooltipShow(tooltip, node, tooltipY);
+		};
+		
+		if (onMouseEnter) {
+			onMouseEnter(e);
+		};
+	};
+	
+	onMouseLeave (e: any) {
+		const { onMouseLeave } = this.props;
+		
+		Util.tooltipHide();
+		
+		if (onMouseLeave) {
+			onMouseLeave(e);
+		};
+	};
+	
+	onMouseDown (e: any) {
+		const { onMouseDown } = this.props;
+		
+		Util.tooltipHide();
+		
+		if (onMouseDown) {
+			onMouseDown(e);
+		};
 	};
 	
 };

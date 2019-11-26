@@ -52,6 +52,10 @@ class Icon extends React.Component<Props, {}> {
 		);
 	};
 	
+	componentWillUnmount () {
+		Util.tooltipHide();
+	};
+	
 	onMouseEnter (e: any) {
 		const { tooltip, tooltipY, onMouseEnter } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));

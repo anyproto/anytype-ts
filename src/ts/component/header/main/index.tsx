@@ -9,6 +9,7 @@ interface Props {
 };
 
 const com = require('proto/commands.js');
+const Constant = require('json/constant.json');
 
 @inject('commonStore')
 @inject('blockStore')
@@ -45,7 +46,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 				type: I.BlockType.Page,
 				fields: { 
 					icon: Util.randomSmile(), 
-					name: 'Untitled',
+					name: Constant.untitled,
 				},
 				content: {
 					style: I.PageStyle.Empty,
