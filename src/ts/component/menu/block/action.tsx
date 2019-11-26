@@ -76,7 +76,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						if (this.checkActiveMark(action.type)) {
 							cn.push('active');
 						};
-						return <Icon key={i} className={cn.join(' ')} onClick={(e: any) => { this.onMark(e, action.type); }} />;
+						return <Icon key={i} className={cn.join(' ')} tooltip={action.name} tooltipY={I.MenuDirection.Bottom} onClick={(e: any) => { this.onMark(e, action.type); }} />;
 					})}
 				</div>
 					

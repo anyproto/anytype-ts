@@ -1,21 +1,30 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { I, Util } from 'ts/lib';
 
 interface Props {
 	id?: string;
 	icon?: string;
 	className?: string;
 	arrow?: boolean;
+	tooltip?: string;
+	tooltipY?: I.MenuDirection;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 };
 
+const $ = require('jquery');
+
 class Icon extends React.Component<Props, {}> {
 	
+	private static defaultProps = {
+		tooltipY: I.MenuDirection.Bottom,
+	};
+	
 	constructor (props: any) {
-        super(props);
+		super(props);
 
 		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -44,7 +53,12 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	onMouseEnter (e: any) {
-		let { onMouseEnter } = this.props;
+		const { tooltip, tooltipY, onMouseEnter } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (tooltip) {
+			Util.tooltipShow(tooltip, node, tooltipY);
+		};
 		
 		if (onMouseEnter) {
 			onMouseEnter(e);
@@ -52,7 +66,9 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	onMouseLeave (e: any) {
-		let { onMouseLeave } = this.props;
+		const { onMouseLeave } = this.props;
+		
+		Util.tooltipHide();
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);
@@ -60,7 +76,9 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	onMouseDown (e: any) {
-		let { onMouseDown } = this.props;
+		const { onMouseDown } = this.props;
+		
+		Util.tooltipHide();
 		
 		if (onMouseDown) {
 			onMouseDown(e);

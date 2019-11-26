@@ -8,6 +8,8 @@ interface Props {
 	commonStore?: any;
 };
 
+const $ = require('jquery');
+
 @inject('commonStore')
 @observer
 class ListPopup extends React.Component<Props, {}> {
@@ -30,6 +32,14 @@ class ListPopup extends React.Component<Props, {}> {
 				{popups.length ? <Dimmer onClick={this.onClose} /> : ''}
 			</div>
 		);
+	};
+	
+	componentDidUpdate () {
+		const { commonStore } = this.props;
+		const { popups } = commonStore;
+		const body = $('body');
+		
+		popups.length > 0 ? body.addClass('over') : body.removeClass('over');
 	};
 	
 	onClose () {

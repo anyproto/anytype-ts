@@ -2,12 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { Page, ListPopup, ListMenu, Progress } from './component';
+import { Page, ListPopup, ListMenu, Progress, Tooltip } from './component';
 import { commonStore, authStore, blockStore, editorStore } from './store';
 import { dispatcher, keyboard, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
-
-//import i18n from 'ts/lib/i18n';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -32,6 +30,7 @@ import 'scss/component/selection.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
+import 'scss/component/tooltip.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -94,6 +93,7 @@ class App extends React.Component<Props, {}> {
 						<ListPopup history={history} />
 						<ListMenu history={history} />
 						<Progress />
+						<Tooltip />
 						<div id="drag" />
 						<div id="rect" />
 							

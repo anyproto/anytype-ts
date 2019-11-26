@@ -1,0 +1,6 @@
+.tooltip { 
+	position: fixed; left: 0px; top: 0px; border-radius: 4px; background: #aca996; padding: 4px 8px; text-transform: none;
+	font-size: 13px; letter-spacing: 0.1px; color: #fff; display: none; z-index: 1000; white-space: nowrap;
+	box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.3); transition: opacity 0.2s ease-in-out;
+}
+.tooltip .txt { line-height: 1.23; }

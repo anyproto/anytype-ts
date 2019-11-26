@@ -41,6 +41,7 @@ import Textarea from './util/textarea';
 import Button from './util/button';
 import Error from './util/error';
 import Select from './util/select';
+import Tooltip from './util/tooltip';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
@@ -67,6 +68,7 @@ export {
 	Textarea,
 	Button,
 	Select,
+	Tooltip,
 	Tag,
 	Loader,
 	Progress,

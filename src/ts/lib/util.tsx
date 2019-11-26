@@ -16,6 +16,7 @@ const sprintf = window.require('sprintf-kit')({
 class Util {
 	
 	icons: any[] = [];
+	timeoutTooltip: number = 0;
 	
 	constructor () {
 		this.icons = Object.keys(EmojiData.emojis);
@@ -237,6 +238,53 @@ class Util {
 		
 	scrollTopEnd () {
 		this.scrollTop($(document).height() - $(window).height());
+	};
+	
+	tooltipShow (text: string, node: any, typeY: I.MenuDirection) {
+		if (!node.length) {
+			return;
+		};
+		
+		window.clearTimeout(this.timeoutTooltip);
+		this.timeoutTooltip = window.setTimeout(() => {
+			this.tooltipHide();
+			
+			let win = $(window);
+			let obj = $('#tooltip');
+			let offset = node.offset();
+			let st = win.scrollTop(); 
+			
+			text = text.toString().replace(/\\n/, '\n');
+			
+			obj.find('.txt').html(this.lbBr(text));
+			obj.show().css({ opacity: 0 });
+			
+			let x = offset.left - obj.outerWidth() / 2 + node.outerWidth() / 2;
+			let y = 0;
+			
+			if (typeY == I.MenuDirection.Top) {
+				y = offset.top - obj.outerHeight() - 12 - st;
+			};
+			
+			if (typeY == I.MenuDirection.Bottom) {
+				y = offset.top + node.outerHeight() + 12 - st;
+			};
+			
+			x = Math.min(win.width() - obj.outerWidth() - 12, x);
+
+			window.setTimeout(() => {
+				obj.css({ left: x, top: y, opacity: 1 });
+			}, 10);
+		}, 50);
+	};
+	
+	tooltipHide () {
+		window.clearTimeout(this.timeoutTooltip);
+		$('#tooltip').hide();
+	};
+	
+	lbBr (s: string) {
+		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
 	};
 };
 
