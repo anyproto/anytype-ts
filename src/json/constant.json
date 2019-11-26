@@ -85,5 +85,16 @@
 		"10": 31,
 		"11": 30,
 		"12": 31
+	},
+	
+	"codeLang": {
+		"js":	 "JavaScript",
+		"cpp":	 "C++",
+		"cs":	 "C#", 
+		"php":	 "PHP",
+		"sql":	 "SQL", 
+		"css":	 "CSS", 
+		"html":	 "HTML", 
+		"go":	 "Go"
 	}
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
+import { Icon, Select } from 'ts/component';
 import { I, keyboard, Util, dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
@@ -38,7 +38,7 @@ const $ = require('jquery');
 class BlockText extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	editorRef: any = null;
+	refLang: any = null;
 	state = {
 		checked: false
 	};
@@ -55,6 +55,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onToggle = this.onToggle.bind(this);
 		this.onCheck = this.onCheck.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onLang = this.onLang.bind(this);
 	};
 
 	render () {
@@ -74,6 +75,7 @@ class BlockText extends React.Component<Props, {}> {
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
 		let cn = [ 'flex' ];
+		let additional = null;
 		
 		if (marker) {
 			markers.push({ type: marker, className: 'bullet c' + marker, active: false, onClick: () => {} });
@@ -88,7 +90,6 @@ class BlockText extends React.Component<Props, {}> {
 		let editor = (
 			<div
 				className="value"
-				ref={(ref: any) => { this.editorRef = ref; }}
 				contentEditable={true}
 				suppressContentEditableWarning={true}
 				onKeyDown={this.onKeyDown}
@@ -139,6 +140,15 @@ class BlockText extends React.Component<Props, {}> {
 				
 			case I.TextStyle.Code:
 				cn.push('code');
+				
+				let options = [];
+				for (let i in Constant.codeLang) {
+					options.push({ id: i, name: Constant.codeLang[i] });
+				};
+				
+				additional = (
+					<Select initial="Language" id="lang" value={lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
+				);
 				break;
 		};
 		
@@ -149,6 +159,7 @@ class BlockText extends React.Component<Props, {}> {
 						<Marker key={i} {...item} />
 					))}
 				</div>
+				{additional}
 				<div className="wrap">
 					<span className="placeHolder">{placeHolder}</span>
 					{editor}
@@ -329,6 +340,12 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onCheck (e: any) {
 		this.setState({ checked: !this.state.checked });
+	};
+	
+	onLang (e: any) {
+		let lang = this.refLang.getValue();
+		
+		console.log('lang', lang);
 	};
 	
 	onSelect (e: any) {

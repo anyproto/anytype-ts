@@ -45,8 +45,8 @@ class MenuSort extends React.Component<Props, State> {
 		const Item = SortableElement((item: any) => (
 			<div className="item">
 				<Icon className="dnd" />
-				<Select options={propertyOptions} value={item.propertyId} />
-				<Select options={typeOptions} value={String(item.type)} />
+				<Select id={[ 'filter', 'property', item.id ].join('-')} options={propertyOptions} value={item.propertyId} />
+				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={String(item.type)} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>
 		));

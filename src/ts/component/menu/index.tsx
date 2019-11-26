@@ -9,6 +9,7 @@ const BORDER = 12;
 import MenuHelp from './help';
 import MenuAccount from './account';
 import MenuSmile from './smile';
+import MenuSelect from './select';
 
 import MenuBlockAction from './block/action';
 import MenuBlockSwitch from './block/switch';
@@ -40,6 +41,7 @@ class Menu extends React.Component<Props, {}> {
 			help: MenuHelp,
 			account: MenuAccount,
 			smile: MenuSmile,
+			select: MenuSelect,
 			
 			blockAction: MenuBlockAction,
 			blockSwitch: MenuBlockSwitch,

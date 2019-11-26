@@ -56,9 +56,9 @@ class MenuFilter extends React.Component<Props, State> {
 		const Item = SortableElement((item: any) => (
 			<div className="item">
 				<Icon className="dnd" />
-				{item.idx > 0 ? <Select options={conditionOptions} value={String(item.condition)} /> : ''}
-				<Select options={propertyOptions} value={item.propertyId} />
-				<Select options={equalityOptions} value={String(item.equality)} />
+				{item.idx > 0 ? <Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={String(item.condition)} /> : ''}
+				<Select id={[ 'filter', 'property', item.id ].join('-')} options={propertyOptions} value={item.propertyId} />
+				<Select id={[ 'filter', 'equality', item.id ].join('-')} options={equalityOptions} value={String(item.equality)} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>
 		));

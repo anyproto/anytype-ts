@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { I } from 'ts/lib';
 import { Icon } from 'ts/component';
+import { commonStore } from 'ts/store';
 
 const $ = require('jquery');
 
@@ -11,6 +13,7 @@ interface Option {
 };
 
 interface Props {
+	id: string;
 	initial?: string;
 	value: string;
 	options: Option[];
@@ -41,6 +44,7 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { id } = this.props;
 		const { value, options } = this.state;
 		let current: Option = options.find((item: any) => { return item.id == value; });
 		
@@ -48,17 +52,8 @@ class Select extends React.Component<Props, State> {
 			current = options[0];
 		};
 		
-		const Option = (item: any) => (
-			<div className={'option ' + (item.id == current.id ? 'active' : '')} onClick={() => { this.onClick(item.id); }}>
-				{item.icon ? <Icon className={item.icon} /> : ''}
-				<div className="name">{item.name}</div>
-			</div>
-		);
-		
-		let cn = [ 'select' ];
-		
 		return (
-			<div className="select">
+			<div id={'select-' + id} className="select">
 				{current ? (
 					<div className="current" onClick={this.show}>
 						{current.icon ? <Icon className={current.icon} /> : ''}
@@ -66,11 +61,6 @@ class Select extends React.Component<Props, State> {
 						<Icon className="arrow" />
 					</div>
 				) : ''}
-				<div className="options">
-					{options.map((item: Option, i: number) => {
-						return <Option key={i} {...item} />;
-					})}
-				</div>
 			</div>
 		);
 	};
@@ -107,19 +97,33 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	show () {
-		let node = $(ReactDOM.findDOMNode(this));
+		const { id, value } = this.props;
+		const { options } = this.state;
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		this.hide();
-		node.find('.options').show();
+		
+		commonStore.menuOpen('select', { 
+			element: 'select-' + id,
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			light: true,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				value: value,
+				options: options,
+				onSelect: (e: any, id: string) => {
+					this.setValue(id);
+					this.hide();
+				}
+			}
+		});
 	};
 	
 	hide () {
-		$('.select .options').hide();
-	};
-	
-	onClick (id: string) {
-		this.setValue(id);
-		this.hide();
+		commonStore.menuClose('select');
 	};
 	
 };
