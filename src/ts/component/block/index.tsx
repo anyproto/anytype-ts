@@ -69,6 +69,7 @@ class Block extends React.Component<Props, {}> {
 			default:
 			case I.BlockType.Text:
 				cn.push('blockText');
+				
 				if (toggleable) {
 					cn.push('canToggle');
 				};

@@ -43,6 +43,7 @@ import 'scss/block/image.scss';
 import 'scss/block/video.scss';
 import 'scss/block/file.scss';
 import 'scss/block/page.scss';
+import 'scss/block/bookmark.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';

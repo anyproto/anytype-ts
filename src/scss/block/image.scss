@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockImage { padding: 7px 0px; }
 	.block.blockImage.isResizing * { cursor: nwse-resize; }
 	
 	.block.blockImage {

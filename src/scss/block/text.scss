@@ -8,12 +8,13 @@
 		
 		.placeHolder { color: #adaa95; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; }
 		
-		.h1 { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
-		.h2 { font-size: 21px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
-		.h3 { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; font-weight: 600; }
+		.title { padding: 13px 0px 24px 0px; }
+		.h1 { padding: 5px 0px 2px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
+		.h2 { padding: 6px 0px 4px 0px; font-size: 21px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
+		.h3 { padding: 7px 0px 3px 0px; font-size: 18px; line-height: 26px; letter-spacing: -0.08px; font-weight: 600; }
 		.h4 { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; }
 		.quote { font-size: 13px; line-height: 22px; letter-spacing: 0.08px; }
-		.code { font-family: 'Mono'; line-height: 1.71; padding: 16px 24px; background: rgba(247,245,240,0.5); }
+		.code { font-family: 'Mono'; line-height: 1.71; padding: 16px 24px; margin: 7px 0px; background: rgba(247,245,240,0.5); }
 		
 		a { cursor: pointer; }
 		kbd { display: inline-block; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; }
