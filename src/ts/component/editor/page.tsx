@@ -30,6 +30,7 @@ class EditorPage extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 	timeoutHover: number = 0;
 	hovered: string =  '';
+	hoverDir: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -153,13 +154,13 @@ class EditorPage extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutHover);
 		
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
-			let dir = pageY < (y + height / 2) ? 'top': 'bottom';
+			this.hoverDir = pageY < (y + height / 2) ? -1 : 1;
 			
 			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 + containerEl.scrollTop() + Number(addOffsetY) });
 			blocks.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (hovered && (pageX <= x + 20)) {
-				hovered.addClass('isAdding ' + dir);
+				hovered.addClass('isAdding ' + (this.hoverDir < 0 ? 'top' : 'bottom'));
 			};
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
@@ -182,7 +183,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const index = blocks[rootId].findIndex((item: I.Block) => { return item.id == focused; });
 		const { content } = block;
-		const node = $(ReactDOM.findDOMNode(this));
 
 		let l = String(content.text || '').length;
 		let k = e.which;
@@ -215,7 +215,7 @@ class EditorPage extends React.Component<Props, {}> {
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			this.blockCreate(block);
+			this.blockCreate(block, 1);
 		};
 	};
 	
@@ -235,10 +235,10 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		this.blockCreate(block);
+		this.blockCreate(block, this.hoverDir);
 	};
 	
-	blockCreate (focused: I.Block) {
+	blockCreate (focused: I.Block, dir: number) {
 		const { blockStore, editorStore, rootId } = this.props;
 		
 		let request = {
@@ -251,8 +251,9 @@ class EditorPage extends React.Component<Props, {}> {
 			contextId: rootId,
 			parentId: focused.parentId || rootId,
 			targetId: focused.id,
-			position: I.BlockPosition.After,
+			position: dir > 0 ? I.BlockPosition.After : I.BlockPosition.Before,
 		};
+		
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
 			editorStore.rangeSave(message.blockId, { from: 0, to: 0 });
 		});
