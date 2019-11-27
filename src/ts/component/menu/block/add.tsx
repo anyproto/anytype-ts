@@ -17,6 +17,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onOver = this.onOver.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 	};
 	
@@ -84,7 +85,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		const Item = (item: any) => (
-			<div id={'block-add-item-' + item.id} className={[ 'item', item.color ].join(' ')} onClick={(e: any) => { this.onSelect(e, item); }}>
+			<div id={'block-add-item-' + item.id} className={[ 'item', item.color ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onSelect(e, item); }}>
 				{item.icon ? <Icon className={item.icon} /> : ''}
 				<div className="name">{item.name}</div>
 				{item.children.length ? <Icon className="arrow" /> : ''}
@@ -100,38 +101,50 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		);
 	};
 	
+	onOver (e: any, item: any) {
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const { onSelect } = data;
+		
+		if (!item.children.length) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#block-add-item-' + item.id);
+		const offsetX = node.outerWidth();
+		const offsetY = node.offset().top - el.offset().top;
+			
+		$('.menuBlockAdd .item.active').removeClass('active');
+		el.addClass('active');
+			
+		commonStore.menuOpen('blockAddSub', { 
+			element: 'block-add-item-' + item.id,
+			type: I.MenuType.Vertical,
+			offsetX: offsetX,
+			offsetY: offsetY - 40,
+			light: true,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				id: item.id,
+				onSelect: onSelect
+			}
+		});
+	};
+	
 	onSelect (e: any, item: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
 		if (item.children.length) {
-			const node = $(ReactDOM.findDOMNode(this));
-			const el = node.find('#block-add-item-' + item.id);
-			const offsetX = node.outerWidth();
-			const offsetY = node.offset().top - el.offset().top;
-			
-			$('.menuBlockAdd .item.active').removeClass('active');
-			el.addClass('active');
-			
-			commonStore.menuOpen('blockAddSub', { 
-				element: 'block-add-item-' + item.id,
-				type: I.MenuType.Vertical,
-				offsetX: offsetX,
-				offsetY: offsetY - 40,
-				light: true,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				data: {
-					id: item.id,
-					onSelect: onSelect
-				}
-			});
-		} else {
-			commonStore.menuClose('blockAdd');
-			commonStore.menuClose('blockAddSub');
-			onSelect(e, item);
+			return;
 		};
+		
+		commonStore.menuClose('blockAdd');
+		commonStore.menuClose('blockAddSub');
+		onSelect(e, item);
 	};
 	
 };
