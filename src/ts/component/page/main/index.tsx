@@ -93,7 +93,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { blockStore } = this.props;
 		const { root } = blockStore;
 		
-		dispatcher.call('blockClose', { id: root }, (errorCode: any, message: any) => {});
+		dispatcher.call('blockClose', { blockId: root }, (errorCode: any, message: any) => {});
 	};
 	
 	onSettings (e: any) {

@@ -43,6 +43,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	range: any = null;
 	timeoutKeyUp: number = 0;
+	focusRange: I.TextRange = { from: 0, to: 0 };
 
 	constructor (props: any) {
 		super(props);
@@ -62,7 +63,6 @@ class BlockText extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		const { checked } = this.state;
-		const { focused, range } = editorStore;
 		
 		if (!block) {
 			return null;
@@ -188,11 +188,18 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { editorStore } = this.props;
+		const { editorStore, id } = this.props;
 		const { focused, range } = editorStore;
+		
+		console.log('update', id);
 		
 		this.setValue();
 		this.rangeApply(focused, range);
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+		window.clearTimeout(this.timeoutKeyUp);
 	};
 	
 	setValue () {
@@ -234,10 +241,6 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('.value');
 		
 		return String(value.text() || '');
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
 	};
 	
 	marksToHtml (text: string, marks: I.Mark[]) {
@@ -286,13 +289,14 @@ class BlockText extends React.Component<Props, {}> {
 		
 		this.placeHolderCheck();
 		onKeyUp(e);
+		this.rangeSave();
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdate(); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(); }, 500);
 	};
 	
-	blockUpdate () {
-		const { blockStore, id, rootId } = this.props;
+	blockUpdateText () {
+		const { blockStore, editorStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
 		
 		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
@@ -303,24 +307,27 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let change = Util.objectCopy(block);
-		change.content.text = this.getValue();
-		
 		let request = {
 			contextId: rootId,
-			changes: com.anytype.Changes.create({
-				changes: blockStore.prepareBlockToProto(change),
-			}),
+			blockId: id,
+			text: value.substr(this.focusRange.from, value.length),
+			range: {
+				from: this.focusRange.from,
+				to: this.focusRange.to
+			},
 		};
-			
-		dispatcher.call('blockUpdate', request, (errorCode: any, message: any) => {});
+		
+		dispatcher.call('blockSetTextTextInRange', request, (errorCode: any, message: any) => {
+			block.content.text = value;
+		});
 	};
 	
 	onFocus (e: any) {
-		const { onFocus } = this.props;
+		const { editorStore, onFocus } = this.props;
+		
+		this.focusRange = this.rangeGet();
 		
 		this.placeHolderCheck();
-		this.rangeSave();
 		keyboard.setFocus(true);
 		onFocus(e);
 	};
@@ -329,11 +336,10 @@ class BlockText extends React.Component<Props, {}> {
 		const { onBlur, editorStore } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const placeHolder = node.find('.placeHolder');
-		
+
 		placeHolder.hide();
 		keyboard.setFocus(false);
 		onBlur(e);
-		//editorStore.rangeClear();
 	};
 	
 	onToggle (e: any) {
@@ -392,16 +398,24 @@ class BlockText extends React.Component<Props, {}> {
 		value.length ? placeHolder.hide() : placeHolder.show();
 	};
 	
+	rangeGet () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const range = getRange(node.find('.value').get(0) as Element) || { start: 0, end: 0 };
+		
+		return { from: range.start, to: range.end };
+	};
+	
 	rangeSave () {
 		if (!this._isMounted) {
 			return;
 		};
 		
 		const { id, editorStore } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const range = getRange(node.find('.value').get(0) as Element) || { start: 0, end: 0 };
-		
-		editorStore.rangeSave(id, { from: range.start, to: range.end });
+		editorStore.rangeSave(id, this.rangeGet());
 	};
 	
 	rangeApply (focused: string, range: I.TextRange) {

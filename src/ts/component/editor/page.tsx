@@ -103,7 +103,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		blockStore.blocksClear(rootId);
-		dispatcher.call('blockClose', { id: rootId }, (errorCode: any, message: any) => {});
+		dispatcher.call('blockClose', { blockId: rootId }, (errorCode: any, message: any) => {});
 	};
 	
 	unbind () {
