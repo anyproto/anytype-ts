@@ -235,10 +235,13 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blockStore, editorStore, commonStore, rootId } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == this.hovered; });
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!block) {
 			return;
 		};
+		
+		node.find('#block-' + $.escapeSelector(block.id)).addClass('isAddingMenu ' + (this.hoverDir < 0 ? 'mtop' : 'mbottom'));
 		
 		let param: any = {};
 		
@@ -250,6 +253,9 @@ class EditorPage extends React.Component<Props, {}> {
 			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
+			onClose: () => {
+				node.find('.block.isAddingMenu').removeClass('isAddingMenu mtop mbottom');
+			},
 			data: {
 				onSelect: (e: any, item: any) => {
 					switch (item.parentId) {

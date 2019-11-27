@@ -31,6 +31,9 @@
 	.block.isAdding.top > .wrapContent { box-shadow: 0px -2px $colorOrange; }
 	.block.isAdding.bottom > .wrapContent { box-shadow: 0px 2px $colorOrange; }
 	
+	.block.isAddingMenu.mtop > .wrapContent { box-shadow: 0px -2px $colorOrange; }
+	.block.isAddingMenu.mbottom > .wrapContent { box-shadow: 0px 2px $colorOrange; }
+	
 	.block.canToggle > .wrapContent > .children { display: none; }
 	.block.isToggled > .wrapContent > .children { display: block; }
 	.block.isToggled > .wrapContent > .selectable > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
