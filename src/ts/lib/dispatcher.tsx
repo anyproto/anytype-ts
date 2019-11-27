@@ -29,69 +29,73 @@ class Dispatcher {
 		} catch (err) {
 			console.error(err);
 		};
-
+		
 		if (!event) {
-			return;
-		};
-		
-		let data = event[event.message];
-		console.log('[Dispatcher.event]', event.message, data);
-		
-		if (data.error && data.error.code) {
 			return;
 		};
 		
 		let blocks: any = [];
 		
-		switch (event.message) {
+		for (let message of event.messages) {
+			let type = message.value;
+			let data = message[type];
 			
-			case 'accountShow':
-				authStore.accountAdd(data.account);
-				break;
-				
-			case 'blockShow':
-				for (let block of data.blocks) {
-					blocks.push(blockStore.prepareBlockFromProto(block));
-				};
-				blockStore.blocksSet(data.rootId, blocks);
-				break;
+			if (data.error && data.error.code) {
+				continue;
+			};
 			
-			case 'blockAdd':
-				blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
-				if (!blocks || !blocks.length) {
+			console.log('[Dispatcher.event]', type, data);
+		
+			switch (type) {
+				
+				case 'accountShow':
+					authStore.accountAdd(data.account);
 					break;
-				};
-				
-				for (let block of data.blocks) {
-					let item = blockStore.prepareBlockFromProto(block);
-					blocks.push(item);
-				};
-				
-				blockStore.blocksSet(data.contextId, blocks);
-				break;
-				
-			case 'blockUpdate':
-				blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
-				if (!blocks.length) {
-					break;
-				};
-				
-				for (let item of data.changes.changes) {
-					let idx = blocks.findIndex((it: any) => { return it.id == item.id; });
-					let change: any = {};
 					
-					if (item.childrenIds && item.childrenIds.childrenIds) {
-						change.childrenIds = item.childrenIds.childrenIds;
+				case 'blockShow':
+					for (let block of data.blocks) {
+						blocks.push(blockStore.prepareBlockFromProto(block));
+					};
+					blockStore.blocksSet(data.rootId, blocks);
+					break;
+				
+				case 'blockAdd':
+					blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
+					if (!blocks || !blocks.length) {
+						break;
 					};
 					
-					blocks[idx] = Object.assign(blocks[idx], change);
-				};
-				
-				blockStore.blocksSet(data.contextId, blocks);
-				break;
-				
-			case 'blockShow':
-				break;
+					for (let block of data.blocks) {
+						let item = blockStore.prepareBlockFromProto(block);
+						blocks.push(item);
+					};
+					
+					blockStore.blocksSet(data.contextId, blocks);
+					break;
+					
+				case 'blockUpdate':
+					blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
+					if (!blocks.length) {
+						break;
+					};
+					
+					for (let item of data.changes.changes) {
+						let idx = blocks.findIndex((it: any) => { return it.id == item.id; });
+						let change: any = {};
+						
+						if (item.childrenIds && item.childrenIds.childrenIds) {
+							change.childrenIds = item.childrenIds.childrenIds;
+						};
+						
+						blocks[idx] = Object.assign(blocks[idx], change);
+					};
+					
+					blockStore.blocksSet(data.contextId, blocks);
+					break;
+					
+				case 'blockShow':
+					break;
+			};
 		};
 		
 	};

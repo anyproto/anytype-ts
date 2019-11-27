@@ -73,7 +73,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		
-		dispatcher.call('blockOpen', { id: rootId }, (errorCode: any, message: any) => {});
+		dispatcher.call('blockOpen', { blockId: rootId }, (errorCode: any, message: any) => {});
 	};
 	
 	componentDidUpdate () {

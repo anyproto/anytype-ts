@@ -81,7 +81,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		dispatcher.call('configGet', {}, (errorCode: any, message: any) => {
 			blockStore.rootSet(message.homeBlockId);
-			dispatcher.call('blockOpen', { id: message.homeBlockId }, (errorCode: any, message: any) => {});
+			dispatcher.call('blockOpen', { blockId: message.homeBlockId }, (errorCode: any, message: any) => {});
 		});
 	};
 	
