@@ -6,6 +6,7 @@ interface Props {
 	id: string;
 	type: string;
 	className?: string;
+	disabled?: boolean;
 	onClick?(e: any): void;
 	onDrop?(e: any, type: string, id: string, direction: string): void;
 };
@@ -52,6 +53,11 @@ class DropTarget extends React.Component<Props, {}> {
 		e.preventDefault();
 		
 		if (!this._isMounted) {
+			return;
+		};
+
+		const { disabled } = this.props;
+		if (disabled) {
 			return;
 		};
 		
@@ -108,6 +114,11 @@ class DropTarget extends React.Component<Props, {}> {
 	
 	onDrop (e: any) {
 		if (!this._isMounted) {
+			return;
+		};
+		
+		const { disabled } = this.props;
+		if (disabled) {
 			return;
 		};
 		

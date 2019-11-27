@@ -119,13 +119,6 @@ class Util {
 		return ':' + this.icons[this.rand(0, this.icons.length - 1)] + ':';
 	};
 	
-	incrementBlockNumber (item: I.Block, n: number) {
-		if (item.type != I.BlockType.Text) {
-			return n;
-		};
-		return item.content.marker == I.MarkerType.Number ? n + 1 : 0;
-	};
-	
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 		let a, jsdate = new Date(timestamp ? timestamp * 1000 : null);

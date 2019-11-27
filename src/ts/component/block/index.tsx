@@ -18,7 +18,6 @@ import BlockPage from './page';
 interface Props extends I.Block {
 	rootId: string;
 	index: number;
-	number: number;
 	dataset?: any;
 	onKeyDown? (e: any): void;
 	onKeyUp? (e: any): void;
@@ -52,10 +51,9 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, type, fields, content, childBlocks, index } = this.props;
+		const { id, type, fields, content, childBlocks, index, permissions } = this.props;
 		const { style, toggleable } = content;
 		
-		let n = 0;
 		let canDrop = true;
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
@@ -98,7 +96,7 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Image:
 				cn.push('blockImage');
 				BlockComponent = () => (
-					<BlockImage ref={(ref: any) => { this.refComponent = ref; }} {...this.props} />
+					<BlockImage ref={(ref: any) => { this.refComponent = ref; }} {...this.props} width={fields.width || 1} />
 				);
 				break;
 				
@@ -147,19 +145,17 @@ class Block extends React.Component<Props, {}> {
 		let wrapContent = (
 			<div className="wrapContent">
 				<div className={[ (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id} data-type={type}>
-					<DropTarget id={id} type={I.DragItem.Block} onDrop={this.onDrop}>
+					<DropTarget id={id} type={I.DragItem.Block} disabled={false} onDrop={this.onDrop}>
 						<BlockComponent {...this.props} />
 					</DropTarget>
 				</div>
 					
 				<div className="children" onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave}>
 					{childBlocks.map((item: any, i: number) => {
-						n = Util.incrementBlockNumber(item, n);
-						
 						return (
 							<React.Fragment key={item.id}>
 								{i > 0 ? <ColResize index={i} /> : ''}
-								<Child ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} width={fields.width || 1} number={n} index={i} />
+								<Child ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} index={i} />
 							</React.Fragment>
 						);
 					})}

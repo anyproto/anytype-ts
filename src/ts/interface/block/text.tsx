@@ -44,6 +44,7 @@ export interface ContentText {
 	style: TextStyle;
 	marks: Mark[];
 	marker: MarkerType;
+	number: number;
 	toggleable: boolean;
 	checkable: boolean;
 	checked: boolean;

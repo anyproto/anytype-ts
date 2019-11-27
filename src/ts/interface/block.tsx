@@ -19,6 +19,7 @@ export enum BlockPosition {
 };
 
 export interface Permissions {
+	read: boolean;
 	edit: boolean;
 	remove: boolean;
 	drag: boolean;
@@ -28,6 +29,7 @@ export interface Permissions {
 export interface Block {
 	id: string;
 	type: BlockType;
+	permissions?: Permissions;
 	parentId?: string;
 	fields: any;
 	content: any;

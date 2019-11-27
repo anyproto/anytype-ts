@@ -46,17 +46,14 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		
-		let n = 0;
-		
 		return (
 			<div className="editor">
 				<div className="blocks">
 					<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 				
 					{tree.map((item: I.Block, i: number) => { 
-						n = Util.incrementBlockNumber(item, n);
 						return <Block 
-							key={item.id} {...item} number={n} index={i}
+							key={item.id} {...item} index={i}
 							{...this.props}
 							onKeyDown={throttle((e: any) => { this.onKeyDown(e); }, THROTTLE)} 
 							onKeyUp={throttle((e: any) => { this.onKeyUp(e); }, THROTTLE)} 
@@ -84,6 +81,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const { focused } = editorStore;
 		
+		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		const focusedBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.id == focused; });
 		const firstBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.type == I.BlockType.Text; });
 		
@@ -93,6 +91,8 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			editorStore.rangeSave(firstBlock.id, { from: length, to: length });
 		};
+		
+		this.setNumbers(tree);
 	};
 	
 	componentWillUnmount () {
@@ -108,6 +108,32 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('mousemove.editor');
+	};
+	
+	setNumbers (list: I.Block[]) {
+		const { blockStore, rootId } = this.props;
+		const { blocks } = blockStore;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		let n = 0;
+		let map: any = {};
+		
+		for (let item of list) {
+			n = (item.type == I.BlockType.Text && item.content.marker == I.MarkerType.Number) ? n + 1 : 0;
+			map[item.id] = n;
+			this.setNumbers(item.childBlocks);
+		};
+		
+		for (let id in map) {
+			if (!map[id]) {
+				continue;
+			};
+			
+			let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+			if (block) {
+				block.content.number = map[id];				
+			};
+		};
 	};
 	
 	onMouseMove (e: any) {

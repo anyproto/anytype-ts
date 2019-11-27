@@ -12,7 +12,6 @@ interface Props extends I.BlockText {
 	blockStore?: any;
 	editorStore?: any;
 	dataset?: any;
-	number: number;
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
@@ -59,7 +58,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, editorStore, id, number, rootId } = this.props;
+		const { blockStore, editorStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		const { checked } = this.state;
@@ -70,7 +69,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		let { fields, content } = block;
-		let { text, marks, style, marker, toggleable, checkable } = content;
+		let { text, marks, style, marker, toggleable, checkable, number } = content;
 		let { lang } = fields;
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
@@ -103,7 +102,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let Marker = (item: any) => (
 			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				{item.type && number ? <div className="txt">{number + '.'}</div> : <Icon />}
+				{(item.type == I.MarkerType.Number) && number ? number + '.' : <Icon />}
 			</div>
 		);
 		
@@ -261,7 +260,7 @@ class BlockText extends React.Component<Props, {}> {
 				attr = 'href="' + mark.param + '"';
 			};
 			if ((type == I.MarkType.TextColor) && mark.param) {
-				attr = 'style="text-color:' + mark.param + '"';
+				attr = 'style="color:' + mark.param + '"';
 			};
 			if ((type == I.MarkType.BgColor) && mark.param) {
 				attr = 'style="background-color:' + mark.param + '"';

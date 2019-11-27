@@ -40,7 +40,6 @@ class DragLayer extends React.Component<Props, State> {
 		const { blocks } = blockStore;
 		const { ids, type } = this.state;
 		
-		let n = 0;
 		let content = null;
 		
 		switch (type) {
@@ -50,8 +49,7 @@ class DragLayer extends React.Component<Props, State> {
 						{ids.map((id: string, i: number) => {
 							const block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
 							
-							n = Util.incrementBlockNumber(block, n);
-							return <Block key={id} {...block} rootId={rootId} number={n} index={i} />
+							return <Block key={id} {...block} rootId={rootId} index={i} />
 						})}
 					</div>
 				);

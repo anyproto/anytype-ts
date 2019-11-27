@@ -32,7 +32,7 @@
 				.icon { position: absolute; left: 50%; top: 50%; display: block; }
 			}
 			
-			.marker.bullet.c1 { width: auto; min-width: 24px; padding: 0px 2px; }
+			.marker.bullet.c1 { width: auto; min-width: 24px; height: auto; vertical-align: baseline; line-height: inherit; }
 			.marker.bullet.c2 {
 				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; margin: -3px 0px 0px -3px; }
 			}
