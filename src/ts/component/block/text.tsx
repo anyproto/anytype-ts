@@ -201,12 +201,15 @@ class BlockText extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		const { fields, content } = block;
-		const { lang } = fields;
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		
+		let { lang } = fields;
 		let { text, style, marks } = content;
+		
+		text = String(text || '');
+		lang = String(lang || 'js');
 		
 		if ((style == I.TextStyle.Title) && (text == Constant.untitled)) {
 			text = '';
@@ -214,7 +217,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let html = '';
 		if (style == I.TextStyle.Code) {
-			let res = low.highlight(String(lang || 'js'), text);
+			let res = low.highlight(lang, text);
 			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
 		} else {
 			html = this.marksToHtml(text, marks);
@@ -342,10 +345,8 @@ class BlockText extends React.Component<Props, {}> {
 		this.setState({ checked: !this.state.checked });
 	};
 	
-	onLang (e: any) {
-		let lang = this.refLang.getValue();
-		
-		console.log('lang', lang);
+	onLang (value: string) {
+		console.log('lang', value);
 	};
 	
 	onSelect (e: any) {

@@ -307,6 +307,13 @@ class EditorPage extends React.Component<Props, {}> {
 							
 						case 'media':
 							param.type = item.id;
+							
+							if (item.id == 'code') {
+								param.type = I.BlockType.Text;
+								param.content = {
+									style: I.TextStyle.Code,
+								};
+							};
 							break;
 							
 						case 'other':
