@@ -59,6 +59,7 @@ import 'scss/menu/help.scss';
 
 import 'scss/menu/block/action.scss';
 import 'scss/menu/block/switch.scss';
+import 'scss/menu/block/add.scss';
 
 import 'scss/menu/dataview/sort.scss';
 import 'scss/menu/dataview/filter.scss';

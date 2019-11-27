@@ -13,6 +13,7 @@ import MenuSelect from './select';
 
 import MenuBlockAction from './block/action';
 import MenuBlockSwitch from './block/switch';
+import MenuBlockAdd from './block/add';
 
 import MenuDataviewPropertyList from './dataview/property/list';
 import MenuDataviewPropertyEdit from './dataview/property/edit';
@@ -45,6 +46,8 @@ class Menu extends React.Component<Props, {}> {
 			
 			blockAction: MenuBlockAction,
 			blockSwitch: MenuBlockSwitch,
+			blockAdd: MenuBlockAdd,
+			blockAddSub: MenuBlockAdd,
 			
 			dataviewPropertyList: MenuDataviewPropertyList,
 			dataviewPropertyEdit: MenuDataviewPropertyEdit,
@@ -91,10 +94,6 @@ class Menu extends React.Component<Props, {}> {
 		this.unbind();
 		
 		$(window).on('resize.menu', () => { this.position(); });
-	};
-	
-	componentDidUpdate () {
-		this.position();
 	};
 	
 	componentWillUnmount () {

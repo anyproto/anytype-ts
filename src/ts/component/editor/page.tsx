@@ -51,7 +51,7 @@ class EditorPage extends React.Component<Props, {}> {
 		return (
 			<div className="editor">
 				<div className="blocks">
-					<Icon id="add" className="add" onClick={this.onAdd} />
+					<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 				
 					{tree.map((item: I.Block, i: number) => { 
 						n = Util.incrementBlockNumber(item, n);
@@ -123,7 +123,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const containerEl = $(container);
 		const rectContainer = (containerEl.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
-		const add = node.find('#add');
+		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
 		const offset = 100;
 		
@@ -215,7 +215,12 @@ class EditorPage extends React.Component<Props, {}> {
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			this.blockCreate(block, 1);
+			this.blockCreate(block, 1, {
+				type: I.BlockType.Text,
+				content: {
+					style: I.TextStyle.Paragraph,
+				},
+			});
 		};
 	};
 	
@@ -227,27 +232,83 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blockStore, editorStore, rootId } = this.props;
+		const { blockStore, editorStore, commonStore, rootId } = this.props;
 		const { blocks } = blockStore;
-		
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == this.hovered; });
+		
 		if (!block) {
 			return;
 		};
 		
-		this.blockCreate(block, this.hoverDir);
+		let param: any = {};
+		
+		commonStore.menuOpen('blockAdd', { 
+			element: 'button-add',
+			type: I.MenuType.Vertical,
+			offsetX: 24,
+			offsetY: -20,
+			light: true,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				onSelect: (e: any, item: any) => {
+					switch (item.parentId) {
+						case 'text':
+							param.type = I.BlockType.Text;
+							param.content = {
+								style: item.id,
+							};
+							break;
+							
+						case 'list':
+							param.type = I.BlockType.Text;
+							param.content = {
+								style: I.TextStyle.Paragraph,
+							};
+							
+							switch (item.id) {
+								case 'checkbox':
+									param.content.checkable = true;
+									break;
+									
+								case 'bulleted':
+									param.content.marker = I.MarkerType.Bullet;
+									break;
+									
+								case 'numbered':
+									param.content.marker = I.MarkerType.Number;
+									break;
+									
+								case 'toggle':
+									param.content.toggleable = true;
+									break;
+							};
+							
+							break;
+							
+						case 'tool':
+							break;
+							
+						case 'media':
+							param.type = item.id;
+							break;
+							
+						case 'other':
+							param.type = item.id;
+							break;
+					};
+					
+					this.blockCreate(block, this.hoverDir, param);
+				}
+			}
+		});
 	};
 	
-	blockCreate (focused: I.Block, dir: number) {
+	blockCreate (focused: I.Block, dir: number, param: any) {
 		const { blockStore, editorStore, rootId } = this.props;
 		
 		let request = {
-			block: blockStore.prepareBlockToProto({
-				type: I.BlockType.Text,
-				content: {
-					style: I.TextStyle.Paragraph,
-				},
-			}),
+			block: blockStore.prepareBlockToProto(param),
 			contextId: rootId,
 			parentId: focused.parentId || rootId,
 			targetId: focused.id,
