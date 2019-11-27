@@ -215,12 +215,22 @@ class EditorPage extends React.Component<Props, {}> {
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			this.blockCreate(block, 1, {
+			let param: any = {
 				type: I.BlockType.Text,
 				content: {
 					style: I.TextStyle.Paragraph,
 				},
-			});
+			};
+			
+			if (block.content.checkable) {
+				param.content.checkable = block.content.checkable;
+			};
+			
+			if (block.content.marker) {
+				param.content.marker = block.content.marker;
+			};
+			
+			this.blockCreate(block, 1, param);
 		};
 	};
 	
