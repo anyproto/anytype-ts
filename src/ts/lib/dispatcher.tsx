@@ -91,9 +91,6 @@ class Dispatcher {
 						break;
 					};
 					
-					let change = data.constructor.name.toLowerCase();
-					let value = data[change];
-					
 					block = blocks.find((it: any) => { return it.id == data.id; });
 					
 					let param: any = {
@@ -101,10 +98,24 @@ class Dispatcher {
 						content: Util.objectCopy(block.content),
 					};
 					
-					switch (change) {
-						case 'text':
-							param.content.text = value.value; 
-							break;
+					if (null !== data.text) {
+						param.content.text = data.text.value;
+					};
+					
+					if (null !== data.style) {
+						param.content.style = data.style.value;
+					};
+					
+					if (null !== data.marker) {
+						param.content.marker = data.marker.value;
+					};
+					
+					if (null !== data.checkable) {
+						param.content.checkable = data.checkable.value;
+					};
+					
+					if (null !== data.toggleable) {
+						param.content.toggleable = data.toggleable.value;
 					};
 					
 					blockStore.blockUpdate(contextId, param);

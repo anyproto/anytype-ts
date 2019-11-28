@@ -124,6 +124,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onBlockSwitch (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		
 		commonStore.menuOpen('blockSwitch', { 
 			element: 'button-switch',
 			type: I.MenuType.Vertical,
@@ -131,7 +134,8 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			offsetY: 0,
 			light: false,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left
+			horizontal: I.MenuDirection.Left,
+			data: data
 		});
 	};
 

@@ -368,7 +368,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { commonStore, id, content } = this.props;
+		const { commonStore, id, rootId, content } = this.props;
 		
 		focus.set(id, this.rangeGet());
 		
@@ -399,6 +399,8 @@ class BlockText extends React.Component<Props, {}> {
 				onClose: () => {
 				},
 				data: {
+					blockId: id, 
+					rootId: rootId,
 					content: content
 				}
 			});
