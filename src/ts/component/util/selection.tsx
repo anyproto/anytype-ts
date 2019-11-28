@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange, setRange } from 'selection-ranges';
-import { I, Key } from 'ts/lib';
+import { I, Key, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props {
-	editorStore?: any;
 	blockStore?: any;
 	className?: string;
 	container: string;
@@ -17,7 +16,6 @@ const $ = require('jquery');
 const THRESHOLD = 10;
 const THROTTLE = 20;
 
-@inject('editorStore')
 @inject('blockStore')
 @observer
 class SelectionProvider extends React.Component<Props, {}> {
@@ -76,7 +74,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			const range = sel.rangeCount >= 1 ? sel.getRangeAt(0) : null;
 			
 			if (range && !range.collapsed) {
-				window.getSelection().empty();					
+				window.getSelection().empty();
 			};
 		});
 	};
@@ -156,9 +154,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { editorStore } = this.props;
-		const { focused, range } = editorStore;
-		
 		this.checkNodes(e);
 		
 		let node = $(ReactDOM.findDOMNode(this));
@@ -216,8 +211,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	checkNodes (e: any) {
-		const { editorStore } = this.props;
-		const { focused, range } = editorStore;
+		const { focused, range } = focus;
 		const rect = this.getRect(e);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scrollTop = $(window).scrollTop();
@@ -266,13 +260,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 				
 				if (this.range.start || this.range.end) {
 					this.clear();
-					editorStore.rangeSave(this.focused, { from: this.range.start, to: this.range.end });
+					focus.set(this.focused, { from: this.range.start, to: this.range.end });
 					setRange(el, this.range);
 				};
 			};
 		} else {
 			if (focused && range.from && range.to) {
-				editorStore.rangeClear();
+				focus.clear();
 			};
 			window.getSelection().empty();
 		};

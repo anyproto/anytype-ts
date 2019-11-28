@@ -34,9 +34,11 @@ class Dispatcher {
 			return;
 		};
 		
-		let blocks: any = [];
+		let contextId = event.contextId;
 		
 		for (let message of event.messages) {
+			let blocks: any = [];
+			let block: any = null;
 			let type = message.value;
 			let data = message[type];
 			
@@ -60,8 +62,8 @@ class Dispatcher {
 					break;
 				
 				case 'blockAdd':
-					blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
-					if (!blocks || !blocks.length) {
+					blocks = Util.objectCopy(blockStore.blocks[contextId] || []);
+					if (!blocks.length) {
 						break;
 					};
 					
@@ -70,30 +72,42 @@ class Dispatcher {
 						blocks.push(item);
 					};
 					
-					blockStore.blocksSet(data.contextId, blocks);
+					blockStore.blocksSet(contextId, blocks);
 					break;
 					
-				case 'blockUpdate':
-					blocks = Util.objectCopy(blockStore.blocks[data.contextId] || []);
+				case 'blockSetChildrenIds':
+					blocks = blockStore.blocks[contextId];
+					if (!blocks.length) {
+						break;
+					};
+				
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					block.childrenIds = data.childrenIds;
+					break;
+					
+				case 'blockSetText':
+					blocks = blockStore.blocks[contextId];
 					if (!blocks.length) {
 						break;
 					};
 					
-					for (let item of data.changes.changes) {
-						let idx = blocks.findIndex((it: any) => { return it.id == item.id; });
-						let change: any = {};
-						
-						if (item.childrenIds && item.childrenIds.childrenIds) {
-							change.childrenIds = item.childrenIds.childrenIds;
-						};
-						
-						blocks[idx] = Object.assign(blocks[idx], change);
+					let change = data.constructor.name.toLowerCase();
+					let value = data[change];
+					
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					
+					let param: any = {
+						id: block.id,
+						content: Util.objectCopy(block.content),
 					};
 					
-					blockStore.blocksSet(data.contextId, blocks);
-					break;
+					switch (change) {
+						case 'text':
+							param.content.text = value.value; 
+							break;
+					};
 					
-				case 'blockShow':
+					blockStore.blockUpdate(contextId, param);
 					break;
 			};
 		};

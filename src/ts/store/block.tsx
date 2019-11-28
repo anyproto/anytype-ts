@@ -14,7 +14,7 @@ class BlockStore {
 	};
 	
 	@computed
-	get blocks (): I.Block[] {
+	get blocks (): any {
 		return this.blockObject;
 	};
 	

@@ -2,14 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon } from 'ts/component';
-import { I, Key, Util, dispatcher } from 'ts/lib';
+import { I, Key, Util, dispatcher, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props {
 	commonStore?: any;
 	blockStore?: any;
-	editorStore?: any;
 	dataset?: any;
 	rootId: string;
 	container: string;
@@ -22,7 +21,6 @@ const $ = require('jquery');
 const THROTTLE = 20;
 
 @inject('commonStore')
-@inject('editorStore')
 @inject('blockStore')
 @observer
 class EditorPage extends React.Component<Props, {}> {
@@ -67,7 +65,7 @@ class EditorPage extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { blockStore, editorStore, rootId } = this.props;
+		const { blockStore, rootId } = this.props;
 		const win = $(window);
 		
 		this.unbind();
@@ -77,21 +75,25 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { blockStore, editorStore, rootId } = this.props;
+		const { blockStore, rootId } = this.props;
 		const { blocks } = blockStore;
-		const { focused } = editorStore;
+		const { focused, range } = focus;
 		
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		const focusedBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.id == focused; });
-		const firstBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.type == I.BlockType.Text; });
+		const title = tree.find((it: I.Block) => { return (it.type == I.BlockType.Text) && (it.content.style == I.TextStyle.Title); });
 		
-		if (!focusedBlock && firstBlock) {
-			let text = String(firstBlock.content.text || '');
+		if (!focusedBlock && title) {
+			let text = String(title.content.text || '');
+			if (text == Constant.untitled) {
+				text = '';
+			};
 			let length = text.length;
 			
-			editorStore.rangeSave(firstBlock.id, { from: length, to: length });
+			focus.set(title.id, { from: length, to: length });
 		};
 		
+		focus.apply();
 		this.setNumbers(tree);
 	};
 	
@@ -197,8 +199,8 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const { blockStore, editorStore, commonStore, dataset, rootId } = this.props;
-		const { focused, range } = editorStore;
+		const { blockStore, commonStore, dataset, rootId } = this.props;
+		const { focused, range } = focus;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		
@@ -233,7 +235,7 @@ class EditorPage extends React.Component<Props, {}> {
 					const l = String(next.content.text || '').length;
 					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
 					
-					editorStore.rangeSave(next.id, newRange);
+					focus.set(next.id, newRange);
 				};
 			};
 		};
@@ -268,7 +270,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blockStore, editorStore, commonStore, rootId } = this.props;
+		const { blockStore, commonStore, rootId } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == this.hovered; });
 		const node = $(ReactDOM.findDOMNode(this));
@@ -354,7 +356,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockCreate (focused: I.Block, dir: number, param: any) {
-		const { blockStore, editorStore, rootId } = this.props;
+		const { blockStore, rootId } = this.props;
 		
 		let request = {
 			block: blockStore.prepareBlockToProto(param),
@@ -365,7 +367,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
-			editorStore.rangeSave(message.blockId, { from: 0, to: 0 });
+			focus.set(message.blockId, { from: 0, to: 0 });
 		});
 	};
 	

@@ -1,16 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { observer, inject } from 'mobx-react';
 
-interface Props extends I.Menu {
-	editorStore?: any;
-};
+interface Props extends I.Menu {};
 
-@inject('editorStore')
-@observer
 class MenuBlockAction extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
@@ -22,11 +17,11 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { editorStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { content } = data;
 		const { style } = content;
-		const { range } = editorStore;
+		const { range } = focus;
 		
 		const markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
@@ -89,10 +84,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	checkActiveMark (type: number) {
-		const { editorStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { content } = data;
-		const { range } = editorStore;
+		const { range } = focus;
 		const marks = content.marks.filter((it: I.Mark) => { return it.type == type; });
 		
 		for (let mark of marks) {
@@ -105,8 +100,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onMark (e: any, type: number) {
-		const { editorStore } = this.props;
-		const { focused, range } = editorStore;
+		const { focused, range } = focus;
 		
 		console.log('type', type, 'focused', focused, 'range', range.from, range.to);
 		commonStore.menuClose(this.props.id);
@@ -126,9 +120,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, id: string) {
-		const { editorStore } = this.props;
-		const { range } = editorStore;
-
 		commonStore.menuClose(this.props.id);
 	};
 	
