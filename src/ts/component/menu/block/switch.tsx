@@ -17,14 +17,14 @@ class MenuBlockSwitch extends React.Component<Props, {}> {
 
 	render () {
 		const blockActions = [
-			{ id: I.TextStyle.Paragraph, icon: 'paragraph', name: 'Text' },
+			{ id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
 			{ id: I.TextStyle.Paragraph, icon: 'page', name: 'Page' },
 			{ id: I.TextStyle.Header1, icon: 'header1', name: 'Heading 1' },
 			{ id: I.TextStyle.Header2, icon: 'header2', name: 'Heading 2' },
 			{ id: I.TextStyle.Header3, icon: 'header3', name: 'Heading 3' },
 			{ id: I.TextStyle.Header4, icon: 'header4', name: 'Heading 4' },
 			{ id: I.TextStyle.Quote, icon: 'quote', name: 'Highlight' },
-			{ id: 'bulleted', icon: 'bulleted', name: 'Bulleted list' },
+			{ id: 'bulleted', icon: 'list', name: 'Bulleted list' },
 			{ id: 'numbered', icon: 'numbered', name: 'Numbered list' },
 			{ id: 'toggle', icon: 'toggle', name: 'Toggle' },
 			{ id: 'checkbox', icon: 'checkbox', name: 'Checkbox' },
@@ -34,7 +34,7 @@ class MenuBlockSwitch extends React.Component<Props, {}> {
 		return (
 			<React.Fragment>
 				{blockActions.map((action: any, i: number) => {
-					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action.id); }} />;
+					return <MenuItemVertical key={i} {...action} className="yellow" onClick={(e: any) => { this.onClick(e, action.id); }} />;
 				})}
 			</React.Fragment>
 		);

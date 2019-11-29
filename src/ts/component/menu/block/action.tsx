@@ -11,6 +11,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onMark = this.onMark.bind(this);
 		this.onBlockSwitch = this.onBlockSwitch.bind(this);
@@ -28,30 +29,30 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
 			{ type: I.MarkType.Link, icon: 'link', name: 'Link' },
-			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code' },
+			{ type: I.MarkType.Code, icon: 'code', name: 'Code' },
 		];
 		
 		let icon = '';
 		switch (style) {
 			default:
 			case I.TextStyle.Paragraph:
-				icon = 'p';
+				icon = 'text';
 				break;
 				
 			case I.TextStyle.Header1:
-				icon = 'h1';
+				icon = 'header1';
 				break;
 				
 			case I.TextStyle.Header2:
-				icon = 'h2';
+				icon = 'header2';
 				break;
 				
 			case I.TextStyle.Header3:
-				icon = 'h3';
+				icon = 'header3';
 				break;
 				
 			case I.TextStyle.Header4:
-				icon = 'h4';
+				icon = 'header4';
 				break;
 				
 			case I.TextStyle.Quote:
@@ -60,7 +61,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div className="flex" onClick={this.onMenuClick}>
 				<div className="section">
 					<Icon id="button-switch" arrow={true} className={[ icon, 'blockSwitch', (commonStore.menuIsOpen('blockSwitch') ? 'active' : '') ].join(' ')} onClick={this.onBlockSwitch} />
 				</div>
@@ -71,15 +72,15 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						if (this.checkActiveMark(action.type)) {
 							cn.push('active');
 						};
-						return <Icon key={i} className={cn.join(' ')} tooltip={action.name} tooltipY={I.MenuDirection.Bottom} onClick={(e: any) => { this.onMark(e, action.type); }} />;
+						return <Icon key={i} className={cn.join(' ')} tooltip={action.name} onClick={(e: any) => { this.onMark(e, action.type); }} />;
 					})}
 				</div>
 					
 				<div className="section">
-					<Icon className="copy" onClick={(e: any) => { this.onClick(e, 'copy'); }} />
-					<Icon className="remove" onClick={(e: any) => { this.onClick(e, 'remove'); }} />
+					<Icon className="copy" tooltip="Copy block" onClick={(e: any) => { this.onClick(e, 'copy'); }} />
+					<Icon className="remove" tooltip="Remove block" onClick={(e: any) => { this.onClick(e, 'remove'); }} />
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 	
@@ -102,6 +103,8 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	onMark (e: any, type: number) {
 		const { focused, range } = focus;
 		
+		focus.apply();
+		
 		console.log('type', type, 'focused', focused, 'range', range.from, range.to);
 		commonStore.menuClose(this.props.id);
 		
@@ -119,8 +122,13 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		};
 	};
 	
+	onMenuClick () {
+		focus.apply();
+	};
+	
 	onClick (e: any, id: string) {
 		commonStore.menuClose(this.props.id);
+		focus.apply();
 	};
 	
 	onBlockSwitch (e: any) {
@@ -130,12 +138,15 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		commonStore.menuOpen('blockSwitch', { 
 			element: 'button-switch',
 			type: I.MenuType.Vertical,
-			offsetX: 36,
-			offsetY: 0,
-			light: false,
-			vertical: I.MenuDirection.Center,
+			offsetX: 56,
+			offsetY: -36,
+			light: true,
+			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			data: data
+			data: data,
+			onClose: () => {
+				commonStore.menuClose(this.props.id);
+			}
 		});
 	};
 

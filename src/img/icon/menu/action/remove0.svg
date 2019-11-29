@@ -1,18 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="19px" viewBox="0 0 16 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
-    <title>trash copy 6</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Desktop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="elements-2" transform="translate(-384.000000, -990.000000)" fill="#ACA996" fill-rule="nonzero">
-            <g id="trash" transform="translate(384.000000, 990.000000)">
-                <path d="M3,6 L3,17 L13,17 L13,6 L15,6 L15,17 C15,18.1045695 14.1045695,19 13,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,6 L3,6 Z" id="Combined-Shape"></path>
-                <path d="M0,2 L16,2 L16,3 C16,3.55228475 15.5522847,4 15,4 L1,4 C0.44771525,4 6.76353751e-17,3.55228475 0,3 L0,2 Z" id="Rectangle-22-Copy"></path>
-                <path d="M5.99183206,0 L9.99183206,0 C10.5441168,-1.01453063e-16 10.9918321,0.44771525 10.9918321,1 L10.9918321,4 L4.99183206,4 L4.99183206,1 C4.99183206,0.44771525 5.43954731,1.01453063e-16 5.99183206,0 Z" id="Rectangle-23-Copy"></path>
-                <rect id="Rectangle-34" x="8.9921875" y="6" width="2" height="9"></rect>
-                <rect id="Rectangle-34" x="4.9921875" y="6" width="2" height="9"></rect>
-            </g>
-        </g>
-    </g>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 6H20V5C20 5 20 4 18.9961 4C11.6167 4 5.6193 4 4.98828 4C4 4 4 5 4 5V6Z" fill="#ACA996"/>
+<path d="M9 3.49976C9 2.67146 9.67146 2 10.4998 2H13.5002C14.3285 2 15 2.67146 15 3.49976V4.50024C15 5.32854 14.3285 6 13.5002 6H10.4998C9.67146 6 9 5.32854 9 4.50024V3.49976Z" fill="#ACA996"/>
+<path d="M9 8H11V18H9V8Z" fill="#ACA996"/>
+<path d="M13 8H15V18H13V8Z" fill="#ACA996"/>
+<path d="M5 6H7V19C7 19.5523 7.44772 20 8 20H16C16.5523 20 17 19.5523 17 19V6H19C19 8.4687 19 15.0927 19 19.0004C19 20.6572 17.6569 22 16 22H8C6.34315 22 5 20.6569 5 19V6Z" fill="#ACA996"/>
 </svg>

@@ -47,7 +47,7 @@ class Icon extends React.Component<Props, {}> {
 		
 		return (
 			<div id={id} onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} className={cn.join(' ')} style={style}>
-				{arrow ? <div className="icon arrow" /> : ''}
+				{arrow ? <div className="arrow" /> : ''}
 			</div>
 		);
 	};

@@ -1,38 +1,8 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockAdd, .menu.menuBlockAddSub { width: 192px; }
-	.menu.menuBlockAdd, .menu.menuBlockAddSub {
-		.icon { width: 24px; height: 24px; background-size: 100% 100%; }
-		.icon.arrow { 
-			position: absolute; right: 8px; top: 4px; margin: 0px; background-image: url('~img/icon/menu/add/arrow0.svg'); 
-		}
-		.icon.text { background-image: url('~img/icon/menu/add/text0.svg'); }
-		.icon.list { background-image: url('~img/icon/menu/add/list0.svg'); }
-		.icon.tool { background-image: url('~img/icon/menu/add/tool0.svg'); }
-		.icon.media { background-image: url('~img/icon/menu/add/media0.svg'); }
-		.icon.other { background-image: url('~img/icon/menu/add/other0.svg'); }
-		
-		.icon.header1 { background-image: url('~img/icon/menu/add/header10.svg'); }
-		.icon.header2 { background-image: url('~img/icon/menu/add/header20.svg'); }
-		.icon.header3 { background-image: url('~img/icon/menu/add/header30.svg'); }
-		.icon.header4 { background-image: url('~img/icon/menu/add/header30.svg'); }
-		.icon.quote { background-image: url('~img/icon/menu/add/quote0.svg'); }
-		
-		.icon.checkbox { background-image: url('~img/icon/menu/add/checkbox0.svg'); }
-		.icon.numbered { background-image: url('~img/icon/menu/add/numbered0.svg'); }
-		.icon.toggle { background-image: url('~img/icon/menu/add/toggle0.svg'); }
-		
-		.icon.task { background-image: url('~img/icon/menu/add/task0.svg'); }
-		.icon.set { background-image: url('~img/icon/menu/add/set0.svg'); }
-		.icon.contact { background-image: url('~img/icon/menu/add/contact0.svg'); }
-		.icon.existing { background-image: url('~img/icon/menu/add/existing0.svg'); }
-		
-		.icon.picture { background-image: url('~img/icon/menu/add/picture0.svg'); }
-		.icon.video { background-image: url('~img/icon/menu/add/video0.svg'); }
-		.icon.bookmark { background-image: url('~img/icon/menu/add/bookmark0.svg'); }
-		.icon.code { background-image: url('~img/icon/menu/add/code0.svg'); }
-		
+	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockSwitch { width: 192px; }
+	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockSwitch {
 		.item { font-size: 15px !important; font-weight: 500; padding: 4px 12px; }
 		.item {
 			.name { line-height: 1; }
@@ -44,34 +14,12 @@
 		.item.blue:hover, .item.blue.active { background: #1ba0eb !important; }
 		.item.red:hover, .item.red.active { background: #ee420b !important; }
 		.item.purple:hover, .item.purple.active { background: #a646c9 !important; }
+	
+		.icon { width: 24px; height: 24px; background-size: 100% 100%; }
+		.icon.arrow { position: absolute; right: 8px; top: 4px; margin: 0px; background-image: url('~img/icon/menu/add/arrow0.svg'); }
 		
 		.item:hover, .item.active {
 			.icon.arrow { background-image: url('~img/icon/menu/add/arrow1.svg'); }
-			.icon.text { background-image: url('~img/icon/menu/add/text1.svg'); }
-			.icon.list { background-image: url('~img/icon/menu/add/list1.svg'); }
-			.icon.tool { background-image: url('~img/icon/menu/add/tool1.svg'); }
-			.icon.media { background-image: url('~img/icon/menu/add/media1.svg'); }
-			.icon.other { background-image: url('~img/icon/menu/add/other1.svg'); }
-			
-			.icon.header1 { background-image: url('~img/icon/menu/add/header11.svg'); }
-			.icon.header2 { background-image: url('~img/icon/menu/add/header21.svg'); }
-			.icon.header3 { background-image: url('~img/icon/menu/add/header31.svg'); }
-			.icon.header4 { background-image: url('~img/icon/menu/add/header31.svg'); }
-			.icon.quote { background-image: url('~img/icon/menu/add/quote1.svg'); }
-			
-			.icon.task { background-image: url('~img/icon/menu/add/task1.svg'); }
-			.icon.set { background-image: url('~img/icon/menu/add/set1.svg'); }
-			.icon.contact { background-image: url('~img/icon/menu/add/contact1.svg'); }
-			.icon.existing { background-image: url('~img/icon/menu/add/existing1.svg'); }
-			
-			.icon.checkbox { background-image: url('~img/icon/menu/add/checkbox1.svg'); }
-			.icon.numbered { background-image: url('~img/icon/menu/add/numbered1.svg'); }
-			.icon.toggle { background-image: url('~img/icon/menu/add/toggle1.svg'); }
-			
-			.icon.picture { background-image: url('~img/icon/menu/add/picture1.svg'); }
-			.icon.video { background-image: url('~img/icon/menu/add/video1.svg'); }
-			.icon.bookmark { background-image: url('~img/icon/menu/add/bookmark1.svg'); }
-			.icon.code { background-image: url('~img/icon/menu/add/code1.svg'); }
 		}
 	}
 }

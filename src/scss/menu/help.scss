@@ -4,5 +4,14 @@
 	.menu.menuHelp { width: 224px; }
 	.menu.menuHelp {
 		.icon { width: 24px; height: 24px; }
+		.icon.chat { background-size: 18px 20px; background-image: url('~img/icon/menu/help/chat0.svg'); }
+		.icon.feature { background-size: 22px 21px; background-image: url('~img/icon/menu/help/feature0.svg'); }
+		.icon.community { background-size: 18px 16px; background-image: url('~img/icon/menu/help/community0.svg'); }
+		
+		.item:hover, .item.active {
+			.icon.chat { background-image: url('~img/icon/menu/help/chat1.svg'); }
+			.icon.feature { background-image: url('~img/icon/menu/help/feature1.svg'); }
+			.icon.community { background-image: url('~img/icon/menu/help/community1.svg'); }
+		}
 	}
 }

@@ -369,6 +369,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { commonStore, id, rootId, content } = this.props;
+		const from = focus.range.from;
+		const to = focus.range.to;
 		
 		focus.set(id, this.rangeGet());
 		
@@ -379,7 +381,7 @@ class BlockText extends React.Component<Props, {}> {
 			this.selectionEnd = range.to;
 		};
 		
-		if (range.to && (range.from != range.to)) {
+		if (range.to && (range.from != range.to) && (from != range.from || to != range.to)) {
 			
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
@@ -393,7 +395,7 @@ class BlockText extends React.Component<Props, {}> {
 				type: I.MenuType.Horizontal,
 				offsetX: x,
 				offsetY: -y,
-				light: false,
+				light: true,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Left,
 				onClose: () => {

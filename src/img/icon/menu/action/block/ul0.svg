@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="19" height="16" viewBox="0 0 19 16">
-    <g fill="#ACA996" fill-rule="nonzero">
-        <path d="M6.031.996H18v2H6.031zM6.031 6.996h12v2h-12zM6.031 12.996H18v2H6.031z"/>
-        <circle cx="2" cy="1.996" r="1.8"/>
-        <circle cx="2" cy="7.996" r="1.8"/>
-        <circle cx="2" cy="13.996" r="1.8"/>
-    </g>
-</svg>

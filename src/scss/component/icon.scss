@@ -5,6 +5,8 @@
 	background-position: center center; transition: $transitionFast; position: relative;
 }
 
+.arrow { background-position: center center; transition: $transitionFast; background-repeat: no-repeat; background-size: 100% 100%; }
+
 .icon.home { width: 24px; height: 24px; background-size: 20px 18px; background-image: url('~img/icon/home.svg'); }
 
 .icon.help { width: 22px; height: 22px; background-image: url('~img/icon/help/dark0.svg'); }

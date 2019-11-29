@@ -3,16 +3,22 @@ import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
 interface Props extends I.MenuItem {
+	className?: string;
 	onClick?(e: any, id: string): void;
 };
 
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { icon, name, onClick } = this.props;
+		const { icon, name, onClick, className } = this.props;
 		
-        return (
-			<div className="item" onMouseDown={(e: any) => { onClick(e, icon); }}>
+		let cn = [ 'item' ];
+		if (className) {
+			cn.push(className);
+		};
+		
+		return (
+			<div className={cn.join(' ')} onMouseDown={(e: any) => { onClick(e, icon); }}>
 				<Icon className={icon} />
 				<div className="name">{name}</div>
 			</div>
