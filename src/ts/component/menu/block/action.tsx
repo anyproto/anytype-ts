@@ -83,7 +83,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				<div className="section">
 					{markActions.map((action: any, i: number) => {
 						let cn = [ action.icon ];
-						if (Mark.isInRange(marks, action.type, range)) {
+						if (Mark.getInRange(marks, action.type, range)) {
 							cn.push('active');
 						};
 						return <Icon key={i} className={cn.join(' ')} tooltip={action.name} onClick={(e: any) => { this.onMark(e, action.type); }} />;
@@ -123,11 +123,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				break;
 				
 			case I.MarkType.Link:
+				let mark = Mark.getInRange(marks, type, { from: from, to: to });
 				commonStore.popupOpen('prompt', {
 					data: {
 						placeHolder: 'Please enter URL',
-						onChange: (v: string) => {
-							onChange(Mark.toggle(marks, { type: type, param: v, range: { from: from, to: to } }));
+						value: (mark ? mark.param : ''),
+						onChange: (param: string) => {
+							onChange(Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } }));
+							focus.apply();
 						}
 					}
 				});

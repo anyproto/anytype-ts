@@ -38,8 +38,6 @@ class Mark {
 		let type = mark.type;
 		let ret: I.Mark[] = [] as I.Mark[];
 		
-		console.log(JSON.stringify(mark, null, 5));
-		
 		if (!map[type] || !map[type].length) {
 			map[type] = [];
 		};
@@ -60,7 +58,6 @@ class Mark {
 					} else {
 						el.param = mark.param;
 					};
-					
 					add = false;
 					break;
 					
@@ -127,8 +124,6 @@ class Mark {
 		};
 		
 		map[type] = this.clear(map[type]);
-		console.log('AFTER CLEAR', JSON.stringify(map[type], null, 5));
-		
 		return this.unmap(map);
 	};
 	
@@ -150,8 +145,18 @@ class Mark {
 				continue;
 			};
 			
+			let del = false;
+			
 			if (prev.range.to >= current.range.from) {
 				marks[(i - 1)].range.to = current.range.to;
+				del = true;
+			};
+			
+			if ([ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor ].indexOf(current.type) >= 0 && !current.param) {
+				del = true;
+			};
+			
+			if (del) {
 				marks.splice(i, 1);
 				i--;
 			};
@@ -189,19 +194,19 @@ class Mark {
 		};
 	};
 	
-	isInRange (marks: I.Mark[], type: number, range: I.TextRange): boolean {
+	getInRange (marks: I.Mark[], type: number, range: I.TextRange): any {
 		let map = this.map(marks);
 		if (!map[type] || !map[type].length) {
-			return false;
+			return null;
 		};
 		
 		for (let mark of map[type]) {
 			let overlap = this.overlap(range, mark.range);
 			if ([ Overlap.Inner, Overlap.Equal ].indexOf(overlap) >= 0) {
-				return true;
+				return mark;
 			};
 		};
-		return false;
+		return null;
 	};
 	
 	toHtml (text: string, marks: I.Mark[]) {
