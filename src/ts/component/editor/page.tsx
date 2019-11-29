@@ -18,6 +18,7 @@ interface Props {
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+const raf = require('raf');
 const THROTTLE = 20;
 
 @inject('commonStore')
@@ -29,6 +30,7 @@ class EditorPage extends React.Component<Props, {}> {
 	timeoutHover: number = 0;
 	hovered: string =  '';
 	hoverDir: number = 0;
+	scrollTop: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -70,6 +72,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		win.on('mousemove.scroll', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 		
 		dispatcher.call('blockOpen', { blockId: rootId }, (errorCode: any, message: any) => {});
 	};
@@ -95,6 +98,10 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		focus.apply();
 		this.setNumbers(tree);
+		
+		window.setTimeout(() => {
+			window.scrollTo(0, this.scrollTop);
+		}, 1);
 	};
 	
 	componentWillUnmount () {
@@ -109,7 +116,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('mousemove.editor');
+		$(window).unbind('mousemove.editor scroll.editor');
 	};
 	
 	setNumbers (list: I.Block[]) {
@@ -353,6 +360,10 @@ class EditorPage extends React.Component<Props, {}> {
 				}
 			}
 		});
+	};
+	
+	onScroll (e: any) {
+		this.scrollTop = $(window).scrollTop();
 	};
 	
 	blockCreate (focused: I.Block, dir: number, param: any) {
