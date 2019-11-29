@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Select } from 'ts/component';
-import { I, keyboard, Key, Util, dispatcher, focus } from 'ts/lib';
+import { I, keyboard, Key, Util, Mark, dispatcher, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import 'highlight.js/styles/github.css';
@@ -34,10 +34,6 @@ class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	range: any = null;
 	timeoutKeyUp: number = 0;
-	start: any = null;
-	end: any = null;
-	selectionStart: any = null;
-	selectionEnd: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -198,7 +194,7 @@ class BlockText extends React.Component<Props, {}> {
 			let res = low.highlight(lang, text);
 			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
 		} else {
-			html = this.marksToHtml(text, marks);
+			html = Mark.toHtml(text, marks);
 		};
 		
 		value.html(html);
@@ -215,51 +211,10 @@ class BlockText extends React.Component<Props, {}> {
 		return String(value.text() || '');
 	};
 	
-	marksToHtml (text: string, marks: I.Mark[]) {
-		if (!marks || !marks.length) {
-			return text;
-		};
-		
-		text = String(text || '');
-		marks = marks || [];
-		
-		let r = text.split('');
-		let tag = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'span', 'span' ];
-		
-		for (let mark of marks) {
-			let type = mark.type || 0;
-			let t = tag[mark.type];
-			let attr = '';
-			
-			if ((type == I.MarkType.Link) && mark.param) {
-				attr = 'href="' + mark.param + '"';
-			};
-			if ((type == I.MarkType.TextColor) && mark.param) {
-				attr = 'style="color:' + mark.param + '"';
-			};
-			if ((type == I.MarkType.BgColor) && mark.param) {
-				attr = 'style="background-color:' + mark.param + '"';
-			};
-			
-			if (r[mark.range.from] && r[mark.range.to - 1]) {
-				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + '>' + r[mark.range.from];
-				r[mark.range.to - 1] += '</' + t + '>';
-			};
-		};
-		return r.join('');
-	};
-	
 	onKeyDown (e: any) {
 		const { onKeyDown, id } = this.props;
-		const range = this.rangeGet();
-		const k = e.which;
-		
-		if ((this.start === null) && ([ Key.up, Key.down, Key.left, Key.right ].indexOf(k) < 0)) {
-			this.start = range.from;
-		};
-		
-		focus.set(id, range);
-		
+
+		focus.set(id, this.rangeGet());
 		this.placeHolderCheck();
 		onKeyDown(e);
 	};
@@ -271,30 +226,13 @@ class BlockText extends React.Component<Props, {}> {
 		this.placeHolderCheck();
 		onKeyUp(e);
 		
-		let t = 500;
-		let remove = false;
-		
-		if ([ Key.up, Key.down, Key.left, Key.right ].indexOf(k) >= 0) {
-			t = 0;
-		};
-		
-		if (k == Key.backSpace) {
-			remove = true;
-		};
-		
-		console.log(k, t);
-		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => {
-			if ((this.start !== null) && (this.end === null) && ([ Key.up, Key.down, Key.left, Key.right ].indexOf(k) >= 0)) {
-				const range = this.rangeGet();
-				this.end = range.from;
-			};
-			this.blockUpdateText(remove);
-		}, t);
+			this.blockUpdateText();
+		}, 500);
 	};
 	
-	blockUpdateText (remove: boolean) {
+	blockUpdateText () {
 		const { blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
 		
@@ -302,40 +240,33 @@ class BlockText extends React.Component<Props, {}> {
 		let value = this.getValue();
 		let text = String(block.content.text || '');
 		
-		console.log('value', value, this.start, this.end, value.substr(this.start, this.end - this.start));
-		
 		if (value == text) {
 			return;
 		};
 		
-		if (this.start > this.end) {
-			let ts = this.start;
-			this.start = this.end;
-			this.end = ts;
-		};
-		
-		let range = { from: this.start, to: this.start };
-		
-		if (this.selectionEnd && (this.selectionStart != this.selectionEnd)) {
-			range.from = this.selectionStart;
-			range.to = this.selectionEnd;
-		};
-		
-		console.log('range', range.from, range.to);
-		
 		let request = {
 			contextId: rootId,
 			blockId: id,
-			text: remove ? '' : value.substr(this.start, this.end - this.start),
-			range: range,
+			text: value,
+			marks: { marks: block.content.marks },
 		};
 		
-		dispatcher.call('blockSetTextTextInRange', request, (errorCode: any, message: any) => {
-			this.start = null;
-			this.end = null;
-			this.selectionStart = null;
-			this.selectionEnd = null;
-		});
+		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
+	};
+	
+	blockUpdateMarks (marks: I.Mark[]) {
+		const { blockStore, id, rootId } = this.props;
+		const { blocks } = blockStore;
+		
+		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+		let request = {
+			contextId: rootId,
+			blockId: id,
+			text: String(block.content.text || ''),
+			marks: { marks: marks },
+		};
+		
+		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
 	};
 	
 	onFocus (e: any) {
@@ -389,17 +320,11 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { commonStore, id, rootId, content } = this.props;
-		const from = focus.range.from;
-		const to = focus.range.to;
+		const { from, to } = focus.range;
 		
 		focus.set(id, this.rangeGet());
 		
 		const { range } = focus;
-		
-		if ((this.selectionStart === null) && (this.selectionEnd === null)) {
-			this.selectionStart = range.from;
-			this.selectionEnd = range.to;
-		};
 		
 		if (range.to && (range.from != range.to) && (from != range.from || to != range.to)) {
 			
@@ -424,8 +349,10 @@ class BlockText extends React.Component<Props, {}> {
 				data: {
 					blockId: id, 
 					rootId: rootId,
-					content: content
-				}
+					onChange: (marks: I.Mark[]) => {
+						this.blockUpdateMarks(marks);
+					},
+				},
 			});
 		};
 	};

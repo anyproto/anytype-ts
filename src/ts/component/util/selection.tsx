@@ -171,6 +171,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onMouseUp (e: any) {
+		const { focused, range } = focus;
+		
 		this.hide();
 		this.lastIds = [];
 		this.focused = '';
@@ -181,10 +183,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 			if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 				this.clear();
 			} else {
-				this.checkNodes(e);
+				//this.checkNodes(e);
 				
 				let target = $(e.target.closest('.selectable'));
-				if (target.length) {
+				if (target.length && (target.data('id') != focused)) {
 					if (e.shiftKey) {
 						target.addClass('isSelected');
 					} else 
@@ -247,6 +249,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		if (!selected.length) {
 			return;
 		};
+		
 		
 		if ((selected.length == 1) && !e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			const value = selected.find('.value');

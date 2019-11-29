@@ -1,11 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, focus } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, Mark, Util, focus } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {
+	commonStore?: any;
+	blockStore?: any;
+};
 
+@inject('commonStore')
+@inject('blockStore')
+@observer
 class MenuBlockAction extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
@@ -18,11 +24,19 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param } = this.props;
+		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
-		const { content } = data;
-		const { style } = content;
 		const { range } = focus;
+		const { blockId, rootId } = data;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
+
+		if (!block) {
+			return null;
+		};
+		
+		const { content } = block;
+		const { marks, style } = content;
 		
 		const markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
@@ -69,7 +83,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				<div className="section">
 					{markActions.map((action: any, i: number) => {
 						let cn = [ action.icon ];
-						if (this.checkActiveMark(action.type)) {
+						if (Mark.isInRange(marks, action.type, range)) {
 							cn.push('active');
 						};
 						return <Icon key={i} className={cn.join(' ')} tooltip={action.name} onClick={(e: any) => { this.onMark(e, action.type); }} />;
@@ -84,37 +98,36 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		);
 	};
 	
-	checkActiveMark (type: number) {
-		const { param } = this.props;
+	onMark (e: any, type: number) {
+		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
-		const { content } = data;
 		const { range } = focus;
-		const marks = content.marks.filter((it: I.Mark) => { return it.type == type; });
-		
-		for (let mark of marks) {
-			if (range.from >= mark.range.from && range.to <= mark.range.to) {
-				return true;
-			};
+		const { blockId, rootId, onChange } = data;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
+
+		if (!block) {
+			return;
 		};
 		
-		return false;
-	};
-	
-	onMark (e: any, type: number) {
-		const { focused, range } = focus;
+		const { from, to } = range;
+		const { content } = block;
+		const { marks } = content;
 		
 		focus.apply();
 		
-		console.log('type', type, 'focused', focused, 'range', range.from, range.to);
-		commonStore.menuClose(this.props.id);
-		
 		switch (type) {
+			default:
+				commonStore.menuClose(this.props.id);
+				onChange(Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } }));
+				break;
+				
 			case I.MarkType.Link:
 				commonStore.popupOpen('prompt', {
 					data: {
 						placeHolder: 'Please enter URL',
 						onChange: (v: string) => {
-							console.log('value', v);
+							onChange(Mark.toggle(marks, { type: type, param: v, range: { from: from, to: to } }));
 						}
 					}
 				});
@@ -127,12 +140,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, id: string) {
+		const { commonStore } = this.props;
+		
 		commonStore.menuClose(this.props.id);
 		focus.apply();
 	};
 	
 	onBlockSwitch (e: any) {
-		const { param } = this.props;
+		const { commonStore, param } = this.props;
 		const { data } = param;
 		
 		commonStore.menuOpen('blockSwitch', { 

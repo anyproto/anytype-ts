@@ -36,7 +36,7 @@ export interface TextRange {
 export interface Mark {
 	range: TextRange;
 	type: MarkType;
-	param: string;
+	param?: string;
 };
 
 export interface ContentText {

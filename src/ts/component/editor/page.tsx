@@ -252,6 +252,13 @@ class EditorPage extends React.Component<Props, {}> {
 				type: I.BlockType.Text,
 				content: {
 					style: I.TextStyle.Paragraph,
+					text: 'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.',
+					marks: {
+						marks: [ 
+							{ type: I.MarkType.Bold, range: { from: 0, to: 7 } },
+							{ type: I.MarkType.Bold, range: { from: 15, to: 19 } },
+						]
+					}
 				},
 			};
 			

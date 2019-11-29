@@ -102,6 +102,10 @@ class Dispatcher {
 						param.content.text = data.text.value;
 					};
 					
+					if (null !== data.marks) {
+						param.content.marks = data.marks.value.marks;
+					};
+					
 					if (null !== data.style) {
 						param.content.style = data.style.value;
 					};

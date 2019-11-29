@@ -7,24 +7,24 @@
 		.section:first-child { padding-right: 22px; }
 		
 		.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
-		.icon.bold:hover { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
+		.icon.bold:hover, .icon.bold.active { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
 		
 		.icon.italic { background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
-		.icon.italic:hover { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
+		.icon.italic:hover, .icon.italic.active { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
 		
 		.icon.strike { background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
-		.icon.strike:hover { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
+		.icon.strike:hover, .icon.strike.active { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
 		
 		.icon.link { background-image: url('~img/icon/menu/action/mark/link0.svg'); }
-		.icon.link:hover { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
+		.icon.link:hover, .icon.link.active { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
 		
 		.icon.code { background-image: url('~img/icon/menu/action/mark/code0.svg'); }
-		.icon.code:hover { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
+		.icon.code:hover, .icon.code.active { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
 		
 		.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
-		.icon.copy:hover { background-image: url('~img/icon/menu/action/copy1.svg'); }
+		.icon.copy:hover, .icon.copy.active { background-image: url('~img/icon/menu/action/copy1.svg'); }
 		
 		.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
-		.icon.remove:hover { background-image: url('~img/icon/menu/action/remove1.svg'); }
+		.icon.remove:hover, .icon.remove.active { background-image: url('~img/icon/menu/action/remove1.svg'); }
 	}
 }

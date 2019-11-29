@@ -19,17 +19,25 @@ class Focus {
 	};
 	
 	apply () {
-		let el = $('#block-' + $.escapeSelector(this.focused));
-		if (el.length) {
-			let value = el.find('.value');
-			if (value) {
-				window.setTimeout(() => {
-					window.getSelection().empty();
-					value.focus();
-					setRange(value.get(0), { start: this.range.from, end: this.range.to });
-				});
-			};
+		if (!this.focused) {
+			return;
 		};
+		
+		let el = $('#block-' + $.escapeSelector(this.focused));
+		if (!el.length) {
+			return;
+		};
+		
+		let value = el.find('.value');
+		if (!value.length) {
+			return;
+		};
+		
+		window.setTimeout(() => {
+			window.getSelection().empty();
+			value.focus();
+			setRange(value.get(0), { start: this.range.from, end: this.range.to });
+		});
 	};
 	
 };

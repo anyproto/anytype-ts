@@ -3,6 +3,7 @@ import { keyboard, Key } from './keyboard';
 import { cache } from './cache';
 import Storage from './storage';
 import Util from './util';
+import Mark from './mark';
 import { focus } from './focus';
 import * as I from 'ts/interface';
 import { StructDecode, StructEncode } from './struct';
@@ -20,6 +21,7 @@ export {
 	Key,
 	Storage,
 	Util,
+	Mark,
 	I,
 	translate,
 	StructDecode, 
