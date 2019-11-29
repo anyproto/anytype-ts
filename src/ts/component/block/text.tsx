@@ -361,6 +361,24 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onCheck (e: any) {
+		const { blockStore, id, rootId } = this.props;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+
+		if (!block) {
+			return;
+		};
+		
+		let { content } = block;
+		let { checked } = content;
+		
+		let request: any = {
+			contextId: rootId,
+			blockId: id,
+			check: !checked,
+		};
+				
+		dispatcher.call('blockSetTextCheck', request, (errorCode: any, message: any) => {});
 	};
 	
 	onLang (value: string) {

@@ -118,6 +118,10 @@ class Dispatcher {
 						param.content.toggleable = data.toggleable.value;
 					};
 					
+					if (null !== data.check) {
+						param.content.checked = data.check.value;
+					};
+					
 					blockStore.blockUpdate(contextId, param);
 					break;
 			};
