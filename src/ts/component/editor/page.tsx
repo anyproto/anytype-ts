@@ -99,9 +99,7 @@ class EditorPage extends React.Component<Props, {}> {
 		focus.apply();
 		this.setNumbers(tree);
 		
-		window.setTimeout(() => {
-			window.scrollTo(0, this.scrollTop);
-		}, 1);
+		window.setTimeout(() => { window.scrollTo(0, this.scrollTop); }, 1);
 	};
 	
 	componentWillUnmount () {

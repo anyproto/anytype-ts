@@ -369,6 +369,8 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
+		focus.clear();
+		
 		let { content } = block;
 		let { checked } = content;
 		
@@ -377,7 +379,7 @@ class BlockText extends React.Component<Props, {}> {
 			blockId: id,
 			check: !checked,
 		};
-				
+		
 		dispatcher.call('blockSetTextCheck', request, (errorCode: any, message: any) => {});
 	};
 	
