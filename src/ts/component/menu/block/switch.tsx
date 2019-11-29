@@ -59,25 +59,21 @@ class MenuBlockSwitch extends React.Component<Props, {}> {
 				break;
 				
 			case 'bulleted':
-				console.log(content.marker);
 				request.marker = I.MarkerType.Bullet;
 				dispatcher.call('blockSetTextMarker', request, (errorCode: any, message: any) => {});
 				break;
 				
 			case 'numbered':
-				console.log(content.marker);
 				request.marker = I.MarkerType.Number;
 				dispatcher.call('blockSetTextMarker', request, (errorCode: any, message: any) => {});
 				break;
 				
 			case 'toggle':
-				console.log(content.toggleable);
 				request.toggleable = true;
 				dispatcher.call('blockSetTextToggleable', request, (errorCode: any, message: any) => {});
 				break;
 				
 			case 'checkbox':
-				console.log(content.checkable);
 				request.checkable = true;
 				dispatcher.call('blockSetTextCheckable', request, (errorCode: any, message: any) => {});
 				break;

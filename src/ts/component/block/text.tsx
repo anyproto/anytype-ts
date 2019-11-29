@@ -102,7 +102,7 @@ class BlockText extends React.Component<Props, {}> {
 		switch (style) {
 			default:
 			case I.TextStyle.Paragraph:
-				cn.push('p');
+				cn.push('text');
 				break;
 				
 			case I.TextStyle.Title:
@@ -111,19 +111,19 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 				
 			case I.TextStyle.Header1:
-				cn.push('h1');
+				cn.push('header1');
 				break;
 				
 			case I.TextStyle.Header2:
-				cn.push('h2');
+				cn.push('header2');
 				break;
 				
 			case I.TextStyle.Header3:
-				cn.push('h3');
+				cn.push('header3');
 				break;
 				
 			case I.TextStyle.Header4:
-				cn.push('h4');
+				cn.push('header4');
 				break;
 				
 			case I.TextStyle.Quote:
@@ -347,10 +347,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		const { onBlur } = this.props;
+		const { commonStore, onBlur } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const placeHolder = node.find('.placeHolder');
-
+		
 		placeHolder.hide();
 		keyboard.setFocus(false);
 		onBlur(e);
@@ -417,6 +417,7 @@ class BlockText extends React.Component<Props, {}> {
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Left,
 				onClose: () => {
+					focus.clear();
 				},
 				data: {
 					blockId: id, 
