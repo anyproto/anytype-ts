@@ -73,6 +73,8 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				break;
 		};
 		
+		let colorActive = Mark.getInRange(marks, I.MarkType.TextColor, range) || Mark.getInRange(marks, I.MarkType.BgColor, range);
+		
 		return (
 			<div className="flex" onClick={this.onMenuClick}>
 				<div className="section">
@@ -90,7 +92,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				</div>
 				
 				<div className="section">
-					<Icon id={'button-' + blockId + '-color'} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} tooltip="Text colors" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
+					<Icon id={'button-' + blockId + '-color'} className={[ 'color', (colorActive ? 'active' : '') ].join(' ')} tooltip="Text colors" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
 				</div>
 			</div>
 		);
