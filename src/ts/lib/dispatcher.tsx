@@ -138,8 +138,6 @@ class Dispatcher {
 			return;
 		};
 		
-		data = Util.objectCopy(data);
-		
 		//const errorCode = com.anytype[Util.toUpperCamelCase(type)].Response.Error.Code;
 		const errorCode = {};
 		const tc = '[Dispatcher.call] ' + type + ' time';

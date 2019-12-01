@@ -258,12 +258,8 @@ class EditorPage extends React.Component<Props, {}> {
 				},
 			};
 			
-			if (block.content.checkable) {
-				param.content.checkable = block.content.checkable;
-			};
-			
-			if (block.content.marker) {
-				param.content.marker = block.content.marker;
+			if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0) {
+				param.content.style = block.content.style;
 			};
 			
 			this.blockCreate(block, 1, param);
