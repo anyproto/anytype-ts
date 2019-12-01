@@ -132,7 +132,6 @@ class Mark {
 	};
 	
 	move (marks: I.Mark[], start: number, diff: number) {
-		marks.slice().sort(this.sort);
 		for (let mark of marks) {
 			let overlap = this.overlap({ from: start, to: start }, mark.range);
 			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight ].indexOf(overlap) >= 0) {
@@ -219,35 +218,6 @@ class Mark {
 		return marks;
 	};
 	
-	overlap (a: I.TextRange, b: I.TextRange): Overlap {
-		if (a.from == b.from && a.to == b.to) {
-			return Overlap.Equal;
-		} else
-		if (a.to < b.from) {
-			return Overlap.Before;
-		} else
-		if (a.from > b.to) {
-			return Overlap.After;
-		} else
-		if ((a.from <= b.from) && (a.to >= b.to)) {
-			return Overlap.Outer;
-		} else
-		if ((a.from > b.from) && (a.to < b.to)) {
-			return Overlap.Inner;
-		} else
-		if ((a.from == b.from) && (a.to < b.to)) {
-			return Overlap.InnerLeft;
-		} else
-		if ((a.from > b.from) && (a.to == b.to)) {
-			return Overlap.InnerRight;
-		} else
-		if ((a.from < b.from) && (a.to >= b.from)) {
-			return Overlap.Left;
-		} else {
-			return Overlap.Right;
-		};
-	};
-	
 	getInRange (marks: I.Mark[], type: number, range: I.TextRange): any {
 		let map = this.map(marks);
 		if (!map[type] || !map[type].length) {
@@ -295,6 +265,35 @@ class Mark {
 			};
 		};
 		return r.join('');
+	};
+	
+	overlap (a: I.TextRange, b: I.TextRange): Overlap {
+		if (a.from == b.from && a.to == b.to) {
+			return Overlap.Equal;
+		} else
+		if (a.to < b.from) {
+			return Overlap.Before;
+		} else
+		if (a.from > b.to) {
+			return Overlap.After;
+		} else
+		if ((a.from <= b.from) && (a.to >= b.to)) {
+			return Overlap.Outer;
+		} else
+		if ((a.from > b.from) && (a.to < b.to)) {
+			return Overlap.Inner;
+		} else
+		if ((a.from == b.from) && (a.to < b.to)) {
+			return Overlap.InnerLeft;
+		} else
+		if ((a.from > b.from) && (a.to == b.to)) {
+			return Overlap.InnerRight;
+		} else
+		if ((a.from < b.from) && (a.to >= b.from)) {
+			return Overlap.Left;
+		} else {
+			return Overlap.Right;
+		};
 	};
 	
 };

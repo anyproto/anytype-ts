@@ -22,7 +22,7 @@ import {
 import { PageStyle, ContentPage, BlockPage } from './block/page';
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
-import { TextStyle, MarkerType, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
+import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { ContentUploadState, ContentMedia, BlockMedia } from './block/media';
 
 export {
@@ -72,7 +72,6 @@ export {
 	BlockIcon,
 	
 	TextStyle, 
-	MarkerType, 
 	MarkType, 
 	TextRange, 
 	Mark, 

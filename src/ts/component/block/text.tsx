@@ -34,7 +34,7 @@ class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	range: any = null;
 	timeoutKeyUp: number = 0;
-	start: any = null;
+	from: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -217,28 +217,26 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onKeyDown (e: any) {
 		const { onKeyDown, id } = this.props;
-		const { range } = focus;
+		const range = this.getRange();
+		const k = e.which;
 		
-		if (this.start === null) {
-			this.start = range.from;
+		if ((this.from === null) && [ Key.up, Key.down, Key.left, Key.right ].indexOf(k) < 0) {
+			this.from = range.from;
 		};
 
-		focus.set(id, this.rangeGet());
+		focus.set(id, range);
 		this.placeHolderCheck();
 		onKeyDown(e);
 	};
 	
 	onKeyUp (e: any) {
 		const { onKeyUp, id } = this.props;
-		const k = e.which;
 		
 		this.placeHolderCheck();
 		onKeyUp(e);
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => {
-			this.blockUpdateText();
-		}, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(); }, 500);
 	};
 	
 	blockUpdateText () {
@@ -254,7 +252,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let marks = Mark.move(block.content.marks, this.start, range.from - this.start);
+		let marks = Mark.move(block.content.marks, this.from, range.from - this.from);
 		marks = Mark.checkRanges(value, marks);
 		
 		let request = {
@@ -265,7 +263,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {
-			this.start = null;
+			this.from = null;
 		});
 	};
 	
@@ -297,6 +295,7 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const placeHolder = node.find('.placeHolder');
 		
+		this.blockUpdateText();
 		placeHolder.hide();
 		keyboard.setFocus(false);
 		onBlur(e);
@@ -335,7 +334,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { commonStore, id, rootId, content } = this.props;
 		const { from, to } = focus.range;
 		
-		focus.set(id, this.rangeGet());
+		focus.set(id, this.getRange());
 		
 		const { range } = focus;
 		
@@ -382,7 +381,7 @@ class BlockText extends React.Component<Props, {}> {
 		value.length ? placeHolder.hide() : placeHolder.show();
 	};
 	
-	rangeGet (): I.TextRange {
+	getRange (): I.TextRange {
 		if (!this._isMounted) {
 			return;
 		};

@@ -15,12 +15,6 @@ export enum TextStyle {
 	Toggle		 = 11,
 };
 
-export enum MarkerType {
-	None	 = 0,
-	Number	 = 1,
-	Bullet	 = 2,
-};
-
 export enum MarkType {
 	Strike	 = 0,
 	Code	 = 1,
