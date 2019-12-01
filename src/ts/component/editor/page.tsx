@@ -352,6 +352,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.apply();
 		});
 	};
 	
