@@ -113,7 +113,7 @@ class BlockStore {
 			childBlocks: [] as I.Block[],
 			fields: {} as any,
 			content: {} as any,
-			permissions: block.permissions || {} as I.Permissions,
+			restrictions: block.restrictions || {} as I.Restrictions,
 		};
 		
 		if (fields) {

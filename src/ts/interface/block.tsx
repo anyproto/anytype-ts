@@ -18,7 +18,7 @@ export enum BlockPosition {
 	After = 1,
 };
 
-export interface Permissions {
+export interface Restrictions {
 	read: boolean;
 	edit: boolean;
 	remove: boolean;
@@ -29,7 +29,7 @@ export interface Permissions {
 export interface Block {
 	id: string;
 	type: BlockType;
-	permissions?: Permissions;
+	restrictions?: Restrictions;
 	parentId?: string;
 	fields: any;
 	content: any;

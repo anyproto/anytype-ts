@@ -4,8 +4,7 @@ import { Icon, MenuItemVertical } from 'ts/component';
 import { I, dispatcher } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
-interface Props extends I.Menu {
-};
+interface Props extends I.Menu {};
 
 class MenuBlockSwitch extends React.Component<Props, {}> {
 	
@@ -24,10 +23,10 @@ class MenuBlockSwitch extends React.Component<Props, {}> {
 			{ id: I.TextStyle.Header3, icon: 'header3', name: 'Heading 3' },
 			{ id: I.TextStyle.Header4, icon: 'header4', name: 'Heading 4' },
 			{ id: I.TextStyle.Quote, icon: 'quote', name: 'Highlight' },
-			{ id: 'bulleted', icon: 'list', name: 'Bulleted list' },
-			{ id: 'numbered', icon: 'numbered', name: 'Numbered list' },
-			{ id: 'toggle', icon: 'toggle', name: 'Toggle' },
-			{ id: 'checkbox', icon: 'checkbox', name: 'Checkbox' },
+			{ id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list' },
+			{ id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list' },
+			{ id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle' },
+			{ id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox' },
 			{ id: I.TextStyle.Code, icon: 'code', name: 'Code snippet' }
 		];
 		
@@ -50,34 +49,10 @@ class MenuBlockSwitch extends React.Component<Props, {}> {
 		let request: any = {
 			contextId: rootId,
 			blockId: blockId,
+			style: id,
 		};
 		
-		switch (id) {
-			default:
-				request.style = id;
-				dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
-				break;
-				
-			case 'bulleted':
-				request.marker = I.MarkerType.Bullet;
-				dispatcher.call('blockSetTextMarker', request, (errorCode: any, message: any) => {});
-				break;
-				
-			case 'numbered':
-				request.marker = I.MarkerType.Number;
-				dispatcher.call('blockSetTextMarker', request, (errorCode: any, message: any) => {});
-				break;
-				
-			case 'toggle':
-				request.toggleable = true;
-				dispatcher.call('blockSetTextToggleable', request, (errorCode: any, message: any) => {});
-				break;
-				
-			case 'checkbox':
-				request.checkable = true;
-				dispatcher.call('blockSetTextCheckable', request, (errorCode: any, message: any) => {});
-				break;
-		};
+		dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
 	};
 
 };
