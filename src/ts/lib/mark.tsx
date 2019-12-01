@@ -34,6 +34,10 @@ class Mark {
 	};
 	
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
+		if (mark.range.from == mark.range.to) {
+			return;	
+		};
+		
 		let map = this.map(marks);
 		let type = mark.type;
 		let ret: I.Mark[] = [] as I.Mark[];
@@ -162,7 +166,11 @@ class Mark {
 			
 			let del = false;
 			
-			if (prev.range.to >= current.range.from) {
+			if (current.range.from == current.range.to) {
+				del = true;
+			};
+			
+			if ((prev.range.to >= current.range.from) && (prev.param == current.param)) {
 				marks[(i - 1)].range.to = current.range.to;
 				del = true;
 			};
@@ -185,11 +193,22 @@ class Mark {
 			let mark = marks[i];
 			let del = false;
 			
-			if (mark.range.from >= text.length) {
+			if (mark.range.from > text.length) {
 				del = true;
 			};
-			if (mark.range.to >= text.length) {
-				mark.range.to = text.length - 1;
+			
+			if (mark.range.from == mark.range.to) {
+				del = true;
+			};
+			
+			if (mark.range.to > text.length) {
+				mark.range.to = text.length;
+			};
+			
+			if (mark.range.from > mark.range.to) {
+				let t = mark.range.to;
+				mark.range.to = mark.range.from;
+				mark.range.from = t;
 			};
 			
 			if (del) {

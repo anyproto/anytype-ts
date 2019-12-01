@@ -110,17 +110,17 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		const { from, to } = range;
 		const { content } = block;
-		const { marks } = content;
 		
 		focus.apply();
 		
-		
+		let { marks } = content;		
 		let mark: any = null;
 		
 		switch (type) {
 			default:
 				commonStore.menuClose(this.props.id);
-				onChange(Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } }));
+				marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
+				onChange(marks);
 				break;
 				
 			case I.MarkType.Link:
@@ -130,7 +130,8 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						placeHolder: 'Please enter URL',
 						value: (mark ? mark.param : ''),
 						onChange: (param: string) => {
-							onChange(Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } }));
+							marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
+							onChange(marks);
 							focus.apply();
 						}
 					}
@@ -138,7 +139,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				break;
 				
 			case I.MarkType.TextColor:
-				mark = Mark.getInRange(marks, type, { from: from, to: to });
+				let markText = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
+				let markBg = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
+				
 				commonStore.menuOpen('blockColor', { 
 					element: 'button-' + blockId + '-color',
 					type: I.MenuType.Vertical,
@@ -148,12 +151,15 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Center,
 					data: {
-						value: (mark ? mark.param : 'black'), 
+						valueText: (markText ? markText.param : ''),
+						valueBg: (markBg ? markBg.param : ''),
 						onChangeText: (param: string) => {
-							onChange(Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } }));
+							marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
+							onChange(marks);
 						},
 						onChangeBg: (param: string) => {
-							onChange(Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } }));
+							marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
+							onChange(marks);
 						},
 					},
 				});
