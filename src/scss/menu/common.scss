@@ -55,11 +55,16 @@
 		.icon.trash { width: 16px; height: 16px; background-image: url('~img/icon/menu/trash.svg'); }
 		
 		.name { display: inline-block; vertical-align: middle; }
+		
+		.section { border-bottom: 1px solid #dfddd0; }
+		.section:last-child { border: 0px; }
+		
+		.section > .name { font-size: 13px; line-height: 18px; color: #aca996; display: block; }
 	}
 	
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 4px 12px; border-right: 1px solid #6a6962; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 4px 12px; border-right: 1px solid #dfddd0; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
 		.icon { width: 32px; height: 32px; margin-right: 8px; border-radius: 4px; background-size: 24px 24px; cursor: pointer; }

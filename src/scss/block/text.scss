@@ -20,7 +20,29 @@
 		}
 		
 		a { cursor: pointer; }
-		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; }
+		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 2px 4px; }
+		
+		.textColor.grey { color: #aca996; }
+		.textColor.yellow { color: #ecd91b; }
+		.textColor.orange { color: #ffb522; }
+		.textColor.red { color: #f55522; }
+		.textColor.pink { color: #e51ca0; }
+		.textColor.purple { color: #ab50cc; }
+		.textColor.blue { color: #3e58eb; }
+		.textColor.ice { color: #2aa7ee; }
+		.textColor.teal { color: #0fc8ba; }
+		.textColor.lime { color: #5dd400; }
+		
+		.bgColor { padding: 2px 4px; }
+		.bgColor.yellow { background: #fef9cc; }
+		.bgColor.orange { background: #fef3c5; }
+		.bgColor.red { background: #ffebe5; }
+		.bgColor.pink { background: #fee3f5; }
+		.bgColor.purple { background: #f4e3fa; }
+		.bgColor.blue { background: #f4e3fa; }
+		.bgColor.ice { background: #d6effd; }
+		.bgColor.teal { background: #d6f5f3; }
+		.bgColor.lime { background: #e3f7d0; }
 		
 		.markers { white-space: nowrap; }
 		.markers {

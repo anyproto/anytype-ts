@@ -3,7 +3,6 @@
 .menus {
 	.menu.menuBlockAction { padding: 0px; transform-origin: 50% 50% !important; }
 	.menu.menuBlockAction {
-		.section { border-color: #dfddd0; }
 		.section:first-child { padding-right: 22px; }
 		
 		.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
@@ -21,10 +20,7 @@
 		.icon.code { background-image: url('~img/icon/menu/action/mark/code0.svg'); }
 		.icon.code:hover, .icon.code.active { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
 		
-		.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
-		.icon.copy:hover, .icon.copy.active { background-image: url('~img/icon/menu/action/copy1.svg'); }
-		
-		.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
-		.icon.remove:hover, .icon.remove.active { background-image: url('~img/icon/menu/action/remove1.svg'); }
+		.icon.color { background-image: url('~img/icon/menu/action/mark/color0.svg'); }
+		.icon.color:hover, .icon.color.active { background-image: url('~img/icon/menu/action/mark/color1.svg'); }
 	}
 }

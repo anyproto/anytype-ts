@@ -1,0 +1,45 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuBlockColor { width: 192px; padding: 0px; }
+	.menu.menuBlockColor {
+		.section { padding: 10px 12px; }
+		.item { 
+			width: 24px; height: 24px; text-align: center; display: inline-block; vertical-align: top; padding: 0px;
+			border-radius: 4px; position: relative; margin: 0px 4px 4px 0px;
+		}
+		.item.active { box-shadow: 0px 0px 0px 1px inset #2c2b27; }
+		
+		.item {
+			.inner { 
+				width: 18px; height: 18px; line-height: 18px; border-radius: 100%; display: inline-block; vertical-align: middle;
+				font-size: 11px; position: absolute; top: 3px; left: 3px;
+			}
+		}
+		
+		.item.text .inner .txt { display: none; }
+		
+		.item.text.black .inner { background: #2c2b27; }
+		.item.text.grey .inner { background: #aca996; }
+		.item.text.yellow .inner { background: #ecd91b; }
+		.item.text.orange .inner { background: #ffb522; }
+		.item.text.red .inner { background: #f55522; }
+		.item.text.pink .inner { background: #e51ca0; }
+		.item.text.purple .inner { background: #ab50cc; }
+		.item.text.blue .inner { background: #3e58eb; }
+		.item.text.ice .inner { background: #2aa7ee; }
+		.item.text.teal .inner { background: #0fc8ba; }
+		.item.text.lime .inner { background: #5dd400; }
+		
+		.item.bg.grey .inner { box-shadow: 0px 0px 0px 1px inset #dfddd0; }
+		.item.bg.yellow .inner { background: #fef9cc; }
+		.item.bg.orange .inner { background: #fef3c5; }
+		.item.bg.red .inner { background: #ffebe5; }
+		.item.bg.pink .inner { background: #fee3f5; }
+		.item.bg.purple .inner { background: #f4e3fa; }
+		.item.bg.blue .inner { background: #f4e3fa; }
+		.item.bg.ice .inner { background: #d6effd; }
+		.item.bg.teal .inner { background: #d6f5f3; }
+		.item.bg.lime .inner { background: #e3f7d0; }
+	}
+}

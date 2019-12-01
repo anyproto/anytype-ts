@@ -18,7 +18,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onMenuClick = this.onMenuClick.bind(this);
-		this.onClick = this.onClick.bind(this);
 		this.onMark = this.onMark.bind(this);
 		this.onBlockSwitch = this.onBlockSwitch.bind(this);
 	};
@@ -89,10 +88,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						return <Icon key={i} className={cn.join(' ')} tooltip={action.name} onClick={(e: any) => { this.onMark(e, action.type); }} />;
 					})}
 				</div>
-					
+				
 				<div className="section">
-					<Icon className="copy" tooltip="Copy block" onClick={(e: any) => { this.onClick(e, 'copy'); }} />
-					<Icon className="remove" tooltip="Remove block" onClick={(e: any) => { this.onClick(e, 'remove'); }} />
+					<Icon id={'button-' + blockId + '-color'} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} tooltip="Text colors" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
 				</div>
 			</div>
 		);
@@ -116,6 +114,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		focus.apply();
 		
+		
+		let mark: any = null;
+		
 		switch (type) {
 			default:
 				commonStore.menuClose(this.props.id);
@@ -123,7 +124,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				break;
 				
 			case I.MarkType.Link:
-				let mark = Mark.getInRange(marks, type, { from: from, to: to });
+				mark = Mark.getInRange(marks, type, { from: from, to: to });
 				commonStore.popupOpen('prompt', {
 					data: {
 						placeHolder: 'Please enter URL',
@@ -135,17 +136,32 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					}
 				});
 				break;
+				
+			case I.MarkType.TextColor:
+				mark = Mark.getInRange(marks, type, { from: from, to: to });
+				commonStore.menuOpen('blockColor', { 
+					element: 'button-' + blockId + '-color',
+					type: I.MenuType.Vertical,
+					offsetX: 0,
+					offsetY: 8,
+					light: true,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Center,
+					data: {
+						value: (mark ? mark.param : 'black'), 
+						onChangeText: (param: string) => {
+							onChange(Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } }));
+						},
+						onChangeBg: (param: string) => {
+							onChange(Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } }));
+						},
+					},
+				});
+				break;
 		};
 	};
 	
 	onMenuClick () {
-		focus.apply();
-	};
-	
-	onClick (e: any, id: string) {
-		const { commonStore } = this.props;
-		
-		commonStore.menuClose(this.props.id);
 		focus.apply();
 	};
 	
