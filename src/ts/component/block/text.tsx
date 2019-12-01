@@ -254,7 +254,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let marks = Mark.move(block.content.marks, range, range.from - this.start);
+		let marks = Mark.move(block.content.marks, this.start, range.from - this.start);
 		marks = Mark.checkRanges(value, marks);
 		
 		let request = {

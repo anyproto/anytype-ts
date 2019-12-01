@@ -127,10 +127,10 @@ class Mark {
 		return this.unmap(map);
 	};
 	
-	move (marks: I.Mark[], range: I.TextRange, diff: number) {
+	move (marks: I.Mark[], start: number, diff: number) {
 		marks.sort(this.sort);
 		for (let mark of marks) {
-			let overlap = this.overlap(range, mark.range);
+			let overlap = this.overlap({ from: start, to: start }, mark.range);
 			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight ].indexOf(overlap) >= 0) {
 				mark.range.to += diff;
 			};
