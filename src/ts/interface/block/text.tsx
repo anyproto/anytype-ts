@@ -9,6 +9,10 @@ export enum TextStyle {
 	Quote		 = 5,
 	Code		 = 6,
 	Title		 = 7,
+	Checkbox	 = 8,
+	Bulleted	 = 9,
+	Numbered	 = 10,
+	Toggle		 = 11,
 };
 
 export enum MarkerType {
@@ -43,10 +47,7 @@ export interface ContentText {
 	text: string;
 	style: TextStyle;
 	marks: Mark[];
-	marker: MarkerType;
 	number: number;
-	toggleable: boolean;
-	checkable: boolean;
 	checked: boolean;
 };
 

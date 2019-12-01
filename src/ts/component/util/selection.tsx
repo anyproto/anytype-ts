@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { getRange, setRange } from 'selection-ranges';
+import { getRange } from 'selection-ranges';
 import { I, Key, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -250,7 +250,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		
 		if ((selected.length == 1) && !e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			const value = selected.find('.value');
 			const el = value.get(0) as Element;
@@ -261,10 +260,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 					this.range = getRange(el) || { start: 0, end: 0 };
 				};
 				
-				if (this.range.start || this.range.end) {
+				if (this.range.end) {
 					this.clear();
 					focus.set(this.focused, { from: this.range.start, to: this.range.end });
-					setRange(el, this.range);
+					focus.apply();
 				};
 			};
 		} else {

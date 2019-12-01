@@ -110,20 +110,8 @@ class Dispatcher {
 						param.content.style = data.style.value;
 					};
 					
-					if (null !== data.marker) {
-						param.content.marker = data.marker.value;
-					};
-					
-					if (null !== data.checkable) {
-						param.content.checkable = data.checkable.value;
-					};
-					
-					if (null !== data.toggleable) {
-						param.content.toggleable = data.toggleable.value;
-					};
-					
-					if (null !== data.check) {
-						param.content.checked = data.check.value;
+					if (null !== data.checked) {
+						param.content.checked = data.checked.value;
 					};
 					
 					blockStore.blockUpdate(contextId, param);

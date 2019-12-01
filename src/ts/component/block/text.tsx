@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Icon, Select } from 'ts/component';
 import { I, keyboard, Key, Util, Mark, dispatcher, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
-import { getRange, setRange } from 'selection-ranges';
+import { getRange } from 'selection-ranges';
 import 'highlight.js/styles/github.css';
 
 interface Props extends I.BlockText {
@@ -34,6 +34,7 @@ class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	range: any = null;
 	timeoutKeyUp: number = 0;
+	start: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -58,20 +59,23 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		let { fields, content } = block;
-		let { text, marks, style, marker, toggleable, checkable, checked, number } = content;
+		let { text, marks, style, checked, number } = content;
 		let { lang } = fields;
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
 		let cn = [ 'flex' ];
 		let additional = null;
 		
-		if (marker) {
-			markers.push({ type: marker, className: 'bullet c' + marker, active: false, onClick: () => {} });
+		if (style == I.TextStyle.Bulleted) {
+			markers.push({ type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} });
 		};
-		if (toggleable) {
+		if (style == I.TextStyle.Numbered) {
+			markers.push({ type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} });
+		};
+		if (style == I.TextStyle.Toggle) {
 			markers.push({ type: 0, className: 'toggle', active: false, onClick: this.onToggle });
 		};
-		if (checkable) {
+		if (style == I.TextStyle.Checkbox) {
 			markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
 		};
 		
@@ -91,7 +95,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let Marker = (item: any) => (
 			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				{(item.type == I.MarkerType.Number) && number ? number + '.' : <Icon />}
+				{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}
 			</div>
 		);
 		
@@ -213,6 +217,11 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onKeyDown (e: any) {
 		const { onKeyDown, id } = this.props;
+		const { range } = focus;
+		
+		if (this.start === null) {
+			this.start = range.from;
+		};
 
 		focus.set(id, this.rangeGet());
 		this.placeHolderCheck();
@@ -235,6 +244,7 @@ class BlockText extends React.Component<Props, {}> {
 	blockUpdateText () {
 		const { blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
+		const { range } = focus;
 		
 		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		let value = this.getValue();
@@ -244,14 +254,19 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
+		let marks = Mark.move(block.content.marks, range, range.from - this.start);
+		marks = Mark.checkRanges(value, marks);
+		
 		let request = {
 			contextId: rootId,
 			blockId: id,
 			text: value,
-			marks: { marks: block.content.marks },
+			marks: { marks: marks },
 		};
 		
-		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
+		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {
+			this.start = null;
+		});
 	};
 	
 	blockUpdateMarks (marks: I.Mark[]) {
@@ -303,15 +318,13 @@ class BlockText extends React.Component<Props, {}> {
 		focus.clear();
 		
 		let { content } = block;
-		let { checked } = content;
-		
 		let request: any = {
 			contextId: rootId,
 			blockId: id,
-			check: !checked,
+			checked: !content.checked,
 		};
 		
-		dispatcher.call('blockSetTextCheck', request, (errorCode: any, message: any) => {});
+		dispatcher.call('blockSetTextChecked', request, (errorCode: any, message: any) => {});
 	};
 	
 	onLang (value: string) {

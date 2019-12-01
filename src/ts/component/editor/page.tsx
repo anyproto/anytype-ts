@@ -126,7 +126,7 @@ class EditorPage extends React.Component<Props, {}> {
 		let map: any = {};
 		
 		for (let item of list) {
-			n = (item.type == I.BlockType.Text && item.content.marker == I.MarkerType.Number) ? n + 1 : 0;
+			n = (item.type == I.BlockType.Text && item.content.style == I.TextStyle.Numbered) ? n + 1 : 0;
 			map[item.id] = n;
 			this.setNumbers(item.childBlocks);
 		};
@@ -303,36 +303,11 @@ class EditorPage extends React.Component<Props, {}> {
 				onSelect: (e: any, item: any) => {
 					switch (item.parentId) {
 						case 'text':
+						case 'list':
 							param.type = I.BlockType.Text;
 							param.content = {
 								style: item.id,
 							};
-							break;
-							
-						case 'list':
-							param.type = I.BlockType.Text;
-							param.content = {
-								style: I.TextStyle.Paragraph,
-							};
-							
-							switch (item.id) {
-								case 'checkbox':
-									param.content.checkable = true;
-									break;
-									
-								case 'bulleted':
-									param.content.marker = I.MarkerType.Bullet;
-									break;
-									
-								case 'numbered':
-									param.content.marker = I.MarkerType.Number;
-									break;
-									
-								case 'toggle':
-									param.content.toggleable = true;
-									break;
-							};
-							
 							break;
 							
 						case 'tool':

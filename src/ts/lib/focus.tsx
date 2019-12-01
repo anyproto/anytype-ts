@@ -36,6 +36,7 @@ class Focus {
 		window.setTimeout(() => {
 			window.getSelection().empty();
 			value.focus();
+			
 			setRange(value.get(0), { start: this.range.from, end: this.range.to });
 		});
 	};

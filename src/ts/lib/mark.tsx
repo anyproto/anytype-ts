@@ -127,6 +127,22 @@ class Mark {
 		return this.unmap(map);
 	};
 	
+	move (marks: I.Mark[], range: I.TextRange, diff: number) {
+		marks.sort(this.sort);
+		for (let mark of marks) {
+			let overlap = this.overlap(range, mark.range);
+			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight ].indexOf(overlap) >= 0) {
+				mark.range.to += diff;
+			};
+			if (overlap == Overlap.Before) {
+				mark.range.from += diff;
+				mark.range.to += diff;
+			};
+		};
+		
+		return this.clear(marks);
+	};
+	
 	sort (c1: I.Mark, c2: I.Mark) {
 		if (c1.range.from > c2.range.from) return 1;
 		if (c1.range.from < c2.range.from) return -1;
@@ -162,6 +178,27 @@ class Mark {
 			};
 		};
 		
+		return marks;
+	};
+	
+	checkRanges (text: string, marks: I.Mark[]) {
+		marks.sort(this.sort);
+		for (let i = 0; i < marks.length; ++i) {
+			let mark = marks[i];
+			let del = false;
+			
+			if (mark.range.from >= text.length) {
+				del = true;
+			};
+			if (mark.range.to >= text.length) {
+				mark.range.to = text.length - 1;
+			};
+			
+			if (del) {
+				marks.splice(i, 1);
+				i--;	
+			};
+		};
 		return marks;
 	};
 	
@@ -215,7 +252,7 @@ class Mark {
 		};
 		
 		text = String(text || '');
-		marks = marks || [];
+		marks = this.checkRanges(text, marks || []);
 		
 		let r = text.split('');
 		let tag = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'span', 'span' ];

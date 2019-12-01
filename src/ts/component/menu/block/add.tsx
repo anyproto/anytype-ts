@@ -39,10 +39,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			},
 			{ 
 				id: 'list', icon: 'list', name: 'List', color: 'green', children: [
-					{ id: 'checkbox', icon: 'checkbox', name: 'Checkbox' },
-					{ id: 'bulleted', icon: 'list', name: 'Bulleted' },
-					{ id: 'numbered', icon: 'numbered', name: 'Numbered' },
-					{ id: 'toggle', icon: 'toggle', name: 'Toggle' },
+					{ id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox' },
+					{ id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted' },
+					{ id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered' },
+					{ id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle' },
 				] as any [],
 			},
 			{ 
