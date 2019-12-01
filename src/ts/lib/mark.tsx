@@ -42,7 +42,7 @@ class Mark {
 			map[type] = [];
 		};
 		
-		map[type].sort(this.sort);
+		map[type].slice().sort(this.sort);
 		
 		let add = true;
 		
@@ -128,7 +128,7 @@ class Mark {
 	};
 	
 	move (marks: I.Mark[], start: number, diff: number) {
-		marks.sort(this.sort);
+		marks.slice().sort(this.sort);
 		for (let mark of marks) {
 			let overlap = this.overlap({ from: start, to: start }, mark.range);
 			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight ].indexOf(overlap) >= 0) {
@@ -139,7 +139,6 @@ class Mark {
 				mark.range.to += diff;
 			};
 		};
-		
 		return this.clear(marks);
 	};
 	
@@ -152,7 +151,7 @@ class Mark {
 	};
 	
 	clear (marks: I.Mark[]) {
-		marks.sort(this.sort);
+		marks.slice().sort(this.sort);
 		for (let i = 0; i < marks.length; ++i) {
 			let current = marks[i];
 			let prev = marks[(i - 1)];
@@ -182,7 +181,6 @@ class Mark {
 	};
 	
 	checkRanges (text: string, marks: I.Mark[]) {
-		marks.sort(this.sort);
 		for (let i = 0; i < marks.length; ++i) {
 			let mark = marks[i];
 			let del = false;

@@ -145,7 +145,7 @@ class Block extends React.Component<Props, {}> {
 		let wrapContent = (
 			<div className="wrapContent">
 				<div className={[ (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id} data-type={type}>
-					<DropTarget id={id} type={I.DragItem.Block} disabled={false} onDrop={this.onDrop}>
+					<DropTarget id={id} type={I.DragItem.Block} disabled={restrictions.dropOn} onDrop={this.onDrop}>
 						<BlockComponent {...this.props} />
 					</DropTarget>
 				</div>
@@ -187,20 +187,32 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onDragStart (e: any) {
-		const { dataset, id } = this.props;
+		const { dataset, id, restrictions } = this.props;
 		const { selection, onDragStart } = dataset;
 		
-		if (dataset) {
-			let ids = [ id ];
-			if (selection) {
-				let selectedIds = selection.get();
-				if (selectedIds.length && (selectedIds.indexOf(id) >= 0)) {
-					ids = selectedIds;
-				};
+		if (!dataset) {
+			return;
+		};
+		
+		if (restrictions.drag) {
+			e.preventDefault();
+			e.stopPropagation();
+		};
+		
+		let ids = [ id ];
+		if (selection) {
+			let selectedIds = selection.get();
+			if (selectedIds.length && (selectedIds.indexOf(id) >= 0)) {
+				ids = selectedIds;
 			};
-			if (onDragStart) {
-				onDragStart(e, I.DragItem.Block, ids, this);				
-			};
+			
+			selection.set(ids);
+			selection.hide();
+			selection.setBlocked(true);
+		};
+		
+		if (!restrictions.drag && onDragStart) {
+			onDragStart(e, I.DragItem.Block, ids, this);				
 		};
 	};
 	
