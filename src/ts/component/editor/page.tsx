@@ -229,6 +229,8 @@ class EditorPage extends React.Component<Props, {}> {
 			const dir = (k == Key.up) ? -1 : 1;
 			const next = blockStore.getNextBlock(rootId, focused, dir);
 			
+			console.log('next', next.id);
+			
 			if (e.shiftKey) {
 				if (selection.get().length < 1) {
 					window.getSelection().empty();
@@ -241,6 +243,7 @@ class EditorPage extends React.Component<Props, {}> {
 					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
 					
 					focus.set(next.id, newRange);
+					focus.apply();
 				};
 			};
 		};

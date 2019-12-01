@@ -126,23 +126,23 @@ class Mark {
 		if (add) {
 			map[type].push(mark);
 		};
-		
-		map[type] = this.clear(map[type]);
 		return this.unmap(map);
 	};
 	
 	move (marks: I.Mark[], start: number, diff: number) {
 		for (let mark of marks) {
-			let overlap = this.overlap({ from: start, to: start }, mark.range);
-			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight ].indexOf(overlap) >= 0) {
+			if (mark.range.to == start) {
 				mark.range.to += diff;
-			};
-			if (overlap == Overlap.Before) {
+			} else 
+			if ((start == 0) && (mark.range.from == 0)) {
+				mark.range.to += diff;
+			} else
+			if (mark.range.from >= start) {
 				mark.range.from += diff;
 				mark.range.to += diff;
 			};
 		};
-		return this.clear(marks);
+		return marks;
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
@@ -153,46 +153,14 @@ class Mark {
 		return 0;
 	};
 	
-	clear (marks: I.Mark[]) {
-		marks.slice().sort(this.sort);
-		for (let i = 0; i < marks.length; ++i) {
-			let current = marks[i];
-			let prev = marks[(i - 1)];
-			
-			if (!prev) {
-				continue;
-			};
-			
-			let del = false;
-			
-			if (current.range.from == current.range.to) {
-				del = true;
-			};
-			
-			if ((prev.range.to >= current.range.from) && (prev.param == current.param)) {
-				marks[(i - 1)].range.to = current.range.to;
-				del = true;
-			};
-			
-			if ([ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor ].indexOf(current.type) >= 0 && !current.param) {
-				del = true;
-			};
-			
-			if (del) {
-				marks.splice(i, 1);
-				i--;
-			};
-		};
-		
-		return marks;
-	};
-	
 	checkRanges (text: string, marks: I.Mark[]) {
+		marks = marks || [];
 		for (let i = 0; i < marks.length; ++i) {
 			let mark = marks[i];
+			let prev = marks[(i - 1)];
 			let del = false;
 			
-			if (mark.range.from > text.length) {
+			if (mark.range.from >= text.length) {
 				del = true;
 			};
 			
@@ -200,25 +168,38 @@ class Mark {
 				del = true;
 			};
 			
-			if (mark.range.to > text.length) {
-				mark.range.to = text.length;
+			if (mark.range.to < 0) {
+				del = true;
 			};
 			
-			if (mark.range.from > mark.range.to) {
-				let t = mark.range.to;
-				mark.range.to = mark.range.from;
-				mark.range.from = t;
+			if (prev && (prev.range.to >= mark.range.from) && (prev.type == mark.type) && (prev.param == mark.param)) {
+				prev.range.to = mark.range.to;
+				del = true;
 			};
 			
 			if (del) {
 				marks.splice(i, 1);
-				i--;	
+				i--;
+			} else {
+				if (mark.range.from < 0) {
+					mark.range.from = 0;
+				};
+				
+				if (mark.range.to > text.length) {
+					mark.range.to = text.length;
+				};
+				
+				if (mark.range.from > mark.range.to) {
+					let t = mark.range.to;
+					mark.range.to = mark.range.from;
+					mark.range.from = t;
+				};
 			};
 		};
 		return marks;
 	};
 	
-	getInRange (marks: I.Mark[], type: number, range: I.TextRange): any {
+	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
 		let map = this.map(marks);
 		if (!map[type] || !map[type].length) {
 			return null;

@@ -130,9 +130,8 @@ class BlockStore {
 				
 				if (content.marks && content.marks.marks.length) {
 					for (let mark of content.marks.marks) {
-						let type = mark.type;
 						marks.push({
-							type: type,
+							type: Number(mark.type) || 0,
 							param: String(mark.param || ''),
 							range: {
 								from: Number(mark.range.from) || 0,

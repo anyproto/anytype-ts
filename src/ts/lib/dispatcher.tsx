@@ -103,7 +103,18 @@ class Dispatcher {
 					};
 					
 					if (null !== data.marks) {
-						param.content.marks = data.marks.value.marks;
+						let marks: any = [];
+						for (let mark of data.marks.value.marks) {
+							marks.push({
+								type: Number(mark.type) || 0,
+								param: String(mark.param || ''),
+								range: {
+									from: Number(mark.range.from) || 0,
+									to: Number(mark.range.to) || 0,
+								}
+							});
+						};
+						param.content.marks = marks;
 					};
 					
 					if (null !== data.style) {
@@ -127,11 +138,13 @@ class Dispatcher {
 			return;
 		};
 		
+		data = Util.objectCopy(data);
+		
 		//const errorCode = com.anytype[Util.toUpperCamelCase(type)].Response.Error.Code;
 		const errorCode = {};
 		const tc = '[Dispatcher.call] ' + type + ' time';
 		
-		console.log('[Dispatcher.call]', type, data);
+		console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
 		let t0 = performance.now();
 		
 		try {

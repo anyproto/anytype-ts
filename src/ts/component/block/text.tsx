@@ -34,7 +34,8 @@ class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	range: any = null;
 	timeoutKeyUp: number = 0;
-	from: any = null;
+	from: number = 0;
+	length: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -218,31 +219,38 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		const { onKeyDown, id } = this.props;
 		const range = this.getRange();
-		const k = e.which;
 		
-		if ((this.from === null) && [ Key.up, Key.down, Key.left, Key.right ].indexOf(k) < 0) {
-			this.from = range.from;
-		};
-
+		this.from = range.from;
+		this.length = this.getValue().length;
+		
 		focus.set(id, range);
 		this.placeHolderCheck();
 		onKeyDown(e);
 	};
 	
 	onKeyUp (e: any) {
-		const { onKeyUp, id } = this.props;
+		const { onKeyUp, id, content } = this.props;
+		const range = this.getRange();
+		const k = e.which;
+		
+		let value = this.getValue();
+		let marks = content.marks;
+		let diff = value.length - this.length;
+		
+		if (diff != 0) {
+			marks = Mark.move(marks, this.from, diff);
+		};
 		
 		this.placeHolderCheck();
 		onKeyUp(e);
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(marks); }, 500);
 	};
 	
-	blockUpdateText () {
+	blockUpdateText (marks: I.Mark[]) {
 		const { blockStore, id, rootId } = this.props;
 		const { blocks } = blockStore;
-		const { range } = focus;
 		
 		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		let value = this.getValue();
@@ -252,19 +260,14 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let marks = Mark.move(block.content.marks, this.from, range.from - this.from);
-		marks = Mark.checkRanges(value, marks);
-		
 		let request = {
 			contextId: rootId,
 			blockId: id,
 			text: value,
-			marks: { marks: marks },
+			marks: { marks: Mark.checkRanges(value, marks) },
 		};
 		
-		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {
-			this.from = null;
-		});
+		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
 	};
 	
 	blockUpdateMarks (marks: I.Mark[]) {
@@ -276,7 +279,7 @@ class BlockText extends React.Component<Props, {}> {
 			contextId: rootId,
 			blockId: id,
 			text: String(block.content.text || ''),
-			marks: { marks: marks },
+			marks: { marks: Mark.checkRanges(block.content.text, marks) },
 		};
 		
 		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
@@ -295,7 +298,6 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const placeHolder = node.find('.placeHolder');
 		
-		this.blockUpdateText();
 		placeHolder.hide();
 		keyboard.setFocus(false);
 		onBlur(e);

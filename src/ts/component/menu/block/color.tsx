@@ -26,8 +26,6 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		const { data } = param;
 		const { valueText, valueBg } = data;
 		
-		console.log(valueText, valueBg);
-
 		const Item = (item: any) => (
 			<div className={item.className} onClick={item.onClick}>
 				<div className="inner">
