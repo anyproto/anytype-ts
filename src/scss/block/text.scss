@@ -20,7 +20,7 @@
 		}
 		
 		a { cursor: pointer; }
-		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 2px 4px; }
+		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 2px 4px; border-radius: 2px; }
 		
 		.textColor.grey { color: #aca996; }
 		.textColor.yellow { color: #ecd91b; }
@@ -33,7 +33,7 @@
 		.textColor.teal { color: #0fc8ba; }
 		.textColor.lime { color: #5dd400; }
 		
-		.bgColor { padding: 2px 4px; }
+		.bgColor { padding: 2px 4px; border-radius: 2px; }
 		.bgColor.yellow { background: #fef9cc; }
 		.bgColor.orange { background: #fef3c5; }
 		.bgColor.red { background: #ffebe5; }
