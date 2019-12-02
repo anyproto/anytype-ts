@@ -6,11 +6,13 @@ import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
 	commonStore?: any;
+	blockStore?: any;
 };
 
 const $ = require('jquery');
 
 @inject('commonStore')
+@inject('blockStore')
 @observer
 class MenuBlockAction extends React.Component<Props, {}> {
 	
@@ -152,7 +154,40 @@ Stone
 		}, 250);
 	};
 	
-	onClick (e: any, id: any) {
+	onClick (e: any, item: any) {
+		const { commonStore, blockStore } = this.props;
+		const { root } = blockStore;
+		
+		switch (item.id) {
+			case 'move':
+				commonStore.menuClose(this.props.id);
+				commonStore.popupOpen('tree', { 
+					data: { 
+						type: 'move', 
+						rootId: root,
+						onConfirm: (id: string) => {
+							console.log('Move', id);
+						},
+					}, 
+				});
+				break;
+				
+			case 'copy':
+				commonStore.menuClose(this.props.id);
+				commonStore.popupOpen('tree', { 
+					data: { 
+						type: 'copy', 
+						rootId: root,
+						onConfirm: (id: string) => {
+							console.log('Move', id);
+						},
+					}, 
+				});
+				break;
+				
+			case 'remove':
+				break;
+		};
 	};
 
 };

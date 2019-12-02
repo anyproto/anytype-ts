@@ -17,6 +17,8 @@ interface Props extends I.Popup {
 @observer
 class PopupTree extends React.Component<Props, {}> {
 	
+	id: string = '';
+	
 	constructor (props: any) {
 		super (props);
 		
@@ -27,10 +29,9 @@ class PopupTree extends React.Component<Props, {}> {
 	render () {
 		const { blockStore, param, } = this.props;
 		const { data } = param;
-		const { id } = data;
+		const { rootId, type } = data;
 		const { blocks } = blockStore;
-		const tree = blockStore.prepareTree(id, blocks[id] || []); 
-		//const { type } = this.props;
+		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []); 
 		
 		const home = { id: 'root', content: {}, fields: { name: 'Home' }, childBlocks: tree };
 		const items = [ home ];
@@ -39,7 +40,6 @@ class PopupTree extends React.Component<Props, {}> {
 			move: 'Move to',
 			link: 'Link to'
 		};
-		const type = 'copy'; 
 		
 		const Item = (item: any) => (
 			<div>
@@ -66,7 +66,7 @@ class PopupTree extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<React.Fragment>
+			<div>
 				<div className="head">
 					<Title text={titles[type]} />
 				</div>
@@ -81,7 +81,7 @@ class PopupTree extends React.Component<Props, {}> {
 					<Button text="Confirm" className="orange" onClick={this.onConfirm} />
 					<Button text="Cancel" className="grey" onClick={this.onCancel} />
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 	
@@ -110,34 +110,28 @@ class PopupTree extends React.Component<Props, {}> {
 			setTimeout(() => { children.css({ height: height }); }, 15);
 			setTimeout(() => { children.css({ overflow: 'visible', height: 'auto' }); }, 215);
 		};
-		
-		setTimeout(() => {
-		}, 215);
 	};
 	
 	onClick (e: any, id: string) {
-		let node = $(ReactDOM.findDOMNode(this));
+		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.item.selected').removeClass('selected');
-		node.find('#item' + id).addClass('selected');
+		node.find('#item' + $.escapeSelector(id)).addClass('selected');
+		
+		this.id = id;
 	};
 	
 	onConfirm (e: any) {
-		const { commonStore } = this.props;
-		commonStore.popupClose(this.props.id);	
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const { onConfirm } = data;
+		
+		commonStore.popupClose(this.props.id);
+		onConfirm(this.id);
 	};
 	
 	onCancel (e: any) {
 		const { commonStore } = this.props;
 		commonStore.popupClose(this.props.id);
-	};
-	
-	copy () {
-	};
-	
-	move () {
-	};
-	
-	link () {
 	};
 	
 };

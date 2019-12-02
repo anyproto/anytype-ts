@@ -112,9 +112,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
-		const { commonStore, blockStore } = this.props;
-		const { root } = blockStore;
-		commonStore.popupOpen('tree', { data: { id: root } });
 	};
 	
 	onSelect (e: any, id: string) {
