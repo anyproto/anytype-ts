@@ -212,10 +212,21 @@ class Mark {
 				attr = 'href="' + mark.param + '"';
 			};
 			if ((type == I.MarkType.TextColor) && mark.param) {
-				attr = 'class="textColor ' + mark.param + '"';
+				attr = 'class="textColor';
+				if (mark.param.match(/^#/)) {
+					attr += '" style="color: ' + mark.param + '"';
+				} else {
+					attr += ' ' + mark.param + '"';
+				};
 			};
+			
 			if ((type == I.MarkType.BgColor) && mark.param) {
-				attr = 'class="bgColor ' + mark.param + '"';
+				attr = 'class="bgColor';
+				if (mark.param.match(/^#/)) {
+					attr += '" style="background-color: ' + mark.param + '"';
+				} else {
+					attr += ' ' + mark.param + '"';
+				};
 			};
 			
 			if (r[mark.range.from] && r[mark.range.to - 1]) {

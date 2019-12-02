@@ -164,14 +164,6 @@ class BlockStore {
 		};
 		
 		block[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
-		
-		let tmp = com.anytype.model.Block.create(block);
-		
-		console.log(tmp);
-		tmp = com.anytype.model.Block.encode(tmp).finish();
-		console.log(tmp);
-		console.log(com.anytype.model.Block.decode(tmp));
-		
 		return com.anytype.model.Block.create(block);
 	};
 	
