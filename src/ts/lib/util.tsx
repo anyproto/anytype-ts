@@ -279,6 +279,25 @@ class Util {
 	lbBr (s: string) {
 		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
 	};
+	
+	map (list: any[], field: string): any {
+		list = list|| [] as any[];
+		
+		let map = {} as any;
+		for (let item of list) {
+			map[item[field]] = map[item[field]] || [];
+			map[item[field]].push(item);
+		};
+		return map;
+	};
+	
+	unmap (map: any) {
+		let ret: any[] = [] as any[];
+		for (let field in map) {
+			ret = ret.concat(map[field]);
+		};
+		return ret;
+	};
 };
 
 export default new Util();

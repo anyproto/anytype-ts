@@ -339,8 +339,10 @@ class BlockText extends React.Component<Props, {}> {
 		focus.set(id, this.getRange());
 		
 		const { range } = focus;
+		const currentFrom = range.from;
+		const currentTo = range.to;
 		
-		if (range.to && (range.from != range.to) && (from != range.from || to != range.to)) {
+		if (currentTo && (currentFrom != currentTo) && (from != currentFrom || to != currentTo)) {
 			
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
@@ -356,13 +358,11 @@ class BlockText extends React.Component<Props, {}> {
 				offsetY: -y,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Left,
-				onClose: () => {
-					focus.clear();
-				},
 				data: {
 					blockId: id, 
 					rootId: rootId,
 					onChange: (marks: I.Mark[]) => {
+						focus.set(id, { from: currentTo, to: currentTo });
 						this.blockUpdateMarks(marks);
 					},
 				},

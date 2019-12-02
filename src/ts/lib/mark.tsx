@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -14,31 +14,12 @@ enum Overlap {
 
 class Mark {
 	
-	map (marks: I.Mark[]): any {
-		marks = marks || [] as I.Mark[];
-		
-		let map = {} as any;
-		for (let mark of marks) {
-			map[mark.type] = map[mark.type] || [];
-			map[mark.type].push(mark);
-		};
-		return map;
-	};
-	
-	unmap (map: any) {
-		let ret: I.Mark[] = [] as I.Mark[];
-		for (let type in map) {
-			ret = ret.concat(map[type]);
-		};
-		return ret;
-	};
-	
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
 		if (mark.range.from == mark.range.to) {
 			return;	
 		};
 		
-		let map = this.map(marks);
+		let map = Util.map(marks, 'type');
 		let type = mark.type;
 		let ret: I.Mark[] = [] as I.Mark[];
 		
@@ -126,7 +107,7 @@ class Mark {
 		if (add) {
 			map[type].push(mark);
 		};
-		return this.unmap(map);
+		return Util.unmap(map);
 	};
 	
 	move (marks: I.Mark[], start: number, diff: number) {
@@ -197,7 +178,7 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
-		let map = this.map(marks);
+		let map = Util.map(marks, 'type');
 		if (!map[type] || !map[type].length) {
 			return null;
 		};
