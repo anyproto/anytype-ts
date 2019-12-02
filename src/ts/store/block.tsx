@@ -101,8 +101,8 @@ class BlockStore {
 	};
 	
 	prepareBlockFromProto (block: any): I.Block {
-		let type = block.content.content;
-		let content = block.content[type];
+		let type = block.content;
+		let content = block[type];
 		let fields = block.fields;
 		
 		let item: I.Block = {
@@ -158,18 +158,19 @@ class BlockStore {
 	
 	prepareBlockToProto (data: any) {
 		let fields = (new StructEncode()).encodeStruct(data.fields || {});
-		let content: any = {};
-		
-		content[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
-		
 		let block: any = {
+			id: String(data.id || ''),
 			fields: fields,
-			content: com.anytype.model.Block.Core.create(content),
 		};
 		
-		if (data.id) {
-			block.id = data.id;
-		};
+		block[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
+		
+		let tmp = com.anytype.model.Block.create(block);
+		
+		console.log(tmp);
+		tmp = com.anytype.model.Block.encode(tmp).finish();
+		console.log(tmp);
+		console.log(com.anytype.model.Block.decode(tmp));
 		
 		return com.anytype.model.Block.create(block);
 	};
