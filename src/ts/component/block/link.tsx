@@ -12,7 +12,7 @@ interface Props extends I.Block {
 
 @inject('blockStore')
 @observer
-class BlockPage extends React.Component<Props, {}> {
+class BlockLink extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -29,7 +29,7 @@ class BlockPage extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const { fields } = block;
+		const { content, fields } = block;
 		const { icon, name } = fields;
 		
 		return (
@@ -49,4 +49,4 @@ class BlockPage extends React.Component<Props, {}> {
 	
 };
 
-export default BlockPage;
+export default BlockLink;

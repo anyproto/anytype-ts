@@ -13,7 +13,7 @@ import BlockIcon from './icon';
 import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
-import BlockPage from './page';
+import BlockLink from './link';
 
 interface Props extends I.Block {
 	rootId: string;
@@ -130,9 +130,9 @@ class Block extends React.Component<Props, {}> {
 				BlockComponent = () => <div className="div" />;
 				break;
 				
-			case I.BlockType.Page:
-				cn.push('blockPage');
-				BlockComponent = BlockPage;
+			case I.BlockType.Link:
+				cn.push('blockLink');
+				BlockComponent = BlockLink;
 				break;
 		};
 		

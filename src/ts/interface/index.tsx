@@ -22,6 +22,7 @@ import {
 import { PageStyle, ContentPage, BlockPage } from './block/page';
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
+import { LinkStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { ContentUploadState, ContentMedia, BlockMedia } from './block/media';
 
@@ -70,6 +71,10 @@ export {
 	
 	ContentIcon, 
 	BlockIcon,
+	
+	LinkStyle,
+	ContentLink, 
+	BlockLink,
 	
 	TextStyle, 
 	MarkType, 

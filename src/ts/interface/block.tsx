@@ -11,6 +11,7 @@ export enum BlockType {
 	Bookmark	 = 'bookmark',
 	Icon		 = 'icon',
 	Div			 = 'div',
+	Link		 = 'link',
 };
 
 export enum BlockPosition {
