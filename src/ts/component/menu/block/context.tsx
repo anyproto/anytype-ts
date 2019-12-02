@@ -135,7 +135,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						onChange: (param: string) => {
 							marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
 							onChange(marks);
-							focus.apply();
+							commonStore.menuClose(this.props.id);
 						}
 					}
 				});
@@ -158,10 +158,12 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						onChangeText: (param: string) => {
 							marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
 							onChange(marks);
+							commonStore.menuClose(this.props.id);
 						},
 						onChangeBg: (param: string) => {
 							marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
 							onChange(marks);
+							commonStore.menuClose(this.props.id);
 						},
 					},
 				});
