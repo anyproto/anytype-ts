@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon } from 'ts/component';
-import { I, Key, Util, dispatcher, focus } from 'ts/lib';
+import { I, Key, Util, dispatcher, focus, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -72,7 +72,8 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('mousemove.scroll', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
+		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
+		win.on('keydown.editor', (e: any) => { this.onKeyDownCommon(e); });
 		
 		dispatcher.call('blockOpen', { blockId: rootId }, (errorCode: any, message: any) => {});
 	};
@@ -114,7 +115,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('mousemove.editor scroll.editor');
+		$(window).unbind('keydown.editor mousemove.editor scroll.editor');
 	};
 	
 	setNumbers (list: I.Block[]) {
@@ -203,6 +204,17 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
+	onKeyDownCommon (e: any) {
+		let k = e.which;
+		
+		if (e.ctrlKey || e.metaKey) {
+			if ((k == Key.a) && !keyboard.focus) {
+				e.preventDefault();
+				this.selectAll();
+			};
+		};
+	};
+	
 	onKeyDown (e: any) {
 		const { blockStore, commonStore, dataset, rootId } = this.props;
 		const { focused, range } = focus;
@@ -219,6 +231,13 @@ class EditorPage extends React.Component<Props, {}> {
 
 		let l = String(content.text || '').length;
 		let k = e.which;
+		
+		if (e.ctrlKey || e.metaKey) {
+			if ((k == Key.a) && (range.from == 0) && (range.to == l)) {
+				e.preventDefault();
+				this.selectAll();
+			};
+		};
 		
 		if (
 			((range.from == 0) && (k == Key.up)) ||
@@ -247,7 +266,8 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		if ((k == Key.backspace) && (range.from == 0 && range.to == 0)) {
-			if (l) {
+			let ids = selection.get();
+			if (l && !ids.length) {
 				this.blockMerge(block);
 			} else {
 				this.blockRemove(block);
@@ -276,6 +296,16 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyUp (e: any) {
+	};
+	
+	selectAll () {
+		const { blockStore, dataset, rootId } = this.props;
+		const { blocks } = blockStore;
+		const { selection } = dataset;
+		
+		selection.set(blocks[rootId].map((item: I.Block) => { return item.id; }));
+		window.getSelection().empty();
+		focus.clear();
 	};
 	
 	onAdd (e: any) {
@@ -395,13 +425,23 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockRemove (focused: I.Block) {
-		const { rootId } = this.props;
+		const { rootId, dataset } = this.props;
+		const { selection } = dataset;
+		
+		let ids = selection.get();
+		let targets = [];
+		
+		if (ids.length) {
+			for (let id of ids) {
+				targets.push({ blockId: id });
+			};
+		} else {
+			targets.push({ blockId: focused.id });
+		};
 		
 		let request: any = {
 			contextId: rootId,
-			targets: [
-				{ blockId: focused.id },
-			],
+			targets: targets,
 		};
 		dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {});
 	};

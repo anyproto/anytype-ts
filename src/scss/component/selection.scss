@@ -1,4 +1,5 @@
 @import "~scss/_vars";
 
 .selection { position: relative; user-select: none; }
+.selection * { user-select: none; }
 #rect { border: 1px dotted $colorBlack; position: absolute; left: 0px; top: 0px; width: 0px; height: 0px; display: none; z-index: 102; }

@@ -55,6 +55,7 @@ export enum Key {
 	up			 = 38,
 	right		 = 39,
 	down		 = 40,
+	a			 = 65,
 };
 
 export let keyboard: Keyboard = new Keyboard();

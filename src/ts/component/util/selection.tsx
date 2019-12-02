@@ -322,7 +322,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = ids;
 		
 		for (let id of ids) {
-			node.find($.escapeSelector('.selectable.c' + id)).addClass('isSelected');
+			node.find('.selectable.c' + $.escapeSelector(id)).addClass('isSelected');
 		};
 	};
 	
