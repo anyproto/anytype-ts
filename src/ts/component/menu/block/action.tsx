@@ -155,12 +155,15 @@ Stone
 	};
 	
 	onClick (e: any, item: any) {
-		const { commonStore, blockStore } = this.props;
+		const { commonStore, blockStore, param } = this.props;
+		const { data } = param;
+		const { blockId, rootId, parentId } = data;
 		const { root } = blockStore;
+		
+		commonStore.menuClose(this.props.id);
 		
 		switch (item.id) {
 			case 'move':
-				commonStore.menuClose(this.props.id);
 				commonStore.popupOpen('tree', { 
 					data: { 
 						type: 'move', 
@@ -173,7 +176,6 @@ Stone
 				break;
 				
 			case 'copy':
-				commonStore.menuClose(this.props.id);
 				commonStore.popupOpen('tree', { 
 					data: { 
 						type: 'copy', 
@@ -186,6 +188,13 @@ Stone
 				break;
 				
 			case 'remove':
+				let request: any = {
+					contextId: rootId,
+					targets: [
+						{ blockId: blockId, parentId: parentId },
+					],
+				};
+				dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {});
 				break;
 		};
 	};

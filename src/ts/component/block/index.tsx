@@ -226,7 +226,7 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMenu (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, id, rootId, parentId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -246,6 +246,7 @@ class Block extends React.Component<Props, {}> {
 			data: {
 				blockId: id, 
 				rootId: rootId,
+				parentId: parentId,
 			},
 		});
 	};
