@@ -4,26 +4,5 @@
 	.menu.menuBlockContext { padding: 0px; transform-origin: 50% 50% !important; }
 	.menu.menuBlockContext {
 		.section:first-child { padding-right: 22px; }
-		
-		.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
-		.icon.bold:hover, .icon.bold.active { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
-		
-		.icon.italic { background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
-		.icon.italic:hover, .icon.italic.active { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
-		
-		.icon.strike { background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
-		.icon.strike:hover, .icon.strike.active { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
-		
-		.icon.link { background-image: url('~img/icon/menu/action/mark/link0.svg'); }
-		.icon.link:hover, .icon.link.active { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
-		
-		.icon.code { background-image: url('~img/icon/menu/action/mark/code0.svg'); }
-		.icon.code:hover, .icon.code.active { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
-		
-		.icon.color { background-image: url('~img/icon/menu/action/mark/color0.svg'); }
-		.icon.color:hover, .icon.color.active { background-image: url('~img/icon/menu/action/mark/color1.svg'); }
-		
-		.icon.comment { background-image: url('~img/icon/menu/action/comment0.svg'); }
-		.icon.comment:hover, .icon.comment.active { background-image: url('~img/icon/menu/action/comment1.svg'); }
 	}
 }

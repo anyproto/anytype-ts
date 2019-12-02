@@ -1,57 +1,158 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, MenuItemVertical } from 'ts/component';
+import { Icon, Input } from 'ts/component';
 import { I, dispatcher } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { observer, inject } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {
+	commonStore?: any;
+};
 
+const $ = require('jquery');
+
+@inject('commonStore')
+@observer
 class MenuBlockAction extends React.Component<Props, {}> {
+	
+	refSearch: any = null;
 	
 	constructor (props: any) {
 		super(props);
 		
+		this.onOver = this.onOver.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
+	
+	/*
+	Red
+Purple
+Violet
+Blue
+Light Blue
+Aquamarine
+Green
+
+Highlight colors
+White
+Cream
+Banana
+Peach
+Rose
+Lavender
+Lilac
+Sky
+Coral
+Mint
+Stone
+	*/
 
 	render () {
-		const blockActions = [
-			{ id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
-			{ id: I.TextStyle.Header1, icon: 'header1', name: 'Heading 1' },
-			{ id: I.TextStyle.Header2, icon: 'header2', name: 'Heading 2' },
-			{ id: I.TextStyle.Header3, icon: 'header3', name: 'Heading 3' },
-			{ id: I.TextStyle.Header4, icon: 'header4', name: 'Heading 4' },
-			{ id: I.TextStyle.Quote, icon: 'quote', name: 'Highlight' },
-			{ id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list' },
-			{ id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list' },
-			{ id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle' },
-			{ id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox' },
-			{ id: I.TextStyle.Code, icon: 'code', name: 'Code snippet' }
+		const sections = [
+			{ 
+				children: [
+					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
+					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
+				] 
+			},
+			{ 
+				children: [
+					{ id: 'comment', icon: 'comment', name: 'Comment' },
+				]
+			},
+			{ 
+				children: [
+					{ id: 'move', icon: 'move', name: 'Move to' },
+					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+					{ id: 'remove', icon: 'remove', name: 'Delete' },
+				]	
+			},
 		];
 		
-		return (
-			<React.Fragment>
-				{blockActions.map((action: any, i: number) => {
-					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action.id); }} />;
+		const Section = (item: any) => (
+			<div className="section">
+				{item.children.map((action: any, i: number) => {
+					return <Item key={i} {...action} />;
 				})}
-			</React.Fragment>
+			</div>
+		);
+		
+		const Item = (item: any) => (
+			<div id={'block-action-item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				{item.icon ? <Icon className={item.icon} /> : ''}
+				<div className="name">{item.name}</div>
+				{item.arrow ? <Icon className="arrow" /> : ''}
+			</div>
+		);
+		
+		return (
+			<div>
+				<Input ref={(ref: any) => { this.refSearch = ref; }} placeHolder="Search actions..." />
+				{sections.map((section: any, i: number) => {
+					return <Section key={i} {...section} />;
+				})}
+			</div>
 		);
 	};
 	
-	onClick (e: any, id: any) {
-		const { param } = this.props;
+	onOver (e: any, item: any) {
+		const { commonStore, param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, content } = data;
+		const { onSelect, blockId, rootId } = data;
 		
-		commonStore.menuClose(this.props.id);
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#block-action-item-' + item.id);
+		const offsetX = node.outerWidth();
+		const offsetY = node.offset().top - el.offset().top;
 		
-		let request: any = {
-			contextId: rootId,
-			blockId: blockId,
-			style: id,
+		node.find('.item.active').removeClass('active');
+		el.addClass('active');
+		
+		commonStore.menuClose('blockStyle');
+		commonStore.menuClose('blockColor');
+		
+		if (!item.arrow) {
+			return;
 		};
 		
-		dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
+		let menuParam: I.MenuParam = {
+			element: 'block-action-item-' + item.id,
+			type: I.MenuType.Vertical,
+			offsetX: offsetX,
+			offsetY: offsetY - 40,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {},
+		};
+		
+		window.setTimeout(() => {
+			switch (item.id) {
+				case 'turn':
+					menuParam.data.onSelect = (style: I.TextStyle) => {
+						let request: any = {
+							contextId: rootId,
+							blockId: blockId,
+							style: style,
+						};
+						dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
+						commonStore.menuClose(this.props.id);
+					};
+					commonStore.menuOpen('blockStyle', menuParam);
+					break;
+					
+				case 'color':
+					menuParam.data.onChangeText = (color: string) => {
+						console.log('text', color);
+					};
+					menuParam.data.onChangeBg = (color: string) => {
+						console.log('bg', color);
+					};
+					commonStore.menuOpen('blockColor', menuParam);
+					break;
+			};
+		}, 250);
+	};
+	
+	onClick (e: any, id: any) {
 	};
 
 };

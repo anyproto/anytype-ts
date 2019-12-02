@@ -8,7 +8,7 @@ import MenuSmile from './smile';
 import MenuSelect from './select';
 
 import MenuBlockContext from './block/context';
-import MenuBlockSwitch from './block/switch';
+import MenuBlockStyle from './block/style';
 import MenuBlockAdd from './block/add';
 import MenuBlockColor from './block/color';
 import MenuBlockAction from './block/action';
@@ -48,7 +48,7 @@ class Menu extends React.Component<Props, {}> {
 			
 			blockContext:			 MenuBlockContext,
 			blockAction:			 MenuBlockAction,
-			blockSwitch:			 MenuBlockSwitch,
+			blockStyle:			 MenuBlockStyle,
 			blockAdd:				 MenuBlockAdd,
 			blockAddSub:			 MenuBlockAdd,
 			blockColor:				 MenuBlockColor,
@@ -114,7 +114,7 @@ class Menu extends React.Component<Props, {}> {
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
 			node.addClass('show');
-			setTimeout(() => { node.css({ transform: 'none' }); }, 210);
+			window.setTimeout(() => { node.css({ transform: 'none' }); }, 210);
 		});
 	};
 	

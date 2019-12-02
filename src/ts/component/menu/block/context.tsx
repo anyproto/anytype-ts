@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Mark, Util, focus } from 'ts/lib';
+import { I, Mark, Util, focus, dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -78,7 +78,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		return (
 			<div className="flex" onClick={this.onMenuClick}>
 				<div className="section">
-					<Icon id="button-switch" arrow={true} tooltip="Switch style" className={[ icon, 'blockSwitch', (commonStore.menuIsOpen('blockSwitch') ? 'active' : '') ].join(' ')} onClick={this.onBlockSwitch} />
+					<Icon id="button-switch" arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={this.onBlockSwitch} />
 				</div>
 					
 				<div className="section">
@@ -178,17 +178,25 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	onBlockSwitch (e: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
+		const { blockId, rootId } = data;
 		
-		commonStore.menuOpen('blockSwitch', { 
+		commonStore.menuOpen('blockStyle', { 
 			element: 'button-switch',
 			type: I.MenuType.Vertical,
 			offsetX: 56,
 			offsetY: -36,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			data: data,
-			onClose: () => {
-				commonStore.menuClose(this.props.id);
+			data: {
+				onSelect: (style: I.TextStyle) => {
+					let request: any = {
+						contextId: rootId,
+						blockId: blockId,
+						style: style,
+					};
+					dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
+					commonStore.menuClose(this.props.id);
+				},
 			}
 		});
 	};
