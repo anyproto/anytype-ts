@@ -56,6 +56,7 @@ import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
+import 'scss/menu/select.scss';
 
 import 'scss/menu/block/action.scss';
 import 'scss/menu/block/context.scss';

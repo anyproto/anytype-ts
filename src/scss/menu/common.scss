@@ -41,7 +41,7 @@
 			transition: all 0.15s ease-in-out; width: 100%;
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
-		.item:hover, .item.active { background: #aca996 !important; }
+		.item:hover, .item.active { color: #fff; background: #aca996 !important; }
 		
 		.icon { margin-right: 8px; }
 		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
