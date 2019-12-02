@@ -217,7 +217,7 @@ class PopupSettings extends React.Component<Props, {}> {
 		
 		input.setType(input.getValue() ? 'password' : 'text');
 		
-		if ((k == Key.backSpace) && prev) {
+		if ((k == Key.backspace) && prev) {
 			prev.setValue('');
 			prev.setType('text');
 			prev.focus();

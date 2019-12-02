@@ -50,12 +50,15 @@ class BlockStore {
 	};
 	
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any): any {
-		let idx = this.blockObject[rootId].findIndex((item: I.Block) => { return item.id == id; });
-		if (idx + dir < 0 || idx + dir > this.blockObject[rootId].length - 1) {
+		let tree = this.prepareTree(rootId, this.blockObject[rootId]);
+		let list = this.unwrapTree(tree);
+		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
+		
+		if (idx + dir < 0 || idx + dir > list.length - 1) {
 			return null;
 		};
 		
-		let ret = this.blockObject[rootId][idx + dir];
+		let ret = list[idx + dir];
 		
 		if (check && ret) {
 			if (check(ret)) {
@@ -72,7 +75,7 @@ class BlockStore {
 		list = Util.objectCopy(list);
 		
 		let ret: any = [];
-		let map: any = {};
+		let map: any = [];
 		
 		for (let item of list) {
 			map[item.id] = item;
@@ -97,6 +100,19 @@ class BlockStore {
 			ret = map[rootId].childBlocks;
 		};
 		
+		return ret;
+	};
+	
+	unwrapTree (tree: I.Block[]) {
+		tree = tree || [] as I.Block[];
+		
+		let ret = [] as I.Block[];
+		for (let item of tree) {
+			ret.push(item);
+			if (item.childBlocks && item.childBlocks.length) {
+				ret = ret.concat(this.unwrapTree(item.childBlocks));
+			};
+		};
 		return ret;
 	};
 	

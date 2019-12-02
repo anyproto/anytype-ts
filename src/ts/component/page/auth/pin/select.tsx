@@ -75,7 +75,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 		
 		input.setType(input.getValue() ? 'password' : 'text');
 		
-		if ((k == Key.backSpace) && prev) {
+		if ((k == Key.backspace) && prev) {
 			prev.setValue('');
 			prev.setType('text');
 			prev.focus();

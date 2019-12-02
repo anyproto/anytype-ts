@@ -25,7 +25,7 @@ class Keyboard {
 		let k = e.which;
 		
 		if (!this.focus) {
-			if (k == Key.backSpace) {
+			if (k == Key.backspace) {
 				e.preventDefault();
 				this.history.goBack();
 			};
@@ -48,7 +48,7 @@ class Keyboard {
 };
 
 export enum Key {
-	backSpace	 = 8,
+	backspace	 = 8,
 	enter		 = 13,
 	escape		 = 27,
 	left		 = 37,

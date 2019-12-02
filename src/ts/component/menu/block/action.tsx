@@ -157,7 +157,7 @@ Stone
 	onClick (e: any, item: any) {
 		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, parentId } = data;
+		const { blockId, rootId } = data;
 		const { root } = blockStore;
 		
 		commonStore.menuClose(this.props.id);
@@ -191,7 +191,7 @@ Stone
 				let request: any = {
 					contextId: rootId,
 					targets: [
-						{ blockId: blockId, parentId: parentId },
+						{ blockId: blockId },
 					],
 				};
 				dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {});

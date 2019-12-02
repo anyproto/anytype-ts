@@ -226,7 +226,7 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMenu (e: any) {
-		const { dataset, id, rootId, parentId } = this.props;
+		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -241,12 +241,9 @@ class Block extends React.Component<Props, {}> {
 			offsetY: -node.outerHeight(),
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			onClose: () => {
-			},
 			data: {
 				blockId: id, 
 				rootId: rootId,
-				parentId: parentId,
 			},
 		});
 	};

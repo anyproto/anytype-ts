@@ -227,9 +227,9 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 			
 			const dir = (k == Key.up) ? -1 : 1;
-			const next = blockStore.getNextBlock(rootId, focused, dir);
-			
-			console.log('next', next.id);
+			const next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
+				return item.type == I.BlockType.Text;
+			});
 			
 			if (e.shiftKey) {
 				if (selection.get().length < 1) {
@@ -237,32 +237,41 @@ class EditorPage extends React.Component<Props, {}> {
 					selection.set([ focused ]);
 					commonStore.menuClose('blockAction');					
 				};
-			} else {
-				if (next && (next.type == I.BlockType.Text)) {
-					const l = String(next.content.text || '').length;
-					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
+			} else if (next) {
+				const l = String(next.content.text || '').length;
+				const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
 					
-					focus.set(next.id, newRange);
-					focus.apply();
-				};
+				focus.set(next.id, newRange);
+				focus.apply();
+			};
+		};
+		
+		if ((k == Key.backspace) && (range.from == 0 && range.to == 0)) {
+			if (l) {
+				this.blockMerge(block);
+			} else {
+				this.blockRemove(block);
 			};
 		};
 		
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			let param: any = {
-				type: I.BlockType.Text,
-				content: {
-					style: I.TextStyle.Paragraph,
-				},
+			if ((range.from == l) && (range.to == l)) {
+				let param: any = {
+					type: I.BlockType.Text,
+					content: {
+						style: I.TextStyle.Paragraph,
+					},
+				};
+				if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0) {
+					param.content.style = block.content.style;
+				};
+				
+				this.blockCreate(block, 1, param);
+			} else {
+				this.blockSplit(block, range.from);
 			};
-			
-			if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0) {
-				param.content.style = block.content.style;
-			};
-			
-			this.blockCreate(block, 1, param);
 		};
 	};
 	
@@ -352,6 +361,49 @@ class EditorPage extends React.Component<Props, {}> {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		});
+	};
+	
+	blockMerge (focused: I.Block) {
+		const { blockStore, rootId } = this.props;
+		const next = blockStore.getNextBlock(rootId, focused.id, -1, (item: any) => {
+			return item.type == I.BlockType.Text;
+		});
+		
+		if (!next) {
+			return;
+		};
+		
+		let request = {
+			contextId: rootId,
+			firstBlockId: focused.id,
+			secondBlockId: next.id,
+		};
+		dispatcher.call('blockMerge', request, (errorCode: any, message: any) => {
+		});
+	};
+	
+	blockSplit (focused: I.Block, start: number) {
+		const { rootId } = this.props;
+		
+		let request = {
+			contextId: rootId,
+			blockId: focused.id,
+			cursorPosition: start,
+		};
+		dispatcher.call('blockSplit', request, (errorCode: any, message: any) => {
+		});
+	};
+	
+	blockRemove (focused: I.Block) {
+		const { rootId } = this.props;
+		
+		let request: any = {
+			contextId: rootId,
+			targets: [
+				{ blockId: focused.id },
+			],
+		};
+		dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {});
 	};
 	
 };
