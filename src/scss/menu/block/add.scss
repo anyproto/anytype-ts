@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockSwitch { width: 192px; }
+	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockSwitch { width: 192px !important; }
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockSwitch {
 		.item { font-size: 15px !important; font-weight: 500; padding: 4px 12px; }
 		.item {

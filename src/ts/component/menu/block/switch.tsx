@@ -15,9 +15,8 @@ class MenuBlockSwitch extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const blockActions = [
+		const actions = [
 			{ id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
-			{ id: I.TextStyle.Paragraph, icon: 'page', name: 'Page' },
 			{ id: I.TextStyle.Header1, icon: 'header1', name: 'Heading 1' },
 			{ id: I.TextStyle.Header2, icon: 'header2', name: 'Heading 2' },
 			{ id: I.TextStyle.Header3, icon: 'header3', name: 'Heading 3' },
@@ -32,8 +31,8 @@ class MenuBlockSwitch extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				{blockActions.map((action: any, i: number) => {
-					return <MenuItemVertical key={i} {...action} className="yellow" onClick={(e: any) => { this.onClick(e, action.id); }} />;
+				{actions.map((action: any, i: number) => {
+					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action.id); }} />;
 				})}
 			</React.Fragment>
 		);

@@ -8,7 +8,6 @@ export interface MenuParam {
 	horizontal: MenuDirection;
 	offsetX: number;
 	offsetY: number;
-	light?: boolean;
 	data?: any;
 	onClose?(): void;
 };

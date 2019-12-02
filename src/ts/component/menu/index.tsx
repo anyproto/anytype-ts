@@ -2,19 +2,16 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
 
-const $ = require('jquery');
-const raf = require('raf');
-const BORDER = 12;
-
 import MenuHelp from './help';
 import MenuAccount from './account';
 import MenuSmile from './smile';
 import MenuSelect from './select';
 
-import MenuBlockAction from './block/action';
+import MenuBlockContext from './block/context';
 import MenuBlockSwitch from './block/switch';
 import MenuBlockAdd from './block/add';
 import MenuBlockColor from './block/color';
+import MenuBlockAction from './block/action';
 
 import MenuDataviewPropertyList from './dataview/property/list';
 import MenuDataviewPropertyEdit from './dataview/property/edit';
@@ -31,36 +28,41 @@ interface Props extends I.Menu {
 	history: any;
 };
 
+const $ = require('jquery');
+const raf = require('raf');
+const BORDER = 12;
+
 class Menu extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
 	render () {
 		const { id, param } = this.props;
-		const { type, vertical, horizontal, light } = param;
+		const { type, vertical, horizontal } = param;
 		
 		const Components: any = {
-			help: MenuHelp,
-			account: MenuAccount,
-			smile: MenuSmile,
-			select: MenuSelect,
+			help:					 MenuHelp,
+			account:				 MenuAccount,
+			smile:					 MenuSmile,
+			select:					 MenuSelect,
 			
-			blockAction: MenuBlockAction,
-			blockSwitch: MenuBlockSwitch,
-			blockAdd: MenuBlockAdd,
-			blockAddSub: MenuBlockAdd,
-			blockColor: MenuBlockColor,
+			blockContext:			 MenuBlockContext,
+			blockAction:			 MenuBlockAction,
+			blockSwitch:			 MenuBlockSwitch,
+			blockAdd:				 MenuBlockAdd,
+			blockAddSub:			 MenuBlockAdd,
+			blockColor:				 MenuBlockColor,
 			
-			dataviewPropertyList: MenuDataviewPropertyList,
-			dataviewPropertyEdit: MenuDataviewPropertyEdit,
-			dataviewPropertyType: MenuDataviewPropertyType,
-			dataviewTagList: MenuDataviewTagList,
-			dataviewTagEdit: MenuDataviewTagEdit,
-			dataviewFilter: MenuDataviewFilter,
-			dataviewSort: MenuDataviewSort,
-			dataviewView: MenuDataviewView,
-			dataviewCalendar: MenuDataviewCalendar,
-			dataviewAccount: MenuDataviewAccount,
+			dataviewPropertyList:	 MenuDataviewPropertyList,
+			dataviewPropertyEdit:	 MenuDataviewPropertyEdit,
+			dataviewPropertyType:	 MenuDataviewPropertyType,
+			dataviewTagList:		 MenuDataviewTagList,
+			dataviewTagEdit:		 MenuDataviewTagEdit,
+			dataviewFilter:			 MenuDataviewFilter,
+			dataviewSort:			 MenuDataviewSort,
+			dataviewView:			 MenuDataviewView,
+			dataviewCalendar:		 MenuDataviewCalendar,
+			dataviewAccount:		 MenuDataviewAccount,
 		};
 		
 		const menuId = Util.toCamelCase('menu-' + id);
@@ -72,9 +74,6 @@ class Menu extends React.Component<Props, {}> {
 			'v' + vertical,
 			'h' + horizontal
 		];
-		if (light) {
-			cn.push('light');
-		};
 		
 		if (!Component) {
 			return <div>Component {id} not found</div>

@@ -96,7 +96,6 @@ class MenuTagList extends React.Component<Props, State> {
 			element: 'tag-' + id,
 			offsetX: 0,
 			offsetY: 4,
-			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {

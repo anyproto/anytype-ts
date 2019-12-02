@@ -93,7 +93,6 @@ class MenuPropertyList extends React.Component<Props, State> {
 			element: 'property-add',
 			offsetX: 8,
 			offsetY: 4,
-			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
@@ -113,7 +112,6 @@ class MenuPropertyList extends React.Component<Props, State> {
 			element: 'property-' + id,
 			offsetX: 0,
 			offsetY: 4,
-			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {

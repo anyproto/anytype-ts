@@ -292,7 +292,6 @@ class EditorPage extends React.Component<Props, {}> {
 			type: I.MenuType.Vertical,
 			offsetX: 24,
 			offsetY: -20,
-			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {

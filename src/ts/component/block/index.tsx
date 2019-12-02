@@ -4,7 +4,7 @@ import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { Block as Child, Icon, DropTarget } from 'ts/component';
 import { throttle } from 'lodash';
-import { blockStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -226,12 +226,28 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMenu (e: any) {
-		const { dataset, id } = this.props;
+		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (selection) {
 			selection.set([ id ]);
 		};
+		
+		commonStore.menuOpen('blockAction', { 
+			element: 'block-' + id,
+			type: I.MenuType.Vertical,
+			offsetX: 50,
+			offsetY: -node.outerHeight(),
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			onClose: () => {
+			},
+			data: {
+				blockId: id, 
+				rootId: rootId,
+			},
+		});
 	};
 	
 	onFocus (e: any) {

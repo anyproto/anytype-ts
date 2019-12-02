@@ -346,15 +346,14 @@ class BlockText extends React.Component<Props, {}> {
 			const offset = node.offset();
 			const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 			
-			const x = rect.x - offset.left + Constant.size.blockMenu - Constant.size.menuBlockAction / 2 + rect.width / 2;
+			const x = rect.x - offset.left + Constant.size.blockMenu - Constant.size.menuBlockContext / 2 + rect.width / 2;
 			const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 			
-			commonStore.menuOpen('blockAction', { 
+			commonStore.menuOpen('blockContext', { 
 				element: 'block-' + id,
 				type: I.MenuType.Horizontal,
 				offsetX: x,
 				offsetY: -y,
-				light: true,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Left,
 				onClose: () => {

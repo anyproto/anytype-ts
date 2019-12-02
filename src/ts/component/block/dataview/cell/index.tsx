@@ -78,7 +78,6 @@ class Cell extends React.Component<Props, {}> {
 		let param: any = { 
 			element: element,
 			offsetY: 4,
-			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: { 

@@ -70,7 +70,6 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 			offsetX: 208,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
-			light: true,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
 			data: {

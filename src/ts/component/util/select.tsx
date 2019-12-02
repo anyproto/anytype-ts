@@ -108,7 +108,6 @@ class Select extends React.Component<Props, State> {
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 4,
-			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {

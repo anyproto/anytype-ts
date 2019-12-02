@@ -125,7 +125,6 @@ class Controls extends React.Component<Props, {}> {
 		commonStore.menuOpen(menu, { 
 			element: 'button-' + id,
 			offsetY: 4,
-			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: data

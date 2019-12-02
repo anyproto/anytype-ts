@@ -123,7 +123,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: offsetY - 40,
-			light: true,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
