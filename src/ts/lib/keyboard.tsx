@@ -7,6 +7,7 @@ class Keyboard {
 	
 	history: any = null;
 	focus: boolean = false;
+	back: boolean = true;
 	
 	init (history: any) {
 		this.history = history;
@@ -25,15 +26,15 @@ class Keyboard {
 		let k = e.which;
 		
 		if (!this.focus) {
-			if (k == Key.backspace) {
+			if ((k == Key.backspace) && this.back) {
 				e.preventDefault();
 				this.history.goBack();
 			};
-			
-			if (k == Key.escape) {
-				e.preventDefault();
-				commonStore.popupCloseAll();
-			};
+		};
+		
+		if (k == Key.escape) {
+			e.preventDefault();
+			commonStore.popupCloseAll();
 		};
 	};
 	
@@ -43,6 +44,10 @@ class Keyboard {
 	
 	setFocus (v: boolean) {
 		this.focus = v;
+	};
+	
+	disableBack (v: boolean) {
+		this.back = !v;
 	};
 	
 };

@@ -70,6 +70,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blockStore, rootId } = this.props;
 		const win = $(window);
 		
+		keyboard.disableBack(true);
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
@@ -108,6 +109,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { blockStore, rootId } = this.props;
 		
+		keyboard.disableBack(false);
 		this.unbind();
 		
 		blockStore.blocksClear(rootId);
@@ -207,11 +209,20 @@ class EditorPage extends React.Component<Props, {}> {
 	onKeyDownCommon (e: any) {
 		let k = e.which;
 		
+		if (keyboard.focus) {
+			return;
+		};
+		
 		if (e.ctrlKey || e.metaKey) {
-			if ((k == Key.a) && !keyboard.focus) {
+			if (k == Key.a) {
 				e.preventDefault();
 				this.selectAll();
 			};
+		};
+		
+		if (k == Key.backspace) {
+			e.preventDefault();
+			this.blockRemove();
 		};
 	};
 	
@@ -424,7 +435,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 	};
 	
-	blockRemove (focused: I.Block) {
+	blockRemove (focused?: I.Block) {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
 		
@@ -435,7 +446,8 @@ class EditorPage extends React.Component<Props, {}> {
 			for (let id of ids) {
 				targets.push({ blockId: id });
 			};
-		} else {
+		} else 
+		if (focused) {
 			targets.push({ blockId: focused.id });
 		};
 		
