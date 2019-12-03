@@ -264,6 +264,7 @@ class EditorPage extends React.Component<Props, {}> {
 			if (e.shiftKey) {
 				if (selection.get().length < 1) {
 					window.getSelection().empty();
+					commonStore.menuClose('blockContext');
 					selection.set([ focused ]);
 					commonStore.menuClose('blockAction');					
 				};
@@ -310,13 +311,14 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	selectAll () {
-		const { blockStore, dataset, rootId } = this.props;
+		const { blockStore, commonStore, dataset, rootId } = this.props;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		
 		selection.set(blocks[rootId].map((item: I.Block) => { return item.id; }));
 		window.getSelection().empty();
 		focus.clear();
+		commonStore.menuClose('blockContext');
 	};
 	
 	onAdd (e: any) {

@@ -6,7 +6,7 @@ export enum LinkStyle {
 };
 
 export interface ContentLink {
-	contentId: string;
+	targetBlockId: string;
 	style: LinkStyle;
 	fields: any;
 	isArchived: boolean;

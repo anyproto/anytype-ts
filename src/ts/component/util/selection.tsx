@@ -183,7 +183,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 				this.clear();
 			} else {
-				//this.checkNodes(e);
+				this.checkNodes(e);
 				
 				let target = $(e.target.closest('.selectable'));
 				if (target.length && (target.data('id') != focused)) {

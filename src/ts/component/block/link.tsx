@@ -29,22 +29,24 @@ class BlockLink extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const { content, fields } = block;
+		const { content } = block;
+		const { fields, isArchived } = content;
 		const { icon, name } = fields;
 		
 		return (
 			<React.Fragment>
 				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} icon={icon} canEdit={true} />
-				<div className="name" onClick={this.onClick}>
-					{name}
-				</div>
+				<div className="name" onClick={this.onClick}>{name}</div>
+				{isArchived ? <div className="archived">Archived</div> : ''}
 			</React.Fragment>
 		);
 	};
 	
 	onClick () {
-		const { id } = this.props;
-		this.props.history.push('/main/edit/' + id);
+		const { content } = this.props;
+		const { targetBlockId } = content;
+		
+		this.props.history.push('/main/edit/' + targetBlockId);
 	};
 	
 };

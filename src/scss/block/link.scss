@@ -1,0 +1,17 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockLink { white-space: nowrap; }
+	.block.blockLink {
+		.name {
+			display: inline-block; vertical-align: top; height: 22px; letter-spacing: 0.1px; max-width: calc(100% - 28px); border-bottom: 1px solid #aca996;
+			padding-top: 1px; overflow: hidden; cursor: pointer;
+		}
+		.smile { margin-right: 4px; }
+		
+		.archived {
+			border-radius: 3px; background-color: #f7f5f0; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 5px;
+			font-size: 13px; line-height: 18px; letter-spacing: 0.1px; color: #aca996; padding: 0px 6px;
+		}
+	}
+}

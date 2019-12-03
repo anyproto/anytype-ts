@@ -132,12 +132,16 @@ class BlockStore {
 			restrictions: block.restrictions || {} as I.Restrictions,
 		};
 		
-		if (fields) {
-			item.fields = StructDecode.decodeStruct(fields);
+		if (block.fields) {
+			item.fields = StructDecode.decodeStruct(block.fields);
 		};
 		
 		if (content) {
 			item.content = Util.objectCopy(content);
+			
+			if (content.fields) {
+				item.content.fields = StructDecode.decodeStruct(content.fields);
+			};
 			
 			if (type == I.BlockType.Text) {
 				let style = content.style;
