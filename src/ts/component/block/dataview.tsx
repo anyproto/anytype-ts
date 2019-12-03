@@ -35,15 +35,7 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { commonStore, blockStore, id, rootId } = this.props;
-		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
-		
-		if (!block) {
-			return null;
-		};
-
-		const { content } = block;		
+		const { commonStore, blockStore, id, rootId, content } = this.props;
 		const { views, data, properties } = content;
 		const view = this.state.view || content.view;
 		const viewItem = views.find((item: any) => { return item.id == view; });

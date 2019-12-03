@@ -35,7 +35,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const { marks, style } = content;
+		
+		let { marks, style } = content;
+		marks = Util.objectCopy(marks);
 		
 		const markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
@@ -48,25 +50,16 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		let icon = '';
 		switch (style) {
 			default:
-			case I.TextStyle.Paragraph:
-				icon = 'text';
-				break;
-				
-			case I.TextStyle.Header1:
-				icon = 'header1';
-				break;
-				
-			case I.TextStyle.Header2:
-				icon = 'header2';
-				break;
-				
-			case I.TextStyle.Header3:
-				icon = 'header3';
-				break;
-				
-			case I.TextStyle.Quote:
-				icon = 'quote';
-				break;
+			case I.TextStyle.Paragraph:	 icon = 'text'; break;
+			case I.TextStyle.Header1:	 icon = 'header1'; break;
+			case I.TextStyle.Header2:	 icon = 'header2'; break;
+			case I.TextStyle.Header3:	 icon = 'header3'; break;
+			case I.TextStyle.Quote:		 icon = 'quote'; break;
+			case I.TextStyle.Code:		 icon = 'code'; break;
+			case I.TextStyle.Bulleted:	 icon = 'list'; break;
+			case I.TextStyle.Numbered:	 icon = 'numbered'; break;
+			case I.TextStyle.Toggle:	 icon = 'toggle'; break;
+			case I.TextStyle.Checkbox:	 icon = 'checkbox'; break;
 		};
 		
 		let colorActive = Mark.getInRange(marks, I.MarkType.TextColor, range) || Mark.getInRange(marks, I.MarkType.BgColor, range);

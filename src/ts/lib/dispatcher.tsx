@@ -85,6 +85,16 @@ class Dispatcher {
 					block.childrenIds = data.childrenIds;
 					break;
 					
+				case 'blockSetIcon':
+					blocks = blockStore.blocks[contextId];
+					if (!blocks.length) {
+						break;
+					};
+				
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					block.content.name = data.name.value;
+					break;
+					
 				case 'blockSetText':
 					blocks = blockStore.blocks[contextId];
 					if (!blocks.length) {
@@ -126,6 +136,10 @@ class Dispatcher {
 					};
 					
 					blockStore.blockUpdate(contextId, param);
+					break;
+					
+				case 'blockDelete':
+					blockStore.blockDelete(contextId, data.blockId);
 					break;
 			};
 		};

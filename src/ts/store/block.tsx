@@ -45,6 +45,15 @@ class BlockStore {
 	};
 	
 	@action
+	blockDelete (rootId: string, id: string) {
+		if (!this.blockObject[rootId]) {
+			return;
+		};
+		
+		this.blockObject[rootId] = this.blockObject[rootId].filter((item: I.Block) => { return item.id != id; });
+	};
+	
+	@action
 	blocksClear (rootId: string) {
 		this.blockObject[rootId] = [];
 	};

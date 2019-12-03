@@ -51,15 +51,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, id, rootId } = this.props;
-		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
-
-		if (!block) {
-			return null;
-		};
+		const { blockStore, id, rootId, fields, content } = this.props;
 		
-		let { fields, content } = block;
 		let { text, marks, style, checked, number } = content;
 		let { lang } = fields;
 		let markers: any[] = [];
@@ -172,10 +165,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	setValue () {
-		const { blockStore, id, rootId } = this.props;
-		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
-		const { fields, content } = block;
+		const { blockStore, id, rootId, fields, content } = this.props;
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
@@ -213,6 +203,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
+		e.persist();
+		
 		const { onKeyDown, id } = this.props;
 		const range = this.getRange();
 		
@@ -225,10 +217,12 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onKeyUp (e: any) {
+		e.persist();
+		
 		const { onKeyUp, id, content } = this.props;
 		const range = this.getRange();
 		const k = e.which;
-		
+
 		let value = this.getValue();
 		let marks = content.marks;
 		let diff = value.length - this.length;
@@ -245,12 +239,9 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	blockUpdateText (marks: I.Mark[]) {
-		const { blockStore, id, rootId } = this.props;
-		const { blocks } = blockStore;
-		
-		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
-		let value = this.getValue();
-		let text = String(block.content.text || '');
+		const { blockStore, id, rootId, content } = this.props;
+		const { text } = content;
+		const value = this.getValue();
 		
 		if (value == text) {
 			return;
@@ -267,15 +258,14 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	blockUpdateMarks (marks: I.Mark[]) {
-		const { blockStore, id, rootId } = this.props;
-		const { blocks } = blockStore;
+		const { blockStore, id, rootId, content } = this.props;
+		const { text } = content;
 		
-		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		let request = {
 			contextId: rootId,
 			blockId: id,
-			text: String(block.content.text || ''),
-			marks: { marks: Mark.checkRanges(block.content.text, marks) },
+			text: String(text || ''),
+			marks: { marks: Mark.checkRanges(text, marks) },
 		};
 		
 		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
@@ -304,21 +294,15 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onCheck (e: any) {
-		const { blockStore, id, rootId } = this.props;
-		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
-
-		if (!block) {
-			return;
-		};
+		const { blockStore, id, rootId, content } = this.props;
+		const { checked } = content;
 		
 		focus.clear();
 		
-		let { content } = block;
 		let request: any = {
 			contextId: rootId,
 			blockId: id,
-			checked: !content.checked,
+			checked: !checked,
 		};
 		
 		dispatcher.call('blockSetTextChecked', request, (errorCode: any, message: any) => {});

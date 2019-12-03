@@ -126,6 +126,8 @@ class Mark {
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
+		if (c1.type > c2.type) return 1;
+		if (c1.type < c2.type) return -1;
 		if (c1.range.from > c2.range.from) return 1;
 		if (c1.range.from < c2.range.from) return -1;
 		if (c1.range.to > c2.range.to) return 1;

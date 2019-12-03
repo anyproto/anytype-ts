@@ -21,15 +21,7 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 
 	render() {
-		const { blockStore, id, rootId } = this.props;
-		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
-		
-		if (!block) {
-			return null;
-		};
-		
-		const { content } = block;
+		const { blockStore, id, rootId, content } = this.props;
 		const { fields, isArchived } = content;
 		const { icon, name } = fields;
 		
