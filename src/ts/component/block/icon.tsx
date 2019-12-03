@@ -46,22 +46,16 @@ class BlockIcon extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		
 		let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
-		
 		if (icon == block.fields.icon) {
 			return;
 		};
 		
-		let change = Util.objectCopy(block);
-		change.fields.icon = icon;
-		
 		let request = {
 			contextId: rootId,
-			changes: com.anytype.Changes.create({
-				changes: blockStore.prepareBlockToProto(change),
-			}),
+			blockId: id,
+			name: icon,
 		};
-		
-		dispatcher.call('blockUpdate', request, (errorCode: any, message: any) => {});
+		dispatcher.call('blockSetIconName', request, (errorCode: any, message: any) => {});
 	};
 	
 };

@@ -17,6 +17,7 @@ const $ = require('jquery');
 class MenuBlockAction extends React.Component<Props, {}> {
 	
 	refSearch: any = null;
+	timeout: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -96,6 +97,10 @@ Stone
 		);
 	};
 	
+	componentWillUnmount () {
+		window.clearTimeout(this.timeout);
+	};
+	
 	onOver (e: any, item: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
@@ -126,7 +131,8 @@ Stone
 			data: {},
 		};
 		
-		window.setTimeout(() => {
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
 			switch (item.id) {
 				case 'turn':
 					menuParam.data.onSelect = (style: I.TextStyle) => {
