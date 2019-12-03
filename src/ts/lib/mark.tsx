@@ -187,7 +187,7 @@ class Mark {
 		
 		for (let mark of map[type]) {
 			let overlap = this.overlap(range, mark.range);
-			if ([ Overlap.Inner, Overlap.Equal ].indexOf(overlap) >= 0) {
+			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight, Overlap.Equal ].indexOf(overlap) >= 0) {
 				return mark;
 			};
 		};
@@ -195,10 +195,6 @@ class Mark {
 	};
 	
 	toHtml (text: string, marks: I.Mark[]) {
-		if (!marks || !marks.length) {
-			return text;
-		};
-		
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 		
@@ -206,37 +202,49 @@ class Mark {
 		let tag = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'span', 'span' ];
 		
 		for (let mark of marks) {
-			let type = mark.type || 0;
 			let t = tag[mark.type];
-			let attr = '';
-			
-			if ((type == I.MarkType.Link) && mark.param) {
-				attr = 'href="' + mark.param + '"';
-			};
-			if ((type == I.MarkType.TextColor) && mark.param) {
-				attr = 'class="textColor';
-				if (mark.param.match(/^#/)) {
-					attr += '" style="color: ' + mark.param + '"';
-				} else {
-					attr += ' ' + mark.param + '"';
-				};
-			};
-			
-			if ((type == I.MarkType.BgColor) && mark.param) {
-				attr = 'class="bgColor';
-				if (mark.param.match(/^#/)) {
-					attr += '" style="background-color: ' + mark.param + '"';
-				} else {
-					attr += ' ' + mark.param + '"';
-				};
-			};
+			let attr = this.paramToAttr(mark.type, mark.param);
 			
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
-				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + '>' + r[mark.range.from];
+				r[mark.range.from] = '<' + t + ' ' + attr + '>' + r[mark.range.from];
 				r[mark.range.to - 1] += '</' + t + '>';
 			};
 		};
 		return r.join('');
+	};
+	
+	paramToAttr (type: I.MarkType, param: string): string {
+		let attr = '';
+		
+		if (!param) {
+			return attr;
+		};
+		
+		switch (type) {
+			case I.MarkType.Link:
+				attr = 'href="' + param + '"';
+				break;
+				
+			case I.MarkType.TextColor:
+				attr = 'class="textColor';
+				if (param.match(/^#/)) {
+					attr += '" style="color: ' + param + '"';
+				} else {
+					attr += ' ' + param + '"';
+				};
+				break;
+				
+			case I.MarkType.BgColor:
+				attr = 'class="bgColor';
+				if (param.match(/^#/)) {
+					attr += '" style="background-color: ' + param + '"';
+				} else {
+					attr += ' ' + param + '"';
+				};
+				break;
+		};
+		
+		return attr;
 	};
 	
 	overlap (a: I.TextRange, b: I.TextRange): Overlap {
