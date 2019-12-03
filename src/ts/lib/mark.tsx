@@ -111,6 +111,8 @@ class Mark {
 	};
 	
 	move (marks: I.Mark[], start: number, diff: number) {
+		marks = marks || [];
+		
 		for (let mark of marks) {
 			if ((mark.range.from < start && mark.range.to >= start) || (!start && !mark.range.from)) {
 				mark.range.to += diff;
