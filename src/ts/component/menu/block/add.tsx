@@ -33,7 +33,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					{ id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1' },
 					{ id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2' },
 					{ id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3' },
-					{ id: I.TextStyle.Header4, icon: 'header4', name: 'Header 4' },
 					{ id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted' },
 				] as any [],
 			},

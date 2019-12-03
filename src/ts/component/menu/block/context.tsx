@@ -64,10 +64,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				icon = 'header3';
 				break;
 				
-			case I.TextStyle.Header4:
-				icon = 'header4';
-				break;
-				
 			case I.TextStyle.Quote:
 				icon = 'quote';
 				break;

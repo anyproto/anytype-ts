@@ -123,10 +123,6 @@ class BlockText extends React.Component<Props, {}> {
 				cn.push('header3');
 				break;
 				
-			case I.TextStyle.Header4:
-				cn.push('header4');
-				break;
-				
 			case I.TextStyle.Quote:
 				cn.push('quote');
 				break;

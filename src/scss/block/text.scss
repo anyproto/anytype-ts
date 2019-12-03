@@ -12,7 +12,6 @@
 		.header1 { padding: 5px 0px 2px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
 		.header2 { padding: 6px 0px 4px 0px; font-size: 21px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
 		.header3 { padding: 7px 0px 3px 0px; font-size: 18px; line-height: 26px; letter-spacing: -0.08px; font-weight: 600; }
-		.header4 { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; }
 		.quote { font-size: 13px; line-height: 22px; letter-spacing: 0.08px; }
 		.code { font-family: 'Mono'; line-height: 1.71; padding: 32px 24px 16px 24px; margin: 7px 0px; background: rgba(247,245,240,0.5); }
 		.code {
@@ -20,7 +19,7 @@
 		}
 		
 		a { cursor: pointer; }
-		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 2px 4px; border-radius: 2px; }
+		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; border-radius: 2px; }
 		
 		.textColor.grey { color: #aca996; }
 		.textColor.yellow { color: #ecd91b; }
@@ -33,7 +32,7 @@
 		.textColor.teal { color: #0fc8ba; }
 		.textColor.lime { color: #5dd400; }
 		
-		.bgColor { padding: 2px 4px; border-radius: 2px; }
+		.bgColor { padding: 0px 4px; border-radius: 2px; }
 		.bgColor.yellow { background: #fef9cc; }
 		.bgColor.orange { background: #fef3c5; }
 		.bgColor.red { background: #ffebe5; }

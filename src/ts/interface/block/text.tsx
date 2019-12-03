@@ -5,7 +5,6 @@ export enum TextStyle {
 	Header1		 = 1,
 	Header2		 = 2,
 	Header3		 = 3,
-	Header4		 = 4,
 	Quote		 = 5,
 	Code		 = 6,
 	Title		 = 7,

@@ -23,7 +23,6 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 					{ id: I.TextStyle.Header1, icon: 'header1', name: 'Heading 1' },
 					{ id: I.TextStyle.Header2, icon: 'header2', name: 'Heading 2' },
 					{ id: I.TextStyle.Header3, icon: 'header3', name: 'Heading 3' },
-					{ id: I.TextStyle.Header4, icon: 'header4', name: 'Heading 4' },
 					{ id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted' },
 					{ id: I.TextStyle.Code, icon: 'code', name: 'Code snippet' }
 				] 
