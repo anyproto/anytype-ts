@@ -223,9 +223,8 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const k = e.which;
 
-		let value = this.getValue();
 		let marks = content.marks;
-		let diff = value.length - this.length;
+		let diff = this.getValue().length - this.length;
 		
 		if (diff != 0) {
 			marks = Mark.move(marks, this.from, diff);

@@ -37,7 +37,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { content } = block;
 		
 		let { marks, style } = content;
-		marks = Util.objectCopy(marks);
 		
 		const markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },

@@ -89,7 +89,7 @@ class Mark {
 						mark = el;
 						add = false;
 					} else {
-						el.range.from = mark.range.to;
+						add = true;
 					};
 					break;
 					
