@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { Block as Child, Icon, DropTarget } from 'ts/component';
@@ -15,7 +16,7 @@ import BlockFile from './file';
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
 
-interface Props extends I.Block {
+interface Props extends I.Block, RouteComponentProps<any> {
 	rootId: string;
 	index: number;
 	dataset?: any;

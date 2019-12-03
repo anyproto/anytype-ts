@@ -6,7 +6,7 @@ import { I, Key, Util, dispatcher, focus, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 	blockStore?: any;
 	dataset?: any;

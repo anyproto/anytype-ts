@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Smile } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
-interface Props extends I.Block {
+interface Props extends I.Block, RouteComponentProps<any> {
 	blockStore?: any;
-	history?: any;
 	rootId: string;
 };
 
