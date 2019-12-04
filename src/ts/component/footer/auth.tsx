@@ -19,10 +19,11 @@ class FooterAuth extends React.Component<Props, {}> {
 
 	render () {
 		const { commonStore } = this.props;
+		const date = (new Date()).getTime() / 1000;
 		
 		return (
 			<div className="footer">
-				<div className="copy">{Util.date('Y', 0)}, Anytype</div>
+				<div className="copy">{Util.date('Y', date)}, Anytype</div>
 				<Icon id="button-help" className={'help light ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
 			</div>
 		);
