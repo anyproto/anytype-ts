@@ -418,8 +418,8 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		let request = {
 			contextId: rootId,
-			firstBlockId: focused.id,
-			secondBlockId: next.id,
+			firstBlockId: next.id,
+			secondBlockId: focused.id,
 		};
 		dispatcher.call('blockMerge', request, (errorCode: any, message: any) => {
 		});

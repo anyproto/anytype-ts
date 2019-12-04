@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props {
@@ -22,7 +22,7 @@ class FooterAuth extends React.Component<Props, {}> {
 		
 		return (
 			<div className="footer">
-				<div className="copy">2018, Anytype</div>
+				<div className="copy">{Util.date('Y')}, Anytype</div>
 				<Icon id="button-help" className={'help light ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
 			</div>
 		);
