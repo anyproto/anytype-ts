@@ -434,6 +434,8 @@ class EditorPage extends React.Component<Props, {}> {
 			cursorPosition: start,
 		};
 		dispatcher.call('blockSplit', request, (errorCode: any, message: any) => {
+			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.apply();
 		});
 	};
 	
