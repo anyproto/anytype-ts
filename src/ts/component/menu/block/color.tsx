@@ -28,9 +28,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		
 		const Item = (item: any) => (
 			<div className={item.className} onClick={item.onClick}>
-				<div className="inner">
-					<div className="txt">A</div>
-				</div>
+				<div className="txt">A</div>
 			</div>
 		);
 		
@@ -38,20 +36,22 @@ class MenuBlockColor extends React.Component<Props, {}> {
 			<React.Fragment>
 				<div className="section">
 					<div className="name">Text color</div>
-					
-					{this.getTextColors().map((color: string, i: number) => {
-						let cn = [ 'item', 'text', color, (color == valueText ? 'active' : '') ];
-						return <Item key={i} className={cn.join(' ')} onClick={(e: any) => { this.onTextColor(e, color); }} />;
-					})}
+					<div className="items">
+						{this.getTextColors().map((color: string, i: number) => {
+							let cn = [ 'item', 'textColor', color, (color == valueText ? 'active' : '') ];
+							return <Item key={i} className={cn.join(' ')} onClick={(e: any) => { this.onTextColor(e, color); }} />;
+						})}
+					</div>
 				</div>
 				
 				<div className="section">
 					<div className="name">Text highlight</div>
-					
-					{this.getBgColors().map((color: string, i: number) => {
-						let cn = [ 'item', 'bg', color, (color == valueBg ? 'active' : '') ];
-						return <Item key={i} className={cn.join(' ')} onClick={(e: any) => { this.onBgColor(e, color); }} />;
-					})}
+					<div className="items">
+						{this.getBgColors().map((color: string, i: number) => {
+							let cn = [ 'item', 'bgColor', color, (color == valueBg ? 'active' : '') ];
+							return <Item key={i} className={cn.join(' ')} onClick={(e: any) => { this.onBgColor(e, color); }} />;
+						})}
+					</div>
 				</div>
 			</React.Fragment>
 		);

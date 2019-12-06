@@ -298,6 +298,24 @@ class Util {
 		};
 		return ret;
 	};
+	
+	styleIcon (s: I.TextStyle): string {
+		let icon = '';
+		switch (s) {
+			default:
+			case I.TextStyle.Paragraph:	 icon = 'text'; break;
+			case I.TextStyle.Header1:	 icon = 'header1'; break;
+			case I.TextStyle.Header2:	 icon = 'header2'; break;
+			case I.TextStyle.Header3:	 icon = 'header3'; break;
+			case I.TextStyle.Quote:		 icon = 'quote'; break;
+			case I.TextStyle.Code:		 icon = 'kbd'; break;
+			case I.TextStyle.Bulleted:	 icon = 'list'; break;
+			case I.TextStyle.Numbered:	 icon = 'numbered'; break;
+			case I.TextStyle.Toggle:	 icon = 'toggle'; break;
+			case I.TextStyle.Checkbox:	 icon = 'checkbox'; break;
+		};
+		return icon;
+	};
 };
 
 export default new Util();

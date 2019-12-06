@@ -112,7 +112,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#block-add-item-' + item.id);
 		const offsetX = node.outerWidth();
-		const offsetY = node.offset().top - el.offset().top;
 			
 		$('.menuBlockAdd .item.active').removeClass('active');
 		el.addClass('active');
@@ -121,7 +120,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			element: 'block-add-item-' + item.id,
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
-			offsetY: offsetY - 40,
+			offsetY: -40,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {

@@ -45,3 +45,25 @@ a { color: $colorBlack; }
 .dropTarget.isOver.bottom { box-shadow: 0px 2px $colorOrange; }
 .dropTarget.isOver.left { box-shadow: -2px 0px $colorOrange; }
 .dropTarget.isOver.right { box-shadow: 2px 0px $colorOrange; }
+
+.textColor.grey { color: #aca996 !important; }
+.textColor.yellow { color: #ecd91b !important; }
+.textColor.orange { color: #ffb522 !important; }
+.textColor.red { color: #f55522 !important; }
+.textColor.pink { color: #e51ca0 !important; }
+.textColor.purple { color: #ab50cc !important; }
+.textColor.blue { color: #3e58eb !important; }
+.textColor.ice { color: #2aa7ee !important; }
+.textColor.teal { color: #0fc8ba !important; }
+.textColor.lime { color: #5dd400 !important; }
+
+.bgColor.grey { background: #f3f2ec !important; }
+.bgColor.yellow { background: #fef9cc !important; }
+.bgColor.orange { background: #fef3c5 !important; }
+.bgColor.red { background: #ffebe5 !important; }
+.bgColor.pink { background: #fee3f5 !important; }
+.bgColor.purple { background: #f4e3fa !important; }
+.bgColor.blue { background: #f4e3fa !important; }
+.bgColor.ice { background: #d6effd !important; }
+.bgColor.teal { background: #d6f5f3 !important; }
+.bgColor.lime { background: #e3f7d0 !important; }

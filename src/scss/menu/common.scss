@@ -41,7 +41,7 @@
 			transition: all 0.15s ease-in-out; width: 100%;
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
-		.item:hover, .item.active { color: #fff; background: #aca996 !important; }
+		.item:hover, .item.active { background: #f3f2ec; }
 		
 		.icon { margin-right: 8px; }
 		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
@@ -65,16 +65,16 @@
 		.section { flex: auto; padding: 4px 12px; border-right: 1px solid #dfddd0; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
-		.icon { width: 32px; height: 32px; margin-right: 8px; border-radius: 4px; background-size: 24px 24px; cursor: pointer; }
+		.icon { width: 32px; height: 32px; margin-right: 4px; border-radius: 4px; background-size: 24px 24px; cursor: pointer; }
 		.icon:last-child { margin: 0px; }
 		
 		.icon {
 			.arrow { 
-				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow.svg'); position: absolute; right: -10px; top: 50%; 
+				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow.svg'); position: absolute; right: 4px; top: 50%; 
 				margin-top: -4px;
 			}
 		}
-		.icon:hover, .icon.active { background-color: #aca996; }
+		.icon:hover, .icon.active { background-color: #f3f2ec; }
 	}
 }
 

@@ -9,6 +9,7 @@ interface Props {
 	arrow?: boolean;
 	tooltip?: string;
 	tooltipY?: I.MenuDirection;
+	inner?: any;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -32,7 +33,7 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { id, icon, arrow, className, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
+		const { id, icon, arrow, className, inner, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
 		
 		let cn = [ 'icon' ];
 		let style: any = {};
@@ -48,6 +49,7 @@ class Icon extends React.Component<Props, {}> {
 		return (
 			<div id={id} onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} className={cn.join(' ')} style={style}>
 				{arrow ? <div className="arrow" /> : ''}
+				{inner ? inner : null}
 			</div>
 		);
 	};

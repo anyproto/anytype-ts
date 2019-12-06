@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input } from 'ts/component';
-import { I, dispatcher } from 'ts/lib';
+import { I, Util, dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -16,7 +16,6 @@ const $ = require('jquery');
 @observer
 class MenuBlockAction extends React.Component<Props, {}> {
 	
-	refSearch: any = null;
 	timeout: number = 0;
 	
 	constructor (props: any) {
@@ -25,51 +24,41 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		this.onOver = this.onOver.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
-	
-	/*
-	Red
-Purple
-Violet
-Blue
-Light Blue
-Aquamarine
-Green
-
-Highlight colors
-White
-Cream
-Banana
-Peach
-Rose
-Lavender
-Lilac
-Sky
-Coral
-Mint
-Stone
-	*/
 
 	render () {
+		const { commonStore, blockStore, param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
+
+		if (!block) {
+			return null;
+		};
+		
+		const { content } = block;
+		const { style } = content;
+		
 		const sections = [
 			{ 
 				children: [
 					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
 					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
+					{ id: 'move', icon: 'move', name: 'Move to' },
+					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+					{ id: 'remove', icon: 'remove', name: 'Delete' },
 				] 
 			},
 			{ 
 				children: [
 					{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
-			},
-			{ 
-				children: [
-					{ id: 'move', icon: 'move', name: 'Move to' },
-					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-					{ id: 'remove', icon: 'remove', name: 'Delete' },
-				]	
-			},
+			}
 		];
+		
+		let color = (
+			<div className={[ 'inner' ].join(' ')}>A</div>
+		);
 		
 		const Section = (item: any) => (
 			<div className="section">
@@ -79,17 +68,24 @@ Stone
 			</div>
 		);
 		
-		const Item = (item: any) => (
-			<div id={'block-action-item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-				{item.icon ? <Icon className={item.icon} /> : ''}
-				<div className="name">{item.name}</div>
-				{item.arrow ? <Icon className="arrow" /> : ''}
-			</div>
-		);
+		const Item = (item: any) => {
+			let icon = item.icon;
+			let inner = item.icon == 'color' ? color: null;
+			if (icon == 'turn') {
+				icon = Util.styleIcon(style);
+			};
+			
+			return (
+				<div id={'block-action-item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+					{item.icon ? <Icon className={icon} inner={inner} /> : ''}
+					<div className="name">{item.name}</div>
+					{item.arrow ? <Icon className="arrow" /> : ''}
+				</div>
+			);
+		};
 		
 		return (
 			<div>
-				<Input ref={(ref: any) => { this.refSearch = ref; }} placeHolder="Search actions..." />
 				{sections.map((section: any, i: number) => {
 					return <Section key={i} {...section} />;
 				})}
