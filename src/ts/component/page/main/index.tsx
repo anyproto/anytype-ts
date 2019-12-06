@@ -139,7 +139,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const position = newIndex < oldIndex ? I.BlockPosition.Before : I.BlockPosition.After; 
 		
 		let request = {
-			rootId: root,
+			contextId: root,
 			blockIds: [ tree[oldIndex].id ],
 			dropTargetId: tree[newIndex].id,
 			position: position,
