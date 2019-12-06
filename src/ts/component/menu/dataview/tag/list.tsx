@@ -67,7 +67,7 @@ class MenuTagList extends React.Component<Props, State> {
 				<List 
 					axis="y" 
 					transitionDuration={150}
-					pressDelay={60}
+					distance={10}
 					onSortEnd={this.onSortEnd}
 					helperClass="dragging"
 					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}

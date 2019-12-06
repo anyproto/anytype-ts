@@ -136,7 +136,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { oldIndex, newIndex } = result;
 		
 		if (oldIndex == newIndex) {
-			//return;
+			return;
 		};
 		
 		const { blockStore } = this.props;

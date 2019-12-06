@@ -64,7 +64,7 @@ class ListIndex extends React.Component<Props, {}> {
 			<List 
 				axis="xy" 
 				transitionDuration={150}
-				pressDelay={60}
+				distance={10}
 				list={tree} 
 				helperClass="dragging"
 				helperContainer={helperContainer} 
