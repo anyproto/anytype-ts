@@ -10,6 +10,7 @@ interface Props {
 	rootId: string;
 	onSelect?(e: any, id: string): void;
 	onAdd?(e: any): void;
+	onSortEnd?(result: any): void;
 	helperContainer?(): any;
 };
 
@@ -73,7 +74,8 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	onSortEnd (result: any) {
-		console.log('[onSortEnd]');
+		const { onSortEnd } = this.props;
+		onSortEnd(result);
 	};
 	
 };

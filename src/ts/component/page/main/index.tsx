@@ -31,6 +31,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
 	render () {
@@ -67,6 +68,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							ref={(ref) => { this.listRef = ref; }}
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
+							onSortEnd={this.onSortEnd}
 							rootId={root}
 							helperContainer={() => { return $('#documents').get(0); }} 
 						/>
@@ -127,6 +129,23 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
+	};
+	
+	onSortEnd (result: any) {
+		const { blockStore } = this.props;
+		const { blocks, root } = blockStore;
+		const tree = blockStore.prepareTree(root, blocks[root] || []);
+		const { oldIndex, newIndex } = result;
+		const position = newIndex < oldIndex ? I.BlockPosition.Before : I.BlockPosition.After; 
+		
+		let request = {
+			rootId: root,
+			blockIds: [ tree[oldIndex].id ],
+			dropTargetId: tree[newIndex].id,
+			position: position,
+		};
+		
+		dispatcher.call('blockMove', request, (errorCode: any, message: any) => {});
 	};
 	
 	resize () {

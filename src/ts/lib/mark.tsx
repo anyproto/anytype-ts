@@ -116,6 +116,7 @@ class Mark {
 		for (let mark of marks) {
 			if ((mark.range.from < start && mark.range.to >= start) || (!start && !mark.range.from)) {
 				mark.range.to += diff;
+				console.log('Move', mark.param, mark.range.to);
 			} else
 			if (mark.range.from >= start) {
 				mark.range.from += diff;
@@ -232,7 +233,7 @@ class Mark {
 				if (param.match(/^#/)) {
 					attr += '" style="color: ' + param + '"';
 				} else {
-					attr += ' ' + param + '"';
+					attr += ' textColor-' + param + '"';
 				};
 				break;
 				
@@ -241,7 +242,7 @@ class Mark {
 				if (param.match(/^#/)) {
 					attr += '" style="background-color: ' + param + '"';
 				} else {
-					attr += ' ' + param + '"';
+					attr += ' bgColor-' + param + '"';
 				};
 				break;
 		};

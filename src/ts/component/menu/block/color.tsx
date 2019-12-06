@@ -38,7 +38,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 					<div className="name">Text color</div>
 					<div className="items">
 						{this.getTextColors().map((color: string, i: number) => {
-							let cn = [ 'item', 'textColor', color, (color == valueText ? 'active' : '') ];
+							let cn = [ 'item', 'textColor', 'textColor-' + color, (color == valueText ? 'active' : '') ];
 							return <Item key={i} className={cn.join(' ')} onClick={(e: any) => { this.onTextColor(e, color); }} />;
 						})}
 					</div>
@@ -48,7 +48,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 					<div className="name">Text highlight</div>
 					<div className="items">
 						{this.getBgColors().map((color: string, i: number) => {
-							let cn = [ 'item', 'bgColor', color, (color == valueBg ? 'active' : '') ];
+							let cn = [ 'item', 'bgColor', 'bgColor-' + color, (color == valueBg ? 'active' : '') ];
 							return <Item key={i} className={cn.join(' ')} onClick={(e: any) => { this.onBgColor(e, color); }} />;
 						})}
 					</div>

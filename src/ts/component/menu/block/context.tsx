@@ -50,9 +50,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		let icon = Util.styleIcon(style);
 		let colorMark = Mark.getInRange(marks, I.MarkType.TextColor, range);
 		let bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range);
-		let colorActive = colorMark || bgMark;
+
 		let color = (
-			<div className={[ 'inner', (colorMark ? 'textColor ' + colorMark.param : ''), (bgMark ? 'bgColor ' + bgMark.param : '') ].join(' ')}>A</div>
+			<div className={[ 'inner', (colorMark ? 'textColor textColor-' + colorMark.param : ''), (bgMark ? 'bgColor bgColor-' + bgMark.param : '') ].join(' ')}>A</div>
 		);
 		
 		return (

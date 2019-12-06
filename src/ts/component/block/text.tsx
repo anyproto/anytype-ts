@@ -34,8 +34,9 @@ class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	range: any = null;
 	timeoutKeyUp: number = 0;
-	from: number = 0;
-	length: number = 0;
+	from: any = null;
+	value: string = '';
+	marks: I.Mark[] = [];
 
 	constructor (props: any) {
 		super(props);
@@ -150,11 +151,17 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { content } = this.props;
+		
+		this.marks = Util.objectCopy(content.marks);
 		this._isMounted = true;
 		this.setValue();
 	};
 	
 	componentDidUpdate () {
+		const { content } = this.props;
+		
+		this.marks = Util.objectCopy(content.marks);
 		this.setValue();
 	};
 	
@@ -204,11 +211,15 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { onKeyDown, id } = this.props;
+		const { commonStore, onKeyDown, id } = this.props;
 		const range = this.getRange();
 		
-		this.from = range.from;
-		this.length = this.getValue().length;
+		commonStore.menuClose('blockContext');
+		
+		if (this.from == null) {
+			this.from = range.from;
+		};
+		this.value = this.getValue();
 		
 		focus.set(id, range);
 		this.placeHolderCheck();
@@ -218,44 +229,43 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { onKeyUp, id, content } = this.props;
+		const { blockStore, onKeyUp, id, rootId, content } = this.props;
 		const range = this.getRange();
 		const k = e.which;
 
-		let marks = content.marks;
-		let diff = this.getValue().length - this.length;
+		let value = this.getValue();
+		let diff = value.length - this.value.length;
 		
 		if (diff != 0) {
-			marks = Mark.move(marks, this.from, diff);
+			this.marks = Mark.move(this.marks, this.from, diff);
+			this.from = null;
 		};
 		
 		this.placeHolderCheck();
 		onKeyUp(e);
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(marks); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks); }, 500);
 	};
 	
-	blockUpdateText (marks: I.Mark[]) {
+	blockUpdateText (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
-		const { text } = content;
+		const { text, marks } = content;
 		const value = this.getValue();
 		
-		if (value == text) {
-			return;
-		};
+		newMarks = Mark.checkRanges(value, newMarks);
 		
 		let request = {
 			contextId: rootId,
 			blockId: id,
 			text: value,
-			marks: { marks: Mark.checkRanges(value, marks) },
+			marks: { marks: newMarks },
 		};
 		
 		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
 	};
 	
-	blockUpdateMarks (marks: I.Mark[]) {
+	blockUpdateMarks (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
 		const { text } = content;
 		
@@ -263,7 +273,7 @@ class BlockText extends React.Component<Props, {}> {
 			contextId: rootId,
 			blockId: id,
 			text: String(text || ''),
-			marks: { marks: Mark.checkRanges(text, marks) },
+			marks: { marks: Mark.checkRanges(text, newMarks) },
 		};
 		
 		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
