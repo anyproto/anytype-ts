@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
 import { dispatcher, I, Util, translate} from 'ts/lib';
+import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
@@ -132,10 +133,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSortEnd (result: any) {
+		const { oldIndex, newIndex } = result;
 		const { blockStore } = this.props;
 		const { blocks, root } = blockStore;
+		const rootBlock = blocks[root].find((it: I.Block) => { return it.id == root; });
+		
+		rootBlock.childrenIds = arrayMove(rootBlock.childrenIds, oldIndex, newIndex);
+		
 		const tree = blockStore.prepareTree(root, blocks[root] || []);
-		const { oldIndex, newIndex } = result;
 		const position = newIndex < oldIndex ? I.BlockPosition.Before : I.BlockPosition.After; 
 		
 		let request = {
@@ -144,7 +149,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 			dropTargetId: tree[newIndex].id,
 			position: position,
 		};
-		
 		dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
 	};
 	

@@ -8,7 +8,7 @@ interface Props {
 	className?: string;
 	disabled?: boolean;
 	onClick?(e: any): void;
-	onDrop?(e: any, type: string, id: string, direction: string): void;
+	onDrop?(e: any, type: string, targetId: string, position: I.BlockPosition): void;
 };
 
 const $ = require('jquery');
@@ -16,7 +16,7 @@ const $ = require('jquery');
 class DropTarget extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
-	direction: string;
+	position: I.BlockPosition = I.BlockPosition.None;
 	
 	constructor (props: any) {
 		super(props);
@@ -79,26 +79,39 @@ class DropTarget extends React.Component<Props, {}> {
 			height: y + height * 0.85
 		};
 		
-		this.direction = '';
+		this.position = I.BlockPosition.None;
 		
 		if ((ey >= y) && (ey <= rect.y)) {
-			this.direction = 'top';
+			this.position = I.BlockPosition.Before;
 		} else 
 		if ((ey >= rect.height) && (ey <= y + height)) {
-			this.direction = 'bottom';
+			this.position = I.BlockPosition.After;
 		} else
 		if ((ex >= x) && (ex < rect.x) && (ey > rect.y) && (ey < rect.height)) {
-			this.direction = 'left';
+			this.position = I.BlockPosition.Left;
 		} else 
 		if ((ex > rect.width) && (ex <= x + width) && (ey > rect.y) && (ey < rect.height)) {
-			this.direction = 'right';
+			this.position = I.BlockPosition.Right;
 		} else 
 		if ((ex > rect.x) && (ex < rect.width) && (ey > rect.y) && (ey < rect.height)) {
-			this.direction = 'middle';
+			this.position = I.BlockPosition.Inner;
 		};
 		
 		node.removeClass('top bottom left right middle');
-		node.addClass('isOver ' + this.direction);
+		node.addClass('isOver ' + this.getDirectionClass(this.position));
+	};
+	
+	getDirectionClass (dir: I.BlockPosition) {
+		let c = '';
+		switch (dir) {
+			case I.BlockPosition.None: c = ''; break;
+			case I.BlockPosition.Before: c = 'top'; break;
+			case I.BlockPosition.After: c = 'bottom'; break;
+			case I.BlockPosition.Left: c = 'left'; break;
+			case I.BlockPosition.Right: c = 'right'; break;
+			case I.BlockPosition.Inner: c = 'middle'; break;
+		};
+		return c;
 	};
 	
 	onDragLeave (e: any) {
@@ -126,7 +139,7 @@ class DropTarget extends React.Component<Props, {}> {
 		node.removeClass('isOver top bottom left right middle');
 		
 		if (this.props.onDrop) {
-			this.props.onDrop(e, this.props.type, this.props.id, this.direction);			
+			this.props.onDrop(e, this.props.type, this.props.id, this.position);			
 		};
 	};
 	

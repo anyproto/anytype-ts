@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragLayer } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, dispatcher } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props {
@@ -12,6 +13,8 @@ interface Props {
 const $ = require('jquery');
 const THROTTLE = 20;
 
+@inject('blockStore')
+@observer
 class DragProvider extends React.Component<Props, {}> {
 	
 	refLayer: any = null;
@@ -86,8 +89,18 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 	};
 	
-	onDrop (e: any, type: string, id: string, direction: string) {
-		console.log('[onDrop]', type, id, this.type, this.ids, direction);
+	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
+		const { rootId } = this.props;
+		
+		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
+		
+		let request = {
+			contextId: rootId,
+			blockIds: this.ids || [],
+			dropTargetId: targetId,
+			position: position,
+		};
+		dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
 	};
 	
 	unbind () {

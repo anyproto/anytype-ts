@@ -77,9 +77,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.props.history.goForward();
 	};
 	
-	onDrop (e: any, type: string, id: string, direction: string) {
+	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
 		if (this.props.dataset && this.props.dataset.onDrop) {
-			this.props.dataset.onDrop(e, type, id, direction);			
+			this.props.dataset.onDrop(e, type, targetId, position);			
 		};
 	};
 	

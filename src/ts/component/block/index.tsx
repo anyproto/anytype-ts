@@ -217,12 +217,12 @@ class Block extends React.Component<Props, {}> {
 		};
 	};
 	
-	onDrop (e: any, type: string, id: string, direction: string) {
+	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
 		const { onDrop } = dataset;
 		
 		if (dataset && onDrop) {
-			onDrop(e, type, id, direction);			
+			onDrop(e, type, targetId, position);			
 		};
 	};
 	
