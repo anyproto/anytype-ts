@@ -145,7 +145,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			position: position,
 		};
 		
-		dispatcher.call('blockMove', request, (errorCode: any, message: any) => {});
+		dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
 	};
 	
 	resize () {
