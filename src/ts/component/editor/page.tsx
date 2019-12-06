@@ -103,7 +103,6 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		focus.apply();
-		this.setNumbers(tree);
 		
 		window.setTimeout(() => { window.scrollTo(0, this.scrollTop); }, 1);
 	};
@@ -122,32 +121,6 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('keydown.editor mousemove.editor scroll.editor');
-	};
-	
-	setNumbers (list: I.Block[]) {
-		const { blockStore, rootId } = this.props;
-		const { blocks } = blockStore;
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		let n = 0;
-		let map: any = {};
-		
-		for (let item of list) {
-			n = (item.type == I.BlockType.Text && item.content.style == I.TextStyle.Numbered) ? n + 1 : 0;
-			map[item.id] = n;
-			this.setNumbers(item.childBlocks);
-		};
-		
-		for (let id in map) {
-			if (!map[id]) {
-				continue;
-			};
-			
-			let block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
-			if (block) {
-				block.content.number = map[id];				
-			};
-		};
 	};
 	
 	onMouseMove (e: any) {

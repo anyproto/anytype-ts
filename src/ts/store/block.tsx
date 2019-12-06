@@ -107,6 +107,16 @@ class BlockStore {
 		return map;
 	};
 	
+	setNumbers (list: I.Block[]) {
+		let n = 0;
+		for (let item of list) {
+			n = (item.type == I.BlockType.Text && item.content.style == I.TextStyle.Numbered) ? n + 1 : 0;
+			item.content.number = n;
+			
+			this.setNumbers(item.childBlocks);
+		};
+	};
+	
 	prepareTree (rootId: string, list: I.Block[]) {
 		list = Util.objectCopy(list);
 		
@@ -115,6 +125,7 @@ class BlockStore {
 		
 		if (map[rootId]) {
 			ret = map[rootId].childBlocks;
+			this.setNumbers(ret);
 		};
 		
 		return ret;

@@ -255,9 +255,11 @@ class BlockText extends React.Component<Props, {}> {
 	
 	blockUpdateText (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
-		const { text, marks } = content;
-		const value = this.getValue();
+		
+		let { text, marks } = content;
+		let value = this.getValue();
 
+		text = String(text || '');
 		if ((value == text) && (JSON.stringify(marks) == JSON.stringify(newMarks))) {
 			return;
 		};
