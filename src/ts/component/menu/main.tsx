@@ -10,8 +10,7 @@ class MenuMain extends React.Component<Props, {}> {
 	
 	render () {
 		return (
-			<div className="menu-main">
-			</div>
+			<div className="menu-main" />
 		);
 	};
 	

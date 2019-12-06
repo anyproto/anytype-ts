@@ -44,7 +44,7 @@ class MenuCalendar extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<Input ref={(ref: any) => { this.valueRef = ref; }} readOnly />
+				<Input ref={(ref: any) => { this.valueRef = ref; }} readOnly={true} />
 				<div className="month">
 					<div className="name">
 						{Constant.month[m]}, {y}

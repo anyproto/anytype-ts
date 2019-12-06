@@ -83,8 +83,7 @@ class BlockText extends React.Component<Props, {}> {
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onSelect={this.onSelect}
-			>
-			</div>
+			/>
 		);
 		
 		let Marker = (item: any) => (

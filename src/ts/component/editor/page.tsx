@@ -52,12 +52,16 @@ class EditorPage extends React.Component<Props, {}> {
 					<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 				
 					{tree.map((item: I.Block, i: number) => { 
-						return <Block 
-							key={item.id} {...item} index={i}
-							{...this.props}
-							onKeyDown={throttle((e: any) => { this.onKeyDown(e); }, THROTTLE)} 
-							onKeyUp={throttle((e: any) => { this.onKeyUp(e); }, THROTTLE)} 
-						/>
+						return (
+							<Block 
+								key={item.id} 
+								index={i}
+								{...item} 
+								{...this.props}
+								onKeyDown={throttle((e: any) => { this.onKeyDown(e); }, THROTTLE)} 
+								onKeyUp={throttle((e: any) => { this.onKeyUp(e); }, THROTTLE)} 
+							/>
+						)
 					})}
 				</div>
 			</div>
