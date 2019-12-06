@@ -134,19 +134,26 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		
+		if (oldIndex == newIndex) {
+			//return;
+		};
+		
 		const { blockStore } = this.props;
 		const { blocks, root } = blockStore;
+		const tree = blockStore.prepareTree(root, blocks[root] || []);
+		const current = tree[oldIndex];
+		const target = tree[newIndex];
 		const rootBlock = blocks[root].find((it: I.Block) => { return it.id == root; });
 		
 		rootBlock.childrenIds = arrayMove(rootBlock.childrenIds, oldIndex, newIndex);
 		
-		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		const position = newIndex < oldIndex ? I.BlockPosition.Before : I.BlockPosition.After; 
 		
 		let request = {
 			contextId: root,
-			blockIds: [ tree[oldIndex].id ],
-			dropTargetId: tree[newIndex].id,
+			blockIds: [ current.id ],
+			dropTargetId: target.id,
 			position: position,
 		};
 		dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
