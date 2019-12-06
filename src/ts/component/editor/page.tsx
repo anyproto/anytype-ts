@@ -58,8 +58,8 @@ class EditorPage extends React.Component<Props, {}> {
 								index={i}
 								{...item} 
 								{...this.props}
-								onKeyDown={throttle((e: any) => { this.onKeyDown(e); }, THROTTLE)} 
-								onKeyUp={throttle((e: any) => { this.onKeyUp(e); }, THROTTLE)} 
+								onKeyDown={throttle((e: any, text: string) => { this.onKeyDown(e, text); }, THROTTLE)} 
+								onKeyUp={throttle((e: any, text: string) => { this.onKeyUp(e, text); }, THROTTLE)} 
 							/>
 						)
 					})}
@@ -230,7 +230,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	onKeyDown (e: any) {
+	onKeyDown (e: any, text?: string) {
 		const { blockStore, commonStore, dataset, rootId } = this.props;
 		const { focused, range } = focus;
 		const { blocks } = blockStore;
@@ -244,7 +244,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const index = blocks[rootId].findIndex((item: I.Block) => { return item.id == focused; });
 		const { content } = block;
 
-		let l = String(content.text || '').length;
+		let l = String(text || '').length;
 		let k = e.which;
 		
 		if (e.ctrlKey || e.metaKey) {
@@ -311,7 +311,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	onKeyUp (e: any) {
+	onKeyUp (e: any, text?: string) {
 	};
 	
 	selectAll () {

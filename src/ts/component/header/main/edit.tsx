@@ -5,6 +5,7 @@ import { I } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
+	rootId: string;
 	authStore?: any;
 	dataset?: any;
 };
@@ -24,7 +25,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { authStore } = this.props;
+		const { authStore, rootId } = this.props;
 		const { account } = authStore;
 		
 		const path = [
@@ -32,7 +33,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		];
 		
 		const PathItemHome = (item: any) => (
-			<DropTarget className="item" id="home" type={I.DragItem.Block} onClick={this.onHome} onDrop={this.onDrop}>
+			<DropTarget {...this.props} className="item" id={rootId} rootId="" type={I.DragItem.Block} onClick={this.onHome} onDrop={this.onDrop}>
 				<Icon className="home" />
 				<div className="name">Home</div>
 				<Icon className="arrow" />
@@ -40,7 +41,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		);
 		
 		const PathItem = (item: any) => (
-			<DropTarget className="item" id={item.id} type={I.DragItem.Block} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
+			<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} type={I.DragItem.Block} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
 				<Smile icon={item.icon} />
 				<div className="name">{item.name}</div>
 				<Icon className="arrow" />

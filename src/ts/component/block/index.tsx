@@ -20,8 +20,8 @@ interface Props extends I.Block, RouteComponentProps<any> {
 	rootId: string;
 	index: number;
 	dataset?: any;
-	onKeyDown? (e: any): void;
-	onKeyUp? (e: any): void;
+	onKeyDown? (e: any, text?: string): void;
+	onKeyUp? (e: any, text?: string): void;
 };
 
 const $ = require('jquery');
@@ -146,7 +146,7 @@ class Block extends React.Component<Props, {}> {
 		let wrapContent = (
 			<div className="wrapContent">
 				<div className={[ (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id} data-type={type}>
-					<DropTarget id={id} type={I.DragItem.Block} disabled={restrictions.dropOn} onDrop={this.onDrop}>
+					<DropTarget {...this.props} id={id} type={I.DragItem.Block} disabled={restrictions.dropOn} onDrop={this.onDrop}>
 						<BlockComponent {...this.props} />
 					</DropTarget>
 				</div>

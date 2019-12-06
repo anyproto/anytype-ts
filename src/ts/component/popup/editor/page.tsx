@@ -18,7 +18,7 @@ class PopupEditorPage extends React.Component<Props, {}> {
 		return (
 			<SelectionProvider rootId={id} container=".popupEditorPage .content">
 				<DragProvider rootId={id}>
-					<Header {...this.props} />
+					<Header {...this.props} rootId={id} />
 							
 					<EditorPage {...this.props} rootId={id} container=".popupEditorPage .content" addOffsetY={-46} />
 				</DragProvider>

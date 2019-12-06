@@ -14,8 +14,8 @@ interface Props extends I.BlockText {
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onKeyDown?(e: any): void;
-	onKeyUp?(e: any): void;
+	onKeyDown?(e: any, text?: string): void;
+	onKeyUp?(e: any, text?: string): void;
 };
 
 const com = require('proto/commands.js');
@@ -213,6 +213,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const { commonStore, onKeyDown, id } = this.props;
 		const range = this.getRange();
+		const k = e.which;
 		
 		commonStore.menuClose('blockContext');
 		
@@ -221,9 +222,13 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		this.value = this.getValue();
 		
+		if (k == Key.enter) {
+			this.blockUpdateText(this.marks);
+		};
+		
 		focus.set(id, range);
 		this.placeHolderCheck();
-		onKeyDown(e);
+		onKeyDown(e, this.value);
 	};
 	
 	onKeyUp (e: any) {
@@ -232,7 +237,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { blockStore, onKeyUp, id, rootId, content } = this.props;
 		const range = this.getRange();
 		const k = e.which;
-
+		
 		let value = this.getValue();
 		let diff = value.length - this.value.length;
 		
@@ -242,7 +247,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		this.placeHolderCheck();
-		onKeyUp(e);
+		onKeyUp(e, value);
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks); }, 500);
@@ -252,6 +257,10 @@ class BlockText extends React.Component<Props, {}> {
 		const { blockStore, id, rootId, content } = this.props;
 		const { text, marks } = content;
 		const value = this.getValue();
+
+		if ((value == text) && (JSON.stringify(marks) == JSON.stringify(newMarks))) {
+			return;
+		};
 		
 		newMarks = Mark.checkRanges(value, newMarks);
 		
@@ -288,10 +297,12 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		const { commonStore, onBlur } = this.props;
+		const { commonStore, onBlur, content } = this.props;
+		const { marks } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const placeHolder = node.find('.placeHolder');
 		
+		this.blockUpdateText(marks);
 		placeHolder.hide();
 		keyboard.setFocus(false);
 		onBlur(e);

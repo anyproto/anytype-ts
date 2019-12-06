@@ -80,11 +80,10 @@ class BlockStore {
 		};
 	};
 	
-	prepareTree (rootId: string, list: I.Block[]) {
+	getMap (list: I.Block[]) {
 		list = Util.objectCopy(list);
 		
-		let ret: any = [];
-		let map: any = [];
+		let map: any = {};
 		
 		for (let item of list) {
 			map[item.id] = item;
@@ -104,6 +103,15 @@ class BlockStore {
 				};
 			};
 		};
+		
+		return map;
+	};
+	
+	prepareTree (rootId: string, list: I.Block[]) {
+		list = Util.objectCopy(list);
+		
+		let ret: any = [];
+		let map: any = this.getMap(list);
 		
 		if (map[rootId]) {
 			ret = map[rootId].childBlocks;

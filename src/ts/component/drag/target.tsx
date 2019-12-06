@@ -4,9 +4,11 @@ import { I } from 'ts/lib';
 
 interface Props {
 	id: string;
+	rootId: string;
 	type: string;
 	className?: string;
 	disabled?: boolean;
+	dataset?: any;
 	onClick?(e: any): void;
 	onDrop?(e: any, type: string, targetId: string, position: I.BlockPosition): void;
 };
@@ -17,6 +19,7 @@ class DropTarget extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
+	canDrop: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -56,11 +59,12 @@ class DropTarget extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { disabled } = this.props;
+		const { id, disabled, dataset } = this.props;
 		if (disabled) {
 			return;
 		};
 		
+		const { dragProvider } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let win = $(window);
@@ -77,6 +81,22 @@ class DropTarget extends React.Component<Props, {}> {
 			y: y + height * 0.15,
 			width: x + width * 0.60,
 			height: y + height * 0.85
+		};
+		
+		let parentIds: string[] = [];
+		this.getParentIds(id, parentIds);
+
+		this.canDrop = true;
+		
+		if (dragProvider) {
+			for (let dropId of dragProvider.ids) {
+				if (parentIds.indexOf(dropId) >= 0) {
+					this.canDrop = false;
+					break;
+				};
+			};
+		} else {
+			this.canDrop = false;
 		};
 		
 		this.position = I.BlockPosition.None;
@@ -98,7 +118,27 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		node.removeClass('top bottom left right middle');
-		node.addClass('isOver ' + this.getDirectionClass(this.position));
+		if (this.canDrop) {
+			node.addClass('isOver ' + this.getDirectionClass(this.position));			
+		};
+	};
+	
+	getParentIds (id: string, parentIds: string[]) {
+		const { rootId, dataset } = this.props;
+		const { dragProvider } = dataset || {};
+		
+		if (!dragProvider) {
+			return;
+		};
+		
+		const item = dragProvider.map[id];
+		
+		if (item.parentId == rootId) {
+			return;
+		};
+		
+		parentIds.push(item.parentId);
+		this.getParentIds(item.parentId, parentIds);
 	};
 	
 	getDirectionClass (dir: I.BlockPosition) {
@@ -130,7 +170,7 @@ class DropTarget extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { disabled } = this.props;
+		const { disabled, onDrop, type, id } = this.props;
 		if (disabled) {
 			return;
 		};
@@ -138,8 +178,8 @@ class DropTarget extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('isOver top bottom left right middle');
 		
-		if (this.props.onDrop) {
-			this.props.onDrop(e, this.props.type, this.props.id, this.position);			
+		if (this.canDrop && onDrop) {
+			onDrop(e, type, id, this.position);			
 		};
 	};
 	

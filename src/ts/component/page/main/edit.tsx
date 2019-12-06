@@ -13,7 +13,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 		return (
 			<SelectionProvider container=".pageMainEdit" rootId={match.params.id}>
 				<DragProvider rootId={match.params.id}>
-					<Header {...this.props} />
+					<Header {...this.props} rootId={match.params.id} />
 					<MenuMain />
 							
 					<div className="wrapper">

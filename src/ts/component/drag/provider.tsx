@@ -6,6 +6,7 @@ import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props {
+	blockStore?: any;
 	dataset?: any;
 	rootId: string;
 };
@@ -20,6 +21,7 @@ class DragProvider extends React.Component<Props, {}> {
 	refLayer: any = null;
 	type: string = '';
 	ids: string[] = [];
+	map: any;
 	
 	constructor (props: any) {
 		super(props);
@@ -43,14 +45,16 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDragStart (e: any, type: string, ids: string[], component: any) {
-		const { dataset } = this.props;
+		const { blockStore, rootId, dataset } = this.props;
 		const { selection } = dataset;
+		const { blocks } = blockStore;
 		const win = $(window);
 		
 		e.stopPropagation();
 		
 		console.log('[onDragStart]', type, ids);
 		
+		this.map = blockStore.getMap(blocks[rootId]);
 		this.set(type, ids);
 		this.refLayer.show(type, this.ids, component);
 		this.unbind();
@@ -138,6 +142,7 @@ class DragProvider extends React.Component<Props, {}> {
 				child = React.cloneElement(child, { children: this.injectProps(children) });
 			};
 			
+			dataset.dragProvider = this;
 			dataset.onDragStart = this.onDragStart;
 			dataset.onDrop = this.onDrop;
 			
