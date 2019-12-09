@@ -9,6 +9,7 @@ import { observer, inject } from 'mobx-react';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
+import 'scss/debug.scss';
 
 import 'scss/component/header.scss';
 import 'scss/component/footer.scss';
@@ -77,6 +78,7 @@ interface Props {
 	commonStore?: any;
 };
 
+const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
@@ -116,16 +118,24 @@ class App extends React.Component<Props, {}> {
 	
 	init () {
 		const phrase = Storage.get('phrase');
+		const body = $('body');
+		
+		let debug = Boolean(Storage.get('debug'));
 		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
 		
-		ipcRenderer.on('dataPath', (e, dataPath) => {
+		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath + '/data');
 			
 			if (phrase) {
 				history.push('/auth/setup/init');
 			};
+		});
+		
+		ipcRenderer.on('toggleDebug', (e: any) => {
+			debug = !debug;
+			debug ? body.addClass('debug') : body.removeClass('debug');
 		});
 	};
 	

@@ -1,0 +1,8 @@
+$bgColor: rgba(79,177,239,0.3);
+
+body.debug {
+	.blocks {
+		.block { border: 1px solid rgba(255,0,0,0.5); }
+		.dropTarget { background: rgba(0,255,0,0.3); }
+	}
+} 

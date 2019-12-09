@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron');
 const { is, appMenu } = require('electron-util');
 const path = require('path');
 const os = require('os');
@@ -48,6 +48,39 @@ function createWindow () {
 	ipcMain.on('urlOpen', async (event, url) => {
 		shell.openExternal(url);
 	});
+	
+	var menu = Menu.buildFromTemplate([
+		appMenu(),
+		{
+			role: 'editMenu',
+		},
+		{
+			role: 'windowMenu',
+		},
+		{
+			label: 'Debug',
+			submenu: [
+				{
+					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
+					click: function () { win.reload(); }
+				},
+				{
+					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
+					click: function () {
+						win.webContents.openDevTools();
+					}
+				},
+				{
+					label: 'UI Debug',
+					click: function () {
+						win.webContents.send('toggleDebug');
+					}
+				},
+			]
+		},
+	
+	]);
+	Menu.setApplicationMenu(menu);
 };
 
 app.on('ready', createWindow);
