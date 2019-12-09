@@ -7,10 +7,12 @@ import { observer, inject } from 'mobx-react';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	authStore?: any;
+	blockStore?: any;
 	dataset?: any;
 };
 
 @inject('authStore')
+@inject('blockStore')
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
 
@@ -25,12 +27,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { authStore, rootId } = this.props;
+		const { authStore, rootId, match } = this.props;
 		const { account } = authStore;
 		
-		const path = [
-			{ id: '2', icon: ':family:', name: 'Contacts' },
-		];
+		let path: I.Block[] = [];
+		this.getPath(match.params.id, path);
 		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" type={I.DragItem.Block} onClick={this.onHome} onDrop={this.onDrop}>
@@ -42,8 +43,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		
 		const PathItem = (item: any) => (
 			<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} type={I.DragItem.Block} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
-				<Smile icon={item.icon} />
-				<div className="name">{item.name}</div>
+				<Smile icon={item.fields.icon} />
+				<div className="name">{item.fields.name}</div>
 				<Icon className="arrow" />
 			</DropTarget>
 		);
@@ -60,6 +61,17 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+	
+	getPath (id: string, path: I.Block[]) {
+		const { blockStore, rootId } = this.props;
+		const { blocks, root } = blockStore;
+		const map = blockStore.getMap(blocks[root]);
+		
+		path.unshift(map[id]);
+		if (map[id].parentId != root) {
+			this.getPath(map[id].parentId, path);
+		};
 	};
 	
 	onHome (e: any) {

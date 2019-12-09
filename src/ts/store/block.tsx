@@ -3,6 +3,7 @@ import { I, Util, StructDecode, StructEncode  } from 'ts/lib';
 import arrayMove from 'array-move';
 
 const com = require('proto/commands.js');
+const Constant = require('json/constant.json');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -162,6 +163,10 @@ class BlockStore {
 		
 		if (block.fields) {
 			item.fields = StructDecode.decodeStruct(block.fields);
+			
+			if (type == I.BlockType.Page) {
+				item.fields.name = item.fields.name || Constant.untitled;
+			};
 		};
 		
 		if (content) {

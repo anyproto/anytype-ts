@@ -183,7 +183,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						type: 'copy', 
 						rootId: root,
 						onConfirm: (id: string) => {
-							console.log('Move', id);
+							console.log('Duplicate', id);
 							
 							let request = {
 								contextId: rootId,
