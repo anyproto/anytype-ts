@@ -393,12 +393,17 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		let l = next.content.text.length;
 		let request = {
 			contextId: rootId,
 			firstBlockId: next.id,
 			secondBlockId: focused.id,
 		};
 		dispatcher.call('blockMerge', request, (errorCode: any, message: any) => {
+			if (next) {
+				focus.set(next.id, { from: l, to: l });
+				focus.apply();				
+			};
 		});
 	};
 	
@@ -417,18 +422,27 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockRemove (focused?: I.Block) {
-		const { rootId, dataset } = this.props;
+		const { blockStore, rootId, dataset } = this.props;
 		const { selection } = dataset;
-		
+
+		let next: any = null;
 		let ids = selection.get();
 		let targets = [];
 		
 		if (ids.length) {
+			next = blockStore.getNextBlock(rootId, ids[0], -1, (item: any) => {
+				return item.type == I.BlockType.Text;
+			});
+		
 			for (let id of ids) {
 				targets.push({ blockId: id });
 			};
 		} else 
 		if (focused) {
+			next = blockStore.getNextBlock(rootId, focused.id, -1, (item: any) => {
+				return item.type == I.BlockType.Text;
+			});
+			
 			targets.push({ blockId: focused.id });
 		};
 		
@@ -436,7 +450,12 @@ class EditorPage extends React.Component<Props, {}> {
 			contextId: rootId,
 			targets: targets,
 		};
-		dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {});
+		dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {
+			if (next) {
+				focus.set(next.id, { from: 0, to: 0 });
+				focus.apply();				
+			};
+		});
 	};
 	
 };
