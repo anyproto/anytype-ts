@@ -146,7 +146,7 @@ class Dispatcher {
 		
 	};
 	
-	call (type: string, data: any, callBack?: (errorCode: any, message: any) => void) {
+	call (type: string, data: any, callback?: (errorCode: any, message: any) => void) {
 		if (!this.service[type]) {
 			console.error('[Dispatcher.call] Service not found: ', type);
 			return;
@@ -161,7 +161,7 @@ class Dispatcher {
 		
 		try {
 			this.service[type](data, (message: any) => {
-				if (!callBack) {
+				if (!callback) {
 					return;
 				};
 				
@@ -173,17 +173,17 @@ class Dispatcher {
 					console.error('[Dispatcher.call] code:', message.error.code, 'description:', message.error.description);
 				};
 				
-				callBack(errorCode, message);
+				callback(errorCode, message);
 				
 				let t1 = performance.now();
-				console.log('[Dispatcher.call] callBack', type, message, Math.ceil(t1 - t0) + 'ms');
+				console.log('[Dispatcher.call] callback', type, message, Math.ceil(t1 - t0) + 'ms');
 			});			
 		} catch (e) {
 			console.error(e);
 		};
 	};
 	
-	napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) {
+	napiCall (method: any, inputObj: any, outputObj: any, request: any, callback?: (message: any) => void) {
 		let buffer = inputObj.encode(request).finish();
 		
 		bindings.sendCommand(method.name, buffer, (item: any) => {
@@ -191,7 +191,7 @@ class Dispatcher {
 			try {
 				message = outputObj.decode(item.data);
 				if (message) {
-					callBack(message);
+					callback(message);
 				};
 			} catch (err) {
 				console.error(err);

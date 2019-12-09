@@ -3,6 +3,8 @@
 .menus {
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockStyle, .menuBlockAction { width: 192px !important; }
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockStyle, .menuBlockAction {
+		.empty { font-size: 13px; line-height: 18px; padding: 4px 12px; }
+	
 		.item { font-size: 15px !important; font-weight: 500; padding: 4px 12px !important; }
 		.item {
 			.name { line-height: 1; }
@@ -18,9 +20,11 @@
 		.icon.arrow { position: absolute; right: 8px; top: 4px; margin: 0px; background-image: url('~img/icon/menu/add/arrow0.svg'); }
 	}
 	
+	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter { width: 288px !important; }
+	
 	.menu.menuBlockAdd, .menu.menuBlockAddSub {
-		.item:hover, .item.active { color: #fff; }
-		.item:hover, .item.active {
+		.item.withColor:hover, .item.withColor.active { color: #fff; }
+		.item.withColor:hover, .item.withColor.active {
 			.icon.arrow { background-image: url('~img/icon/menu/add/arrow1.svg'); }
 			.icon.text { background-image: url('~img/icon/menu/action/block/text1.svg'); }
 			.icon.list { background-image: url('~img/icon/menu/action/block/list1.svg'); }

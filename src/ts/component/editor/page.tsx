@@ -285,6 +285,9 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyUp (e: any, text?: string) {
+		const { commonStore } = this.props;
+		
+		commonStore.filterSet(text);
 	};
 	
 	selectAll () {
@@ -312,53 +315,37 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		node.find('#block-' + $.escapeSelector(block.id)).addClass('isAddingMenu ' + (this.hoverDir < 0 ? 'mtop' : 'mbottom'));
-		
-		let param: any = {};
-		
-		commonStore.menuOpen('blockAdd', { 
-			element: 'button-add',
-			type: I.MenuType.Vertical,
-			offsetX: 24,
-			offsetY: -20,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			onClose: () => {
-				node.find('.block.isAddingMenu').removeClass('isAddingMenu mtop mbottom');
-			},
-			data: {
-				onSelect: (e: any, item: any) => {
-					switch (item.parentId) {
-						case 'text':
-						case 'list':
-							param.type = I.BlockType.Text;
+		this.blockCreate(block, this.hoverDir, {
+			type: I.BlockType.Text,
+			style: I.TextStyle.Paragraph,
+		}, (blockId) => {
+			commonStore.menuOpen('blockAdd', { 
+				element: 'block-' + blockId,
+				type: I.MenuType.Vertical,
+				offsetX: 50,
+				offsetY: 4,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				onClose: () => {
+					focus.apply();
+					commonStore.filterSet('');
+				},
+				data: {
+					onSelect: (e: any, item: any) => {
+						let param: any = {
+							type: item.type,
+						};
+						
+						if (item.type == I.BlockType.Text) {
 							param.content = {
 								style: item.id,
 							};
-							break;
-							
-						case 'tool':
-							break;
-							
-						case 'media':
-							param.type = item.id;
-							
-							if (item.id == 'code') {
-								param.type = I.BlockType.Text;
-								param.content = {
-									style: I.TextStyle.Code,
-								};
-							};
-							break;
-							
-						case 'other':
-							param.type = item.id;
-							break;
-					};
-					
-					this.blockCreate(block, this.hoverDir, param);
+						};
+						
+						this.blockCreate(block, this.hoverDir, param);
+					}
 				}
-			}
+			});
 		});
 	};
 	
@@ -366,7 +353,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.scrollTop = $(window).scrollTop();
 	};
 	
-	blockCreate (focused: I.Block, dir: number, param: any) {
+	blockCreate (focused: I.Block, dir: number, param: any, callback?: (blockId: string) => void) {
 		const { blockStore, rootId } = this.props;
 		
 		let request = {
@@ -380,6 +367,10 @@ class EditorPage extends React.Component<Props, {}> {
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
+			
+			if (callback) {
+				callback(message.blockId);
+			};
 		});
 	};
 	
@@ -393,7 +384,6 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let l = next.content.text.length;
 		let request = {
 			contextId: rootId,
 			firstBlockId: next.id,
@@ -401,6 +391,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		dispatcher.call('blockMerge', request, (errorCode: any, message: any) => {
 			if (next) {
+				let l = String(next.content.text || '').length;
 				focus.set(next.id, { from: l, to: l });
 				focus.apply();				
 			};
@@ -450,9 +441,11 @@ class EditorPage extends React.Component<Props, {}> {
 			contextId: rootId,
 			targets: targets,
 		};
+		
 		dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {
 			if (next) {
-				focus.set(next.id, { from: 0, to: 0 });
+				let l = String(next.content.text || '').length;
+				focus.set(next.id, { from: l, to: l });
 				focus.apply();				
 			};
 		});

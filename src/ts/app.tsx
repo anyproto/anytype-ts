@@ -118,7 +118,7 @@ class App extends React.Component<Props, {}> {
 	
 	init () {
 		const phrase = Storage.get('phrase');
-		const body = $('body');
+		const html = $('html');
 		
 		let debug = Boolean(Storage.get('debug'));
 		
@@ -133,9 +133,11 @@ class App extends React.Component<Props, {}> {
 			};
 		});
 		
+		debug ? html.addClass('debug') : html.removeClass('debug');
 		ipcRenderer.on('toggleDebug', (e: any) => {
 			debug = !debug;
-			debug ? body.addClass('debug') : body.removeClass('debug');
+			debug ? html.addClass('debug') : html.removeClass('debug');
+			Storage.set('debug', Number(debug));
 		});
 	};
 	

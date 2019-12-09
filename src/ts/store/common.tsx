@@ -10,10 +10,16 @@ class CommonStore {
 	@observable public menuList: I.Menu[] = [];
 	@observable public coverId: number = 0;
 	@observable public progressObj: I.Progress = { status: '', current: 0, total: 0 };
+	@observable public filterString: string = '';
 	
 	@computed
 	get progress(): I.Progress {
 		return this.progressObj;
+	};
+	
+	@computed
+	get filter(): string {
+		return String(this.filterString || '');
 	};
 	
 	@computed
@@ -112,12 +118,12 @@ class CommonStore {
 	};
 	
 	@action
-	menuClose (id: string, callBack?: () => void) {
+	menuClose (id: string, callback?: () => void) {
 		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
 		
 		if (!item) {
-			if (callBack) {
-				callBack();
+			if (callback) {
+				callback();
 			};
 			return;
 		};
@@ -134,8 +140,8 @@ class CommonStore {
 		window.setTimeout(() => {
 			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
 			
-			if (callBack) {
-				callBack();
+			if (callback) {
+				callback();
 			};
 		}, TIMEOUT);
 	};
@@ -145,6 +151,11 @@ class CommonStore {
 		for (let item of this.menuList) {
 			this.menuClose(item.id);
 		};
+	};
+	
+	@action
+	filterSet (v: string) {
+		this.filterString = String(v || '');
 	};
 	
 };
