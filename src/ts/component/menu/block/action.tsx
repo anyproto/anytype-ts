@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input } from 'ts/component';
-import { I, Util, dispatcher } from 'ts/lib';
+import { I, Util, dispatcher, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -184,6 +184,18 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						rootId: root,
 						onConfirm: (id: string) => {
 							console.log('Move', id);
+							
+							let request = {
+								contextId: rootId,
+								blockId: blockId,
+								targetId: blockId,
+								position: I.BlockPosition.After,
+							};
+							
+							dispatcher.call('blockDuplicate', request, (errorCode: any, message: any) => {
+								focus.set(message.blockId, { from: 0, to: 0 });
+								focus.apply();
+							});
 						},
 					}, 
 				});
