@@ -1,4 +1,4 @@
-import { observable, action, computed, set } from 'mobx';
+import { observable, action, computed, set, toJS } from 'mobx';
 import { I, Util, StructDecode, StructEncode  } from 'ts/lib';
 import arrayMove from 'array-move';
 
@@ -119,8 +119,6 @@ class BlockStore {
 	};
 	
 	prepareTree (rootId: string, list: I.Block[]) {
-		list = Util.objectCopy(list);
-		
 		let ret: any = [];
 		let map: any = this.getMap(list);
 		

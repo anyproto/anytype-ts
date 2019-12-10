@@ -29,7 +29,7 @@ class EditorPage extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 	timeoutHover: number = 0;
 	hovered: string =  '';
-	hoverDir: number = 0;
+	hoverPosition: number = 0;
 	scrollTop: number = 0;
 
 	constructor (props: any) {
@@ -58,8 +58,8 @@ class EditorPage extends React.Component<Props, {}> {
 								index={i}
 								{...item} 
 								{...this.props}
-								onKeyDown={throttle((e: any, text: string) => { this.onKeyDown(e, text); }, THROTTLE)} 
-								onKeyUp={throttle((e: any, text: string) => { this.onKeyUp(e, text); }, THROTTLE)} 
+								onKeyDown={this.onKeyDown} 
+								onKeyUp={this.onKeyUp} 
 							/>
 						)
 					})}
@@ -88,9 +88,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const { focused, range } = focus;
 		
-		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		const focusedBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.id == focused; });
-		const title = tree.find((it: I.Block) => { return (it.type == I.BlockType.Text) && (it.content.style == I.TextStyle.Title); });
+		const title = (blocks[rootId] || []).find((it: I.Block) => { return (it.type == I.BlockType.Text) && (it.content.style == I.TextStyle.Title); });
 		
 		if (!focusedBlock && title) {
 			let text = String(title.content.text || '');
@@ -103,7 +102,6 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		focus.apply();
-		
 		window.setTimeout(() => { window.scrollTo(0, this.scrollTop); }, 1);
 	};
 	
@@ -167,13 +165,13 @@ class EditorPage extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutHover);
 		
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
-			this.hoverDir = pageY < (y + height / 2) ? -1 : 1;
+			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Before : I.BlockPosition.After;
 			
 			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 + containerEl.scrollTop() + Number(addOffsetY) });
 			blocks.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (hovered && (pageX <= x + 20)) {
-				hovered.addClass('isAdding ' + (this.hoverDir < 0 ? 'top' : 'bottom'));
+				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Before ? 'top' : 'bottom'));
 			};
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
@@ -277,7 +275,7 @@ class EditorPage extends React.Component<Props, {}> {
 					param.content.style = block.content.style;
 				};
 				
-				this.blockCreate(block, 1, param);
+				this.blockCreate(block, I.BlockPosition.After, param);
 			} else {
 				this.blockSplit(block, range.from);
 			};
@@ -315,7 +313,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		this.blockCreate(block, this.hoverDir, {
+		this.blockCreate(block, this.hoverPosition, {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId) => {
@@ -342,7 +340,7 @@ class EditorPage extends React.Component<Props, {}> {
 							};
 						};
 						
-						this.blockCreate(block, this.hoverDir, param);
+						this.blockCreate(block, this.hoverPosition, param);
 					}
 				}
 			});
@@ -353,7 +351,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.scrollTop = $(window).scrollTop();
 	};
 	
-	blockCreate (focused: I.Block, dir: number, param: any, callback?: (blockId: string) => void) {
+	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callback?: (blockId: string) => void) {
 		const { blockStore, rootId } = this.props;
 		
 		let request = {
@@ -361,7 +359,7 @@ class EditorPage extends React.Component<Props, {}> {
 			contextId: rootId,
 			parentId: focused.parentId || rootId,
 			targetId: focused.id,
-			position: dir > 0 ? I.BlockPosition.After : I.BlockPosition.Before,
+			position: position,
 		};
 		
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {

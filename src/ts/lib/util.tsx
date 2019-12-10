@@ -42,7 +42,7 @@ class Util {
 		});
 	};
 	
-	objectCopy (o: any) {
+	objectCopy (o: any): any {
 		return JSON.parse(JSON.stringify(o));
 	};
 	

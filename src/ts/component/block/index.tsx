@@ -55,7 +55,6 @@ class Block extends React.Component<Props, {}> {
 		const { id, type, fields, content, childBlocks, index, restrictions } = this.props;
 		const { style } = content;
 		
-		let canDrop = true;
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
 		let BlockComponent: any = (): any => null;
@@ -78,7 +77,6 @@ class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.Layout:
-				canDrop = false;
 				canSelect = false;
 				cn.push('blockLayout c' + style);
 				break;
@@ -126,29 +124,23 @@ class Block extends React.Component<Props, {}> {
 				break;
 		};
 		
-		let wrapMenu = (
-			<div className="wrapMenu">
-				<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onClick={this.onMenu} />
-			</div>
-		);
-		
-		let wrapContent = (
-			<div className="wrapContent">
-				<div className={[ (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id} data-type={type}>
-					<DropTarget {...this.props} id={id} type={I.DragItem.Block} disabled={restrictions.dropOn} onDrop={this.onDrop}>
-						<BlockComponent {...this.props} />
-					</DropTarget>
-				</div>
-					
-				<ListChildren ref={(ref: any) => { this.refChildren = ref; }} {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
-			</div>
-		);
-		
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="id tag red">{id}</div>
-				{wrapMenu}
-				{wrapContent}
+				
+				<div className="wrapMenu">
+					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onClick={this.onMenu} />
+				</div>
+				
+				<div className="wrapContent">
+					<div className={[ (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id} data-type={type}>
+						<DropTarget {...this.props} id={id} type={I.DragItem.Block} disabled={restrictions.dropOn} onDrop={this.onDrop}>
+							<BlockComponent {...this.props} />
+						</DropTarget>
+					</div>
+						
+					<ListChildren ref={(ref: any) => { this.refChildren = ref; }} {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
+				</div>
 			</div>
 		);
 	};
