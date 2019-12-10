@@ -81,8 +81,6 @@ class DragProvider extends React.Component<Props, {}> {
 		const { dataset } = this.props;
 		const { selection } = dataset;
 		
-		console.log('[onDragEnd]');
-		
 		$('.selectable.isDragging').removeClass('isDragging');
 		
 		this.refLayer.hide();
@@ -94,7 +92,15 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
-		const { rootId } = this.props;
+		const { blockStore, rootId } = this.props;
+		const { blocks } = blockStore;
+		const map = blockStore.getMap(blocks[rootId]);
+		const block = map[targetId];
+		const parent = map[block.parentId];
+		
+		if ((parent.type == I.BlockType.Layout) && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
+			targetId = parent.id;
+		};
 		
 		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
 		

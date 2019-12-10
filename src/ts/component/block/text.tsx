@@ -291,8 +291,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onFocus (e: any) {
-		const { onFocus } = this.props;
+		const { onFocus, id } = this.props;
+		const range = this.getRange();
 		
+		focus.set(id, range);
 		this.placeHolderCheck();
 		keyboard.setFocus(true);
 		onFocus(e);
