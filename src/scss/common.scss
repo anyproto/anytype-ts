@@ -40,11 +40,11 @@ input, textarea, select { font-family: 'Lcg'; }
 
 a { color: $colorBlack; }
 
-.dropTarget.isOver.middle { background: rgba(255,187,44,0.3); }
-.dropTarget.isOver.top { box-shadow: 0px -2px $colorOrange; }
-.dropTarget.isOver.bottom { box-shadow: 0px 2px $colorOrange; }
-.dropTarget.isOver.left { box-shadow: -2px 0px $colorOrange; }
-.dropTarget.isOver.right { box-shadow: 2px 0px $colorOrange; }
+.dropTarget.isOver.middle { background: rgba(255,187,44,0.3) !important; }
+.dropTarget.isOver.top { box-shadow: 0px 2px $colorOrange inset; }
+.dropTarget.isOver.bottom { box-shadow: 0px -2px $colorOrange inset; }
+.dropTarget.isOver.left { box-shadow: 2px 0px $colorOrange inset; }
+.dropTarget.isOver.right { box-shadow: -2px 0px $colorOrange inset; }
 
 .textColor-grey { color: #aca996 !important; }
 .textColor-yellow { color: #ecd91b !important; }

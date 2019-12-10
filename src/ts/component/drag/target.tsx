@@ -85,7 +85,7 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		let parentIds: string[] = [];
 		this.getParentIds(id, parentIds);
-
+		
 		this.canDrop = true;
 		
 		if (dragProvider) {
