@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
-import { Block as Child, Icon, DropTarget } from 'ts/component';
+import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
 import { commonStore, blockStore } from 'ts/store';
 
@@ -31,8 +31,8 @@ const THROTTLE = 20;
 class Block extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	refObj: any = {};
 	refComponent: any = null;
+	refChildren: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -58,8 +58,7 @@ class Block extends React.Component<Props, {}> {
 		let canDrop = true;
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
-		let BlockComponent: any = null;
-		let ColResize: React.ReactType<{ index: number }> = () => null;
+		let BlockComponent: any = (): any => null;
 		let css: any = {
 			width: (fields.width || 1) * 100 + '%'
 		};
@@ -82,16 +81,6 @@ class Block extends React.Component<Props, {}> {
 				canDrop = false;
 				canSelect = false;
 				cn.push('blockLayout c' + style);
-				
-				if (style == I.LayoutStyle.Row) {
-					ColResize = (item: any) => (
-						<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={(e: any) => { this.onResizeStart(e, item.index); }}>
-							<div className="inner" />
-						</div>
-					);
-				};
-				
-				BlockComponent = (): any => null;
 				break;
 				
 			case I.BlockType.Image:
@@ -151,16 +140,7 @@ class Block extends React.Component<Props, {}> {
 					</DropTarget>
 				</div>
 					
-				<div className="children" onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave}>
-					{childBlocks.map((item: any, i: number) => {
-						return (
-							<React.Fragment key={item.id}>
-								{i > 0 ? <ColResize index={i} /> : ''}
-								<Child ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} index={i} />
-							</React.Fragment>
-						);
-					})}
-				</div>
+				<ListChildren ref={(ref: any) => { this.refChildren = ref; }} {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 			</div>
 		);
 		
@@ -266,7 +246,7 @@ class Block extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
 		const currentBlock = childBlocks[index];
-		const offset = node.find('#block-' + prevBlock.id).offset().left + Constant.size.blockMenu;
+		const offset = node.find('#block-' + $.escapeSelector(prevBlock.id)).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setBlocked(true);
@@ -286,9 +266,9 @@ class Block extends React.Component<Props, {}> {
 		const { childBlocks } = this.props;		
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
-		const prevNode = node.find('#block-' + prevBlock.id);
+		const prevNode = node.find('#block-' + $.escapeSelector(prevBlock.id));
 		const currentBlock = childBlocks[index];
-		const currentNode = node.find('#block-' + currentBlock.id);
+		const currentNode = node.find('#block-' + $.escapeSelector(currentBlock.id));
 		const res = this.calcWidth(e.pageX - offset, index);
 		const w1 = res.percent * res.sum;
 		const w2 = (1 - res.percent) * res.sum;
@@ -369,8 +349,8 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	callChildMethod (id: string, method: string, args?: any[]) {
-		if (this.refObj[id] && this.refObj[id][method]) {
-			this.refObj[id][method].apply(this.refObj[id], args);
+		if (this.refChildren.refObj[id] && this.refChildren.refObj[id][method]) {
+			this.refChildren.refObj[id][method].apply(this.refChildren.refObj[id], args);
 		};
 	};
 	
@@ -378,9 +358,9 @@ class Block extends React.Component<Props, {}> {
 		if (this.refComponent && this.refComponent.resize) {
 			this.refComponent.resize(width);
 		};
-		for (let id in this.refObj) {
-			if (this.refObj[id].refComponent && this.refObj[id].refComponent.resize) {
-				this.refObj[id].refComponent.resize(width);
+		for (let id in this.refChildren.refObj) {
+			if (this.refChildren.refObj[id].refComponent && this.refChildren.refObj[id].refComponent.resize) {
+				this.refChildren.refObj[id].refComponent.resize(width);
 			};
 		};
 	};

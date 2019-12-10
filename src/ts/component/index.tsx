@@ -10,6 +10,7 @@ import DropTarget from './drag/target';
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListIndex from './list/index';
+import ListChildren from './list/children';
 
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
@@ -56,6 +57,7 @@ export {
 	ListPopup,
 	ListMenu,
 	ListIndex,
+	ListChildren,
 	HeaderAuth,
 	HeaderMainIndex,
 	HeaderMainEdit,

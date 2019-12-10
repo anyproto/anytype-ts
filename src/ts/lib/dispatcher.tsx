@@ -35,13 +35,14 @@ class Dispatcher {
 		};
 		
 		let contextId = event.contextId;
-		let blocks = Util.objectCopy(blockStore.blocks[contextId] || []);
+		let blocks = blockStore.blocks[contextId] || [];
 		let set = false;
 		
 		for (let message of event.messages) {
 			let block: any = null;
 			let type = message.value;
 			let data = message[type];
+			let param: any = {};
 			
 			if (data.error && data.error.code) {
 				continue;
@@ -73,23 +74,26 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetChildrenIds':
-					blocks = blockStore.blocks[contextId];
-					if (!blocks.length) {
-						break;
-					};
-				
 					block = blocks.find((it: any) => { return it.id == data.id; });
-					block.childrenIds = data.childrenIds;
+					
+					param = {
+						id: block.id,
+						childrenIds: data.childrenIds,
+					};
+					
+					blockStore.blockUpdate(contextId, param);
 					break;
 					
 				case 'blockSetIcon':
-					blocks = blockStore.blocks[contextId];
-					if (!blocks.length) {
-						break;
-					};
-				
 					block = blocks.find((it: any) => { return it.id == data.id; });
-					block.content.name = data.name.value;
+					
+					param = {
+						id: block.id,
+						content: Util.objectCopy(block.content),
+					};
+					param.content.name = data.name.value;
+					
+					blockStore.blockUpdate(contextId, param);
 					break;
 					
 				case 'blockSetText':
@@ -100,7 +104,7 @@ class Dispatcher {
 					
 					block = blocks.find((it: any) => { return it.id == data.id; });
 					
-					let param: any = {
+					param = {
 						id: block.id,
 						content: Util.objectCopy(block.content),
 					};
