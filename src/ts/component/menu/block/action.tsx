@@ -98,9 +98,12 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onOver (e: any, item: any) {
-		const { commonStore, param } = this.props;
+		const { blockStore, commonStore, param } = this.props;
 		const { data } = param;
 		const { onSelect, blockId, rootId } = data;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
+		const length = block.content.text.length;
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#block-action-item-' + item.id);
@@ -137,9 +140,13 @@ class MenuBlockAction extends React.Component<Props, {}> {
 							blockId: blockId,
 							style: style,
 						};
-						dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
+						dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {
+							focus.set(message.blockId, { from: length, to: length });
+							focus.apply();
+						});
 						commonStore.menuClose(this.props.id);
 					};
+					
 					commonStore.menuOpen('blockStyle', menuParam);
 					break;
 					
@@ -150,6 +157,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					menuParam.data.onChangeBg = (color: string) => {
 						console.log('bg', color);
 					};
+					
 					commonStore.menuOpen('blockColor', menuParam);
 					break;
 			};
@@ -160,7 +168,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { root } = blockStore;
+		const { blocks, root } = blockStore;
+		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
+		const length = block.content.text.length;
 		
 		commonStore.menuClose(this.props.id);
 		
@@ -183,8 +193,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						type: 'copy', 
 						rootId: root,
 						onConfirm: (id: string) => {
-							console.log('Duplicate', id);
-							
 							let request = {
 								contextId: rootId,
 								blockId: blockId,
@@ -193,7 +201,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 							};
 							
 							dispatcher.call('blockDuplicate', request, (errorCode: any, message: any) => {
-								focus.set(message.blockId, { from: 0, to: 0 });
+								focus.set(message.blockId, { from: length, to: length });
 								focus.apply();
 							});
 						},
