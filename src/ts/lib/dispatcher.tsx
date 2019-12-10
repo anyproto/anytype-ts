@@ -35,9 +35,10 @@ class Dispatcher {
 		};
 		
 		let contextId = event.contextId;
+		let blocks = Util.objectCopy(blockStore.blocks[contextId] || []);
+		let set = false;
 		
 		for (let message of event.messages) {
-			let blocks: any = [];
 			let block: any = null;
 			let type = message.value;
 			let data = message[type];
@@ -58,21 +59,17 @@ class Dispatcher {
 					for (let block of data.blocks) {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
-					blockStore.blocksSet(data.rootId, blocks);
+					
+					contextId = data.rootId;
+					set = true;
 					break;
 				
 				case 'blockAdd':
-					blocks = Util.objectCopy(blockStore.blocks[contextId] || []);
-					if (!blocks.length) {
-						break;
-					};
-					
 					for (let block of data.blocks) {
-						let item = blockStore.prepareBlockFromProto(block);
-						blocks.push(item);
+						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
 					
-					blockStore.blocksSet(contextId, blocks);
+					set = true;
 					break;
 					
 				case 'blockSetChildrenIds':
@@ -139,9 +136,14 @@ class Dispatcher {
 					break;
 					
 				case 'blockDelete':
-					blockStore.blockDelete(contextId, data.blockId);
+					blocks = blocks.filter((item: I.Block) => { return item.id != data.blockId; });
+					set = true;
 					break;
 			};
+		};
+		
+		if (set) {
+			blockStore.blocksSet(contextId, blocks);
 		};
 		
 	};
