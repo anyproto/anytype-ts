@@ -214,6 +214,8 @@ class BlockText extends React.Component<Props, {}> {
 		const { commonStore, onKeyDown, id } = this.props;
 		const range = this.getRange();
 		const k = e.which;
+		const node = $(ReactDOM.findDOMNode(this));
+		const placeHolder = node.find('.placeHolder');
 		
 		commonStore.menuClose('blockContext');
 		
@@ -227,7 +229,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		focus.set(id, range);
-		this.placeHolderCheck();
+		placeHolder.hide();
 		onKeyDown(e, this.value);
 	};
 	
