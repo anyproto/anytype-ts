@@ -58,7 +58,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		return (
 			<div className="flex" onClick={this.onMenuClick}>
 				<div className="section">
-					<Icon id="button-switch" arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
+					<Icon id={'button-' + blockId + '-switch'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
 				</div>
 					
 				<div className="section">
@@ -74,6 +74,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				<div className="section">
 					<Icon id={'button-' + blockId + '-color'} className="color" inner={color} tooltip="Text colors" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
 					<Icon id={'button-' + blockId + '-comment'} className="comment" tooltip="Comment" onClick={(e: any) => {}} />
+					<Icon id={'button-' + blockId + '-more'} className={[ 'more', (commonStore.menuIsOpen('blockMore') ? 'active' : '') ].join(' ')} tooltip="More options" onClick={(e: any) => { this.onMark(e, 'more'); }} />
 				</div>
 			</div>
 		);
@@ -101,6 +102,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');
+		commonStore.menuClose('select');
 		
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
@@ -115,7 +117,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					
 				case 'style':
 					commonStore.menuOpen('blockStyle', { 
-						element: 'button-switch',
+						element: 'button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,
 						offsetX: -12,
 						offsetY: 4,
@@ -129,6 +131,24 @@ class MenuBlockContext extends React.Component<Props, {}> {
 									style: style,
 								};
 								dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
+								commonStore.menuClose(this.props.id);
+							},
+						}
+					});
+					break;
+					
+				case 'more':
+					commonStore.menuOpen('blockMore', { 
+						element: 'button-' + blockId + '-more',
+						type: I.MenuType.Vertical,
+						offsetX: -12,
+						offsetY: 4,
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Left,
+						data: {
+							rootId: rootId,
+							blockId: blockId,
+							onSelect: (item: any) => {
 								commonStore.menuClose(this.props.id);
 							},
 						}

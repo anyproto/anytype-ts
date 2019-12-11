@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockStyle, .menuBlockAction { width: 192px !important; }
-	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockStyle, .menuBlockAction {
+	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockStyle, .menuBlockAction, .menuBlockMore { width: 192px !important; }
+	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockStyle, .menuBlockAction, .menuBlockMore {
 		.empty { font-size: 13px; line-height: 18px; padding: 4px 12px; }
 	
 		.item { font-size: 15px !important; font-weight: 500; padding: 4px 12px !important; }

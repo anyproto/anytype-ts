@@ -12,6 +12,7 @@ import MenuBlockStyle from './block/style';
 import MenuBlockAdd from './block/add';
 import MenuBlockColor from './block/color';
 import MenuBlockAction from './block/action';
+import MenuBlockMore from './block/more';
 
 import MenuDataviewPropertyList from './dataview/property/list';
 import MenuDataviewPropertyEdit from './dataview/property/edit';
@@ -48,10 +49,11 @@ class Menu extends React.Component<Props, {}> {
 			
 			blockContext:			 MenuBlockContext,
 			blockAction:			 MenuBlockAction,
-			blockStyle:			 MenuBlockStyle,
+			blockStyle:				 MenuBlockStyle,
 			blockAdd:				 MenuBlockAdd,
 			blockAddSub:			 MenuBlockAdd,
 			blockColor:				 MenuBlockColor,
+			blockMore:				 MenuBlockMore,
 			
 			dataviewPropertyList:	 MenuDataviewPropertyList,
 			dataviewPropertyEdit:	 MenuDataviewPropertyEdit,
