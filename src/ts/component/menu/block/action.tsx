@@ -103,7 +103,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { onSelect, blockId, rootId } = data;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
-		const length = block.content.text.length;
+		const length = String(block.content.text || '').length;
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#block-action-item-' + item.id);

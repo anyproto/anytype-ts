@@ -61,16 +61,14 @@ class Dispatcher {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
 					
-					contextId = data.rootId;
 					set = true;
+					contextId = data.rootId;
 					break;
 				
 				case 'blockAdd':
 					for (let block of data.blocks) {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
-					
-					set = true;
 					break;
 					
 				case 'blockSetChildrenIds':
@@ -141,7 +139,6 @@ class Dispatcher {
 					
 				case 'blockDelete':
 					blocks = blocks.filter((item: I.Block) => { return item.id != data.blockId; });
-					set = true;
 					break;
 			};
 		};
@@ -160,9 +157,10 @@ class Dispatcher {
 		
 		//const errorCode = com.anytype[Util.toUpperCamelCase(type)].Response.Error.Code;
 		const errorCode = {};
-		const tc = '[Dispatcher.call] ' + type + ' time';
 		
 		console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
+		console.profile('dispatcher.call.' + type);
+		
 		let t0 = performance.now();
 		
 		try {
@@ -183,6 +181,7 @@ class Dispatcher {
 				
 				let t1 = performance.now();
 				console.log('[Dispatcher.call] callback', type, message, Math.ceil(t1 - t0) + 'ms');
+				console.profileEnd('dispatcher.call.' + type);
 			});			
 		} catch (e) {
 			console.error(e);

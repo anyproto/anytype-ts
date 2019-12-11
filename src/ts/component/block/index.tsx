@@ -52,8 +52,7 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, type, fields, content, childBlocks, index, restrictions } = this.props;
-		const { style } = content;
+		const { id, type, fields, content, index, restrictions } = this.props;
 		
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
@@ -67,7 +66,7 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				cn.push('blockText');
 				
-				if (style == I.TextStyle.Toggle) {
+				if (content.style == I.TextStyle.Toggle) {
 					cn.push('canToggle');
 				};
 				
@@ -78,7 +77,7 @@ class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.Layout:
 				canSelect = false;
-				cn.push('blockLayout c' + style);
+				cn.push('blockLayout c' + content.style);
 				break;
 				
 			case I.BlockType.Image:
