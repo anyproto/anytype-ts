@@ -13,27 +13,19 @@ class Dispatcher {
 		com.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
 		this.service = com.anytype.ClientCommands.create(() => {}, false, false);
 		
-		bindings.setEventHandler((item: any) => {
+		const handler = (item: any) => {
 			try {
 				this.event(item);
 			} catch (e) {
 				console.error(e);
 			};
-		});
+		};
+		
+		bindings.setEventHandler(handler);
 	};
 	
 	event (item: any) {
-		let event = null;
-		try {
-			event = com.anytype.Event.decode(item.data);
-		} catch (err) {
-			console.error(err);
-		};
-		
-		if (!event) {
-			return;
-		};
-		
+		let event = com.anytype.Event.decode(item.data);
 		let contextId = event.contextId;
 		let blocks = blockStore.blocks[contextId] || [];
 		let set = false;
@@ -57,6 +49,8 @@ class Dispatcher {
 					break;
 					
 				case 'blockShow':
+					blocks = Util.objectCopy(blocks);
+				
 					for (let block of data.blocks) {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
@@ -189,9 +183,8 @@ class Dispatcher {
 	};
 	
 	napiCall (method: any, inputObj: any, outputObj: any, request: any, callback?: (message: any) => void) {
-		let buffer = inputObj.encode(request).finish();
-		
-		bindings.sendCommand(method.name, buffer, (item: any) => {
+		const buffer = inputObj.encode(request).finish();
+		const handler = (item: any) => {
 			let message = null;
 			try {
 				message = outputObj.decode(item.data);
@@ -201,7 +194,9 @@ class Dispatcher {
 			} catch (err) {
 				console.error(err);
 			};
-		});
+		};
+		
+		bindings.sendCommand(method.name, buffer, handler);
 	};
 	
 };

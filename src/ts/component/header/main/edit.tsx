@@ -36,7 +36,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" type={I.DragItem.Block} onClick={this.onHome} onDrop={this.onDrop}>
 				<Icon className="home" />
-				<div className="name">Home</div>
+				<div className="name">{account.name || 'Home'}</div>
 				<Icon className="arrow" />
 			</DropTarget>
 		);

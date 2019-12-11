@@ -23,6 +23,7 @@ class ListChildren extends React.Component<Props, {}> {
 		const { style } = content;
 		
 		let ColResize: any = (): any => null;
+		let cn = [ 'children' ];
 		
 		if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
 			ColResize = (item: any) => (
@@ -32,8 +33,12 @@ class ListChildren extends React.Component<Props, {}> {
 			);
 		};
 		
+		if ((type == I.BlockType.Text) && (style == I.TextStyle.Toggle)) {
+			cn.push('canToggle');
+		};
+		
 		return (
-			<div className="children" onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
+			<div className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{childBlocks.map((item: any, i: number) => {
 					return (
 						<React.Fragment key={item.id}>

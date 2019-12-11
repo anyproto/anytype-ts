@@ -40,11 +40,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { account } = authStore;
 		const { cover } = commonStore;
 		const { blocks, root } = blockStore;
-		
-		if (!account) {
-			return null;
-		};
-		
 		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		
 		return (

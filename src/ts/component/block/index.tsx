@@ -52,7 +52,7 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, type, fields, content, index, restrictions } = this.props;
+		const { id, rootId, type, fields, content, index, restrictions } = this.props;
 		
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
@@ -65,11 +65,6 @@ class Block extends React.Component<Props, {}> {
 			default:
 			case I.BlockType.Text:
 				cn.push('blockText');
-				
-				if (content.style == I.TextStyle.Toggle) {
-					cn.push('canToggle');
-				};
-				
 				BlockComponent = () => (
 					<BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />
 				);
@@ -132,11 +127,13 @@ class Block extends React.Component<Props, {}> {
 				</div>
 				
 				<div className="wrapContent">
-					<div className={[ (canSelect ? 'selectable' : ''), 'c' + id ].join(' ')} data-id={id} data-type={type}>
-						<DropTarget {...this.props} id={id} type={I.DragItem.Block} disabled={restrictions.dropOn} onDrop={this.onDrop}>
-							<BlockComponent {...this.props} />
-						</DropTarget>
-					</div>
+					{canSelect ? (
+						<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
+							<DropTarget {...this.props} rootId={rootId} id={id} type={I.DragItem.Block} disabled={restrictions.dropOn} onDrop={this.onDrop}>
+								<BlockComponent {...this.props} />
+							</DropTarget>
+						</div>
+					) : ''}
 						
 					<ListChildren ref={(ref: any) => { this.refChildren = ref; }} {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 				</div>
