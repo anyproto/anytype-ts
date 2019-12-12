@@ -2,8 +2,12 @@
 	"pinSize": 6,
 	"intercom": "zy2yo0vf",
 	
-	"untitled": "Untitled", 
+	"untitled": "Untitled",
+	
 	"defaultLang": "en",
+	"langs": [
+		{ "id": "en", "name": "English" }
+	],
 	
 	"size": {
 		"editorPage": 800,

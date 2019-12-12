@@ -228,8 +228,6 @@ class BlockText extends React.Component<Props, {}> {
 		if (k == Key.tab) {
 			e.preventDefault();
 			
-			console.log(e);
-			
 			let request: any = {
 				contextId: rootId,
 				blockIds: [ id ],
@@ -247,12 +245,13 @@ class BlockText extends React.Component<Props, {}> {
 			} else {
 				const next = blockStore.getNextBlock(rootId, id, -1);
 			
-				if (next && (parentId == next.parentId)) {
+				if (next) {
+					let position = parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom;
 					let request = {
 						contextId: rootId,
 						blockIds: [ id ],
 						dropTargetId: next.id,
-						position: I.BlockPosition.Inner,
+						position: position,
 					};
 					dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
 				};
