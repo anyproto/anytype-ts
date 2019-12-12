@@ -228,16 +228,34 @@ class BlockText extends React.Component<Props, {}> {
 		if (k == Key.tab) {
 			e.preventDefault();
 			
-			const next = blockStore.getNextBlock(rootId, id, -1);
+			console.log(e);
 			
-			if (next && (parentId == next.parentId)) {
+			let request: any = {
+				contextId: rootId,
+				blockIds: [ id ],
+				position: I.BlockPosition.Inner,
+			};
+			
+			if (e.shiftKey) {
 				let request = {
 					contextId: rootId,
 					blockIds: [ id ],
-					dropTargetId: next.id,
-					position: I.BlockPosition.Inner,
+					dropTargetId: parentId,
+					position: I.BlockPosition.Bottom,
 				};
 				dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
+			} else {
+				const next = blockStore.getNextBlock(rootId, id, -1);
+			
+				if (next && (parentId == next.parentId)) {
+					let request = {
+						contextId: rootId,
+						blockIds: [ id ],
+						dropTargetId: next.id,
+						position: I.BlockPosition.Inner,
+					};
+					dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
+				};
 			};
 		};
 		
