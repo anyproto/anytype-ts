@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Textarea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher, Storage } from 'ts/lib';
+import { dispatcher, Storage, translate } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -42,15 +42,15 @@ class PageAuthLogin extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Title text="Login with your keychain" />
-					<Label text="Type your keychain phrase or private key" />
+					<Title text={translate('authLoginTitle')} />
+					<Label text={translate('authLoginLabel')} />
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
-						<Textarea ref={(ref: any) => this.phraseRef = ref} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
+						<Textarea ref={(ref: any) => this.phraseRef = ref} placeHolder={translate('authLoginPhrase')} />
 						<div className="buttons">
-							<Button type="input" text="Login" className="orange" />
-							<Button text="Back" className="grey" onClick={this.onCancel} />
+							<Button type="input" text={translate('authLoginLogin')} className="orange" />
+							<Button text={translate('authLoginBack')} className="grey" onClick={this.onCancel} />
 						</div>
 					</form>
 				</Frame>

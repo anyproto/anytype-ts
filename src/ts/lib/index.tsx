@@ -8,9 +8,18 @@ import { focus } from './focus';
 import * as I from 'ts/interface';
 import { StructDecode, StructEncode } from './struct';
 
-const lang = require('json/lang.json');
+const Constant = require('json/constant.json');
+const Text = require('json/text.json');
+const lang = Storage.get('lang') || Constant.defaultLang;
+
 const translate = (key: string): string => {
-	return lang[key] || key;
+	if (!Text[key]) {
+		return '*No key - ' + key + '*';
+	};
+	if (!Text[key][lang]) {
+		return '*No lang for key - ' + key + '*';
+	};
+	return Text[key][lang];
 };
 
 export {

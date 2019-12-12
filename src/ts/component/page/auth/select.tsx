@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher, Storage } from 'ts/lib';
+import { dispatcher, Storage, translate } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -40,13 +40,13 @@ class PageAuthSelect extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Title text="Organize everything" />
-					<Label text="With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." />
+					<Title text={translate('authSelectTitle')} />
+					<Label text={translate('authSelectLabel')} />
 					<Error text={error} />
 								
 					<div className="buttons">
-						<Button text="Login" type="input" className="orange" onClick={this.onLogin} />
-						<Button text="Sign up" type="input" className="grey" onClick={this.onRegister} />
+						<Button text={translate('authSelectLogin')} type="input" className="orange" onClick={this.onLogin} />
+						<Button text={translate('authSelectSignup')} type="input" className="grey" onClick={this.onRegister} />
 					</div>
 				</Frame>
 			</div>

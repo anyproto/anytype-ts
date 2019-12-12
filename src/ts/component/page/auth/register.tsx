@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { dispatcher, Util } from 'ts/lib';
+import { dispatcher, Util, translate } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
 
@@ -40,7 +40,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 		const { commonStore } = this.props;
 		const { cover } = commonStore;
 		const { error, preview } = this.state;
-		
+
 		return (
 			<div>
 				<Cover num={cover} />
@@ -48,7 +48,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Title text="Add name and profile picture" />
+					<Title text={translate('authRegisterTitle')} />
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
@@ -56,8 +56,8 @@ class PageAuthRegister extends React.Component<Props, State> {
 							<IconUser icon={preview} className={preview ? 'active' : ''} />
 						</div>
 					
-						<Input ref={(ref: any) => this.nameRef = ref} placeHolder="Type your name" value={name} onKeyUp={this.onNameChange} />
-						<Button type="input" text="Create profile" className="orange" />
+						<Input ref={(ref: any) => this.nameRef = ref} placeHolder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
+						<Button type="input" text={translate('authRegisterSubmit')} className="orange" />
 					</form>
 				</Frame>
 			</div>

@@ -1,0 +1,26 @@
+{
+	"authSelectTitle": { "en": "Organize everything" },
+	"authSelectLabel": { "en": "With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." },
+	"authSelectLogin": { "en": "Login" },
+	"authSelectSignup": { "en": "Sign up" },
+	
+	"authLoginTitle": { "en": "Login with your keychain" },
+	"authLoginLabel": { "en": "Type your keychain phrase or private key" },
+	"authLoginPhrase": { "en": "witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" },
+	"authLoginLogin": { "en": "Login" },
+	"authLoginBack": { "en": "Back" },
+	
+	"authRegisterTitle": { "en": "Add name and profile picture" },
+	"authRegisterName": { "en": "Type your name" },
+	"authRegisterSubmit": { "en": "Create profile" },
+	
+	"authSetupLogin": { "en": "Logging in..." },
+	"authSetupRegister": { "en": "Creating profile..." },
+	"authSetupSelect": { "en": "Selecting profile..." },
+	
+	"authSuccessTitle": { "en": "Congratulations!" },
+	"authSuccessLabel": { "en": "You've created your first profile! It is stored on your device and nobody will know about it until you share it!" },
+	"authSuccessSubmit": { "en": "Let's start!" },
+	
+	"indexHi": { "en": "Hi, %s" }
+}

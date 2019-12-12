@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher, Storage } from 'ts/lib';
+import { dispatcher, Storage, translate } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -39,14 +39,14 @@ class PageAuthSetup extends React.Component<Props, State> {
 		let title = '';
 		switch (match.params.id) {
 			case 'init':
-				title = 'Logging in...'; 
+				title = translate('authSetupLogin'); 
 				break;
 			case 'register':
 			case 'add': 
-				title = 'Creating profile...';
+				title = translate('authSetupRegister');
 				break;
 			case 'select': 
-				title = 'Selecting profile...';
+				title = translate('authSetupSelect');
 				break;
 		};
 		
