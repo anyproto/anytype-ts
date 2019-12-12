@@ -1,4 +1,4 @@
-import { I, Util } from 'ts/lib';
+import { I, Util, Storage } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -8,6 +8,7 @@ class Keyboard {
 	history: any = null;
 	focus: boolean = false;
 	back: boolean = true;
+	timeoutPin: number = 0;
 	
 	init (history: any) {
 		this.history = history;
@@ -36,6 +37,8 @@ class Keyboard {
 			e.preventDefault();
 			commonStore.popupCloseAll();
 		};
+		
+		this.setPinCheck();
 	};
 	
 	onKeyUp (e: any) {
@@ -44,6 +47,20 @@ class Keyboard {
 	
 	setFocus (v: boolean) {
 		this.focus = v;
+	};
+	
+	setPinCheck () {
+		const pin = Storage.get('pin');
+		if (!pin) {
+			return;
+		};
+		
+		window.clearTimeout(this.timeoutPin);
+		this.timeoutPin = window.setTimeout(() => {
+			if (pin) {
+				this.history.push('/auth/pin-check');				
+			};
+		}, 10000);
 	};
 	
 	disableBack (v: boolean) {

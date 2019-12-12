@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher, Storage, translate } from 'ts/lib';
+import { dispatcher, Storage, translate, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -104,6 +104,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	init () {
 		const { authStore, history } = this.props;
 		const { path } = authStore;
+		const pin = Storage.get('pin');
 		
 		let phrase = Storage.get('phrase');
 		if (!phrase) {
@@ -134,11 +135,17 @@ class PageAuthSetup extends React.Component<Props, State> {
 					} else
 					if (message.account) {
 						authStore.accountSet(message.account);
-						history.push('/main/index');
+						
+						if (pin) {
+							history.push('/auth/pin-check');
+							keyboard.setPinCheck();
+						} else {
+							history.push('/main/index');
+						};
 					};
 				});
 			} else {
-				history.push('/auth/account-select');				
+				history.push('/auth/account-select');
 			};
 		});
 	};

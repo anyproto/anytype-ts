@@ -105,6 +105,7 @@
 		"rehype": "^9.0.1",
 		"sass-loader": "^8.0.0",
 		"selection-ranges": "^3.0.3",
+		"sha1": "^1.1.1",
 		"sprintf-kit": "^2.0.0",
 		"style-loader": "^1.0.1",
 		"url-loader": "^2.3.0"

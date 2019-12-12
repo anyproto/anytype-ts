@@ -6,6 +6,7 @@ import { observer, inject } from 'mobx-react';
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
+const sha1 = require('sha1');
 
 interface Props extends I.Popup {
 	history: any;
@@ -24,6 +25,7 @@ class PopupSettings extends React.Component<Props, {}> {
 
 	phraseRef: any = null;
 	refObj: any = {};
+	pin: string = '';
 	state = {
 		page: 'index'
 	};
@@ -39,6 +41,7 @@ class PopupSettings extends React.Component<Props, {}> {
 		this.onFocusPin = this.onFocusPin.bind(this);
 		this.onBlurPin = this.onBlurPin.bind(this);
 		this.onChangePin = this.onChangePin.bind(this);
+		this.onSelectPin = this.onSelectPin.bind(this);
 	};
 	
 	render () {
@@ -159,7 +162,7 @@ class PopupSettings extends React.Component<Props, {}> {
 								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />
 							))}
 						</div>
-						<Button text="Confirm" className="orange" onClick={() => { this.onPage('index'); }} />
+						<Button text="Confirm" className="orange" onClick={this.onSelectPin} />
 					</div>
 				);
 				break;
@@ -228,7 +231,17 @@ class PopupSettings extends React.Component<Props, {}> {
 		
 		let pin = this.getPin();
 		if (pin.length == Constant.pinSize) {
-		};			
+			this.pin = pin;
+			this.onSelectPin();
+		};
+	};
+	
+	onSelectPin () {
+		if (this.pin.length == Constant.pinSize) {
+			Storage.set('pin', sha1(this.pin));
+		};
+		
+		this.onPage('index');
 	};
 	
 	getPin () {

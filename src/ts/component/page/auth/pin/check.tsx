@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Key, Storage } from 'ts/lib';
+import { Key, Storage, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const sha1 = require('sha1');
@@ -19,7 +19,7 @@ interface State {
 @inject('commonStore')
 @inject('authStore')
 @observer
-class PageAuthPinConfirm extends React.Component<Props, State> {
+class PageAuthPinCheck extends React.Component<Props, State> {
 	
 	refObj: any = {};
 	state = {
@@ -42,15 +42,14 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 			inputs.push({ id: i });
 		};
 		
-        return (
+		return (
 			<div>
 				<Cover num={cover} />
 				<Header />
 				<Footer />
 				
 				<Frame>
-					<Title text="Confirm pin code" />
-					<Label text="This is one password you need to remember. You will need this password to login on this device." />
+					<Title text="Enter pin code" />
 					<Error text={error} />
 					
 					{inputs.map((item: any, i: number) => (
@@ -59,7 +58,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 				</Frame>
 			</div>
 		);
-    };
+	};
 
 	componentDidMount () {
 		this.refObj[1].focus();
@@ -89,18 +88,10 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		
 		let pin = this.getPin();
 		if (pin.length == Constant.pinSize) {
-			if (pin == authStore.pin) {
-				Storage.set('pin', sha1(pin));
-				
-				if (isSelect) {
-					history.push('/auth/setup/select');
-				};
-				
-				if (isAdd) {
-					history.push('/main/index');
-				};
+			if (sha1(pin) == Storage.get('pin')) {
+				history.push('/main/index');
 			} else {
-				this.setState({ error: 'Pin codes do not match' });
+				this.setState({ error: 'Incorrect pin' });
 			};
 		};
 	};
@@ -115,4 +106,4 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 	
 };
 
-export default PageAuthPinConfirm;
+export default PageAuthPinCheck;

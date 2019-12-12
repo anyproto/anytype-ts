@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { Page, ListPopup, ListMenu, Progress, Tooltip } from './component';
+import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader } from './component';
 import { commonStore, authStore, blockStore } from './store';
 import { dispatcher, keyboard, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
@@ -78,6 +78,10 @@ interface Props {
 	commonStore?: any;
 };
 
+interface State {
+	loading: boolean;
+};
+
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
@@ -89,9 +93,19 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
-class App extends React.Component<Props, {}> {
+class App extends React.Component<Props, State> {
+	
+	state = {
+		loading: true
+	};
 	
 	render () {
+		const { loading } = this.state;
+		
+		if (loading) {
+			return <Loader />
+		};
+		
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
@@ -127,7 +141,8 @@ class App extends React.Component<Props, {}> {
 		
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath + '/data');
-			
+
+			this.setState({ loading: false });
 			if (phrase) {
 				history.push('/auth/setup/init');
 			};

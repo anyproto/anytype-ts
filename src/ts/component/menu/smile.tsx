@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NimblePicker } from 'emoji-mart';
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const EmojiData = require('emoji-mart/data/apple.json');
@@ -38,6 +38,12 @@ class MenuSmile extends React.Component<Props, {}> {
 		if (this.ref) {
 			this.ref.forceUpdate();
 		};
+		
+		keyboard.setFocus(true);
+	};
+	
+	componentWillUnmount () {
+		keyboard.setFocus(false);
 	};
 	
 	onSelect (item: any) {

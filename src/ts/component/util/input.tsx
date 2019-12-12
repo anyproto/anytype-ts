@@ -31,6 +31,7 @@ interface State {
 
 class Input extends React.Component<Props, State> {
 	
+	_isMounted = false;
 	public static defaultProps = {
         type: 'text',
 		value: ''
@@ -87,6 +88,8 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+		
 		this.setValue(this.props.value);
 		this.setState({ type: this.props.type });
 	};
@@ -97,6 +100,10 @@ class Input extends React.Component<Props, State> {
 		if (this.state.selected) {
 			node.select();
 		};
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 	
 	onChange (e: any) {
@@ -138,7 +145,13 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	focus () {
-		setTimeout(() => { $(ReactDOM.findDOMNode(this)).focus(); });
+		setTimeout(() => {
+			if (!this._isMounted) {
+				return;
+			};
+			
+			$(ReactDOM.findDOMNode(this)).focus(); 
+		});
 	};
 	
 	select () {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Util } from 'ts/lib';
+import { Util, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer, inject } from 'mobx-react';
 
@@ -9,6 +9,7 @@ import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinSelect from './auth/pin/select';
 import PageAuthPinConfirm from './auth/pin/confirm';
+import PageAuthPinCheck from './auth/pin/check';
 import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
@@ -40,6 +41,7 @@ class Page extends React.Component<Props, {}> {
 			'auth/login':			 PageAuthLogin,
 			'auth/pin-select':		 PageAuthPinSelect,
 			'auth/pin-confirm':		 PageAuthPinConfirm,
+			'auth/pin-check':		 PageAuthPinCheck,
 			'auth/setup':			 PageAuthSetup,
 			'auth/account-select':	 PageAuthAccountSelect,
 			'auth/success':			 PageAuthSuccess,
