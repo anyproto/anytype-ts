@@ -39,6 +39,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onMenuAdd = this.onMenuAdd.bind(this);
 	};
 
 	render () {
@@ -59,7 +60,8 @@ class EditorPage extends React.Component<Props, {}> {
 								{...item} 
 								{...this.props}
 								onKeyDown={this.onKeyDown} 
-								onKeyUp={this.onKeyUp} 
+								onKeyUp={this.onKeyUp}
+								onMenuAdd={this.onMenuAdd}
 							/>
 						)
 					})}
@@ -165,13 +167,13 @@ class EditorPage extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutHover);
 		
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
-			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Before : I.BlockPosition.After;
+			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
 			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 + containerEl.scrollTop() + Number(addOffsetY) });
 			blocks.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (hovered && (pageX <= x + 20)) {
-				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Before ? 'top' : 'bottom'));
+				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 			};
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
@@ -275,7 +277,7 @@ class EditorPage extends React.Component<Props, {}> {
 					param.content.style = block.content.style;
 				};
 				
-				this.blockCreate(block, I.BlockPosition.After, param);
+				this.blockCreate(block, I.BlockPosition.Bottom, param);
 			} else {
 				this.blockSplit(block, range.from);
 			};
@@ -316,34 +318,42 @@ class EditorPage extends React.Component<Props, {}> {
 		this.blockCreate(block, this.hoverPosition, {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
-		}, (blockId) => {
-			commonStore.menuOpen('blockAdd', { 
-				element: 'block-' + blockId,
-				type: I.MenuType.Vertical,
-				offsetX: 50,
-				offsetY: 4,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				onClose: () => {
-					focus.apply();
-					commonStore.filterSet('');
-				},
-				data: {
-					onSelect: (e: any, item: any) => {
-						let param: any = {
-							type: item.type,
-						};
+		}, (blockId: string) => {
+			this.onMenuAdd(blockId);
+		});
+	};
+	
+	onMenuAdd (id: string) {
+		const { blockStore, commonStore, rootId } = this.props;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+		
+		commonStore.menuOpen('blockAdd', { 
+			element: 'block-' + id,
+			type: I.MenuType.Vertical,
+			offsetX: 50,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			onClose: () => {
+			focus.apply();
+				commonStore.filterSet('');
+			},
+			data: {
+				onSelect: (e: any, item: any) => {
+					let param: any = {
+						type: item.type,
+					};
 						
-						if (item.type == I.BlockType.Text) {
-							param.content = {
-								style: item.id,
-							};
+					if (item.type == I.BlockType.Text) {
+						param.content = {
+							style: item.id,
 						};
+					};
 						
-						this.blockCreate(block, this.hoverPosition, param);
-					}
+					this.blockCreate(block, this.hoverPosition, param);
 				}
-			});
+			}
 		});
 	};
 	

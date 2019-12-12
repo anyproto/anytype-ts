@@ -18,8 +18,8 @@ export enum BlockType {
 
 export enum BlockPosition {
 	None	 = 0,
-	Before	 = 1,
-	After	 = 2,
+	Top		 = 1,
+	Bottom	 = 2,
 	Left	 = 3,
 	Right	 = 4,
 	Inner	 = 5,

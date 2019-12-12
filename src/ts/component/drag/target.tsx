@@ -102,10 +102,10 @@ class DropTarget extends React.Component<Props, {}> {
 		this.position = I.BlockPosition.None;
 		
 		if ((ey >= y) && (ey <= rect.y)) {
-			this.position = I.BlockPosition.Before;
+			this.position = I.BlockPosition.Top;
 		} else 
 		if ((ey >= rect.height) && (ey <= y + height)) {
-			this.position = I.BlockPosition.After;
+			this.position = I.BlockPosition.Bottom;
 		} else
 		if ((ex >= x) && (ex < rect.x) && (ey > rect.y) && (ey < rect.height)) {
 			this.position = I.BlockPosition.Left;
@@ -145,8 +145,8 @@ class DropTarget extends React.Component<Props, {}> {
 		let c = '';
 		switch (dir) {
 			case I.BlockPosition.None: c = ''; break;
-			case I.BlockPosition.Before: c = 'top'; break;
-			case I.BlockPosition.After: c = 'bottom'; break;
+			case I.BlockPosition.Top: c = 'top'; break;
+			case I.BlockPosition.Bottom: c = 'bottom'; break;
 			case I.BlockPosition.Left: c = 'left'; break;
 			case I.BlockPosition.Right: c = 'right'; break;
 			case I.BlockPosition.Inner: c = 'middle'; break;

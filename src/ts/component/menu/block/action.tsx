@@ -197,7 +197,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 								contextId: rootId,
 								blockId: blockId,
 								targetId: blockId,
-								position: I.BlockPosition.After,
+								position: I.BlockPosition.Bottom,
 							};
 							
 							dispatcher.call('blockDuplicate', request, (errorCode: any, message: any) => {

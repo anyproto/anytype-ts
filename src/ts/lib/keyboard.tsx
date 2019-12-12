@@ -54,6 +54,7 @@ class Keyboard {
 
 export enum Key {
 	backspace	 = 8,
+	tab			 = 9,
 	enter		 = 13,
 	escape		 = 27,
 	left		 = 37,
@@ -61,6 +62,7 @@ export enum Key {
 	right		 = 39,
 	down		 = 40,
 	a			 = 65,
+	slash		 = 191,
 };
 
 export let keyboard: Keyboard = new Keyboard();

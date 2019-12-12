@@ -55,7 +55,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 			contextId: root,
 			parentId: root,
 			targetId: '',
-			position: I.BlockPosition.After,
+			position: I.BlockPosition.Bottom,
 		};
 		
 		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {

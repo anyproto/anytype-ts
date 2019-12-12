@@ -143,7 +143,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		rootBlock.childrenIds = arrayMove(rootBlock.childrenIds, oldIndex, newIndex);
 		
-		const position = newIndex < oldIndex ? I.BlockPosition.Before : I.BlockPosition.After; 
+		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom; 
 		
 		let request = {
 			contextId: root,

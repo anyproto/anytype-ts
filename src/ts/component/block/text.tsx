@@ -16,6 +16,7 @@ interface Props extends I.BlockText {
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, text?: string): void;
 	onKeyUp?(e: any, text?: string): void;
+	onMenuAdd? (id: string): void;
 };
 
 const com = require('proto/commands.js');
@@ -211,7 +212,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { commonStore, onKeyDown, id } = this.props;
+		const { commonStore, blockStore, onKeyDown, id, parentId, rootId } = this.props;
 		const range = this.getRange();
 		const k = e.which;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -223,6 +224,27 @@ class BlockText extends React.Component<Props, {}> {
 			this.from = range.from;
 		};
 		this.value = this.getValue();
+		
+		if (k == Key.tab) {
+			e.preventDefault();
+			
+			const next = blockStore.getNextBlock(rootId, id, -1);
+			
+			if (next && (parentId == next.parentId)) {
+				let request = {
+					contextId: rootId,
+					blockIds: [ id ],
+					dropTargetId: next.id,
+					position: I.BlockPosition.Inner,
+				};
+				dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
+			};
+		};
+		
+		if ((k == Key.slash) && !this.value) {
+			e.preventDefault();
+			this.props.onMenuAdd(id);
+		};
 		
 		if (k == Key.enter) {
 			this.blockUpdateText(this.marks);
