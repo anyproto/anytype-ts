@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, C, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockMedia {
@@ -12,11 +12,15 @@ interface Props extends I.BlockMedia {
 @observer
 class BlockFile extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
+
 	constructor (props: any) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
+		this.onChangeUrl = this.onChangeUrl.bind(this);
+		this.onChangeFile = this.onChangeFile.bind(this);
 	};
 
 	render () {
@@ -28,7 +32,7 @@ class BlockFile extends React.Component<Props, {}> {
 			default:
 			case I.ContentUploadState.Empty:
 				element = (
-					<InputWithFile icon="file" textFile="Upload a file" />
+					<InputWithFile icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
@@ -57,6 +61,26 @@ class BlockFile extends React.Component<Props, {}> {
 				{element}
 			</React.Fragment>
 		);
+	};
+	
+	componentDidMount () {
+		this._isMounted = true;
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+	
+	onChangeUrl (e: any, url: string) {
+		const { id, rootId } = this.props;
+		
+		C.BlockUpload(rootId, id, url, '');
+	};
+	
+	onChangeFile (e: any, path: string) {
+		const { id, rootId } = this.props;
+		
+		C.BlockUpload(rootId, id, '', path);
 	};
 	
 	onOpen (e: any) {

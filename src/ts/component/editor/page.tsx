@@ -116,7 +116,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		blockStore.blocksClear(rootId);
-		C.BlockOpen(rootId);
+		C.BlockClose(rootId);
 	};
 	
 	unbind () {

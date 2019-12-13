@@ -27,11 +27,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { authStore, rootId, match } = this.props;
+		const { authStore, rootId } = this.props;
 		const { account } = authStore;
 		
 		let path: I.Block[] = [];
-		this.getPath(match.params.id, path);
+		this.getPath(rootId, path);
 		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" type={I.DragItem.Block} onClick={this.onHome} onDrop={this.onDrop}>
