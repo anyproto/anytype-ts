@@ -10,9 +10,11 @@
 ## Local version
 ------------
 
+	npm run update:addon
 	npm run start:dev
   
 ## Build
 ------------
 
+	npm run update:addon
 	npm run dist:(mac|win|linux)
