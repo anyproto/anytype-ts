@@ -4,6 +4,7 @@
 ------------
 
 	git clone git@github.com:anytypeio/js-anytype.git
+	cd js-anytype
 	npm install -D
   
 ## Local version
