@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon } from 'ts/component';
-import { I, Key, Util, dispatcher, focus, keyboard } from 'ts/lib';
+import { I, C, Key, Util, dispatcher, focus, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -82,7 +82,7 @@ class EditorPage extends React.Component<Props, {}> {
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 		win.on('keydown.editor', (e: any) => { this.onKeyDownCommon(e); });
 		
-		dispatcher.call('blockOpen', { blockId: rootId }, (errorCode: any, message: any) => {});
+		C.BlockOpen(rootId);
 	};
 	
 	componentDidUpdate () {
@@ -116,7 +116,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		blockStore.blocksClear(rootId);
-		dispatcher.call('blockClose', { blockId: rootId }, (errorCode: any, message: any) => {});
+		C.BlockOpen(rootId);
 	};
 	
 	unbind () {
@@ -364,15 +364,7 @@ class EditorPage extends React.Component<Props, {}> {
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callback?: (blockId: string) => void) {
 		const { blockStore, rootId } = this.props;
 		
-		let request = {
-			block: blockStore.prepareBlockToProto(param),
-			contextId: rootId,
-			parentId: focused.parentId || rootId,
-			targetId: focused.id,
-			position: position,
-		};
-		
-		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
+		C.BlockCreate(param, rootId, focused.parentId || rootId, focused.id, position, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 			
@@ -392,12 +384,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let request = {
-			contextId: rootId,
-			firstBlockId: next.id,
-			secondBlockId: focused.id,
-		};
-		dispatcher.call('blockMerge', request, (errorCode: any, message: any) => {
+		C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
 			if (next) {
 				let l = String(next.content.text || '').length;
 				focus.set(next.id, { from: l, to: l });
@@ -409,12 +396,7 @@ class EditorPage extends React.Component<Props, {}> {
 	blockSplit (focused: I.Block, start: number) {
 		const { rootId } = this.props;
 		
-		let request = {
-			contextId: rootId,
-			blockId: focused.id,
-			cursorPosition: start,
-		};
-		dispatcher.call('blockSplit', request, (errorCode: any, message: any) => {
+		C.BlockSplit(rootId, focused.id, start, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		});
@@ -445,12 +427,7 @@ class EditorPage extends React.Component<Props, {}> {
 			targets.push({ blockId: focused.id });
 		};
 		
-		let request: any = {
-			contextId: rootId,
-			targets: targets,
-		};
-		
-		dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {
+		C.BlockUnlink(rootId, targets, (message: any) => {
 			if (next) {
 				let l = String(next.content.text || '').length;
 				focus.set(next.id, { from: l, to: l });

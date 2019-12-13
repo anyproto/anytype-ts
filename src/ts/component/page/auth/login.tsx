@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Textarea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher, Storage, translate } from 'ts/lib';
+import { Storage, translate, C } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -24,7 +24,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 	};
 	
 	constructor (props: any) {
-        super(props);
+		super(props);
 
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
@@ -74,17 +74,14 @@ class PageAuthLogin extends React.Component<Props, State> {
 		
 		this.phraseRef.setError(false);
 		
-		let request = { 
-			rootPath: path, 
-			mnemonic: this.phraseRef.getValue()
-		};
+		const phrase = this.phraseRef.getValue();
 		
-		dispatcher.call('walletRecover', request, (errorCode: any, message: any) => {
+		C.WalletRecover(path, phrase, (message: any) => {
 			if (message.error.code) {
 				this.phraseRef.setError(true);
 				this.setState({ error: message.error.description });
 			} else {
-				authStore.phraseSet(request.mnemonic);
+				authStore.phraseSet(phrase);
 				history.push('/auth/account-select');
 			};
 		});

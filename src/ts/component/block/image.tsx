@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon } from 'ts/component';
-import { I, cache } from 'ts/lib';
+import { I, C, cache } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockMedia {
@@ -37,6 +37,8 @@ class BlockImage extends React.Component<Props, {}> {
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.resize = this.resize.bind(this);
+		this.onChangeUrl = this.onChangeUrl.bind(this);
+		this.onChangeFile = this.onChangeFile.bind(this);
 	};
 
 	render () {
@@ -54,7 +56,7 @@ class BlockImage extends React.Component<Props, {}> {
 			default:
 			case I.ContentUploadState.Empty:
 				element = (
-					<InputWithFile icon="image" textFile="Upload a picture" accept={accept} />
+					<InputWithFile icon="image" textFile="Upload a picture" accept={accept} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
@@ -137,6 +139,18 @@ class BlockImage extends React.Component<Props, {}> {
 			});
 			image.attr({ src: 'data:image/jpeg;base64,' + s });
 		});
+	};
+	
+	onChangeUrl (e: any, url: string) {
+		const { id, rootId } = this.props;
+		
+		C.BlockUpload(rootId, id, url, '');
+	};
+	
+	onChangeFile (e: any, path: string) {
+		const { id, rootId } = this.props;
+		
+		C.BlockUpload(rootId, id, '', path);
 	};
 	
 	onResizeStart (e: any) {

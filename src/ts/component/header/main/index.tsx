@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { dispatcher, I, Util} from 'ts/lib';
+import { I, C, Util} from 'ts/lib';
 
 interface Props {
 	commonStore?: any;
@@ -41,24 +41,18 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
-		let request = {
-			block: blockStore.prepareBlockToProto({
-				type: I.BlockType.Page,
-				fields: { 
-					icon: Util.randomSmile(), 
-					name: Constant.untitled,
-				},
-				content: {
-					style: I.PageStyle.Empty,
-				},
-			}),
-			contextId: root,
-			parentId: root,
-			targetId: '',
-			position: I.BlockPosition.Bottom,
+		const block = {
+			type: I.BlockType.Page,
+			fields: { 
+				icon: Util.randomSmile(), 
+				name: Constant.untitled,
+			},
+			content: {
+				style: I.PageStyle.Empty,
+			},
 		};
-		
-		dispatcher.call('blockCreate', request, (errorCode: any, message: any) => {
+
+		C.BlockCreate(block, root, root, '', I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			/*
 			commonStore.popupOpen('editorPage', {

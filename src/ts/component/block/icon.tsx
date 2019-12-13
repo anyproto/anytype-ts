@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Smile } from 'ts/component';
-import { I, dispatcher, Util } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockIcon {
@@ -35,13 +35,8 @@ class BlockIcon extends React.Component<Props, {}> {
 	
 	onSelect (icon: string) {
 		const { id, rootId } = this.props;
-
-		let request = {
-			contextId: rootId,
-			blockId: id,
-			name: icon,
-		};
-		dispatcher.call('blockSetIconName', request, (errorCode: any, message: any) => {});
+		
+		C.BlockSetIconName(rootId, id, icon);
 	};
 	
 };

@@ -16,7 +16,7 @@ interface Props {
 	withFile?: boolean;
 	accept?: string[];
 	onChangeUrl? (e: any, url: string): void;
-	onChangeFile? (e: any, file: any): void;
+	onChangeFile? (e: any, path: string): void;
 };
 
 interface State {
@@ -196,7 +196,7 @@ class InputWithFile extends React.Component<Props, State> {
 			};
 			
 			if (onChangeFile) {
-				onChangeFile(e, Util.makeFileFromPath(files[0]));	
+				onChangeFile(e, files[0]);	
 			};
 		});
 	};

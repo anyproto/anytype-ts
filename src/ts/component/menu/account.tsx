@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, IconUser } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { I, dispatcher } from 'ts/lib';
+import { I, C } from 'ts/lib';
 
 interface Props extends I.Menu {
 	history: any;
@@ -59,24 +59,25 @@ class MenuAccount extends React.Component<Props, {}> {
 		
 		if (!accounts.length) {
 			authStore.accountClear();
-			dispatcher.call('accountRecover', {}, (errorCode: any, message: any) => {});			
+			C.AccountRecover();			
 		};
 	};
 	
 	onSelect (e: any, id: string) {
 		const { blockStore, commonStore, authStore } = this.props;
+		const { path } = authStore;
 		
 		commonStore.menuClose(this.props.id);
 		
-		dispatcher.call('accountSelect', { id: id }, (errorCode: any, message: any) => {
+		C.AccountSelect(id, path, (message: any) => {
 			if (message.error.code) {
 			} else
 			if (message.account) {
 				authStore.accountSet(message.account);
 				
-				dispatcher.call('configGet', {}, (errorCode: any, message: any) => {
+				C.ConfigGet((message: any) => {
 					blockStore.rootSet(message.homeBlockId);
-					dispatcher.call('blockOpen', { blockId: message.homeBlockId }, (errorCode: any, message: any) => {});
+					C.BlockOpen(message.homeBlockId);
 				});
 			};
 		});

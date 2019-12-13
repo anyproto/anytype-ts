@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { dispatcher, I, Util, translate} from 'ts/lib';
+import { I, C, Util, translate} from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {
@@ -77,9 +77,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { blockStore } = this.props;
 		
-		dispatcher.call('configGet', {}, (errorCode: any, message: any) => {
+		C.ConfigGet((message: any) => {
 			blockStore.rootSet(message.homeBlockId);
-			dispatcher.call('blockOpen', { blockId: message.homeBlockId }, (errorCode: any, message: any) => {});
+			C.BlockOpen(message.homeBlockId);
 		});
 	};
 	
@@ -91,7 +91,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { blockStore } = this.props;
 		const { root } = blockStore;
 		
-		dispatcher.call('blockClose', { blockId: root }, (errorCode: any, message: any) => {});
+		C.BlockClose(root);
 	};
 	
 	onSettings (e: any) {
@@ -145,13 +145,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom; 
 		
-		let request = {
-			contextId: root,
-			blockIds: [ current.id ],
-			dropTargetId: target.id,
-			position: position,
-		};
-		dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
+		C.BlockListMove(root, [ current.id ], target.id, position);
 	};
 	
 	resize () {

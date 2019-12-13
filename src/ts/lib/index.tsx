@@ -7,6 +7,7 @@ import Mark from './mark';
 import { focus } from './focus';
 import * as I from 'ts/interface';
 import { StructDecode, StructEncode } from './struct';
+import * as C from './command';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
@@ -32,6 +33,7 @@ export {
 	Util,
 	Mark,
 	I,
+	C,
 	translate,
 	StructDecode, 
 	StructEncode,

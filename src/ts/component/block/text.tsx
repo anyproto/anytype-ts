@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Select } from 'ts/component';
-import { I, keyboard, Key, Util, Mark, dispatcher, focus } from 'ts/lib';
+import { I, C, keyboard, Key, Util, Mark, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import 'highlight.js/styles/github.css';
@@ -228,32 +228,12 @@ class BlockText extends React.Component<Props, {}> {
 		if (k == Key.tab) {
 			e.preventDefault();
 			
-			let request: any = {
-				contextId: rootId,
-				blockIds: [ id ],
-				position: I.BlockPosition.Inner,
-			};
-			
 			if (e.shiftKey) {
-				let request = {
-					contextId: rootId,
-					blockIds: [ id ],
-					dropTargetId: parentId,
-					position: I.BlockPosition.Bottom,
-				};
-				dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
+				C.BlockListMove(rootId, [ id ], parentId, I.BlockPosition.Bottom);
 			} else {
 				const next = blockStore.getNextBlock(rootId, id, -1);
-			
 				if (next) {
-					let position = parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom;
-					let request = {
-						contextId: rootId,
-						blockIds: [ id ],
-						dropTargetId: next.id,
-						position: position,
-					};
-					dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
+					C.BlockListMove(rootId, [ id ], next.id, (parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom));
 				};
 			};
 		};
@@ -305,30 +285,14 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		newMarks = Mark.checkRanges(value, newMarks);
-		
-		let request = {
-			contextId: rootId,
-			blockId: id,
-			text: value,
-			marks: { marks: newMarks },
-		};
-		
-		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
+		C.BlockSetTextText(rootId, id, value, newMarks);
 	};
 	
 	blockUpdateMarks (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
 		const { text } = content;
 		
-		let request = {
-			contextId: rootId,
-			blockId: id,
-			text: String(text || ''),
-			marks: { marks: Mark.checkRanges(text, newMarks) },
-		};
-		
-		dispatcher.call('blockSetTextText', request, (errorCode: any, message: any) => {});
+		C.BlockSetTextText(rootId, id, String(text || ''), newMarks);
 	};
 	
 	onFocus (e: any) {
@@ -360,14 +324,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { checked } = content;
 		
 		focus.clear();
-		
-		let request: any = {
-			contextId: rootId,
-			blockId: id,
-			checked: !checked,
-		};
-		
-		dispatcher.call('blockSetTextChecked', request, (errorCode: any, message: any) => {});
+		C.BlockSetTextChecked(rootId, id, !checked);
 	};
 	
 	onLang (value: string) {

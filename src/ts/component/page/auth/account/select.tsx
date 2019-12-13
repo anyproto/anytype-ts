@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Icon, Cover, Error, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { dispatcher, Storage, I } from 'ts/lib';
+import { Storage, I, C } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
@@ -65,11 +65,9 @@ class PageAccountSelect extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		dispatcher.call('accountRecover', {}, (errorCode: any, message: any) => {
+		C.AccountRecover((message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
-			} else {
-				
 			};
 		});
 	};

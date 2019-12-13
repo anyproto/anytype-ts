@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input } from 'ts/component';
-import { I, Util, dispatcher, focus } from 'ts/lib';
+import { I, C, Util, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -90,14 +90,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						type: 'copy', 
 						rootId: root,
 						onConfirm: (id: string) => {
-							let request = {
-								contextId: rootId,
-								blockId: blockId,
-								targetId: blockId,
-								position: I.BlockPosition.Bottom,
-							};
-							
-							dispatcher.call('blockDuplicate', request, (errorCode: any, message: any) => {
+							C.BlockDuplicate(rootId, blockId, blockId, I.BlockPosition.Bottom, (message: any) => {
 								focus.set(message.blockId, { from: length, to: length });
 								focus.apply();
 							});
@@ -107,13 +100,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'remove':
-				let request: any = {
-					contextId: rootId,
-					targets: [
-						{ blockId: blockId },
-					],
-				};
-				dispatcher.call('blockUnlink', request, (errorCode: any, message: any) => {});
+				C.BlockUnlink(rootId, [ { blockId: blockId } ]);
 				break;
 		};
 	};

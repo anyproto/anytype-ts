@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Label } from 'ts/component';
-import { dispatcher, I, Util, cache } from 'ts/lib';
+import { I, C, Util, cache } from 'ts/lib';
 
 interface Props {
 	name?: string;
@@ -104,12 +104,7 @@ class IconUser extends React.Component<Props, State> {
 			return;
 		};
 			
-		let request = {
-			id: image.id,
-			size: I.ImageSize.Large
-		};
-			
-		dispatcher.call('imageGetBlob', request, (errorCode: any, message: any) => {
+		C.ImageGetBlob(image.id, I.ImageSize.Large, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};

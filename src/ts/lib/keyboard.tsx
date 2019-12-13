@@ -60,7 +60,7 @@ class Keyboard {
 			if (pin) {
 				this.history.push('/auth/pin-check');				
 			};
-		}, 10000);
+		}, 5 * 60 * 1000);
 	};
 	
 	disableBack (v: boolean) {

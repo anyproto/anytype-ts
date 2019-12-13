@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher, Storage, translate } from 'ts/lib';
+import { Storage, translate, C } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -61,11 +61,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 		const { authStore, history } = this.props;
 		const { path } = authStore;
 		
-		let request = { 
-			rootPath: path
-		};
-		
-		dispatcher.call('walletCreate', request, (errorCode: any, message: any) => {
+		C.WalletCreate(path, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {

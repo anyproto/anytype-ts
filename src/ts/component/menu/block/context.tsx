@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Mark, Util, focus, dispatcher } from 'ts/lib';
+import { I, C, Mark, Util, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -125,12 +125,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						horizontal: I.MenuDirection.Left,
 						data: {
 							onSelect: (style: I.TextStyle) => {
-								let request: any = {
-									contextId: rootId,
-									blockId: blockId,
-									style: style,
-								};
-								dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
+								C.BlockSetTextStyle(rootId, blockId, style);
 								commonStore.menuClose(this.props.id);
 							},
 						}
@@ -219,12 +214,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				onSelect: (style: I.TextStyle) => {
-					let request: any = {
-						contextId: rootId,
-						blockId: blockId,
-						style: style,
-					};
-					dispatcher.call('blockSetTextStyle', request, (errorCode: any, message: any) => {});
+					C.BlockSetTextStyle(rootId, blockId, style);
 					commonStore.menuClose(this.props.id);
 				},
 			}

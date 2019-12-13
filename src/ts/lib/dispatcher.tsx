@@ -143,14 +143,11 @@ class Dispatcher {
 		
 	};
 	
-	call (type: string, data: any, callback?: (errorCode: any, message: any) => void) {
+	call (type: string, data: any, callback?: (message: any) => void) {
 		if (!this.service[type]) {
 			console.error('[Dispatcher.call] Service not found: ', type);
 			return;
 		};
-		
-		//const errorCode = com.anytype[Util.toUpperCamelCase(type)].Response.Error.Code;
-		const errorCode = {};
 		
 		console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
 		console.profile('dispatcher.call.' + type);
@@ -171,7 +168,7 @@ class Dispatcher {
 					console.error('[Dispatcher.call] code:', message.error.code, 'description:', message.error.description);
 				};
 				
-				callback(errorCode, message);
+				callback(message);
 				
 				let t1 = performance.now();
 				console.log('[Dispatcher.call] callback', type, message, Math.ceil(t1 - t0) + 'ms');

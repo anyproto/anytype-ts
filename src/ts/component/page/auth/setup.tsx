@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { dispatcher, Storage, translate, keyboard } from 'ts/lib';
+import { Storage, translate, keyboard, C } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -104,7 +104,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 	init () {
 		const { authStore, history } = this.props;
 		const { path } = authStore;
-		const pin = Storage.get('pin');
+		//const pin = Storage.get('pin');
+		let pin = '';
 		
 		let phrase = Storage.get('phrase');
 		if (!phrase) {
@@ -112,24 +113,15 @@ class PageAuthSetup extends React.Component<Props, State> {
 		};
 		
 		let accountId = Storage.get('accountId');
-		let request: any = { 
-			rootPath: path, 
-			mnemonic: phrase
-		};
-			
-		dispatcher.call('walletRecover', request, (errorCode: any, message: any) => {
+		
+		C.WalletRecover(path, phrase, (message: any) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
 			} else 
 			if (accountId) {
 				authStore.phraseSet(phrase);
 				
-				request = { 
-					rootPath: path,
-					id: accountId
-				};
-				
-				dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
+				C.AccountSelect(accountId, path, (message: any) => {
 					if (message.error.code) {
 						this.setError(message.error.description);
 					} else
@@ -153,12 +145,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	add () {
 		const { authStore, history, match } = this.props;
 		
-		let request = { 
-			name: authStore.name, 
-			avatarLocalPath: authStore.icon 
-		};
-		
-		dispatcher.call('accountCreate', request, (errorCode: any, message: any) => {
+		C.AccountCreate(authStore.name, authStore.icon, (message: any) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
 			} else
@@ -178,13 +165,9 @@ class PageAuthSetup extends React.Component<Props, State> {
 	
 	select () {
 		const { authStore, history } = this.props;
-		const { account } = authStore; 
+		const { account, path } = authStore; 
 		
-		let request = { 
-			id: account.id 
-		};
-			
-		dispatcher.call('accountSelect', request, (errorCode: any, message: any) => {
+		C.AccountSelect(account.id, path, (message: any) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
 			} else {

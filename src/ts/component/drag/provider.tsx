@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragLayer } from 'ts/component';
-import { I, dispatcher } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -104,13 +104,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
 		
-		let request = {
-			contextId: rootId,
-			blockIds: this.ids || [],
-			dropTargetId: targetId,
-			position: position,
-		};
-		dispatcher.call('blockListMove', request, (errorCode: any, message: any) => {});
+		C.BlockListMove(rootId, this.ids || [], targetId, position);
 	};
 	
 	unbind () {
