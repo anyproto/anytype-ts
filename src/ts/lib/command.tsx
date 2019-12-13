@@ -83,10 +83,10 @@ const BlockDuplicate = (contextId: string, blockId: string, targetId: string, po
 	dispatcher.call('blockDuplicate', request, callBack);
 };
 
-const BlockUnlink = (contextId: string, targets: any[], callBack?: (message: any) => void) => {
+const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
-		targets: targets,
+		blockIds: blockIds,
 	};
 	dispatcher.call('blockUnlink', request, callBack);
 };

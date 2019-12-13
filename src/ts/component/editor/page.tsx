@@ -114,6 +114,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		keyboard.disableBack(false);
 		this.unbind();
+		focus.clear();
 		
 		blockStore.blocksClear(rootId);
 		C.BlockClose(rootId);
@@ -408,26 +409,22 @@ class EditorPage extends React.Component<Props, {}> {
 
 		let next: any = null;
 		let ids = selection.get();
-		let targets = [];
+		let blockIds = [];
 		
 		if (ids.length) {
 			next = blockStore.getNextBlock(rootId, ids[0], -1, (item: any) => {
 				return item.type == I.BlockType.Text;
 			});
-		
-			for (let id of ids) {
-				targets.push({ blockId: id });
-			};
+			blockIds = ids;
 		} else 
 		if (focused) {
 			next = blockStore.getNextBlock(rootId, focused.id, -1, (item: any) => {
 				return item.type == I.BlockType.Text;
 			});
-			
-			targets.push({ blockId: focused.id });
+			blockIds = [ focused.id ];
 		};
 		
-		C.BlockUnlink(rootId, targets, (message: any) => {
+		C.BlockUnlink(rootId, blockIds, (message: any) => {
 			if (next) {
 				let l = String(next.content.text || '').length;
 				focus.set(next.id, { from: l, to: l });
