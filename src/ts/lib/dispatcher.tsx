@@ -101,11 +101,11 @@ class Dispatcher {
 						content: Util.objectCopy(block.content),
 					};
 					
-					if (null !== data.text) {
+					if (null != data.text) {
 						param.content.text = data.text.value;
 					};
 					
-					if (null !== data.marks) {
+					if (null != data.marks) {
 						let marks: any = [];
 						for (let mark of data.marks.value.marks) {
 							marks.push({
@@ -120,19 +120,19 @@ class Dispatcher {
 						param.content.marks = marks;
 					};
 					
-					if (null !== data.style) {
+					if (null != data.style) {
 						param.content.style = data.style.value;
 					};
 					
-					if (null !== data.checked) {
+					if (null != data.checked) {
 						param.content.checked = data.checked.value;
 					};
 					
-					if (null !== data.textColor) {
-						param.content.textColor = data.textColor.value;
+					if (null != data.color) {
+						param.content.color = data.color.value;
 					};
 					
-					if (null !== data.backgroundColor) {
+					if (null != data.backgroundColor) {
 						param.content.backgroundColor = data.backgroundColor.value;
 					};
 					

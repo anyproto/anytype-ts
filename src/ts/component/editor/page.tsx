@@ -295,6 +295,7 @@ class EditorPage extends React.Component<Props, {}> {
 						style: I.TextStyle.Paragraph,
 					},
 				};
+				
 				if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0) {
 					param.content.style = block.content.style;
 				};
