@@ -380,7 +380,7 @@ class EditorPage extends React.Component<Props, {}> {
 						};
 					};
 						
-					this.blockCreate(block, this.hoverPosition, param);
+					this.blockReplace(block, param);
 				}
 			}
 		});
@@ -408,6 +408,19 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blockStore, rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, focused.parentId || rootId, focused.id, position, (message: any) => {
+			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.apply();
+			
+			if (callback) {
+				callback(message.blockId);
+			};
+		});
+	};
+	
+	blockReplace (focused: I.Block, param: any, callback?: (blockId: string) => void) {
+		const { blockStore, rootId } = this.props;
+		
+		C.BlockReplace(param, rootId, focused.id, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 			

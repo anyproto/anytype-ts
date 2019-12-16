@@ -73,6 +73,15 @@ const BlockCreate = (block: any, contextId: string, parentId: string, targetId: 
 	dispatcher.call('blockCreate', request, callBack);
 };
 
+const BlockReplace = (block: any, contextId: string, blockId: string, callBack?: (message: any) => void) => {
+	const request = {
+		block: blockStore.prepareBlockToProto(block),
+		contextId: contextId,
+		blockId: blockId,
+	};
+	dispatcher.call('blockReplace', request, callBack);
+};
+
 const BlockDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -223,6 +232,7 @@ export {
 	BlockOpen,
 	BlockClose,
 	BlockCreate,
+	BlockReplace,
 	BlockDuplicate,
 	BlockUnlink,
 	BlockSetIconName,

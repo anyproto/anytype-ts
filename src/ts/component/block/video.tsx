@@ -23,7 +23,7 @@ class BlockVideo extends React.Component<Props, {}> {
 
 	render () {
 		const { blockStore, id, rootId, content } = this.props;
-		const accept = [ 'mp4' ];
+		const accept = [ 'mp4', 'm4v' ];
 
 		return (
 			<React.Fragment>
