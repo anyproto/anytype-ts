@@ -175,8 +175,6 @@ class BlockStore {
 			};
 			
 			if (type == I.BlockType.Text) {
-				let style = content.style;
-				let marker = content.marker;
 				let marks: any = [];
 				
 				if (content.marks && content.marks.marks.length) {
@@ -192,15 +190,17 @@ class BlockStore {
 					};
 				};
 				
-				item.content.style = style;
-				item.content.marker = marker;
+				item.content.style = content.style;
+				item.content.marker = content.marker;
 				item.content.marks = marks;
 			};
 						
 			if (type == I.BlockType.Layout) {
-				let style = content.style;
-				
-				item.content.style = style;
+				item.content.style = content.style;
+			};
+			
+			if (type == I.BlockType.File) {
+				item.content.type = content.type;
 			};
 		};
 		

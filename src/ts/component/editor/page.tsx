@@ -191,8 +191,6 @@ class EditorPage extends React.Component<Props, {}> {
 		const { selection } = dataset;
 		const k = e.which;
 		
-		console.log('focus', keyboard.focus);
-		
 		if (keyboard.focus) {
 			return;
 		};
