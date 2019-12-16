@@ -128,6 +128,14 @@ class Dispatcher {
 						param.content.checked = data.checked.value;
 					};
 					
+					if (null !== data.textColor) {
+						param.content.textColor = data.textColor.value;
+					};
+					
+					if (null !== data.backgroundColor) {
+						param.content.backgroundColor = data.backgroundColor.value;
+					};
+					
 					blockStore.blockUpdate(contextId, param);
 					break;
 					

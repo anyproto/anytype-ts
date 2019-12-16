@@ -64,7 +64,6 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		switch (type) {
-			default:
 			case I.BlockType.Text:
 				cn.push('blockText');
 				BlockComponent = () => (
@@ -77,26 +76,31 @@ class Block extends React.Component<Props, {}> {
 				cn.push('blockLayout c' + content.style);
 				break;
 				
-			case I.BlockType.Image:
-				cn.push('blockImage');
-				BlockComponent = () => (
-					<BlockImage ref={(ref: any) => { this.refComponent = ref; }} {...this.props} width={fields.width || 1} />
-				);
-				break;
-				
 			case I.BlockType.Icon:
 				cn.push('blockIcon');
 				BlockComponent = BlockIcon;
 				break;
 				
-			case I.BlockType.Video:
-				cn.push('blockVideo');
-				BlockComponent = BlockVideo;
-				break;
-				
 			case I.BlockType.File:
-				cn.push('blockFile');
-				BlockComponent = BlockFile;
+				switch (content.type) {
+					default: 
+					case I.MediaStyle.File: 
+						cn.push('blockFile');
+						BlockComponent = BlockFile;
+						break;
+						
+					case I.MediaStyle.Image: 
+						cn.push('blockImage');
+						BlockComponent = () => (
+							<BlockImage ref={(ref: any) => { this.refComponent = ref; }} {...this.props} width={fields.width || 1} />
+						);
+						break;
+						
+					case I.MediaStyle.Video: 
+						cn.push('blockVideo');
+						BlockComponent = BlockVideo;
+						break;
+				};
 				break;
 				
 			case I.BlockType.Bookmark:

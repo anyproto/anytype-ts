@@ -57,9 +57,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			},
 			{ 
 				id: 'media', icon: 'media', name: 'Media', color: 'red', children: [
-					{ type: I.BlockType.File, id: 'file', icon: 'media', name: 'File' },
-					{ type: I.BlockType.Image, id: 'image', icon: 'picture', name: 'Picture' },
-					{ type: I.BlockType.Video, id: 'video', icon: 'video', name: 'Video' },
+					{ type: I.BlockType.File, id: I.MediaStyle.File, icon: 'media', name: 'File' },
+					{ type: I.BlockType.File, id: I.MediaStyle.Image, icon: 'picture', name: 'Picture' },
+					{ type: I.BlockType.File, id: I.MediaStyle.Video, icon: 'video', name: 'Video' },
 					{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', name: 'Bookmark' },
 					{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code' },	
 				] as any [],

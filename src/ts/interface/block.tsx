@@ -6,8 +6,6 @@ export enum BlockType {
 	
 	Text		 = 'text',
 	File		 = 'file',
-	Image		 = 'image',
-	Video		 = 'video',
 	Bookmark	 = 'bookmark',
 	Icon		 = 'icon',
 	Div			 = 'div',

@@ -214,7 +214,7 @@ class EditorPage extends React.Component<Props, {}> {
 						Util.clipboardCopy({
 							text: message.textSlot || 'textSlot',
 							html: message.htmlSlot || 'htmlSlot',
-							anytype: message.anytypeSlot || 'anytypeSlot',
+							anytype: message.anySlot || 'anySlot',
 						});
 					});
 				};
@@ -373,6 +373,12 @@ class EditorPage extends React.Component<Props, {}> {
 					if (item.type == I.BlockType.Text) {
 						param.content = {
 							style: item.id,
+						};
+					};
+					
+					if (item.type == I.BlockType.File) {
+						param.content = {
+							type: item.id,
 						};
 					};
 						

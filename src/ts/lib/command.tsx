@@ -128,6 +128,24 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 	dispatcher.call('blockSetTextChecked', request, callBack);
 };
 
+const BlockSetTextColor = (contextId: string, blockId: string, color: string, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockId: blockId,
+		color: color,
+	};
+	dispatcher.call('blockSetTextColor', request, callBack);
+};
+
+const BlockSetTextBackgroundColor = (contextId: string, blockId: string, color: string, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockId: blockId,
+		color: color,
+	};
+	dispatcher.call('blockSetTextBackgroundColor', request, callBack);
+};
+
 const BlockListMove = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -184,9 +202,9 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 		focusedBlockId: focusedId,
 		selectedTextRange: range,
 		blockIds: blockIds,
-		clipboardText: String(data.text || ''),
-		clipboardHtml: String(data.html || ''),
-		clipboardAny: String(data.anytype || ''),
+		textSlot: String(data.text || ''),
+		htmlSlot: String(data.html || ''),
+		anySlot: String(data.anytype || ''),
 	};
 	dispatcher.call('blockPaste', request, callBack);	
 };
@@ -218,4 +236,6 @@ export {
 	BlockSetTextStyle,
 	BlockSetTextText,
 	BlockSetTextChecked,
+	BlockSetTextColor,
+	BlockSetTextBackgroundColor,
 };

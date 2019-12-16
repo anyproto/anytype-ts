@@ -147,10 +147,18 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					
 				case 'color':
 					menuParam.data.onChangeText = (color: string) => {
-						console.log('text', color);
+						C.BlockSetTextColor(rootId, blockId, color, (message: any) => {
+							focus.set(message.blockId, { from: length, to: length });
+							focus.apply();
+						});
+						commonStore.menuClose(this.props.id);
 					};
 					menuParam.data.onChangeBg = (color: string) => {
-						console.log('bg', color);
+						C.BlockSetTextBackgroundColor(rootId, blockId, color, (message: any) => {
+							focus.set(message.blockId, { from: length, to: length });
+							focus.apply();
+						});
+						commonStore.menuClose(this.props.id);
 					};
 					
 					commonStore.menuOpen('blockColor', menuParam);
@@ -165,7 +173,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { blockId, rootId } = data;
 		const { blocks, root } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
-		const length = block.content.text.length;
+		const length = String(block.content.text || '').length;
 		
 		commonStore.menuClose(this.props.id);
 		
