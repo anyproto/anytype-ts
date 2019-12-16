@@ -17,6 +17,7 @@ interface Props extends I.BlockText {
 	onKeyDown?(e: any, text?: string): void;
 	onKeyUp?(e: any, text?: string): void;
 	onMenuAdd? (id: string): void;
+	onPaste? (e: any): void;
 };
 
 const com = require('proto/commands.js');
@@ -50,6 +51,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onCheck = this.onCheck.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onLang = this.onLang.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 	};
 
 	render () {
@@ -85,6 +87,7 @@ class BlockText extends React.Component<Props, {}> {
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onSelect={this.onSelect}
+				onPaste={this.onPaste}
 			/>
 		);
 		
@@ -313,6 +316,12 @@ class BlockText extends React.Component<Props, {}> {
 		placeHolder.hide();
 		keyboard.setFocus(false);
 		onBlur(e);
+	};
+	
+	onPaste (e: any) {
+		const { onPaste } = this.props;
+
+		onPaste(e);
 	};
 	
 	onToggle (e: any) {

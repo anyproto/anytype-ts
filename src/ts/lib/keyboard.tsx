@@ -79,6 +79,7 @@ export enum Key {
 	right		 = 39,
 	down		 = 40,
 	a			 = 65,
+	c			 = 67,
 	slash		 = 191,
 };
 

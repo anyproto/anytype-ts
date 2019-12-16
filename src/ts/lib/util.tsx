@@ -46,6 +46,27 @@ class Util {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
+	clipboardCopy (data: any) {
+		const handler = (e: any) => {
+			e.preventDefault();
+			
+			if (data.text) {
+				e.clipboardData.setData('text/plain', data.text);
+			};
+			if (data.html) {
+				e.clipboardData.setData('text/html', data.html);				
+			};
+			if (data.anytype) {
+				e.clipboardData.setData('application/anytype', JSON.stringify(data.anytype));				
+			};
+			
+			document.removeEventListener('copy', handler, true);
+		};
+
+		document.addEventListener('copy', handler, true);
+		document.execCommand('copy');
+	};
+	
 	makeFileFromPath (path: string) {
 		let fn = path.split('/');
 		let stat = fs.statSync(path);

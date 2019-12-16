@@ -23,6 +23,7 @@ interface Props extends I.Block, RouteComponentProps<any> {
 	onKeyDown? (e: any, text?: string): void;
 	onKeyUp? (e: any, text?: string): void;
 	onMenuAdd? (id: string): void;
+	onPaste? (e: any): void;
 };
 
 const $ = require('jquery');

@@ -40,6 +40,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 	};
 
 	render () {
@@ -62,6 +63,7 @@ class EditorPage extends React.Component<Props, {}> {
 								onKeyDown={this.onKeyDown} 
 								onKeyUp={this.onKeyUp}
 								onMenuAdd={this.onMenuAdd}
+								onPaste={this.onPaste}
 							/>
 						)
 					})}
@@ -185,16 +187,37 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDownCommon (e: any) {
-		let k = e.which;
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset;
+		const k = e.which;
+		
+		console.log('focus', keyboard.focus);
 		
 		if (keyboard.focus) {
 			return;
 		};
 		
+		const ids = selection.get();
+		
 		if (e.ctrlKey || e.metaKey) {
 			if (k == Key.a) {
 				e.preventDefault();
 				this.selectAll();
+			};
+			
+			if (k == Key.c) {
+				e.preventDefault();
+				
+				const ids = selection.get();
+				if (ids.length) {
+					C.BlockCopy(rootId, ids, (message: any) => {
+						Util.clipboardCopy({
+							text: message.textSlot || 'textSlot',
+							html: message.htmlSlot || 'htmlSlot',
+							anytype: message.anytypeSlot || 'anytypeSlot',
+						});
+					});
+				};
 			};
 		};
 		
@@ -298,6 +321,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		selection.set(blocks[rootId].map((item: I.Block) => { return item.id; }));
 		window.getSelection().empty();
+		keyboard.setFocus(false);
 		focus.clear();
 		commonStore.menuClose('blockContext');
 	};
@@ -360,6 +384,20 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	onScroll (e: any) {
 		this.scrollTop = $(window).scrollTop();
+	};
+	
+	onPaste (e: any) {
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset;
+		const { focused, range } = focus;
+		
+		const data: any = {
+			text: e.clipboardData.getData('text/plain'),
+			html: e.clipboardData.getData('text/html'),
+			anytype: e.clipboardData.getData('application/anytype'),
+		};
+		
+		C.BlockPaste(rootId, focused, range, selection.get(), data);
 	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callback?: (blockId: string) => void) {
