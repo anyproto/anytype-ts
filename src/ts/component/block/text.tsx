@@ -56,7 +56,7 @@ class BlockText extends React.Component<Props, {}> {
 
 	render () {
 		const { blockStore, id, rootId, fields, content } = this.props;
-		const { text, marks, style, checked, number } = content;
+		const { text, marks, style, checked, number, color, bgColor } = content;
 		
 		let { lang } = fields;
 		let markers: any[] = [];
@@ -75,6 +75,13 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		if (style == I.TextStyle.Checkbox) {
 			markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
+		};
+		
+		if (color) {
+			cn.push('textColor textColor-' + color);
+		};
+		if (bgColor) {
+			cn.push('bgColor bgColor-' + bgColor);
 		};
 		
 		let editor = (
@@ -181,7 +188,7 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('.value');
 		
 		let { lang } = fields;
-		let { text, style, marks, color, bgColor } = content;
+		let { text, style, marks } = content;
 		
 		text = String(text || '');
 		lang = String(lang || 'js');
@@ -196,13 +203,6 @@ class BlockText extends React.Component<Props, {}> {
 			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
 		} else {
 			html = Mark.toHtml(text, marks);
-		};
-		
-		if (color) {
-			html = '<span ' + Mark.paramToAttr(I.MarkType.TextColor, color) + '>' + html + '</span>';
-		};
-		if (bgColor) {
-			html = '<span ' + Mark.paramToAttr(I.MarkType.BgColor, bgColor) + '>' + html + '</span>';
 		};
 		
 		value.html(html);

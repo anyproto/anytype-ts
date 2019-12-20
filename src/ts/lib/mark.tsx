@@ -229,21 +229,11 @@ class Mark {
 				break;
 				
 			case I.MarkType.TextColor:
-				attr = 'class="textColor';
-				if (param.match(/^#/)) {
-					attr += '" style="color: ' + param + '"';
-				} else {
-					attr += ' textColor-' + param + '"';
-				};
+				attr = 'class="textColor textColor-' + param + '"';
 				break;
 				
 			case I.MarkType.BgColor:
-				attr = 'class="bgColor';
-				if (param.match(/^#/)) {
-					attr += '" style="background-color: ' + param + '"';
-				} else {
-					attr += ' bgColor-' + param + '"';
-				};
+				attr = 'class="bgColor bgColor-' + param + '"';
 				break;
 		};
 		

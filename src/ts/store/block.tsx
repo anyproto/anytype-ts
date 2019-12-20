@@ -190,6 +190,7 @@ class BlockStore {
 					};
 				};
 				
+				item.content.bgColor = content.backgroundColor;
 				item.content.style = content.style;
 				item.content.marker = content.marker;
 				item.content.marks = marks;
