@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input } from 'ts/component';
-import { I, C, Util, dispatcher, focus } from 'ts/lib';
+import { I, C, Key, Util, dispatcher, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -17,10 +17,12 @@ const $ = require('jquery');
 class MenuBlockAction extends React.Component<Props, {}> {
 	
 	timeout: number = 0;
+	n: number = -1;
 	
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
@@ -38,23 +40,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		const { content } = block;
 		const { style } = content;
-		
-		const sections = [
-			{ 
-				children: [
-					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
-					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
-					{ id: 'move', icon: 'move', name: 'Move to' },
-					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-					{ id: 'remove', icon: 'remove', name: 'Delete' },
-				] 
-			},
-			{ 
-				children: [
-					{ id: 'comment', icon: 'comment', name: 'Comment' },
-				]
-			}
-		];
+		const sections = this.getSections();
 		
 		let color = (
 			<div className={[ 'inner' ].join(' ')}>A</div>
@@ -93,8 +79,109 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		);
 	};
 	
+	componentDidMount () {
+		this.rebind();
+	};
+	
 	componentWillUnmount () {
 		window.clearTimeout(this.timeout);
+		this.unbind();
+	};
+	
+	rebind () {
+		this.unbind();
+		
+		const win = $(window);
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
+	};
+	
+	getSections () {
+		return [
+			{ 
+				children: [
+					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
+					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
+					{ id: 'move', icon: 'move', name: 'Move to' },
+					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+					{ id: 'remove', icon: 'remove', name: 'Delete' },
+				] 
+			},
+			{ 
+				children: [
+					{ id: 'comment', icon: 'comment', name: 'Comment' },
+				]
+			}
+		];
+	};
+	
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		return items;
+	};
+	
+	onKeyDown (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+		const k = e.which;
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = this.getItems();
+		const l = items.length;
+		const item = items[this.n];
+		
+		const setActive = () => {
+			const item = items[this.n];
+			
+			node.find('.item.active').removeClass('active');
+			node.find('#block-action-item-' + item.id).addClass('active');
+		};
+		
+		switch (k) {
+			case Key.up:
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
+				};
+				setActive();
+				break;
+				
+			case Key.down:
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
+				};
+				setActive();
+				break;
+				
+			case Key.right:
+				if (item) {
+					this.onOver(e, item);
+				};
+				break;
+				
+			case Key.enter:
+			case Key.space:
+				if (item) {
+					item.arrow ? this.onOver(e, item) : this.onClick(e, item);					
+				};
+				break;
+				
+			case Key.escape:
+				commonStore.menuClose(this.props.id);
+				break;
+		};
 	};
 	
 	onOver (e: any, item: any) {
@@ -104,11 +191,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		const length = String(block.content.text || '').length;
+		const items = this.getItems();
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#block-action-item-' + item.id);
 		const offsetX = node.outerWidth();
 		const offsetY = node.offset().top - el.offset().top;
+		
+		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		
 		node.find('.item.active').removeClass('active');
 		el.addClass('active');
@@ -141,6 +231,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						});
 						commonStore.menuClose(this.props.id);
 					};
+					menuParam.data.rebind = this.rebind;
 					
 					commonStore.menuOpen('blockStyle', menuParam);
 					break;
@@ -210,7 +301,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				break;
 				
 			case 'remove':
-				C.BlockUnlink(rootId, [ { blockId: blockId } ]);
+				C.BlockUnlink(rootId, [ blockId ]);
 				break;
 		};
 	};

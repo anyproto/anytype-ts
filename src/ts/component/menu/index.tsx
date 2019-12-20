@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util } from 'ts/lib';
+import { I, Key, Util } from 'ts/lib';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -36,6 +36,12 @@ const BORDER = 12;
 class Menu extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	
+	constructor (props: any) {
+		super(props);
+		
+		this.position = this.position.bind(this);
+	};
 
 	render () {
 		const { id, param } = this.props;
@@ -96,7 +102,8 @@ class Menu extends React.Component<Props, {}> {
 		this.animate();
 		this.unbind();
 		
-		$(window).on('resize.menu', () => { this.position(); });
+		const win = $(window);
+		win.on('resize.menu', () => { this.position(); });
 	};
 	
 	componentWillUnmount () {

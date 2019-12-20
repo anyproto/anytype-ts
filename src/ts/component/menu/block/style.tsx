@@ -1,12 +1,20 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, dispatcher } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, Key, dispatcher } from 'ts/lib';
+import { observer, inject } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {
+	commonStore?: any;
+};
 
+const $ = require('jquery');
+
+@inject('commonStore')
+@observer
 class MenuBlockStyle extends React.Component<Props, {}> {
+	
+	n: number = -1;
 	
 	constructor (props: any) {
 		super(props);
@@ -15,7 +23,42 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const actions = [
+		const items = this.getItems();
+		
+		return (
+			<div>
+				{items.map((item: any, i: number) => {
+					return <MenuItemVertical key={i} {...item} onClick={(e: any) => { this.onClick(e, item.id); }} />;
+				})}
+			</div>
+		);
+	};
+	
+	componentDidMount () {
+		this.unbind();
+		
+		const win = $(window);
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
+	
+	componentWillUnmount () {
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+
+		this.unbind();
+		
+		if (rebind) {
+			rebind();
+		};
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
+	};
+	
+	getItems () {
+		return [
 			{ id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
 			{ id: I.TextStyle.Header1, icon: 'header1', name: 'Heading 1' },
 			{ id: I.TextStyle.Header2, icon: 'header2', name: 'Heading 2' },
@@ -27,20 +70,60 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 			{ id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle' },
 			{ id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox' },
 		];
+	};
+	
+	onKeyDown (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
 		
-		return (
-			<React.Fragment>
-				{actions.map((action: any, i: number) => {
-					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action.id); }} />;
-				})}
-			</React.Fragment>
-		);
+		const { commonStore } = this.props;
+		const k = e.which;
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = this.getItems();
+		const l = items.length;
+		const item = items[this.n];
+		
+		const setActive = () => {
+			const item = items[this.n];
+			
+			node.find('.item.active').removeClass('active');
+			node.find('#item-' + item.id).addClass('active');
+		};
+		
+		switch (k) {
+			case Key.up:
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
+				};
+				setActive();
+				break;
+				
+			case Key.down:
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
+				};
+				setActive();
+				break;
+				
+			case Key.enter:
+			case Key.space:
+				if (item) {
+					this.onClick(e, item.id);
+				};
+				break;
+				
+			case Key.escape:
+				commonStore.menuClose(this.props.id);
+				break;
+		};
 	};
 	
 	onClick (e: any, id: I.TextStyle) {
-		const { param } = this.props;
+		const { commonStore, param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, content, onSelect } = data;
+		const { onSelect } = data;
 		
 		commonStore.menuClose(this.props.id);
 		onSelect(id);

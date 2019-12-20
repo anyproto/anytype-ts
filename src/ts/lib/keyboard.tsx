@@ -74,6 +74,7 @@ export enum Key {
 	tab			 = 9,
 	enter		 = 13,
 	escape		 = 27,
+	space		 = 32,
 	left		 = 37,
 	up			 = 38,
 	right		 = 39,
