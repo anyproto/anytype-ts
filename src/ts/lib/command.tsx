@@ -115,7 +115,7 @@ const BlockSetTextStyle = (contextId: string, blockId: string, style: I.TextStyl
 		blockId: blockId,
 		style: style,
 	};
-	dispatcher.call('BlockSetTextStyle', request, callBack);
+	dispatcher.call('blockSetTextStyle', request, callBack);
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {

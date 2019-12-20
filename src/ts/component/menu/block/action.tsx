@@ -168,6 +168,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+		
 		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;

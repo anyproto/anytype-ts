@@ -56,8 +56,8 @@ class BlockText extends React.Component<Props, {}> {
 
 	render () {
 		const { blockStore, id, rootId, fields, content } = this.props;
+		const { text, marks, style, checked, number } = content;
 		
-		let { text, marks, style, checked, number } = content;
 		let { lang } = fields;
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
@@ -181,7 +181,7 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('.value');
 		
 		let { lang } = fields;
-		let { text, style, marks } = content;
+		let { text, style, marks, color, bgColor } = content;
 		
 		text = String(text || '');
 		lang = String(lang || 'js');
@@ -196,6 +196,13 @@ class BlockText extends React.Component<Props, {}> {
 			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
 		} else {
 			html = Mark.toHtml(text, marks);
+		};
+		
+		if (color) {
+			html = '<span ' + Mark.paramToAttr(I.MarkType.TextColor, color) + '>' + html + '</span>';
+		};
+		if (bgColor) {
+			html = '<span ' + Mark.paramToAttr(I.MarkType.BgColor, bgColor) + '>' + html + '</span>';
 		};
 		
 		value.html(html);

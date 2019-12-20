@@ -42,6 +42,8 @@ export interface ContentText {
 	marks: Mark[];
 	number: number;
 	checked: boolean;
+	color: string;
+	bgColor: string;
 };
 
 export interface BlockText extends I.Block {
