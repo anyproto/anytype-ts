@@ -52,7 +52,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 			},
 		};
 
-		C.BlockCreate(block, root, root, '', I.BlockPosition.Bottom, (message: any) => {
+		C.BlockCreate(block, root, '', I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			/*
 			commonStore.popupOpen('editorPage', {

@@ -62,11 +62,10 @@ const BlockClose = (blockId: string, callBack?: (message: any) => void) => {
 	dispatcher.call('blockClose', request, callBack);
 };
 
-const BlockCreate = (block: any, contextId: string, parentId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		block: blockStore.prepareBlockToProto(block),
 		contextId: contextId,
-		parentId: parentId,
 		targetId: targetId,
 		position: position,
 	};

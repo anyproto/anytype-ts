@@ -408,7 +408,7 @@ class EditorPage extends React.Component<Props, {}> {
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callback?: (blockId: string) => void) {
 		const { blockStore, rootId } = this.props;
 		
-		C.BlockCreate(param, rootId, focused.parentId || rootId, focused.id, position, (message: any) => {
+		C.BlockCreate(param, rootId, focused.id, position, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 			
