@@ -115,6 +115,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 				break;
 				
 			case Key.down:
+			case Key.right:
 				this.n++;
 				if (this.n > l - 1) {
 					this.n = 0;

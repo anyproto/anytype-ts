@@ -65,24 +65,11 @@ class BlockText extends React.Component<Props, {}> {
 		let ct: string[] = [];
 		let additional = null;
 		
-		if (style == I.TextStyle.Bulleted) {
-			markers.push({ type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} });
-		};
-		if (style == I.TextStyle.Numbered) {
-			markers.push({ type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} });
-		};
-		if (style == I.TextStyle.Toggle) {
-			markers.push({ type: 0, className: 'toggle', active: false, onClick: this.onToggle });
-		};
-		if (style == I.TextStyle.Checkbox) {
-			markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
-		};
-		
 		if (color) {
 			ct.push('textColor textColor-' + color);
 		};
 		if (bgColor) {
-			//ct.push('bgColor bgColor-' + bgColor);
+			ct.push('bgColor bgColor-' + bgColor);
 		};
 		
 		let editor = (
@@ -97,12 +84,6 @@ class BlockText extends React.Component<Props, {}> {
 				onSelect={this.onSelect}
 				onPaste={this.onPaste}
 			/>
-		);
-		
-		let Marker = (item: any) => (
-			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				<span className={ct.join(' ')}>{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}</span>
-			</div>
 		);
 		
 		switch (style) {
@@ -144,7 +125,31 @@ class BlockText extends React.Component<Props, {}> {
 					<Select initial="Language" id="lang" value={lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
 				);
 				break;
+				
+			case I.TextStyle.Bulleted:
+				markers.push({ type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} });
+				break;
+				
+			case I.TextStyle.Numbered:
+				markers.push({ type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} });
+				break;
+				
+			case I.TextStyle.Toggle:
+				ct = [];
+				markers.push({ type: 0, className: 'toggle', active: false, onClick: this.onToggle });
+				break;
+				
+			case I.TextStyle.Checkbox:
+				ct = [];
+				markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
+				break;
 		};
+		
+		let Marker = (item: any) => (
+			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
+				<span className={ct.join(' ')}>{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}</span>
+			</div>
+		);
 		
 		return (
 			<div className={cn.join(' ')}>
@@ -189,7 +194,7 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('.value');
 		
 		let { lang } = fields;
-		let { text, style, marks, color, bgColor } = content;
+		let { text, style, marks, color, bgColor, number } = content;
 		
 		text = String(text || '');
 		lang = String(lang || 'js');

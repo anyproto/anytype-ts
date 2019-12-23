@@ -21,21 +21,22 @@
 		a { cursor: pointer; }
 		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; border-radius: 2px; }
 		
-		.bgColor { padding: 0px 4px; border-radius: 2px; }
-		
 		.markers { white-space: nowrap; }
 		.markers {
-			.marker { 
-				width: 24px; height: 22px; line-height: 22px; text-align: center; margin-right: 4px; display: inline-block;
-				vertical-align: top; position: relative; 
-			}
+			.marker { text-align: center; display: inline-block; vertical-align: top; position: relative; }
 			.marker {
-				.icon { position: absolute; left: 50%; top: 50%; display: block; }
+				.icon { display: inline-block; }
 			}
 			
-			.marker.number { width: auto; min-width: 24px; height: auto; vertical-align: baseline; line-height: inherit; }
+			.marker.number { vertical-align: baseline; line-height: 24px; }
+			.marker.number {
+				span { min-width: 28px; line-height: 1; display: inline-block; text-align: center; padding-right: 4px; }
+			}
+			
 			.marker.bullet {
-				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; margin: -3px 0px 0px -3px; }
+				span { min-width: 28px; line-height: 1; display: inline-block; text-align: center; padding-right: 4px; }
+				
+				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; }
 				
 				.textColor-grey .icon { background-color: #aca996 !important; }
 				.textColor-yellow .icon { background-color: #ecd91b !important; }
@@ -49,12 +50,15 @@
 				.textColor-lime .icon { background-color: #5dd400 !important; }
 			}
 			
-			.marker.toggle { cursor: pointer; }
+			.marker.check, .marker.toggle { width: 24px; height: 22px; line-height: 22px; margin-right: 4px; cursor: pointer; }
+			.marker.check, .marker.toggle {
+				.icon { position: absolute; display: block; left: 50%; top: 50%; }
+			}
+			
 			.marker.toggle {
 				.icon { width: 10px; height: 10px; background-size: 6px 10px; background-image: url('~img/icon/marker/toggle.svg'); margin: -5px 0px 0px -5px; }
 			}
 			
-			.marker.check { cursor: pointer; }
 			.marker.check {
 				.icon {
 					width: 18px; height: 18px; background-image: url('~img/icon/marker/check0.svg'); margin: -9px 0px 0px -9px;

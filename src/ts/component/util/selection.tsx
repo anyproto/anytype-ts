@@ -246,11 +246,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 		});
 		
 		const selected = node.find('.selectable.isSelected');
-		if (!selected.length) {
+		const length = selected.length;
+		if (!length) {
 			return;
 		};
 		
-		if ((selected.length == 1) && !e.shiftKey && !(e.ctrlKey || e.metaKey)) {
+		if ((length <= 1) && !e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 			const value = selected.find('.value');
 			const el = value.get(0) as Element;
 			
