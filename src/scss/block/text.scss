@@ -36,6 +36,17 @@
 			.marker.number { width: auto; min-width: 24px; height: auto; vertical-align: baseline; line-height: inherit; }
 			.marker.bullet {
 				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; margin: -3px 0px 0px -3px; }
+				
+				.textColor-grey .icon { background-color: #aca996 !important; }
+				.textColor-yellow .icon { background-color: #ecd91b !important; }
+				.textColor-orange .icon { background-color: #ffb522 !important; }
+				.textColor-red .icon { background-color: #f55522 !important; }
+				.textColor-pink .icon { background-color: #e51ca0 !important; }
+				.textColor-purple .icon { background-color: #ab50cc !important; }
+				.textColor-blue .icon { background-color: #3e58eb !important; }
+				.textColor-ice .icon { background-color: #2aa7ee !important; }
+				.textColor-teal .icon { background-color: #0fc8ba !important; }
+				.textColor-lime .icon { background-color: #5dd400 !important; }
 			}
 			
 			.marker.toggle { cursor: pointer; }

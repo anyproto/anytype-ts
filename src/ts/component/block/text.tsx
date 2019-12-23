@@ -62,6 +62,7 @@ class BlockText extends React.Component<Props, {}> {
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
 		let cn = [ 'flex' ];
+		let ct: string[] = [];
 		let additional = null;
 		
 		if (style == I.TextStyle.Bulleted) {
@@ -78,10 +79,10 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if (color) {
-			cn.push('textColor textColor-' + color);
+			ct.push('textColor textColor-' + color);
 		};
 		if (bgColor) {
-			cn.push('bgColor bgColor-' + bgColor);
+			//ct.push('bgColor bgColor-' + bgColor);
 		};
 		
 		let editor = (
@@ -100,7 +101,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let Marker = (item: any) => (
 			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}
+				<span className={ct.join(' ')}>{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}</span>
 			</div>
 		);
 		
@@ -188,7 +189,7 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('.value');
 		
 		let { lang } = fields;
-		let { text, style, marks } = content;
+		let { text, style, marks, color, bgColor } = content;
 		
 		text = String(text || '');
 		lang = String(lang || 'js');
@@ -203,6 +204,13 @@ class BlockText extends React.Component<Props, {}> {
 			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
 		} else {
 			html = Mark.toHtml(text, marks);
+		};
+		
+		if (color) {
+			html = '<span ' + Mark.paramToAttr(I.MarkType.TextColor, color) + '>' + html + '</span>';
+		};
+		if (bgColor) {
+			html = '<span ' + Mark.paramToAttr(I.MarkType.BgColor, bgColor) + '>' + html + '</span>';
 		};
 		
 		value.html(html);

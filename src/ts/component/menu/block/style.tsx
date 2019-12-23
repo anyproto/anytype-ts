@@ -6,11 +6,13 @@ import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
 	commonStore?: any;
+	blockStore?: any;
 };
 
 const $ = require('jquery');
 
 @inject('commonStore')
+@inject('blockStore')
 @observer
 class MenuBlockStyle extends React.Component<Props, {}> {
 	
@@ -23,12 +25,18 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { blockStore, param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
+		const { content } = block;
 		const items = this.getItems();
 		
 		return (
 			<div>
 				{items.map((item: any, i: number) => {
-					return <MenuItemVertical key={i} {...item} onClick={(e: any) => { this.onClick(e, item.id); }} />;
+					return <MenuItemVertical key={i} {...item} className={(item.id == content.style ? 'active' : '')} onClick={(e: any) => { this.onClick(e, item.id); }} />;
 				})}
 			</div>
 		);
@@ -113,7 +121,8 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 					this.onClick(e, item.id);
 				};
 				break;
-				
+			
+			case Key.left:	
 			case Key.escape:
 				commonStore.menuClose(this.props.id);
 				break;

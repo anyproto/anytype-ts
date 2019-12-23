@@ -217,7 +217,11 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			offsetY: offsetY - 40,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			data: {},
+			data: {
+				blockId: blockId,
+				rootId: rootId,
+				rebind: this.rebind,
+			},
 		};
 		
 		window.clearTimeout(this.timeout);
@@ -231,7 +235,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						});
 						commonStore.menuClose(this.props.id);
 					};
-					menuParam.data.rebind = this.rebind;
 					
 					commonStore.menuOpen('blockStyle', menuParam);
 					break;
