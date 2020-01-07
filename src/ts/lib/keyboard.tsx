@@ -67,6 +67,14 @@ class Keyboard {
 		this.back = !v;
 	};
 	
+	isArrow (k: number): boolean {
+		return [ Key.up, Key.down, Key.left, Key.right ].indexOf(k) >= 0;
+	};
+	
+	isSpecial (k: number): boolean {
+		return this.isArrow(k) || [ Key.backspace, Key.tab, Key.enter ].indexOf(k) >= 0;
+	};
+	
 };
 
 export enum Key {

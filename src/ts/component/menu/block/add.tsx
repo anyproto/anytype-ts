@@ -14,7 +14,9 @@ const $ = require('jquery');
 @observer
 class MenuBlockAdd extends React.Component<Props, {}> {
 	
+	_isMounted = false;
 	n: number = -1;
+	t: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -46,6 +48,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+		
 		const { commonStore } = this.props;
 		
 		commonStore.filterSet('');
@@ -66,6 +70,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		this._isMounted = false;
+		
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { rebind } = data;
@@ -89,7 +95,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		//e.preventDefault();
+		if (!this._isMounted) {
+			return;
+		};
+		
 		e.stopPropagation();
 		
 		const { commonStore, param } = this.props;
@@ -100,15 +109,28 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const l = items.length;
 		const item = items[this.n];
 		
+		window.clearTimeout(this.t);
+		
 		const setActive = () => {
 			const item = items[this.n];
 			
 			node.find('.item.active').removeClass('active');
 			node.find('#block-add-item-' + item.id).addClass('active');
+			
+			this.t = window.setTimeout(() => {
+				if (item) {
+					this.onOver(e, item);
+				};
+			}, 500);
 		};
 		
 		switch (k) {
 			case Key.up:
+				if (this.n == -1) {
+					commonStore.menuClose(this.props.id);
+					break;
+				};
+			
 				this.n--;
 				if (this.n < 0) {
 					this.n = l - 1;
@@ -132,6 +154,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				
 			case Key.enter:
 			case Key.space:
+				e.preventDefault();
+				
 				if (item) {
 					item.children.length ? this.onOver(e, item) : this.onClick(e, item);					
 				};

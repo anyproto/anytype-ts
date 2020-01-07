@@ -225,7 +225,11 @@ class BlockText extends React.Component<Props, {}> {
 		});
 	};
 	
-	getValue () {
+	getValue (): string {
+		if (!this._isMounted) {
+			return '';
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		
@@ -238,8 +242,6 @@ class BlockText extends React.Component<Props, {}> {
 		const { commonStore, blockStore, onKeyDown, id, parentId, rootId } = this.props;
 		const range = this.getRange();
 		const k = e.which;
-		const node = $(ReactDOM.findDOMNode(this));
-		const placeHolder = node.find('.placeHolder');
 		
 		commonStore.menuClose('blockContext');
 		
@@ -264,6 +266,7 @@ class BlockText extends React.Component<Props, {}> {
 		if ((k == Key.slash) && !this.value) {
 			e.preventDefault();
 			this.props.onMenuAdd(id);
+			return;
 		};
 		
 		if (k == Key.enter) {
@@ -271,7 +274,9 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		focus.set(id, range);
-		placeHolder.hide();
+		if (!keyboard.isSpecial(k)) {
+			this.placeHolderHide();
+		};
 		onKeyDown(e, this.value);
 	};
 	
@@ -329,11 +334,9 @@ class BlockText extends React.Component<Props, {}> {
 	onBlur (e: any) {
 		const { commonStore, onBlur, content } = this.props;
 		const { marks } = content;
-		const node = $(ReactDOM.findDOMNode(this));
-		const placeHolder = node.find('.placeHolder');
 		
 		this.blockUpdateText(marks);
-		placeHolder.hide();
+		this.placeHolderHide();
 		keyboard.setFocus(false);
 		onBlur(e);
 	};
@@ -399,15 +402,26 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	placeHolderCheck () {
+		const value = this.getValue();
+		value.length ? this.placeHolderHide() : this.placeHolderShow();			
+	};
+	
+	placeHolderHide () {
 		if (!this._isMounted) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('.value').text();
-		const placeHolder = node.find('.placeHolder');
+		node.find('.placeHolder').hide();
+	};
+	
+	placeHolderShow () {
+		if (!this._isMounted) {
+			return;
+		};
 		
-		value.length ? placeHolder.hide() : placeHolder.show();
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder').show();
 	};
 	
 	getRange (): I.TextRange {
