@@ -59,7 +59,10 @@ class CommonStore {
 		this.popupList.push({ id: id, param: param });
 	};
 	
-	popupIsOpen (id: string): boolean {
+	popupIsOpen (id?: string): boolean {
+		if (!id) {
+			return this.popupList.length > 0;
+		};
 		return this.popupList.find((item: I.Popup) => { return item.id == id; }) ? true : false;
 	};
 	
@@ -113,7 +116,10 @@ class CommonStore {
 		});
 	};
 	
-	menuIsOpen (id: string): boolean {
+	menuIsOpen (id?: string): boolean {
+		if (!id) {
+			return this.menuList.length > 0;
+		};
 		return this.menuList.find((item: I.Menu) => { return item.id == id; }) ? true : false;
 	};
 	

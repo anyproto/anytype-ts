@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, Key, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -14,20 +14,138 @@ const $ = require('jquery');
 @observer
 class MenuBlockAdd extends React.Component<Props, {}> {
 	
+	n: number = -1;
+	
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onOver = this.onOver.bind(this);
-		this.onSelect = this.onSelect.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
-		const { commonStore, param } = this.props;
-		const { filter } = commonStore; 
-		const { data } = param;
-		const { id } = data;
+		const options = this.getItems();
 		
-		let options = [
+		const Item = (item: any) => (
+			<div id={'block-add-item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				{item.icon ? <Icon className={item.icon} /> : ''}
+				<div className="name">{item.name}</div>
+				{item.children.length ? <Icon className="arrow" /> : ''}
+			</div>
+		);
+		
+		return (
+			<div className="items">
+				{!options.length ? <div className="empty">No items match filter</div> : ''}
+				{options.map((item: any, i: number) => (
+					<Item key={i} {...item} />
+				))}
+			</div>
+		);
+	};
+	
+	componentDidMount () {
+		const { commonStore } = this.props;
+		
+		commonStore.filterSet('');
+		this.rebind();
+	};
+	
+	componentDidUpdate () {
+		const { commonStore } = this.props;
+		const { filter } = commonStore; 
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (filter) {
+			$('#menuBlockAdd').addClass('withFilter');
+			commonStore.menuClose('blockAddSub');
+		} else {
+			$('#menuBlockAdd').removeClass('withFilter');
+		};
+	};
+	
+	componentWillUnmount () {
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+
+		this.unbind();
+		
+		if (rebind) {
+			rebind();
+		};
+	};
+	
+	rebind () {
+		this.unbind();
+		
+		const win = $(window);
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
+	};
+	
+	onKeyDown (e: any) {
+		//e.preventDefault();
+		e.stopPropagation();
+		
+		const { commonStore, param } = this.props;
+		const { data } = param;
+		const k = e.which;
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = this.getItems();
+		const l = items.length;
+		const item = items[this.n];
+		
+		const setActive = () => {
+			const item = items[this.n];
+			
+			node.find('.item.active').removeClass('active');
+			node.find('#block-add-item-' + item.id).addClass('active');
+		};
+		
+		switch (k) {
+			case Key.up:
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
+				};
+				setActive();
+				break;
+				
+			case Key.down:
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
+				};
+				setActive();
+				break;
+				
+			case Key.right:
+				if (item) {
+					this.onOver(e, item);
+				};
+				break;
+				
+			case Key.enter:
+			case Key.space:
+				if (item) {
+					item.children.length ? this.onOver(e, item) : this.onClick(e, item);					
+				};
+				break;
+			
+			case Key.left:	
+			case Key.escape:
+				commonStore.menuClose(this.props.id);
+				break;
+		};
+	};
+	
+	getSections () {
+		return [
 			{ 
 				id: 'text', icon: 'text', name: 'Text', color: 'yellow', children: [
 					{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
@@ -70,6 +188,16 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				] as any [],
 			},
 		];
+	};
+	
+	getItems () {
+		const { commonStore, param } = this.props;
+		const { filter } = commonStore; 
+		const { data } = param;
+		const { id } = data;
+		const sections = this.getSections();
+		
+		let options = sections;
 		
 		if (id) {
 			const item = options.find((it: any) => { return it.id == id; });
@@ -100,41 +228,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			options = list;
 		};
 		
-		const Item = (item: any) => (
-			<div id={'block-add-item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onSelect(e, item); }}>
-				{item.icon ? <Icon className={item.icon} /> : ''}
-				<div className="name">{item.name}</div>
-				{item.children.length ? <Icon className="arrow" /> : ''}
-			</div>
-		);
-		
-		return (
-			<div className="items">
-				{!options.length ? <div className="empty">No items match filter</div> : ''}
-				{options.map((item: any, i: number) => (
-					<Item key={i} {...item} />
-				))}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { commonStore } = this.props;
-		
-		commonStore.filterSet('');
-	};
-	
-	componentDidUpdate () {
-		const { commonStore } = this.props;
-		const { filter } = commonStore; 
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		if (filter) {
-			$('#menuBlockAdd').addClass('withFilter');
-			commonStore.menuClose('blockAddSub');
-		} else {
-			$('#menuBlockAdd').removeClass('withFilter');
-		};
+		return options;
 	};
 	
 	onOver (e: any, item: any) {
@@ -162,12 +256,13 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				id: item.id,
-				onSelect: onSelect
+				onSelect: onSelect,
+				rebind: this.rebind,
 			}
 		});
 	};
 	
-	onSelect (e: any, item: any) {
+	onClick (e: any, item: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;

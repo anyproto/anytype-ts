@@ -253,6 +253,10 @@ class EditorPage extends React.Component<Props, {}> {
 			((range.from == 0) && (k == Key.up)) ||
 			((range.to == l) && (k == Key.down))
 		) {
+			if (commonStore.menuIsOpen()) {
+				return;
+			};
+			
 			e.preventDefault();
 			
 			const dir = (k == Key.up) ? -1 : 1;
@@ -286,6 +290,10 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		if (k == Key.enter) {
+			if (commonStore.menuIsOpen()) {
+				return;
+			};
+			
 			e.preventDefault();
 			
 			if ((range.from == l) && (range.to == l)) {

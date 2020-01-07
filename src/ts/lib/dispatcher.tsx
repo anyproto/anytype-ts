@@ -158,8 +158,6 @@ class Dispatcher {
 		};
 		
 		console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
-		console.profile('dispatcher.call.' + type);
-		
 		let t0 = performance.now();
 		
 		try {
@@ -180,7 +178,6 @@ class Dispatcher {
 				
 				let t1 = performance.now();
 				console.log('[Dispatcher.call] callback', type, message, Math.ceil(t1 - t0) + 'ms');
-				console.profileEnd('dispatcher.call.' + type);
 			});			
 		} catch (e) {
 			console.error(e);

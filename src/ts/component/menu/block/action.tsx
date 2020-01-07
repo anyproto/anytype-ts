@@ -134,7 +134,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		const { commonStore, param } = this.props;
 		const { data } = param;
-		const { rebind } = data;
 		const k = e.which;
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
