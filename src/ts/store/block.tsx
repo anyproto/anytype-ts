@@ -1,5 +1,5 @@
 import { observable, action, computed, set, toJS } from 'mobx';
-import { I, Util, StructDecode, StructEncode  } from 'ts/lib';
+import { I, Util, StructDecode, StructEncode } from 'ts/lib';
 import arrayMove from 'array-move';
 
 const com = require('proto/commands.js');

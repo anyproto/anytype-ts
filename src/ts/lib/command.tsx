@@ -1,4 +1,4 @@
-import { I, Mark, dispatcher } from 'ts/lib';
+import { I, Mark, dispatcher, StructEncode } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 const ImageGetBlob = (id: string, size: I.ImageSize, callBack?: (message: any) => void) => {
@@ -154,6 +154,15 @@ const BlockSetTextBackgroundColor = (contextId: string, blockId: string, color: 
 	dispatcher.call('blockSetTextBackgroundColor', request, callBack);
 };
 
+const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockId: blockId,
+		fields: (new StructEncode()).encodeStruct(fields || {}),
+	};
+	dispatcher.call('blockSetFields', request, callBack);
+};
+
 const BlockListMove = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -247,4 +256,5 @@ export {
 	BlockSetTextChecked,
 	BlockSetTextColor,
 	BlockSetTextBackgroundColor,
+	BlockSetFields,
 };

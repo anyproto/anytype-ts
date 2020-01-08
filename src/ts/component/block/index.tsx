@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, Util } from 'ts/lib';
+import { I, C, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
@@ -275,7 +275,7 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
-		const { dataset, childBlocks } = this.props;
+		const { dataset, childBlocks, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
@@ -288,8 +288,13 @@ class Block extends React.Component<Props, {}> {
 		this.unbind();
 		node.removeClass('isResizing');
 		
-		prevBlock.fields.width = res.percent * res.sum;
-		currentBlock.fields.width = (1 - res.percent) * res.sum;
+		//prevBlock.fields.width = res.percent * res.sum;
+		//currentBlock.fields.width = (1 - res.percent) * res.sum;
+		
+		C.BlockSetFields(rootId, prevBlock.id, { width: res.percent * res.sum }, (message: any) => {
+		});
+		C.BlockSetFields(rootId, currentBlock.id, { width: (1 - res.percent) * res.sum }, (message: any) => {
+		});
 	};
 	
 	calcWidth (x: number, index: number) {

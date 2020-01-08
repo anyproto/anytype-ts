@@ -3,6 +3,9 @@ $bgColor: rgba(79,177,239,0.1);
 html.debug {
 	.blocks {
 		.block { border: 1px solid rgba(255,0,0,0.3); }
+		.block.blockLayout.c0 { border-color: rgba(0,255,0,0.3); }
+		.block.blockLayout.c1 { border-color: rgba(0,0,255,0.3); }
+		
 		.dropTarget { background: rgba(0,255,0,0.1); }
 	}
 } 
