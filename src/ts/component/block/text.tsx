@@ -37,7 +37,6 @@ class BlockText extends React.Component<Props, {}> {
 	range: any = null;
 	timeoutKeyUp: number = 0;
 	from: any = null;
-	value: string = '';
 	marks: I.Mark[] = [];
 
 	constructor (props: any) {
@@ -194,7 +193,7 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('.value');
 		
 		let { lang } = fields;
-		let { text, style, marks, color, bgColor, number } = content;
+		let { text, style, color, bgColor, number } = content;
 		
 		text = String(text || '');
 		lang = String(lang || 'js');
@@ -208,7 +207,7 @@ class BlockText extends React.Component<Props, {}> {
 			let res = low.highlight(lang, text);
 			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
 		} else {
-			html = Mark.toHtml(text, marks);
+			html = Mark.toHtml(text, this.marks);
 		};
 		
 		if (color) {
@@ -236,19 +235,22 @@ class BlockText extends React.Component<Props, {}> {
 		return String(value.text() || '');
 	};
 	
+	getMarksFromHtml (): I.Mark[] {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('.value');
+		
+		return Mark.fromHtml(value.html());
+	};
+	
 	onKeyDown (e: any) {
 		e.persist();
 		
 		const { commonStore, blockStore, onKeyDown, id, parentId, rootId } = this.props;
 		const range = this.getRange();
 		const k = e.which;
+		const value = this.getValue();
 		
 		commonStore.menuClose('blockContext');
-		
-		if (this.from == null) {
-			this.from = range.from;
-		};
-		this.value = this.getValue();
 		
 		if (k == Key.tab) {
 			e.preventDefault();
@@ -263,7 +265,7 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		};
 		
-		if ((k == Key.slash) && !this.value) {
+		if ((k == Key.slash) && !value) {
 			e.preventDefault();
 			this.props.onMenuAdd(id);
 			return;
@@ -277,7 +279,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
 		};
-		onKeyDown(e, this.value);
+		onKeyDown(e, value);
 	};
 	
 	onKeyUp (e: any) {
@@ -286,14 +288,9 @@ class BlockText extends React.Component<Props, {}> {
 		const { blockStore, onKeyUp, id, rootId, content } = this.props;
 		const range = this.getRange();
 		const k = e.which;
+		const value = this.getValue();
 		
-		let value = this.getValue();
-		let diff = value.length - this.value.length;
-		
-		if (diff != 0) {
-			this.marks = Mark.move(this.marks, this.from, diff);
-			this.from = null;
-		};
+		this.marks = this.getMarksFromHtml();
 		
 		this.placeHolderCheck();
 		onKeyUp(e, value);
@@ -305,11 +302,11 @@ class BlockText extends React.Component<Props, {}> {
 	blockUpdateText (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
 		
-		let { text, marks } = content;
+		let { text } = content;
 		let value = this.getValue();
 
 		text = String(text || '');
-		if ((value == text) && (JSON.stringify(marks) == JSON.stringify(newMarks))) {
+		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(newMarks))) {
 			return;
 		};
 		
@@ -333,9 +330,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onBlur (e: any) {
 		const { commonStore, onBlur, content } = this.props;
-		const { marks } = content;
 		
-		this.blockUpdateText(marks);
+		this.blockUpdateText(this.marks);
 		this.placeHolderHide();
 		keyboard.setFocus(false);
 		onBlur(e);
@@ -393,8 +389,9 @@ class BlockText extends React.Component<Props, {}> {
 					blockId: id, 
 					rootId: rootId,
 					onChange: (marks: I.Mark[]) => {
+						this.marks = Util.objectCopy(marks);
 						focus.set(id, { from: currentTo, to: currentTo });
-						this.blockUpdateMarks(marks);
+						this.blockUpdateMarks(this.marks);
 					},
 				},
 			});

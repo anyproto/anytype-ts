@@ -12,6 +12,8 @@ enum Overlap {
 	After		 = 8,		 // b ... a
 };
 
+const Tags = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'tc', 'hlc' ];
+
 class Mark {
 	
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
@@ -202,10 +204,9 @@ class Mark {
 		marks = this.checkRanges(text, marks || []);
 		
 		let r = text.split('');
-		let tag = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'span', 'span' ];
 		
 		for (let mark of marks) {
-			let t = tag[mark.type];
+			let t = Tags[mark.type];
 			let attr = this.paramToAttr(mark.type, mark.param);
 			
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
@@ -214,6 +215,42 @@ class Mark {
 			};
 		};
 		return r.join('');
+	};
+	
+	fromHtml (html: string): I.Mark[] {
+		const rs = new RegExp('<(' + Tags.join('|') + ')(:?([^>]+)>|>)', 'ig');
+		const rt = new RegExp('<(' + Tags.join('|') + ')', 'i');
+		const re = new RegExp('</(' + Tags.join('|') + ')>', 'ig');
+		const m = html.match(rs);
+		
+		let marks = [] as I.Mark[];
+		
+		if (!m) {
+			return marks;
+		};
+		
+		for (let s of m) {
+			let t = s.match(rt)[1];
+			let a = s.match(new RegExp('<' + t + '\\s([^>]+)>', 'i'));
+			
+			let end = '</' + t + '>';
+			let o1 = html.indexOf(s);
+			
+			html = html.replace(s, '');
+			
+			let o2 = html.indexOf(end);
+			html = html.replace(end, '');
+			
+			marks.push({
+				type: Tags.indexOf(t),
+				range: {
+					from: Number(o1) || 0,
+					to: Number(o2) || 0,
+				},
+				param: this.attrToParam(a ? a[1] : ''),
+			});
+		};
+		return marks;
 	};
 	
 	paramToAttr (type: I.MarkType, param: string): string {
@@ -238,6 +275,16 @@ class Mark {
 		};
 		
 		return attr;
+	};
+	
+	attrToParam (attr: string): string {
+		attr = String(attr || '').trim();
+		
+		let m = attr.match(/(:?href|class)="([^"]+)"/);
+		if (!m) {
+			return '';
+		};
+		return m[2].replace('textColor textColor-', '').replace('bgColor bgColor-', '');
 	};
 	
 	overlap (a: I.TextRange, b: I.TextRange): Overlap {
