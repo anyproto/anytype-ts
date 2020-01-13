@@ -360,7 +360,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { commonStore, id, rootId, content } = this.props;
+		const { commonStore, id, rootId, content, dataset } = this.props;
+		const { selection } = dataset;
 		const { from, to } = focus.range;
 		
 		focus.set(id, this.getRange());
@@ -370,6 +371,11 @@ class BlockText extends React.Component<Props, {}> {
 		const currentTo = range.to;
 		
 		if (currentTo && (currentFrom != currentTo) && (from != currentFrom || to != currentTo)) {
+			
+			let ids = [];
+			if (selection) {
+				ids = selection.get();
+			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
@@ -386,7 +392,8 @@ class BlockText extends React.Component<Props, {}> {
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Left,
 				data: {
-					blockId: id, 
+					blockId: id,
+					blockIds: ids,
 					rootId: rootId,
 					onChange: (marks: I.Mark[]) => {
 						this.marks = Util.objectCopy(marks);

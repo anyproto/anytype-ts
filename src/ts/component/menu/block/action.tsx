@@ -16,6 +16,7 @@ const $ = require('jquery');
 @observer
 class MenuBlockAction extends React.Component<Props, {}> {
 	
+	_isMounted: boolean = false;
 	timeout: number = 0;
 	n: number = -1;
 	
@@ -30,7 +31,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	render () {
 		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
+		const { blockId, blockIds, rootId } = data;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
 
@@ -91,15 +92,21 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
 		this.rebind();
 	};
 	
 	componentWillUnmount () {
+		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 		this.unbind();
 	};
 	
 	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		this.unbind();
 		
 		const win = $(window);
@@ -140,6 +147,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		e.preventDefault();
 		e.stopPropagation();
 		
@@ -195,9 +206,13 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onOver (e: any, item: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { blockStore, commonStore, param } = this.props;
 		const { data } = param;
-		const { onSelect, blockId, rootId } = data;
+		const { onSelect, blockId, blockIds, rootId } = data;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		
@@ -232,6 +247,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				blockId: blockId,
+				blockIds: blockIds,
 				rootId: rootId,
 				rebind: this.rebind,
 			},
@@ -242,7 +258,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			switch (item.id) {
 				case 'turn':
 					menuParam.data.onSelect = (style: I.TextStyle) => {
-						C.BlockSetTextStyle(rootId, blockId, style, (message: any) => {
+						C.BlockListSetTextStyle(rootId, blockIds, style, (message: any) => {
 							focus.set(message.blockId, { from: length, to: length });
 							focus.apply();
 						});
@@ -278,7 +294,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		if (item.arrow) {
+		if (!this._isMounted || item.arrow) {
 			return;
 		};
 		

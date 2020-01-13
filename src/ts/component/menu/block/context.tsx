@@ -84,7 +84,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
 		const { range } = focus;
-		const { blockId, rootId, onChange } = data;
+		const { blockId, blockIds, rootId, onChange } = data;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
 
@@ -127,7 +127,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							rootId: rootId,
 							blockId: blockId,
 							onSelect: (style: I.TextStyle) => {
-								C.BlockSetTextStyle(rootId, blockId, style);
+								C.BlockListSetTextStyle(rootId, blockIds, style);
 								commonStore.menuClose(this.props.id);
 							},
 						}
@@ -205,7 +205,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	onBlockSwitch (e: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
+		const { blockId, blockIds, rootId } = data;
 		
 		commonStore.menuOpen('blockStyle', { 
 			element: 'button-switch',
@@ -216,7 +216,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				onSelect: (style: I.TextStyle) => {
-					C.BlockSetTextStyle(rootId, blockId, style);
+					C.BlockListSetTextStyle(rootId, blockIds, style);
 					commonStore.menuClose(this.props.id);
 				},
 			}

@@ -13,7 +13,6 @@ interface Props {
 };
 
 const $ = require('jquery');
-const THRESHOLD = 10;
 const THROTTLE = 20;
 
 @inject('blockStore')
@@ -65,20 +64,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
 		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
 		
-		doc.on('selectstart.selection selectionchange.selection', (e: any) => {
-			if (this.get().length <= 0) {
-				return;
-			};
-			
-			/*
-			const sel = window.getSelection();
-			const range = sel.rangeCount >= 1 ? sel.getRangeAt(0) : null;
-			
-			if (range && !range.collapsed) {
-				window.getSelection().empty();
-			};
-			*/
-		});
+		doc.on('selectstart.selection selectionchange.selection', (e: any) => {});
 	};
 	
 	componentWillUnmount () {
@@ -153,9 +139,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const rect = this.getRect(e);
-		if ((rect.width < THRESHOLD) || (rect.height < THRESHOLD)) {
-			return;
-		};
 		
 		this.checkNodes(e);
 		
@@ -252,23 +235,25 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if ((length <= 1) && !e.shiftKey && !(e.ctrlKey || e.metaKey)) {
+		if ((length <= 1) && !(e.ctrlKey || e.metaKey)) {
 			const value = selected.find('.value');
-			const el = value.get(0) as Element;
-			
 			if (!value.length) {
 				return;
 			};
+
+			const el = value.get(0) as Element;			
+			const range = getRange(el); 
+			
+			selected.removeClass('isSelected');
 			
 			if (!this.range) {
 				this.focused = selected.data('id');
-				this.range = getRange(el);				
+				this.range = range;
 			};
-
-			if (this.range) {
-				this.clear();
+			
+			if (this.range && !range) {
 				focus.set(this.focused, { from: this.range.start, to: this.range.end });
-				focus.apply();				
+				focus.apply();
 			};
 		} else {
 			if (focused && range.from && range.to) {

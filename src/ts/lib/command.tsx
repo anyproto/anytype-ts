@@ -110,13 +110,13 @@ const BlockSetIconName = (contextId: string, blockId: string, name: string, call
 	dispatcher.call('blockSetIconName', request, callBack);
 };
 
-const BlockSetTextStyle = (contextId: string, blockId: string, style: I.TextStyle, callBack?: (message: any) => void) => {
+const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
-		blockId: blockId,
+		blockIds: blockIds,
 		style: style,
 	};
-	dispatcher.call('blockSetTextStyle', request, callBack);
+	dispatcher.call('blockListSetTextStyle', request, callBack);
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
@@ -266,12 +266,12 @@ export {
 	BlockCopy,
 	BlockPaste,
 	
-	BlockSetTextStyle,
 	BlockSetTextText,
 	BlockSetTextChecked,
 	BlockSetTextColor,
 	BlockSetTextBackgroundColor,
 	BlockSetFields,
 	
+	BlockListSetTextStyle,
 	BlockListSetFields,
 };

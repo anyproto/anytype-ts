@@ -208,8 +208,13 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
+		let ids = [];
 		if (selection) {
-			selection.set([ id ]);
+			ids = selection.get();
+			if (!ids.length) {
+				ids = [ id ];
+				selection.set(ids);
+			};
 		};
 		
 		commonStore.menuOpen('blockAction', { 
@@ -220,7 +225,8 @@ class Block extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				blockId: id, 
+				blockId: id,
+				blockIds: ids,
 				rootId: rootId,
 			},
 		});
