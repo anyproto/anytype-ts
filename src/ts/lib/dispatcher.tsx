@@ -158,7 +158,7 @@ class Dispatcher {
 			return;
 		};
 		
-		//console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
+		console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
 		let t0 = performance.now();
 		
 		try {

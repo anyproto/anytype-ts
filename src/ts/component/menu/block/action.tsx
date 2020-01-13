@@ -39,11 +39,11 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const { style } = content;
+		const { style, color, bgColor } = content;
 		const sections = this.getSections();
 		
-		let color = (
-			<div className={[ 'inner' ].join(' ')}>A</div>
+		const Inner = (
+			<div className="inner">A</div>
 		);
 		
 		const Section = (item: any) => (
@@ -55,15 +55,26 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		);
 		
 		const Item = (item: any) => {
-			let icon = item.icon;
-			let inner = item.icon == 'color' ? color: null;
-			if (icon == 'turn') {
-				icon = Util.styleIcon(style);
+			let icon = [ item.icon ];
+			let inner = null;
+			
+			if (item.icon == 'turn') {
+				icon = [ Util.styleIcon(style) ];
+			};
+			
+			if (item.icon == 'color') {
+				inner = Inner;
+				if (color) {
+					icon.push('textColor textColor-' + color);
+				};
+				if (bgColor) {
+					icon.push('bgColor bgColor-' + bgColor);
+				};
 			};
 			
 			return (
 				<div id={'block-action-item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-					{item.icon ? <Icon className={icon} inner={inner} /> : ''}
+					{item.icon ? <Icon className={icon.join(' ')} inner={inner} /> : ''}
 					<div className="name">{item.name}</div>
 					{item.arrow ? <Icon className="arrow" /> : ''}
 				</div>
@@ -189,9 +200,12 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { onSelect, blockId, rootId } = data;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
-		const length = String(block.content.text || '').length;
-		const items = this.getItems();
 		
+		const { content } = block;
+		const { text, color, bgColor } = content;
+		
+		const length = String(text || '').length;
+		const items = this.getItems();
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#block-action-item-' + item.id);
 		const offsetX = node.outerWidth();
@@ -239,6 +253,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					break;
 					
 				case 'color':
+					menuParam.data.valueText = color;
+					menuParam.data.valueBg = bgColor;
+				
 					menuParam.data.onChangeText = (color: string) => {
 						C.BlockSetTextColor(rootId, blockId, color, (message: any) => {
 							focus.set(message.blockId, { from: length, to: length });

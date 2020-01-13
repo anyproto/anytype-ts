@@ -124,6 +124,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Left,
 						data: {
+							rootId: rootId,
+							blockId: blockId,
 							onSelect: (style: I.TextStyle) => {
 								C.BlockSetTextStyle(rootId, blockId, style);
 								commonStore.menuClose(this.props.id);
