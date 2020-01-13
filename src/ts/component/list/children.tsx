@@ -43,7 +43,7 @@ class ListChildren extends React.Component<Props, {}> {
 					return (
 						<React.Fragment key={item.id}>
 							{i > 0 ? <ColResize index={i} /> : ''}
-							<Block ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} index={i} />
+							<Block ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} cnt={childBlocks.length} index={i} />
 						</React.Fragment>
 					);
 				})}

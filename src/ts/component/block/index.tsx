@@ -20,6 +20,7 @@ interface Props extends I.Block, RouteComponentProps<any> {
 	rootId: string;
 	index: number;
 	dataset?: any;
+	cnt?: number;
 	onKeyDown? (e: any, text?: string): void;
 	onKeyUp? (e: any, text?: string): void;
 	onMenuAdd? (id: string): void;
@@ -54,14 +55,12 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, type, fields, content, index, restrictions } = this.props;
+		const { id, rootId, type, fields, content, index, restrictions, cnt } = this.props;
 		
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
 		let BlockComponent: any = (): any => null;
-		let css: any = {
-			width: (fields.width || 1) * 100 + '%'
-		};
+		let css: any = {};
 		
 		switch (type) {
 			case I.BlockType.Text:
@@ -74,6 +73,10 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Layout:
 				canSelect = false;
 				cn.push('blockLayout c' + content.style);
+				
+				if (content.style == I.LayoutStyle.Column) {
+					css.width = (fields.width || 1 / cnt) * 100 + '%';
+				};
 				break;
 				
 			case I.BlockType.Icon:
@@ -331,7 +334,7 @@ class Block extends React.Component<Props, {}> {
 		for (let i in childBlocks) {
 			const child = childBlocks[i];
 			
-			c += child.fields.width;
+			c += child.fields.width || 1 / childBlocks.length;
 			if ((p >= c - 0.1) && (p <= c + 0.1)) {
 				num = Number(i) + 1;
 				break;
