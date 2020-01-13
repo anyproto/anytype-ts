@@ -273,6 +273,9 @@ class Block extends React.Component<Props, {}> {
 		prevNode.css({ width: w1 * 100 + '%' });
 		currentNode.css({ width: w2 * 100 + '%' });
 		
+		node.find('.colResize.active').removeClass('active');
+		node.find('.colResize.c' + index).addClass('active');
+		
 		this.callChildMethod(prevBlock.id, 'resize', [ w1 ]);
 		this.callChildMethod(currentBlock.id, 'resize', [ w2 ]);
 	};
@@ -304,8 +307,8 @@ class Block extends React.Component<Props, {}> {
 		const dw = 1 / childBlocks.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		
-		x = Math.max(120, x);
-		x = Math.min(sum * (Constant.size.editorPage - 120), x);
+		x = Math.max(60, x);
+		x = Math.min(sum * Constant.size.editorPage - 35, x);
 		x = x / (sum * Constant.size.editorPage);
 		
 		return { sum: sum, percent: x };

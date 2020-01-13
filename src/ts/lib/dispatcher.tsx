@@ -89,13 +89,10 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetFields':
-					blocks = blockStore.blocks[contextId];
-					if (!blocks.length) {
-						break;
-					};
-					
 					block = blocks.find((it: any) => { return it.id == data.id; });
 					block.fields = StructDecode.decodeStruct(data.fields);
+					
+					set = true;
 					break;
 					
 				case 'blockSetText':
@@ -110,7 +107,6 @@ class Dispatcher {
 						id: block.id,
 						content: Util.objectCopy(block.content),
 					};
-					
 					
 					if (null !== data.text) {
 						param.content.text = data.text.value;
