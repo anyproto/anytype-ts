@@ -1,6 +1,8 @@
 import { I, Mark, dispatcher, StructEncode } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
+const Struct = new StructEncode();
+
 const ImageGetBlob = (id: string, size: I.ImageSize, callBack?: (message: any) => void) => {
 	const request = {
 		id: id,
@@ -158,7 +160,7 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 	const request = {
 		contextId: contextId,
 		blockId: blockId,
-		fields: (new StructEncode()).encodeStruct(fields || {}),
+		fields: Struct.encodeStruct(fields || {}),
 	};
 	dispatcher.call('blockSetFields', request, callBack);
 };
@@ -226,6 +228,19 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.call('blockPaste', request, callBack);	
 };
 
+const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
+	fields = fields.map((it: any) => {
+		it.fields = Struct.encodeStruct(it.fields || {});
+		return it;
+	});
+	
+	const request: any = {
+		contextId: contextId,
+		blockFields: fields,
+	};
+	dispatcher.call('blockListSetFields', request, callBack);	
+};
+
 export {
 	ImageGetBlob,
 	ConfigGet,
@@ -257,4 +272,6 @@ export {
 	BlockSetTextColor,
 	BlockSetTextBackgroundColor,
 	BlockSetFields,
+	
+	BlockListSetFields,
 };

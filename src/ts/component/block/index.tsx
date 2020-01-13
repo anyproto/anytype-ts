@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
 import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
 import { commonStore, blockStore } from 'ts/store';
@@ -17,6 +16,7 @@ import BlockBookmark from './bookmark';
 import BlockLink from './link';
 
 interface Props extends I.Block, RouteComponentProps<any> {
+	blockStore?: any;
 	rootId: string;
 	index: number;
 	dataset?: any;
@@ -288,13 +288,10 @@ class Block extends React.Component<Props, {}> {
 		this.unbind();
 		node.removeClass('isResizing');
 		
-		//prevBlock.fields.width = res.percent * res.sum;
-		//currentBlock.fields.width = (1 - res.percent) * res.sum;
-		
-		C.BlockSetFields(rootId, prevBlock.id, { width: res.percent * res.sum }, (message: any) => {
-		});
-		C.BlockSetFields(rootId, currentBlock.id, { width: (1 - res.percent) * res.sum }, (message: any) => {
-		});
+		C.BlockListSetFields(rootId, [
+			{ blockId: prevBlock.id, fields: { width: res.percent * res.sum } },
+			{ blockId: currentBlock.id, fields: { width: (1 - res.percent) * res.sum } },
+		]);
 	};
 	
 	calcWidth (x: number, index: number) {
@@ -316,8 +313,9 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { childBlocks, type, content } = this.props;
+		const { rootId, id, childBlocks, type, content } = this.props;
 		const { style } = content;
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!childBlocks.length || (type != I.BlockType.Layout) || (style != I.LayoutStyle.Row)) {
@@ -331,10 +329,9 @@ class Block extends React.Component<Props, {}> {
 		let num = 0;
 		
 		for (let i in childBlocks) {
-			let child = childBlocks[i];
+			const child = childBlocks[i];
 			
 			c += child.fields.width;
-			
 			if ((p >= c - 0.1) && (p <= c + 0.1)) {
 				num = Number(i) + 1;
 				break;

@@ -1,5 +1,5 @@
 import { authStore, blockStore } from 'ts/store';
-import { Util, I } from 'ts/lib';
+import { Util, I, StructDecode } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
@@ -86,6 +86,16 @@ class Dispatcher {
 					param.content.name = data.name.value;
 					
 					blockStore.blockUpdate(contextId, param);
+					break;
+					
+				case 'blockSetFields':
+					blocks = blockStore.blocks[contextId];
+					if (!blocks.length) {
+						break;
+					};
+					
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					block.fields = StructDecode.decodeStruct(data.fields);
 					break;
 					
 				case 'blockSetText':
