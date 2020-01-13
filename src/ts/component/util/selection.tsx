@@ -137,6 +137,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.y = e.pageY;
 		this.moved = false;
 		this.lastIds = [];
+		this.focused = focus.focused;
 		
 		this.unbindMouse();
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
@@ -173,29 +174,26 @@ class SelectionProvider extends React.Component<Props, {}> {
 	onMouseUp (e: any) {
 		const { focused, range } = focus;
 		
-		this.hide();
-		this.lastIds = [];
-		this.focused = '';
-		this.range = null;
-		this.unbindMouse();
-		
 		if (!this.moved) {
 			if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
 				this.clear();
 			} else {
 				this.checkNodes(e);
 				
+				let focus = $('.selectable.c' + $.escapeSelector(this.focused));
 				let target = $(e.target.closest('.selectable'));
-				if (target.length && (target.data('id') != focused)) {
-					if (e.shiftKey) {
-						target.addClass('isSelected');
-					} else 
-					if (e.ctrlKey || e.metaKey) {
-						target.hasClass('isSelected') ? target.removeClass('isSelected') : target.addClass('isSelected');
-					};
+				
+				if (target.length && e.shiftKey && (target.data('id') != this.focused)) {
+					focus.addClass('isSelected');
+					target.addClass('isSelected');
 				};
 			};
 		};
+		
+		this.hide();
+		this.lastIds = [];
+		this.focused = '';
+		this.range = null;
 	};
 	
 	getRect (e: any) {
@@ -277,14 +275,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	hide () {
 		const node = $(ReactDOM.findDOMNode(this));
-		
 		$('#rect').hide();
+		
 		this.unbindMouse();
 	};
 	
 	clear () {
 		const node = $(ReactDOM.findDOMNode(this));
-		
 		node.find('.selectable.isSelected').removeClass('isSelected');
 	};
 	
