@@ -70,12 +70,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 				return;
 			};
 			
+			/*
 			const sel = window.getSelection();
 			const range = sel.rangeCount >= 1 ? sel.getRangeAt(0) : null;
 			
 			if (range && !range.collapsed) {
 				window.getSelection().empty();
 			};
+			*/
 		});
 	};
 	
@@ -162,10 +164,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const selected = node.find('.selectable.isSelected');
 		
 		el.css({ 
-			transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
-			width: rect.width, 
-			height: rect.height,
-			opacity: selected.length ? 1 : 0
+			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
+			width: rect.width - 10, 
+			height: rect.height - 10,
+			opacity: 1,
+			display: selected.length ? 'block' : 'none',
 		});
 		
 		this.moved = true;
@@ -204,8 +207,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		let rect = {
 			x: Math.min(this.x, cx),
 			y: Math.min(this.y, cy),
-			width: Math.abs(cx - this.x),
-			height: Math.abs(cy - this.y)
+			width: Math.abs(cx - this.x) - 10,
+			height: Math.abs(cy - this.y) - 10
 		};
 		return rect;
 	};
@@ -257,15 +260,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 				return;
 			};
 			
-			if (!this.focused || !this.range) {
+			if (!this.range) {
 				this.focused = selected.data('id');
-				this.range = getRange(el) || { start: 0, end: 0 };
+				this.range = getRange(el);				
 			};
-				
-			if (this.range.end) {
+
+			if (this.range) {
 				this.clear();
 				focus.set(this.focused, { from: this.range.start, to: this.range.end });
-				focus.apply();
+				focus.apply();				
 			};
 		} else {
 			if (focused && range.from && range.to) {
