@@ -124,12 +124,12 @@ class CommonStore {
 	};
 	
 	@action
-	menuClose (id: string, callback?: () => void) {
+	menuClose (id: string, callBack?: () => void) {
 		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
 		
 		if (!item) {
-			if (callback) {
-				callback();
+			if (callBack) {
+				callBack();
 			};
 			return;
 		};
@@ -146,8 +146,8 @@ class CommonStore {
 		window.setTimeout(() => {
 			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
 			
-			if (callback) {
-				callback();
+			if (callBack) {
+				callBack();
 			};
 		}, TIMEOUT);
 	};

@@ -207,23 +207,15 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 	dispatcher.call('blockUpload', request, callBack);	
 };
 
-const BlockCopy = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
-	const request: any = {
-		contextId: contextId,
-		blockIds: blockIds,
-	};
-	dispatcher.call('blockCopy', request, callBack);	
-};
-
 const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], data: any, callBack?: (message: any) => void) => {
 	const request: any = {
 		contextId: contextId,
 		focusedBlockId: focusedId,
 		selectedTextRange: range,
-		blockIds: blockIds,
-		textSlot: String(data.text || ''),
-		htmlSlot: String(data.html || ''),
-		anySlot: String(data.anytype || ''),
+		selectedBlockIds: blockIds,
+		textSlot: data.text,
+		htmlSlot: data.html,
+		anySlot: data.anytype,
 	};
 	dispatcher.call('blockPaste', request, callBack);	
 };
@@ -263,7 +255,6 @@ export {
 	BlockMerge,
 	BlockSplit,
 	BlockUpload,
-	BlockCopy,
 	BlockPaste,
 	
 	BlockSetTextText,

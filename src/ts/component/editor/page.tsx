@@ -208,12 +208,10 @@ class EditorPage extends React.Component<Props, {}> {
 				
 				const ids = selection.get();
 				if (ids.length) {
-					C.BlockCopy(rootId, ids, (message: any) => {
-						Util.clipboardCopy({
-							text: message.textSlot || 'textSlot',
-							html: message.htmlSlot || 'htmlSlot',
-							anytype: message.anySlot || 'anySlot',
-						});
+					Util.clipboardCopy({
+						text: null,
+						html: null, 
+						anytype: ids 
 					});
 				};
 			};
@@ -400,41 +398,56 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		const { dataset, rootId } = this.props;
+		const { blockStore, dataset, rootId } = this.props;
+		const { blocks } = blockStore;
 		const { selection } = dataset;
 		const { focused, range } = focus;
+
+		let ids = [];
+		let list = [];
+		try {
+			ids = JSON.parse(e.clipboardData.getData('application/anytype') || '[]');
+		} catch (e) {};
 		
 		const data: any = {
 			text: e.clipboardData.getData('text/plain'),
 			html: e.clipboardData.getData('text/html'),
-			anytype: e.clipboardData.getData('application/anytype'),
+			anytype: [],
 		};
 		
-		C.BlockPaste(rootId, focused, range, selection.get(), data);
+		for (let id of ids) {
+			let block = blocks[rootId].find((it: any) => { return it.id == id; });
+			console.log(block);
+			if (block) {
+				data.anytype.push(blockStore.prepareBlockToProto(block));
+			};
+		};
+		
+		C.BlockPaste(rootId, focused, range, selection.get(), data, (message: any) => {});
 	};
 	
-	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callback?: (blockId: string) => void) {
+	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { blockStore, rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, focused.id, position, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 			
-			if (callback) {
-				callback(message.blockId);
+			if (callBack) {
+				callBack(message.blockId);
 			};
 		});
 	};
 	
-	blockReplace (focused: I.Block, param: any, callback?: (blockId: string) => void) {
+	blockReplace (focused: I.Block, param: any, callBack?: (blockId: string) => void) {
 		const { blockStore, rootId } = this.props;
 		
 		C.BlockReplace(param, rootId, focused.id, (message: any) => {
-			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.set(focused.id, { from: 0, to: 0 });
 			focus.apply();
 			
-			if (callback) {
-				callback(message.blockId);
+			if (callBack) {
+				callBack(focused.id);
 			};
 		});
 	};
