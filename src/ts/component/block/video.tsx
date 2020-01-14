@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InputWithFile, Icon, Loader } from 'ts/component';
+import { InputWithFile, Icon, Loader, Error } from 'ts/component';
 import { I, C } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -55,6 +55,9 @@ class BlockVideo extends React.Component<Props, {}> {
 				break;
 				
 			case I.FileState.Error:
+				element = (
+					<Error text="Error" />
+				);
 				break;
 		};
 		
