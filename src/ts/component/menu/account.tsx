@@ -76,6 +76,7 @@ class MenuAccount extends React.Component<Props, {}> {
 				authStore.accountSet(message.account);
 				
 				C.ConfigGet((message: any) => {
+					commonStore.gatewaySet(message.gatewayUrl);
 					blockStore.rootSet(message.homeBlockId);
 					C.BlockOpen(message.homeBlockId);
 				});

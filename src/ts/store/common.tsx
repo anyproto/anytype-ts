@@ -11,6 +11,7 @@ class CommonStore {
 	@observable public coverId: number = 0;
 	@observable public progressObj: I.Progress = { status: '', current: 0, total: 0 };
 	@observable public filterString: string = '';
+	@observable public gatewayUrl: string = '';
 	
 	@computed
 	get progress(): I.Progress {
@@ -37,10 +38,28 @@ class CommonStore {
 		return this.menuList;
 	};
 	
+	@computed
+	get gateway(): string {
+		return this.gatewayUrl;
+	};
+	
 	@action
 	coverSet (v: number) {
 		this.coverId = v;
 		Storage.set('cover', v);
+	};
+	
+	@action
+	gatewaySet (v: string) {
+		this.gatewayUrl = v;
+	};
+	
+	fileUrl (hash: string) {
+		return this.gatewayUrl + '/file/' + hash;
+	};
+	
+	imageUrl (hash: string, width: number) {
+		return this.gatewayUrl + '/image/' + hash + '?width=' + width;
 	};
 	
 	@action

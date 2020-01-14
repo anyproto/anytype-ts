@@ -147,6 +147,7 @@ class BlockStore {
 		let type = block.content;
 		let content = block[type];
 		let fields = block.fields;
+		let file = block.file;
 		
 		let item: I.Block = {
 			id: block.id,
@@ -201,7 +202,9 @@ class BlockStore {
 			};
 			
 			if (type == I.BlockType.File) {
+				item.content = Util.objectCopy(content);
 				item.content.type = content.type;
+				item.content.state = content.state;
 			};
 		};
 		

@@ -4,15 +4,15 @@ import { InputWithFile, Loader, Icon } from 'ts/component';
 import { I, C, cache } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
-interface Props extends I.BlockMedia {
+interface Props extends I.BlockFile {
 	dataset?: any;
+	commonStore?: any;
 	blockStore?: any;
 	width?: any;
 	rootId: string;
 };
 
 interface State {
-	image: string;
 	size: any;
 };
 
@@ -20,13 +20,13 @@ const $ = require('jquery');
 const fs = window.require('fs');
 const Constant = require('json/constant.json');
 
+@inject('commonStore')
 @inject('blockStore')
 @observer
 class BlockImage extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	state = {
-		image: '',
 		size: null as any
 	};
 	
@@ -42,38 +42,36 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { image } = this.state;
-		const { blockStore, id, rootId, content } = this.props;
-		let { localFilePath, uploadState } = content;
+		const { commonStore, content } = this.props;
+		const { state, hash } = content;
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
 		
-		if (localFilePath) {
-			uploadState = I.ContentUploadState.Done;
-		};
-		
 		let element = null;
-		switch (uploadState) {
+		switch (content.state) {
 			default:
-			case I.ContentUploadState.Empty:
+			case I.FileState.Empty:
 				element = (
 					<InputWithFile icon="image" textFile="Upload a picture" accept={accept} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
-			case I.ContentUploadState.Loading:
+			case I.FileState.Uploading:
 				element = (
 					<Loader />
 				);
 				break;
 				
-			case I.ContentUploadState.Done:
+			case I.FileState.Done:
 				element = (
 					<div className="wrap">
-						<img className="img" src={image} />
+						<img className="img" src={commonStore.imageUrl(content.hash, 1024)} />
 						<Icon className="resize" onMouseDown={this.onResizeStart} />
 						<Icon className="dots" />
 					</div>
 				);
+				break;
+				
+			case I.FileState.Error:
 				break;
 		};
 		
@@ -86,59 +84,10 @@ class BlockImage extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.load();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-	};
-	
-	load () {
-		const { content } = this.props;
-		const { localFilePath, uploadState } = content;
-		
-		if (!localFilePath/* || (uploadState != I.ContentUploadState.Done)*/) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		const image = node.find('.img');
-		
-		let set = (res: any) => {
-			this.setState({ 
-				image: 'data:image/jpeg;base64,' + res.image, 
-				size: { width: res.width, height: res.height, div: res.div } as any
-			});
-		};
-		let key = [ 'media', localFilePath ].join('.');
-		let res = cache.get(key);
-		
-		if (res) {
-			set(res);
-			return;
-		};
-		
-		fs.readFile(localFilePath, (err: any, res: any) => {
-			if (!this._isMounted) {
-				return;
-			};
-			
-			if (err) {
-				console.error(err);
-				return;
-			};
-			
-			let s = new Buffer(res).toString('base64');
-			
-			image.on('load', (e: any) => {
-				const rect = (image.get(0) as Element).getBoundingClientRect() as DOMRect;
-				const res = { image: s, width: rect.width, height: rect.height, div: rect.width / rect.height };
-				
-				cache.set(key, res);
-				set(res);
-			});
-			image.attr({ src: 'data:image/jpeg;base64,' + s });
-		});
 	};
 	
 	onChangeUrl (e: any, url: string) {

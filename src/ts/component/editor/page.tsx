@@ -417,7 +417,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		for (let id of ids) {
 			let block = blocks[rootId].find((it: any) => { return it.id == id; });
-			console.log(block);
 			if (block) {
 				data.anytype.push(blockStore.prepareBlockToProto(block));
 			};

@@ -3,11 +3,15 @@ import { InputWithFile, Loader, Icon } from 'ts/component';
 import { I, C, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
-interface Props extends I.BlockMedia {
+interface Props extends I.BlockFile {
+	commonStore?: any;
 	blockStore?: any;
 	rootId: string;
 };
 
+const { ipcRenderer } = window.require('electron');
+
+@inject('commonStore')
 @inject('blockStore')
 @observer
 class BlockFile extends React.Component<Props, {}> {
@@ -24,35 +28,37 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, id, rootId, content } = this.props;
-		const { uploadState } = content;
+		const { id, rootId, content } = this.props;
 		
 		let element = null;
-		switch (uploadState) {
+		switch (content.state) {
 			default:
-			case I.ContentUploadState.Empty:
+			case I.FileState.Empty:
 				element = (
 					<InputWithFile icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
-			case I.ContentUploadState.Loading:
+			case I.FileState.Uploading:
 				element = (
 					<Loader />
 				);
 				break;
 				
-			case I.ContentUploadState.Done:
+			case I.FileState.Done:
 				element = (
 					<React.Fragment>
 						<span onMouseDown={this.onOpen}>
 							<Icon className="type image" />
-							<span className="name">Name</span>
-							<span className="size">{Util.fileSize(10023450)}</span>
+							<span className="name">{content.name}</span>
+							<span className="size">{Util.fileSize(content.size)}</span>
 						</span>
 						<span className="download" onMouseDown={this.onDownload}>Download</span>
 					</React.Fragment>
 				);
+				break;
+				
+			case I.FileState.Error:
 				break;
 		};
 		
@@ -73,20 +79,22 @@ class BlockFile extends React.Component<Props, {}> {
 	
 	onChangeUrl (e: any, url: string) {
 		const { id, rootId } = this.props;
-		
 		C.BlockUpload(rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
 		const { id, rootId } = this.props;
-		
 		C.BlockUpload(rootId, id, '', path);
 	};
 	
 	onOpen (e: any) {
+		const { commonStore, content } = this.props;
+		ipcRenderer.send('urlOpen', commonStore.fileUrl(content.hash));
 	};
 	
 	onDownload (e: any) {
+		const { commonStore, content } = this.props;
+		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 	};
 	
 };

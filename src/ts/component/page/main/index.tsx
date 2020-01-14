@@ -75,9 +75,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { blockStore } = this.props;
+		const { blockStore, commonStore } = this.props;
 		
 		C.ConfigGet((message: any) => {
+			commonStore.gatewaySet(message.gatewayUrl);
 			blockStore.rootSet(message.homeBlockId);
 			C.BlockOpen(message.homeBlockId);
 		});

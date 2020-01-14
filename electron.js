@@ -1,6 +1,7 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron');
 const { is, appMenu } = require('electron-util');
+const { download } = require('electron-dl');
 const path = require('path');
 const os = require('os');
 const dataPath = app.getPath('userData');
@@ -45,8 +46,13 @@ function createWindow () {
 		app.quit();
 	});
 	
-	ipcMain.on('urlOpen', async (event, url) => {
+	ipcMain.on('urlOpen', async (e, url) => {
 		shell.openExternal(url);
+	});
+	
+	ipcMain.on('download', async (e, url) => {
+	 	const win = BrowserWindow.getFocusedWindow();
+	 	await download(win, url, { saveAs: true });
 	});
 	
 	var menu = Menu.buildFromTemplate([

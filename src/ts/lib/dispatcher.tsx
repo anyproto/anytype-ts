@@ -146,6 +146,36 @@ class Dispatcher {
 					blockStore.blockUpdate(contextId, param);
 					break;
 					
+				case 'blockSetFile':
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					
+					console.log('1', JSON.stringify(block, null, 5));
+					
+					if (data.name) {
+						block.content.name = String(data.name.value || '');
+					};
+					
+					if (data.hash) {
+						block.content.hash = String(data.hash.value || '');
+					};
+					
+					if (data.size) {
+						block.content.size = Number(data.size.value) || 0;
+					};
+					
+					if (data.type) {
+						//block.content.type = Number(data.type.value) || 0;
+					};
+					
+					if (data.state) {
+						block.content.state = Number(data.state.value) || 0;
+					};
+					
+					console.log('2', JSON.stringify(block, null, 5));
+					
+					set = true;
+					break;
+					
 				case 'blockDelete':
 					blocks = blocks.filter((item: I.Block) => { return item.id != data.blockId; });
 					break;

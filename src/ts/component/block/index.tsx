@@ -87,19 +87,19 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.File:
 				switch (content.type) {
 					default: 
-					case I.MediaStyle.File: 
+					case I.FileType.File: 
 						cn.push('blockFile');
 						BlockComponent = BlockFile;
 						break;
 						
-					case I.MediaStyle.Image: 
+					case I.FileType.Image: 
 						cn.push('blockImage');
 						BlockComponent = () => (
 							<BlockImage ref={(ref: any) => { this.refComponent = ref; }} {...this.props} width={fields.width || 1} />
 						);
 						break;
 						
-					case I.MediaStyle.Video: 
+					case I.FileType.Video: 
 						cn.push('blockVideo');
 						BlockComponent = BlockVideo;
 						break;
