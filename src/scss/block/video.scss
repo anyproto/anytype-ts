@@ -2,4 +2,7 @@
 
 .blocks {
 	.block.blockVideo { padding: 7px 0px; }
+	.block.blockVideo {
+		video { width: 100%; }
+	}
 }

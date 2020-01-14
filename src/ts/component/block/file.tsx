@@ -29,9 +29,10 @@ class BlockFile extends React.Component<Props, {}> {
 
 	render () {
 		const { id, rootId, content } = this.props;
+		const { state, hash, size, name } = content;
 		
 		let element = null;
-		switch (content.state) {
+		switch (state) {
 			default:
 			case I.FileState.Empty:
 				element = (
@@ -50,8 +51,8 @@ class BlockFile extends React.Component<Props, {}> {
 					<React.Fragment>
 						<span onMouseDown={this.onOpen}>
 							<Icon className="type image" />
-							<span className="name">{content.name}</span>
-							<span className="size">{Util.fileSize(content.size)}</span>
+							<span className="name">{name}</span>
+							<span className="size">{Util.fileSize(size)}</span>
 						</span>
 						<span className="download" onMouseDown={this.onDownload}>Download</span>
 					</React.Fragment>

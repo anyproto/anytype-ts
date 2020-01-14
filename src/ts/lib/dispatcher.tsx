@@ -96,20 +96,10 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetText':
-					blocks = blockStore.blocks[contextId];
-					if (!blocks.length) {
-						break;
-					};
-					
 					block = blocks.find((it: any) => { return it.id == data.id; });
 					
-					param = {
-						id: block.id,
-						content: Util.objectCopy(block.content),
-					};
-					
 					if (null !== data.text) {
-						param.content.text = data.text.value;
+						block.content.text = data.text.value;
 					};
 					
 					if (null !== data.marks) {
@@ -124,54 +114,50 @@ class Dispatcher {
 								}
 							});
 						};
-						param.content.marks = marks;
+						block.content.marks = marks;
 					};
 					
 					if (null !== data.style) {
-						param.content.style = data.style.value;
+						block.content.style = data.style.value;
 					};
 					
 					if (null !== data.checked) {
-						param.content.checked = data.checked.value;
+						block.content.checked = data.checked.value;
 					};
 					
 					if (null !== data.color) {
-						param.content.color = data.color.value;
+						block.content.color = data.color.value;
 					};
 					
 					if (null !== data.backgroundColor) {
-						param.content.bgColor = data.backgroundColor.value;
+						block.content.bgColor = data.backgroundColor.value;
 					};
 					
-					blockStore.blockUpdate(contextId, param);
+					set = true;
 					break;
 					
 				case 'blockSetFile':
 					block = blocks.find((it: any) => { return it.id == data.id; });
 					
-					console.log('1', JSON.stringify(block, null, 5));
-					
-					if (data.name) {
+					if (null !== data.name) {
 						block.content.name = String(data.name.value || '');
 					};
 					
-					if (data.hash) {
+					if (null !== data.hash) {
 						block.content.hash = String(data.hash.value || '');
 					};
 					
-					if (data.size) {
+					if (null !== data.size) {
 						block.content.size = Number(data.size.value) || 0;
 					};
 					
-					if (data.type) {
+					if (null !== data.type) {
 						//block.content.type = Number(data.type.value) || 0;
 					};
 					
-					if (data.state) {
+					if (null !== data.state) {
 						block.content.state = Number(data.state.value) || 0;
 					};
-					
-					console.log('2', JSON.stringify(block, null, 5));
 					
 					set = true;
 					break;

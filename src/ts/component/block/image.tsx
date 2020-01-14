@@ -47,7 +47,7 @@ class BlockImage extends React.Component<Props, {}> {
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
 		
 		let element = null;
-		switch (content.state) {
+		switch (state) {
 			default:
 			case I.FileState.Empty:
 				element = (
@@ -64,7 +64,7 @@ class BlockImage extends React.Component<Props, {}> {
 			case I.FileState.Done:
 				element = (
 					<div className="wrap">
-						<img className="img" src={commonStore.imageUrl(content.hash, 1024)} />
+						<img className="img" src={commonStore.imageUrl(hash, 1024)} />
 						<Icon className="resize" onMouseDown={this.onResizeStart} />
 						<Icon className="dots" />
 					</div>
