@@ -38,6 +38,6 @@ mkdir -p build
 mv addon/*.* build/
 rm -rf addon
 
-mv protobuf/commands.js electron/commands.js
+mv protobuf/commands.js src/proto/commands.js
 rm -rf protobuf
 rm -rf $FILE
