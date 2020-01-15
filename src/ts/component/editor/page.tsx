@@ -247,7 +247,7 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		};
 		
-		if (
+		if (focused && 
 			((range.from == 0) && (k == Key.up)) ||
 			((range.to == l) && (k == Key.down))
 		) {
@@ -267,7 +267,7 @@ class EditorPage extends React.Component<Props, {}> {
 					window.getSelection().empty();
 					commonStore.menuClose('blockContext');
 					selection.set([ focused ]);
-					commonStore.menuClose('blockAction');					
+					commonStore.menuClose('blockAction');
 				};
 			} else if (next) {
 				const l = String(next.content.text || '').length;
@@ -279,7 +279,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		if ((k == Key.backspace) && (range.from == 0 && range.to == 0)) {
-			let ids = selection.get();
+			const ids = selection.get();
 			if (l && !ids.length) {
 				this.blockMerge(block);
 			} else {

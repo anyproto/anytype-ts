@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, Key, focus } from 'ts/lib';
+import { I, C, Key, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -77,30 +77,51 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		let ids: any = this.get();
 		
-		if (e.shiftKey && (k == Key.up || k == Key.down) && (ids.length >= 1)) {
+		if ((k == Key.up || k == Key.down) && ids.length) {
 			let dir = (k == Key.up) ? -1 : 1;
 			let idx = (dir < 0) ? 0 : ids.length - 1;
 			let method = '';
 			
-			if (ids.length == 1) {
-				this.dir = dir;
-			};
-			
-			if (this.dir && (dir != this.dir)) {
-				method = dir < 0 ? 'pop' : 'shift';
-				ids[method]();
-			} else {
-				const next = blockStore.getNextBlock(rootId, ids[idx], dir, (item: any) => {
-					return item.type != I.BlockType.Layout;
-				});
-
-				method = dir < 0 ? 'unshift' : 'push';
-				if (next) {
-					ids[method](next.id);
+			// Move selection with arrows
+			if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
+				window.getSelection().empty();
+				
+				let next;
+				if (dir < 0) {
+					next = blockStore.getNextBlock(rootId, ids[0], dir);
+				} else {
+					next = blockStore.getNextBlock(rootId, ids[ids.length - 1], dir);
 				};
+				
+				if (next && ids.indexOf(next.id) < 0) {
+					C.BlockListMove(rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));
+				};
+			} else 
+			// Expand selection by arrows
+			if (e.shiftKey) {
+				let idx = (dir < 0) ? 0 : ids.length - 1;
+				let method = '';
+				
+				if (ids.length == 1) {
+					this.dir = dir;
+				};
+				
+				if (this.dir && (dir != this.dir)) {
+					method = dir < 0 ? 'pop' : 'shift';
+					ids[method]();
+				} else {
+					const next = blockStore.getNextBlock(rootId, ids[idx], dir, (item: any) => {
+						return item.type != I.BlockType.Layout;
+					});
+	
+					method = dir < 0 ? 'unshift' : 'push';
+					if (next) {
+						ids[method](next.id);
+					};
+				};
+				
+				this.set(ids);
 			};
-			
-			this.set(ids);
 		};
 	};
 	
@@ -150,8 +171,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
 			width: rect.width - 10, 
 			height: rect.height - 10,
-			opacity: 1,
-			display: selected.length ? 'block' : 'none',
+			opacity: selected.length ? 1 : 0.3,
 		});
 		
 		this.moved = true;
@@ -244,16 +264,20 @@ class SelectionProvider extends React.Component<Props, {}> {
 			const el = value.get(0) as Element;			
 			const range = getRange(el); 
 			
-			selected.removeClass('isSelected');
-			
 			if (!this.range) {
 				this.focused = selected.data('id');
 				this.range = range;
 			};
 			
-			if (this.range && !range) {
-				focus.set(this.focused, { from: this.range.start, to: this.range.end });
-				focus.apply();
+			if (this.range) {
+				if (this.range.end && (this.range.start != this.range.end)) {
+					selected.removeClass('isSelected');
+				};
+				
+				if (!range) {
+					focus.set(this.focused, { from: this.range.start, to: this.range.end });
+					focus.apply();
+				};
 			};
 		} else {
 			if (focused && range.from && range.to) {
