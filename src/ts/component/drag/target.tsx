@@ -79,9 +79,9 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		let rect = {
 			x: x + width * 0.15,
-			y: y + height * 0.15,
+			y: y + height * 0.3,
 			width: x + width * 0.60,
-			height: y + height * 0.85
+			height: y + height * 0.7
 		};
 		
 		let parentIds: string[] = [];
