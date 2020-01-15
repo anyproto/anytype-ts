@@ -8,6 +8,13 @@
 	</head>
 	<body>
 		<div id="root"></div>
-		<script src="./main.js"></script>
+		<script type="text/javascript">
+			var s = document.createElement('script');
+			s.type = 'text/javascript';
+			s.src = './main.js?' + Math.random();
+			s.async = true;
+			
+			document.body.appendChild(s);
+		</script>
 	</body>
 </html>
