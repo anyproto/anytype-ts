@@ -51,7 +51,6 @@ class Block extends React.Component<Props, {}> {
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
-		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -132,7 +131,7 @@ class Block extends React.Component<Props, {}> {
 				<div className="id tag red">{id}</div>
 				
 				<div className="wrapMenu">
-					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenu} />
+					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onClick={this.onMenu} />
 				</div>
 				
 				<div className="wrapContent">
@@ -285,9 +284,6 @@ class Block extends React.Component<Props, {}> {
 		
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
-		
-		this.callChildMethod(prevBlock.id, 'resize', [ w1 ]);
-		this.callChildMethod(currentBlock.id, 'resize', [ w2 ]);
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
@@ -357,23 +353,6 @@ class Block extends React.Component<Props, {}> {
 		node.find('.colResize.active').removeClass('active');
 		if (num) {
 			node.find('.colResize.c' + num).addClass('active');
-		};
-	};
-	
-	callChildMethod (id: string, method: string, args?: any[]) {
-		if (this.refChildren.refObj[id] && this.refChildren.refObj[id][method]) {
-			this.refChildren.refObj[id][method].apply(this.refChildren.refObj[id], args);
-		};
-	};
-	
-	resize (width: number) {
-		if (this.refComponent && this.refComponent.resize) {
-			this.refComponent.resize(width);
-		};
-		for (let id in this.refChildren.refObj) {
-			if (this.refChildren.refObj[id].refComponent && this.refChildren.refObj[id].refComponent.resize) {
-				this.refChildren.refObj[id].refComponent.resize(width);
-			};
 		};
 	};
 	

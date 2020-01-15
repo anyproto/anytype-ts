@@ -39,6 +39,7 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop} onClick={onClick}>
+				<div className="marker" />
 				{children}
 			</div>
 		);

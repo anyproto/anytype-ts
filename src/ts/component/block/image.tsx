@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, cache } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockFile {
@@ -10,10 +10,6 @@ interface Props extends I.BlockFile {
 	blockStore?: any;
 	width?: any;
 	rootId: string;
-};
-
-interface State {
-	size: any;
 };
 
 const $ = require('jquery');
@@ -26,9 +22,6 @@ const Constant = require('json/constant.json');
 class BlockImage extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	state = {
-		size: null as any
-	};
 	
 	constructor (props: any) {
 		super(props);
@@ -36,17 +29,23 @@ class BlockImage extends React.Component<Props, {}> {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
-		this.resize = this.resize.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 	};
 
 	render () {
-		const { commonStore, content } = this.props;
+		const { commonStore, content, fields } = this.props;
+		const { width } = fields;
 		const { state, hash } = content;
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
 		
 		let element = null;
+		let css: any = {};
+		
+		if (width) {
+			css.width = width;
+		};
+		
 		switch (state) {
 			default:
 			case I.FileState.Empty:
@@ -64,7 +63,7 @@ class BlockImage extends React.Component<Props, {}> {
 			case I.FileState.Done:
 				element = (
 					<div className="wrap">
-						<img className="img" src={commonStore.imageUrl(hash, 1024)} />
+						<img style={css} className="img" src={commonStore.imageUrl(hash, 1024)} />
 						<Icon className="resize" onMouseDown={this.onResizeStart} />
 						<Icon className="dots" />
 					</div>
@@ -137,19 +136,22 @@ class BlockImage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { size } = this.state;
 		const rect = (image.get(0) as Element).getBoundingClientRect() as DOMRect;
 		
-		let width = this.checkWidth(e.pageX - rect.x + 20);
-		let height = width / size.div;
-		
-		image.css({ width: width, height: height });
+		image.css({ width: this.checkWidth(e.pageX - rect.x + 20) });
 	};
 	
 	onResizeEnd (e: any) {
-		const { dataset } = this.props;
+		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
+		const image = node.find('.img');
+		
+		if (!image.length) {
+			return;
+		};
+		
+		const rect = (image.get(0) as Element).getBoundingClientRect() as DOMRect;
 		
 		this.unbind();
 		
@@ -158,17 +160,10 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		node.removeClass('isResizing');
-	};
-	
-	resize (w: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const image = node.find('.img');
-		const { size } = this.state;
 		
-		let width = this.checkWidth((Constant.size.editorPage - Constant.size.blockMenu) * w);
-		let height = width / size.div;
-		
-		image.css({ width: width, height: height });
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { width: this.checkWidth(e.pageX - rect.x + 20) } },
+		]);
 	};
 	
 	unbind () {
