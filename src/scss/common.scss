@@ -43,24 +43,24 @@ a { color: $colorBlack; }
 
 .dropTarget { position: relative; }
 .dropTarget {
-	.marker { position: absolute; display: none; background: $colorOrange; z-index: 10; }
+	.line { position: absolute; display: none; background: $colorOrange; z-index: 10; }
 }
 .dropTarget {
-	.marker { display: block; }
+	.line { display: block; }
 }
 
 .dropTarget.isOver.middle { background: rgba(255,187,44,0.3) !important; }
 .dropTarget.isOver.top { 
-	.marker { width: 100%; height: 2px; left: 0px; top: 0px; }
+	.line { width: 100%; height: 2px; left: 0px; top: 0px; }
 }
 .dropTarget.isOver.bottom {
-	.marker { width: 100%; height: 2px; left: 0px; bottom: 0px; }
+	.line { width: 100%; height: 2px; left: 0px; bottom: 0px; }
 }
 .dropTarget.isOver.left { 
-	.marker { width: 2px; height: 100%; left: 0px; top: 0px; }	
+	.line { width: 2px; height: 100%; left: 0px; top: 0px; }	
 }
 .dropTarget.isOver.right {
-	.marker { width: 2px; height: 100%; right: 0px; top: 0px; }
+	.line { width: 2px; height: 100%; right: 0px; top: 0px; }
 }
 
 .textColor-grey { color: #aca996 !important; }
