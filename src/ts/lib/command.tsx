@@ -110,15 +110,6 @@ const BlockSetIconName = (contextId: string, blockId: string, name: string, call
 	dispatcher.call('blockSetIconName', request, callBack);
 };
 
-const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = {
-		contextId: contextId,
-		blockIds: blockIds,
-		style: style,
-	};
-	dispatcher.call('blockListSetTextStyle', request, callBack);
-};
-
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -165,16 +156,6 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 	dispatcher.call('blockSetFields', request, callBack);
 };
 
-const BlockListMove = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = {
-		contextId: contextId,
-		blockIds: blockIds,
-		dropTargetId: targetId,
-		position: position,
-	};
-	dispatcher.call('blockListMove', request, callBack);
-};
-
 const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -218,6 +199,25 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 		anySlot: data.anytype,
 	};
 	dispatcher.call('blockPaste', request, callBack);	
+};
+
+const BlockListMove = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		dropTargetId: targetId,
+		position: position,
+	};
+	dispatcher.call('blockListMove', request, callBack);
+};
+
+const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		style: style,
+	};
+	dispatcher.call('blockListSetTextStyle', request, callBack);
 };
 
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {

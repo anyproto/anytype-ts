@@ -186,7 +186,7 @@ class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutKeyUp);
 	};
 	
-	setValue () {
+	setValue (v?: string) {
 		const { blockStore, id, rootId, fields, content } = this.props;
 		
 		const node = $(ReactDOM.findDOMNode(this));
@@ -195,7 +195,7 @@ class BlockText extends React.Component<Props, {}> {
 		let { lang } = fields;
 		let { text, style, color, bgColor, number } = content;
 		
-		text = String(text || '');
+		text = String(v || text || '');
 		lang = String(lang || 'js');
 		
 		if ((style == I.TextStyle.Title) && (text == Constant.untitled)) {
@@ -265,12 +265,6 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		};
 		
-		if ((k == Key.slash) && !value) {
-			e.preventDefault();
-			this.props.onMenuAdd(id);
-			return;
-		};
-		
 		if (k == Key.enter) {
 			this.blockUpdateText(this.marks);
 		};
@@ -286,11 +280,81 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		
 		const { blockStore, onKeyUp, id, rootId, content } = this.props;
+		const value = this.getValue();
+		
+		// Open menu
+		if (value == '/') {
+			e.preventDefault();
+			this.props.onMenuAdd(id);
+			return;
+		};
+		
+		// Make div
+		if (value == '---') {
+			C.BlockReplace({ type: I.BlockType.Div }, rootId, id);
+			return;
+		};
+		
+		// Make list
+		if ([ '* ', '- ', '+ ' ].indexOf(value) >= 0) {
+			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Bulleted);
+			this.setValue('');
+			return;
+		};
+		
+		// Make checkbox
+		if (value == '[]') {
+			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Checkbox);
+			this.setValue('');
+			return;
+		};
+		
+		// Make numbered
+		if (value == '1. ') {
+			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Numbered);
+			this.setValue('');
+			return;
+		};
+		
+		// Make h1
+		if (value == '# ') {
+			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header1);
+			this.setValue('');
+			return;
+		};
+		
+		// Make h2
+		if (value == '## ') {
+			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header2);
+			this.setValue('');
+			return;
+		};
+		
+		// Make h3
+		if (value == '### ') {
+			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header3);
+			this.setValue('');
+			return;
+		};
+		
+		// Make toggle
+		if (value == '> ') {
+			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Toggle);
+			this.setValue('');
+			return;
+		};
+		
+		// Make quote
+		if (value == '" ') {
+			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Quote);
+			this.setValue('');
+			return;
+		};
 		
 		this.marks = this.getMarksFromHtml();
 		
 		this.placeHolderCheck();
-		onKeyUp(e, this.getValue());
+		onKeyUp(e, value);
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks); }, 500);
