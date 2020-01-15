@@ -45,7 +45,8 @@ class Block extends React.Component<Props, {}> {
 		this.onBlur = this.onBlur.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onMenu = this.onMenu.bind(this);
+		this.onMenuDown = this.onMenuDown.bind(this);
+		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
@@ -131,7 +132,7 @@ class Block extends React.Component<Props, {}> {
 				<div className="id tag red">{id}</div>
 				
 				<div className="wrapMenu">
-					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onClick={this.onMenu} />
+					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 				</div>
 				
 				<div className="wrapContent">
@@ -202,7 +203,16 @@ class Block extends React.Component<Props, {}> {
 		};
 	};
 	
-	onMenu (e: any) {
+	onMenuDown (e: any) {
+		const { dataset, id, rootId } = this.props;
+		const { selection } = dataset;
+		
+		if (selection) {
+			selection.setPreventClear(true);
+		};
+	};
+	
+	onMenuClick (e: any) {
 		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));

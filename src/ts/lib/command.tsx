@@ -208,7 +208,7 @@ const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: str
 		targetId: targetId,
 		position: position,
 	};
-	dispatcher.call('blockDuplicate', request, callBack);
+	dispatcher.call('blockListDuplicate', request, callBack);
 };
 
 const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {

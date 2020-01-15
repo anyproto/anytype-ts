@@ -326,11 +326,11 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						type: 'copy', 
 						rootId: root,
 						onConfirm: (id: string) => {
-							C.BlockListDuplicate(rootId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
-								focus.set(message.blockId, { from: length, to: length });
+							C.BlockListDuplicate(rootId, blockIds, blockIds[blockIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
+								focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
 								focus.apply();
 							});
-						},
+						}
 					}, 
 				});
 				break;
