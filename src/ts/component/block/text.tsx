@@ -416,8 +416,16 @@ class BlockText extends React.Component<Props, {}> {
 		C.BlockSetTextChecked(rootId, id, !checked);
 	};
 	
-	onLang (value: string) {
-		console.log('lang', value);
+	onLang (v: string) {
+		const { id, rootId, content } = this.props;
+		const l = String(content.text || '').length;
+		
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { lang: v } },
+		], (message: any) => {
+			focus.set(id, { from: l, to: l });
+			focus.apply();
+		});
 	};
 	
 	onSelect (e: any) {

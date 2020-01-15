@@ -315,7 +315,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		if (k == Key.enter) {
-			if (commonStore.menuIsOpen()) {
+			if (e.shiftKey || commonStore.menuIsOpen()) {
 				return;
 			};
 			
