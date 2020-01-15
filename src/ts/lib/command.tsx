@@ -83,16 +83,6 @@ const BlockReplace = (block: any, contextId: string, blockId: string, callBack?:
 	dispatcher.call('blockReplace', request, callBack);
 };
 
-const BlockDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = {
-		contextId: contextId,
-		blockId: blockId,
-		targetId: targetId,
-		position: position,
-	};
-	dispatcher.call('blockDuplicate', request, callBack);
-};
-
 const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -129,22 +119,22 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 	dispatcher.call('blockSetTextChecked', request, callBack);
 };
 
-const BlockSetTextColor = (contextId: string, blockId: string, color: string, callBack?: (message: any) => void) => {
+const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
-		blockId: blockId,
+		blockIds: blockIds,
 		color: color,
 	};
-	dispatcher.call('blockSetTextColor', request, callBack);
+	dispatcher.call('blockListSetTextColor', request, callBack);
 };
 
-const BlockSetTextBackgroundColor = (contextId: string, blockId: string, color: string, callBack?: (message: any) => void) => {
+const BlockListSetTextBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
-		blockId: blockId,
+		blockIds: blockIds,
 		color: color,
 	};
-	dispatcher.call('blockSetTextBackgroundColor', request, callBack);
+	dispatcher.call('blockListSetTextBackgroundColor', request, callBack);
 };
 
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
@@ -211,6 +201,16 @@ const BlockListMove = (contextId: string, blockIds: string[], targetId: string, 
 	dispatcher.call('blockListMove', request, callBack);
 };
 
+const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		targetId: targetId,
+		position: position,
+	};
+	dispatcher.call('blockDuplicate', request, callBack);
+};
+
 const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -248,7 +248,6 @@ export {
 	BlockClose,
 	BlockCreate,
 	BlockReplace,
-	BlockDuplicate,
 	BlockUnlink,
 	BlockSetIconName,
 	BlockListMove,
@@ -259,10 +258,11 @@ export {
 	
 	BlockSetTextText,
 	BlockSetTextChecked,
-	BlockSetTextColor,
-	BlockSetTextBackgroundColor,
 	BlockSetFields,
 	
+	BlockListDuplicate,
+	BlockListSetTextColor,
+	BlockListSetTextBackgroundColor,
 	BlockListSetTextStyle,
 	BlockListSetFields,
 };

@@ -258,10 +258,31 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 			
 			const dir = (k == Key.up) ? -1 : 1;
-			const next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
-				return item.type == I.BlockType.Text;
-			});
 			
+			if (e.ctrlKey || e.metaKey) {
+				const root = blocks[rootId].find((item: I.Block) => { return item.id == rootId; });
+				let next;
+				
+				if (dir < 0) {
+					next = blockStore.getNextBlock(rootId, root.childrenIds[0], -dir, (item: any) => {
+						return item.type == I.BlockType.Text;
+					});
+				} else {
+					next = blockStore.getFirstBlock(rootId, root.childrenIds[root.childrenIds.length - 1], -dir, (item: any) => {
+						return item.type == I.BlockType.Text;
+					});
+				};
+				
+				if (next) {
+					console.log(next.id, next.content.text);
+					
+					const l = String(next.content.text || '').length;
+					const newRange = (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l });
+					
+					focus.set(next.id, newRange);
+					focus.apply();
+				};
+			} else
 			if (e.shiftKey) {
 				if (selection.get().length < 1) {
 					window.getSelection().empty();
@@ -269,12 +290,18 @@ class EditorPage extends React.Component<Props, {}> {
 					selection.set([ focused ]);
 					commonStore.menuClose('blockAction');
 				};
-			} else if (next) {
-				const l = String(next.content.text || '').length;
-				const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
+			} else {
+				const next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
+					return item.type == I.BlockType.Text;
+				});
+				
+				if (next) {
+					const l = String(next.content.text || '').length;
+					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
 					
-				focus.set(next.id, newRange);
-				focus.apply();
+					focus.set(next.id, newRange);
+					focus.apply();					
+				};
 			};
 		};
 		

@@ -132,7 +132,7 @@ class Block extends React.Component<Props, {}> {
 				<div className="id tag red">{id}</div>
 				
 				<div className="wrapMenu">
-					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onClick={this.onMenu} />
+					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenu} />
 				</div>
 				
 				<div className="wrapContent">
@@ -186,7 +186,7 @@ class Block extends React.Component<Props, {}> {
 			
 			selection.set(ids);
 			selection.hide();
-			selection.setBlocked(true);
+			selection.setPreventSelect(true);
 		};
 		
 		if (!restrictions.drag && onDragStart) {
@@ -213,8 +213,9 @@ class Block extends React.Component<Props, {}> {
 			ids = selection.get();
 			if (!ids.length) {
 				ids = [ id ];
-				selection.set(ids);
 			};
+			selection.set(ids);
+			selection.setPreventClear(true);
 		};
 		
 		commonStore.menuOpen('blockAction', { 
@@ -229,6 +230,9 @@ class Block extends React.Component<Props, {}> {
 				blockIds: ids,
 				rootId: rootId,
 			},
+			onClose: () => {
+				selection.setPreventClear(false);
+			}
 		});
 	};
 	
@@ -252,7 +256,7 @@ class Block extends React.Component<Props, {}> {
 		const offset = node.find('#block-' + $.escapeSelector(prevBlock.id)).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
-			selection.setBlocked(true);
+			selection.setPreventSelect(true);
 		};
 		this.unbind();
 		node.addClass('isResizing');
@@ -295,7 +299,7 @@ class Block extends React.Component<Props, {}> {
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		if (selection) {
-			selection.setBlocked(false);	
+			selection.setPreventSelect(false);	
 		};
 		this.unbind();
 		node.removeClass('isResizing');

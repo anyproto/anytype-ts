@@ -66,7 +66,7 @@ class DragProvider extends React.Component<Props, {}> {
 		if (selection) {
 			selection.set(this.ids);
 			selection.hide();
-			selection.setBlocked(true);
+			selection.setPreventSelect(true);
 		};
 	};
 	
@@ -87,7 +87,7 @@ class DragProvider extends React.Component<Props, {}> {
 		this.unbind();
 		
 		if (selection) {
-			selection.setBlocked(false);
+			selection.setPreventSelect(false);
 		};
 	};
 	

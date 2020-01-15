@@ -59,23 +59,47 @@ class BlockStore {
 		this.blockObject[rootId] = [];
 	};
 	
-	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any): any {
-		let tree = this.prepareTree(rootId, this.blockObject[rootId]);
-		let list = this.unwrapTree(tree);
-		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
+	// If check is present find next block if check passes or continue to next block in "dir" direction, else just return next block; 
+	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
+		if (!list) {
+			let tree = this.prepareTree(rootId, this.blockObject[rootId]);
+			list = this.unwrapTree(tree);
+		};
 		
+		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
 		if (idx + dir < 0 || idx + dir > list.length - 1) {
 			return null;
 		};
 		
 		let ret = list[idx + dir];
-		
 		if (check && ret) {
-			if (check(ret)) {
-				return ret;
-			} else {
-				return this.getNextBlock(rootId, ret.id, dir, check);
-			};
+			return check(ret) ? ret : this.getNextBlock(rootId, ret.id, dir, check, list);
+		} else {
+			return ret;
+		};
+	};
+	
+	// Find first block if check passes, if not - continue to next block in "dir" direction
+	getFirstBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
+		if (!check) {
+			return;
+		};
+		
+		if (!list) {
+			let tree = this.prepareTree(rootId, this.blockObject[rootId]);
+			list = this.unwrapTree(tree);
+		};
+		
+		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
+		if (idx + dir < 0 || idx + dir > list.length - 1) {
+			return null;
+		};
+		
+		let ret = list[idx];
+		let next = list[idx + dir];
+		
+		if (ret) {
+			return check(ret) ? ret : this.getFirstBlock(rootId, next.id, dir, check, list);
 		} else {
 			return ret;
 		};

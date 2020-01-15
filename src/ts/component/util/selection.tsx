@@ -23,11 +23,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 	y: number = 0;
 	dir: number = 0;
 	lastIds: string[] = [];
-	blocked: boolean = false;
 	moved: boolean = false;
 	focused: string = '';
 	range: any = null;
 	nodes: any = null;
+	preventSelect: boolean = false;
+	preventClear: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -130,7 +131,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onMouseDown (e: any) {
-		if (this.blocked) {
+		if (this.preventSelect) {
 			this.hide();
 			return;
 		};
@@ -154,7 +155,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
-		if (this.blocked) {
+		if (this.preventSelect) {
 			this.hide();
 			return;
 		};
@@ -296,6 +297,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	clear () {
+		if (this.preventClear) {
+			return;
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.selectable.isSelected').removeClass('isSelected');
 	};
@@ -323,8 +328,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 	
-	setBlocked (v: boolean) {
-		this.blocked = v;
+	setPreventSelect (v: boolean) {
+		this.preventSelect = v;
+	};
+	
+	setPreventClear (v: boolean) {
+		this.preventClear = v;
 	};
 	
 	set (ids: string[]) {

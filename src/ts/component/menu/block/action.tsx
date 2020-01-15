@@ -273,14 +273,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					menuParam.data.valueBg = bgColor;
 				
 					menuParam.data.onChangeText = (color: string) => {
-						C.BlockSetTextColor(rootId, blockId, color, (message: any) => {
+						C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
 							focus.set(message.blockId, { from: length, to: length });
 							focus.apply();
 						});
 						commonStore.menuClose(this.props.id);
 					};
 					menuParam.data.onChangeBg = (color: string) => {
-						C.BlockSetTextBackgroundColor(rootId, blockId, color, (message: any) => {
+						C.BlockListSetTextBackgroundColor(rootId, blockIds, color, (message: any) => {
 							focus.set(message.blockId, { from: length, to: length });
 							focus.apply();
 						});
@@ -300,7 +300,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
+		const { blockId, blockIds, rootId } = data;
 		const { blocks, root } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		const length = String(block.content.text || '').length;
@@ -326,7 +326,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						type: 'copy', 
 						rootId: root,
 						onConfirm: (id: string) => {
-							C.BlockDuplicate(rootId, blockId, blockId, I.BlockPosition.Bottom, (message: any) => {
+							C.BlockListDuplicate(rootId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
 								focus.set(message.blockId, { from: length, to: length });
 								focus.apply();
 							});

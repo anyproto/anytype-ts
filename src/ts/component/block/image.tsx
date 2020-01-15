@@ -118,7 +118,7 @@ class BlockImage extends React.Component<Props, {}> {
 		
 		if (selection) {
 			selection.hide();
-			selection.setBlocked(true);
+			selection.setPreventSelect(true);
 		};
 		
 		node.addClass('isResizing');
@@ -154,7 +154,7 @@ class BlockImage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		if (selection) {
-			selection.setBlocked(false);
+			selection.setPreventSelect(false);
 		};
 		
 		node.removeClass('isResizing');

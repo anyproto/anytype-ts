@@ -61,7 +61,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { commonStore, blockStore, param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, onSelect } = data;
+		const { blockId, blockIds, rootId, onSelect } = data;
 		const { blocks, root } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		const length = block.content.text.length;
@@ -90,7 +90,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						type: 'copy', 
 						rootId: root,
 						onConfirm: (id: string) => {
-							C.BlockDuplicate(rootId, blockId, blockId, I.BlockPosition.Bottom, (message: any) => {
+							C.BlockListDuplicate(rootId, [ blockId ], blockId, I.BlockPosition.Bottom, (message: any) => {
 								focus.set(message.blockId, { from: length, to: length });
 								focus.apply();
 							});
