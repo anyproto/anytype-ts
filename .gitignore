@@ -7,5 +7,6 @@ dist/main.js.map
 build
 addon
 protobuf
-todo.txt
-done.txt
+todo.md
+done.md
+commands.md

@@ -10,7 +10,6 @@ module.exports = {
 	resolve: {
 		extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
 		modules: [
-			path.resolve('./electron/'),
 			path.resolve('./src/'),
 			path.resolve('./node_modules')
 		]

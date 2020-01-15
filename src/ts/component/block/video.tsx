@@ -28,8 +28,6 @@ class BlockVideo extends React.Component<Props, {}> {
 		const { state, hash } = content;
 		const accept = [ 'mp4', 'm4v' ];
 		
-		console.log(content);
-		
 		let element = null;
 		switch (state) {
 			default:

@@ -286,14 +286,11 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		
 		const { blockStore, onKeyUp, id, rootId, content } = this.props;
-		const range = this.getRange();
-		const k = e.which;
-		const value = this.getValue();
 		
 		this.marks = this.getMarksFromHtml();
 		
 		this.placeHolderCheck();
-		onKeyUp(e, value);
+		onKeyUp(e, this.getValue());
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks); }, 500);
