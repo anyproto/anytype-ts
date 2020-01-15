@@ -43,7 +43,7 @@ class BlockImage extends React.Component<Props, {}> {
 		let css: any = {};
 		
 		if (width) {
-			css.width = width;
+			css.width = this.checkWidth(width);
 		};
 		
 		switch (state) {
@@ -62,8 +62,8 @@ class BlockImage extends React.Component<Props, {}> {
 				
 			case I.FileState.Done:
 				element = (
-					<div className="wrap">
-						<img style={css} className="img" src={commonStore.imageUrl(hash, 1024)} />
+					<div style={css} className="wrap">
+						<img className="img" src={commonStore.imageUrl(hash, 1024)} />
 						<Icon className="resize" onMouseDown={this.onResizeStart} />
 						<Icon className="dots" />
 					</div>
@@ -78,9 +78,9 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div>
 				{element}
-			</React.Fragment>
+			</div>
 		);
 	};
 	
@@ -130,28 +130,28 @@ class BlockImage extends React.Component<Props, {}> {
 		e.stopPropagation();
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const image = node.find('.img');
+		const wrap = node.find('.wrap');
 		
-		if (!image.length) {
+		if (!wrap.length) {
 			return;
 		};
 		
-		const rect = (image.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		
-		image.css({ width: this.checkWidth(e.pageX - rect.x + 20) });
+		wrap.css({ width: this.checkWidth(e.pageX - rect.x + 20) });
 	};
 	
 	onResizeEnd (e: any) {
 		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
-		const image = node.find('.img');
+		const wrap = node.find('.wrap');
 		
-		if (!image.length) {
+		if (!wrap.length) {
 			return;
 		};
 		
-		const rect = (image.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		
 		this.unbind();
 		
@@ -171,10 +171,7 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	checkWidth (v: number) {
-		const { fields } = this.props;
-		const width = fields.width || this.props.width || 1;
-		const max = Math.floor((Constant.size.editorPage + Constant.size.blockMenu) * width - Constant.size.blockMenu);
-		return Math.max(20, Math.min(max, v));
+		return Math.max(60, v);
 	};
 	
 };

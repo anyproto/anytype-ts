@@ -8,8 +8,8 @@
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 13px; line-height: 18px; }
 		
-		.wrap { position: relative; }
-		.img { max-width: 100%; display: block; }
+		.wrap { max-width: 100%; position: relative; }
+		.img { width: 100%; display: block; }
 		
 		.icon.resize {
 			width: 18px; height: 18px; position: absolute; right: 4px; bottom: 4px;
