@@ -49,7 +49,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		
 		return (
-			<div className="editor" onPaste={this.onPaste}>
+			<div className="editor">
 				<div className="blocks">
 					<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 				
@@ -83,7 +83,12 @@ class EditorPage extends React.Component<Props, {}> {
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 		win.on('keydown.editor', (e: any) => { this.onKeyDownCommon(e); });
-		win.on('paste.editor', (e: any) => { this.onPaste(e); });
+		win.on('paste.editor', (e: any) => {
+			if (keyboard.focus) {
+				return;
+			}; 
+			this.onPaste(e); 
+		});
 		
 		C.BlockOpen(rootId);
 	};
@@ -102,7 +107,6 @@ class EditorPage extends React.Component<Props, {}> {
 				text = '';
 			};
 			let length = text.length;
-			
 			focus.set(title.id, { from: length, to: length });
 		};
 		
@@ -207,18 +211,8 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (k == Key.c) {
 				e.preventDefault();
-				this.copy(e);
+				this.onCopy(e);
 			};
-			
-			/*
-			if (k == Key.v) {
-				e.preventDefault();
-				//this.paste(e);
-				
-				let pe = new ClipboardEvent('paste');
-				window.dispatchEvent(pe);
-			};
-			*/
 		};
 		
 		if (k == Key.backspace) {
@@ -251,7 +245,7 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 			
 			if (k == Key.c) {
-				this.copy(e);
+				this.onCopy(e);
 			};
 		};
 		
@@ -282,8 +276,6 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 				
 				if (next) {
-					console.log(next.id, next.content.text);
-					
 					const l = String(next.content.text || '').length;
 					const newRange = (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l });
 					
@@ -350,50 +342,7 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	onKeyUp (e: any, text?: string) {
 		const { commonStore } = this.props;
-		
 		commonStore.filterSet(text);
-	};
-	
-	copy (e: any) {
-		const { blockStore, dataset, rootId } = this.props;
-		const { blocks } = blockStore;
-		const { selection } = dataset;
-		const ids = selection.get();
-
-		if (!ids.length) {
-			return;
-		};
-		
-		let text: string[] = [];
-		let list: any[] = ids.map((id: string) => {
-			const block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
-			
-			if (block.type == I.BlockType.Text) {
-				text.push(String(block.content.text || ''));
-			};
-			return blockStore.prepareBlockToProto(block);
-		});
-
-		Util.clipboardCopy({
-			text: text.join('\n'),
-			html: null, 
-			anytype: list 
-		});		
-	};
-	
-	paste (e: any) {
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const { dataset, rootId } = this.props;
-		const { selection } = dataset;
-		const { focused, range } = focus;
-
-		const data: any = {
-			text: cb.getData('text/plain'),
-			html: cb.getData('text/html'),
-			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
-		};
-		
-		C.BlockPaste(rootId, focused, range, selection.get(), data, (message: any) => {});
 	};
 	
 	selectAll () {
@@ -474,9 +423,48 @@ class EditorPage extends React.Component<Props, {}> {
 		this.scrollTop = $(window).scrollTop();
 	};
 	
+	onCopy (e: any) {
+		const { blockStore, dataset, rootId } = this.props;
+		const { blocks } = blockStore;
+		const { selection } = dataset;
+		const ids = selection.get();
+
+		if (!ids.length) {
+			return;
+		};
+		
+		let text: string[] = [];
+		let list: any[] = ids.map((id: string) => {
+			const block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
+			
+			if (block.type == I.BlockType.Text) {
+				text.push(String(block.content.text || ''));
+			};
+			return blockStore.prepareBlockToProto(block);
+		});
+
+		Util.clipboardCopy({
+			text: text.join('\n'),
+			html: null, 
+			anytype: list 
+		});		
+	};
+	
 	onPaste (e: any) {
 		e.preventDefault();
-		this.paste(e);
+		
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset;
+		const { focused, range } = focus;
+
+		const data: any = {
+			text: cb.getData('text/plain'),
+			html: cb.getData('text/html'),
+			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
+		};
+		
+		C.BlockPaste(rootId, focused, range, selection.get(), data, (message: any) => {});
 	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {

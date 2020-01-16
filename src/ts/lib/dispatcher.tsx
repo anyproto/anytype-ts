@@ -4,6 +4,7 @@ import { Util, I, StructDecode } from 'ts/lib';
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
 const protobuf = require('protobufjs');
+const DEBUG = true;
 
 class Dispatcher {
 
@@ -40,7 +41,9 @@ class Dispatcher {
 				continue;
 			};
 			
-			console.log('[Dispatcher.event]', type, data);
+			if (DEBUG) {
+				console.log('[Dispatcher.event]', type, data);				
+			};
 		
 			switch (type) {
 				
@@ -180,15 +183,16 @@ class Dispatcher {
 			return;
 		};
 		
-		console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
-		let t0 = performance.now();
+		let t0 = 0;
+		let t1 = 0;
+		
+		if (DEBUG) {
+			t0 = performance.now();
+			console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
+		};
 		
 		try {
 			this.service[type](data, (message: any) => {
-				if (!callBack) {
-					return;
-				};
-				
 				message.error = message.error || {};
 				message.error.code = Number(message.error.code) || 0;
 				message.error.description = String(message.error.description || '');
@@ -197,10 +201,14 @@ class Dispatcher {
 					console.error('[Dispatcher.call] code:', message.error.code, 'description:', message.error.description);
 				};
 				
-				callBack(message);
+				if (callBack) {
+					callBack(message);
+				};
 				
-				let t1 = performance.now();
-				console.log('[Dispatcher.call] callBack', type, message, Math.ceil(t1 - t0) + 'ms');
+				if (DEBUG) {
+					t1 = performance.now();
+					console.log('[Dispatcher.call] callBack', type, message, Math.ceil(t1 - t0) + 'ms');					
+				};
 			});			
 		} catch (e) {
 			console.error(e);
