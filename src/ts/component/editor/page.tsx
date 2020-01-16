@@ -49,7 +49,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		
 		return (
-			<div className="editor">
+			<div className="editor" onPaste={this.onPaste}>
 				<div className="blocks">
 					<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 				
@@ -83,6 +83,7 @@ class EditorPage extends React.Component<Props, {}> {
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 		win.on('keydown.editor', (e: any) => { this.onKeyDownCommon(e); });
+		win.on('paste.editor', (e: any) => { this.onPaste(e); });
 		
 		C.BlockOpen(rootId);
 	};
@@ -195,6 +196,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const node = $(ReactDOM.findDOMNode(this));
 		const ids = selection.get();
 		
 		if (e.ctrlKey || e.metaKey) {
@@ -205,16 +207,18 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (k == Key.c) {
 				e.preventDefault();
-				
-				const ids = selection.get();
-				if (ids.length) {
-					Util.clipboardCopy({
-						text: null,
-						html: null, 
-						anytype: ids 
-					});
-				};
+				this.copy(e);
 			};
+			
+			/*
+			if (k == Key.v) {
+				e.preventDefault();
+				//this.paste(e);
+				
+				let pe = new ClipboardEvent('paste');
+				window.dispatchEvent(pe);
+			};
+			*/
 		};
 		
 		if (k == Key.backspace) {
@@ -244,6 +248,10 @@ class EditorPage extends React.Component<Props, {}> {
 			if ((k == Key.a) && (range.from == 0) && (range.to == l)) {
 				e.preventDefault();
 				this.selectAll();
+			};
+			
+			if (k == Key.c) {
+				this.copy(e);
 			};
 		};
 		
@@ -346,6 +354,48 @@ class EditorPage extends React.Component<Props, {}> {
 		commonStore.filterSet(text);
 	};
 	
+	copy (e: any) {
+		const { blockStore, dataset, rootId } = this.props;
+		const { blocks } = blockStore;
+		const { selection } = dataset;
+		const ids = selection.get();
+
+		if (!ids.length) {
+			return;
+		};
+		
+		let text: string[] = [];
+		let list: any[] = ids.map((id: string) => {
+			const block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
+			
+			if (block.type == I.BlockType.Text) {
+				text.push(String(block.content.text || ''));
+			};
+			return blockStore.prepareBlockToProto(block);
+		});
+
+		Util.clipboardCopy({
+			text: text.join('\n'),
+			html: null, 
+			anytype: list 
+		});		
+	};
+	
+	paste (e: any) {
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset;
+		const { focused, range } = focus;
+
+		const data: any = {
+			text: cb.getData('text/plain'),
+			html: cb.getData('text/html'),
+			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
+		};
+		
+		C.BlockPaste(rootId, focused, range, selection.get(), data, (message: any) => {});
+	};
+	
 	selectAll () {
 		const { blockStore, commonStore, dataset, rootId } = this.props;
 		const { blocks } = blockStore;
@@ -425,31 +475,8 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		const { blockStore, dataset, rootId } = this.props;
-		const { blocks } = blockStore;
-		const { selection } = dataset;
-		const { focused, range } = focus;
-
-		let ids = [];
-		let list = [];
-		try {
-			ids = JSON.parse(e.clipboardData.getData('application/anytype') || '[]');
-		} catch (e) {};
-		
-		const data: any = {
-			text: e.clipboardData.getData('text/plain'),
-			html: e.clipboardData.getData('text/html'),
-			anytype: [],
-		};
-		
-		for (let id of ids) {
-			let block = blocks[rootId].find((it: any) => { return it.id == id; });
-			if (block) {
-				data.anytype.push(blockStore.prepareBlockToProto(block));
-			};
-		};
-		
-		C.BlockPaste(rootId, focused, range, selection.get(), data, (message: any) => {});
+		console.log('onPaste');
+		this.paste(e);
 	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
