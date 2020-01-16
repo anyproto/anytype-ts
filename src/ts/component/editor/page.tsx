@@ -90,26 +90,28 @@ class EditorPage extends React.Component<Props, {}> {
 			this.onPaste(e); 
 		});
 		
-		C.BlockOpen(rootId);
+		C.BlockOpen(rootId, (message: any) => {
+			const { blockStore, rootId } = this.props;
+			const { blocks } = blockStore;
+			const { focused, range } = focus;
+			
+			const focusedBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.id == focused; });
+			const title = (blocks[rootId] || []).find((it: I.Block) => { return (it.type == I.BlockType.Text) && (it.content.style == I.TextStyle.Title); });
+			
+			if (!focusedBlock && title) {
+				let text = String(title.content.text || '');
+				if (text == Constant.untitled) {
+					text = '';
+				};
+				let length = text.length;
+				focus.set(title.id, { from: length, to: length });
+			};
+			
+			focus.apply();
+		});
 	};
 	
 	componentDidUpdate () {
-		const { blockStore, rootId } = this.props;
-		const { blocks } = blockStore;
-		const { focused, range } = focus;
-		
-		const focusedBlock = (blocks[rootId] || []).find((it: I.Block) => { return it.id == focused; });
-		const title = (blocks[rootId] || []).find((it: I.Block) => { return (it.type == I.BlockType.Text) && (it.content.style == I.TextStyle.Title); });
-		
-		if (!focusedBlock && title) {
-			let text = String(title.content.text || '');
-			if (text == Constant.untitled) {
-				text = '';
-			};
-			let length = text.length;
-			focus.set(title.id, { from: length, to: length });
-		};
-		
 		focus.apply();
 		window.setTimeout(() => { window.scrollTo(0, this.scrollTop); }, 1);
 	};

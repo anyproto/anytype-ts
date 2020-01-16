@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.BlockFile {
@@ -63,7 +63,7 @@ class BlockImage extends React.Component<Props, {}> {
 			case I.FileState.Done:
 				element = (
 					<div style={css} className="wrap">
-						<img className="img" src={commonStore.imageUrl(hash, 1024)} />
+						<img className="img" src={commonStore.imageUrl(hash, 1024)} onDragStart={(e: any) => { e.preventDefault(); }} />
 						<Icon className="resize" onMouseDown={this.onResizeStart} />
 						<Icon className="dots" />
 					</div>
@@ -113,6 +113,7 @@ class BlockImage extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
+		focus.clear();
 		this.unbind();
 		
 		if (selection) {

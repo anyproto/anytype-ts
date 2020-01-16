@@ -219,8 +219,9 @@ class Block extends React.Component<Props, {}> {
 		
 		let ids = [];
 		if (selection) {
+			selection.setPreventClear(false);
 			ids = selection.get();
-			if (!ids.length) {
+			if (ids.length <= 1) {
 				ids = [ id ];
 			};
 			selection.set(ids);
