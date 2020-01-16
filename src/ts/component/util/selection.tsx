@@ -19,6 +19,7 @@ const THROTTLE = 20;
 @observer
 class SelectionProvider extends React.Component<Props, {}> {
 
+	_isMounted = false;
 	x: number = 0;
 	y: number = 0;
 	dir: number = 0;
@@ -57,6 +58,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
 		this.unbind();
 		
 		let win = $(window); 
@@ -69,10 +71,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		this._isMounted = false;
 		this.unbind();
 	};
 	
 	onKeyDown (e: any) {
+		if (!this._isMounted) {
+			return
+		};
+		
 		const { blockStore, rootId } = this.props;
 		const k = e.which;
 		
@@ -127,10 +134,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onKeyUp (e: any) {
-		let k = e.which;
 	};
 	
 	onMouseDown (e: any) {
+		if (!this._isMounted) {
+			return
+		};
+		
 		if (this.preventSelect) {
 			this.hide();
 			return;
@@ -155,6 +165,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
+		if (!this._isMounted) {
+			return
+		};
+		
 		if (this.preventSelect) {
 			this.hide();
 			return;
@@ -179,6 +193,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onMouseUp (e: any) {
+		if (!this._isMounted) {
+			return
+		};
+		
 		const { focused, range } = focus;
 		
 		if (!this.moved) {
@@ -218,6 +236,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	checkNodes (e: any) {
+		if (!this._isMounted) {
+			return
+		};
+		
 		const { focused, range } = focus;
 		const rect = this.getRect(e);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -290,6 +312,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	hide () {
+		if (!this._isMounted) {
+			return
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		$('#rect').hide();
 		
@@ -297,6 +323,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	clear () {
+		if (!this._isMounted) {
+			return
+		};
+		
 		if (this.preventClear) {
 			return;
 		};

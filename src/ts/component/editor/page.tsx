@@ -124,7 +124,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.editor mousemove.editor scroll.editor');
+		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor');
 	};
 	
 	onMouseMove (e: any) {
@@ -475,7 +475,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		console.log('onPaste');
+		e.preventDefault();
 		this.paste(e);
 	};
 	
