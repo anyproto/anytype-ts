@@ -29,7 +29,7 @@ class BlockFile extends React.Component<Props, {}> {
 
 	render () {
 		const { id, rootId, content } = this.props;
-		const { state, hash, size, name } = content;
+		const { state, hash, size, name, mime } = content;
 		
 		let element = null;
 		switch (state) {
@@ -50,7 +50,7 @@ class BlockFile extends React.Component<Props, {}> {
 				element = (
 					<React.Fragment>
 						<span onMouseDown={this.onOpen}>
-							<Icon className="type image" />
+							<Icon className={[ 'type', this.getIcon() ].join(' ')} />
 							<span className="name">{name}</span>
 							<span className="size">{Util.fileSize(size)}</span>
 						</span>
@@ -99,6 +99,58 @@ class BlockFile extends React.Component<Props, {}> {
 	onDownload (e: any) {
 		const { commonStore, content } = this.props;
 		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+	};
+	
+	getIcon (): string {
+		const { content } = this.props;
+		const { name, mime } = content;
+		
+		let icon = '';
+		let t: string[] = [];
+		
+		if (mime) {
+			let a: string[] = mime.split(';');
+			if (a.length) {
+				t = a[0].split('/');
+			};
+		};
+		
+		if (t.length) {
+			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
+				icon = t[0];
+			};
+			
+			if ([ 'pdf' ].indexOf(t[1]) >= 0) {
+				icon = t[1];
+			};
+			
+			if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(t[1]) >= 0) {
+				icon = 'archive';
+			};
+			
+			if ([ 'vnd.ms-powerpoint' ].indexOf(t[1]) >= 0) {
+				icon = 'presentation';
+			};
+			
+			if ([ 'vnd.openxmlformats-officedocument.spreadsheetml.sheet' ].indexOf(t[1]) >= 0) {
+				icon = 'table';
+			};
+		};
+		
+		if (!icon) {
+			let a: string[] = name.split('.');
+			let e = a[a.length - 1];
+			
+			if ([ 'csv', 'json', 'txt' ].indexOf(e) >= 0) {
+				icon = 'text';
+			};
+			
+			if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
+				icon = 'archive';
+			};
+		};
+		
+		return String(icon || 'unknown');
 	};
 	
 };

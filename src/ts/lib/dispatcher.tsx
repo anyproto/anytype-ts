@@ -150,12 +150,16 @@ class Dispatcher {
 						block.content.hash = String(data.hash.value || '');
 					};
 					
+					if (null !== data.mime) {
+						block.content.mime = String(data.mime.value || '');
+					};
+					
 					if (null !== data.size) {
 						block.content.size = Number(data.size.value) || 0;
 					};
 					
 					if (null !== data.type) {
-						//block.content.type = Number(data.type.value) || 0;
+						block.content.type = Number(data.type.value) || 0;
 					};
 					
 					if (null !== data.state) {

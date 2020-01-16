@@ -15,11 +15,12 @@ export enum FileState {
 };
 
 export interface File {
-	hash?: string;
-	name?: string;
-	size?: number;
+	hash: string;
+	name: string;
+	mime: string;
+	size: number;
 	state: FileState;
-	type?: FileType;
+	type: FileType;
 };
 
 export interface BlockFile extends I.Block {
