@@ -529,7 +529,7 @@ class EditorPage extends React.Component<Props, {}> {
 							type: item.id,
 						};
 					};
-						
+					
 					this.blockReplace(block, param);
 				}
 			}

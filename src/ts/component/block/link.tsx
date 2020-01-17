@@ -23,7 +23,7 @@ class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { blockStore, id, rootId, content } = this.props;
 		const { fields, isArchived } = content;
-		const { icon, name } = fields;
+		const { icon, name } = fields || {};
 		
 		return (
 			<React.Fragment>
