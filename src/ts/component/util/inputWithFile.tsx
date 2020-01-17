@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, Button } from 'ts/component';
-import { Util } from 'ts/lib';
+import { focus, Util } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
 
@@ -153,6 +153,8 @@ class InputWithFile extends React.Component<Props, State> {
 	onChangeUrl (e: any, force: boolean) {
 		const { onChangeUrl } = this.props;
 		
+		focus.clear();
+		
 		window.clearTimeout(this.t);
 		this.t = window.setTimeout(() => {
 			if (!this.urlRef) {
@@ -179,6 +181,7 @@ class InputWithFile extends React.Component<Props, State> {
 		
 		e.preventDefault();
 		e.stopPropagation();
+		focus.clear();
 		
 		let options: any = { 
 			properties: [ 'openFile' ], 

@@ -8,7 +8,6 @@ interface Props {
 	blockStore?: any;
 };
 
-const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 
 @inject('commonStore')
@@ -28,7 +27,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 				<Icon className="logo" />
 				<div className="menu">
 					<div className="item" onClick={this.onNew}>
-						<Icon className="new" /> New
+						<Icon className="new" />New
 					</div>
 				</div>
 			</div>

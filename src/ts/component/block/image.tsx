@@ -94,13 +94,11 @@ class BlockImage extends React.Component<Props, {}> {
 	
 	onChangeUrl (e: any, url: string) {
 		const { id, rootId } = this.props;
-		
 		C.BlockUpload(rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
 		const { id, rootId } = this.props;
-		
 		C.BlockUpload(rootId, id, '', path);
 	};
 	

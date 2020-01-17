@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon } from 'ts/component';
-import { I, C, Key, Util, dispatcher, focus, keyboard } from 'ts/lib';
+import { I, C, Key, Util, Mark, dispatcher, focus, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -35,8 +35,8 @@ class EditorPage extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
+		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
@@ -60,8 +60,8 @@ class EditorPage extends React.Component<Props, {}> {
 								index={i}
 								{...item} 
 								{...this.props}
-								onKeyDown={this.onKeyDown} 
-								onKeyUp={this.onKeyUp}
+								onKeyDown={this.onKeyDownBlock} 
+								onKeyUp={this.onKeyUpBlock}
 								onMenuAdd={this.onMenuAdd}
 								onPaste={this.onPaste}
 							/>
@@ -82,7 +82,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
-		win.on('keydown.editor', (e: any) => { this.onKeyDownCommon(e); });
+		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
 		win.on('paste.editor', (e: any) => {
 			if (keyboard.focus) {
 				return;
@@ -193,7 +193,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	onKeyDownCommon (e: any) {
+	onKeyDownEditor (e: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
 		const k = e.which;
@@ -223,7 +223,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	onKeyDown (e: any, text?: string) {
+	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
 		const { blockStore, commonStore, dataset, rootId } = this.props;
 		const { focused, range } = focus;
 		const { blocks } = blockStore;
@@ -316,6 +316,62 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		};
 		
+		if ((e.ctrlKey || e.metaKey) && range.to && (range.from != range.to)) {
+			let call = false;
+			let type = 0;
+			
+			// Bold
+			if (k == Key.b) {
+				call = true;
+				type = I.MarkType.Bold;
+			};
+			
+			// Italic
+			if (k == Key.i) {
+				call = true;
+				type = I.MarkType.Italic;
+			};
+			
+			// Strikethrough
+			if ((k == Key.s) && e.shiftKey) {
+				call = true;
+				type = I.MarkType.Strike;
+			};
+			
+			// Link
+			if (k == Key.k) {
+				call = true;
+				type = I.MarkType.Link;
+			};
+			
+			// Code
+			if (k == Key.e) {
+				call = true;
+				type = I.MarkType.Code;
+			};
+			
+			if (call) {
+				e.preventDefault();
+				
+				if (type == I.MarkType.Link) {
+					let mark = Mark.getInRange(marks, type, range);
+					commonStore.popupOpen('prompt', {
+						data: {
+							placeHolder: 'Please enter URL',
+							value: (mark ? mark.param : ''),
+							onChange: (param: string) => {
+								marks = Mark.toggle(marks, { type: type, param: param, range: range });
+								C.BlockSetTextText(rootId, block.id, String(text || ''), marks);
+							}
+						}
+					});
+				} else {
+					marks = Mark.toggle(marks, { type: type, range: range });
+					C.BlockSetTextText(rootId, block.id, String(text || ''), marks);
+				};
+			};
+		};
+		
 		if (k == Key.enter) {
 			if (e.shiftKey || commonStore.menuIsOpen()) {
 				return;
@@ -342,7 +398,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	onKeyUp (e: any, text?: string) {
+	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
 		const { commonStore } = this.props;
 		commonStore.filterSet(text);
 	};

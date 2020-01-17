@@ -14,8 +14,8 @@ interface Props extends I.BlockText {
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onKeyDown?(e: any, text?: string): void;
-	onKeyUp?(e: any, text?: string): void;
+	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 	onMenuAdd? (id: string): void;
 	onPaste? (e: any): void;
 };
@@ -265,7 +265,7 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		};
 		
-		if (k == Key.enter) {
+		if ((k == Key.enter) && !e.shiftKey) {
 			this.blockUpdateText(this.marks);
 		};
 		
@@ -273,7 +273,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
 		};
-		onKeyDown(e, value);
+		onKeyDown(e, value, this.marks);
 	};
 	
 	onKeyUp (e: any) {
@@ -354,7 +354,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = this.getMarksFromHtml();
 		
 		this.placeHolderCheck();
-		onKeyUp(e, value);
+		onKeyUp(e, value, this.marks);
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks); }, 500);

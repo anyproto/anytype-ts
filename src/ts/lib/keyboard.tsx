@@ -1,7 +1,8 @@
-import { I, Util, Storage } from 'ts/lib';
+import { I, C, Util, Storage } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 class Keyboard {
 	
@@ -24,6 +25,8 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
+		const { root } = blockStore;
+		
 		let k = e.which;
 		
 		if (!this.focus) {
@@ -36,6 +39,32 @@ class Keyboard {
 		if (k == Key.escape) {
 			e.preventDefault();
 			commonStore.popupCloseAll();
+		};
+		
+		if (e.ctrlKey || e.metaKey) {
+			
+			// Create new page
+			if (k == Key.n) {
+				commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
+		
+				const block = {
+					type: I.BlockType.Page,
+					fields: { 
+						icon: Util.randomSmile(), 
+						name: Constant.untitled,
+					},
+					content: {
+						style: I.PageStyle.Empty,
+					},
+				};
+		
+				C.BlockCreate(block, root, '', I.BlockPosition.Bottom, (message: any) => {
+					commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
+					commonStore.popupOpen('editorPage', {
+						data: { id: message.blockId }
+					});
+				});
+			};
 		};
 		
 		this.setPinCheck();
@@ -88,7 +117,14 @@ export enum Key {
 	right		 = 39,
 	down		 = 40,
 	a			 = 65,
+	b			 = 66,
 	c			 = 67,
+	d			 = 68,
+	e			 = 69,
+	i			 = 73,
+	k			 = 75,
+	n			 = 78,
+	s			 = 83,
 	v			 = 86,
 	slash		 = 191,
 };

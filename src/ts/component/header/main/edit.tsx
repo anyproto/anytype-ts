@@ -68,6 +68,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { blocks, root } = blockStore;
 		const map = blockStore.getMap(blocks[root]);
 		
+		if (!map[id]) {
+			return;
+		};
+		
 		path.unshift(map[id]);
 		if (map[id].parentId != root) {
 			this.getPath(map[id].parentId, path);
