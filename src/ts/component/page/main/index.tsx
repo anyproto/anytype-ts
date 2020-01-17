@@ -78,9 +78,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { blockStore, commonStore } = this.props;
 		
 		C.ConfigGet((message: any) => {
+			const root = message.homeBlockId;
+			
 			commonStore.gatewaySet(message.gatewayUrl);
-			blockStore.rootSet(message.homeBlockId);
-			C.BlockOpen(message.homeBlockId);
+			blockStore.rootSet(root);
+			
+			C.BlockClose(root, (message: any) => {
+				C.BlockOpen(root);
+			});
 		});
 	};
 	
@@ -89,10 +94,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		const { blockStore } = this.props;
-		const { root } = blockStore;
-		
-		C.BlockClose(root);
 	};
 	
 	onSettings (e: any) {

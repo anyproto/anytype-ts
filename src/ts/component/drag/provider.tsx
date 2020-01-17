@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragLayer } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -51,6 +51,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const win = $(window);
 		
 		e.stopPropagation();
+		focus.clear();
 		
 		console.log('[onDragStart]', type, ids);
 		
