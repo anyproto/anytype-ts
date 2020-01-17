@@ -259,6 +259,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const node = $(ReactDOM.findDOMNode(this));
 		const index = blocks[rootId].findIndex((item: I.Block) => { return item.id == focused; });
 		const { content } = block;
 
@@ -273,6 +274,39 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (k == Key.c) {
 				this.onCopy(e);
+			};
+			
+			// Open action menu
+			if (k == Key.slash) {
+				const el = node.find('#' + $.escapeSelector(focused));
+				
+				let ids = [];
+				if (selection) {
+					selection.setPreventClear(false);
+					ids = selection.get();
+					if (ids.length <= 1) {
+						ids = [ focused ];
+					};
+					selection.set(ids);
+					selection.setPreventClear(true);
+				};
+				
+				commonStore.menuOpen('blockAction', { 
+					element: 'block-' + focused,
+					type: I.MenuType.Vertical,
+					offsetX: 50,
+					offsetY: -el.outerHeight(),
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					data: {
+						blockId: focused,
+						blockIds: ids,
+						rootId: rootId,
+					},
+					onClose: () => {
+						selection.setPreventClear(false);
+					}
+				});
 			};
 		};
 		
