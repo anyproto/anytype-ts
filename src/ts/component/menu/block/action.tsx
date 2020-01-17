@@ -303,7 +303,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { blockId, blockIds, rootId } = data;
 		const { blocks, root } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
-		const length = String(block.content.text || '').length;
 		
 		commonStore.menuClose(this.props.id);
 		
@@ -326,9 +325,15 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						type: 'copy', 
 						rootId: root,
 						onConfirm: (id: string) => {
+							const lastId = blockIds[blockIds.length - 1];
+							const last = blocks[rootId].find((it: I.Block) => { return it.id == lastId; });
+							
 							C.BlockListDuplicate(rootId, blockIds, blockIds[blockIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
-								focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
-								focus.apply();
+								if (last) {
+									const length = String(last.content.text || '').length;
+									focus.set(last.id, { from: length, to: length });
+									focus.apply();									
+								};
 							});
 						}
 					}, 

@@ -45,6 +45,8 @@ class Keyboard {
 			
 			// Create new page
 			if (k == Key.n) {
+				e.preventDefault();
+				
 				commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
 				const block = {

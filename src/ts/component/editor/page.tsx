@@ -194,8 +194,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDownEditor (e: any) {
-		const { dataset, rootId } = this.props;
+		const { dataset, commonStore, blockStore, rootId } = this.props;
+		const { root, blocks } = blockStore;
 		const { selection } = dataset;
+		const { focused } = focus;
 		const k = e.which;
 		
 		if (keyboard.focus) {
@@ -214,6 +216,29 @@ class EditorPage extends React.Component<Props, {}> {
 			if (k == Key.c) {
 				e.preventDefault();
 				this.onCopy(e);
+			};
+			
+			if (k == Key.d) {
+				e.preventDefault();
+				
+				commonStore.popupOpen('tree', { 
+					data: { 
+						type: 'copy', 
+						rootId: root,
+						onConfirm: (id: string) => {
+							const lastId = ids[ids.length - 1];
+							const last = blocks[rootId].find((it: I.Block) => { return it.id == lastId; });
+							
+							C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {
+								if (last) {
+									const length = String(last.content.text || '').length;
+									focus.set(last.id, { from: length, to: length });
+									focus.apply();
+								};
+							});
+						}
+					}, 
+				});
 			};
 		};
 		
