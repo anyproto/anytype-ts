@@ -25,7 +25,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const { root } = blockStore;
+		const { blocks, root } = blockStore;
 		
 		let k = e.which;
 		
@@ -61,9 +61,16 @@ class Keyboard {
 		
 				C.BlockCreate(block, root, '', I.BlockPosition.Bottom, (message: any) => {
 					commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-					commonStore.popupOpen('editorPage', {
-						data: { id: message.blockId }
-					});
+					
+					if (message.blockId) {
+						const block = blocks[root].find((it: any) => { return it.id == message.blockId; });
+						
+						if (block) {
+							commonStore.popupOpen('editorPage', {
+								data: { id: block.content.targetBlockId }
+							});
+						};
+					};
 				});
 			};
 		};
