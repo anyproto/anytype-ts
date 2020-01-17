@@ -41,29 +41,33 @@ class PopupTree extends React.Component<Props, {}> {
 			link: 'Link to'
 		};
 		
-		const Item = (item: any) => (
-			<div>
-				<div id={'item' + item.id} className={'item c' + item.index + (item.childBlocks.length ? ' withChildren' : '')}>
-					<div className="arrow" onMouseDown={(e: any) => { this.onToggle(e, item.id); }}>
-						<div className="dot" />
-					</div>
-					<span onMouseDown={(e: any) => { this.onClick(e, item.id); }}>
-						{item.id == 'root' ? <Icon className="home" /> : <Smile icon={item.fields.icon} />}
-						<div className="name">
-							<div className="txt">{item.fields.name}</div>
+		const Item = (item: any) => {
+			let content = item.content || {};
+			let fields = content.fields || {};
+			return (
+				<div>
+					<div id={'item' + item.id} className={'item c' + item.index + (item.childBlocks.length ? ' withChildren' : '')}>
+						<div className="arrow" onMouseDown={(e: any) => { this.onToggle(e, item.id); }}>
+							<div className="dot" />
 						</div>
-					</span>
-				</div>
-				{item.childBlocks.length ? (
-					<div id={'children' + item.id} className="children">
-						{item.childBlocks.map((child: any, i: number) => {
-							let index = item.index + 1;
-							return <Item key={i} {...this.props} {...child} index={index} />;
-						})}
+						<span onMouseDown={(e: any) => { this.onClick(e, item.id); }}>
+							{item.id == 'root' ? <Icon className="home" /> : <Smile icon={fields.icon} />}
+							<div className="name">
+								<div className="txt">{fields.name}</div>
+							</div>
+						</span>
 					</div>
-				) : ''}
-			</div>
-		);
+					{item.childBlocks.length ? (
+						<div id={'children' + item.id} className="children">
+							{item.childBlocks.map((child: any, i: number) => {
+								let index = item.index + 1;
+								return <Item key={i} {...this.props} {...child} index={index} />;
+							})}
+						</div>
+					) : ''}
+				</div>
+			);
+		};
 		
 		return (
 			<div>
@@ -121,12 +125,18 @@ class PopupTree extends React.Component<Props, {}> {
 	};
 	
 	onConfirm (e: any) {
-		const { commonStore, param } = this.props;
+		const { commonStore, blockStore, param } = this.props;
+		const { blocks, root } = blockStore;
 		const { data } = param;
 		const { onConfirm } = data;
+		const block = blocks[root].find((it: any) => { return it.id == this.id; });
+		
+		if (!block) {
+			return;
+		};
 		
 		commonStore.popupClose(this.props.id);
-		onConfirm(this.id);
+		onConfirm(block.content.targetBlockId);
 	};
 	
 	onCancel (e: any) {

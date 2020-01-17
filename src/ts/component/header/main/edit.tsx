@@ -41,13 +41,17 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			</DropTarget>
 		);
 		
-		const PathItem = (item: any) => (
-			<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} type={I.DragItem.Block} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
-				<Smile icon={item.fields.icon} />
-				<div className="name">{item.fields.name}</div>
-				<Icon className="arrow" />
-			</DropTarget>
-		);
+		const PathItem = (item: any) => {
+			let content = item.content || {};
+			let fields = content.fields || {}; 
+			return (
+				<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} type={I.DragItem.Block} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
+					<Smile icon={fields.icon} />
+					<div className="name">{fields.name}</div>
+					<Icon className="arrow" />
+				</DropTarget>
+			);
+		};
 		
 		return (
 			<div className="header headerMainFolder">
@@ -67,14 +71,16 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { blockStore, rootId } = this.props;
 		const { blocks, root } = blockStore;
 		const map = blockStore.getMap(blocks[root]);
+		const block = blocks[root].find((it: any) => { return it.content.targetBlockId == id; });
 		
-		if (!map[id]) {
-			return;
+		console.log(block);
+		
+		if (block) {
+			path.unshift(block);
 		};
 		
-		path.unshift(map[id]);
-		if (map[id].parentId != root) {
-			this.getPath(map[id].parentId, path);
+		if (map[block.id].parentId != root) {
+			this.getPath(map[block.id].parentId, path);
 		};
 	};
 	
@@ -83,7 +89,15 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onPath (e: any, id: string) {
-		this.props.history.push('/main/edit/' + id);
+		const { blockStore } = this.props;
+		const { blocks, root } = blockStore;
+		const block = blocks[root].find((it: any) => { return it.id == id; });
+		
+		if (!block) {
+			return;
+		};
+		
+		this.props.history.push('/main/edit/' + block.content.targetBlockId);
 	};
 	
 	onBack (e: any) {
