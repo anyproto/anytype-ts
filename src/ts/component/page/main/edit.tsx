@@ -8,7 +8,7 @@ interface Props extends RouteComponentProps<any> {};
 class PageMainEdit extends React.Component<Props, {}> {
 	
 	render () {
-		const { match } = this.props;
+		const { history, location, match } = this.props;
 		
 		return (
 			<SelectionProvider container=".pageMainEdit" rootId={match.params.id}>
@@ -17,7 +17,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					<MenuMain />
 							
 					<div className="wrapper">
-						<EditorPage {...this.props} rootId={match.params.id} container=".pageMainEdit" addOffsetY={0} />
+						<EditorPage history={history} location={location} match={match} rootId={match.params.id} container=".pageMainEdit" addOffsetY={0} />
 					</div>
 				</DragProvider>
 			</SelectionProvider>

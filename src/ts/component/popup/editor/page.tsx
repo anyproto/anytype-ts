@@ -11,7 +11,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 class PopupEditorPage extends React.Component<Props, {}> {
 	
 	render () {
-		const { param } = this.props;
+		const { history, location, match, param } = this.props;
 		const { data } = param;
 		const { id } = data;
 		
@@ -20,7 +20,7 @@ class PopupEditorPage extends React.Component<Props, {}> {
 				<DragProvider rootId={id}>
 					<Header {...this.props} rootId={id} />
 							
-					<EditorPage {...this.props} rootId={id} container=".popupEditorPage .content" addOffsetY={-46} />
+					<EditorPage history={history} location={location} match={match} rootId={id} container=".popupEditorPage .content" addOffsetY={-46} />
 				</DragProvider>
 			</SelectionProvider>
 		);
