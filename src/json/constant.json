@@ -2,7 +2,8 @@
 	"pinSize": 6,
 	"intercom": "zy2yo0vf",
 	
-	"untitled": "Untitled",
+	"defaultName": "Untitled",
+	"defaultIcon": ":page_facing_up:",
 	
 	"defaultLang": "en",
 	"langs": [

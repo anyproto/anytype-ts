@@ -14,6 +14,7 @@ interface Props {
 
 const $ = require('jquery');
 const THROTTLE = 20;
+const THRESHOLD = 10;
 
 @inject('blockStore')
 @observer
@@ -175,6 +176,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const rect = this.getRect(e);
+		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
+			return;
+		};
 		
 		this.checkNodes(e);
 		

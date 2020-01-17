@@ -119,7 +119,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { root, blocks } = blockStore;
 		const block = blocks[root].find((it: any) => { return it.id == id; });
 		
-		if (!block) {
+		if (!block || (block.type != I.BlockType.Link)) {
 			return;
 		};
 		

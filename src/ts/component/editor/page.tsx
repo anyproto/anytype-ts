@@ -100,7 +100,7 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (!focusedBlock && title) {
 				let text = String(title.content.text || '');
-				if (text == Constant.untitled) {
+				if (text == Constant.defaultName) {
 					text = '';
 				};
 				let length = text.length;

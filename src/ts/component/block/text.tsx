@@ -93,7 +93,7 @@ class BlockText extends React.Component<Props, {}> {
 				
 			case I.TextStyle.Title:
 				cn.push('title');
-				placeHolder = Constant.untitled;
+				placeHolder = Constant.defaultName;
 				break;
 				
 			case I.TextStyle.Header1:
@@ -198,7 +198,7 @@ class BlockText extends React.Component<Props, {}> {
 		text = String(v || text || '');
 		lang = String(lang || 'js');
 		
-		if ((style == I.TextStyle.Title) && (text == Constant.untitled)) {
+		if ((style == I.TextStyle.Title) && (text == Constant.defaultName)) {
 			text = '';
 		};
 		

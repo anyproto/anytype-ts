@@ -52,7 +52,7 @@ class Keyboard {
 					type: I.BlockType.Page,
 					fields: { 
 						icon: Util.randomSmile(), 
-						name: Constant.untitled,
+						name: Constant.defaultName,
 					},
 					content: {
 						style: I.PageStyle.Empty,

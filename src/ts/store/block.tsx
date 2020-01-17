@@ -188,7 +188,8 @@ class BlockStore {
 			item.fields = StructDecode.decodeStruct(block.fields);
 			
 			if (type == I.BlockType.Page) {
-				item.fields.name = item.fields.name || Constant.untitled;
+				item.fields.name = item.fields.name || Constant.defaultName;
+				item.fields.icon = item.fields.icon || Constant.defaultIcon;
 			};
 		};
 		
@@ -223,6 +224,15 @@ class BlockStore {
 						
 			if (type == I.BlockType.Layout) {
 				item.content.style = content.style;
+			};
+			
+			if (type == I.BlockType.Link) {
+				item.content.style = content.style;
+				
+				if (item.content.style == I.LinkStyle.Page) {
+					item.content.fields.name = item.content.fields.name || Constant.defaultName;
+					item.content.fields.icon = item.content.fields.icon || Constant.defaultIcon;
+				};
 			};
 			
 			if (type == I.BlockType.File) {

@@ -44,7 +44,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 			type: I.BlockType.Page,
 			fields: { 
 				icon: Util.randomSmile(), 
-				name: Constant.untitled,
+				name: Constant.defaultName,
 			},
 			content: {
 				style: I.PageStyle.Empty,
