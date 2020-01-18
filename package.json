@@ -31,7 +31,7 @@
 		"url": "https://github.com/anytypeio/js-anytype/issues"
 	},
 	"homepage": "https://github.com/anytypeio/js-anytype#readme",
-	"devDependencies": {
+	"dependencies": {
 		"@types/history": "^4.7.3",
 		"@types/jquery": "^3.3.31",
 		"@types/react": "^16.9.17",
@@ -49,9 +49,7 @@
 		"wait-for-localhost-cli": "^1.1.0",
 		"webpack": "^4.41.5",
 		"webpack-cli": "^3.3.10",
-		"webpack-dev-server": "^3.10.1"
-	},
-	"dependencies": {
+		"webpack-dev-server": "^3.10.1",
 		"@babel/core": "^7.7.7",
 		"@types/i18n": "^0.8.6",
 		"@types/intercom-web": "^2.8.7",
