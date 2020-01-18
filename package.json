@@ -47,7 +47,6 @@
 		"tslint-react": "^4.1.0",
 		"typescript": "^3.7.4",
 		"wait-for-localhost-cli": "^1.1.0",
-		"webpack": "^4.41.5",
 		"webpack-cli": "^3.3.10",
 		"webpack-dev-server": "^3.10.1",
 		"@babel/core": "^7.7.7",
@@ -168,5 +167,8 @@
 				"region": "ams3"
 			}
 		]
+	},
+	"devDependencies": {
+		"webpack": "^4.41.5"
 	}
 }
