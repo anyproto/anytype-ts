@@ -1,31 +1,59 @@
-name: Build/release
+name: Electron CD
 
-on: push
+on: [push]
 
 jobs:
-  release:
+  build:
+
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macOS-10.14, windows-2016, ubuntu-18.04]
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
-
-      - name: Install Node.js, NPM and Yarn
+      - name: Context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
-          node-version: 10
-
-      - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
+          node-version: 10.x
+      - name: npm install
+        run: |
+          npm install -D
+      - name: Publish mac
+        run: |
+          npm run dist:mac
+      - name: Publish win
+        run: |
+          npm run dist: win
+      - name: Publish linux
+        run: |
+          npm run dist:linux
+      name: Cleanup artifacts
+        if: matrix.os != 'windows-latest'
+        run: |
+          mkdir artifacts
+          mv "dist/(*.exe,*.deb,*.AppImage,*.dmg)" artifacts || true
+      - name: Cleanup artifacts Win
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir artifacts
+          mv dist/*.exe artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          name: ${{ matrix.os }}
+          path: dist
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "dist/**"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
