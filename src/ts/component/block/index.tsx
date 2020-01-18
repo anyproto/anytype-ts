@@ -201,6 +201,7 @@ class Block extends React.Component<Props, {}> {
 			selection.set(ids);
 			selection.hide();
 			selection.setPreventSelect(true);
+			selection.setPreventClear(true);
 		};
 		
 		if (onDragStart) {
@@ -210,7 +211,11 @@ class Block extends React.Component<Props, {}> {
 	
 	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
-		const { onDrop } = dataset;
+		const { selection, onDrop } = dataset;
+		
+		if (selection) {
+			selection.setPreventClear(false);
+		};
 		
 		if (dataset && onDrop) {
 			onDrop(e, type, targetId, position);			

@@ -89,6 +89,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		if (selection) {
 			selection.setPreventSelect(false);
+			selection.setPreventClear(false);
 		};
 	};
 	
