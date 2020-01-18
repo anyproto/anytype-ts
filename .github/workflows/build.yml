@@ -21,9 +21,6 @@ jobs:
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
-        env:
-          GIT_COMMIT: ''
-          DATE: ''
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
