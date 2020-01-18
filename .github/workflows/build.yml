@@ -18,6 +18,10 @@ jobs:
         with:
           node-version: 12.10.0
 
+      - name: Create artifact dir
+        run: |
+          mkdir -p artifacts
+
       - name: Build
         uses: samuelmeuli/action-electron-builder@v1
         with:
