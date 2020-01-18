@@ -1,4 +1,7 @@
 const path = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const GitRevisionPlugin = new require('git-revision-webpack-plugin');
+const gitRevision = new GitRevisionPlugin();
 
 module.exports = {
 	mode: 'development',
@@ -66,6 +69,26 @@ module.exports = {
 			}
 		]
 	},
+	plugins: [
+		new webpack.DefinePlugin({
+			'___ENV___': JSON.stringify(env.NODE_ENV),
+			'___GIT_VERSION___': JSON.stringify(gitRevision.version()),
+			'___GIT_COMMIT___': JSON.stringify(gitRevision.commithash()),
+			'___GIT_BRANCH___': JSON.stringify(gitRevision.branch()),
+			//'process.env.NODE_ENV': JSON.stringify('production'),
+		}),
+		
+		/*
+		new UglifyJsPlugin({
+			sourceMap: false,
+			uglifyOptions: {
+				output: {
+					comments: false
+				}
+			}
+		})
+		*/
+	],
 	externals: {
 		bindings: 'require("bindings")'
 	}
