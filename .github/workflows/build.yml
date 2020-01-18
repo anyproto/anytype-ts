@@ -24,17 +24,13 @@ jobs:
         with:
           node-version: 10.x
       - name: npm install
-        run: |
-          npm install -D
+        run: npm install -D
       - name: Publish mac
-        run: |
-          npm run dist:mac
+        run: npm run dist:mac
       - name: Publish win
-        run: |
-          npm run dist: win
+        run: npm run dist: win
       - name: Publish linux
-        run: |
-          npm run dist:linux
+        run: npm run dist:linux
       name: Cleanup artifacts
         if: matrix.os != 'windows-latest'
         run: |
