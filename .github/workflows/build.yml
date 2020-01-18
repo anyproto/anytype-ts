@@ -13,23 +13,23 @@ jobs:
   build_on_mac:
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@master
-      with:
-        ref: electron
-    - uses: actions/setup-node@master
-      with:
-        node-version: 12.10.0
-    - name: see directory
-      run: ls
-      build_on_win:
+      - uses: actions/checkout@master
+        with:
+          ref: electron
+      - uses: actions/setup-node@master
+        with:
+          node-version: 12.10.0
+      - name: see directory
+        run: ls
+        build_on_win:
       
-runs-on: windows-2016
+    runs-on: windows-2016
     steps:
-    - uses: actions/checkout@master
-      with:
-        ref: feature/github-actions        
-    - uses: actions/setup-node@master
-      with:
-        node-version: 10.16
-    - name: see directory
-      run: ls
+      - uses: actions/checkout@master
+        with:
+          ref: feature/github-actions        
+      - uses: actions/setup-node@master
+        with:
+          node-version: 10.16
+      - name: see directory
+        run: ls
