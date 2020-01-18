@@ -28,7 +28,7 @@ jobs:
       - name: Publish mac
         run: npm run dist:mac
       - name: Publish win
-        run: npm run dist: win
+        run: npm run dist:win
       - name: Publish linux
         run: npm run dist:linux
       name: Cleanup artifacts
