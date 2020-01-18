@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 12.10.0
 
-      - name: Build/release Electron app
+      - name: Build
         uses: samuelmeuli/action-electron-builder@v1
         with:
           # GitHub token, automatically provided to the action
