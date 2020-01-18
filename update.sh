@@ -4,11 +4,9 @@ REPO="anytypeio/go-anytype-middleware"
 FILE="addon.tar.gz"
 GITHUB="api.github.com"
 
-#echo -n "GitHub auth token: "
-#read -s token
-#printf "\n"
-
-token='185fa730ee27be84392c8e334d1afb808761cdc6'
+echo -n "GitHub auth token: "
+read -s token
+rintf "\n"
 
 if [ "$token" = "" ]; then
   echo "ERROR: token is empty"
