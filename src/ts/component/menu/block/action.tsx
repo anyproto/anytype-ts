@@ -128,6 +128,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const { content, type } = block;
+		const { style } = content;
+		
 		let sections = [
 			{ 
 				children: [
@@ -145,12 +148,18 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			}
 		];
 		
-		if (block.content.style == I.TextStyle.Title) {
+		// Restrictions
+		
+		if (style == I.TextStyle.Title) {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color', 'move', 'remove' ].indexOf(it.id) < 0; });
 		};
 		
-		if (block.type != I.BlockType.Text) {
+		if (type != I.BlockType.Text) {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color' ].indexOf(it.id) < 0; });
+		};
+		
+		if (type == I.BlockType.Icon) {
+			delete(sections[0]);
 		};
 		
 		return sections;

@@ -34,7 +34,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.getPath(rootId, path);
 		
 		const PathItemHome = (item: any) => (
-			<DropTarget {...this.props} className="item" id={rootId} rootId="" type={I.DragItem.Block} onClick={this.onHome} onDrop={this.onDrop}>
+			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
 				<Icon className="home" />
 				<div className="name">{account.name || 'Home'}</div>
 				<Icon className="arrow" />
@@ -45,7 +45,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			let content = item.content || {};
 			let fields = content.fields || {}; 
 			return (
-				<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} type={I.DragItem.Block} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
+				<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} dropType={I.DragItem.Menu} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
 					<Smile icon={fields.icon} />
 					<div className="name">{fields.name}</div>
 					<Icon className="arrow" />

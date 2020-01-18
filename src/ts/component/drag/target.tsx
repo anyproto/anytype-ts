@@ -5,12 +5,14 @@ import { I } from 'ts/lib';
 interface Props {
 	id: string;
 	rootId: string;
-	type: string;
+	style?: I.TextStyle;
+	type?: I.BlockType;
+	dropType: I.DragItem;
 	className?: string;
 	disabled?: boolean;
 	dataset?: any;
 	onClick?(e: any): void;
-	onDrop?(e: any, type: string, targetId: string, position: I.BlockPosition): void;
+	onDrop?(e: any, dropType: string, targetId: string, position: I.BlockPosition): void;
 };
 
 const $ = require('jquery');
@@ -60,7 +62,7 @@ class DropTarget extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { id, disabled, dataset } = this.props;
+		const { id, disabled, dataset, dropType, style, type } = this.props;
 		if (disabled) {
 			return;
 		};
@@ -118,6 +120,20 @@ class DropTarget extends React.Component<Props, {}> {
 			this.position = I.BlockPosition.Inner;
 		};
 		
+		// You can't drop on Icon
+		if (type == I.BlockType.Icon) {
+			this.position = I.BlockPosition.None;
+		};
+		
+		// You can drop only on bottom of Title
+		if ((style == I.TextStyle.Title) && ([ I.BlockPosition.Left, I.BlockPosition.Right, I.BlockPosition.Top ].indexOf(this.position) >= 0)) {
+			this.position = I.BlockPosition.None;
+		};
+		
+		if ((dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
+			this.position = I.BlockPosition.Inner;
+		};
+		
 		node.removeClass('top bottom left right middle');
 		if (this.canDrop) {
 			node.addClass('isOver ' + this.getDirectionClass(this.position));			
@@ -133,6 +149,9 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		const item = dragProvider.map[id];
+		if (!item) {
+			return;
+		};
 		
 		if (item.parentId == rootId) {
 			return;
@@ -171,7 +190,7 @@ class DropTarget extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { disabled, onDrop, type, id } = this.props;
+		const { disabled, onDrop, dropType, id } = this.props;
 		if (disabled) {
 			return;
 		};
@@ -179,8 +198,8 @@ class DropTarget extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('isOver top bottom left right middle');
 		
-		if (this.canDrop && onDrop) {
-			onDrop(e, type, id, this.position);			
+		if (this.canDrop && onDrop && (this.position != I.BlockPosition.None)) {
+			onDrop(e, dropType, id, this.position);			
 		};
 	};
 	

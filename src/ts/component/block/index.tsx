@@ -55,7 +55,8 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, type, fields, content, index, restrictions, cnt } = this.props;
+		const { id, rootId, type, fields, content, index, cnt } = this.props;
+		const { style } = content || {};
 		
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
@@ -138,7 +139,7 @@ class Block extends React.Component<Props, {}> {
 				<div className="wrapContent">
 					{canSelect ? (
 						<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
-							<DropTarget {...this.props} rootId={rootId} id={id} type={I.DragItem.Block} disabled={restrictions.dropOn} onDrop={this.onDrop}>
+							<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
 								<BlockComponent {...this.props} />
 							</DropTarget>
 						</div>
@@ -165,16 +166,29 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onDragStart (e: any) {
-		const { dataset, id, restrictions } = this.props;
+		const { dataset, id, type, content } = this.props;
 		const { selection, onDragStart } = dataset;
 		
 		if (!dataset) {
 			return;
 		};
 		
-		if (restrictions.drag) {
+		const { style } = content;
+
+		let canDrag = true;
+		
+		if (type == I.BlockType.Icon) {
+			canDrag = false;
+		};
+		
+		if (style == I.TextStyle.Title) {
+			canDrag = false;
+		};
+		
+		if (!canDrag) {
 			e.preventDefault();
 			e.stopPropagation();
+			return;
 		};
 		
 		let ids = [ id ];
@@ -189,7 +203,7 @@ class Block extends React.Component<Props, {}> {
 			selection.setPreventSelect(true);
 		};
 		
-		if (!restrictions.drag && onDragStart) {
+		if (onDragStart) {
 			onDragStart(e, I.DragItem.Block, ids, this);				
 		};
 	};

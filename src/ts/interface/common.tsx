@@ -18,6 +18,7 @@ export interface Account {
 
 export enum DragItem {
 	Block = 'block',
+	Menu = 'menu',
 };
 
 export interface Progress {
