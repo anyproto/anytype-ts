@@ -104,16 +104,19 @@ class EditorPage extends React.Component<Props, {}> {
 					text = '';
 				};
 				let length = text.length;
+				
 				focus.set(title.id, { from: length, to: length });
 			};
 			
-			focus.apply();
+			window.setTimeout(() => { focus.apply(); }, 1);
 		});
 	};
 	
 	componentDidUpdate () {
-		focus.apply();
-		window.setTimeout(() => { window.scrollTo(0, this.scrollTop); }, 1);
+		window.setTimeout(() => {
+			focus.apply(); 
+			window.scrollTo(0, this.scrollTop); 
+		}, 1);
 	};
 	
 	componentWillUnmount () {

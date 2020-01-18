@@ -73,8 +73,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const map = blockStore.getMap(blocks[root]);
 		const block = blocks[root].find((it: any) => { return it.content.targetBlockId == id; });
 		
-		console.log(block);
-		
 		if (block) {
 			path.unshift(block);
 		};

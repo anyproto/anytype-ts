@@ -7,11 +7,13 @@ import { observer, inject } from 'mobx-react';
 const $ = require('jquery');
 
 interface Props extends I.Popup {
+	authStore?: any;
 	blockStore?: any;
 	commonStore?: any;
 	type: string;
 };
 
+@inject('authStore')
 @inject('commonStore')
 @inject('blockStore')
 @observer
@@ -27,13 +29,20 @@ class PopupTree extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { blockStore, param, } = this.props;
+		const { authStore, blockStore, param, } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
 		const { blocks } = blockStore;
+		const { account } = authStore;
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []); 
 		
-		const home = { id: 'root', content: {}, fields: { name: 'Home' }, childBlocks: tree };
+		const home = { 
+			id: 'root', 
+			content: { 
+				fields: { name: account.name || 'Home' } 
+			}, 
+			childBlocks: tree 
+		};
 		const items = [ home ];
 		const titles: any = {
 			copy: 'Duplicate to',

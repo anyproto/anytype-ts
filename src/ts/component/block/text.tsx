@@ -432,12 +432,17 @@ class BlockText extends React.Component<Props, {}> {
 		const { commonStore, id, rootId, content, dataset } = this.props;
 		const { selection } = dataset;
 		const { from, to } = focus.range;
+		const { style } = content;
 		
 		focus.set(id, this.getRange());
 		
 		const { range } = focus;
 		const currentFrom = range.from;
 		const currentTo = range.to;
+		
+		if (style == I.TextStyle.Title) {
+			return;
+		};
 		
 		if (currentTo && (currentFrom != currentTo) && (from != currentFrom || to != currentTo)) {
 			

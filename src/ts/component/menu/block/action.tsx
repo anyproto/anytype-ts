@@ -118,7 +118,17 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	getSections () {
-		return [
+		const { blockStore, param } = this.props;
+		const { data } = param;
+		const { blockId, blockIds, rootId } = data;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
+		
+		if (!block) {
+			return;
+		};
+		
+		let sections = [
 			{ 
 				children: [
 					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
@@ -134,6 +144,16 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				]
 			}
 		];
+		
+		if (block.content.style == I.TextStyle.Title) {
+			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color', 'move', 'remove' ].indexOf(it.id) < 0; });
+		};
+		
+		if (block.type != I.BlockType.Text) {
+			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color' ].indexOf(it.id) < 0; });
+		};
+		
+		return sections;
 	};
 	
 	getItems () {
