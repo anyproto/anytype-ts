@@ -50,6 +50,7 @@ jobs:
         uses: Arduino/actions/setup-protoc@master
 
       - name: Build Middleware
+        if: matrix.os != 'windows-latest'
         run: | 
           export GOPATH=~/go
           cd go-anytype-middleware
