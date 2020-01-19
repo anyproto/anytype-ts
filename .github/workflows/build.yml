@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: 'anytypeio/go-anytype-middleware'
-          token: ${{secrets.GITHUB_TOKEN}}
+          token: ${{ secrets.GitHub_PAT }}
 
       - name: Build Middleware
         run: | 
