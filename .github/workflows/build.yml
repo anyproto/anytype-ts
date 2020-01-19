@@ -48,7 +48,6 @@ jobs:
 
       - name: Build Middleware
         run: | 
-          git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           cd go-anytype-middleware
           go mod download
           make setup-protoc
