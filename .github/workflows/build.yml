@@ -46,7 +46,7 @@ jobs:
         with:
           repo_token: ${{secrets.TOKEN}}
         env:
-          GOPATH=~/go
+          GOPATH: ~/go
 
       - name: Build Middleware
         run: | 
@@ -58,7 +58,7 @@ jobs:
           make build-lib
           make build-js
         env:
-          GOPATH=~/go
+          GOPATH: ~/go
 
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
