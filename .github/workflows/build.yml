@@ -21,24 +21,30 @@ jobs:
       - name: Build
         uses: samuelmeuli/action-electron-builder@v1
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.github_token }}
 
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          #release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      - name: Cleanup artifacts
+        if: matrix.os != 'windows-latest'
+        run: |
+          mkdir artifacts
+          mv "dist/(*.exe,*.deb,*.AppImage,*.dmg)" artifacts || true
+
+      - name: Cleanup artifacts Win
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir artifacts
+          mv dist/*.exe artifacts
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v1
         with:
           name: ${{matrix.os}}
-          path: dist
+          path: artifacts
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: "dist/**"
+          files: "artifacts/**"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
