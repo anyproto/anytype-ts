@@ -29,20 +29,21 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      - name: Build Front
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          github_token: ${{ secrets.github_token }}
-
       - name: Checkout Middleware
         uses: actions/checkout@v2
         with:
           repository: 'anytypeio/go-anytype-middleware'
+          token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Build Middleware
         run: | 
           cd go-anytype-middleware
           go mod download && make protos && make build-lib && make build-js
+
+      - name: Build Front
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{ secrets.github_token }}
 
       - name: Make artifacts dir
         run: | 
