@@ -35,6 +35,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
 
       - name: Set GOPATH
+		if: matrix.os != 'windows-latest'
         run: export GOPATH=~/go
 
       - name: Checkout Middleware
