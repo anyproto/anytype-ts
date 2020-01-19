@@ -36,6 +36,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: 'anytypeio/go-anytype-middleware'
+
+      - name: Build Middleware
         run: | 
           cd go-anytype-middleware
           go mod download && make protos && make build-lib && make build-js
