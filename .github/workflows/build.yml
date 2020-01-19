@@ -18,10 +18,6 @@ jobs:
         with:
           node-version: 12.10.0
 
-      - name: Create artifact dir
-        run: |
-          mkdir -p artifacts
-
       - name: Build
         uses: samuelmeuli/action-electron-builder@v1
         with:
@@ -37,12 +33,12 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: ${{matrix.os}}
-          path: artifacts
+          path: dist
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: "artifacts/**"
+          files: "dist/**"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
