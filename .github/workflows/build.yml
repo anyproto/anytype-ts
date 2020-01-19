@@ -16,6 +16,10 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
 
     steps:
+      - name: Setup
+        run: | 
+          git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
+
       - name: Check out Git repository
         uses: actions/checkout@v1
 
@@ -29,6 +33,9 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Set GOPATH
+        run: export GOPATH=~/go
+
       - name: Checkout Middleware
         uses: actions/checkout@v2
         with:
@@ -41,7 +48,6 @@ jobs:
 
       - name: Build Middleware
         run: | 
-          export GOPATH=~/go
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           cd go-anytype-middleware
           go mod download
