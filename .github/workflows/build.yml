@@ -41,6 +41,7 @@ jobs:
           git config --global url."https://ra3orblade:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           cd go-anytype-middleware
           go mod download
+          make setup-protoc
           make protos
           make build-lib
           make build-js
