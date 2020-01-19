@@ -12,8 +12,7 @@
 		"start:electron-wait-webpack": "wait-for-localhost 8080 && ./node_modules/.bin/electron .",
 		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:prod": "npm-run-all --parallel start:watch-prod start:electron-wait-webpack",
-		"build": "webpack --mode=development --env.NODE_ENV=development",
-		"build:prod": "webpack --mode=production --env.NODE_ENV=production -p --config webpack.config.js",
+		"build": "webpack --mode=production --env.NODE_ENV=production -p --config webpack.config.js",
 		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos",
 		"dist:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --windows",
 		"dist:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
@@ -138,7 +137,6 @@
 			"icon": "electron/icon.icns",
 			"type": "distribution",
 			"target": [
-				"dmg",
 				"zip"
 			],
 			"category": "public.app-category.productivity",

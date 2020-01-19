@@ -26,16 +26,18 @@ jobs:
         with:
           github_token: ${{ secrets.github_token }}
 
+      - name: Make artifacts dir
+        run: | 
+          mkdir -p artifacts
+
       - name: Cleanup artifacts
         if: matrix.os != 'windows-latest'
         run: |
-          mkdir artifacts
-          mv "dist/(*.exe,*.deb,*.AppImage,*.dmg)" artifacts || true
+          mv dist/*.{zip,dmg,deb,AppImage,exe} artifacts || true
 
       - name: Cleanup artifacts Win
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir artifacts
           mv dist/*.exe artifacts
 
       - name: Upload artifacts
