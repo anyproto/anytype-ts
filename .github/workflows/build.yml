@@ -10,6 +10,7 @@ jobs:
 
     strategy:
       matrix:
+        go-version: [ 1.13.x ]
         os: [ macos-latest, ubuntu-latest, windows-latest ]
 
     steps:
@@ -21,10 +22,23 @@ jobs:
         with:
           node-version: 12.10.0
 
-      - name: Build
+      - name: Install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{ secrets.github_token }}
+
+      - name: Checkout Middleware
+        uses: actions/checkout@v2
+        with:
+          repository: 'anytypeio/go-anytype-middleware'
+        run: | 
+          cd go-anytype-middleware
+          go mod download && make protos && make build-lib && make build-js
 
       - name: Make artifacts dir
         run: | 
