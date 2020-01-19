@@ -33,18 +33,22 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: 'anytypeio/go-anytype-middleware'
-          token: ${{ secrets.TOKEN }}
+          token: ${{secrets.TOKEN}}
           path: go-anytype-middleware
 
       - name: Build Middleware
         run: | 
+          git config --global url."https://ra3orblade:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           cd go-anytype-middleware
-          go mod download && make protos && make build-lib && make build-js
+          go mod download
+          make protos
+          make build-lib
+          make build-js
 
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
         with:
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{secrets.TOKEN}}
 
       - name: Make artifacts dir
         run: | 
