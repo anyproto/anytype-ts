@@ -46,9 +46,15 @@ jobs:
           token: ${{secrets.TOKEN}}
           path: go-anytype-middleware
 
+      - name: Checkout Protobuf
+        uses: actions/checkout@v2
+        with:
+          repository: 'protocolbuffers/protobuf'
+          token: ${{secrets.TOKEN}}
+          path: protobuf
+
       - name: Install Protoc
         run: | 
-          git clone https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/protocolbuffers/protobuf.git
           cd protobuf
           git submodule update --init --recursive
           ./autogen.sh
