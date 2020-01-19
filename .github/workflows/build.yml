@@ -36,6 +36,9 @@ jobs:
           token: ${{secrets.TOKEN}}
           path: go-anytype-middleware
 
+      - name: Install Protoc
+        uses: Arduino/actions/setup-protoc@master
+
       - name: Build Middleware
         run: | 
           export GOPATH=~/go
