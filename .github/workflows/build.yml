@@ -34,6 +34,11 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Set GOPATH
+        if: matrix.os != 'windows-latest'
+        run: |  
+          export GOPATH=~/go
+
       - name: Checkout Middleware
         uses: actions/checkout@v2
         with:
@@ -45,11 +50,11 @@ jobs:
         uses: Arduino/actions/setup-protoc@master
         with:
           repo_token: ${{secrets.TOKEN}}
-        env:
-          GOPATH: ~/go
 
       - name: Build Middleware
+        if: matrix.os != 'windows-latest'
         run: | 
+          export GOPATH=~/go
           cd go-anytype-middleware
           go mod download
           pwd
@@ -57,8 +62,6 @@ jobs:
           make protos
           make build-lib
           make build-js
-        env:
-          GOPATH: ~/go
 
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
