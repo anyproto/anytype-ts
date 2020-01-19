@@ -48,6 +48,7 @@ jobs:
 
       - name: Build Middleware
         run: | 
+          export GOPATH=~/go
           cd go-anytype-middleware
           go mod download
           make setup-protoc
