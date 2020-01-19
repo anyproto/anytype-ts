@@ -55,6 +55,7 @@ jobs:
           export GOPATH=~/go
           cd go-anytype-middleware
           go mod download
+          pwd
           make setup-protoc
           make protos
           make build-lib
