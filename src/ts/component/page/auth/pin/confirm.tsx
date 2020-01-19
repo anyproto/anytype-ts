@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Key, Storage } from 'ts/lib';
+import { Key, Storage, translate } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const sha1 = require('sha1');
@@ -49,8 +49,8 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Title text="Confirm pin code" />
-					<Label text="This is one password you need to remember. You will need this password to login on this device." />
+					<Title text={translate('authPinConfirmTitle')} />
+					<Label text={translate('authPinConfirmLabel')} />
 					<Error text={error} />
 					
 					{inputs.map((item: any, i: number) => (
@@ -100,7 +100,7 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 					history.push('/main/index');
 				};
 			} else {
-				this.setState({ error: 'Pin codes do not match' });
+				this.setState({ error: translate('authPinConfirmError') });
 			};
 		};
 	};

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Key, Storage, Util } from 'ts/lib';
+import { Key, Storage, Util, translate } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const sha1 = require('sha1');
@@ -49,7 +49,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Title text="Enter pin code" />
+					<Title text={translate('authPinCheckTitle')} />
 					<Error text={error} />
 					
 					{inputs.map((item: any, i: number) => (
@@ -91,7 +91,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 			if (sha1(pin) == Storage.get('pin')) {
 				history.push('/main/index');
 			} else {
-				this.setState({ error: 'Incorrect pin' });
+				this.setState({ error: translate('authPinCheckError') });
 			};
 		};
 	};
