@@ -190,7 +190,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			{ 
 				id: 'tool', icon: 'tool', name: 'Tool', color: 'blue', children: [
 					{ id: 'task', icon: 'task', name: 'Task' },
-					{ type: I.BlockType.Link, id: 'page', icon: 'tool', name: 'Page' },
+					{ type: I.BlockType.Page, id: 'page', icon: 'tool', name: 'Page' },
 					{ id: 'dataview', icon: 'tool', name: 'Database' },
 					{ id: 'set', icon: 'set', name: 'Set' },
 					{ id: 'contact', icon: 'contact', name: 'Contact' },

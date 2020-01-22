@@ -108,7 +108,7 @@ class EditorPage extends React.Component<Props, {}> {
 				focus.set(title.id, { from: length, to: length });
 			};
 			
-			window.setTimeout(() => { focus.apply(); }, 1);
+			window.setTimeout(() => { focus.apply(); }, 15);
 		});
 	};
 	
@@ -533,7 +533,19 @@ class EditorPage extends React.Component<Props, {}> {
 						};
 					};
 					
-					this.blockReplace(block, param);
+					if (item.type == I.BlockType.Page) {
+						param.fields = {
+							icon: Util.randomSmile(), 
+							name: Constant.defaultName,
+						};
+						param.content = {
+							style: I.PageStyle.Empty,
+						};
+						
+						this.blockCreatePage(block, I.BlockPosition.Bottom, param);
+					} else {
+						this.blockReplace(block, param);
+					};
 				}
 			}
 		});
@@ -593,6 +605,18 @@ class EditorPage extends React.Component<Props, {}> {
 		C.BlockCreate(param, rootId, focused.id, position, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
+			
+			if (callBack) {
+				callBack(message.blockId);
+			};
+		});
+	};
+	
+	blockCreatePage (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
+		const { blockStore, rootId } = this.props;
+		
+		C.BlockCreatePage(param, rootId, focused.id, position, (message: any) => {
+			C.BlockUnlink(rootId, [ focused.id ]);
 			
 			if (callBack) {
 				callBack(message.blockId);

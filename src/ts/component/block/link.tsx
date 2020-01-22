@@ -35,10 +35,10 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 	
 	onClick () {
-		const { content } = this.props;
+		const { history, content } = this.props;
 		const { targetBlockId } = content;
 		
-		this.props.history.push('/main/edit/' + targetBlockId);
+		history.push('/main/edit/' + targetBlockId);
 	};
 	
 };

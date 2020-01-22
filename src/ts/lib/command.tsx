@@ -74,6 +74,16 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.call('blockCreate', request, callBack);
 };
 
+const BlockCreatePage = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	const request = {
+		block: blockStore.prepareBlockToProto(block),
+		contextId: contextId,
+		targetId: targetId,
+		position: position,
+	};
+	dispatcher.call('blockCreatePage', request, callBack);
+};
+
 const BlockReplace = (block: any, contextId: string, blockId: string, callBack?: (message: any) => void) => {
 	const request = {
 		block: blockStore.prepareBlockToProto(block),
@@ -247,6 +257,7 @@ export {
 	BlockOpen,
 	BlockClose,
 	BlockCreate,
+	BlockCreatePage,
 	BlockReplace,
 	BlockUnlink,
 	BlockSetIconName,

@@ -66,10 +66,14 @@ class Dispatcher {
 					for (let block of data.blocks) {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
+					set = true;
 					break;
 					
 				case 'blockSetChildrenIds':
 					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
 					
 					param = {
 						id: block.id,
@@ -81,6 +85,9 @@ class Dispatcher {
 					
 				case 'blockSetIcon':
 					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
 					
 					param = {
 						id: block.id,
@@ -93,6 +100,9 @@ class Dispatcher {
 					
 				case 'blockSetFields':
 					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
 					
 					param = {
 						id: block.id,
@@ -102,8 +112,29 @@ class Dispatcher {
 					blockStore.blockUpdate(contextId, param);
 					break;
 					
+				case 'blockSetLink':
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
+					
+					param = {
+						id: block.id,
+						content: Util.objectCopy(block.content),
+					};
+					
+					if (null !== data.fields) {
+						param.content.fields = StructDecode.decodeStruct(data.fields.value);
+					};
+					
+					blockStore.blockUpdate(contextId, param);
+					break;
+					
 				case 'blockSetText':
 					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
 					
 					param = {
 						id: block.id,
@@ -150,6 +181,9 @@ class Dispatcher {
 					
 				case 'blockSetFile':
 					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
 					
 					param = {
 						id: block.id,
@@ -227,7 +261,7 @@ class Dispatcher {
 					t1 = performance.now();
 					console.log('[Dispatcher.call] callBack', type, message, Math.ceil(t1 - t0) + 'ms');					
 				};
-			});			
+			});
 		} catch (e) {
 			console.error(e);
 		};
