@@ -93,16 +93,25 @@ class Dispatcher {
 					
 				case 'blockSetFields':
 					block = blocks.find((it: any) => { return it.id == data.id; });
-					block.fields = StructDecode.decodeStruct(data.fields);
 					
-					set = true;
+					param = {
+						id: block.id,
+						fields: StructDecode.decodeStruct(data.fields),
+					};
+					
+					blockStore.blockUpdate(contextId, param);
 					break;
 					
 				case 'blockSetText':
 					block = blocks.find((it: any) => { return it.id == data.id; });
 					
+					param = {
+						id: block.id,
+						content: Util.objectCopy(block.content),
+					};
+					
 					if (null !== data.text) {
-						block.content.text = data.text.value;
+						param.content.text = data.text.value;
 					};
 					
 					if (null !== data.marks) {
@@ -117,56 +126,61 @@ class Dispatcher {
 								}
 							});
 						};
-						block.content.marks = marks;
+						param.content.marks = marks;
 					};
 					
 					if (null !== data.style) {
-						block.content.style = data.style.value;
+						param.content.style = data.style.value;
 					};
 					
 					if (null !== data.checked) {
-						block.content.checked = data.checked.value;
+						param.content.checked = data.checked.value;
 					};
 					
 					if (null !== data.color) {
-						block.content.color = data.color.value;
+						param.content.color = data.color.value;
 					};
 					
 					if (null !== data.backgroundColor) {
-						block.content.bgColor = data.backgroundColor.value;
+						param.content.bgColor = data.backgroundColor.value;
 					};
 					
-					set = true;
+					blockStore.blockUpdate(contextId, param);
 					break;
 					
 				case 'blockSetFile':
 					block = blocks.find((it: any) => { return it.id == data.id; });
 					
+					param = {
+						id: block.id,
+						content: Util.objectCopy(block.content),
+					};
+					
 					if (null !== data.name) {
-						block.content.name = String(data.name.value || '');
+						param.content.name = String(data.name.value || '');
 					};
 					
 					if (null !== data.hash) {
-						block.content.hash = String(data.hash.value || '');
+						param.content.hash = String(data.hash.value || '');
 					};
 					
 					if (null !== data.mime) {
-						block.content.mime = String(data.mime.value || '');
+						param.content.mime = String(data.mime.value || '');
 					};
 					
 					if (null !== data.size) {
-						block.content.size = Number(data.size.value) || 0;
+						param.content.size = Number(data.size.value) || 0;
 					};
 					
 					if (null !== data.type) {
-						block.content.type = Number(data.type.value) || 0;
+						param.content.type = Number(data.type.value) || 0;
 					};
 					
 					if (null !== data.state) {
-						block.content.state = Number(data.state.value) || 0;
+						param.content.state = Number(data.state.value) || 0;
 					};
 					
-					set = true;
+					blockStore.blockUpdate(contextId, param);
 					break;
 					
 				case 'blockDelete':

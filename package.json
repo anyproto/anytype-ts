@@ -59,7 +59,6 @@
 		"ts-loader": "^6.2.1",
 		"tslint": "^5.20.1",
 		"tslint-react": "^4.1.0",
-		"typescript": "^3.7.5",
 		"url-loader": "^2.3.0",
 		"sass-loader": "^8.0.2",
 		"json-loader": "^0.5.7",
@@ -102,14 +101,15 @@
 		"react-dom": "^16.12.0",
 		"react-hot-loader": "^4.12.18",
 		"react-router-dom": "^5.1.2",
-		"react-sortable-hoc": "^1.10.1",
+		"react-sortable-hoc": "^1.11.0",
 		"read-chunk": "^3.2.0",
 		"readline": "^1.3.0",
 		"rehype": "^9.0.1",
 		"selection-ranges": "^3.0.3",
 		"sha1": "^1.1.1",
 		"source-map-loader": "^0.2.4",
-		"sprintf-kit": "^2.0.0"
+		"sprintf-kit": "^2.0.0",
+		"typescript": "^3.7.5"
 	},
 	"build": {
 		"appId": "com.anytype.anytype",

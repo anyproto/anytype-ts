@@ -53,33 +53,35 @@ jobs:
           token: ${{secrets.TOKEN}}
           path: protobuf
 
-      - name: Install Protoc
-        run: | 
-          cd protobuf
-          git submodule update --init --recursive
-          ./autogen.sh
-          ./configure
-          make
-          make check
-          sudo make install
-          sudo ldconfig
+      #- name: Install Protoc
+      #  run: | 
+      #    cd protobuf
+      #    git submodule update --init --recursive
+      #    ./autogen.sh
+      #    ./configure
+      #    make
+      #    make check
+      #    sudo make install
+      #    sudo ldconfig
 
-      - name: Build Middleware
-        if: matrix.os != 'windows-latest'
-        run: | 
-          export GOPATH=~/go
-          cd go-anytype-middleware
-          go mod download
-          pwd
-          make setup-protoc
-          make protos
-          make build-lib
-          make build-js
+     # - name: Build Middleware
+     #   if: matrix.os != 'windows-latest'
+     #   run: | 
+     #     export GOPATH=~/go
+     #     cd go-anytype-middleware
+     #     go mod download
+     #     pwd
+     #     make setup-protoc
+     #     make protos
+     #     make build-lib
+     #     make build-js
 
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
+          mac_certs: ${{ secrets.MAC_CERT_TEXT }}
+          mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
 
       - name: Make artifacts dir
         run: | 
