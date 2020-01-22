@@ -50,6 +50,7 @@
 		"webpack": "^4.41.5",
 		"electron": "^6.1.7",
 		"electron-builder": "^21.2.0",
+		"electron-notarize": "^0.2.1",
 		"webpack-cli": "^3.3.10",
 		"webpack-dev-server": "^3.10.1",
 		"wait-for-localhost-cli": "^1.1.0",
@@ -112,19 +113,22 @@
 		"typescript": "^3.7.5"
 	},
 	"build": {
-		"appId": "com.anytype.anytype",
+		"afterSign": "electron/notarize.js",
+		"appId": "com.anytype.anytype2",
 		"compression": "normal",
 		"productName": "Anytype",
 		"protocols": [
 			{
-				"name": "Anytype",
+				"name": "Anytype2",
 				"role": "Editor",
 				"schemes": [
-					"anytype"
+					"anytype2"
 				]
 			}
 		],
-		"asarUnpack": [],
+		"asarUnpack": [
+			"build"
+		],
 		"extraResources": [],
 		"files": [
 			"electron.js",
@@ -133,12 +137,22 @@
 			"dist/main.js",
 			"build"
 		],
+
+		"dmg": {
+			"sign": false
+		},
 		"mac": {
 			"icon": "electron/icon.icns",
 			"type": "distribution",
+			"hardenedRuntime": true,
+			"gatekeeperAssess": false,
+			"entitlements": "electron/entitlements.mac.plist",
+			"entitlementsInherit": "electron/entitlements.mac.plist",
 			"target": [
+				"dmg",
 				"zip"
 			],
+			"identity": "6SFR4648FW",
 			"category": "public.app-category.productivity",
 			"artifactName": "${productName}-${version}.${ext}",
 			"publish": [
