@@ -61,7 +61,9 @@ class Block extends React.Component<Props, {}> {
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
 		let BlockComponent: any = (): any => null;
-		let css: any = {};
+		let css: any = {
+			width: (fields.width || 1 / cnt) * 100 + '%'
+		};
 		
 		switch (type) {
 			case I.BlockType.Text:
@@ -74,10 +76,6 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Layout:
 				canSelect = false;
 				cn.push('blockLayout c' + content.style);
-				
-				if (content.style == I.LayoutStyle.Column) {
-					css.width = (fields.width || 1 / cnt) * 100 + '%';
-				};
 				break;
 				
 			case I.BlockType.Icon:
@@ -144,6 +142,14 @@ class Block extends React.Component<Props, {}> {
 							</DropTarget>
 						</div>
 					) : ''}
+					
+					{(type == I.BlockType.Layout) && (content.style == I.LayoutStyle.Row) ? (
+						<React.Fragment>
+							<DropTarget className="targetTop" {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
+							<DropTarget className="targetBot" {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
+						</React.Fragment>
+					): ''}
+					
 						
 					<ListChildren ref={(ref: any) => { this.refChildren = ref; }} {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 				</div>

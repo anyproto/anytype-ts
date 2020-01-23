@@ -5,7 +5,7 @@ import { I } from 'ts/lib';
 interface Props {
 	id: string;
 	rootId: string;
-	style?: I.TextStyle;
+	style?: number;
 	type?: I.BlockType;
 	dropType: I.DragItem;
 	className?: string;
@@ -62,7 +62,7 @@ class DropTarget extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { id, disabled, dataset, dropType, style, type } = this.props;
+		const { id, disabled, dataset, dropType, style, type, className } = this.props;
 		if (disabled) {
 			return;
 		};
@@ -130,12 +130,21 @@ class DropTarget extends React.Component<Props, {}> {
 			this.position = I.BlockPosition.None;
 		};
 		
+		if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row) && (this.position != I.BlockPosition.None)) {
+			if (className == 'targetTop') {
+				this.position = I.BlockPosition.Top;
+			};
+			if (className == 'targetBot') {
+				this.position = I.BlockPosition.Bottom;
+			};
+		};
+		
 		if ((dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
 			this.position = I.BlockPosition.Inner;
 		};
 		
 		node.removeClass('top bottom left right middle');
-		if (this.canDrop) {
+		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			node.addClass('isOver ' + this.getDirectionClass(this.position));			
 		};
 	};
