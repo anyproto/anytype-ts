@@ -27,6 +27,7 @@ const THROTTLE = 20;
 class EditorPage extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	id: string = '';
 	timeoutHover: number = 0;
 	hovered: string =  '';
 	hoverPosition: number = 0;
@@ -80,6 +81,8 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		keyboard.disableBack(true);
 		this.unbind();
+		this.open();
+		
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
@@ -89,6 +92,37 @@ class EditorPage extends React.Component<Props, {}> {
 			}; 
 			this.onPaste(e); 
 		});
+	};
+	
+	componentDidUpdate () {
+		this.open();
+		
+		window.setTimeout(() => {
+			focus.apply(); 
+			window.scrollTo(0, this.scrollTop); 
+		}, 1);
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+		
+		const { blockStore, rootId } = this.props;
+		
+		keyboard.disableBack(false);
+		this.unbind();
+		this.close(rootId);
+		focus.clear();
+	};
+	
+	open () {
+		const { blockStore, rootId } = this.props;
+		
+		if (this.id == rootId) {
+			return;
+		};
+		
+		this.close(this.id);
+		this.id = rootId;
 		
 		C.BlockOpen(rootId, (message: any) => {
 			const { blockStore, rootId } = this.props;
@@ -108,28 +142,15 @@ class EditorPage extends React.Component<Props, {}> {
 				focus.set(title.id, { from: length, to: length });
 			};
 			
-			window.setTimeout(() => { focus.apply(); }, 15);
+			window.setTimeout(() => { focus.apply(); }, 1);
 		});
 	};
 	
-	componentDidUpdate () {
-		window.setTimeout(() => {
-			focus.apply(); 
-			window.scrollTo(0, this.scrollTop); 
-		}, 1);
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
+	close (id: string) {
+		const { blockStore } = this.props;
 		
-		const { blockStore, rootId } = this.props;
-		
-		keyboard.disableBack(false);
-		this.unbind();
-		focus.clear();
-		
-		blockStore.blocksClear(rootId);
-		C.BlockClose(rootId);
+		blockStore.blocksClear(id);
+		C.BlockClose(id);
 	};
 	
 	unbind () {

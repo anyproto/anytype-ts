@@ -250,7 +250,7 @@ class Dispatcher {
 				message.error.description = String(message.error.description || '');
 				
 				if (message.error.code) {
-					console.error('[Dispatcher.call] code:', message.error.code, 'description:', message.error.description);
+					console.error('[Dispatcher.call]', type, 'code:', message.error.code, 'description:', message.error.description);
 				};
 				
 				if (callBack) {

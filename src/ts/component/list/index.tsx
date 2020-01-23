@@ -8,7 +8,7 @@ import { dispatcher, I, Util} from 'ts/lib';
 interface Props {
 	blockStore?: any;
 	rootId: string;
-	onSelect?(e: any, id: string): void;
+	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
@@ -36,7 +36,7 @@ class ListIndex extends React.Component<Props, {}> {
 			let content = item.content || {};
 			let fields = content.fields || {};
 			return (
-				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item.id); }}>
+				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
 					<Smile className="c48" icon={fields.icon} size={24} />
 					<div className="name">{fields.name}</div>
 				</div>

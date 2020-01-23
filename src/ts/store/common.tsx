@@ -74,7 +74,6 @@ class CommonStore {
 	
 	@action
 	popupOpen (id: string, param: I.PopupParam) {
-		this.popupClose(id);
 		this.popupList.push({ id: id, param: param });
 	};
 	
@@ -86,7 +85,7 @@ class CommonStore {
 	};
 	
 	@action
-	popupClose (id: string) {
+	popupClose (id: string, callBack?: () => void) {
 		const item: I.Popup = this.popupList.find((item: I.Popup) => { return item.id == id; });
 		
 		if (!item) {
@@ -110,6 +109,10 @@ class CommonStore {
 		
 		window.setTimeout(() => {
 			this.popupList = this.popupList.filter((item: I.Popup) => { return item.id != id; });
+			
+			if (callBack) {
+				callBack();
+			};
 		}, TIMEOUT);
 	};
 	

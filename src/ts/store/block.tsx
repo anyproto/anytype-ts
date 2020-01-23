@@ -230,6 +230,7 @@ class BlockStore {
 				item.content.style = content.style;
 				
 				if (item.content.style == I.LinkStyle.Page) {
+					item.content.fields = item.content.fields || {};
 					item.content.fields.name = item.content.fields.name || Constant.defaultName;
 					item.content.fields.icon = item.content.fields.icon || Constant.defaultIcon;
 				};
