@@ -44,21 +44,11 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { commonStore, history, content, rootId } = this.props;
+		const { content, rootId } = this.props;
 		const { targetBlockId } = content;
 		
-		if (targetBlockId == rootId) {
-			return;
-		};
-
-		if (commonStore.popupIsOpen('editorPage')) {
-			commonStore.popupClose('editorPage', () => {
-				commonStore.popupOpen('editorPage', {
-					data: { id: targetBlockId }
-				});				
-			});
-		} else {
-			history.push('/main/edit/' + targetBlockId);
+		if (targetBlockId != rootId) {
+			Util.pageOpen(e, this.props, targetBlockId);
 		};
 	};
 	

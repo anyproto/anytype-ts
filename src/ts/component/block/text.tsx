@@ -217,11 +217,15 @@ class BlockText extends React.Component<Props, {}> {
 			html = '<span ' + Mark.paramToAttr(I.MarkType.BgColor, bgColor) + '>' + html + '</span>';
 		};
 		
-		value.html(html);
-		value.find('a').unbind('click.link').on('click.link', function (e: any) {
-			e.preventDefault();
-			ipcRenderer.send('urlOpen', $(this).attr('href'));
-		});
+		if (html == text) {
+			value.text(text);
+		} else {
+			value.html(html);
+			value.find('a').unbind('click.link').on('click.link', function (e: any) {
+				e.preventDefault();
+				ipcRenderer.send('urlOpen', $(this).attr('href'));
+			});
+		};
 	};
 	
 	getValue (): string {

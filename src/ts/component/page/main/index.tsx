@@ -115,15 +115,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, block: any) {
-		const { commonStore, history } = this.props;
-
-		if (e.shiftKey) {
-			commonStore.popupOpen('editorPage', {
-				data: { id: block.content.targetBlockId }
-			});
-		} else {
-			history.push('/main/edit/' + block.content.targetBlockId);
-		};
+		Util.pageOpen(e, this.props, block.content.targetBlockId);
 	};
 	
 	onAdd (e: any) {

@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, set } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 
 const $ = require('jquery');
@@ -74,7 +74,19 @@ class CommonStore {
 	
 	@action
 	popupOpen (id: string, param: I.PopupParam) {
-		this.popupList.push({ id: id, param: param });
+		this.popupClose(id, () => {
+			this.popupList.push({ id: id, param: param });
+		});
+	};
+	
+	@action
+	popupUpdate (id: string, param: any) {
+		let item = this.popupList.find((item: I.Popup) => { return item.id == id; });
+		if (!item) {
+			return;
+		};
+		
+		set(item, { param: param });
 	};
 	
 	popupIsOpen (id?: string): boolean {
@@ -89,6 +101,9 @@ class CommonStore {
 		const item: I.Popup = this.popupList.find((item: I.Popup) => { return item.id == id; });
 		
 		if (!item) {
+			if (callBack) {
+				callBack();
+			};
 			return;
 		};
 		

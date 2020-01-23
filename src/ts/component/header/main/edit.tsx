@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile, DropTarget } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -45,7 +45,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			let content = item.content || {};
 			let fields = content.fields || {}; 
 			return (
-				<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} dropType={I.DragItem.Menu} onClick={(e: any) => { this.onPath(e, item.id); }} onDrop={this.onDrop}>
+				<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} dropType={I.DragItem.Menu} onClick={(e: any) => { this.onPath(e, item); }} onDrop={this.onDrop}>
 					<Smile icon={fields.icon} />
 					<div className="name">{fields.name}</div>
 					<Icon className="arrow" />
@@ -90,16 +90,14 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.props.history.push('/main/index');
 	};
 	
-	onPath (e: any, id: string) {
-		const { blockStore } = this.props;
-		const { blocks, root } = blockStore;
-		const block = blocks[root].find((it: any) => { return it.id == id; });
+	onPath (e: any, block: any) {
+		const { rootId } = this.props;
+		const { content } = block;
+		const { targetBlockId } = content;
 		
-		if (!block) {
-			return;
+		if (targetBlockId != rootId) {
+			Util.pageOpen(e, this.props, targetBlockId);
 		};
-		
-		this.props.history.push('/main/edit/' + block.content.targetBlockId);
 	};
 	
 	onBack (e: any) {

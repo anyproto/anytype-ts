@@ -1,4 +1,5 @@
 import { I } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 const $ = require('jquery');
 const loadImage = window.require('blueimp-load-image');
@@ -336,6 +337,22 @@ class Util {
 			case I.TextStyle.Checkbox:	 icon = 'checkbox'; break;
 		};
 		return icon;
+	};
+	
+	pageOpen (e: any, props: any, targetId: string) {
+		const { history } = props;
+		const param = {
+			data: { id: targetId }
+		};
+
+		if (commonStore.popupIsOpen('editorPage')) {
+			commonStore.popupUpdate('editorPage', param);
+		} else 
+		if (e.shiftKey || (e.ctrlKey || e.metaKey)) { 
+			commonStore.popupOpen('editorPage', param);
+		} else {
+			history.push('/main/edit/' + targetId);
+		};
 	};
 };
 

@@ -209,8 +209,12 @@ class Mark {
 			let t = Tags[mark.type];
 			let attr = this.paramToAttr(mark.type, mark.param);
 			
+			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor ].indexOf(mark.type) >= 0) {
+				continue;
+			};
+			
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
-				r[mark.range.from] = '<' + t + ' ' + attr + '>' + r[mark.range.from];
+				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + '>' + r[mark.range.from];
 				r[mark.range.to - 1] += '</' + t + '>';
 			};
 		};
