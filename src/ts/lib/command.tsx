@@ -50,6 +50,20 @@ const AccountSelect = (id: string, path: string, callBack?: (message: any) => vo
 	dispatcher.call('accountSelect', request, callBack);
 };
 
+const BlockUndo = (contextId: string, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+	};
+	dispatcher.call('blockUndo', request, callBack);
+};
+
+const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+	};
+	dispatcher.call('blockRedo', request, callBack);
+};
+
 const BlockOpen = (blockId: string, callBack?: (message: any) => void) => {
 	const request = {
 		blockId: blockId,
@@ -253,6 +267,9 @@ export {
 	AccountCreate,
 	AccountRecover,
 	AccountSelect,
+	
+	BlockUndo,
+	BlockRedo,
 	
 	BlockOpen,
 	BlockClose,

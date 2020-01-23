@@ -246,6 +246,16 @@ class EditorPage extends React.Component<Props, {}> {
 				this.onCopy(e);
 			};
 			
+			if (k == Key.z) {
+				e.preventDefault();
+				e.shiftKey ? C.BlockRedo(rootId) : C.BlockUndo(rootId);
+			};
+			
+			if (k == Key.y) {
+				e.preventDefault();
+				C.BlockRedo(rootId);
+			};
+			
 			if (k == Key.d) {
 				e.preventDefault();
 				
@@ -302,6 +312,16 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (k == Key.c) {
 				this.onCopy(e);
+			};
+			
+			if (k == Key.z) {
+				e.preventDefault();
+				e.shiftKey ? C.BlockRedo(rootId) : C.BlockUndo(rootId);
+			};
+			
+			if (k == Key.y) {
+				e.preventDefault();
+				C.BlockRedo(rootId);
 			};
 			
 			// Open action menu
