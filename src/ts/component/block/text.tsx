@@ -280,8 +280,11 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		
 		const { commonStore, blockStore, onKeyUp, id, rootId, content } = this.props;
+		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
+		
+		let cmdParsed = false;
 		
 		// Open menu
 		if (value == '/') {
@@ -293,94 +296,118 @@ class BlockText extends React.Component<Props, {}> {
 		// Make div
 		if (value == '---') {
 			C.BlockReplace({ type: I.BlockType.Div }, rootId, id);
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make file
 		if (value == '/file') {
 			C.BlockReplace({ type: I.BlockType.File, content: { type: I.FileType.File } }, rootId, id);
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make image
 		if (value == '/image') {
 			C.BlockReplace({ type: I.BlockType.File, content: { type: I.FileType.Image } }, rootId, id);
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make video
 		if (value == '/video') {
 			C.BlockReplace({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id);
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make video
 		if (value == '/video') {
 			C.BlockReplace({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id);
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make list
 		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && (style != I.TextStyle.Bulleted)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Bulleted);
-			this.setValue('');
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make checkbox
 		if ((value == '[]') && (style != I.TextStyle.Checkbox)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Checkbox);
-			this.setValue('');
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make numbered
 		if ((value == '1. ') && (style != I.TextStyle.Numbered)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Numbered);
-			this.setValue('');
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make h1
 		if ((value == '# ') && (style != I.TextStyle.Header1)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header1);
-			this.setValue('');
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make h2
 		if ((value == '## ') && (style != I.TextStyle.Header2)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header2);
-			this.setValue('');
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make h3
 		if ((value == '### ') && (style != I.TextStyle.Header3)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header3);
-			this.setValue('');
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make toggle
 		if ((value == '> ') && (style != I.TextStyle.Toggle)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Toggle);
-			this.setValue('');
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make quote
 		if ((value == '" ') && (style != I.TextStyle.Quote)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Quote);
-			this.setValue('');
-			return;
+			cmdParsed = true;
 		};
 		
 		// Make code
 		if ((value == '/code') && (style != I.TextStyle.Code)) {
 			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Code);
-			this.setValue('');
+			cmdParsed = true;
+		};
+		
+		// Move to
+		if (value == '/move') {
+			commonStore.popupOpen('tree', { 
+				data: { 
+					type: 'move', 
+					rootId: root,
+					onConfirm: (blockId: string) => {
+						console.log('Move', blockId);
+					},
+				}, 
+			});
+			cmdParsed = true;
+		};
+		
+		// Delete
+		if (value == '/delete') {
+			const next = blockStore.getNextBlock(rootId, id, -1);
+			
+			C.BlockUnlink(rootId, [ id ]);
+			cmdParsed = true;
+			
+			if (next) {
+				const length = String(next.content.text || '').length;
+				focus.set(next.id, { from: length, to: length });
+				focus.apply();
+			};
+		};
+		
+		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
+			this.setValue('');
 			return;
 		};
 		
