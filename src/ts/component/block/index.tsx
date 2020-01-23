@@ -21,6 +21,7 @@ interface Props extends I.Block, RouteComponentProps<any> {
 	index: number;
 	dataset?: any;
 	cnt?: number;
+	css?: any;
 	onKeyDown? (e: any, text?: string): void;
 	onKeyUp? (e: any, text?: string): void;
 	onMenuAdd? (id: string): void;
@@ -55,15 +56,12 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, type, fields, content, index, cnt } = this.props;
+		const { id, rootId, type, fields, content, index, cnt, css } = this.props;
 		const { style } = content || {};
 		
 		let canSelect = true;
 		let cn = [ 'block', 'index' + index ];
 		let BlockComponent: any = (): any => null;
-		let css: any = {
-			width: (fields.width || 1 / cnt) * 100 + '%'
-		};
 		
 		switch (type) {
 			case I.BlockType.Text:

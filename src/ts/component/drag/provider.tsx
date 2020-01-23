@@ -100,13 +100,26 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		const { blockStore, rootId } = this.props;
 		const { blocks, root } = blockStore;
+		const target = blocks[rootId].find((it: any) => { return it.id == targetId; });
+		const map = blockStore.getMap(blocks[rootId]);
 		
-		if (type == I.DragItem.Menu) {
-			const block = blocks[root].find((it: any) => { return it.id == targetId; });
-			if (block && (block.type == I.BlockType.Link)) {
-				targetId = block.content.targetBlockId;
-				console.log(block);
-			};
+		if (!target) {
+			return;
+		};
+		
+		const t = map[targetId];
+		if (!t) {
+			return;
+		};
+		
+		const parent = map[t.parentId];
+		
+		if ((type == I.DragItem.Menu) && (target.type == I.BlockType.Link)) {
+			targetId = target.content.targetBlockId;
+		};
+		
+		if (parent && (parent.type == I.BlockType.Layout) && ([ I.BlockPosition.Left, I.BlockPosition.Right, I.BlockPosition.Top ].indexOf(position) >= 0)) {
+			targetId = parent.id;
 		};
 		
 		console.log('[onDrop]', type, targetId, this.type, this.ids, position);

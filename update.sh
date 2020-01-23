@@ -6,7 +6,7 @@ GITHUB="api.github.com"
 
 echo -n "GitHub auth token: "
 read -s token
-rintf "\n"
+printf "\n"
 
 if [ "$token" = "" ]; then
   echo "ERROR: token is empty"

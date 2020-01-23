@@ -21,6 +21,7 @@ class ListChildren extends React.Component<Props, {}> {
 	render () {
 		const { onMouseMove, onMouseLeave, onResizeStart, childBlocks, type, content } = this.props;
 		const { style } = content;
+		const length = childBlocks.length;
 		
 		let ColResize: any = (): any => null;
 		let cn = [ 'children' ];
@@ -40,10 +41,15 @@ class ListChildren extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{childBlocks.map((item: any, i: number) => {
+					let css: any = {};
+					if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
+						css.width = (item.fields.width || 1 / length ) * 100 + '%';
+					};
+					
 					return (
 						<React.Fragment key={item.id}>
 							{i > 0 ? <ColResize index={i} /> : ''}
-							<Block ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} cnt={childBlocks.length} index={i} />
+							<Block ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} cnt={length} css={css} index={i} />
 						</React.Fragment>
 					);
 				})}

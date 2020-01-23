@@ -147,6 +147,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	close (id: string) {
+		if (!id) {
+			return;
+		};
+		
 		const { blockStore } = this.props;
 		
 		blockStore.blocksClear(id);

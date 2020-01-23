@@ -130,6 +130,7 @@ class DropTarget extends React.Component<Props, {}> {
 			this.position = I.BlockPosition.None;
 		};
 		
+		// You can drop vertically on Layout.Row
 		if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row) && (this.position != I.BlockPosition.None)) {
 			if (className == 'targetTop') {
 				this.position = I.BlockPosition.Top;
