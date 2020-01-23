@@ -528,6 +528,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blockStore, commonStore, rootId } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+		const { type, content } = block;
+		const { style } = content;
 		
 		commonStore.menuOpen('blockAdd', { 
 			element: 'block-' + id,
@@ -537,7 +539,7 @@ class EditorPage extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
-			focus.apply();
+				focus.apply();
 				commonStore.filterSet('');
 			},
 			data: {
@@ -547,6 +549,11 @@ class EditorPage extends React.Component<Props, {}> {
 					};
 						
 					if (item.type == I.BlockType.Text) {
+						// Block is already paragraph, no need to replace
+						if (item.id == I.TextStyle.Paragraph) {
+							return;
+						};
+						
 						param.content = {
 							style: item.id,
 						};
@@ -653,7 +660,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blockStore, rootId } = this.props;
 		
 		C.BlockReplace(param, rootId, focused.id, (message: any) => {
-			focus.set(focused.id, { from: 0, to: 0 });
+			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 			
 			if (callBack) {
