@@ -73,6 +73,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let editor = (
 			<div
+				id="value"
 				className="value"
 				contentEditable={true}
 				suppressContentEditableWarning={true}
@@ -190,37 +191,35 @@ class BlockText extends React.Component<Props, {}> {
 		const { blockStore, id, rootId, fields, content } = this.props;
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('.value');
+		const value = node.find('#value');
 		
-		let { lang } = fields;
 		let { text, style, color, bgColor, number } = content;
 		
 		text = String(v || text || '');
-		lang = String(lang || 'js');
-		
 		if ((style == I.TextStyle.Title) && (text == Constant.defaultName)) {
 			text = '';
 		};
 		
 		let html = '';
 		if (style == I.TextStyle.Code) {
-			let res = low.highlight(lang, text);
+			let { lang } = fields || {};
+			let res = low.highlight(String(lang || 'js'), text);
+			
 			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
 		} else {
 			html = Mark.toHtml(text, this.marks);
+			
+			if (color) {
+				html = '<span ' + Mark.paramToAttr(I.MarkType.TextColor, color) + '>' + html + '</span>';
+			};
+			if (bgColor) {
+				html = '<span ' + Mark.paramToAttr(I.MarkType.BgColor, bgColor) + '>' + html + '</span>';
+			};
 		};
 		
-		if (color) {
-			html = '<span ' + Mark.paramToAttr(I.MarkType.TextColor, color) + '>' + html + '</span>';
-		};
-		if (bgColor) {
-			html = '<span ' + Mark.paramToAttr(I.MarkType.BgColor, bgColor) + '>' + html + '</span>';
-		};
+		value.get(0).innerHTML = html;
 		
-		if (html == text) {
-			value.text(text);
-		} else {
-			value.html(html);
+		if (html != text) {
 			value.find('a').unbind('click.link').on('click.link', function (e: any) {
 				e.preventDefault();
 				ipcRenderer.send('urlOpen', $(this).attr('href'));

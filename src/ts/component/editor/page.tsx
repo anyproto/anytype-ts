@@ -11,8 +11,7 @@ interface Props extends RouteComponentProps<any> {
 	blockStore?: any;
 	dataset?: any;
 	rootId: string;
-	container: string;
-	addOffsetY: number;
+	addOffsetX: number;
 };
 
 const com = require('proto/commands.js');
@@ -166,13 +165,13 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { container, addOffsetY } = this.props;
+		const { addOffsetX } = this.props;
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('.block');
-		const containerEl = $(container);
-		const rectContainer = (containerEl.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const container = $('.editor');
+		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
@@ -183,19 +182,18 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		// Find hovered block by mouse coords
 		blocks.each((i: number, item: any) => {
-			item = $(item);
-			
-			let rect = $(item).get(0).getBoundingClientRect() as DOMRect;
+			let rect = item.getBoundingClientRect() as DOMRect;
 			let { x, y, width, height } = rect;
 			y += st;
 
 			if ((pageX >= x) && (pageX <= x + width) && (pageY >= y) && (pageY <= y + height)) {
-				hovered = item;
+				hovered = item as Element;
 			};
 		});
 		
 		if (hovered) {
-			rect = (hovered.get(0) as Element).getBoundingClientRect() as DOMRect;
+			rect = hovered.getBoundingClientRect() as DOMRect;
+			hovered = $(hovered);
 			this.hovered = hovered.data('id');
 		};
 		
@@ -207,10 +205,13 @@ class EditorPage extends React.Component<Props, {}> {
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
-			add.css({ opacity: 1, left: rect.x - rectContainer.x + 2, top: pageY - 10 + containerEl.scrollTop() + Number(addOffsetY) });
+			let ax = rect.x - (rectContainer.x + addOffsetX) + 10 - 4;
+			let ay = pageY - rectContainer.y - 10 - st;
+			
+			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
 			blocks.addClass('showMenu').removeClass('isAdding top bottom');
 			
-			if (hovered && (pageX <= x + 20)) {
+			if (pageX <= x + 20) {
 				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 			};
 		} else {

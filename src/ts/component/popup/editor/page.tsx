@@ -20,7 +20,7 @@ class PopupEditorPage extends React.Component<Props, {}> {
 				<DragProvider rootId={id}>
 					<Header {...this.props} rootId={id} />
 							
-					<EditorPage history={history} location={location} match={match} rootId={id} container=".popupEditorPage .content" addOffsetY={-46} />
+					<EditorPage history={history} location={location} match={match} rootId={id} addOffsetX={0} />
 				</DragProvider>
 			</SelectionProvider>
 		);

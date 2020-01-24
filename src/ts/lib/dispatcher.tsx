@@ -30,6 +30,16 @@ class Dispatcher {
 		let contextId = event.contextId;
 		let blocks = blockStore.blocks[contextId] || [];
 		let set = false;
+		let types = [];
+		
+		if (DEBUG) {
+			for (let message of event.messages) {
+				let type = message.value;
+				types.push(message.value);
+			};
+			
+			console.profile(types.join(', '));
+		};
 		
 		for (let message of event.messages) {
 			let block: any = null;
@@ -42,7 +52,7 @@ class Dispatcher {
 			};
 			
 			if (DEBUG) {
-				console.log('[Dispatcher.event]', type, data);				
+				console.log('[Dispatcher.event]', type, data);
 			};
 		
 			switch (type) {
@@ -63,9 +73,12 @@ class Dispatcher {
 					break;
 				
 				case 'blockAdd':
+					blocks = Util.objectCopy(blocks);
+				
 					for (let block of data.blocks) {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
+					
 					set = true;
 					break;
 					
@@ -227,6 +240,9 @@ class Dispatcher {
 			blockStore.blocksSet(contextId, blocks);
 		};
 		
+		if (DEBUG) {
+			console.profileEnd(types.join(', '));
+		};
 	};
 	
 	call (type: string, data: any, callBack?: (message: any) => void) {

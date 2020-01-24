@@ -158,6 +158,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color' ].indexOf(it.id) < 0; });
 		};
 		
+		if (style == I.TextStyle.Code) {
+			sections[0].children = sections[0].children.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
+		};
+		
 		if (type == I.BlockType.Icon) {
 			delete(sections[0]);
 		};

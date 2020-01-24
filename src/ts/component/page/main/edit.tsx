@@ -5,6 +5,8 @@ import { MenuMain, HeaderMainEdit as Header, DragProvider, SelectionProvider, Ed
 
 interface Props extends RouteComponentProps<any> {};
 
+const Constant = require('json/constant.json');
+
 class PageMainEdit extends React.Component<Props, {}> {
 	
 	render () {
@@ -17,7 +19,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					<MenuMain />
 							
 					<div className="wrapper">
-						<EditorPage history={history} location={location} match={match} rootId={match.params.id} container=".pageMainEdit" addOffsetY={0} />
+						<EditorPage history={history} location={location} match={match} rootId={match.params.id} addOffsetX={-Constant.size.blockMenu} />
 					</div>
 				</DragProvider>
 			</SelectionProvider>
