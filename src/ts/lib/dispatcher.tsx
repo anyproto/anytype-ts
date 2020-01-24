@@ -1,10 +1,11 @@
 import { authStore, blockStore } from 'ts/store';
-import { Util, I, StructDecode } from 'ts/lib';
+import { Util, I, StructDecode, focus, keyboard } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
 const protobuf = require('protobufjs');
 const DEBUG = true;
+const PROFILE = false;
 
 class Dispatcher {
 
@@ -26,18 +27,18 @@ class Dispatcher {
 	};
 	
 	event (item: any) {
+		let { focused } = focus;
 		let event = com.anytype.Event.decode(item.data);
 		let contextId = event.contextId;
 		let blocks = blockStore.blocks[contextId] || [];
 		let set = false;
 		let types = [];
 		
-		if (DEBUG) {
+		if (PROFILE) {
 			for (let message of event.messages) {
 				let type = message.value;
 				types.push(message.value);
 			};
-			
 			console.profile(types.join(', '));
 		};
 		
@@ -232,6 +233,12 @@ class Dispatcher {
 					
 				case 'blockDelete':
 					blocks = blocks.filter((item: I.Block) => { return item.id != data.blockId; });
+					
+					// Remove focus if block is deleted
+					if (focused == data.blockId) {
+						focus.clear();
+						keyboard.setFocus(false);
+					};
 					break;
 			};
 		};
@@ -240,7 +247,7 @@ class Dispatcher {
 			blockStore.blocksSet(contextId, blocks);
 		};
 		
-		if (DEBUG) {
+		if (PROFILE) {
 			console.profileEnd(types.join(', '));
 		};
 	};
