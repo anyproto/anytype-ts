@@ -163,7 +163,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		};
 		
 		if (type == I.BlockType.Icon) {
-			delete(sections[0]);
+			sections = sections.filter((it: any, i: number) => { return i > 0; });
 		};
 		
 		return sections;

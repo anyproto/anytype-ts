@@ -720,6 +720,7 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	blockRemove (focused?: I.Block) {
 		const { blockStore, rootId, dataset } = this.props;
+		const { blocks } = blockStore;
 		const { selection } = dataset;
 
 		let next: any = null;
@@ -739,6 +740,11 @@ class EditorPage extends React.Component<Props, {}> {
 			blockIds = [ focused.id ];
 		};
 		
+		blockIds = blockIds.filter((id: string) => {
+			const block = (blocks[rootId] || []).find((it: any) => { return it.id == id; });
+			return block ? this.canDelete(block) : false;
+		});
+		
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
 			if (next) {
 				let l = String(next.content.text || '').length;
@@ -746,6 +752,18 @@ class EditorPage extends React.Component<Props, {}> {
 				focus.apply();				
 			};
 		});
+	};
+	
+	canDelete (block: I.Block) {
+		if (block.type == I.BlockType.Icon) {
+			return false;
+		};
+			
+		if ((block.type == I.BlockType.Text) && (block.content.style == I.TextStyle.Title)) {
+			return false;
+		};
+		
+		return true;
 	};
 	
 };
