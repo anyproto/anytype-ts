@@ -1,0 +1,28 @@
+@import "~scss/_vars";
+
+.blocks {
+	
+	/* Row */
+	.block.blockLayout.c0 { padding: 15px 0px; }
+	.block.blockLayout.c0 > .wrapMenu { display: none; }
+	.block.blockLayout.c0 > .wrapContent { width: 100%; overflow: visible; }
+	.block.blockLayout.c0 > .wrapContent > .children { display: flex; }
+	.block.blockLayout.c0 > .wrapContent > .dropTarget { width: 100%; height: 15px; position: absolute; left: 0px; }
+	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetTop { top: -15px; }
+	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetBot { bottom: -7px; }
+	
+	/* Column */
+	.block.blockLayout.c1 { padding: 0px; }
+	.block.blockLayout.c1 > .wrapMenu { display: none; }
+	.block.blockLayout.c1 > .wrapContent { width: 100%; }
+	.block.blockLayout.c1 > .wrapContent > .dropTarget { display: none; }
+	
+	.block.blockLayout.c1 > .wrapContent > .children > .block.first { padding-top: 0px; }
+	.block.blockLayout.c1 > .wrapContent > .children > .block.first {
+		.inputWithFile { margin-top: 0px; }
+	}
+	.block.blockLayout.c1 > .wrapContent > .children > .block.last { padding-bottom: 0px; }
+	.block.blockLayout.c1 > .wrapContent > .children > .block.last {
+		.inputWithFile { margin-bottom: 0px; }
+	}	
+}

@@ -1,0 +1,8 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockDiv { padding: 7px 0px; line-height: 0px; }
+	.block.blockDiv {
+		.div { height: 1px; background: #d2d0c2; }
+	}
+}

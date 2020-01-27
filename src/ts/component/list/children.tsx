@@ -42,14 +42,24 @@ class ListChildren extends React.Component<Props, {}> {
 			<div className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{childBlocks.map((item: any, i: number) => {
 					let css: any = {};
+					let cn = [];
+					
 					if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
 						css.width = (item.fields.width || 1 / length ) * 100 + '%';
+					};
+					
+					if (i == 0) {
+						cn.push('first');
+					};
+					
+					if (i == childBlocks.length - 1) {
+						cn.push('last');
 					};
 					
 					return (
 						<React.Fragment key={item.id}>
 							{i > 0 ? <ColResize index={i} /> : ''}
-							<Block ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} cnt={length} css={css} index={i} />
+							<Block ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} cnt={length} css={css} className={cn.join(' ')} index={i} />
 						</React.Fragment>
 					);
 				})}
