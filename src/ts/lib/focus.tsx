@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { getRange, setRange } from 'selection-ranges';
 
 const $ = require('jquery');
@@ -35,6 +35,7 @@ class Focus {
 		
 		value.focus();
 		setRange(value.get(0), { start: this.range.from, end: this.range.to });
+		keyboard.setFocus(true);
 	};
 	
 };

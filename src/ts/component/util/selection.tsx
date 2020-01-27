@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, C, Key, focus } from 'ts/lib';
+import { I, C, Key, focus, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -310,6 +310,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				focus.clear();
 			};
 			
+			keyboard.setFocus(false);
 			window.getSelection().empty();
 		};
 	};
