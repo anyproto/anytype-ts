@@ -54,7 +54,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className="header headerMainFolder">
+			<div className="header headerMainEdit">
 				<div className="path">
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />

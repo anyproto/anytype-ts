@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 10; }
+.header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 10; transition: $transitionFast; }
 .header {
 	.logo { 
 		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 14px; background: url('~img/logo.svg') no-repeat;
@@ -44,4 +44,4 @@
 	.icon.back:hover, .icon.forward:hover { background-image: url('~img/icon/back1.svg'); }
 }
 
-.headerMainFolder { padding: 9px 0px 9px 80px; }
+.headerMainEdit { background: #fff; padding: 9px 0px 9px 80px; }

@@ -28,9 +28,11 @@ class EditorPage extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 	id: string = '';
 	timeoutHover: number = 0;
+	timeoutMove: number = 0;
 	hovered: string =  '';
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
+	uiHidden: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -96,6 +98,10 @@ class EditorPage extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		this.open();
 		
+		if (this.uiHidden) {
+			this.uiHide();
+		};
+		
 		window.setTimeout(() => {
 			focus.apply(); 
 			window.scrollTo(0, this.scrollTop); 
@@ -158,6 +164,32 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor');
+	};
+	
+	uiHide () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+
+		$('.header').css({ opacity: 0 });
+		$('.footer').css({ opacity: 0 });
+		
+		this.uiHidden = true;
+		
+		window.clearTimeout(this.timeoutMove);
+		this.timeoutMove = window.setTimeout(() => {
+			win.unbind('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
+		}, 100);
+	};
+
+	uiShow () {
+		const win = $(window);
+		
+		$('.header').css({ opacity: 1 });
+		$('.footer').css({ opacity: 1 });
+		
+		this.uiHidden = false;
+		
+		win.unbind('mousemove.ui');
 	};
 	
 	onMouseMove (e: any) {
@@ -606,6 +638,7 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	onScroll (e: any) {
 		this.scrollTop = $(window).scrollTop();
+		this.uiHide();
 	};
 	
 	onCopy (e: any) {
