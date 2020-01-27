@@ -22,6 +22,7 @@ class DropTarget extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
 	canDrop: boolean = false;
+	t: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -41,7 +42,6 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop} onClick={onClick}>
-				<div className="line" />
 				{children}
 			</div>
 		);
@@ -145,9 +145,12 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		node.removeClass('top bottom left right middle');
+			
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
-			node.addClass('isOver ' + this.getDirectionClass(this.position));			
+			node.addClass('isOver ' + this.getDirectionClass(this.position));
 		};
+		
+		console.log('over');
 	};
 	
 	getParentIds (id: string, parentIds: string[]) {
@@ -193,6 +196,7 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('isOver top bottom left right middle');
+		console.log('leave');
 	};
 	
 	onDrop (e: any) {
