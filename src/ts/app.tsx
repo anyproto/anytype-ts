@@ -115,7 +115,7 @@ class App extends React.Component<Props, State> {
 						<Progress />
 						<Tooltip />
 						<div id="drag" />
-						<div id="rect" />
+						<div id="selection-rect" />
 							
 						{Routes.map((item: RouteElement, i: number) => (
 							<Route path={item.path} exact={true} key={i} component={Page} />

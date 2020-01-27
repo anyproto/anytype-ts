@@ -147,9 +147,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let win = $(window);
-		let node = $(ReactDOM.findDOMNode(this));
-		let el = $('#rect');
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = $('#selection-rect');
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
@@ -183,14 +183,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.checkNodes(e);
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = $('#rect');
+		const el = $('#selection-rect');
 		const selected = node.find('.selectable.isSelected');
 		
 		el.css({ 
 			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
 			width: rect.width - 10, 
 			height: rect.height - 10,
-			opacity: selected.length ? 1 : 0.3,
 		});
 		
 		this.moved = true;
@@ -321,7 +320,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		$('#rect').hide();
+		$('#selection-rect').hide();
 		
 		this.unbindMouse();
 	};
