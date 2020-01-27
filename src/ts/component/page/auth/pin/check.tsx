@@ -91,9 +91,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 			if (sha1(pin) == Storage.get('pin')) {
 				if (isSelect) {
 					history.push('/auth/setup/select');
-				};
-				
-				if (isAdd) {
+				} else {
 					history.push('/main/index');
 				};
 			} else {

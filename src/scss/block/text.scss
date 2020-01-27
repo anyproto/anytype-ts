@@ -1,22 +1,12 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockText { word-wrap: break-word; }
+	.block.blockText { font-size: 15px; line-height: 24px; letter-spacing: -0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.wrap { flex: auto; position: relative; }
+		.wrap { flex: auto; position: relative; padding: 0px; }
 		.value { -webkit-user-modify: read-write-plaintext-only; }
 		
 		.placeHolder { color: #ebe9e0; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; }
-		
-		.title { padding: 13px 0px 24px 0px; }
-		.header1 { padding: 5px 0px 2px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
-		.header2 { padding: 6px 0px 4px 0px; font-size: 21px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
-		.header3 { padding: 7px 0px 3px 0px; font-size: 18px; line-height: 26px; letter-spacing: -0.08px; font-weight: 600; }
-		.quote { font-size: 13px; line-height: 22px; letter-spacing: 0.08px; }
-		.code { font-family: 'Mono'; line-height: 1.71; padding: 32px 24px 16px 24px; margin: 7px 0px; background: rgba(247,245,240,0.5); }
-		.code {
-			.select { position: absolute; top: 1px; right: 1px; padding: 0px 22px 0px 8px; font-size: 12px; height: 24px; border: 0px; }
-		}
 		
 		a { cursor: pointer; }
 		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; border-radius: 2px; }
@@ -68,6 +58,20 @@
 				.icon { background-image: url('~img/icon/marker/check1.svg'); }
 			}
 		}
+	}
+	
+	.blockText.title { padding: 12px 0px 24px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
+	.blockText.header1 { padding: 23px 0px 1px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
+	.blockText.header2 { padding: 15px 0px 1px 0px; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
+	.blockText.header3 { padding: 15px 0px 1px 0px; font-size: 17px; line-height: 24px; font-weight: 600; }
+	.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; }
+	.blockText.quote {
+		.wrap { padding-left: 28px; }
+		.line { width: 2px; height: 100%; position: absolute; left: 11px; top: 0px; background: $colorOrange; }
+	}
+	.blockText.code { font-family: 'Mono'; line-height: 1.71; padding: 32px 24px 16px 24px; margin: 7px 0px; background: rgba(247,245,240,0.5); }
+	.blockText.code {
+		.select { position: absolute; top: 1px; right: 1px; padding: 0px 22px 0px 8px; font-size: 12px; height: 24px; border: 0px; }
 	}
 	
 }

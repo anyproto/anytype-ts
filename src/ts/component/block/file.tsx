@@ -150,7 +150,7 @@ class BlockFile extends React.Component<Props, {}> {
 			};
 		};
 		
-		return String(icon || 'unknown');
+		return String(icon || 'other');
 	};
 	
 };

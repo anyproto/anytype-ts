@@ -1,17 +1,19 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockFile { padding: 7px 0px; white-space: nowrap; }
+	.block.blockFile { white-space: nowrap; }
 	.block.blockFile {
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
-		.error { margin: 0px; font-size: 13px; line-height: 18px; }
+		.error { margin: 0px; font-size: 13px; line-height: 24px; height: 24px; }
+		
+		.inputWithFile { margin: 6px 0px; }
 		
 		.name {
 			min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block; overflow: hidden;
 			vertical-align: top; padding-top: 1px; cursor: pointer;
 		}
 		.size {
-			max-width: 100px; font-size: 13px; height: 24px; line-height: 24px; letter-spacing: 0.1px; color: #6a6962; margin: 0px 8px;
+			max-width: 100px; font-size: 13px; height: 24px; line-height: 24px; letter-spacing: 0.1px; color: #aca996; margin: 0px 8px;
 			display: inline-block; vertical-align: top; padding-top: 1px;
 		}
 		.download {
@@ -20,8 +22,8 @@
 		}
 		.download:hover { color: #1092d9; }
 
-		.icon.type { width: 24px; height: 24px; margin-right: 4px; background-size: 18px 22px; transition: none; vertical-align: top; }
-		.icon.unknown { background-image: url('~img/icon/file/unknown.svg'); }
+		.icon.type { width: 24px; height: 24px; margin-right: 4px; transition: none; vertical-align: top; }
+		.icon.other { background-image: url('~img/icon/file/other.svg'); }
 		.icon.image { background-image: url('~img/icon/file/image.svg'); }
 		.icon.video { background-image: url('~img/icon/file/video.svg'); }
 		.icon.text { background-image: url('~img/icon/file/text.svg'); }

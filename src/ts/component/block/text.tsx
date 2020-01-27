@@ -60,7 +60,6 @@ class BlockText extends React.Component<Props, {}> {
 		let { lang } = fields;
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
-		let cn = [ 'flex' ];
 		let ct: string[] = [];
 		let additional = null;
 		
@@ -87,35 +86,12 @@ class BlockText extends React.Component<Props, {}> {
 		);
 		
 		switch (style) {
-			default:
-			case I.TextStyle.Paragraph:
-				cn.push('text');
-				break;
-				
-			case I.TextStyle.Title:
-				cn.push('title');
-				placeHolder = Constant.defaultName;
-				break;
-				
-			case I.TextStyle.Header1:
-				cn.push('header1');
-				break;
-				
-			case I.TextStyle.Header2:
-				cn.push('header2');
-				break;
-				
-			case I.TextStyle.Header3:
-				cn.push('header3');
-				break;
-				
 			case I.TextStyle.Quote:
-				cn.push('quote');
+				additional = (
+					<div className="line" />
+				);
 				break;
-				
 			case I.TextStyle.Code:
-				cn.push('code');
-				
 				let options = [];
 				for (let i in Constant.codeLang) {
 					options.push({ id: i, name: Constant.codeLang[i] });
@@ -152,7 +128,7 @@ class BlockText extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div className="flex">
 				<div className="markers">
 					{markers.map((item: any, i: number) => (
 						<Marker key={i} {...item} />

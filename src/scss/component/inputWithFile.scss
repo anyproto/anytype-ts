@@ -1,16 +1,16 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	line-height: 24px; padding: 11px; border-radius: 4px; border: solid 1px #d2d0c2; color: #adaa95;
+	line-height: 24px; padding: 11px; border-radius: 4px; border: solid 1px #aca996; color: #aca996;
 	transition: background 0.2s ease-in-out; white-space: nowrap; overflow: hidden;
 }
-.inputWithFile:hover { background: #f7f5f0; }
 .inputWithFile {
 	.txt { line-height: 23px; padding-top: 1px; height: 24px; overflow: hidden; width: calc(100% - 30px); }
 	.fileWrap { display: inline-block; vertical-align: top; }
-	.fileWrap .border { border-bottom: 1px solid #d2d0c2; display: inline-block; line-height: 1; transition: $transitionFast; }
-	.fileWrap:hover .border { border-color: #000; cursor: pointer; color: #000; }
+	.fileWrap .border { border-bottom: 1px solid #aca996; display: inline-block; line-height: 1; transition: $transitionFast; }
+	.fileWrap:hover .border { cursor: pointer; color: $colorBlack; }
 
+	.input::placeholder { color: #aca996; }
 	.urlToggle { cursor: text; display: inline-block; }
 
 	#form { display: inline-block; vertical-align: top; }

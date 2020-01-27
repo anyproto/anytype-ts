@@ -39,10 +39,10 @@
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }
-	.block > .wrapContent > .selectable.isSelected > .dropTarget { background: #f7f5f0; }
+	.block > .wrapContent > .selectable.isSelected > .dropTarget { background: #f7f5f0; border-radius: 4px; }
 	
+	.block.blockDiv { padding: 7px 0px; line-height: 0px; }
 	.block.blockDiv {
-		.dropTarget { padding: 8px 0px; }
 		.div { height: 1px; background: #d2d0c2; }
 	}
 	
