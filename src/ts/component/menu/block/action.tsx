@@ -149,7 +149,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		];
 		
 		// Restrictions
-		
 		if (style == I.TextStyle.Title) {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color', 'move', 'remove' ].indexOf(it.id) < 0; });
 		};
@@ -263,6 +262,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		node.find('.item.active').removeClass('active');
 		el.addClass('active');
+		
+		if ((item.id == 'turn') && commonStore.menuIsOpen('blockStyle')) {
+			return;
+		};
+		
+		if ((item.id == 'color') && commonStore.menuIsOpen('blockColor')) {
+			return;
+		};
 		
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');

@@ -61,6 +61,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { filter } = commonStore; 
 		const node = $(ReactDOM.findDOMNode(this));
 		
+		console.log(filter);
+		
 		if (filter) {
 			$('#menuBlockAdd').addClass('withFilter');
 			commonStore.menuClose('blockAddSub');
@@ -147,6 +149,13 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				break;
 				
 			case Key.right:
+				if ((this.props.id == 'blockAddSub') && (this.n == -1)) {
+					this.n++;
+					if (this.n > l - 1) {
+						this.n = 0;
+					};
+					setActive();
+				} else 
 				if (item) {
 					this.onOver(e, item);
 				};
@@ -216,11 +225,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	getItems () {
 		const { commonStore, param } = this.props;
-		const { filter } = commonStore; 
 		const { data } = param;
 		const { id } = data;
 		const sections = this.getSections();
 		
+		let { filter } = commonStore;
 		let options = sections;
 		
 		if (id) {

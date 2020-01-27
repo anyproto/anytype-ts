@@ -290,7 +290,7 @@ class BlockText extends React.Component<Props, {}> {
 		let cmdParsed = false;
 		
 		// Open menu
-		if (value == '/') {
+		if ((value == '/') && !commonStore.menuIsOpen('blockAdd')) {
 			e.preventDefault();
 			this.props.onMenuAdd(id);
 			return;
