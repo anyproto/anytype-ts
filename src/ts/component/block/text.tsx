@@ -513,6 +513,9 @@ class BlockText extends React.Component<Props, {}> {
 			if (selection) {
 				ids = selection.get();
 			};
+			if (!ids.length) {
+				ids = [ id ];
+			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
