@@ -74,9 +74,15 @@ class PageAccountSelect extends React.Component<Props, State> {
 
 	onSelect (e: any, account: I.Account) {
 		const { authStore, history } = this.props;
+		const pin = Storage.get('pin');
 		
 		authStore.accountSet(account);
-		history.push('/auth/pin-select/select');
+		
+		if (pin) {
+			history.push('/auth/pin-check/select');
+		} else {
+			history.push('/auth/pin-select/select');
+		};
 	};
 	
 	onAdd (e: any) {

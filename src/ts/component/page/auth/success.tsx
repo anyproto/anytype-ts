@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { translate } from 'ts/lib';
+import { translate, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -40,7 +40,14 @@ class PageAuthSuccess extends React.Component<Props, State> {
 	};
 
 	onSubmit (e: any) {
-		this.props.history.push('/main/index');
+		const { history } = this.props;
+		const pin = Storage.get('pin');
+		
+		if (pin) {
+			history.push('/auth/pin-check/add');
+		} else {
+			history.push('/main/index');
+		};
 	};
 
 };

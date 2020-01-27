@@ -88,7 +88,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 		if (pin.length == Constant.pinSize) {
 			authStore.pinSet(pin);
 			history.push('/auth/pin-confirm/' + match.params.id);
-		};			
+		};
 	};
 	
 	getPin () {

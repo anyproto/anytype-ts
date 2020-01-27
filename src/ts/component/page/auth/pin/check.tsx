@@ -89,7 +89,13 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 		let pin = this.getPin();
 		if (pin.length == Constant.pinSize) {
 			if (sha1(pin) == Storage.get('pin')) {
-				history.push('/main/index');
+				if (isSelect) {
+					history.push('/auth/setup/select');
+				};
+				
+				if (isAdd) {
+					history.push('/main/index');
+				};
 			} else {
 				this.setState({ error: translate('authPinCheckError') });
 			};
