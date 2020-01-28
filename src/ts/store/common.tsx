@@ -164,9 +164,6 @@ class CommonStore {
 	menuClose (id: string, callBack?: () => void) {
 		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
 		
-		console.log('menuClose', id);
-		console.trace();
-		
 		if (!item) {
 			if (callBack) {
 				callBack();
