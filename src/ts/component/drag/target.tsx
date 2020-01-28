@@ -93,7 +93,7 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		if (dragProvider) {
 			for (let dropId of dragProvider.ids) {
-				if (parentIds.indexOf(dropId) >= 0) {
+				if ((dropId == id) || (parentIds.indexOf(dropId) >= 0)) {
 					this.canDrop = false;
 					break;
 				};
@@ -140,12 +140,12 @@ class DropTarget extends React.Component<Props, {}> {
 			};
 		};
 		
+		// You can only drop inside of menu items
 		if ((dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
 			this.position = I.BlockPosition.Inner;
 		};
 		
 		node.removeClass('top bottom left right middle');
-			
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			node.addClass('isOver ' + this.getDirectionClass(this.position));
 		};

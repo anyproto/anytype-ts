@@ -22,6 +22,11 @@
 				position: absolute; left: 25px; top: 0px; width: 2px; height: 100%; background: #ebe9e0; cursor: col-resize; z-index: 1; 
 			}
 		}
+		
+		.dropTarget.isOver.top { border-radius: 0px 0px 4px 4px !important; }
+		.dropTarget.isOver.bottom { border-radius: 4px 4px 0px 0px !important; }
+		.dropTarget.isOver.left { border-radius: 0px 4px 4px 0px !important; }
+		.dropTarget.isOver.right { border-radius: 4px 0px 0px 4px !important; }
 	}
 	
 	.block.isResizing { cursor: col-resize; user-select: none; }

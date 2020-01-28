@@ -146,8 +146,8 @@ class Block extends React.Component<Props, {}> {
 					
 					{(type == I.BlockType.Layout) && (content.style == I.LayoutStyle.Row) ? (
 						<React.Fragment>
-							<DropTarget className="targetTop" {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
-							<DropTarget className="targetBot" {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
+							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
+							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
 						</React.Fragment>
 					): ''}
 					
