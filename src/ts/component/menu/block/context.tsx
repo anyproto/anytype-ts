@@ -39,13 +39,24 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { content } = block;
 		const { marks, style } = content;
 		
-		const markActions = [
+		let canMark = true;
+		let markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
 			{ type: I.MarkType.Link, icon: 'link', name: 'Link' },
 			{ type: I.MarkType.Code, icon: 'code', name: 'Code' },
 		];
+		
+		// You can't mark code, as it's highlighted automatically
+		if ([ I.TextStyle.Code ].indexOf(style) >= 0) {
+			canMark = false;
+		};
+		
+		// You can't make headers bold, since they are already bold
+		if ([ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].indexOf(style) >= 0) {
+			markActions = markActions.filter((it: any) => { return it.type != I.MarkType.Bold; });
+		};
 		
 		let icon = Util.styleIcon(style);
 		let colorMark = Mark.getInRange(marks, I.MarkType.TextColor, range);
@@ -60,19 +71,23 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				<div className="section">
 					<Icon id={'button-' + blockId + '-switch'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
 				</div>
-					
-				<div className="section">
-					{markActions.map((action: any, i: number) => {
-						let cn = [ action.icon ];
-						if (Mark.getInRange(marks, action.type, range)) {
-							cn.push('active');
-						};
-						return <Icon key={i} className={cn.join(' ')} tooltip={action.name} onClick={(e: any) => { this.onMark(e, action.type); }} />;
-					})}
-				</div>
+				
+				{canMark && markActions.length ? (
+					<div className="section">
+						{markActions.map((action: any, i: number) => {
+							let cn = [ action.icon ];
+							if (Mark.getInRange(marks, action.type, range)) {
+								cn.push('active');
+							};
+							return <Icon key={i} className={cn.join(' ')} tooltip={action.name} onClick={(e: any) => { this.onMark(e, action.type); }} />;
+						})}
+					</div>
+				) : ''}
 				
 				<div className="section">
-					<Icon id={'button-' + blockId + '-color'} className="color" inner={color} tooltip="Text colors" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
+					{canMark ? (
+						<Icon id={'button-' + blockId + '-color'} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} inner={color} tooltip="Text colors" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
+					) : ''}
 					<Icon id={'button-' + blockId + '-comment'} className="comment" tooltip="Comment" onClick={(e: any) => {}} />
 					<Icon id={'button-' + blockId + '-more'} className={[ 'more', (commonStore.menuIsOpen('blockMore') ? 'active' : '') ].join(' ')} tooltip="More options" onClick={(e: any) => { this.onMark(e, 'more'); }} />
 				</div>
