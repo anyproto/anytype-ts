@@ -64,6 +64,17 @@ function createWindow () {
 			role: 'windowMenu',
 		},
 		{
+			label: 'Help',
+			submenu: [
+				{
+					label: 'Table of contents',
+					click: function () {
+						win.webContents.send('help');
+					}
+				},
+			]
+		},
+		{
 			label: 'Debug',
 			submenu: [
 				{

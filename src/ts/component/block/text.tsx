@@ -121,7 +121,7 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 		};
 		
-		let Marker = (item: any) => (
+		const Marker = (item: any) => (
 			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
 				<span className={ct.join(' ')}>{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}</span>
 			</div>

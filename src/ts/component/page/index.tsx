@@ -18,6 +18,9 @@ import PageAuthSuccess from './auth/success';
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 
+import PageHelpIndex from './help/index';
+import PageHelpShortcuts from './help/shortcuts';
+
 const $ = require('jquery');
 const raf = require('raf');
 
@@ -48,6 +51,9 @@ class Page extends React.Component<Props, {}> {
 			
 			'main/index':			 PageMainIndex,
 			'main/edit':			 PageMainEdit,
+			
+			'help/index':			 PageHelpIndex,
+			'help/shortcuts':		 PageHelpShortcuts,
 		};
 		
 		const path = [ match.params.page, match.params.action ].join('/');

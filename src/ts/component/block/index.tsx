@@ -70,55 +70,7 @@ class Block extends React.Component<Props, {}> {
 		
 		switch (type) {
 			case I.BlockType.Text:
-				cn.push('blockText');
-				
-				switch (content.style) {
-					default:
-					case I.TextStyle.Paragraph:
-						cn.push('paragraph');
-						break;
-						
-					case I.TextStyle.Title:
-						cn.push('title');
-						break;
-						
-					case I.TextStyle.Header1:
-						cn.push('header1');
-						break;
-						
-					case I.TextStyle.Header2:
-						cn.push('header2');
-						break;
-						
-					case I.TextStyle.Header3:
-						cn.push('header3');
-						break;
-						
-					case I.TextStyle.Quote:
-						cn.push('quote');
-						break;
-						
-					case I.TextStyle.Code:
-						cn.push('code');
-						break;
-						
-					case I.TextStyle.Bulleted:
-						cn.push('bulleted');
-						break;
-						
-					case I.TextStyle.Numbered:
-						cn.push('numbered');
-						break;
-						
-					case I.TextStyle.Toggle:
-						cn.push('toggle');
-						break;
-						
-					case I.TextStyle.Checkbox:
-						cn.push('checkbox');
-						break;
-				};
-				
+				cn.push('blockText ' + Util.styleClass(content.style));
 				BlockComponent = () => (
 					<BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />
 				);

@@ -37,7 +37,6 @@
 	.block.isToggled > .wrapContent > .children { display: block; }
 	.block.isToggled > .wrapContent > .selectable > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
 	
-	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }
 	.block > .wrapContent > .selectable.isSelected > .dropTarget { background: #f7f5f0; border-radius: 4px; }
 }

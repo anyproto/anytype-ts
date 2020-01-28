@@ -342,6 +342,25 @@ class Util {
 		return icon;
 	};
 	
+	styleClass (s: I.TextStyle): string {
+		let c = '';
+		switch (s) {
+			default:
+			case I.TextStyle.Paragraph:	 c = 'paragraph'; break;
+			case I.TextStyle.Title:		 c = 'title'; break;
+			case I.TextStyle.Header1:	 c = 'header1'; break;
+			case I.TextStyle.Header2:	 c = 'header2'; break;
+			case I.TextStyle.Header3:	 c = 'header3'; break;
+			case I.TextStyle.Quote:		 c = 'quote'; break;
+			case I.TextStyle.Code:		 c = 'code'; break;
+			case I.TextStyle.Bulleted:	 c = 'bulleted'; break;
+			case I.TextStyle.Numbered:	 c = 'numbered'; break;
+			case I.TextStyle.Toggle:	 c = 'toggle'; break;
+			case I.TextStyle.Checkbox:	 c = 'checkbox'; break;
+		};
+		return c;
+	};
+	
 	pageOpen (e: any, props: any, targetId: string) {
 		const { history } = props;
 		const param = {

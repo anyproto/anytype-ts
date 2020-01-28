@@ -36,6 +36,7 @@ import 'scss/component/tooltip.scss';
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
+import 'scss/page/help.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -156,6 +157,10 @@ class App extends React.Component<Props, State> {
 			debug = !debug;
 			debug ? html.addClass('debug') : html.removeClass('debug');
 			Storage.set('debug', Number(debug));
+		});
+		
+		ipcRenderer.on('help', (e: any) => {
+			history.push('/help/index');
 		});
 	};
 	
