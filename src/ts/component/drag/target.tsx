@@ -149,8 +149,6 @@ class DropTarget extends React.Component<Props, {}> {
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			node.addClass('isOver ' + this.getDirectionClass(this.position));
 		};
-		
-		console.log('over');
 	};
 	
 	getParentIds (id: string, parentIds: string[]) {
@@ -196,7 +194,6 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('isOver top bottom left right middle');
-		console.log('leave');
 	};
 	
 	onDrop (e: any) {

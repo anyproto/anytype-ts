@@ -255,7 +255,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.nodes.each((i: number, el: any) => {
 			let item = $(el);
 			let id = String(item.data('id') || '');
-			let elRect = el.getBoundingClientRect() as DOMRect; 
+			let elRect = el.getBoundingClientRect() as DOMRect;
 			
 			elRect.y += scrollTop;
 			
@@ -313,6 +313,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 			keyboard.setFocus(false);
 			window.getSelection().empty();
 		};
+		
+		this.set(this.get());
 	};
 	
 	hide () {
@@ -336,6 +338,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.block.isSelected').removeClass('isSelected');
 		node.find('.selectable.isSelected').removeClass('isSelected');
 	};
 	
@@ -380,6 +383,17 @@ class SelectionProvider extends React.Component<Props, {}> {
 		for (let id of ids) {
 			node.find('.selectable.c' + $.escapeSelector(id)).addClass('isSelected');
 		};
+		
+		node.find('.block.isSelected').removeClass('isSelected');
+		node.find('.selectable.isSelected').each((i: number, el: any) => {
+			let item = $(el);
+			let id = String(item.data('id') || '');
+			let block = node.find('#block-' + $.escapeSelector(id));
+			let children = node.find('.children.c' + $.escapeSelector(id) + ' .selectable');
+			
+			block.addClass('isSelected');
+			children.removeClass('isSelected');
+		});
 	};
 	
 	get (): string[] {

@@ -19,12 +19,12 @@ class ListChildren extends React.Component<Props, {}> {
 	refObj: any = {};
 	
 	render () {
-		const { onMouseMove, onMouseLeave, onResizeStart, childBlocks, type, content } = this.props;
+		const { onMouseMove, onMouseLeave, onResizeStart, childBlocks, id, type, content } = this.props;
 		const { style } = content;
 		const length = childBlocks.length;
 		
 		let ColResize: any = (): any => null;
-		let cn = [ 'children' ];
+		let cn = [ 'children', 'c' + id ];
 		
 		if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
 			ColResize = (item: any) => (

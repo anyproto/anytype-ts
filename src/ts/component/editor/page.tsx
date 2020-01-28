@@ -246,7 +246,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		window.clearTimeout(this.timeoutHover);
 		
-		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height - offset)) {
+		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
 			let ax = rect.x - (rectContainer.x + addOffsetX);

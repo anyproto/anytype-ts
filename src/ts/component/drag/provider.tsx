@@ -98,7 +98,8 @@ class DragProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blockStore, rootId } = this.props;
+		const { blockStore, rootId, dataset } = this.props;
+		const { selection } = dataset;
 		const { blocks, root } = blockStore;
 		const target = blocks[rootId].find((it: any) => { return it.id == targetId; });
 		const map = blockStore.getMap(blocks[rootId]);
@@ -123,7 +124,11 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 		
 		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
-		C.BlockListMove(rootId, this.ids || [], targetId, position);
+		C.BlockListMove(rootId, this.ids || [], targetId, position, () => {
+			if (selection) {
+				selection.set(this.ids);
+			};
+		});
 	};
 	
 	unbind () {

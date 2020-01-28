@@ -39,4 +39,6 @@
 	
 	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }
 	.block > .wrapContent > .selectable.isSelected > .dropTarget { background: #f7f5f0; border-radius: 4px; }
+	
+	.block.isSelected .children .selectable { background: #f7f5f0; border-radius: 4px; }
 }

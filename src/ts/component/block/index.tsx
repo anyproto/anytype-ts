@@ -36,8 +36,6 @@ const THROTTLE = 20;
 class Block extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	refComponent: any = null;
-	refChildren: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -97,7 +95,7 @@ class Block extends React.Component<Props, {}> {
 					case I.FileType.Image: 
 						cn.push('blockImage');
 						BlockComponent = () => (
-							<BlockImage ref={(ref: any) => { this.refComponent = ref; }} {...this.props} width={fields.width || 1} />
+							<BlockImage {...this.props} width={fields.width || 1} />
 						);
 						break;
 						
@@ -153,8 +151,7 @@ class Block extends React.Component<Props, {}> {
 						</React.Fragment>
 					): ''}
 					
-						
-					<ListChildren ref={(ref: any) => { this.refChildren = ref; }} {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
+					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 				</div>
 			</div>
 		);
