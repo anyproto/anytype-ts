@@ -4,9 +4,7 @@ import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainEdit as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
-}; 
+interface Props extends I.Popup, RouteComponentProps<any> {}; 
 
 class PopupEditorPage extends React.Component<Props, {}> {
 	

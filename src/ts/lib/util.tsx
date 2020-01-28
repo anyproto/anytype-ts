@@ -47,7 +47,7 @@ class Util {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
-	clipboardCopy (data: any) {
+	clipboardCopy (data: any, callBack?: () => void) {
 		const handler = (e: any) => {
 			e.preventDefault();
 			
@@ -62,6 +62,9 @@ class Util {
 			};
 			
 			document.removeEventListener('copy', handler, true);
+			if (callBack) {
+				callBack();
+			};
 		};
 
 		document.addEventListener('copy', handler, true);

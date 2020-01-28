@@ -31,12 +31,13 @@ class BlockImage extends React.Component<Props, {}> {
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
 		const { commonStore, content, fields } = this.props;
 		const { width } = fields;
-		const { state, hash } = content;
+		const { state } = content;
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
 		
 		let element = null;
@@ -63,7 +64,7 @@ class BlockImage extends React.Component<Props, {}> {
 			case I.FileState.Done:
 				element = (
 					<div style={css} className="wrap">
-						<img className="img" src={commonStore.imageUrl(hash, 1024)} onDragStart={(e: any) => { e.preventDefault(); }} />
+						<img className="img" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} />
 						<Icon className="resize" onMouseDown={this.onResizeStart} />
 						<Icon className="dots" />
 					</div>
@@ -163,6 +164,24 @@ class BlockImage extends React.Component<Props, {}> {
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: this.checkWidth(e.pageX - rect.x + 20) } },
 		]);
+	};
+	
+	onClick (e: any) {
+		const { commonStore } = this.props;
+		
+		commonStore.popupOpen('preview', {
+			data: {
+				type: I.FileType.Image,
+				url: this.getUrl(),
+			}
+		});
+	};
+	
+	getUrl () {
+		const { commonStore, content } = this.props;
+		const { state, hash } = content;
+		
+		return commonStore.imageUrl(hash, 2048);
 	};
 	
 	unbind () {

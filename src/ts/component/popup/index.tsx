@@ -9,6 +9,7 @@ const raf = require('raf');
 import PopupSettings from './settings';
 import PopupTree from './tree';
 import PopupPrompt from './prompt';
+import PopupPreview from './preview';
 import PopupEditorPage from './editor/page';
 
 interface Props extends I.Popup {
@@ -33,6 +34,7 @@ class Popup extends React.Component<Props, {}> {
 			settings: PopupSettings,
 			tree: PopupTree,
 			prompt: PopupPrompt,
+			preview: PopupPreview,
 			editorPage: PopupEditorPage,
 		};
 		

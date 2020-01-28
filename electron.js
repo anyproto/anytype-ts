@@ -82,6 +82,12 @@ function createWindow () {
 						win.webContents.send('toggleDebug');
 					}
 				},
+				{
+					label: 'Copy document',
+					click: function () {
+						win.webContents.send('copyDocument');
+					}
+				},
 			]
 		},
 	

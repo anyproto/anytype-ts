@@ -14,6 +14,7 @@ interface Props extends RouteComponentProps<any> {
 	addOffsetX: number;
 };
 
+const { ipcRenderer } = window.require('electron');
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -78,6 +79,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this._isMounted = true;
 		
 		const { blockStore, rootId } = this.props;
+		const { blocks } = blockStore; 
 		const win = $(window);
 		
 		keyboard.disableBack(true);
@@ -92,6 +94,16 @@ class EditorPage extends React.Component<Props, {}> {
 				return;
 			}; 
 			this.onPaste(e); 
+		});
+		
+		ipcRenderer.on('copyDocument', (e: any) => {
+			const json = JSON.stringify({
+				blocks: blocks[rootId],
+			}, null, 5);
+
+			Util.clipboardCopy({ text: json }, () => {
+				alert('Document copied to clipboard');
+			});
 		});
 	};
 	
