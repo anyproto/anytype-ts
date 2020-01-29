@@ -346,11 +346,11 @@ class EditorPage extends React.Component<Props, {}> {
 		const index = blocks[rootId].findIndex((item: I.Block) => { return item.id == focused; });
 		const { content } = block;
 
-		let l = String(text || '').length;
+		let length = String(text || '').length;
 		let k = e.which;
 		
 		if (e.ctrlKey || e.metaKey) {
-			if ((k == Key.a) && (range.from == 0) && (range.to == l)) {
+			if ((k == Key.a) && (range.from == 0) && (range.to == length)) {
 				e.preventDefault();
 				this.selectAll();
 			};
@@ -405,7 +405,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		if (focused && 
 			((range.from == 0) && (k == Key.up)) ||
-			((range.to == l) && (k == Key.down))
+			((range.to == length) && (k == Key.down))
 		) {
 			if (commonStore.menuIsOpen()) {
 				return;
@@ -440,8 +440,9 @@ class EditorPage extends React.Component<Props, {}> {
 			if (e.shiftKey) {
 				if (selection.get().length < 1) {
 					window.getSelection().empty();
-					commonStore.menuClose('blockContext');
 					selection.set([ focused ]);
+					
+					commonStore.menuClose('blockContext');
 					commonStore.menuClose('blockAction');
 				};
 			} else {
@@ -461,7 +462,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		if ((k == Key.backspace) && (range.from == 0 && range.to == 0)) {
 			const ids = selection.get();
-			if (l && !ids.length) {
+			if (length && !ids.length) {
 				this.blockMerge(block);
 			} else {
 				this.blockRemove(block);
@@ -531,7 +532,7 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			e.preventDefault();
 			
-			if ((range.from == l) && (range.to == l)) {
+			if ((range.from == length) && (range.to == length)) {
 				let param: any = {
 					type: I.BlockType.Text,
 					content: {
@@ -539,7 +540,7 @@ class EditorPage extends React.Component<Props, {}> {
 					},
 				};
 				
-				if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0) {
+				if (length && ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0)) {
 					param.content.style = block.content.style;
 				};
 				
