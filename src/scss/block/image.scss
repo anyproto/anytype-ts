@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockImage { padding: 7px 0px; }
+	.block.blockImage { padding: 5px 0px; }
 	.block.blockImage.isResizing * { cursor: nwse-resize; }
 	
 	.block.blockImage {
@@ -27,4 +27,6 @@
 		.icon.resize { opacity: 1; }
 		.icon.dots { opacity: 1; }
 	}
+	
+	.block.blockImage > .wrapContent > .selectable > .dropTarget { padding: 2px; }
 }

@@ -4,8 +4,8 @@
 	.block { padding: 1px 0px; word-break: break-word; display: flex; flex: auto; position: relative; }
 	.block {
 		.id { position: absolute; left: 0px; top: 1px; z-index: 2; opacity: 0.3; display: none; }
-		.wrapMenu { width: 50px; text-align: right; }
-		.wrapContent { width: calc(100% - 50px); position: relative; }
+		.wrapMenu { width: 46px; text-align: right; }
+		.wrapContent { width: calc(100% - 46px); position: relative; }
 		
 		.flex { position: relative; z-index: 1; }
 		.icon.dnd { 
