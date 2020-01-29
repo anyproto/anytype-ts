@@ -248,6 +248,11 @@ class BlockText extends React.Component<Props, {}> {
 			this.blockUpdateText(this.marks);
 		};
 		
+		if ((value == '/') && (k == Key.backspace)) {
+			commonStore.menuClose('blockAddSub');
+			commonStore.menuClose('blockAdd');
+		};
+		
 		focus.set(id, range);
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
@@ -262,6 +267,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
+		const k = e.which;
 		
 		let cmdParsed = false;
 		

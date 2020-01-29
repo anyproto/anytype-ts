@@ -61,8 +61,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { filter } = commonStore; 
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		console.log(filter);
-		
 		if (filter) {
 			$('#menuBlockAdd').addClass('withFilter');
 			commonStore.menuClose('blockAddSub');
@@ -74,7 +72,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		
-		const { commonStore, param } = this.props;
+		const { commonStore, param, id } = this.props;
 		const { data } = param;
 		const { rebind } = data;
 

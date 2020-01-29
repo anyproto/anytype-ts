@@ -181,7 +181,7 @@ class BlockImage extends React.Component<Props, {}> {
 		const { commonStore, content } = this.props;
 		const { state, hash } = content;
 		
-		return commonStore.imageUrl(hash, 2048);
+		return commonStore.imageUrl(hash, Constant.size.image);
 	};
 	
 	unbind () {

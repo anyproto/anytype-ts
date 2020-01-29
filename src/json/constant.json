@@ -13,7 +13,8 @@
 	"size": {
 		"editorPage": 800,
 		"blockMenu": 50,
-		"menuBlockContext": 380
+		"menuBlockContext": 380,
+		"image": 2048
 	},
 
 	"index": {

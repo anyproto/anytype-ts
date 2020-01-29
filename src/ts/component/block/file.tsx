@@ -9,6 +9,7 @@ interface Props extends I.BlockFile {
 	rootId: string;
 };
 
+const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
 @inject('commonStore')
@@ -49,7 +50,7 @@ class BlockFile extends React.Component<Props, {}> {
 			case I.FileState.Done:
 				element = (
 					<React.Fragment>
-						<span onMouseDown={this.onOpen}>
+						<span className="cp" onMouseDown={this.onOpen}>
 							<Icon className={[ 'type', this.getIcon() ].join(' ')} />
 							<span className="name">{name}</span>
 							<span className="size">{Util.fileSize(size)}</span>
@@ -93,7 +94,19 @@ class BlockFile extends React.Component<Props, {}> {
 	
 	onOpen (e: any) {
 		const { commonStore, content } = this.props;
-		ipcRenderer.send('urlOpen', commonStore.fileUrl(content.hash));
+		const { hash } = content;
+		const icon = this.getIcon();
+		
+		if (icon == 'image') {
+			commonStore.popupOpen('preview', {
+				data: {
+					type: I.FileType.Image,
+					url: commonStore.fileUrl(hash),
+				}
+			});
+		} else {
+			this.onDownload(e);
+		};
 	};
 	
 	onDownload (e: any) {
