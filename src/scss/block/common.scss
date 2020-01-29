@@ -5,7 +5,7 @@
 	.block {
 		.id { position: absolute; left: 0px; top: 1px; z-index: 2; opacity: 0.3; display: none; }
 		.wrapMenu { width: 46px; text-align: right; }
-		.wrapContent { width: calc(100% - 46px); position: relative; }
+		.wrapContent { width: calc(100% - 46px); position: relative; overflow: hidden; }
 		
 		.flex { position: relative; z-index: 1; }
 		.icon.dnd { 
