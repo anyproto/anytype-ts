@@ -70,6 +70,10 @@ class DropTarget extends React.Component<Props, {}> {
 		const { dragProvider } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		
+		if (!dragProvider) {
+			return;
+		};
+		
 		let win = $(window);
 		let offset = node.offset();
 		let width = node.width();
@@ -86,20 +90,21 @@ class DropTarget extends React.Component<Props, {}> {
 			height: y + height * 0.7
 		};
 		
-		let parentIds: string[] = [];
-		this.getParentIds(id, parentIds);
-		
 		this.canDrop = true;
 		
-		if (dragProvider) {
+		if (dragProvider.type == I.DragItem.Block) {
+			let parentIds: string[] = [];
+			this.getParentIds(id, parentIds);
+			
 			for (let dropId of dragProvider.ids) {
-				if ((dropId == id) || (parentIds.indexOf(dropId) >= 0)) {
+				if ((dropId == id) || (parentIds.length && (parentIds.indexOf(dropId) >= 0))) {
 					this.canDrop = false;
 					break;
 				};
 			};
-		} else {
-			this.canDrop = false;
+		} else 
+		if (e.dataTransfer.items.length) {
+			// File drop
 		};
 		
 		this.position = I.BlockPosition.None;
@@ -205,6 +210,8 @@ class DropTarget extends React.Component<Props, {}> {
 		if (disabled) {
 			return;
 		};
+		
+		console.log('Files', e.dataTransfer.items);
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('isOver top bottom left right middle');

@@ -4,7 +4,7 @@ import { Util, I, StructDecode, focus, keyboard } from 'ts/lib';
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
 const protobuf = require('protobufjs');
-const DEBUG = true;
+const DEBUG = false;
 const PROFILE = false;
 
 class Dispatcher {

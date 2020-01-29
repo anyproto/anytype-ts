@@ -293,7 +293,8 @@ class Block extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
 		const currentBlock = childBlocks[index];
-		const offset = node.find('#block-' + $.escapeSelector(prevBlock.id)).offset().left + Constant.size.blockMenu;
+		
+		let offset = node.find('#block-' + $.escapeSelector(prevBlock.id)).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setPreventSelect(true);
@@ -301,7 +302,6 @@ class Block extends React.Component<Props, {}> {
 		this.unbind();
 		node.addClass('isResizing');
 		
-		this.onResize(e, index, offset);
 		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
 		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e, index, offset); }));
 	};
@@ -317,6 +317,7 @@ class Block extends React.Component<Props, {}> {
 		const currentBlock = childBlocks[index];
 		const currentNode = node.find('#block-' + $.escapeSelector(currentBlock.id));
 		const res = this.calcWidth(e.pageX - offset, index);
+		
 		const w1 = res.percent * res.sum;
 		const w2 = (1 - res.percent) * res.sum;
 		

@@ -127,7 +127,8 @@
 			}
 		],
 		"asarUnpack": [
-			"build"
+			"build",
+			"dist/main.js"
 		],
 		"extraResources": [],
 		"files": [
