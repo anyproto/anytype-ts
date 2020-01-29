@@ -29,9 +29,10 @@ printf "Done\n"
 echo -n "Uncompressing... "
 tar -zxf $FILE
 printf "Done\n"
+ls addon
 
-mkdir -p build
-mv addon/*.* build/
+mkdir -p build_
+mv addon/* build/
 rm -rf addon
 
 mv protobuf/commands.js src/proto/commands.js
