@@ -264,8 +264,6 @@ class EditorPage extends React.Component<Props, {}> {
 				blocks.removeClass('showMenu isAdding top bottom');
 			}, 10);
 		};
-		
-		keyboard.setPinCheck();
 	};
 	
 	onKeyDownEditor (e: any) {

@@ -6,6 +6,7 @@ import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader } from './componen
 import { commonStore, authStore, blockStore } from './store';
 import { dispatcher, keyboard, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
+import { throttle } from 'lodash';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -86,6 +87,7 @@ interface State {
 	loading: boolean;
 };
 
+const THROTTLE = 20;
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
@@ -135,6 +137,7 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
+		const win = $(window);
 		const phrase = Storage.get('phrase');
 		const html = $('html');
 		
@@ -162,6 +165,10 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('help', (e: any) => {
 			history.push('/help/index');
 		});
+		
+		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
+			keyboard.setPinCheck();
+		}, THROTTLE));
 	};
 	
 };

@@ -3096,6 +3096,945 @@ $root.anytype = (function() {
                 return Move;
             })();
 
+            BlockList.Duplicate = (function() {
+
+                /**
+                 * Properties of a Duplicate.
+                 * @memberof anytype.Rpc.BlockList
+                 * @interface IDuplicate
+                 */
+
+                /**
+                 * Constructs a new Duplicate.
+                 * @memberof anytype.Rpc.BlockList
+                 * @classdesc Represents a Duplicate.
+                 * @implements IDuplicate
+                 * @constructor
+                 * @param {anytype.Rpc.BlockList.IDuplicate=} [properties] Properties to set
+                 */
+                function Duplicate(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * Creates a new Duplicate instance using the specified properties.
+                 * @function create
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @static
+                 * @param {anytype.Rpc.BlockList.IDuplicate=} [properties] Properties to set
+                 * @returns {anytype.Rpc.BlockList.Duplicate} Duplicate instance
+                 */
+                Duplicate.create = function create(properties) {
+                    return new Duplicate(properties);
+                };
+
+                /**
+                 * Encodes the specified Duplicate message. Does not implicitly {@link anytype.Rpc.BlockList.Duplicate.verify|verify} messages.
+                 * @function encode
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @static
+                 * @param {anytype.Rpc.BlockList.IDuplicate} message Duplicate message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                Duplicate.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified Duplicate message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Duplicate.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @static
+                 * @param {anytype.Rpc.BlockList.IDuplicate} message Duplicate message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                Duplicate.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a Duplicate message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {anytype.Rpc.BlockList.Duplicate} Duplicate
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                Duplicate.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Duplicate();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a Duplicate message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {anytype.Rpc.BlockList.Duplicate} Duplicate
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                Duplicate.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a Duplicate message.
+                 * @function verify
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                Duplicate.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a Duplicate message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {anytype.Rpc.BlockList.Duplicate} Duplicate
+                 */
+                Duplicate.fromObject = function fromObject(object) {
+                    if (object instanceof $root.anytype.Rpc.BlockList.Duplicate)
+                        return object;
+                    return new $root.anytype.Rpc.BlockList.Duplicate();
+                };
+
+                /**
+                 * Creates a plain object from a Duplicate message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @static
+                 * @param {anytype.Rpc.BlockList.Duplicate} message Duplicate
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                Duplicate.toObject = function toObject() {
+                    return {};
+                };
+
+                /**
+                 * Converts this Duplicate to JSON.
+                 * @function toJSON
+                 * @memberof anytype.Rpc.BlockList.Duplicate
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                Duplicate.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                Duplicate.Request = (function() {
+
+                    /**
+                     * Properties of a Request.
+                     * @memberof anytype.Rpc.BlockList.Duplicate
+                     * @interface IRequest
+                     * @property {string|null} [contextId] Request contextId
+                     * @property {string|null} [targetId] Request targetId
+                     * @property {Array.<string>|null} [blockIds] Request blockIds
+                     * @property {anytype.model.Block.Position|null} [position] Request position
+                     */
+
+                    /**
+                     * Constructs a new Request.
+                     * @memberof anytype.Rpc.BlockList.Duplicate
+                     * @classdesc Represents a Request.
+                     * @implements IRequest
+                     * @constructor
+                     * @param {anytype.Rpc.BlockList.Duplicate.IRequest=} [properties] Properties to set
+                     */
+                    function Request(properties) {
+                        this.blockIds = [];
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Request contextId.
+                     * @member {string} contextId
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @instance
+                     */
+                    Request.prototype.contextId = "";
+
+                    /**
+                     * Request targetId.
+                     * @member {string} targetId
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @instance
+                     */
+                    Request.prototype.targetId = "";
+
+                    /**
+                     * Request blockIds.
+                     * @member {Array.<string>} blockIds
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @instance
+                     */
+                    Request.prototype.blockIds = $util.emptyArray;
+
+                    /**
+                     * Request position.
+                     * @member {anytype.model.Block.Position} position
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @instance
+                     */
+                    Request.prototype.position = 0;
+
+                    /**
+                     * Creates a new Request instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Duplicate.IRequest=} [properties] Properties to set
+                     * @returns {anytype.Rpc.BlockList.Duplicate.Request} Request instance
+                     */
+                    Request.create = function create(properties) {
+                        return new Request(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.BlockList.Duplicate.Request.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Duplicate.IRequest} message Request message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Request.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.targetId);
+                        if (message.blockIds != null && message.blockIds.length)
+                            for (var i = 0; i < message.blockIds.length; ++i)
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.blockIds[i]);
+                        if (message.position != null && message.hasOwnProperty("position"))
+                            writer.uint32(/* id 4, wireType 0 =*/32).int32(message.position);
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Duplicate.Request.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Duplicate.IRequest} message Request message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Request.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Request message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.BlockList.Duplicate.Request} Request
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Request.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Duplicate.Request();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.contextId = reader.string();
+                                break;
+                            case 2:
+                                message.targetId = reader.string();
+                                break;
+                            case 3:
+                                if (!(message.blockIds && message.blockIds.length))
+                                    message.blockIds = [];
+                                message.blockIds.push(reader.string());
+                                break;
+                            case 4:
+                                message.position = reader.int32();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Request message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.BlockList.Duplicate.Request} Request
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Request.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Request message.
+                     * @function verify
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Request.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            if (!$util.isString(message.contextId))
+                                return "contextId: string expected";
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            if (!$util.isString(message.targetId))
+                                return "targetId: string expected";
+                        if (message.blockIds != null && message.hasOwnProperty("blockIds")) {
+                            if (!Array.isArray(message.blockIds))
+                                return "blockIds: array expected";
+                            for (var i = 0; i < message.blockIds.length; ++i)
+                                if (!$util.isString(message.blockIds[i]))
+                                    return "blockIds: string[] expected";
+                        }
+                        if (message.position != null && message.hasOwnProperty("position"))
+                            switch (message.position) {
+                            default:
+                                return "position: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                            case 5:
+                                break;
+                            }
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.BlockList.Duplicate.Request} Request
+                     */
+                    Request.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.BlockList.Duplicate.Request)
+                            return object;
+                        var message = new $root.anytype.Rpc.BlockList.Duplicate.Request();
+                        if (object.contextId != null)
+                            message.contextId = String(object.contextId);
+                        if (object.targetId != null)
+                            message.targetId = String(object.targetId);
+                        if (object.blockIds) {
+                            if (!Array.isArray(object.blockIds))
+                                throw TypeError(".anytype.Rpc.BlockList.Duplicate.Request.blockIds: array expected");
+                            message.blockIds = [];
+                            for (var i = 0; i < object.blockIds.length; ++i)
+                                message.blockIds[i] = String(object.blockIds[i]);
+                        }
+                        switch (object.position) {
+                        case "None":
+                        case 0:
+                            message.position = 0;
+                            break;
+                        case "Top":
+                        case 1:
+                            message.position = 1;
+                            break;
+                        case "Bottom":
+                        case 2:
+                            message.position = 2;
+                            break;
+                        case "Left":
+                        case 3:
+                            message.position = 3;
+                            break;
+                        case "Right":
+                        case 4:
+                            message.position = 4;
+                            break;
+                        case "Inner":
+                        case 5:
+                            message.position = 5;
+                            break;
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Request message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Duplicate.Request} message Request
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Request.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.arrays || options.defaults)
+                            object.blockIds = [];
+                        if (options.defaults) {
+                            object.contextId = "";
+                            object.targetId = "";
+                            object.position = options.enums === String ? "None" : 0;
+                        }
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            object.contextId = message.contextId;
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            object.targetId = message.targetId;
+                        if (message.blockIds && message.blockIds.length) {
+                            object.blockIds = [];
+                            for (var j = 0; j < message.blockIds.length; ++j)
+                                object.blockIds[j] = message.blockIds[j];
+                        }
+                        if (message.position != null && message.hasOwnProperty("position"))
+                            object.position = options.enums === String ? $root.anytype.model.Block.Position[message.position] : message.position;
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Request to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Request
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Request.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    return Request;
+                })();
+
+                Duplicate.Response = (function() {
+
+                    /**
+                     * Properties of a Response.
+                     * @memberof anytype.Rpc.BlockList.Duplicate
+                     * @interface IResponse
+                     * @property {anytype.Rpc.BlockList.Duplicate.Response.IError|null} [error] Response error
+                     * @property {Array.<string>|null} [blockIds] Response blockIds
+                     */
+
+                    /**
+                     * Constructs a new Response.
+                     * @memberof anytype.Rpc.BlockList.Duplicate
+                     * @classdesc Represents a Response.
+                     * @implements IResponse
+                     * @constructor
+                     * @param {anytype.Rpc.BlockList.Duplicate.IResponse=} [properties] Properties to set
+                     */
+                    function Response(properties) {
+                        this.blockIds = [];
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Response error.
+                     * @member {anytype.Rpc.BlockList.Duplicate.Response.IError|null|undefined} error
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @instance
+                     */
+                    Response.prototype.error = null;
+
+                    /**
+                     * Response blockIds.
+                     * @member {Array.<string>} blockIds
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @instance
+                     */
+                    Response.prototype.blockIds = $util.emptyArray;
+
+                    /**
+                     * Creates a new Response instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Duplicate.IResponse=} [properties] Properties to set
+                     * @returns {anytype.Rpc.BlockList.Duplicate.Response} Response instance
+                     */
+                    Response.create = function create(properties) {
+                        return new Response(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.BlockList.Duplicate.Response.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Duplicate.IResponse} message Response message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Response.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.error != null && message.hasOwnProperty("error"))
+                            $root.anytype.Rpc.BlockList.Duplicate.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        if (message.blockIds != null && message.blockIds.length)
+                            for (var i = 0; i < message.blockIds.length; ++i)
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.blockIds[i]);
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Duplicate.Response.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Duplicate.IResponse} message Response message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Response.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Response message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.BlockList.Duplicate.Response} Response
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Response.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Duplicate.Response();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.error = $root.anytype.Rpc.BlockList.Duplicate.Response.Error.decode(reader, reader.uint32());
+                                break;
+                            case 2:
+                                if (!(message.blockIds && message.blockIds.length))
+                                    message.blockIds = [];
+                                message.blockIds.push(reader.string());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Response message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.BlockList.Duplicate.Response} Response
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Response.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Response message.
+                     * @function verify
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Response.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.error != null && message.hasOwnProperty("error")) {
+                            var error = $root.anytype.Rpc.BlockList.Duplicate.Response.Error.verify(message.error);
+                            if (error)
+                                return "error." + error;
+                        }
+                        if (message.blockIds != null && message.hasOwnProperty("blockIds")) {
+                            if (!Array.isArray(message.blockIds))
+                                return "blockIds: array expected";
+                            for (var i = 0; i < message.blockIds.length; ++i)
+                                if (!$util.isString(message.blockIds[i]))
+                                    return "blockIds: string[] expected";
+                        }
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.BlockList.Duplicate.Response} Response
+                     */
+                    Response.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.BlockList.Duplicate.Response)
+                            return object;
+                        var message = new $root.anytype.Rpc.BlockList.Duplicate.Response();
+                        if (object.error != null) {
+                            if (typeof object.error !== "object")
+                                throw TypeError(".anytype.Rpc.BlockList.Duplicate.Response.error: object expected");
+                            message.error = $root.anytype.Rpc.BlockList.Duplicate.Response.Error.fromObject(object.error);
+                        }
+                        if (object.blockIds) {
+                            if (!Array.isArray(object.blockIds))
+                                throw TypeError(".anytype.Rpc.BlockList.Duplicate.Response.blockIds: array expected");
+                            message.blockIds = [];
+                            for (var i = 0; i < object.blockIds.length; ++i)
+                                message.blockIds[i] = String(object.blockIds[i]);
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Response message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Duplicate.Response} message Response
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Response.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.arrays || options.defaults)
+                            object.blockIds = [];
+                        if (options.defaults)
+                            object.error = null;
+                        if (message.error != null && message.hasOwnProperty("error"))
+                            object.error = $root.anytype.Rpc.BlockList.Duplicate.Response.Error.toObject(message.error, options);
+                        if (message.blockIds && message.blockIds.length) {
+                            object.blockIds = [];
+                            for (var j = 0; j < message.blockIds.length; ++j)
+                                object.blockIds[j] = message.blockIds[j];
+                        }
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Response to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Response.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    Response.Error = (function() {
+
+                        /**
+                         * Properties of an Error.
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                         * @interface IError
+                         * @property {anytype.Rpc.BlockList.Duplicate.Response.Error.Code|null} [code] Error code
+                         * @property {string|null} [description] Error description
+                         */
+
+                        /**
+                         * Constructs a new Error.
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response
+                         * @classdesc Represents an Error.
+                         * @implements IError
+                         * @constructor
+                         * @param {anytype.Rpc.BlockList.Duplicate.Response.IError=} [properties] Properties to set
+                         */
+                        function Error(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Error code.
+                         * @member {anytype.Rpc.BlockList.Duplicate.Response.Error.Code} code
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @instance
+                         */
+                        Error.prototype.code = 0;
+
+                        /**
+                         * Error description.
+                         * @member {string} description
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @instance
+                         */
+                        Error.prototype.description = "";
+
+                        /**
+                         * Creates a new Error instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Duplicate.Response.IError=} [properties] Properties to set
+                         * @returns {anytype.Rpc.BlockList.Duplicate.Response.Error} Error instance
+                         */
+                        Error.create = function create(properties) {
+                            return new Error(properties);
+                        };
+
+                        /**
+                         * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.BlockList.Duplicate.Response.Error.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Duplicate.Response.IError} message Error message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Error.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Duplicate.Response.Error.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Duplicate.Response.IError} message Error message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Error.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes an Error message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Rpc.BlockList.Duplicate.Response.Error} Error
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Error.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Duplicate.Response.Error();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    message.code = reader.int32();
+                                    break;
+                                case 2:
+                                    message.description = reader.string();
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes an Error message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Rpc.BlockList.Duplicate.Response.Error} Error
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Error.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies an Error message.
+                         * @function verify
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        Error.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                switch (message.code) {
+                                default:
+                                    return "code: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                    break;
+                                }
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                if (!$util.isString(message.description))
+                                    return "description: string expected";
+                            return null;
+                        };
+
+                        /**
+                         * Creates an Error message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Rpc.BlockList.Duplicate.Response.Error} Error
+                         */
+                        Error.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.BlockList.Duplicate.Response.Error)
+                                return object;
+                            var message = new $root.anytype.Rpc.BlockList.Duplicate.Response.Error();
+                            switch (object.code) {
+                            case "NULL":
+                            case 0:
+                                message.code = 0;
+                                break;
+                            case "UNKNOWN_ERROR":
+                            case 1:
+                                message.code = 1;
+                                break;
+                            case "BAD_INPUT":
+                            case 2:
+                                message.code = 2;
+                                break;
+                            }
+                            if (object.description != null)
+                                message.description = String(object.description);
+                            return message;
+                        };
+
+                        /**
+                         * Creates a plain object from an Error message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Duplicate.Response.Error} message Error
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        Error.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.code = options.enums === String ? "NULL" : 0;
+                                object.description = "";
+                            }
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                object.code = options.enums === String ? $root.anytype.Rpc.BlockList.Duplicate.Response.Error.Code[message.code] : message.code;
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                object.description = message.description;
+                            return object;
+                        };
+
+                        /**
+                         * Converts this Error to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Rpc.BlockList.Duplicate.Response.Error
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        Error.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        /**
+                         * Code enum.
+                         * @name anytype.Rpc.BlockList.Duplicate.Response.Error.Code
+                         * @enum {string}
+                         * @property {number} NULL=0 NULL value
+                         * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+                         * @property {number} BAD_INPUT=2 BAD_INPUT value
+                         */
+                        Error.Code = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "NULL"] = 0;
+                            values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                            values[valuesById[2] = "BAD_INPUT"] = 2;
+                            return values;
+                        })();
+
+                        return Error;
+                    })();
+
+                    return Response;
+                })();
+
+                return Duplicate;
+            })();
+
             BlockList.Set = (function() {
 
                 /**
@@ -4318,7 +5257,2739 @@ $root.anytype = (function() {
                         return Style;
                     })();
 
+                    Text.Color = (function() {
+
+                        /**
+                         * Properties of a Color.
+                         * @memberof anytype.Rpc.BlockList.Set.Text
+                         * @interface IColor
+                         */
+
+                        /**
+                         * Constructs a new Color.
+                         * @memberof anytype.Rpc.BlockList.Set.Text
+                         * @classdesc Represents a Color.
+                         * @implements IColor
+                         * @constructor
+                         * @param {anytype.Rpc.BlockList.Set.Text.IColor=} [properties] Properties to set
+                         */
+                        function Color(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Creates a new Color instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Text.IColor=} [properties] Properties to set
+                         * @returns {anytype.Rpc.BlockList.Set.Text.Color} Color instance
+                         */
+                        Color.create = function create(properties) {
+                            return new Color(properties);
+                        };
+
+                        /**
+                         * Encodes the specified Color message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.Color.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Text.IColor} message Color message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Color.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified Color message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.Color.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Text.IColor} message Color message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Color.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a Color message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Rpc.BlockList.Set.Text.Color} Color
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Color.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Text.Color();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a Color message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Rpc.BlockList.Set.Text.Color} Color
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Color.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a Color message.
+                         * @function verify
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        Color.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+
+                        /**
+                         * Creates a Color message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Rpc.BlockList.Set.Text.Color} Color
+                         */
+                        Color.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.BlockList.Set.Text.Color)
+                                return object;
+                            return new $root.anytype.Rpc.BlockList.Set.Text.Color();
+                        };
+
+                        /**
+                         * Creates a plain object from a Color message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Text.Color} message Color
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        Color.toObject = function toObject() {
+                            return {};
+                        };
+
+                        /**
+                         * Converts this Color to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        Color.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        Color.Request = (function() {
+
+                            /**
+                             * Properties of a Request.
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                             * @interface IRequest
+                             * @property {string|null} [contextId] Request contextId
+                             * @property {Array.<string>|null} [blockIds] Request blockIds
+                             * @property {string|null} [color] Request color
+                             */
+
+                            /**
+                             * Constructs a new Request.
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                             * @classdesc Represents a Request.
+                             * @implements IRequest
+                             * @constructor
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.IRequest=} [properties] Properties to set
+                             */
+                            function Request(properties) {
+                                this.blockIds = [];
+                                if (properties)
+                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                        if (properties[keys[i]] != null)
+                                            this[keys[i]] = properties[keys[i]];
+                            }
+
+                            /**
+                             * Request contextId.
+                             * @member {string} contextId
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @instance
+                             */
+                            Request.prototype.contextId = "";
+
+                            /**
+                             * Request blockIds.
+                             * @member {Array.<string>} blockIds
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @instance
+                             */
+                            Request.prototype.blockIds = $util.emptyArray;
+
+                            /**
+                             * Request color.
+                             * @member {string} color
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @instance
+                             */
+                            Request.prototype.color = "";
+
+                            /**
+                             * Creates a new Request instance using the specified properties.
+                             * @function create
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.IRequest=} [properties] Properties to set
+                             * @returns {anytype.Rpc.BlockList.Set.Text.Color.Request} Request instance
+                             */
+                            Request.create = function create(properties) {
+                                return new Request(properties);
+                            };
+
+                            /**
+                             * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.Color.Request.verify|verify} messages.
+                             * @function encode
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.IRequest} message Request message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Request.encode = function encode(message, writer) {
+                                if (!writer)
+                                    writer = $Writer.create();
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
+                                if (message.blockIds != null && message.blockIds.length)
+                                    for (var i = 0; i < message.blockIds.length; ++i)
+                                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.blockIds[i]);
+                                if (message.color != null && message.hasOwnProperty("color"))
+                                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.color);
+                                return writer;
+                            };
+
+                            /**
+                             * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.Color.Request.verify|verify} messages.
+                             * @function encodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.IRequest} message Request message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Request.encodeDelimited = function encodeDelimited(message, writer) {
+                                return this.encode(message, writer).ldelim();
+                            };
+
+                            /**
+                             * Decodes a Request message from the specified reader or buffer.
+                             * @function decode
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @param {number} [length] Message length if known beforehand
+                             * @returns {anytype.Rpc.BlockList.Set.Text.Color.Request} Request
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Request.decode = function decode(reader, length) {
+                                if (!(reader instanceof $Reader))
+                                    reader = $Reader.create(reader);
+                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Text.Color.Request();
+                                while (reader.pos < end) {
+                                    var tag = reader.uint32();
+                                    switch (tag >>> 3) {
+                                    case 1:
+                                        message.contextId = reader.string();
+                                        break;
+                                    case 2:
+                                        if (!(message.blockIds && message.blockIds.length))
+                                            message.blockIds = [];
+                                        message.blockIds.push(reader.string());
+                                        break;
+                                    case 3:
+                                        message.color = reader.string();
+                                        break;
+                                    default:
+                                        reader.skipType(tag & 7);
+                                        break;
+                                    }
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Decodes a Request message from the specified reader or buffer, length delimited.
+                             * @function decodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @returns {anytype.Rpc.BlockList.Set.Text.Color.Request} Request
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Request.decodeDelimited = function decodeDelimited(reader) {
+                                if (!(reader instanceof $Reader))
+                                    reader = new $Reader(reader);
+                                return this.decode(reader, reader.uint32());
+                            };
+
+                            /**
+                             * Verifies a Request message.
+                             * @function verify
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @static
+                             * @param {Object.<string,*>} message Plain object to verify
+                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                             */
+                            Request.verify = function verify(message) {
+                                if (typeof message !== "object" || message === null)
+                                    return "object expected";
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    if (!$util.isString(message.contextId))
+                                        return "contextId: string expected";
+                                if (message.blockIds != null && message.hasOwnProperty("blockIds")) {
+                                    if (!Array.isArray(message.blockIds))
+                                        return "blockIds: array expected";
+                                    for (var i = 0; i < message.blockIds.length; ++i)
+                                        if (!$util.isString(message.blockIds[i]))
+                                            return "blockIds: string[] expected";
+                                }
+                                if (message.color != null && message.hasOwnProperty("color"))
+                                    if (!$util.isString(message.color))
+                                        return "color: string expected";
+                                return null;
+                            };
+
+                            /**
+                             * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                             * @function fromObject
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @static
+                             * @param {Object.<string,*>} object Plain object
+                             * @returns {anytype.Rpc.BlockList.Set.Text.Color.Request} Request
+                             */
+                            Request.fromObject = function fromObject(object) {
+                                if (object instanceof $root.anytype.Rpc.BlockList.Set.Text.Color.Request)
+                                    return object;
+                                var message = new $root.anytype.Rpc.BlockList.Set.Text.Color.Request();
+                                if (object.contextId != null)
+                                    message.contextId = String(object.contextId);
+                                if (object.blockIds) {
+                                    if (!Array.isArray(object.blockIds))
+                                        throw TypeError(".anytype.Rpc.BlockList.Set.Text.Color.Request.blockIds: array expected");
+                                    message.blockIds = [];
+                                    for (var i = 0; i < object.blockIds.length; ++i)
+                                        message.blockIds[i] = String(object.blockIds[i]);
+                                }
+                                if (object.color != null)
+                                    message.color = String(object.color);
+                                return message;
+                            };
+
+                            /**
+                             * Creates a plain object from a Request message. Also converts values to other types if specified.
+                             * @function toObject
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.Request} message Request
+                             * @param {$protobuf.IConversionOptions} [options] Conversion options
+                             * @returns {Object.<string,*>} Plain object
+                             */
+                            Request.toObject = function toObject(message, options) {
+                                if (!options)
+                                    options = {};
+                                var object = {};
+                                if (options.arrays || options.defaults)
+                                    object.blockIds = [];
+                                if (options.defaults) {
+                                    object.contextId = "";
+                                    object.color = "";
+                                }
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    object.contextId = message.contextId;
+                                if (message.blockIds && message.blockIds.length) {
+                                    object.blockIds = [];
+                                    for (var j = 0; j < message.blockIds.length; ++j)
+                                        object.blockIds[j] = message.blockIds[j];
+                                }
+                                if (message.color != null && message.hasOwnProperty("color"))
+                                    object.color = message.color;
+                                return object;
+                            };
+
+                            /**
+                             * Converts this Request to JSON.
+                             * @function toJSON
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Request
+                             * @instance
+                             * @returns {Object.<string,*>} JSON object
+                             */
+                            Request.prototype.toJSON = function toJSON() {
+                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                            };
+
+                            return Request;
+                        })();
+
+                        Color.Response = (function() {
+
+                            /**
+                             * Properties of a Response.
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                             * @interface IResponse
+                             * @property {anytype.Rpc.BlockList.Set.Text.Color.Response.IError|null} [error] Response error
+                             */
+
+                            /**
+                             * Constructs a new Response.
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color
+                             * @classdesc Represents a Response.
+                             * @implements IResponse
+                             * @constructor
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.IResponse=} [properties] Properties to set
+                             */
+                            function Response(properties) {
+                                if (properties)
+                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                        if (properties[keys[i]] != null)
+                                            this[keys[i]] = properties[keys[i]];
+                            }
+
+                            /**
+                             * Response error.
+                             * @member {anytype.Rpc.BlockList.Set.Text.Color.Response.IError|null|undefined} error
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @instance
+                             */
+                            Response.prototype.error = null;
+
+                            /**
+                             * Creates a new Response instance using the specified properties.
+                             * @function create
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.IResponse=} [properties] Properties to set
+                             * @returns {anytype.Rpc.BlockList.Set.Text.Color.Response} Response instance
+                             */
+                            Response.create = function create(properties) {
+                                return new Response(properties);
+                            };
+
+                            /**
+                             * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.Color.Response.verify|verify} messages.
+                             * @function encode
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.IResponse} message Response message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Response.encode = function encode(message, writer) {
+                                if (!writer)
+                                    writer = $Writer.create();
+                                if (message.error != null && message.hasOwnProperty("error"))
+                                    $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                                return writer;
+                            };
+
+                            /**
+                             * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.Color.Response.verify|verify} messages.
+                             * @function encodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.IResponse} message Response message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Response.encodeDelimited = function encodeDelimited(message, writer) {
+                                return this.encode(message, writer).ldelim();
+                            };
+
+                            /**
+                             * Decodes a Response message from the specified reader or buffer.
+                             * @function decode
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @param {number} [length] Message length if known beforehand
+                             * @returns {anytype.Rpc.BlockList.Set.Text.Color.Response} Response
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Response.decode = function decode(reader, length) {
+                                if (!(reader instanceof $Reader))
+                                    reader = $Reader.create(reader);
+                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Text.Color.Response();
+                                while (reader.pos < end) {
+                                    var tag = reader.uint32();
+                                    switch (tag >>> 3) {
+                                    case 1:
+                                        message.error = $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error.decode(reader, reader.uint32());
+                                        break;
+                                    default:
+                                        reader.skipType(tag & 7);
+                                        break;
+                                    }
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Decodes a Response message from the specified reader or buffer, length delimited.
+                             * @function decodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @returns {anytype.Rpc.BlockList.Set.Text.Color.Response} Response
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Response.decodeDelimited = function decodeDelimited(reader) {
+                                if (!(reader instanceof $Reader))
+                                    reader = new $Reader(reader);
+                                return this.decode(reader, reader.uint32());
+                            };
+
+                            /**
+                             * Verifies a Response message.
+                             * @function verify
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @static
+                             * @param {Object.<string,*>} message Plain object to verify
+                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                             */
+                            Response.verify = function verify(message) {
+                                if (typeof message !== "object" || message === null)
+                                    return "object expected";
+                                if (message.error != null && message.hasOwnProperty("error")) {
+                                    var error = $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error.verify(message.error);
+                                    if (error)
+                                        return "error." + error;
+                                }
+                                return null;
+                            };
+
+                            /**
+                             * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                             * @function fromObject
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @static
+                             * @param {Object.<string,*>} object Plain object
+                             * @returns {anytype.Rpc.BlockList.Set.Text.Color.Response} Response
+                             */
+                            Response.fromObject = function fromObject(object) {
+                                if (object instanceof $root.anytype.Rpc.BlockList.Set.Text.Color.Response)
+                                    return object;
+                                var message = new $root.anytype.Rpc.BlockList.Set.Text.Color.Response();
+                                if (object.error != null) {
+                                    if (typeof object.error !== "object")
+                                        throw TypeError(".anytype.Rpc.BlockList.Set.Text.Color.Response.error: object expected");
+                                    message.error = $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error.fromObject(object.error);
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Creates a plain object from a Response message. Also converts values to other types if specified.
+                             * @function toObject
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.Color.Response} message Response
+                             * @param {$protobuf.IConversionOptions} [options] Conversion options
+                             * @returns {Object.<string,*>} Plain object
+                             */
+                            Response.toObject = function toObject(message, options) {
+                                if (!options)
+                                    options = {};
+                                var object = {};
+                                if (options.defaults)
+                                    object.error = null;
+                                if (message.error != null && message.hasOwnProperty("error"))
+                                    object.error = $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error.toObject(message.error, options);
+                                return object;
+                            };
+
+                            /**
+                             * Converts this Response to JSON.
+                             * @function toJSON
+                             * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                             * @instance
+                             * @returns {Object.<string,*>} JSON object
+                             */
+                            Response.prototype.toJSON = function toJSON() {
+                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                            };
+
+                            Response.Error = (function() {
+
+                                /**
+                                 * Properties of an Error.
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                                 * @interface IError
+                                 * @property {anytype.Rpc.BlockList.Set.Text.Color.Response.Error.Code|null} [code] Error code
+                                 * @property {string|null} [description] Error description
+                                 */
+
+                                /**
+                                 * Constructs a new Error.
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response
+                                 * @classdesc Represents an Error.
+                                 * @implements IError
+                                 * @constructor
+                                 * @param {anytype.Rpc.BlockList.Set.Text.Color.Response.IError=} [properties] Properties to set
+                                 */
+                                function Error(properties) {
+                                    if (properties)
+                                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                            if (properties[keys[i]] != null)
+                                                this[keys[i]] = properties[keys[i]];
+                                }
+
+                                /**
+                                 * Error code.
+                                 * @member {anytype.Rpc.BlockList.Set.Text.Color.Response.Error.Code} code
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @instance
+                                 */
+                                Error.prototype.code = 0;
+
+                                /**
+                                 * Error description.
+                                 * @member {string} description
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @instance
+                                 */
+                                Error.prototype.description = "";
+
+                                /**
+                                 * Creates a new Error instance using the specified properties.
+                                 * @function create
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.BlockList.Set.Text.Color.Response.IError=} [properties] Properties to set
+                                 * @returns {anytype.Rpc.BlockList.Set.Text.Color.Response.Error} Error instance
+                                 */
+                                Error.create = function create(properties) {
+                                    return new Error(properties);
+                                };
+
+                                /**
+                                 * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.Color.Response.Error.verify|verify} messages.
+                                 * @function encode
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.BlockList.Set.Text.Color.Response.IError} message Error message or plain object to encode
+                                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                                 * @returns {$protobuf.Writer} Writer
+                                 */
+                                Error.encode = function encode(message, writer) {
+                                    if (!writer)
+                                        writer = $Writer.create();
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
+                                    return writer;
+                                };
+
+                                /**
+                                 * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.Color.Response.Error.verify|verify} messages.
+                                 * @function encodeDelimited
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.BlockList.Set.Text.Color.Response.IError} message Error message or plain object to encode
+                                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                                 * @returns {$protobuf.Writer} Writer
+                                 */
+                                Error.encodeDelimited = function encodeDelimited(message, writer) {
+                                    return this.encode(message, writer).ldelim();
+                                };
+
+                                /**
+                                 * Decodes an Error message from the specified reader or buffer.
+                                 * @function decode
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @static
+                                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                                 * @param {number} [length] Message length if known beforehand
+                                 * @returns {anytype.Rpc.BlockList.Set.Text.Color.Response.Error} Error
+                                 * @throws {Error} If the payload is not a reader or valid buffer
+                                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                                 */
+                                Error.decode = function decode(reader, length) {
+                                    if (!(reader instanceof $Reader))
+                                        reader = $Reader.create(reader);
+                                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error();
+                                    while (reader.pos < end) {
+                                        var tag = reader.uint32();
+                                        switch (tag >>> 3) {
+                                        case 1:
+                                            message.code = reader.int32();
+                                            break;
+                                        case 2:
+                                            message.description = reader.string();
+                                            break;
+                                        default:
+                                            reader.skipType(tag & 7);
+                                            break;
+                                        }
+                                    }
+                                    return message;
+                                };
+
+                                /**
+                                 * Decodes an Error message from the specified reader or buffer, length delimited.
+                                 * @function decodeDelimited
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @static
+                                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                                 * @returns {anytype.Rpc.BlockList.Set.Text.Color.Response.Error} Error
+                                 * @throws {Error} If the payload is not a reader or valid buffer
+                                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                                 */
+                                Error.decodeDelimited = function decodeDelimited(reader) {
+                                    if (!(reader instanceof $Reader))
+                                        reader = new $Reader(reader);
+                                    return this.decode(reader, reader.uint32());
+                                };
+
+                                /**
+                                 * Verifies an Error message.
+                                 * @function verify
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @static
+                                 * @param {Object.<string,*>} message Plain object to verify
+                                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                                 */
+                                Error.verify = function verify(message) {
+                                    if (typeof message !== "object" || message === null)
+                                        return "object expected";
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        switch (message.code) {
+                                        default:
+                                            return "code: enum value expected";
+                                        case 0:
+                                        case 1:
+                                        case 2:
+                                            break;
+                                        }
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        if (!$util.isString(message.description))
+                                            return "description: string expected";
+                                    return null;
+                                };
+
+                                /**
+                                 * Creates an Error message from a plain object. Also converts values to their respective internal types.
+                                 * @function fromObject
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @static
+                                 * @param {Object.<string,*>} object Plain object
+                                 * @returns {anytype.Rpc.BlockList.Set.Text.Color.Response.Error} Error
+                                 */
+                                Error.fromObject = function fromObject(object) {
+                                    if (object instanceof $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error)
+                                        return object;
+                                    var message = new $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error();
+                                    switch (object.code) {
+                                    case "NULL":
+                                    case 0:
+                                        message.code = 0;
+                                        break;
+                                    case "UNKNOWN_ERROR":
+                                    case 1:
+                                        message.code = 1;
+                                        break;
+                                    case "BAD_INPUT":
+                                    case 2:
+                                        message.code = 2;
+                                        break;
+                                    }
+                                    if (object.description != null)
+                                        message.description = String(object.description);
+                                    return message;
+                                };
+
+                                /**
+                                 * Creates a plain object from an Error message. Also converts values to other types if specified.
+                                 * @function toObject
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.BlockList.Set.Text.Color.Response.Error} message Error
+                                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                                 * @returns {Object.<string,*>} Plain object
+                                 */
+                                Error.toObject = function toObject(message, options) {
+                                    if (!options)
+                                        options = {};
+                                    var object = {};
+                                    if (options.defaults) {
+                                        object.code = options.enums === String ? "NULL" : 0;
+                                        object.description = "";
+                                    }
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        object.code = options.enums === String ? $root.anytype.Rpc.BlockList.Set.Text.Color.Response.Error.Code[message.code] : message.code;
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        object.description = message.description;
+                                    return object;
+                                };
+
+                                /**
+                                 * Converts this Error to JSON.
+                                 * @function toJSON
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.Color.Response.Error
+                                 * @instance
+                                 * @returns {Object.<string,*>} JSON object
+                                 */
+                                Error.prototype.toJSON = function toJSON() {
+                                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                                };
+
+                                /**
+                                 * Code enum.
+                                 * @name anytype.Rpc.BlockList.Set.Text.Color.Response.Error.Code
+                                 * @enum {string}
+                                 * @property {number} NULL=0 NULL value
+                                 * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+                                 * @property {number} BAD_INPUT=2 BAD_INPUT value
+                                 */
+                                Error.Code = (function() {
+                                    var valuesById = {}, values = Object.create(valuesById);
+                                    values[valuesById[0] = "NULL"] = 0;
+                                    values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                                    values[valuesById[2] = "BAD_INPUT"] = 2;
+                                    return values;
+                                })();
+
+                                return Error;
+                            })();
+
+                            return Response;
+                        })();
+
+                        return Color;
+                    })();
+
+                    Text.BackgroundColor = (function() {
+
+                        /**
+                         * Properties of a BackgroundColor.
+                         * @memberof anytype.Rpc.BlockList.Set.Text
+                         * @interface IBackgroundColor
+                         */
+
+                        /**
+                         * Constructs a new BackgroundColor.
+                         * @memberof anytype.Rpc.BlockList.Set.Text
+                         * @classdesc Represents a BackgroundColor.
+                         * @implements IBackgroundColor
+                         * @constructor
+                         * @param {anytype.Rpc.BlockList.Set.Text.IBackgroundColor=} [properties] Properties to set
+                         */
+                        function BackgroundColor(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Creates a new BackgroundColor instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Text.IBackgroundColor=} [properties] Properties to set
+                         * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor} BackgroundColor instance
+                         */
+                        BackgroundColor.create = function create(properties) {
+                            return new BackgroundColor(properties);
+                        };
+
+                        /**
+                         * Encodes the specified BackgroundColor message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.BackgroundColor.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Text.IBackgroundColor} message BackgroundColor message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        BackgroundColor.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified BackgroundColor message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.BackgroundColor.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Text.IBackgroundColor} message BackgroundColor message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        BackgroundColor.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a BackgroundColor message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor} BackgroundColor
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        BackgroundColor.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a BackgroundColor message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor} BackgroundColor
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        BackgroundColor.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a BackgroundColor message.
+                         * @function verify
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        BackgroundColor.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+
+                        /**
+                         * Creates a BackgroundColor message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor} BackgroundColor
+                         */
+                        BackgroundColor.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor)
+                                return object;
+                            return new $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor();
+                        };
+
+                        /**
+                         * Creates a plain object from a BackgroundColor message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor} message BackgroundColor
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        BackgroundColor.toObject = function toObject() {
+                            return {};
+                        };
+
+                        /**
+                         * Converts this BackgroundColor to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        BackgroundColor.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        BackgroundColor.Request = (function() {
+
+                            /**
+                             * Properties of a Request.
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                             * @interface IRequest
+                             * @property {string|null} [contextId] Request contextId
+                             * @property {Array.<string>|null} [blockIds] Request blockIds
+                             * @property {string|null} [color] Request color
+                             */
+
+                            /**
+                             * Constructs a new Request.
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                             * @classdesc Represents a Request.
+                             * @implements IRequest
+                             * @constructor
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IRequest=} [properties] Properties to set
+                             */
+                            function Request(properties) {
+                                this.blockIds = [];
+                                if (properties)
+                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                        if (properties[keys[i]] != null)
+                                            this[keys[i]] = properties[keys[i]];
+                            }
+
+                            /**
+                             * Request contextId.
+                             * @member {string} contextId
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @instance
+                             */
+                            Request.prototype.contextId = "";
+
+                            /**
+                             * Request blockIds.
+                             * @member {Array.<string>} blockIds
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @instance
+                             */
+                            Request.prototype.blockIds = $util.emptyArray;
+
+                            /**
+                             * Request color.
+                             * @member {string} color
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @instance
+                             */
+                            Request.prototype.color = "";
+
+                            /**
+                             * Creates a new Request instance using the specified properties.
+                             * @function create
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IRequest=} [properties] Properties to set
+                             * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request} Request instance
+                             */
+                            Request.create = function create(properties) {
+                                return new Request(properties);
+                            };
+
+                            /**
+                             * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request.verify|verify} messages.
+                             * @function encode
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IRequest} message Request message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Request.encode = function encode(message, writer) {
+                                if (!writer)
+                                    writer = $Writer.create();
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
+                                if (message.blockIds != null && message.blockIds.length)
+                                    for (var i = 0; i < message.blockIds.length; ++i)
+                                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.blockIds[i]);
+                                if (message.color != null && message.hasOwnProperty("color"))
+                                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.color);
+                                return writer;
+                            };
+
+                            /**
+                             * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request.verify|verify} messages.
+                             * @function encodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IRequest} message Request message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Request.encodeDelimited = function encodeDelimited(message, writer) {
+                                return this.encode(message, writer).ldelim();
+                            };
+
+                            /**
+                             * Decodes a Request message from the specified reader or buffer.
+                             * @function decode
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @param {number} [length] Message length if known beforehand
+                             * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request} Request
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Request.decode = function decode(reader, length) {
+                                if (!(reader instanceof $Reader))
+                                    reader = $Reader.create(reader);
+                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request();
+                                while (reader.pos < end) {
+                                    var tag = reader.uint32();
+                                    switch (tag >>> 3) {
+                                    case 1:
+                                        message.contextId = reader.string();
+                                        break;
+                                    case 2:
+                                        if (!(message.blockIds && message.blockIds.length))
+                                            message.blockIds = [];
+                                        message.blockIds.push(reader.string());
+                                        break;
+                                    case 3:
+                                        message.color = reader.string();
+                                        break;
+                                    default:
+                                        reader.skipType(tag & 7);
+                                        break;
+                                    }
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Decodes a Request message from the specified reader or buffer, length delimited.
+                             * @function decodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request} Request
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Request.decodeDelimited = function decodeDelimited(reader) {
+                                if (!(reader instanceof $Reader))
+                                    reader = new $Reader(reader);
+                                return this.decode(reader, reader.uint32());
+                            };
+
+                            /**
+                             * Verifies a Request message.
+                             * @function verify
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @static
+                             * @param {Object.<string,*>} message Plain object to verify
+                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                             */
+                            Request.verify = function verify(message) {
+                                if (typeof message !== "object" || message === null)
+                                    return "object expected";
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    if (!$util.isString(message.contextId))
+                                        return "contextId: string expected";
+                                if (message.blockIds != null && message.hasOwnProperty("blockIds")) {
+                                    if (!Array.isArray(message.blockIds))
+                                        return "blockIds: array expected";
+                                    for (var i = 0; i < message.blockIds.length; ++i)
+                                        if (!$util.isString(message.blockIds[i]))
+                                            return "blockIds: string[] expected";
+                                }
+                                if (message.color != null && message.hasOwnProperty("color"))
+                                    if (!$util.isString(message.color))
+                                        return "color: string expected";
+                                return null;
+                            };
+
+                            /**
+                             * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                             * @function fromObject
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @static
+                             * @param {Object.<string,*>} object Plain object
+                             * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request} Request
+                             */
+                            Request.fromObject = function fromObject(object) {
+                                if (object instanceof $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request)
+                                    return object;
+                                var message = new $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request();
+                                if (object.contextId != null)
+                                    message.contextId = String(object.contextId);
+                                if (object.blockIds) {
+                                    if (!Array.isArray(object.blockIds))
+                                        throw TypeError(".anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request.blockIds: array expected");
+                                    message.blockIds = [];
+                                    for (var i = 0; i < object.blockIds.length; ++i)
+                                        message.blockIds[i] = String(object.blockIds[i]);
+                                }
+                                if (object.color != null)
+                                    message.color = String(object.color);
+                                return message;
+                            };
+
+                            /**
+                             * Creates a plain object from a Request message. Also converts values to other types if specified.
+                             * @function toObject
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request} message Request
+                             * @param {$protobuf.IConversionOptions} [options] Conversion options
+                             * @returns {Object.<string,*>} Plain object
+                             */
+                            Request.toObject = function toObject(message, options) {
+                                if (!options)
+                                    options = {};
+                                var object = {};
+                                if (options.arrays || options.defaults)
+                                    object.blockIds = [];
+                                if (options.defaults) {
+                                    object.contextId = "";
+                                    object.color = "";
+                                }
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    object.contextId = message.contextId;
+                                if (message.blockIds && message.blockIds.length) {
+                                    object.blockIds = [];
+                                    for (var j = 0; j < message.blockIds.length; ++j)
+                                        object.blockIds[j] = message.blockIds[j];
+                                }
+                                if (message.color != null && message.hasOwnProperty("color"))
+                                    object.color = message.color;
+                                return object;
+                            };
+
+                            /**
+                             * Converts this Request to JSON.
+                             * @function toJSON
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request
+                             * @instance
+                             * @returns {Object.<string,*>} JSON object
+                             */
+                            Request.prototype.toJSON = function toJSON() {
+                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                            };
+
+                            return Request;
+                        })();
+
+                        BackgroundColor.Response = (function() {
+
+                            /**
+                             * Properties of a Response.
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                             * @interface IResponse
+                             * @property {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.IError|null} [error] Response error
+                             */
+
+                            /**
+                             * Constructs a new Response.
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor
+                             * @classdesc Represents a Response.
+                             * @implements IResponse
+                             * @constructor
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IResponse=} [properties] Properties to set
+                             */
+                            function Response(properties) {
+                                if (properties)
+                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                        if (properties[keys[i]] != null)
+                                            this[keys[i]] = properties[keys[i]];
+                            }
+
+                            /**
+                             * Response error.
+                             * @member {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.IError|null|undefined} error
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @instance
+                             */
+                            Response.prototype.error = null;
+
+                            /**
+                             * Creates a new Response instance using the specified properties.
+                             * @function create
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IResponse=} [properties] Properties to set
+                             * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response} Response instance
+                             */
+                            Response.create = function create(properties) {
+                                return new Response(properties);
+                            };
+
+                            /**
+                             * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.verify|verify} messages.
+                             * @function encode
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IResponse} message Response message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Response.encode = function encode(message, writer) {
+                                if (!writer)
+                                    writer = $Writer.create();
+                                if (message.error != null && message.hasOwnProperty("error"))
+                                    $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                                return writer;
+                            };
+
+                            /**
+                             * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.verify|verify} messages.
+                             * @function encodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IResponse} message Response message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Response.encodeDelimited = function encodeDelimited(message, writer) {
+                                return this.encode(message, writer).ldelim();
+                            };
+
+                            /**
+                             * Decodes a Response message from the specified reader or buffer.
+                             * @function decode
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @param {number} [length] Message length if known beforehand
+                             * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response} Response
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Response.decode = function decode(reader, length) {
+                                if (!(reader instanceof $Reader))
+                                    reader = $Reader.create(reader);
+                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response();
+                                while (reader.pos < end) {
+                                    var tag = reader.uint32();
+                                    switch (tag >>> 3) {
+                                    case 1:
+                                        message.error = $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.decode(reader, reader.uint32());
+                                        break;
+                                    default:
+                                        reader.skipType(tag & 7);
+                                        break;
+                                    }
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Decodes a Response message from the specified reader or buffer, length delimited.
+                             * @function decodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response} Response
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Response.decodeDelimited = function decodeDelimited(reader) {
+                                if (!(reader instanceof $Reader))
+                                    reader = new $Reader(reader);
+                                return this.decode(reader, reader.uint32());
+                            };
+
+                            /**
+                             * Verifies a Response message.
+                             * @function verify
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @static
+                             * @param {Object.<string,*>} message Plain object to verify
+                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                             */
+                            Response.verify = function verify(message) {
+                                if (typeof message !== "object" || message === null)
+                                    return "object expected";
+                                if (message.error != null && message.hasOwnProperty("error")) {
+                                    var error = $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.verify(message.error);
+                                    if (error)
+                                        return "error." + error;
+                                }
+                                return null;
+                            };
+
+                            /**
+                             * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                             * @function fromObject
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @static
+                             * @param {Object.<string,*>} object Plain object
+                             * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response} Response
+                             */
+                            Response.fromObject = function fromObject(object) {
+                                if (object instanceof $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response)
+                                    return object;
+                                var message = new $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response();
+                                if (object.error != null) {
+                                    if (typeof object.error !== "object")
+                                        throw TypeError(".anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.error: object expected");
+                                    message.error = $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.fromObject(object.error);
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Creates a plain object from a Response message. Also converts values to other types if specified.
+                             * @function toObject
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response} message Response
+                             * @param {$protobuf.IConversionOptions} [options] Conversion options
+                             * @returns {Object.<string,*>} Plain object
+                             */
+                            Response.toObject = function toObject(message, options) {
+                                if (!options)
+                                    options = {};
+                                var object = {};
+                                if (options.defaults)
+                                    object.error = null;
+                                if (message.error != null && message.hasOwnProperty("error"))
+                                    object.error = $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.toObject(message.error, options);
+                                return object;
+                            };
+
+                            /**
+                             * Converts this Response to JSON.
+                             * @function toJSON
+                             * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                             * @instance
+                             * @returns {Object.<string,*>} JSON object
+                             */
+                            Response.prototype.toJSON = function toJSON() {
+                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                            };
+
+                            Response.Error = (function() {
+
+                                /**
+                                 * Properties of an Error.
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                                 * @interface IError
+                                 * @property {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.Code|null} [code] Error code
+                                 * @property {string|null} [description] Error description
+                                 */
+
+                                /**
+                                 * Constructs a new Error.
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response
+                                 * @classdesc Represents an Error.
+                                 * @implements IError
+                                 * @constructor
+                                 * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.IError=} [properties] Properties to set
+                                 */
+                                function Error(properties) {
+                                    if (properties)
+                                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                            if (properties[keys[i]] != null)
+                                                this[keys[i]] = properties[keys[i]];
+                                }
+
+                                /**
+                                 * Error code.
+                                 * @member {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.Code} code
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @instance
+                                 */
+                                Error.prototype.code = 0;
+
+                                /**
+                                 * Error description.
+                                 * @member {string} description
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @instance
+                                 */
+                                Error.prototype.description = "";
+
+                                /**
+                                 * Creates a new Error instance using the specified properties.
+                                 * @function create
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.IError=} [properties] Properties to set
+                                 * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error} Error instance
+                                 */
+                                Error.create = function create(properties) {
+                                    return new Error(properties);
+                                };
+
+                                /**
+                                 * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.verify|verify} messages.
+                                 * @function encode
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.IError} message Error message or plain object to encode
+                                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                                 * @returns {$protobuf.Writer} Writer
+                                 */
+                                Error.encode = function encode(message, writer) {
+                                    if (!writer)
+                                        writer = $Writer.create();
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
+                                    return writer;
+                                };
+
+                                /**
+                                 * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.verify|verify} messages.
+                                 * @function encodeDelimited
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.IError} message Error message or plain object to encode
+                                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                                 * @returns {$protobuf.Writer} Writer
+                                 */
+                                Error.encodeDelimited = function encodeDelimited(message, writer) {
+                                    return this.encode(message, writer).ldelim();
+                                };
+
+                                /**
+                                 * Decodes an Error message from the specified reader or buffer.
+                                 * @function decode
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @static
+                                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                                 * @param {number} [length] Message length if known beforehand
+                                 * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error} Error
+                                 * @throws {Error} If the payload is not a reader or valid buffer
+                                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                                 */
+                                Error.decode = function decode(reader, length) {
+                                    if (!(reader instanceof $Reader))
+                                        reader = $Reader.create(reader);
+                                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error();
+                                    while (reader.pos < end) {
+                                        var tag = reader.uint32();
+                                        switch (tag >>> 3) {
+                                        case 1:
+                                            message.code = reader.int32();
+                                            break;
+                                        case 2:
+                                            message.description = reader.string();
+                                            break;
+                                        default:
+                                            reader.skipType(tag & 7);
+                                            break;
+                                        }
+                                    }
+                                    return message;
+                                };
+
+                                /**
+                                 * Decodes an Error message from the specified reader or buffer, length delimited.
+                                 * @function decodeDelimited
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @static
+                                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                                 * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error} Error
+                                 * @throws {Error} If the payload is not a reader or valid buffer
+                                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                                 */
+                                Error.decodeDelimited = function decodeDelimited(reader) {
+                                    if (!(reader instanceof $Reader))
+                                        reader = new $Reader(reader);
+                                    return this.decode(reader, reader.uint32());
+                                };
+
+                                /**
+                                 * Verifies an Error message.
+                                 * @function verify
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @static
+                                 * @param {Object.<string,*>} message Plain object to verify
+                                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                                 */
+                                Error.verify = function verify(message) {
+                                    if (typeof message !== "object" || message === null)
+                                        return "object expected";
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        switch (message.code) {
+                                        default:
+                                            return "code: enum value expected";
+                                        case 0:
+                                        case 1:
+                                        case 2:
+                                            break;
+                                        }
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        if (!$util.isString(message.description))
+                                            return "description: string expected";
+                                    return null;
+                                };
+
+                                /**
+                                 * Creates an Error message from a plain object. Also converts values to their respective internal types.
+                                 * @function fromObject
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @static
+                                 * @param {Object.<string,*>} object Plain object
+                                 * @returns {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error} Error
+                                 */
+                                Error.fromObject = function fromObject(object) {
+                                    if (object instanceof $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error)
+                                        return object;
+                                    var message = new $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error();
+                                    switch (object.code) {
+                                    case "NULL":
+                                    case 0:
+                                        message.code = 0;
+                                        break;
+                                    case "UNKNOWN_ERROR":
+                                    case 1:
+                                        message.code = 1;
+                                        break;
+                                    case "BAD_INPUT":
+                                    case 2:
+                                        message.code = 2;
+                                        break;
+                                    }
+                                    if (object.description != null)
+                                        message.description = String(object.description);
+                                    return message;
+                                };
+
+                                /**
+                                 * Creates a plain object from an Error message. Also converts values to other types if specified.
+                                 * @function toObject
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error} message Error
+                                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                                 * @returns {Object.<string,*>} Plain object
+                                 */
+                                Error.toObject = function toObject(message, options) {
+                                    if (!options)
+                                        options = {};
+                                    var object = {};
+                                    if (options.defaults) {
+                                        object.code = options.enums === String ? "NULL" : 0;
+                                        object.description = "";
+                                    }
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        object.code = options.enums === String ? $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.Code[message.code] : message.code;
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        object.description = message.description;
+                                    return object;
+                                };
+
+                                /**
+                                 * Converts this Error to JSON.
+                                 * @function toJSON
+                                 * @memberof anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error
+                                 * @instance
+                                 * @returns {Object.<string,*>} JSON object
+                                 */
+                                Error.prototype.toJSON = function toJSON() {
+                                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                                };
+
+                                /**
+                                 * Code enum.
+                                 * @name anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response.Error.Code
+                                 * @enum {string}
+                                 * @property {number} NULL=0 NULL value
+                                 * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+                                 * @property {number} BAD_INPUT=2 BAD_INPUT value
+                                 */
+                                Error.Code = (function() {
+                                    var valuesById = {}, values = Object.create(valuesById);
+                                    values[valuesById[0] = "NULL"] = 0;
+                                    values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                                    values[valuesById[2] = "BAD_INPUT"] = 2;
+                                    return values;
+                                })();
+
+                                return Error;
+                            })();
+
+                            return Response;
+                        })();
+
+                        return BackgroundColor;
+                    })();
+
                     return Text;
+                })();
+
+                Set.Fields = (function() {
+
+                    /**
+                     * Properties of a Fields.
+                     * @memberof anytype.Rpc.BlockList.Set
+                     * @interface IFields
+                     */
+
+                    /**
+                     * Constructs a new Fields.
+                     * @memberof anytype.Rpc.BlockList.Set
+                     * @classdesc Represents a Fields.
+                     * @implements IFields
+                     * @constructor
+                     * @param {anytype.Rpc.BlockList.Set.IFields=} [properties] Properties to set
+                     */
+                    function Fields(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Creates a new Fields instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Set.IFields=} [properties] Properties to set
+                     * @returns {anytype.Rpc.BlockList.Set.Fields} Fields instance
+                     */
+                    Fields.create = function create(properties) {
+                        return new Fields(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Fields message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Set.IFields} message Fields message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Fields.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Fields message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Set.IFields} message Fields message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Fields.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Fields message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.BlockList.Set.Fields} Fields
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Fields.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Fields();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Fields message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.BlockList.Set.Fields} Fields
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Fields.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Fields message.
+                     * @function verify
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Fields.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Fields message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.BlockList.Set.Fields} Fields
+                     */
+                    Fields.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.BlockList.Set.Fields)
+                            return object;
+                        return new $root.anytype.Rpc.BlockList.Set.Fields();
+                    };
+
+                    /**
+                     * Creates a plain object from a Fields message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @static
+                     * @param {anytype.Rpc.BlockList.Set.Fields} message Fields
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Fields.toObject = function toObject() {
+                        return {};
+                    };
+
+                    /**
+                     * Converts this Fields to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.BlockList.Set.Fields
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Fields.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    Fields.Request = (function() {
+
+                        /**
+                         * Properties of a Request.
+                         * @memberof anytype.Rpc.BlockList.Set.Fields
+                         * @interface IRequest
+                         * @property {string|null} [contextId] Request contextId
+                         * @property {Array.<anytype.Rpc.BlockList.Set.Fields.Request.IBlockField>|null} [blockFields] Request blockFields
+                         */
+
+                        /**
+                         * Constructs a new Request.
+                         * @memberof anytype.Rpc.BlockList.Set.Fields
+                         * @classdesc Represents a Request.
+                         * @implements IRequest
+                         * @constructor
+                         * @param {anytype.Rpc.BlockList.Set.Fields.IRequest=} [properties] Properties to set
+                         */
+                        function Request(properties) {
+                            this.blockFields = [];
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Request contextId.
+                         * @member {string} contextId
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @instance
+                         */
+                        Request.prototype.contextId = "";
+
+                        /**
+                         * Request blockFields.
+                         * @member {Array.<anytype.Rpc.BlockList.Set.Fields.Request.IBlockField>} blockFields
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @instance
+                         */
+                        Request.prototype.blockFields = $util.emptyArray;
+
+                        /**
+                         * Creates a new Request instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Fields.IRequest=} [properties] Properties to set
+                         * @returns {anytype.Rpc.BlockList.Set.Fields.Request} Request instance
+                         */
+                        Request.create = function create(properties) {
+                            return new Request(properties);
+                        };
+
+                        /**
+                         * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.Request.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Fields.IRequest} message Request message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Request.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
+                            if (message.blockFields != null && message.blockFields.length)
+                                for (var i = 0; i < message.blockFields.length; ++i)
+                                    $root.anytype.Rpc.BlockList.Set.Fields.Request.BlockField.encode(message.blockFields[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.Request.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Fields.IRequest} message Request message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Request.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a Request message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Rpc.BlockList.Set.Fields.Request} Request
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Request.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Fields.Request();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    message.contextId = reader.string();
+                                    break;
+                                case 2:
+                                    if (!(message.blockFields && message.blockFields.length))
+                                        message.blockFields = [];
+                                    message.blockFields.push($root.anytype.Rpc.BlockList.Set.Fields.Request.BlockField.decode(reader, reader.uint32()));
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a Request message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Rpc.BlockList.Set.Fields.Request} Request
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Request.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a Request message.
+                         * @function verify
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        Request.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                if (!$util.isString(message.contextId))
+                                    return "contextId: string expected";
+                            if (message.blockFields != null && message.hasOwnProperty("blockFields")) {
+                                if (!Array.isArray(message.blockFields))
+                                    return "blockFields: array expected";
+                                for (var i = 0; i < message.blockFields.length; ++i) {
+                                    var error = $root.anytype.Rpc.BlockList.Set.Fields.Request.BlockField.verify(message.blockFields[i]);
+                                    if (error)
+                                        return "blockFields." + error;
+                                }
+                            }
+                            return null;
+                        };
+
+                        /**
+                         * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Rpc.BlockList.Set.Fields.Request} Request
+                         */
+                        Request.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.BlockList.Set.Fields.Request)
+                                return object;
+                            var message = new $root.anytype.Rpc.BlockList.Set.Fields.Request();
+                            if (object.contextId != null)
+                                message.contextId = String(object.contextId);
+                            if (object.blockFields) {
+                                if (!Array.isArray(object.blockFields))
+                                    throw TypeError(".anytype.Rpc.BlockList.Set.Fields.Request.blockFields: array expected");
+                                message.blockFields = [];
+                                for (var i = 0; i < object.blockFields.length; ++i) {
+                                    if (typeof object.blockFields[i] !== "object")
+                                        throw TypeError(".anytype.Rpc.BlockList.Set.Fields.Request.blockFields: object expected");
+                                    message.blockFields[i] = $root.anytype.Rpc.BlockList.Set.Fields.Request.BlockField.fromObject(object.blockFields[i]);
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Creates a plain object from a Request message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Fields.Request} message Request
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        Request.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.arrays || options.defaults)
+                                object.blockFields = [];
+                            if (options.defaults)
+                                object.contextId = "";
+                            if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                object.contextId = message.contextId;
+                            if (message.blockFields && message.blockFields.length) {
+                                object.blockFields = [];
+                                for (var j = 0; j < message.blockFields.length; ++j)
+                                    object.blockFields[j] = $root.anytype.Rpc.BlockList.Set.Fields.Request.BlockField.toObject(message.blockFields[j], options);
+                            }
+                            return object;
+                        };
+
+                        /**
+                         * Converts this Request to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        Request.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        Request.BlockField = (function() {
+
+                            /**
+                             * Properties of a BlockField.
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                             * @interface IBlockField
+                             * @property {string|null} [blockId] BlockField blockId
+                             * @property {google.protobuf.IStruct|null} [fields] BlockField fields
+                             */
+
+                            /**
+                             * Constructs a new BlockField.
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request
+                             * @classdesc Represents a BlockField.
+                             * @implements IBlockField
+                             * @constructor
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Request.IBlockField=} [properties] Properties to set
+                             */
+                            function BlockField(properties) {
+                                if (properties)
+                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                        if (properties[keys[i]] != null)
+                                            this[keys[i]] = properties[keys[i]];
+                            }
+
+                            /**
+                             * BlockField blockId.
+                             * @member {string} blockId
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @instance
+                             */
+                            BlockField.prototype.blockId = "";
+
+                            /**
+                             * BlockField fields.
+                             * @member {google.protobuf.IStruct|null|undefined} fields
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @instance
+                             */
+                            BlockField.prototype.fields = null;
+
+                            /**
+                             * Creates a new BlockField instance using the specified properties.
+                             * @function create
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Request.IBlockField=} [properties] Properties to set
+                             * @returns {anytype.Rpc.BlockList.Set.Fields.Request.BlockField} BlockField instance
+                             */
+                            BlockField.create = function create(properties) {
+                                return new BlockField(properties);
+                            };
+
+                            /**
+                             * Encodes the specified BlockField message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.Request.BlockField.verify|verify} messages.
+                             * @function encode
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Request.IBlockField} message BlockField message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            BlockField.encode = function encode(message, writer) {
+                                if (!writer)
+                                    writer = $Writer.create();
+                                if (message.blockId != null && message.hasOwnProperty("blockId"))
+                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.blockId);
+                                if (message.fields != null && message.hasOwnProperty("fields"))
+                                    $root.google.protobuf.Struct.encode(message.fields, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                                return writer;
+                            };
+
+                            /**
+                             * Encodes the specified BlockField message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.Request.BlockField.verify|verify} messages.
+                             * @function encodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Request.IBlockField} message BlockField message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            BlockField.encodeDelimited = function encodeDelimited(message, writer) {
+                                return this.encode(message, writer).ldelim();
+                            };
+
+                            /**
+                             * Decodes a BlockField message from the specified reader or buffer.
+                             * @function decode
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @param {number} [length] Message length if known beforehand
+                             * @returns {anytype.Rpc.BlockList.Set.Fields.Request.BlockField} BlockField
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            BlockField.decode = function decode(reader, length) {
+                                if (!(reader instanceof $Reader))
+                                    reader = $Reader.create(reader);
+                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Fields.Request.BlockField();
+                                while (reader.pos < end) {
+                                    var tag = reader.uint32();
+                                    switch (tag >>> 3) {
+                                    case 1:
+                                        message.blockId = reader.string();
+                                        break;
+                                    case 2:
+                                        message.fields = $root.google.protobuf.Struct.decode(reader, reader.uint32());
+                                        break;
+                                    default:
+                                        reader.skipType(tag & 7);
+                                        break;
+                                    }
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Decodes a BlockField message from the specified reader or buffer, length delimited.
+                             * @function decodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @returns {anytype.Rpc.BlockList.Set.Fields.Request.BlockField} BlockField
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            BlockField.decodeDelimited = function decodeDelimited(reader) {
+                                if (!(reader instanceof $Reader))
+                                    reader = new $Reader(reader);
+                                return this.decode(reader, reader.uint32());
+                            };
+
+                            /**
+                             * Verifies a BlockField message.
+                             * @function verify
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @static
+                             * @param {Object.<string,*>} message Plain object to verify
+                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                             */
+                            BlockField.verify = function verify(message) {
+                                if (typeof message !== "object" || message === null)
+                                    return "object expected";
+                                if (message.blockId != null && message.hasOwnProperty("blockId"))
+                                    if (!$util.isString(message.blockId))
+                                        return "blockId: string expected";
+                                if (message.fields != null && message.hasOwnProperty("fields")) {
+                                    var error = $root.google.protobuf.Struct.verify(message.fields);
+                                    if (error)
+                                        return "fields." + error;
+                                }
+                                return null;
+                            };
+
+                            /**
+                             * Creates a BlockField message from a plain object. Also converts values to their respective internal types.
+                             * @function fromObject
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @static
+                             * @param {Object.<string,*>} object Plain object
+                             * @returns {anytype.Rpc.BlockList.Set.Fields.Request.BlockField} BlockField
+                             */
+                            BlockField.fromObject = function fromObject(object) {
+                                if (object instanceof $root.anytype.Rpc.BlockList.Set.Fields.Request.BlockField)
+                                    return object;
+                                var message = new $root.anytype.Rpc.BlockList.Set.Fields.Request.BlockField();
+                                if (object.blockId != null)
+                                    message.blockId = String(object.blockId);
+                                if (object.fields != null) {
+                                    if (typeof object.fields !== "object")
+                                        throw TypeError(".anytype.Rpc.BlockList.Set.Fields.Request.BlockField.fields: object expected");
+                                    message.fields = $root.google.protobuf.Struct.fromObject(object.fields);
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Creates a plain object from a BlockField message. Also converts values to other types if specified.
+                             * @function toObject
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Request.BlockField} message BlockField
+                             * @param {$protobuf.IConversionOptions} [options] Conversion options
+                             * @returns {Object.<string,*>} Plain object
+                             */
+                            BlockField.toObject = function toObject(message, options) {
+                                if (!options)
+                                    options = {};
+                                var object = {};
+                                if (options.defaults) {
+                                    object.blockId = "";
+                                    object.fields = null;
+                                }
+                                if (message.blockId != null && message.hasOwnProperty("blockId"))
+                                    object.blockId = message.blockId;
+                                if (message.fields != null && message.hasOwnProperty("fields"))
+                                    object.fields = $root.google.protobuf.Struct.toObject(message.fields, options);
+                                return object;
+                            };
+
+                            /**
+                             * Converts this BlockField to JSON.
+                             * @function toJSON
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Request.BlockField
+                             * @instance
+                             * @returns {Object.<string,*>} JSON object
+                             */
+                            BlockField.prototype.toJSON = function toJSON() {
+                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                            };
+
+                            return BlockField;
+                        })();
+
+                        return Request;
+                    })();
+
+                    Fields.Response = (function() {
+
+                        /**
+                         * Properties of a Response.
+                         * @memberof anytype.Rpc.BlockList.Set.Fields
+                         * @interface IResponse
+                         * @property {anytype.Rpc.BlockList.Set.Fields.Response.IError|null} [error] Response error
+                         */
+
+                        /**
+                         * Constructs a new Response.
+                         * @memberof anytype.Rpc.BlockList.Set.Fields
+                         * @classdesc Represents a Response.
+                         * @implements IResponse
+                         * @constructor
+                         * @param {anytype.Rpc.BlockList.Set.Fields.IResponse=} [properties] Properties to set
+                         */
+                        function Response(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Response error.
+                         * @member {anytype.Rpc.BlockList.Set.Fields.Response.IError|null|undefined} error
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @instance
+                         */
+                        Response.prototype.error = null;
+
+                        /**
+                         * Creates a new Response instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Fields.IResponse=} [properties] Properties to set
+                         * @returns {anytype.Rpc.BlockList.Set.Fields.Response} Response instance
+                         */
+                        Response.create = function create(properties) {
+                            return new Response(properties);
+                        };
+
+                        /**
+                         * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.Response.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Fields.IResponse} message Response message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Response.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.error != null && message.hasOwnProperty("error"))
+                                $root.anytype.Rpc.BlockList.Set.Fields.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.Response.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Fields.IResponse} message Response message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Response.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a Response message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Rpc.BlockList.Set.Fields.Response} Response
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Response.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Fields.Response();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    message.error = $root.anytype.Rpc.BlockList.Set.Fields.Response.Error.decode(reader, reader.uint32());
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a Response message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Rpc.BlockList.Set.Fields.Response} Response
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Response.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a Response message.
+                         * @function verify
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        Response.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.error != null && message.hasOwnProperty("error")) {
+                                var error = $root.anytype.Rpc.BlockList.Set.Fields.Response.Error.verify(message.error);
+                                if (error)
+                                    return "error." + error;
+                            }
+                            return null;
+                        };
+
+                        /**
+                         * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Rpc.BlockList.Set.Fields.Response} Response
+                         */
+                        Response.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.BlockList.Set.Fields.Response)
+                                return object;
+                            var message = new $root.anytype.Rpc.BlockList.Set.Fields.Response();
+                            if (object.error != null) {
+                                if (typeof object.error !== "object")
+                                    throw TypeError(".anytype.Rpc.BlockList.Set.Fields.Response.error: object expected");
+                                message.error = $root.anytype.Rpc.BlockList.Set.Fields.Response.Error.fromObject(object.error);
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Creates a plain object from a Response message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @static
+                         * @param {anytype.Rpc.BlockList.Set.Fields.Response} message Response
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        Response.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults)
+                                object.error = null;
+                            if (message.error != null && message.hasOwnProperty("error"))
+                                object.error = $root.anytype.Rpc.BlockList.Set.Fields.Response.Error.toObject(message.error, options);
+                            return object;
+                        };
+
+                        /**
+                         * Converts this Response to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        Response.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        Response.Error = (function() {
+
+                            /**
+                             * Properties of an Error.
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                             * @interface IError
+                             * @property {anytype.Rpc.BlockList.Set.Fields.Response.Error.Code|null} [code] Error code
+                             * @property {string|null} [description] Error description
+                             */
+
+                            /**
+                             * Constructs a new Error.
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response
+                             * @classdesc Represents an Error.
+                             * @implements IError
+                             * @constructor
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Response.IError=} [properties] Properties to set
+                             */
+                            function Error(properties) {
+                                if (properties)
+                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                        if (properties[keys[i]] != null)
+                                            this[keys[i]] = properties[keys[i]];
+                            }
+
+                            /**
+                             * Error code.
+                             * @member {anytype.Rpc.BlockList.Set.Fields.Response.Error.Code} code
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @instance
+                             */
+                            Error.prototype.code = 0;
+
+                            /**
+                             * Error description.
+                             * @member {string} description
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @instance
+                             */
+                            Error.prototype.description = "";
+
+                            /**
+                             * Creates a new Error instance using the specified properties.
+                             * @function create
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Response.IError=} [properties] Properties to set
+                             * @returns {anytype.Rpc.BlockList.Set.Fields.Response.Error} Error instance
+                             */
+                            Error.create = function create(properties) {
+                                return new Error(properties);
+                            };
+
+                            /**
+                             * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.Response.Error.verify|verify} messages.
+                             * @function encode
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Response.IError} message Error message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Error.encode = function encode(message, writer) {
+                                if (!writer)
+                                    writer = $Writer.create();
+                                if (message.code != null && message.hasOwnProperty("code"))
+                                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                                if (message.description != null && message.hasOwnProperty("description"))
+                                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
+                                return writer;
+                            };
+
+                            /**
+                             * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.BlockList.Set.Fields.Response.Error.verify|verify} messages.
+                             * @function encodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Response.IError} message Error message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Error.encodeDelimited = function encodeDelimited(message, writer) {
+                                return this.encode(message, writer).ldelim();
+                            };
+
+                            /**
+                             * Decodes an Error message from the specified reader or buffer.
+                             * @function decode
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @param {number} [length] Message length if known beforehand
+                             * @returns {anytype.Rpc.BlockList.Set.Fields.Response.Error} Error
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Error.decode = function decode(reader, length) {
+                                if (!(reader instanceof $Reader))
+                                    reader = $Reader.create(reader);
+                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.BlockList.Set.Fields.Response.Error();
+                                while (reader.pos < end) {
+                                    var tag = reader.uint32();
+                                    switch (tag >>> 3) {
+                                    case 1:
+                                        message.code = reader.int32();
+                                        break;
+                                    case 2:
+                                        message.description = reader.string();
+                                        break;
+                                    default:
+                                        reader.skipType(tag & 7);
+                                        break;
+                                    }
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Decodes an Error message from the specified reader or buffer, length delimited.
+                             * @function decodeDelimited
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @returns {anytype.Rpc.BlockList.Set.Fields.Response.Error} Error
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Error.decodeDelimited = function decodeDelimited(reader) {
+                                if (!(reader instanceof $Reader))
+                                    reader = new $Reader(reader);
+                                return this.decode(reader, reader.uint32());
+                            };
+
+                            /**
+                             * Verifies an Error message.
+                             * @function verify
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @static
+                             * @param {Object.<string,*>} message Plain object to verify
+                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                             */
+                            Error.verify = function verify(message) {
+                                if (typeof message !== "object" || message === null)
+                                    return "object expected";
+                                if (message.code != null && message.hasOwnProperty("code"))
+                                    switch (message.code) {
+                                    default:
+                                        return "code: enum value expected";
+                                    case 0:
+                                    case 1:
+                                    case 2:
+                                        break;
+                                    }
+                                if (message.description != null && message.hasOwnProperty("description"))
+                                    if (!$util.isString(message.description))
+                                        return "description: string expected";
+                                return null;
+                            };
+
+                            /**
+                             * Creates an Error message from a plain object. Also converts values to their respective internal types.
+                             * @function fromObject
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @static
+                             * @param {Object.<string,*>} object Plain object
+                             * @returns {anytype.Rpc.BlockList.Set.Fields.Response.Error} Error
+                             */
+                            Error.fromObject = function fromObject(object) {
+                                if (object instanceof $root.anytype.Rpc.BlockList.Set.Fields.Response.Error)
+                                    return object;
+                                var message = new $root.anytype.Rpc.BlockList.Set.Fields.Response.Error();
+                                switch (object.code) {
+                                case "NULL":
+                                case 0:
+                                    message.code = 0;
+                                    break;
+                                case "UNKNOWN_ERROR":
+                                case 1:
+                                    message.code = 1;
+                                    break;
+                                case "BAD_INPUT":
+                                case 2:
+                                    message.code = 2;
+                                    break;
+                                }
+                                if (object.description != null)
+                                    message.description = String(object.description);
+                                return message;
+                            };
+
+                            /**
+                             * Creates a plain object from an Error message. Also converts values to other types if specified.
+                             * @function toObject
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @static
+                             * @param {anytype.Rpc.BlockList.Set.Fields.Response.Error} message Error
+                             * @param {$protobuf.IConversionOptions} [options] Conversion options
+                             * @returns {Object.<string,*>} Plain object
+                             */
+                            Error.toObject = function toObject(message, options) {
+                                if (!options)
+                                    options = {};
+                                var object = {};
+                                if (options.defaults) {
+                                    object.code = options.enums === String ? "NULL" : 0;
+                                    object.description = "";
+                                }
+                                if (message.code != null && message.hasOwnProperty("code"))
+                                    object.code = options.enums === String ? $root.anytype.Rpc.BlockList.Set.Fields.Response.Error.Code[message.code] : message.code;
+                                if (message.description != null && message.hasOwnProperty("description"))
+                                    object.description = message.description;
+                                return object;
+                            };
+
+                            /**
+                             * Converts this Error to JSON.
+                             * @function toJSON
+                             * @memberof anytype.Rpc.BlockList.Set.Fields.Response.Error
+                             * @instance
+                             * @returns {Object.<string,*>} JSON object
+                             */
+                            Error.prototype.toJSON = function toJSON() {
+                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                            };
+
+                            /**
+                             * Code enum.
+                             * @name anytype.Rpc.BlockList.Set.Fields.Response.Error.Code
+                             * @enum {string}
+                             * @property {number} NULL=0 NULL value
+                             * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+                             * @property {number} BAD_INPUT=2 BAD_INPUT value
+                             */
+                            Error.Code = (function() {
+                                var valuesById = {}, values = Object.create(valuesById);
+                                values[valuesById[0] = "NULL"] = 0;
+                                values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                                values[valuesById[2] = "BAD_INPUT"] = 2;
+                                return values;
+                            })();
+
+                            return Error;
+                        })();
+
+                        return Response;
+                    })();
+
+                    return Fields;
                 })();
 
                 return Set;
@@ -7019,912 +10690,6 @@ $root.anytype = (function() {
                 return Merge;
             })();
 
-            Block.Duplicate = (function() {
-
-                /**
-                 * Properties of a Duplicate.
-                 * @memberof anytype.Rpc.Block
-                 * @interface IDuplicate
-                 */
-
-                /**
-                 * Constructs a new Duplicate.
-                 * @memberof anytype.Rpc.Block
-                 * @classdesc Represents a Duplicate.
-                 * @implements IDuplicate
-                 * @constructor
-                 * @param {anytype.Rpc.Block.IDuplicate=} [properties] Properties to set
-                 */
-                function Duplicate(properties) {
-                    if (properties)
-                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                            if (properties[keys[i]] != null)
-                                this[keys[i]] = properties[keys[i]];
-                }
-
-                /**
-                 * Creates a new Duplicate instance using the specified properties.
-                 * @function create
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @static
-                 * @param {anytype.Rpc.Block.IDuplicate=} [properties] Properties to set
-                 * @returns {anytype.Rpc.Block.Duplicate} Duplicate instance
-                 */
-                Duplicate.create = function create(properties) {
-                    return new Duplicate(properties);
-                };
-
-                /**
-                 * Encodes the specified Duplicate message. Does not implicitly {@link anytype.Rpc.Block.Duplicate.verify|verify} messages.
-                 * @function encode
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @static
-                 * @param {anytype.Rpc.Block.IDuplicate} message Duplicate message or plain object to encode
-                 * @param {$protobuf.Writer} [writer] Writer to encode to
-                 * @returns {$protobuf.Writer} Writer
-                 */
-                Duplicate.encode = function encode(message, writer) {
-                    if (!writer)
-                        writer = $Writer.create();
-                    return writer;
-                };
-
-                /**
-                 * Encodes the specified Duplicate message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Duplicate.verify|verify} messages.
-                 * @function encodeDelimited
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @static
-                 * @param {anytype.Rpc.Block.IDuplicate} message Duplicate message or plain object to encode
-                 * @param {$protobuf.Writer} [writer] Writer to encode to
-                 * @returns {$protobuf.Writer} Writer
-                 */
-                Duplicate.encodeDelimited = function encodeDelimited(message, writer) {
-                    return this.encode(message, writer).ldelim();
-                };
-
-                /**
-                 * Decodes a Duplicate message from the specified reader or buffer.
-                 * @function decode
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @static
-                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                 * @param {number} [length] Message length if known beforehand
-                 * @returns {anytype.Rpc.Block.Duplicate} Duplicate
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                Duplicate.decode = function decode(reader, length) {
-                    if (!(reader instanceof $Reader))
-                        reader = $Reader.create(reader);
-                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Duplicate();
-                    while (reader.pos < end) {
-                        var tag = reader.uint32();
-                        switch (tag >>> 3) {
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
-                        }
-                    }
-                    return message;
-                };
-
-                /**
-                 * Decodes a Duplicate message from the specified reader or buffer, length delimited.
-                 * @function decodeDelimited
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @static
-                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                 * @returns {anytype.Rpc.Block.Duplicate} Duplicate
-                 * @throws {Error} If the payload is not a reader or valid buffer
-                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                 */
-                Duplicate.decodeDelimited = function decodeDelimited(reader) {
-                    if (!(reader instanceof $Reader))
-                        reader = new $Reader(reader);
-                    return this.decode(reader, reader.uint32());
-                };
-
-                /**
-                 * Verifies a Duplicate message.
-                 * @function verify
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @static
-                 * @param {Object.<string,*>} message Plain object to verify
-                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                 */
-                Duplicate.verify = function verify(message) {
-                    if (typeof message !== "object" || message === null)
-                        return "object expected";
-                    return null;
-                };
-
-                /**
-                 * Creates a Duplicate message from a plain object. Also converts values to their respective internal types.
-                 * @function fromObject
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @static
-                 * @param {Object.<string,*>} object Plain object
-                 * @returns {anytype.Rpc.Block.Duplicate} Duplicate
-                 */
-                Duplicate.fromObject = function fromObject(object) {
-                    if (object instanceof $root.anytype.Rpc.Block.Duplicate)
-                        return object;
-                    return new $root.anytype.Rpc.Block.Duplicate();
-                };
-
-                /**
-                 * Creates a plain object from a Duplicate message. Also converts values to other types if specified.
-                 * @function toObject
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @static
-                 * @param {anytype.Rpc.Block.Duplicate} message Duplicate
-                 * @param {$protobuf.IConversionOptions} [options] Conversion options
-                 * @returns {Object.<string,*>} Plain object
-                 */
-                Duplicate.toObject = function toObject() {
-                    return {};
-                };
-
-                /**
-                 * Converts this Duplicate to JSON.
-                 * @function toJSON
-                 * @memberof anytype.Rpc.Block.Duplicate
-                 * @instance
-                 * @returns {Object.<string,*>} JSON object
-                 */
-                Duplicate.prototype.toJSON = function toJSON() {
-                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                };
-
-                Duplicate.Request = (function() {
-
-                    /**
-                     * Properties of a Request.
-                     * @memberof anytype.Rpc.Block.Duplicate
-                     * @interface IRequest
-                     * @property {string|null} [contextId] Request contextId
-                     * @property {string|null} [targetId] Request targetId
-                     * @property {string|null} [blockId] Request blockId
-                     * @property {anytype.model.Block.Position|null} [position] Request position
-                     */
-
-                    /**
-                     * Constructs a new Request.
-                     * @memberof anytype.Rpc.Block.Duplicate
-                     * @classdesc Represents a Request.
-                     * @implements IRequest
-                     * @constructor
-                     * @param {anytype.Rpc.Block.Duplicate.IRequest=} [properties] Properties to set
-                     */
-                    function Request(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-
-                    /**
-                     * Request contextId.
-                     * @member {string} contextId
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @instance
-                     */
-                    Request.prototype.contextId = "";
-
-                    /**
-                     * Request targetId.
-                     * @member {string} targetId
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @instance
-                     */
-                    Request.prototype.targetId = "";
-
-                    /**
-                     * Request blockId.
-                     * @member {string} blockId
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @instance
-                     */
-                    Request.prototype.blockId = "";
-
-                    /**
-                     * Request position.
-                     * @member {anytype.model.Block.Position} position
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @instance
-                     */
-                    Request.prototype.position = 0;
-
-                    /**
-                     * Creates a new Request instance using the specified properties.
-                     * @function create
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @static
-                     * @param {anytype.Rpc.Block.Duplicate.IRequest=} [properties] Properties to set
-                     * @returns {anytype.Rpc.Block.Duplicate.Request} Request instance
-                     */
-                    Request.create = function create(properties) {
-                        return new Request(properties);
-                    };
-
-                    /**
-                     * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.Block.Duplicate.Request.verify|verify} messages.
-                     * @function encode
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @static
-                     * @param {anytype.Rpc.Block.Duplicate.IRequest} message Request message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    Request.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.contextId != null && message.hasOwnProperty("contextId"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
-                        if (message.targetId != null && message.hasOwnProperty("targetId"))
-                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.targetId);
-                        if (message.blockId != null && message.hasOwnProperty("blockId"))
-                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.blockId);
-                        if (message.position != null && message.hasOwnProperty("position"))
-                            writer.uint32(/* id 4, wireType 0 =*/32).int32(message.position);
-                        return writer;
-                    };
-
-                    /**
-                     * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Duplicate.Request.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @static
-                     * @param {anytype.Rpc.Block.Duplicate.IRequest} message Request message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    Request.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-
-                    /**
-                     * Decodes a Request message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {anytype.Rpc.Block.Duplicate.Request} Request
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    Request.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Duplicate.Request();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.contextId = reader.string();
-                                break;
-                            case 2:
-                                message.targetId = reader.string();
-                                break;
-                            case 3:
-                                message.blockId = reader.string();
-                                break;
-                            case 4:
-                                message.position = reader.int32();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-
-                    /**
-                     * Decodes a Request message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {anytype.Rpc.Block.Duplicate.Request} Request
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    Request.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-
-                    /**
-                     * Verifies a Request message.
-                     * @function verify
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    Request.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.contextId != null && message.hasOwnProperty("contextId"))
-                            if (!$util.isString(message.contextId))
-                                return "contextId: string expected";
-                        if (message.targetId != null && message.hasOwnProperty("targetId"))
-                            if (!$util.isString(message.targetId))
-                                return "targetId: string expected";
-                        if (message.blockId != null && message.hasOwnProperty("blockId"))
-                            if (!$util.isString(message.blockId))
-                                return "blockId: string expected";
-                        if (message.position != null && message.hasOwnProperty("position"))
-                            switch (message.position) {
-                            default:
-                                return "position: enum value expected";
-                            case 0:
-                            case 1:
-                            case 2:
-                            case 3:
-                            case 4:
-                            case 5:
-                                break;
-                            }
-                        return null;
-                    };
-
-                    /**
-                     * Creates a Request message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {anytype.Rpc.Block.Duplicate.Request} Request
-                     */
-                    Request.fromObject = function fromObject(object) {
-                        if (object instanceof $root.anytype.Rpc.Block.Duplicate.Request)
-                            return object;
-                        var message = new $root.anytype.Rpc.Block.Duplicate.Request();
-                        if (object.contextId != null)
-                            message.contextId = String(object.contextId);
-                        if (object.targetId != null)
-                            message.targetId = String(object.targetId);
-                        if (object.blockId != null)
-                            message.blockId = String(object.blockId);
-                        switch (object.position) {
-                        case "None":
-                        case 0:
-                            message.position = 0;
-                            break;
-                        case "Top":
-                        case 1:
-                            message.position = 1;
-                            break;
-                        case "Bottom":
-                        case 2:
-                            message.position = 2;
-                            break;
-                        case "Left":
-                        case 3:
-                            message.position = 3;
-                            break;
-                        case "Right":
-                        case 4:
-                            message.position = 4;
-                            break;
-                        case "Inner":
-                        case 5:
-                            message.position = 5;
-                            break;
-                        }
-                        return message;
-                    };
-
-                    /**
-                     * Creates a plain object from a Request message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @static
-                     * @param {anytype.Rpc.Block.Duplicate.Request} message Request
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    Request.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults) {
-                            object.contextId = "";
-                            object.targetId = "";
-                            object.blockId = "";
-                            object.position = options.enums === String ? "None" : 0;
-                        }
-                        if (message.contextId != null && message.hasOwnProperty("contextId"))
-                            object.contextId = message.contextId;
-                        if (message.targetId != null && message.hasOwnProperty("targetId"))
-                            object.targetId = message.targetId;
-                        if (message.blockId != null && message.hasOwnProperty("blockId"))
-                            object.blockId = message.blockId;
-                        if (message.position != null && message.hasOwnProperty("position"))
-                            object.position = options.enums === String ? $root.anytype.model.Block.Position[message.position] : message.position;
-                        return object;
-                    };
-
-                    /**
-                     * Converts this Request to JSON.
-                     * @function toJSON
-                     * @memberof anytype.Rpc.Block.Duplicate.Request
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    Request.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-
-                    return Request;
-                })();
-
-                Duplicate.Response = (function() {
-
-                    /**
-                     * Properties of a Response.
-                     * @memberof anytype.Rpc.Block.Duplicate
-                     * @interface IResponse
-                     * @property {anytype.Rpc.Block.Duplicate.Response.IError|null} [error] Response error
-                     * @property {string|null} [blockId] Response blockId
-                     */
-
-                    /**
-                     * Constructs a new Response.
-                     * @memberof anytype.Rpc.Block.Duplicate
-                     * @classdesc Represents a Response.
-                     * @implements IResponse
-                     * @constructor
-                     * @param {anytype.Rpc.Block.Duplicate.IResponse=} [properties] Properties to set
-                     */
-                    function Response(properties) {
-                        if (properties)
-                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                if (properties[keys[i]] != null)
-                                    this[keys[i]] = properties[keys[i]];
-                    }
-
-                    /**
-                     * Response error.
-                     * @member {anytype.Rpc.Block.Duplicate.Response.IError|null|undefined} error
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @instance
-                     */
-                    Response.prototype.error = null;
-
-                    /**
-                     * Response blockId.
-                     * @member {string} blockId
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @instance
-                     */
-                    Response.prototype.blockId = "";
-
-                    /**
-                     * Creates a new Response instance using the specified properties.
-                     * @function create
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @static
-                     * @param {anytype.Rpc.Block.Duplicate.IResponse=} [properties] Properties to set
-                     * @returns {anytype.Rpc.Block.Duplicate.Response} Response instance
-                     */
-                    Response.create = function create(properties) {
-                        return new Response(properties);
-                    };
-
-                    /**
-                     * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.Block.Duplicate.Response.verify|verify} messages.
-                     * @function encode
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @static
-                     * @param {anytype.Rpc.Block.Duplicate.IResponse} message Response message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    Response.encode = function encode(message, writer) {
-                        if (!writer)
-                            writer = $Writer.create();
-                        if (message.error != null && message.hasOwnProperty("error"))
-                            $root.anytype.Rpc.Block.Duplicate.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-                        if (message.blockId != null && message.hasOwnProperty("blockId"))
-                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.blockId);
-                        return writer;
-                    };
-
-                    /**
-                     * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Duplicate.Response.verify|verify} messages.
-                     * @function encodeDelimited
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @static
-                     * @param {anytype.Rpc.Block.Duplicate.IResponse} message Response message or plain object to encode
-                     * @param {$protobuf.Writer} [writer] Writer to encode to
-                     * @returns {$protobuf.Writer} Writer
-                     */
-                    Response.encodeDelimited = function encodeDelimited(message, writer) {
-                        return this.encode(message, writer).ldelim();
-                    };
-
-                    /**
-                     * Decodes a Response message from the specified reader or buffer.
-                     * @function decode
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @param {number} [length] Message length if known beforehand
-                     * @returns {anytype.Rpc.Block.Duplicate.Response} Response
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    Response.decode = function decode(reader, length) {
-                        if (!(reader instanceof $Reader))
-                            reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Duplicate.Response();
-                        while (reader.pos < end) {
-                            var tag = reader.uint32();
-                            switch (tag >>> 3) {
-                            case 1:
-                                message.error = $root.anytype.Rpc.Block.Duplicate.Response.Error.decode(reader, reader.uint32());
-                                break;
-                            case 2:
-                                message.blockId = reader.string();
-                                break;
-                            default:
-                                reader.skipType(tag & 7);
-                                break;
-                            }
-                        }
-                        return message;
-                    };
-
-                    /**
-                     * Decodes a Response message from the specified reader or buffer, length delimited.
-                     * @function decodeDelimited
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @static
-                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {anytype.Rpc.Block.Duplicate.Response} Response
-                     * @throws {Error} If the payload is not a reader or valid buffer
-                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                     */
-                    Response.decodeDelimited = function decodeDelimited(reader) {
-                        if (!(reader instanceof $Reader))
-                            reader = new $Reader(reader);
-                        return this.decode(reader, reader.uint32());
-                    };
-
-                    /**
-                     * Verifies a Response message.
-                     * @function verify
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @static
-                     * @param {Object.<string,*>} message Plain object to verify
-                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                     */
-                    Response.verify = function verify(message) {
-                        if (typeof message !== "object" || message === null)
-                            return "object expected";
-                        if (message.error != null && message.hasOwnProperty("error")) {
-                            var error = $root.anytype.Rpc.Block.Duplicate.Response.Error.verify(message.error);
-                            if (error)
-                                return "error." + error;
-                        }
-                        if (message.blockId != null && message.hasOwnProperty("blockId"))
-                            if (!$util.isString(message.blockId))
-                                return "blockId: string expected";
-                        return null;
-                    };
-
-                    /**
-                     * Creates a Response message from a plain object. Also converts values to their respective internal types.
-                     * @function fromObject
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @static
-                     * @param {Object.<string,*>} object Plain object
-                     * @returns {anytype.Rpc.Block.Duplicate.Response} Response
-                     */
-                    Response.fromObject = function fromObject(object) {
-                        if (object instanceof $root.anytype.Rpc.Block.Duplicate.Response)
-                            return object;
-                        var message = new $root.anytype.Rpc.Block.Duplicate.Response();
-                        if (object.error != null) {
-                            if (typeof object.error !== "object")
-                                throw TypeError(".anytype.Rpc.Block.Duplicate.Response.error: object expected");
-                            message.error = $root.anytype.Rpc.Block.Duplicate.Response.Error.fromObject(object.error);
-                        }
-                        if (object.blockId != null)
-                            message.blockId = String(object.blockId);
-                        return message;
-                    };
-
-                    /**
-                     * Creates a plain object from a Response message. Also converts values to other types if specified.
-                     * @function toObject
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @static
-                     * @param {anytype.Rpc.Block.Duplicate.Response} message Response
-                     * @param {$protobuf.IConversionOptions} [options] Conversion options
-                     * @returns {Object.<string,*>} Plain object
-                     */
-                    Response.toObject = function toObject(message, options) {
-                        if (!options)
-                            options = {};
-                        var object = {};
-                        if (options.defaults) {
-                            object.error = null;
-                            object.blockId = "";
-                        }
-                        if (message.error != null && message.hasOwnProperty("error"))
-                            object.error = $root.anytype.Rpc.Block.Duplicate.Response.Error.toObject(message.error, options);
-                        if (message.blockId != null && message.hasOwnProperty("blockId"))
-                            object.blockId = message.blockId;
-                        return object;
-                    };
-
-                    /**
-                     * Converts this Response to JSON.
-                     * @function toJSON
-                     * @memberof anytype.Rpc.Block.Duplicate.Response
-                     * @instance
-                     * @returns {Object.<string,*>} JSON object
-                     */
-                    Response.prototype.toJSON = function toJSON() {
-                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                    };
-
-                    Response.Error = (function() {
-
-                        /**
-                         * Properties of an Error.
-                         * @memberof anytype.Rpc.Block.Duplicate.Response
-                         * @interface IError
-                         * @property {anytype.Rpc.Block.Duplicate.Response.Error.Code|null} [code] Error code
-                         * @property {string|null} [description] Error description
-                         */
-
-                        /**
-                         * Constructs a new Error.
-                         * @memberof anytype.Rpc.Block.Duplicate.Response
-                         * @classdesc Represents an Error.
-                         * @implements IError
-                         * @constructor
-                         * @param {anytype.Rpc.Block.Duplicate.Response.IError=} [properties] Properties to set
-                         */
-                        function Error(properties) {
-                            if (properties)
-                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                    if (properties[keys[i]] != null)
-                                        this[keys[i]] = properties[keys[i]];
-                        }
-
-                        /**
-                         * Error code.
-                         * @member {anytype.Rpc.Block.Duplicate.Response.Error.Code} code
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @instance
-                         */
-                        Error.prototype.code = 0;
-
-                        /**
-                         * Error description.
-                         * @member {string} description
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @instance
-                         */
-                        Error.prototype.description = "";
-
-                        /**
-                         * Creates a new Error instance using the specified properties.
-                         * @function create
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @static
-                         * @param {anytype.Rpc.Block.Duplicate.Response.IError=} [properties] Properties to set
-                         * @returns {anytype.Rpc.Block.Duplicate.Response.Error} Error instance
-                         */
-                        Error.create = function create(properties) {
-                            return new Error(properties);
-                        };
-
-                        /**
-                         * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.Block.Duplicate.Response.Error.verify|verify} messages.
-                         * @function encode
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @static
-                         * @param {anytype.Rpc.Block.Duplicate.Response.IError} message Error message or plain object to encode
-                         * @param {$protobuf.Writer} [writer] Writer to encode to
-                         * @returns {$protobuf.Writer} Writer
-                         */
-                        Error.encode = function encode(message, writer) {
-                            if (!writer)
-                                writer = $Writer.create();
-                            if (message.code != null && message.hasOwnProperty("code"))
-                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
-                            if (message.description != null && message.hasOwnProperty("description"))
-                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
-                            return writer;
-                        };
-
-                        /**
-                         * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Duplicate.Response.Error.verify|verify} messages.
-                         * @function encodeDelimited
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @static
-                         * @param {anytype.Rpc.Block.Duplicate.Response.IError} message Error message or plain object to encode
-                         * @param {$protobuf.Writer} [writer] Writer to encode to
-                         * @returns {$protobuf.Writer} Writer
-                         */
-                        Error.encodeDelimited = function encodeDelimited(message, writer) {
-                            return this.encode(message, writer).ldelim();
-                        };
-
-                        /**
-                         * Decodes an Error message from the specified reader or buffer.
-                         * @function decode
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @static
-                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                         * @param {number} [length] Message length if known beforehand
-                         * @returns {anytype.Rpc.Block.Duplicate.Response.Error} Error
-                         * @throws {Error} If the payload is not a reader or valid buffer
-                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                         */
-                        Error.decode = function decode(reader, length) {
-                            if (!(reader instanceof $Reader))
-                                reader = $Reader.create(reader);
-                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Duplicate.Response.Error();
-                            while (reader.pos < end) {
-                                var tag = reader.uint32();
-                                switch (tag >>> 3) {
-                                case 1:
-                                    message.code = reader.int32();
-                                    break;
-                                case 2:
-                                    message.description = reader.string();
-                                    break;
-                                default:
-                                    reader.skipType(tag & 7);
-                                    break;
-                                }
-                            }
-                            return message;
-                        };
-
-                        /**
-                         * Decodes an Error message from the specified reader or buffer, length delimited.
-                         * @function decodeDelimited
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @static
-                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                         * @returns {anytype.Rpc.Block.Duplicate.Response.Error} Error
-                         * @throws {Error} If the payload is not a reader or valid buffer
-                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                         */
-                        Error.decodeDelimited = function decodeDelimited(reader) {
-                            if (!(reader instanceof $Reader))
-                                reader = new $Reader(reader);
-                            return this.decode(reader, reader.uint32());
-                        };
-
-                        /**
-                         * Verifies an Error message.
-                         * @function verify
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @static
-                         * @param {Object.<string,*>} message Plain object to verify
-                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                         */
-                        Error.verify = function verify(message) {
-                            if (typeof message !== "object" || message === null)
-                                return "object expected";
-                            if (message.code != null && message.hasOwnProperty("code"))
-                                switch (message.code) {
-                                default:
-                                    return "code: enum value expected";
-                                case 0:
-                                case 1:
-                                case 2:
-                                    break;
-                                }
-                            if (message.description != null && message.hasOwnProperty("description"))
-                                if (!$util.isString(message.description))
-                                    return "description: string expected";
-                            return null;
-                        };
-
-                        /**
-                         * Creates an Error message from a plain object. Also converts values to their respective internal types.
-                         * @function fromObject
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @static
-                         * @param {Object.<string,*>} object Plain object
-                         * @returns {anytype.Rpc.Block.Duplicate.Response.Error} Error
-                         */
-                        Error.fromObject = function fromObject(object) {
-                            if (object instanceof $root.anytype.Rpc.Block.Duplicate.Response.Error)
-                                return object;
-                            var message = new $root.anytype.Rpc.Block.Duplicate.Response.Error();
-                            switch (object.code) {
-                            case "NULL":
-                            case 0:
-                                message.code = 0;
-                                break;
-                            case "UNKNOWN_ERROR":
-                            case 1:
-                                message.code = 1;
-                                break;
-                            case "BAD_INPUT":
-                            case 2:
-                                message.code = 2;
-                                break;
-                            }
-                            if (object.description != null)
-                                message.description = String(object.description);
-                            return message;
-                        };
-
-                        /**
-                         * Creates a plain object from an Error message. Also converts values to other types if specified.
-                         * @function toObject
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @static
-                         * @param {anytype.Rpc.Block.Duplicate.Response.Error} message Error
-                         * @param {$protobuf.IConversionOptions} [options] Conversion options
-                         * @returns {Object.<string,*>} Plain object
-                         */
-                        Error.toObject = function toObject(message, options) {
-                            if (!options)
-                                options = {};
-                            var object = {};
-                            if (options.defaults) {
-                                object.code = options.enums === String ? "NULL" : 0;
-                                object.description = "";
-                            }
-                            if (message.code != null && message.hasOwnProperty("code"))
-                                object.code = options.enums === String ? $root.anytype.Rpc.Block.Duplicate.Response.Error.Code[message.code] : message.code;
-                            if (message.description != null && message.hasOwnProperty("description"))
-                                object.description = message.description;
-                            return object;
-                        };
-
-                        /**
-                         * Converts this Error to JSON.
-                         * @function toJSON
-                         * @memberof anytype.Rpc.Block.Duplicate.Response.Error
-                         * @instance
-                         * @returns {Object.<string,*>} JSON object
-                         */
-                        Error.prototype.toJSON = function toJSON() {
-                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                        };
-
-                        /**
-                         * Code enum.
-                         * @name anytype.Rpc.Block.Duplicate.Response.Error.Code
-                         * @enum {string}
-                         * @property {number} NULL=0 NULL value
-                         * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
-                         * @property {number} BAD_INPUT=2 BAD_INPUT value
-                         */
-                        Error.Code = (function() {
-                            var valuesById = {}, values = Object.create(valuesById);
-                            values[valuesById[0] = "NULL"] = 0;
-                            values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
-                            values[valuesById[2] = "BAD_INPUT"] = 2;
-                            return values;
-                        })();
-
-                        return Error;
-                    })();
-
-                    return Response;
-                })();
-
-                return Duplicate;
-            })();
-
             Block.Copy = (function() {
 
                 /**
@@ -8958,10 +11723,10 @@ $root.anytype = (function() {
                      * @property {string|null} [contextId] Request contextId
                      * @property {string|null} [focusedBlockId] Request focusedBlockId
                      * @property {anytype.model.IRange|null} [selectedTextRange] Request selectedTextRange
-                     * @property {Array.<string>|null} [selectedBlocks] Request selectedBlocks
+                     * @property {Array.<string>|null} [selectedBlockIds] Request selectedBlockIds
                      * @property {string|null} [textSlot] Request textSlot
                      * @property {string|null} [htmlSlot] Request htmlSlot
-                     * @property {string|null} [anySlot] Request anySlot
+                     * @property {Array.<anytype.model.IBlock>|null} [anySlot] Request anySlot
                      */
 
                     /**
@@ -8973,7 +11738,8 @@ $root.anytype = (function() {
                      * @param {anytype.Rpc.Block.Paste.IRequest=} [properties] Properties to set
                      */
                     function Request(properties) {
-                        this.selectedBlocks = [];
+                        this.selectedBlockIds = [];
+                        this.anySlot = [];
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -9005,12 +11771,12 @@ $root.anytype = (function() {
                     Request.prototype.selectedTextRange = null;
 
                     /**
-                     * Request selectedBlocks.
-                     * @member {Array.<string>} selectedBlocks
+                     * Request selectedBlockIds.
+                     * @member {Array.<string>} selectedBlockIds
                      * @memberof anytype.Rpc.Block.Paste.Request
                      * @instance
                      */
-                    Request.prototype.selectedBlocks = $util.emptyArray;
+                    Request.prototype.selectedBlockIds = $util.emptyArray;
 
                     /**
                      * Request textSlot.
@@ -9030,11 +11796,11 @@ $root.anytype = (function() {
 
                     /**
                      * Request anySlot.
-                     * @member {string} anySlot
+                     * @member {Array.<anytype.model.IBlock>} anySlot
                      * @memberof anytype.Rpc.Block.Paste.Request
                      * @instance
                      */
-                    Request.prototype.anySlot = "";
+                    Request.prototype.anySlot = $util.emptyArray;
 
                     /**
                      * Creates a new Request instance using the specified properties.
@@ -9066,15 +11832,16 @@ $root.anytype = (function() {
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.focusedBlockId);
                         if (message.selectedTextRange != null && message.hasOwnProperty("selectedTextRange"))
                             $root.anytype.model.Range.encode(message.selectedTextRange, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-                        if (message.selectedBlocks != null && message.selectedBlocks.length)
-                            for (var i = 0; i < message.selectedBlocks.length; ++i)
-                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.selectedBlocks[i]);
+                        if (message.selectedBlockIds != null && message.selectedBlockIds.length)
+                            for (var i = 0; i < message.selectedBlockIds.length; ++i)
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.selectedBlockIds[i]);
                         if (message.textSlot != null && message.hasOwnProperty("textSlot"))
                             writer.uint32(/* id 5, wireType 2 =*/42).string(message.textSlot);
                         if (message.htmlSlot != null && message.hasOwnProperty("htmlSlot"))
                             writer.uint32(/* id 6, wireType 2 =*/50).string(message.htmlSlot);
-                        if (message.anySlot != null && message.hasOwnProperty("anySlot"))
-                            writer.uint32(/* id 7, wireType 2 =*/58).string(message.anySlot);
+                        if (message.anySlot != null && message.anySlot.length)
+                            for (var i = 0; i < message.anySlot.length; ++i)
+                                $root.anytype.model.Block.encode(message.anySlot[i], writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
                         return writer;
                     };
 
@@ -9119,9 +11886,9 @@ $root.anytype = (function() {
                                 message.selectedTextRange = $root.anytype.model.Range.decode(reader, reader.uint32());
                                 break;
                             case 4:
-                                if (!(message.selectedBlocks && message.selectedBlocks.length))
-                                    message.selectedBlocks = [];
-                                message.selectedBlocks.push(reader.string());
+                                if (!(message.selectedBlockIds && message.selectedBlockIds.length))
+                                    message.selectedBlockIds = [];
+                                message.selectedBlockIds.push(reader.string());
                                 break;
                             case 5:
                                 message.textSlot = reader.string();
@@ -9130,7 +11897,9 @@ $root.anytype = (function() {
                                 message.htmlSlot = reader.string();
                                 break;
                             case 7:
-                                message.anySlot = reader.string();
+                                if (!(message.anySlot && message.anySlot.length))
+                                    message.anySlot = [];
+                                message.anySlot.push($root.anytype.model.Block.decode(reader, reader.uint32()));
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -9178,12 +11947,12 @@ $root.anytype = (function() {
                             if (error)
                                 return "selectedTextRange." + error;
                         }
-                        if (message.selectedBlocks != null && message.hasOwnProperty("selectedBlocks")) {
-                            if (!Array.isArray(message.selectedBlocks))
-                                return "selectedBlocks: array expected";
-                            for (var i = 0; i < message.selectedBlocks.length; ++i)
-                                if (!$util.isString(message.selectedBlocks[i]))
-                                    return "selectedBlocks: string[] expected";
+                        if (message.selectedBlockIds != null && message.hasOwnProperty("selectedBlockIds")) {
+                            if (!Array.isArray(message.selectedBlockIds))
+                                return "selectedBlockIds: array expected";
+                            for (var i = 0; i < message.selectedBlockIds.length; ++i)
+                                if (!$util.isString(message.selectedBlockIds[i]))
+                                    return "selectedBlockIds: string[] expected";
                         }
                         if (message.textSlot != null && message.hasOwnProperty("textSlot"))
                             if (!$util.isString(message.textSlot))
@@ -9191,9 +11960,15 @@ $root.anytype = (function() {
                         if (message.htmlSlot != null && message.hasOwnProperty("htmlSlot"))
                             if (!$util.isString(message.htmlSlot))
                                 return "htmlSlot: string expected";
-                        if (message.anySlot != null && message.hasOwnProperty("anySlot"))
-                            if (!$util.isString(message.anySlot))
-                                return "anySlot: string expected";
+                        if (message.anySlot != null && message.hasOwnProperty("anySlot")) {
+                            if (!Array.isArray(message.anySlot))
+                                return "anySlot: array expected";
+                            for (var i = 0; i < message.anySlot.length; ++i) {
+                                var error = $root.anytype.model.Block.verify(message.anySlot[i]);
+                                if (error)
+                                    return "anySlot." + error;
+                            }
+                        }
                         return null;
                     };
 
@@ -9218,19 +11993,27 @@ $root.anytype = (function() {
                                 throw TypeError(".anytype.Rpc.Block.Paste.Request.selectedTextRange: object expected");
                             message.selectedTextRange = $root.anytype.model.Range.fromObject(object.selectedTextRange);
                         }
-                        if (object.selectedBlocks) {
-                            if (!Array.isArray(object.selectedBlocks))
-                                throw TypeError(".anytype.Rpc.Block.Paste.Request.selectedBlocks: array expected");
-                            message.selectedBlocks = [];
-                            for (var i = 0; i < object.selectedBlocks.length; ++i)
-                                message.selectedBlocks[i] = String(object.selectedBlocks[i]);
+                        if (object.selectedBlockIds) {
+                            if (!Array.isArray(object.selectedBlockIds))
+                                throw TypeError(".anytype.Rpc.Block.Paste.Request.selectedBlockIds: array expected");
+                            message.selectedBlockIds = [];
+                            for (var i = 0; i < object.selectedBlockIds.length; ++i)
+                                message.selectedBlockIds[i] = String(object.selectedBlockIds[i]);
                         }
                         if (object.textSlot != null)
                             message.textSlot = String(object.textSlot);
                         if (object.htmlSlot != null)
                             message.htmlSlot = String(object.htmlSlot);
-                        if (object.anySlot != null)
-                            message.anySlot = String(object.anySlot);
+                        if (object.anySlot) {
+                            if (!Array.isArray(object.anySlot))
+                                throw TypeError(".anytype.Rpc.Block.Paste.Request.anySlot: array expected");
+                            message.anySlot = [];
+                            for (var i = 0; i < object.anySlot.length; ++i) {
+                                if (typeof object.anySlot[i] !== "object")
+                                    throw TypeError(".anytype.Rpc.Block.Paste.Request.anySlot: object expected");
+                                message.anySlot[i] = $root.anytype.model.Block.fromObject(object.anySlot[i]);
+                            }
+                        }
                         return message;
                     };
 
@@ -9247,15 +12030,16 @@ $root.anytype = (function() {
                         if (!options)
                             options = {};
                         var object = {};
-                        if (options.arrays || options.defaults)
-                            object.selectedBlocks = [];
+                        if (options.arrays || options.defaults) {
+                            object.selectedBlockIds = [];
+                            object.anySlot = [];
+                        }
                         if (options.defaults) {
                             object.contextId = "";
                             object.focusedBlockId = "";
                             object.selectedTextRange = null;
                             object.textSlot = "";
                             object.htmlSlot = "";
-                            object.anySlot = "";
                         }
                         if (message.contextId != null && message.hasOwnProperty("contextId"))
                             object.contextId = message.contextId;
@@ -9263,17 +12047,20 @@ $root.anytype = (function() {
                             object.focusedBlockId = message.focusedBlockId;
                         if (message.selectedTextRange != null && message.hasOwnProperty("selectedTextRange"))
                             object.selectedTextRange = $root.anytype.model.Range.toObject(message.selectedTextRange, options);
-                        if (message.selectedBlocks && message.selectedBlocks.length) {
-                            object.selectedBlocks = [];
-                            for (var j = 0; j < message.selectedBlocks.length; ++j)
-                                object.selectedBlocks[j] = message.selectedBlocks[j];
+                        if (message.selectedBlockIds && message.selectedBlockIds.length) {
+                            object.selectedBlockIds = [];
+                            for (var j = 0; j < message.selectedBlockIds.length; ++j)
+                                object.selectedBlockIds[j] = message.selectedBlockIds[j];
                         }
                         if (message.textSlot != null && message.hasOwnProperty("textSlot"))
                             object.textSlot = message.textSlot;
                         if (message.htmlSlot != null && message.hasOwnProperty("htmlSlot"))
                             object.htmlSlot = message.htmlSlot;
-                        if (message.anySlot != null && message.hasOwnProperty("anySlot"))
-                            object.anySlot = message.anySlot;
+                        if (message.anySlot && message.anySlot.length) {
+                            object.anySlot = [];
+                            for (var j = 0; j < message.anySlot.length; ++j)
+                                object.anySlot[j] = $root.anytype.model.Block.toObject(message.anySlot[j], options);
+                        }
                         return object;
                     };
 
@@ -9895,7 +12682,7 @@ $root.anytype = (function() {
                      * @interface IRequest
                      * @property {string|null} [contextId] Request contextId
                      * @property {string|null} [blockId] Request blockId
-                     * @property {string|null} [localPath] Request localPath
+                     * @property {string|null} [filePath] Request filePath
                      * @property {string|null} [url] Request url
                      */
 
@@ -9931,12 +12718,12 @@ $root.anytype = (function() {
                     Request.prototype.blockId = "";
 
                     /**
-                     * Request localPath.
-                     * @member {string} localPath
+                     * Request filePath.
+                     * @member {string} filePath
                      * @memberof anytype.Rpc.Block.Upload.Request
                      * @instance
                      */
-                    Request.prototype.localPath = "";
+                    Request.prototype.filePath = "";
 
                     /**
                      * Request url.
@@ -9974,8 +12761,8 @@ $root.anytype = (function() {
                             writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
                         if (message.blockId != null && message.hasOwnProperty("blockId"))
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.blockId);
-                        if (message.localPath != null && message.hasOwnProperty("localPath"))
-                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.localPath);
+                        if (message.filePath != null && message.hasOwnProperty("filePath"))
+                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.filePath);
                         if (message.url != null && message.hasOwnProperty("url"))
                             writer.uint32(/* id 4, wireType 2 =*/34).string(message.url);
                         return writer;
@@ -10019,7 +12806,7 @@ $root.anytype = (function() {
                                 message.blockId = reader.string();
                                 break;
                             case 3:
-                                message.localPath = reader.string();
+                                message.filePath = reader.string();
                                 break;
                             case 4:
                                 message.url = reader.string();
@@ -10065,9 +12852,9 @@ $root.anytype = (function() {
                         if (message.blockId != null && message.hasOwnProperty("blockId"))
                             if (!$util.isString(message.blockId))
                                 return "blockId: string expected";
-                        if (message.localPath != null && message.hasOwnProperty("localPath"))
-                            if (!$util.isString(message.localPath))
-                                return "localPath: string expected";
+                        if (message.filePath != null && message.hasOwnProperty("filePath"))
+                            if (!$util.isString(message.filePath))
+                                return "filePath: string expected";
                         if (message.url != null && message.hasOwnProperty("url"))
                             if (!$util.isString(message.url))
                                 return "url: string expected";
@@ -10090,8 +12877,8 @@ $root.anytype = (function() {
                             message.contextId = String(object.contextId);
                         if (object.blockId != null)
                             message.blockId = String(object.blockId);
-                        if (object.localPath != null)
-                            message.localPath = String(object.localPath);
+                        if (object.filePath != null)
+                            message.filePath = String(object.filePath);
                         if (object.url != null)
                             message.url = String(object.url);
                         return message;
@@ -10113,15 +12900,15 @@ $root.anytype = (function() {
                         if (options.defaults) {
                             object.contextId = "";
                             object.blockId = "";
-                            object.localPath = "";
+                            object.filePath = "";
                             object.url = "";
                         }
                         if (message.contextId != null && message.hasOwnProperty("contextId"))
                             object.contextId = message.contextId;
                         if (message.blockId != null && message.hasOwnProperty("blockId"))
                             object.blockId = message.blockId;
-                        if (message.localPath != null && message.hasOwnProperty("localPath"))
-                            object.localPath = message.localPath;
+                        if (message.filePath != null && message.hasOwnProperty("filePath"))
+                            object.filePath = message.filePath;
                         if (message.url != null && message.hasOwnProperty("url"))
                             object.url = message.url;
                         return object;
@@ -24035,6 +26822,994 @@ $root.anytype = (function() {
                     return Icon;
                 })();
 
+                Set.Link = (function() {
+
+                    /**
+                     * Properties of a Link.
+                     * @memberof anytype.Rpc.Block.Set
+                     * @interface ILink
+                     */
+
+                    /**
+                     * Constructs a new Link.
+                     * @memberof anytype.Rpc.Block.Set
+                     * @classdesc Represents a Link.
+                     * @implements ILink
+                     * @constructor
+                     * @param {anytype.Rpc.Block.Set.ILink=} [properties] Properties to set
+                     */
+                    function Link(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Creates a new Link instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @static
+                     * @param {anytype.Rpc.Block.Set.ILink=} [properties] Properties to set
+                     * @returns {anytype.Rpc.Block.Set.Link} Link instance
+                     */
+                    Link.create = function create(properties) {
+                        return new Link(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Link message. Does not implicitly {@link anytype.Rpc.Block.Set.Link.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @static
+                     * @param {anytype.Rpc.Block.Set.ILink} message Link message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Link.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Link message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Set.Link.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @static
+                     * @param {anytype.Rpc.Block.Set.ILink} message Link message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Link.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Link message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.Block.Set.Link} Link
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Link.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Set.Link();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Link message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.Block.Set.Link} Link
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Link.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Link message.
+                     * @function verify
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Link.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Link message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.Block.Set.Link} Link
+                     */
+                    Link.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.Block.Set.Link)
+                            return object;
+                        return new $root.anytype.Rpc.Block.Set.Link();
+                    };
+
+                    /**
+                     * Creates a plain object from a Link message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @static
+                     * @param {anytype.Rpc.Block.Set.Link} message Link
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Link.toObject = function toObject() {
+                        return {};
+                    };
+
+                    /**
+                     * Converts this Link to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.Block.Set.Link
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Link.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    Link.TargetBlockId = (function() {
+
+                        /**
+                         * Properties of a TargetBlockId.
+                         * @memberof anytype.Rpc.Block.Set.Link
+                         * @interface ITargetBlockId
+                         */
+
+                        /**
+                         * Constructs a new TargetBlockId.
+                         * @memberof anytype.Rpc.Block.Set.Link
+                         * @classdesc Represents a TargetBlockId.
+                         * @implements ITargetBlockId
+                         * @constructor
+                         * @param {anytype.Rpc.Block.Set.Link.ITargetBlockId=} [properties] Properties to set
+                         */
+                        function TargetBlockId(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Creates a new TargetBlockId instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {anytype.Rpc.Block.Set.Link.ITargetBlockId=} [properties] Properties to set
+                         * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId} TargetBlockId instance
+                         */
+                        TargetBlockId.create = function create(properties) {
+                            return new TargetBlockId(properties);
+                        };
+
+                        /**
+                         * Encodes the specified TargetBlockId message. Does not implicitly {@link anytype.Rpc.Block.Set.Link.TargetBlockId.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {anytype.Rpc.Block.Set.Link.ITargetBlockId} message TargetBlockId message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        TargetBlockId.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified TargetBlockId message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Set.Link.TargetBlockId.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {anytype.Rpc.Block.Set.Link.ITargetBlockId} message TargetBlockId message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        TargetBlockId.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a TargetBlockId message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId} TargetBlockId
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        TargetBlockId.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Set.Link.TargetBlockId();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a TargetBlockId message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId} TargetBlockId
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        TargetBlockId.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a TargetBlockId message.
+                         * @function verify
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        TargetBlockId.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+
+                        /**
+                         * Creates a TargetBlockId message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId} TargetBlockId
+                         */
+                        TargetBlockId.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.Block.Set.Link.TargetBlockId)
+                                return object;
+                            return new $root.anytype.Rpc.Block.Set.Link.TargetBlockId();
+                        };
+
+                        /**
+                         * Creates a plain object from a TargetBlockId message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {anytype.Rpc.Block.Set.Link.TargetBlockId} message TargetBlockId
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        TargetBlockId.toObject = function toObject() {
+                            return {};
+                        };
+
+                        /**
+                         * Converts this TargetBlockId to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        TargetBlockId.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        TargetBlockId.Request = (function() {
+
+                            /**
+                             * Properties of a Request.
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                             * @interface IRequest
+                             * @property {string|null} [contextId] Request contextId
+                             * @property {string|null} [blockId] Request blockId
+                             * @property {string|null} [targetBlockId] Request targetBlockId
+                             */
+
+                            /**
+                             * Constructs a new Request.
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                             * @classdesc Represents a Request.
+                             * @implements IRequest
+                             * @constructor
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IRequest=} [properties] Properties to set
+                             */
+                            function Request(properties) {
+                                if (properties)
+                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                        if (properties[keys[i]] != null)
+                                            this[keys[i]] = properties[keys[i]];
+                            }
+
+                            /**
+                             * Request contextId.
+                             * @member {string} contextId
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @instance
+                             */
+                            Request.prototype.contextId = "";
+
+                            /**
+                             * Request blockId.
+                             * @member {string} blockId
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @instance
+                             */
+                            Request.prototype.blockId = "";
+
+                            /**
+                             * Request targetBlockId.
+                             * @member {string} targetBlockId
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @instance
+                             */
+                            Request.prototype.targetBlockId = "";
+
+                            /**
+                             * Creates a new Request instance using the specified properties.
+                             * @function create
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @static
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IRequest=} [properties] Properties to set
+                             * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Request} Request instance
+                             */
+                            Request.create = function create(properties) {
+                                return new Request(properties);
+                            };
+
+                            /**
+                             * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.Block.Set.Link.TargetBlockId.Request.verify|verify} messages.
+                             * @function encode
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @static
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IRequest} message Request message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Request.encode = function encode(message, writer) {
+                                if (!writer)
+                                    writer = $Writer.create();
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
+                                if (message.blockId != null && message.hasOwnProperty("blockId"))
+                                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.blockId);
+                                if (message.targetBlockId != null && message.hasOwnProperty("targetBlockId"))
+                                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.targetBlockId);
+                                return writer;
+                            };
+
+                            /**
+                             * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Set.Link.TargetBlockId.Request.verify|verify} messages.
+                             * @function encodeDelimited
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @static
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IRequest} message Request message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Request.encodeDelimited = function encodeDelimited(message, writer) {
+                                return this.encode(message, writer).ldelim();
+                            };
+
+                            /**
+                             * Decodes a Request message from the specified reader or buffer.
+                             * @function decode
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @param {number} [length] Message length if known beforehand
+                             * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Request} Request
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Request.decode = function decode(reader, length) {
+                                if (!(reader instanceof $Reader))
+                                    reader = $Reader.create(reader);
+                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Request();
+                                while (reader.pos < end) {
+                                    var tag = reader.uint32();
+                                    switch (tag >>> 3) {
+                                    case 1:
+                                        message.contextId = reader.string();
+                                        break;
+                                    case 2:
+                                        message.blockId = reader.string();
+                                        break;
+                                    case 3:
+                                        message.targetBlockId = reader.string();
+                                        break;
+                                    default:
+                                        reader.skipType(tag & 7);
+                                        break;
+                                    }
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Decodes a Request message from the specified reader or buffer, length delimited.
+                             * @function decodeDelimited
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Request} Request
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Request.decodeDelimited = function decodeDelimited(reader) {
+                                if (!(reader instanceof $Reader))
+                                    reader = new $Reader(reader);
+                                return this.decode(reader, reader.uint32());
+                            };
+
+                            /**
+                             * Verifies a Request message.
+                             * @function verify
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @static
+                             * @param {Object.<string,*>} message Plain object to verify
+                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                             */
+                            Request.verify = function verify(message) {
+                                if (typeof message !== "object" || message === null)
+                                    return "object expected";
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    if (!$util.isString(message.contextId))
+                                        return "contextId: string expected";
+                                if (message.blockId != null && message.hasOwnProperty("blockId"))
+                                    if (!$util.isString(message.blockId))
+                                        return "blockId: string expected";
+                                if (message.targetBlockId != null && message.hasOwnProperty("targetBlockId"))
+                                    if (!$util.isString(message.targetBlockId))
+                                        return "targetBlockId: string expected";
+                                return null;
+                            };
+
+                            /**
+                             * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                             * @function fromObject
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @static
+                             * @param {Object.<string,*>} object Plain object
+                             * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Request} Request
+                             */
+                            Request.fromObject = function fromObject(object) {
+                                if (object instanceof $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Request)
+                                    return object;
+                                var message = new $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Request();
+                                if (object.contextId != null)
+                                    message.contextId = String(object.contextId);
+                                if (object.blockId != null)
+                                    message.blockId = String(object.blockId);
+                                if (object.targetBlockId != null)
+                                    message.targetBlockId = String(object.targetBlockId);
+                                return message;
+                            };
+
+                            /**
+                             * Creates a plain object from a Request message. Also converts values to other types if specified.
+                             * @function toObject
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @static
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.Request} message Request
+                             * @param {$protobuf.IConversionOptions} [options] Conversion options
+                             * @returns {Object.<string,*>} Plain object
+                             */
+                            Request.toObject = function toObject(message, options) {
+                                if (!options)
+                                    options = {};
+                                var object = {};
+                                if (options.defaults) {
+                                    object.contextId = "";
+                                    object.blockId = "";
+                                    object.targetBlockId = "";
+                                }
+                                if (message.contextId != null && message.hasOwnProperty("contextId"))
+                                    object.contextId = message.contextId;
+                                if (message.blockId != null && message.hasOwnProperty("blockId"))
+                                    object.blockId = message.blockId;
+                                if (message.targetBlockId != null && message.hasOwnProperty("targetBlockId"))
+                                    object.targetBlockId = message.targetBlockId;
+                                return object;
+                            };
+
+                            /**
+                             * Converts this Request to JSON.
+                             * @function toJSON
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Request
+                             * @instance
+                             * @returns {Object.<string,*>} JSON object
+                             */
+                            Request.prototype.toJSON = function toJSON() {
+                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                            };
+
+                            return Request;
+                        })();
+
+                        TargetBlockId.Response = (function() {
+
+                            /**
+                             * Properties of a Response.
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                             * @interface IResponse
+                             * @property {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.IError|null} [error] Response error
+                             */
+
+                            /**
+                             * Constructs a new Response.
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId
+                             * @classdesc Represents a Response.
+                             * @implements IResponse
+                             * @constructor
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IResponse=} [properties] Properties to set
+                             */
+                            function Response(properties) {
+                                if (properties)
+                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                        if (properties[keys[i]] != null)
+                                            this[keys[i]] = properties[keys[i]];
+                            }
+
+                            /**
+                             * Response error.
+                             * @member {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.IError|null|undefined} error
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @instance
+                             */
+                            Response.prototype.error = null;
+
+                            /**
+                             * Creates a new Response instance using the specified properties.
+                             * @function create
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @static
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IResponse=} [properties] Properties to set
+                             * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Response} Response instance
+                             */
+                            Response.create = function create(properties) {
+                                return new Response(properties);
+                            };
+
+                            /**
+                             * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.Block.Set.Link.TargetBlockId.Response.verify|verify} messages.
+                             * @function encode
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @static
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IResponse} message Response message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Response.encode = function encode(message, writer) {
+                                if (!writer)
+                                    writer = $Writer.create();
+                                if (message.error != null && message.hasOwnProperty("error"))
+                                    $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                                return writer;
+                            };
+
+                            /**
+                             * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Set.Link.TargetBlockId.Response.verify|verify} messages.
+                             * @function encodeDelimited
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @static
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IResponse} message Response message or plain object to encode
+                             * @param {$protobuf.Writer} [writer] Writer to encode to
+                             * @returns {$protobuf.Writer} Writer
+                             */
+                            Response.encodeDelimited = function encodeDelimited(message, writer) {
+                                return this.encode(message, writer).ldelim();
+                            };
+
+                            /**
+                             * Decodes a Response message from the specified reader or buffer.
+                             * @function decode
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @param {number} [length] Message length if known beforehand
+                             * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Response} Response
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Response.decode = function decode(reader, length) {
+                                if (!(reader instanceof $Reader))
+                                    reader = $Reader.create(reader);
+                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response();
+                                while (reader.pos < end) {
+                                    var tag = reader.uint32();
+                                    switch (tag >>> 3) {
+                                    case 1:
+                                        message.error = $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.decode(reader, reader.uint32());
+                                        break;
+                                    default:
+                                        reader.skipType(tag & 7);
+                                        break;
+                                    }
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Decodes a Response message from the specified reader or buffer, length delimited.
+                             * @function decodeDelimited
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @static
+                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                             * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Response} Response
+                             * @throws {Error} If the payload is not a reader or valid buffer
+                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                             */
+                            Response.decodeDelimited = function decodeDelimited(reader) {
+                                if (!(reader instanceof $Reader))
+                                    reader = new $Reader(reader);
+                                return this.decode(reader, reader.uint32());
+                            };
+
+                            /**
+                             * Verifies a Response message.
+                             * @function verify
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @static
+                             * @param {Object.<string,*>} message Plain object to verify
+                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                             */
+                            Response.verify = function verify(message) {
+                                if (typeof message !== "object" || message === null)
+                                    return "object expected";
+                                if (message.error != null && message.hasOwnProperty("error")) {
+                                    var error = $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.verify(message.error);
+                                    if (error)
+                                        return "error." + error;
+                                }
+                                return null;
+                            };
+
+                            /**
+                             * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                             * @function fromObject
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @static
+                             * @param {Object.<string,*>} object Plain object
+                             * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Response} Response
+                             */
+                            Response.fromObject = function fromObject(object) {
+                                if (object instanceof $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response)
+                                    return object;
+                                var message = new $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response();
+                                if (object.error != null) {
+                                    if (typeof object.error !== "object")
+                                        throw TypeError(".anytype.Rpc.Block.Set.Link.TargetBlockId.Response.error: object expected");
+                                    message.error = $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.fromObject(object.error);
+                                }
+                                return message;
+                            };
+
+                            /**
+                             * Creates a plain object from a Response message. Also converts values to other types if specified.
+                             * @function toObject
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @static
+                             * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.Response} message Response
+                             * @param {$protobuf.IConversionOptions} [options] Conversion options
+                             * @returns {Object.<string,*>} Plain object
+                             */
+                            Response.toObject = function toObject(message, options) {
+                                if (!options)
+                                    options = {};
+                                var object = {};
+                                if (options.defaults)
+                                    object.error = null;
+                                if (message.error != null && message.hasOwnProperty("error"))
+                                    object.error = $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.toObject(message.error, options);
+                                return object;
+                            };
+
+                            /**
+                             * Converts this Response to JSON.
+                             * @function toJSON
+                             * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                             * @instance
+                             * @returns {Object.<string,*>} JSON object
+                             */
+                            Response.prototype.toJSON = function toJSON() {
+                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                            };
+
+                            Response.Error = (function() {
+
+                                /**
+                                 * Properties of an Error.
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                                 * @interface IError
+                                 * @property {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.Code|null} [code] Error code
+                                 * @property {string|null} [description] Error description
+                                 */
+
+                                /**
+                                 * Constructs a new Error.
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response
+                                 * @classdesc Represents an Error.
+                                 * @implements IError
+                                 * @constructor
+                                 * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.IError=} [properties] Properties to set
+                                 */
+                                function Error(properties) {
+                                    if (properties)
+                                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                            if (properties[keys[i]] != null)
+                                                this[keys[i]] = properties[keys[i]];
+                                }
+
+                                /**
+                                 * Error code.
+                                 * @member {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.Code} code
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @instance
+                                 */
+                                Error.prototype.code = 0;
+
+                                /**
+                                 * Error description.
+                                 * @member {string} description
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @instance
+                                 */
+                                Error.prototype.description = "";
+
+                                /**
+                                 * Creates a new Error instance using the specified properties.
+                                 * @function create
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.IError=} [properties] Properties to set
+                                 * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error} Error instance
+                                 */
+                                Error.create = function create(properties) {
+                                    return new Error(properties);
+                                };
+
+                                /**
+                                 * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.verify|verify} messages.
+                                 * @function encode
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.IError} message Error message or plain object to encode
+                                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                                 * @returns {$protobuf.Writer} Writer
+                                 */
+                                Error.encode = function encode(message, writer) {
+                                    if (!writer)
+                                        writer = $Writer.create();
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
+                                    return writer;
+                                };
+
+                                /**
+                                 * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.verify|verify} messages.
+                                 * @function encodeDelimited
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.IError} message Error message or plain object to encode
+                                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                                 * @returns {$protobuf.Writer} Writer
+                                 */
+                                Error.encodeDelimited = function encodeDelimited(message, writer) {
+                                    return this.encode(message, writer).ldelim();
+                                };
+
+                                /**
+                                 * Decodes an Error message from the specified reader or buffer.
+                                 * @function decode
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @static
+                                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                                 * @param {number} [length] Message length if known beforehand
+                                 * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error} Error
+                                 * @throws {Error} If the payload is not a reader or valid buffer
+                                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                                 */
+                                Error.decode = function decode(reader, length) {
+                                    if (!(reader instanceof $Reader))
+                                        reader = $Reader.create(reader);
+                                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error();
+                                    while (reader.pos < end) {
+                                        var tag = reader.uint32();
+                                        switch (tag >>> 3) {
+                                        case 1:
+                                            message.code = reader.int32();
+                                            break;
+                                        case 2:
+                                            message.description = reader.string();
+                                            break;
+                                        default:
+                                            reader.skipType(tag & 7);
+                                            break;
+                                        }
+                                    }
+                                    return message;
+                                };
+
+                                /**
+                                 * Decodes an Error message from the specified reader or buffer, length delimited.
+                                 * @function decodeDelimited
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @static
+                                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                                 * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error} Error
+                                 * @throws {Error} If the payload is not a reader or valid buffer
+                                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                                 */
+                                Error.decodeDelimited = function decodeDelimited(reader) {
+                                    if (!(reader instanceof $Reader))
+                                        reader = new $Reader(reader);
+                                    return this.decode(reader, reader.uint32());
+                                };
+
+                                /**
+                                 * Verifies an Error message.
+                                 * @function verify
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @static
+                                 * @param {Object.<string,*>} message Plain object to verify
+                                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                                 */
+                                Error.verify = function verify(message) {
+                                    if (typeof message !== "object" || message === null)
+                                        return "object expected";
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        switch (message.code) {
+                                        default:
+                                            return "code: enum value expected";
+                                        case 0:
+                                        case 1:
+                                        case 2:
+                                            break;
+                                        }
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        if (!$util.isString(message.description))
+                                            return "description: string expected";
+                                    return null;
+                                };
+
+                                /**
+                                 * Creates an Error message from a plain object. Also converts values to their respective internal types.
+                                 * @function fromObject
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @static
+                                 * @param {Object.<string,*>} object Plain object
+                                 * @returns {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error} Error
+                                 */
+                                Error.fromObject = function fromObject(object) {
+                                    if (object instanceof $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error)
+                                        return object;
+                                    var message = new $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error();
+                                    switch (object.code) {
+                                    case "NULL":
+                                    case 0:
+                                        message.code = 0;
+                                        break;
+                                    case "UNKNOWN_ERROR":
+                                    case 1:
+                                        message.code = 1;
+                                        break;
+                                    case "BAD_INPUT":
+                                    case 2:
+                                        message.code = 2;
+                                        break;
+                                    }
+                                    if (object.description != null)
+                                        message.description = String(object.description);
+                                    return message;
+                                };
+
+                                /**
+                                 * Creates a plain object from an Error message. Also converts values to other types if specified.
+                                 * @function toObject
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @static
+                                 * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error} message Error
+                                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                                 * @returns {Object.<string,*>} Plain object
+                                 */
+                                Error.toObject = function toObject(message, options) {
+                                    if (!options)
+                                        options = {};
+                                    var object = {};
+                                    if (options.defaults) {
+                                        object.code = options.enums === String ? "NULL" : 0;
+                                        object.description = "";
+                                    }
+                                    if (message.code != null && message.hasOwnProperty("code"))
+                                        object.code = options.enums === String ? $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.Code[message.code] : message.code;
+                                    if (message.description != null && message.hasOwnProperty("description"))
+                                        object.description = message.description;
+                                    return object;
+                                };
+
+                                /**
+                                 * Converts this Error to JSON.
+                                 * @function toJSON
+                                 * @memberof anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error
+                                 * @instance
+                                 * @returns {Object.<string,*>} JSON object
+                                 */
+                                Error.prototype.toJSON = function toJSON() {
+                                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                                };
+
+                                /**
+                                 * Code enum.
+                                 * @name anytype.Rpc.Block.Set.Link.TargetBlockId.Response.Error.Code
+                                 * @enum {string}
+                                 * @property {number} NULL=0 NULL value
+                                 * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+                                 * @property {number} BAD_INPUT=2 BAD_INPUT value
+                                 */
+                                Error.Code = (function() {
+                                    var valuesById = {}, values = Object.create(valuesById);
+                                    values[valuesById[0] = "NULL"] = 0;
+                                    values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                                    values[valuesById[2] = "BAD_INPUT"] = 2;
+                                    return values;
+                                })();
+
+                                return Error;
+                            })();
+
+                            return Response;
+                        })();
+
+                        return TargetBlockId;
+                    })();
+
+                    return Link;
+                })();
+
                 return Set;
             })();
 
@@ -25031,23 +28806,23 @@ $root.anytype = (function() {
                 return Get;
             })();
 
-            Block.History = (function() {
+            Block.Undo = (function() {
 
                 /**
-                 * Properties of a History.
+                 * Properties of an Undo.
                  * @memberof anytype.Rpc.Block
-                 * @interface IHistory
+                 * @interface IUndo
                  */
 
                 /**
-                 * Constructs a new History.
+                 * Constructs a new Undo.
                  * @memberof anytype.Rpc.Block
-                 * @classdesc Represents a History.
-                 * @implements IHistory
+                 * @classdesc Represents an Undo.
+                 * @implements IUndo
                  * @constructor
-                 * @param {anytype.Rpc.Block.IHistory=} [properties] Properties to set
+                 * @param {anytype.Rpc.Block.IUndo=} [properties] Properties to set
                  */
-                function History(properties) {
+                function Undo(properties) {
                     if (properties)
                         for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                             if (properties[keys[i]] != null)
@@ -25055,60 +28830,60 @@ $root.anytype = (function() {
                 }
 
                 /**
-                 * Creates a new History instance using the specified properties.
+                 * Creates a new Undo instance using the specified properties.
                  * @function create
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @static
-                 * @param {anytype.Rpc.Block.IHistory=} [properties] Properties to set
-                 * @returns {anytype.Rpc.Block.History} History instance
+                 * @param {anytype.Rpc.Block.IUndo=} [properties] Properties to set
+                 * @returns {anytype.Rpc.Block.Undo} Undo instance
                  */
-                History.create = function create(properties) {
-                    return new History(properties);
+                Undo.create = function create(properties) {
+                    return new Undo(properties);
                 };
 
                 /**
-                 * Encodes the specified History message. Does not implicitly {@link anytype.Rpc.Block.History.verify|verify} messages.
+                 * Encodes the specified Undo message. Does not implicitly {@link anytype.Rpc.Block.Undo.verify|verify} messages.
                  * @function encode
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @static
-                 * @param {anytype.Rpc.Block.IHistory} message History message or plain object to encode
+                 * @param {anytype.Rpc.Block.IUndo} message Undo message or plain object to encode
                  * @param {$protobuf.Writer} [writer] Writer to encode to
                  * @returns {$protobuf.Writer} Writer
                  */
-                History.encode = function encode(message, writer) {
+                Undo.encode = function encode(message, writer) {
                     if (!writer)
                         writer = $Writer.create();
                     return writer;
                 };
 
                 /**
-                 * Encodes the specified History message, length delimited. Does not implicitly {@link anytype.Rpc.Block.History.verify|verify} messages.
+                 * Encodes the specified Undo message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Undo.verify|verify} messages.
                  * @function encodeDelimited
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @static
-                 * @param {anytype.Rpc.Block.IHistory} message History message or plain object to encode
+                 * @param {anytype.Rpc.Block.IUndo} message Undo message or plain object to encode
                  * @param {$protobuf.Writer} [writer] Writer to encode to
                  * @returns {$protobuf.Writer} Writer
                  */
-                History.encodeDelimited = function encodeDelimited(message, writer) {
+                Undo.encodeDelimited = function encodeDelimited(message, writer) {
                     return this.encode(message, writer).ldelim();
                 };
 
                 /**
-                 * Decodes a History message from the specified reader or buffer.
+                 * Decodes an Undo message from the specified reader or buffer.
                  * @function decode
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @static
                  * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
                  * @param {number} [length] Message length if known beforehand
-                 * @returns {anytype.Rpc.Block.History} History
+                 * @returns {anytype.Rpc.Block.Undo} Undo
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                History.decode = function decode(reader, length) {
+                Undo.decode = function decode(reader, length) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
-                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.History();
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Undo();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
                         switch (tag >>> 3) {
@@ -25121,90 +28896,91 @@ $root.anytype = (function() {
                 };
 
                 /**
-                 * Decodes a History message from the specified reader or buffer, length delimited.
+                 * Decodes an Undo message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @static
                  * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                 * @returns {anytype.Rpc.Block.History} History
+                 * @returns {anytype.Rpc.Block.Undo} Undo
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                History.decodeDelimited = function decodeDelimited(reader) {
+                Undo.decodeDelimited = function decodeDelimited(reader) {
                     if (!(reader instanceof $Reader))
                         reader = new $Reader(reader);
                     return this.decode(reader, reader.uint32());
                 };
 
                 /**
-                 * Verifies a History message.
+                 * Verifies an Undo message.
                  * @function verify
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @static
                  * @param {Object.<string,*>} message Plain object to verify
                  * @returns {string|null} `null` if valid, otherwise the reason why it is not
                  */
-                History.verify = function verify(message) {
+                Undo.verify = function verify(message) {
                     if (typeof message !== "object" || message === null)
                         return "object expected";
                     return null;
                 };
 
                 /**
-                 * Creates a History message from a plain object. Also converts values to their respective internal types.
+                 * Creates an Undo message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @static
                  * @param {Object.<string,*>} object Plain object
-                 * @returns {anytype.Rpc.Block.History} History
+                 * @returns {anytype.Rpc.Block.Undo} Undo
                  */
-                History.fromObject = function fromObject(object) {
-                    if (object instanceof $root.anytype.Rpc.Block.History)
+                Undo.fromObject = function fromObject(object) {
+                    if (object instanceof $root.anytype.Rpc.Block.Undo)
                         return object;
-                    return new $root.anytype.Rpc.Block.History();
+                    return new $root.anytype.Rpc.Block.Undo();
                 };
 
                 /**
-                 * Creates a plain object from a History message. Also converts values to other types if specified.
+                 * Creates a plain object from an Undo message. Also converts values to other types if specified.
                  * @function toObject
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @static
-                 * @param {anytype.Rpc.Block.History} message History
+                 * @param {anytype.Rpc.Block.Undo} message Undo
                  * @param {$protobuf.IConversionOptions} [options] Conversion options
                  * @returns {Object.<string,*>} Plain object
                  */
-                History.toObject = function toObject() {
+                Undo.toObject = function toObject() {
                     return {};
                 };
 
                 /**
-                 * Converts this History to JSON.
+                 * Converts this Undo to JSON.
                  * @function toJSON
-                 * @memberof anytype.Rpc.Block.History
+                 * @memberof anytype.Rpc.Block.Undo
                  * @instance
                  * @returns {Object.<string,*>} JSON object
                  */
-                History.prototype.toJSON = function toJSON() {
+                Undo.prototype.toJSON = function toJSON() {
                     return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                 };
 
-                History.Move = (function() {
+                Undo.Request = (function() {
 
                     /**
-                     * Properties of a Move.
-                     * @memberof anytype.Rpc.Block.History
-                     * @interface IMove
+                     * Properties of a Request.
+                     * @memberof anytype.Rpc.Block.Undo
+                     * @interface IRequest
+                     * @property {string|null} [contextId] Request contextId
                      */
 
                     /**
-                     * Constructs a new Move.
-                     * @memberof anytype.Rpc.Block.History
-                     * @classdesc Represents a Move.
-                     * @implements IMove
+                     * Constructs a new Request.
+                     * @memberof anytype.Rpc.Block.Undo
+                     * @classdesc Represents a Request.
+                     * @implements IRequest
                      * @constructor
-                     * @param {anytype.Rpc.Block.History.IMove=} [properties] Properties to set
+                     * @param {anytype.Rpc.Block.Undo.IRequest=} [properties] Properties to set
                      */
-                    function Move(properties) {
+                    function Request(properties) {
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -25212,63 +28988,76 @@ $root.anytype = (function() {
                     }
 
                     /**
-                     * Creates a new Move instance using the specified properties.
-                     * @function create
-                     * @memberof anytype.Rpc.Block.History.Move
-                     * @static
-                     * @param {anytype.Rpc.Block.History.IMove=} [properties] Properties to set
-                     * @returns {anytype.Rpc.Block.History.Move} Move instance
+                     * Request contextId.
+                     * @member {string} contextId
+                     * @memberof anytype.Rpc.Block.Undo.Request
+                     * @instance
                      */
-                    Move.create = function create(properties) {
-                        return new Move(properties);
+                    Request.prototype.contextId = "";
+
+                    /**
+                     * Creates a new Request instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.Block.Undo.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.Undo.IRequest=} [properties] Properties to set
+                     * @returns {anytype.Rpc.Block.Undo.Request} Request instance
+                     */
+                    Request.create = function create(properties) {
+                        return new Request(properties);
                     };
 
                     /**
-                     * Encodes the specified Move message. Does not implicitly {@link anytype.Rpc.Block.History.Move.verify|verify} messages.
+                     * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.Block.Undo.Request.verify|verify} messages.
                      * @function encode
-                     * @memberof anytype.Rpc.Block.History.Move
+                     * @memberof anytype.Rpc.Block.Undo.Request
                      * @static
-                     * @param {anytype.Rpc.Block.History.IMove} message Move message or plain object to encode
+                     * @param {anytype.Rpc.Block.Undo.IRequest} message Request message or plain object to encode
                      * @param {$protobuf.Writer} [writer] Writer to encode to
                      * @returns {$protobuf.Writer} Writer
                      */
-                    Move.encode = function encode(message, writer) {
+                    Request.encode = function encode(message, writer) {
                         if (!writer)
                             writer = $Writer.create();
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
                         return writer;
                     };
 
                     /**
-                     * Encodes the specified Move message, length delimited. Does not implicitly {@link anytype.Rpc.Block.History.Move.verify|verify} messages.
+                     * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Undo.Request.verify|verify} messages.
                      * @function encodeDelimited
-                     * @memberof anytype.Rpc.Block.History.Move
+                     * @memberof anytype.Rpc.Block.Undo.Request
                      * @static
-                     * @param {anytype.Rpc.Block.History.IMove} message Move message or plain object to encode
+                     * @param {anytype.Rpc.Block.Undo.IRequest} message Request message or plain object to encode
                      * @param {$protobuf.Writer} [writer] Writer to encode to
                      * @returns {$protobuf.Writer} Writer
                      */
-                    Move.encodeDelimited = function encodeDelimited(message, writer) {
+                    Request.encodeDelimited = function encodeDelimited(message, writer) {
                         return this.encode(message, writer).ldelim();
                     };
 
                     /**
-                     * Decodes a Move message from the specified reader or buffer.
+                     * Decodes a Request message from the specified reader or buffer.
                      * @function decode
-                     * @memberof anytype.Rpc.Block.History.Move
+                     * @memberof anytype.Rpc.Block.Undo.Request
                      * @static
                      * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
                      * @param {number} [length] Message length if known beforehand
-                     * @returns {anytype.Rpc.Block.History.Move} Move
+                     * @returns {anytype.Rpc.Block.Undo.Request} Request
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Move.decode = function decode(reader, length) {
+                    Request.decode = function decode(reader, length) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
-                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.History.Move();
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Undo.Request();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
+                            case 1:
+                                message.contextId = reader.string();
+                                break;
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -25278,93 +29067,297 @@ $root.anytype = (function() {
                     };
 
                     /**
-                     * Decodes a Move message from the specified reader or buffer, length delimited.
+                     * Decodes a Request message from the specified reader or buffer, length delimited.
                      * @function decodeDelimited
-                     * @memberof anytype.Rpc.Block.History.Move
+                     * @memberof anytype.Rpc.Block.Undo.Request
                      * @static
                      * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                     * @returns {anytype.Rpc.Block.History.Move} Move
+                     * @returns {anytype.Rpc.Block.Undo.Request} Request
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Move.decodeDelimited = function decodeDelimited(reader) {
+                    Request.decodeDelimited = function decodeDelimited(reader) {
                         if (!(reader instanceof $Reader))
                             reader = new $Reader(reader);
                         return this.decode(reader, reader.uint32());
                     };
 
                     /**
-                     * Verifies a Move message.
+                     * Verifies a Request message.
                      * @function verify
-                     * @memberof anytype.Rpc.Block.History.Move
+                     * @memberof anytype.Rpc.Block.Undo.Request
                      * @static
                      * @param {Object.<string,*>} message Plain object to verify
                      * @returns {string|null} `null` if valid, otherwise the reason why it is not
                      */
-                    Move.verify = function verify(message) {
+                    Request.verify = function verify(message) {
                         if (typeof message !== "object" || message === null)
                             return "object expected";
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            if (!$util.isString(message.contextId))
+                                return "contextId: string expected";
                         return null;
                     };
 
                     /**
-                     * Creates a Move message from a plain object. Also converts values to their respective internal types.
+                     * Creates a Request message from a plain object. Also converts values to their respective internal types.
                      * @function fromObject
-                     * @memberof anytype.Rpc.Block.History.Move
+                     * @memberof anytype.Rpc.Block.Undo.Request
                      * @static
                      * @param {Object.<string,*>} object Plain object
-                     * @returns {anytype.Rpc.Block.History.Move} Move
+                     * @returns {anytype.Rpc.Block.Undo.Request} Request
                      */
-                    Move.fromObject = function fromObject(object) {
-                        if (object instanceof $root.anytype.Rpc.Block.History.Move)
+                    Request.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.Block.Undo.Request)
                             return object;
-                        return new $root.anytype.Rpc.Block.History.Move();
+                        var message = new $root.anytype.Rpc.Block.Undo.Request();
+                        if (object.contextId != null)
+                            message.contextId = String(object.contextId);
+                        return message;
                     };
 
                     /**
-                     * Creates a plain object from a Move message. Also converts values to other types if specified.
+                     * Creates a plain object from a Request message. Also converts values to other types if specified.
                      * @function toObject
-                     * @memberof anytype.Rpc.Block.History.Move
+                     * @memberof anytype.Rpc.Block.Undo.Request
                      * @static
-                     * @param {anytype.Rpc.Block.History.Move} message Move
+                     * @param {anytype.Rpc.Block.Undo.Request} message Request
                      * @param {$protobuf.IConversionOptions} [options] Conversion options
                      * @returns {Object.<string,*>} Plain object
                      */
-                    Move.toObject = function toObject() {
-                        return {};
+                    Request.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.contextId = "";
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            object.contextId = message.contextId;
+                        return object;
                     };
 
                     /**
-                     * Converts this Move to JSON.
+                     * Converts this Request to JSON.
                      * @function toJSON
-                     * @memberof anytype.Rpc.Block.History.Move
+                     * @memberof anytype.Rpc.Block.Undo.Request
                      * @instance
                      * @returns {Object.<string,*>} JSON object
                      */
-                    Move.prototype.toJSON = function toJSON() {
+                    Request.prototype.toJSON = function toJSON() {
                         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                     };
 
-                    Move.Request = (function() {
+                    return Request;
+                })();
+
+                Undo.Response = (function() {
+
+                    /**
+                     * Properties of a Response.
+                     * @memberof anytype.Rpc.Block.Undo
+                     * @interface IResponse
+                     * @property {anytype.Rpc.Block.Undo.Response.IError|null} [error] Response error
+                     */
+
+                    /**
+                     * Constructs a new Response.
+                     * @memberof anytype.Rpc.Block.Undo
+                     * @classdesc Represents a Response.
+                     * @implements IResponse
+                     * @constructor
+                     * @param {anytype.Rpc.Block.Undo.IResponse=} [properties] Properties to set
+                     */
+                    function Response(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Response error.
+                     * @member {anytype.Rpc.Block.Undo.Response.IError|null|undefined} error
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @instance
+                     */
+                    Response.prototype.error = null;
+
+                    /**
+                     * Creates a new Response instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.Undo.IResponse=} [properties] Properties to set
+                     * @returns {anytype.Rpc.Block.Undo.Response} Response instance
+                     */
+                    Response.create = function create(properties) {
+                        return new Response(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.Block.Undo.Response.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.Undo.IResponse} message Response message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Response.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.error != null && message.hasOwnProperty("error"))
+                            $root.anytype.Rpc.Block.Undo.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Undo.Response.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.Undo.IResponse} message Response message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Response.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Response message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.Block.Undo.Response} Response
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Response.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Undo.Response();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.error = $root.anytype.Rpc.Block.Undo.Response.Error.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Response message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.Block.Undo.Response} Response
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Response.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Response message.
+                     * @function verify
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Response.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.error != null && message.hasOwnProperty("error")) {
+                            var error = $root.anytype.Rpc.Block.Undo.Response.Error.verify(message.error);
+                            if (error)
+                                return "error." + error;
+                        }
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.Block.Undo.Response} Response
+                     */
+                    Response.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.Block.Undo.Response)
+                            return object;
+                        var message = new $root.anytype.Rpc.Block.Undo.Response();
+                        if (object.error != null) {
+                            if (typeof object.error !== "object")
+                                throw TypeError(".anytype.Rpc.Block.Undo.Response.error: object expected");
+                            message.error = $root.anytype.Rpc.Block.Undo.Response.Error.fromObject(object.error);
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Response message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.Undo.Response} message Response
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Response.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.error = null;
+                        if (message.error != null && message.hasOwnProperty("error"))
+                            object.error = $root.anytype.Rpc.Block.Undo.Response.Error.toObject(message.error, options);
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Response to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.Block.Undo.Response
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Response.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    Response.Error = (function() {
 
                         /**
-                         * Properties of a Request.
-                         * @memberof anytype.Rpc.Block.History.Move
-                         * @interface IRequest
-                         * @property {string|null} [contextId] Request contextId
-                         * @property {string|null} [blockId] Request blockId
-                         * @property {boolean|null} [moveForward] Request moveForward
+                         * Properties of an Error.
+                         * @memberof anytype.Rpc.Block.Undo.Response
+                         * @interface IError
+                         * @property {anytype.Rpc.Block.Undo.Response.Error.Code|null} [code] Error code
+                         * @property {string|null} [description] Error description
                          */
 
                         /**
-                         * Constructs a new Request.
-                         * @memberof anytype.Rpc.Block.History.Move
-                         * @classdesc Represents a Request.
-                         * @implements IRequest
+                         * Constructs a new Error.
+                         * @memberof anytype.Rpc.Block.Undo.Response
+                         * @classdesc Represents an Error.
+                         * @implements IError
                          * @constructor
-                         * @param {anytype.Rpc.Block.History.Move.IRequest=} [properties] Properties to set
+                         * @param {anytype.Rpc.Block.Undo.Response.IError=} [properties] Properties to set
                          */
-                        function Request(properties) {
+                        function Error(properties) {
                             if (properties)
                                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                     if (properties[keys[i]] != null)
@@ -25372,101 +29365,88 @@ $root.anytype = (function() {
                         }
 
                         /**
-                         * Request contextId.
-                         * @member {string} contextId
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * Error code.
+                         * @member {anytype.Rpc.Block.Undo.Response.Error.Code} code
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @instance
                          */
-                        Request.prototype.contextId = "";
+                        Error.prototype.code = 0;
 
                         /**
-                         * Request blockId.
-                         * @member {string} blockId
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * Error description.
+                         * @member {string} description
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @instance
                          */
-                        Request.prototype.blockId = "";
+                        Error.prototype.description = "";
 
                         /**
-                         * Request moveForward.
-                         * @member {boolean} moveForward
-                         * @memberof anytype.Rpc.Block.History.Move.Request
-                         * @instance
-                         */
-                        Request.prototype.moveForward = false;
-
-                        /**
-                         * Creates a new Request instance using the specified properties.
+                         * Creates a new Error instance using the specified properties.
                          * @function create
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @static
-                         * @param {anytype.Rpc.Block.History.Move.IRequest=} [properties] Properties to set
-                         * @returns {anytype.Rpc.Block.History.Move.Request} Request instance
+                         * @param {anytype.Rpc.Block.Undo.Response.IError=} [properties] Properties to set
+                         * @returns {anytype.Rpc.Block.Undo.Response.Error} Error instance
                          */
-                        Request.create = function create(properties) {
-                            return new Request(properties);
+                        Error.create = function create(properties) {
+                            return new Error(properties);
                         };
 
                         /**
-                         * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.Block.History.Move.Request.verify|verify} messages.
+                         * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.Block.Undo.Response.Error.verify|verify} messages.
                          * @function encode
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @static
-                         * @param {anytype.Rpc.Block.History.Move.IRequest} message Request message or plain object to encode
+                         * @param {anytype.Rpc.Block.Undo.Response.IError} message Error message or plain object to encode
                          * @param {$protobuf.Writer} [writer] Writer to encode to
                          * @returns {$protobuf.Writer} Writer
                          */
-                        Request.encode = function encode(message, writer) {
+                        Error.encode = function encode(message, writer) {
                             if (!writer)
                                 writer = $Writer.create();
-                            if (message.contextId != null && message.hasOwnProperty("contextId"))
-                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
-                            if (message.blockId != null && message.hasOwnProperty("blockId"))
-                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.blockId);
-                            if (message.moveForward != null && message.hasOwnProperty("moveForward"))
-                                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.moveForward);
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
                             return writer;
                         };
 
                         /**
-                         * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.Block.History.Move.Request.verify|verify} messages.
+                         * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Undo.Response.Error.verify|verify} messages.
                          * @function encodeDelimited
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @static
-                         * @param {anytype.Rpc.Block.History.Move.IRequest} message Request message or plain object to encode
+                         * @param {anytype.Rpc.Block.Undo.Response.IError} message Error message or plain object to encode
                          * @param {$protobuf.Writer} [writer] Writer to encode to
                          * @returns {$protobuf.Writer} Writer
                          */
-                        Request.encodeDelimited = function encodeDelimited(message, writer) {
+                        Error.encodeDelimited = function encodeDelimited(message, writer) {
                             return this.encode(message, writer).ldelim();
                         };
 
                         /**
-                         * Decodes a Request message from the specified reader or buffer.
+                         * Decodes an Error message from the specified reader or buffer.
                          * @function decode
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @static
                          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
                          * @param {number} [length] Message length if known beforehand
-                         * @returns {anytype.Rpc.Block.History.Move.Request} Request
+                         * @returns {anytype.Rpc.Block.Undo.Response.Error} Error
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        Request.decode = function decode(reader, length) {
+                        Error.decode = function decode(reader, length) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
-                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.History.Move.Request();
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Undo.Response.Error();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
                                 switch (tag >>> 3) {
                                 case 1:
-                                    message.contextId = reader.string();
+                                    message.code = reader.int32();
                                     break;
                                 case 2:
-                                    message.blockId = reader.string();
-                                    break;
-                                case 3:
-                                    message.moveForward = reader.bool();
+                                    message.description = reader.string();
                                     break;
                                 default:
                                     reader.skipType(tag & 7);
@@ -25477,124 +29457,697 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Decodes a Request message from the specified reader or buffer, length delimited.
+                         * Decodes an Error message from the specified reader or buffer, length delimited.
                          * @function decodeDelimited
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @static
                          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                         * @returns {anytype.Rpc.Block.History.Move.Request} Request
+                         * @returns {anytype.Rpc.Block.Undo.Response.Error} Error
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        Request.decodeDelimited = function decodeDelimited(reader) {
+                        Error.decodeDelimited = function decodeDelimited(reader) {
                             if (!(reader instanceof $Reader))
                                 reader = new $Reader(reader);
                             return this.decode(reader, reader.uint32());
                         };
 
                         /**
-                         * Verifies a Request message.
+                         * Verifies an Error message.
                          * @function verify
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @static
                          * @param {Object.<string,*>} message Plain object to verify
                          * @returns {string|null} `null` if valid, otherwise the reason why it is not
                          */
-                        Request.verify = function verify(message) {
+                        Error.verify = function verify(message) {
                             if (typeof message !== "object" || message === null)
                                 return "object expected";
-                            if (message.contextId != null && message.hasOwnProperty("contextId"))
-                                if (!$util.isString(message.contextId))
-                                    return "contextId: string expected";
-                            if (message.blockId != null && message.hasOwnProperty("blockId"))
-                                if (!$util.isString(message.blockId))
-                                    return "blockId: string expected";
-                            if (message.moveForward != null && message.hasOwnProperty("moveForward"))
-                                if (typeof message.moveForward !== "boolean")
-                                    return "moveForward: boolean expected";
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                switch (message.code) {
+                                default:
+                                    return "code: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                    break;
+                                }
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                if (!$util.isString(message.description))
+                                    return "description: string expected";
                             return null;
                         };
 
                         /**
-                         * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                         * Creates an Error message from a plain object. Also converts values to their respective internal types.
                          * @function fromObject
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @static
                          * @param {Object.<string,*>} object Plain object
-                         * @returns {anytype.Rpc.Block.History.Move.Request} Request
+                         * @returns {anytype.Rpc.Block.Undo.Response.Error} Error
                          */
-                        Request.fromObject = function fromObject(object) {
-                            if (object instanceof $root.anytype.Rpc.Block.History.Move.Request)
+                        Error.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.Block.Undo.Response.Error)
                                 return object;
-                            var message = new $root.anytype.Rpc.Block.History.Move.Request();
-                            if (object.contextId != null)
-                                message.contextId = String(object.contextId);
-                            if (object.blockId != null)
-                                message.blockId = String(object.blockId);
-                            if (object.moveForward != null)
-                                message.moveForward = Boolean(object.moveForward);
+                            var message = new $root.anytype.Rpc.Block.Undo.Response.Error();
+                            switch (object.code) {
+                            case "NULL":
+                            case 0:
+                                message.code = 0;
+                                break;
+                            case "UNKNOWN_ERROR":
+                            case 1:
+                                message.code = 1;
+                                break;
+                            case "BAD_INPUT":
+                            case 2:
+                                message.code = 2;
+                                break;
+                            case "CAN_NOT_MOVE":
+                            case 3:
+                                message.code = 3;
+                                break;
+                            }
+                            if (object.description != null)
+                                message.description = String(object.description);
                             return message;
                         };
 
                         /**
-                         * Creates a plain object from a Request message. Also converts values to other types if specified.
+                         * Creates a plain object from an Error message. Also converts values to other types if specified.
                          * @function toObject
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @static
-                         * @param {anytype.Rpc.Block.History.Move.Request} message Request
+                         * @param {anytype.Rpc.Block.Undo.Response.Error} message Error
                          * @param {$protobuf.IConversionOptions} [options] Conversion options
                          * @returns {Object.<string,*>} Plain object
                          */
-                        Request.toObject = function toObject(message, options) {
+                        Error.toObject = function toObject(message, options) {
                             if (!options)
                                 options = {};
                             var object = {};
                             if (options.defaults) {
-                                object.contextId = "";
-                                object.blockId = "";
-                                object.moveForward = false;
+                                object.code = options.enums === String ? "NULL" : 0;
+                                object.description = "";
                             }
-                            if (message.contextId != null && message.hasOwnProperty("contextId"))
-                                object.contextId = message.contextId;
-                            if (message.blockId != null && message.hasOwnProperty("blockId"))
-                                object.blockId = message.blockId;
-                            if (message.moveForward != null && message.hasOwnProperty("moveForward"))
-                                object.moveForward = message.moveForward;
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                object.code = options.enums === String ? $root.anytype.Rpc.Block.Undo.Response.Error.Code[message.code] : message.code;
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                object.description = message.description;
                             return object;
                         };
 
                         /**
-                         * Converts this Request to JSON.
+                         * Converts this Error to JSON.
                          * @function toJSON
-                         * @memberof anytype.Rpc.Block.History.Move.Request
+                         * @memberof anytype.Rpc.Block.Undo.Response.Error
                          * @instance
                          * @returns {Object.<string,*>} JSON object
                          */
-                        Request.prototype.toJSON = function toJSON() {
+                        Error.prototype.toJSON = function toJSON() {
                             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                         };
 
-                        return Request;
+                        /**
+                         * Code enum.
+                         * @name anytype.Rpc.Block.Undo.Response.Error.Code
+                         * @enum {string}
+                         * @property {number} NULL=0 NULL value
+                         * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+                         * @property {number} BAD_INPUT=2 BAD_INPUT value
+                         * @property {number} CAN_NOT_MOVE=3 CAN_NOT_MOVE value
+                         */
+                        Error.Code = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "NULL"] = 0;
+                            values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                            values[valuesById[2] = "BAD_INPUT"] = 2;
+                            values[valuesById[3] = "CAN_NOT_MOVE"] = 3;
+                            return values;
+                        })();
+
+                        return Error;
                     })();
 
-                    Move.Response = (function() {
+                    return Response;
+                })();
+
+                return Undo;
+            })();
+
+            Block.Redo = (function() {
+
+                /**
+                 * Properties of a Redo.
+                 * @memberof anytype.Rpc.Block
+                 * @interface IRedo
+                 */
+
+                /**
+                 * Constructs a new Redo.
+                 * @memberof anytype.Rpc.Block
+                 * @classdesc Represents a Redo.
+                 * @implements IRedo
+                 * @constructor
+                 * @param {anytype.Rpc.Block.IRedo=} [properties] Properties to set
+                 */
+                function Redo(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * Creates a new Redo instance using the specified properties.
+                 * @function create
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @static
+                 * @param {anytype.Rpc.Block.IRedo=} [properties] Properties to set
+                 * @returns {anytype.Rpc.Block.Redo} Redo instance
+                 */
+                Redo.create = function create(properties) {
+                    return new Redo(properties);
+                };
+
+                /**
+                 * Encodes the specified Redo message. Does not implicitly {@link anytype.Rpc.Block.Redo.verify|verify} messages.
+                 * @function encode
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @static
+                 * @param {anytype.Rpc.Block.IRedo} message Redo message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                Redo.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified Redo message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Redo.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @static
+                 * @param {anytype.Rpc.Block.IRedo} message Redo message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                Redo.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a Redo message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {anytype.Rpc.Block.Redo} Redo
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                Redo.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Redo();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a Redo message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {anytype.Rpc.Block.Redo} Redo
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                Redo.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a Redo message.
+                 * @function verify
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                Redo.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a Redo message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {anytype.Rpc.Block.Redo} Redo
+                 */
+                Redo.fromObject = function fromObject(object) {
+                    if (object instanceof $root.anytype.Rpc.Block.Redo)
+                        return object;
+                    return new $root.anytype.Rpc.Block.Redo();
+                };
+
+                /**
+                 * Creates a plain object from a Redo message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @static
+                 * @param {anytype.Rpc.Block.Redo} message Redo
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                Redo.toObject = function toObject() {
+                    return {};
+                };
+
+                /**
+                 * Converts this Redo to JSON.
+                 * @function toJSON
+                 * @memberof anytype.Rpc.Block.Redo
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                Redo.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                Redo.Request = (function() {
+
+                    /**
+                     * Properties of a Request.
+                     * @memberof anytype.Rpc.Block.Redo
+                     * @interface IRequest
+                     * @property {string|null} [contextId] Request contextId
+                     */
+
+                    /**
+                     * Constructs a new Request.
+                     * @memberof anytype.Rpc.Block.Redo
+                     * @classdesc Represents a Request.
+                     * @implements IRequest
+                     * @constructor
+                     * @param {anytype.Rpc.Block.Redo.IRequest=} [properties] Properties to set
+                     */
+                    function Request(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Request contextId.
+                     * @member {string} contextId
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @instance
+                     */
+                    Request.prototype.contextId = "";
+
+                    /**
+                     * Creates a new Request instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.Redo.IRequest=} [properties] Properties to set
+                     * @returns {anytype.Rpc.Block.Redo.Request} Request instance
+                     */
+                    Request.create = function create(properties) {
+                        return new Request(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.Block.Redo.Request.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.Redo.IRequest} message Request message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Request.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Redo.Request.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.Redo.IRequest} message Request message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Request.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Request message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.Block.Redo.Request} Request
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Request.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Redo.Request();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.contextId = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Request message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.Block.Redo.Request} Request
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Request.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Request message.
+                     * @function verify
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Request.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            if (!$util.isString(message.contextId))
+                                return "contextId: string expected";
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.Block.Redo.Request} Request
+                     */
+                    Request.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.Block.Redo.Request)
+                            return object;
+                        var message = new $root.anytype.Rpc.Block.Redo.Request();
+                        if (object.contextId != null)
+                            message.contextId = String(object.contextId);
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Request message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.Redo.Request} message Request
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Request.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.contextId = "";
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            object.contextId = message.contextId;
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Request to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.Block.Redo.Request
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Request.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    return Request;
+                })();
+
+                Redo.Response = (function() {
+
+                    /**
+                     * Properties of a Response.
+                     * @memberof anytype.Rpc.Block.Redo
+                     * @interface IResponse
+                     * @property {anytype.Rpc.Block.Redo.Response.IError|null} [error] Response error
+                     */
+
+                    /**
+                     * Constructs a new Response.
+                     * @memberof anytype.Rpc.Block.Redo
+                     * @classdesc Represents a Response.
+                     * @implements IResponse
+                     * @constructor
+                     * @param {anytype.Rpc.Block.Redo.IResponse=} [properties] Properties to set
+                     */
+                    function Response(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Response error.
+                     * @member {anytype.Rpc.Block.Redo.Response.IError|null|undefined} error
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @instance
+                     */
+                    Response.prototype.error = null;
+
+                    /**
+                     * Creates a new Response instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.Redo.IResponse=} [properties] Properties to set
+                     * @returns {anytype.Rpc.Block.Redo.Response} Response instance
+                     */
+                    Response.create = function create(properties) {
+                        return new Response(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.Block.Redo.Response.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.Redo.IResponse} message Response message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Response.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.error != null && message.hasOwnProperty("error"))
+                            $root.anytype.Rpc.Block.Redo.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Redo.Response.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.Redo.IResponse} message Response message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Response.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Response message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.Block.Redo.Response} Response
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Response.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Redo.Response();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.error = $root.anytype.Rpc.Block.Redo.Response.Error.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Response message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.Block.Redo.Response} Response
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Response.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Response message.
+                     * @function verify
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Response.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.error != null && message.hasOwnProperty("error")) {
+                            var error = $root.anytype.Rpc.Block.Redo.Response.Error.verify(message.error);
+                            if (error)
+                                return "error." + error;
+                        }
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.Block.Redo.Response} Response
+                     */
+                    Response.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.Block.Redo.Response)
+                            return object;
+                        var message = new $root.anytype.Rpc.Block.Redo.Response();
+                        if (object.error != null) {
+                            if (typeof object.error !== "object")
+                                throw TypeError(".anytype.Rpc.Block.Redo.Response.error: object expected");
+                            message.error = $root.anytype.Rpc.Block.Redo.Response.Error.fromObject(object.error);
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Response message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.Redo.Response} message Response
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Response.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults)
+                            object.error = null;
+                        if (message.error != null && message.hasOwnProperty("error"))
+                            object.error = $root.anytype.Rpc.Block.Redo.Response.Error.toObject(message.error, options);
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Response to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.Block.Redo.Response
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Response.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    Response.Error = (function() {
 
                         /**
-                         * Properties of a Response.
-                         * @memberof anytype.Rpc.Block.History.Move
-                         * @interface IResponse
-                         * @property {anytype.Rpc.Block.History.Move.Response.IError|null} [error] Response error
+                         * Properties of an Error.
+                         * @memberof anytype.Rpc.Block.Redo.Response
+                         * @interface IError
+                         * @property {anytype.Rpc.Block.Redo.Response.Error.Code|null} [code] Error code
+                         * @property {string|null} [description] Error description
                          */
 
                         /**
-                         * Constructs a new Response.
-                         * @memberof anytype.Rpc.Block.History.Move
-                         * @classdesc Represents a Response.
-                         * @implements IResponse
+                         * Constructs a new Error.
+                         * @memberof anytype.Rpc.Block.Redo.Response
+                         * @classdesc Represents an Error.
+                         * @implements IError
                          * @constructor
-                         * @param {anytype.Rpc.Block.History.Move.IResponse=} [properties] Properties to set
+                         * @param {anytype.Rpc.Block.Redo.Response.IError=} [properties] Properties to set
                          */
-                        function Response(properties) {
+                        function Error(properties) {
                             if (properties)
                                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                     if (properties[keys[i]] != null)
@@ -25602,75 +30155,88 @@ $root.anytype = (function() {
                         }
 
                         /**
-                         * Response error.
-                         * @member {anytype.Rpc.Block.History.Move.Response.IError|null|undefined} error
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * Error code.
+                         * @member {anytype.Rpc.Block.Redo.Response.Error.Code} code
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @instance
                          */
-                        Response.prototype.error = null;
+                        Error.prototype.code = 0;
 
                         /**
-                         * Creates a new Response instance using the specified properties.
-                         * @function create
-                         * @memberof anytype.Rpc.Block.History.Move.Response
-                         * @static
-                         * @param {anytype.Rpc.Block.History.Move.IResponse=} [properties] Properties to set
-                         * @returns {anytype.Rpc.Block.History.Move.Response} Response instance
+                         * Error description.
+                         * @member {string} description
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
+                         * @instance
                          */
-                        Response.create = function create(properties) {
-                            return new Response(properties);
+                        Error.prototype.description = "";
+
+                        /**
+                         * Creates a new Error instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.Block.Redo.Response.IError=} [properties] Properties to set
+                         * @returns {anytype.Rpc.Block.Redo.Response.Error} Error instance
+                         */
+                        Error.create = function create(properties) {
+                            return new Error(properties);
                         };
 
                         /**
-                         * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.Block.History.Move.Response.verify|verify} messages.
+                         * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.Block.Redo.Response.Error.verify|verify} messages.
                          * @function encode
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @static
-                         * @param {anytype.Rpc.Block.History.Move.IResponse} message Response message or plain object to encode
+                         * @param {anytype.Rpc.Block.Redo.Response.IError} message Error message or plain object to encode
                          * @param {$protobuf.Writer} [writer] Writer to encode to
                          * @returns {$protobuf.Writer} Writer
                          */
-                        Response.encode = function encode(message, writer) {
+                        Error.encode = function encode(message, writer) {
                             if (!writer)
                                 writer = $Writer.create();
-                            if (message.error != null && message.hasOwnProperty("error"))
-                                $root.anytype.Rpc.Block.History.Move.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
                             return writer;
                         };
 
                         /**
-                         * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.Block.History.Move.Response.verify|verify} messages.
+                         * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.Block.Redo.Response.Error.verify|verify} messages.
                          * @function encodeDelimited
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @static
-                         * @param {anytype.Rpc.Block.History.Move.IResponse} message Response message or plain object to encode
+                         * @param {anytype.Rpc.Block.Redo.Response.IError} message Error message or plain object to encode
                          * @param {$protobuf.Writer} [writer] Writer to encode to
                          * @returns {$protobuf.Writer} Writer
                          */
-                        Response.encodeDelimited = function encodeDelimited(message, writer) {
+                        Error.encodeDelimited = function encodeDelimited(message, writer) {
                             return this.encode(message, writer).ldelim();
                         };
 
                         /**
-                         * Decodes a Response message from the specified reader or buffer.
+                         * Decodes an Error message from the specified reader or buffer.
                          * @function decode
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @static
                          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
                          * @param {number} [length] Message length if known beforehand
-                         * @returns {anytype.Rpc.Block.History.Move.Response} Response
+                         * @returns {anytype.Rpc.Block.Redo.Response.Error} Error
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        Response.decode = function decode(reader, length) {
+                        Error.decode = function decode(reader, length) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
-                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.History.Move.Response();
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.Redo.Response.Error();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
                                 switch (tag >>> 3) {
                                 case 1:
-                                    message.error = $root.anytype.Rpc.Block.History.Move.Response.Error.decode(reader, reader.uint32());
+                                    message.code = reader.int32();
+                                    break;
+                                case 2:
+                                    message.description = reader.string();
                                     break;
                                 default:
                                     reader.skipType(tag & 7);
@@ -25681,349 +30247,143 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Decodes a Response message from the specified reader or buffer, length delimited.
+                         * Decodes an Error message from the specified reader or buffer, length delimited.
                          * @function decodeDelimited
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @static
                          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                         * @returns {anytype.Rpc.Block.History.Move.Response} Response
+                         * @returns {anytype.Rpc.Block.Redo.Response.Error} Error
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        Response.decodeDelimited = function decodeDelimited(reader) {
+                        Error.decodeDelimited = function decodeDelimited(reader) {
                             if (!(reader instanceof $Reader))
                                 reader = new $Reader(reader);
                             return this.decode(reader, reader.uint32());
                         };
 
                         /**
-                         * Verifies a Response message.
+                         * Verifies an Error message.
                          * @function verify
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @static
                          * @param {Object.<string,*>} message Plain object to verify
                          * @returns {string|null} `null` if valid, otherwise the reason why it is not
                          */
-                        Response.verify = function verify(message) {
+                        Error.verify = function verify(message) {
                             if (typeof message !== "object" || message === null)
                                 return "object expected";
-                            if (message.error != null && message.hasOwnProperty("error")) {
-                                var error = $root.anytype.Rpc.Block.History.Move.Response.Error.verify(message.error);
-                                if (error)
-                                    return "error." + error;
-                            }
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                switch (message.code) {
+                                default:
+                                    return "code: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                    break;
+                                }
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                if (!$util.isString(message.description))
+                                    return "description: string expected";
                             return null;
                         };
 
                         /**
-                         * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                         * Creates an Error message from a plain object. Also converts values to their respective internal types.
                          * @function fromObject
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @static
                          * @param {Object.<string,*>} object Plain object
-                         * @returns {anytype.Rpc.Block.History.Move.Response} Response
+                         * @returns {anytype.Rpc.Block.Redo.Response.Error} Error
                          */
-                        Response.fromObject = function fromObject(object) {
-                            if (object instanceof $root.anytype.Rpc.Block.History.Move.Response)
+                        Error.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.Block.Redo.Response.Error)
                                 return object;
-                            var message = new $root.anytype.Rpc.Block.History.Move.Response();
-                            if (object.error != null) {
-                                if (typeof object.error !== "object")
-                                    throw TypeError(".anytype.Rpc.Block.History.Move.Response.error: object expected");
-                                message.error = $root.anytype.Rpc.Block.History.Move.Response.Error.fromObject(object.error);
+                            var message = new $root.anytype.Rpc.Block.Redo.Response.Error();
+                            switch (object.code) {
+                            case "NULL":
+                            case 0:
+                                message.code = 0;
+                                break;
+                            case "UNKNOWN_ERROR":
+                            case 1:
+                                message.code = 1;
+                                break;
+                            case "BAD_INPUT":
+                            case 2:
+                                message.code = 2;
+                                break;
+                            case "CAN_NOT_MOVE":
+                            case 3:
+                                message.code = 3;
+                                break;
                             }
+                            if (object.description != null)
+                                message.description = String(object.description);
                             return message;
                         };
 
                         /**
-                         * Creates a plain object from a Response message. Also converts values to other types if specified.
+                         * Creates a plain object from an Error message. Also converts values to other types if specified.
                          * @function toObject
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @static
-                         * @param {anytype.Rpc.Block.History.Move.Response} message Response
+                         * @param {anytype.Rpc.Block.Redo.Response.Error} message Error
                          * @param {$protobuf.IConversionOptions} [options] Conversion options
                          * @returns {Object.<string,*>} Plain object
                          */
-                        Response.toObject = function toObject(message, options) {
+                        Error.toObject = function toObject(message, options) {
                             if (!options)
                                 options = {};
                             var object = {};
-                            if (options.defaults)
-                                object.error = null;
-                            if (message.error != null && message.hasOwnProperty("error"))
-                                object.error = $root.anytype.Rpc.Block.History.Move.Response.Error.toObject(message.error, options);
+                            if (options.defaults) {
+                                object.code = options.enums === String ? "NULL" : 0;
+                                object.description = "";
+                            }
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                object.code = options.enums === String ? $root.anytype.Rpc.Block.Redo.Response.Error.Code[message.code] : message.code;
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                object.description = message.description;
                             return object;
                         };
 
                         /**
-                         * Converts this Response to JSON.
+                         * Converts this Error to JSON.
                          * @function toJSON
-                         * @memberof anytype.Rpc.Block.History.Move.Response
+                         * @memberof anytype.Rpc.Block.Redo.Response.Error
                          * @instance
                          * @returns {Object.<string,*>} JSON object
                          */
-                        Response.prototype.toJSON = function toJSON() {
+                        Error.prototype.toJSON = function toJSON() {
                             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                         };
 
-                        Response.Error = (function() {
-
-                            /**
-                             * Properties of an Error.
-                             * @memberof anytype.Rpc.Block.History.Move.Response
-                             * @interface IError
-                             * @property {anytype.Rpc.Block.History.Move.Response.Error.Code|null} [code] Error code
-                             * @property {string|null} [description] Error description
-                             */
-
-                            /**
-                             * Constructs a new Error.
-                             * @memberof anytype.Rpc.Block.History.Move.Response
-                             * @classdesc Represents an Error.
-                             * @implements IError
-                             * @constructor
-                             * @param {anytype.Rpc.Block.History.Move.Response.IError=} [properties] Properties to set
-                             */
-                            function Error(properties) {
-                                if (properties)
-                                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                                        if (properties[keys[i]] != null)
-                                            this[keys[i]] = properties[keys[i]];
-                            }
-
-                            /**
-                             * Error code.
-                             * @member {anytype.Rpc.Block.History.Move.Response.Error.Code} code
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @instance
-                             */
-                            Error.prototype.code = 0;
-
-                            /**
-                             * Error description.
-                             * @member {string} description
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @instance
-                             */
-                            Error.prototype.description = "";
-
-                            /**
-                             * Creates a new Error instance using the specified properties.
-                             * @function create
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @static
-                             * @param {anytype.Rpc.Block.History.Move.Response.IError=} [properties] Properties to set
-                             * @returns {anytype.Rpc.Block.History.Move.Response.Error} Error instance
-                             */
-                            Error.create = function create(properties) {
-                                return new Error(properties);
-                            };
-
-                            /**
-                             * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.Block.History.Move.Response.Error.verify|verify} messages.
-                             * @function encode
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @static
-                             * @param {anytype.Rpc.Block.History.Move.Response.IError} message Error message or plain object to encode
-                             * @param {$protobuf.Writer} [writer] Writer to encode to
-                             * @returns {$protobuf.Writer} Writer
-                             */
-                            Error.encode = function encode(message, writer) {
-                                if (!writer)
-                                    writer = $Writer.create();
-                                if (message.code != null && message.hasOwnProperty("code"))
-                                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
-                                if (message.description != null && message.hasOwnProperty("description"))
-                                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
-                                return writer;
-                            };
-
-                            /**
-                             * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.Block.History.Move.Response.Error.verify|verify} messages.
-                             * @function encodeDelimited
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @static
-                             * @param {anytype.Rpc.Block.History.Move.Response.IError} message Error message or plain object to encode
-                             * @param {$protobuf.Writer} [writer] Writer to encode to
-                             * @returns {$protobuf.Writer} Writer
-                             */
-                            Error.encodeDelimited = function encodeDelimited(message, writer) {
-                                return this.encode(message, writer).ldelim();
-                            };
-
-                            /**
-                             * Decodes an Error message from the specified reader or buffer.
-                             * @function decode
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @static
-                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                             * @param {number} [length] Message length if known beforehand
-                             * @returns {anytype.Rpc.Block.History.Move.Response.Error} Error
-                             * @throws {Error} If the payload is not a reader or valid buffer
-                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                             */
-                            Error.decode = function decode(reader, length) {
-                                if (!(reader instanceof $Reader))
-                                    reader = $Reader.create(reader);
-                                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.History.Move.Response.Error();
-                                while (reader.pos < end) {
-                                    var tag = reader.uint32();
-                                    switch (tag >>> 3) {
-                                    case 1:
-                                        message.code = reader.int32();
-                                        break;
-                                    case 2:
-                                        message.description = reader.string();
-                                        break;
-                                    default:
-                                        reader.skipType(tag & 7);
-                                        break;
-                                    }
-                                }
-                                return message;
-                            };
-
-                            /**
-                             * Decodes an Error message from the specified reader or buffer, length delimited.
-                             * @function decodeDelimited
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @static
-                             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                             * @returns {anytype.Rpc.Block.History.Move.Response.Error} Error
-                             * @throws {Error} If the payload is not a reader or valid buffer
-                             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-                             */
-                            Error.decodeDelimited = function decodeDelimited(reader) {
-                                if (!(reader instanceof $Reader))
-                                    reader = new $Reader(reader);
-                                return this.decode(reader, reader.uint32());
-                            };
-
-                            /**
-                             * Verifies an Error message.
-                             * @function verify
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @static
-                             * @param {Object.<string,*>} message Plain object to verify
-                             * @returns {string|null} `null` if valid, otherwise the reason why it is not
-                             */
-                            Error.verify = function verify(message) {
-                                if (typeof message !== "object" || message === null)
-                                    return "object expected";
-                                if (message.code != null && message.hasOwnProperty("code"))
-                                    switch (message.code) {
-                                    default:
-                                        return "code: enum value expected";
-                                    case 0:
-                                    case 1:
-                                    case 2:
-                                    case 3:
-                                        break;
-                                    }
-                                if (message.description != null && message.hasOwnProperty("description"))
-                                    if (!$util.isString(message.description))
-                                        return "description: string expected";
-                                return null;
-                            };
-
-                            /**
-                             * Creates an Error message from a plain object. Also converts values to their respective internal types.
-                             * @function fromObject
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @static
-                             * @param {Object.<string,*>} object Plain object
-                             * @returns {anytype.Rpc.Block.History.Move.Response.Error} Error
-                             */
-                            Error.fromObject = function fromObject(object) {
-                                if (object instanceof $root.anytype.Rpc.Block.History.Move.Response.Error)
-                                    return object;
-                                var message = new $root.anytype.Rpc.Block.History.Move.Response.Error();
-                                switch (object.code) {
-                                case "NULL":
-                                case 0:
-                                    message.code = 0;
-                                    break;
-                                case "UNKNOWN_ERROR":
-                                case 1:
-                                    message.code = 1;
-                                    break;
-                                case "BAD_INPUT":
-                                case 2:
-                                    message.code = 2;
-                                    break;
-                                case "CAN_NOT_MOVE":
-                                case 3:
-                                    message.code = 3;
-                                    break;
-                                }
-                                if (object.description != null)
-                                    message.description = String(object.description);
-                                return message;
-                            };
-
-                            /**
-                             * Creates a plain object from an Error message. Also converts values to other types if specified.
-                             * @function toObject
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @static
-                             * @param {anytype.Rpc.Block.History.Move.Response.Error} message Error
-                             * @param {$protobuf.IConversionOptions} [options] Conversion options
-                             * @returns {Object.<string,*>} Plain object
-                             */
-                            Error.toObject = function toObject(message, options) {
-                                if (!options)
-                                    options = {};
-                                var object = {};
-                                if (options.defaults) {
-                                    object.code = options.enums === String ? "NULL" : 0;
-                                    object.description = "";
-                                }
-                                if (message.code != null && message.hasOwnProperty("code"))
-                                    object.code = options.enums === String ? $root.anytype.Rpc.Block.History.Move.Response.Error.Code[message.code] : message.code;
-                                if (message.description != null && message.hasOwnProperty("description"))
-                                    object.description = message.description;
-                                return object;
-                            };
-
-                            /**
-                             * Converts this Error to JSON.
-                             * @function toJSON
-                             * @memberof anytype.Rpc.Block.History.Move.Response.Error
-                             * @instance
-                             * @returns {Object.<string,*>} JSON object
-                             */
-                            Error.prototype.toJSON = function toJSON() {
-                                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-                            };
-
-                            /**
-                             * Code enum.
-                             * @name anytype.Rpc.Block.History.Move.Response.Error.Code
-                             * @enum {string}
-                             * @property {number} NULL=0 NULL value
-                             * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
-                             * @property {number} BAD_INPUT=2 BAD_INPUT value
-                             * @property {number} CAN_NOT_MOVE=3 CAN_NOT_MOVE value
-                             */
-                            Error.Code = (function() {
-                                var valuesById = {}, values = Object.create(valuesById);
-                                values[valuesById[0] = "NULL"] = 0;
-                                values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
-                                values[valuesById[2] = "BAD_INPUT"] = 2;
-                                values[valuesById[3] = "CAN_NOT_MOVE"] = 3;
-                                return values;
-                            })();
-
-                            return Error;
+                        /**
+                         * Code enum.
+                         * @name anytype.Rpc.Block.Redo.Response.Error.Code
+                         * @enum {string}
+                         * @property {number} NULL=0 NULL value
+                         * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+                         * @property {number} BAD_INPUT=2 BAD_INPUT value
+                         * @property {number} CAN_NOT_MOVE=3 CAN_NOT_MOVE value
+                         */
+                        Error.Code = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "NULL"] = 0;
+                            values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                            values[valuesById[2] = "BAD_INPUT"] = 2;
+                            values[valuesById[3] = "CAN_NOT_MOVE"] = 3;
+                            return values;
                         })();
 
-                        return Response;
+                        return Error;
                     })();
 
-                    return Move;
+                    return Response;
                 })();
 
-                return History;
+                return Redo;
             })();
 
             Block.Open = (function() {
@@ -27741,6 +32101,939 @@ $root.anytype = (function() {
                 })();
 
                 return Create;
+            })();
+
+            Block.CreatePage = (function() {
+
+                /**
+                 * Properties of a CreatePage.
+                 * @memberof anytype.Rpc.Block
+                 * @interface ICreatePage
+                 */
+
+                /**
+                 * Constructs a new CreatePage.
+                 * @memberof anytype.Rpc.Block
+                 * @classdesc Represents a CreatePage.
+                 * @implements ICreatePage
+                 * @constructor
+                 * @param {anytype.Rpc.Block.ICreatePage=} [properties] Properties to set
+                 */
+                function CreatePage(properties) {
+                    if (properties)
+                        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * Creates a new CreatePage instance using the specified properties.
+                 * @function create
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @static
+                 * @param {anytype.Rpc.Block.ICreatePage=} [properties] Properties to set
+                 * @returns {anytype.Rpc.Block.CreatePage} CreatePage instance
+                 */
+                CreatePage.create = function create(properties) {
+                    return new CreatePage(properties);
+                };
+
+                /**
+                 * Encodes the specified CreatePage message. Does not implicitly {@link anytype.Rpc.Block.CreatePage.verify|verify} messages.
+                 * @function encode
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @static
+                 * @param {anytype.Rpc.Block.ICreatePage} message CreatePage message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                CreatePage.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified CreatePage message, length delimited. Does not implicitly {@link anytype.Rpc.Block.CreatePage.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @static
+                 * @param {anytype.Rpc.Block.ICreatePage} message CreatePage message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                CreatePage.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a CreatePage message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {anytype.Rpc.Block.CreatePage} CreatePage
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                CreatePage.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.CreatePage();
+                    while (reader.pos < end) {
+                        var tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a CreatePage message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {anytype.Rpc.Block.CreatePage} CreatePage
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                CreatePage.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a CreatePage message.
+                 * @function verify
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                CreatePage.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a CreatePage message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {anytype.Rpc.Block.CreatePage} CreatePage
+                 */
+                CreatePage.fromObject = function fromObject(object) {
+                    if (object instanceof $root.anytype.Rpc.Block.CreatePage)
+                        return object;
+                    return new $root.anytype.Rpc.Block.CreatePage();
+                };
+
+                /**
+                 * Creates a plain object from a CreatePage message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @static
+                 * @param {anytype.Rpc.Block.CreatePage} message CreatePage
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                CreatePage.toObject = function toObject() {
+                    return {};
+                };
+
+                /**
+                 * Converts this CreatePage to JSON.
+                 * @function toJSON
+                 * @memberof anytype.Rpc.Block.CreatePage
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                CreatePage.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                CreatePage.Request = (function() {
+
+                    /**
+                     * Properties of a Request.
+                     * @memberof anytype.Rpc.Block.CreatePage
+                     * @interface IRequest
+                     * @property {string|null} [contextId] Request contextId
+                     * @property {string|null} [targetId] Request targetId
+                     * @property {anytype.model.IBlock|null} [block] Request block
+                     * @property {anytype.model.Block.Position|null} [position] Request position
+                     */
+
+                    /**
+                     * Constructs a new Request.
+                     * @memberof anytype.Rpc.Block.CreatePage
+                     * @classdesc Represents a Request.
+                     * @implements IRequest
+                     * @constructor
+                     * @param {anytype.Rpc.Block.CreatePage.IRequest=} [properties] Properties to set
+                     */
+                    function Request(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Request contextId.
+                     * @member {string} contextId
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @instance
+                     */
+                    Request.prototype.contextId = "";
+
+                    /**
+                     * Request targetId.
+                     * @member {string} targetId
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @instance
+                     */
+                    Request.prototype.targetId = "";
+
+                    /**
+                     * Request block.
+                     * @member {anytype.model.IBlock|null|undefined} block
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @instance
+                     */
+                    Request.prototype.block = null;
+
+                    /**
+                     * Request position.
+                     * @member {anytype.model.Block.Position} position
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @instance
+                     */
+                    Request.prototype.position = 0;
+
+                    /**
+                     * Creates a new Request instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.CreatePage.IRequest=} [properties] Properties to set
+                     * @returns {anytype.Rpc.Block.CreatePage.Request} Request instance
+                     */
+                    Request.create = function create(properties) {
+                        return new Request(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Request message. Does not implicitly {@link anytype.Rpc.Block.CreatePage.Request.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.CreatePage.IRequest} message Request message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Request.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.contextId);
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.targetId);
+                        if (message.block != null && message.hasOwnProperty("block"))
+                            $root.anytype.model.Block.encode(message.block, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                        if (message.position != null && message.hasOwnProperty("position"))
+                            writer.uint32(/* id 4, wireType 0 =*/32).int32(message.position);
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Request message, length delimited. Does not implicitly {@link anytype.Rpc.Block.CreatePage.Request.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.CreatePage.IRequest} message Request message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Request.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Request message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.Block.CreatePage.Request} Request
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Request.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.CreatePage.Request();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.contextId = reader.string();
+                                break;
+                            case 2:
+                                message.targetId = reader.string();
+                                break;
+                            case 3:
+                                message.block = $root.anytype.model.Block.decode(reader, reader.uint32());
+                                break;
+                            case 4:
+                                message.position = reader.int32();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Request message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.Block.CreatePage.Request} Request
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Request.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Request message.
+                     * @function verify
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Request.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            if (!$util.isString(message.contextId))
+                                return "contextId: string expected";
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            if (!$util.isString(message.targetId))
+                                return "targetId: string expected";
+                        if (message.block != null && message.hasOwnProperty("block")) {
+                            var error = $root.anytype.model.Block.verify(message.block);
+                            if (error)
+                                return "block." + error;
+                        }
+                        if (message.position != null && message.hasOwnProperty("position"))
+                            switch (message.position) {
+                            default:
+                                return "position: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                            case 5:
+                                break;
+                            }
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Request message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.Block.CreatePage.Request} Request
+                     */
+                    Request.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.Block.CreatePage.Request)
+                            return object;
+                        var message = new $root.anytype.Rpc.Block.CreatePage.Request();
+                        if (object.contextId != null)
+                            message.contextId = String(object.contextId);
+                        if (object.targetId != null)
+                            message.targetId = String(object.targetId);
+                        if (object.block != null) {
+                            if (typeof object.block !== "object")
+                                throw TypeError(".anytype.Rpc.Block.CreatePage.Request.block: object expected");
+                            message.block = $root.anytype.model.Block.fromObject(object.block);
+                        }
+                        switch (object.position) {
+                        case "None":
+                        case 0:
+                            message.position = 0;
+                            break;
+                        case "Top":
+                        case 1:
+                            message.position = 1;
+                            break;
+                        case "Bottom":
+                        case 2:
+                            message.position = 2;
+                            break;
+                        case "Left":
+                        case 3:
+                            message.position = 3;
+                            break;
+                        case "Right":
+                        case 4:
+                            message.position = 4;
+                            break;
+                        case "Inner":
+                        case 5:
+                            message.position = 5;
+                            break;
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Request message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @static
+                     * @param {anytype.Rpc.Block.CreatePage.Request} message Request
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Request.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.contextId = "";
+                            object.targetId = "";
+                            object.block = null;
+                            object.position = options.enums === String ? "None" : 0;
+                        }
+                        if (message.contextId != null && message.hasOwnProperty("contextId"))
+                            object.contextId = message.contextId;
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            object.targetId = message.targetId;
+                        if (message.block != null && message.hasOwnProperty("block"))
+                            object.block = $root.anytype.model.Block.toObject(message.block, options);
+                        if (message.position != null && message.hasOwnProperty("position"))
+                            object.position = options.enums === String ? $root.anytype.model.Block.Position[message.position] : message.position;
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Request to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.Block.CreatePage.Request
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Request.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    return Request;
+                })();
+
+                CreatePage.Response = (function() {
+
+                    /**
+                     * Properties of a Response.
+                     * @memberof anytype.Rpc.Block.CreatePage
+                     * @interface IResponse
+                     * @property {anytype.Rpc.Block.CreatePage.Response.IError|null} [error] Response error
+                     * @property {string|null} [blockId] Response blockId
+                     * @property {string|null} [targetId] Response targetId
+                     */
+
+                    /**
+                     * Constructs a new Response.
+                     * @memberof anytype.Rpc.Block.CreatePage
+                     * @classdesc Represents a Response.
+                     * @implements IResponse
+                     * @constructor
+                     * @param {anytype.Rpc.Block.CreatePage.IResponse=} [properties] Properties to set
+                     */
+                    function Response(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Response error.
+                     * @member {anytype.Rpc.Block.CreatePage.Response.IError|null|undefined} error
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @instance
+                     */
+                    Response.prototype.error = null;
+
+                    /**
+                     * Response blockId.
+                     * @member {string} blockId
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @instance
+                     */
+                    Response.prototype.blockId = "";
+
+                    /**
+                     * Response targetId.
+                     * @member {string} targetId
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @instance
+                     */
+                    Response.prototype.targetId = "";
+
+                    /**
+                     * Creates a new Response instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.CreatePage.IResponse=} [properties] Properties to set
+                     * @returns {anytype.Rpc.Block.CreatePage.Response} Response instance
+                     */
+                    Response.create = function create(properties) {
+                        return new Response(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Response message. Does not implicitly {@link anytype.Rpc.Block.CreatePage.Response.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.CreatePage.IResponse} message Response message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Response.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.error != null && message.hasOwnProperty("error"))
+                            $root.anytype.Rpc.Block.CreatePage.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        if (message.blockId != null && message.hasOwnProperty("blockId"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.blockId);
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.targetId);
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Response message, length delimited. Does not implicitly {@link anytype.Rpc.Block.CreatePage.Response.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.CreatePage.IResponse} message Response message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Response.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Response message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Rpc.Block.CreatePage.Response} Response
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Response.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.CreatePage.Response();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.error = $root.anytype.Rpc.Block.CreatePage.Response.Error.decode(reader, reader.uint32());
+                                break;
+                            case 2:
+                                message.blockId = reader.string();
+                                break;
+                            case 3:
+                                message.targetId = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Response message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Rpc.Block.CreatePage.Response} Response
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Response.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Response message.
+                     * @function verify
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Response.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.error != null && message.hasOwnProperty("error")) {
+                            var error = $root.anytype.Rpc.Block.CreatePage.Response.Error.verify(message.error);
+                            if (error)
+                                return "error." + error;
+                        }
+                        if (message.blockId != null && message.hasOwnProperty("blockId"))
+                            if (!$util.isString(message.blockId))
+                                return "blockId: string expected";
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            if (!$util.isString(message.targetId))
+                                return "targetId: string expected";
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Response message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Rpc.Block.CreatePage.Response} Response
+                     */
+                    Response.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Rpc.Block.CreatePage.Response)
+                            return object;
+                        var message = new $root.anytype.Rpc.Block.CreatePage.Response();
+                        if (object.error != null) {
+                            if (typeof object.error !== "object")
+                                throw TypeError(".anytype.Rpc.Block.CreatePage.Response.error: object expected");
+                            message.error = $root.anytype.Rpc.Block.CreatePage.Response.Error.fromObject(object.error);
+                        }
+                        if (object.blockId != null)
+                            message.blockId = String(object.blockId);
+                        if (object.targetId != null)
+                            message.targetId = String(object.targetId);
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Response message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @static
+                     * @param {anytype.Rpc.Block.CreatePage.Response} message Response
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Response.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.error = null;
+                            object.blockId = "";
+                            object.targetId = "";
+                        }
+                        if (message.error != null && message.hasOwnProperty("error"))
+                            object.error = $root.anytype.Rpc.Block.CreatePage.Response.Error.toObject(message.error, options);
+                        if (message.blockId != null && message.hasOwnProperty("blockId"))
+                            object.blockId = message.blockId;
+                        if (message.targetId != null && message.hasOwnProperty("targetId"))
+                            object.targetId = message.targetId;
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Response to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Rpc.Block.CreatePage.Response
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Response.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    Response.Error = (function() {
+
+                        /**
+                         * Properties of an Error.
+                         * @memberof anytype.Rpc.Block.CreatePage.Response
+                         * @interface IError
+                         * @property {anytype.Rpc.Block.CreatePage.Response.Error.Code|null} [code] Error code
+                         * @property {string|null} [description] Error description
+                         */
+
+                        /**
+                         * Constructs a new Error.
+                         * @memberof anytype.Rpc.Block.CreatePage.Response
+                         * @classdesc Represents an Error.
+                         * @implements IError
+                         * @constructor
+                         * @param {anytype.Rpc.Block.CreatePage.Response.IError=} [properties] Properties to set
+                         */
+                        function Error(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Error code.
+                         * @member {anytype.Rpc.Block.CreatePage.Response.Error.Code} code
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @instance
+                         */
+                        Error.prototype.code = 0;
+
+                        /**
+                         * Error description.
+                         * @member {string} description
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @instance
+                         */
+                        Error.prototype.description = "";
+
+                        /**
+                         * Creates a new Error instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.Block.CreatePage.Response.IError=} [properties] Properties to set
+                         * @returns {anytype.Rpc.Block.CreatePage.Response.Error} Error instance
+                         */
+                        Error.create = function create(properties) {
+                            return new Error(properties);
+                        };
+
+                        /**
+                         * Encodes the specified Error message. Does not implicitly {@link anytype.Rpc.Block.CreatePage.Response.Error.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.Block.CreatePage.Response.IError} message Error message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Error.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.description);
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified Error message, length delimited. Does not implicitly {@link anytype.Rpc.Block.CreatePage.Response.Error.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.Block.CreatePage.Response.IError} message Error message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Error.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes an Error message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Rpc.Block.CreatePage.Response.Error} Error
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Error.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Rpc.Block.CreatePage.Response.Error();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    message.code = reader.int32();
+                                    break;
+                                case 2:
+                                    message.description = reader.string();
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes an Error message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Rpc.Block.CreatePage.Response.Error} Error
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Error.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies an Error message.
+                         * @function verify
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        Error.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                switch (message.code) {
+                                default:
+                                    return "code: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                    break;
+                                }
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                if (!$util.isString(message.description))
+                                    return "description: string expected";
+                            return null;
+                        };
+
+                        /**
+                         * Creates an Error message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Rpc.Block.CreatePage.Response.Error} Error
+                         */
+                        Error.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Rpc.Block.CreatePage.Response.Error)
+                                return object;
+                            var message = new $root.anytype.Rpc.Block.CreatePage.Response.Error();
+                            switch (object.code) {
+                            case "NULL":
+                            case 0:
+                                message.code = 0;
+                                break;
+                            case "UNKNOWN_ERROR":
+                            case 1:
+                                message.code = 1;
+                                break;
+                            case "BAD_INPUT":
+                            case 2:
+                                message.code = 2;
+                                break;
+                            }
+                            if (object.description != null)
+                                message.description = String(object.description);
+                            return message;
+                        };
+
+                        /**
+                         * Creates a plain object from an Error message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @static
+                         * @param {anytype.Rpc.Block.CreatePage.Response.Error} message Error
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        Error.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.code = options.enums === String ? "NULL" : 0;
+                                object.description = "";
+                            }
+                            if (message.code != null && message.hasOwnProperty("code"))
+                                object.code = options.enums === String ? $root.anytype.Rpc.Block.CreatePage.Response.Error.Code[message.code] : message.code;
+                            if (message.description != null && message.hasOwnProperty("description"))
+                                object.description = message.description;
+                            return object;
+                        };
+
+                        /**
+                         * Converts this Error to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Rpc.Block.CreatePage.Response.Error
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        Error.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        /**
+                         * Code enum.
+                         * @name anytype.Rpc.Block.CreatePage.Response.Error.Code
+                         * @enum {string}
+                         * @property {number} NULL=0 NULL value
+                         * @property {number} UNKNOWN_ERROR=1 UNKNOWN_ERROR value
+                         * @property {number} BAD_INPUT=2 BAD_INPUT value
+                         */
+                        Error.Code = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "NULL"] = 0;
+                            values[valuesById[1] = "UNKNOWN_ERROR"] = 1;
+                            values[valuesById[2] = "BAD_INPUT"] = 2;
+                            return values;
+                        })();
+
+                        return Error;
+                    })();
+
+                    return Response;
+                })();
+
+                return CreatePage;
             })();
 
             Block.Unlink = (function() {
@@ -37559,8 +42852,8 @@ $root.anytype = (function() {
                              * Properties of a Request.
                              * @memberof anytype.Rpc.Ipfs.Image.Get.Blob
                              * @interface IRequest
-                             * @property {string|null} [id] Request id
-                             * @property {anytype.model.Image.Size|null} [size] Request size
+                             * @property {string|null} [hash] Request hash
+                             * @property {number|null} [wantWidth] Request wantWidth
                              */
 
                             /**
@@ -37579,20 +42872,20 @@ $root.anytype = (function() {
                             }
 
                             /**
-                             * Request id.
-                             * @member {string} id
+                             * Request hash.
+                             * @member {string} hash
                              * @memberof anytype.Rpc.Ipfs.Image.Get.Blob.Request
                              * @instance
                              */
-                            Request.prototype.id = "";
+                            Request.prototype.hash = "";
 
                             /**
-                             * Request size.
-                             * @member {anytype.model.Image.Size} size
+                             * Request wantWidth.
+                             * @member {number} wantWidth
                              * @memberof anytype.Rpc.Ipfs.Image.Get.Blob.Request
                              * @instance
                              */
-                            Request.prototype.size = 0;
+                            Request.prototype.wantWidth = 0;
 
                             /**
                              * Creates a new Request instance using the specified properties.
@@ -37618,10 +42911,10 @@ $root.anytype = (function() {
                             Request.encode = function encode(message, writer) {
                                 if (!writer)
                                     writer = $Writer.create();
-                                if (message.id != null && message.hasOwnProperty("id"))
-                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
-                                if (message.size != null && message.hasOwnProperty("size"))
-                                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.size);
+                                if (message.hash != null && message.hasOwnProperty("hash"))
+                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.hash);
+                                if (message.wantWidth != null && message.hasOwnProperty("wantWidth"))
+                                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.wantWidth);
                                 return writer;
                             };
 
@@ -37657,10 +42950,10 @@ $root.anytype = (function() {
                                     var tag = reader.uint32();
                                     switch (tag >>> 3) {
                                     case 1:
-                                        message.id = reader.string();
+                                        message.hash = reader.string();
                                         break;
                                     case 2:
-                                        message.size = reader.int32();
+                                        message.wantWidth = reader.int32();
                                         break;
                                     default:
                                         reader.skipType(tag & 7);
@@ -37697,18 +42990,12 @@ $root.anytype = (function() {
                             Request.verify = function verify(message) {
                                 if (typeof message !== "object" || message === null)
                                     return "object expected";
-                                if (message.id != null && message.hasOwnProperty("id"))
-                                    if (!$util.isString(message.id))
-                                        return "id: string expected";
-                                if (message.size != null && message.hasOwnProperty("size"))
-                                    switch (message.size) {
-                                    default:
-                                        return "size: enum value expected";
-                                    case 0:
-                                    case 1:
-                                    case 2:
-                                        break;
-                                    }
+                                if (message.hash != null && message.hasOwnProperty("hash"))
+                                    if (!$util.isString(message.hash))
+                                        return "hash: string expected";
+                                if (message.wantWidth != null && message.hasOwnProperty("wantWidth"))
+                                    if (!$util.isInteger(message.wantWidth))
+                                        return "wantWidth: integer expected";
                                 return null;
                             };
 
@@ -37724,22 +43011,10 @@ $root.anytype = (function() {
                                 if (object instanceof $root.anytype.Rpc.Ipfs.Image.Get.Blob.Request)
                                     return object;
                                 var message = new $root.anytype.Rpc.Ipfs.Image.Get.Blob.Request();
-                                if (object.id != null)
-                                    message.id = String(object.id);
-                                switch (object.size) {
-                                case "Large":
-                                case 0:
-                                    message.size = 0;
-                                    break;
-                                case "Small":
-                                case 1:
-                                    message.size = 1;
-                                    break;
-                                case "Thumb":
-                                case 2:
-                                    message.size = 2;
-                                    break;
-                                }
+                                if (object.hash != null)
+                                    message.hash = String(object.hash);
+                                if (object.wantWidth != null)
+                                    message.wantWidth = object.wantWidth | 0;
                                 return message;
                             };
 
@@ -37757,13 +43032,13 @@ $root.anytype = (function() {
                                     options = {};
                                 var object = {};
                                 if (options.defaults) {
-                                    object.id = "";
-                                    object.size = options.enums === String ? "Large" : 0;
+                                    object.hash = "";
+                                    object.wantWidth = 0;
                                 }
-                                if (message.id != null && message.hasOwnProperty("id"))
-                                    object.id = message.id;
-                                if (message.size != null && message.hasOwnProperty("size"))
-                                    object.size = options.enums === String ? $root.anytype.model.Image.Size[message.size] : message.size;
+                                if (message.hash != null && message.hasOwnProperty("hash"))
+                                    object.hash = message.hash;
+                                if (message.wantWidth != null && message.hasOwnProperty("wantWidth"))
+                                    object.wantWidth = message.wantWidth;
                                 return object;
                             };
 
@@ -38436,8 +43711,8 @@ $root.anytype = (function() {
                              * Properties of a Request.
                              * @memberof anytype.Rpc.Ipfs.Image.Get.File
                              * @interface IRequest
-                             * @property {string|null} [id] Request id
-                             * @property {anytype.model.Image.Size|null} [size] Request size
+                             * @property {string|null} [hash] Request hash
+                             * @property {number|null} [wantWidth] Request wantWidth
                              */
 
                             /**
@@ -38456,20 +43731,20 @@ $root.anytype = (function() {
                             }
 
                             /**
-                             * Request id.
-                             * @member {string} id
+                             * Request hash.
+                             * @member {string} hash
                              * @memberof anytype.Rpc.Ipfs.Image.Get.File.Request
                              * @instance
                              */
-                            Request.prototype.id = "";
+                            Request.prototype.hash = "";
 
                             /**
-                             * Request size.
-                             * @member {anytype.model.Image.Size} size
+                             * Request wantWidth.
+                             * @member {number} wantWidth
                              * @memberof anytype.Rpc.Ipfs.Image.Get.File.Request
                              * @instance
                              */
-                            Request.prototype.size = 0;
+                            Request.prototype.wantWidth = 0;
 
                             /**
                              * Creates a new Request instance using the specified properties.
@@ -38495,10 +43770,10 @@ $root.anytype = (function() {
                             Request.encode = function encode(message, writer) {
                                 if (!writer)
                                     writer = $Writer.create();
-                                if (message.id != null && message.hasOwnProperty("id"))
-                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
-                                if (message.size != null && message.hasOwnProperty("size"))
-                                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.size);
+                                if (message.hash != null && message.hasOwnProperty("hash"))
+                                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.hash);
+                                if (message.wantWidth != null && message.hasOwnProperty("wantWidth"))
+                                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.wantWidth);
                                 return writer;
                             };
 
@@ -38534,10 +43809,10 @@ $root.anytype = (function() {
                                     var tag = reader.uint32();
                                     switch (tag >>> 3) {
                                     case 1:
-                                        message.id = reader.string();
+                                        message.hash = reader.string();
                                         break;
                                     case 2:
-                                        message.size = reader.int32();
+                                        message.wantWidth = reader.int32();
                                         break;
                                     default:
                                         reader.skipType(tag & 7);
@@ -38574,18 +43849,12 @@ $root.anytype = (function() {
                             Request.verify = function verify(message) {
                                 if (typeof message !== "object" || message === null)
                                     return "object expected";
-                                if (message.id != null && message.hasOwnProperty("id"))
-                                    if (!$util.isString(message.id))
-                                        return "id: string expected";
-                                if (message.size != null && message.hasOwnProperty("size"))
-                                    switch (message.size) {
-                                    default:
-                                        return "size: enum value expected";
-                                    case 0:
-                                    case 1:
-                                    case 2:
-                                        break;
-                                    }
+                                if (message.hash != null && message.hasOwnProperty("hash"))
+                                    if (!$util.isString(message.hash))
+                                        return "hash: string expected";
+                                if (message.wantWidth != null && message.hasOwnProperty("wantWidth"))
+                                    if (!$util.isInteger(message.wantWidth))
+                                        return "wantWidth: integer expected";
                                 return null;
                             };
 
@@ -38601,22 +43870,10 @@ $root.anytype = (function() {
                                 if (object instanceof $root.anytype.Rpc.Ipfs.Image.Get.File.Request)
                                     return object;
                                 var message = new $root.anytype.Rpc.Ipfs.Image.Get.File.Request();
-                                if (object.id != null)
-                                    message.id = String(object.id);
-                                switch (object.size) {
-                                case "Large":
-                                case 0:
-                                    message.size = 0;
-                                    break;
-                                case "Small":
-                                case 1:
-                                    message.size = 1;
-                                    break;
-                                case "Thumb":
-                                case 2:
-                                    message.size = 2;
-                                    break;
-                                }
+                                if (object.hash != null)
+                                    message.hash = String(object.hash);
+                                if (object.wantWidth != null)
+                                    message.wantWidth = object.wantWidth | 0;
                                 return message;
                             };
 
@@ -38634,13 +43891,13 @@ $root.anytype = (function() {
                                     options = {};
                                 var object = {};
                                 if (options.defaults) {
-                                    object.id = "";
-                                    object.size = options.enums === String ? "Large" : 0;
+                                    object.hash = "";
+                                    object.wantWidth = 0;
                                 }
-                                if (message.id != null && message.hasOwnProperty("id"))
-                                    object.id = message.id;
-                                if (message.size != null && message.hasOwnProperty("size"))
-                                    object.size = options.enums === String ? $root.anytype.model.Image.Size[message.size] : message.size;
+                                if (message.hash != null && message.hasOwnProperty("hash"))
+                                    object.hash = message.hash;
+                                if (message.wantWidth != null && message.hasOwnProperty("wantWidth"))
+                                    object.wantWidth = message.wantWidth;
                                 return object;
                             };
 
@@ -39632,6 +44889,7 @@ $root.anytype = (function() {
                      * @interface IResponse
                      * @property {anytype.Rpc.Config.Get.Response.IError|null} [error] Response error
                      * @property {string|null} [homeBlockId] Response homeBlockId
+                     * @property {string|null} [gatewayUrl] Response gatewayUrl
                      */
 
                     /**
@@ -39666,6 +44924,14 @@ $root.anytype = (function() {
                     Response.prototype.homeBlockId = "";
 
                     /**
+                     * Response gatewayUrl.
+                     * @member {string} gatewayUrl
+                     * @memberof anytype.Rpc.Config.Get.Response
+                     * @instance
+                     */
+                    Response.prototype.gatewayUrl = "";
+
+                    /**
                      * Creates a new Response instance using the specified properties.
                      * @function create
                      * @memberof anytype.Rpc.Config.Get.Response
@@ -39693,6 +44959,8 @@ $root.anytype = (function() {
                             $root.anytype.Rpc.Config.Get.Response.Error.encode(message.error, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                         if (message.homeBlockId != null && message.hasOwnProperty("homeBlockId"))
                             writer.uint32(/* id 2, wireType 2 =*/18).string(message.homeBlockId);
+                        if (message.gatewayUrl != null && message.hasOwnProperty("gatewayUrl"))
+                            writer.uint32(/* id 3, wireType 2 =*/26).string(message.gatewayUrl);
                         return writer;
                     };
 
@@ -39732,6 +45000,9 @@ $root.anytype = (function() {
                                 break;
                             case 2:
                                 message.homeBlockId = reader.string();
+                                break;
+                            case 3:
+                                message.gatewayUrl = reader.string();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -39776,6 +45047,9 @@ $root.anytype = (function() {
                         if (message.homeBlockId != null && message.hasOwnProperty("homeBlockId"))
                             if (!$util.isString(message.homeBlockId))
                                 return "homeBlockId: string expected";
+                        if (message.gatewayUrl != null && message.hasOwnProperty("gatewayUrl"))
+                            if (!$util.isString(message.gatewayUrl))
+                                return "gatewayUrl: string expected";
                         return null;
                     };
 
@@ -39798,6 +45072,8 @@ $root.anytype = (function() {
                         }
                         if (object.homeBlockId != null)
                             message.homeBlockId = String(object.homeBlockId);
+                        if (object.gatewayUrl != null)
+                            message.gatewayUrl = String(object.gatewayUrl);
                         return message;
                     };
 
@@ -39817,11 +45093,14 @@ $root.anytype = (function() {
                         if (options.defaults) {
                             object.error = null;
                             object.homeBlockId = "";
+                            object.gatewayUrl = "";
                         }
                         if (message.error != null && message.hasOwnProperty("error"))
                             object.error = $root.anytype.Rpc.Config.Get.Response.Error.toObject(message.error, options);
                         if (message.homeBlockId != null && message.hasOwnProperty("homeBlockId"))
                             object.homeBlockId = message.homeBlockId;
+                        if (message.gatewayUrl != null && message.hasOwnProperty("gatewayUrl"))
+                            object.gatewayUrl = message.gatewayUrl;
                         return object;
                     };
 
@@ -41195,6 +46474,7 @@ $root.anytype = (function() {
              * @property {anytype.Event.Block.Set.IText|null} [blockSetText] Message blockSetText
              * @property {anytype.Event.Block.Set.IFile|null} [blockSetFile] Message blockSetFile
              * @property {anytype.Event.Block.Set.IIcon|null} [blockSetIcon] Message blockSetIcon
+             * @property {anytype.Event.Block.Set.ILink|null} [blockSetLink] Message blockSetLink
              * @property {anytype.Event.Block.IShow|null} [blockShow] Message blockShow
              * @property {anytype.Event.User.Block.IJoin|null} [userBlockJoin] Message userBlockJoin
              * @property {anytype.Event.User.Block.ILeft|null} [userBlockLeft] Message userBlockLeft
@@ -41315,6 +46595,14 @@ $root.anytype = (function() {
             Message.prototype.blockSetIcon = null;
 
             /**
+             * Message blockSetLink.
+             * @member {anytype.Event.Block.Set.ILink|null|undefined} blockSetLink
+             * @memberof anytype.Event.Message
+             * @instance
+             */
+            Message.prototype.blockSetLink = null;
+
+            /**
              * Message blockShow.
              * @member {anytype.Event.Block.IShow|null|undefined} blockShow
              * @memberof anytype.Event.Message
@@ -41367,12 +46655,12 @@ $root.anytype = (function() {
 
             /**
              * Message value.
-             * @member {"accountShow"|"blockAdd"|"blockDelete"|"filesUpload"|"marksInfo"|"blockSetFields"|"blockSetChildrenIds"|"blockSetRestrictions"|"blockSetIsArchived"|"blockSetText"|"blockSetFile"|"blockSetIcon"|"blockShow"|"userBlockJoin"|"userBlockLeft"|"userBlockSelectRange"|"userBlockTextRange"|"ping"|undefined} value
+             * @member {"accountShow"|"blockAdd"|"blockDelete"|"filesUpload"|"marksInfo"|"blockSetFields"|"blockSetChildrenIds"|"blockSetRestrictions"|"blockSetIsArchived"|"blockSetText"|"blockSetFile"|"blockSetIcon"|"blockSetLink"|"blockShow"|"userBlockJoin"|"userBlockLeft"|"userBlockSelectRange"|"userBlockTextRange"|"ping"|undefined} value
              * @memberof anytype.Event.Message
              * @instance
              */
             Object.defineProperty(Message.prototype, "value", {
-                get: $util.oneOfGetter($oneOfFields = ["accountShow", "blockAdd", "blockDelete", "filesUpload", "marksInfo", "blockSetFields", "blockSetChildrenIds", "blockSetRestrictions", "blockSetIsArchived", "blockSetText", "blockSetFile", "blockSetIcon", "blockShow", "userBlockJoin", "userBlockLeft", "userBlockSelectRange", "userBlockTextRange", "ping"]),
+                get: $util.oneOfGetter($oneOfFields = ["accountShow", "blockAdd", "blockDelete", "filesUpload", "marksInfo", "blockSetFields", "blockSetChildrenIds", "blockSetRestrictions", "blockSetIsArchived", "blockSetText", "blockSetFile", "blockSetIcon", "blockSetLink", "blockShow", "userBlockJoin", "userBlockLeft", "userBlockSelectRange", "userBlockTextRange", "ping"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -41424,16 +46712,18 @@ $root.anytype = (function() {
                     $root.anytype.Event.Block.Set.File.encode(message.blockSetFile, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
                 if (message.blockSetIcon != null && message.hasOwnProperty("blockSetIcon"))
                     $root.anytype.Event.Block.Set.Icon.encode(message.blockSetIcon, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
+                if (message.blockSetLink != null && message.hasOwnProperty("blockSetLink"))
+                    $root.anytype.Event.Block.Set.Link.encode(message.blockSetLink, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
                 if (message.blockShow != null && message.hasOwnProperty("blockShow"))
-                    $root.anytype.Event.Block.Show.encode(message.blockShow, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
+                    $root.anytype.Event.Block.Show.encode(message.blockShow, writer.uint32(/* id 20, wireType 2 =*/162).fork()).ldelim();
                 if (message.userBlockJoin != null && message.hasOwnProperty("userBlockJoin"))
-                    $root.anytype.Event.User.Block.Join.encode(message.userBlockJoin, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
+                    $root.anytype.Event.User.Block.Join.encode(message.userBlockJoin, writer.uint32(/* id 21, wireType 2 =*/170).fork()).ldelim();
                 if (message.userBlockLeft != null && message.hasOwnProperty("userBlockLeft"))
-                    $root.anytype.Event.User.Block.Left.encode(message.userBlockLeft, writer.uint32(/* id 15, wireType 2 =*/122).fork()).ldelim();
+                    $root.anytype.Event.User.Block.Left.encode(message.userBlockLeft, writer.uint32(/* id 22, wireType 2 =*/178).fork()).ldelim();
                 if (message.userBlockSelectRange != null && message.hasOwnProperty("userBlockSelectRange"))
-                    $root.anytype.Event.User.Block.SelectRange.encode(message.userBlockSelectRange, writer.uint32(/* id 16, wireType 2 =*/130).fork()).ldelim();
+                    $root.anytype.Event.User.Block.SelectRange.encode(message.userBlockSelectRange, writer.uint32(/* id 23, wireType 2 =*/186).fork()).ldelim();
                 if (message.userBlockTextRange != null && message.hasOwnProperty("userBlockTextRange"))
-                    $root.anytype.Event.User.Block.TextRange.encode(message.userBlockTextRange, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
+                    $root.anytype.Event.User.Block.TextRange.encode(message.userBlockTextRange, writer.uint32(/* id 24, wireType 2 =*/194).fork()).ldelim();
                 if (message.ping != null && message.hasOwnProperty("ping"))
                     $root.anytype.Event.Ping.encode(message.ping, writer.uint32(/* id 100, wireType 2 =*/802).fork()).ldelim();
                 return writer;
@@ -41507,18 +46797,21 @@ $root.anytype = (function() {
                         message.blockSetIcon = $root.anytype.Event.Block.Set.Icon.decode(reader, reader.uint32());
                         break;
                     case 13:
+                        message.blockSetLink = $root.anytype.Event.Block.Set.Link.decode(reader, reader.uint32());
+                        break;
+                    case 20:
                         message.blockShow = $root.anytype.Event.Block.Show.decode(reader, reader.uint32());
                         break;
-                    case 14:
+                    case 21:
                         message.userBlockJoin = $root.anytype.Event.User.Block.Join.decode(reader, reader.uint32());
                         break;
-                    case 15:
+                    case 22:
                         message.userBlockLeft = $root.anytype.Event.User.Block.Left.decode(reader, reader.uint32());
                         break;
-                    case 16:
+                    case 23:
                         message.userBlockSelectRange = $root.anytype.Event.User.Block.SelectRange.decode(reader, reader.uint32());
                         break;
-                    case 17:
+                    case 24:
                         message.userBlockTextRange = $root.anytype.Event.User.Block.TextRange.decode(reader, reader.uint32());
                         break;
                     case 100:
@@ -41678,6 +46971,16 @@ $root.anytype = (function() {
                             return "blockSetIcon." + error;
                     }
                 }
+                if (message.blockSetLink != null && message.hasOwnProperty("blockSetLink")) {
+                    if (properties.value === 1)
+                        return "value: multiple values";
+                    properties.value = 1;
+                    {
+                        var error = $root.anytype.Event.Block.Set.Link.verify(message.blockSetLink);
+                        if (error)
+                            return "blockSetLink." + error;
+                    }
+                }
                 if (message.blockShow != null && message.hasOwnProperty("blockShow")) {
                     if (properties.value === 1)
                         return "value: multiple values";
@@ -41813,6 +47116,11 @@ $root.anytype = (function() {
                         throw TypeError(".anytype.Event.Message.blockSetIcon: object expected");
                     message.blockSetIcon = $root.anytype.Event.Block.Set.Icon.fromObject(object.blockSetIcon);
                 }
+                if (object.blockSetLink != null) {
+                    if (typeof object.blockSetLink !== "object")
+                        throw TypeError(".anytype.Event.Message.blockSetLink: object expected");
+                    message.blockSetLink = $root.anytype.Event.Block.Set.Link.fromObject(object.blockSetLink);
+                }
                 if (object.blockShow != null) {
                     if (typeof object.blockShow !== "object")
                         throw TypeError(".anytype.Event.Message.blockShow: object expected");
@@ -41918,6 +47226,11 @@ $root.anytype = (function() {
                     object.blockSetIcon = $root.anytype.Event.Block.Set.Icon.toObject(message.blockSetIcon, options);
                     if (options.oneofs)
                         object.value = "blockSetIcon";
+                }
+                if (message.blockSetLink != null && message.hasOwnProperty("blockSetLink")) {
+                    object.blockSetLink = $root.anytype.Event.Block.Set.Link.toObject(message.blockSetLink, options);
+                    if (options.oneofs)
+                        object.value = "blockSetLink";
                 }
                 if (message.blockShow != null && message.hasOwnProperty("blockShow")) {
                     object.blockShow = $root.anytype.Event.Block.Show.toObject(message.blockShow, options);
@@ -46181,8 +51494,10 @@ $root.anytype = (function() {
                      * @property {string|null} [id] File id
                      * @property {anytype.Event.Block.Set.File.IType|null} [type] File type
                      * @property {anytype.Event.Block.Set.File.IState|null} [state] File state
-                     * @property {anytype.Event.Block.Set.File.ILocalFilePath|null} [localFilePath] File localFilePath
-                     * @property {anytype.Event.Block.Set.File.IPreviewLocalFilePath|null} [previewLocalFilePath] File previewLocalFilePath
+                     * @property {anytype.Event.Block.Set.File.IMime|null} [mime] File mime
+                     * @property {anytype.Event.Block.Set.File.IHash|null} [hash] File hash
+                     * @property {anytype.Event.Block.Set.File.IName|null} [name] File name
+                     * @property {anytype.Event.Block.Set.File.ISize|null} [size] File size
                      */
 
                     /**
@@ -46225,20 +51540,36 @@ $root.anytype = (function() {
                     File.prototype.state = null;
 
                     /**
-                     * File localFilePath.
-                     * @member {anytype.Event.Block.Set.File.ILocalFilePath|null|undefined} localFilePath
+                     * File mime.
+                     * @member {anytype.Event.Block.Set.File.IMime|null|undefined} mime
                      * @memberof anytype.Event.Block.Set.File
                      * @instance
                      */
-                    File.prototype.localFilePath = null;
+                    File.prototype.mime = null;
 
                     /**
-                     * File previewLocalFilePath.
-                     * @member {anytype.Event.Block.Set.File.IPreviewLocalFilePath|null|undefined} previewLocalFilePath
+                     * File hash.
+                     * @member {anytype.Event.Block.Set.File.IHash|null|undefined} hash
                      * @memberof anytype.Event.Block.Set.File
                      * @instance
                      */
-                    File.prototype.previewLocalFilePath = null;
+                    File.prototype.hash = null;
+
+                    /**
+                     * File name.
+                     * @member {anytype.Event.Block.Set.File.IName|null|undefined} name
+                     * @memberof anytype.Event.Block.Set.File
+                     * @instance
+                     */
+                    File.prototype.name = null;
+
+                    /**
+                     * File size.
+                     * @member {anytype.Event.Block.Set.File.ISize|null|undefined} size
+                     * @memberof anytype.Event.Block.Set.File
+                     * @instance
+                     */
+                    File.prototype.size = null;
 
                     /**
                      * Creates a new File instance using the specified properties.
@@ -46270,10 +51601,14 @@ $root.anytype = (function() {
                             $root.anytype.Event.Block.Set.File.Type.encode(message.type, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                         if (message.state != null && message.hasOwnProperty("state"))
                             $root.anytype.Event.Block.Set.File.State.encode(message.state, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-                        if (message.localFilePath != null && message.hasOwnProperty("localFilePath"))
-                            $root.anytype.Event.Block.Set.File.LocalFilePath.encode(message.localFilePath, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
-                        if (message.previewLocalFilePath != null && message.hasOwnProperty("previewLocalFilePath"))
-                            $root.anytype.Event.Block.Set.File.PreviewLocalFilePath.encode(message.previewLocalFilePath, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                        if (message.mime != null && message.hasOwnProperty("mime"))
+                            $root.anytype.Event.Block.Set.File.Mime.encode(message.mime, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.hash != null && message.hasOwnProperty("hash"))
+                            $root.anytype.Event.Block.Set.File.Hash.encode(message.hash, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            $root.anytype.Event.Block.Set.File.Name.encode(message.name, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                        if (message.size != null && message.hasOwnProperty("size"))
+                            $root.anytype.Event.Block.Set.File.Size.encode(message.size, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
                         return writer;
                     };
 
@@ -46318,10 +51653,16 @@ $root.anytype = (function() {
                                 message.state = $root.anytype.Event.Block.Set.File.State.decode(reader, reader.uint32());
                                 break;
                             case 4:
-                                message.localFilePath = $root.anytype.Event.Block.Set.File.LocalFilePath.decode(reader, reader.uint32());
+                                message.mime = $root.anytype.Event.Block.Set.File.Mime.decode(reader, reader.uint32());
                                 break;
                             case 5:
-                                message.previewLocalFilePath = $root.anytype.Event.Block.Set.File.PreviewLocalFilePath.decode(reader, reader.uint32());
+                                message.hash = $root.anytype.Event.Block.Set.File.Hash.decode(reader, reader.uint32());
+                                break;
+                            case 6:
+                                message.name = $root.anytype.Event.Block.Set.File.Name.decode(reader, reader.uint32());
+                                break;
+                            case 7:
+                                message.size = $root.anytype.Event.Block.Set.File.Size.decode(reader, reader.uint32());
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -46371,15 +51712,25 @@ $root.anytype = (function() {
                             if (error)
                                 return "state." + error;
                         }
-                        if (message.localFilePath != null && message.hasOwnProperty("localFilePath")) {
-                            var error = $root.anytype.Event.Block.Set.File.LocalFilePath.verify(message.localFilePath);
+                        if (message.mime != null && message.hasOwnProperty("mime")) {
+                            var error = $root.anytype.Event.Block.Set.File.Mime.verify(message.mime);
                             if (error)
-                                return "localFilePath." + error;
+                                return "mime." + error;
                         }
-                        if (message.previewLocalFilePath != null && message.hasOwnProperty("previewLocalFilePath")) {
-                            var error = $root.anytype.Event.Block.Set.File.PreviewLocalFilePath.verify(message.previewLocalFilePath);
+                        if (message.hash != null && message.hasOwnProperty("hash")) {
+                            var error = $root.anytype.Event.Block.Set.File.Hash.verify(message.hash);
                             if (error)
-                                return "previewLocalFilePath." + error;
+                                return "hash." + error;
+                        }
+                        if (message.name != null && message.hasOwnProperty("name")) {
+                            var error = $root.anytype.Event.Block.Set.File.Name.verify(message.name);
+                            if (error)
+                                return "name." + error;
+                        }
+                        if (message.size != null && message.hasOwnProperty("size")) {
+                            var error = $root.anytype.Event.Block.Set.File.Size.verify(message.size);
+                            if (error)
+                                return "size." + error;
                         }
                         return null;
                     };
@@ -46408,15 +51759,25 @@ $root.anytype = (function() {
                                 throw TypeError(".anytype.Event.Block.Set.File.state: object expected");
                             message.state = $root.anytype.Event.Block.Set.File.State.fromObject(object.state);
                         }
-                        if (object.localFilePath != null) {
-                            if (typeof object.localFilePath !== "object")
-                                throw TypeError(".anytype.Event.Block.Set.File.localFilePath: object expected");
-                            message.localFilePath = $root.anytype.Event.Block.Set.File.LocalFilePath.fromObject(object.localFilePath);
+                        if (object.mime != null) {
+                            if (typeof object.mime !== "object")
+                                throw TypeError(".anytype.Event.Block.Set.File.mime: object expected");
+                            message.mime = $root.anytype.Event.Block.Set.File.Mime.fromObject(object.mime);
                         }
-                        if (object.previewLocalFilePath != null) {
-                            if (typeof object.previewLocalFilePath !== "object")
-                                throw TypeError(".anytype.Event.Block.Set.File.previewLocalFilePath: object expected");
-                            message.previewLocalFilePath = $root.anytype.Event.Block.Set.File.PreviewLocalFilePath.fromObject(object.previewLocalFilePath);
+                        if (object.hash != null) {
+                            if (typeof object.hash !== "object")
+                                throw TypeError(".anytype.Event.Block.Set.File.hash: object expected");
+                            message.hash = $root.anytype.Event.Block.Set.File.Hash.fromObject(object.hash);
+                        }
+                        if (object.name != null) {
+                            if (typeof object.name !== "object")
+                                throw TypeError(".anytype.Event.Block.Set.File.name: object expected");
+                            message.name = $root.anytype.Event.Block.Set.File.Name.fromObject(object.name);
+                        }
+                        if (object.size != null) {
+                            if (typeof object.size !== "object")
+                                throw TypeError(".anytype.Event.Block.Set.File.size: object expected");
+                            message.size = $root.anytype.Event.Block.Set.File.Size.fromObject(object.size);
                         }
                         return message;
                     };
@@ -46438,8 +51799,10 @@ $root.anytype = (function() {
                             object.id = "";
                             object.type = null;
                             object.state = null;
-                            object.localFilePath = null;
-                            object.previewLocalFilePath = null;
+                            object.mime = null;
+                            object.hash = null;
+                            object.name = null;
+                            object.size = null;
                         }
                         if (message.id != null && message.hasOwnProperty("id"))
                             object.id = message.id;
@@ -46447,10 +51810,14 @@ $root.anytype = (function() {
                             object.type = $root.anytype.Event.Block.Set.File.Type.toObject(message.type, options);
                         if (message.state != null && message.hasOwnProperty("state"))
                             object.state = $root.anytype.Event.Block.Set.File.State.toObject(message.state, options);
-                        if (message.localFilePath != null && message.hasOwnProperty("localFilePath"))
-                            object.localFilePath = $root.anytype.Event.Block.Set.File.LocalFilePath.toObject(message.localFilePath, options);
-                        if (message.previewLocalFilePath != null && message.hasOwnProperty("previewLocalFilePath"))
-                            object.previewLocalFilePath = $root.anytype.Event.Block.Set.File.PreviewLocalFilePath.toObject(message.previewLocalFilePath, options);
+                        if (message.mime != null && message.hasOwnProperty("mime"))
+                            object.mime = $root.anytype.Event.Block.Set.File.Mime.toObject(message.mime, options);
+                        if (message.hash != null && message.hasOwnProperty("hash"))
+                            object.hash = $root.anytype.Event.Block.Set.File.Hash.toObject(message.hash, options);
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            object.name = $root.anytype.Event.Block.Set.File.Name.toObject(message.name, options);
+                        if (message.size != null && message.hasOwnProperty("size"))
+                            object.size = $root.anytype.Event.Block.Set.File.Size.toObject(message.size, options);
                         return object;
                     };
 
@@ -46977,7 +52344,6 @@ $root.anytype = (function() {
                                 case 1:
                                 case 2:
                                 case 3:
-                                case 4:
                                     break;
                                 }
                             return null;
@@ -47004,17 +52370,13 @@ $root.anytype = (function() {
                             case 1:
                                 message.value = 1;
                                 break;
-                            case "PreviewDownloaded":
+                            case "Done":
                             case 2:
                                 message.value = 2;
                                 break;
-                            case "Downloading":
+                            case "Error":
                             case 3:
                                 message.value = 3;
-                                break;
-                            case "Done":
-                            case 4:
-                                message.value = 4;
                                 break;
                             }
                             return message;
@@ -47191,6 +52553,7 @@ $root.anytype = (function() {
                                 case 0:
                                 case 1:
                                 case 2:
+                                case 3:
                                     break;
                                 }
                             return null;
@@ -47209,17 +52572,21 @@ $root.anytype = (function() {
                                 return object;
                             var message = new $root.anytype.Event.Block.Set.File.Type();
                             switch (object.value) {
-                            case "File":
+                            case "None":
                             case 0:
                                 message.value = 0;
                                 break;
-                            case "Image":
+                            case "File":
                             case 1:
                                 message.value = 1;
                                 break;
-                            case "Video":
+                            case "Image":
                             case 2:
                                 message.value = 2;
+                                break;
+                            case "Video":
+                            case 3:
+                                message.value = 3;
                                 break;
                             }
                             return message;
@@ -47239,7 +52606,7 @@ $root.anytype = (function() {
                                 options = {};
                             var object = {};
                             if (options.defaults)
-                                object.value = options.enums === String ? "File" : 0;
+                                object.value = options.enums === String ? "None" : 0;
                             if (message.value != null && message.hasOwnProperty("value"))
                                 object.value = options.enums === String ? $root.anytype.model.Block.Content.File.Type[message.value] : message.value;
                             return object;
@@ -47259,24 +52626,24 @@ $root.anytype = (function() {
                         return Type;
                     })();
 
-                    File.LocalFilePath = (function() {
+                    File.Hash = (function() {
 
                         /**
-                         * Properties of a LocalFilePath.
+                         * Properties of a Hash.
                          * @memberof anytype.Event.Block.Set.File
-                         * @interface ILocalFilePath
-                         * @property {string|null} [value] LocalFilePath value
+                         * @interface IHash
+                         * @property {string|null} [value] Hash value
                          */
 
                         /**
-                         * Constructs a new LocalFilePath.
+                         * Constructs a new Hash.
                          * @memberof anytype.Event.Block.Set.File
-                         * @classdesc Represents a LocalFilePath.
-                         * @implements ILocalFilePath
+                         * @classdesc Represents a Hash.
+                         * @implements IHash
                          * @constructor
-                         * @param {anytype.Event.Block.Set.File.ILocalFilePath=} [properties] Properties to set
+                         * @param {anytype.Event.Block.Set.File.IHash=} [properties] Properties to set
                          */
-                        function LocalFilePath(properties) {
+                        function Hash(properties) {
                             if (properties)
                                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                     if (properties[keys[i]] != null)
@@ -47284,35 +52651,35 @@ $root.anytype = (function() {
                         }
 
                         /**
-                         * LocalFilePath value.
+                         * Hash value.
                          * @member {string} value
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @instance
                          */
-                        LocalFilePath.prototype.value = "";
+                        Hash.prototype.value = "";
 
                         /**
-                         * Creates a new LocalFilePath instance using the specified properties.
+                         * Creates a new Hash instance using the specified properties.
                          * @function create
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @static
-                         * @param {anytype.Event.Block.Set.File.ILocalFilePath=} [properties] Properties to set
-                         * @returns {anytype.Event.Block.Set.File.LocalFilePath} LocalFilePath instance
+                         * @param {anytype.Event.Block.Set.File.IHash=} [properties] Properties to set
+                         * @returns {anytype.Event.Block.Set.File.Hash} Hash instance
                          */
-                        LocalFilePath.create = function create(properties) {
-                            return new LocalFilePath(properties);
+                        Hash.create = function create(properties) {
+                            return new Hash(properties);
                         };
 
                         /**
-                         * Encodes the specified LocalFilePath message. Does not implicitly {@link anytype.Event.Block.Set.File.LocalFilePath.verify|verify} messages.
+                         * Encodes the specified Hash message. Does not implicitly {@link anytype.Event.Block.Set.File.Hash.verify|verify} messages.
                          * @function encode
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @static
-                         * @param {anytype.Event.Block.Set.File.ILocalFilePath} message LocalFilePath message or plain object to encode
+                         * @param {anytype.Event.Block.Set.File.IHash} message Hash message or plain object to encode
                          * @param {$protobuf.Writer} [writer] Writer to encode to
                          * @returns {$protobuf.Writer} Writer
                          */
-                        LocalFilePath.encode = function encode(message, writer) {
+                        Hash.encode = function encode(message, writer) {
                             if (!writer)
                                 writer = $Writer.create();
                             if (message.value != null && message.hasOwnProperty("value"))
@@ -47321,33 +52688,33 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Encodes the specified LocalFilePath message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.File.LocalFilePath.verify|verify} messages.
+                         * Encodes the specified Hash message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.File.Hash.verify|verify} messages.
                          * @function encodeDelimited
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @static
-                         * @param {anytype.Event.Block.Set.File.ILocalFilePath} message LocalFilePath message or plain object to encode
+                         * @param {anytype.Event.Block.Set.File.IHash} message Hash message or plain object to encode
                          * @param {$protobuf.Writer} [writer] Writer to encode to
                          * @returns {$protobuf.Writer} Writer
                          */
-                        LocalFilePath.encodeDelimited = function encodeDelimited(message, writer) {
+                        Hash.encodeDelimited = function encodeDelimited(message, writer) {
                             return this.encode(message, writer).ldelim();
                         };
 
                         /**
-                         * Decodes a LocalFilePath message from the specified reader or buffer.
+                         * Decodes a Hash message from the specified reader or buffer.
                          * @function decode
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @static
                          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
                          * @param {number} [length] Message length if known beforehand
-                         * @returns {anytype.Event.Block.Set.File.LocalFilePath} LocalFilePath
+                         * @returns {anytype.Event.Block.Set.File.Hash} Hash
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        LocalFilePath.decode = function decode(reader, length) {
+                        Hash.decode = function decode(reader, length) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
-                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.File.LocalFilePath();
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.File.Hash();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
                                 switch (tag >>> 3) {
@@ -47363,30 +52730,30 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Decodes a LocalFilePath message from the specified reader or buffer, length delimited.
+                         * Decodes a Hash message from the specified reader or buffer, length delimited.
                          * @function decodeDelimited
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @static
                          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                         * @returns {anytype.Event.Block.Set.File.LocalFilePath} LocalFilePath
+                         * @returns {anytype.Event.Block.Set.File.Hash} Hash
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        LocalFilePath.decodeDelimited = function decodeDelimited(reader) {
+                        Hash.decodeDelimited = function decodeDelimited(reader) {
                             if (!(reader instanceof $Reader))
                                 reader = new $Reader(reader);
                             return this.decode(reader, reader.uint32());
                         };
 
                         /**
-                         * Verifies a LocalFilePath message.
+                         * Verifies a Hash message.
                          * @function verify
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @static
                          * @param {Object.<string,*>} message Plain object to verify
                          * @returns {string|null} `null` if valid, otherwise the reason why it is not
                          */
-                        LocalFilePath.verify = function verify(message) {
+                        Hash.verify = function verify(message) {
                             if (typeof message !== "object" || message === null)
                                 return "object expected";
                             if (message.value != null && message.hasOwnProperty("value"))
@@ -47396,32 +52763,32 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Creates a LocalFilePath message from a plain object. Also converts values to their respective internal types.
+                         * Creates a Hash message from a plain object. Also converts values to their respective internal types.
                          * @function fromObject
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @static
                          * @param {Object.<string,*>} object Plain object
-                         * @returns {anytype.Event.Block.Set.File.LocalFilePath} LocalFilePath
+                         * @returns {anytype.Event.Block.Set.File.Hash} Hash
                          */
-                        LocalFilePath.fromObject = function fromObject(object) {
-                            if (object instanceof $root.anytype.Event.Block.Set.File.LocalFilePath)
+                        Hash.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Event.Block.Set.File.Hash)
                                 return object;
-                            var message = new $root.anytype.Event.Block.Set.File.LocalFilePath();
+                            var message = new $root.anytype.Event.Block.Set.File.Hash();
                             if (object.value != null)
                                 message.value = String(object.value);
                             return message;
                         };
 
                         /**
-                         * Creates a plain object from a LocalFilePath message. Also converts values to other types if specified.
+                         * Creates a plain object from a Hash message. Also converts values to other types if specified.
                          * @function toObject
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @static
-                         * @param {anytype.Event.Block.Set.File.LocalFilePath} message LocalFilePath
+                         * @param {anytype.Event.Block.Set.File.Hash} message Hash
                          * @param {$protobuf.IConversionOptions} [options] Conversion options
                          * @returns {Object.<string,*>} Plain object
                          */
-                        LocalFilePath.toObject = function toObject(message, options) {
+                        Hash.toObject = function toObject(message, options) {
                             if (!options)
                                 options = {};
                             var object = {};
@@ -47433,37 +52800,37 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Converts this LocalFilePath to JSON.
+                         * Converts this Hash to JSON.
                          * @function toJSON
-                         * @memberof anytype.Event.Block.Set.File.LocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Hash
                          * @instance
                          * @returns {Object.<string,*>} JSON object
                          */
-                        LocalFilePath.prototype.toJSON = function toJSON() {
+                        Hash.prototype.toJSON = function toJSON() {
                             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                         };
 
-                        return LocalFilePath;
+                        return Hash;
                     })();
 
-                    File.PreviewLocalFilePath = (function() {
+                    File.Mime = (function() {
 
                         /**
-                         * Properties of a PreviewLocalFilePath.
+                         * Properties of a Mime.
                          * @memberof anytype.Event.Block.Set.File
-                         * @interface IPreviewLocalFilePath
-                         * @property {string|null} [value] PreviewLocalFilePath value
+                         * @interface IMime
+                         * @property {string|null} [value] Mime value
                          */
 
                         /**
-                         * Constructs a new PreviewLocalFilePath.
+                         * Constructs a new Mime.
                          * @memberof anytype.Event.Block.Set.File
-                         * @classdesc Represents a PreviewLocalFilePath.
-                         * @implements IPreviewLocalFilePath
+                         * @classdesc Represents a Mime.
+                         * @implements IMime
                          * @constructor
-                         * @param {anytype.Event.Block.Set.File.IPreviewLocalFilePath=} [properties] Properties to set
+                         * @param {anytype.Event.Block.Set.File.IMime=} [properties] Properties to set
                          */
-                        function PreviewLocalFilePath(properties) {
+                        function Mime(properties) {
                             if (properties)
                                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                     if (properties[keys[i]] != null)
@@ -47471,35 +52838,35 @@ $root.anytype = (function() {
                         }
 
                         /**
-                         * PreviewLocalFilePath value.
+                         * Mime value.
                          * @member {string} value
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @instance
                          */
-                        PreviewLocalFilePath.prototype.value = "";
+                        Mime.prototype.value = "";
 
                         /**
-                         * Creates a new PreviewLocalFilePath instance using the specified properties.
+                         * Creates a new Mime instance using the specified properties.
                          * @function create
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @static
-                         * @param {anytype.Event.Block.Set.File.IPreviewLocalFilePath=} [properties] Properties to set
-                         * @returns {anytype.Event.Block.Set.File.PreviewLocalFilePath} PreviewLocalFilePath instance
+                         * @param {anytype.Event.Block.Set.File.IMime=} [properties] Properties to set
+                         * @returns {anytype.Event.Block.Set.File.Mime} Mime instance
                          */
-                        PreviewLocalFilePath.create = function create(properties) {
-                            return new PreviewLocalFilePath(properties);
+                        Mime.create = function create(properties) {
+                            return new Mime(properties);
                         };
 
                         /**
-                         * Encodes the specified PreviewLocalFilePath message. Does not implicitly {@link anytype.Event.Block.Set.File.PreviewLocalFilePath.verify|verify} messages.
+                         * Encodes the specified Mime message. Does not implicitly {@link anytype.Event.Block.Set.File.Mime.verify|verify} messages.
                          * @function encode
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @static
-                         * @param {anytype.Event.Block.Set.File.IPreviewLocalFilePath} message PreviewLocalFilePath message or plain object to encode
+                         * @param {anytype.Event.Block.Set.File.IMime} message Mime message or plain object to encode
                          * @param {$protobuf.Writer} [writer] Writer to encode to
                          * @returns {$protobuf.Writer} Writer
                          */
-                        PreviewLocalFilePath.encode = function encode(message, writer) {
+                        Mime.encode = function encode(message, writer) {
                             if (!writer)
                                 writer = $Writer.create();
                             if (message.value != null && message.hasOwnProperty("value"))
@@ -47508,33 +52875,33 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Encodes the specified PreviewLocalFilePath message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.File.PreviewLocalFilePath.verify|verify} messages.
+                         * Encodes the specified Mime message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.File.Mime.verify|verify} messages.
                          * @function encodeDelimited
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @static
-                         * @param {anytype.Event.Block.Set.File.IPreviewLocalFilePath} message PreviewLocalFilePath message or plain object to encode
+                         * @param {anytype.Event.Block.Set.File.IMime} message Mime message or plain object to encode
                          * @param {$protobuf.Writer} [writer] Writer to encode to
                          * @returns {$protobuf.Writer} Writer
                          */
-                        PreviewLocalFilePath.encodeDelimited = function encodeDelimited(message, writer) {
+                        Mime.encodeDelimited = function encodeDelimited(message, writer) {
                             return this.encode(message, writer).ldelim();
                         };
 
                         /**
-                         * Decodes a PreviewLocalFilePath message from the specified reader or buffer.
+                         * Decodes a Mime message from the specified reader or buffer.
                          * @function decode
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @static
                          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
                          * @param {number} [length] Message length if known beforehand
-                         * @returns {anytype.Event.Block.Set.File.PreviewLocalFilePath} PreviewLocalFilePath
+                         * @returns {anytype.Event.Block.Set.File.Mime} Mime
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        PreviewLocalFilePath.decode = function decode(reader, length) {
+                        Mime.decode = function decode(reader, length) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
-                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.File.PreviewLocalFilePath();
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.File.Mime();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
                                 switch (tag >>> 3) {
@@ -47550,30 +52917,30 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Decodes a PreviewLocalFilePath message from the specified reader or buffer, length delimited.
+                         * Decodes a Mime message from the specified reader or buffer, length delimited.
                          * @function decodeDelimited
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @static
                          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                         * @returns {anytype.Event.Block.Set.File.PreviewLocalFilePath} PreviewLocalFilePath
+                         * @returns {anytype.Event.Block.Set.File.Mime} Mime
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        PreviewLocalFilePath.decodeDelimited = function decodeDelimited(reader) {
+                        Mime.decodeDelimited = function decodeDelimited(reader) {
                             if (!(reader instanceof $Reader))
                                 reader = new $Reader(reader);
                             return this.decode(reader, reader.uint32());
                         };
 
                         /**
-                         * Verifies a PreviewLocalFilePath message.
+                         * Verifies a Mime message.
                          * @function verify
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @static
                          * @param {Object.<string,*>} message Plain object to verify
                          * @returns {string|null} `null` if valid, otherwise the reason why it is not
                          */
-                        PreviewLocalFilePath.verify = function verify(message) {
+                        Mime.verify = function verify(message) {
                             if (typeof message !== "object" || message === null)
                                 return "object expected";
                             if (message.value != null && message.hasOwnProperty("value"))
@@ -47583,32 +52950,32 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Creates a PreviewLocalFilePath message from a plain object. Also converts values to their respective internal types.
+                         * Creates a Mime message from a plain object. Also converts values to their respective internal types.
                          * @function fromObject
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @static
                          * @param {Object.<string,*>} object Plain object
-                         * @returns {anytype.Event.Block.Set.File.PreviewLocalFilePath} PreviewLocalFilePath
+                         * @returns {anytype.Event.Block.Set.File.Mime} Mime
                          */
-                        PreviewLocalFilePath.fromObject = function fromObject(object) {
-                            if (object instanceof $root.anytype.Event.Block.Set.File.PreviewLocalFilePath)
+                        Mime.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Event.Block.Set.File.Mime)
                                 return object;
-                            var message = new $root.anytype.Event.Block.Set.File.PreviewLocalFilePath();
+                            var message = new $root.anytype.Event.Block.Set.File.Mime();
                             if (object.value != null)
                                 message.value = String(object.value);
                             return message;
                         };
 
                         /**
-                         * Creates a plain object from a PreviewLocalFilePath message. Also converts values to other types if specified.
+                         * Creates a plain object from a Mime message. Also converts values to other types if specified.
                          * @function toObject
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @static
-                         * @param {anytype.Event.Block.Set.File.PreviewLocalFilePath} message PreviewLocalFilePath
+                         * @param {anytype.Event.Block.Set.File.Mime} message Mime
                          * @param {$protobuf.IConversionOptions} [options] Conversion options
                          * @returns {Object.<string,*>} Plain object
                          */
-                        PreviewLocalFilePath.toObject = function toObject(message, options) {
+                        Mime.toObject = function toObject(message, options) {
                             if (!options)
                                 options = {};
                             var object = {};
@@ -47620,17 +52987,218 @@ $root.anytype = (function() {
                         };
 
                         /**
-                         * Converts this PreviewLocalFilePath to JSON.
+                         * Converts this Mime to JSON.
                          * @function toJSON
-                         * @memberof anytype.Event.Block.Set.File.PreviewLocalFilePath
+                         * @memberof anytype.Event.Block.Set.File.Mime
                          * @instance
                          * @returns {Object.<string,*>} JSON object
                          */
-                        PreviewLocalFilePath.prototype.toJSON = function toJSON() {
+                        Mime.prototype.toJSON = function toJSON() {
                             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
                         };
 
-                        return PreviewLocalFilePath;
+                        return Mime;
+                    })();
+
+                    File.Size = (function() {
+
+                        /**
+                         * Properties of a Size.
+                         * @memberof anytype.Event.Block.Set.File
+                         * @interface ISize
+                         * @property {number|Long|null} [value] Size value
+                         */
+
+                        /**
+                         * Constructs a new Size.
+                         * @memberof anytype.Event.Block.Set.File
+                         * @classdesc Represents a Size.
+                         * @implements ISize
+                         * @constructor
+                         * @param {anytype.Event.Block.Set.File.ISize=} [properties] Properties to set
+                         */
+                        function Size(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Size value.
+                         * @member {number|Long} value
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @instance
+                         */
+                        Size.prototype.value = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+                        /**
+                         * Creates a new Size instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @static
+                         * @param {anytype.Event.Block.Set.File.ISize=} [properties] Properties to set
+                         * @returns {anytype.Event.Block.Set.File.Size} Size instance
+                         */
+                        Size.create = function create(properties) {
+                            return new Size(properties);
+                        };
+
+                        /**
+                         * Encodes the specified Size message. Does not implicitly {@link anytype.Event.Block.Set.File.Size.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @static
+                         * @param {anytype.Event.Block.Set.File.ISize} message Size message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Size.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.value);
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified Size message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.File.Size.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @static
+                         * @param {anytype.Event.Block.Set.File.ISize} message Size message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Size.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a Size message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Event.Block.Set.File.Size} Size
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Size.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.File.Size();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    message.value = reader.int64();
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a Size message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Event.Block.Set.File.Size} Size
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Size.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a Size message.
+                         * @function verify
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        Size.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                if (!$util.isInteger(message.value) && !(message.value && $util.isInteger(message.value.low) && $util.isInteger(message.value.high)))
+                                    return "value: integer|Long expected";
+                            return null;
+                        };
+
+                        /**
+                         * Creates a Size message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Event.Block.Set.File.Size} Size
+                         */
+                        Size.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Event.Block.Set.File.Size)
+                                return object;
+                            var message = new $root.anytype.Event.Block.Set.File.Size();
+                            if (object.value != null)
+                                if ($util.Long)
+                                    (message.value = $util.Long.fromValue(object.value)).unsigned = false;
+                                else if (typeof object.value === "string")
+                                    message.value = parseInt(object.value, 10);
+                                else if (typeof object.value === "number")
+                                    message.value = object.value;
+                                else if (typeof object.value === "object")
+                                    message.value = new $util.LongBits(object.value.low >>> 0, object.value.high >>> 0).toNumber();
+                            return message;
+                        };
+
+                        /**
+                         * Creates a plain object from a Size message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @static
+                         * @param {anytype.Event.Block.Set.File.Size} message Size
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        Size.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults)
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.value = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.value = options.longs === String ? "0" : 0;
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                if (typeof message.value === "number")
+                                    object.value = options.longs === String ? String(message.value) : message.value;
+                                else
+                                    object.value = options.longs === String ? $util.Long.prototype.toString.call(message.value) : options.longs === Number ? new $util.LongBits(message.value.low >>> 0, message.value.high >>> 0).toNumber() : message.value;
+                            return object;
+                        };
+
+                        /**
+                         * Converts this Size to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Event.Block.Set.File.Size
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        Size.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        return Size;
                     })();
 
                     return File;
@@ -48036,6 +53604,854 @@ $root.anytype = (function() {
                     })();
 
                     return Icon;
+                })();
+
+                Set.Link = (function() {
+
+                    /**
+                     * Properties of a Link.
+                     * @memberof anytype.Event.Block.Set
+                     * @interface ILink
+                     * @property {string|null} [id] Link id
+                     * @property {anytype.Event.Block.Set.Link.ITargetBlockId|null} [targetBlockId] Link targetBlockId
+                     * @property {anytype.Event.Block.Set.Link.IStyle|null} [style] Link style
+                     * @property {anytype.Event.Block.Set.Link.IFields|null} [fields] Link fields
+                     */
+
+                    /**
+                     * Constructs a new Link.
+                     * @memberof anytype.Event.Block.Set
+                     * @classdesc Represents a Link.
+                     * @implements ILink
+                     * @constructor
+                     * @param {anytype.Event.Block.Set.ILink=} [properties] Properties to set
+                     */
+                    function Link(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Link id.
+                     * @member {string} id
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @instance
+                     */
+                    Link.prototype.id = "";
+
+                    /**
+                     * Link targetBlockId.
+                     * @member {anytype.Event.Block.Set.Link.ITargetBlockId|null|undefined} targetBlockId
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @instance
+                     */
+                    Link.prototype.targetBlockId = null;
+
+                    /**
+                     * Link style.
+                     * @member {anytype.Event.Block.Set.Link.IStyle|null|undefined} style
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @instance
+                     */
+                    Link.prototype.style = null;
+
+                    /**
+                     * Link fields.
+                     * @member {anytype.Event.Block.Set.Link.IFields|null|undefined} fields
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @instance
+                     */
+                    Link.prototype.fields = null;
+
+                    /**
+                     * Creates a new Link instance using the specified properties.
+                     * @function create
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @static
+                     * @param {anytype.Event.Block.Set.ILink=} [properties] Properties to set
+                     * @returns {anytype.Event.Block.Set.Link} Link instance
+                     */
+                    Link.create = function create(properties) {
+                        return new Link(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Link message. Does not implicitly {@link anytype.Event.Block.Set.Link.verify|verify} messages.
+                     * @function encode
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @static
+                     * @param {anytype.Event.Block.Set.ILink} message Link message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Link.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.id != null && message.hasOwnProperty("id"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+                        if (message.targetBlockId != null && message.hasOwnProperty("targetBlockId"))
+                            $root.anytype.Event.Block.Set.Link.TargetBlockId.encode(message.targetBlockId, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        if (message.style != null && message.hasOwnProperty("style"))
+                            $root.anytype.Event.Block.Set.Link.Style.encode(message.style, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                        if (message.fields != null && message.hasOwnProperty("fields"))
+                            $root.anytype.Event.Block.Set.Link.Fields.encode(message.fields, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Link message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.Link.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @static
+                     * @param {anytype.Event.Block.Set.ILink} message Link message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Link.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a Link message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {anytype.Event.Block.Set.Link} Link
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Link.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.Link();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1:
+                                message.id = reader.string();
+                                break;
+                            case 2:
+                                message.targetBlockId = $root.anytype.Event.Block.Set.Link.TargetBlockId.decode(reader, reader.uint32());
+                                break;
+                            case 3:
+                                message.style = $root.anytype.Event.Block.Set.Link.Style.decode(reader, reader.uint32());
+                                break;
+                            case 4:
+                                message.fields = $root.anytype.Event.Block.Set.Link.Fields.decode(reader, reader.uint32());
+                                break;
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a Link message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {anytype.Event.Block.Set.Link} Link
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Link.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a Link message.
+                     * @function verify
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Link.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.id != null && message.hasOwnProperty("id"))
+                            if (!$util.isString(message.id))
+                                return "id: string expected";
+                        if (message.targetBlockId != null && message.hasOwnProperty("targetBlockId")) {
+                            var error = $root.anytype.Event.Block.Set.Link.TargetBlockId.verify(message.targetBlockId);
+                            if (error)
+                                return "targetBlockId." + error;
+                        }
+                        if (message.style != null && message.hasOwnProperty("style")) {
+                            var error = $root.anytype.Event.Block.Set.Link.Style.verify(message.style);
+                            if (error)
+                                return "style." + error;
+                        }
+                        if (message.fields != null && message.hasOwnProperty("fields")) {
+                            var error = $root.anytype.Event.Block.Set.Link.Fields.verify(message.fields);
+                            if (error)
+                                return "fields." + error;
+                        }
+                        return null;
+                    };
+
+                    /**
+                     * Creates a Link message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {anytype.Event.Block.Set.Link} Link
+                     */
+                    Link.fromObject = function fromObject(object) {
+                        if (object instanceof $root.anytype.Event.Block.Set.Link)
+                            return object;
+                        var message = new $root.anytype.Event.Block.Set.Link();
+                        if (object.id != null)
+                            message.id = String(object.id);
+                        if (object.targetBlockId != null) {
+                            if (typeof object.targetBlockId !== "object")
+                                throw TypeError(".anytype.Event.Block.Set.Link.targetBlockId: object expected");
+                            message.targetBlockId = $root.anytype.Event.Block.Set.Link.TargetBlockId.fromObject(object.targetBlockId);
+                        }
+                        if (object.style != null) {
+                            if (typeof object.style !== "object")
+                                throw TypeError(".anytype.Event.Block.Set.Link.style: object expected");
+                            message.style = $root.anytype.Event.Block.Set.Link.Style.fromObject(object.style);
+                        }
+                        if (object.fields != null) {
+                            if (typeof object.fields !== "object")
+                                throw TypeError(".anytype.Event.Block.Set.Link.fields: object expected");
+                            message.fields = $root.anytype.Event.Block.Set.Link.Fields.fromObject(object.fields);
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a Link message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @static
+                     * @param {anytype.Event.Block.Set.Link} message Link
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Link.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.id = "";
+                            object.targetBlockId = null;
+                            object.style = null;
+                            object.fields = null;
+                        }
+                        if (message.id != null && message.hasOwnProperty("id"))
+                            object.id = message.id;
+                        if (message.targetBlockId != null && message.hasOwnProperty("targetBlockId"))
+                            object.targetBlockId = $root.anytype.Event.Block.Set.Link.TargetBlockId.toObject(message.targetBlockId, options);
+                        if (message.style != null && message.hasOwnProperty("style"))
+                            object.style = $root.anytype.Event.Block.Set.Link.Style.toObject(message.style, options);
+                        if (message.fields != null && message.hasOwnProperty("fields"))
+                            object.fields = $root.anytype.Event.Block.Set.Link.Fields.toObject(message.fields, options);
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Link to JSON.
+                     * @function toJSON
+                     * @memberof anytype.Event.Block.Set.Link
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Link.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    Link.TargetBlockId = (function() {
+
+                        /**
+                         * Properties of a TargetBlockId.
+                         * @memberof anytype.Event.Block.Set.Link
+                         * @interface ITargetBlockId
+                         * @property {string|null} [value] TargetBlockId value
+                         */
+
+                        /**
+                         * Constructs a new TargetBlockId.
+                         * @memberof anytype.Event.Block.Set.Link
+                         * @classdesc Represents a TargetBlockId.
+                         * @implements ITargetBlockId
+                         * @constructor
+                         * @param {anytype.Event.Block.Set.Link.ITargetBlockId=} [properties] Properties to set
+                         */
+                        function TargetBlockId(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * TargetBlockId value.
+                         * @member {string} value
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @instance
+                         */
+                        TargetBlockId.prototype.value = "";
+
+                        /**
+                         * Creates a new TargetBlockId instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.ITargetBlockId=} [properties] Properties to set
+                         * @returns {anytype.Event.Block.Set.Link.TargetBlockId} TargetBlockId instance
+                         */
+                        TargetBlockId.create = function create(properties) {
+                            return new TargetBlockId(properties);
+                        };
+
+                        /**
+                         * Encodes the specified TargetBlockId message. Does not implicitly {@link anytype.Event.Block.Set.Link.TargetBlockId.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.ITargetBlockId} message TargetBlockId message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        TargetBlockId.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.value);
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified TargetBlockId message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.Link.TargetBlockId.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.ITargetBlockId} message TargetBlockId message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        TargetBlockId.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a TargetBlockId message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Event.Block.Set.Link.TargetBlockId} TargetBlockId
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        TargetBlockId.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.Link.TargetBlockId();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    message.value = reader.string();
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a TargetBlockId message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Event.Block.Set.Link.TargetBlockId} TargetBlockId
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        TargetBlockId.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a TargetBlockId message.
+                         * @function verify
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        TargetBlockId.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                if (!$util.isString(message.value))
+                                    return "value: string expected";
+                            return null;
+                        };
+
+                        /**
+                         * Creates a TargetBlockId message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Event.Block.Set.Link.TargetBlockId} TargetBlockId
+                         */
+                        TargetBlockId.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Event.Block.Set.Link.TargetBlockId)
+                                return object;
+                            var message = new $root.anytype.Event.Block.Set.Link.TargetBlockId();
+                            if (object.value != null)
+                                message.value = String(object.value);
+                            return message;
+                        };
+
+                        /**
+                         * Creates a plain object from a TargetBlockId message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.TargetBlockId} message TargetBlockId
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        TargetBlockId.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults)
+                                object.value = "";
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                object.value = message.value;
+                            return object;
+                        };
+
+                        /**
+                         * Converts this TargetBlockId to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Event.Block.Set.Link.TargetBlockId
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        TargetBlockId.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        return TargetBlockId;
+                    })();
+
+                    Link.Style = (function() {
+
+                        /**
+                         * Properties of a Style.
+                         * @memberof anytype.Event.Block.Set.Link
+                         * @interface IStyle
+                         * @property {anytype.model.Block.Content.Link.Style|null} [value] Style value
+                         */
+
+                        /**
+                         * Constructs a new Style.
+                         * @memberof anytype.Event.Block.Set.Link
+                         * @classdesc Represents a Style.
+                         * @implements IStyle
+                         * @constructor
+                         * @param {anytype.Event.Block.Set.Link.IStyle=} [properties] Properties to set
+                         */
+                        function Style(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Style value.
+                         * @member {anytype.model.Block.Content.Link.Style} value
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @instance
+                         */
+                        Style.prototype.value = 0;
+
+                        /**
+                         * Creates a new Style instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.IStyle=} [properties] Properties to set
+                         * @returns {anytype.Event.Block.Set.Link.Style} Style instance
+                         */
+                        Style.create = function create(properties) {
+                            return new Style(properties);
+                        };
+
+                        /**
+                         * Encodes the specified Style message. Does not implicitly {@link anytype.Event.Block.Set.Link.Style.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.IStyle} message Style message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Style.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.value);
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified Style message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.Link.Style.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.IStyle} message Style message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Style.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a Style message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Event.Block.Set.Link.Style} Style
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Style.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.Link.Style();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    message.value = reader.int32();
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a Style message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Event.Block.Set.Link.Style} Style
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Style.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a Style message.
+                         * @function verify
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        Style.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                switch (message.value) {
+                                default:
+                                    return "value: enum value expected";
+                                case 0:
+                                case 1:
+                                    break;
+                                }
+                            return null;
+                        };
+
+                        /**
+                         * Creates a Style message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Event.Block.Set.Link.Style} Style
+                         */
+                        Style.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Event.Block.Set.Link.Style)
+                                return object;
+                            var message = new $root.anytype.Event.Block.Set.Link.Style();
+                            switch (object.value) {
+                            case "Page":
+                            case 0:
+                                message.value = 0;
+                                break;
+                            case "Dataview":
+                            case 1:
+                                message.value = 1;
+                                break;
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Creates a plain object from a Style message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.Style} message Style
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        Style.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults)
+                                object.value = options.enums === String ? "Page" : 0;
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                object.value = options.enums === String ? $root.anytype.model.Block.Content.Link.Style[message.value] : message.value;
+                            return object;
+                        };
+
+                        /**
+                         * Converts this Style to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Event.Block.Set.Link.Style
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        Style.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        return Style;
+                    })();
+
+                    Link.Fields = (function() {
+
+                        /**
+                         * Properties of a Fields.
+                         * @memberof anytype.Event.Block.Set.Link
+                         * @interface IFields
+                         * @property {google.protobuf.IStruct|null} [value] Fields value
+                         */
+
+                        /**
+                         * Constructs a new Fields.
+                         * @memberof anytype.Event.Block.Set.Link
+                         * @classdesc Represents a Fields.
+                         * @implements IFields
+                         * @constructor
+                         * @param {anytype.Event.Block.Set.Link.IFields=} [properties] Properties to set
+                         */
+                        function Fields(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+
+                        /**
+                         * Fields value.
+                         * @member {google.protobuf.IStruct|null|undefined} value
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @instance
+                         */
+                        Fields.prototype.value = null;
+
+                        /**
+                         * Creates a new Fields instance using the specified properties.
+                         * @function create
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.IFields=} [properties] Properties to set
+                         * @returns {anytype.Event.Block.Set.Link.Fields} Fields instance
+                         */
+                        Fields.create = function create(properties) {
+                            return new Fields(properties);
+                        };
+
+                        /**
+                         * Encodes the specified Fields message. Does not implicitly {@link anytype.Event.Block.Set.Link.Fields.verify|verify} messages.
+                         * @function encode
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.IFields} message Fields message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Fields.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                $root.google.protobuf.Struct.encode(message.value, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                            return writer;
+                        };
+
+                        /**
+                         * Encodes the specified Fields message, length delimited. Does not implicitly {@link anytype.Event.Block.Set.Link.Fields.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.IFields} message Fields message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        Fields.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+
+                        /**
+                         * Decodes a Fields message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {anytype.Event.Block.Set.Link.Fields} Fields
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Fields.decode = function decode(reader, length) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.Event.Block.Set.Link.Fields();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                switch (tag >>> 3) {
+                                case 1:
+                                    message.value = $root.google.protobuf.Struct.decode(reader, reader.uint32());
+                                    break;
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Decodes a Fields message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {anytype.Event.Block.Set.Link.Fields} Fields
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        Fields.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+
+                        /**
+                         * Verifies a Fields message.
+                         * @function verify
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        Fields.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.value != null && message.hasOwnProperty("value")) {
+                                var error = $root.google.protobuf.Struct.verify(message.value);
+                                if (error)
+                                    return "value." + error;
+                            }
+                            return null;
+                        };
+
+                        /**
+                         * Creates a Fields message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {anytype.Event.Block.Set.Link.Fields} Fields
+                         */
+                        Fields.fromObject = function fromObject(object) {
+                            if (object instanceof $root.anytype.Event.Block.Set.Link.Fields)
+                                return object;
+                            var message = new $root.anytype.Event.Block.Set.Link.Fields();
+                            if (object.value != null) {
+                                if (typeof object.value !== "object")
+                                    throw TypeError(".anytype.Event.Block.Set.Link.Fields.value: object expected");
+                                message.value = $root.google.protobuf.Struct.fromObject(object.value);
+                            }
+                            return message;
+                        };
+
+                        /**
+                         * Creates a plain object from a Fields message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @static
+                         * @param {anytype.Event.Block.Set.Link.Fields} message Fields
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        Fields.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults)
+                                object.value = null;
+                            if (message.value != null && message.hasOwnProperty("value"))
+                                object.value = $root.google.protobuf.Struct.toObject(message.value, options);
+                            return object;
+                        };
+
+                        /**
+                         * Converts this Fields to JSON.
+                         * @function toJSON
+                         * @memberof anytype.Event.Block.Set.Link.Fields
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        Fields.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+
+                        return Fields;
+                    })();
+
+                    return Link;
                 })();
 
                 return Set;
@@ -49951,6 +56367,39 @@ $root.anytype = (function() {
          */
 
         /**
+         * Callback as used by {@link anytype.ClientCommands#blockCreatePage}.
+         * @memberof anytype.ClientCommands
+         * @typedef BlockCreatePageCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {anytype.Rpc.Block.CreatePage.Response} [response] Response
+         */
+
+        /**
+         * Calls BlockCreatePage.
+         * @function blockCreatePage
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.Block.CreatePage.IRequest} request Request message or plain object
+         * @param {anytype.ClientCommands.BlockCreatePageCallback} callback Node-style callback called with the error, if any, and Response
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(ClientCommands.prototype.blockCreatePage = function blockCreatePage(request, callback) {
+            return this.rpcCall(blockCreatePage, $root.anytype.Rpc.Block.CreatePage.Request, $root.anytype.Rpc.Block.CreatePage.Response, request, callback);
+        }, "name", { value: "BlockCreatePage" });
+
+        /**
+         * Calls BlockCreatePage.
+         * @function blockCreatePage
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.Block.CreatePage.IRequest} request Request message or plain object
+         * @returns {Promise<anytype.Rpc.Block.CreatePage.Response>} Promise
+         * @variation 2
+         */
+
+        /**
          * Callback as used by {@link anytype.ClientCommands#blockUnlink}.
          * @memberof anytype.ClientCommands
          * @typedef BlockUnlinkCallback
@@ -49980,39 +56429,6 @@ $root.anytype = (function() {
          * @instance
          * @param {anytype.Rpc.Block.Unlink.IRequest} request Request message or plain object
          * @returns {Promise<anytype.Rpc.Block.Unlink.Response>} Promise
-         * @variation 2
-         */
-
-        /**
-         * Callback as used by {@link anytype.ClientCommands#blockDuplicate}.
-         * @memberof anytype.ClientCommands
-         * @typedef BlockDuplicateCallback
-         * @type {function}
-         * @param {Error|null} error Error, if any
-         * @param {anytype.Rpc.Block.Duplicate.Response} [response] Response
-         */
-
-        /**
-         * Calls BlockDuplicate.
-         * @function blockDuplicate
-         * @memberof anytype.ClientCommands
-         * @instance
-         * @param {anytype.Rpc.Block.Duplicate.IRequest} request Request message or plain object
-         * @param {anytype.ClientCommands.BlockDuplicateCallback} callback Node-style callback called with the error, if any, and Response
-         * @returns {undefined}
-         * @variation 1
-         */
-        Object.defineProperty(ClientCommands.prototype.blockDuplicate = function blockDuplicate(request, callback) {
-            return this.rpcCall(blockDuplicate, $root.anytype.Rpc.Block.Duplicate.Request, $root.anytype.Rpc.Block.Duplicate.Response, request, callback);
-        }, "name", { value: "BlockDuplicate" });
-
-        /**
-         * Calls BlockDuplicate.
-         * @function blockDuplicate
-         * @memberof anytype.ClientCommands
-         * @instance
-         * @param {anytype.Rpc.Block.Duplicate.IRequest} request Request message or plain object
-         * @returns {Promise<anytype.Rpc.Block.Duplicate.Response>} Promise
          * @variation 2
          */
 
@@ -50116,35 +56532,68 @@ $root.anytype = (function() {
          */
 
         /**
-         * Callback as used by {@link anytype.ClientCommands#blockHistoryMove}.
+         * Callback as used by {@link anytype.ClientCommands#blockUndo}.
          * @memberof anytype.ClientCommands
-         * @typedef BlockHistoryMoveCallback
+         * @typedef BlockUndoCallback
          * @type {function}
          * @param {Error|null} error Error, if any
-         * @param {anytype.Rpc.Block.History.Move.Response} [response] Response
+         * @param {anytype.Rpc.Block.Undo.Response} [response] Response
          */
 
         /**
-         * Calls BlockHistoryMove.
-         * @function blockHistoryMove
+         * Calls BlockUndo.
+         * @function blockUndo
          * @memberof anytype.ClientCommands
          * @instance
-         * @param {anytype.Rpc.Block.History.Move.IRequest} request Request message or plain object
-         * @param {anytype.ClientCommands.BlockHistoryMoveCallback} callback Node-style callback called with the error, if any, and Response
+         * @param {anytype.Rpc.Block.Undo.IRequest} request Request message or plain object
+         * @param {anytype.ClientCommands.BlockUndoCallback} callback Node-style callback called with the error, if any, and Response
          * @returns {undefined}
          * @variation 1
          */
-        Object.defineProperty(ClientCommands.prototype.blockHistoryMove = function blockHistoryMove(request, callback) {
-            return this.rpcCall(blockHistoryMove, $root.anytype.Rpc.Block.History.Move.Request, $root.anytype.Rpc.Block.History.Move.Response, request, callback);
-        }, "name", { value: "BlockHistoryMove" });
+        Object.defineProperty(ClientCommands.prototype.blockUndo = function blockUndo(request, callback) {
+            return this.rpcCall(blockUndo, $root.anytype.Rpc.Block.Undo.Request, $root.anytype.Rpc.Block.Undo.Response, request, callback);
+        }, "name", { value: "BlockUndo" });
 
         /**
-         * Calls BlockHistoryMove.
-         * @function blockHistoryMove
+         * Calls BlockUndo.
+         * @function blockUndo
          * @memberof anytype.ClientCommands
          * @instance
-         * @param {anytype.Rpc.Block.History.Move.IRequest} request Request message or plain object
-         * @returns {Promise<anytype.Rpc.Block.History.Move.Response>} Promise
+         * @param {anytype.Rpc.Block.Undo.IRequest} request Request message or plain object
+         * @returns {Promise<anytype.Rpc.Block.Undo.Response>} Promise
+         * @variation 2
+         */
+
+        /**
+         * Callback as used by {@link anytype.ClientCommands#blockRedo}.
+         * @memberof anytype.ClientCommands
+         * @typedef BlockRedoCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {anytype.Rpc.Block.Redo.Response} [response] Response
+         */
+
+        /**
+         * Calls BlockRedo.
+         * @function blockRedo
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.Block.Redo.IRequest} request Request message or plain object
+         * @param {anytype.ClientCommands.BlockRedoCallback} callback Node-style callback called with the error, if any, and Response
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(ClientCommands.prototype.blockRedo = function blockRedo(request, callback) {
+            return this.rpcCall(blockRedo, $root.anytype.Rpc.Block.Redo.Request, $root.anytype.Rpc.Block.Redo.Response, request, callback);
+        }, "name", { value: "BlockRedo" });
+
+        /**
+         * Calls BlockRedo.
+         * @function blockRedo
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.Block.Redo.IRequest} request Request message or plain object
+         * @returns {Promise<anytype.Rpc.Block.Redo.Response>} Promise
          * @variation 2
          */
 
@@ -50281,6 +56730,39 @@ $root.anytype = (function() {
          */
 
         /**
+         * Callback as used by {@link anytype.ClientCommands#blockListSetFields}.
+         * @memberof anytype.ClientCommands
+         * @typedef BlockListSetFieldsCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {anytype.Rpc.BlockList.Set.Fields.Response} [response] Response
+         */
+
+        /**
+         * Calls BlockListSetFields.
+         * @function blockListSetFields
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.BlockList.Set.Fields.IRequest} request Request message or plain object
+         * @param {anytype.ClientCommands.BlockListSetFieldsCallback} callback Node-style callback called with the error, if any, and Response
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(ClientCommands.prototype.blockListSetFields = function blockListSetFields(request, callback) {
+            return this.rpcCall(blockListSetFields, $root.anytype.Rpc.BlockList.Set.Fields.Request, $root.anytype.Rpc.BlockList.Set.Fields.Response, request, callback);
+        }, "name", { value: "BlockListSetFields" });
+
+        /**
+         * Calls BlockListSetFields.
+         * @function blockListSetFields
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.BlockList.Set.Fields.IRequest} request Request message or plain object
+         * @returns {Promise<anytype.Rpc.BlockList.Set.Fields.Response>} Promise
+         * @variation 2
+         */
+
+        /**
          * Callback as used by {@link anytype.ClientCommands#blockListSetTextStyle}.
          * @memberof anytype.ClientCommands
          * @typedef BlockListSetTextStyleCallback
@@ -50310,6 +56792,39 @@ $root.anytype = (function() {
          * @instance
          * @param {anytype.Rpc.BlockList.Set.Text.Style.IRequest} request Request message or plain object
          * @returns {Promise<anytype.Rpc.BlockList.Set.Text.Style.Response>} Promise
+         * @variation 2
+         */
+
+        /**
+         * Callback as used by {@link anytype.ClientCommands#blockListDuplicate}.
+         * @memberof anytype.ClientCommands
+         * @typedef BlockListDuplicateCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {anytype.Rpc.BlockList.Duplicate.Response} [response] Response
+         */
+
+        /**
+         * Calls BlockListDuplicate.
+         * @function blockListDuplicate
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.BlockList.Duplicate.IRequest} request Request message or plain object
+         * @param {anytype.ClientCommands.BlockListDuplicateCallback} callback Node-style callback called with the error, if any, and Response
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(ClientCommands.prototype.blockListDuplicate = function blockListDuplicate(request, callback) {
+            return this.rpcCall(blockListDuplicate, $root.anytype.Rpc.BlockList.Duplicate.Request, $root.anytype.Rpc.BlockList.Duplicate.Response, request, callback);
+        }, "name", { value: "BlockListDuplicate" });
+
+        /**
+         * Calls BlockListDuplicate.
+         * @function blockListDuplicate
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.BlockList.Duplicate.IRequest} request Request message or plain object
+         * @returns {Promise<anytype.Rpc.BlockList.Duplicate.Response>} Promise
          * @variation 2
          */
 
@@ -50380,6 +56895,39 @@ $root.anytype = (function() {
          */
 
         /**
+         * Callback as used by {@link anytype.ClientCommands#blockListSetTextColor}.
+         * @memberof anytype.ClientCommands
+         * @typedef BlockListSetTextColorCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {anytype.Rpc.BlockList.Set.Text.Color.Response} [response] Response
+         */
+
+        /**
+         * Calls BlockListSetTextColor.
+         * @function blockListSetTextColor
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.BlockList.Set.Text.Color.IRequest} request Request message or plain object
+         * @param {anytype.ClientCommands.BlockListSetTextColorCallback} callback Node-style callback called with the error, if any, and Response
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(ClientCommands.prototype.blockListSetTextColor = function blockListSetTextColor(request, callback) {
+            return this.rpcCall(blockListSetTextColor, $root.anytype.Rpc.BlockList.Set.Text.Color.Request, $root.anytype.Rpc.BlockList.Set.Text.Color.Response, request, callback);
+        }, "name", { value: "BlockListSetTextColor" });
+
+        /**
+         * Calls BlockListSetTextColor.
+         * @function blockListSetTextColor
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.BlockList.Set.Text.Color.IRequest} request Request message or plain object
+         * @returns {Promise<anytype.Rpc.BlockList.Set.Text.Color.Response>} Promise
+         * @variation 2
+         */
+
+        /**
          * Callback as used by {@link anytype.ClientCommands#blockSetTextBackgroundColor}.
          * @memberof anytype.ClientCommands
          * @typedef BlockSetTextBackgroundColorCallback
@@ -50409,6 +56957,39 @@ $root.anytype = (function() {
          * @instance
          * @param {anytype.Rpc.Block.Set.Text.BackgroundColor.IRequest} request Request message or plain object
          * @returns {Promise<anytype.Rpc.Block.Set.Text.BackgroundColor.Response>} Promise
+         * @variation 2
+         */
+
+        /**
+         * Callback as used by {@link anytype.ClientCommands#blockListSetTextBackgroundColor}.
+         * @memberof anytype.ClientCommands
+         * @typedef BlockListSetTextBackgroundColorCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response} [response] Response
+         */
+
+        /**
+         * Calls BlockListSetTextBackgroundColor.
+         * @function blockListSetTextBackgroundColor
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IRequest} request Request message or plain object
+         * @param {anytype.ClientCommands.BlockListSetTextBackgroundColorCallback} callback Node-style callback called with the error, if any, and Response
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(ClientCommands.prototype.blockListSetTextBackgroundColor = function blockListSetTextBackgroundColor(request, callback) {
+            return this.rpcCall(blockListSetTextBackgroundColor, $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Request, $root.anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response, request, callback);
+        }, "name", { value: "BlockListSetTextBackgroundColor" });
+
+        /**
+         * Calls BlockListSetTextBackgroundColor.
+         * @function blockListSetTextBackgroundColor
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.BlockList.Set.Text.BackgroundColor.IRequest} request Request message or plain object
+         * @returns {Promise<anytype.Rpc.BlockList.Set.Text.BackgroundColor.Response>} Promise
          * @variation 2
          */
 
@@ -50805,6 +57386,39 @@ $root.anytype = (function() {
          * @instance
          * @param {anytype.Rpc.Block.Set.Icon.Name.IRequest} request Request message or plain object
          * @returns {Promise<anytype.Rpc.Block.Set.Icon.Name.Response>} Promise
+         * @variation 2
+         */
+
+        /**
+         * Callback as used by {@link anytype.ClientCommands#blockSetLinkTargetBlockId}.
+         * @memberof anytype.ClientCommands
+         * @typedef BlockSetLinkTargetBlockIdCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.Response} [response] Response
+         */
+
+        /**
+         * Calls BlockSetLinkTargetBlockId.
+         * @function blockSetLinkTargetBlockId
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IRequest} request Request message or plain object
+         * @param {anytype.ClientCommands.BlockSetLinkTargetBlockIdCallback} callback Node-style callback called with the error, if any, and Response
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(ClientCommands.prototype.blockSetLinkTargetBlockId = function blockSetLinkTargetBlockId(request, callback) {
+            return this.rpcCall(blockSetLinkTargetBlockId, $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Request, $root.anytype.Rpc.Block.Set.Link.TargetBlockId.Response, request, callback);
+        }, "name", { value: "BlockSetLinkTargetBlockId" });
+
+        /**
+         * Calls BlockSetLinkTargetBlockId.
+         * @function blockSetLinkTargetBlockId
+         * @memberof anytype.ClientCommands
+         * @instance
+         * @param {anytype.Rpc.Block.Set.Link.TargetBlockId.IRequest} request Request message or plain object
+         * @returns {Promise<anytype.Rpc.Block.Set.Link.TargetBlockId.Response>} Promise
          * @variation 2
          */
 
@@ -54262,12 +60876,13 @@ $root.anytype = (function() {
                      * Properties of a File.
                      * @memberof anytype.model.Block.Content
                      * @interface IFile
-                     * @property {string|null} [localFilePath] File localFilePath
-                     * @property {string|null} [previewFilePath] File previewFilePath
-                     * @property {anytype.model.Block.Content.File.State|null} [state] File state
+                     * @property {string|null} [hash] File hash
+                     * @property {string|null} [name] File name
                      * @property {anytype.model.Block.Content.File.Type|null} [type] File type
+                     * @property {string|null} [mime] File mime
                      * @property {number|Long|null} [size] File size
                      * @property {number|Long|null} [addedAt] File addedAt
+                     * @property {anytype.model.Block.Content.File.State|null} [state] File state
                      */
 
                     /**
@@ -54286,28 +60901,20 @@ $root.anytype = (function() {
                     }
 
                     /**
-                     * File localFilePath.
-                     * @member {string} localFilePath
+                     * File hash.
+                     * @member {string} hash
                      * @memberof anytype.model.Block.Content.File
                      * @instance
                      */
-                    File.prototype.localFilePath = "";
+                    File.prototype.hash = "";
 
                     /**
-                     * File previewFilePath.
-                     * @member {string} previewFilePath
+                     * File name.
+                     * @member {string} name
                      * @memberof anytype.model.Block.Content.File
                      * @instance
                      */
-                    File.prototype.previewFilePath = "";
-
-                    /**
-                     * File state.
-                     * @member {anytype.model.Block.Content.File.State} state
-                     * @memberof anytype.model.Block.Content.File
-                     * @instance
-                     */
-                    File.prototype.state = 0;
+                    File.prototype.name = "";
 
                     /**
                      * File type.
@@ -54316,6 +60923,14 @@ $root.anytype = (function() {
                      * @instance
                      */
                     File.prototype.type = 0;
+
+                    /**
+                     * File mime.
+                     * @member {string} mime
+                     * @memberof anytype.model.Block.Content.File
+                     * @instance
+                     */
+                    File.prototype.mime = "";
 
                     /**
                      * File size.
@@ -54332,6 +60947,14 @@ $root.anytype = (function() {
                      * @instance
                      */
                     File.prototype.addedAt = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+                    /**
+                     * File state.
+                     * @member {anytype.model.Block.Content.File.State} state
+                     * @memberof anytype.model.Block.Content.File
+                     * @instance
+                     */
+                    File.prototype.state = 0;
 
                     /**
                      * Creates a new File instance using the specified properties.
@@ -54357,18 +60980,20 @@ $root.anytype = (function() {
                     File.encode = function encode(message, writer) {
                         if (!writer)
                             writer = $Writer.create();
-                        if (message.localFilePath != null && message.hasOwnProperty("localFilePath"))
-                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.localFilePath);
-                        if (message.previewFilePath != null && message.hasOwnProperty("previewFilePath"))
-                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.previewFilePath);
-                        if (message.state != null && message.hasOwnProperty("state"))
-                            writer.uint32(/* id 3, wireType 0 =*/24).int32(message.state);
+                        if (message.hash != null && message.hasOwnProperty("hash"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.hash);
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
                         if (message.type != null && message.hasOwnProperty("type"))
-                            writer.uint32(/* id 4, wireType 0 =*/32).int32(message.type);
+                            writer.uint32(/* id 3, wireType 0 =*/24).int32(message.type);
+                        if (message.mime != null && message.hasOwnProperty("mime"))
+                            writer.uint32(/* id 4, wireType 2 =*/34).string(message.mime);
                         if (message.size != null && message.hasOwnProperty("size"))
                             writer.uint32(/* id 5, wireType 0 =*/40).int64(message.size);
                         if (message.addedAt != null && message.hasOwnProperty("addedAt"))
                             writer.uint32(/* id 6, wireType 0 =*/48).int64(message.addedAt);
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            writer.uint32(/* id 7, wireType 0 =*/56).int32(message.state);
                         return writer;
                     };
 
@@ -54404,22 +61029,25 @@ $root.anytype = (function() {
                             var tag = reader.uint32();
                             switch (tag >>> 3) {
                             case 1:
-                                message.localFilePath = reader.string();
+                                message.hash = reader.string();
                                 break;
                             case 2:
-                                message.previewFilePath = reader.string();
+                                message.name = reader.string();
                                 break;
                             case 3:
-                                message.state = reader.int32();
+                                message.type = reader.int32();
                                 break;
                             case 4:
-                                message.type = reader.int32();
+                                message.mime = reader.string();
                                 break;
                             case 5:
                                 message.size = reader.int64();
                                 break;
                             case 6:
                                 message.addedAt = reader.int64();
+                                break;
+                            case 7:
+                                message.state = reader.int32();
                                 break;
                             default:
                                 reader.skipType(tag & 7);
@@ -54456,12 +61084,31 @@ $root.anytype = (function() {
                     File.verify = function verify(message) {
                         if (typeof message !== "object" || message === null)
                             return "object expected";
-                        if (message.localFilePath != null && message.hasOwnProperty("localFilePath"))
-                            if (!$util.isString(message.localFilePath))
-                                return "localFilePath: string expected";
-                        if (message.previewFilePath != null && message.hasOwnProperty("previewFilePath"))
-                            if (!$util.isString(message.previewFilePath))
-                                return "previewFilePath: string expected";
+                        if (message.hash != null && message.hasOwnProperty("hash"))
+                            if (!$util.isString(message.hash))
+                                return "hash: string expected";
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            if (!$util.isString(message.name))
+                                return "name: string expected";
+                        if (message.type != null && message.hasOwnProperty("type"))
+                            switch (message.type) {
+                            default:
+                                return "type: enum value expected";
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                break;
+                            }
+                        if (message.mime != null && message.hasOwnProperty("mime"))
+                            if (!$util.isString(message.mime))
+                                return "mime: string expected";
+                        if (message.size != null && message.hasOwnProperty("size"))
+                            if (!$util.isInteger(message.size) && !(message.size && $util.isInteger(message.size.low) && $util.isInteger(message.size.high)))
+                                return "size: integer|Long expected";
+                        if (message.addedAt != null && message.hasOwnProperty("addedAt"))
+                            if (!$util.isInteger(message.addedAt) && !(message.addedAt && $util.isInteger(message.addedAt.low) && $util.isInteger(message.addedAt.high)))
+                                return "addedAt: integer|Long expected";
                         if (message.state != null && message.hasOwnProperty("state"))
                             switch (message.state) {
                             default:
@@ -54470,24 +61117,8 @@ $root.anytype = (function() {
                             case 1:
                             case 2:
                             case 3:
-                            case 4:
                                 break;
                             }
-                        if (message.type != null && message.hasOwnProperty("type"))
-                            switch (message.type) {
-                            default:
-                                return "type: enum value expected";
-                            case 0:
-                            case 1:
-                            case 2:
-                                break;
-                            }
-                        if (message.size != null && message.hasOwnProperty("size"))
-                            if (!$util.isInteger(message.size) && !(message.size && $util.isInteger(message.size.low) && $util.isInteger(message.size.high)))
-                                return "size: integer|Long expected";
-                        if (message.addedAt != null && message.hasOwnProperty("addedAt"))
-                            if (!$util.isInteger(message.addedAt) && !(message.addedAt && $util.isInteger(message.addedAt.low) && $util.isInteger(message.addedAt.high)))
-                                return "addedAt: integer|Long expected";
                         return null;
                     };
 
@@ -54503,46 +61134,30 @@ $root.anytype = (function() {
                         if (object instanceof $root.anytype.model.Block.Content.File)
                             return object;
                         var message = new $root.anytype.model.Block.Content.File();
-                        if (object.localFilePath != null)
-                            message.localFilePath = String(object.localFilePath);
-                        if (object.previewFilePath != null)
-                            message.previewFilePath = String(object.previewFilePath);
-                        switch (object.state) {
-                        case "Empty":
-                        case 0:
-                            message.state = 0;
-                            break;
-                        case "Uploading":
-                        case 1:
-                            message.state = 1;
-                            break;
-                        case "PreviewDownloaded":
-                        case 2:
-                            message.state = 2;
-                            break;
-                        case "Downloading":
-                        case 3:
-                            message.state = 3;
-                            break;
-                        case "Done":
-                        case 4:
-                            message.state = 4;
-                            break;
-                        }
+                        if (object.hash != null)
+                            message.hash = String(object.hash);
+                        if (object.name != null)
+                            message.name = String(object.name);
                         switch (object.type) {
-                        case "File":
+                        case "None":
                         case 0:
                             message.type = 0;
                             break;
-                        case "Image":
+                        case "File":
                         case 1:
                             message.type = 1;
                             break;
-                        case "Video":
+                        case "Image":
                         case 2:
                             message.type = 2;
                             break;
+                        case "Video":
+                        case 3:
+                            message.type = 3;
+                            break;
                         }
+                        if (object.mime != null)
+                            message.mime = String(object.mime);
                         if (object.size != null)
                             if ($util.Long)
                                 (message.size = $util.Long.fromValue(object.size)).unsigned = false;
@@ -54561,6 +61176,24 @@ $root.anytype = (function() {
                                 message.addedAt = object.addedAt;
                             else if (typeof object.addedAt === "object")
                                 message.addedAt = new $util.LongBits(object.addedAt.low >>> 0, object.addedAt.high >>> 0).toNumber();
+                        switch (object.state) {
+                        case "Empty":
+                        case 0:
+                            message.state = 0;
+                            break;
+                        case "Uploading":
+                        case 1:
+                            message.state = 1;
+                            break;
+                        case "Done":
+                        case 2:
+                            message.state = 2;
+                            break;
+                        case "Error":
+                        case 3:
+                            message.state = 3;
+                            break;
+                        }
                         return message;
                     };
 
@@ -54578,10 +61211,10 @@ $root.anytype = (function() {
                             options = {};
                         var object = {};
                         if (options.defaults) {
-                            object.localFilePath = "";
-                            object.previewFilePath = "";
-                            object.state = options.enums === String ? "Empty" : 0;
-                            object.type = options.enums === String ? "File" : 0;
+                            object.hash = "";
+                            object.name = "";
+                            object.type = options.enums === String ? "None" : 0;
+                            object.mime = "";
                             if ($util.Long) {
                                 var long = new $util.Long(0, 0, false);
                                 object.size = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
@@ -54592,15 +61225,16 @@ $root.anytype = (function() {
                                 object.addedAt = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                             } else
                                 object.addedAt = options.longs === String ? "0" : 0;
+                            object.state = options.enums === String ? "Empty" : 0;
                         }
-                        if (message.localFilePath != null && message.hasOwnProperty("localFilePath"))
-                            object.localFilePath = message.localFilePath;
-                        if (message.previewFilePath != null && message.hasOwnProperty("previewFilePath"))
-                            object.previewFilePath = message.previewFilePath;
-                        if (message.state != null && message.hasOwnProperty("state"))
-                            object.state = options.enums === String ? $root.anytype.model.Block.Content.File.State[message.state] : message.state;
+                        if (message.hash != null && message.hasOwnProperty("hash"))
+                            object.hash = message.hash;
+                        if (message.name != null && message.hasOwnProperty("name"))
+                            object.name = message.name;
                         if (message.type != null && message.hasOwnProperty("type"))
                             object.type = options.enums === String ? $root.anytype.model.Block.Content.File.Type[message.type] : message.type;
+                        if (message.mime != null && message.hasOwnProperty("mime"))
+                            object.mime = message.mime;
                         if (message.size != null && message.hasOwnProperty("size"))
                             if (typeof message.size === "number")
                                 object.size = options.longs === String ? String(message.size) : message.size;
@@ -54611,6 +61245,8 @@ $root.anytype = (function() {
                                 object.addedAt = options.longs === String ? String(message.addedAt) : message.addedAt;
                             else
                                 object.addedAt = options.longs === String ? $util.Long.prototype.toString.call(message.addedAt) : options.longs === Number ? new $util.LongBits(message.addedAt.low >>> 0, message.addedAt.high >>> 0).toNumber() : message.addedAt;
+                        if (message.state != null && message.hasOwnProperty("state"))
+                            object.state = options.enums === String ? $root.anytype.model.Block.Content.File.State[message.state] : message.state;
                         return object;
                     };
 
@@ -54629,15 +61265,17 @@ $root.anytype = (function() {
                      * Type enum.
                      * @name anytype.model.Block.Content.File.Type
                      * @enum {string}
-                     * @property {number} File=0 File value
-                     * @property {number} Image=1 Image value
-                     * @property {number} Video=2 Video value
+                     * @property {number} None=0 None value
+                     * @property {number} File=1 File value
+                     * @property {number} Image=2 Image value
+                     * @property {number} Video=3 Video value
                      */
                     File.Type = (function() {
                         var valuesById = {}, values = Object.create(valuesById);
-                        values[valuesById[0] = "File"] = 0;
-                        values[valuesById[1] = "Image"] = 1;
-                        values[valuesById[2] = "Video"] = 2;
+                        values[valuesById[0] = "None"] = 0;
+                        values[valuesById[1] = "File"] = 1;
+                        values[valuesById[2] = "Image"] = 2;
+                        values[valuesById[3] = "Video"] = 3;
                         return values;
                     })();
 
@@ -54647,17 +61285,15 @@ $root.anytype = (function() {
                      * @enum {string}
                      * @property {number} Empty=0 Empty value
                      * @property {number} Uploading=1 Uploading value
-                     * @property {number} PreviewDownloaded=2 PreviewDownloaded value
-                     * @property {number} Downloading=3 Downloading value
-                     * @property {number} Done=4 Done value
+                     * @property {number} Done=2 Done value
+                     * @property {number} Error=3 Error value
                      */
                     File.State = (function() {
                         var valuesById = {}, values = Object.create(valuesById);
                         values[valuesById[0] = "Empty"] = 0;
                         values[valuesById[1] = "Uploading"] = 1;
-                        values[valuesById[2] = "PreviewDownloaded"] = 2;
-                        values[valuesById[3] = "Downloading"] = 3;
-                        values[valuesById[4] = "Done"] = 4;
+                        values[valuesById[2] = "Done"] = 2;
+                        values[valuesById[3] = "Error"] = 3;
                         return values;
                     })();
 
@@ -54889,6 +61525,243 @@ $root.anytype = (function() {
             })();
 
             return Block;
+        })();
+
+        model.BlockMetaOnly = (function() {
+
+            /**
+             * Properties of a BlockMetaOnly.
+             * @memberof anytype.model
+             * @interface IBlockMetaOnly
+             * @property {string|null} [id] BlockMetaOnly id
+             * @property {google.protobuf.IStruct|null} [fields] BlockMetaOnly fields
+             * @property {boolean|null} [isArchived] BlockMetaOnly isArchived
+             */
+
+            /**
+             * Constructs a new BlockMetaOnly.
+             * @memberof anytype.model
+             * @classdesc Represents a BlockMetaOnly.
+             * @implements IBlockMetaOnly
+             * @constructor
+             * @param {anytype.model.IBlockMetaOnly=} [properties] Properties to set
+             */
+            function BlockMetaOnly(properties) {
+                if (properties)
+                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * BlockMetaOnly id.
+             * @member {string} id
+             * @memberof anytype.model.BlockMetaOnly
+             * @instance
+             */
+            BlockMetaOnly.prototype.id = "";
+
+            /**
+             * BlockMetaOnly fields.
+             * @member {google.protobuf.IStruct|null|undefined} fields
+             * @memberof anytype.model.BlockMetaOnly
+             * @instance
+             */
+            BlockMetaOnly.prototype.fields = null;
+
+            /**
+             * BlockMetaOnly isArchived.
+             * @member {boolean} isArchived
+             * @memberof anytype.model.BlockMetaOnly
+             * @instance
+             */
+            BlockMetaOnly.prototype.isArchived = false;
+
+            /**
+             * Creates a new BlockMetaOnly instance using the specified properties.
+             * @function create
+             * @memberof anytype.model.BlockMetaOnly
+             * @static
+             * @param {anytype.model.IBlockMetaOnly=} [properties] Properties to set
+             * @returns {anytype.model.BlockMetaOnly} BlockMetaOnly instance
+             */
+            BlockMetaOnly.create = function create(properties) {
+                return new BlockMetaOnly(properties);
+            };
+
+            /**
+             * Encodes the specified BlockMetaOnly message. Does not implicitly {@link anytype.model.BlockMetaOnly.verify|verify} messages.
+             * @function encode
+             * @memberof anytype.model.BlockMetaOnly
+             * @static
+             * @param {anytype.model.IBlockMetaOnly} message BlockMetaOnly message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            BlockMetaOnly.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.id != null && message.hasOwnProperty("id"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+                if (message.fields != null && message.hasOwnProperty("fields"))
+                    $root.google.protobuf.Struct.encode(message.fields, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                if (message.isArchived != null && message.hasOwnProperty("isArchived"))
+                    writer.uint32(/* id 5, wireType 0 =*/40).bool(message.isArchived);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified BlockMetaOnly message, length delimited. Does not implicitly {@link anytype.model.BlockMetaOnly.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof anytype.model.BlockMetaOnly
+             * @static
+             * @param {anytype.model.IBlockMetaOnly} message BlockMetaOnly message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            BlockMetaOnly.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a BlockMetaOnly message from the specified reader or buffer.
+             * @function decode
+             * @memberof anytype.model.BlockMetaOnly
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {anytype.model.BlockMetaOnly} BlockMetaOnly
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            BlockMetaOnly.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.model.BlockMetaOnly();
+                while (reader.pos < end) {
+                    var tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1:
+                        message.id = reader.string();
+                        break;
+                    case 2:
+                        message.fields = $root.google.protobuf.Struct.decode(reader, reader.uint32());
+                        break;
+                    case 5:
+                        message.isArchived = reader.bool();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a BlockMetaOnly message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof anytype.model.BlockMetaOnly
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {anytype.model.BlockMetaOnly} BlockMetaOnly
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            BlockMetaOnly.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a BlockMetaOnly message.
+             * @function verify
+             * @memberof anytype.model.BlockMetaOnly
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            BlockMetaOnly.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.id != null && message.hasOwnProperty("id"))
+                    if (!$util.isString(message.id))
+                        return "id: string expected";
+                if (message.fields != null && message.hasOwnProperty("fields")) {
+                    var error = $root.google.protobuf.Struct.verify(message.fields);
+                    if (error)
+                        return "fields." + error;
+                }
+                if (message.isArchived != null && message.hasOwnProperty("isArchived"))
+                    if (typeof message.isArchived !== "boolean")
+                        return "isArchived: boolean expected";
+                return null;
+            };
+
+            /**
+             * Creates a BlockMetaOnly message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof anytype.model.BlockMetaOnly
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {anytype.model.BlockMetaOnly} BlockMetaOnly
+             */
+            BlockMetaOnly.fromObject = function fromObject(object) {
+                if (object instanceof $root.anytype.model.BlockMetaOnly)
+                    return object;
+                var message = new $root.anytype.model.BlockMetaOnly();
+                if (object.id != null)
+                    message.id = String(object.id);
+                if (object.fields != null) {
+                    if (typeof object.fields !== "object")
+                        throw TypeError(".anytype.model.BlockMetaOnly.fields: object expected");
+                    message.fields = $root.google.protobuf.Struct.fromObject(object.fields);
+                }
+                if (object.isArchived != null)
+                    message.isArchived = Boolean(object.isArchived);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a BlockMetaOnly message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof anytype.model.BlockMetaOnly
+             * @static
+             * @param {anytype.model.BlockMetaOnly} message BlockMetaOnly
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            BlockMetaOnly.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                var object = {};
+                if (options.defaults) {
+                    object.id = "";
+                    object.fields = null;
+                    object.isArchived = false;
+                }
+                if (message.id != null && message.hasOwnProperty("id"))
+                    object.id = message.id;
+                if (message.fields != null && message.hasOwnProperty("fields"))
+                    object.fields = $root.google.protobuf.Struct.toObject(message.fields, options);
+                if (message.isArchived != null && message.hasOwnProperty("isArchived"))
+                    object.isArchived = message.isArchived;
+                return object;
+            };
+
+            /**
+             * Converts this BlockMetaOnly to JSON.
+             * @function toJSON
+             * @memberof anytype.model.BlockMetaOnly
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            BlockMetaOnly.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            return BlockMetaOnly;
         })();
 
         model.Range = (function() {
@@ -55341,7 +62214,7 @@ $root.anytype = (function() {
                  * Properties of an Avatar.
                  * @memberof anytype.model.Account
                  * @interface IAvatar
-                 * @property {anytype.model.IImage|null} [image] Avatar image
+                 * @property {anytype.model.Block.Content.IFile|null} [image] Avatar image
                  * @property {string|null} [color] Avatar color
                  */
 
@@ -55362,7 +62235,7 @@ $root.anytype = (function() {
 
                 /**
                  * Avatar image.
-                 * @member {anytype.model.IImage|null|undefined} image
+                 * @member {anytype.model.Block.Content.IFile|null|undefined} image
                  * @memberof anytype.model.Account.Avatar
                  * @instance
                  */
@@ -55415,7 +62288,7 @@ $root.anytype = (function() {
                     if (!writer)
                         writer = $Writer.create();
                     if (message.image != null && message.hasOwnProperty("image"))
-                        $root.anytype.model.Image.encode(message.image, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        $root.anytype.model.Block.Content.File.encode(message.image, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                     if (message.color != null && message.hasOwnProperty("color"))
                         writer.uint32(/* id 2, wireType 2 =*/18).string(message.color);
                     return writer;
@@ -55453,7 +62326,7 @@ $root.anytype = (function() {
                         var tag = reader.uint32();
                         switch (tag >>> 3) {
                         case 1:
-                            message.image = $root.anytype.model.Image.decode(reader, reader.uint32());
+                            message.image = $root.anytype.model.Block.Content.File.decode(reader, reader.uint32());
                             break;
                         case 2:
                             message.color = reader.string();
@@ -55497,7 +62370,7 @@ $root.anytype = (function() {
                     if (message.image != null && message.hasOwnProperty("image")) {
                         properties.avatar = 1;
                         {
-                            var error = $root.anytype.model.Image.verify(message.image);
+                            var error = $root.anytype.model.Block.Content.File.verify(message.image);
                             if (error)
                                 return "image." + error;
                         }
@@ -55527,7 +62400,7 @@ $root.anytype = (function() {
                     if (object.image != null) {
                         if (typeof object.image !== "object")
                             throw TypeError(".anytype.model.Account.Avatar.image: object expected");
-                        message.image = $root.anytype.model.Image.fromObject(object.image);
+                        message.image = $root.anytype.model.Block.Content.File.fromObject(object.image);
                     }
                     if (object.color != null)
                         message.color = String(object.color);
@@ -55548,7 +62421,7 @@ $root.anytype = (function() {
                         options = {};
                     var object = {};
                     if (message.image != null && message.hasOwnProperty("image")) {
-                        object.image = $root.anytype.model.Image.toObject(message.image, options);
+                        object.image = $root.anytype.model.Block.Content.File.toObject(message.image, options);
                         if (options.oneofs)
                             object.avatar = "image";
                     }
@@ -55575,617 +62448,6 @@ $root.anytype = (function() {
             })();
 
             return Account;
-        })();
-
-        model.Image = (function() {
-
-            /**
-             * Properties of an Image.
-             * @memberof anytype.model
-             * @interface IImage
-             * @property {string|null} [id] Image id
-             * @property {Array.<anytype.model.Image.Size>|null} [sizes] Image sizes
-             * @property {anytype.model.Image.Style|null} [style] Image style
-             */
-
-            /**
-             * Constructs a new Image.
-             * @memberof anytype.model
-             * @classdesc Represents an Image.
-             * @implements IImage
-             * @constructor
-             * @param {anytype.model.IImage=} [properties] Properties to set
-             */
-            function Image(properties) {
-                this.sizes = [];
-                if (properties)
-                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                        if (properties[keys[i]] != null)
-                            this[keys[i]] = properties[keys[i]];
-            }
-
-            /**
-             * Image id.
-             * @member {string} id
-             * @memberof anytype.model.Image
-             * @instance
-             */
-            Image.prototype.id = "";
-
-            /**
-             * Image sizes.
-             * @member {Array.<anytype.model.Image.Size>} sizes
-             * @memberof anytype.model.Image
-             * @instance
-             */
-            Image.prototype.sizes = $util.emptyArray;
-
-            /**
-             * Image style.
-             * @member {anytype.model.Image.Style} style
-             * @memberof anytype.model.Image
-             * @instance
-             */
-            Image.prototype.style = 0;
-
-            /**
-             * Creates a new Image instance using the specified properties.
-             * @function create
-             * @memberof anytype.model.Image
-             * @static
-             * @param {anytype.model.IImage=} [properties] Properties to set
-             * @returns {anytype.model.Image} Image instance
-             */
-            Image.create = function create(properties) {
-                return new Image(properties);
-            };
-
-            /**
-             * Encodes the specified Image message. Does not implicitly {@link anytype.model.Image.verify|verify} messages.
-             * @function encode
-             * @memberof anytype.model.Image
-             * @static
-             * @param {anytype.model.IImage} message Image message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            Image.encode = function encode(message, writer) {
-                if (!writer)
-                    writer = $Writer.create();
-                if (message.id != null && message.hasOwnProperty("id"))
-                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
-                if (message.sizes != null && message.sizes.length) {
-                    writer.uint32(/* id 2, wireType 2 =*/18).fork();
-                    for (var i = 0; i < message.sizes.length; ++i)
-                        writer.int32(message.sizes[i]);
-                    writer.ldelim();
-                }
-                if (message.style != null && message.hasOwnProperty("style"))
-                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.style);
-                return writer;
-            };
-
-            /**
-             * Encodes the specified Image message, length delimited. Does not implicitly {@link anytype.model.Image.verify|verify} messages.
-             * @function encodeDelimited
-             * @memberof anytype.model.Image
-             * @static
-             * @param {anytype.model.IImage} message Image message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            Image.encodeDelimited = function encodeDelimited(message, writer) {
-                return this.encode(message, writer).ldelim();
-            };
-
-            /**
-             * Decodes an Image message from the specified reader or buffer.
-             * @function decode
-             * @memberof anytype.model.Image
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @param {number} [length] Message length if known beforehand
-             * @returns {anytype.model.Image} Image
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            Image.decode = function decode(reader, length) {
-                if (!(reader instanceof $Reader))
-                    reader = $Reader.create(reader);
-                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.model.Image();
-                while (reader.pos < end) {
-                    var tag = reader.uint32();
-                    switch (tag >>> 3) {
-                    case 1:
-                        message.id = reader.string();
-                        break;
-                    case 2:
-                        if (!(message.sizes && message.sizes.length))
-                            message.sizes = [];
-                        if ((tag & 7) === 2) {
-                            var end2 = reader.uint32() + reader.pos;
-                            while (reader.pos < end2)
-                                message.sizes.push(reader.int32());
-                        } else
-                            message.sizes.push(reader.int32());
-                        break;
-                    case 3:
-                        message.style = reader.int32();
-                        break;
-                    default:
-                        reader.skipType(tag & 7);
-                        break;
-                    }
-                }
-                return message;
-            };
-
-            /**
-             * Decodes an Image message from the specified reader or buffer, length delimited.
-             * @function decodeDelimited
-             * @memberof anytype.model.Image
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {anytype.model.Image} Image
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            Image.decodeDelimited = function decodeDelimited(reader) {
-                if (!(reader instanceof $Reader))
-                    reader = new $Reader(reader);
-                return this.decode(reader, reader.uint32());
-            };
-
-            /**
-             * Verifies an Image message.
-             * @function verify
-             * @memberof anytype.model.Image
-             * @static
-             * @param {Object.<string,*>} message Plain object to verify
-             * @returns {string|null} `null` if valid, otherwise the reason why it is not
-             */
-            Image.verify = function verify(message) {
-                if (typeof message !== "object" || message === null)
-                    return "object expected";
-                if (message.id != null && message.hasOwnProperty("id"))
-                    if (!$util.isString(message.id))
-                        return "id: string expected";
-                if (message.sizes != null && message.hasOwnProperty("sizes")) {
-                    if (!Array.isArray(message.sizes))
-                        return "sizes: array expected";
-                    for (var i = 0; i < message.sizes.length; ++i)
-                        switch (message.sizes[i]) {
-                        default:
-                            return "sizes: enum value[] expected";
-                        case 0:
-                        case 1:
-                        case 2:
-                            break;
-                        }
-                }
-                if (message.style != null && message.hasOwnProperty("style"))
-                    switch (message.style) {
-                    default:
-                        return "style: enum value expected";
-                    case 0:
-                    case 1:
-                        break;
-                    }
-                return null;
-            };
-
-            /**
-             * Creates an Image message from a plain object. Also converts values to their respective internal types.
-             * @function fromObject
-             * @memberof anytype.model.Image
-             * @static
-             * @param {Object.<string,*>} object Plain object
-             * @returns {anytype.model.Image} Image
-             */
-            Image.fromObject = function fromObject(object) {
-                if (object instanceof $root.anytype.model.Image)
-                    return object;
-                var message = new $root.anytype.model.Image();
-                if (object.id != null)
-                    message.id = String(object.id);
-                if (object.sizes) {
-                    if (!Array.isArray(object.sizes))
-                        throw TypeError(".anytype.model.Image.sizes: array expected");
-                    message.sizes = [];
-                    for (var i = 0; i < object.sizes.length; ++i)
-                        switch (object.sizes[i]) {
-                        default:
-                        case "Large":
-                        case 0:
-                            message.sizes[i] = 0;
-                            break;
-                        case "Small":
-                        case 1:
-                            message.sizes[i] = 1;
-                            break;
-                        case "Thumb":
-                        case 2:
-                            message.sizes[i] = 2;
-                            break;
-                        }
-                }
-                switch (object.style) {
-                case "Picture":
-                case 0:
-                    message.style = 0;
-                    break;
-                case "File":
-                case 1:
-                    message.style = 1;
-                    break;
-                }
-                return message;
-            };
-
-            /**
-             * Creates a plain object from an Image message. Also converts values to other types if specified.
-             * @function toObject
-             * @memberof anytype.model.Image
-             * @static
-             * @param {anytype.model.Image} message Image
-             * @param {$protobuf.IConversionOptions} [options] Conversion options
-             * @returns {Object.<string,*>} Plain object
-             */
-            Image.toObject = function toObject(message, options) {
-                if (!options)
-                    options = {};
-                var object = {};
-                if (options.arrays || options.defaults)
-                    object.sizes = [];
-                if (options.defaults) {
-                    object.id = "";
-                    object.style = options.enums === String ? "Picture" : 0;
-                }
-                if (message.id != null && message.hasOwnProperty("id"))
-                    object.id = message.id;
-                if (message.sizes && message.sizes.length) {
-                    object.sizes = [];
-                    for (var j = 0; j < message.sizes.length; ++j)
-                        object.sizes[j] = options.enums === String ? $root.anytype.model.Image.Size[message.sizes[j]] : message.sizes[j];
-                }
-                if (message.style != null && message.hasOwnProperty("style"))
-                    object.style = options.enums === String ? $root.anytype.model.Image.Style[message.style] : message.style;
-                return object;
-            };
-
-            /**
-             * Converts this Image to JSON.
-             * @function toJSON
-             * @memberof anytype.model.Image
-             * @instance
-             * @returns {Object.<string,*>} JSON object
-             */
-            Image.prototype.toJSON = function toJSON() {
-                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-            };
-
-            /**
-             * Size enum.
-             * @name anytype.model.Image.Size
-             * @enum {string}
-             * @property {number} Large=0 Large value
-             * @property {number} Small=1 Small value
-             * @property {number} Thumb=2 Thumb value
-             */
-            Image.Size = (function() {
-                var valuesById = {}, values = Object.create(valuesById);
-                values[valuesById[0] = "Large"] = 0;
-                values[valuesById[1] = "Small"] = 1;
-                values[valuesById[2] = "Thumb"] = 2;
-                return values;
-            })();
-
-            /**
-             * Style enum.
-             * @name anytype.model.Image.Style
-             * @enum {string}
-             * @property {number} Picture=0 Picture value
-             * @property {number} File=1 File value
-             */
-            Image.Style = (function() {
-                var valuesById = {}, values = Object.create(valuesById);
-                values[valuesById[0] = "Picture"] = 0;
-                values[valuesById[1] = "File"] = 1;
-                return values;
-            })();
-
-            return Image;
-        })();
-
-        model.Video = (function() {
-
-            /**
-             * Properties of a Video.
-             * @memberof anytype.model
-             * @interface IVideo
-             * @property {string|null} [id] Video id
-             * @property {Array.<anytype.model.Video.Size>|null} [sizes] Video sizes
-             */
-
-            /**
-             * Constructs a new Video.
-             * @memberof anytype.model
-             * @classdesc Represents a Video.
-             * @implements IVideo
-             * @constructor
-             * @param {anytype.model.IVideo=} [properties] Properties to set
-             */
-            function Video(properties) {
-                this.sizes = [];
-                if (properties)
-                    for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                        if (properties[keys[i]] != null)
-                            this[keys[i]] = properties[keys[i]];
-            }
-
-            /**
-             * Video id.
-             * @member {string} id
-             * @memberof anytype.model.Video
-             * @instance
-             */
-            Video.prototype.id = "";
-
-            /**
-             * Video sizes.
-             * @member {Array.<anytype.model.Video.Size>} sizes
-             * @memberof anytype.model.Video
-             * @instance
-             */
-            Video.prototype.sizes = $util.emptyArray;
-
-            /**
-             * Creates a new Video instance using the specified properties.
-             * @function create
-             * @memberof anytype.model.Video
-             * @static
-             * @param {anytype.model.IVideo=} [properties] Properties to set
-             * @returns {anytype.model.Video} Video instance
-             */
-            Video.create = function create(properties) {
-                return new Video(properties);
-            };
-
-            /**
-             * Encodes the specified Video message. Does not implicitly {@link anytype.model.Video.verify|verify} messages.
-             * @function encode
-             * @memberof anytype.model.Video
-             * @static
-             * @param {anytype.model.IVideo} message Video message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            Video.encode = function encode(message, writer) {
-                if (!writer)
-                    writer = $Writer.create();
-                if (message.id != null && message.hasOwnProperty("id"))
-                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
-                if (message.sizes != null && message.sizes.length) {
-                    writer.uint32(/* id 2, wireType 2 =*/18).fork();
-                    for (var i = 0; i < message.sizes.length; ++i)
-                        writer.int32(message.sizes[i]);
-                    writer.ldelim();
-                }
-                return writer;
-            };
-
-            /**
-             * Encodes the specified Video message, length delimited. Does not implicitly {@link anytype.model.Video.verify|verify} messages.
-             * @function encodeDelimited
-             * @memberof anytype.model.Video
-             * @static
-             * @param {anytype.model.IVideo} message Video message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            Video.encodeDelimited = function encodeDelimited(message, writer) {
-                return this.encode(message, writer).ldelim();
-            };
-
-            /**
-             * Decodes a Video message from the specified reader or buffer.
-             * @function decode
-             * @memberof anytype.model.Video
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @param {number} [length] Message length if known beforehand
-             * @returns {anytype.model.Video} Video
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            Video.decode = function decode(reader, length) {
-                if (!(reader instanceof $Reader))
-                    reader = $Reader.create(reader);
-                var end = length === undefined ? reader.len : reader.pos + length, message = new $root.anytype.model.Video();
-                while (reader.pos < end) {
-                    var tag = reader.uint32();
-                    switch (tag >>> 3) {
-                    case 1:
-                        message.id = reader.string();
-                        break;
-                    case 2:
-                        if (!(message.sizes && message.sizes.length))
-                            message.sizes = [];
-                        if ((tag & 7) === 2) {
-                            var end2 = reader.uint32() + reader.pos;
-                            while (reader.pos < end2)
-                                message.sizes.push(reader.int32());
-                        } else
-                            message.sizes.push(reader.int32());
-                        break;
-                    default:
-                        reader.skipType(tag & 7);
-                        break;
-                    }
-                }
-                return message;
-            };
-
-            /**
-             * Decodes a Video message from the specified reader or buffer, length delimited.
-             * @function decodeDelimited
-             * @memberof anytype.model.Video
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {anytype.model.Video} Video
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            Video.decodeDelimited = function decodeDelimited(reader) {
-                if (!(reader instanceof $Reader))
-                    reader = new $Reader(reader);
-                return this.decode(reader, reader.uint32());
-            };
-
-            /**
-             * Verifies a Video message.
-             * @function verify
-             * @memberof anytype.model.Video
-             * @static
-             * @param {Object.<string,*>} message Plain object to verify
-             * @returns {string|null} `null` if valid, otherwise the reason why it is not
-             */
-            Video.verify = function verify(message) {
-                if (typeof message !== "object" || message === null)
-                    return "object expected";
-                if (message.id != null && message.hasOwnProperty("id"))
-                    if (!$util.isString(message.id))
-                        return "id: string expected";
-                if (message.sizes != null && message.hasOwnProperty("sizes")) {
-                    if (!Array.isArray(message.sizes))
-                        return "sizes: array expected";
-                    for (var i = 0; i < message.sizes.length; ++i)
-                        switch (message.sizes[i]) {
-                        default:
-                            return "sizes: enum value[] expected";
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                            break;
-                        }
-                }
-                return null;
-            };
-
-            /**
-             * Creates a Video message from a plain object. Also converts values to their respective internal types.
-             * @function fromObject
-             * @memberof anytype.model.Video
-             * @static
-             * @param {Object.<string,*>} object Plain object
-             * @returns {anytype.model.Video} Video
-             */
-            Video.fromObject = function fromObject(object) {
-                if (object instanceof $root.anytype.model.Video)
-                    return object;
-                var message = new $root.anytype.model.Video();
-                if (object.id != null)
-                    message.id = String(object.id);
-                if (object.sizes) {
-                    if (!Array.isArray(object.sizes))
-                        throw TypeError(".anytype.model.Video.sizes: array expected");
-                    message.sizes = [];
-                    for (var i = 0; i < object.sizes.length; ++i)
-                        switch (object.sizes[i]) {
-                        default:
-                        case "SD360p":
-                        case 0:
-                            message.sizes[i] = 0;
-                            break;
-                        case "SD480p":
-                        case 1:
-                            message.sizes[i] = 1;
-                            break;
-                        case "HD720p":
-                        case 2:
-                            message.sizes[i] = 2;
-                            break;
-                        case "HD1080p":
-                        case 3:
-                            message.sizes[i] = 3;
-                            break;
-                        case "UHD1440p":
-                        case 4:
-                            message.sizes[i] = 4;
-                            break;
-                        case "UHD2160p":
-                        case 5:
-                            message.sizes[i] = 5;
-                            break;
-                        }
-                }
-                return message;
-            };
-
-            /**
-             * Creates a plain object from a Video message. Also converts values to other types if specified.
-             * @function toObject
-             * @memberof anytype.model.Video
-             * @static
-             * @param {anytype.model.Video} message Video
-             * @param {$protobuf.IConversionOptions} [options] Conversion options
-             * @returns {Object.<string,*>} Plain object
-             */
-            Video.toObject = function toObject(message, options) {
-                if (!options)
-                    options = {};
-                var object = {};
-                if (options.arrays || options.defaults)
-                    object.sizes = [];
-                if (options.defaults)
-                    object.id = "";
-                if (message.id != null && message.hasOwnProperty("id"))
-                    object.id = message.id;
-                if (message.sizes && message.sizes.length) {
-                    object.sizes = [];
-                    for (var j = 0; j < message.sizes.length; ++j)
-                        object.sizes[j] = options.enums === String ? $root.anytype.model.Video.Size[message.sizes[j]] : message.sizes[j];
-                }
-                return object;
-            };
-
-            /**
-             * Converts this Video to JSON.
-             * @function toJSON
-             * @memberof anytype.model.Video
-             * @instance
-             * @returns {Object.<string,*>} JSON object
-             */
-            Video.prototype.toJSON = function toJSON() {
-                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-            };
-
-            /**
-             * Size enum.
-             * @name anytype.model.Video.Size
-             * @enum {string}
-             * @property {number} SD360p=0 SD360p value
-             * @property {number} SD480p=1 SD480p value
-             * @property {number} HD720p=2 HD720p value
-             * @property {number} HD1080p=3 HD1080p value
-             * @property {number} UHD1440p=4 UHD1440p value
-             * @property {number} UHD2160p=5 UHD2160p value
-             */
-            Video.Size = (function() {
-                var valuesById = {}, values = Object.create(valuesById);
-                values[valuesById[0] = "SD360p"] = 0;
-                values[valuesById[1] = "SD480p"] = 1;
-                values[valuesById[2] = "HD720p"] = 2;
-                values[valuesById[3] = "HD1080p"] = 3;
-                values[valuesById[4] = "UHD1440p"] = 4;
-                values[valuesById[5] = "UHD2160p"] = 5;
-                return values;
-            })();
-
-            return Video;
         })();
 
         return model;
