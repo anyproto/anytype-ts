@@ -82,6 +82,9 @@ jobs:
           github_token: ${{secrets.TOKEN}}
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
           mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
+        env:
+          APPLEID: ${{ secrets.APPLEID }}
+          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
 
       - name: Make artifacts dir
         run: | 
