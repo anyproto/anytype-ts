@@ -31,7 +31,7 @@ tar -zxf $FILE
 printf "Done\n"
 ls addon
 
-mkdir -p build_
+mkdir -p build
 mv addon/* build/
 rm -rf addon
 
