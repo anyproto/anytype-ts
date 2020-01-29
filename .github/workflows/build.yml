@@ -29,30 +29,6 @@ jobs:
         with:
           node-version: 12.10.0
 
-      - name: Install Go
-        uses: actions/setup-go@v1
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: Set GOPATH
-        if: matrix.os != 'windows-latest'
-        run: |  
-          go env -w GOPATH=$HOME/go
-
-      - name: Checkout Middleware
-        uses: actions/checkout@v2
-        with:
-          repository: 'anytypeio/go-anytype-middleware'
-          token: ${{secrets.TOKEN}}
-          path: go-anytype-middleware
-
-      - name: Checkout Protobuf
-        uses: actions/checkout@v2
-        with:
-          repository: 'protocolbuffers/protobuf'
-          token: ${{secrets.TOKEN}}
-          path: protobuf
-
       - name: Update Addon
         run: ./update.sh ${{secrets.TOKEN}}
 
