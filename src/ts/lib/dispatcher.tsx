@@ -232,7 +232,10 @@ class Dispatcher {
 					break;
 					
 				case 'blockDelete':
+					blocks = Util.objectCopy(blocks);
 					blocks = blocks.filter((item: I.Block) => { return item.id != data.blockId; });
+					
+					set = true;
 					
 					// Remove focus if block is deleted
 					if (focused == data.blockId) {
