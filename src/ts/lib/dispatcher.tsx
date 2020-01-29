@@ -53,7 +53,7 @@ class Dispatcher {
 			};
 			
 			if (DEBUG) {
-				console.log('[Dispatcher.event]', type, data);
+				console.log('[Dispatcher.event]', type, JSON.stringify(data, null, 5));
 			};
 		
 			switch (type) {

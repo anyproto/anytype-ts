@@ -60,16 +60,13 @@ class BlockText extends React.Component<Props, {}> {
 		let { lang } = fields;
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
-		let ct: string[] = [];
+		let ct: string[] = [ 'flex' ];
 		let additional = null;
 		
 		if (color) {
 			ct.push('textColor textColor-' + color);
 		};
-		if (bgColor) {
-			ct.push('bgColor bgColor-' + bgColor);
-		};
-		
+
 		let editor = (
 			<div
 				id="value"
@@ -187,9 +184,6 @@ class BlockText extends React.Component<Props, {}> {
 			
 			if (color) {
 				html = '<span ' + Mark.paramToAttr(I.MarkType.TextColor, color) + '>' + html + '</span>';
-			};
-			if (bgColor) {
-				html = '<span ' + Mark.paramToAttr(I.MarkType.BgColor, bgColor) + '>' + html + '</span>';
 			};
 		};
 		

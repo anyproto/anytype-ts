@@ -59,7 +59,8 @@ class Block extends React.Component<Props, {}> {
 		const { style } = content || {};
 		
 		let canSelect = true;
-		let cn = [ 'block', 'index' + index ];
+		let cn: string[] = [ 'block', 'index' + index ];
+		let cd: string[] = [];
 		let BlockComponent: any = (): any => null;
 		
 		if (className) {
@@ -69,6 +70,10 @@ class Block extends React.Component<Props, {}> {
 		switch (type) {
 			case I.BlockType.Text:
 				cn.push('blockText ' + Util.styleClass(content.style));
+				if (content.bgColor) {
+					cd.push('bgColor bgColor-' + content.bgColor);
+				};
+				
 				BlockComponent = () => (
 					<BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />
 				);
@@ -138,7 +143,7 @@ class Block extends React.Component<Props, {}> {
 				<div className="wrapContent">
 					{canSelect ? (
 						<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
-							<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
+							<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
 								<BlockComponent {...this.props} />
 							</DropTarget>
 						</div>
