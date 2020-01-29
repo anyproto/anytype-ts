@@ -65,10 +65,8 @@
 	.blockText.header2 { padding: 15px 0px 1px 0px; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
 	.blockText.header3 { padding: 15px 0px 1px 0px; font-size: 17px; line-height: 24px; font-weight: 600; }
 	.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; }
-	.blockText.quote {
-		.wrap { padding-left: 28px; }
-		.line { width: 2px; height: 100%; position: absolute; left: 11px; top: 0px; background: $colorOrange; }
-	}
+	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: 100%; position: absolute; left: 11px; top: 0px; background: $colorOrange; }
+	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.blockText.code { font-family: 'Mono'; line-height: 1.71; padding: 32px 24px 16px 24px; margin: 7px 0px; background: rgba(247,245,240,0.5); }
 	.blockText.code {
 		.select { position: absolute; top: 1px; right: 1px; padding: 0px 22px 0px 8px; font-size: 12px; height: 24px; border: 0px; }
