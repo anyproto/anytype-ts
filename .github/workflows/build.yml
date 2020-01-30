@@ -1,9 +1,10 @@
 name: Release
+on: push
 
-on: 
-  push:
-    tags:        
-      - v*
+#on: 
+#  push:
+#    tags:        
+#      - v*
 
 jobs:
   release:
@@ -29,7 +30,7 @@ jobs:
           node-version: 12.10.0
 
       - name: Update Addon
-        run: ./update.sh ${{secrets.TOKEN}}
+        run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}
 
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
