@@ -58,5 +58,5 @@ rm -rf addon
 
 mv -fv protobuf/commands.js src/proto/commands.js
 rm -rf protobuf
-#rm -rf $FILE
+rm -rf $FILE
 printf "Done\n"
