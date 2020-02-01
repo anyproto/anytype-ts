@@ -6,6 +6,7 @@ import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	authStore?: any;
+	history?: any;
 };
 
 const { ipcRenderer } = window.require('electron');
@@ -24,6 +25,7 @@ class MenuHelp extends React.Component<Props, {}> {
 	
 	render () {
 		const items: I.MenuItem[] = [
+			{ icon: 'help', name: 'Help' },
 			{ icon: 'chat', name: 'Chat with Us' },
 			{ icon: 'feature', name: 'Suggest a Feature' },
 			{ icon: 'community', name: 'Join our Community' }
@@ -39,12 +41,16 @@ class MenuHelp extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, id: string) {
-		const { authStore } = this.props;
+		const { authStore, history } = this.props;
 		const { account } = authStore;
 		
 		commonStore.menuClose(this.props.id);
 		
 		switch (id) {
+			case 'help':
+				history.push('/help/index');
+				break;
+				
 			case 'chat':
 				let param: any = {
 					app_id: Constant.intercom,
