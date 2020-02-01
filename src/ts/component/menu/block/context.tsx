@@ -178,6 +178,12 @@ class MenuBlockContext extends React.Component<Props, {}> {
 								onChange(marks);
 								commonStore.menuClose(this.props.id);
 							}
+						},
+						onClose: () => {
+							console.log('CLOSE', focus);
+							window.setTimeout(() => {
+								focus.apply();
+							}, 10);
 						}
 					});
 					break;

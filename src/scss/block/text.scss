@@ -67,9 +67,17 @@
 	.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; }
 	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: 100%; position: absolute; left: 11px; top: 0px; background: $colorOrange; }
 	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
-	.blockText.code { font-family: 'Mono'; line-height: 1.71; padding: 32px 24px 16px 24px; margin: 7px 0px; background: rgba(247,245,240,0.5); }
+	.blockText.code { font-family: 'Mono'; line-height: 1.71; margin: 7px 0px; }
+	.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 42px 16px 16px 16px; background: rgba(247,245,240,0.5); }
+	.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.blockText.code {
-		.select { position: absolute; top: 1px; right: 1px; padding: 0px 22px 0px 8px; font-size: 12px; height: 24px; border: 0px; }
+		.select { 
+			position: absolute; top: 16px; left: 16px; z-index: 1; font-size: 13px; height: 18px; border: 0px;
+			font-weight: 500; color: #aca996; 
+		}
+		.select {
+			.current { padding: 0px 16px 0px 0px; }
+		}
 	}
 	
 }
