@@ -17,30 +17,34 @@
 		.item:last-child { margin-right: 0px; }
 
 		.item {
-			.icon.new { margin: -4px 7px 0px 0px; width: 16px; height: 16px; background-image: url('~img/icon/plus/new0.svg'); }
+			.icon.plus-new { margin: -4px 7px 0px 0px; width: 16px; height: 16px; background-image: url('~img/icon/plus/new0.svg'); }
 		}
 		.item:hover {
-			.icon.new { background-image: url('~img/icon/plus/new1.svg'); }
+			.icon.plus-new { background-image: url('~img/icon/plus/new1.svg'); }
 		}
 	}
 	
 	.path { white-space: nowrap; }
 	.path {
-		.item { display: inline-block; vertical-align: middle; color: #6c6a5f; margin-right: 4px; cursor: pointer; }
+		.item { display: inline-block; vertical-align: middle; color: #6c6a5f; margin-right: 8px; cursor: pointer; }
 		.item {
 			.icon.home { margin-right: 4px; }
 			.icon.arrow { width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); }
 			.smile { margin-right: 4px; }
-			.name { display: inline-block; vertical-align: middle; margin-right: 6px; padding-top: 2px; line-height: 22px; }
+			.name { display: inline-block; vertical-align: middle; margin-right: 8px; padding-top: 2px; line-height: 22px; }
 		}
 		.item:last-child {
 			.icon.arrow { display: none; }
 		}
 	}
 	
-	.icon.back { margin-right: 12px; }
-	.icon.forward { margin-right: 14px; transform: rotateZ(180deg); }
-	.icon.back, .icon.forward { width: 16px; height: 18px; background-image: url('~img/icon/back0.svg'); cursor: pointer; }
+	.icon.plus-edit { cursor: pointer; width: 24px; height: 24px; margin-right: 4px; background-image: url('~img/icon/plus/edit0.svg'); }
+	.icon.plus-edit:hover { background-image: url('~img/icon/plus/edit1.svg'); }
+	
+	.icon.back, .icon.forward { 
+		width: 24px; height: 24px; margin-right: 4px; background-image: url('~img/icon/back0.svg'); cursor: pointer; 
+	}
+	.icon.forward { transform: rotateZ(180deg); }
 	.icon.back:hover, .icon.forward:hover { background-image: url('~img/icon/back1.svg'); }
 }
 

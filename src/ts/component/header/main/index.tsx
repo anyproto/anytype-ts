@@ -18,7 +18,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onNew = this.onNew.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 
 	render () {
@@ -26,15 +26,15 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 			<div className="header">
 				<Icon className="logo" />
 				<div className="menu">
-					<div className="item" onClick={this.onNew}>
-						<Icon className="new" />New
+					<div className="item" onClick={this.onAdd}>
+						<Icon className="plus-new" />New
 					</div>
 				</div>
 			</div>
 		);
 	};
 	
-	onNew (e: any) {
+	onAdd (e: any) {
 		Util.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	

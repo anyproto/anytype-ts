@@ -11,6 +11,8 @@ interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 };
 
+const Constant = require('json/constant.json');
+
 @inject('authStore')
 @inject('blockStore')
 @observer
@@ -24,6 +26,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 
 	render () {
@@ -56,6 +59,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		return (
 			<div className="header headerMainEdit">
 				<div className="path">
+					<Icon className="plus-edit" onClick={this.onAdd} />
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
@@ -84,6 +88,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				this.getPath(map[block.id].parentId, path);
 			};
 		};
+	};
+	
+	onAdd (e: any) {
+		Util.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	
 	onHome (e: any) {
