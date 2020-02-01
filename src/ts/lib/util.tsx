@@ -377,7 +377,9 @@ class Util {
 		};
 	};
 	
-	pageCreate (props: any, icon: string, name: string) {
+	pageCreate (e: any, props: any, icon: string, name: string) {
+		e.persist();
+		
 		const { commonStore, blockStore } = props;
 		const { root, blocks } = blockStore;
 		
@@ -396,12 +398,7 @@ class Util {
 
 		C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			/*
-			commonStore.popupOpen('editorPage', {
-				data: { id: message.targetId }
-			});
-			*/
-			
+			this.pageOpen(e, props, message.targetId);
 			this.scrollTopEnd();
 		});	
 	};

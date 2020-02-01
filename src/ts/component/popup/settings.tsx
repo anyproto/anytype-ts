@@ -94,11 +94,11 @@ class PopupSettings extends React.Component<Props, {}> {
 									<div className="switches">
 										<div className="item">
 											<div className="name">Updates</div>
-											<Switch value={true} />
+											<Switch value={true} className="green" />
 										</div>
 										<div className="item">
 											<div className="name">New invites</div>
-											<Switch />
+											<Switch className="green" />
 										</div>
 									</div>
 								</div>

@@ -29,7 +29,9 @@ class ListChildren extends React.Component<Props, {}> {
 		if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
 			ColResize = (item: any) => (
 				<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={(e: any) => { onResizeStart(e, item.index); }}>
-					<div className="inner" />
+					<div className="inner">
+						<div className="line" />
+					</div>
 				</div>
 			);
 		};

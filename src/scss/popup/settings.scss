@@ -16,7 +16,7 @@
 		
 		.index {
 			.rows { margin-bottom: 20px; }
-			.row { padding: 22px 0px; border-bottom: 1px solid #e0ded2; cursor: pointer; position: relative; }
+			.row { padding: 22px 0px; border-bottom: 1px solid #e0ded2; cursor: pointer; position: relative; font-weight: 500; }
 			.row.flex { display: flex; }
 			.row {
 				.icon { width: 20px; height: 20px; margin: -2px 12px 0px 0px; }
@@ -27,8 +27,8 @@
 				
 				.label { display: inline-block; vertical-align: middle; }
 				.icon.arrow { 
-					width: 9px; height: 12px; background-image: url('~img/icon/popup/settings/arrow0.svg'); position: absolute; right: 0px;
-					top: 50%; margin: -6px 0px 0px 0px; 
+					width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/arrow.svg'); position: absolute; right: 0px;
+					top: 50%; margin: -12px 0px 0px 0px; 
 				}
 				
 				.side { width: 50%; }
@@ -39,11 +39,8 @@
 					.name { display: inline-block; vertical-align: middle; width: calc(100% - 28px); }
 				}
 			}
-			.row:hover {
-				.icon.arrow { background-image: url('~img/icon/popup/settings/arrow1.svg'); }
-			}
 			
-			.logout { color: #ff6745; cursor: pointer; }
+			.logout { color: #ff6745; cursor: pointer; font-weight: 500; }
 			.logout:hover { color: $colorBlack; }
 		}
 		

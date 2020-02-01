@@ -10,7 +10,7 @@
 		.flex { position: relative; z-index: 1; }
 		.icon.dnd { 
 			width: 12px; background-size: 2px 8px; opacity: 0; cursor: move; vertical-align: top; 
-			border: 1px solid #d2d0c2; border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 8px;
+			border: 1px solid #d2d0c2; border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 2px;
 			 background-image: url('~img/icon/block/menu0.svg');
 		}
 		.icon.dnd:hover { background-image: url('~img/icon/block/menu1.svg'); border: 2px solid $colorOrange; }
@@ -19,8 +19,9 @@
 		.colResize.active { opacity: 1; }
 		.colResize {
 			.inner { 
-				position: absolute; left: 23px; top: 0px; width: 2px; height: 100%; background: #ebe9e0; cursor: col-resize; z-index: 1; 
+				position: absolute; left: 21px; top: 0px; width: 12px; height: 100%; cursor: col-resize; z-index: 1; 
 			}
+			.line { height: 100%; width: 2px; background: #ebe9e0; position: absolute; left: 50%; top: 0px; margin-left: -1px; }
 		}
 		
 		.dropTarget.isOver.top { border-radius: 0px 0px 4px 4px !important; }

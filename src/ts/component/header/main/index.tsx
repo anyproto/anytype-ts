@@ -35,7 +35,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onNew (e: any) {
-		Util.pageCreate(this.props, Util.randomSmile(), Constant.defaultName);
+		Util.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	
 };
