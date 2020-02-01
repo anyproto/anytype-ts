@@ -16,7 +16,7 @@
 		
 		.index {
 			.rows { margin-bottom: 20px; }
-			.row { padding: 22px 0px; border-bottom: 1px solid #e0ded2; cursor: pointer; position: relative; font-weight: 500; }
+			.row { padding: 22px 0px; border-bottom: 1px solid #e0ded2; cursor: pointer; position: relative; }
 			.row.flex { display: flex; }
 			.row {
 				.icon { width: 20px; height: 20px; margin: -2px 12px 0px 0px; }
@@ -25,7 +25,7 @@
 				.icon.pin { background-size: 16px 20px; background-image: url('~img/icon/popup/settings/pin.svg'); }
 				.icon.notify { background-size: 18px 20px; background-image: url('~img/icon/popup/settings/notify.svg'); }
 				
-				.label { display: inline-block; vertical-align: middle; }
+				.label { display: inline-block; vertical-align: middle; font-weight: 500; }
 				.icon.arrow { 
 					width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/arrow.svg'); position: absolute; right: 0px;
 					top: 50%; margin: -12px 0px 0px 0px; 

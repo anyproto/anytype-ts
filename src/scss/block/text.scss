@@ -60,30 +60,26 @@
 		}
 	}
 	
-	.blockText.paragraph > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockText.isChecked { color: #aca996; }
 	
-	.blockText.title { padding: 12px 0px 24px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
-	.blockText.title > .wrapContent > .selectable > .dropTarget { padding-top: 3px; padding-bottom: 2px; } 
+	.block.blockText > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
 	
-	.blockText.header1 { padding: 23px 0px 1px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
-	.blockText.header1 > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockText.title { padding: 12px 0px 24px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
+	.block.blockText.title > .wrapContent > .selectable > .dropTarget { padding-top: 3px; padding-bottom: 2px; } 
+	.block.blockText.header1 { padding: 23px 0px 1px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
+	.block.blockText.header2 { padding: 15px 0px 1px 0px; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
+	.block.blockText.header3 { padding: 15px 0px 1px 0px; font-size: 17px; line-height: 24px; font-weight: 600; }
 	
-	.blockText.header2 { padding: 15px 0px 1px 0px; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
-	.blockText.header2 > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; font-style: italic; }
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 4px; }
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: calc(100% + 8px); position: absolute; left: 11px; top: -4px; background: $colorOrange; }
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
 	
-	.blockText.header3 { padding: 15px 0px 1px 0px; font-size: 17px; line-height: 24px; font-weight: 600; }
-	.blockText.header3 > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
-	
-	.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; }
-	.blockText.quote > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 4px; }
-	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: calc(100% + 8px); position: absolute; left: 11px; top: -4px; background: $colorOrange; }
-	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
-	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
-	
-	.blockText.code { font-family: 'Mono'; line-height: 1.71; margin: 7px 0px; }
-	.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 42px 16px 16px 16px; background: rgba(247,245,240,0.5); }
-	.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
-	.blockText.code {
+	.block.blockText.code { font-family: 'Mono'; line-height: 1.71; margin: 7px 0px; }
+	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 42px 16px 16px 16px; background: rgba(247,245,240,0.5); }
+	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
+	.block.blockText.code {
 		.select { 
 			position: absolute; top: 16px; left: 16px; z-index: 1; font-size: 13px; height: 18px; border: 0px;
 			font-weight: 500; color: #aca996; 

@@ -73,7 +73,9 @@ class Block extends React.Component<Props, {}> {
 				if (content.bgColor) {
 					cd.push('bgColor bgColor-' + content.bgColor);
 				};
-				
+				if (content.checked) {
+					cn.push('isChecked');
+				};
 				BlockComponent = () => (
 					<BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />
 				);

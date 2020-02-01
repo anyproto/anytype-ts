@@ -195,17 +195,20 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				] as any [],
 			},
 			{ 
-				id: 'tool', icon: 'tool', name: 'Tool', color: 'blue', children: [
-					{ id: 'task', icon: 'task', name: 'Task' },
+				id: 'tool', icon: 'tool', name: 'Page', color: 'blue', children: [
 					{ type: I.BlockType.Page, id: 'page', icon: 'tool', name: 'Page' },
+					
+					/*
+					{ id: 'task', icon: 'task', name: 'Task' },
 					{ id: 'dataview', icon: 'tool', name: 'Database' },
 					{ id: 'set', icon: 'set', name: 'Set' },
 					{ id: 'contact', icon: 'contact', name: 'Contact' },
 					{ id: 'existing', icon: 'existing', name: 'Existing Tool' },
+					*/
 				] as any [],
 			},
 			{ 
-				id: 'media', icon: 'media', name: 'Media', color: 'red', children: [
+				id: 'media', icon: 'media', name: 'Object', color: 'red', children: [
 					{ type: I.BlockType.File, id: I.FileType.File, icon: 'media', name: 'File' },
 					{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', name: 'Picture' },
 					{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', name: 'Video' },

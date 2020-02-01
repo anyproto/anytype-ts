@@ -8,7 +8,7 @@
 	.dimmer.show { opacity: 1; }
 	
 	.popup { 
-		position: fixed; left: 50%; top: 50%; z-index: 101; background: #fff; border-radius: 8px; 
+		position: fixed; left: 50%; top: 50%; z-index: 101; background: #fff; border-radius: 12px; box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.35);
 		opacity: 0; transform: scale3d(0.8,0.8,1); transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; 
 	}
 	.popup.show { opacity: 1; transform: scale3d(1,1,1); }

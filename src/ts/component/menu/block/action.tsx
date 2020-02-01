@@ -141,11 +141,13 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
 				] 
 			},
+			/*
 			{ 
 				children: [
 					{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
 			}
+			*/
 		];
 		
 		// Restrictions
