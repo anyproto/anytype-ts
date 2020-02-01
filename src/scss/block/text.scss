@@ -64,12 +64,11 @@
 	.blockText.header1 { padding: 23px 0px 1px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
 	.blockText.header2 { padding: 15px 0px 1px 0px; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
 	.blockText.header3 { padding: 15px 0px 1px 0px; font-size: 17px; line-height: 24px; font-weight: 600; }
+	
 	.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; }
 	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: 100%; position: absolute; left: 11px; top: 0px; background: $colorOrange; }
 	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
-	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap {
-		.placeHolder { left: 28px; }
-	}
+	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
 	
 	.blockText.code { font-family: 'Mono'; line-height: 1.71; margin: 7px 0px; }
 	.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 42px 16px 16px 16px; background: rgba(247,245,240,0.5); }
