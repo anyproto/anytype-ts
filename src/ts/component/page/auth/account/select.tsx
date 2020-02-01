@@ -66,13 +66,17 @@ class PageAccountSelect extends React.Component<Props, State> {
 
 	componentDidMount () {
 		const { authStore } = this.props;
+		const { path } = authStore;
+		const phrase = Storage.get('phrase');
 		
 		authStore.accountClear();
 		
-		C.AccountRecover((message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-			};
+		C.WalletRecover(path, phrase, (message: any) => {
+			C.AccountRecover((message: any) => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+				};
+			});
 		});
 	};
 

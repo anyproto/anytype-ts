@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, IconUser } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { I, C, Util } from 'ts/lib';
+import { I, C, Util, Storage } from 'ts/lib';
 
 interface Props extends I.Menu {
 	history: any;
@@ -55,11 +55,15 @@ class MenuAccount extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		const { authStore } = this.props;
-		const { accounts } = authStore;
+		const { path, accounts } = authStore;
+		const phrase = Storage.get('phrase');
 		
 		if (!accounts.length) {
 			authStore.accountClear();
-			C.AccountRecover();			
+			
+			C.WalletRecover(path, phrase, (message: any) => {
+				C.AccountRecover((message: any) => {});
+			});			
 		};
 	};
 	
