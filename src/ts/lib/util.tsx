@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -375,6 +375,29 @@ class Util {
 		} else {
 			history.push('/main/edit/' + targetId);
 		};
+	};
+	
+	pageCreate (props: any, icon: string, name: string) {
+		const { commonStore, blockStore } = props;
+		const { root, blocks } = blockStore;
+		
+		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
+
+		const block = {
+			type: I.BlockType.Page,
+			fields: { 
+				icon: icon, 
+				name: name,
+			},
+			content: {
+				style: I.PageStyle.Empty,
+			},
+		};
+
+		C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
+			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
+			this.scrollTopEnd();
+		});	
 	};
 };
 

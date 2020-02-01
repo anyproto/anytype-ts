@@ -35,30 +35,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onNew (e: any) {
-		const { commonStore, blockStore } = this.props;
-		const { root, blocks } = blockStore;
-		
-		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-
-		const block = {
-			type: I.BlockType.Page,
-			fields: { 
-				icon: Util.randomSmile(), 
-				name: Constant.defaultName,
-			},
-			content: {
-				style: I.PageStyle.Empty,
-			},
-		};
-
-		C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
-			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			commonStore.popupOpen('editorPage', {
-				data: { id: message.targetId }
-			});
-			
-			Util.scrollTopEnd();
-		});
+		Util.pageCreate(this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	
 };

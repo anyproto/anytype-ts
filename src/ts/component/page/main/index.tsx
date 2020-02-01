@@ -119,6 +119,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
+		Util.pageCreate(this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	
 	onSortEnd (result: any) {
