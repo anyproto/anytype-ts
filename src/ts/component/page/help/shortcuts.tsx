@@ -22,7 +22,7 @@ class PageHelpShortcuts extends React.Component<Props, {}> {
 			{ type: I.BlockType.Text, style: I.TextStyle.Header1, text: 'Application' },
 			{ type: I.BlockType.Text, style: I.TextStyle.Header3, text: 'Basic keys' },
 			{ type: I.BlockType.Text, style: I.TextStyle.Bulleted, text: 'Use <b>cmd</b> & <b>Option</b> in MacOS and <b>ctrl<b> & <b>Alt</b> in Windows or Linux' },
-			{ type: I.BlockType.Text, style: I.TextStyle.Bulleted, text: 'Press <b>cmd or ctrl</b> to create new page on a dashboard' },
+			{ type: I.BlockType.Text, style: I.TextStyle.Bulleted, text: 'Press <b>cmd or ctrl + N</b> to create new page on a dashboard' },
 			{ type: I.BlockType.Text, style: I.TextStyle.Header1, text: 'Editor' },
 			{ type: I.BlockType.Text, style: I.TextStyle.Header2, text: 'Page' },
 			{ type: I.BlockType.Text, style: I.TextStyle.Header3, text: 'Menu' },
