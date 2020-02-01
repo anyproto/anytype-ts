@@ -244,13 +244,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		if (filter) {
-			let reg = new RegExp(filter, 'ig');
 			let list: any[] = [];
 			for (let item of options) {
 				list = list.concat(item.children);
 			};
 			
-			list = list.filter((it: any) => { return it.name.match(reg); });
+			list = list.filter((it: any) => { return it.name.match(filter); });
 			list = list.map((it: any) => { 
 				it.color = '';
 				it.children = [];
