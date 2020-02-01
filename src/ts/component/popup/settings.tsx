@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, IconUser, Switch, Button, Title, Label, Cover, Textarea, Input } from 'ts/component';
-import { I, Storage, Key, Util } from 'ts/lib';
+import { I, C, Storage, Key, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 const { dialog } = window.require('electron').remote;
@@ -308,6 +308,7 @@ class PopupSettings extends React.Component<Props, {}> {
 	onLogout (e: any) {
 		const { authStore, history } = this.props;
 		
+		C.AccountStop(false);
 		authStore.logout();
 		history.push('/');
 	};

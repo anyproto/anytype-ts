@@ -50,6 +50,13 @@ const AccountSelect = (id: string, path: string, callBack?: (message: any) => vo
 	dispatcher.call('accountSelect', request, callBack);
 };
 
+const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
+	const request = {
+		removeData: removeData,
+	};
+	dispatcher.call('accountStop', request, callBack);
+};
+
 const BlockUndo = (contextId: string, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -267,6 +274,7 @@ export {
 	AccountCreate,
 	AccountRecover,
 	AccountSelect,
+	AccountStop,
 	
 	BlockUndo,
 	BlockRedo,
