@@ -20,6 +20,7 @@
 		.icon.dots {
 			width: 28px; height: 28px; border-radius: 4px; background-color: #393834; position: absolute; right: 4px; top: 4px;
 			background-image: url('~img/icon/dots0.svg'); opacity: 0; background-size: 16px 4px; cursor: pointer; z-index: 1;
+			display: none;
 		}
 		.icon.dots:hover { background-image: url('~img/icon/dots1.svg'); }
 	}

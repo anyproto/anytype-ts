@@ -28,7 +28,7 @@ class BlockIcon extends React.Component<Props, {}> {
 
 		return (
 			<React.Fragment>
-				<Smile id={'block-icon-' + id} canEdit={true} size={24} icon={name} offsetX={52} offsetY={-48} onSelect={this.onSelect} className={'c48 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+				<Smile id={'block-icon-' + id} canEdit={true} size={32} icon={name} offsetX={52} offsetY={-48} onSelect={this.onSelect} className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};

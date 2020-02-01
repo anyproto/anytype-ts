@@ -60,13 +60,23 @@
 		}
 	}
 	
+	.blockText.paragraph > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	
 	.blockText.title { padding: 12px 0px 24px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
+	.blockText.title > .wrapContent > .selectable > .dropTarget { padding-top: 3px; padding-bottom: 2px; } 
+	
 	.blockText.header1 { padding: 23px 0px 1px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
+	.blockText.header1 > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	
 	.blockText.header2 { padding: 15px 0px 1px 0px; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
+	.blockText.header2 > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	
 	.blockText.header3 { padding: 15px 0px 1px 0px; font-size: 17px; line-height: 24px; font-weight: 600; }
+	.blockText.header3 > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
 	
 	.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; }
-	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: 100%; position: absolute; left: 11px; top: 0px; background: $colorOrange; }
+	.blockText.quote > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 4px; }
+	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: calc(100% + 8px); position: absolute; left: 11px; top: -4px; background: $colorOrange; }
 	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
 	
