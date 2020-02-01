@@ -5,7 +5,7 @@ export interface Avatar {
 };
 
 export interface Image {
-	id: string;
+	hash: string;
 	sizes: ImageSize[];
 };
 

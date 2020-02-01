@@ -396,6 +396,12 @@ class Util {
 
 		C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
+			/*
+			commonStore.popupOpen('editorPage', {
+				data: { id: message.targetId }
+			});
+			*/
+			
 			this.scrollTopEnd();
 		});	
 	};

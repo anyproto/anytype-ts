@@ -3,9 +3,9 @@ import { blockStore } from 'ts/store';
 
 const Struct = new StructEncode();
 
-const ImageGetBlob = (id: string, size: I.ImageSize, callBack?: (message: any) => void) => {
+const ImageGetBlob = (hash: string, size: I.ImageSize, callBack?: (message: any) => void) => {
 	const request = {
-		id: id,
+		hash: hash,
 		size: size
 	};
 	dispatcher.call('imageGetBlob', request, callBack);

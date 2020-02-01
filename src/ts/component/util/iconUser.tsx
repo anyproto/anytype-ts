@@ -88,7 +88,7 @@ class IconUser extends React.Component<Props, State> {
 		};
 		
 		const { image } = avatar;
-		if (!image || !image.id) {
+		if (!image || !image.hash) {
 			return;
 		};
 		
@@ -96,7 +96,7 @@ class IconUser extends React.Component<Props, State> {
 			this.setState({ icon: 'data:image/jpeg;base64,' + s });
 		};
 		
-		let key = [ 'image', image.id, I.ImageSize.Large ].join('.');
+		let key = [ 'image', image.hash, I.ImageSize.Large ].join('.');
 		let s = cache.get(key);
 			
 		if (s) {
@@ -104,7 +104,7 @@ class IconUser extends React.Component<Props, State> {
 			return;
 		};
 			
-		C.ImageGetBlob(image.id, I.ImageSize.Large, (message: any) => {
+		C.ImageGetBlob(image.hash, I.ImageSize.Large, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
