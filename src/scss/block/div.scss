@@ -1,8 +1,11 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockDiv { padding: 7px 0px; line-height: 0px; }
+	.block.blockDiv { padding: 0px; line-height: 0px; }
 	.block.blockDiv {
-		.div { height: 1px; background: #d2d0c2; }
+		.dropTarget { height: 15px; }
+		.icon.dnd { height: 12px; margin: 2px 8px 0px 0px; }
+		.icon.dnd:hover { background-image: none; }
+		.div { width: 100%; height: 1px; background: #d2d0c2; position: absolute; top: 50%; left: 0px; }
 	}
 }

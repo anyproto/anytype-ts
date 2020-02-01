@@ -9,7 +9,7 @@
 		
 		.flex { position: relative; z-index: 1; }
 		.icon.dnd { 
-			width: 12px; height: 24px; background-size: 2px 8px; opacity: 0; cursor: move; vertical-align: top; 
+			width: 12px; background-size: 2px 8px; opacity: 0; cursor: move; vertical-align: top; 
 			border: 1px solid #d2d0c2; border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 8px;
 			 background-image: url('~img/icon/block/menu0.svg');
 		}
