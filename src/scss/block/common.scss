@@ -18,9 +18,7 @@
 		.colResize { width: 0px; position: relative; opacity: 0; }
 		.colResize.active { opacity: 1; }
 		.colResize {
-			.inner { 
-				position: absolute; left: 21px; top: 0px; width: 12px; height: 100%; cursor: col-resize; z-index: 1; 
-			}
+			.inner { position: absolute; left: 21px; top: 0px; width: 12px; height: 100%; cursor: col-resize; z-index: 1; }
 			.line { height: 100%; width: 2px; background: #ebe9e0; position: absolute; left: 50%; top: 0px; margin-left: -1px; }
 		}
 		
