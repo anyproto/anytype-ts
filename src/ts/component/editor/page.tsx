@@ -554,12 +554,22 @@ class EditorPage extends React.Component<Props, {}> {
 						style: I.TextStyle.Paragraph,
 					},
 				};
+				let replace = false;
 				
-				if (length && ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0)) {
-					param.content.style = block.content.style;
+				// If block is non-empty list - create new list block of the same style, otherwise - replace empty list block with paragraph
+				if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0) {
+					if (!length) {
+						replace = true;
+					} else {
+						param.content.style = block.content.style;
+					};
 				};
 				
-				this.blockCreate(block, I.BlockPosition.Bottom, param);
+				if (replace) {
+					this.blockReplace(block, param);
+				} else {
+					this.blockCreate(block, I.BlockPosition.Bottom, param);					
+				};
 			} else {
 				this.blockSplit(block, range.from);
 			};
