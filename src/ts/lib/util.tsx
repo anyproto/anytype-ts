@@ -361,6 +361,21 @@ class Util {
 		return c;
 	};
 	
+	pageInit (props: any) {
+		const { blockStore, commonStore } = props;
+		
+		C.ConfigGet((message: any) => {
+			const root = message.homeBlockId;
+					
+			commonStore.gatewaySet(message.gatewayUrl);
+			blockStore.rootSet(root);
+					
+			C.BlockClose(root, (message: any) => {
+				C.BlockOpen(root);
+			});
+		});
+	};
+	
 	pageOpen (e: any, props: any, targetId: string) {
 		const { history } = props;
 		const param = {

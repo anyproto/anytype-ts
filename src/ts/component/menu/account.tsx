@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, IconUser } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { I, C } from 'ts/lib';
+import { I, C, Util } from 'ts/lib';
 
 interface Props extends I.Menu {
 	history: any;
@@ -74,12 +74,7 @@ class MenuAccount extends React.Component<Props, {}> {
 			} else
 			if (message.account) {
 				authStore.accountSet(message.account);
-				
-				C.ConfigGet((message: any) => {
-					commonStore.gatewaySet(message.gatewayUrl);
-					blockStore.rootSet(message.homeBlockId);
-					C.BlockOpen(message.homeBlockId);
-				});
+				Util.pageInit(this.props);
 			};
 		});
 	};
