@@ -4,21 +4,21 @@
 	.block { padding: 1px 0px; word-break: break-word; display: flex; flex: auto; position: relative; }
 	.block {
 		.id { position: absolute; left: 0px; top: 1px; z-index: 2; opacity: 0.3; display: none; }
-		.wrapMenu { width: 46px; text-align: right; }
-		.wrapContent { width: calc(100% - 46px); position: relative; overflow: hidden; }
+		.wrapMenu { width: 48px; text-align: right; }
+		.wrapContent { width: calc(100% - 48px); position: relative; overflow: hidden; }
 		
 		.flex { position: relative; z-index: 1; }
 		.icon.dnd { 
 			width: 12px; background-size: 2px 8px; opacity: 0; cursor: move; vertical-align: top; 
-			border: 1px solid #d2d0c2; border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 2px;
-			 background-image: url('~img/icon/block/menu0.svg');
+			border: 1px solid #d2d0c2; border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 6px;
+			background-image: url('~img/icon/block/menu0.svg');
 		}
 		.icon.dnd:hover { background-image: url('~img/icon/block/menu1.svg'); border: 2px solid $colorOrange; }
 		
 		.colResize { width: 0px; position: relative; opacity: 0; }
 		.colResize.active { opacity: 1; }
 		.colResize {
-			.inner { position: absolute; left: 21px; top: 0px; width: 12px; height: 100%; cursor: col-resize; z-index: 1; }
+			.inner { position: absolute; left: 20px; top: 0px; width: 12px; height: 100%; cursor: col-resize; z-index: 1; }
 			.line { height: 100%; width: 2px; background: #ebe9e0; position: absolute; left: 50%; top: 0px; margin-left: -1px; }
 		}
 		
@@ -45,4 +45,6 @@
 	.block > .wrapContent > .selectable.isSelected > .dropTarget { background: #f7f5f0 !important; border-radius: 4px; }
 	
 	.block.isSelected .children .selectable { background: #f7f5f0; border-radius: 4px; }
+	
+	.block.blockIcon > .wrapMenu { visibility: hidden; }
 }
