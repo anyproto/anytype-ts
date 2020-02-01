@@ -180,7 +180,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							}
 						},
 						onClose: () => {
-							window.setTimeout(() => { focus.apply(); }, 1);
+							window.setTimeout(() => { focus.apply(); }, 15);
 						}
 					});
 					break;

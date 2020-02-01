@@ -61,7 +61,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
     };
 
 	componentDidMount () {
-		this.refObj[1].focus();
+		window.setTimeout(() => { this.refObj[1].focus(); }, 15);
 	};
 	
 	onChange (e: any, id: number) {

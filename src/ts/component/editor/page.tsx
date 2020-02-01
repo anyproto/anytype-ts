@@ -209,23 +209,24 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { addOffsetX } = this.props;
+		const { blockStore, addOffsetX, rootId } = this.props;
+		const { blocks } = blockStore;
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const blocks = node.find('.block');
+		const items = node.find('.block');
 		const container = $('.editor');
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const offset = 100;
+		const offset = 210;
 		
 		let hovered: any = null;
 		let rect = { x: 0, y: 0, width: 0, height: 0 };
 		
 		// Find hovered block by mouse coords
-		blocks.each((i: number, item: any) => {
+		items.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
 			let { x, y, width, height } = rect;
 			y += st;
@@ -253,15 +254,29 @@ class EditorPage extends React.Component<Props, {}> {
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
-			blocks.addClass('showMenu').removeClass('isAdding top bottom');
+			items.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
-				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+				const block = blocks[rootId].find((it: any) => { return it.id == this.hovered; });
+				
+				let canAdd = true;
+				if (block) {
+					if (block.type == I.BlockType.Icon) {
+						canAdd = false;
+					};
+					if ((block.type == I.BlockType.Text) && (block.content.style == I.TextStyle.Title) && (this.hoverPosition == I.BlockPosition.Top)) {
+						canAdd = false;
+					};
+				};
+				
+				if (canAdd) {
+					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+				};
 			};
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
 				add.css({ opacity: 0 });
-				blocks.removeClass('showMenu isAdding top bottom');
+				items.removeClass('showMenu isAdding top bottom');
 			}, 10);
 		};
 	};

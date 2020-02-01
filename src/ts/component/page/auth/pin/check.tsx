@@ -61,9 +61,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		window.setTimeout(() => {
-			this.refObj[1].focus();
-		}, 1);
+		window.setTimeout(() => { this.refObj[1].focus(); }, 15);
 	};
 
 	onChange (e: any, id: number) {
