@@ -11,7 +11,7 @@ class ContentIcon extends React.Component<Props, {}> {
 		const { icon } = this.props;
 		
 		return (
-			<Smile size={24} icon={icon} className="c48" />
+			<Smile size={32} icon={icon} className="c64" />
 		);
 	};
 	
