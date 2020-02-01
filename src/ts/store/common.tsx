@@ -8,7 +8,8 @@ const TIMEOUT = 200;
 class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
-	@observable public coverId: number = 0;
+	@observable public coverNum: number = 0;
+	@observable public coverImage: string = '';
 	@observable public progressObj: I.Progress = { status: '', current: 0, total: 0 };
 	@observable public filterString: string = '';
 	@observable public gatewayUrl: string = '';
@@ -24,8 +25,13 @@ class CommonStore {
 	};
 	
 	@computed
-	get cover(): number {
-		return this.coverId || Storage.get('cover') || COVER;
+	get coverId(): number {
+		return Number(this.coverNum || Storage.get('coverNum')) || COVER;
+	};
+	
+	@computed
+	get coverImg(): string {
+		return String(this.coverImage || Storage.get('coverImage') || '');
 	};
 	
 	@computed
@@ -44,9 +50,15 @@ class CommonStore {
 	};
 	
 	@action
-	coverSet (v: number) {
-		this.coverId = v;
-		Storage.set('cover', v);
+	coverSetNum (num: number) {
+		this.coverNum = num;
+		Storage.set('coverNum', this.coverNum);
+	};
+	
+	@action
+	coverSetImage (image: string) {
+		this.coverImage = image;
+		Storage.set('coverImage', this.coverImage);
 	};
 	
 	@action

@@ -21,11 +21,11 @@ class PageAuthSuccess extends React.Component<Props, State> {
 
 	render () {
 		const { commonStore, match } = this.props;
-		const { cover } = commonStore;
+		const { coverId, coverImg } = commonStore;
 
 		return (
 			<div>
-				<Cover num={cover} />
+				<Cover num={coverId} image={coverImg} />
 				<Header />
 				<Footer />
 				

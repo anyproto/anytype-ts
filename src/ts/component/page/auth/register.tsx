@@ -38,12 +38,12 @@ class PageAuthRegister extends React.Component<Props, State> {
 	
 	render () {
 		const { commonStore } = this.props;
-		const { cover } = commonStore;
+		const { coverId, coverImg } = commonStore;
 		const { error, preview } = this.state;
 
 		return (
 			<div>
-				<Cover num={cover} />
+				<Cover num={coverId} image={coverImg} />
 				<Header />
 				<Footer />
 				
@@ -52,8 +52,8 @@ class PageAuthRegister extends React.Component<Props, State> {
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
-						<div className="fileWrap" onMouseDown={this.onFileClick}>
-							<IconUser icon={preview} className={preview ? 'active' : ''} />
+						<div className="fileWrap" onClick={this.onFileClick}>
+							<IconUser icon={preview} color="grey" className={preview ? 'active' : ''} />
 						</div>
 					
 						<Input ref={(ref: any) => this.nameRef = ref} placeHolder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
@@ -86,7 +86,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 			Util.loadPreviewBase64(Util.makeFileFromPath(path), {}, (image: string, param: any) => {
 				this.setState({ preview: image });
 			});
-	    });
+		});
 	};
 	
 	onNameChange (e: any) {

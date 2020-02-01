@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, IconUser, Switch, Button, Title, Label, Cover, Textarea, Input } from 'ts/component';
-import { I, Storage, Key } from 'ts/lib';
+import { I, Storage, Key, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
+const { dialog } = window.require('electron').remote;
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
@@ -16,6 +17,7 @@ interface Props extends I.Popup {
 
 interface State {
 	page: string;
+	preview: string;
 };
 
 @inject('commonStore')
@@ -27,7 +29,8 @@ class PopupSettings extends React.Component<Props, {}> {
 	refObj: any = {};
 	pin: string = '';
 	state = {
-		page: 'index'
+		page: 'index',
+		preview: '',
 	};
 	
 	constructor (props: any) {
@@ -42,13 +45,14 @@ class PopupSettings extends React.Component<Props, {}> {
 		this.onBlurPin = this.onBlurPin.bind(this);
 		this.onChangePin = this.onChangePin.bind(this);
 		this.onSelectPin = this.onSelectPin.bind(this);
+		this.onFileClick = this.onFileClick.bind(this);
 	};
 	
 	render () {
 		const { authStore, commonStore } = this.props;
 		const { account } = authStore;
-		const { cover } = commonStore;
-		const { page } = this.state;
+		const { coverId, coverImg } = commonStore;
+		const { page, preview } = this.state;
 		
 		let content = null;
 		let inputs = [];
@@ -109,24 +113,38 @@ class PopupSettings extends React.Component<Props, {}> {
 			case 'wallpaper':
 				let covers = [];
 				for (let i = 1; i <= 7; ++i) {
-					covers.push({ id: i });
+					covers.push({ id: i, image: '' });
 				};
 				
 				const Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item.id); }}>
-						<Cover num={item.id} />
+						<Cover num={item.id} image={item.image} />
 					</div>
 				);
+				
+				if (coverImg) {
+					covers.unshift({ id: -1, image: coverImg });
+				};
 				
 				content = (
 					<div>
 						<Icon className="back" onClick={() => { this.onPage('index'); }} />
 						<Title text="Wallpaper" />
 						
-						<div className="covers">
-							{covers.map((item: any, i: number) => (
-								<Item key={i} {...item} active={item.id == cover} />
-							))}
+						<div className="row">
+							<Label text="Upload wallpaper. For best results upload high resolution images." />
+							<div className="fileWrap item" onClick={this.onFileClick}>
+								<Cover image={preview} className="upload" />
+							</div>
+						</div>
+						
+						<div className="row">
+							<Label text="Choose wallpaper" />
+							<div className="covers">
+								{covers.map((item: any, i: number) => (
+									<Item key={i} {...item} active={item.id == coverId} />
+								))}
+							</div>
 						</div>
 					</div>
 				);
@@ -197,6 +215,27 @@ class PopupSettings extends React.Component<Props, {}> {
 		);
 	};
 	
+	onFileClick (e: any) {
+		const { commonStore } = this.props;
+		
+		dialog.showOpenDialog({ properties: [ 'openFile' ] }, (files: any) => {
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+
+			let path = files[0];
+			let param = {
+				maxWidth: 1968,
+				quality: 0.95,
+			};
+			
+			Util.loadPreviewBase64(Util.makeFileFromPath(path), param, (image: string, param: any) => {
+				commonStore.coverSetImage(image);
+				this.setState({ preview: image });
+			});
+		});
+	};
+	
 	onFocusPhrase (e: any) {
 		this.phraseRef.select();
 	};
@@ -261,9 +300,9 @@ class PopupSettings extends React.Component<Props, {}> {
 		this.setState({ page: id });
 	};
 	
-	onCover (id: number) {
+	onCover (num: number) {
 		const { commonStore } = this.props;
-		commonStore.coverSet(id);
+		commonStore.coverSetNum(num);
 	};
 	
 	onLogout (e: any) {

@@ -89,7 +89,7 @@ class Util {
 		param = Object.assign({
 			maxWidth: 256,
 			type: 'image/png',
-			quality: 1,
+			quality: 0.95,
 			canvas: true,
 			contain: true
 		}, param);

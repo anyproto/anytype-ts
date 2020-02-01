@@ -33,7 +33,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 
 	render () {
 		const { commonStore, match } = this.props;
-		const { cover } = commonStore;
+		const { coverId, coverImg } = commonStore;
 		const { icon, error } = this.state;
 		
 		let title = '';
@@ -50,9 +50,9 @@ class PageAuthSetup extends React.Component<Props, State> {
 				break;
 		};
 		
-        return (
+		return (
 			<div>
-				<Cover num={cover} />
+				<Cover num={coverId} image={coverImg} />
 				<Header />
 				<Footer />
 				

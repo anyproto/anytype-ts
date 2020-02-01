@@ -38,13 +38,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 	render () {
 		const { commonStore, authStore, blockStore } = this.props;
 		const { account } = authStore;
-		const { cover } = commonStore;
+		const { coverId, coverImg } = commonStore;
 		const { blocks, root } = blockStore;
 		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		
 		return (
 			<div>
-				<Cover num={cover} />
+				<Cover num={coverId} image={coverImg} />
 				<Header />
 				<Footer />
 				

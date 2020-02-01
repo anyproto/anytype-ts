@@ -45,7 +45,7 @@ class Dispatcher {
 		for (let message of event.messages) {
 			let block: any = null;
 			let type = message.value;
-			let data = message[type];
+			let data = message[type] || {};
 			let param: any = {};
 			
 			if (data.error && data.error.code) {

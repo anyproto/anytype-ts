@@ -33,7 +33,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	
 	render () {
 		const { commonStore } = this.props;
-		const { cover } = commonStore;
+		const { coverId, coverImg } = commonStore;
 		const { error } = this.state;
 		
 		let inputs = [];
@@ -43,7 +43,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<Cover num={cover} />
+				<Cover num={coverId} image={coverImg} />
 				<Header />
 				<Footer />
 				

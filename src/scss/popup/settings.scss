@@ -49,12 +49,26 @@
 		
 		.wallpaper {
 			.covers { margin-left: -4px; width: 596px; }
+			
+			.row { margin-bottom: 24px; }
+			.row:lsat-child { margin: 0px; }
+			.label { margin-bottom: 8px; } 
+			
 			.item { 
 				width: 140px; height: 88px; display: inline-block; vertical-align: top; margin: 0px 8px 8px 0px; cursor: pointer;
-				position: relative; border: 2px solid #fff; transition: $transitionFast; border-radius: 4px;
+				position: relative; border: 1px solid rgba(0,0,0,0); border-radius: 4px;
 			}
 			.item:nth-child(4n + 4) { margin-right: 0px; }
-			.item:hover, .item.active { border: 2px solid $colorOrange; }
+			.item:hover, .item.active:hover { border: 2px solid $colorOrange; }
+			.item.active { border: 1px solid #dfddd0; }
+			
+			.item {
+				.cover.upload { 
+					background-image: url('~img/icon/popup/settings/upload0.svg'); background-size: 24px 24px;
+					border: 1px solid #dfddd0; background-position: center center;
+				}
+			}
+			
 			.cover { position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); }
 		}
 		

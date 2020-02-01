@@ -28,7 +28,7 @@ class IconUser extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	
 	public static defaultProps = {
-		color: 'grey',
+		color: '',
 		tooltipY: I.MenuDirection.Bottom,
 	};
 
