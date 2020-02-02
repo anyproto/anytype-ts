@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "1.0.31",
+	"version": "1.0.32",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -158,8 +158,8 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "anytype",
-					"region": "ams3"
+					"name": "at9412003",
+					"region": "fra1"
 				}
 			]
 		},
@@ -178,8 +178,8 @@
 		"publish": [
 			{
 				"provider": "spaces",
-				"name": "anytype",
-				"region": "ams3"
+				"name": "at9412003",
+				"region": "fra1"
 			}
 		]
 	}
