@@ -4,6 +4,8 @@ import { Util, I, StructDecode, focus, keyboard } from 'ts/lib';
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
 const protobuf = require('protobufjs');
+const Constant = require('json/constant.json');
+
 const DEBUG = true;
 const PROFILE = false;
 
@@ -47,6 +49,7 @@ class Dispatcher {
 			let type = message.value;
 			let data = message[type] || {};
 			let param: any = {};
+			let update = false;
 			
 			if (data.error && data.error.code) {
 				continue;
@@ -139,6 +142,9 @@ class Dispatcher {
 					
 					if (null !== data.fields) {
 						param.content.fields = StructDecode.decodeStruct(data.fields.value);
+						
+						param.content.fields.name = String(param.content.fields.name || Constant.defaultName);
+						param.content.fields.icon = String(param.content.fields.icon || Constant.defaultIcon);
 					};
 					
 					blockStore.blockUpdate(contextId, param);
@@ -155,8 +161,9 @@ class Dispatcher {
 						content: Util.objectCopy(block.content),
 					};
 					
-					if (null !== data.text) {
-						param.content.text = data.text.value;
+					if ((null !== data.text) && (focused != data.id)) {
+						param.content.text = String(data.text.value || '');
+						update = true;
 					};
 					
 					if (null !== data.marks) {
@@ -172,25 +179,32 @@ class Dispatcher {
 							});
 						};
 						param.content.marks = marks;
+						update = true;
 					};
 					
 					if (null !== data.style) {
-						param.content.style = data.style.value;
+						param.content.style = Number(data.style.value) || 0;
+						update = true;
 					};
 					
 					if (null !== data.checked) {
-						param.content.checked = data.checked.value;
+						param.content.checked = Boolean(data.checked.value);
+						update = true;
 					};
 					
 					if (null !== data.color) {
-						param.content.color = data.color.value;
+						param.content.color = String(data.color.value || '');
+						update = true;
 					};
 					
 					if (null !== data.backgroundColor) {
-						param.content.bgColor = data.backgroundColor.value;
+						param.content.bgColor = String(data.backgroundColor.value || '');
+						update = true;
 					};
 					
-					blockStore.blockUpdate(contextId, param);
+					if (update) {
+						blockStore.blockUpdate(contextId, param);
+					};
 					break;
 					
 				case 'blockSetFile':
@@ -206,29 +220,37 @@ class Dispatcher {
 					
 					if (null !== data.name) {
 						param.content.name = String(data.name.value || '');
+						update = true;
 					};
 					
 					if (null !== data.hash) {
 						param.content.hash = String(data.hash.value || '');
+						update = true;
 					};
 					
 					if (null !== data.mime) {
 						param.content.mime = String(data.mime.value || '');
+						update = true;
 					};
 					
 					if (null !== data.size) {
 						param.content.size = Number(data.size.value) || 0;
+						update = true;
 					};
 					
 					if (null !== data.type) {
 						param.content.type = Number(data.type.value) || 0;
+						update = true;
 					};
 					
 					if (null !== data.state) {
 						param.content.state = Number(data.state.value) || 0;
+						update = true;
 					};
 					
-					blockStore.blockUpdate(contextId, param);
+					if (update) {
+						blockStore.blockUpdate(contextId, param);
+					};
 					break;
 					
 				case 'blockDelete':

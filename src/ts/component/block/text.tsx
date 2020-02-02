@@ -401,6 +401,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	blockUpdateText (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
+		const { blocks } = blockStore;
 		
 		let { text } = content;
 		let value = this.getValue();
@@ -410,6 +411,19 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const block = blocks[rootId].find((it: any) => { return it.id == id; });
+		if (!block) {
+			return;
+		};
+		
+		let param = {
+			id: block.id,
+			content: Util.objectCopy(block.content),
+		};
+		param.content.text = value;
+		param.content.marks = newMarks;
+		
+		blockStore.blockUpdate(rootId, param);
 		C.BlockSetTextText(rootId, id, value, newMarks);
 	};
 	
