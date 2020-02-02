@@ -298,7 +298,7 @@ class Util {
 	
 	tooltipHide () {
 		window.clearTimeout(this.timeoutTooltip);
-		$('#tooltip').hide();
+		//$('#tooltip').hide();
 	};
 	
 	lbBr (s: string) {

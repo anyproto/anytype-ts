@@ -1,9 +1,13 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupEditorPage { width: 880px; height: calc(100% - 20px); padding: 40px; }
+	.popup.popupEditorPage { width: 800px; height: calc(100% - 20px); padding: 40px 0px; }
 	.popup.popupEditorPage {
-		.content { max-height: 100%; overflow-x: hidden; overflow-y: auto; }
 		.header { position: relative; padding: 0px; }
+		
+		.content { height: 100%; overflow-y: scroll; padding: 0px 48px; }
+		.selection { height: 100%; }
+		.editor { margin-top: 36px; }
+		.blocks { margin-left: -48px; }
 	}	
 }

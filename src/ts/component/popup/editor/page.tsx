@@ -4,7 +4,9 @@ import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainEdit as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
-interface Props extends I.Popup, RouteComponentProps<any> {}; 
+interface Props extends I.Popup, RouteComponentProps<any> {};
+
+const Constant = require('json/constant.json'); 
 
 class PopupEditorPage extends React.Component<Props, {}> {
 	
@@ -18,7 +20,7 @@ class PopupEditorPage extends React.Component<Props, {}> {
 				<DragProvider rootId={id}>
 					<Header {...this.props} rootId={id} />
 							
-					<EditorPage history={history} location={location} match={match} rootId={id} addOffsetX={0} />
+					<EditorPage history={history} location={location} match={match} rootId={id} addOffsetX={-Constant.size.blockMenu} />
 				</DragProvider>
 			</SelectionProvider>
 		);
