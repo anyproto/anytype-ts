@@ -104,13 +104,14 @@ class PageAuthSetup extends React.Component<Props, State> {
 	init () {
 		const { authStore, history } = this.props;
 		const { path } = authStore;
-		const pin = Storage.get('pin');
+		//const pin = Storage.get('pin');
 		const phrase = Storage.get('phrase');
 		
 		if (!phrase) {
 			return;
 		};
 		
+		let pin = '';
 		let accountId = Storage.get('accountId');
 		
 		C.WalletRecover(path, phrase, (message: any) => {

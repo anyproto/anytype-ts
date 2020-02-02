@@ -6,6 +6,7 @@ import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
+	commonStore?: any;
 	authStore?: any;
 	blockStore?: any;
 	dataset?: any;
@@ -13,6 +14,7 @@ interface Props extends RouteComponentProps<any> {
 
 const Constant = require('json/constant.json');
 
+@inject('commonStore')
 @inject('authStore')
 @inject('blockStore')
 @observer
@@ -27,6 +29,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onForward = this.onForward.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onMore = this.onMore.bind(this);
 	};
 
 	render () {
@@ -66,6 +69,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					{path.map((item: any, i: any) => (
 						<PathItem key={i} {...item} />
 					))}
+				</div>
+				
+				<div className="menu">
+					<Icon id={'button-' + rootId + '-more'} className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);
@@ -120,6 +127,25 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		if (this.props.dataset && this.props.dataset.onDrop) {
 			this.props.dataset.onDrop(e, type, targetId, position);			
 		};
+	};
+	
+	onMore (e: any) {
+		const { commonStore, rootId } = this.props;
+		
+		commonStore.menuOpen('blockMore', { 
+			element: 'button-' + rootId + '-more',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				rootId: rootId,
+				blockId: rootId,
+				onSelect: (item: any) => {
+				},
+			}
+		});
 	};
 	
 };

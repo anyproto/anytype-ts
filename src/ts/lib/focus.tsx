@@ -16,6 +16,7 @@ class Focus {
 	
 	clear () {
 		this.set('', { from: 0, to: 0 });
+		window.getSelection().empty();
 	};
 	
 	apply () {
