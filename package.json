@@ -158,8 +158,8 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "anytype",
-					"region": "ams3"
+					"name": "at9412003",
+					"region": "fra1"
 				}
 			]
 		},
@@ -178,8 +178,8 @@
 		"publish": [
 			{
 				"provider": "spaces",
-				"name": "anytype",
-				"region": "ams3"
+				"name": "at9412003",
+				"region": "fra1"
 			}
 		]
 	}
