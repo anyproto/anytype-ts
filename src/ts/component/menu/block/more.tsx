@@ -29,7 +29,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const items = this.getItems();
 		
 		const Item = (item: any) => (
-			<div id={'block-action-item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+			<div id={'block-more-item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 				{item.icon ? <Icon className={item.icon} /> : ''}
 				<div className="name">{item.name}</div>
 			</div>
@@ -74,7 +74,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const item = items[this.n];
 			
 			node.find('.item.active').removeClass('active');
-			node.find('#item-' + item.id).addClass('active');
+			node.find('#block-more-item-' + item.id).addClass('active');
 		};
 		
 		switch (k) {
@@ -118,17 +118,20 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return [];
 		};
 		
-		let items = [
-			{ id: 'move', icon: 'move', name: 'Move to' },
-			{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-			{ id: 'remove', icon: 'remove', name: 'Delete' },
-		];
+		let items = [];
 		
 		if (block.type == I.BlockType.Page) {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
-			].concat(items);
+				{ id: 'remove', icon: 'remove', name: 'Delete' },
+			];
+		} else {
+			items = [
+				{ id: 'move', icon: 'move', name: 'Move to' },
+				{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+				{ id: 'remove', icon: 'remove', name: 'Delete' },
+			];
 		};
 		
 		return items;
