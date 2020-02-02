@@ -128,9 +128,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			];
 		} else {
 			items = [
+				{ id: 'remove', icon: 'remove', name: 'Delete' },
 				{ id: 'move', icon: 'move', name: 'Move to' },
 				{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-				{ id: 'remove', icon: 'remove', name: 'Delete' },
 			];
 		};
 		
