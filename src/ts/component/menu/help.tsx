@@ -25,7 +25,7 @@ class MenuHelp extends React.Component<Props, {}> {
 	
 	render () {
 		const items: I.MenuItem[] = [
-			{ icon: 'help', name: 'Help' },
+			//{ icon: 'help', name: 'Help' },
 			{ icon: 'chat', name: 'Chat with Us' },
 			{ icon: 'feature', name: 'Suggest a Feature' },
 			{ icon: 'community', name: 'Join our Community' }

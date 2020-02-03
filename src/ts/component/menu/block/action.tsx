@@ -136,8 +136,8 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				children: [
 					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
 					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
-					{ id: 'move', icon: 'move', name: 'Move to' },
-					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+					//{ id: 'move', icon: 'move', name: 'Move to' },
+					//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
 				] 
 			},

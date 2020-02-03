@@ -85,7 +85,7 @@ class PopupSettings extends React.Component<Props, {}> {
 								<Icon className="arrow" />
 							</div>
 							
-							<div className="row flex">
+							<div className="row flex dn">
 								<div className="side left">
 									<Icon className="notify" />
 									<Label text="Notifications" />

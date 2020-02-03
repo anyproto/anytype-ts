@@ -11,7 +11,7 @@
 		.icon:last-child { margin-right: 0px; }
 		.icon.user { line-height: 40px; }
 		.icon.settings { background-size: 18px 18px; background-image: url('~img/icon/settings.svg'); }
-		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); }
+		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); display: none; }
 	}
 	
 	#documents { width: calc(100% + 16px); }

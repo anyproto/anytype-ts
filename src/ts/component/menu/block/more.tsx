@@ -124,13 +124,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
-				{ id: 'remove', icon: 'remove', name: 'Delete' },
+				//{ id: 'remove', icon: 'remove', name: 'Delete' },
 			];
 		} else {
 			items = [
 				{ id: 'remove', icon: 'remove', name: 'Delete' },
-				{ id: 'move', icon: 'move', name: 'Move to' },
-				{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+				//{ id: 'move', icon: 'move', name: 'Move to' },
+				//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 			];
 		};
 		
