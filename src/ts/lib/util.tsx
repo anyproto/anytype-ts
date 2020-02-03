@@ -382,7 +382,7 @@ class Util {
 				});
 			};
 			
-			C.BlockClose(root, (message: any) => {
+			C.BlockClose(root, [], (message: any) => {
 				C.BlockOpen(root, []);
 			});
 		});

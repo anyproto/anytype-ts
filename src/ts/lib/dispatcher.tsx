@@ -87,10 +87,7 @@ class Dispatcher {
 					
 				case 'blockSetChildrenIds':
 					block = blocks.find((it: any) => { return it.id == data.id; });
-					console.log('BLOCK', block);
-					
 					if (!block) {
-						console.log(123);
 						return;
 					};
 					
@@ -102,8 +99,6 @@ class Dispatcher {
 					};
 					
 					blockStore.blockUpdate(contextId, param);
-					
-					console.log(JSON.stringify({ blockId: block.id, childrenIds: block.childrenIds  }, null, 5));
 					break;
 					
 				case 'blockSetIcon':
@@ -140,8 +135,6 @@ class Dispatcher {
 					if (!block) {
 						return;
 					};
-					
-					console.log(JSON.stringify({ blockId: block.id, childrenIds: block.childrenIds  }, null, 5));
 					
 					param = {
 						id: block.id,

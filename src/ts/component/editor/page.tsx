@@ -170,9 +170,10 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const { blockStore } = this.props;
+		const { breadcrumbs } = blockStore;
 		
 		blockStore.blocksClear(id);
-		C.BlockClose(id);
+		C.BlockClose(id, [ breadcrumbs ]);
 	};
 	
 	unbind () {
