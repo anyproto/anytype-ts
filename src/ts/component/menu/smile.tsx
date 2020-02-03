@@ -30,6 +30,7 @@ class MenuSmile extends React.Component<Props, {}> {
 				title=""
 				showPreview={false}
 				emojiTooltip={false}
+				native={true}
 			/>
 		);
 	};
