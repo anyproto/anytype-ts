@@ -15,7 +15,7 @@
 .smile.c64 { width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; }
 .smile.c64 {
 	.emoji-mart-emoji { font-size: 36px; height: 1em; line-height: 1em; }
-	.emoji-mart-emoji { span { height: 36px; line-height: 36px; margin: 2px 0px 0px 3px; } }
+	.emoji-mart-emoji { span { height: 36px; line-height: 36px; margin: 2px 0px 0px 0px; } }
 }
 
 .smile.canEdit { cursor: pointer; transition: background-color 0.2s ease-in-out; }
