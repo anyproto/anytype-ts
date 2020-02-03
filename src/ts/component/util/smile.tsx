@@ -50,7 +50,7 @@ class Smile extends React.Component<Props, State> {
 		
 		return (
 			<div id={id} className={cn.join(' ')} onClick={this.onClick}>
-				{icon ? <Emoji emoji={icon} set="apple" size={size} backgroundImageFn={() => ''} /> : ''}
+				{icon ? <Emoji native={true} emoji={icon} set="apple" size={size} /> : ''}
 			</div>
 		);
 	};
