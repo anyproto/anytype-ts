@@ -134,14 +134,13 @@ class EditorPage extends React.Component<Props, {}> {
 	open () {
 		const { blockStore, rootId } = this.props;
 		const { breadcrumbs } = blockStore;
+		const oldId = this.id;
 		
-		if (this.id == rootId) {
+		if (oldId == rootId) {
 			return;
 		};
 		
-		//this.close(this.id);
 		this.id = rootId;
-		
 		C.BlockOpen(rootId, [ breadcrumbs ], (message: any) => {
 			const { blockStore, rootId } = this.props;
 			const { blocks } = blockStore;
@@ -160,6 +159,7 @@ class EditorPage extends React.Component<Props, {}> {
 				focus.set(title.id, { from: length, to: length });
 			};
 			
+			this.close(oldId);
 			window.setTimeout(() => { focus.apply(); }, 1);
 		});
 	};
