@@ -42,8 +42,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { blocks, root } = blockStore;
 		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		
-		console.log(JSON.stringify(tree, null, 5));
-		
 		return (
 			<div>
 				<Cover num={coverId} image={coverImg} />
