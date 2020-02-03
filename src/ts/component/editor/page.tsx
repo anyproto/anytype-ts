@@ -139,7 +139,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		this.close(this.id);
+		//this.close(this.id);
 		this.id = rootId;
 		
 		C.BlockOpen(rootId, [ breadcrumbs ], (message: any) => {
