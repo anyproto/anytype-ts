@@ -57,7 +57,6 @@ class BlockText extends React.Component<Props, {}> {
 		const { blockStore, id, rootId, fields, content } = this.props;
 		const { text, marks, style, checked, number, color, bgColor } = content;
 		
-		let { lang } = fields;
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
 		let ct: string[] = [ 'flex' ];
@@ -95,7 +94,7 @@ class BlockText extends React.Component<Props, {}> {
 				};
 				
 				additional = (
-					<Select initial="Language" id="lang" value={lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
+					<Select initial="Language" id="lang" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
 				);
 				break;
 				

@@ -96,12 +96,15 @@
 	
 	"codeLang": {
 		"js":	 "JavaScript",
+		"java":	 "Java",
 		"cpp":	 "C++",
 		"cs":	 "C#", 
 		"php":	 "PHP",
 		"sql":	 "SQL", 
 		"css":	 "CSS", 
 		"html":	 "HTML", 
-		"go":	 "Go"
+		"go":	 "Go",
+		"swift": "Swift",
+		"kotlin": "Kotlin"
 	}
 }

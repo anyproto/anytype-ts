@@ -17,6 +17,7 @@ interface Props {
 	initial?: string;
 	value: string;
 	options: Option[];
+	horizontal?: I.MenuDirection;
 	onChange? (id: string): void;
 };
 
@@ -28,7 +29,8 @@ interface State {
 class Select extends React.Component<Props, State> {
 	
 	private static defaultProps = {
-		initial: ''
+		initial: '',
+		horizontal: I.MenuDirection.Left,
 	};
 	
 	state = {
@@ -97,7 +99,7 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	show () {
-		const { id, value } = this.props;
+		const { id, value, horizontal } = this.props;
 		const { options } = this.state;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -109,7 +111,7 @@ class Select extends React.Component<Props, State> {
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
+			horizontal: horizontal,
 			data: {
 				value: value,
 				options: options,
