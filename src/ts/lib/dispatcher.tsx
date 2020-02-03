@@ -56,7 +56,7 @@ class Dispatcher {
 			};
 			
 			if (DEBUG) {
-				console.log('[Dispatcher.event]', type, JSON.stringify(data, null, 5));
+				console.log('[Dispatcher.event] contextId', contextId, 'type', type, 'data', JSON.stringify(data, null, 5));
 			};
 		
 			switch (type) {
@@ -88,6 +88,8 @@ class Dispatcher {
 					
 				case 'blockSetChildrenIds':
 					block = blocks.find((it: any) => { return it.id == data.id; });
+					console.log('BLOCK');
+					
 					if (!block) {
 						return;
 					};
@@ -98,6 +100,8 @@ class Dispatcher {
 					};
 					
 					blockStore.blockUpdate(contextId, param);
+					
+					console.log(JSON.stringify({ blockId: block.id, childrenIds: block.childrenIds  }, null, 5));
 					break;
 					
 				case 'blockSetIcon':
@@ -134,6 +138,8 @@ class Dispatcher {
 					if (!block) {
 						return;
 					};
+					
+					console.log(JSON.stringify({ blockId: block.id, childrenIds: block.childrenIds  }, null, 5));
 					
 					param = {
 						id: block.id,

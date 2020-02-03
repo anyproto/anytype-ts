@@ -33,8 +33,15 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { authStore, rootId } = this.props;
+		const { authStore, blockStore, rootId } = this.props;
+		const { breadcrumbs, blocks } = blockStore;
 		const { account } = authStore;
+		const map = blockStore.getMap(blocks[breadcrumbs] || []);
+		
+		console.log(breadcrumbs);
+		console.log(JSON.stringify(map, null, 5));
+		
+		//const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
 		
 		let path: I.Block[] = [];
 		this.getPath(rootId, path);

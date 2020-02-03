@@ -133,6 +133,7 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	open () {
 		const { blockStore, rootId } = this.props;
+		const { breadcrumbs } = blockStore;
 		
 		if (this.id == rootId) {
 			return;
@@ -141,7 +142,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.close(this.id);
 		this.id = rootId;
 		
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockOpen(rootId, [ breadcrumbs ], (message: any) => {
 			const { blockStore, rootId } = this.props;
 			const { blocks } = blockStore;
 			const { focused, range } = focus;

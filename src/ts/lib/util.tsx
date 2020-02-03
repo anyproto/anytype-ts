@@ -363,16 +363,28 @@ class Util {
 	
 	pageInit (props: any) {
 		const { blockStore, commonStore } = props;
+		const { breadcrumbs } = blockStore;
 		
 		C.ConfigGet((message: any) => {
 			const root = message.homeBlockId;
-					
+			
+			if (!root) {
+				console.error('No root defined');
+				return;
+			};
+
 			commonStore.gatewaySet(message.gatewayUrl);
 			blockStore.rootSet(root);
-					
-			C.BlockClose(root, (message: any) => {
-				C.BlockOpen(root);
-			});
+			
+			if (!breadcrumbs) {
+				C.BlockOpenBreadcrumbs((message: any) => {
+					blockStore.breadcrumbsSet(message.blockId);
+				});
+			};
+			
+			//C.BlockClose(root, (message: any) => {
+				C.BlockOpen(root, []);
+			//});
 		});
 	};
 	

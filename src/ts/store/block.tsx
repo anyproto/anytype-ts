@@ -6,11 +6,17 @@ const Constant = require('json/constant.json');
 
 class BlockStore {
 	@observable public rootId: string = '';
+	@observable public breadcrumbsId: string = '';
 	@observable public blockObject: any = {};
 	
 	@computed
 	get root (): string {
 		return this.rootId;
+	};
+	
+	@computed
+	get breadcrumbs (): string {
+		return this.breadcrumbsId;
 	};
 	
 	@computed
@@ -21,6 +27,11 @@ class BlockStore {
 	@action
 	rootSet (id: string) {
 		this.rootId = String(id || '');
+	};
+	
+	@action
+	breadcrumbsSet (id: string) {
+		this.breadcrumbsId = String(id || '');
 	};
 	
 	@action
