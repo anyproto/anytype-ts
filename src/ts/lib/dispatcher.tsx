@@ -66,14 +66,13 @@ class Dispatcher {
 					break;
 					
 				case 'blockShow':
-					blocks = Util.objectCopy(blocks);
+					blocks = [];
 				
 					for (let block of data.blocks) {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
 					
 					set = true;
-					contextId = data.rootId;
 					break;
 				
 				case 'blockAdd':
@@ -88,11 +87,14 @@ class Dispatcher {
 					
 				case 'blockSetChildrenIds':
 					block = blocks.find((it: any) => { return it.id == data.id; });
-					console.log('BLOCK');
+					console.log('BLOCK', block);
 					
 					if (!block) {
+						console.log(123);
 						return;
 					};
+					
+					block.childrenIds = data.childrenIds;
 					
 					param = {
 						id: block.id,

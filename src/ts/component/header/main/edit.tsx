@@ -36,15 +36,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { authStore, blockStore, rootId } = this.props;
 		const { breadcrumbs, blocks } = blockStore;
 		const { account } = authStore;
-		const map = blockStore.getMap(blocks[breadcrumbs] || []);
-		
-		console.log(breadcrumbs);
-		console.log(JSON.stringify(map, null, 5));
-		
-		//const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
-		
-		let path: I.Block[] = [];
-		this.getPath(rootId, path);
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
 		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
@@ -73,7 +65,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
-					{path.map((item: any, i: any) => (
+					{tree.map((item: any, i: any) => (
 						<PathItem key={i} {...item} />
 					))}
 				</div>
@@ -83,25 +75,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
-	};
-	
-	getPath (id: string, path: I.Block[]) {
-		const { blockStore, rootId } = this.props;
-		const { blocks, root } = blockStore;
-		const map = blockStore.getMap(blocks[root]);
-		
-		let block = blocks[root].find((it: any) => { return it.content.targetBlockId == id; });
-		if (!block) {
-			block = (blocks[rootId] || []).find((it: any) => { return it.content.targetBlockId == id; });
-		};
-		
-		if (block) {
-			path.unshift(block);
-			
-			if (map[block.id].parentId != root) {
-				this.getPath(map[block.id].parentId, path);
-			};
-		};
 	};
 	
 	onAdd (e: any) {
