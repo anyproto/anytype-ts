@@ -7,14 +7,21 @@
 	cd js-anytype
 	npm install -D
   
-## Local version
-------------
+## Install node addon library and protobuf bindings
+### Fetch the latest binary from the [github releases](https://github.com/anytypeio/go-anytype-middleware/releases/latest)
 
 	npm run update:addon
+	
+### Or compile from the source code
+
+Follow instructions at [go-anytype-middleware](https://github.com/anytypeio/go-anytype-middleware#how-to-build)
+
+## Run the local dev-server
+------------
+
 	npm run start:dev
   
 ## Build
 ------------
 
-	npm run update:addon
 	npm run dist:(mac|win|linux)
