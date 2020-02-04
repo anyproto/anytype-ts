@@ -117,6 +117,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');
+		commonStore.menuClose('blockMore');
 		commonStore.menuClose('select');
 		
 		window.clearTimeout(this.timeout);
