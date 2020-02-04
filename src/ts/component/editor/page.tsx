@@ -34,6 +34,7 @@ class EditorPage extends React.Component<Props, {}> {
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
+	uiBlockHide: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -114,10 +115,13 @@ class EditorPage extends React.Component<Props, {}> {
 			this.uiHide();
 		};
 		
+		this.uiBlockHide = true;
+		
 		window.setTimeout(() => {
 			focus.apply(); 
-			window.scrollTo(0, this.scrollTop); 
-		}, 1);
+			window.scrollTo(0, this.scrollTop);
+			this.uiBlockHide = false;
+		}, 15);
 	};
 	
 	componentWillUnmount () {
@@ -180,6 +184,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	uiHide () {
+		if (this.uiBlockHide) {
+			return;
+		};
+		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
@@ -678,8 +686,13 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onScroll (e: any) {
-		this.scrollTop = $(window).scrollTop();
-		this.uiHide();
+		const top = $(window).scrollTop();
+		
+		if (Math.abs(top - this.scrollTop) >= 10) {
+			this.uiHide();
+		};
+		
+		this.scrollTop = top;
 	};
 	
 	onCopy (e: any) {

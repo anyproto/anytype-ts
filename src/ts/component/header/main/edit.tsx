@@ -66,7 +66,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
 					{tree.map((item: any, i: any) => (
-						<PathItem key={i} {...item} index={i} />
+						<PathItem key={item.id} {...item} index={i} />
 					))}
 				</div>
 				

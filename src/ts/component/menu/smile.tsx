@@ -42,6 +42,14 @@ class MenuSmile extends React.Component<Props, {}> {
 		keyboard.setFocus(true);
 	};
 	
+	componentDidUpdate () {
+		if (this.ref) {
+			this.ref.forceUpdate();
+		};
+		
+		keyboard.setFocus(true);
+	};
+	
 	componentWillUnmount () {
 		keyboard.setFocus(false);
 	};
