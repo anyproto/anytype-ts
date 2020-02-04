@@ -161,7 +161,7 @@ class Dispatcher {
 						content: Util.objectCopy(block.content),
 					};
 					
-					if ((null !== data.text) && (focused != data.id)) {
+					if (null !== data.text) {
 						param.content.text = String(data.text.value || '');
 						update = true;
 					};

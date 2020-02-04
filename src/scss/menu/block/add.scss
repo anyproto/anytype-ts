@@ -3,29 +3,27 @@
 .menus {
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockStyle, .menuBlockAction, .menuBlockMore { width: 192px !important; }
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menuBlockStyle, .menuBlockAction, .menuBlockMore {
-		.empty { font-size: 13px; line-height: 18px; padding: 4px 12px; }
+		.empty { font-size: 13px; line-height: 18px; padding: 4px 16px; }
 	
-		.item { font-size: 15px !important; font-weight: 500; padding: 4px 12px !important; }
+		.item { padding: 4px 16px !important; }
 		.item {
 			.name { line-height: 1; }
 		}
 		
-		.item.yellow:hover, .item.yellow.active { background: $colorOrange !important; }
-		.item.green:hover, .item.green.active { background: #0cbbae !important; }
-		.item.blue:hover, .item.blue.active { background: #1ba0eb !important; }
-		.item.red:hover, .item.red.active { background: #ee420b !important; }
-		.item.purple:hover, .item.purple.active { background: #a646c9 !important; }
+		.item.yellow:hover, .item.yellow.active { background: #fef3c5 !important; }
+		.item.green:hover, .item.green.active { background: #d6f5f3 !important; }
+		.item.blue:hover, .item.blue.active { background: #d6effd !important; }
+		.item.red:hover, .item.red.active { background: #ffebe5 !important; }
+		.item.purple:hover, .item.purple.active { background: #f4e3fa !important; }
 	
 		.icon { width: 24px; height: 24px; background-size: 100% 100%; }
-		.icon.arrow { position: absolute; right: 8px; top: 4px; margin: 0px; background-image: url('~img/icon/menu/add/arrow0.svg'); }
+		.icon.arrow { position: absolute; right: 8px; top: 4px; margin: 0px; background-image: url('~img/icon/menu/add/arrow.svg'); }
 	}
 	
 	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter { width: 288px !important; }
 	
 	.menu.menuBlockAdd, .menu.menuBlockAddSub {
-		.item.withColor:hover, .item.withColor.active { color: #fff; }
 		.item.withColor:hover, .item.withColor.active {
-			.icon.arrow { background-image: url('~img/icon/menu/add/arrow1.svg'); }
 			.icon.text { background-image: url('~img/icon/menu/action/block/text1.svg'); }
 			.icon.list { background-image: url('~img/icon/menu/action/block/list1.svg'); }
 			.icon.tool { background-image: url('~img/icon/menu/action/block/tool1.svg'); }
