@@ -131,9 +131,6 @@ class Dispatcher {
 					
 				case 'blockSetLink':
 					block = blocks.find((it: any) => { return it.id == data.id; });
-					
-					console.log('BLOCK', JSON.stringify(blocks, null, 5), block);
-					
 					if (!block) {
 						return;
 					};
@@ -154,7 +151,6 @@ class Dispatcher {
 					};
 					
 					if (update) {
-						console.log('UPDATE', param);
 						blockStore.blockUpdate(contextId, param);
 					};
 					break;
