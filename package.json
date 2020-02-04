@@ -128,15 +128,16 @@
 		],
 		"asarUnpack": [
 			"dist/main.js",
-			"dist/index.html"
+			"dist/index.html",
+			"build"
 		],
 		"extraResources": [],
 		"files": [
 			"electron.js",
+			"build",
 			"!dist/*",
 			"dist/index.html",
 			"dist/main.js",
-			"build",
 			"!node_modules/**/*",
 			"node_modules/electron-util",
 			"node_modules/new-github-issue-url",
