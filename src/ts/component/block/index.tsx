@@ -124,7 +124,7 @@ class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.Div:
-				cn.push('blockDiv');
+				cn.push('blockDiv c' + content.style);
 				BlockComponent = () => <div className="div" />;
 				break;
 				

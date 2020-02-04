@@ -36,7 +36,15 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		return (
 			<div>
 				{items.map((item: any, i: number) => {
-					return <MenuItemVertical key={i} {...item} className={(item.id == content.style ? 'active' : '')} onClick={(e: any) => { this.onClick(e, item.id); }} />;
+					let cn = [];
+					if (item.color) {
+						cn.push(item.color);
+						cn.push('withColor');
+					};
+					if (item.id == content.style) {
+						cn.push('active');
+					};
+					return <MenuItemVertical key={i} {...item} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item.id); }} />;
 				})}
 			</div>
 		);
@@ -67,16 +75,16 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	
 	getItems () {
 		return [
-			{ id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
-			{ id: I.TextStyle.Header1, icon: 'header1', name: 'Heading 1' },
-			{ id: I.TextStyle.Header2, icon: 'header2', name: 'Heading 2' },
-			{ id: I.TextStyle.Header3, icon: 'header3', name: 'Heading 3' },
-			{ id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted' },
-			{ id: I.TextStyle.Code, icon: 'code', name: 'Code snippet' },
-			{ id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list' },
-			{ id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list' },
-			{ id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle' },
-			{ id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox' },
+			{ id: I.TextStyle.Paragraph,	 icon: 'text',		 name: 'Text',		 color: 'yellow' },
+			{ id: I.TextStyle.Header1,		 icon: 'header1',	 name: 'Heading 1',	 color: 'yellow' },
+			{ id: I.TextStyle.Header2,		 icon: 'header2',	 name: 'Heading 2',	 color: 'yellow' },
+			{ id: I.TextStyle.Header3,		 icon: 'header3',	 name: 'Heading 3',	 color: 'yellow' },
+			{ id: I.TextStyle.Quote,		 icon: 'quote',		 name: 'Highlighted', color: 'yellow' },
+			{ id: I.TextStyle.Code,			 icon: 'code',		 name: 'Code snippet', color: 'red' },
+			{ id: I.TextStyle.Bulleted,		 icon: 'list',		 name: 'Bulleted list', color: 'green' },
+			{ id: I.TextStyle.Numbered,		 icon: 'numbered',	 name: 'Numbered list', color: 'green' },
+			{ id: I.TextStyle.Toggle,		 icon: 'toggle',	 name: 'Toggle', color: 'green' },
+			{ id: I.TextStyle.Checkbox,		 icon: 'checkbox',	 name: 'Checkbox', color: 'green' },
 		];
 	};
 	

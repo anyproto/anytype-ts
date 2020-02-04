@@ -25,6 +25,7 @@ import { ContentIcon, BlockIcon } from './block/icon';
 import { LinkStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { FileType, FileState, File, BlockFile } from './block/file';
+import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 
 export {
 	ImageSize,
@@ -82,6 +83,10 @@ export {
 	Mark, 
 	ContentText, 
 	BlockText,
+	
+	DivStyle, 
+	ContentDiv,
+	BlockDiv,
 	
 	FileType, 
 	FileState, 

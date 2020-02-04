@@ -658,6 +658,12 @@ class EditorPage extends React.Component<Props, {}> {
 						};
 					};
 					
+					if (item.type == I.BlockType.Div) {
+						param.content = {
+							style: item.id,
+						};
+					};
+					
 					if (item.type == I.BlockType.Page) {
 						param.fields = {
 							icon: Util.randomSmile(), 

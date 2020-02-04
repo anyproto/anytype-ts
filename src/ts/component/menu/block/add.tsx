@@ -195,21 +195,20 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				] as any [],
 			},
 			{ 
-				id: 'tool', icon: 'tool', name: 'Page', color: 'blue', children: [
-					{ type: I.BlockType.Page, id: 'page', icon: 'tool', name: 'Page' },
-					
+				id: 'page', icon: 'page', name: 'Page', color: 'blue', children: [
+					{ type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page' },
+					{ id: 'existing', icon: 'existing', name: 'Existing Page' },
 					/*
 					{ id: 'task', icon: 'task', name: 'Task' },
-					{ id: 'dataview', icon: 'tool', name: 'Database' },
+					{ id: 'dataview', icon: 'page', name: 'Database' },
 					{ id: 'set', icon: 'set', name: 'Set' },
 					{ id: 'contact', icon: 'contact', name: 'Contact' },
-					{ id: 'existing', icon: 'existing', name: 'Existing Tool' },
 					*/
 				] as any [],
 			},
 			{ 
-				id: 'media', icon: 'media', name: 'Object', color: 'red', children: [
-					{ type: I.BlockType.File, id: I.FileType.File, icon: 'media', name: 'File' },
+				id: 'file', icon: 'file', name: 'Object', color: 'red', children: [
+					{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', name: 'File' },
 					{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', name: 'Picture' },
 					{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', name: 'Video' },
 					{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', name: 'Bookmark' },
@@ -217,8 +216,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				] as any [],
 			},
 			{ 
-				id: 'other', icon: 'other', name: 'Other', color: 'purple', children: [
-					{ type: I.BlockType.Div, id: 'div', icon: 'other', name: 'Divider' },
+				id: 'other', icon: 'line', name: 'Other', color: 'purple', children: [
+					{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider' },
+					{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Line divider' },
 				] as any [],
 			},
 		];
