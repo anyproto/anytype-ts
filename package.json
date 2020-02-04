@@ -127,8 +127,8 @@
 			}
 		],
 		"asarUnpack": [
-			"build",
-			"dist/main.js"
+			"dist/main.js",
+			"dist/index.html"
 		],
 		"extraResources": [],
 		"files": [
@@ -136,7 +136,40 @@
 			"!dist/*",
 			"dist/index.html",
 			"dist/main.js",
-			"build"
+			"build",
+			"!node_modules/**/*",
+			"node_modules/electron-util",
+			"node_modules/new-github-issue-url",
+			"node_modules/electron-is-dev",
+			"node_modules/electron-dl",
+			"node_modules/electron-updater",
+			"node_modules/electron-log",
+			"node_modules/unused-filename",
+			"node_modules/modify-filename",
+			"node_modules/path-exists",
+			"node_modules/pupa",
+			"node_modules/ext-name",
+			"node_modules/ext-list",
+			"node_modules/mime-db",
+			"node_modules/sort-keys",
+			"node_modules/sort-keys-length",
+			"node_modules/is-plain-obj",
+			"node_modules/bindings",
+			"node_modules/file-uri-to-path",
+			"node_modules/blueimp-load-image",
+			"node_modules/read-chunk",
+			"node_modules/pify",
+			"node_modules/with-open-file",
+			"node_modules/p-try",
+			"node_modules/p-finally",
+			"node_modules/file-type",
+			"node_modules/sprintf-kit",
+			"node_modules/es5-ext",
+			"node_modules/lowlight",
+			"node_modules/highlight.js/lib/highlight.js",
+			"node_modules/highlight.js/lib/languages/*",
+			"node_modules/fault",
+			"node_modules/format"
 		],
 		"dmg": {
 			"sign": false
