@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile, DropTarget } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, C, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -66,7 +66,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
 					{tree.map((item: any, i: any) => (
-						<PathItem key={i} {...item} />
+						<PathItem key={i} {...item} index={i} />
 					))}
 				</div>
 				
@@ -82,15 +82,21 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onHome (e: any) {
+		const { blockStore } = this.props;
+		const { breadcrumbs } = blockStore;
+		
+		C.BlockCutBreadcrumbs(breadcrumbs, 0);
 		this.props.history.push('/main/index');
 	};
 	
 	onPath (e: any, block: any) {
-		const { rootId } = this.props;
+		const { blockStore, rootId } = this.props;
+		const { breadcrumbs } = blockStore;
 		const { content } = block;
 		const { targetBlockId } = content;
 		
 		if (targetBlockId != rootId) {
+			C.BlockCutBreadcrumbs(breadcrumbs, block.index);
 			Util.pageOpen(e, this.props, targetBlockId);
 		};
 	};
