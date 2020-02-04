@@ -33,7 +33,6 @@ class Dispatcher {
 		let event = com.anytype.Event.decode(item.data);
 		let contextId = event.contextId;
 		let blocks = blockStore.blocks[contextId] || [];
-		let set = false;
 		let types = [];
 		
 		if (PROFILE) {
@@ -72,7 +71,7 @@ class Dispatcher {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
 					
-					set = true;
+					blockStore.blocksSet(contextId, blocks);
 					break;
 				
 				case 'blockAdd':
@@ -82,7 +81,7 @@ class Dispatcher {
 						blocks.push(blockStore.prepareBlockFromProto(block));
 					};
 					
-					set = true;
+					blockStore.blocksSet(contextId, blocks);
 					break;
 					
 				case 'blockSetChildrenIds':
@@ -91,13 +90,12 @@ class Dispatcher {
 						return;
 					};
 					
-					block.childrenIds = data.childrenIds;
-					
 					param = {
 						id: block.id,
-						childrenIds: data.childrenIds,
+						childrenIds: data.childrenIds || [],
 					};
 					
+					block.childrenIds = param.childrenIds;
 					blockStore.blockUpdate(contextId, param);
 					break;
 					
@@ -127,11 +125,15 @@ class Dispatcher {
 						fields: StructDecode.decodeStruct(data.fields),
 					};
 					
+					block.fields = param.fields;
 					blockStore.blockUpdate(contextId, param);
 					break;
 					
 				case 'blockSetLink':
 					block = blocks.find((it: any) => { return it.id == data.id; });
+					
+					console.log('BLOCK', JSON.stringify(blocks, null, 5), block);
+					
 					if (!block) {
 						return;
 					};
@@ -146,9 +148,15 @@ class Dispatcher {
 						
 						param.content.fields.name = String(param.content.fields.name || Constant.defaultName);
 						param.content.fields.icon = String(param.content.fields.icon || Constant.defaultIcon);
+						
+						block.content.fields = param.content.fields;
+						update = true;
 					};
 					
-					blockStore.blockUpdate(contextId, param);
+					if (update) {
+						console.log('UPDATE', param);
+						blockStore.blockUpdate(contextId, param);
+					};
 					break;
 					
 				case 'blockSetText':
@@ -255,10 +263,7 @@ class Dispatcher {
 					break;
 					
 				case 'blockDelete':
-					blocks = Util.objectCopy(blocks);
 					blocks = blocks.filter((item: I.Block) => { return item.id != data.blockId; });
-					
-					set = true;
 					
 					// Remove focus if block is deleted
 					if (focused == data.blockId) {
@@ -267,10 +272,6 @@ class Dispatcher {
 					};
 					break;
 			};
-		};
-		
-		if (set) {
-			blockStore.blocksSet(contextId, blocks);
 		};
 		
 		if (PROFILE) {
