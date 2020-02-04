@@ -379,6 +379,7 @@ class Util {
 			if (!breadcrumbs) {
 				C.BlockOpenBreadcrumbs((message: any) => {
 					blockStore.breadcrumbsSet(message.blockId);
+					C.BlockCutBreadcrumbs(message.blockId, 0);
 				});
 			};
 			
