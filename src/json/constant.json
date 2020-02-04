@@ -13,8 +13,15 @@
 	"size": {
 		"editorPage": 704,
 		"blockMenu": 48,
-		"menuBlockContext": 380,
-		"image": 2048
+		"image": 2048,
+		
+		"menuBlockContext": {
+			"default": 380,
+			"code": 130,
+			"header1": 330,
+			"header2": 330,
+			"header3": 330
+		}
 	},
 
 	"index": {

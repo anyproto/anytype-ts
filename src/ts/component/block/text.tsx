@@ -509,8 +509,8 @@ class BlockText extends React.Component<Props, {}> {
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
 			const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
-			
-			const x = rect.x - offset.left + Constant.size.blockMenu - Constant.size.menuBlockContext / 2 + rect.width / 2;
+			const size = Number(Constant.size.menuBlockContext[Util.styleClass(style)] || Constant.size.menuBlockContext.default) || 0;
+			const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
 			const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 			
 			commonStore.menuOpen('blockContext', { 
