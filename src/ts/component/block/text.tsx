@@ -273,31 +273,31 @@ class BlockText extends React.Component<Props, {}> {
 		
 		// Make div
 		if (value == '---') {
-			C.BlockReplace({ type: I.BlockType.Div }, rootId, id);
+			C.BlockCreate({ type: I.BlockType.Div }, rootId, id, I.BlockPosition.Replace);
 			cmdParsed = true;
 		};
 		
 		// Make file
 		if (value == '/file') {
-			C.BlockReplace({ type: I.BlockType.File, content: { type: I.FileType.File } }, rootId, id);
+			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.File } }, rootId, id, I.BlockPosition.Replace);
 			cmdParsed = true;
 		};
 		
 		// Make image
 		if (value == '/image') {
-			C.BlockReplace({ type: I.BlockType.File, content: { type: I.FileType.Image } }, rootId, id);
+			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Image } }, rootId, id, I.BlockPosition.Replace);
 			cmdParsed = true;
 		};
 		
 		// Make video
 		if (value == '/video') {
-			C.BlockReplace({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id);
+			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace);
 			cmdParsed = true;
 		};
 		
 		// Make video
 		if (value == '/video') {
-			C.BlockReplace({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id);
+			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace);
 			cmdParsed = true;
 		};
 		

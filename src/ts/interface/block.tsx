@@ -21,6 +21,7 @@ export enum BlockPosition {
 	Left	 = 3,
 	Right	 = 4,
 	Inner	 = 5,
+	Replace	 = 6,
 };
 
 export interface Restrictions {

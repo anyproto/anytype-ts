@@ -324,16 +324,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 								type: item.type,
 								fields: {
 									icon: Util.randomSmile(), 
-									name: Constant.defaultName,
+									name: String(text || Constant.defaultName),
 								},
 								content: {
 									style: I.PageStyle.Empty,
 								}
 							};
 							
-							C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Bottom, (message: any) => {
-								C.BlockUnlink(rootId, [ blockId ]);
-							});
+							C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Replace);
 						};
 						
 						commonStore.menuClose(this.props.id);

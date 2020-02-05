@@ -105,15 +105,6 @@ const BlockCreatePage = (block: any, contextId: string, targetId: string, positi
 	dispatcher.call('blockCreatePage', request, callBack);
 };
 
-const BlockReplace = (block: any, contextId: string, blockId: string, callBack?: (message: any) => void) => {
-	const request = {
-		block: blockStore.prepareBlockToProto(block),
-		contextId: contextId,
-		blockId: blockId,
-	};
-	dispatcher.call('blockReplace', request, callBack);
-};
-
 const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -283,7 +274,6 @@ export {
 	BlockClose,
 	BlockCreate,
 	BlockCreatePage,
-	BlockReplace,
 	BlockUnlink,
 	BlockSetIconName,
 	BlockListMove,
