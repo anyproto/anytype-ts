@@ -105,7 +105,7 @@ class BlockFile extends React.Component<Props, {}> {
 				}
 			});
 		} else {
-			this.onDownload(e);
+			ipcRenderer.send('urlOpen', commonStore.fileUrl(hash));
 		};
 	};
 	
