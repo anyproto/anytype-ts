@@ -3,5 +3,7 @@
 .menus {
 	.menu.menuBlockAction {
 		.section { padding: 4px 0px; }
+		.section:first-child { padding-top: 0px; }
+		.section:last-child { padding-bottom: 0px; }
 	}
 }
