@@ -12,17 +12,14 @@
 		.img { width: 100%; display: block; }
 		
 		.icon.resize {
-			width: 18px; height: 18px; position: absolute; right: 4px; bottom: 4px;
-			background-image: url('~img/icon/resize0.svg'); opacity: 0; cursor: nwse-resize;
+			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px;
+			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
 		}
-		.icon.resize:hover { background-image: url('~img/icon/resize1.svg'); }
 				
 		.icon.dots {
-			width: 28px; height: 28px; border-radius: 4px; background-color: #393834; position: absolute; right: 4px; top: 4px;
-			background-image: url('~img/icon/dots0.svg'); opacity: 0; background-size: 16px 4px; cursor: pointer; z-index: 1;
-			display: none;
+			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;
+			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; cursor: pointer; z-index: 1;
 		}
-		.icon.dots:hover { background-image: url('~img/icon/dots1.svg'); }
 	}
 	.block.blockImage:hover {
 		.icon.resize { opacity: 1; }
@@ -30,4 +27,8 @@
 	}
 	
 	.block.blockImage > .wrapContent > .selectable > .dropTarget { padding: 2px; }
+	.block.blockImage > .wrapContent > .selectable.isSelected > .dropTarget > .wrap {
+		.icon.resize { opacity: 1; }
+		.icon.dots { opacity: 1; }
+	}
 }

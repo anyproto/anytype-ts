@@ -32,10 +32,12 @@ class BlockImage extends React.Component<Props, {}> {
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onMenuDown = this.onMenuDown.bind(this);
+		this.onMenuClick = this.onMenuClick.bind(this);
 	};
 
 	render () {
-		const { commonStore, content, fields } = this.props;
+		const { commonStore, content, fields, id } = this.props;
 		const { width } = fields;
 		const { state } = content;
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
@@ -66,7 +68,7 @@ class BlockImage extends React.Component<Props, {}> {
 					<div style={css} className="wrap">
 						<img className="img" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} />
 						<Icon className="resize" onMouseDown={this.onResizeStart} />
-						<Icon className="dots" />
+						<Icon id={'block-image-menu-' + id} className="dots" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 					</div>
 				);
 				break;
@@ -79,9 +81,9 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div>
+			<React.Fragment>
 				{element}
-			</div>
+			</React.Fragment>
 		);
 	};
 	
@@ -130,28 +132,25 @@ class BlockImage extends React.Component<Props, {}> {
 		e.stopPropagation();
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('.wrap');
 		
-		if (!wrap.length) {
+		if (!node.hasClass('wrap')) {
 			return;
 		};
 		
-		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		
-		wrap.css({ width: this.checkWidth(e.pageX - rect.x + 20) });
+		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		node.css({ width: this.checkWidth(e.pageX - rect.x + 20) });
 	};
 	
 	onResizeEnd (e: any) {
 		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('.wrap');
 		
-		if (!wrap.length) {
+		if (!node.hasClass('wrap')) {
 			return;
 		};
 		
-		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
 		
 		this.unbind();
 		
@@ -173,6 +172,49 @@ class BlockImage extends React.Component<Props, {}> {
 			data: {
 				type: I.FileType.Image,
 				url: this.getUrl(),
+			}
+		});
+	};
+	
+	onMenuDown (e: any) {
+		const { dataset, id, rootId } = this.props;
+		const { selection } = dataset;
+		
+		if (selection) {
+			selection.setPreventClear(true);
+		};
+	};
+	
+	onMenuClick (e: any) {
+		const { commonStore, dataset, id, rootId } = this.props;
+		const { selection } = dataset;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		let ids = [];
+		if (selection) {
+			selection.setPreventClear(false);
+			ids = selection.get();
+			if (ids.length <= 1) {
+				ids = [ id ];
+			};
+			selection.set(ids);
+			selection.setPreventClear(true);
+		};
+		
+		commonStore.menuOpen('blockAction', { 
+			element: 'block-image-menu-' + id,
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				blockId: id,
+				blockIds: ids,
+				rootId: rootId,
+			},
+			onClose: () => {
+				selection.setPreventClear(false);
 			}
 		});
 	};
