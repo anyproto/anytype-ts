@@ -137,15 +137,30 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	open () {
 		const { blockStore, rootId } = this.props;
-		const { breadcrumbs } = blockStore;
-		const oldId = this.id;
+		const { blocks, breadcrumbs } = blockStore;
 		
-		if (oldId == rootId) {
+		if (this.id == rootId) {
 			return;
 		};
 		
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
+		
+		let bc: any[] = [];
+		let lastTargetId = null;
+		
+		if (tree.length) {
+			let last = tree[tree.length - 1];
+			if (last) {
+				lastTargetId = last.content.targetBlockId;
+			};
+		};
+		if (!lastTargetId || (lastTargetId != rootId)) {
+			bc = [ breadcrumbs ];
+		};
+		
+		this.close(this.id);
 		this.id = rootId;
-		C.BlockOpen(rootId, [ breadcrumbs ], (message: any) => {
+		C.BlockOpen(this.id, bc, (message: any) => {
 			const { blockStore, rootId } = this.props;
 			const { blocks } = blockStore;
 			const { focused, range } = focus;
@@ -163,7 +178,6 @@ class EditorPage extends React.Component<Props, {}> {
 				focus.set(title.id, { from: length, to: length });
 			};
 			
-			this.close(oldId);
 			window.setTimeout(() => { focus.apply(); }, 1);
 		});
 	};
@@ -175,8 +189,9 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { blockStore } = this.props;
 		
-		blockStore.blocksClear(id);
-		C.BlockClose(id, []);
+		C.BlockClose(id, [], (message: any) => {
+			blockStore.blocksClear(id);
+		});
 	};
 	
 	unbind () {

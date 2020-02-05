@@ -66,7 +66,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
 					{tree.map((item: any, i: any) => (
-						<PathItem key={item.id} {...item} index={i} />
+						<PathItem key={item.id} {...item} index={i + 1} />
 					))}
 				</div>
 				
@@ -85,24 +85,34 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { blockStore } = this.props;
 		const { breadcrumbs } = blockStore;
 		
-		C.BlockCutBreadcrumbs(breadcrumbs, 0);
-		this.props.history.push('/main/index');
+		C.BlockCutBreadcrumbs(breadcrumbs, 0, (message: any) => {
+			this.props.history.push('/main/index');
+		});
 	};
 	
 	onPath (e: any, block: any) {
+		e.persist();
+		
 		const { blockStore, rootId } = this.props;
 		const { breadcrumbs } = blockStore;
 		const { content } = block;
 		const { targetBlockId } = content;
 		
 		if (targetBlockId != rootId) {
-			C.BlockCutBreadcrumbs(breadcrumbs, block.index);
-			Util.pageOpen(e, this.props, targetBlockId);
+			C.BlockCutBreadcrumbs(breadcrumbs, block.index, (message: any) => {
+				Util.pageOpen(e, this.props, targetBlockId);
+			});
 		};
 	};
 	
 	onBack (e: any) {
-		this.props.history.goBack();
+		const { blockStore } = this.props;
+		const { breadcrumbs, blocks } = blockStore;
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
+		
+		C.BlockCutBreadcrumbs(breadcrumbs, tree.length - 1, (message: any) => {
+			this.props.history.goBack();			
+		});
 	};
 	
 	onForward (e: any) {
