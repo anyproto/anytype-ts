@@ -218,7 +218,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			{ 
 				id: 'other', icon: 'line', name: 'Other', color: 'purple', children: [
 					{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider' },
-					{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Line divider' },
+					{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider' },
 				] as any [],
 			},
 		];

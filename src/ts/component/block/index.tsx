@@ -125,7 +125,21 @@ class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.Div:
 				cn.push('blockDiv c' + content.style);
-				BlockComponent = () => <div className="div" />;
+				
+				let inner: any = null;
+				switch (content.style) {
+					case I.DivStyle.Dot:
+						inner = (
+							<React.Fragment>
+								<div className="dot" />
+								<div className="dot" />
+								<div className="dot" />
+							</React.Fragment>
+						);
+						break;
+				};
+				
+				BlockComponent = () => <div className="div">{inner}</div>;
 				break;
 				
 			case I.BlockType.Link:

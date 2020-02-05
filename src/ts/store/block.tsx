@@ -194,6 +194,7 @@ class BlockStore {
 		
 		if (content) {
 			item.content = Util.objectCopy(content);
+			item.content.style = content.style;
 			
 			if (content.fields) {
 				item.content.fields = StructDecode.decodeStruct(content.fields);
@@ -222,11 +223,15 @@ class BlockStore {
 			};
 						
 			if (type == I.BlockType.Layout) {
-				item.content.style = content.style;
+				//item.content.style = content.style;
+			};
+			
+			if (type == I.BlockType.Div) {
+				//item.content.style = content.style;
 			};
 			
 			if (type == I.BlockType.Link) {
-				item.content.style = content.style;
+				//item.content.style = content.style;
 				
 				if (item.content.style == I.LinkStyle.Page) {
 					item.content.fields = item.content.fields || {};
