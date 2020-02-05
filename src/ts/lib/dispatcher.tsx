@@ -49,6 +49,7 @@ class Dispatcher {
 			let data = message[type] || {};
 			let param: any = {};
 			let update = false;
+			let set = false;
 			
 			if (data.error && data.error.code) {
 				continue;
@@ -260,6 +261,7 @@ class Dispatcher {
 					
 				case 'blockDelete':
 					blocks = blocks.filter((item: I.Block) => { return item.id != data.blockId; });
+					set = true;
 					
 					// Remove focus if block is deleted
 					if (focused == data.blockId) {
@@ -267,6 +269,10 @@ class Dispatcher {
 						keyboard.setFocus(false);
 					};
 					break;
+			};
+			
+			if (set) {
+				blockStore.blocksSet(contextId, blocks);
 			};
 		};
 		
