@@ -203,6 +203,7 @@ class Dispatcher {
 					};
 					
 					if (update) {
+						block.content = Object.assign(block.content, param.content);
 						blockStore.blockUpdate(contextId, param);
 					};
 					break;
@@ -249,6 +250,7 @@ class Dispatcher {
 					};
 					
 					if (update) {
+						block.content = Object.assign(block.content, param.content);
 						blockStore.blockUpdate(contextId, param);
 					};
 					break;

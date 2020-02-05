@@ -74,7 +74,9 @@
 				margin-top: -4px;
 			}
 		}
-		.icon:hover, .icon.active { background-color: #f3f2ec; }
+		.icon.active {
+			 .arrow { transform: rotateZ(-180deg); }
+		}
 	}
 }
 

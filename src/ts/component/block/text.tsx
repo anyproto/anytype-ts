@@ -428,8 +428,21 @@ class BlockText extends React.Component<Props, {}> {
 	
 	blockUpdateMarks (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
+		const { blocks } = blockStore;
 		const { text } = content;
 		
+		const block = blocks[rootId].find((it: any) => { return it.id == id; });
+		if (!block) {
+			return;
+		};
+		
+		let param = {
+			id: block.id,
+			content: Util.objectCopy(block.content),
+		};
+		param.content.marks = newMarks;
+		
+		blockStore.blockUpdate(rootId, param);
 		C.BlockSetTextText(rootId, id, String(text || ''), newMarks);
 	};
 	
