@@ -4,21 +4,21 @@
 	.menu.menuBlockContext { padding: 0px; transform-origin: 50% 50% !important; }
 	.menu.menuBlockContext {
 		.icon.blockStyle { width: 48px; background-position: 8px center; }
-		.icon.color { width: 48px; }
+		.icon.color { width: 40px; }
 		.icon.color {
-			.inner { margin: 0px; left: 8px; top: 4px; margin: 0px; }
+			.inner { margin: 0px; left: 0px; top: 0px; margin: 0px; }
 		}
 		
-		.icon.blockStyle.text { background-image: url('~img/icon/menu/style/text.svg'); }
-		.icon.blockStyle.header1 { background-image: url('~img/icon/menu/style/header1.svg'); }
-		.icon.blockStyle.header2 { background-image: url('~img/icon/menu/style/header2.svg'); }
-		.icon.blockStyle.header3 { background-image: url('~img/icon/menu/style/header3.svg'); }
-		.icon.blockStyle.quote { background-image: url('~img/icon/menu/style/quote.svg'); }
-		.icon.blockStyle.list { background-image: url('~img/icon/menu/style/list.svg'); }
-		.icon.blockStyle.checkbox { background-image: url('~img/icon/menu/style/checkbox.svg'); }
-		.icon.blockStyle.numbered { background-image: url('~img/icon/menu/style/numbered.svg'); }
-		.icon.blockStyle.toggle { background-image: url('~img/icon/menu/style/toggle.svg'); }
-		.icon.blockStyle.code { background-image: url('~img/icon/menu/style/code.svg'); }
+		.icon.blockStyle.active.text { background-image: url('~img/icon/menu/style/text.svg'); }
+		.icon.blockStyle.active.header1 { background-image: url('~img/icon/menu/style/header1.svg'); }
+		.icon.blockStyle.active.header2 { background-image: url('~img/icon/menu/style/header2.svg'); }
+		.icon.blockStyle.active.header3 { background-image: url('~img/icon/menu/style/header3.svg'); }
+		.icon.blockStyle.active.quote { background-image: url('~img/icon/menu/style/quote.svg'); }
+		.icon.blockStyle.active.list { background-image: url('~img/icon/menu/style/list.svg'); }
+		.icon.blockStyle.active.checkbox { background-image: url('~img/icon/menu/style/checkbox.svg'); }
+		.icon.blockStyle.active.numbered { background-image: url('~img/icon/menu/style/numbered.svg'); }
+		.icon.blockStyle.active.toggle { background-image: url('~img/icon/menu/style/toggle.svg'); }
+		.icon.blockStyle.active.code { background-image: url('~img/icon/menu/style/code.svg'); }
 		
 		.icon.active.bold { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
 		.icon.active.code { background-image: url('~img/icon/menu/action/mark/code1.svg'); }

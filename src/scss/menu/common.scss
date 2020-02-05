@@ -5,7 +5,7 @@
 	
 	.menu { 
 		border-radius: 8px; color: $colorBlack; position: absolute; z-index: 103; text-align: left; padding: 8px 0px;
-		box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.3); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
+		box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.35); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
 		transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
 	}
 	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
@@ -62,20 +62,20 @@
 	
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 4px 12px; border-right: 1px solid #dfddd0; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 10px 15px; border-right: 1px solid #dfddd0; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
-		.icon { width: 32px; height: 32px; margin-right: 4px; border-radius: 4px; background-size: 24px 24px; cursor: pointer; }
+		.icon { width: 24px; height: 24px; margin-right: 12px; border-radius: 4px; background-size: 24px 24px; cursor: pointer; }
 		.icon:last-child { margin: 0px; }
 		
 		.icon {
 			.arrow { 
-				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow.svg'); position: absolute; right: 4px; top: 50%; 
+				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow0.svg'); position: absolute; right: 4px; top: 50%; 
 				margin-top: -4px;
 			}
 		}
 		.icon.active {
-			 .arrow { transform: rotateZ(-180deg); }
+			 .arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); transform: rotateZ(-180deg); }
 		}
 	}
 }

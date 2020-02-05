@@ -10,6 +10,7 @@ interface Props extends I.Menu {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @inject('commonStore')
 @inject('blockStore')
@@ -299,11 +300,31 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		this.timeout = window.setTimeout(() => {
 			switch (item.id) {
 				case 'turn':
-					menuParam.data.onSelect = (style: I.TextStyle) => {
-						C.BlockListSetTextStyle(rootId, blockIds, style, (message: any) => {
-							focus.set(message.blockId, { from: length, to: length });
-							focus.apply();
-						});
+					menuParam.data.onSelect = (item: any) => {
+						if (item.type == I.BlockType.Text) {
+							C.BlockListSetTextStyle(rootId, blockIds, item.style, (message: any) => {
+								focus.set(message.blockId, { from: length, to: length });
+								focus.apply();
+							});
+						};
+						
+						if (item.type == I.BlockType.Page) {
+							const param: any = {
+								type: item.type,
+								fields: {
+									icon: Util.randomSmile(), 
+									name: Constant.defaultName,
+								},
+								content: {
+									style: I.PageStyle.Empty,
+								}
+							};
+							
+							C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Bottom, (message: any) => {
+								C.BlockUnlink(rootId, [ blockId ]);
+							});
+						};
+						
 						commonStore.menuClose(this.props.id);
 					};
 					

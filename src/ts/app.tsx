@@ -65,6 +65,7 @@ import 'scss/menu/help.scss';
 import 'scss/menu/select.scss';
 
 import 'scss/menu/block/action.scss';
+import 'scss/menu/block/style.scss';
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/add.scss';
 import 'scss/menu/block/color.scss';

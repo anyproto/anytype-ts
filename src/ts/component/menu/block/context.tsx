@@ -9,6 +9,8 @@ interface Props extends I.Menu {
 	blockStore?: any;
 };
 
+const Constant = require('json/constant.json');
+
 @inject('commonStore')
 @inject('blockStore')
 @observer
@@ -142,8 +144,31 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						data: {
 							rootId: rootId,
 							blockId: blockId,
-							onSelect: (style: I.TextStyle) => {
-								C.BlockListSetTextStyle(rootId, blockIds, style);
+							onSelect: (item: any) => {
+								if (item.type == I.BlockType.Text) {
+									C.BlockListSetTextStyle(rootId, blockIds, item.style, (message: any) => {
+										focus.set(message.blockId, { from: length, to: length });
+										focus.apply();
+									});
+								};
+								
+								if (item.type == I.BlockType.Page) {
+									const param: any = {
+										type: item.type,
+										fields: {
+											icon: Util.randomSmile(), 
+											name: Constant.defaultName,
+										},
+										content: {
+											style: I.PageStyle.Empty,
+										}
+									};
+									
+									C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Bottom, (message: any) => {
+										C.BlockUnlink(rootId, [ blockId ]);
+									});
+								};
+								
 								commonStore.menuClose(this.props.id);
 							},
 						}

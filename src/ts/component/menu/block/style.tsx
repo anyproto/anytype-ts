@@ -31,20 +31,28 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		const { content } = block;
-		const items = this.getItems();
+		const sections = this.getSections();
+		
+		const Section = (item: any) => (
+			<div className="section">
+				{item.children.map((action: any, i: number) => {
+					let cn = [];
+					if (action.color) {
+						cn.push(action.color);
+						cn.push('withColor');
+					};
+					if (action.id == content.style) {
+						cn.push('active');
+					};
+					return <MenuItemVertical key={i} {...action} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} />;
+				})}
+			</div>
+		);
 		
 		return (
 			<div>
-				{items.map((item: any, i: number) => {
-					let cn = [];
-					if (item.color) {
-						cn.push(item.color);
-						cn.push('withColor');
-					};
-					if (item.id == content.style) {
-						cn.push('active');
-					};
-					return <MenuItemVertical key={i} {...item} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item.id); }} />;
+				{sections.map((section: any, i: number) => {
+					return <Section key={i} {...section} />;
 				})}
 			</div>
 		);
@@ -73,19 +81,46 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
-	getItems () {
+	getSections () {
 		return [
-			{ id: I.TextStyle.Paragraph,	 icon: 'text',		 name: 'Text',		 color: 'yellow' },
-			{ id: I.TextStyle.Header1,		 icon: 'header1',	 name: 'Heading 1',	 color: 'yellow' },
-			{ id: I.TextStyle.Header2,		 icon: 'header2',	 name: 'Heading 2',	 color: 'yellow' },
-			{ id: I.TextStyle.Header3,		 icon: 'header3',	 name: 'Heading 3',	 color: 'yellow' },
-			{ id: I.TextStyle.Quote,		 icon: 'quote',		 name: 'Highlighted', color: 'yellow' },
-			{ id: I.TextStyle.Code,			 icon: 'code',		 name: 'Code snippet', color: 'red' },
-			{ id: I.TextStyle.Bulleted,		 icon: 'list',		 name: 'Bulleted list', color: 'green' },
-			{ id: I.TextStyle.Numbered,		 icon: 'numbered',	 name: 'Numbered list', color: 'green' },
-			{ id: I.TextStyle.Toggle,		 icon: 'toggle',	 name: 'Toggle', color: 'green' },
-			{ id: I.TextStyle.Checkbox,		 icon: 'checkbox',	 name: 'Checkbox', color: 'green' },
+			{ 
+				children: [
+					{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted' },
+				] as any [],
+			},
+			{ 
+				children: [
+					{ type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox', color: 'green' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list', color: 'green' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list', color: 'green' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle', color: 'green' },
+				] as any [],
+			},
+			{ 
+				children: [
+					{ type: I.BlockType.Page, icon: 'page', name: 'Page', color: 'blue' },
+				] as any [],
+			},
+			{ 
+				children: [
+					{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet', color: 'red' },
+				] as any [],
+			},
 		];
+	};
+	
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		return items;
 	};
 	
 	onKeyDown (e: any) {
@@ -137,13 +172,13 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		};
 	};
 	
-	onClick (e: any, id: I.TextStyle) {
+	onClick (e: any, item: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(id);
+		onSelect(item);
 	};
 
 };
