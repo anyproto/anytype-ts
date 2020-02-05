@@ -36,7 +36,7 @@
 		"@types/i18n": "^0.8.6",
 		"@types/intercom-web": "^2.8.7",
 		"@types/is": "0.0.21",
-		"@types/jquery": "^3.3.31",
+		"@types/jquery": "^3.3.32",
 		"@types/lodash": "^4.14.149",
 		"@types/long": "^4.0.1",
 		"@types/mobx-devtools-mst": "^0.9.7",
@@ -64,7 +64,7 @@
 		"wait-for-localhost-cli": "^1.1.0",
 		"webpack": "^4.41.5",
 		"webpack-cli": "^3.3.10",
-		"webpack-dev-server": "^3.10.2"
+		"webpack-dev-server": "^3.10.3"
 	},
 	"dependencies": {
 		"array-move": "^2.2.1",

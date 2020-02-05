@@ -31,11 +31,11 @@
 	.block.isResizing { cursor: col-resize; user-select: none; }
 	
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.isAdding.top > .wrapContent { box-shadow: 0px -2px $colorOrange; }
-	.block.isAdding.bottom > .wrapContent { box-shadow: 0px 2px $colorOrange; }
+	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange inset; }
+	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange inset; }
 	
-	.block.isAddingMenu.mtop > .wrapContent { box-shadow: 0px -2px $colorOrange; }
-	.block.isAddingMenu.mbottom > .wrapContent { box-shadow: 0px 2px $colorOrange; }
+	.block.isAddingMenu.mTop > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange inset; }
+	.block.isAddingMenu.mBottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange inset; }
 	
 	.block > .wrapContent > .children.canToggle { display: none; }
 	.block.isToggled > .wrapContent > .children { display: block; }

@@ -30,7 +30,7 @@ class EditorPage extends React.Component<Props, {}> {
 	id: string = '';
 	timeoutHover: number = 0;
 	timeoutMove: number = 0;
-	hovered: string =  '';
+	hoverId: string =  '';
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
@@ -146,7 +146,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
 		
 		let bc: any[] = [];
-		let lastTargetId = null;
+		let lastTargetId = '';
 		
 		if (tree.length) {
 			let last = tree[tree.length - 1];
@@ -247,41 +247,39 @@ class EditorPage extends React.Component<Props, {}> {
 		const offset = 210;
 		
 		let hovered: any = null;
-		let rect = { x: 0, y: 0, width: 0, height: 0 };
+		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
 		
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
-			let { x, y, width, height } = rect;
-			y += st;
+			rect.y += st;
 
-			if ((pageX >= x) && (pageX <= x + width) && (pageY >= y) && (pageY <= y + height)) {
+			if ((pageX >= rect.x) && (pageX <= rect.x + rect.width) && (pageY >= rect.y) && (pageY <= rect.y + rect.height)) {
 				hovered = item as Element;
+				hoveredRect = rect;
 			};
 		});
 		
 		if (hovered) {
-			rect = hovered.getBoundingClientRect() as DOMRect;
 			hovered = $(hovered);
-			this.hovered = hovered.data('id');
+			this.hoverId = hovered.data('id');
 		};
 		
-		let { x, y, width, height } = rect;
-		y += st;
+		const { x, y, width, height } = hoveredRect;
 		
 		window.clearTimeout(this.timeoutHover);
 		
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
-			let ax = rect.x - (rectContainer.x + addOffsetX) + 2;
+			let ax = hoveredRect.x - (rectContainer.x + addOffsetX) + 2;
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
-				const block = blocks[rootId].find((it: any) => { return it.id == this.hovered; });
+				const block = blocks[rootId].find((it: any) => { return it.id == this.hoverId; });
 				
 				let canAdd = true;
 				if (block) {
@@ -620,13 +618,13 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		if (!this.hovered) {
+		if (!this.hoverId) {
 			return;
 		};
 		
 		const { blockStore, commonStore, rootId } = this.props;
 		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == this.hovered; });
+		const block = blocks[rootId].find((item: I.Block) => { return item.id == this.hoverId; });
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!block) {
@@ -821,9 +819,14 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockRemove (focused?: I.Block) {
-		const { blockStore, rootId, dataset } = this.props;
+		const { commonStore, blockStore, rootId, dataset } = this.props;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
+		
+		commonStore.menuClose('blockAdd');
+		commonStore.menuClose('blockAddSub');
+		commonStore.menuClose('blockAction');
+		commonStore.menuClose('blockContext');
 
 		let next: any = null;
 		let ids = selection.get();
