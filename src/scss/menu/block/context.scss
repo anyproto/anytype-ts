@@ -4,6 +4,10 @@
 	.menu.menuBlockContext { padding: 0px; transform-origin: 50% 50% !important; }
 	.menu.menuBlockContext {
 		.icon.blockStyle { width: 48px; background-position: 8px center; }
+		.icon.color { width: 48px; }
+		.icon.color {
+			.inner { margin: 0px; left: 8px; top: 4px; margin: 0px; }
+		}
 		
 		.icon.blockStyle.text { background-image: url('~img/icon/menu/style/text.svg'); }
 		.icon.blockStyle.header1 { background-image: url('~img/icon/menu/style/header1.svg'); }
@@ -21,5 +25,7 @@
 		.icon.active.italic { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
 		.icon.active.link { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
 		.icon.active.strike { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
+		
+		.icon.active.more { background-image: url('~img/icon/menu/action/more1.svg'); }
 	}
 }
