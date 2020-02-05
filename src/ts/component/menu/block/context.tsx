@@ -137,8 +137,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockStyle', { 
 						element: 'button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,
-						offsetX: -12,
-						offsetY: 4,
+						offsetX: -15,
+						offsetY: 10,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Left,
 						data: {
