@@ -34,6 +34,7 @@ class EditorPage extends React.Component<Props, {}> {
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
+	uiBlockHide: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -114,10 +115,13 @@ class EditorPage extends React.Component<Props, {}> {
 			this.uiHide();
 		};
 		
+		this.uiBlockHide = true;
+		
 		window.setTimeout(() => {
 			focus.apply(); 
-			window.scrollTo(0, this.scrollTop); 
-		}, 1);
+			window.scrollTo(0, this.scrollTop);
+			this.uiBlockHide = false;
+		}, 15);
 	};
 	
 	componentWillUnmount () {
@@ -133,15 +137,30 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	open () {
 		const { blockStore, rootId } = this.props;
+		const { blocks, breadcrumbs } = blockStore;
 		
 		if (this.id == rootId) {
 			return;
 		};
 		
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
+		
+		let bc: any[] = [];
+		let lastTargetId = null;
+		
+		if (tree.length) {
+			let last = tree[tree.length - 1];
+			if (last) {
+				lastTargetId = last.content.targetBlockId;
+			};
+		};
+		if (!lastTargetId || (lastTargetId != rootId)) {
+			bc = [ breadcrumbs ];
+		};
+		
 		this.close(this.id);
 		this.id = rootId;
-		
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockOpen(this.id, bc, (message: any) => {
 			const { blockStore, rootId } = this.props;
 			const { blocks } = blockStore;
 			const { focused, range } = focus;
@@ -170,8 +189,9 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { blockStore } = this.props;
 		
-		blockStore.blocksClear(id);
-		C.BlockClose(id);
+		C.BlockClose(id, [], (message: any) => {
+			blockStore.blocksClear(id);
+		});
 	};
 	
 	unbind () {
@@ -179,6 +199,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	uiHide () {
+		if (this.uiBlockHide) {
+			return;
+		};
+		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
@@ -677,8 +701,13 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onScroll (e: any) {
-		this.scrollTop = $(window).scrollTop();
-		this.uiHide();
+		const top = $(window).scrollTop();
+		
+		if (Math.abs(top - this.scrollTop) >= 10) {
+			this.uiHide();
+		};
+		
+		this.scrollTop = top;
 	};
 	
 	onCopy (e: any) {

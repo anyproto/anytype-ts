@@ -35,11 +35,11 @@ class BlockLink extends React.Component<Props, {}> {
 		name = name || Constant.defaultName;
 		
 		return (
-			<React.Fragment>
+			<div className={isArchived ? 'isArchived' : ''}>
 				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} icon={icon} canEdit={true} onSelect={this.onSelect} />
 				<div className="name" onClick={this.onClick}>{name}</div>
-				{isArchived ? <div className="archived">Archived</div> : ''}
-			</React.Fragment>
+				<div className="archive">Archived</div>
+			</div>
 		);
 	};
 	

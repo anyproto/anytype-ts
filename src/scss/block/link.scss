@@ -9,11 +9,15 @@
 		}
 		.smile { margin-right: 4px; }
 		
-		.archived {
-			border-radius: 3px; background-color: #f7f5f0; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 5px;
-			font-size: 13px; line-height: 18px; letter-spacing: 0.1px; color: #aca996; padding: 0px 6px;
+		.archive {
+			border-radius: 3px; background-color: #f3f2ec; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 8px;
+			font-size: 13px; line-height: 18px; letter-spacing: 0.1px; color: #aca996; padding: 0px 6px; display: none;
 		}
 	}
 	
 	.block.blockLink > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockLink > .wrapContent > .selectable > .dropTarget > .isArchived {
+		.name { color: #aca996; border-color: #dfddd0; }
+		.archive { display: inline-block; }
+	}
 }

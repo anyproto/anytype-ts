@@ -57,6 +57,35 @@ const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => 
 	dispatcher.call('accountStop', request, callBack);
 };
 
+const BlockOpen = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
+	const request = {
+		blockId: blockId,
+		breadcrumbsIds: breadcrumbsIds,
+	};
+	dispatcher.call('blockOpen', request, callBack);
+};
+
+const BlockOpenBreadcrumbs = (callBack?: (message: any) => void) => {
+	const request = {};
+	dispatcher.call('blockOpenBreadcrumbs', request, callBack);
+};
+
+const BlockCutBreadcrumbs = (id: string, index: number, callBack?: (message: any) => void) => {
+	const request = {
+		breadcrumbsId: id,
+		index: index,
+	};
+	dispatcher.call('blockCutBreadcrumbs', request, callBack);
+};
+
+const BlockClose = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
+	const request = {
+		blockId: blockId,
+		breadcrumbsIds: breadcrumbsIds,
+	};
+	dispatcher.call('blockClose', request, callBack);
+};
+
 const BlockUndo = (contextId: string, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -69,20 +98,6 @@ const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
 		contextId: contextId,
 	};
 	dispatcher.call('blockRedo', request, callBack);
-};
-
-const BlockOpen = (blockId: string, callBack?: (message: any) => void) => {
-	const request = {
-		blockId: blockId,
-	};
-	dispatcher.call('blockOpen', request, callBack);
-};
-
-const BlockClose = (blockId: string, callBack?: (message: any) => void) => {
-	const request = {
-		blockId: blockId,
-	};
-	dispatcher.call('blockClose', request, callBack);
 };
 
 const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
@@ -276,11 +291,12 @@ export {
 	AccountSelect,
 	AccountStop,
 	
+	BlockOpen,
+	BlockOpenBreadcrumbs,
+	BlockCutBreadcrumbs,
+	BlockClose,
 	BlockUndo,
 	BlockRedo,
-	
-	BlockOpen,
-	BlockClose,
 	BlockCreate,
 	BlockCreatePage,
 	BlockReplace,

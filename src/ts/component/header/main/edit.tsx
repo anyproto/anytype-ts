@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile, DropTarget } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, C, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -33,11 +33,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { authStore, rootId } = this.props;
+		const { authStore, blockStore, rootId } = this.props;
+		const { breadcrumbs, blocks } = blockStore;
 		const { account } = authStore;
-		
-		let path: I.Block[] = [];
-		this.getPath(rootId, path);
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
 		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
@@ -66,8 +65,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
-					{path.map((item: any, i: any) => (
-						<PathItem key={i} {...item} />
+					{tree.map((item: any, i: any) => (
+						<PathItem key={item.id} {...item} index={i + 1} />
 					))}
 				</div>
 				
@@ -78,45 +77,42 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		);
 	};
 	
-	getPath (id: string, path: I.Block[]) {
-		const { blockStore, rootId } = this.props;
-		const { blocks, root } = blockStore;
-		const map = blockStore.getMap(blocks[root]);
-		
-		let block = blocks[root].find((it: any) => { return it.content.targetBlockId == id; });
-		if (!block) {
-			block = (blocks[rootId] || []).find((it: any) => { return it.content.targetBlockId == id; });
-		};
-		
-		if (block) {
-			path.unshift(block);
-			
-			if (map[block.id].parentId != root) {
-				this.getPath(map[block.id].parentId, path);
-			};
-		};
-	};
-	
 	onAdd (e: any) {
 		Util.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	
 	onHome (e: any) {
-		this.props.history.push('/main/index');
+		const { blockStore } = this.props;
+		const { breadcrumbs } = blockStore;
+		
+		C.BlockCutBreadcrumbs(breadcrumbs, 0, (message: any) => {
+			this.props.history.push('/main/index');
+		});
 	};
 	
 	onPath (e: any, block: any) {
-		const { rootId } = this.props;
+		e.persist();
+		
+		const { blockStore, rootId } = this.props;
+		const { breadcrumbs } = blockStore;
 		const { content } = block;
 		const { targetBlockId } = content;
 		
 		if (targetBlockId != rootId) {
-			Util.pageOpen(e, this.props, targetBlockId);
+			C.BlockCutBreadcrumbs(breadcrumbs, block.index, (message: any) => {
+				Util.pageOpen(e, this.props, targetBlockId);
+			});
 		};
 	};
 	
 	onBack (e: any) {
-		this.props.history.goBack();
+		const { blockStore } = this.props;
+		const { breadcrumbs, blocks } = blockStore;
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
+		
+		C.BlockCutBreadcrumbs(breadcrumbs, tree.length - 1, (message: any) => {
+			this.props.history.goBack();			
+		});
 	};
 	
 	onForward (e: any) {
