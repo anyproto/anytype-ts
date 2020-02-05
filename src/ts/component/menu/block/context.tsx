@@ -57,7 +57,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		// You can't make headers bold, since they are already bold
 		if ([ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].indexOf(style) >= 0) {
-			markActions = markActions.filter((it: any) => { return it.type != I.MarkType.Bold; });
+			markActions = markActions.filter((it: any) => { return [ I.MarkType.Bold, I.MarkType.Code ].indexOf(it.type) < 0; });
 		};
 		
 		let icon = Util.styleIcon(style);
