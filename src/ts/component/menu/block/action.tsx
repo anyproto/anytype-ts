@@ -11,6 +11,7 @@ interface Props extends I.Menu {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const { ipcRenderer } = window.require('electron');
 
 @inject('commonStore')
 @inject('blockStore')
@@ -152,6 +153,12 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		];
 		
 		// Restrictions
+		if (type == I.BlockType.File) {
+			sections[0].children.splice(3, 0, { id: 'rename', icon: 'rename', name: 'Rename' });
+			sections[0].children.splice(3, 0, { id: 'replace', icon: 'replace', name: 'Replace' });
+			sections[0].children.splice(3, 0, { id: 'download', icon: 'download', name: 'Download' });
+		};
+		
 		if (style == I.TextStyle.Title) {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color', 'move', 'remove' ].indexOf(it.id) < 0; });
 		};
@@ -250,6 +257,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { onSelect, blockId, blockIds, rootId } = data;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
+		
+		if (!block) {
+			return;
+		};
 		
 		const { content } = block;
 		const { text, color, bgColor } = content;
@@ -367,9 +378,19 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { blocks, root } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		
+		if (!block) {
+			return;
+		};
+		
+		const { content } = block;
+		
 		commonStore.menuClose(this.props.id);
 		
 		switch (item.id) {
+			case 'download':
+				ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+				break;
+					
 			case 'move':
 				commonStore.popupOpen('tree', { 
 					data: { 
