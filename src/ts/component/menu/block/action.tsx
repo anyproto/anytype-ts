@@ -154,8 +154,8 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		// Restrictions
 		if (type == I.BlockType.File) {
-			sections[0].children.splice(1, 0, { id: 'rename', icon: 'rename', name: 'Rename' });
-			sections[0].children.splice(1, 0, { id: 'replace', icon: 'replace', name: 'Replace' });
+			//sections[0].children.splice(1, 0, { id: 'rename', icon: 'rename', name: 'Rename' });
+			//sections[0].children.splice(1, 0, { id: 'replace', icon: 'replace', name: 'Replace' });
 			sections[0].children.splice(1, 0, { id: 'download', icon: 'download', name: 'Download' });
 		};
 		
