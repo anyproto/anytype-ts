@@ -211,7 +211,6 @@ class CommonStore {
 	@action
 	filterSet (v: string) {
 		v = v.replace(/[\/\\\*]/g, '');
-		console.log('filter', v);
 		this.filterString = String(v || '');
 	};
 	

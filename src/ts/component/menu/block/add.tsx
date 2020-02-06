@@ -219,7 +219,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				e.preventDefault();
 				
 				if (item) {
-					item.children.length ? this.onOver(e, item) : this.onClick(e, item);					
+					item.arrow ? this.onOver(e, item) : this.onClick(e, item);					
 				};
 				break;
 			
