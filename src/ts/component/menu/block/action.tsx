@@ -136,27 +136,26 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		let sections = [
 			{ 
 				children: [
-					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
-					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
 					//{ id: 'move', icon: 'move', name: 'Move to' },
 					//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
+					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
 				] 
 			},
-			/*
 			{ 
 				children: [
-					{ id: 'comment', icon: 'comment', name: 'Comment' },
+					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
+					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
 			}
-			*/
 		];
 		
 		// Restrictions
 		if (type == I.BlockType.File) {
-			//sections[0].children.splice(1, 0, { id: 'rename', icon: 'rename', name: 'Rename' });
-			//sections[0].children.splice(1, 0, { id: 'replace', icon: 'replace', name: 'Replace' });
-			sections[0].children.splice(1, 0, { id: 'download', icon: 'download', name: 'Download' });
+			let idx = sections[0].children.findIndex((it: any) => { return it.id == 'remove'; });
+			sections[0].children.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
+			//sections[0].children.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
+			//sections[0].children.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
 		};
 		
 		if (style == I.TextStyle.Title) {

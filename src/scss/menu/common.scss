@@ -62,7 +62,7 @@
 	
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 10px 15px; border-right: 1px solid #dfddd0; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 10px 16px; border-right: 1px solid #dfddd0; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
 		.icon { width: 24px; height: 24px; margin-right: 12px; border-radius: 4px; background-size: 24px 24px; cursor: pointer; }
@@ -70,7 +70,7 @@
 		
 		.icon {
 			.arrow { 
-				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow0.svg'); position: absolute; right: 4px; top: 50%; 
+				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow0.svg'); position: absolute; right: 0px; top: 50%; 
 				margin-top: -4px;
 			}
 		}
