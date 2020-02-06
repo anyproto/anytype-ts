@@ -217,7 +217,9 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { commonStore, blockStore, onKeyDown, id, parentId, rootId } = this.props;
+		const { commonStore, blockStore, onKeyDown, id, parentId, rootId, content } = this.props;
+		const { blocks } = blockStore;
+		const { style } = content;
 		const range = this.getRange();
 		const k = e.which;
 		const value = this.getValue();
@@ -228,11 +230,24 @@ class BlockText extends React.Component<Props, {}> {
 		if (k == Key.tab) {
 			e.preventDefault();
 			
-			if (e.shiftKey) {
-				C.BlockListMove(rootId, [ id ], parentId, I.BlockPosition.Bottom);
-			} else {
-				const next = blockStore.getNextBlock(rootId, id, -1);
-				if (next) {
+			const parent = blocks[rootId].find((it: any) => { return it.id == parentId; });
+			const next = blockStore.getNextBlock(rootId, id, -1);
+			
+			let canTab = true;
+			if (style == I.TextStyle.Title) {
+				canTab = false;
+			};
+			if (parent && (parent.content.style == I.TextStyle.Title)) {
+				canTab = false;
+			};
+			if (next && (next.content.style == I.TextStyle.Title)) {
+				canTab = false;
+			};
+
+			if (canTab) {
+				if (e.shiftKey) {
+					C.BlockListMove(rootId, [ id ], parentId, I.BlockPosition.Bottom);
+				} else {
 					C.BlockListMove(rootId, [ id ], next.id, (parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom));
 				};
 			};
@@ -266,7 +281,7 @@ class BlockText extends React.Component<Props, {}> {
 		let cmdParsed = false;
 		
 		// Open menu
-		if ((value == '/') && !commonStore.menuIsOpen('blockAdd')) {
+		if ((value == '/') && !commonStore.menuIsOpen('blockAdd') && (style != I.TextStyle.Title)) {
 			e.preventDefault();
 			this.props.onMenuAdd(id);
 			return;
