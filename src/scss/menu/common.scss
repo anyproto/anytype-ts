@@ -53,18 +53,10 @@
 		
 		.item.withChildren:hover::before, .item.withChildren:hover::after {
 			content: ""; position: absolute; z-index: 1000; right: 0px; width: 80%; height: 100%; animation: subnavHoverHelp 1.5s;
-			background-color: fuchsia; opacity: .3;
 		}
 		
-		.item.withChildren:hover::before {
-			bottom: -100%;
-			clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
-		}
-		
-		.item.withChildren:hover::after {
-			top: -100%;
-			clip-path: polygon(0% 100%, 100% 0%, 100% 100%);
-		}
+		.item.withChildren:hover::before { bottom: -100%; clip-path: polygon(0% 0%, 100% 0%, 100% 100%); }		
+		.item.withChildren:hover::after { top: -100%; clip-path: polygon(0% 100%, 100% 0%, 100% 100%); }
 		
 		.icon { margin-right: 8px; }
 		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }

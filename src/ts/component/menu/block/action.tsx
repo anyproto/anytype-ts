@@ -308,7 +308,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				case 'turn':
 					menuParam.data.onSelect = (item: any) => {
 						if (item.type == I.BlockType.Text) {
-							C.BlockListSetTextStyle(rootId, blockIds, item.style, (message: any) => {
+							C.BlockListSetTextStyle(rootId, blockIds, item.id, (message: any) => {
 								focus.set(message.blockId, { from: length, to: length });
 								focus.apply();
 							});

@@ -233,7 +233,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blockStore, addOffsetX, rootId } = this.props;
+		const { commonStore, blockStore, addOffsetX, rootId } = this.props;
 		const { blocks } = blockStore;
 		
 		const win = $(window);
@@ -265,7 +265,7 @@ class EditorPage extends React.Component<Props, {}> {
 			this.hoverId = hovered.data('id');
 		};
 		
-		if (keyboard.resize) {
+		if (keyboard.resize || commonStore.menuIsOpen()) {
 			hovered = null;
 		};
 		
