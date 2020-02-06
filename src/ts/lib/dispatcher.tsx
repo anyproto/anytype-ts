@@ -261,14 +261,19 @@ class Dispatcher {
 					break;
 					
 				case 'blockDelete':
-					blocks = blocks.filter((item: I.Block) => { return item.id != data.blockId; });
-					blockStore.blocksSet(contextId, blocks);
+					blocks = Util.objectCopy(blocks);
 					
-					// Remove focus if block is deleted
-					if (focused == data.blockId) {
-						focus.clear();
-						keyboard.setFocus(false);
+					for (let blockId of data.blockIds) {
+						blocks = blocks.filter((item: I.Block) => { return item.id != blockId; });
+						
+						// Remove focus if block is deleted
+						if (focused == blockId) {
+							focus.clear();
+							keyboard.setFocus(false);
+						};
 					};
+					
+					blockStore.blocksSet(contextId, blocks);
 					break;
 			};
 		};
