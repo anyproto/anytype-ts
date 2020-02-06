@@ -16,7 +16,7 @@ const $ = require('jquery');
 @observer
 class MenuBlockStyle extends React.Component<Props, {}> {
 	
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -25,23 +25,17 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, param } = this.props;
-		const { data } = param;
-		const { blockId, rootId } = data;
-		const { blocks } = blockStore;
-		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
-		const { content } = block;
 		const sections = this.getSections();
+		const active = this.getActive();
 		
 		const Section = (item: any) => (
 			<div className="section">
 				{item.children.map((action: any, i: number) => {
 					let cn = [];
-					if (action.color) {
-						cn.push(action.color);
-						cn.push('withColor');
+					if (item.color) {
+						cn.push(item.color + ' withColor');
 					};
-					if (action.id == content.style) {
+					if (action.id == active) {
 						cn.push('active');
 					};
 					return <MenuItemVertical key={i} {...action} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} />;
@@ -59,7 +53,12 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const items = this.getItems();
+		const active = this.getActive();
+
+		this.n = items.findIndex((it: any) => { return it.id == active; });
 		this.unbind();
+		this.setActive();
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -81,34 +80,56 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
+	getActive () {
+		const { blockStore, param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const { blocks } = blockStore;
+		const block = (blocks[rootId] || []).find((it: I.Block) => { return it.id == blockId; });
+		return block ? block.content.style : 0;
+	};
+	
+	setActive = () => {
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = this.getItems();
+		const item = items[this.n];
+		
+		if (!item) {
+			return;
+		};
+			
+		node.find('.item.active').removeClass('active');
+		node.find('#item-' + item.id).addClass('active');
+	};
+	
 	getSections () {
 		return [
 			{ 
+				color: 'yellow',
 				children: [
-					{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text', color: 'yellow' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1', color: 'yellow' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2', color: 'yellow' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3', color: 'yellow' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted', color: 'yellow' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted' },
 				] as any [],
 			},
 			{ 
+				color: 'green',
 				children: [
-					{ type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox', color: 'green' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list', color: 'green' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list', color: 'green' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle', color: 'green' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list' },
+					{ type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle' },
 				] as any [],
 			},
 			{ 
-				children: [
-					{ type: I.BlockType.Page, icon: 'page', name: 'Page', color: 'blue' },
-				] as any [],
+				color: 'blue',
+				children: [ { type: I.BlockType.Page, icon: 'page', name: 'Page' } ] as any [],
 			},
 			{ 
-				children: [
-					{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet', color: 'red' },
-				] as any [],
+				color: 'red',
+				children: [ { type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet' } ] as any [],
 			},
 		];
 	};
@@ -134,20 +155,13 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		const l = items.length;
 		const item = items[this.n];
 		
-		const setActive = () => {
-			const item = items[this.n];
-			
-			node.find('.item.active').removeClass('active');
-			node.find('#item-' + item.id).addClass('active');
-		};
-		
 		switch (k) {
 			case Key.up:
 				this.n--;
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.down:
@@ -155,13 +169,13 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.enter:
 			case Key.space:
 				if (item) {
-					this.onClick(e, item.id);
+					this.onClick(e, item);
 				};
 				break;
 			

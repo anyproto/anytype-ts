@@ -15,7 +15,7 @@ const Constant = require('json/constant.json');
 @observer
 class MenuBlockColor extends React.Component<Props, {}> {
 	
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -71,6 +71,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this.unbind();
+		this.setActive();
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -92,6 +93,19 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
+	setActive = () => {
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = this.getItems();
+		const item = items[this.n];
+		
+		if (!item) {
+			return;
+		};
+			
+		node.find('.item.active').removeClass('active');
+		node.find('#item-' + item.id).addClass('active');
+	};
+	
 	onKeyDown (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -103,20 +117,13 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		const l = items.length;
 		const item = items[this.n];
 		
-		const setActive = () => {
-			const item = items[this.n];
-			
-			node.find('.item.active').removeClass('active');
-			node.find('#item-' + item.id).addClass('active');
-		};
-		
 		switch (k) {
 			case Key.up:
 				this.n--;
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.down:
@@ -125,7 +132,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.enter:
@@ -159,7 +166,6 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	
 	getItems () {
 		const sections = this.getSections();
-		
 		let items: any[] = [];
 		for (let section of sections) {
 			items = items.concat(section.children);
@@ -169,10 +175,10 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	
 	getTextColors () {
 		let items: any[] = [
-			{ isTextColor: true, name: 'Black', value: 'black' }
+			{ id: 'color-black', name: 'Black', value: 'black', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
-			items.push({ isTextColor: true, name: Constant.textColor[i], value: i });
+			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, isTextColor: true });
 		};
 		return items;
 	};
@@ -180,7 +186,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	getBgColors () {
 		let items: any[] = [];
 		for (let i in Constant.textColor) {
-			items.push({ isBgColor: true, name: Constant.textColor[i] + ' highlight', value: i });
+			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
 		};
 		return items;
 	};

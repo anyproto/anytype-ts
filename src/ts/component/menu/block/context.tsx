@@ -152,6 +152,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					if (isOpen) {
 						break;
 					};
+					
+					focus.clear();
 					commonStore.menuOpen('blockStyle', { 
 						element: 'button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,

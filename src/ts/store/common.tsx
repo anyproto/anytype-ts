@@ -175,7 +175,7 @@ class CommonStore {
 	@action
 	menuClose (id: string, callBack?: () => void) {
 		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
-		
+
 		if (!item) {
 			if (callBack) {
 				callBack();

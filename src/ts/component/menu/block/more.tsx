@@ -17,7 +17,7 @@ const $ = require('jquery');
 @observer
 class MenuBlockMore extends React.Component<Props, {}> {
 	
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -29,7 +29,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const items = this.getItems();
 		
 		const Item = (item: any) => (
-			<div id={'block-more-item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+			<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 				{item.icon ? <Icon className={item.icon} /> : ''}
 				<div className="name">{item.name}</div>
 			</div>
@@ -46,6 +46,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this.unbind();
+		this.setActive();
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -59,6 +60,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
+	setActive = () => {
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = this.getItems();
+		const item = items[this.n];
+		
+		if (!item) {
+			return;
+		};
+			
+		node.find('.item.active').removeClass('active');
+		node.find('#item-' + item.id).addClass('active');
+	};
+	
 	onKeyDown (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -70,20 +84,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const l = items.length;
 		const item = items[this.n];
 		
-		const setActive = () => {
-			const item = items[this.n];
-			
-			node.find('.item.active').removeClass('active');
-			node.find('#block-more-item-' + item.id).addClass('active');
-		};
-		
 		switch (k) {
 			case Key.up:
 				this.n--;
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.down:
@@ -91,7 +98,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.enter:

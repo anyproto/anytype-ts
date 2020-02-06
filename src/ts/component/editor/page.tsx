@@ -632,6 +632,8 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		commonStore.filterSet('');
+		
 		this.blockCreate(block, this.hoverPosition, {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,

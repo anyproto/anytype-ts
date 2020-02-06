@@ -218,13 +218,21 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		
 		const { commonStore, blockStore, onKeyDown, id, parentId, rootId, content } = this.props;
+		
+		if (
+			commonStore.menuIsOpen('blockStyle') ||
+			commonStore.menuIsOpen('blockColor') ||
+			commonStore.menuIsOpen('blockMore') 
+		) {
+			e.preventDefault();
+			return;
+		};
+		
 		const { blocks } = blockStore;
 		const { style } = content;
 		const range = this.getRange();
 		const k = e.which;
 		const value = this.getValue();
-		
-		commonStore.menuClose('blockContext');
 		
 		// Indent block
 		if (k == Key.tab) {
@@ -501,46 +509,43 @@ class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 		
-		if (style == I.TextStyle.Title) {
+		if ((style == I.TextStyle.Title) && !currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
 			return;
 		};
-		
-		if (currentTo && (currentFrom != currentTo) && (from != currentFrom || to != currentTo)) {
 			
-			let ids = [];
-			if (selection) {
-				ids = selection.get();
-			};
-			if (!ids.length) {
-				ids = [ id ];
-			};
-			
-			const node = $(ReactDOM.findDOMNode(this));
-			const offset = node.offset();
-			const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
-			const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
-			const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
-			const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
-			
-			commonStore.menuOpen('blockContext', { 
-				element: 'block-' + id,
-				type: I.MenuType.Horizontal,
-				offsetX: x,
-				offsetY: -y,
-				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Left,
-				data: {
-					blockId: id,
-					blockIds: ids,
-					rootId: rootId,
-					onChange: (marks: I.Mark[]) => {
-						this.marks = Util.objectCopy(marks);
-						focus.set(id, { from: currentTo, to: currentTo });
-						this.blockUpdateMarks(this.marks);
-					},
-				},
-			});
+		let ids = [];
+		if (selection) {
+			ids = selection.get();
 		};
+		if (!ids.length) {
+			ids = [ id ];
+		};
+			
+		const node = $(ReactDOM.findDOMNode(this));
+		const offset = node.offset();
+		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
+		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
+		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
+			
+		commonStore.menuOpen('blockContext', { 
+			element: 'block-' + id,
+			type: I.MenuType.Horizontal,
+			offsetX: x,
+			offsetY: -y,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				blockId: id,
+				blockIds: ids,
+				rootId: rootId,
+				onChange: (marks: I.Mark[]) => {
+					this.marks = Util.objectCopy(marks);
+					focus.set(id, { from: currentTo, to: currentTo });
+					this.blockUpdateMarks(this.marks);
+				},
+			},
+		});
 	};
 	
 	placeHolderCheck () {

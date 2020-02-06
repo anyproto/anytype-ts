@@ -40,7 +40,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		);
 		
 		const Item = (item: any) => (
-			<div id={'block-add-item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 				{item.icon ? <Icon className={item.icon} inner={item.inner} /> : ''}
 				<div className="name">{item.name}</div>
 				{item.arrow ? <Icon className="arrow" /> : ''}
@@ -103,8 +103,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		const { commonStore, id } = this.props;
 		
-		commonStore.filterSet('');
 		this.rebind();
+		this.checkFilter();
 		
 		if (id == 'blockAddSub') {
 			this.n = 0;
@@ -113,9 +113,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
+		this.checkFilter();
+	};
+	
+	checkFilter () {
 		const { commonStore } = this.props;
-		const { filter } = commonStore; 
-		const node = $(ReactDOM.findDOMNode(this));
+		const { filter } = commonStore;
 		const obj = $('#menuBlockAdd');
 		
 		if (filter) {
@@ -161,7 +164,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 			
 		node.find('.item.active').removeClass('active');
-		node.find('#block-add-item-' + item.id).addClass('active');
+		node.find('#item-' + item.id).addClass('active');
 	};
 	
 	onKeyDown (e: any) {
@@ -337,29 +340,20 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	getTextColors () {
-		let id = 0;
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: 'black' }
+			{ id: 'color-black', name: 'Black', value: 'black', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
-			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i });
+			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, isTextColor: true });
 		};
-		items = items.map((it: any) => {
-			it.isTextColor = true;
-			return it;
-		});
 		return items;
 	};
 	
 	getBgColors () {
 		let items: any[] = [];
 		for (let i in Constant.textColor) {
-			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i });
+			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
 		};
-		items = items.map((it: any) => {
-			it.isBgColor = true;
-			return it;
-		});
 		return items;
 	};
 	
