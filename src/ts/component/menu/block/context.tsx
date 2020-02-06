@@ -85,10 +85,13 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					</div>
 				) : ''}
 				
-				<div className="section">
-					{canMark ? (
+				{canMark ? (
+					<div className="section">
 						<Icon id={'button-' + blockId + '-color'} arrow={true} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} inner={color} tooltip="Text colors" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
-					) : ''}
+					</div>
+				) : ''}
+				
+				<div className="section">
 					<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" onClick={(e: any) => {}} />
 					<Icon id={'button-' + blockId + '-more'} className={[ 'more', (commonStore.menuIsOpen('blockMore') ? 'active' : '') ].join(' ')} tooltip="More options" onClick={(e: any) => { this.onMark(e, 'more'); }} />
 				</div>
