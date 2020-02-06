@@ -247,8 +247,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		if (filter) {
-			console.log(filter);
-			
 			let list: any[] = [];
 			for (let item of options) {
 				list = list.concat(item.children);

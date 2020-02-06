@@ -26,8 +26,6 @@ class PopupPreview extends React.Component<Props, {}> {
 				break;
 		};
 		
-		console.log(content);
-		
 		return (
 			<div>
 				<Loader />

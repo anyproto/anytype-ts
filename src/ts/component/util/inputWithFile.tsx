@@ -194,7 +194,7 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 		
 		dialog.showOpenDialog(null, options, (files: any[]) => {
-			if (files == undefined) {
+			if ((files == undefined) || !files.length) {
 				return;
 			};
 			

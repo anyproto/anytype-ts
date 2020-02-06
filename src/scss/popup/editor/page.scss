@@ -4,6 +4,9 @@
 	.popup.popupEditorPage { width: 800px; height: calc(100% - 20px); padding: 40px 0px; }
 	.popup.popupEditorPage {
 		.header { position: relative; padding: 0px; }
+		.header {
+			.menu { right: 0px; top: 0px; }
+		}
 		
 		.content { height: 100%; overflow-y: scroll; padding: 0px 48px; }
 		.selection { height: 100%; }
