@@ -264,7 +264,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					});
 					break;
 			};
-		}, 60);
+		}, Constant.delay.menu);
 	};
 	
 	onMenuClick () {

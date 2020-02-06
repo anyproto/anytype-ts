@@ -10,6 +10,10 @@
 		{ "id": "en", "name": "English" }
 	],
 	
+	"delay": {
+		"menu": 50 
+	},
+	
 	"size": {
 		"editorPage": 704,
 		"blockMenu": 48,

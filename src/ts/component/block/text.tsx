@@ -281,9 +281,13 @@ class BlockText extends React.Component<Props, {}> {
 		let cmdParsed = false;
 		
 		// Open menu
-		if ((value.match(/^\//)) && !commonStore.menuIsOpen('blockAdd') && (style != I.TextStyle.Title)) {
+		if ((value.match(/^\//)) && (style != I.TextStyle.Title)) {
 			e.preventDefault();
-			this.props.onMenuAdd(id);
+			
+			commonStore.filterSet(value);
+			if (!commonStore.menuIsOpen('blockAdd')) {
+				this.props.onMenuAdd(id);
+			};
 			return;
 		};
 		

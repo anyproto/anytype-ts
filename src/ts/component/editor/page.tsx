@@ -604,8 +604,6 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
-		const { commonStore } = this.props;
-		commonStore.filterSet(text);
 	};
 	
 	selectAll () {

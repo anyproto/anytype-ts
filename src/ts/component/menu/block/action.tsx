@@ -357,7 +357,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockColor', menuParam);
 					break;
 			};
-		}, 250);
+		}, Constant.delay.menu);
 	};
 	
 	onClick (e: any, item: any) {

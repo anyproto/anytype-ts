@@ -1,9 +1,9 @@
 import { observable, action, computed, set } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 
+const Constant = require('json/constant.json');
 const $ = require('jquery');
 const COVER = 3;
-const TIMEOUT = 60;
 
 class CommonStore {
 	@observable public popupList: I.Popup[] = [];
@@ -140,7 +140,7 @@ class CommonStore {
 			if (callBack) {
 				callBack();
 			};
-		}, TIMEOUT);
+		}, Constant.delay.menu);
 	};
 	
 	@action
@@ -198,7 +198,7 @@ class CommonStore {
 			if (callBack) {
 				callBack();
 			};
-		}, TIMEOUT);
+		}, Constant.delay.menu);
 	};
 	
 	@action
@@ -211,6 +211,7 @@ class CommonStore {
 	@action
 	filterSet (v: string) {
 		v = v.replace(/[\/\\\*]/g, '');
+		console.log('filter', v);
 		this.filterString = String(v || '');
 	};
 	

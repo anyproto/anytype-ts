@@ -54,6 +54,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					{item.children.map((action: any, i: number) => {
 						let icn: string[] = [ 'inner' ];
 						
+						if (action.isBlock) {
+							action.color = item.color;
+						};
+						
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + action.value);
 						};
@@ -288,11 +292,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			]);
 			
 			sections = sections.filter((s: any) => {
-				s.children = s.children.filter((c: any) => { return c.name.match(reg); });
-				s.children = s.children.map((it: any) => { 
-					it.color = '';
-					return it; 
-				});
+				s.children = (s.children || []).filter((c: any) => { return c.name.match(reg); });
 				return s.children.length > 0;
 			});
 		};
@@ -307,7 +307,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const sections = this.getSections();
 		const { filter } = commonStore;
 		
-		let options = sections;
+		let options: any[] = sections;
 		
 		if (id) {
 			const item = options.find((it: any) => { return it.id == id; });
@@ -327,16 +327,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			let list: any[] = [];
 			
 			for (let item of options) {
-				list = list.concat(item.children);
+				list = list.concat(item.children || []);
 			};
 			
-			list = list.filter((it: any) => { return it.name.match(reg); });
-			list = list.map((it: any) => { 
-				it.color = '';
-				it.children = [];
-				return it; 
-			});
-			options = list;
+			options = list.filter((it: any) => { return it.name.match(reg); });
 		};
 		
 		return options;
