@@ -23,7 +23,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onMark = this.onMark.bind(this);
-		this.onBlockSwitch = this.onBlockSwitch.bind(this);
 	};
 
 	render () {
@@ -114,12 +113,25 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		focus.apply();
 		
-		let { marks } = content;		
+		let { marks } = content;
 		let mark: any = null;
+		let isOpen = false;
+		
+		if ((type == 'style') && commonStore.menuIsOpen('blockStyle')) {
+			isOpen = true;
+		};
+		
+		if ((type == 'more') && commonStore.menuIsOpen('blockMore')) {
+			isOpen = true;
+		};
+		
+		if ((type == I.MarkType.TextColor) && commonStore.menuIsOpen('blockColor')) {
+			isOpen = true;
+		};
 		
 		commonStore.menuClose('blockStyle');
-		commonStore.menuClose('blockColor');
 		commonStore.menuClose('blockMore');
+		commonStore.menuClose('blockColor');
 		commonStore.menuClose('select');
 		
 		window.clearTimeout(this.timeout);
@@ -134,6 +146,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					break;
 					
 				case 'style':
+					if (isOpen) {
+						break;
+					};
 					commonStore.menuOpen('blockStyle', { 
 						element: 'button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,
@@ -146,7 +161,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							blockId: blockId,
 							onSelect: (item: any) => {
 								if (item.type == I.BlockType.Text) {
-									C.BlockListSetTextStyle(rootId, blockIds, item.style, (message: any) => {
+									C.BlockListSetTextStyle(rootId, blockIds, item.id, (message: any) => {
 										focus.set(message.blockId, { from: length, to: length });
 										focus.apply();
 									});
@@ -176,6 +191,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					break;
 					
 				case 'more':
+					if (isOpen) {
+						break;
+					};
 					commonStore.menuOpen('blockMore', { 
 						element: 'button-' + blockId + '-more',
 						type: I.MenuType.Vertical,
@@ -212,6 +230,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					break;
 					
 				case I.MarkType.TextColor:
+					if (isOpen) {
+						break;
+					};
+					
 					let markText = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
 					let markBg = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
 					
@@ -246,27 +268,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		focus.apply();
 	};
 	
-	onBlockSwitch (e: any) {
-		const { commonStore, param } = this.props;
-		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
-		
-		commonStore.menuOpen('blockStyle', { 
-			element: 'button-switch',
-			type: I.MenuType.Vertical,
-			offsetX: -12,
-			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			data: {
-				onSelect: (style: I.TextStyle) => {
-					C.BlockListSetTextStyle(rootId, blockIds, style);
-					commonStore.menuClose(this.props.id);
-				},
-			}
-		});
-	};
-
 };
 
 export default MenuBlockContext;
