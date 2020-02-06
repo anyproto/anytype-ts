@@ -22,7 +22,6 @@ import FooterMainIndex from './footer/main/index';
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
 import MenuItemMain from './menu/item/main';
-import MenuMain from './menu/main';
 
 import Popup from './popup';
 import Frame from './util/frame';
@@ -79,7 +78,6 @@ export {
 	Menu,
 	MenuItemVertical,
 	MenuItemMain,
-	MenuMain,
 	SelectionProvider,
 	Popup,
 	Frame,

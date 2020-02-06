@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSelect { max-height: 200px; overflow-x: hidden; overflow-y: auto; }
 	.menu.menuSelect {
+		.content { max-height: 200px; }
 		.item { padding: 2px 12px; }
 		.name { font-size: 13px; }
 	}

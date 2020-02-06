@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { MenuMain, HeaderMainEdit as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
+import { HeaderMainEdit as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -16,8 +16,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 			<SelectionProvider container=".pageMainEdit" rootId={match.params.id}>
 				<DragProvider rootId={match.params.id}>
 					<Header {...this.props} rootId={match.params.id} />
-					<MenuMain />
-							
+
 					<div className="wrapper">
 						<EditorPage history={history} location={location} match={match} rootId={match.params.id} addOffsetX={-Constant.size.blockMenu} />
 					</div>

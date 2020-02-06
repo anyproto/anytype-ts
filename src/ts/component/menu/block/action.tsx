@@ -75,8 +75,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				};
 			};
 			
+			//hover-help hover-help-visible
+			
 			return (
-				<div id={'block-action-item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				<div id={'block-action-item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 					{item.icon ? <Icon className={icon.join(' ')} inner={inner} /> : ''}
 					<div className="name">{item.name}</div>
 					{item.arrow ? <Icon className="arrow" /> : ''}

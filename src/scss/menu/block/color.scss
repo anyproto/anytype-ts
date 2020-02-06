@@ -3,6 +3,8 @@
 .menus {
 	.menu.menuBlockColor { width: 208px; padding: 12px 0px; }
 	.menu.menuBlockColor {
+		.content { max-height: 450px; }
+	
 		.section { padding: 12px 0px; }
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { padding-bottom: 0px; }

@@ -1,9 +1,9 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuAccount { width: 288px; border-radius: 12px; padding: 0px; overflow: hidden; }
+	.menu.menuAccount { width: 288px; border-radius: 12px; padding: 0px; }
 	.menu.menuAccount {
-		.items { overflow-x: hidden; overflow-y: auto; max-height: 330px; }
+		.content { max-height: 330px; }
 		.item { padding: 12px; } 
 		.item {
 			.icon.user { vertical-align: top; margin-right: 8px; }
