@@ -374,7 +374,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
+		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
 		
 		if (!block) {
 			return;
