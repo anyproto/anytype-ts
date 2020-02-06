@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Smile } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, Util, DataUtil } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	type: I.BlockType;
@@ -28,7 +28,7 @@ class Block extends React.Component<Props, {}> {
 				break;
 									
 			case I.BlockType.Text:
-				cn.push('blockText ' + Util.styleClass(style));
+				cn.push('blockText ' + DataUtil.styleClassText(style));
 				content = <ContentText {...this.props} />;
 				break;
 								

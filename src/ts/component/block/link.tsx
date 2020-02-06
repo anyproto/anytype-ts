@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Smile } from 'ts/component';
-import { I, C, Util } from 'ts/lib';
+import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Block, RouteComponentProps<any> {
@@ -48,7 +48,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { targetBlockId } = content;
 		
 		if (targetBlockId != rootId) {
-			Util.pageOpen(e, this.props, targetBlockId);
+			DataUtil.pageOpen(e, this.props, targetBlockId);
 		};
 	};
 	

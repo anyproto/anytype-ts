@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input } from 'ts/component';
-import { I, C, Key, Util, dispatcher, focus } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, dispatcher, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -62,7 +62,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			let inner = null;
 			
 			if (item.icon == 'turn') {
-				icon = [ Util.styleIcon(style) ];
+				icon = [ DataUtil.styleIcon(style) ];
 			};
 			
 			if (item.icon == 'color') {

@@ -3,6 +3,7 @@ import { keyboard, Key } from './keyboard';
 import { cache } from './cache';
 import Storage from './storage';
 import Util from './util';
+import DataUtil from './datautil';
 import Mark from './mark';
 import { focus } from './focus';
 import * as I from 'ts/interface';
@@ -31,6 +32,7 @@ export {
 	Key,
 	Storage,
 	Util,
+	DataUtil,
 	Mark,
 	I,
 	C,

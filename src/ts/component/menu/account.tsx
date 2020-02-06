@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, IconUser } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { I, C, Util, Storage } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage } from 'ts/lib';
 
 interface Props extends I.Menu {
 	history: any;
@@ -78,7 +78,7 @@ class MenuAccount extends React.Component<Props, {}> {
 			} else
 			if (message.account) {
 				authStore.accountSet(message.account);
-				Util.pageInit(this.props);
+				DataUtil.pageInit(this.props);
 			};
 		});
 	};

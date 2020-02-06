@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util } from 'ts/lib';
+import { I, C, Util, DataUtil } from 'ts/lib';
 import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
 import { commonStore, blockStore } from 'ts/store';
@@ -69,7 +69,7 @@ class Block extends React.Component<Props, {}> {
 		
 		switch (type) {
 			case I.BlockType.Text:
-				cn.push('blockText ' + Util.styleClass(content.style));
+				cn.push('blockText ' + DataUtil.styleClassText(content.style));
 				if (content.bgColor) {
 					cd.push('bgColor bgColor-' + content.bgColor);
 				};

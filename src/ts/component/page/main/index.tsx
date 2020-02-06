@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { I, C, Util, translate} from 'ts/lib';
+import { I, C, Util, DataUtil, translate} from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {
@@ -75,7 +75,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		Util.pageInit(this.props);
+		DataUtil.pageInit(this.props);
 	};
 	
 	componentDidUpdate () {
@@ -104,11 +104,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, block: any) {
-		Util.pageOpen(e, this.props, block.content.targetBlockId);
+		DataUtil.pageOpen(e, this.props, block.content.targetBlockId);
 	};
 	
 	onAdd (e: any) {
-		Util.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
+		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	
 	onSortEnd (result: any) {
@@ -123,12 +123,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		const current = tree[oldIndex];
 		const target = tree[newIndex];
-		const rootBlock = blocks[root].find((it: I.Block) => { return it.id == root; });
-		
-		rootBlock.childrenIds = arrayMove(rootBlock.childrenIds, oldIndex, newIndex);
-		
+		const block = blocks[root].find((it: I.Block) => { return it.id == root; });
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom; 
-		
+
+		block.childrenIds = arrayMove(block.childrenIds, oldIndex, newIndex);		
 		C.BlockListMove(root, [ current.id ], target.id, position);
 	};
 	

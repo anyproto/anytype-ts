@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon } from 'ts/component';
-import { I, C, Key, Util, Mark, dispatcher, focus, keyboard } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, dispatcher, focus, keyboard } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -440,8 +440,65 @@ class EditorPage extends React.Component<Props, {}> {
 					}
 				});
 			};
+			
+			if (range.to && (range.from != range.to)) {
+				let call = false;
+				let type = 0;
+				
+				// Bold
+				if (k == Key.b) {
+					call = true;
+					type = I.MarkType.Bold;
+				};
+				
+				// Italic
+				if (k == Key.i) {
+					call = true;
+					type = I.MarkType.Italic;
+				};
+				
+				// Strikethrough
+				if ((k == Key.s) && e.shiftKey) {
+					call = true;
+					type = I.MarkType.Strike;
+				};
+				
+				// Link
+				if (k == Key.k) {
+					call = true;
+					type = I.MarkType.Link;
+				};
+				
+				// Code
+				if (k == Key.e) {
+					call = true;
+					type = I.MarkType.Code;
+				};
+				
+				if (call) {
+					e.preventDefault();
+					
+					if (type == I.MarkType.Link) {
+						let mark = Mark.getInRange(marks, type, range);
+						commonStore.popupOpen('prompt', {
+							data: {
+								placeHolder: 'Please enter URL',
+								value: (mark ? mark.param : ''),
+								onChange: (param: string) => {
+									marks = Mark.toggle(marks, { type: type, param: param, range: range });
+									DataUtil.blockSetText(rootId, block, text, marks);
+								}
+							}
+						});
+					} else {
+						marks = Mark.toggle(marks, { type: type, range: range });
+						DataUtil.blockSetText(rootId, block, text, marks);
+					};
+				};
+			};
 		};
 		
+		// Cursor keys
 		if (focused && 
 			((range.from == 0) && (k == Key.up)) ||
 			((range.to == length) && (k == Key.down))
@@ -499,6 +556,7 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		};
 		
+		// Backspace
 		if ((k == Key.backspace) && (range.from == 0 && range.to == 0)) {
 			const ids = selection.get();
 			if (length && !ids.length) {
@@ -508,62 +566,7 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		};
 		
-		if ((e.ctrlKey || e.metaKey) && range.to && (range.from != range.to)) {
-			let call = false;
-			let type = 0;
-			
-			// Bold
-			if (k == Key.b) {
-				call = true;
-				type = I.MarkType.Bold;
-			};
-			
-			// Italic
-			if (k == Key.i) {
-				call = true;
-				type = I.MarkType.Italic;
-			};
-			
-			// Strikethrough
-			if ((k == Key.s) && e.shiftKey) {
-				call = true;
-				type = I.MarkType.Strike;
-			};
-			
-			// Link
-			if (k == Key.k) {
-				call = true;
-				type = I.MarkType.Link;
-			};
-			
-			// Code
-			if (k == Key.e) {
-				call = true;
-				type = I.MarkType.Code;
-			};
-			
-			if (call) {
-				e.preventDefault();
-				
-				if (type == I.MarkType.Link) {
-					let mark = Mark.getInRange(marks, type, range);
-					commonStore.popupOpen('prompt', {
-						data: {
-							placeHolder: 'Please enter URL',
-							value: (mark ? mark.param : ''),
-							onChange: (param: string) => {
-								marks = Mark.toggle(marks, { type: type, param: param, range: range });
-								C.BlockSetTextText(rootId, block.id, String(text || ''), marks);
-							}
-						}
-					});
-				} else {
-					marks = Mark.toggle(marks, { type: type, range: range });
-					C.BlockSetTextText(rootId, block.id, String(text || ''), marks);
-				};
-			};
-		};
-		
+		// Enter
 		if (k == Key.enter) {
 			if (e.shiftKey || commonStore.menuIsOpen()) {
 				return;

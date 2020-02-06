@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { observer, inject } from 'mobx-react';
-import { I, C, Util} from 'ts/lib';
+import { I, C, Util, DataUtil } from 'ts/lib';
 
 interface Props {
 	commonStore?: any;
@@ -35,7 +35,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		Util.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
+		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	
 };

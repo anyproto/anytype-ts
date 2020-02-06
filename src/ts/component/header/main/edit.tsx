@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile, DropTarget } from 'ts/component';
-import { I, C, Util } from 'ts/lib';
+import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -78,7 +78,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		Util.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
+		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
 	};
 	
 	onHome (e: any) {
@@ -100,7 +100,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		
 		if (targetBlockId != rootId) {
 			C.BlockCutBreadcrumbs(breadcrumbs, block.index, (message: any) => {
-				Util.pageOpen(e, this.props, targetBlockId);
+				DataUtil.pageOpen(e, this.props, targetBlockId);
 			});
 		};
 	};

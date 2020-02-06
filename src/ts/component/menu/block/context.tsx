@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, C, Mark, Util, focus } from 'ts/lib';
+import { I, C, Mark, Util, DataUtil, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -60,7 +60,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			markActions = markActions.filter((it: any) => { return [ I.MarkType.Bold, I.MarkType.Code ].indexOf(it.type) < 0; });
 		};
 		
-		let icon = Util.styleIcon(style);
+		let icon = DataUtil.styleIcon(style);
 		let colorMark = Mark.getInRange(marks, I.MarkType.TextColor, range);
 		let bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range);
 

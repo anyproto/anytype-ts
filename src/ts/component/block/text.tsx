@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Select } from 'ts/component';
-import { I, C, keyboard, Key, Util, Mark, focus } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import 'highlight.js/styles/github.css';
@@ -224,6 +224,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		commonStore.menuClose('blockContext');
 		
+		// Indent block
 		if (k == Key.tab) {
 			e.preventDefault();
 			
@@ -401,49 +402,25 @@ class BlockText extends React.Component<Props, {}> {
 	blockUpdateText (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
 		const { blocks } = blockStore;
-		
-		let { text } = content;
-		let value = this.getValue();
+		const value = this.getValue();
+		const text = String(content.text || '');
 
-		text = String(text || '');
 		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(newMarks))) {
 			return;
 		};
 		
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
-		if (!block) {
-			return;
-		};
 		
-		let param = {
-			id: block.id,
-			content: Util.objectCopy(block.content),
-		};
-		param.content.text = value;
-		param.content.marks = newMarks;
-		
-		blockStore.blockUpdate(rootId, param);
-		C.BlockSetTextText(rootId, id, value, newMarks);
+		DataUtil.blockSetText(rootId, block, value, newMarks);
 	};
 	
 	blockUpdateMarks (newMarks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const { text } = content;
-		
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
-		if (!block) {
-			return;
-		};
 		
-		let param = {
-			id: block.id,
-			content: Util.objectCopy(block.content),
-		};
-		param.content.marks = newMarks;
-		
-		blockStore.blockUpdate(rootId, param);
-		C.BlockSetTextText(rootId, id, String(text || ''), newMarks);
+		DataUtil.blockSetText(rootId, block, text, newMarks);
 	};
 	
 	onFocus (e: any) {
@@ -522,7 +499,7 @@ class BlockText extends React.Component<Props, {}> {
 			const node = $(ReactDOM.findDOMNode(this));
 			const offset = node.offset();
 			const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
-			const size = Number(Constant.size.menuBlockContext[Util.styleClass(style)] || Constant.size.menuBlockContext.default) || 0;
+			const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
 			const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
 			const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 			
