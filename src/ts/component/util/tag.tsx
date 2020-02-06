@@ -36,12 +36,13 @@ class Tag extends React.Component<Props, {}> {
 	
 	getColor (): string {
 		const { text } = this.props;
+		const a = Object.keys(Constant.textColor);
 		
 		let n = 0;
 		for (let i = 0; i < text.length; i++) {
 			n += text.charCodeAt(i);
 		};
-		return Constant.tagColor[n % Constant.tagColor.length];
+		return a[n % a.length];
 	};
 	
 };

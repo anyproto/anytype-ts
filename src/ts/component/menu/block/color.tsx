@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
+import { Icon, MenuItemVertical } from 'ts/component';
 import { I, Key } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
@@ -20,46 +20,51 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onTextColor = this.onTextColor.bind(this);
-		this.onBgColor = this.onBgColor.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { valueText, valueBg } = data;
+		const sections = this.getSections();
 		
-		const Item = (item: any) => (
-			<div id={item.id} className={item.className} onClick={item.onClick}>
-				<div className="txt">A</div>
+		let id = 0;
+		
+		const Section = (item: any) => (
+			<div className="section">
+				<div className="name">{item.name}</div>
+				<div className="items">
+					{item.children.map((action: any, i: number) => {
+						let icn: string[] = [ 'inner' ];
+						let cn = [];
+						if (action.type == I.MarkType.TextColor) {
+							icn.push('textColor textColor-' + action.color);
+							if (action.color == valueText) {
+								cn.push('active');
+							};
+						};
+						if (action.type == I.MarkType.BgColor) {
+							icn.push('bgColor bgColor-' + action.color);
+							if (action.color == valueBg) {
+								cn.push('active');
+							};
+						};
+						let inner = (
+							<div className={icn.join(' ')}>A</div>
+						);
+						
+						return <MenuItemVertical id={id++} key={i} {...action} inner={inner} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} />;
+					})}
+				</div>
 			</div>
 		);
-
-		let id = 0;
 		
 		return (
 			<div>
-				<div className="section">
-					<div className="name">Text color</div>
-					<div className="items">
-						{this.getTextColors().map((color: string, i: number) => {
-							let cn = [ 'item', 'textColor', 'textColor-' + color, (color == valueText ? 'active' : '') ];
-							id++;
-							return <Item id={'item-' + id} key={i} className={cn.join(' ')} onClick={(e: any) => { this.onTextColor(e, color); }} />;
-						})}
-					</div>
-				</div>
-				
-				<div className="section">
-					<div className="name">Text highlight</div>
-					<div className="items">
-						{this.getBgColors().map((color: string, i: number) => {
-							let cn = [ 'item', 'bgColor', 'bgColor-' + color, (color == valueBg ? 'active' : '') ];
-							id++;
-							return <Item id={'item-' + id} key={i} className={cn.join(' ')} onClick={(e: any) => { this.onBgColor(e, color); }} />;
-						})}
-					</div>
-				</div>
+				{sections.map((section: any, i: number) => {
+					return <Section key={i} {...section} />;
+				})}
 			</div>
 		);
 	};
@@ -126,12 +131,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 			case Key.enter:
 			case Key.space:
 				if (item) {
-					if (item.type == I.MarkType.TextColor) {
-						this.onTextColor(e, item.color);						
-					};
-					if (item.type == I.MarkType.BgColor) {
-						this.onBgColor(e, item.color);						
-					};
+					this.onClick(e, item);
 				};
 				break;
 			
@@ -142,50 +142,63 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		};
 	};
 	
-	getItems () {
-		let items: any[] = [];
+	getSections () {
 		let id = 0;
-		for (let c of this.getTextColors()) {
-			items.push({ id: ++id, type: I.MarkType.TextColor, color: c });
-		};
-		for (let c of this.getBgColors()) {
-			items.push({ id: ++id, type: I.MarkType.BgColor, color: c });
+		let sections = [
+			{ 
+				name: 'Text color',
+				children: this.getTextColors()
+			},
+			{ 
+				name: 'Background color',
+				children: this.getBgColors(),
+			},
+		];
+		return sections;
+	};
+	
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
 		};
 		return items;
 	};
 	
 	getTextColors () {
-		return [ 'black' ].concat(Constant.tagColor);
+		let items: any[] = [
+			{ type: I.MarkType.TextColor, name: 'Black', color: 'black' }
+		];
+		for (let i in Constant.textColor) {
+			items.push({ type: I.MarkType.TextColor, name: Constant.textColor[i], color: i });
+		};
+		return items;
 	};
 	
 	getBgColors () {
-		return Constant.tagColor;
+		let items: any[] = [];
+		for (let i in Constant.textColor) {
+			items.push({ type: I.MarkType.BgColor, name: Constant.textColor[i], color: i });
+		};
+		return items;
 	};
 	
-	onTextColor (e: any, color: string) {
+	onClick (e: any, item: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
-		const { onChangeText } = data;
-		
-		if (color == this.getTextColors()[0]) {
-			color = '';
-		};
+		const { onChangeText, onChangeBg } = data;
 		
 		commonStore.menuClose(this.props.id);
-		onChangeText(color);
-	};
-	
-	onBgColor (e: any, color: string) {
-		const { commonStore, param } = this.props;
-		const { data } = param;
-		const { onChangeBg } = data;
 		
-		if (color == this.getBgColors()[0]) {
-			color = '';
+		if (item.type == I.MarkType.TextColor) {
+			onChangeText(item.color);
 		};
 		
-		commonStore.menuClose(this.props.id);
-		onChangeBg(color);
+		if (item.type == I.MarkType.BgColor) {
+			onChangeBg(item.color);
+		};
 	};
 	
 };

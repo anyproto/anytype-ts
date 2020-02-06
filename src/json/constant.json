@@ -48,18 +48,18 @@
 		"11": "Phone"
 	},
 	
-	"tagColor": [
-		"grey",
-		"yellow",
-		"orange",
-		"red",
-		"pink",
-		"purple",
-		"blue",
-		"ice",
-		"teal",
-		"lime"
-	],
+	"textColor": {
+		"grey": "Grey",
+		"yellow": "Yellow",
+		"orange": "Amber",
+		"red": "Red",
+		"pink": "Pink",
+		"purple": "Purple",
+		"blue": "Blue",
+		"ice": "Sky",
+		"teal": "Teal",
+		"lime": "Green"
+	},
 	
 	"month": {
 		"1": "January",

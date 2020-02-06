@@ -1,23 +1,19 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockColor { width: 208px; padding: 0px; }
+	.menu.menuBlockColor { width: 208px; }
 	.menu.menuBlockColor {
-		.section { padding: 10px 12px; }
-		.section > .name { margin-bottom: 10px; }
-		.item { 
-			width: 24px; height: 24px; line-height: 22px; text-align: center; display: inline-block; vertical-align: top; padding: 0px;
-			border-radius: 2px; position: relative; margin: 0px 8px 8px 0px; font-size: 15px; font-weight: 500;
+		.section { padding: 12px 0px 0px 0px; }
+		.section > .name { padding: 0px 16px; margin-bottom: 10px; }
+		
+		.item { padding: 2px 16px; }
+		.item {
+			.icon { width: 24px; height: 24px; line-height: 24px; text-align: center; vertical-align: top; }
+			.icon {
+				.inner { width: 22px; height: 22px; line-height: 22px; display: inline-block; vertical-align: middle; border-radius: 2px; }
+				.inner.textColor { border: 1px solid #dfddd0; }
+				.inner.bgColor { border: 1px solid rgba(0,0,0,0); }
+			}
 		}
-		.items {
-			.item:nth-child(6n) { margin-right: 0px; }
-		}
-		
-		.item.textColor { border: 1px solid #dfddd0; }
-		.item.bgColor { border: 1px solid rgba(0,0,0,0); }
-		
-		.item:hover, .item.active { border-color: #aca996; } 
-		
-		.item.textColor:hover, .item.textColor.active { background: none; }
 	}
 }
