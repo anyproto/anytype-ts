@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { I, C, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
 import { commonStore, blockStore } from 'ts/store';
@@ -315,6 +315,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		this.unbind();
 		node.addClass('isResizing');
+		keyboard.setResize(true);
 		
 		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
 		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e, index, offset); }));
@@ -355,6 +356,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		this.unbind();
 		node.removeClass('isResizing');
+		keyboard.setResize(false);
 		
 		C.BlockListSetFields(rootId, [
 			{ blockId: prevBlock.id, fields: { width: res.percent * res.sum } },

@@ -40,13 +40,13 @@ class MenuBlockColor extends React.Component<Props, {}> {
 						let cn = [];
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + action.value);
-							if (action.color == valueText) {
+							if (action.value == valueText) {
 								cn.push('active');
 							};
 						};
 						if (action.isBgColor) {
 							icn.push('bgColor bgColor-' + action.value);
-							if (action.color == valueBg) {
+							if (action.value == valueBg) {
 								cn.push('active');
 							};
 						};

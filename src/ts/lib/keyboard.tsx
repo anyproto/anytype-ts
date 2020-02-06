@@ -8,6 +8,7 @@ class Keyboard {
 	
 	history: any = null;
 	focus: boolean = false;
+	resize: boolean = false;
 	back: boolean = true;
 	timeoutPin: number = 0;
 	
@@ -77,6 +78,10 @@ class Keyboard {
 	
 	setFocus (v: boolean) {
 		this.focus = v;
+	};
+	
+	setResize (v: boolean) {
+		this.resize = v;
 	};
 	
 	setPinCheck () {

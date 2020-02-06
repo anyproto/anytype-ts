@@ -265,6 +265,10 @@ class EditorPage extends React.Component<Props, {}> {
 			this.hoverId = hovered.data('id');
 		};
 		
+		if (keyboard.resize) {
+			hovered = null;
+		};
+		
 		const { x, y, width, height } = hoveredRect;
 		
 		window.clearTimeout(this.timeoutHover);
