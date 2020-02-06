@@ -75,8 +75,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				};
 			};
 			
-			//hover-help hover-help-visible
-			
 			return (
 				<div id={'block-action-item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 					{item.icon ? <Icon className={icon.join(' ')} inner={inner} /> : ''}
@@ -158,10 +156,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			sections[0].children.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
 			//sections[0].children.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
 			//sections[0].children.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
-		};
-		
-		if (style == I.TextStyle.Title) {
-			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color', 'move', 'remove' ].indexOf(it.id) < 0; });
 		};
 		
 		if (type != I.BlockType.Text) {
@@ -424,7 +418,16 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				break;
 				
 			case 'remove':
-				C.BlockUnlink(rootId, [ blockId ]);
+				let next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
+					return it.type == I.BlockType.Text;
+				});
+				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+					if (next) {
+						let l = String(next.content.text || '').length;
+						focus.set(next.id, { from: l, to: l });
+						focus.apply();				
+					};
+				});
 				break;
 		};
 	};

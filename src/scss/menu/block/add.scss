@@ -20,7 +20,15 @@
 		.icon.arrow { position: absolute; right: 8px; top: 4px; margin: 0px; background-image: url('~img/icon/menu/add/arrow.svg'); }
 	}
 	
-	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter { width: 288px !important; }
+	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter { width: 288px !important; padding: 12px 0px; }
+	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter {
+		.content { max-height: 400px; }
+		
+		.section { padding: 12px 0px; }
+		.section:first-child { padding-top: 0px; }
+		.section:last-child { padding-bottom: 0px; }
+		.section > .name { padding: 0px 16px; margin-bottom: 10px; }
+	}
 	
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menu.menuBlockStyle {
 		.item.withColor:hover, .item.withColor.active {

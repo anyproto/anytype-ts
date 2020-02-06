@@ -643,7 +643,13 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		const { type, content } = block;
-		const { style } = content;
+		const { style, text, hash } = content;
+		
+		const length = String(text || '').length;
+		const cb = (message: any) => {
+			focus.set(message.blockId, { from: length, to: length });
+			focus.apply();
+		};
 		
 		commonStore.menuOpen('blockAdd', { 
 			element: 'block-' + id,
@@ -657,46 +663,81 @@ class EditorPage extends React.Component<Props, {}> {
 				commonStore.filterSet('');
 			},
 			data: {
+				blockId: id,
+				rootId: rootId,
 				onSelect: (e: any, item: any) => {
-					let param: any = {
-						type: item.type,
-					};
-						
-					if (item.type == I.BlockType.Text) {
-						// Block is already paragraph, no need to replace
-						if (item.id == I.TextStyle.Paragraph) {
-							return;
-						};
-						
-						param.content = {
-							style: item.id,
-						};
-					};
+					// Text colors
+					if (item.isTextColor) {
+						C.BlockListSetTextColor(rootId, [ id ], item.value, cb);
+					} else 
 					
-					if (item.type == I.BlockType.File) {
-						param.content = {
-							type: item.id,
-						};
-					};
+					// Background colors
+					if (item.isBgColor) {
+						C.BlockListSetTextBackgroundColor(rootId, [ id ], item.value, cb);
+					} else 
 					
-					if (item.type == I.BlockType.Div) {
-						param.content = {
-							style: item.id,
+					// Actions
+					if (item.isAction) {
+						switch (item.id) {
+							
+							case 'download':
+								ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+								break;
+								
+							case 'remove':
+								this.blockRemove(block);
+								break;
+								
 						};
-					};
+					} else
 					
-					if (item.type == I.BlockType.Page) {
-						param.fields = {
-							icon: Util.randomSmile(), 
-							name: Constant.defaultName,
+					// Align
+					if (item.isAlign) {
+						
+					} else 
+					
+					// Blocks
+					if (item.isBlock) {
+						let param: any = {
+							type: item.type,
 						};
-						param.content = {
-							style: I.PageStyle.Empty,
+							
+						if (item.type == I.BlockType.Text) {
+							// Block is already paragraph, no need to replace
+							if (item.id == I.TextStyle.Paragraph) {
+								return;
+							};
+							
+							param.content = {
+								style: item.id,
+							};
 						};
 						
-						this.blockCreatePage(block, I.BlockPosition.Replace, param);
-					} else {
-						this.blockCreate(block, I.BlockPosition.Replace, param);
+						if (item.type == I.BlockType.File) {
+							param.content = {
+								type: item.id,
+							};
+						};
+						
+						if (item.type == I.BlockType.Div) {
+							param.content = {
+								style: item.id,
+							};
+						};
+						
+						if (item.type == I.BlockType.Page) {
+							param.fields = {
+								icon: Util.randomSmile(), 
+								name: Constant.defaultName,
+							};
+							param.content = {
+								style: I.PageStyle.Empty,
+							};
+							
+							this.blockCreatePage(block, I.BlockPosition.Replace, param);
+						} else {
+							this.blockCreate(block, I.BlockPosition.Replace, param);
+						};
 					};
 				}
 			}

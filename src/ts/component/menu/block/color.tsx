@@ -38,14 +38,14 @@ class MenuBlockColor extends React.Component<Props, {}> {
 					{item.children.map((action: any, i: number) => {
 						let icn: string[] = [ 'inner' ];
 						let cn = [];
-						if (action.type == I.MarkType.TextColor) {
-							icn.push('textColor textColor-' + action.color);
+						if (action.isTextColor) {
+							icn.push('textColor textColor-' + action.value);
 							if (action.color == valueText) {
 								cn.push('active');
 							};
 						};
-						if (action.type == I.MarkType.BgColor) {
-							icn.push('bgColor bgColor-' + action.color);
+						if (action.isBgColor) {
+							icn.push('bgColor bgColor-' + action.value);
 							if (action.color == valueBg) {
 								cn.push('active');
 							};
@@ -54,7 +54,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 							<div className={icn.join(' ')}>A</div>
 						);
 						
-						return <MenuItemVertical id={id++} key={i} {...action} inner={inner} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} />;
+						return <MenuItemVertical id={id++} key={i} {...action} icon="color" inner={inner} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -169,10 +169,10 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	
 	getTextColors () {
 		let items: any[] = [
-			{ type: I.MarkType.TextColor, name: 'Black', color: 'black' }
+			{ isTextColor: true, name: 'Black', value: 'black' }
 		];
 		for (let i in Constant.textColor) {
-			items.push({ type: I.MarkType.TextColor, name: Constant.textColor[i], color: i });
+			items.push({ isTextColor: true, name: Constant.textColor[i], value: i });
 		};
 		return items;
 	};
@@ -180,7 +180,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	getBgColors () {
 		let items: any[] = [];
 		for (let i in Constant.textColor) {
-			items.push({ type: I.MarkType.BgColor, name: Constant.textColor[i], color: i });
+			items.push({ isBgColor: true, name: Constant.textColor[i] + ' highlight', value: i });
 		};
 		return items;
 	};
@@ -192,12 +192,12 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		
 		commonStore.menuClose(this.props.id);
 		
-		if (item.type == I.MarkType.TextColor) {
-			onChangeText(item.color);
+		if (item.isTextColor) {
+			onChangeText(item.value);
 		};
 		
-		if (item.type == I.MarkType.BgColor) {
-			onChangeBg(item.color);
+		if (item.isBgColor) {
+			onChangeBg(item.value);
 		};
 	};
 	
