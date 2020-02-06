@@ -425,7 +425,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#block-add-item-' + item.id);
-		const offsetX = node.outerWidth();
+		const offsetX = node.outerWidth() + 1;
 			
 		$('.menuBlockAdd .item.active').removeClass('active');
 		el.addClass('active');
