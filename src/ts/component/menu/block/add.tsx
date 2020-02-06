@@ -97,10 +97,15 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { commonStore } = this.props;
+		const { commonStore, id } = this.props;
 		
 		commonStore.filterSet('');
 		this.rebind();
+		
+		if (id == 'blockAddSub') {
+			this.n = 0;
+			this.setActive();
+		};
 	};
 	
 	componentDidUpdate () {
@@ -142,6 +147,19 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
+	setActive = () => {
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = this.getItems();
+		const item = items[this.n];
+		
+		if (!item) {
+			return;
+		};
+			
+		node.find('.item.active').removeClass('active');
+		node.find('#block-add-item-' + item.id).addClass('active');
+	};
+	
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -157,21 +175,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const l = items.length;
 		const item = items[this.n];
 		
-		window.clearTimeout(this.t);
-		
-		const setActive = () => {
-			const item = items[this.n];
-			
-			node.find('.item.active').removeClass('active');
-			node.find('#block-add-item-' + item.id).addClass('active');
-			
-			this.t = window.setTimeout(() => {
-				if (item) {
-					this.onOver(e, item);
-				};
-			}, 500);
-		};
-		
 		switch (k) {
 			case Key.up:
 				if (this.n == -1) {
@@ -183,7 +186,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.down:
@@ -191,7 +194,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.right:
@@ -200,7 +203,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					if (this.n > l - 1) {
 						this.n = 0;
 					};
-					setActive();
+					this.setActive();
 				} else 
 				if (item) {
 					this.onOver(e, item);

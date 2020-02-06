@@ -3,7 +3,7 @@ import { I, Storage, Util } from 'ts/lib';
 
 const $ = require('jquery');
 const COVER = 3;
-const TIMEOUT = 200;
+const TIMEOUT = 60;
 
 class CommonStore {
 	@observable public popupList: I.Popup[] = [];

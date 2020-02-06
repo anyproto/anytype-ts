@@ -1,9 +1,9 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockStyle { padding: 7px 0px; }
+	.menu.menuBlockStyle { padding: 12px 0px; }
 	.menu.menuBlockStyle {
-		.section { padding: 7px 0px; }
+		.section { padding: 12px 0px; }
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { padding-bottom: 0px; }
 	}

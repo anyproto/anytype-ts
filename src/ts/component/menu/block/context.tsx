@@ -155,8 +155,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockStyle', { 
 						element: 'button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,
-						offsetX: -15,
-						offsetY: 10,
+						offsetX: -16,
+						offsetY: 11,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Left,
 						data: {
@@ -200,8 +200,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockMore', { 
 						element: 'button-' + blockId + '-more',
 						type: I.MenuType.Vertical,
-						offsetX: -12,
-						offsetY: 4,
+						offsetX: -16,
+						offsetY: 11,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Left,
 						data: {
@@ -243,8 +243,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockColor', { 
 						element: 'button-' + blockId + '-color',
 						type: I.MenuType.Vertical,
-						offsetX: -12,
-						offsetY: 8,
+						offsetX: -16,
+						offsetY: 11,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Left,
 						data: {
