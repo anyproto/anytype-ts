@@ -135,17 +135,19 @@ class Menu extends React.Component<Props, {}> {
 			if (!this._isMounted) {
 				return;
 			};
+			
+			let elId = $.escapeSelector(element).replace('\\#', '#');
 
-			const el = $('#' + $.escapeSelector(element));
+			const el = $(elId);
 			if (!el.length) {
-				console.error('[Menu.position] element not found', element);
+				console.error('[Menu.position] element not found', elId);
 				return;
 			};
 
-			const win = $(window);			
+			const win = $(window);
 			const node = $(ReactDOM.findDOMNode(this));
 			const ww = win.width();
-			const wh = win.scrollTop() + win.height();			
+			const wh = win.scrollTop() + win.height();
 			const offset = el.offset();
 			const width = node.outerWidth();
 			const height = node.outerHeight();

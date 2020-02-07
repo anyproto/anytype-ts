@@ -73,7 +73,7 @@ class Cell extends React.Component<Props, {}> {
 	
 	onClick () {
 		const { commonStore, id, property, data } = this.props;
-		const element = [ 'cell', property.id, id ].join('-');
+		const element = '#' + [ 'cell', property.id, id ].join('-');
 		
 		let param: any = { 
 			element: element,

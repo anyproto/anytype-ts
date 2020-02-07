@@ -66,7 +66,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		
 		commonStore.menuOpen('dataviewPropertyType', { 
-			element: 'property-type',
+			element: '#property-type',
 			offsetX: 208,
 			offsetY: 4,
 			type: I.MenuType.Vertical,

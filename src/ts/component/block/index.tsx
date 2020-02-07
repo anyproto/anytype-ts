@@ -273,7 +273,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		commonStore.menuOpen('blockAction', { 
-			element: 'block-' + id,
+			element: '#block-' + id,
 			type: I.MenuType.Vertical,
 			offsetX: node.outerWidth() - 26,
 			offsetY: -node.outerHeight(),

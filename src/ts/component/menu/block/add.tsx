@@ -155,16 +155,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	setActive = () => {
-		const node = $(ReactDOM.findDOMNode(this));
-		const items = this.getItems();
-		const item = items[this.n];
-		
-		if (!item) {
-			return;
-		};
-			
-		node.find('.item.active').removeClass('active');
-		node.find('#item-' + item.id).addClass('active');
+		Util.menuSetActive(this.props.id, this.getItems()[this.n]);
 	};
 	
 	onKeyDown (e: any) {
@@ -419,7 +410,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		el.addClass('active');
 			
 		commonStore.menuOpen('blockAddSub', { 
-			element: 'item-' + item.id,
+			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: -40,

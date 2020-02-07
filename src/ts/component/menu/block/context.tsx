@@ -155,7 +155,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					
 					focus.clear();
 					commonStore.menuOpen('blockStyle', { 
-						element: 'button-' + blockId + '-switch',
+						element: '#button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,
 						offsetX: -16,
 						offsetY: 11,
@@ -200,7 +200,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						break;
 					};
 					commonStore.menuOpen('blockMore', { 
-						element: 'button-' + blockId + '-more',
+						element: '#button-' + blockId + '-more',
 						type: I.MenuType.Vertical,
 						offsetX: -16,
 						offsetY: 11,
@@ -243,7 +243,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					let markBg = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
 					
 					commonStore.menuOpen('blockColor', { 
-						element: 'button-' + blockId + '-color',
+						element: '#button-' + blockId + '-color',
 						type: I.MenuType.Vertical,
 						offsetX: -16,
 						offsetY: 11,

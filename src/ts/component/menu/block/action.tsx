@@ -20,7 +20,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	timeout: number = 0;
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -76,7 +76,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			};
 			
 			return (
-				<div id={'block-action-item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				<div id={'item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 					{item.icon ? <Icon className={icon.join(' ')} inner={inner} /> : ''}
 					<div className="name">{item.name}</div>
 					{item.arrow ? <Icon className="arrow" /> : ''}
@@ -96,6 +96,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
+		this.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -183,6 +184,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		return items;
 	};
 	
+	setActive = () => {
+		Util.menuSetActive(this.props.id, this.getItems()[this.n]);
+	};
+	
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -199,20 +204,13 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const l = items.length;
 		const item = items[this.n];
 		
-		const setActive = () => {
-			const item = items[this.n];
-			
-			node.find('.item.active').removeClass('active');
-			node.find('#block-action-item-' + item.id).addClass('active');
-		};
-		
 		switch (k) {
 			case Key.up:
 				this.n--;
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.down:
@@ -220,7 +218,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				setActive();
+				this.setActive();
 				break;
 				
 			case Key.right:
@@ -263,7 +261,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const length = String(text || '').length;
 		const items = this.getItems();
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#block-action-item-' + item.id);
+		const el = node.find('#item-' + item.id);
 		const offsetX = node.outerWidth();
 		const offsetY = node.offset().top - el.offset().top;
 		
@@ -288,7 +286,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		};
 		
 		let menuParam: I.MenuParam = {
-			element: 'block-action-item-' + item.id,
+			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: offsetY - 40,

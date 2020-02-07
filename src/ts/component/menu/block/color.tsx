@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, Key } from 'ts/lib';
+import { I, Key, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -94,16 +94,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 	
 	setActive = () => {
-		const node = $(ReactDOM.findDOMNode(this));
-		const items = this.getItems();
-		const item = items[this.n];
-		
-		if (!item) {
-			return;
-		};
-			
-		node.find('.item.active').removeClass('active');
-		node.find('#item-' + item.id).addClass('active');
+		Util.menuSetActive(this.props.id, this.getItems()[this.n]);
 	};
 	
 	onKeyDown (e: any) {

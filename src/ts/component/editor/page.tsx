@@ -428,7 +428,7 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 				
 				commonStore.menuOpen('blockAction', { 
-					element: 'block-' + focused,
+					element: '#block-' + focused,
 					type: I.MenuType.Vertical,
 					offsetX: 50,
 					offsetY: -el.outerHeight(),
@@ -656,7 +656,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		commonStore.menuOpen('blockAdd', { 
-			element: 'block-' + id,
+			element: '#block-' + id,
 			type: I.MenuType.Vertical,
 			offsetX: 50,
 			offsetY: 4,

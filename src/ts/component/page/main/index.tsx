@@ -93,7 +93,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	onAccount () {
 		const { commonStore } = this.props;
 		commonStore.menuOpen('account', { 
-			element: 'button-account',
+			element: '#button-account',
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right

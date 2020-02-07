@@ -202,7 +202,7 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		commonStore.menuOpen('blockAction', { 
-			element: 'block-image-menu-' + id,
+			element: '#block-image-menu-' + id,
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 4,

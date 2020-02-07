@@ -533,7 +533,7 @@ class BlockText extends React.Component<Props, {}> {
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 			
 		commonStore.menuOpen('blockContext', { 
-			element: 'block-' + id,
+			element: '#block-' + id,
 			type: I.MenuType.Horizontal,
 			offsetX: x,
 			offsetY: -y,

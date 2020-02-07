@@ -63,7 +63,7 @@ class Smile extends React.Component<Props, State> {
 		};
 		
 		commonStore.menuOpen('smile', { 
-			element: id,
+			element: '#' + id,
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: offsetY,

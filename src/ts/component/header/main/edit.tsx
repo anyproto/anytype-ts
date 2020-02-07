@@ -129,7 +129,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { commonStore, rootId } = this.props;
 		
 		commonStore.menuOpen('blockMore', { 
-			element: 'button-' + rootId + '-more',
+			element: '#button-' + rootId + '-more',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 4,

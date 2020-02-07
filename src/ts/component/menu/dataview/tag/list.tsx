@@ -93,7 +93,7 @@ class MenuTagList extends React.Component<Props, State> {
 		//commonStore.menuClose(this.props.id);
 		
 		commonStore.menuOpen('dataviewTagEdit', { 
-			element: 'tag-' + id,
+			element: '#tag-' + id,
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
