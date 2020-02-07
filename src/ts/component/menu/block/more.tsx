@@ -143,7 +143,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		const length = String(block.content.text || '').length;
 		
-		commonStore.menuClose(this.props.id);
+		let close = true;
+		
 		if (onSelect) {
 			onSelect(item);
 		};
@@ -153,10 +154,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		switch (item.id) {
 			case 'undo':
 				C.BlockUndo(rootId);
+				close = false;
 				break;
 				
 			case 'redo':
 				C.BlockRedo(rootId);
+				close = false;
 				break;
 			
 			case 'move':
@@ -193,6 +196,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					};
 				});
 				break;
+		};
+		
+		if (close) {
+			commonStore.menuClose(this.props.id);
 		};
 	};
 
