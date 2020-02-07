@@ -102,11 +102,11 @@ class DataUtil {
 	};
 	
 	pageCreate (e: any, props: any, icon: string, name: string) {
-		e.persist();
+		if (e.persist) {
+			e.persist();
+		};
 		
-		const { commonStore, blockStore } = props;
 		const { root, blocks } = blockStore;
-		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
 		const block = {

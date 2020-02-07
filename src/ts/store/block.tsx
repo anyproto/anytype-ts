@@ -198,8 +198,8 @@ class BlockStore {
 			item.fields = StructDecode.decodeStruct(block.fields);
 			
 			if (type == I.BlockType.Page) {
-				item.fields.name = String(item.fields.name || Constant.defaultName);
-				item.fields.icon = String(item.fields.icon || Constant.defaultIcon);
+				item.fields.name = String(item.fields.name || Constant.default.name);
+				item.fields.icon = String(item.fields.icon || Constant.default.icon);
 			};
 		};
 		
@@ -246,8 +246,8 @@ class BlockStore {
 				
 				if (item.content.style == I.LinkStyle.Page) {
 					item.content.fields = item.content.fields || {};
-					item.content.fields.name = String(item.content.fields.name || Constant.defaultName);
-					item.content.fields.icon = String(item.content.fields.icon || Constant.defaultIcon);
+					item.content.fields.name = String(item.content.fields.name || Constant.default.name);
+					item.content.fields.icon = String(item.content.fields.icon || Constant.default.icon);
 				};
 			};
 			

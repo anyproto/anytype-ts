@@ -177,7 +177,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 										type: item.type,
 										fields: {
 											icon: Util.randomSmile(), 
-											name: Constant.defaultName,
+											name: Constant.default.name,
 										},
 										content: {
 											style: I.PageStyle.Empty,

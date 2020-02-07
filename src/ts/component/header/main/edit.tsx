@@ -78,7 +78,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
+		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.default.name);
 	};
 	
 	onHome (e: any) {

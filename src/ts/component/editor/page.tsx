@@ -170,7 +170,7 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (!focusedBlock && title) {
 				let text = String(title.content.text || '');
-				if (text == Constant.defaultName) {
+				if (text == Constant.default.name) {
 					text = '';
 				};
 				let length = text.length;
@@ -732,7 +732,7 @@ class EditorPage extends React.Component<Props, {}> {
 						if (item.type == I.BlockType.Page) {
 							param.fields = {
 								icon: Util.randomSmile(), 
-								name: Constant.defaultName,
+								name: Constant.default.name,
 							};
 							param.content = {
 								style: I.PageStyle.Empty,

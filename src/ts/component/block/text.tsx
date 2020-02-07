@@ -82,6 +82,10 @@ class BlockText extends React.Component<Props, {}> {
 		);
 		
 		switch (style) {
+			case I.TextStyle.Title:
+				placeHolder = Constant.default.name;
+				break;
+				
 			case I.TextStyle.Quote:
 				additional = (
 					<div className="line" />
@@ -168,7 +172,7 @@ class BlockText extends React.Component<Props, {}> {
 		let { text, style, color, bgColor, number } = content;
 		
 		text = String(v || text || '');
-		if ((style == I.TextStyle.Title) && (text == Constant.defaultName)) {
+		if ((style == I.TextStyle.Title) && (text == Constant.default.name)) {
 			text = '';
 		};
 		

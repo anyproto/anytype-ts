@@ -143,8 +143,8 @@ class Dispatcher {
 					if (null !== data.fields) {
 						param.content.fields = StructDecode.decodeStruct(data.fields.value);
 						
-						param.content.fields.name = String(param.content.fields.name || Constant.defaultName);
-						param.content.fields.icon = String(param.content.fields.icon || Constant.defaultIcon);
+						param.content.fields.name = String(param.content.fields.name || Constant.default.name);
+						param.content.fields.icon = String(param.content.fields.icon || Constant.default.icon);
 						
 						block.content.fields = param.content.fields;
 						update = true;
