@@ -768,7 +768,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let text: string[] = [];
+		let text: any = [];
 		let list: any[] = ids.map((id: string) => {
 			const block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
 			
@@ -777,12 +777,12 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 			return blockStore.prepareBlockToProto(block);
 		});
+		text = text.join('\n');
 
-		Util.clipboardCopy({
-			text: text.join('\n'),
-			html: null, 
-			anytype: list 
-		});		
+		Util.clipboardCopy({ text: text, html: null, anytype: list });
+		C.BlockCopy(rootId, list, (message: any) => {
+			Util.clipboardCopy({ text: text, html: message.html, anytype: list });
+		});
 	};
 	
 	onPaste (e: any) {
