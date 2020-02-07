@@ -419,7 +419,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		el.addClass('active');
 			
 		commonStore.menuOpen('blockAddSub', { 
-			element: 'block-add-item-' + item.id,
+			element: 'item-' + item.id,
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: -40,

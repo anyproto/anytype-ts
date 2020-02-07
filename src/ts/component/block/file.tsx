@@ -116,10 +116,11 @@ class BlockFile extends React.Component<Props, {}> {
 	
 	getIcon (): string {
 		const { content } = this.props;
-		const { name, mime } = content;
 		
 		let icon = '';
 		let t: string[] = [];
+		let name = String(content.name || '');
+		let mime = String(content.mime || '');
 		
 		if (mime) {
 			let a: string[] = mime.split(';');
@@ -153,6 +154,10 @@ class BlockFile extends React.Component<Props, {}> {
 		if (!icon) {
 			let a: string[] = name.split('.');
 			let e = a[a.length - 1];
+			
+			if ([ 'm4v' ].indexOf(e) >= 0) {
+				icon = 'video';
+			};
 			
 			if ([ 'csv', 'json', 'txt' ].indexOf(e) >= 0) {
 				icon = 'text';
