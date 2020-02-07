@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Key, Util } from 'ts/lib';
+import { I, keyboard, Key, Util } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -154,8 +154,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = () => {
-		Util.menuSetActive(this.props.id, this.getItems()[this.n]);
+	setActive = (item?: any, scroll?: boolean) => {
+		const items = this.getItems();
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id });
+		};
+		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -164,11 +168,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		e.stopPropagation();
+		keyboard.disableMouse(true);
 		
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const k = e.which;
-		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
@@ -184,7 +188,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -192,7 +196,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.right:
@@ -398,16 +402,15 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onSelect } = data;
 		
-		if (!item.arrow || !commonStore.menuIsOpen('blockAdd')) {
+		if (!item.arrow || !commonStore.menuIsOpen('blockAdd') || !keyboard.mouse) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#block-add-item-' + item.id);
 		const offsetX = node.outerWidth() + 1;
-			
-		$('.menuBlockAdd .item.active').removeClass('active');
-		el.addClass('active');
+		
+		this.setActive(item, false);
 			
 		commonStore.menuOpen('blockAddSub', { 
 			element: '#item-' + item.id,

@@ -325,19 +325,24 @@ class Util {
 	};
 	
 	// Helper method to set active element in menu with keyboard and scroll to it
-	menuSetActive (id: string, item: any) {
+	menuSetActive (id: string, item: any, offset?: number, scroll?: boolean) {
 		const menu = $('#' + this.toCamelCase('menu-' + id));
 		if (!menu || !menu.length || !item) {
 			return;
 		};
 		
 		const el = menu.find('#item-' + item.id);
-		const content = menu.find('.content');
 			
 		menu.find('.item.active').removeClass('active');
 		el.addClass('active');
 		
-		menu.find('.content').scrollTop(content.scrollTop() + el.position().top - 12);
+		if (scroll) {
+			const content = menu.find('.content');
+			
+			let top = content.scrollTop() + el.position().top - Number(offset) || 0;
+			top = Math.max(0, top);
+			menu.find('.content').scrollTop(top);
+		};
 	};
 	
 };

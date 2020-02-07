@@ -5,13 +5,14 @@ import { I } from 'ts/lib';
 interface Props extends I.MenuItem {
 	inner?: any;
 	className?: string;
-	onClick?(e: any, id: string): void;
+	onClick?(e: any): void;
+	onMouseEnter?(e: any): void;
 };
 
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, inner, name, onClick, className } = this.props;
+		const { id, icon, inner, name, className, onClick, onMouseEnter } = this.props;
 		
 		let cn = [ 'item' ];
 		if (className) {
@@ -19,7 +20,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={'item-' + id} className={cn.join(' ')} onMouseDown={(e: any) => { onClick(e, icon); }}>
+			<div id={'item-' + id} className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter}>
 				<Icon className={icon} inner={inner} />
 				<div className="name">{name}</div>
 			</div>

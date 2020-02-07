@@ -34,19 +34,19 @@ class MenuHelp extends React.Component<Props, {}> {
 		return (
 			<div className="items">
 				{items.map((item: I.MenuItem, i) => (
-					<MenuItemVertical key={item.icon} {...item} onClick={this.onClick} />
+					<MenuItemVertical key={item.icon} {...item} onClick={(e: any) => { this.onClick(e, item); }} />
 				))}
 			</div>
 		);
 	};
 	
-	onClick (e: any, id: string) {
+	onClick (e: any, item: any) {
 		const { authStore, history } = this.props;
 		const { account } = authStore;
 		
 		commonStore.menuClose(this.props.id);
 		
-		switch (id) {
+		switch (item.id) {
 			case 'help':
 				history.push('/help/index');
 				break;

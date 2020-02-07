@@ -9,11 +9,11 @@
 			.name { line-height: 1; }
 		}
 		
-		.item.yellow:hover, .item.yellow.active { background: #fef3c5 !important; }
-		.item.green:hover, .item.green.active { background: #d6f5f3 !important; }
-		.item.blue:hover, .item.blue.active { background: #d6effd !important; }
-		.item.red:hover, .item.red.active { background: #ffebe5 !important; }
-		.item.purple:hover, .item.purple.active { background: #f4e3fa !important; }
+		.item.yellow.active { background: #fef3c5 !important; }
+		.item.green.active { background: #d6f5f3 !important; }
+		.item.blue.active { background: #d6effd !important; }
+		.item.red.active { background: #ffebe5 !important; }
+		.item.purple.active { background: #f4e3fa !important; }
 	
 		.icon { width: 24px; height: 24px; background-size: 100% 100%; }
 		.icon.arrow { position: absolute; right: 8px; top: 4px; margin: 0px; background-image: url('~img/icon/menu/add/arrow.svg'); }
@@ -30,7 +30,7 @@
 	}
 	
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menu.menuBlockStyle {
-		.item.withColor:hover, .item.withColor.active {
+		.item.withColor.active {
 			.icon.text { background-image: url('~img/icon/menu/action/block/text1.svg'); }
 			.icon.list { background-image: url('~img/icon/menu/action/block/list1.svg'); }
 			

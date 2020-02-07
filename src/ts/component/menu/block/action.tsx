@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input } from 'ts/component';
-import { I, C, Key, Util, DataUtil, dispatcher, focus } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, dispatcher, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -184,8 +184,12 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		return items;
 	};
 	
-	setActive = () => {
-		Util.menuSetActive(this.props.id, this.getItems()[this.n]);
+	setActive = (item?: any, scroll?: boolean) => {
+		const items = this.getItems();
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id });
+		};
+		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -196,10 +200,11 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 		
+		keyboard.disableMouse(true);
+		
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const k = e.which;
-		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
@@ -210,7 +215,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -218,7 +223,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.right:
@@ -267,8 +272,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		
-		node.find('.item.active').removeClass('active');
-		el.addClass('active');
+		this.setActive(item, false);
 		
 		if ((item.id == 'turn') && commonStore.menuIsOpen('blockStyle')) {
 			return;
@@ -281,7 +285,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');
 		
-		if (!item.arrow) {
+		if (!item.arrow || !keyboard.mouse) {
 			return;
 		};
 		

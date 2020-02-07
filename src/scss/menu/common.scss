@@ -49,7 +49,7 @@
 			transition: all 0.15s ease-in-out; width: 100%;
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
-		.item:hover, .item.active { background: #f3f2ec; }
+		.item.active { background: #f3f2ec; }
 		
 		.item.withChildren:hover::before, .item.withChildren:hover::after {
 			content: ""; position: absolute; z-index: 1000; right: 0px; width: 80%; height: 100%; animation: subnavHoverHelp 1.5s;

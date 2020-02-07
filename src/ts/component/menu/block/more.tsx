@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input } from 'ts/component';
-import { I, C, Key, Util, focus } from 'ts/lib';
+import { Icon, MenuItemVertical } from 'ts/component';
+import { I, C, keyboard, Key, Util, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -27,18 +27,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 	render () {
 		const items = this.getItems();
-		
-		const Item = (item: any) => (
-			<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
-				{item.icon ? <Icon className={item.icon} /> : ''}
-				<div className="name">{item.name}</div>
-			</div>
-		);
-		
+
 		return (
 			<div>
 				{items.map((action: any, i: number) => {
-					return <Item key={i} {...action} />;
+					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
 				})}
 			</div>
 		);
@@ -60,13 +53,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = () => {
-		Util.menuSetActive(this.props.id, this.getItems()[this.n]);
+	setActive = (item?: any, scroll?: boolean) => {
+		const items = this.getItems();
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id });
+		};
+		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
 	};
 	
 	onKeyDown (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
+		
+		keyboard.disableMouse(true);
 		
 		const { commonStore } = this.props;
 		const k = e.which;
@@ -81,7 +80,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -89,7 +88,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.enter:
@@ -133,6 +132,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		return items;
+	};
+	
+	onOver (e: any, item: any) {
+		if (!keyboard.mouse) {
+			return;
+		};
+		this.setActive(item, false);
 	};
 	
 	onClick (e: any, item: any) {

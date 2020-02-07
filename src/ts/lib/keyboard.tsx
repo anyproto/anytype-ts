@@ -10,6 +10,7 @@ class Keyboard {
 	focus: boolean = false;
 	resize: boolean = false;
 	back: boolean = true;
+	mouse: boolean = true;
 	timeoutPin: number = 0;
 	
 	init (history: any) {
@@ -82,6 +83,10 @@ class Keyboard {
 	
 	disableBack (v: boolean) {
 		this.back = !v;
+	};
+	
+	disableMouse (v: boolean) {
+		this.mouse = !v;
 	};
 	
 	isArrow (k: number): boolean {
