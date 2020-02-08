@@ -180,6 +180,15 @@ class Block extends React.Component<Props, {}> {
 		this._isMounted = true;
 	};
 	
+	componentDidUpdate () {
+		const { dataset, id } = this.props;
+		const { selection } = dataset;
+		
+		if (selection) {
+			selection.set(selection.get(true));
+		};
+	};
+	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -264,12 +273,14 @@ class Block extends React.Component<Props, {}> {
 		let ids = [];
 		if (selection) {
 			selection.setPreventClear(false);
-			ids = selection.get();
+			ids = selection.get(true);
 			if (ids.length <= 1) {
 				ids = [ id ];
 			};
 			selection.set(ids);
 			selection.setPreventClear(true);
+			
+			ids = selection.get(true);
 		};
 		
 		commonStore.menuOpen('blockAction', { 

@@ -269,7 +269,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				};
 			} else 
 			if (!item.hasClass('isSelected')) {
-				item.addClass('isSelected');	
+				item.addClass('isSelected');
 			};
 			
 			this.lastIds.push(id);
@@ -380,29 +380,35 @@ class SelectionProvider extends React.Component<Props, {}> {
 		ids = [ ...new Set(ids) ];
 		this.lastIds = ids;
 		
-		for (let id of ids) {
-			node.find('.selectable.c' + $.escapeSelector(id)).addClass('isSelected');
-		};
-		
 		node.find('.block.isSelected').removeClass('isSelected');
-		node.find('.selectable.isSelected').each((i: number, el: any) => {
-			let item = $(el);
-			let id = String(item.data('id') || '');
-			let block = node.find('#block-' + $.escapeSelector(id));
-			let children = node.find('.children.c' + $.escapeSelector(id) + ' .selectable');
+		
+		for (let id of ids) {
+			id = $.escapeSelector(id);
+			
+			let block = node.find('#block-' + id);
 			
 			block.addClass('isSelected');
-			children.removeClass('isSelected');
-		});
+			block.find('.children.c' + id + ' .selectable').removeClass('isSelected');
+			node.find('.selectable.c' + id).addClass('isSelected');
+		};
 	};
 	
-	get (): string[] {
+	get (withChildren?: boolean): string[] {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let ids = [] as string[];
 		node.find('.selectable.isSelected').each((i: number, item: any) => {
 			item = $(item);
-			ids.push(String(item.data('id') || ''));
+			let id = String(item.data('id') || '');
+			
+			ids.push(id);
+			
+			if (withChildren) {
+				node.find('.children.c' + $.escapeSelector(id) + ' .selectable').each((c: number, child: any) => {
+					child = $(child);
+					ids.push(String(child.data('id') || ''));
+				});
+			};
 		});
 		return [ ...new Set(ids) ];
 	};

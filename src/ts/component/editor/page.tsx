@@ -419,7 +419,7 @@ class EditorPage extends React.Component<Props, {}> {
 				let ids = [];
 				if (selection) {
 					selection.setPreventClear(false);
-					ids = selection.get();
+					ids = selection.get(true);
 					if (ids.length <= 1) {
 						ids = [ focused ];
 					};
