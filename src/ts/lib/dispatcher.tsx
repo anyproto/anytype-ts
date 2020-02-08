@@ -1,5 +1,5 @@
 import { authStore, blockStore } from 'ts/store';
-import { Util, I, StructDecode, focus, keyboard } from 'ts/lib';
+import { Util, I, StructDecode, focus, keyboard, Storage } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
@@ -34,6 +34,7 @@ class Dispatcher {
 		let contextId = event.contextId;
 		let blocks = blockStore.blocks[contextId] || [];
 		let types = [];
+		let debug = Storage.get('debugMW'); 
 		
 		if (PROFILE) {
 			for (let message of event.messages) {
@@ -54,7 +55,7 @@ class Dispatcher {
 				continue;
 			};
 			
-			if (DEBUG) {
+			if (debug) {
 				console.log('[Dispatcher.event] contextId', contextId, 'type', type, 'data', JSON.stringify(data, null, 5));
 			};
 		
@@ -289,10 +290,11 @@ class Dispatcher {
 			return;
 		};
 		
+		let debug = Storage.get('debugMW');
 		let t0 = 0;
 		let t1 = 0;
 		
-		if (DEBUG) {
+		if (debug) {
 			t0 = performance.now();
 			console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
 		};
@@ -311,7 +313,7 @@ class Dispatcher {
 					callBack(message);
 				};
 				
-				if (DEBUG) {
+				if (debug) {
 					t1 = performance.now();
 					console.log('[Dispatcher.call] callBack', type, message, Math.ceil(t1 - t0) + 'ms');					
 				};

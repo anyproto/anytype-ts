@@ -142,7 +142,8 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const html = $('html');
 		
-		let debug = Boolean(Storage.get('debug'));
+		let debugUI = Boolean(Storage.get('debugUI'));
+		let debugMW = Boolean(Storage.get('debugMW'));
 		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
@@ -156,11 +157,17 @@ class App extends React.Component<Props, State> {
 			};
 		});
 		
-		debug ? html.addClass('debug') : html.removeClass('debug');
-		ipcRenderer.on('toggleDebug', (e: any) => {
-			debug = !debug;
-			debug ? html.addClass('debug') : html.removeClass('debug');
-			Storage.set('debug', Number(debug));
+		debugUI ? html.addClass('debug') : html.removeClass('debug');
+		
+		ipcRenderer.on('toggleDebugUI', (e: any) => {
+			debugUI = !debugUI;
+			debugUI ? html.addClass('debug') : html.removeClass('debug');
+			Storage.set('debugUI', Number(debugUI));
+		});
+		
+		ipcRenderer.on('toggleDebugMW', (e: any) => {
+			debugMW = !debugMW;
+			Storage.set('debugMW', Number(debugMW));
 		});
 		
 		ipcRenderer.on('help', (e: any) => {
