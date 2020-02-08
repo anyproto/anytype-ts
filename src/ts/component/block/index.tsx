@@ -270,19 +270,6 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		let ids = [];
-		if (selection) {
-			selection.setPreventClear(false);
-			ids = selection.get(true);
-			if (ids.length <= 1) {
-				ids = [ id ];
-			};
-			selection.set(ids);
-			selection.setPreventClear(true);
-			
-			ids = selection.get(true);
-		};
-		
 		commonStore.menuOpen('blockAction', { 
 			element: '#block-' + id,
 			type: I.MenuType.Vertical,
@@ -292,7 +279,7 @@ class Block extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: id,
-				blockIds: ids,
+				blockIds: DataUtil.selectionGet(this.props),
 				rootId: rootId,
 			},
 			onClose: () => {

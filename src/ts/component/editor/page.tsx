@@ -319,7 +319,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const ids = selection.get();
+		const ids = DataUtil.selectionGet(this.props);
 		
 		if (e.ctrlKey || e.metaKey) {
 			if (k == Key.a) {
@@ -416,17 +416,6 @@ class EditorPage extends React.Component<Props, {}> {
 			if (k == Key.slash) {
 				const el = node.find('#' + $.escapeSelector(focused));
 				
-				let ids = [];
-				if (selection) {
-					selection.setPreventClear(false);
-					ids = selection.get(true);
-					if (ids.length <= 1) {
-						ids = [ focused ];
-					};
-					selection.set(ids);
-					selection.setPreventClear(true);
-				};
-				
 				commonStore.menuOpen('blockAction', { 
 					element: '#block-' + focused,
 					type: I.MenuType.Vertical,
@@ -436,7 +425,7 @@ class EditorPage extends React.Component<Props, {}> {
 					horizontal: I.MenuDirection.Left,
 					data: {
 						blockId: focused,
-						blockIds: ids,
+						blockIds: DataUtil.selectionGet(this.props),
 						rootId: rootId,
 					},
 					onClose: () => {
@@ -562,7 +551,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		// Backspace
 		if ((k == Key.backspace) && (range.from == 0 && range.to == 0)) {
-			const ids = selection.get();
+			const ids = selection.get(true);
 			if (length && !ids.length) {
 				this.blockMerge(block);
 			} else {
@@ -763,7 +752,9 @@ class EditorPage extends React.Component<Props, {}> {
 		let text: any = [];
 		let list: any[] = [ root ];
 		
-		list = list.concat(this.getCopyBlockList(ids));
+		list = list.concat(ids.map((id: any) => {
+			return blocks[rootId].find((el: I.Block) => { return el.id == id; });
+		}));
 		list = list.concat(this.getCopyLayoutBlockList(ids));
 		list = blockStore.unwrapTree(blockStore.prepareTree(rootId, list));
 		
@@ -779,28 +770,6 @@ class EditorPage extends React.Component<Props, {}> {
 			console.log(message.html);
 			Util.clipboardCopy({ text: text, html: message.html, anytype: list });
 		});
-	};
-	
-	// Recursively get children of selected blocks for copy
-	getCopyBlockList (ids: string[]) {
-		const { blockStore, rootId } = this.props;
-		const { blocks } = blockStore;
-		
-		if (!ids.length) {
-			return [];
-		};
-		
-		let list: any[] = [];
-		for (let id of ids) {
-			let block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
-			if (!block) {
-				continue;
-			};
-			
-			list.push(block);
-			list = list.concat(this.getCopyBlockList(block.childrenIds));
-		};
-		return list;
 	};
 	
 	// Recursevily get parent layout blocks
@@ -846,7 +815,7 @@ class EditorPage extends React.Component<Props, {}> {
 			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
 		};
 		
-		C.BlockPaste(rootId, focused, range, selection.get(), data, (message: any) => {});
+		C.BlockPaste(rootId, focused, range, selection.get(true), data, (message: any) => {});
 	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {

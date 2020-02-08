@@ -506,8 +506,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { commonStore, id, rootId, content, dataset } = this.props;
-		const { selection } = dataset;
+		const { commonStore, id, rootId, content } = this.props;
 		const { from, to } = focus.range;
 		const { style } = content;
 		
@@ -521,14 +520,6 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 			
-		let ids = [];
-		if (selection) {
-			ids = selection.get();
-		};
-		if (!ids.length) {
-			ids = [ id ];
-		};
-			
 		const node = $(ReactDOM.findDOMNode(this));
 		const offset = node.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
@@ -536,7 +527,7 @@ class BlockText extends React.Component<Props, {}> {
 		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 			
-		commonStore.menuOpen('blockContext', { 
+		commonStore.menuOpen('blockContext', {
 			element: '#block-' + id,
 			type: I.MenuType.Horizontal,
 			offsetX: x,
@@ -545,7 +536,7 @@ class BlockText extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				blockId: id,
-				blockIds: ids,
+				blockIds: [ id ],
 				rootId: rootId,
 				onChange: (marks: I.Mark[]) => {
 					this.marks = Util.objectCopy(marks);

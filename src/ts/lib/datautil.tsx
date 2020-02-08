@@ -69,6 +69,21 @@ class DataUtil {
 		return c;
 	};
 	
+	selectionGet (props: any): string[] {
+		const { dataset, id } = props;
+		const { selection } = dataset;
+		
+		let ids: string[] = [];
+		if (selection) {
+			ids = selection.get(true);
+			if (ids.length <= 1) {
+				selection.set([ id ]);
+				ids = selection.get(true);
+			};
+		};
+		return ids;
+	};
+	
 	pageInit (props: any) {
 		const { blockStore, commonStore } = props;
 		const { breadcrumbs } = blockStore;
