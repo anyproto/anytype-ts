@@ -85,6 +85,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const k = e.which;
 		
 		let ids: any = this.get();
+		let idsWithChildren: any = this.get(true);
 		
 		if ((k == Key.up || k == Key.down) && ids.length) {
 			let dir = (k == Key.up) ? -1 : 1;
@@ -97,9 +98,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 				
 				let next;
 				if (dir < 0) {
-					next = blockStore.getNextBlock(rootId, ids[0], dir);
+					next = blockStore.getNextBlock(rootId, idsWithChildren[0], dir);
 				} else {
-					next = blockStore.getNextBlock(rootId, ids[ids.length - 1], dir);
+					next = blockStore.getNextBlock(rootId, idsWithChildren[idsWithChildren.length - 1], dir);
 				};
 				
 				if (next && ids.indexOf(next.id) < 0) {

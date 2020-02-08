@@ -384,6 +384,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		const root = blocks[rootId].find((item: I.Block) => { return item.id == rootId; });
 		const index = blocks[rootId].findIndex((item: I.Block) => { return item.id == focused; });
 		const { content } = block;
 
@@ -492,59 +493,71 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		// Cursor keys
-		if (focused && 
-			((range.from == 0) && (k == Key.up)) ||
-			((range.to == length) && (k == Key.down))
-		) {
+		
+		if ((k == Key.up) || (k == Key.down)) {
 			if (commonStore.menuIsOpen()) {
 				return;
 			};
 			
-			e.preventDefault();
-			
 			const dir = (k == Key.up) ? -1 : 1;
+			let next;
 			
-			if (e.ctrlKey || e.metaKey) {
-				const root = blocks[rootId].find((item: I.Block) => { return item.id == rootId; });
-				let next;
+			// Move block
+			if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
+				e.preventDefault();
 				
-				if (dir < 0) {
-					next = blockStore.getNextBlock(rootId, root.childrenIds[0], -dir, (item: any) => {
-						return item.type == I.BlockType.Text;
-					});
-				} else {
-					next = blockStore.getFirstBlock(rootId, root.childrenIds[root.childrenIds.length - 1], -dir, (item: any) => {
-						return item.type == I.BlockType.Text;
-					});
-				};
-				
-				if (next) {
-					const l = String(next.content.text || '').length;
-					const newRange = (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l });
-					
-					focus.set(next.id, newRange);
-					focus.apply();
-				};
-			} else
-			if (e.shiftKey) {
-				if (selection.get().length < 1) {
-					window.getSelection().empty();
-					selection.set([ focused ]);
-					
-					commonStore.menuClose('blockContext');
-					commonStore.menuClose('blockAction');
-				};
-			} else {
-				const next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
-					return item.type == I.BlockType.Text;
+				next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
+					let check = true;
+					if ((item.type == I.BlockType.Icon) || ((item.type == I.BlockType.Text) && (item.content.style == I.TextStyle.Title))) {
+						check = false;
+					};
+					return check;
 				});
-				
 				if (next) {
-					const l = String(next.content.text || '').length;
-					const newRange = (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l });
+					C.BlockListMove(rootId, [ focused ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
+				};
+				return;
+			};
+			
+			if (
+				((range.from == 0) && (k == Key.up)) ||
+				((range.to == length) && (k == Key.down))
+			) {
+				e.preventDefault();
+				
+				if (e.ctrlKey || e.metaKey) {
+					if (dir < 0) {
+						next = blockStore.getNextBlock(rootId, root.childrenIds[0], -dir, (item: any) => {
+							return item.type == I.BlockType.Text;
+						});
+					} else {
+						next = blockStore.getFirstBlock(rootId, root.childrenIds[root.childrenIds.length - 1], -dir, (item: any) => {
+							return item.type == I.BlockType.Text;
+						});
+					};
 					
-					focus.set(next.id, newRange);
-					focus.apply();					
+					const l = String(next.content.text || '').length;
+					focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+					focus.apply();
+				} else
+				if (e.shiftKey) {
+					if (selection.get(true).length < 1) {
+						window.getSelection().empty();
+						selection.set([ focused ]);
+						
+						commonStore.menuClose('blockContext');
+						commonStore.menuClose('blockAction');
+					};
+				} else {
+					next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
+						return item.type == I.BlockType.Text;
+					});
+					
+					if (next) {
+						const l = String(next.content.text || '').length;
+						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+						focus.apply();
+					};
 				};
 			};
 		};

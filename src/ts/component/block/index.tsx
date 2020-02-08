@@ -185,7 +185,7 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset;
 		
 		if (selection) {
-			selection.set(selection.get(true));
+			selection.set(selection.get());
 		};
 	};
 	
