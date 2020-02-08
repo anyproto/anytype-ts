@@ -169,9 +169,13 @@ class BlockStore {
 		
 		let ret = [] as I.Block[];
 		for (let item of tree) {
+			let cb = item.childBlocks;
+			
+			delete(item.childBlocks);
 			ret.push(item);
-			if (item.childBlocks && item.childBlocks.length) {
-				ret = ret.concat(this.unwrapTree(item.childBlocks));
+			
+			if (cb && cb.length) {
+				ret = ret.concat(this.unwrapTree(cb));
 			};
 		};
 		return ret;
@@ -262,10 +266,26 @@ class BlockStore {
 	};
 	
 	prepareBlockToProto (data: any) {
-		let fields = (new StructEncode()).encodeStruct(data.fields || {});
+		
 		let block: any = {
 			id: String(data.id || ''),
-			fields: fields,
+		};
+		
+		if (data.fields) {
+			block.fields = (new StructEncode()).encodeStruct(data.fields || {});
+		};
+		
+		if (data.childrenIds) {
+			block.childrenIds = data.childrenIds || [];
+		};
+		
+		if (data.type == I.BlockType.File) {
+			if (data.content.size) {
+				data.content.size = parseFloat(data.content.size);
+			};
+			if (data.content.addedAt) {
+				data.content.addedAt = parseFloat(data.content.addedAt);
+			};
 		};
 		
 		block[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);

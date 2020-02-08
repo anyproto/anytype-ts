@@ -758,21 +758,78 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let text: string[] = [];
-		let list: any[] = ids.map((id: string) => {
-			const block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
-			
-			if (block.type == I.BlockType.Text) {
-				text.push(String(block.content.text || ''));
+		const root = (blocks[rootId] || []).find((it: any) => { return it.id == rootId; });
+		
+		let text: any = [];
+		let list: any[] = [ root ];
+		
+		list = list.concat(this.getCopyBlockList(ids));
+		list = list.concat(this.getCopyLayoutBlockList(ids));
+		list = blockStore.unwrapTree(blockStore.prepareTree(rootId, list));
+		
+		for (let block of list) {
+			if (block.type  == I.BlockType.Text) {
+				text.push(block.content.text);
 			};
-			return blockStore.prepareBlockToProto(block);
+		};
+		text = text.join('\n');
+		
+		Util.clipboardCopy({ text: text, html: null, anytype: list });
+		C.BlockCopy(rootId, list, (message: any) => {
+			console.log(message.html);
+			Util.clipboardCopy({ text: text, html: message.html, anytype: list });
 		});
-
-		Util.clipboardCopy({
-			text: text.join('\n'),
-			html: null, 
-			anytype: list 
-		});		
+	};
+	
+	// Recursively get children of selected blocks for copy
+	getCopyBlockList (ids: string[]) {
+		const { blockStore, rootId } = this.props;
+		const { blocks } = blockStore;
+		
+		if (!ids.length) {
+			return [];
+		};
+		
+		let list: any[] = [];
+		for (let id of ids) {
+			let block = blocks[rootId].find((el: I.Block) => { return el.id == id; });
+			if (!block) {
+				continue;
+			};
+			
+			list.push(block);
+			list = list.concat(this.getCopyBlockList(block.childrenIds));
+		};
+		return list;
+	};
+	
+	// Recursevily get parent layout blocks
+	getCopyLayoutBlockList (ids: string[]) {
+		const { blockStore, rootId } = this.props;
+		const { blocks } = blockStore;
+		
+		if (!ids.length) {
+			return [];
+		};
+		
+		let list: any[] = [];
+		for (let id of ids) {
+			let block = blocks[rootId].find((el: I.Block) => { 
+				return (el.childrenIds.indexOf(id) >= 0) && (el.type == I.BlockType.Layout); 
+			});
+			
+			if (!block) {
+				continue;
+			};
+			
+			list.push(block);
+			if (block.content.style == I.LayoutStyle.Column) {
+				list = list.concat(this.getCopyLayoutBlockList([ block.id ]));
+			};
+		};
+		
+		list = Util.arrayValues(DataUtil.unique(list, 'id'));
+		return list;
 	};
 	
 	onPaste (e: any) {

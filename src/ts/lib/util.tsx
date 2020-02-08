@@ -47,6 +47,14 @@ class Util {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
+	arrayValues (a: any) {
+		let r: any[] = [];
+		for (let k in a) {
+			r.push(a[k]);
+		};
+		return r;
+	};
+	
 	clipboardCopy (data: any, callBack?: () => void) {
 		const handler = (e: any) => {
 			e.preventDefault();
@@ -55,10 +63,10 @@ class Util {
 				e.clipboardData.setData('text/plain', data.text);
 			};
 			if (data.html) {
-				e.clipboardData.setData('text/html', data.html);				
+				e.clipboardData.setData('text/html', data.html);	
 			};
 			if (data.anytype) {
-				e.clipboardData.setData('application/anytype', JSON.stringify(data.anytype));				
+				e.clipboardData.setData('application/anytype', JSON.stringify(data.anytype));
 			};
 			
 			document.removeEventListener('copy', handler, true);

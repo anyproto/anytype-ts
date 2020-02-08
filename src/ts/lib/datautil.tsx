@@ -14,6 +14,16 @@ class DataUtil {
 		return map;
 	};
 	
+	unique (list: any[], field: string) {
+		list = list|| [] as any[];
+		
+		let map = {} as any;
+		for (let item of list) {
+			map[item[field]] = item
+		};
+		return map;
+	};
+	
 	unmap (map: any) {
 		let ret: any[] = [] as any[];
 		for (let field in map) {
