@@ -784,6 +784,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		Util.clipboardCopy({ text: text, html: null, anytype: list });
 		C.BlockCopy(rootId, list, (message: any) => {
+			console.log(message.html);
 			Util.clipboardCopy({ text: text, html: message.html, anytype: list });
 		});
 	};
@@ -804,7 +805,7 @@ class EditorPage extends React.Component<Props, {}> {
 				continue;
 			};
 			
-			list.push(blockStore.prepareBlockToProto(block));
+			list.push(block);
 			list = list.concat(this.getCopyBlockList(block.childrenIds));
 		};
 		return list;
