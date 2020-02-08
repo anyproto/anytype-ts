@@ -76,7 +76,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			};
 			
 			return (
-				<div id={'item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				<div id={'item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 					{item.icon ? <Icon className={icon.join(' ')} inner={inner} /> : ''}
 					<div className="name">{item.name}</div>
 					{item.arrow ? <Icon className="arrow" /> : ''}
@@ -245,6 +245,12 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		};
 	};
 	
+	onMouseEnter (e: any, item: any) {
+		if (keyboard.mouse) {
+			this.onOver(e, item);
+		};
+	};
+	
 	onOver (e: any, item: any) {
 		if (!this._isMounted) {
 			return;
@@ -285,7 +291,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');
 		
-		if (!item.arrow || !keyboard.mouse) {
+		if (!item.arrow) {
 			return;
 		};
 		

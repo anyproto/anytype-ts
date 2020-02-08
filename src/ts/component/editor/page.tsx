@@ -670,6 +670,8 @@ class EditorPage extends React.Component<Props, {}> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
+					console.log(item);
+					
 					// Text colors
 					if (item.isTextColor) {
 						C.BlockListSetTextColor(rootId, [ id ], item.value, cb);
@@ -704,29 +706,19 @@ class EditorPage extends React.Component<Props, {}> {
 					if (item.isBlock) {
 						let param: any = {
 							type: item.type,
+							content: {},
 						};
 							
 						if (item.type == I.BlockType.Text) {
-							// Block is already paragraph, no need to replace
-							if (item.id == I.TextStyle.Paragraph) {
-								return;
-							};
-							
-							param.content = {
-								style: item.id,
-							};
+							param.content.style = item.id;
 						};
 						
 						if (item.type == I.BlockType.File) {
-							param.content = {
-								type: item.id,
-							};
+							param.content.type = item.id;
 						};
 						
 						if (item.type == I.BlockType.Div) {
-							param.content = {
-								style: item.id,
-							};
+							param.content.style = item.id;
 						};
 						
 						if (item.type == I.BlockType.Page) {
@@ -734,9 +726,7 @@ class EditorPage extends React.Component<Props, {}> {
 								icon: Util.randomSmile(), 
 								name: Constant.default.name,
 							};
-							param.content = {
-								style: I.PageStyle.Empty,
-							};
+							param.content.style = I.PageStyle.Empty;
 							
 							this.blockCreatePage(block, I.BlockPosition.Replace, param);
 						} else {

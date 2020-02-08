@@ -40,7 +40,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		);
 		
 		const Item = (item: any) => (
-			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 				{item.icon ? <Icon className={item.icon} inner={item.inner} /> : ''}
 				<div className="name">{item.name}</div>
 				{item.arrow ? <Icon className="arrow" /> : ''}
@@ -397,21 +397,26 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		return items;
 	};
 	
+	onMouseEnter (e: any, item: any) {
+		if (keyboard.mouse) {
+			this.onOver(e, item);
+		};
+	};
+	
 	onOver (e: any, item: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
-		if (!item.arrow || !commonStore.menuIsOpen('blockAdd') || !keyboard.mouse) {
+		this.setActive(item, false);
+		
+		if (!item.arrow || !commonStore.menuIsOpen('blockAdd')) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#block-add-item-' + item.id);
 		const offsetX = node.outerWidth() + 1;
-		
-		this.setActive(item, false);
-			
+
 		commonStore.menuOpen('blockAddSub', { 
 			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,

@@ -225,6 +225,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							onChange: (param: string) => {
 								marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
 								onChange(marks);
+								commonStore.menuClose(this.props.id);
 							}
 						},
 						onClose: () => {
