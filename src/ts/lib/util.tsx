@@ -47,6 +47,14 @@ class Util {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
+	arrayValues (a: any) {
+		let r: any[] = [];
+		for (let k in a) {
+			r.push(a[k]);
+		};
+		return r;
+	};
+	
 	clipboardCopy (data: any, callBack?: () => void) {
 		const handler = (e: any) => {
 			e.preventDefault();

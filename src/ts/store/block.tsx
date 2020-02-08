@@ -262,10 +262,17 @@ class BlockStore {
 	};
 	
 	prepareBlockToProto (data: any) {
-		let fields = (new StructEncode()).encodeStruct(data.fields || {});
+		
 		let block: any = {
 			id: String(data.id || ''),
-			fields: fields,
+		};
+		
+		if (data.fields) {
+			block.fields = (new StructEncode()).encodeStruct(data.fields || {});
+		};
+		
+		if (data.childrenIds) {
+			block.childrenIds = data.childrenIds || [];
 		};
 		
 		block[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
