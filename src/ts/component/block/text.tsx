@@ -421,6 +421,10 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
+		if (k == Key.backspace) {
+			commonStore.menuClose('blockContext');
+		};
+		
 		this.marks = this.getMarksFromHtml();
 		
 		this.placeHolderCheck();

@@ -221,39 +221,51 @@ class Mark {
 		return r.join('');
 	};
 	
-	fromHtml (html: string): I.Mark[] {
-		const rs = new RegExp('<(' + Tags.join('|') + ')(:?([^>]+)>|>)', 'ig');
-		const rt = new RegExp('<(' + Tags.join('|') + ')', 'i');
-		const re = new RegExp('</(' + Tags.join('|') + ')>', 'ig');
-		const m = html.match(rs);
+	fromHtml (html: string): any[] {
+		const reg = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]+)>|>)', 'ig');
+		const rp = new RegExp('^[^"]*"([^"]*)"$', 'i');
 		
-		let marks = [] as I.Mark[];
+		html = html.replace(/&nbsp;/g, ' ');
+
+		let text = html;
+		let marks: any[] = [];
+
+		html.replace(reg, (s: string, p1: string, p2: string, p3: string) => {
+			p1 = String(p1 || '').trim();
+			p2 = String(p2 || '').trim();
+			p3 = String(p3 || '').trim();
+			
+			let o = Number(text.indexOf(s)) || 0;
+			let isEnd = p1 == '/';
+			let type = Tags.indexOf(p2)
+
+			if (isEnd) {
+				for (let i = 0; i < marks.length; ++i) {
+					let m = marks[i];
+					if ((m.type == type) && !m.range.to) {
+						marks[i].range.to = o;
+						break;
+					};
+				};
+			} else {
+				let pm = p3.match(rp);
+				let param = pm ? pm[1]: '';
+				
+				param = param.replace('textColor textColor-', '').replace('bgColor bgColor-', '');
+				marks.push({
+					type: type,
+					range: {
+						from: Number(o) || 0,
+						to: 0,
+					},
+					param: param,
+				});
+			};
+
+			text = text.replace(s, '');
+			return '';
+		});
 		
-		if (!m) {
-			return marks;
-		};
-		
-		for (let s of m) {
-			let t = s.match(rt)[1];
-			let a = s.match(new RegExp('<' + t + '\\s([^>]+)>', 'i'));
-			
-			let end = '</' + t + '>';
-			let o1 = html.indexOf(s);
-			
-			html = html.replace(s, '');
-			
-			let o2 = html.indexOf(end);
-			html = html.replace(end, '');
-			
-			marks.push({
-				type: Tags.indexOf(t),
-				range: {
-					from: Number(o1) || 0,
-					to: Number(o2) || 0,
-				},
-				param: this.attrToParam(a ? a[1] : ''),
-			});
-		};
 		return marks;
 	};
 	
@@ -279,16 +291,6 @@ class Mark {
 		};
 		
 		return attr;
-	};
-	
-	attrToParam (attr: string): string {
-		attr = String(attr || '').trim();
-		
-		let m = attr.match(/(:?href|class)="([^"]+)"/);
-		if (!m) {
-			return '';
-		};
-		return m[2].replace('textColor textColor-', '').replace('bgColor bgColor-', '');
 	};
 	
 	overlap (a: I.TextRange, b: I.TextRange): Overlap {
