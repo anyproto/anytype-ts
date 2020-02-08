@@ -752,7 +752,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { blockStore, dataset, rootId } = this.props;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
-		const ids = selection.get();
+		const ids = selection.get(true);
 
 		if (!ids.length) {
 			return;
