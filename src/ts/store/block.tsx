@@ -279,6 +279,15 @@ class BlockStore {
 			block.childrenIds = data.childrenIds || [];
 		};
 		
+		if (data.type == I.BlockType.File) {
+			if (data.content.size) {
+				data.content.size = parseFloat(data.content.size);
+			};
+			if (data.content.addedAt) {
+				data.content.addedAt = parseFloat(data.content.addedAt);
+			};
+		};
+		
 		block[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
 		return com.anytype.model.Block.create(block);
 	};
