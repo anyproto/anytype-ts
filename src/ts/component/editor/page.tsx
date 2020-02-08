@@ -768,20 +768,22 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const root = (blocks[rootId] || []).find((it: any) => { return it.id == rootId; });
+		
 		let text: any = [];
-		let list: any[] = [];
+		let list: any[] = [ root ];
 		
 		list = list.concat(this.getCopyBlockList(ids));
 		list = list.concat(this.getCopyLayoutBlockList(ids));
+		list = blockStore.unwrapTree(blockStore.prepareTree(rootId, list));
 		
 		for (let block of list) {
-			if (block.type == I.BlockType.Text) {
-				text.push(String(block.content.text || ''));
+			if (block.type  == I.BlockType.Text) {
+				text.push(block.content.text);
 			};
 		};
-		
 		text = text.join('\n');
-
+		
 		Util.clipboardCopy({ text: text, html: null, anytype: list });
 		C.BlockCopy(rootId, list, (message: any) => {
 			console.log(message.html);

@@ -169,9 +169,13 @@ class BlockStore {
 		
 		let ret = [] as I.Block[];
 		for (let item of tree) {
+			let cb = item.childBlocks;
+			
+			delete(item.childBlocks);
 			ret.push(item);
-			if (item.childBlocks && item.childBlocks.length) {
-				ret = ret.concat(this.unwrapTree(item.childBlocks));
+			
+			if (cb && cb.length) {
+				ret = ret.concat(this.unwrapTree(cb));
 			};
 		};
 		return ret;

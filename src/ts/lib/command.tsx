@@ -218,7 +218,7 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
 	const request: any = {
 		contextId: contextId,
-		blocks: blocks,
+		blocks: blocks.map((block: any) => { return blockStore.prepareBlockToProto(block); }),
 	};
 	dispatcher.call('blockCopy', request, callBack);	
 };
