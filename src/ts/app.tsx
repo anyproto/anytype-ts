@@ -4,7 +4,7 @@ import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader } from './component';
 import { commonStore, authStore, blockStore } from './store';
-import { dispatcher, keyboard, Storage } from 'ts/lib';
+import { C, dispatcher, keyboard, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -135,6 +135,8 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
+		C.VersionGet();
+		
 		const win = $(window);
 		const phrase = Storage.get('phrase');
 		const html = $('html');

@@ -3,6 +3,10 @@ import { blockStore } from 'ts/store';
 
 const Struct = new StructEncode();
 
+const VersionGet = (callBack?: (message: any) => void) => {
+	dispatcher.call('versionGet', {}, callBack);
+};
+
 const ImageGetBlob = (hash: string, size: I.ImageSize, callBack?: (message: any) => void) => {
 	const request = {
 		hash: hash,
@@ -279,6 +283,8 @@ const BlockListSetFields = (contextId: string, fields: any, callBack?: (message:
 };
 
 export {
+	VersionGet,
+	
 	ImageGetBlob,
 	ConfigGet,
 	

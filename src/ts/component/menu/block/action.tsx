@@ -291,6 +291,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');
+		commonStore.menuClose('blockAlign');
 		
 		if (!item.arrow) {
 			return;
@@ -438,6 +439,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				let next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
 					return it.type == I.BlockType.Text;
 				});
+				
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
 					if (next) {
 						let l = String(next.content.text || '').length;
