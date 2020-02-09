@@ -441,6 +441,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
+		e.stopPropagation();
+		
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;

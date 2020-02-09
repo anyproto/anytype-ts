@@ -24,14 +24,10 @@ class Mark {
 		let map = Util.map(marks, 'type');
 		let type = mark.type;
 		let ret: I.Mark[] = [] as I.Mark[];
-		
-		if (!map[type] || !map[type].length) {
-			map[type] = [];
-		};
-		
-		map[type].slice().sort(this.sort);
-		
 		let add = true;
+		
+		map[type] = map[type] || [];
+		map[type].slice().sort(this.sort);
 		
 		for (let i = 0; i < map[type].length; ++i) {
 			let del = false;
@@ -114,11 +110,9 @@ class Mark {
 	
 	move (marks: I.Mark[], start: number, diff: number) {
 		marks = marks || [];
-		
 		for (let mark of marks) {
 			if ((mark.range.from < start && mark.range.to >= start) || (!start && !mark.range.from)) {
 				mark.range.to += diff;
-				console.log('Move', mark.param, mark.range.to);
 			} else
 			if (mark.range.from >= start) {
 				mark.range.from += diff;
@@ -201,10 +195,9 @@ class Mark {
 	
 	toHtml (text: string, marks: I.Mark[]) {
 		text = String(text || '');
-		marks = this.checkRanges(text, marks || []);
+		marks = this.checkRanges(text, marks || []).sort(this.sort);
 		
 		let r = text.split('');
-		
 		for (let mark of marks) {
 			let t = Tags[mark.type];
 			let attr = this.paramToAttr(mark.type, mark.param);
@@ -222,7 +215,7 @@ class Mark {
 	};
 	
 	fromHtml (html: string): any[] {
-		const reg = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]+)>|>)', 'ig');
+		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]+)>|>)', 'ig');
 		const rp = new RegExp('^[^"]*"([^"]*)"$', 'i');
 		
 		html = html.replace(/&nbsp;/g, ' ');
@@ -230,20 +223,20 @@ class Mark {
 		let text = html;
 		let marks: any[] = [];
 
-		html.replace(reg, (s: string, p1: string, p2: string, p3: string) => {
+		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
 			p3 = String(p3 || '').trim();
-			
-			let o = Number(text.indexOf(s)) || 0;
-			let isEnd = p1 == '/';
+
+			let end = p1 == '/';			
+			let offset = Number(text.indexOf(s)) || 0;
 			let type = Tags.indexOf(p2)
 
-			if (isEnd) {
+			if (end) {
 				for (let i = 0; i < marks.length; ++i) {
 					let m = marks[i];
 					if ((m.type == type) && !m.range.to) {
-						marks[i].range.to = o;
+						marks[i].range.to = offset;
 						break;
 					};
 				};
@@ -254,10 +247,7 @@ class Mark {
 				param = param.replace('textColor textColor-', '').replace('bgColor bgColor-', '');
 				marks.push({
 					type: type,
-					range: {
-						from: Number(o) || 0,
-						to: 0,
-					},
+					range: { from: offset, to: 0 },
 					param: param,
 				});
 			};

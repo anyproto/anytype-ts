@@ -119,7 +119,7 @@ class DataUtil {
 		if (commonStore.popupIsOpen('editorPage')) {
 			commonStore.popupUpdate('editorPage', param);
 		} else 
-		if (e.shiftKey || (e.ctrlKey || e.metaKey)) { 
+		if (e && (e.shiftKey || (e.ctrlKey || e.metaKey))) { 
 			commonStore.popupOpen('editorPage', param);
 		} else {
 			history.push('/main/edit/' + targetId);
@@ -127,7 +127,7 @@ class DataUtil {
 	};
 	
 	pageCreate (e: any, props: any, icon: string, name: string) {
-		if (e.persist) {
+		if (e && e.persist) {
 			e.persist();
 		};
 		

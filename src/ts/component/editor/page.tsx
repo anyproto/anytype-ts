@@ -672,8 +672,6 @@ class EditorPage extends React.Component<Props, {}> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
-					console.log(item);
-					
 					// Text colors
 					if (item.isTextColor) {
 						C.BlockListSetTextColor(rootId, [ id ], item.value, cb);
@@ -845,10 +843,11 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockCreatePage (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
-		const { blockStore, rootId } = this.props;
+		const { commonStore, blockStore, rootId } = this.props;
 		
+		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		C.BlockCreatePage(param, rootId, focused.id, position, (message: any) => {
-			//C.BlockUnlink(rootId, [ focused.id ]);
+			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (callBack) {
 				callBack(message.blockId);
