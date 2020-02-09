@@ -221,7 +221,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { commonStore, blockStore, onKeyDown, id, parentId, rootId, content } = this.props;
+		const { commonStore, blockStore, onKeyDown, onMenuAdd, id, parentId, rootId, content } = this.props;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -274,6 +274,10 @@ class BlockText extends React.Component<Props, {}> {
 			commonStore.menuClose('blockAdd');
 		};
 		
+		if (!value && (k == Key.slash)) {
+			onMenuAdd(id);
+		};
+		
 		focus.set(id, range);
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
@@ -292,14 +296,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let cmdParsed = false;
 		
-		// Open menu
-		if ((value == '/') && (style != I.TextStyle.Title) && !commonStore.menuIsOpen('blockAdd')) {
-			e.preventDefault();
-			this.props.onMenuAdd(id);
-			return;
-		};
-		
-		if (value.match(/^\//)) {
+		if (commonStore.menuIsOpen('blockAdd')) {
 			commonStore.filterSet(value);
 		};
 		
