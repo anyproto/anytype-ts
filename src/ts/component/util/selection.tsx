@@ -183,11 +183,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		this.checkNodes(e);
 		
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = $('#selection-rect');
-		const selected = node.find('.selectable.isSelected');
-		
-		el.css({ 
+		$('#selection-rect').css({ 
 			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
 			width: rect.width - 10, 
 			height: rect.height - 10,
@@ -339,8 +335,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.block.isSelected').removeClass('isSelected');
-		node.find('.selectable.isSelected').removeClass('isSelected');
+		node.find('.isSelected').removeClass('isSelected');
 	};
 	
 	unbind () {
@@ -380,8 +375,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		ids = [ ...new Set(ids) ];
 		this.lastIds = ids;
-		
-		console.log(ids);
 		
 		for (let id of ids) {
 			id = $.escapeSelector(id);
