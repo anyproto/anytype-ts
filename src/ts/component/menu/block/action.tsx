@@ -274,11 +274,10 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const items = this.getItems();
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#item-' + item.id);
-		const offsetX = node.outerWidth();
-		const offsetY = node.offset().top - el.offset().top;
+		const offsetX = node.outerWidth() + 1;
+		const offsetY = node.offset().top - el.offset().top - 40;
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		
 		this.setActive(item, false);
 		
 		if ((item.id == 'turn') && commonStore.menuIsOpen('blockStyle')) {
@@ -301,7 +300,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
-			offsetY: offsetY - 40,
+			offsetY: offsetY,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {

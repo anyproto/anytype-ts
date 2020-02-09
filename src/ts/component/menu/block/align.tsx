@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util } from 'ts/lib';
+import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -26,7 +26,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	render () {
 		const { commonStore, param } = this.props;
 		const { data } = param;
-		const items = this.getItems();
+		const items = DataUtil.menuGetAlign();
 		
 		return (
 			<div>
@@ -111,15 +111,6 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 				commonStore.menuClose(this.props.id);
 				break;
 		};
-	};
-	
-	
-	getItems () {
-		return [
-			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Left' },
-			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Center' },
-			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Right' },
-		];
 	};
 	
 	onOver (e: any, item: any) {

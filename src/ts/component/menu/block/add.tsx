@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, keyboard, Key, Util } from 'ts/lib';
+import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -229,8 +229,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	getSections () {
-		const { commonStore } = this.props;
+		const { commonStore, blockStore, param } = this.props;
 		const { filter } = commonStore;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const { blocks } = blockStore;
+		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
 		
 		let sections: any[] = [
 			{ 
@@ -283,10 +287,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			let reg = new RegExp(filter, 'gi');
 			
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: this.getActions() },
-				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: this.getAlign() },
-				{ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: this.getTextColors() },
-				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: this.getBgColors() },
+				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: DataUtil.menuGetActions(block) },
+				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: DataUtil.menuGetAlign() },
+				{ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() },
+				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: DataUtil.menuGetBgColors() },
 			]);
 			
 			sections = sections.filter((s: any) => {
@@ -309,6 +313,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		if (id) {
 			const item = options.find((it: any) => { return it.id == id; });
+			if (!item) {
+				return;
+			};
 			
 			options = item.children;
 			for (let i in options) {
@@ -332,77 +339,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		return options;
-	};
-	
-	getTextColors () {
-		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: 'black', isTextColor: true }
-		];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, isTextColor: true });
-		};
-		return items;
-	};
-	
-	getBgColors () {
-		let items: any[] = [];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
-		};
-		return items;
-	};
-	
-	getAlign () {
-		return [
-			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Left' },
-			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Center' },
-			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Right' },
-		];
-	};
-	
-	getActions () {
-		const { blockStore, param } = this.props;
-		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
-		const { blocks } = blockStore;
-		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
-		
-		if (!block) {
-			return;
-		};
-		
-		const { content, type } = block;
-		const { style } = content;
-		
-		let items: any[] = [
-			//{ id: 'move', icon: 'move', name: 'Move to' },
-			//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-			{ id: 'remove', icon: 'remove', name: 'Delete' },
-			//{ id: 'comment', icon: 'comment', name: 'Comment' }
-		];
-		
-		// Restrictions
-		if (type == I.BlockType.File) {
-			let idx = items.findIndex((it: any) => { return it.id == 'remove'; });
-			items.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
-			//items.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
-			//items.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
-		};
-		
-		if (type != I.BlockType.Text) {
-			items = items.filter((it: any) => { return [ 'turn', 'color' ].indexOf(it.id) < 0; });
-		};
-		
-		if (style == I.TextStyle.Code) {
-			items = items.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
-		};
-		
-		items = items.map((it: any) => {
-			it.isAction = true;
-			return it;
-		});
-		
-		return items;
 	};
 	
 	onMouseEnter (e: any, item: any) {

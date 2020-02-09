@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util } from 'ts/lib';
+import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -148,14 +148,8 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	getSections () {
 		let id = 0;
 		let sections = [
-			{ 
-				name: 'Text color',
-				children: this.getTextColors()
-			},
-			{ 
-				name: 'Background color',
-				children: this.getBgColors(),
-			},
+			{ name: 'Text color', children: DataUtil.menuGetTextColors() },
+			{ name: 'Background color', children: DataUtil.menuGetBgColors() },
 		];
 		return sections;
 	};
@@ -165,24 +159,6 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		let items: any[] = [];
 		for (let section of sections) {
 			items = items.concat(section.children);
-		};
-		return items;
-	};
-	
-	getTextColors () {
-		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: 'black', isTextColor: true }
-		];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, isTextColor: true });
-		};
-		return items;
-	};
-	
-	getBgColors () {
-		let items: any[] = [];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
 		};
 		return items;
 	};
