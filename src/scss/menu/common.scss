@@ -52,12 +52,12 @@
 		.item.active { background: #f3f2ec; }
 		
 		.item.withChildren:hover::before, .item.withChildren:hover::after {
-			content: ""; position: absolute; z-index: 1000; right: 0px; width: 30%; height: 30%; animation: subnavHoverHelp 1s;
-			opacity: 0.3; background: pink;
+			content: ""; position: absolute; z-index: 1000; right: 0px; width: 50%; height: 75%; animation: subnavHoverHelp 1s;
+			/*opacity: 0.3; background: pink;*/
 		}
 		
-		.item.withChildren:hover::before { bottom: -100%; clip-path: polygon(0% 0%, 100% 0%, 100% 100%); }		
-		.item.withChildren:hover::after { top: -100%; clip-path: polygon(0% 100%, 100% 0%, 100% 100%); }
+		.item.withChildren:hover::before { bottom: -75%; clip-path: polygon(0% 0%, 100% 0%, 100% 100%); }		
+		.item.withChildren:hover::after { top: -75%; clip-path: polygon(0% 100%, 100% 0%, 100% 100%); }
 		
 		.icon { width: 24px; height: 24px; margin-right: 8px; }
 		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
