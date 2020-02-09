@@ -36,13 +36,17 @@ class DragLayer extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { ids, type } = this.state;
+		
+		if (!type) {
+			return null;
+		};
+		
 		const { blockStore, rootId } = this.props;
 		const { blocks } = blockStore;
-		const { ids, type } = this.state;
 		const map = blockStore.getMap(blocks[rootId] || []);
 		
 		let content = null;
-		
 		switch (type) {
 			case I.DragItem.Block:
 				content = (
