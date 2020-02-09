@@ -223,6 +223,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							placeHolder: 'Please enter URL',
 							value: (mark ? mark.param : ''),
 							onChange: (param: string) => {
+								param = Util.urlFix(param);
 								marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
 								onChange(marks);
 								commonStore.menuClose(this.props.id);

@@ -353,6 +353,13 @@ class Util {
 		};
 	};
 	
+	urlFix (url: string): string {
+		if (!url.match(/:\/\//)) {
+			url = 'http://' + url;
+		};
+		return url;
+	};
+	
 };
 
 export default new Util();

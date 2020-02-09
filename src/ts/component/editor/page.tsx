@@ -479,6 +479,7 @@ class EditorPage extends React.Component<Props, {}> {
 								placeHolder: 'Please enter URL',
 								value: (mark ? mark.param : ''),
 								onChange: (param: string) => {
+									param = Util.urlFix(param);
 									marks = Mark.toggle(marks, { type: type, param: param, range: range });
 									DataUtil.blockSetText(rootId, block, text, marks);
 								}
