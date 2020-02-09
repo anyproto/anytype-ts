@@ -64,11 +64,8 @@ import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/select.scss';
 
-import 'scss/menu/block/action.scss';
-import 'scss/menu/block/style.scss';
 import 'scss/menu/block/context.scss';
-import 'scss/menu/block/add.scss';
-import 'scss/menu/block/color.scss';
+import 'scss/menu/block/common.scss';
 import 'scss/menu/block/icon.scss';
 
 import 'scss/menu/dataview/sort.scss';

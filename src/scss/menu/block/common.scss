@@ -2,12 +2,10 @@
 
 .menus {
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuBlockMore {
-		.empty { font-size: 13px; line-height: 18px; padding: 4px 16px; }
-	
-		.item { padding: 4px 16px !important; }
 		.item {
 			.name { line-height: 1; }
 		}
+		.item.empty { font-size: 13px; line-height: 18px; }
 		
 		.item.yellow.active { background: #fef3c5 !important; }
 		.item.green.active { background: #d6f5f3 !important; }
@@ -21,12 +19,7 @@
 	
 	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter { width: 288px !important; padding: 12px 0px; }
 	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter {
-		.content { max-height: 400px; }
-		
-		.section { padding: 12px 0px; }
-		.section:first-child { padding-top: 0px; }
-		.section:last-child { padding-bottom: 0px; }
-		.section > .name { padding: 0px 16px; margin-bottom: 10px; }
+		.section > .name { padding: 4px 16px; margin-bottom: 6px; }
 	}
 	
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menu.menuBlockStyle {

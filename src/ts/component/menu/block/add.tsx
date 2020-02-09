@@ -80,7 +80,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				{!options.length ? <div className="empty">No items match filter</div> : ''}
+				{!options.length ? <div className="item empty">No items match filter</div> : ''}
 				{filter ? (
 					<React.Fragment>
 						{sections.map((item: any, i: number) => (
@@ -284,7 +284,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			
 			sections = sections.concat([
 				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: this.getActions() },
-				//{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: [] },
+				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: this.getAlign() },
 				{ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: this.getTextColors() },
 				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: this.getBgColors() },
 			]);
@@ -350,6 +350,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
 		};
 		return items;
+	};
+	
+	getAlign () {
+		return [
+			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Left' },
+			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Center' },
+			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Right' },
+		];
 	};
 	
 	getActions () {

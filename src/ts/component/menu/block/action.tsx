@@ -145,6 +145,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			},
 			{ 
 				children: [
+					{ id: 'align', icon: 'align left', name: 'Align', arrow: true },
 					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
@@ -363,6 +364,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					};
 					
 					commonStore.menuOpen('blockColor', menuParam);
+					break;
+					
+				case 'align':
+					menuParam.data.onChange = (align: I.BlockAlign) => {
+						commonStore.menuClose(this.props.id);
+					};
+					
+					commonStore.menuOpen('blockAlign', menuParam);
 					break;
 			};
 		}, Constant.delay.menu);

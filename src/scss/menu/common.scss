@@ -35,9 +35,9 @@
 		.content { opacity: 1; }
 	}
 	
-	.menu.vertical { width: 208px; }
+	.menu.vertical { width: 208px; padding: 8px 0px; }
 	.menu.vertical {
-		.content { overflow-y: auto; }
+		.content { overflow-y: auto; max-height: 450px; }
 	
 		.title { 
 			font-size: 13px; line-height: 18px; margin: 0px; padding: 7px 16px; font-weight: 400; color: #aca996;
@@ -45,7 +45,7 @@
 		}
 	
 		.item { 
-			padding: 7px 16px; font-size: 15px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
+			padding: 4px 16px; font-size: 15px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
 			transition: all 0.05s ease-in-out; width: 100%;
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
@@ -58,7 +58,7 @@
 		.item.withChildren:hover::before { bottom: -100%; clip-path: polygon(0% 0%, 100% 0%, 100% 100%); }		
 		.item.withChildren:hover::after { top: -100%; clip-path: polygon(0% 100%, 100% 0%, 100% 100%); }
 		
-		.icon { margin-right: 8px; }
+		.icon { width: 24px; height: 24px; margin-right: 8px; }
 		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
 		.icon.delete { 
 			width: 18px; height: 18px; background-size: 10px 10px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
@@ -69,8 +69,10 @@
 		
 		.name { display: inline-block; vertical-align: middle; }
 		
-		.section { border-bottom: 1px solid #dfddd0; }
-		.section:last-child { border: 0px; }
+		.section { border-bottom: 1px solid #dfddd0; padding: 7px 0px; }
+		.section:first-child { padding-top: 0px; }
+		.section:last-child { border: 0px; padding-bottom: 0px; }
+		.section > .name { padding: 4px 16px; margin-bottom: 6px; }
 		
 		.section > .name { font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #aca996; display: block; }
 	}

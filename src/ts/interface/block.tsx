@@ -24,6 +24,12 @@ export enum BlockPosition {
 	Replace	 = 6,
 };
 
+export enum BlockAlign {
+	Left	 = 0,
+	Center	 = 1,
+	Right	 = 2,
+};
+
 export interface Restrictions {
 	read: boolean;
 	edit: boolean;
