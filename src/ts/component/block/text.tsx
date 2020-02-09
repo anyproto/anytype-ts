@@ -266,7 +266,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if ((k == Key.enter) && !e.shiftKey) {
-			this.blockUpdateText(this.marks);
+			this.blockUpdateText(this.marks, true);
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
@@ -431,10 +431,10 @@ class BlockText extends React.Component<Props, {}> {
 		onKeyUp(e, value, this.marks);
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks, false); }, 500);
 	};
 	
-	blockUpdateText (newMarks: I.Mark[]) {
+	blockUpdateText (newMarks: I.Mark[], update: boolean) {
 		const { blockStore, id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const value = this.getValue();
@@ -445,8 +445,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
-		
-		DataUtil.blockSetText(rootId, block, value, newMarks);
+		DataUtil.blockSetText(rootId, block, value, newMarks, update);
 	};
 	
 	blockUpdateMarks (newMarks: I.Mark[]) {
@@ -455,7 +454,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { text } = content;
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
 		
-		DataUtil.blockSetText(rootId, block, text, newMarks);
+		DataUtil.blockSetText(rootId, block, text, newMarks, true);
 	};
 	
 	onFocus (e: any) {
@@ -469,7 +468,7 @@ class BlockText extends React.Component<Props, {}> {
 	onBlur (e: any) {
 		const { commonStore, onBlur, content } = this.props;
 		
-		this.blockUpdateText(this.marks);
+		this.blockUpdateText(this.marks, true);
 		this.placeHolderHide();
 		keyboard.setFocus(false);
 		onBlur(e);

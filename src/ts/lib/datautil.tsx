@@ -152,7 +152,7 @@ class DataUtil {
 		});	
 	};
 	
-	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[]) {
+	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean) {
 		if (!block) {
 			return;
 		};
@@ -160,14 +160,17 @@ class DataUtil {
 		text = String(text || '');
 		marks = marks || [];
 		
-		let param = {
-			id: block.id,
-			content: Util.objectCopy(block.content),
+		if (update) {
+			let param = {
+				id: block.id,
+				content: Util.objectCopy(block.content),
+			};
+			param.content.text = text;
+			param.content.marks = marks;
+			
+			blockStore.blockUpdate(rootId, param);
 		};
-		param.content.text = text;
-		param.content.marks = marks;
 		
-		blockStore.blockUpdate(rootId, param);
 		C.BlockSetTextText(rootId, block.id, text, marks);
 	};
 };
