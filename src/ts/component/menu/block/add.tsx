@@ -31,7 +31,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	render () {
 		const { commonStore } = this.props;
-		const { filter } = commonStore; 
+		const { filter } = commonStore;
 		const options = this.getItems();
 		const sections = this.getSections();
 		

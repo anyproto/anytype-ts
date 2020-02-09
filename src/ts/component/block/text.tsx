@@ -266,7 +266,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if ((k == Key.enter) && !e.shiftKey) {
-			this.blockUpdateText(this.marks, true);
+			this.blockSetText(this.marks);
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
@@ -293,14 +293,14 @@ class BlockText extends React.Component<Props, {}> {
 		let cmdParsed = false;
 		
 		// Open menu
-		if ((value.match(/^\//)) && (style != I.TextStyle.Title)) {
+		if ((value == '/') && (style != I.TextStyle.Title) && !commonStore.menuIsOpen('blockAdd')) {
 			e.preventDefault();
-			
-			commonStore.filterSet(value);
-			if (!commonStore.menuIsOpen('blockAdd')) {
-				this.props.onMenuAdd(id);
-			};
+			this.props.onMenuAdd(id);
 			return;
+		};
+		
+		if (value.match(/^\//)) {
+			commonStore.filterSet(value);
 		};
 		
 		// Make div
@@ -431,34 +431,30 @@ class BlockText extends React.Component<Props, {}> {
 		onKeyUp(e, value, this.marks);
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks, false); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.blockSetText(this.marks); }, 500);
 	};
 	
-	blockUpdateText (newMarks: I.Mark[], update: boolean) {
+	blockSetText (marks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const value = this.getValue();
 		const text = String(content.text || '');
-
-		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(newMarks))) {
+		
+		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
 			return;
 		};
 		
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
-		DataUtil.blockSetText(rootId, block, value, newMarks, update);
-	};
-	
-	blockUpdateMarks (newMarks: I.Mark[]) {
-		const { blockStore, id, rootId, content } = this.props;
-		const { blocks } = blockStore;
-		const { text } = content;
-		const block = blocks[rootId].find((it: any) => { return it.id == id; });
-		
-		DataUtil.blockSetText(rootId, block, text, newMarks, true);
+		DataUtil.blockSetText(rootId, block, value, marks);
 	};
 	
 	onFocus (e: any) {
-		const { onFocus } = this.props;
+		const { commonStore, onFocus } = this.props;
+		const value = this.getValue();
+		
+		if (value.match(/^\//)) {
+			commonStore.filterSet(value);
+		};
 		
 		this.placeHolderCheck();
 		keyboard.setFocus(true);
@@ -468,7 +464,7 @@ class BlockText extends React.Component<Props, {}> {
 	onBlur (e: any) {
 		const { commonStore, onBlur, content } = this.props;
 		
-		this.blockUpdateText(this.marks, true);
+		this.blockSetText(this.marks);
 		this.placeHolderHide();
 		keyboard.setFocus(false);
 		onBlur(e);
@@ -538,9 +534,8 @@ class BlockText extends React.Component<Props, {}> {
 				blockIds: [ id ],
 				rootId: rootId,
 				onChange: (marks: I.Mark[]) => {
-					this.marks = Util.objectCopy(marks);
 					focus.set(id, { from: currentFrom, to: currentTo });
-					this.blockUpdateMarks(this.marks);
+					this.blockSetText(Util.objectCopy(marks));
 				},
 			},
 		});

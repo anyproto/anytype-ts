@@ -481,13 +481,13 @@ class EditorPage extends React.Component<Props, {}> {
 								onChange: (param: string) => {
 									param = Util.urlFix(param);
 									marks = Mark.toggle(marks, { type: type, param: param, range: range });
-									DataUtil.blockSetText(rootId, block, text, marks, true);
+									DataUtil.blockSetText(rootId, block, text, marks);
 								}
 							}
 						});
 					} else {
 						marks = Mark.toggle(marks, { type: type, range: range });
-						DataUtil.blockSetText(rootId, block, text, marks, true);
+						DataUtil.blockSetText(rootId, block, text, marks);
 					};
 				};
 			};

@@ -210,8 +210,7 @@ class CommonStore {
 	
 	@action
 	filterSet (v: string) {
-		v = v.replace(/[\/\\\*]/g, '');
-		this.filterString = String(v || '');
+		this.filterString = String(v || '').replace(/[\/\\\*]/g, '');
 	};
 	
 };
