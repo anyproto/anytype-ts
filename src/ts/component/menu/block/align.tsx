@@ -26,7 +26,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	render () {
 		const { commonStore, param } = this.props;
 		const { data } = param;
-		const items = DataUtil.menuGetAlign();
+		const items = this.getItems();
 		
 		return (
 			<div>
@@ -67,6 +67,10 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
 		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+	};
+	
+	getItems () {
+		return DataUtil.menuGetAlign();
 	};
 	
 	onKeyDown (e: any) {
