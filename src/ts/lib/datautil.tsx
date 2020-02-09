@@ -168,6 +168,7 @@ class DataUtil {
 		};
 		param.content.text = text;
 		param.content.marks = marks;
+		block.content = param.content;
 			
 		blockStore.blockUpdate(rootId, param);
 		C.BlockSetTextText(rootId, block.id, text, marks);

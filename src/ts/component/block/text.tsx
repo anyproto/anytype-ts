@@ -448,6 +448,15 @@ class BlockText extends React.Component<Props, {}> {
 		DataUtil.blockSetText(rootId, block, value, marks);
 	};
 	
+	blockSetMarks (marks: I.Mark[]) {
+		const { blockStore, id, rootId, content } = this.props;
+		const { blocks } = blockStore;
+		const text = String(content.text || '');
+		const block = blocks[rootId].find((it: any) => { return it.id == id; });
+		
+		DataUtil.blockSetText(rootId, block, text, marks);
+	};
+	
 	onFocus (e: any) {
 		const { commonStore, onFocus } = this.props;
 		const value = this.getValue();
@@ -521,7 +530,8 @@ class BlockText extends React.Component<Props, {}> {
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
 		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
-			
+		
+		commonStore.menuClose('blockAdd');
 		commonStore.menuOpen('blockContext', {
 			element: '#block-' + id,
 			type: I.MenuType.Horizontal,
@@ -534,8 +544,9 @@ class BlockText extends React.Component<Props, {}> {
 				blockIds: [ id ],
 				rootId: rootId,
 				onChange: (marks: I.Mark[]) => {
+					this.marks = Util.objectCopy(marks);
 					focus.set(id, { from: currentFrom, to: currentTo });
-					this.blockSetText(Util.objectCopy(marks));
+					this.blockSetMarks(marks);
 				},
 			},
 		});
