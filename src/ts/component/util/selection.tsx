@@ -381,17 +381,22 @@ class SelectionProvider extends React.Component<Props, {}> {
 		ids = [ ...new Set(ids) ];
 		this.lastIds = ids;
 		
-		node.find('.block.isSelected').removeClass('isSelected');
+		console.log(ids);
 		
 		for (let id of ids) {
 			id = $.escapeSelector(id);
 			
 			let block = node.find('#block-' + id);
+			if (block.hasClass('no-select')) {
+				continue;
+			};
 			
 			block.addClass('isSelected');
-			block.find('.children.c' + id + ' .selectable').removeClass('isSelected');
-			node.find('.selectable.c' + id).addClass('isSelected');
+			block.find('.selectable.c' + id).addClass('isSelected');
+			block.find('.children.c' + id + ' .block').addClass('isSelected no-select');
 		};
+		
+		node.find('.no-select').removeClass('no-select');
 	};
 	
 	get (withChildren?: boolean): string[] {
