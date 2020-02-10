@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragLayer } from 'ts/component';
 import { I, C, focus } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props {
-	blockStore?: any;
 	dataset?: any;
 	rootId: string;
 };
@@ -14,7 +14,6 @@ interface Props {
 const $ = require('jquery');
 const THROTTLE = 20;
 
-@inject('blockStore')
 @observer
 class DragProvider extends React.Component<Props, {}> {
 	
@@ -45,7 +44,7 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDragStart (e: any, type: string, ids: string[], component: any) {
-		const { blockStore, rootId, dataset } = this.props;
+		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
 		const { blocks } = blockStore;
 		const win = $(window);
@@ -98,7 +97,7 @@ class DragProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blockStore, rootId, dataset } = this.props;
+		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
 		const { blocks, root } = blockStore;
 		const target = blocks[rootId].find((it: any) => { return it.id == targetId; });

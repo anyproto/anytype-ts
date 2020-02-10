@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
@@ -13,7 +14,6 @@ const { ipcRenderer } = window.require('electron');
 const Url = require('json/url.json');
 const Constant = require('json/constant.json');
 
-@inject('authStore')
 @observer
 class MenuHelp extends React.Component<Props, {}> {
 	
@@ -41,7 +41,7 @@ class MenuHelp extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { authStore, history } = this.props;
+		const { history } = this.props;
 		const { account } = authStore;
 		
 		commonStore.menuClose(this.props.id);

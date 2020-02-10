@@ -2,17 +2,15 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
 
 interface Props extends I.Block, RouteComponentProps<any> {
-	blockStore?: any;
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
 };
 
-@inject('blockStore')
 @observer
 class ListChildren extends React.Component<Props, {}> {
 	
@@ -22,6 +20,10 @@ class ListChildren extends React.Component<Props, {}> {
 		const { onMouseMove, onMouseLeave, onResizeStart, childBlocks, id, type, content } = this.props;
 		const { style } = content;
 		const length = childBlocks.length;
+		
+		if (!length) {
+			return null;
+		};
 		
 		let ColResize: any = (): any => null;
 		let cn = [ 'children', 'c' + id ];
@@ -60,7 +62,7 @@ class ListChildren extends React.Component<Props, {}> {
 					
 					return (
 						<React.Fragment key={item.id}>
-							{i > 0 ? <ColResize index={i} /> : ''}
+							{(i > 0) && (style == I.LayoutStyle.Row) ? <ColResize index={i} /> : ''}
 							<Block ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} cnt={length} css={css} className={cn.join(' ')} index={i} />
 						</React.Fragment>
 					);

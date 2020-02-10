@@ -2,12 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
 import { I, C, DataUtil, focus } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.BlockFile {
 	dataset?: any;
-	commonStore?: any;
-	blockStore?: any;
 	width?: any;
 	rootId: string;
 };
@@ -16,8 +15,6 @@ const $ = require('jquery');
 const fs = window.require('fs');
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class BlockImage extends React.Component<Props, {}> {
 
@@ -37,7 +34,7 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { commonStore, content, fields, id } = this.props;
+		const { content, fields, id } = this.props;
 		const { width } = fields;
 		const { state } = content;
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
@@ -166,8 +163,6 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { commonStore } = this.props;
-		
 		commonStore.popupOpen('preview', {
 			data: {
 				type: I.FileType.Image,
@@ -186,7 +181,7 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onMenuClick (e: any) {
-		const { commonStore, dataset, id, rootId } = this.props;
+		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -209,7 +204,7 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	getUrl () {
-		const { commonStore, content } = this.props;
+		const { content } = this.props;
 		const { state, hash } = content;
 		
 		return commonStore.imageUrl(hash, Constant.size.image);

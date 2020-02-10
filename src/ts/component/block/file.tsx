@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
 import { I, C, Util } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore, blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.BlockFile {
 	commonStore?: any;
@@ -12,8 +13,6 @@ interface Props extends I.BlockFile {
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class BlockFile extends React.Component<Props, {}> {
 
@@ -93,7 +92,7 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 	
 	onOpen (e: any) {
-		const { commonStore, content } = this.props;
+		const { content } = this.props;
 		const { hash } = content;
 		const icon = this.getIcon();
 		
@@ -110,7 +109,7 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 	
 	onDownload (e: any) {
-		const { commonStore, content } = this.props;
+		const { content } = this.props;
 		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 	};
 	

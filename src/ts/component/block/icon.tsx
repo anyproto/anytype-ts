@@ -1,18 +1,15 @@
 import * as React from 'react';
 import { Smile } from 'ts/component';
 import { I, C } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.BlockIcon {
-	commonStore?: any;
-	blockStore?: any;
 	rootId: string;
 };
 
 const com = require('proto/commands.js');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class BlockIcon extends React.Component<Props, {}> {
 
@@ -23,7 +20,7 @@ class BlockIcon extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { commonStore, blockStore, rootId, id, content } = this.props;
+		const { id, content } = this.props;
 		const { name } = content;
 
 		return (

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import CellText from './text';
 import CellDate from './date';
@@ -10,11 +11,8 @@ import CellMultiple from './multiple';
 import CellBool from './bool';
 import CellAccount from './account';
 
-interface Props extends I.Cell {
-	commonStore?: any;
-};
+interface Props extends I.Cell {};
 
-@inject('commonStore')
 @observer
 class Cell extends React.Component<Props, {}> {
 	
@@ -72,7 +70,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 	
 	onClick () {
-		const { commonStore, id, property, data } = this.props;
+		const { id, property, data } = this.props;
 		const element = '#' + [ 'cell', property.id, id ].join('-');
 		
 		let param: any = { 

@@ -2,7 +2,8 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile, DropTarget } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { authStore, commonStore, blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -14,9 +15,6 @@ interface Props extends RouteComponentProps<any> {
 
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
-@inject('authStore')
-@inject('blockStore')
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
 
@@ -33,7 +31,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { authStore, blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { breadcrumbs, blocks } = blockStore;
 		const { account } = authStore;
 		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
@@ -82,7 +80,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onHome (e: any) {
-		const { blockStore } = this.props;
 		const { breadcrumbs } = blockStore;
 		
 		C.BlockCutBreadcrumbs(breadcrumbs, 0, (message: any) => {
@@ -93,7 +90,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onPath (e: any, block: any) {
 		e.persist();
 		
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
 		const { content } = block;
 		const { targetBlockId } = content;
@@ -106,7 +103,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onBack (e: any) {
-		const { blockStore } = this.props;
 		const { breadcrumbs, blocks } = blockStore;
 		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
 		
@@ -126,7 +122,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onMore (e: any) {
-		const { commonStore, rootId } = this.props;
+		const { rootId } = this.props;
 		
 		commonStore.menuOpen('blockMore', { 
 			element: '#button-' + rootId + '-more',

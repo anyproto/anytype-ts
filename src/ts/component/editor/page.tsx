@@ -2,13 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon } from 'ts/component';
+import { commonStore, blockStore } from 'ts/store';
 import { I, C, Key, Util, DataUtil, Mark, dispatcher, focus, keyboard } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
 interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	blockStore?: any;
 	dataset?: any;
 	rootId: string;
 	addOffsetX: number;
@@ -21,8 +20,6 @@ const $ = require('jquery');
 const raf = require('raf');
 const THROTTLE = 20;
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class EditorPage extends React.Component<Props, {}> {
 
@@ -48,7 +45,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { blocks } = blockStore;
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		
@@ -79,7 +76,7 @@ class EditorPage extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { blocks } = blockStore; 
 		const win = $(window);
 		
@@ -127,7 +124,7 @@ class EditorPage extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		
 		keyboard.disableBack(false);
 		this.unbind();
@@ -136,7 +133,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	open () {
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { blocks, breadcrumbs } = blockStore;
 		
 		if (this.id == rootId) {
@@ -161,7 +158,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.close(this.id);
 		this.id = rootId;
 		C.BlockOpen(this.id, bc, (message: any) => {
-			const { blockStore, rootId } = this.props;
+			const { rootId } = this.props;
 			const { blocks } = blockStore;
 			const { focused, range } = focus;
 			
@@ -186,8 +183,6 @@ class EditorPage extends React.Component<Props, {}> {
 		if (!id) {
 			return;
 		};
-		
-		const { blockStore } = this.props;
 		
 		C.BlockClose(id, [], (message: any) => {
 			blockStore.blocksClear(id);
@@ -233,7 +228,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { commonStore, blockStore, addOffsetX, rootId } = this.props;
+		const { addOffsetX, rootId } = this.props;
 		const { blocks } = blockStore;
 		
 		const win = $(window);
@@ -308,7 +303,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDownEditor (e: any) {
-		const { dataset, commonStore, blockStore, rootId } = this.props;
+		const { dataset, rootId } = this.props;
 		const { root, blocks } = blockStore;
 		const { selection } = dataset;
 		const { focused } = focus;
@@ -373,7 +368,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
-		const { blockStore, commonStore, dataset, rootId } = this.props;
+		const { dataset, rootId } = this.props;
 		const { focused, range } = focus;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
@@ -610,7 +605,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	selectAll () {
-		const { blockStore, commonStore, dataset, rootId } = this.props;
+		const { dataset, rootId } = this.props;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		
@@ -626,7 +621,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blockStore, commonStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == this.hoverId; });
 		const node = $(ReactDOM.findDOMNode(this));
@@ -646,7 +641,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onMenuAdd (id: string) {
-		const { blockStore, commonStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 		const { type, content } = block;
@@ -750,7 +745,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onCopy (e: any) {
-		const { blockStore, dataset, rootId } = this.props;
+		const { dataset, rootId } = this.props;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		const ids = selection.get(true);
@@ -786,7 +781,7 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	// Recursevily get parent layout blocks
 	getCopyLayoutBlockList (ids: string[]) {
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { blocks } = blockStore;
 		
 		if (!ids.length) {
@@ -831,7 +826,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, focused.id, position, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
@@ -844,7 +839,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockCreatePage (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
-		const { commonStore, blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		C.BlockCreatePage(param, rootId, focused.id, position, (message: any) => {
@@ -857,7 +852,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockMerge (focused: I.Block) {
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const next = blockStore.getNextBlock(rootId, focused.id, -1, (item: any) => {
 			return item.type == I.BlockType.Text;
 		});
@@ -885,7 +880,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	blockRemove (focused?: I.Block) {
-		const { commonStore, blockStore, rootId, dataset } = this.props;
+		const { rootId, dataset } = this.props;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		

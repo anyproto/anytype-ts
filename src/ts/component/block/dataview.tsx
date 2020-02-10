@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import Controls from './dataview/controls';
 
@@ -11,16 +12,12 @@ import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
 interface Props extends I.BlockDataview {
-	commonStore?: any;
-	blockStore?: any;
 	rootId: string;
 };
 interface State {
 	view: string;
 };
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class BlockDataview extends React.Component<Props, State> {
 
@@ -35,7 +32,7 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { commonStore, blockStore, id, rootId, content } = this.props;
+		const { id, rootId, content } = this.props;
 		const { views, data, properties } = content;
 		const view = this.state.view || content.view;
 		const viewItem = views.find((item: any) => { return item.id == view; });

@@ -1,7 +1,7 @@
 export enum ImageSize { Large, Small, Thumb };
 
 export interface Avatar {
-	image: Image;
+	image?: Image;
 };
 
 export interface Image {
@@ -13,7 +13,7 @@ export interface Account {
 	id: string;
 	name: string;
 	color?: string;
-	avatar?: Image;
+	avatar?: Avatar;
 };
 
 export enum DragItem {

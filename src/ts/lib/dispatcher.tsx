@@ -65,6 +65,8 @@ class Dispatcher {
 					break;
 					
 				case 'blockShow':
+					console.log('Block cnt', data.blocks.length);
+					
 					blocks = data.blocks.map((it: any) => {
 						return blockStore.prepareBlockFromProto(it);
 					});

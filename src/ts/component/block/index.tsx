@@ -55,7 +55,7 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, type, fields, content, index, cnt, css, className } = this.props;
+		const { id, rootId, childrenIds, type, fields, content, index, cnt, css, className } = this.props;
 		const { style } = content || {};
 		
 		let canSelect = true;
@@ -170,7 +170,7 @@ class Block extends React.Component<Props, {}> {
 						</React.Fragment>
 					): ''}
 					
-					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
+					{childrenIds.length ? <ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} /> : ''}
 				</div>
 			</div>
 		);

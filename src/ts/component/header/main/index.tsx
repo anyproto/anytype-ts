@@ -1,18 +1,11 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { observer, inject } from 'mobx-react';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { I, Util, DataUtil } from 'ts/lib';
 
-interface Props {
-	commonStore?: any;
-	blockStore?: any;
-};
+interface Props {};
 
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
-@inject('blockStore')
-@observer
 class HeaderMainIndex extends React.Component<Props, {}> {
 	
 	constructor (props: any) {

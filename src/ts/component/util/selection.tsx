@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
 import { I, C, Key, focus, keyboard } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
+import { blockStore } from 'ts/store';
 import { throttle } from 'lodash';
 
 interface Props {
-	blockStore?: any;
 	className?: string;
 	container: string;
 	rootId: string;
@@ -16,7 +16,6 @@ const $ = require('jquery');
 const THROTTLE = 20;
 const THRESHOLD = 10;
 
-@inject('blockStore')
 @observer
 class SelectionProvider extends React.Component<Props, {}> {
 
@@ -81,7 +80,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return
 		};
 		
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const k = e.which;
 		
 		let ids: any = this.get();

@@ -2,13 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Block } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 const $ = require('jquery');
 const raf = require('raf');
 
 interface Props {
-	blockStore?: any;
 	rootId: string;
 };
 
@@ -18,7 +18,6 @@ interface State {
 	ids: string[];
 };
 
-@inject('blockStore')
 @observer
 class DragLayer extends React.Component<Props, State> {
 	
@@ -44,7 +43,7 @@ class DragLayer extends React.Component<Props, State> {
 			return null;
 		};
 		
-		const { blockStore, rootId } = this.props;
+		const { rootId } = this.props;
 		const { blocks } = blockStore;
 		const map = blockStore.getMap(blocks[rootId] || []);
 		
@@ -55,7 +54,7 @@ class DragLayer extends React.Component<Props, State> {
 					<div className="blocks">
 						{ids.map((id: string, i: number) => {
 							const block = map[id] || {};
-							
+
 							return <Block key={id} {...block} rootId={rootId} index={i} />
 						})}
 					</div>

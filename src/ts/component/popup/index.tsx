@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -14,11 +13,8 @@ import PopupEditorPage from './editor/page';
 
 interface Props extends I.Popup {
 	history: any;
-	commonStore?: any;
 };
 
-@inject('commonStore')
-@observer
 class Popup extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;

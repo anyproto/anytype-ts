@@ -2,20 +2,17 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Label } from 'ts/component';
 import { Util } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props {
-	commonStore?: any;
-};
+interface Props {};
 
 const $ = require('jquery');
 
-@inject('commonStore')
 @observer
 class Progress extends React.Component<Props, {}> {
 	
 	render () {
-		const { commonStore } = this.props;
 		const { progress } = commonStore;
 		const { status, current, total } = progress;
 		
@@ -36,7 +33,6 @@ class Progress extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { commonStore } = this.props;
 		const { progress } = commonStore;
 		const { status, current, total } = progress;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -45,10 +41,7 @@ class Progress extends React.Component<Props, {}> {
 		
 		if (total && (current >= total)) {
 			node.addClass('hide');
-			
-			setTimeout(() => {
-				commonStore.progressClear();
-			}, 200);
+			setTimeout(() => { commonStore.progressClear(); }, 200);
 		};
 	};
 	

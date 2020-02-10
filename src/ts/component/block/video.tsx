@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { InputWithFile, Icon, Loader, Error } from 'ts/component';
 import { I, C } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.BlockFile {
 	rootId: string;
-	commonStore?: any;
-	blockStore?: any;
 };
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class BlockVideo extends React.Component<Props, {}> {
 
@@ -24,7 +21,7 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { commonStore, content } = this.props;
+		const { content } = this.props;
 		const { state, hash } = content;
 		const accept = [ 'mp4', 'm4v' ];
 		

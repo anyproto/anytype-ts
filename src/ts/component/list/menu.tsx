@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Menu, Dimmer } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import { I } from 'ts/lib';
 
 interface Props {
 	history: any;
-	commonStore?: any;
 };
 
-@inject('commonStore')
 @observer
 class ListMenu extends React.Component<Props, {}> {
 
@@ -19,7 +18,7 @@ class ListMenu extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { history, commonStore } = this.props;
+		const { history } = this.props;
 		const { menus } = commonStore;
 		
 		return (
@@ -33,7 +32,6 @@ class ListMenu extends React.Component<Props, {}> {
 	};
 	
 	onClose () {
-		const { commonStore } = this.props;
 		commonStore.menuCloseAll();
 	};
 	
