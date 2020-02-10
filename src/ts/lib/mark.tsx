@@ -133,7 +133,8 @@ class Mark {
 	};
 	
 	checkRanges (text: string, marks: I.Mark[]) {
-		marks = marks || [];
+		marks = (marks || []).sort(this.sort);
+		
 		for (let i = 0; i < marks.length; ++i) {
 			let mark = marks[i];
 			let prev = marks[(i - 1)];

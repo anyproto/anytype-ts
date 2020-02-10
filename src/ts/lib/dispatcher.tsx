@@ -102,7 +102,9 @@ class Dispatcher {
 						return;
 					};
 					
-					block.fields = StructDecode.decodeStruct(data.fields);
+					if (null !== data.fields) {
+						block.fields = StructDecode.decodeStruct(data.fields);
+					};
 					break;
 					
 				case 'blockSetLink':
@@ -111,17 +113,11 @@ class Dispatcher {
 						return;
 					};
 					
-					param = {
-						content: Util.objectCopy(block.content),
-					};
-					
 					if (null !== data.fields) {
-						param.content.fields = StructDecode.decodeStruct(data.fields.value);
-						param.content.fields.name = String(param.content.fields.name || Constant.default.name);
-						param.content.fields.icon = String(param.content.fields.icon || Constant.default.icon);
+						block.content.fields = StructDecode.decodeStruct(data.fields.value);
+						block.content.fields.name = String(param.content.fields.name || Constant.default.name);
+						block.content.fields.icon = String(param.content.fields.icon || Constant.default.icon);
 					};
-					
-					block.content = param.content;
 					break;
 					
 				case 'blockSetText':
@@ -130,12 +126,8 @@ class Dispatcher {
 						return;
 					};
 					
-					param = {
-						content: Util.objectCopy(block.content),
-					};
-					
 					if (null !== data.text) {
-						param.content.text = String(data.text.value || '');
+						block.content.text = String(data.text.value || '');
 					};
 					
 					if (null !== data.marks) {
@@ -150,26 +142,24 @@ class Dispatcher {
 								}
 							});
 						};
-						param.content.marks = marks;
+						block.content.marks = marks;
 					};
 					
 					if (null !== data.style) {
-						param.content.style = Number(data.style.value) || 0;
+						block.content.style = Number(data.style.value) || 0;
 					};
 					
 					if (null !== data.checked) {
-						param.content.checked = Boolean(data.checked.value);
+						block.content.checked = Boolean(data.checked.value);
 					};
 					
 					if (null !== data.color) {
-						param.content.color = String(data.color.value || '');
+						block.content.color = String(data.color.value || '');
 					};
 					
 					if (null !== data.backgroundColor) {
-						param.content.bgColor = String(data.backgroundColor.value || '');
+						block.content.bgColor = String(data.backgroundColor.value || '');
 					};
-					
-					block.content = param.content;
 					break;
 					
 				case 'blockSetFile':
@@ -178,35 +168,29 @@ class Dispatcher {
 						return;
 					};
 					
-					param = {
-						content: Util.objectCopy(block.content),
-					};
-					
 					if (null !== data.name) {
-						param.content.name = String(data.name.value || '');
+						block.content.name = String(data.name.value || '');
 					};
 					
 					if (null !== data.hash) {
-						param.content.hash = String(data.hash.value || '');
+						block.content.hash = String(data.hash.value || '');
 					};
 					
 					if (null !== data.mime) {
-						param.content.mime = String(data.mime.value || '');
+						block.content.mime = String(data.mime.value || '');
 					};
 					
 					if (null !== data.size) {
-						param.content.size = Number(data.size.value) || 0;
+						block.content.size = Number(data.size.value) || 0;
 					};
 					
 					if (null !== data.type) {
-						param.content.type = Number(data.type.value) || 0;
+						block.content.type = Number(data.type.value) || 0;
 					};
 					
 					if (null !== data.state) {
-						param.content.state = Number(data.state.value) || 0;
+						block.content.state = Number(data.state.value) || 0;
 					};
-					
-					block.content = param.content;
 					break;
 					
 				case 'blockDelete':

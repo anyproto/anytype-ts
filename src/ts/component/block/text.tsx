@@ -467,6 +467,7 @@ class BlockText extends React.Component<Props, {}> {
 	onBlur (e: any) {
 		const { onBlur, content } = this.props;
 		
+		window.clearTimeout(this.timeoutKeyUp);
 		this.blockSetText(this.marks);
 		this.placeHolderHide();
 		keyboard.setFocus(false);

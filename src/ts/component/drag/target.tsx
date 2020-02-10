@@ -85,7 +85,7 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		let rect = {
 			x: x + width * 0.15,
-			y: y + height * 0.3,
+			y: y + height * 0,
 			width: x + width * 0.60,
 			height: y + height * 0.7
 		};
@@ -110,7 +110,7 @@ class DropTarget extends React.Component<Props, {}> {
 		this.position = I.BlockPosition.None;
 		
 		if ((ey >= y) && (ey <= rect.y)) {
-			this.position = I.BlockPosition.Top;
+			//this.position = I.BlockPosition.Top;
 		} else 
 		if ((ey >= rect.height) && (ey <= y + height)) {
 			this.position = I.BlockPosition.Bottom;
