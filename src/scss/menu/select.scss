@@ -3,7 +3,10 @@
 .menus {
 	.menu.menuSelect {
 		.content { max-height: 200px; }
+		
 		.item { padding: 2px 12px; }
+		.item:hover { background: #f3f2ec; }
+		
 		.name { font-size: 13px; }
 	}
 }

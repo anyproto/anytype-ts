@@ -82,6 +82,10 @@ class BlockText extends React.Component<Props, {}> {
 		);
 		
 		switch (style) {
+			case I.TextStyle.Title:
+				placeHolder = Constant.default.name;
+				break;
+				
 			case I.TextStyle.Quote:
 				additional = (
 					<div className="line" />
@@ -168,7 +172,7 @@ class BlockText extends React.Component<Props, {}> {
 		let { text, style, color, bgColor, number } = content;
 		
 		text = String(v || text || '');
-		if ((style == I.TextStyle.Title) && (text == Constant.defaultName)) {
+		if ((style == I.TextStyle.Title) && (text == Constant.default.name)) {
 			text = '';
 		};
 		
@@ -217,7 +221,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { commonStore, blockStore, onKeyDown, id, parentId, rootId, content } = this.props;
+		const { commonStore, blockStore, onKeyDown, onMenuAdd, id, parentId, rootId, content } = this.props;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -262,12 +266,16 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if ((k == Key.enter) && !e.shiftKey) {
-			this.blockUpdateText(this.marks);
+			this.blockSetText(this.marks);
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
 			commonStore.menuClose('blockAddSub');
 			commonStore.menuClose('blockAdd');
+		};
+		
+		if (!value && (k == Key.slash)) {
+			onMenuAdd(id);
 		};
 		
 		focus.set(id, range);
@@ -288,15 +296,8 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let cmdParsed = false;
 		
-		// Open menu
-		if ((value.match(/^\//)) && (style != I.TextStyle.Title)) {
-			e.preventDefault();
-			
+		if (commonStore.menuIsOpen('blockAdd')) {
 			commonStore.filterSet(value);
-			if (!commonStore.menuIsOpen('blockAdd')) {
-				this.props.onMenuAdd(id);
-			};
-			return;
 		};
 		
 		// Make div
@@ -417,41 +418,49 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
+		if (k == Key.backspace) {
+			commonStore.menuClose('blockContext');
+		};
+		
 		this.marks = this.getMarksFromHtml();
 		
 		this.placeHolderCheck();
 		onKeyUp(e, value, this.marks);
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.blockUpdateText(this.marks); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.blockSetText(this.marks); }, 500);
 	};
 	
-	blockUpdateText (newMarks: I.Mark[]) {
+	blockSetText (marks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const value = this.getValue();
 		const text = String(content.text || '');
-
-		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(newMarks))) {
+		
+		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
 			return;
 		};
 		
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
-		
-		DataUtil.blockSetText(rootId, block, value, newMarks);
+		DataUtil.blockSetText(rootId, block, value, marks);
 	};
 	
-	blockUpdateMarks (newMarks: I.Mark[]) {
+	blockSetMarks (marks: I.Mark[]) {
 		const { blockStore, id, rootId, content } = this.props;
 		const { blocks } = blockStore;
-		const { text } = content;
+		const text = String(content.text || '');
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
 		
-		DataUtil.blockSetText(rootId, block, text, newMarks);
+		DataUtil.blockSetText(rootId, block, text, marks);
 	};
 	
 	onFocus (e: any) {
-		const { onFocus } = this.props;
+		const { commonStore, onFocus } = this.props;
+		const value = this.getValue();
+		
+		if (value.match(/^\//)) {
+			commonStore.filterSet(value);
+		};
 		
 		this.placeHolderCheck();
 		keyboard.setFocus(true);
@@ -461,7 +470,7 @@ class BlockText extends React.Component<Props, {}> {
 	onBlur (e: any) {
 		const { commonStore, onBlur, content } = this.props;
 		
-		this.blockUpdateText(this.marks);
+		this.blockSetText(this.marks);
 		this.placeHolderHide();
 		keyboard.setFocus(false);
 		onBlur(e);
@@ -498,8 +507,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { commonStore, id, rootId, content, dataset } = this.props;
-		const { selection } = dataset;
+		const { commonStore, id, rootId, content } = this.props;
 		const { from, to } = focus.range;
 		const { style } = content;
 		
@@ -513,23 +521,16 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 			
-		let ids = [];
-		if (selection) {
-			ids = selection.get();
-		};
-		if (!ids.length) {
-			ids = [ id ];
-		};
-			
 		const node = $(ReactDOM.findDOMNode(this));
 		const offset = node.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
 		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
-			
-		commonStore.menuOpen('blockContext', { 
-			element: 'block-' + id,
+		
+		commonStore.menuClose('blockAdd');
+		commonStore.menuOpen('blockContext', {
+			element: '#block-' + id,
 			type: I.MenuType.Horizontal,
 			offsetX: x,
 			offsetY: -y,
@@ -537,12 +538,12 @@ class BlockText extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				blockId: id,
-				blockIds: ids,
+				blockIds: [ id ],
 				rootId: rootId,
 				onChange: (marks: I.Mark[]) => {
 					this.marks = Util.objectCopy(marks);
-					focus.set(id, { from: currentTo, to: currentTo });
-					this.blockUpdateMarks(this.marks);
+					focus.set(id, { from: currentFrom, to: currentTo });
+					this.blockSetMarks(marks);
 				},
 			},
 		});

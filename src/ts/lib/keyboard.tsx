@@ -1,4 +1,4 @@
-import { I, C, Util, Storage } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -10,6 +10,7 @@ class Keyboard {
 	focus: boolean = false;
 	resize: boolean = false;
 	back: boolean = true;
+	mouse: boolean = true;
 	timeoutPin: number = 0;
 	
 	init (history: any) {
@@ -47,25 +48,7 @@ class Keyboard {
 			// Create new page
 			if (k == Key.n) {
 				e.preventDefault();
-				commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-		
-				const block = {
-					type: I.BlockType.Page,
-					fields: { 
-						icon: Util.randomSmile(), 
-						name: Constant.defaultName,
-					},
-					content: {
-						style: I.PageStyle.Empty,
-					},
-				};
-		
-				C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
-					commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-					commonStore.popupOpen('editorPage', {
-						data: { id: message.targetId }
-					});
-				});
+				DataUtil.pageCreate(e, { history: this.history }, Util.randomSmile(), Constant.default.name);
 			};
 		};
 		
@@ -100,6 +83,10 @@ class Keyboard {
 	
 	disableBack (v: boolean) {
 		this.back = !v;
+	};
+	
+	disableMouse (v: boolean) {
+		this.mouse = !v;
 	};
 	
 	isArrow (k: number): boolean {

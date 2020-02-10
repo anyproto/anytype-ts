@@ -4,7 +4,7 @@ import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader } from './component';
 import { commonStore, authStore, blockStore } from './store';
-import { dispatcher, keyboard, Storage } from 'ts/lib';
+import { C, dispatcher, keyboard, Storage } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -64,11 +64,8 @@ import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/select.scss';
 
-import 'scss/menu/block/action.scss';
-import 'scss/menu/block/style.scss';
 import 'scss/menu/block/context.scss';
-import 'scss/menu/block/add.scss';
-import 'scss/menu/block/color.scss';
+import 'scss/menu/block/common.scss';
 import 'scss/menu/block/icon.scss';
 
 import 'scss/menu/dataview/sort.scss';
@@ -138,11 +135,14 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
+		C.VersionGet();
+		
 		const win = $(window);
 		const phrase = Storage.get('phrase');
 		const html = $('html');
 		
-		let debug = Boolean(Storage.get('debug'));
+		let debugUI = Boolean(Storage.get('debugUI'));
+		let debugMW = Boolean(Storage.get('debugMW'));
 		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
@@ -156,11 +156,17 @@ class App extends React.Component<Props, State> {
 			};
 		});
 		
-		debug ? html.addClass('debug') : html.removeClass('debug');
-		ipcRenderer.on('toggleDebug', (e: any) => {
-			debug = !debug;
-			debug ? html.addClass('debug') : html.removeClass('debug');
-			Storage.set('debug', Number(debug));
+		debugUI ? html.addClass('debug') : html.removeClass('debug');
+		
+		ipcRenderer.on('toggleDebugUI', (e: any) => {
+			debugUI = !debugUI;
+			debugUI ? html.addClass('debug') : html.removeClass('debug');
+			Storage.set('debugUI', Number(debugUI));
+		});
+		
+		ipcRenderer.on('toggleDebugMW', (e: any) => {
+			debugMW = !debugMW;
+			Storage.set('debugMW', Number(debugMW));
 		});
 		
 		ipcRenderer.on('help', (e: any) => {
@@ -169,6 +175,7 @@ class App extends React.Component<Props, State> {
 		
 		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
 			keyboard.setPinCheck();
+			keyboard.disableMouse(false);
 		}, THROTTLE));
 	};
 	

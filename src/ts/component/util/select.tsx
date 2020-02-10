@@ -106,7 +106,7 @@ class Select extends React.Component<Props, State> {
 		this.hide();
 		
 		commonStore.menuOpen('select', { 
-			element: 'select-' + id,
+			element: '#select-' + id,
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 4,

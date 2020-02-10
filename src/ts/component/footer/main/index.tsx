@@ -31,7 +31,7 @@ class FooterMainIndex extends React.Component<Props, {}> {
 		const { commonStore } = this.props;
 		
 		commonStore.menuOpen('help', { 
-			element: 'button-help',
+			element: '#button-help',
 			offsetY: 4,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right

@@ -24,14 +24,10 @@ class Mark {
 		let map = Util.map(marks, 'type');
 		let type = mark.type;
 		let ret: I.Mark[] = [] as I.Mark[];
-		
-		if (!map[type] || !map[type].length) {
-			map[type] = [];
-		};
-		
-		map[type].slice().sort(this.sort);
-		
 		let add = true;
+		
+		map[type] = map[type] || [];
+		map[type].slice().sort(this.sort);
 		
 		for (let i = 0; i < map[type].length; ++i) {
 			let del = false;
@@ -114,11 +110,9 @@ class Mark {
 	
 	move (marks: I.Mark[], start: number, diff: number) {
 		marks = marks || [];
-		
 		for (let mark of marks) {
 			if ((mark.range.from < start && mark.range.to >= start) || (!start && !mark.range.from)) {
 				mark.range.to += diff;
-				console.log('Move', mark.param, mark.range.to);
 			} else
 			if (mark.range.from >= start) {
 				mark.range.from += diff;
@@ -201,10 +195,9 @@ class Mark {
 	
 	toHtml (text: string, marks: I.Mark[]) {
 		text = String(text || '');
-		marks = this.checkRanges(text, marks || []);
+		marks = this.checkRanges(text, marks || []).sort(this.sort);
 		
 		let r = text.split('');
-		
 		for (let mark of marks) {
 			let t = Tags[mark.type];
 			let attr = this.paramToAttr(mark.type, mark.param);
@@ -221,39 +214,48 @@ class Mark {
 		return r.join('');
 	};
 	
-	fromHtml (html: string): I.Mark[] {
-		const rs = new RegExp('<(' + Tags.join('|') + ')(:?([^>]+)>|>)', 'ig');
-		const rt = new RegExp('<(' + Tags.join('|') + ')', 'i');
-		const re = new RegExp('</(' + Tags.join('|') + ')>', 'ig');
-		const m = html.match(rs);
+	fromHtml (html: string): any[] {
+		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]+)>|>)', 'ig');
+		const rp = new RegExp('^[^"]*"([^"]*)"$', 'i');
 		
-		let marks = [] as I.Mark[];
+		html = html.replace(/&nbsp;/g, ' ');
+
+		let text = html;
+		let marks: any[] = [];
+
+		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
+			p1 = String(p1 || '').trim();
+			p2 = String(p2 || '').trim();
+			p3 = String(p3 || '').trim();
+
+			let end = p1 == '/';			
+			let offset = Number(text.indexOf(s)) || 0;
+			let type = Tags.indexOf(p2)
+
+			if (end) {
+				for (let i = 0; i < marks.length; ++i) {
+					let m = marks[i];
+					if ((m.type == type) && !m.range.to) {
+						marks[i].range.to = offset;
+						break;
+					};
+				};
+			} else {
+				let pm = p3.match(rp);
+				let param = pm ? pm[1]: '';
+				
+				param = param.replace('textColor textColor-', '').replace('bgColor bgColor-', '');
+				marks.push({
+					type: type,
+					range: { from: offset, to: 0 },
+					param: param,
+				});
+			};
+
+			text = text.replace(s, '');
+			return '';
+		});
 		
-		if (!m) {
-			return marks;
-		};
-		
-		for (let s of m) {
-			let t = s.match(rt)[1];
-			let a = s.match(new RegExp('<' + t + '\\s([^>]+)>', 'i'));
-			
-			let end = '</' + t + '>';
-			let o1 = html.indexOf(s);
-			
-			html = html.replace(s, '');
-			
-			let o2 = html.indexOf(end);
-			html = html.replace(end, '');
-			
-			marks.push({
-				type: Tags.indexOf(t),
-				range: {
-					from: Number(o1) || 0,
-					to: Number(o2) || 0,
-				},
-				param: this.attrToParam(a ? a[1] : ''),
-			});
-		};
 		return marks;
 	};
 	
@@ -279,16 +281,6 @@ class Mark {
 		};
 		
 		return attr;
-	};
-	
-	attrToParam (attr: string): string {
-		attr = String(attr || '').trim();
-		
-		let m = attr.match(/(:?href|class)="([^"]+)"/);
-		if (!m) {
-			return '';
-		};
-		return m[2].replace('textColor textColor-', '').replace('bgColor bgColor-', '');
 	};
 	
 	overlap (a: I.TextRange, b: I.TextRange): Overlap {

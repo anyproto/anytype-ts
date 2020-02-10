@@ -14,6 +14,7 @@ interface Props {
 
 interface State {
 	type: string;
+	width: number;
 	ids: string[];
 };
 
@@ -24,6 +25,7 @@ class DragLayer extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	state = {
 		type: '',
+		width: 0,
 		ids: [] as string[]
 	};
 	
@@ -36,13 +38,17 @@ class DragLayer extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { ids, type, width } = this.state;
+		
+		if (!type) {
+			return null;
+		};
+		
 		const { blockStore, rootId } = this.props;
 		const { blocks } = blockStore;
-		const { ids, type } = this.state;
 		const map = blockStore.getMap(blocks[rootId] || []);
 		
 		let content = null;
-		
 		switch (type) {
 			case I.DragItem.Block:
 				content = (
@@ -58,7 +64,7 @@ class DragLayer extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className="dragLayer">
+			<div className="dragLayer" style={{ width: width }}>
 				{content}
 			</div>
 		);
@@ -78,21 +84,19 @@ class DragLayer extends React.Component<Props, State> {
 		};
 		
 		const comp = $(ReactDOM.findDOMNode(component));
-		const node = $(ReactDOM.findDOMNode(this));
 		const rect = comp.get(0).getBoundingClientRect() as DOMRect;
 		
-		node.removeClass('show').css({ width: rect.width });
-		this.setState({ type: type, ids: ids });
+		this.setState({ type: type, width: rect.width, ids: ids });
 	};
 	
 	hide () {
 		if (!this._isMounted) {
 			return;
 		};
-			
-		let node = $(ReactDOM.findDOMNode(this));
-		node.removeClass('show');
 		
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.css({ left: '', top: '' });
 		this.setState({ type: '', ids: [] });
 	};
 	
@@ -103,11 +107,9 @@ class DragLayer extends React.Component<Props, State> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
+			const css = x && y ? { left: 0, top: 0, transform: `translate3d(${x + 10}px, ${y + 10}px, 0px)` } : { left: '', top: '' };
 			
-			node.css({ transform: `translate3d(${x + 10}px, ${y + 10}px, 0px)` });
-			if (!node.hasClass('show')) {
-				node.addClass('show');
-			};
+			node.css(css);
 		});
 	};
 	

@@ -13,7 +13,7 @@ const Constant = require('json/constant.json');
 
 @inject('commonStore')
 @observer
-class MenuBlockColor extends React.Component<Props, {}> {
+class MenuBlockAlign extends React.Component<Props, {}> {
 	
 	n: number = 0;
 	
@@ -26,44 +26,12 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	render () {
 		const { commonStore, param } = this.props;
 		const { data } = param;
-		const { valueText, valueBg } = data;
-		const sections = this.getSections();
-		
-		let id = 0;
-		
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="name">{item.name}</div>
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						let icn: string[] = [ 'inner' ];
-						let cn = [];
-						if (action.isTextColor) {
-							icn.push('textColor textColor-' + action.value);
-							if (action.value == valueText) {
-								cn.push('active');
-							};
-						};
-						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + action.value);
-							if (action.value == valueBg) {
-								cn.push('active');
-							};
-						};
-						let inner = (
-							<div className={icn.join(' ')}>A</div>
-						);
-						
-						return <MenuItemVertical id={id++} key={i} {...action} icon="color" inner={inner} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
-					})}
-				</div>
-			</div>
-		);
+		const items = this.getItems();
 		
 		return (
 			<div>
-				{sections.map((section: any, i: number) => {
-					return <Section key={i} {...section} />;
+				{items.map((action: any, i: number) => {
+					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
 				})}
 			</div>
 		);
@@ -99,6 +67,10 @@ class MenuBlockColor extends React.Component<Props, {}> {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
 		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+	};
+	
+	getItems () {
+		return DataUtil.menuGetAlign();
 	};
 	
 	onKeyDown (e: any) {
@@ -145,24 +117,6 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		};
 	};
 	
-	getSections () {
-		let id = 0;
-		let sections = [
-			{ name: 'Text color', children: DataUtil.menuGetTextColors() },
-			{ name: 'Background color', children: DataUtil.menuGetBgColors() },
-		];
-		return sections;
-	};
-	
-	getItems () {
-		const sections = this.getSections();
-		let items: any[] = [];
-		for (let section of sections) {
-			items = items.concat(section.children);
-		};
-		return items;
-	};
-	
 	onOver (e: any, item: any) {
 		if (!keyboard.mouse) {
 			return;
@@ -173,19 +127,12 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { commonStore, param } = this.props;
 		const { data } = param;
-		const { onChangeText, onChangeBg } = data;
+		const { onChange } = data;
 		
 		commonStore.menuClose(this.props.id);
-		
-		if (item.isTextColor) {
-			onChangeText(item.value);
-		};
-		
-		if (item.isBgColor) {
-			onChangeBg(item.value);
-		};
+		onChange(item.id);
 	};
 	
 };
 
-export default MenuBlockColor;
+export default MenuBlockAlign;

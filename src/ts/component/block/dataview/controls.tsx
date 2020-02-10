@@ -123,7 +123,7 @@ class Controls extends React.Component<Props, {}> {
 		};
 		
 		commonStore.menuOpen(menu, { 
-			element: 'button-' + id,
+			element: '#button-' + id,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,

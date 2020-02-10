@@ -28,11 +28,7 @@ class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { blockStore, id, rootId, content } = this.props;
 		const { fields, isArchived } = content;
-		
-		let { icon, name } = fields || {};
-		
-		icon = icon || Constant.defaultIcon;
-		name = name || Constant.defaultName;
+		const { icon, name } = fields || {};
 		
 		return (
 			<div className={isArchived ? 'isArchived' : ''}>

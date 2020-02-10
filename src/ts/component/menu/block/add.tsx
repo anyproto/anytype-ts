@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Key, Util } from 'ts/lib';
+import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -31,7 +31,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	render () {
 		const { commonStore } = this.props;
-		const { filter } = commonStore; 
+		const { filter } = commonStore;
 		const options = this.getItems();
 		const sections = this.getSections();
 		
@@ -40,7 +40,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		);
 		
 		const Item = (item: any) => (
-			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 				{item.icon ? <Icon className={item.icon} inner={item.inner} /> : ''}
 				<div className="name">{item.name}</div>
 				{item.arrow ? <Icon className="arrow" /> : ''}
@@ -80,7 +80,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				{!options.length ? <div className="empty">No items match filter</div> : ''}
+				{!options.length ? <div className="item empty">No items match filter</div> : ''}
 				{filter ? (
 					<React.Fragment>
 						{sections.map((item: any, i: number) => (
@@ -154,17 +154,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = () => {
-		const node = $(ReactDOM.findDOMNode(this));
+	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		const item = items[this.n];
-		
-		if (!item) {
-			return;
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-			
-		node.find('.item.active').removeClass('active');
-		node.find('#item-' + item.id).addClass('active');
+		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -173,11 +168,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		e.stopPropagation();
+		keyboard.disableMouse(true);
 		
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const k = e.which;
-		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
@@ -193,7 +188,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -201,7 +196,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.right:
@@ -234,8 +229,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	getSections () {
-		const { commonStore } = this.props;
+		const { commonStore, blockStore, param } = this.props;
 		const { filter } = commonStore;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const { blocks } = blockStore;
+		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
 		
 		let sections: any[] = [
 			{ 
@@ -288,10 +287,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			let reg = new RegExp(filter, 'gi');
 			
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: this.getActions() },
-				//{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: [] },
-				{ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: this.getTextColors() },
-				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: this.getBgColors() },
+				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: DataUtil.menuGetActions(block) },
+				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: DataUtil.menuGetAlign() },
+				{ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() },
+				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: DataUtil.menuGetBgColors() },
 			]);
 			
 			sections = sections.filter((s: any) => {
@@ -314,6 +313,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		if (id) {
 			const item = options.find((it: any) => { return it.id == id; });
+			if (!item) {
+				return;
+			};
 			
 			options = item.children;
 			for (let i in options) {
@@ -339,67 +341,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		return options;
 	};
 	
-	getTextColors () {
-		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: 'black', isTextColor: true }
-		];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, isTextColor: true });
+	onMouseEnter (e: any, item: any) {
+		if (keyboard.mouse) {
+			this.onOver(e, item);
 		};
-		return items;
-	};
-	
-	getBgColors () {
-		let items: any[] = [];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
-		};
-		return items;
-	};
-	
-	getActions () {
-		const { blockStore, param } = this.props;
-		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
-		const { blocks } = blockStore;
-		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
-		
-		if (!block) {
-			return;
-		};
-		
-		const { content, type } = block;
-		const { style } = content;
-		
-		let items: any[] = [
-			//{ id: 'move', icon: 'move', name: 'Move to' },
-			//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-			{ id: 'remove', icon: 'remove', name: 'Delete' },
-			//{ id: 'comment', icon: 'comment', name: 'Comment' }
-		];
-		
-		// Restrictions
-		if (type == I.BlockType.File) {
-			let idx = items.findIndex((it: any) => { return it.id == 'remove'; });
-			items.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
-			//items.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
-			//items.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
-		};
-		
-		if (type != I.BlockType.Text) {
-			items = items.filter((it: any) => { return [ 'turn', 'color' ].indexOf(it.id) < 0; });
-		};
-		
-		if (style == I.TextStyle.Code) {
-			items = items.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
-		};
-		
-		items = items.map((it: any) => {
-			it.isAction = true;
-			return it;
-		});
-		
-		return items;
 	};
 	
 	onOver (e: any, item: any) {
@@ -407,19 +352,17 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onSelect } = data;
 		
+		this.setActive(item, false);
+		
 		if (!item.arrow || !commonStore.menuIsOpen('blockAdd')) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#block-add-item-' + item.id);
 		const offsetX = node.outerWidth() + 1;
-			
-		$('.menuBlockAdd .item.active').removeClass('active');
-		el.addClass('active');
-			
+
 		commonStore.menuOpen('blockAddSub', { 
-			element: 'item-' + item.id,
+			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: -40,
@@ -434,6 +377,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
+		e.stopPropagation();
+		
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;

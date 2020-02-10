@@ -47,6 +47,14 @@ class Util {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
+	arrayValues (a: any) {
+		let r: any[] = [];
+		for (let k in a) {
+			r.push(a[k]);
+		};
+		return r;
+	};
+	
 	clipboardCopy (data: any, callBack?: () => void) {
 		const handler = (e: any) => {
 			e.preventDefault();
@@ -55,10 +63,10 @@ class Util {
 				e.clipboardData.setData('text/plain', data.text);
 			};
 			if (data.html) {
-				e.clipboardData.setData('text/html', data.html);				
+				e.clipboardData.setData('text/html', data.html);	
 			};
 			if (data.anytype) {
-				e.clipboardData.setData('application/anytype', JSON.stringify(data.anytype));				
+				e.clipboardData.setData('application/anytype', JSON.stringify(data.anytype));
 			};
 			
 			document.removeEventListener('copy', handler, true);
@@ -322,6 +330,34 @@ class Util {
 			ret = ret.concat(map[field]);
 		};
 		return ret;
+	};
+	
+	// Helper method to set active element in menu with keyboard and scroll to it
+	menuSetActive (id: string, item: any, offset?: number, scroll?: boolean) {
+		const menu = $('#' + this.toCamelCase('menu-' + id));
+		if (!menu || !menu.length || !item) {
+			return;
+		};
+		
+		const el = menu.find('#item-' + item.id);
+			
+		menu.find('.item.active').removeClass('active');
+		el.addClass('active');
+		
+		if (scroll) {
+			const content = menu.find('.content');
+			
+			let top = content.scrollTop() + el.position().top - Number(offset) || 0;
+			top = Math.max(0, top);
+			menu.find('.content').scrollTop(top);
+		};
+	};
+	
+	urlFix (url: string): string {
+		if (!url.match(/:\/\//)) {
+			url = 'http://' + url;
+		};
+		return url;
 	};
 	
 };

@@ -12,7 +12,7 @@ import * as C from './command';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
-const lang = Storage.get('lang') || Constant.defaultLang;
+const lang = Storage.get('lang') || Constant.default.lang;
 
 const translate = (key: string): string => {
 	if (!Text[key]) {

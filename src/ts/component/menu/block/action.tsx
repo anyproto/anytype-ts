@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input } from 'ts/component';
-import { I, C, Key, Util, DataUtil, dispatcher, focus } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, dispatcher, focus } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -20,7 +20,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	timeout: number = 0;
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -76,7 +76,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			};
 			
 			return (
-				<div id={'block-action-item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				<div id={'item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 					{item.icon ? <Icon className={icon.join(' ')} inner={inner} /> : ''}
 					<div className="name">{item.name}</div>
 					{item.arrow ? <Icon className="arrow" /> : ''}
@@ -96,6 +96,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
+		this.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -144,6 +145,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			},
 			{ 
 				children: [
+					{ id: 'align', icon: 'align left', name: 'Align', arrow: true },
 					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
@@ -183,6 +185,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		return items;
 	};
 	
+	setActive = (item?: any, scroll?: boolean) => {
+		const items = this.getItems();
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id });
+		};
+		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+	};
+	
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -191,20 +201,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 		
+		keyboard.disableMouse(true);
+		
 		const { commonStore, param } = this.props;
 		const { data } = param;
 		const k = e.which;
-		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
-		
-		const setActive = () => {
-			const item = items[this.n];
-			
-			node.find('.item.active').removeClass('active');
-			node.find('#block-action-item-' + item.id).addClass('active');
-		};
 		
 		switch (k) {
 			case Key.up:
@@ -212,7 +216,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -220,7 +224,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				setActive();
+				this.setActive(null, true);
 				break;
 				
 			case Key.right:
@@ -239,6 +243,12 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			case Key.escape:
 				commonStore.menuClose(this.props.id);
 				break;
+		};
+	};
+	
+	onMouseEnter (e: any, item: any) {
+		if (keyboard.mouse) {
+			this.onOver(e, item);
 		};
 	};
 	
@@ -263,14 +273,12 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const length = String(text || '').length;
 		const items = this.getItems();
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#block-action-item-' + item.id);
-		const offsetX = node.outerWidth();
-		const offsetY = node.offset().top - el.offset().top;
+		const el = node.find('#item-' + item.id);
+		const offsetX = node.outerWidth() + 1;
+		const offsetY = node.offset().top - el.offset().top - 40;
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		
-		node.find('.item.active').removeClass('active');
-		el.addClass('active');
+		this.setActive(item, false);
 		
 		if ((item.id == 'turn') && commonStore.menuIsOpen('blockStyle')) {
 			return;
@@ -282,16 +290,17 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');
+		commonStore.menuClose('blockAlign');
 		
 		if (!item.arrow) {
 			return;
 		};
 		
 		let menuParam: I.MenuParam = {
-			element: 'block-action-item-' + item.id,
+			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,
 			offsetX: offsetX,
-			offsetY: offsetY - 40,
+			offsetY: offsetY,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
@@ -319,7 +328,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 								type: item.type,
 								fields: {
 									icon: Util.randomSmile(), 
-									name: String(text || Constant.defaultName),
+									name: String(text || Constant.default.name),
 								},
 								content: {
 									style: I.PageStyle.Empty,
@@ -355,6 +364,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					};
 					
 					commonStore.menuOpen('blockColor', menuParam);
+					break;
+					
+				case 'align':
+					menuParam.data.onChange = (align: I.BlockAlign) => {
+						commonStore.menuClose(this.props.id);
+					};
+					
+					commonStore.menuOpen('blockAlign', menuParam);
 					break;
 			};
 		}, Constant.delay.menu);
@@ -421,6 +438,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				let next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
 					return it.type == I.BlockType.Text;
 				});
+				
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
 					if (next) {
 						let l = String(next.content.text || '').length;

@@ -104,7 +104,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	init () {
 		const { authStore, history } = this.props;
 		const { path } = authStore;
-		const debug = Boolean(Storage.get('debug'));
+		const debug = Boolean(Storage.get('debugUI'));
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
 		const pin = debug ? '' : Storage.get('pin');

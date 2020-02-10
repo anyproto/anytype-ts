@@ -73,7 +73,7 @@ class DragProvider extends React.Component<Props, {}> {
 	
 	onDragMove (e: any) {
 		let x = e.pageX;
-		let y = e.pageY - $(window).scrollTop();
+		let y = Math.max(0, e.pageY - $(window).scrollTop());
 		
 		this.refLayer.move(x, y);
 	};

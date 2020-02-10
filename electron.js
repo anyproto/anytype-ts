@@ -90,7 +90,13 @@ function createWindow () {
 				{
 					label: 'UI Debug',
 					click: function () {
-						win.webContents.send('toggleDebug');
+						win.webContents.send('toggleDebugUI');
+					}
+				},
+				{
+					label: 'MW Debug',
+					click: function () {
+						win.webContents.send('toggleDebugMW');
 					}
 				},
 				{

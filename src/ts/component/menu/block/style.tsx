@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, Key, dispatcher } from 'ts/lib';
+import { I, keyboard, Key, Util, dispatcher } from 'ts/lib';
 import { observer, inject } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -38,7 +38,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 					if (action.id == active) {
 						cn.push('active');
 					};
-					return <MenuItemVertical key={i} {...action} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} />;
+					return <MenuItemVertical key={i} {...action} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }}  />;
 				})}
 			</div>
 		);
@@ -89,17 +89,12 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		return block ? block.content.style : 0;
 	};
 	
-	setActive = () => {
-		const node = $(ReactDOM.findDOMNode(this));
+	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		const item = items[this.n];
-		
-		if (!item) {
-			return;
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-			
-		node.find('.item.active').removeClass('active');
-		node.find('#item-' + item.id).addClass('active');
+		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
 	};
 	
 	getSections () {
@@ -148,6 +143,8 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 		
+		keyboard.disableMouse(true);
+		
 		const { commonStore } = this.props;
 		const k = e.which;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -161,7 +158,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive();
+				this.setActive(null, item);
 				break;
 				
 			case Key.down:
@@ -169,7 +166,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive();
+				this.setActive(null, item);
 				break;
 				
 			case Key.enter:
@@ -184,6 +181,13 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 				commonStore.menuClose(this.props.id);
 				break;
 		};
+	};
+	
+	onOver (e: any, item: any) {
+		if (!keyboard.mouse) {
+			return;
+		};
+		this.setActive(item, false);
 	};
 	
 	onClick (e: any, item: any) {

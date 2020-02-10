@@ -143,7 +143,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			switch (type) {
 				
 				default:
-					commonStore.menuClose(this.props.id);
+					//commonStore.menuClose(this.props.id);
 					marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
 					onChange(marks);
 					break;
@@ -155,7 +155,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					
 					focus.clear();
 					commonStore.menuOpen('blockStyle', { 
-						element: 'button-' + blockId + '-switch',
+						element: '#button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,
 						offsetX: -16,
 						offsetY: 11,
@@ -177,7 +177,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 										type: item.type,
 										fields: {
 											icon: Util.randomSmile(), 
-											name: Constant.defaultName,
+											name: Constant.default.name,
 										},
 										content: {
 											style: I.PageStyle.Empty,
@@ -200,7 +200,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						break;
 					};
 					commonStore.menuOpen('blockMore', { 
-						element: 'button-' + blockId + '-more',
+						element: '#button-' + blockId + '-more',
 						type: I.MenuType.Vertical,
 						offsetX: -16,
 						offsetY: 11,
@@ -223,6 +223,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							placeHolder: 'Please enter URL',
 							value: (mark ? mark.param : ''),
 							onChange: (param: string) => {
+								param = Util.urlFix(param);
 								marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
 								onChange(marks);
 								commonStore.menuClose(this.props.id);
@@ -243,7 +244,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					let markBg = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
 					
 					commonStore.menuOpen('blockColor', { 
-						element: 'button-' + blockId + '-color',
+						element: '#button-' + blockId + '-color',
 						type: I.MenuType.Vertical,
 						offsetX: -16,
 						offsetY: 11,

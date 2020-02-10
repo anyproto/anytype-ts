@@ -85,6 +85,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const k = e.which;
 		
 		let ids: any = this.get();
+		let idsWithChildren: any = this.get(true);
 		
 		if ((k == Key.up || k == Key.down) && ids.length) {
 			let dir = (k == Key.up) ? -1 : 1;
@@ -97,9 +98,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 				
 				let next;
 				if (dir < 0) {
-					next = blockStore.getNextBlock(rootId, ids[0], dir);
+					next = blockStore.getNextBlock(rootId, idsWithChildren[0], dir);
 				} else {
-					next = blockStore.getNextBlock(rootId, ids[ids.length - 1], dir);
+					next = blockStore.getNextBlock(rootId, idsWithChildren[idsWithChildren.length - 1], dir);
 				};
 				
 				if (next && ids.indexOf(next.id) < 0) {
@@ -182,11 +183,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		this.checkNodes(e);
 		
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = $('#selection-rect');
-		const selected = node.find('.selectable.isSelected');
-		
-		el.css({ 
+		$('#selection-rect').css({ 
 			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
 			width: rect.width - 10, 
 			height: rect.height - 10,
@@ -269,7 +266,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				};
 			} else 
 			if (!item.hasClass('isSelected')) {
-				item.addClass('isSelected');	
+				item.addClass('isSelected');
 			};
 			
 			this.lastIds.push(id);
@@ -338,8 +335,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.block.isSelected').removeClass('isSelected');
-		node.find('.selectable.isSelected').removeClass('isSelected');
+		node.find('.isSelected').removeClass('isSelected');
 	};
 	
 	unbind () {
@@ -381,28 +377,37 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = ids;
 		
 		for (let id of ids) {
-			node.find('.selectable.c' + $.escapeSelector(id)).addClass('isSelected');
-		};
-		
-		node.find('.block.isSelected').removeClass('isSelected');
-		node.find('.selectable.isSelected').each((i: number, el: any) => {
-			let item = $(el);
-			let id = String(item.data('id') || '');
-			let block = node.find('#block-' + $.escapeSelector(id));
-			let children = node.find('.children.c' + $.escapeSelector(id) + ' .selectable');
+			id = $.escapeSelector(id);
+			
+			let block = node.find('#block-' + id);
+			if (block.hasClass('no-select')) {
+				continue;
+			};
 			
 			block.addClass('isSelected');
-			children.removeClass('isSelected');
-		});
+			block.find('.selectable.c' + id).addClass('isSelected');
+			block.find('.children.c' + id + ' .block').addClass('isSelected no-select');
+		};
+		
+		node.find('.no-select').removeClass('no-select');
 	};
 	
-	get (): string[] {
+	get (withChildren?: boolean): string[] {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let ids = [] as string[];
 		node.find('.selectable.isSelected').each((i: number, item: any) => {
 			item = $(item);
-			ids.push(String(item.data('id') || ''));
+			let id = String(item.data('id') || '');
+			
+			ids.push(id);
+			
+			if (withChildren) {
+				node.find('.children.c' + $.escapeSelector(id) + ' .selectable').each((c: number, child: any) => {
+					child = $(child);
+					ids.push(String(child.data('id') || ''));
+				});
+			};
 		});
 		return [ ...new Set(ids) ];
 	};

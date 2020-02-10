@@ -93,7 +93,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	onAccount () {
 		const { commonStore } = this.props;
 		commonStore.menuOpen('account', { 
-			element: 'button-account',
+			element: '#button-account',
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right
@@ -108,7 +108,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.defaultName);
+		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.default.name);
 	};
 	
 	onSortEnd (result: any) {

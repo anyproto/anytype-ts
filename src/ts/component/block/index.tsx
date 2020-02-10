@@ -180,6 +180,15 @@ class Block extends React.Component<Props, {}> {
 		this._isMounted = true;
 	};
 	
+	componentDidUpdate () {
+		const { dataset, id } = this.props;
+		const { selection } = dataset;
+		
+		if (selection) {
+			selection.set(selection.get());
+		};
+	};
+	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -261,19 +270,8 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		let ids = [];
-		if (selection) {
-			selection.setPreventClear(false);
-			ids = selection.get();
-			if (ids.length <= 1) {
-				ids = [ id ];
-			};
-			selection.set(ids);
-			selection.setPreventClear(true);
-		};
-		
 		commonStore.menuOpen('blockAction', { 
-			element: 'block-' + id,
+			element: '#block-' + id,
 			type: I.MenuType.Vertical,
 			offsetX: node.outerWidth() - 26,
 			offsetY: -node.outerHeight(),
@@ -281,7 +279,7 @@ class Block extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: id,
-				blockIds: ids,
+				blockIds: DataUtil.selectionGet(this.props),
 				rootId: rootId,
 			},
 			onClose: () => {
