@@ -24,9 +24,11 @@ function createWindow () {
 	
 	let win = new BrowserWindow(param);
 	
+	/*
 	BrowserWindow.addDevToolsExtension(
 		path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.4.0_0')
 	);
+	*/
 	
 	if (is.development) {
 		win.loadURL('http://localhost:8080');
