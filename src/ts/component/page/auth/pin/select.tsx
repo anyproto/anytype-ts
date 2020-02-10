@@ -2,21 +2,17 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { Key, translate } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore, authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 const Constant: any = require('json/constant.json');
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	authStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	error: string;
 };
 
-@inject('commonStore')
-@inject('authStore')
 @observer
 class PageAuthPinSelect extends React.Component<Props, State> {
 	
@@ -32,7 +28,6 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { commonStore } = this.props;
 		const { coverId, coverImg } = commonStore;
 		const { error } = this.state;
 		
@@ -65,7 +60,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	};
 	
 	onChange (e: any, id: number) {
-		const { authStore, match, history } = this.props;
+		const { match, history } = this.props;
 		
 		let k = e.which;
 		let input = this.refObj[id];

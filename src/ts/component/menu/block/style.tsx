@@ -2,17 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
 import { I, keyboard, Key, Util, dispatcher } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {
-	commonStore?: any;
-	blockStore?: any;
-};
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class MenuBlockStyle extends React.Component<Props, {}> {
 	
@@ -65,7 +61,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rebind } = data;
 
@@ -81,7 +77,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 	
 	getActive () {
-		const { blockStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const { blocks } = blockStore;
@@ -145,7 +141,6 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
-		const { commonStore } = this.props;
 		const k = e.which;
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
@@ -191,7 +186,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		

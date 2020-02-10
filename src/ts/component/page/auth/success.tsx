@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { translate, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {};

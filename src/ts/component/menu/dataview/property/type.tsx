@@ -2,15 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {
-	commonStore?: any;
-};
+interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
 @observer
 class MenuPropertyType extends React.Component<Props, {}> {
 	
@@ -21,7 +19,7 @@ class MenuPropertyType extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { properties, property } = data;
 		
@@ -45,7 +43,7 @@ class MenuPropertyType extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, id: string) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		

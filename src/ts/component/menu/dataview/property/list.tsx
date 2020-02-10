@@ -3,19 +3,17 @@ import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
 import { I } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
 const $ = require('jquery');
 
-interface Props extends I.Menu {
-	commonStore?: any;
-};
+interface Props extends I.Menu {};
 interface State {
 	items: I.Property[];
 };
 
-@inject('commonStore')
 @observer
 class MenuPropertyList extends React.Component<Props, State> {
 	
@@ -85,11 +83,12 @@ class MenuPropertyList extends React.Component<Props, State> {
 	};
 	
 	onAdd (e: any) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { properties } = data;
 		
 		commonStore.menuOpen('propertyEdit', { 
+			type: I.MenuType.Vertical,
 			element: '#property-add',
 			offsetX: 8,
 			offsetY: 4,
@@ -103,12 +102,13 @@ class MenuPropertyList extends React.Component<Props, State> {
 	};
 	
 	onEdit (e: any, id: string) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { properties } = data;
 		const property = properties.find((item: any) => { return item.id == id; });
 		
 		commonStore.menuOpen('dataviewPropertyEdit', { 
+			type: I.MenuType.Vertical,
 			element: '#property-' + id,
 			offsetX: 0,
 			offsetY: 4,
@@ -123,7 +123,6 @@ class MenuPropertyList extends React.Component<Props, State> {
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		
 		this.setState({ items: arrayMove(this.state.items, oldIndex, newIndex) });
 	};
 	

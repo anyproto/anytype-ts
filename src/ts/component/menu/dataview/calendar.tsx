@@ -2,20 +2,18 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
 import { Icon, Input } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-interface Props extends I.Menu {
-	commonStore?: any;
-};
+interface Props extends I.Menu {};
 
 interface State {
 	value: number;
 };
 
-@inject('commonStore')
 @observer
 class MenuCalendar extends React.Component<Props, {}> {
 	
@@ -106,7 +104,7 @@ class MenuCalendar extends React.Component<Props, {}> {
 	};
 	
 	set (d: number, m: number, y: number) {
-		const { id, commonStore, param } = this.props;
+		const { id, param } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		

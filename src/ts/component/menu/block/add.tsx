@@ -2,18 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {
-	commonStore?: any;
-	blockStore?: any;
-};
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class MenuBlockAdd extends React.Component<Props, {}> {
 	
@@ -30,7 +26,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { commonStore } = this.props;
 		const { filter } = commonStore;
 		const options = this.getItems();
 		const sections = this.getSections();
@@ -100,13 +95,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		
-		const { commonStore, id } = this.props;
-		
 		this.rebind();
 		this.checkFilter();
 		
-		if (id == 'blockAddSub') {
+		if (this.props.id == 'blockAddSub') {
 			this.n = 0;
 			this.setActive();
 		};
@@ -117,7 +109,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	checkFilter () {
-		const { commonStore } = this.props;
 		const { filter } = commonStore;
 		const obj = $('#menuBlockAdd');
 		
@@ -132,7 +123,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		
-		const { commonStore, param, id } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rebind } = data;
 
@@ -170,7 +161,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 		
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const k = e.which;
 		const items = this.getItems();
@@ -229,7 +220,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	getSections () {
-		const { commonStore, blockStore, param } = this.props;
+		const { param } = this.props;
 		const { filter } = commonStore;
 		const { data } = param;
 		const { blockId, rootId } = data;
@@ -303,7 +294,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	getItems () {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { id } = data;
 		const sections = this.getSections();
@@ -348,7 +339,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	onOver (e: any, item: any) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
@@ -379,7 +370,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 		
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		

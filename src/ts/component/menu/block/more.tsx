@@ -2,18 +2,15 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, focus } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
 	history?: any;
-	commonStore?: any;
-	blockStore?: any;
 };
 
 const $ = require('jquery');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class MenuBlockMore extends React.Component<Props, {}> {
 	
@@ -67,7 +64,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
-		const { commonStore } = this.props;
 		const k = e.which;
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
@@ -105,7 +101,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	getItems () {
-		const { commonStore, blockStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const { blocks } = blockStore;
@@ -142,7 +138,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { commonStore, blockStore, param, history } = this.props;
+		const { param, history } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, onSelect } = data;
 		const { blocks, root } = blockStore;
