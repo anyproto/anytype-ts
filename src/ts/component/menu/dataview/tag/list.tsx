@@ -4,19 +4,18 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, Tag, Input } from 'ts/component';
 import { I } from 'ts/lib';
 import arrayMove from 'array-move';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-const $ = require('jquery');
+interface Props extends I.Menu {};
 
-interface Props extends I.Menu {
-	commonStore?: any;
-};
 interface State {
 	items: any[];
 	filter: string;
 };
 
-@inject('commonStore')
+const $ = require('jquery');
+
 @observer
 class MenuTagList extends React.Component<Props, State> {
 	
@@ -86,13 +85,14 @@ class MenuTagList extends React.Component<Props, State> {
 	};
 	
 	onSelect (e: any, id: number) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { values } = data;
 		
 		//commonStore.menuClose(this.props.id);
 		
 		commonStore.menuOpen('dataviewTagEdit', { 
+			type: I.MenuType.Vertical,
 			element: '#tag-' + id,
 			offsetX: 0,
 			offsetY: 4,
@@ -123,7 +123,6 @@ class MenuTagList extends React.Component<Props, State> {
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		
 		this.setState({ items: arrayMove(this.state.items, oldIndex, newIndex) });
 	};
 	

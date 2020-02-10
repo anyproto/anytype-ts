@@ -87,7 +87,6 @@ class DataUtil {
 	};
 	
 	pageInit (props: any) {
-		const { blockStore, commonStore } = props;
 		const { breadcrumbs } = blockStore;
 		
 		C.ConfigGet((message: any) => {

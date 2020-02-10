@@ -2,16 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
 import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {
-	commonStore?: any;
-};
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
 @observer
 class MenuBlockColor extends React.Component<Props, {}> {
 	
@@ -24,7 +22,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { valueText, valueBg } = data;
 		const sections = this.getSections();
@@ -78,7 +76,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rebind } = data;
 
@@ -107,7 +105,6 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
-		const { commonStore } = this.props;
 		const k = e.which;
 		const items = this.getItems();
 		const l = items.length;
@@ -171,7 +168,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onChangeText, onChangeBg } = data;
 		

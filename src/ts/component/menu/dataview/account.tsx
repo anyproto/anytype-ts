@@ -2,19 +2,18 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, IconUser, Input } from 'ts/component';
 import { I } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-const $ = require('jquery');
+interface Props extends I.Menu {};
 
-interface Props extends I.Menu {
-	commonStore?: any;
-};
 interface State {
 	items: any[];
 	filter: string;
 };
 
-@inject('commonStore')
+const $ = require('jquery');
+
 @observer
 class MenuAccount extends React.Component<Props, State> {
 	
@@ -72,7 +71,6 @@ class MenuAccount extends React.Component<Props, State> {
 	};
 	
 	onSelect (e: any, id: number) {
-		const { commonStore } = this.props;
 		commonStore.menuClose(this.props.id);
 	};
 	

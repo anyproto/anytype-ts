@@ -2,22 +2,18 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { commonStore, authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import { dispatcher, Util, translate } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	authStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
 	preview: string;
 };
 
-@inject('commonStore')
-@inject('authStore')
 @observer
 class PageAuthRegister extends React.Component<Props, State> {
 
@@ -37,7 +33,6 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { commonStore } = this.props;
 		const { coverId, coverImg } = commonStore;
 		const { error, preview } = this.state;
 
@@ -73,8 +68,6 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 
 	onFileClick (e: any) {
-		const { authStore } = this.props;
-		
 		dialog.showOpenDialog({ properties: [ 'openFile' ] }, (files: any) => {
 			if ((files == undefined) || !files.length) {
 				return;
@@ -90,14 +83,13 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 	
 	onNameChange (e: any) {
-		const { authStore } = this.props;
 		authStore.nameSet(this.nameRef.getValue());
 	};
 
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { match, history, authStore } = this.props;
+		const { match, history } = this.props;
 		
 		this.nameRef.setError(false);
 

@@ -2,19 +2,15 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, dispatcher, focus } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {
-	commonStore?: any;
-	blockStore?: any;
-};
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class MenuBlockAction extends React.Component<Props, {}> {
 	
@@ -31,7 +27,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { commonStore, blockStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const { blocks } = blockStore;
@@ -121,7 +117,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	getSections () {
-		const { blockStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const { blocks } = blockStore;
@@ -203,7 +199,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const k = e.which;
 		const items = this.getItems();
@@ -257,7 +253,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blockStore, commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onSelect, blockId, blockIds, rootId } = data;
 		const { blocks } = blockStore;
@@ -382,7 +378,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { commonStore, blockStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const { blocks, root } = blockStore;

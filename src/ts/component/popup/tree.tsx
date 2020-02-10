@@ -2,20 +2,15 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Title, Smile, Icon, Button } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { authStore, commonStore, blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 const $ = require('jquery');
 
 interface Props extends I.Popup {
-	authStore?: any;
-	blockStore?: any;
-	commonStore?: any;
 	type: string;
 };
 
-@inject('authStore')
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class PopupTree extends React.Component<Props, {}> {
 	
@@ -29,7 +24,7 @@ class PopupTree extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { authStore, blockStore, param, } = this.props;
+		const { param, } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
 		const { blocks } = blockStore;
@@ -134,7 +129,7 @@ class PopupTree extends React.Component<Props, {}> {
 	};
 	
 	onConfirm (e: any) {
-		const { commonStore, blockStore, param } = this.props;
+		const { param } = this.props;
 		const { blocks, root } = blockStore;
 		const { data } = param;
 		const { onConfirm } = data;
@@ -149,7 +144,6 @@ class PopupTree extends React.Component<Props, {}> {
 	};
 	
 	onCancel (e: any) {
-		const { commonStore } = this.props;
 		commonStore.popupClose(this.props.id);
 	};
 	

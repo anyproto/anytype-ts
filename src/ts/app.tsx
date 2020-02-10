@@ -5,7 +5,6 @@ import { Provider } from 'mobx-react';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader } from './component';
 import { commonStore, authStore, blockStore } from './store';
 import { C, dispatcher, keyboard, Storage } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 
 import 'scss/font.scss';

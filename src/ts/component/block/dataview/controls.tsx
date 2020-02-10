@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.BlockDataview {
-	commonStore?: any;
 	view: string;
 	viewType: I.ViewType;
 	onView(e: any, id: string): void;
 };
 
-@inject('commonStore')
 @observer
 class Controls extends React.Component<Props, {}> {
 
@@ -21,7 +20,7 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { commonStore, view, viewType, content, onView } = this.props;
+		const { view, viewType, content, onView } = this.props;
 		const { views } = content;
 		
 		const buttons: any[] = [
@@ -97,7 +96,7 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { commonStore, view, viewType, content } = this.props;
+		const { view, viewType, content } = this.props;
 		const { properties, views } = content;
 		const viewItem = views.find((item: any) => { return item.id == view; });
 		
@@ -124,6 +123,8 @@ class Controls extends React.Component<Props, {}> {
 		
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,
+			type: I.MenuType.Vertical,
+			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,

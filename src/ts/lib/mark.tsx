@@ -105,7 +105,7 @@ class Mark {
 		if (add) {
 			map[type].push(mark);
 		};
-		return Util.unmap(map);
+		return Util.unmap(map).sort(this.sort);
 	};
 	
 	move (marks: I.Mark[], start: number, diff: number) {

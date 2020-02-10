@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, IconUser, Switch, Button, Title, Label, Cover, Textarea, Input } from 'ts/component';
 import { I, C, Storage, Key, Util } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { authStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 const { dialog } = window.require('electron').remote;
 const $ = require('jquery');
@@ -20,8 +21,6 @@ interface State {
 	preview: string;
 };
 
-@inject('commonStore')
-@inject('authStore')
 @observer
 class PopupSettings extends React.Component<Props, {}> {
 
@@ -49,7 +48,6 @@ class PopupSettings extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { authStore, commonStore } = this.props;
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
 		const { page, preview } = this.state;
@@ -216,8 +214,6 @@ class PopupSettings extends React.Component<Props, {}> {
 	};
 	
 	onFileClick (e: any) {
-		const { commonStore } = this.props;
-		
 		dialog.showOpenDialog({ properties: [ 'openFile' ] }, (files: any) => {
 			if ((files == undefined) || !files.length) {
 				return;
@@ -249,7 +245,7 @@ class PopupSettings extends React.Component<Props, {}> {
 	};
 	
 	onChangePin (e: any, id: number) {
-		const { authStore, history } = this.props;
+		const { history } = this.props;
 		
 		let k = e.which;
 		let input = this.refObj[id];
@@ -292,8 +288,7 @@ class PopupSettings extends React.Component<Props, {}> {
 	};
 	
 	onClose () {
-		const { commonStore, id } = this.props;
-		commonStore.popupClose(id);
+		commonStore.popupClose(this.props.id);
 	};
 	
 	onPage (id: string) {
@@ -301,12 +296,11 @@ class PopupSettings extends React.Component<Props, {}> {
 	};
 	
 	onCover (num: number) {
-		const { commonStore } = this.props;
 		commonStore.coverSetNum(num);
 	};
 	
 	onLogout (e: any) {
-		const { authStore, history } = this.props;
+		const { history } = this.props;
 		
 		C.AccountStop(false);
 		authStore.logout();

@@ -2,12 +2,10 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { Storage, translate, keyboard, C } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore, authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	authStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	icon: string;
 	index: number;
@@ -19,8 +17,6 @@ const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
 ];
 
-@inject('commonStore')
-@inject('authStore')
 @observer
 class PageAuthSetup extends React.Component<Props, State> {
 
@@ -32,7 +28,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { commonStore, match } = this.props;
+		const { match } = this.props;
 		const { coverId, coverImg } = commonStore;
 		const { icon, error } = this.state;
 		
@@ -66,7 +62,7 @@ class PageAuthSetup extends React.Component<Props, State> {
     };
 
 	componentDidMount () {
-		const { authStore, match } = this.props;
+		const { match } = this.props;
 		
 		this.clear();
 		this.setClock();
@@ -102,7 +98,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 	
 	init () {
-		const { authStore, history } = this.props;
+		const { history } = this.props;
 		const { path } = authStore;
 		const debug = Boolean(Storage.get('debugUI'));
 		const phrase = Storage.get('phrase');
@@ -142,7 +138,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 	
 	add () {
-		const { authStore, history, match } = this.props;
+		const { history, match } = this.props;
 		
 		C.AccountCreate(authStore.name, authStore.icon, (message: any) => {
 			if (message.error.code) {
@@ -163,7 +159,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 	
 	select () {
-		const { authStore, history } = this.props;
+		const { history } = this.props;
 		const { account, path } = authStore; 
 		
 		C.AccountSelect(account.id, path, (message: any) => {

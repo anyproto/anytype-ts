@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Input, Button } from 'ts/component';
 import { I } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {
 	history: any;
-	commonStore?: any;
 };
 
-@inject('commonStore')
 @observer
 class PopupPrompt extends React.Component<Props, {}> {
 	
@@ -45,7 +44,7 @@ class PopupPrompt extends React.Component<Props, {}> {
 	};
 	
 	onSubmit (e: any) {
-		const { commonStore, id, param } = this.props;
+		const { id, param } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		
@@ -58,9 +57,7 @@ class PopupPrompt extends React.Component<Props, {}> {
 	};
 	
 	onCancel (e: any) {
-		const { commonStore, id } = this.props;
-		
-		commonStore.popupClose(id);
+		commonStore.popupClose(this.props.id);
 	};
 	
 };

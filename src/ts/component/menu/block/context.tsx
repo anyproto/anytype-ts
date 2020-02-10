@@ -2,17 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, C, Mark, Util, DataUtil, focus } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {
-	commonStore?: any;
-	blockStore?: any;
-};
+interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class MenuBlockContext extends React.Component<Props, {}> {
 	
@@ -26,7 +22,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { commonStore, blockStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { range } = focus;
 		const { blockId, rootId } = data;
@@ -100,7 +96,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	};
 	
 	onMark (e: any, type: any) {
-		const { commonStore, blockStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { range } = focus;
 		const { blockId, blockIds, rootId, onChange } = data;
@@ -143,7 +139,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			switch (type) {
 				
 				default:
-					//commonStore.menuClose(this.props.id);
 					marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
 					onChange(marks);
 					break;

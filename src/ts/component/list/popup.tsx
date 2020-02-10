@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Popup, Dimmer } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import { I } from 'ts/lib';
 
 interface Props {
@@ -10,7 +11,6 @@ interface Props {
 
 const $ = require('jquery');
 
-@inject('commonStore')
 @observer
 class ListPopup extends React.Component<Props, {}> {
 
@@ -21,7 +21,7 @@ class ListPopup extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { history, commonStore } = this.props;
+		const { history } = this.props;
 		const { popups } = commonStore;
 		
 		return (
@@ -35,7 +35,6 @@ class ListPopup extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { commonStore } = this.props;
 		const { popups } = commonStore;
 		const body = $('body');
 		
@@ -43,7 +42,6 @@ class ListPopup extends React.Component<Props, {}> {
 	};
 	
 	onClose () {
-		const { commonStore } = this.props;
 		commonStore.popupCloseAll();
 	};
 	

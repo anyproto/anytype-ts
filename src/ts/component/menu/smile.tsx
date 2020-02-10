@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { NimblePicker } from 'emoji-mart';
 import { I, keyboard } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 const EmojiData = require('emoji-mart/data/apple.json');
 
-interface Props extends I.Menu {
-	commonStore?: any;
-};
+interface Props extends I.Menu {};
 
-@inject('commonStore')
 @observer
 class MenuSmile extends React.Component<Props, {}> {
 
@@ -56,7 +54,7 @@ class MenuSmile extends React.Component<Props, {}> {
 	};
 	
 	onSelect (item: any) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		

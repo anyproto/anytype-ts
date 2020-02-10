@@ -2,14 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Select } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
+import { commonStore, blockStore } from 'ts/store';
 import 'highlight.js/styles/github.css';
 
 interface Props extends I.BlockText {
 	rootId: string;
-	commonStore?: any;
-	blockStore?: any;
 	dataset?: any;
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
@@ -27,8 +26,6 @@ const rehype = require('rehype');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class BlockText extends React.Component<Props, {}> {
 
@@ -54,7 +51,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { blockStore, id, rootId, fields, content } = this.props;
+		const { id, rootId, fields, content } = this.props;
 		const { text, marks, style, checked, number, color, bgColor } = content;
 		
 		let markers: any[] = [];
@@ -164,7 +161,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	setValue (v?: string) {
-		const { blockStore, id, rootId, fields, content } = this.props;
+		const { id, rootId, fields, content } = this.props;
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
@@ -221,7 +218,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { commonStore, blockStore, onKeyDown, onMenuAdd, id, parentId, rootId, content } = this.props;
+		const { onKeyDown, onMenuAdd, id, parentId, rootId, content } = this.props;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -288,7 +285,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { commonStore, blockStore, onKeyUp, id, rootId, content } = this.props;
+		const { onKeyUp, id, rootId, content } = this.props;
 		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
@@ -432,7 +429,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	blockSetText (marks: I.Mark[]) {
-		const { blockStore, id, rootId, content } = this.props;
+		const { id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const value = this.getValue();
 		const text = String(content.text || '');
@@ -446,7 +443,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	blockSetMarks (marks: I.Mark[]) {
-		const { blockStore, id, rootId, content } = this.props;
+		const { id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const text = String(content.text || '');
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
@@ -455,7 +452,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onFocus (e: any) {
-		const { commonStore, onFocus } = this.props;
+		const { onFocus } = this.props;
 		const value = this.getValue();
 		
 		if (value.match(/^\//)) {
@@ -468,7 +465,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		const { commonStore, onBlur, content } = this.props;
+		const { onBlur, content } = this.props;
 		
 		this.blockSetText(this.marks);
 		this.placeHolderHide();
@@ -487,7 +484,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onCheck (e: any) {
-		const { blockStore, id, rootId, content } = this.props;
+		const { id, rootId, content } = this.props;
 		const { checked } = content;
 		
 		focus.clear();
@@ -507,7 +504,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { commonStore, id, rootId, content } = this.props;
+		const { id, rootId, content } = this.props;
 		const { from, to } = focus.range;
 		const { style } = content;
 		

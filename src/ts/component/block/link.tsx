@@ -3,18 +3,15 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Smile } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Block, RouteComponentProps<any> {
-	commonStore?: any;
-	blockStore?: any;
 	rootId: string;
 };
 
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
-@inject('blockStore')
 @observer
 class BlockLink extends React.Component<Props, {}> {
 	
@@ -26,7 +23,7 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 
 	render() {
-		const { blockStore, id, rootId, content } = this.props;
+		const { id, rootId, content } = this.props;
 		const { fields, isArchived } = content;
 		const { icon, name } = fields || {};
 		

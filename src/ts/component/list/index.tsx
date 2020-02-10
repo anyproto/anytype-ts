@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconUser, Smile } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
 
 interface Props {
@@ -16,7 +17,6 @@ interface Props {
 
 const Constant = require('json/constant.json');
 
-@inject('blockStore')
 @observer
 class ListIndex extends React.Component<Props, {}> {
 	
@@ -27,7 +27,7 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { blockStore, onSelect, onAdd, helperContainer, rootId } = this.props;
+		const { onSelect, onAdd, helperContainer, rootId } = this.props;
 		const { blocks } = blockStore;
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		const length = blocks.length;

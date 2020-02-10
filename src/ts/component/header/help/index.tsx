@@ -2,14 +2,13 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
-	authStore?: any;
 	path?: any[];
 };
 
-@inject('authStore')
 @observer
 class HeaderHelpIndex extends React.Component<Props, {}> {
 
@@ -26,7 +25,7 @@ class HeaderHelpIndex extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { authStore, path } = this.props;
+		const { path } = this.props;
 		const { account } = authStore;
 		
 		const PathItemHome = (item: any) => (

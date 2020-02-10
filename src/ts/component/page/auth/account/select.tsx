@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Icon, Cover, Error, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { commonStore, authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import { Storage, I, C } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	commonStore?: any;
 	authStore?: any;
 };
+
 interface State {
 	error: string;
 };
 
-@inject('commonStore')
-@inject('authStore')
 @observer
 class PageAccountSelect extends React.Component<Props, State> {
 
@@ -29,7 +29,6 @@ class PageAccountSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { commonStore, authStore } = this.props;
 		const { coverId, coverImg } = commonStore;
 		const { error } = this.state;
 		
@@ -65,7 +64,6 @@ class PageAccountSelect extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		const { authStore } = this.props;
 		const { path } = authStore;
 		const phrase = Storage.get('phrase');
 		
@@ -81,7 +79,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 	};
 
 	onSelect (e: any, account: I.Account) {
-		const { authStore, history } = this.props;
+		const { history } = this.props;
 		const pin = Storage.get('pin');
 		
 		authStore.accountSet(account);

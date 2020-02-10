@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { I, Util } from 'ts/lib';
 import { Icon, Input } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {
-	commonStore?: any;
-};
+interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 
-@inject('commonStore')
 @observer
 class MenuPropertyEdit extends React.Component<Props, {}> {
 	
@@ -20,7 +18,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { property } = data;
 		
@@ -62,7 +60,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 	};
 	
 	onType (e: any) {
-		const { commonStore, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		
 		commonStore.menuOpen('dataviewPropertyType', { 

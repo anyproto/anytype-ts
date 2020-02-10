@@ -2,23 +2,17 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { commonStore, authStore, blockStore} from 'ts/store';
+import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate} from 'ts/lib';
 import arrayMove from 'array-move';
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	authStore?: any;
-	blockStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 
 const com = require('proto/commands.js');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
-@inject('commonStore')
-@inject('authStore')
-@inject('blockStore')
 @observer
 class PageMainIndex extends React.Component<Props, {}> {
 	
@@ -36,7 +30,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { commonStore, authStore, blockStore } = this.props;
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
 		const { blocks, root } = blockStore;
@@ -86,14 +79,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSettings (e: any) {
-		const { commonStore } = this.props;
 		commonStore.popupOpen('settings', {});
 	};
 	
 	onAccount () {
-		const { commonStore } = this.props;
-		commonStore.menuOpen('account', { 
+		commonStore.menuOpen('account', {
+			type: I.MenuType.Vertical, 
 			element: '#button-account',
+			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right
@@ -118,7 +111,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blockStore } = this.props;
 		const { blocks, root } = blockStore;
 		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		const current = tree[oldIndex];
@@ -131,7 +123,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		const { blockStore } = this.props;
 		const { blocks, root } = blockStore;
 		const tree = blockStore.prepareTree(root, blocks[root] || []);
 		

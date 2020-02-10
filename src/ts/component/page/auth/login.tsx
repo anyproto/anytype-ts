@@ -2,18 +2,14 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Textarea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { Storage, translate, C } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore, authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	authStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
 };
 
-@inject('commonStore')
-@inject('authStore')
 @observer
 class PageAuthLogin extends React.Component<Props, State> {
 
@@ -31,7 +27,6 @@ class PageAuthLogin extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { commonStore } = this.props;
 		const { coverId, coverImg } = commonStore;
 		const { error } = this.state;
 		
@@ -69,7 +64,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { authStore, history } = this.props;
+		const { history } = this.props;
 		const { path } = authStore;
 		
 		this.phraseRef.setError(false);

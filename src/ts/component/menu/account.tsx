@@ -1,18 +1,11 @@
 import * as React from 'react';
 import { Icon, IconUser } from 'ts/component';
-import { observer, inject } from 'mobx-react';
+import { blockStore, commonStore, authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage } from 'ts/lib';
 
-interface Props extends I.Menu {
-	history: any;
-	commonStore?: any;
-	authStore?: any;
-	blockStore?: any;
-};
+interface Props extends I.Menu { history: any; };
 
-@inject('commonStore')
-@inject('authStore')
-@inject('blockStore')
 @observer
 class MenuAccount extends React.Component<Props, {}> {
 	
@@ -24,7 +17,6 @@ class MenuAccount extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { authStore } = this.props;
 		const { account, accounts } = authStore;
 		
 		const Item = (item: any) => (
@@ -54,7 +46,6 @@ class MenuAccount extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { authStore } = this.props;
 		const { path, accounts } = authStore;
 		const phrase = Storage.get('phrase');
 		
@@ -68,7 +59,6 @@ class MenuAccount extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, id: string) {
-		const { blockStore, commonStore, authStore } = this.props;
 		const { path } = authStore;
 		
 		commonStore.menuClose(this.props.id);

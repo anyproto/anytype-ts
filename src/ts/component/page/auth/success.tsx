@@ -2,14 +2,12 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { translate, Storage } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 interface State {};
 
-@inject('commonStore')
 @observer
 class PageAuthSuccess extends React.Component<Props, State> {
 
@@ -20,7 +18,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { commonStore, match } = this.props;
+		const { match } = this.props;
 		const { coverId, coverImg } = commonStore;
 
 		return (

@@ -2,18 +2,14 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { Storage, translate, C } from 'ts/lib';
-import { observer, inject } from 'mobx-react';
+import { commonStore, authStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	authStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
 };
 
-@inject('commonStore')
-@inject('authStore')
 @observer
 class PageAuthSelect extends React.Component<Props, State> {
 
@@ -29,7 +25,6 @@ class PageAuthSelect extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { commonStore } = this.props;
 		const { coverId, coverImg } = commonStore;
 		const { error } = this.state;
 		
@@ -58,7 +53,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 	};
 	
 	onRegister (e: any) {
-		const { authStore, history } = this.props;
+		const { history } = this.props;
 		const { path } = authStore;
 		
 		C.WalletCreate(path, (message: any) => {
