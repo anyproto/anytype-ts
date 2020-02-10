@@ -61,7 +61,7 @@ class Block extends React.Component<Props, {}> {
 		let canSelect = true;
 		let cn: string[] = [ 'block', 'index' + index ];
 		let cd: string[] = [];
-		let BlockComponent: any = (): any => null;
+		let blockComponent = null;
 		
 		if (className) {
 			cn.push(className);
@@ -76,9 +76,8 @@ class Block extends React.Component<Props, {}> {
 				if (content.checked) {
 					cn.push('isChecked');
 				};
-				BlockComponent = () => (
-					<BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />
-				);
+				
+				blockComponent = <BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
 				break;
 				
 			case I.BlockType.Layout:
@@ -88,7 +87,7 @@ class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.Icon:
 				cn.push('blockIcon');
-				BlockComponent = BlockIcon;
+				blockComponent = <BlockIcon {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
@@ -96,31 +95,30 @@ class Block extends React.Component<Props, {}> {
 					default: 
 					case I.FileType.File: 
 						cn.push('blockFile');
-						BlockComponent = BlockFile;
+						blockComponent = <BlockFile {...this.props} />;
 						break;
 						
 					case I.FileType.Image: 
 						cn.push('blockImage');
-						BlockComponent = () => (
-							<BlockImage {...this.props} width={fields.width || 1} />
-						);
+						//blockComponent = <BlockImage {...this.props} width={fields.width || 1} />;
+						blockComponent = <BlockImage {...this.props} />;
 						break;
 						
 					case I.FileType.Video: 
 						cn.push('blockVideo');
-						BlockComponent = BlockVideo;
+						blockComponent = <BlockVideo {...this.props} />;
 						break;
 				};
 				break;
 				
 			case I.BlockType.Bookmark:
 				cn.push('blockBookmark');
-				BlockComponent = BlockBookmark;
+				blockComponent = <BlockBookmark {...this.props} />;
 				break;
 			
 			case I.BlockType.Dataview:
 				cn.push('blockDataview');
-				BlockComponent = BlockDataview;
+				blockComponent = <BlockDataview {...this.props} />;
 				break;
 				
 			case I.BlockType.Div:
@@ -139,12 +137,12 @@ class Block extends React.Component<Props, {}> {
 						break;
 				};
 				
-				BlockComponent = () => <div className="div">{inner}</div>;
+				blockComponent = <div className="div">{inner}</div>;
 				break;
 				
 			case I.BlockType.Link:
 				cn.push('blockLink');
-				BlockComponent = BlockLink;
+				blockComponent = <BlockLink {...this.props} />;
 				break;
 		};
 		
@@ -158,7 +156,7 @@ class Block extends React.Component<Props, {}> {
 					{canSelect ? (
 						<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
 							<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
-								<BlockComponent {...this.props} />
+								{blockComponent}
 							</DropTarget>
 						</div>
 					) : ''}
