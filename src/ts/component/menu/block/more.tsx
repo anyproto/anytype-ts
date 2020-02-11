@@ -117,9 +117,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
-				{ id: 'archive', icon: 'remove', name: 'Archive' },
-				//{ id: 'remove', icon: 'remove', name: 'Delete' },
 			];
+			
+			if (block.fields.isArchived) {
+				items.push({ id: 'remove', icon: 'remove', name: 'Delete' });
+			} else {
+				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });				
+			};
 		} else {
 			items = [
 				{ id: 'remove', icon: 'remove', name: 'Delete' },
