@@ -86,20 +86,22 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		};
 		
 		let pin = this.getPin();
-		if (pin.length == Constant.pinSize) {
-			if (pin == authStore.pin) {
-				Storage.set('pin', sha1(pin));
+		if (pin.length != Constant.pinSize) {
+			return;
+		};
+		
+		if (pin == authStore.pin) {
+			Storage.set('pin', sha1(pin));
 				
-				if (isSelect) {
-					history.push('/auth/setup/select');
-				};
-				
-				if (isAdd) {
-					history.push('/main/index');
-				};
-			} else {
-				this.setState({ error: translate('authPinConfirmError') });
+			if (isSelect) {
+				history.push('/auth/setup/select');
 			};
+				
+			if (isAdd) {
+				history.push('/main/index');
+			};
+		} else {
+			this.setState({ error: translate('authPinConfirmError') });
 		};
 	};
 	

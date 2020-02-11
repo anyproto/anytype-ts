@@ -1,8 +1,9 @@
 import { I } from 'ts/lib';
 
 export enum LinkStyle {
-	Page = 0,
-	Dataview = 1,
+	Page		 = 0,
+	Dataview	 = 1,
+	Dashboard	 = 2,
 };
 
 export interface ContentLink {
