@@ -127,7 +127,6 @@ class DataUtil {
 		if (e && (e.shiftKey || (e.ctrlKey || e.metaKey))) { 
 			commonStore.popupOpen('editorPage', param);
 		} else {
-			console.log('/main/edit/' + targetId + '/link/' + linkId);
 			history.push('/main/edit/' + targetId + '/link/' + linkId);
 		};
 	};
