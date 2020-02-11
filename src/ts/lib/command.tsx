@@ -222,7 +222,7 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
 	const request: any = {
 		contextId: contextId,
-		blocks: blocks.map((block: any) => { return blockStore.prepareBlockToProto(block); }),
+		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
 	dispatcher.call('blockCopy', request, callBack);	
 };
@@ -235,7 +235,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 		selectedBlockIds: blockIds,
 		textSlot: data.text,
 		htmlSlot: data.html,
-		anySlot: data.anytype,
+		anySlot: (data.anytype || []).map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
 	dispatcher.call('blockPaste', request, callBack);	
 };
