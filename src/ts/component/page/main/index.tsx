@@ -97,7 +97,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, block: any) {
-		DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
+		if (block.content.style == I.LinkStyle.Archive) {
+			console.log('Archive');
+		} else {
+			DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);			
+		};
 	};
 	
 	onAdd (e: any) {
@@ -124,7 +128,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	resize () {
 		const { blocks, root } = blockStore;
-		const tree = blockStore.prepareTree(root, blocks[root] || []);
+		
+		let tree = blockStore.prepareTree(root, blocks[root] || []);
+		tree = tree.filter((it: any) => { return !it.fields.isArchived; });
 		
 		let size = Constant.index.document;
 		let win = $(window);
