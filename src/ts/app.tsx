@@ -51,6 +51,7 @@ import 'scss/block/layout.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
+import 'scss/popup/archive.scss';
 import 'scss/popup/tree.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';

@@ -12,8 +12,6 @@ const sha1 = require('sha1');
 
 interface Props extends I.Popup {
 	history: any;
-	commonStore?: any;
-	authStore?: any;
 };
 
 interface State {
@@ -22,7 +20,7 @@ interface State {
 };
 
 @observer
-class PopupSettings extends React.Component<Props, {}> {
+class PopupSettings extends React.Component<Props, State> {
 
 	phraseRef: any = null;
 	refObj: any = {};
