@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuSmile { width: 408px; }
 	.menu.menuSmile {
-	
+		.content { overflow: visible; max-height: 488px; }
 		.head { color: #aca996; font-weight: 500; padding: 4px 16px; border-bottom: 1px solid #eae9e0; }
 		.head {
 			.btn { display: inline-block; vertical-align: middle; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
@@ -13,12 +13,14 @@
 		
 		.filter { padding: 4px 16px; border-bottom: 1px solid #eae9e0; }
 		.filter {
-			.input-text { padding: 0px; height: 40px; }
+			.input-text { padding: 0px; height: 32px; }
 		}
 	
-		.items { padding: 0px 16px; }
+		.items { overflow: auto; height: 392px; }
 		.section { padding-bottom: 4px; }
+		.section:first-child { padding-top: 8px; }
 		.section > .name { color: #e89d00; }
+		.section > .list { padding: 0px 16px; }
 		
 		.smile { margin: 0px 8px 4px 0px; cursor: pointer; }
 		.smile:nth-child(12n + 12) { margin-right: 0px; }

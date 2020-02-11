@@ -36,7 +36,7 @@ class MenuSmile extends React.Component<Props, {}> {
 		const Section = (item: any) => (
 			<div className="section">
 				<div className="name">{item.name}</div>
-				<div className="items">
+				<div className="list">
 					{item.emojis.map((smile: any, i: number) => (
 						<div key={i} className="smile" onClick={(e: any) => { this.onSelect(smile); }}>
 							<Emoji native={true} emoji={':' + smile + ':'} set="apple" size={24} />
@@ -58,9 +58,11 @@ class MenuSmile extends React.Component<Props, {}> {
 					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." value={filter} onKeyUp={this.onSubmit} />
 				</form>
 				
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
+				<div className="items">
+					{sections.map((item: any, i: number) => (
+						<Section key={i} {...item} />
+					))}
+				</div>
 			</div>
 		);
 	};
@@ -106,6 +108,8 @@ class MenuSmile extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
+		
+		console.log(EmojiData.emojis[id]);
 		
 		commonStore.menuClose(this.props.id);
 		onSelect(id);
