@@ -241,7 +241,6 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 		htmlSlot: data.html,
 		anySlot: (data.anytype || []).map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
-	console.log(request);
 	dispatcher.call('blockPaste', request, callBack);	
 };
 
