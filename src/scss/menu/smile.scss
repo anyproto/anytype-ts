@@ -1,5 +1,26 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSmile { width: auto; background: none; padding: 0px; }
+	.menu.menuSmile { width: 408px; }
+	.menu.menuSmile {
+	
+		.head { color: #aca996; font-weight: 500; padding: 4px 16px; border-bottom: 1px solid #eae9e0; }
+		.head {
+			.btn { display: inline-block; vertical-align: middle; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
+			.btn:last-child { margin-right: 0px; }
+			.btn:hover { color: $colorBlack; }
+		}
+		
+		.filter { padding: 4px 16px; border-bottom: 1px solid #eae9e0; }
+		.filter {
+			.input-text { padding: 0px; height: 40px; }
+		}
+	
+		.items { padding: 0px 16px; }
+		.section { padding-bottom: 4px; }
+		.section > .name { color: #e89d00; }
+		
+		.smile { margin: 0px 8px 4px 0px; cursor: pointer; }
+		.smile:nth-child(12n + 12) { margin-right: 0px; }
+	}
 }

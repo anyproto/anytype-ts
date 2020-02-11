@@ -275,7 +275,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		];
 		
 		if (filter) {
-			let reg = new RegExp(filter, 'gi');
+			const reg = new RegExp(filter, 'gi');
 			
 			sections = sections.concat([
 				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: DataUtil.menuGetActions(block) },

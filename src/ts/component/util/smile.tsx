@@ -70,9 +70,11 @@ class Smile extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onSelect: (item: any) => {
-					this.setState({ icon: item.colons });
-					onSelect(item.colons);
+				onSelect: (id: string) => {
+					id = ':' + id + ':';
+					console.log(id);
+					this.setState({ icon: id });
+					onSelect(id);
 				}
 			}
 		});

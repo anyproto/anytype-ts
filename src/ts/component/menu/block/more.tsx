@@ -193,7 +193,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'archive':
-				C.BlockSetPageIsArchived(root, linkPage + '/' + linkId, true, (message: any) => {});
+				C.BlockSetPageIsArchived(root, blockId, true, (message: any) => {});
 				break;
 				
 			case 'remove':
