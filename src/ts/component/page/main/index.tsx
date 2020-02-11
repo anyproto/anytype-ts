@@ -97,7 +97,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, block: any) {
-		DataUtil.pageOpen(e, this.props, block.content.targetBlockId);
+		DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
 	};
 	
 	onAdd (e: any) {

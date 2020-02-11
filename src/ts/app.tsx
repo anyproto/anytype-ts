@@ -117,6 +117,7 @@ class App extends React.Component<Props, State> {
 						<ListMenu history={history} />
 						<Progress />
 						<Tooltip />
+						
 						<div id="drag" />
 						<div id="selection-rect" />
 							

@@ -124,6 +124,15 @@ const BlockCreatePage = (block: any, contextId: string, targetId: string, positi
 	dispatcher.call('blockCreatePage', request, callBack);
 };
 
+const BlockSetPageIsArchived = (contextId: string, blockId: string, isArchived: boolean, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockId: blockId,
+		isArchived: isArchived,
+	};
+	dispatcher.call('blockSetPageIsArchived', request, callBack);
+};
+
 const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -304,6 +313,7 @@ export {
 	BlockRedo,
 	BlockCreate,
 	BlockCreatePage,
+	BlockSetPageIsArchived,
 	BlockUnlink,
 	BlockSetIconName,
 	BlockListMove,

@@ -6,12 +6,18 @@ const Constant = require('json/constant.json');
 
 class BlockStore {
 	@observable public rootId: string = '';
+	@observable public archiveId: string = '';
 	@observable public breadcrumbsId: string = '';
 	@observable public blockObject: any = {};
 	
 	@computed
 	get root (): string {
 		return this.rootId;
+	};
+	
+	@computed
+	get archive (): string {
+		return this.archiveId;
 	};
 	
 	@computed
@@ -27,6 +33,11 @@ class BlockStore {
 	@action
 	rootSet (id: string) {
 		this.rootId = String(id || '');
+	};
+	
+	@action
+	archiveSet (id: string) {
+		this.archiveId = String(id || '');
 	};
 	
 	@action

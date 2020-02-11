@@ -117,6 +117,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
+				{ id: 'archive', icon: 'remove', name: 'Archive' },
 				//{ id: 'remove', icon: 'remove', name: 'Delete' },
 			];
 		} else {
@@ -140,7 +141,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, onSelect } = data;
+		const { blockId, blockIds, linkPage, linkId, rootId, onSelect } = data;
 		const { blocks, root } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		const length = String(block.content.text || '').length;
@@ -189,6 +190,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						},
 					}, 
 				});
+				break;
+				
+			case 'archive':
+				C.BlockSetPageIsArchived(root, linkPage + '/' + linkId, true, (message: any) => {});
 				break;
 				
 			case 'remove':

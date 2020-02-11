@@ -92,12 +92,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
-		const { content } = block;
-		const { targetBlockId } = content;
 		
-		if (targetBlockId != rootId) {
+		if (block.content.targetBlockId != rootId) {
 			C.BlockCutBreadcrumbs(breadcrumbs, block.index, (message: any) => {
-				DataUtil.pageOpen(e, this.props, targetBlockId);
+				DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
 			});
 		};
 	};
@@ -122,7 +120,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onMore (e: any) {
-		const { rootId } = this.props;
+		const { rootId, match } = this.props;
 		
 		commonStore.menuOpen('blockMore', { 
 			element: '#button-' + rootId + '-more',
@@ -134,6 +132,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: rootId,
+				linkPage: match.params.linkPage,
+				linkId: match.params.linkId,
 				onSelect: (item: any) => {
 				},
 			}
