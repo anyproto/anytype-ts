@@ -314,7 +314,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const ids = DataUtil.selectionGet(this.props);
+		const ids = selection.get(true);
 		
 		if (e.ctrlKey || e.metaKey) {
 			if (k == Key.a) {

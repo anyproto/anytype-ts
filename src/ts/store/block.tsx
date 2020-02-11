@@ -266,7 +266,6 @@ class BlockStore {
 	};
 	
 	prepareBlockToProto (data: any) {
-		
 		let block: any = {
 			id: String(data.id || ''),
 		};
@@ -279,6 +278,10 @@ class BlockStore {
 			block.childrenIds = data.childrenIds || [];
 		};
 		
+		if (data.type == I.BlockType.Text) {
+			data.content.marks = { marks: data.content.marks };
+		};
+		
 		if (data.type == I.BlockType.File) {
 			if (data.content.size) {
 				data.content.size = parseFloat(data.content.size);
@@ -289,7 +292,8 @@ class BlockStore {
 		};
 		
 		block[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
-		return com.anytype.model.Block.create(block);
+		block = com.anytype.model.Block.create(block);
+		return block;
 	};
 	
 };

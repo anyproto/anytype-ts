@@ -251,6 +251,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.nodes.each((i: number, el: any) => {
 			let item = $(el);
 			let id = String(item.data('id') || '');
+			let block = node.find('#block-' + $.escapeSelector(id));
 			let elRect = el.getBoundingClientRect() as DOMRect;
 			
 			elRect.y += scrollTop;
@@ -261,11 +262,18 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			if ((e.ctrlKey || e.metaKey)) {
 				if (this.lastIds.indexOf(id) < 0) {
-					item.hasClass('isSelected') ? item.removeClass('isSelected') : item.addClass('isSelected');	
+					if (item.hasClass('isSelected')) {
+						item.removeClass('isSelected');
+						block.removeClass('isSelected');
+					} else {
+						item.addClass('isSelected');
+						block.addClass('isSelected');
+					};
 				};
 			} else 
 			if (!item.hasClass('isSelected')) {
 				item.addClass('isSelected');
+				block.addClass('isSelected');
 			};
 			
 			this.lastIds.push(id);
@@ -293,7 +301,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			if (this.range) {
 				if (this.range.end && (this.range.start != this.range.end)) {
-					selected.removeClass('isSelected');
+					node.find('.isSelected').removeClass('isSelected');
 				};
 				
 				if (!range) {
@@ -302,7 +310,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				};
 			};
 		} else {
-			if (focused && range.from && range.to) {
+			if (focused && range.to) {
 				focus.clear();
 			};
 			
@@ -325,12 +333,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	clear () {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.preventClear) {
 			return
-		};
-		
-		if (this.preventClear) {
-			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));

@@ -1,4 +1,4 @@
-import { I, Mark, dispatcher, StructEncode } from 'ts/lib';
+import { I, Util, Mark, dispatcher, StructEncode } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 const Struct = new StructEncode();
@@ -220,6 +220,8 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 };
 
 const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
+	blocks = Util.objectCopy(blocks);
+	
 	const request: any = {
 		contextId: contextId,
 		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
@@ -228,6 +230,8 @@ const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: an
 };
 
 const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], data: any, callBack?: (message: any) => void) => {
+	data = Util.objectCopy(data);
+	
 	const request: any = {
 		contextId: contextId,
 		focusedBlockId: focusedId,
@@ -237,6 +241,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 		htmlSlot: data.html,
 		anySlot: (data.anytype || []).map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
+	console.log(request);
 	dispatcher.call('blockPaste', request, callBack);	
 };
 
