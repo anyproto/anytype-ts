@@ -9,11 +9,14 @@
 		.item { margin-bottom: 6px; padding: 4px 0px; transition: $transitionFast; border-radius: 4px; position: relative; }
 		.item:last-child  { margin: 0px; }
 		.item:hover { background: #f7f5f0; }
+		.item:hover {
+			.buttons { opacity: 1; }
+		}
 		
 		.item {
 			.smile { margin-right: 4px; }
 			.name { display: inline-block; vertical-align: middle; width: calc(100% - 28px); }
-			.buttons { position: absolute; right: 10px; top: 4px; }
+			.buttons { position: absolute; right: 10px; top: 4px; opacity: 0; transition: $transitionFast; }
 			.buttons {
 				.btn { display: inline-block; vertical-align: middle; margin-right: 20px; color: #aca996; cursor: pointer; }
 				.btn:last-child { margin: 0px; }
