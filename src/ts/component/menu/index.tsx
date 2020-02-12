@@ -4,8 +4,9 @@ import { I, Key, Util } from 'ts/lib';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
-import MenuSmile from './smile';
 import MenuSelect from './select';
+import MenuSmile from './smile';
+import MenuSmileSkin from './smile/skin';
 
 import MenuBlockContext from './block/context';
 import MenuBlockStyle from './block/style';
@@ -51,8 +52,9 @@ class Menu extends React.Component<Props, {}> {
 		const Components: any = {
 			help:					 MenuHelp,
 			account:				 MenuAccount,
-			smile:					 MenuSmile,
 			select:					 MenuSelect,
+			smile:					 MenuSmile,
+			smileSkin:				 MenuSmileSkin,
 			
 			blockContext:			 MenuBlockContext,
 			blockAction:			 MenuBlockAction,
