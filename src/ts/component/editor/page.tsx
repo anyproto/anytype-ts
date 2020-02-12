@@ -300,7 +300,7 @@ class EditorPage extends React.Component<Props, {}> {
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			if (!hasIcon) {
-				ay -= 16;
+				ay -= 18;
 			};
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
