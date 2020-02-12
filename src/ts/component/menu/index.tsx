@@ -140,11 +140,9 @@ class Menu extends React.Component<Props, {}> {
 				return;
 			};
 			
-			let elId = $.escapeSelector(element).replace('\\#', '#');
-
-			const el = $(elId);
+			const el = $(element.replace(/\//g, '\\/'));
 			if (!el.length) {
-				console.error('[Menu.position] element not found', elId);
+				console.error('[Menu.position] element not found', element);
 				return;
 			};
 

@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSmile { width: 408px; }
+	.menu.menuSmile { width: 408px; user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; max-height: 488px; }
 		.head { color: #aca996; font-weight: 500; padding: 4px 16px; border-bottom: 1px solid #eae9e0; }

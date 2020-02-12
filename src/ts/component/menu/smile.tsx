@@ -101,6 +101,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentWillUnmount () {
+		window.clearTimeout(this.t);
 		keyboard.setFocus(false);
 		commonStore.menuClose('smileSkin');
 	};
@@ -154,7 +155,9 @@ class MenuSmile extends React.Component<Props, State> {
 	onMouseDown (id: string) {
 		const win = $(window);
 		const item = EmojiData.emojis[id];
+		
 		this.id = id;
+		window.clearTimeout(this.t);
 		
 		if (item.skin_variations) {
 			this.t = window.setTimeout(() => {
@@ -162,7 +165,7 @@ class MenuSmile extends React.Component<Props, State> {
 				
 				commonStore.menuOpen('smileSkin', {
 					type: I.MenuType.Horizontal,
-					element: '#item-' + id,
+					element: '.menuSmile #item-' + id,
 					offsetX: 0,
 					offsetY: 4,
 					vertical: I.MenuDirection.Top,
@@ -177,17 +180,19 @@ class MenuSmile extends React.Component<Props, State> {
 						this.id = '';
 					}
 				});
-			}, 500);
-			
-			win.unbind('mouseup.smile').on('mouseup.smile', () => {
-				if (this.id) {
-					this.onSelect(id);
-				};
-				window.clearTimeout(this.t);
-			});
-		} else {
-			this.onSelect(id);
+			}, 200);
 		};
+		
+		win.unbind('mouseup.smile').on('mouseup.smile', () => {
+			if (commonStore.menuIsOpen('smileSkin')) {
+				return;
+			};
+			if (this.id) {
+				this.onSelect(id);
+			};
+			window.clearTimeout(this.t);
+			win.unbind('mouseup.smile')
+		});
 	};
 	
 	setLastIds (id: string) {
