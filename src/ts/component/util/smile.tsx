@@ -38,8 +38,12 @@ class Smile extends React.Component<Props, State> {
 	
 	render () {
 		const { id, size, className, canEdit } = this.props;
+		const icon = this.state.icon || this.props.icon;
 		
-		let icon = this.state.icon || this.props.icon;
+		if (!icon) {
+			return null;
+		};
+		
 		let cn = [ 'smile' ];
 		if (className) {
 			cn.push(className);

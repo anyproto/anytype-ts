@@ -171,7 +171,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 									const param: any = {
 										type: item.type,
 										fields: {
-											icon: Util.randomSmile(), 
 											name: Constant.default.name,
 										},
 										content: {

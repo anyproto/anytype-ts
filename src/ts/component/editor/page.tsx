@@ -748,7 +748,6 @@ class EditorPage extends React.Component<Props, {}> {
 						
 						if (item.type == I.BlockType.Page) {
 							param.fields = {
-								icon: Util.randomSmile(), 
 								name: Constant.default.name,
 							};
 							param.content.style = I.PageStyle.Empty;

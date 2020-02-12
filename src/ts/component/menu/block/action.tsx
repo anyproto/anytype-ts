@@ -323,7 +323,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 							const param: any = {
 								type: item.type,
 								fields: {
-									icon: Util.randomSmile(), 
 									name: String(text || Constant.default.name),
 								},
 								content: {

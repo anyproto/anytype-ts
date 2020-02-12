@@ -121,6 +121,7 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		if (lastIds && lastIds.length) {
+			console.log(lastIds.toString());
 			sections.unshift({
 				name: 'Recently used',
 				emojis: lastIds,
@@ -202,12 +203,11 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		let ids = Storage.get('smileIds') || [];
 		
-		if (ids.length && (ids[0] == id)) {
-			return;
-		};
-		
 		ids.unshift(id);
+		ids = [ ...new Set(ids) ];
 		ids = ids.slice(0, LIMIT);
+		
+		Storage.delete('smileIds');
 		Storage.set('smileIds', ids);
 	};
 	
