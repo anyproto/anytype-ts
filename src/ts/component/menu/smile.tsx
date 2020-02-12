@@ -121,7 +121,6 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		if (lastIds && lastIds.length) {
-			console.log(lastIds.toString());
 			sections.unshift({
 				name: 'Recently used',
 				emojis: lastIds,

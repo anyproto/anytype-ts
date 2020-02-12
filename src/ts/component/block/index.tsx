@@ -162,6 +162,7 @@ class Block extends React.Component<Props, {}> {
 							<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
 								{blockComponent}
 							</DropTarget>
+							<div className="selectionOver" />
 						</div>
 					) : ''}
 					
