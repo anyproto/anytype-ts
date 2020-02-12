@@ -214,7 +214,6 @@ class BlockStore {
 			
 			if (type == I.BlockType.Page) {
 				item.fields.name = String(item.fields.name || Constant.default.name);
-				item.fields.icon = String(item.fields.icon || Constant.default.icon);
 			};
 		};
 		
@@ -262,7 +261,6 @@ class BlockStore {
 				if (item.content.style == I.LinkStyle.Page) {
 					item.content.fields = item.content.fields || {};
 					item.content.fields.name = String(item.content.fields.name || Constant.default.name);
-					item.content.fields.icon = String(item.content.fields.icon || Constant.default.icon);
 				};
 			};
 			

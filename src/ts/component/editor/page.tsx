@@ -7,6 +7,8 @@ import { I, C, Key, Util, DataUtil, Mark, dispatcher, focus, keyboard } from 'ts
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
+import Controls from './controls';
+
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
@@ -14,7 +16,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { ipcRenderer } = window.require('electron');
-const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -47,10 +48,23 @@ class EditorPage extends React.Component<Props, {}> {
 	render () {
 		const { rootId } = this.props;
 		const { blocks } = blockStore;
+		const root = (blocks[rootId] || []).find((it: any) => { return it.id == rootId });
+		
+		if (!root) {
+			return null;
+		};
+		
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
 		
+		let cn = [ 'editor' ];
+		if (root && root.fields.icon) {
+			cn.push('withIcon');
+		};
+		
 		return (
-			<div className="editor">
+			<div className={cn.join(' ')}>
+				<Controls {...this.props} />
+				
 				<div className="blocks">
 					<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 				
@@ -235,14 +249,25 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.block');
 		const container = $('.editor');
+		
+		if (!container.length) {
+			return;
+		};
+		
+		const root = (blocks[rootId] || []).find((it: any) => { return it.id == rootId });
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const offset = 210;
-		
+		const hasIcon = root && root.fields.icon;
+
+		let offset = 130;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
+		
+		if (hasIcon) {
+			offset += 64;
+		};
 		
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
@@ -273,6 +298,10 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			let ax = hoveredRect.x - (rectContainer.x + addOffsetX) + 2;
 			let ay = pageY - rectContainer.y - 10 - st;
+			
+			if (!hasIcon) {
+				ay -= 16;
+			};
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');

@@ -114,7 +114,6 @@ class Dispatcher {
 					if (null !== data.fields) {
 						block.content.fields = StructDecode.decodeStruct(data.fields.value);
 						block.content.fields.name = String(block.content.fields.name || Constant.default.name);
-						block.content.fields.icon = String(block.content.fields.icon || Constant.default.icon);
 					};
 					break;
 					

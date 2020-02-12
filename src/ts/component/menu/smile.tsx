@@ -159,7 +159,7 @@ class MenuSmile extends React.Component<Props, State> {
 		this.id = id;
 		window.clearTimeout(this.t);
 		
-		if (item.skin_variations) {
+		if (item && item.skin_variations) {
 			this.t = window.setTimeout(() => {
 				win.unbind('mouseup.smile');
 				
@@ -196,6 +196,10 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	setLastIds (id: string) {
+		if (!id) {
+			return;
+		};
+		
 		let ids = Storage.get('smileIds') || [];
 		
 		if (ids.length && (ids[0] == id)) {

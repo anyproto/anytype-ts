@@ -7,4 +7,38 @@
 		transition: opacity 0.05s ease-in-out, background 0.05s ease-in-out, border-color 0.05s ease-in-out; 
 	}
 	.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); background-color: $colorOrange; border-color: $colorOrange; }
+	
+	.controls { position: relative; z-index: 1; }
+	.controls {
+		.sides { display: flex; }
+		.side { width: 50%; }
+		.side.right { text-align: right; }
+		
+		.btn { line-height: 18px; font-weight: 500; font-size: 13px; line-height: 18px; color: #ACA996; cursor: pointer; transition: $transitionFast; }
+		.btn:hover { color: $colorBlack; }
+		.btn {
+			.icon { width: 16px; height: 16px; margin-right: 6px; }
+		}
+		
+		.btn.addIcon {
+			.icon { background-image: url('~img/icon/add/icon0.svg'); }
+		}
+		.btn.addIcon:hover {
+			.icon { background-image: url('~img/icon/add/icon1.svg'); }
+		}
+		
+		.btn.addCover {
+			.icon { background-image: url('~img/icon/add/cover0.svg'); }
+		}
+		.btn.addCover:hover {
+			.icon { background-image: url('~img/icon/add/cover1.svg'); }
+		}
+	}
+}
+
+.editor.withIcon {
+	.blocks { margin-top: -18px; }
+	.controls {
+		.btn.addIcon { display: none; }
+	}
 }
