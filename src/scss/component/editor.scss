@@ -8,13 +8,16 @@
 	}
 	.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); background-color: $colorOrange; border-color: $colorOrange; }
 	
-	.controls { position: relative; z-index: 1; }
+	.controls { padding-top: 96px; position: relative; z-index: 1; }
 	.controls {
 		.sides { display: flex; }
 		.side { width: 50%; }
 		.side.right { text-align: right; }
 		
-		.btn { line-height: 18px; font-weight: 500; font-size: 13px; line-height: 18px; color: #ACA996; cursor: pointer; transition: $transitionFast; }
+		.btn { 
+			line-height: 18px; font-weight: 500; font-size: 13px; line-height: 18px; color: #ACA996; cursor: pointer; display: inline-block; 
+			transition: $transitionFast; opacity: 0; 
+		}
 		.btn:hover { color: $colorBlack; }
 		.btn {
 			.icon { width: 16px; height: 16px; margin-right: 6px; }
@@ -33,6 +36,9 @@
 		.btn.addCover:hover {
 			.icon { background-image: url('~img/icon/add/cover1.svg'); }
 		}
+	}
+	.controls:hover {
+		.btn { opacity: 1; }
 	}
 }
 
