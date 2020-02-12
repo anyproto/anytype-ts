@@ -48,6 +48,7 @@ import 'scss/block/link.scss';
 import 'scss/block/bookmark.scss';
 import 'scss/block/div.scss';
 import 'scss/block/layout.scss';
+import 'scss/block/icon.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';

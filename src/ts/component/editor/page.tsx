@@ -297,7 +297,7 @@ class EditorPage extends React.Component<Props, {}> {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
 			let ax = hoveredRect.x - (rectContainer.x + addOffsetX) + 2;
-			let ay = pageY - rectContainer.y - 106 - st;
+			let ay = pageY - rectContainer.y - 10 - st;
 			
 			if (!hasIcon) {
 				ay -= 16;
