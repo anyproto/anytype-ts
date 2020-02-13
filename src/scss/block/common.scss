@@ -6,7 +6,7 @@
 		.wrapMenu { width: 48px; text-align: right; }
 		.wrapContent { width: calc(100% - 48px); position: relative; overflow: hidden; }
 		
-		.flex { position: relative; z-index: 1; }
+		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
 			width: 12px; background-size: 2px 8px; opacity: 0; cursor: move; vertical-align: top; 
 			border: 1px solid #d2d0c2; border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 6px;

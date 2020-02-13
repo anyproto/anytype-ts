@@ -243,6 +243,16 @@ class DataUtil {
 		];
 	};
 	
+	linkId (match: any) {
+		if (match.params.link) {
+			return match.params.link;
+		};
+		if (match.params.linkId) {
+			return match.params.linkId;
+		};
+		return '';
+	};
+	
 };
 
 export default new DataUtil();

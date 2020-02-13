@@ -34,7 +34,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const { breadcrumbs, blocks } = blockStore;
 		const { account } = authStore;
-		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
 		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
@@ -132,8 +132,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: rootId,
-				linkPage: match.params.linkPage,
-				linkId: match.params.linkId,
+				match: match,
 				onSelect: (item: any) => {
 				},
 			}

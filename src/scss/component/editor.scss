@@ -9,7 +9,7 @@
 	}
 	.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); background-color: $colorOrange; border-color: $colorOrange; }
 	
-	.controls { position: absolute; width: 100%; height: 166px; left: 0px; top: -96px; z-index: 1; line-height: 18px; }
+	.controls { position: absolute; width: 100%; height: 164px; left: 0px; top: -96px; z-index: 1; line-height: 18px; }
 	.controls {
 		.sides { display: flex; position: absolute; left: 0px; top: 96px; width: 100%; }
 		.side { width: 50%; }

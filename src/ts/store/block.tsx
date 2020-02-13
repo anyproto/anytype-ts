@@ -137,7 +137,7 @@ class BlockStore {
 	};
 	
 	getMap (list: I.Block[]) {
-		list = Util.objectCopy(list);
+		list = Util.objectCopy(list || []);
 		
 		let map: any = {};
 		
