@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 
 const $ = require('jquery');
 const EmojiData = require('emoji-mart/data/apple.json');
-const LIMIT = 12;
+const LIMIT = 24;
 
 interface Props extends I.Menu {};
 interface State {
