@@ -214,6 +214,15 @@ const BlockSplit = (contextId: string, blockId: string, position: number, callBa
 	dispatcher.call('blockSplit', request, callBack);
 };
 
+const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, callBack?: (message: any) => void) => {
+	const request: any = {
+		contextId: contextId,
+		blockId: blockId,
+		url: url,
+	};
+	dispatcher.call('blockBookmarkFetch', request, callBack);	
+};
+
 const BlockUpload = (contextId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) => {
 	const request: any = {
 		contextId: contextId,
@@ -323,6 +332,7 @@ export {
 	BlockListMove,
 	BlockMerge,
 	BlockSplit,
+	BlockBookmarkFetch,
 	BlockUpload,
 	BlockCopy,
 	BlockPaste,

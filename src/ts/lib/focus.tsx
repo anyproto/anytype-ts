@@ -22,7 +22,6 @@ class Focus {
 		this.focused = '';
 		this.range.from = 0;
 		this.range.to = 0;
-		window.getSelection().empty();
 	};
 	
 	apply () {

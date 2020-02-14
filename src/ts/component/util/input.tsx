@@ -17,6 +17,7 @@ interface Props {
 	readOnly?: boolean;
 	accept?: string;
 	onChange?(e: any, value: string): void;
+	onPaste?(e: any, value: string): void;
 	onKeyUp?(e: any, value: string): void;
 	onKeyDown?(e: any, value: string): void;
 	onFocus?(e: any, value: string): void;
@@ -51,6 +52,7 @@ class Input extends React.Component<Props, State> {
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 	};
 
 	render () {
@@ -80,6 +82,7 @@ class Input extends React.Component<Props, State> {
 				onKeyDown={this.onKeyDown}
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
+				onPaste={this.onPaste}
 				maxLength={maxLength ? maxLength : undefined}
 				accept={accept ? accept : undefined}
 				multiple={multiple}
@@ -142,6 +145,16 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		keyboard.setFocus(false);
+	};
+	
+	onPaste (e: any) {
+		e.preventDefault();
+		
+		this.setValue(e.clipboardData.getData('text/plain'));
+		
+		if (this.props.onPaste) {
+			this.props.onPaste(e, this.state.value);
+		};
 	};
 	
 	focus () {

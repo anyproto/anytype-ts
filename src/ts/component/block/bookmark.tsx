@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, InputWithFile } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockText {
@@ -12,6 +12,8 @@ class BlockBookmark extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
+		
+		this.onChangeUrl = this.onChangeUrl.bind(this);
 	};
 
 	render () {
@@ -19,9 +21,14 @@ class BlockBookmark extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<InputWithFile icon="bookmark" withFile={false} />
+				<InputWithFile icon="bookmark" withFile={false} onChangeUrl={this.onChangeUrl} />
 			</React.Fragment>
 		);
+	};
+	
+	onChangeUrl (e: any, url: string) {
+		const { id, rootId } = this.props;
+		C.BlockBookmarkFetch(rootId, id, url);
 	};
 	
 };

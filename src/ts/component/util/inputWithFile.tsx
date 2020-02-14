@@ -82,7 +82,7 @@ class InputWithFile extends React.Component<Props, State> {
 					<form id="form" onSubmit={this.onSubmit}>
 						{focused ? (
 							<span>
-								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onChangeUrl(e, false); }} onFocus={onFocus} onBlur={onBlur} />
+								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onChangeUrl(e, false); }} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
 								<Button type="input" className="dn" />
 							</span>
 						) : (
@@ -166,9 +166,7 @@ class InputWithFile extends React.Component<Props, State> {
 				return;
 			};
 			
-			if (!url.match(/^[^:]+:\/\//)) {
-				url = 'http://' + url;
-			};
+			url = Util.urlFix(url);
 			
 			if (onChangeUrl) {
 				onChangeUrl(e, url);
