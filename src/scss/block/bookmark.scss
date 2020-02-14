@@ -1,7 +1,6 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockBookmark { padding: 7px 0px; }
 	.block.blockBookmark {
 		.dropTarget { border-radius: 4px; }
 	
@@ -16,10 +15,9 @@
 		.inner.vertical { display: block; padding-top: 112px; }
 		.inner.vertical {
 			.side.left { width: 100%; border-radius: 0px; }
-			.side.right {
-				position: absolute; top: 1px; left: 1px; height: 112px; width: calc(100% - 2px); border-radius: 4px 4px 0px 0px;
-				background-position: top center;
-			}		
+			.side.right { position: absolute; top: 1px; left: 1px; height: 112px; width: calc(100% - 2px); border-radius: 4px 4px 0px 0px; }
+			
+			.img { background-position: top center; }
 		}
 
 		.title { font-size: 15px; line-height: 20px; height: 20px; letter-spacing: -0.08px; color: $colorBlack; overflow: hidden; }
@@ -33,6 +31,6 @@
 		
 		.icon.fav { width: 16px; height: 16px; margin: -4px 4px 0px 0px; }
 	}
-	.bookMark:hover { border-color: #aca996; }
-	.bookMark.selected { border-color: #aca996; }
+	
+	.block.blockBookmark > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
 }

@@ -22,6 +22,12 @@
 	.icon.file { background-image: url('~img/icon/add/file.svg'); }
 	.icon.bookmark { background-image: url('~img/icon/add/bookMark.svg'); }
 }
+
+.inputWithFile.isSmall {
+	.fileWrap { display: block; }
+	.txt { height: 48px; }
+}
+
 .inputWithFile.noFile {
 	.urlToggle { width: 100%; }
 	#form { width: 100%; }
@@ -31,11 +37,6 @@
 .inputWithFile.focused {
 	.fileWrap { display: none; }
 	#form { width: 100%; }
-}
-
-.inputWithFile.small {
-	.fileWrap { display: block; }
-	.txt { height: 48px; }
 }
 
 .inputWithFile.isSmall.isFocused {

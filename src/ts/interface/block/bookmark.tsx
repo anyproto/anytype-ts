@@ -8,11 +8,12 @@ export enum BookmarkType {
 }
 
 export interface ContentBookmark {
+	type: BookmarkType;
 	url: string;
 	title: string;
 	description: string;
 	imageHash: string;
-	type: BookmarkType;
+	faviconHash: string;
 };
 
 export interface BlockBookmark extends I.Block {
