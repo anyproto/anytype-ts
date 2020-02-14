@@ -4,7 +4,7 @@
 	.block.blockText { font-size: 15px; line-height: 24px; letter-spacing: -0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
 		.wrap { flex: auto; position: relative; padding: 0px; }
-		.placeHolder { color: #aca996; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; }
+		.placeHolder { color: #aca996; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; width: 100%; height: 100%; }
 		
 		a { cursor: pointer; }
 		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; border-radius: 2px; }
