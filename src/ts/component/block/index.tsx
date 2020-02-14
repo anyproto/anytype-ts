@@ -370,6 +370,8 @@ class Block extends React.Component<Props, {}> {
 		
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
+		
+		node.find('.blockBookmark .inner').trigger('resize');
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
@@ -391,6 +393,8 @@ class Block extends React.Component<Props, {}> {
 			{ blockId: prevBlock.id, fields: { width: res.percent * res.sum } },
 			{ blockId: currentBlock.id, fields: { width: (1 - res.percent) * res.sum } },
 		]);
+		
+		node.find('.blockBookmark').trigger('resize');
 	};
 	
 	calcWidth (x: number, index: number) {

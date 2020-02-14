@@ -171,7 +171,7 @@ class InputWithFile extends React.Component<Props, State> {
 			if (onChangeUrl) {
 				onChangeUrl(e, url);
 			};
-		}, force ? 0 : 1000);
+		}, force ? 50 : 1000);
 	};
 	
 	onClickFile (e: any) {

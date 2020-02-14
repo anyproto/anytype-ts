@@ -151,7 +151,6 @@ class Input extends React.Component<Props, State> {
 		e.preventDefault();
 		
 		this.setValue(e.clipboardData.getData('text/plain'));
-		
 		if (this.props.onPaste) {
 			this.props.onPaste(e, this.state.value);
 		};

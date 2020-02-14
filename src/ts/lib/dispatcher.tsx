@@ -190,6 +190,29 @@ class Dispatcher {
 					};
 					break;
 					
+				case 'blockSetBookmark':
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
+					
+					if (null !== data.url) {
+						block.content.url = String(data.url.value || '');
+					};
+					
+					if (null !== data.title) {
+						block.content.title = String(data.title.value || '');
+					};
+					
+					if (null !== data.description) {
+						block.content.description = String(data.description.value || '');
+					};
+					
+					if (null !== data.imageHash) {
+						block.content.imageHash = String(data.imageHash.value || '');
+					};
+					break;
+					
 				case 'blockDelete':
 					for (let blockId of data.blockIds) {
 						blocks = blocks.filter((item: I.Block) => { return item.id != blockId; });
