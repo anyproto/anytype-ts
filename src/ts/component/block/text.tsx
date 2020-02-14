@@ -175,15 +175,15 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let html = text;
 		
-		//html = html.replace(/\n/g, '__break__');
-		//html = html.replace(/&nbsp;/g, ' ');
+		html = html.replace(/\n/g, '__break__');
+		html = html.replace(/&nbsp;/g, ' ');
 		
 		if (style == I.TextStyle.Code) {
 			let { lang } = fields || {};
 			let res = low.highlight(String(lang || 'js'), html);
 			
 			if (res.value) {
-				//html = rehype().stringify({ type: 'root', children: res.value }).toString();
+				html = rehype().stringify({ type: 'root', children: res.value }).toString();
 			};
 		} else {
 			html = Mark.toHtml(html, this.marks);
@@ -193,7 +193,7 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		};
 
-		//html = html.replace(/__break__/g, '<br/>');
+		html = html.replace(/__break__/g, '<br/>');
 		value.get(0).innerHTML = html;
 		
 		if (html != text) {
@@ -268,7 +268,7 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		};
 		
-		if ((k == Key.enter) && !e.shiftKey) {
+		if ((k == Key.enter) && !e.shiftKey && (style != I.TextStyle.Code)) {
 			this.blockSetText(this.marks);
 		};
 		
@@ -585,7 +585,7 @@ class BlockText extends React.Component<Props, {}> {
 		node.find('.placeHolder').show();
 	};
 	
-	getRange (): I.TextRange {
+	getRange () {
 		if (!this._isMounted) {
 			return;
 		};
@@ -593,7 +593,7 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('.value').get(0) as Element);
 		
-		return range ? { from: range.start, to: range.end } : { from: 0, to: 0 };
+		return range ? { from: range.start, to: range.end } : null;
 	};
 	
 };

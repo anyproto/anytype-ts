@@ -1,4 +1,4 @@
-import { I, C, Util } from 'ts/lib';
+import { I, C, Util, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -162,6 +162,8 @@ class DataUtil {
 			return;
 		};
 		
+		focus.setBlock(true);
+		
 		text = String(text || '');
 		marks = marks || [];
 		
@@ -174,7 +176,9 @@ class DataUtil {
 		block.content = param.content;
 			
 		blockStore.blockUpdate(rootId, param);
-		C.BlockSetTextText(rootId, block.id, text, marks);
+		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
+			focus.setBlock(false);
+		});
 	};
 	
 	// Action menu

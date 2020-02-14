@@ -5,17 +5,24 @@ const $ = require('jquery');
 
 class Focus {
 	
+	block: boolean = false;
 	focused: string = '';
 	range: I.TextRange = { from: 0, to: 0 };
 	
 	set (id: string, range: I.TextRange): void {
+		if (!range || this.block) {
+			return;
+		};
+		
 		this.focused = String(id || '');
 		this.range.from = Number(range.from) || 0;
 		this.range.to = Number(range.to) || 0;
 	};
 	
 	clear () {
-		this.set('', { from: 0, to: 0 });
+		this.focused = '';
+		this.range.from = 0;
+		this.range.to = 0;
 		window.getSelection().empty();
 	};
 	
@@ -37,6 +44,10 @@ class Focus {
 		value.focus();
 		setRange(value.get(0), { start: this.range.from, end: this.range.to });
 		keyboard.setFocus(true);
+	};
+	
+	setBlock (v: boolean) {
+		this.block = v;
 	};
 	
 };

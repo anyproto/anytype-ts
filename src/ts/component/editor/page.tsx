@@ -228,6 +228,8 @@ class EditorPage extends React.Component<Props, {}> {
 
 		$('.header').css({ opacity: 0 });
 		$('.footer').css({ opacity: 0 });
+		$('.icon.dnd').css({ opacity: 0 });
+		$('#button-add').css({ opacity: 0 });
 		
 		this.uiHidden = true;
 		
@@ -242,9 +244,10 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		$('.header').css({ opacity: 1 });
 		$('.footer').css({ opacity: 1 });
+		$('.icon.dnd').css({ opacity: '' });
+		$('#button-add').css({ opacity: '' });
 		
 		this.uiHidden = false;
-		
 		win.unbind('mousemove.ui');
 	};
 	
