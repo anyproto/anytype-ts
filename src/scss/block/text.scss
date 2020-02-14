@@ -4,6 +4,7 @@
 	.block.blockText { font-size: 15px; line-height: 24px; letter-spacing: -0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
 		.wrap { flex: auto; position: relative; padding: 0px; }
+		.value { -webkit-user-modify: read-write-plaintext-only; }
 		.placeHolder { color: #aca996; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; width: 100%; height: 100%; }
 		
 		a { cursor: pointer; }

@@ -162,8 +162,6 @@ class DataUtil {
 			return;
 		};
 		
-		focus.setBlock(true);
-		
 		text = String(text || '');
 		marks = marks || [];
 		
@@ -176,9 +174,7 @@ class DataUtil {
 		block.content = param.content;
 			
 		blockStore.blockUpdate(rootId, param);
-		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
-			focus.setBlock(false);
-		});
+		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {});
 	};
 	
 	// Action menu

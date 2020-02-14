@@ -5,12 +5,11 @@ const $ = require('jquery');
 
 class Focus {
 	
-	block: boolean = false;
 	focused: string = '';
 	range: I.TextRange = { from: 0, to: 0 };
 	
 	set (id: string, range: I.TextRange): void {
-		if (!range || this.block) {
+		if (!range) {
 			return;
 		};
 		
@@ -44,10 +43,6 @@ class Focus {
 		value.focus();
 		setRange(value.get(0), { start: this.range.from, end: this.range.to });
 		keyboard.setFocus(true);
-	};
-	
-	setBlock (v: boolean) {
-		this.block = v;
 	};
 	
 };

@@ -143,7 +143,7 @@ class EditorPage extends React.Component<Props, {}> {
 			focus.apply(); 
 			window.scrollTo(0, this.scrollTop);
 			this.uiBlockHide = false;
-		}, 15);
+		}, 1);
 	};
 	
 	componentWillUnmount () {
