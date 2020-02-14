@@ -122,9 +122,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 		
 		ipcRenderer.on('copyDocument', (e: any) => {
-			const json = JSON.stringify({
-				blocks: blocks[rootId],
-			}, null, 5);
+			const json = JSON.stringify({ blocks: blocks[rootId] }, null, 5);
 
 			Util.clipboardCopy({ text: json }, () => {
 				alert('Document copied to clipboard');
@@ -279,8 +277,14 @@ class EditorPage extends React.Component<Props, {}> {
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
 		
+		if (withCover && withIcon) {
+			offset = 360;
+		} else
+		if (withCover) {
+			offset = 360;
+		} else 
 		if (withIcon) {
-			offset += 64;
+			offset = 184;
 		};
 		
 		// Find hovered block by mouse coords

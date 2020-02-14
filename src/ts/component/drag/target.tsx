@@ -75,13 +75,12 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		let win = $(window);
-		let offset = node.offset();
-		let width = node.width();
-		let height = node.height();
-		let x = offset.left;
-		let y = offset.top;
 		let ex = e.pageX;
 		let ey = e.pageY;
+		let domRect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		let { x, y, width, height } = domRect;
+		
+		y += win.scrollTop();
 		
 		let rect = {
 			x: x + width * 0.15,

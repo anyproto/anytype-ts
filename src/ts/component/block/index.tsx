@@ -294,6 +294,7 @@ class Block extends React.Component<Props, {}> {
 			},
 			onClose: () => {
 				selection.setPreventClear(false);
+				selection.clear();
 			}
 		});
 	};
