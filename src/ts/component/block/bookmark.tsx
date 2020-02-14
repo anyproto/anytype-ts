@@ -29,6 +29,12 @@ class BlockBookmark extends React.Component<Props, {}> {
 		
 		let element = null;
 		if (url) {
+			let style: any = {};
+			
+			if (imageHash) {
+				style.backgroundImage = 'url("' + commonStore.imageUrl(imageHash, 500) + '")';
+			};
+			
 			element = (
 				<div className="inner">
 					<div className="side left">
@@ -37,7 +43,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 						<div className="link">{url}</div>
 					</div>
 					<div className="side right">
-						{imageHash ? <div className="img" style={{ backgroundImage: 'url("' + commonStore.imageUrl(imageHash, 500) + '")' }} /> : ''}
+						<div className="img" style={style} />
 					</div>
 				</div>
 			);

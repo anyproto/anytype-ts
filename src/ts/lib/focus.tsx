@@ -9,7 +9,7 @@ class Focus {
 	range: I.TextRange = { from: 0, to: 0 };
 	
 	set (id: string, range: I.TextRange): void {
-		if (!range) {
+		if (!id || !range) {
 			return;
 		};
 		

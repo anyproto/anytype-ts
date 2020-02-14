@@ -211,6 +211,10 @@ class Dispatcher {
 					if (null !== data.imageHash) {
 						block.content.imageHash = String(data.imageHash.value || '');
 					};
+					
+					if (null !== data.type) {
+						block.content.type = Number(data.type.value) || 0;
+					};
 					break;
 					
 				case 'blockDelete':
