@@ -399,19 +399,27 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let ids = [] as string[];
+		
 		node.find('.selectable.isSelected').each((i: number, item: any) => {
 			item = $(item);
+
 			let id = String(item.data('id') || '');
-			
-			ids.push(id);
+			if (id) {
+				ids.push(id);
+			};
 			
 			if (withChildren) {
 				node.find('.children.c' + $.escapeSelector(id) + ' .selectable').each((c: number, child: any) => {
 					child = $(child);
-					ids.push(String(child.data('id') || ''));
+					
+					let id = String(child.data('id') || '');
+					if (id) {
+						ids.push(id);
+					};
 				});
 			};
 		});
+		
 		return [ ...new Set(ids) ];
 	};
 	

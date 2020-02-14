@@ -175,15 +175,15 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let html = text;
 		
-		html = html.replace(/\n/g, '__break__');
-		html = html.replace(/&nbsp;/g, ' ');
+		//html = html.replace(/\n/g, '__break__');
+		//html = html.replace(/&nbsp;/g, ' ');
 		
 		if (style == I.TextStyle.Code) {
 			let { lang } = fields || {};
 			let res = low.highlight(String(lang || 'js'), html);
 			
 			if (res.value) {
-				html = rehype().stringify({ type: 'root', children: res.value }).toString();
+				//html = rehype().stringify({ type: 'root', children: res.value }).toString();
 			};
 		} else {
 			html = Mark.toHtml(html, this.marks);
@@ -193,7 +193,7 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		};
 
-		html = html.replace(/__break__/g, '<br/>');		
+		//html = html.replace(/__break__/g, '<br/>');
 		value.get(0).innerHTML = html;
 		
 		if (html != text) {

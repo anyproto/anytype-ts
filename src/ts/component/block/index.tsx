@@ -71,11 +71,16 @@ class Block extends React.Component<Props, {}> {
 		switch (type) {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(content.style));
+				
 				if (content.bgColor) {
 					cd.push('bgColor bgColor-' + content.bgColor);
 				};
 				if (content.checked) {
 					cn.push('isChecked');
+				};
+				
+				if (content.style == I.TextStyle.Title) {
+					canSelect = false;
 				};
 				
 				blockComponent = <BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
@@ -91,6 +96,7 @@ class Block extends React.Component<Props, {}> {
 					return null;
 				};
 			
+				canSelect = false;
 				cn.push('blockIcon');
 				blockComponent = <BlockIcon {...this.props} />;
 				break;
@@ -156,6 +162,27 @@ class Block extends React.Component<Props, {}> {
 				break;
 		};
 		
+		let element = (
+			<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
+				{blockComponent}
+			</DropTarget>
+		);
+		
+		if (canSelect) {
+			element = (
+				<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
+					{element}
+					<div className="selectionOver" />
+				</div>
+			);
+		} else {
+			element = (
+				<div className="selectable">
+					{element}
+				</div>
+			);
+		};
+		
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
@@ -163,14 +190,7 @@ class Block extends React.Component<Props, {}> {
 				</div>
 				
 				<div className="wrapContent">
-					{canSelect ? (
-						<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
-							<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
-								{blockComponent}
-							</DropTarget>
-							<div className="selectionOver" />
-						</div>
-					) : ''}
+					{element}
 					
 					{(type == I.BlockType.Layout) && (content.style == I.LayoutStyle.Row) ? (
 						<React.Fragment>
