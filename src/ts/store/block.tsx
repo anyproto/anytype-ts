@@ -275,6 +275,8 @@ class BlockStore {
 	};
 	
 	prepareBlockToProto (data: any) {
+		data.content = Util.objectCopy(data.content || {});
+		
 		let block: any = {
 			id: String(data.id || ''),
 		};

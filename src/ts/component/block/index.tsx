@@ -290,6 +290,7 @@ class Block extends React.Component<Props, {}> {
 				blockId: id,
 				blockIds: DataUtil.selectionGet(this.props),
 				rootId: rootId,
+				dataset: dataset,
 			},
 			onClose: () => {
 				selection.setPreventClear(false);

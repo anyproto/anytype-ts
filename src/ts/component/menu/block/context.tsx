@@ -99,7 +99,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { range } = focus;
-		const { blockId, blockIds, rootId, onChange } = data;
+		const { blockId, blockIds, rootId, onChange, dataset } = data;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
 
@@ -159,6 +159,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						data: {
 							rootId: rootId,
 							blockId: blockId,
+							dataset: dataset,
 							onSelect: (item: any) => {
 								if (item.type == I.BlockType.Text) {
 									C.BlockListSetTextStyle(rootId, blockIds, item.id, (message: any) => {

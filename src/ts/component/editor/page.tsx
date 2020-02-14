@@ -339,6 +339,12 @@ class EditorPage extends React.Component<Props, {}> {
 				items.removeClass('showMenu isAdding top bottom');
 			}, 10);
 		};
+		
+		if (keyboard.drag) {
+			add.css({ opacity: 0 });
+			items.removeClass('showMenu isAdding top bottom');
+			hovered.addClass('showMenu');
+		};
 	};
 	
 	onKeyDownEditor (e: any) {
@@ -424,6 +430,8 @@ class EditorPage extends React.Component<Props, {}> {
 
 		let length = String(text || '').length;
 		let k = e.which;
+		
+		this.uiHide();
 		
 		if (e.ctrlKey || e.metaKey) {
 			if ((k == Key.a) && (range.from == 0) && (range.to == length)) {
@@ -609,7 +617,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		// Enter
 		if (k == Key.enter) {
-			if (e.shiftKey || commonStore.menuIsOpen()) {
+			if (e.shiftKey || commonStore.menuIsOpen() || (content.style == I.TextStyle.Code)) {
 				return;
 			};
 			

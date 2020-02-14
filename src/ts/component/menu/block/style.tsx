@@ -188,10 +188,12 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
+		const { onSelect, dataset } = data;
+		const { selection } = dataset;
 		
 		commonStore.menuClose(this.props.id);
 		onSelect(item);
+		selection.clear();
 	};
 
 };

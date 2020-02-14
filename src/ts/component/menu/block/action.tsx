@@ -255,7 +255,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelect, blockId, blockIds, rootId } = data;
+		const { onSelect, blockId, blockIds, rootId, dataset } = data;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		
@@ -304,6 +304,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				blockIds: blockIds,
 				rootId: rootId,
 				rebind: this.rebind,
+				dataset: dataset,
 			},
 		};
 		

@@ -505,7 +505,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { id, rootId, content } = this.props;
+		const { id, rootId, content, dataset } = this.props;
 		const { from, to } = focus.range;
 		const { style } = content;
 		
@@ -538,6 +538,7 @@ class BlockText extends React.Component<Props, {}> {
 				blockId: id,
 				blockIds: [ id ],
 				rootId: rootId,
+				dataset: dataset,
 				onChange: (marks: I.Mark[]) => {
 					this.marks = Util.objectCopy(marks);
 					focus.set(id, { from: currentFrom, to: currentTo });

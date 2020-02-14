@@ -301,7 +301,7 @@ class Util {
 			window.setTimeout(() => {
 				obj.css({ left: x, top: y, opacity: 1 });
 			}, 10);
-		}, 50);
+		}, 250);
 	};
 	
 	tooltipHide () {

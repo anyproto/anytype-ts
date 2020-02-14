@@ -9,6 +9,7 @@ class Keyboard {
 	history: any = null;
 	focus: boolean = false;
 	resize: boolean = false;
+	drag: boolean = false;
 	back: boolean = true;
 	mouse: boolean = true;
 	timeoutPin: number = 0;
@@ -65,6 +66,10 @@ class Keyboard {
 	
 	setResize (v: boolean) {
 		this.resize = v;
+	};
+	
+	setDrag (v: boolean) {
+		this.drag = v;
 	};
 	
 	setPinCheck () {
