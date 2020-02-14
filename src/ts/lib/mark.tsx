@@ -220,10 +220,11 @@ class Mark {
 		const rp = new RegExp('^[^"]*"([^"]*)"$', 'i');
 		
 		html = html.replace(/&nbsp;/g, ' ');
+		html = html.replace(/<br\/?>/g, '\n');
 
 		let text = html;
 		let marks: any[] = [];
-
+		
 		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();

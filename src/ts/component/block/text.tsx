@@ -173,20 +173,27 @@ class BlockText extends React.Component<Props, {}> {
 			text = '';
 		};
 		
-		let html = '';
+		let html = text;
+		
+		html = html.replace(/\n/g, '__break__');
+		html = html.replace(/&nbsp;/g, ' ');
+		
 		if (style == I.TextStyle.Code) {
 			let { lang } = fields || {};
-			let res = low.highlight(String(lang || 'js'), text);
+			let res = low.highlight(String(lang || 'js'), html);
 			
-			html = res.value ? rehype().stringify({ type: 'root', children: res.value }).toString() : text;
+			if (res.value) {
+				html = rehype().stringify({ type: 'root', children: res.value }).toString();
+			};
 		} else {
-			html = Mark.toHtml(text, this.marks);
-			
+			html = Mark.toHtml(html, this.marks);
+
 			if (color) {
 				html = '<span ' + Mark.paramToAttr(I.MarkType.TextColor, color) + '>' + html + '</span>';
 			};
 		};
-		
+
+		html = html.replace(/__break__/g, '<br/>');		
 		value.get(0).innerHTML = html;
 		
 		if (html != text) {
@@ -204,8 +211,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
-		
-		return String(value.text() || '');
+		return String(value.get(0).innerText || '');
 	};
 	
 	getMarksFromHtml (): I.Mark[] {
@@ -438,6 +444,10 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
+		if (content.style == I.TextStyle.Code) {
+			marks = [];
+		};
+		
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
 		DataUtil.blockSetText(rootId, block, value, marks);
 	};
@@ -447,6 +457,10 @@ class BlockText extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const text = String(content.text || '');
 		const block = blocks[rootId].find((it: any) => { return it.id == id; });
+		
+		if (content.style == I.TextStyle.Code) {
+			marks = [];
+		};
 		
 		DataUtil.blockSetText(rootId, block, text, marks);
 	};
