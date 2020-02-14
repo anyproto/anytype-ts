@@ -99,6 +99,7 @@ class DataUtil {
 
 			commonStore.gatewaySet(message.gatewayUrl);
 			blockStore.rootSet(root);
+			blockStore.archiveSet(message.archiveBlockId);
 			
 			if (!breadcrumbs) {
 				C.BlockOpenBreadcrumbs((message: any) => {
@@ -111,10 +112,13 @@ class DataUtil {
 		});
 	};
 	
-	pageOpen (e: any, props: any, targetId: string) {
+	pageOpen (e: any, props: any, linkId: string, targetId: string) {
 		const { history } = props;
 		const param = {
-			data: { id: targetId }
+			data: { 
+				id: targetId,
+				link: linkId, 
+			}
 		};
 
 		if (commonStore.popupIsOpen('editorPage')) {
@@ -123,7 +127,7 @@ class DataUtil {
 		if (e && (e.shiftKey || (e.ctrlKey || e.metaKey))) { 
 			commonStore.popupOpen('editorPage', param);
 		} else {
-			history.push('/main/edit/' + targetId);
+			history.push('/main/edit/' + targetId + '/link/' + linkId);
 		};
 	};
 	
@@ -148,7 +152,7 @@ class DataUtil {
 
 		C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			this.pageOpen(e, props, message.targetId);
+			this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();
 		});	
 	};
@@ -237,6 +241,16 @@ class DataUtil {
 			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Center' },
 			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Right' },
 		];
+	};
+	
+	linkId (match: any) {
+		if (match.params.link) {
+			return match.params.link;
+		};
+		if (match.params.linkId) {
+			return match.params.linkId;
+		};
+		return '';
 	};
 	
 };

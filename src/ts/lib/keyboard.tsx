@@ -48,7 +48,7 @@ class Keyboard {
 			// Create new page
 			if (k == Key.n) {
 				e.preventDefault();
-				DataUtil.pageCreate(e, { history: this.history }, Util.randomSmile(), Constant.default.name);
+				DataUtil.pageCreate(e, { history: this.history }, '', Constant.default.name);
 			};
 		};
 		

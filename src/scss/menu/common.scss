@@ -70,12 +70,12 @@
 		
 		.name { display: inline-block; vertical-align: middle; }
 		
-		.section { border-bottom: 1px solid #dfddd0; padding: 7px 0px; }
+		.section { border-bottom: 1px solid #dfddd0; padding: 8px 0px; }
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { border: 0px; padding-bottom: 0px; }
-		.section > .name { padding: 4px 16px; margin-bottom: 6px; }
-		
-		.section > .name { font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #aca996; display: block; }
+		.section > .name { 
+			padding: 4px 16px; margin-bottom: 6px; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #aca996; display: block; 
+		}
 	}
 	
 	.menu.horizontal {

@@ -7,6 +7,9 @@ import { I, C, Key, Util, DataUtil, Mark, dispatcher, focus, keyboard } from 'ts
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
+import BlockCover from 'ts/component/block/cover';
+import Controls from './controls';
+
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
@@ -14,7 +17,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { ipcRenderer } = window.require('electron');
-const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -47,27 +49,52 @@ class EditorPage extends React.Component<Props, {}> {
 	render () {
 		const { rootId } = this.props;
 		const { blocks } = blockStore;
+		const root = (blocks[rootId] || []).find((it: any) => { return it.id == rootId });
+		
+		if (!root) {
+			return null;
+		};
+		
 		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
+		const withIcon = root && root.fields.icon;
+		const withCover = true;
+		
+		let cn = [ 'editorWrapper' ];
+		
+		if (withIcon && withCover) {
+			cn.push('withIconAndCover');
+		} else
+		if (withIcon) {
+			cn.push('withIcon');
+		} else
+		if (withCover) {
+			cn.push('withCover');
+		};
 		
 		return (
-			<div className="editor">
-				<div className="blocks">
-					<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
+			<div className={cn.join(' ')}>
+				<Controls {...this.props} />
+				{withCover ? <Block {...this.props} id="" fields={{}} content={{}} childrenIds={[]} childBlocks={[]} type={I.BlockType.Cover} /> : ''}
 				
-					{tree.map((item: I.Block, i: number) => { 
-						return (
-							<Block 
-								key={item.id} 
-								index={i}
-								{...item} 
-								{...this.props}
-								onKeyDown={this.onKeyDownBlock} 
-								onKeyUp={this.onKeyUpBlock}
-								onMenuAdd={this.onMenuAdd}
-								onPaste={this.onPaste}
-							/>
-						)
-					})}
+				<div className="editor">
+					<div className="blocks">
+						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
+					
+						{tree.map((item: I.Block, i: number) => {
+							return (
+								<Block 
+									key={item.id} 
+									index={i}
+									{...item} 
+									{...this.props}
+									onKeyDown={this.onKeyDownBlock} 
+									onKeyUp={this.onKeyUpBlock}
+									onMenuAdd={this.onMenuAdd}
+									onPaste={this.onPaste}
+								/>
+							)
+						})}
+					</div>
 				</div>
 			</div>
 		);
@@ -235,14 +262,26 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.block');
 		const container = $('.editor');
+		
+		if (!container.length) {
+			return;
+		};
+		
+		const root = (blocks[rootId] || []).find((it: any) => { return it.id == rootId });
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const offset = 210;
-		
+		const withIcon = root && root.fields.icon;
+		const withCover = true;
+
+		let offset = 130;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
+		
+		if (withIcon) {
+			offset += 64;
+		};
 		
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
@@ -719,7 +758,6 @@ class EditorPage extends React.Component<Props, {}> {
 						
 						if (item.type == I.BlockType.Page) {
 							param.fields = {
-								icon: Util.randomSmile(), 
 								name: Constant.default.name,
 							};
 							param.content.style = I.PageStyle.Empty;

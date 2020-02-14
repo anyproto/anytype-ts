@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Key, Storage, Util, translate } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { C, Key, Storage, Util, translate } from 'ts/lib';
+import { commonStore, authStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 const sha1 = require('sha1');
@@ -61,6 +61,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 
 	onChange (e: any, id: number) {
 		const { match, history } = this.props;
+		const { breadcrumbs } = blockStore;
 		const isAdd = match.params.id == 'add';
 		const isSelect = match.params.id == 'select';
 		
@@ -82,16 +83,20 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 		};
 		
 		let pin = this.getPin();
-		if (pin.length == Constant.pinSize) {
-			if (sha1(pin) == Storage.get('pin')) {
-				if (isSelect) {
-					history.push('/auth/setup/select');
-				} else {
-					history.push('/main/index');
-				};
+		if (pin.length != Constant.pinSize) {
+			return;
+		};
+		
+		if (sha1(pin) == Storage.get('pin')) {
+			if (isSelect) {
+				history.push('/auth/setup/select');
 			} else {
-				this.setState({ error: translate('authPinCheckError') });
+				C.BlockCutBreadcrumbs(breadcrumbs, 0, (message: any) => {
+					this.props.history.push('/main/index');
+				});
 			};
+		} else {
+			this.setState({ error: translate('authPinCheckError') });
 		};
 	};
 	

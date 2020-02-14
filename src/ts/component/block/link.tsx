@@ -24,8 +24,8 @@ class BlockLink extends React.Component<Props, {}> {
 
 	render() {
 		const { id, rootId, content } = this.props;
-		const { fields, isArchived } = content;
-		const { icon, name } = fields || {};
+		const { fields } = content;
+		const { icon, name, isArchived } = fields || {};
 		
 		return (
 			<div className={isArchived ? 'isArchived' : ''}>
@@ -37,11 +37,11 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { content, rootId } = this.props;
+		const { content, id, rootId } = this.props;
 		const { targetBlockId } = content;
 		
 		if (targetBlockId != rootId) {
-			DataUtil.pageOpen(e, this.props, targetBlockId);
+			DataUtil.pageOpen(e, this.props, id, targetBlockId);
 		};
 	};
 	

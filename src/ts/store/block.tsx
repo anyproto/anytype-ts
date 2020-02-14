@@ -6,12 +6,18 @@ const Constant = require('json/constant.json');
 
 class BlockStore {
 	@observable public rootId: string = '';
+	@observable public archiveId: string = '';
 	@observable public breadcrumbsId: string = '';
 	@observable public blockObject: any = {};
 	
 	@computed
 	get root (): string {
 		return this.rootId;
+	};
+	
+	@computed
+	get archive (): string {
+		return this.archiveId;
 	};
 	
 	@computed
@@ -27,6 +33,11 @@ class BlockStore {
 	@action
 	rootSet (id: string) {
 		this.rootId = String(id || '');
+	};
+	
+	@action
+	archiveSet (id: string) {
+		this.archiveId = String(id || '');
 	};
 	
 	@action
@@ -126,7 +137,7 @@ class BlockStore {
 	};
 	
 	getMap (list: I.Block[]) {
-		list = Util.objectCopy(list);
+		list = Util.objectCopy(list || []);
 		
 		let map: any = {};
 		
@@ -203,7 +214,6 @@ class BlockStore {
 			
 			if (type == I.BlockType.Page) {
 				item.fields.name = String(item.fields.name || Constant.default.name);
-				item.fields.icon = String(item.fields.icon || Constant.default.icon);
 			};
 		};
 		
@@ -251,7 +261,6 @@ class BlockStore {
 				if (item.content.style == I.LinkStyle.Page) {
 					item.content.fields = item.content.fields || {};
 					item.content.fields.name = String(item.content.fields.name || Constant.default.name);
-					item.content.fields.icon = String(item.content.fields.icon || Constant.default.icon);
 				};
 			};
 			

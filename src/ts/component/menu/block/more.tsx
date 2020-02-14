@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, focus } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, focus } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -117,8 +117,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
-				//{ id: 'remove', icon: 'remove', name: 'Delete' },
 			];
+			
+			if (block.fields.isArchived) {
+				items.push({ id: 'remove', icon: 'remove', name: 'Delete' });
+			} else {
+				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });				
+			};
 		} else {
 			items = [
 				{ id: 'remove', icon: 'remove', name: 'Delete' },
@@ -140,10 +145,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, onSelect } = data;
-		const { blocks, root } = blockStore;
-		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
+		const { blockId, blockIds, linkPage, linkId, rootId, onSelect, match } = data;
+		const { blocks, root, breadcrumbs } = blockStore;
+		const block = (blocks[rootId] || []).find((it: I.Block) => { return it.id == blockId; });
+		
+		if (!block) {
+			return;
+		};
+		
 		const length = String(block.content.text || '').length;
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
+		const prev = tree[tree.length - 2];
 		
 		let close = true;
 		
@@ -188,6 +200,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							});
 						},
 					}, 
+				});
+				break;
+				
+			case 'archive':
+				C.BlockSetPageIsArchived(rootId, blockId, true, (message: any) => {
+					C.BlockCutBreadcrumbs(breadcrumbs, tree.length - 1, (message: any) => {
+						if (prev) {
+							history.push('/main/edit/' + prev.content.targetBlockId + '/link/' + prev.id);
+						} else {
+							history.push('/main/index');
+						};
+					});
 				});
 				break;
 				

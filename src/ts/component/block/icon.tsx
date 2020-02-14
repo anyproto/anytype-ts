@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Smile } from 'ts/component';
+import { Smile, Icon } from 'ts/component';
 import { I, C } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -22,10 +22,10 @@ class BlockIcon extends React.Component<Props, {}> {
 	render (): any {
 		const { id, content } = this.props;
 		const { name } = content;
-
+		
 		return (
 			<React.Fragment>
-				<Smile id={'block-icon-' + id} canEdit={true} size={32} icon={name} offsetX={68} offsetY={-64} onSelect={this.onSelect} className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+				<Smile id={'block-icon-' + id} canEdit={true} size={32} icon={name} offsetX={0} offsetY={16} onSelect={this.onSelect} className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};

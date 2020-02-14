@@ -38,8 +38,12 @@ class Smile extends React.Component<Props, State> {
 	
 	render () {
 		const { id, size, className, canEdit } = this.props;
+		const icon = this.state.icon || this.props.icon;
 		
-		let icon = this.state.icon || this.props.icon;
+		if (!icon) {
+			return null;
+		};
+		
 		let cn = [ 'smile' ];
 		if (className) {
 			cn.push(className);
@@ -70,9 +74,10 @@ class Smile extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onSelect: (item: any) => {
-					this.setState({ icon: item.colons });
-					onSelect(item.colons);
+				onSelect: (id: string) => {
+					id = id ? ':' + id + ':' : '';
+					this.setState({ icon: id });
+					onSelect(id);
 				}
 			}
 		});

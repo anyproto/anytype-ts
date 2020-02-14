@@ -1,5 +1,46 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSmile { width: auto; background: none; padding: 0px; }
+	.menu.menuSmile { width: 408px; user-select: none; }
+	.menu.menuSmile {
+		.content { overflow: visible; max-height: 488px; }
+		.head { color: #aca996; font-weight: 500; padding: 4px 16px; border-bottom: 1px solid #eae9e0; }
+		.head {
+			.btn { display: inline-block; vertical-align: middle; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
+			.btn:last-child { margin-right: 0px; }
+			.btn:hover { color: $colorBlack; }
+		}
+		
+		.filter { padding: 4px 16px; border-bottom: 1px solid #eae9e0; }
+		.filter {
+			.input-text { padding: 0px; height: 32px; }
+		}
+	
+		.items { overflow: auto; height: 392px; }
+		.empty { height: 100%; line-height: 392px; padding: 16px; text-align: center; }
+		.empty {
+			b { display: block; font-weight: 400; color: $colorBlack; }
+			.txt { line-height: 24px; color: #aca996; }
+		}
+		
+		.section { padding-top: 0px; padding-bottom: 4px; border: 0px; }
+		.section:first-child { padding-top: 8px; }
+		.section > .name { color: #e89d00; }
+		.section > .list { padding: 0px 12px; }
+		
+		.item { 
+			cursor: pointer; width: 32px; height: 32px; position: relative; border-radius: 4px; display: inline-block;
+			vertical-align: top; padding: 0px;
+		}
+		.item:hover, .item.active { background: #f3f2ec; }
+		.item {
+			.smile { position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -12px; }
+		}
+	}
+	
+	.menu.menuSmileSkin { padding: 10px; white-space: nowrap; }
+	.menu.menuSmileSkin {
+		.item { display: inline-block; vertical-align: top; margin-right: 8px; cursor: pointer; }
+		.item:last-child { margin: 0px; }
+	}
 }

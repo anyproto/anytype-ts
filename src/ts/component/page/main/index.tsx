@@ -97,11 +97,15 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, block: any) {
-		DataUtil.pageOpen(e, this.props, block.content.targetBlockId);
+		if (block.content.style == I.LinkStyle.Archive) {
+			commonStore.popupOpen('archive', {});
+		} else {
+			DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);			
+		};
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.default.name);
+		DataUtil.pageCreate(e, this.props, '', Constant.default.name);
 	};
 	
 	onSortEnd (result: any) {
@@ -124,7 +128,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	resize () {
 		const { blocks, root } = blockStore;
-		const tree = blockStore.prepareTree(root, blocks[root] || []);
+		
+		let tree = blockStore.prepareTree(root, blocks[root] || []);
+		tree = tree.filter((it: any) => { return !it.fields.isArchived; });
 		
 		let size = Constant.index.document;
 		let win = $(window);

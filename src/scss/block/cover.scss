@@ -1,0 +1,9 @@
+@import "~scss/_vars";
+
+.block.blockCover { 
+	background-size: cover; background-repeat: no-repeat; background-position: center center; 
+	background-image: url('~img/cover/4.jpg'); position: absolute; left: 24px; top: 0px; height: 296px; width: calc(100% - 48px);
+}
+.block.blockCover {
+	
+}

@@ -48,9 +48,12 @@ import 'scss/block/link.scss';
 import 'scss/block/bookmark.scss';
 import 'scss/block/div.scss';
 import 'scss/block/layout.scss';
+import 'scss/block/icon.scss';
+import 'scss/block/cover.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
+import 'scss/popup/archive.scss';
 import 'scss/popup/tree.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
@@ -117,6 +120,7 @@ class App extends React.Component<Props, State> {
 						<ListMenu history={history} />
 						<Progress />
 						<Tooltip />
+						
 						<div id="drag" />
 						<div id="selection-rect" />
 							

@@ -14,11 +14,12 @@ import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
+import BlockCover from './cover';
 
 interface Props extends I.Block, RouteComponentProps<any> {
+	index?: number;
 	blockStore?: any;
 	rootId: string;
-	index: number;
 	dataset?: any;
 	cnt?: number;
 	css?: any;
@@ -55,11 +56,11 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, childrenIds, type, fields, content, index, cnt, css, className } = this.props;
+		const { id, rootId, childrenIds, type, fields, content, cnt, css, index, className } = this.props;
 		const { style } = content || {};
 		
 		let canSelect = true;
-		let cn: string[] = [ 'block', 'index' + index ];
+		let cn: string[] = [ 'block', (index ? 'index-' + index : '') ];
 		let cd: string[] = [];
 		let blockComponent = null;
 		
@@ -86,6 +87,10 @@ class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.Icon:
+				if (!content.name) {
+					return null;
+				};
+			
 				cn.push('blockIcon');
 				blockComponent = <BlockIcon {...this.props} />;
 				break;
@@ -144,6 +149,11 @@ class Block extends React.Component<Props, {}> {
 				cn.push('blockLink');
 				blockComponent = <BlockLink {...this.props} />;
 				break;
+				
+			case I.BlockType.Cover:
+				cn.push('blockCover');
+				blockComponent = <BlockCover {...this.props} />;
+				break;
 		};
 		
 		return (
@@ -158,6 +168,7 @@ class Block extends React.Component<Props, {}> {
 							<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
 								{blockComponent}
 							</DropTarget>
+							<div className="selectionOver" />
 						</div>
 					) : ''}
 					
