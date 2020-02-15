@@ -371,8 +371,7 @@ class Block extends React.Component<Props, {}> {
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
 		
-		node.find('.blockBookmark .inner').trigger('resize');
-		node.find('.inputWithFile').trigger('resize');
+		node.find('.resizable').trigger('resize');
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {

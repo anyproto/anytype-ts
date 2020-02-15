@@ -54,7 +54,7 @@ class InputWithFile extends React.Component<Props, State> {
 		const { focused, isSmall } = this.state;
 		const { icon, textUrl, textFile, withFile } = this.props;
 
-		let cn = [ 'inputWithFile' ];		
+		let cn = [ 'inputWithFile', 'resizable' ];		
 		let placeHolder = textUrl;
 		let onFocus = focused ? () => {} : this.onFocus;
 		let onBlur = focused ? this.onBlur : () => {};
