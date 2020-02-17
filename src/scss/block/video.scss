@@ -1,11 +1,10 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockVideo { padding: 5px 0px; }
 	.block.blockVideo {
 		video { width: 100%; }
 		.error { margin: 0px; font-size: 13px; line-height: 18px; }
 	}
 	
-	.block.blockVideo > .wrapContent > .selectable > .dropTarget { padding: 2px; }
+	.block.blockVideo > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
 }

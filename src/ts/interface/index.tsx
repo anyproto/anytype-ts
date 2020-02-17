@@ -25,6 +25,7 @@ import { ContentIcon, BlockIcon } from './block/icon';
 import { LinkStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { FileType, FileState, File, BlockFile } from './block/file';
+import { BookmarkType, ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 
 export {
@@ -93,4 +94,8 @@ export {
 	FileState, 
 	File, 
 	BlockFile,
+	
+	BookmarkType,
+	ContentBookmark, 
+	BlockBookmark,
 }

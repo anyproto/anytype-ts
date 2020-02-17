@@ -21,7 +21,7 @@ interface Props {
 
 interface State {
 	focused: boolean;
-	small: boolean;
+	isSmall: boolean;
 };
 
 class InputWithFile extends React.Component<Props, State> {
@@ -34,7 +34,7 @@ class InputWithFile extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	state = {
 		focused: false,
-		small: false 
+		isSmall: false 
 	};
 	
 	t = 0;
@@ -51,10 +51,10 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { focused, small } = this.state;
+		const { focused, isSmall } = this.state;
 		const { icon, textUrl, textFile, withFile } = this.props;
 
-		let cn = [ 'inputWithFile' ];		
+		let cn = [ 'inputWithFile', 'resizable' ];		
 		let placeHolder = textUrl;
 		let onFocus = focused ? () => {} : this.onFocus;
 		let onBlur = focused ? this.onBlur : () => {};
@@ -63,15 +63,15 @@ class InputWithFile extends React.Component<Props, State> {
 		if (!withFile) {
 			cn.push('noFile');
 		};
-		if (small) {
-			cn.push('small');
+		if (isSmall) {
+			cn.push('isSmall');
 		};
 		if (focused) {
 			cn.push('focused');
 		};
 		
 		if (withFile && focused) {
-			placeHolder += or + (!small ? textFile : '');
+			placeHolder += or + (!isSmall ? textFile : '');
 		};
 		
 		return (
@@ -82,16 +82,16 @@ class InputWithFile extends React.Component<Props, State> {
 					<form id="form" onSubmit={this.onSubmit}>
 						{focused ? (
 							<span>
-								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onChangeUrl(e, false); }} onFocus={onFocus} onBlur={onBlur} />
+								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
 								<Button type="input" className="dn" />
 							</span>
 						) : (
-							<span className="urlToggle" onClick={this.onFocus}>{textUrl + (withFile && small ? or : '')}</span>
+							<span className="urlToggle" onClick={this.onFocus}>{textUrl + (withFile && isSmall ? or : '')}</span>
 						)}
 					</form>
 					{withFile ? (
 						<span className="fileWrap" onMouseDown={this.onClickFile}>
-							{!small ? <span>&nbsp;or&nbsp;</span> : ''}
+							{!isSmall ? <span>&nbsp;or&nbsp;</span> : ''}
 							<span className="border">{textFile}</span>
 						</span>
 					) : ''}
@@ -103,10 +103,12 @@ class InputWithFile extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.resize();
+		this.bind();
 	};
 	
 	componentDidUpdate () {
 		this.resize();
+		this.bind();
 		
 		if (this.state.focused && this.urlRef) {
 			this.urlRef.focus();
@@ -115,6 +117,25 @@ class InputWithFile extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+	
+	bind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.unbind('resize').on('resize', (e: any) => { this.resize(); });
+	};
+	
+	unbind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.unbind('resize');
 	};
 	
 	resize () {
@@ -125,10 +146,10 @@ class InputWithFile extends React.Component<Props, State> {
 			
 			const node = $(ReactDOM.findDOMNode(this));
 			const width = node.find('#text').width();
-			const small = width < SMALL_WIDTH ? true : false;
+			const isSmall = width < SMALL_WIDTH ? true : false;
 			
-			if (small != this.state.small) {
-				this.setState({ small: small });	
+			if (isSmall != this.state.isSmall) {
+				this.setState({ isSmall: isSmall });	
 			};
 		});
 	};
@@ -166,14 +187,12 @@ class InputWithFile extends React.Component<Props, State> {
 				return;
 			};
 			
-			if (!url.match(/^[^:]+:\/\//)) {
-				url = 'http://' + url;
-			};
+			url = Util.urlFix(url);
 			
 			if (onChangeUrl) {
 				onChangeUrl(e, url);
 			};
-		}, force ? 0 : 1000);
+		}, force ? 50 : 1000);
 	};
 	
 	onClickFile (e: any) {

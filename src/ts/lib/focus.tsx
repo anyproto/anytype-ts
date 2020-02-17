@@ -9,7 +9,7 @@ class Focus {
 	range: I.TextRange = { from: 0, to: 0 };
 	
 	set (id: string, range: I.TextRange): void {
-		if (!range) {
+		if (!id || !range) {
 			return;
 		};
 		
@@ -22,7 +22,6 @@ class Focus {
 		this.focused = '';
 		this.range.from = 0;
 		this.range.to = 0;
-		window.getSelection().empty();
 	};
 	
 	apply () {
