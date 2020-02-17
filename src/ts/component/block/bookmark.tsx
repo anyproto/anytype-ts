@@ -25,12 +25,11 @@ class BlockBookmark extends React.Component<Props, {}> {
 
 	render () {
 		const { id, rootId, content } = this.props;
-		const { url, title, description, imageHash } = content;
+		const { url, title, description, imageHash, faviconHash } = content;
 		
 		let element = null;
 		if (url) {
 			let style: any = {};
-			
 			if (imageHash) {
 				style.backgroundImage = 'url("' + commonStore.imageUrl(imageHash, 500) + '")';
 			};
@@ -40,7 +39,10 @@ class BlockBookmark extends React.Component<Props, {}> {
 					<div className="side left">
 						<div className="title">{title}</div>
 						<div className="descr">{description}</div>
-						<div className="link">{url}</div>
+						<div className="link">
+							{faviconHash ? <Icon className="fav" icon={commonStore.imageUrl(faviconHash, 16)} /> : ''}
+							{url}
+						</div>
 					</div>
 					<div className="side right">
 						<div className="img" style={style} />

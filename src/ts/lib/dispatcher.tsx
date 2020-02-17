@@ -212,6 +212,10 @@ class Dispatcher {
 						block.content.imageHash = String(data.imageHash.value || '');
 					};
 					
+					if (null !== data.faviconHash) {
+						block.content.faviconHash = String(data.faviconHash.value || '');
+					};
+					
 					if (null !== data.type) {
 						block.content.type = Number(data.type.value) || 0;
 					};
