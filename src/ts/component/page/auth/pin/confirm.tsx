@@ -8,10 +8,7 @@ import { observer } from 'mobx-react';
 const sha1 = require('sha1');
 const Constant: any = require('json/constant.json');
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	authStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	error: string;

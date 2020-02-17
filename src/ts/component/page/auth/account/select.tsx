@@ -5,10 +5,7 @@ import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Storage, I, C } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {
-	commonStore?: any;
-	authStore?: any;
-};
+interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	error: string;

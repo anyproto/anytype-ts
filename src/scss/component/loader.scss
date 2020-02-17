@@ -1,8 +1,8 @@
-.loaderWrapper { width: 24px; height: 30px; margin: 0px auto; position: relative; padding: 6px 0px; }
+.loaderWrapper { width: 24px; height: 24px; margin: 0px auto; position: relative; }
 .loaderWrapper {
 	.loader, .loader:after { border-radius: 100%; width: 24px; height: 24px; }
 	.loader {
-		border: 2px solid rgba(0,0,0,0.1); border-left: 2px solid rgba(0,0,0,0.4); position: absolute; left: 50%; top: 50%; 
+		border: 2px solid #eae9e0; border-left: 2px solid #aca996; position: absolute; left: 50%; top: 50%; 
 		margin: -12px 0px 0px -12px; transform: translateZ(0); animation: load 0.8s infinite linear;
 	}
 }

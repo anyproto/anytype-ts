@@ -5,6 +5,15 @@ const Constant = require('json/constant.json');
 const $ = require('jquery');
 const COVER = 3;
 
+interface LinkPreview {
+	url: string;
+	rootId: string;
+	blockId: string;
+	range: I.TextRange;
+	marks: I.Mark[];
+	onChange?(marks: I.Mark[]): void;
+};
+
 class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
@@ -13,10 +22,16 @@ class CommonStore {
 	@observable public progressObj: I.Progress = { status: '', current: 0, total: 0 };
 	@observable public filterString: string = '';
 	@observable public gatewayUrl: string = '';
+	@observable public linkPreviewObj: LinkPreview;
 	
 	@computed
 	get progress(): I.Progress {
 		return this.progressObj;
+	};
+	
+	@computed
+	get linkPreview(): LinkPreview {
+		return this.linkPreviewObj;
 	};
 	
 	@computed
@@ -152,7 +167,6 @@ class CommonStore {
 	
 	@action
 	menuOpen (id: string, param: I.MenuParam) {
-		param.element = String(param.element || '');
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
 		
@@ -211,6 +225,11 @@ class CommonStore {
 	@action
 	filterSet (v: string) {
 		this.filterString = String(v || '').replace(/[\/\\\*]/g, '');
+	};
+	
+	@action
+	linkPreviewSet (param: LinkPreview) {
+		this.linkPreviewObj = param;
 	};
 	
 };

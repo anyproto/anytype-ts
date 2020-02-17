@@ -38,7 +38,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 			element = (
 				<div className="inner resizable">
 					<div className="side left">
-						<div className="title">{title}</div>
+						<div className="name">{title}</div>
 						<div className="descr">{description}</div>
 						<div className="link">{url}</div>
 					</div>

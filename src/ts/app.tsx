@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader } from './component';
+import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
 import { C, dispatcher, keyboard, Storage } from 'ts/lib';
 import { throttle } from 'lodash';
@@ -32,6 +32,7 @@ import 'scss/component/loader.scss';
 import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/tooltip.scss';
+import 'scss/component/linkPreview.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -118,6 +119,7 @@ class App extends React.Component<Props, State> {
 					<div>
 						<ListPopup history={history} />
 						<ListMenu history={history} />
+						<LinkPreview />
 						<Progress />
 						<Tooltip />
 						

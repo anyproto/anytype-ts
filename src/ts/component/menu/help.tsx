@@ -6,7 +6,6 @@ import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {
-	authStore?: any;
 	history?: any;
 };
 

@@ -140,8 +140,14 @@ class Menu extends React.Component<Props, {}> {
 				return;
 			};
 			
-			const el = $(element.replace(/\//g, '\\/'));
-			if (!el.length) {
+			let el = null;
+			if ('object' == typeof(element)) {
+				el = element;
+			} else {
+				el = $(element.replace(/\//g, '\\/'));
+			};
+			
+			if (!el || !el.length) {
 				console.error('[Menu.position] element not found', element);
 				return;
 			};
