@@ -35,6 +35,7 @@
 		.item:hover, .item.active { background: #f3f2ec; }
 		.item {
 			.smile { position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -12px; }
+			.smile .emoji-mart-emoji span { margin-top: 2px; }
 		}
 	}
 	
