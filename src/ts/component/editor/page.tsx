@@ -859,6 +859,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const { dataset, rootId } = this.props;
+		const { blocks } = blockStore;
 		const { selection } = dataset;
 		const { focused, range } = focus;
 
@@ -868,7 +869,16 @@ class EditorPage extends React.Component<Props, {}> {
 			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
 		};
 		
-		C.BlockPaste(rootId, focused, range, selection.get(true), data, (message: any) => {});
+		C.BlockPaste(rootId, focused, range, selection.get(true), data, (message: any) => {
+			if (message.blockIds && message.blockIds.length) {
+				const lastId = message.blockIds[message.blockIds.length - 1];
+				const block = (blocks[rootId] || []).find((it: any) => { return it.id == lastId; });
+				const length = String(block.content.text || '').length;
+				
+				focus.set(block.id, { from: length, to: length });
+				focus.apply(true);
+			};
+		});
 	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {

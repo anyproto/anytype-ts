@@ -28,17 +28,17 @@ class Focus {
 		};
 	};
 	
-	apply () {
+	apply (scroll?: boolean) {
 		if (!this.focused) {
 			return;
 		};
 		
-		let el = $('#block-' + $.escapeSelector(this.focused));
+		const el = $('#block-' + $.escapeSelector(this.focused));
 		if (!el.length) {
 			return;
 		};
 		
-		let value = el.find('.value');
+		const value = el.find('.value');
 		if (!value.length) {
 			return;
 		};
@@ -46,6 +46,14 @@ class Focus {
 		value.focus();
 		setRange(value.get(0), { start: this.range.from, end: this.range.to });
 		keyboard.setFocus(true);
+		
+		if (scroll) {
+			const win = $(window);
+			const rect = el.get(0).getBoundingClientRect() as DOMRect;
+			const st = win.scrollTop();
+		
+			win.scrollTop(st + rect.y);
+		};
 	};
 	
 };
