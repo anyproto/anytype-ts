@@ -9,10 +9,13 @@ import { observer } from 'mobx-react';
 const $ = require('jquery');
 const EmojiData = require('emoji-mart/data/apple.json');
 const LIMIT = 24;
+const HEIGHT = 32;
+const PAGE = 144;
 
 interface Props extends I.Menu {};
 interface State {
 	filter: string;
+	page: number;
 };
 
 class MenuSmile extends React.Component<Props, State> {
@@ -21,7 +24,8 @@ class MenuSmile extends React.Component<Props, State> {
 	id: string = '';
 	t: number = 0;
 	state = {
-		filter: ''
+		filter: '',
+		page: 0,
 	};
 
 	constructor (props: any) {
@@ -33,8 +37,12 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { filter } = this.state;
+		const { filter, page } = this.state;
 		const sections = this.getSections();
+		
+		let id = 1;
+		
+		console.log('Page', page);
 		
 		const Item = (item: any) => (
 			<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.smile); }}>
@@ -48,9 +56,16 @@ class MenuSmile extends React.Component<Props, State> {
 			<div className="section">
 				<div className="name">{item.name}</div>
 				<div className="list">
-					{item.emojis.map((smile: any, i: number) => (
-						<Item key={i} id={smile} smile={smile} />
-					))}
+					{item.emojis.map((smile: any, i: number) => {
+						id++;
+						
+						if (id >= (page + 1) * PAGE * 1.1) {
+							return null;
+						};
+						
+						console.log(id);
+						return <Item key={i} id={smile} smile={smile} />;
+					})}
 				</div>
 			</div>
 		);
@@ -86,12 +101,14 @@ class MenuSmile extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		keyboard.setFocus(true);
+		this.bind();
 	};
 	
 	componentDidUpdate () {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		keyboard.setFocus(true);
+		this.bind();
 		
 		if (this.id) {
 			const el = node.find('#item-' + this.id);
@@ -104,6 +121,28 @@ class MenuSmile extends React.Component<Props, State> {
 		window.clearTimeout(this.t);
 		keyboard.setFocus(false);
 		commonStore.menuClose('smileSkin');
+		this.unbind();
+	};
+	
+	bind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.items').unbind('scroll.menu').on('scroll.menu', (e: any) => { this.onScroll(e); });
+	};
+	
+	unbind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.items').unbind('scroll.menu');
+	};
+	
+	onScroll (e: any) {
+		const { page } = this.state;
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = node.find('.items');
+		const top = items.scrollTop();
+		
+		if (top >= page * 12 * HEIGHT + 2 * HEIGHT) {
+			this.setState({ page: page + 1 });
+		};
 	};
 	
 	getSections () {
@@ -128,6 +167,16 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		return sections;
+	};
+	
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		return items;
 	};
 	
 	onSubmit (e: any) {
