@@ -317,6 +317,13 @@ class Util {
 			return;
 		};
 		
+		let win = $(window);
+		let obj = $('#linkPreview');
+		
+		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
+			window.clearTimeout(this.timeoutLinkPreview);
+		});
+		
 		window.clearTimeout(this.timeoutLinkPreview);
 		this.timeoutLinkPreview = window.setTimeout(() => {
 			commonStore.linkPreviewSet({
@@ -324,11 +331,7 @@ class Util {
 				...param,
 			});
 			
-			let win = $(window);
-			let obj = $('#linkPreview');
 			let offset = node.offset();
-			let st = win.scrollTop(); 
-			
 			let x = offset.left - obj.outerWidth() / 2 + node.outerWidth() / 2;
 			let y = 0;
 			let css: any = { opacity: 0 };
@@ -356,7 +359,7 @@ class Util {
 					this.linkPreviewHide();
 				});
 			});
-		}, 250);
+		}, 500);
 	};
 	
 	linkPreviewHide () {
