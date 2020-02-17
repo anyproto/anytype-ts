@@ -136,6 +136,8 @@ class DataUtil {
 			e.persist();
 		};
 		
+		console.log(props);
+		
 		const { root, blocks } = blockStore;
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 

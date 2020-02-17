@@ -529,7 +529,11 @@ class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 		
-		if ((style == I.TextStyle.Title) && !currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
+		if (style == I.TextStyle.Title) {
+			return;
+		};
+		
+		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
 			return;
 		};
 			

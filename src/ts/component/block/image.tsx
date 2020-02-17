@@ -163,6 +163,10 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
+		if (e.shiftKey || e.ctrlKey || e.metaKey) {
+			return;
+		};
+		
 		commonStore.popupOpen('preview', {
 			data: {
 				type: I.FileType.Image,

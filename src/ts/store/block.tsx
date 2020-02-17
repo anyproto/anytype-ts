@@ -304,8 +304,6 @@ class BlockStore {
 			data.fields.icon = String(data.fields.icon || '');
 		};
 		
-		console.log(data);
-		
 		if (data.fields) {
 			block.fields = (new StructEncode()).encodeStruct(data.fields || {});
 		};

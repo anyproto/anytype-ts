@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
 
-interface Props {};
+interface Props extends RouteComponentProps<any>  {};
 
 const Constant = require('json/constant.json');
 
