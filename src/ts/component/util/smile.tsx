@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
+import { Icon } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { I } from 'ts/lib';
 
@@ -40,10 +41,6 @@ class Smile extends React.Component<Props, State> {
 		const { id, size, className, canEdit } = this.props;
 		const icon = this.state.icon || this.props.icon;
 		
-		if (!icon) {
-			return null;
-		};
-		
 		let cn = [ 'smile' ];
 		if (className) {
 			cn.push(className);
@@ -54,7 +51,7 @@ class Smile extends React.Component<Props, State> {
 		
 		return (
 			<div id={id} className={cn.join(' ')} onClick={this.onClick}>
-				{icon ? <Emoji native={true} emoji={icon} set="apple" size={size} /> : ''}
+				{icon ? <Emoji native={true} emoji={icon} set="apple" size={size} /> : <Icon className="blank" />}
 			</div>
 		);
 	};

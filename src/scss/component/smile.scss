@@ -4,18 +4,22 @@
 	.emoji-mart-emoji {
 		span { height: 100%; display: inline-block; vertical-align: middle; /*background-image: url('~img/emoji.png') !important;*/ }
 	}
+	
+	.icon.blank { width: 18px; height: 18px; background-image: url('~img/blank/smile.svg'); }
 }
 
 .smile.c48 { width: 48px; height: 48px; border-radius: 100%; background-color: #f7f5f0; line-height: 48px; }
 .smile.c48 {
 	.emoji-mart-emoji { font-size: 24px; height: 28px; line-height: 1em; }
 	.emoji-mart-emoji { span { height: 28px; line-height: 32px; } }
+	.icon.blank { width: 24px; height: 24px;  }
 }
 
 .smile.c64 { width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; }
 .smile.c64 {
 	.emoji-mart-emoji { font-size: 36px; height: 1em; line-height: 1em; }
 	.emoji-mart-emoji { span { height: 36px; line-height: 36px; margin: 3px 0px 0px 0px; } }
+	.icon.blank { width: 24px; height: 24px;  }
 }
 
 .smile.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }
