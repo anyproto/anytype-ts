@@ -28,14 +28,16 @@ class ListChildren extends React.Component<Props, {}> {
 		let ColResize: any = (): any => null;
 		let cn = [ 'children', 'c' + id ];
 		
-		if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
-			ColResize = (item: any) => (
-				<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={(e: any) => { onResizeStart(e, item.index); }}>
-					<div className="inner">
-						<div className="line" />
+		if (type == I.BlockType.Layout) {
+			if (style == I.LayoutStyle.Row) {
+				ColResize = (item: any) => (
+					<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={(e: any) => { onResizeStart(e, item.index); }}>
+						<div className="inner">
+							<div className="line" />
+						</div>
 					</div>
-				</div>
-			);
+				);
+			};
 		};
 		
 		if ((type == I.BlockType.Text) && (style == I.TextStyle.Toggle)) {

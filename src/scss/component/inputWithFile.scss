@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	line-height: 24px; padding: 11px; border-radius: 4px; border: solid 1px #aca996; color: #aca996;
+	line-height: 24px; padding: 11px; border-radius: 4px; border: solid 1px #dfddd0; color: #aca996;
 	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden;
 }
 .inputWithFile {
@@ -17,11 +17,17 @@
 	#url { height: 23px; vertical-align: top; padding: 0px; }
 
 	.icon { width: 24px; height: 24px; margin: 0px 6px 0px 0px; transition: none; vertical-align: top; }
-	.icon.image { background-size: 20px 18px; background-image: url('~img/icon/add/image.svg'); }
-	.icon.video { background-size: 22px 18px; background-image: url('~img/icon/add/video.svg'); }
-	.icon.file { background-size: 18px 22px; background-image: url('~img/icon/add/file.svg'); }
-	.icon.bookmark { background-size: 16px 20px; background-image: url('~img/icon/add/bookMark.svg'); }
+	.icon.image { background-image: url('~img/icon/add/image.svg'); }
+	.icon.video { background-image: url('~img/icon/add/video.svg'); }
+	.icon.file { background-image: url('~img/icon/add/file.svg'); }
+	.icon.bookmark { background-image: url('~img/icon/add/bookMark.svg'); }
 }
+
+.inputWithFile.isSmall {
+	.fileWrap { display: block; }
+	.txt { height: 48px; }
+}
+
 .inputWithFile.noFile {
 	.urlToggle { width: 100%; }
 	#form { width: 100%; }
@@ -31,11 +37,6 @@
 .inputWithFile.focused {
 	.fileWrap { display: none; }
 	#form { width: 100%; }
-}
-
-.inputWithFile.small {
-	.fileWrap { display: block; }
-	.txt { height: 48px; }
 }
 
 .inputWithFile.isSmall.isFocused {

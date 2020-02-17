@@ -137,13 +137,12 @@ class EditorPage extends React.Component<Props, {}> {
 			this.uiHide();
 		};
 		
-		this.uiBlockHide = true;
+		//this.uiBlockHide = true;
 		
-		window.setTimeout(() => {
-			focus.apply(); 
-			window.scrollTo(0, this.scrollTop);
-			this.uiBlockHide = false;
-		}, 1);
+		focus.apply(); 
+		window.scrollTo(0, this.scrollTop);
+		
+		//this.uiBlockHide = false;
 	};
 	
 	componentWillUnmount () {
@@ -649,7 +648,8 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 				
 				this.blockCreate(block, replace ? I.BlockPosition.Replace : I.BlockPosition.Bottom, param);
-			} else {
+			} else 
+			if (content.style != I.TextStyle.Title) {
 				this.blockSplit(block, range.from);
 			};
 		};

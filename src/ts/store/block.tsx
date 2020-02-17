@@ -281,10 +281,6 @@ class BlockStore {
 			id: String(data.id || ''),
 		};
 		
-		if (data.fields) {
-			block.fields = (new StructEncode()).encodeStruct(data.fields || {});
-		};
-		
 		if (data.childrenIds) {
 			block.childrenIds = data.childrenIds || [];
 		};
@@ -300,6 +296,18 @@ class BlockStore {
 			if (data.content.addedAt) {
 				data.content.addedAt = parseFloat(data.content.addedAt);
 			};
+		};
+		
+		if (data.type == I.BlockType.Page) {
+			data.fields = data.fields || {};
+			data.fields.name = String(data.fields.name || Constant.default.name);
+			data.fields.icon = String(data.fields.icon || '');
+		};
+		
+		console.log(data);
+		
+		if (data.fields) {
+			block.fields = (new StructEncode()).encodeStruct(data.fields || {});
 		};
 		
 		block[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
