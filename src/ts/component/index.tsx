@@ -47,6 +47,8 @@ import Tooltip from './util/tooltip';
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
 
+import LinkPreview from './util/linkPreview';
+
 export {
 	Page,
 	EditorPage,
