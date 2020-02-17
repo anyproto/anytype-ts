@@ -111,7 +111,7 @@ class BlockImage extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		focus.clear();
+		focus.clear(true);
 		this.unbind();
 		
 		if (selection) {

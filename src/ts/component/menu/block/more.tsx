@@ -163,7 +163,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			onSelect(item);
 		};
 		
-		focus.clear();
+		focus.clear(false);
 		
 		switch (item.id) {
 			case 'undo':
@@ -195,8 +195,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						rootId: root,
 						onConfirm: (id: string) => {
 							C.BlockListDuplicate(rootId, [ blockId ], blockId, I.BlockPosition.Bottom, (message: any) => {
-								focus.set(message.blockId, { from: length, to: length });
-								focus.apply();
+								if (message.blockIds.length) {
+									focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
+									focus.apply();
+								};
 							});
 						},
 					}, 

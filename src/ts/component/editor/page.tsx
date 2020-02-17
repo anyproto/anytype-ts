@@ -153,7 +153,7 @@ class EditorPage extends React.Component<Props, {}> {
 		keyboard.disableBack(false);
 		this.unbind();
 		this.close(rootId);
-		focus.clear();
+		focus.clear(false);
 	};
 	
 	open () {
@@ -390,25 +390,8 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (k == Key.d) {
 				e.preventDefault();
-				
-				commonStore.popupOpen('tree', { 
-					data: { 
-						type: 'copy', 
-						rootId: root,
-						onConfirm: (id: string) => {
-							const lastId = ids[ids.length - 1];
-							const last = blocks[rootId].find((it: I.Block) => { return it.id == lastId; });
-							
-							C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {
-								if (last) {
-									const length = String(last.content.text || '').length;
-									focus.set(last.id, { from: length, to: length });
-									focus.apply();
-								};
-							});
-						}
-					}, 
-				});
+				focus.clear(true);
+				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
 			};
 		};
 		
@@ -451,14 +434,24 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (k == Key.z) {
 				e.preventDefault();
-				focus.clear();
+				focus.clear(true);
 				e.shiftKey ? C.BlockRedo(rootId) : C.BlockUndo(rootId);
 			};
 			
 			if (k == Key.y) {
 				e.preventDefault();
-				focus.clear();
+				focus.clear(true);
 				C.BlockRedo(rootId);
+			};
+			
+			if (k == Key.d) {
+				e.preventDefault();
+				C.BlockListDuplicate(rootId, [ focused ], focused, I.BlockPosition.Bottom, (message: any) => {
+					if (message.blockIds.length) {
+						focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
+						focus.apply();
+					};
+				});
 			};
 			
 			// Open action menu
@@ -666,7 +659,7 @@ class EditorPage extends React.Component<Props, {}> {
 		selection.set(blocks[rootId].map((item: I.Block) => { return item.id; }));
 		window.getSelection().empty();
 		keyboard.setFocus(false);
-		focus.clear();
+		focus.clear(true);
 		commonStore.menuClose('blockContext');
 	};
 	

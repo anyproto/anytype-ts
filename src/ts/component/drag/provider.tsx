@@ -50,7 +50,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const win = $(window);
 		
 		e.stopPropagation();
-		focus.clear();
+		focus.clear(true);
 		
 		console.log('[onDragStart]', type, ids);
 		

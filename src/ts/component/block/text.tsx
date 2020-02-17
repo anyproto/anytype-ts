@@ -502,7 +502,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, rootId, content } = this.props;
 		const { checked } = content;
 		
-		focus.clear();
+		focus.clear(true);
 		C.BlockSetTextChecked(rootId, id, !checked);
 	};
 	

@@ -18,10 +18,14 @@ class Focus {
 		this.range.to = Number(range.to) || 0;
 	};
 	
-	clear () {
+	clear (withRange: boolean) {
 		this.focused = '';
 		this.range.from = 0;
 		this.range.to = 0;
+		
+		if (withRange) {
+			window.getSelection().empty();	
+		};
 	};
 	
 	apply () {

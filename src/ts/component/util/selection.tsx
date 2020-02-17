@@ -311,7 +311,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		} else {
 			if (focused && range.to) {
-				focus.clear();
+				focus.clear(false);
 			};
 			
 			keyboard.setFocus(false);
