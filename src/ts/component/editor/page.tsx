@@ -522,9 +522,27 @@ class EditorPage extends React.Component<Props, {}> {
 					
 					if (type == I.MarkType.Link) {
 						let mark = Mark.getInRange(marks, type, range);
+						/*
 						commonStore.popupOpen('prompt', {
 							data: {
 								placeHolder: 'Please enter URL',
+								value: (mark ? mark.param : ''),
+								onChange: (param: string) => {
+									param = Util.urlFix(param);
+									marks = Mark.toggle(marks, { type: type, param: param, range: range });
+									DataUtil.blockSetText(rootId, block, text, marks);
+								}
+							}
+						});
+						*/
+						commonStore.menuOpen('blockLink', {
+							type: I.MenuType.Horizontal,
+							element: $('#menuBlockContext'),
+							offsetX: 0,
+							offsetY: -44,
+							vertical: I.MenuDirection.Top,
+							horizontal: I.MenuDirection.Center,
+							data: {
 								value: (mark ? mark.param : ''),
 								onChange: (param: string) => {
 									param = Util.urlFix(param);

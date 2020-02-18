@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 @observer
@@ -109,6 +110,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		const { from, to } = range;
 		const { content } = block;
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		focus.apply();
 		
@@ -213,19 +215,23 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					
 				case I.MarkType.Link:
 					mark = Mark.getInRange(marks, type, { from: from, to: to });
-					commonStore.popupOpen('prompt', {
+					commonStore.menuOpen('blockLink', {
+						type: I.MenuType.Horizontal,
+						element: node,
+						offsetX: 0,
+						offsetY: -node.outerHeight(),
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
 						data: {
-							placeHolder: 'Please enter URL',
 							value: (mark ? mark.param : ''),
 							onChange: (param: string) => {
 								param = Util.urlFix(param);
 								marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
 								onChange(marks);
 								commonStore.menuClose(this.props.id);
+								
+								window.setTimeout(() => { focus.apply(); }, 15);
 							}
-						},
-						onClose: () => {
-							window.setTimeout(() => { focus.apply(); }, 15);
 						}
 					});
 					break;

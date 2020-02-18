@@ -425,6 +425,9 @@ class Util {
 	};
 	
 	urlFix (url: string): string {
+		if (!url) {
+			return '';
+		};
 		if (!url.match(/:\/\//)) {
 			url = 'http://' + url;
 		};

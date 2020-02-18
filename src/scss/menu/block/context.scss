@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockContext { padding: 0px; transform-origin: 50% 50% !important; }
+	.menu.menuBlockContext { padding: 0px; height: 44px; transform-origin: 50% 50% !important; }
 	.menu.menuBlockContext {
 		.icon.blockStyle { width: 36px; background-position: 0px center; }
 		.icon.color { width: 36px; }
