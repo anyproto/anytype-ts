@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { commonStore } from 'ts/store';
 import { Icon, Loader } from 'ts/component';
 import { observer } from 'mobx-react';
@@ -15,6 +16,7 @@ interface State {
 	imageUrl: string;
 };
 
+const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 
 @observer
@@ -117,16 +119,23 @@ class LinkPreview extends React.Component<Props, {}> {
 	
 	onEdit (e: any) {
 		const { linkPreview } = commonStore;
+		const node = $(ReactDOM.findDOMNode(this));
+		
 		let { marks, range, onChange } =  linkPreview;
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
 		
-		commonStore.popupOpen('prompt', {
+		commonStore.menuOpen('blockLink', {
+			type: I.MenuType.Horizontal,
+			element: node,
+			offsetX: 0,
+			offsetY: 0,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Center,
 			data: {
-				placeHolder: 'Please enter URL',
 				value: (mark ? mark.param : ''),
 				onChange: (param: string) => {
 					param = Util.urlFix(param);
-					marks = Mark.toggle(marks, { type: I.MarkType.Link, param: param, range: { from: range.from, to: range.to } });
+					marks = Mark.toggle(marks, { type: I.MarkType.Link, param: param, range: range });
 					onChange(marks);
 				}
 			}

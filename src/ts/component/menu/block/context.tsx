@@ -216,6 +216,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					
 				case I.MarkType.Link:
 					mark = Mark.getInRange(marks, type, { from: from, to: to });
+					
 					commonStore.menuOpen('blockLink', {
 						type: I.MenuType.Horizontal,
 						element: node,
