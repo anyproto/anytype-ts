@@ -1,3 +1,4 @@
+import { hot } from 'react-hot-loader/root';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
@@ -187,4 +188,4 @@ class App extends React.Component<Props, State> {
 	
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+export default hot(App);
