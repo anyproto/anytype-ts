@@ -8,7 +8,7 @@
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 13px; line-height: 18px; }
 		
-		.wrap { max-width: 100%; position: relative; }
+		.wrap { max-width: 100%; position: relative; display: inline-block; }
 		.img { width: 100%; display: block; }
 		
 		.icon.resize {
@@ -21,6 +21,9 @@
 			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; cursor: pointer; z-index: 1;
 		}
 	}
+	
+	.block.blockImage > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
+	
 	.block.blockImage:hover {
 		.icon.resize { opacity: 1; }
 		.icon.dots { opacity: 1; }

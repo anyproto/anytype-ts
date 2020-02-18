@@ -153,10 +153,6 @@ class Dispatcher {
 					if (null !== data.color) {
 						block.content.color = String(data.color.value || '');
 					};
-					
-					if (null !== data.backgroundColor) {
-						block.content.bgColor = String(data.backgroundColor.value || '');
-					};
 					break;
 					
 				case 'blockSetFile':
@@ -219,6 +215,24 @@ class Dispatcher {
 					if (null !== data.type) {
 						block.content.type = Number(data.type.value) || 0;
 					};
+					break;
+					
+				case 'blockSetBackgroundColor':
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
+					
+					block.bgColor = String(data.backgroundColor || '');
+					break;
+					
+				case 'blockSetAlign':
+					block = blocks.find((it: any) => { return it.id == data.id; });
+					if (!block) {
+						return;
+					};
+					
+					block.align = Number(data.align) || 0;
 					break;
 					
 				case 'blockDelete':

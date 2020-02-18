@@ -45,7 +45,7 @@ export interface Block {
 	parentId?: string;
 	fields: any;
 	align?: BlockAlign;
-	backgroundColor?: string;
+	bgColor?: string;
 	content: any;
 	childrenIds: string[];
 	childBlocks: Block[];

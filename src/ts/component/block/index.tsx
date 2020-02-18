@@ -56,7 +56,7 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, childrenIds, type, fields, content, cnt, css, index, align, className } = this.props;
+		const { id, rootId, childrenIds, type, fields, content, cnt, css, index, align, bgColor, className } = this.props;
 		const { style } = content || {};
 		
 		let canSelect = true;
@@ -68,13 +68,14 @@ class Block extends React.Component<Props, {}> {
 			cn.push(className);
 		};
 		
+		if (bgColor) {
+			cd.push('bgColor bgColor-' + bgColor);
+		};
+		
 		switch (type) {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(content.style));
 				
-				if (content.bgColor) {
-					cd.push('bgColor bgColor-' + content.bgColor);
-				};
 				if (content.checked) {
 					cn.push('isChecked');
 				};
