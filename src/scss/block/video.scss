@@ -18,10 +18,11 @@
 		}
 		
 		.icon.play {
-			width: 48px; height: 48px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -24px 0px 0px -24px;
-			background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.2); cursor: pointer;
+			width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
+			background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7); cursor: pointer;
+			background-size: 24px 28px; background-position: 24px center;
 		}
-		.icon.play:hover { background-color: rgba(255,255,255,0.5); }
+		.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 	}
 	.block.blockVideo > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 	

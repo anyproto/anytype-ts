@@ -124,7 +124,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
 		
 		if (!block) {
-			return;
+			return [];
 		};
 		
 		const { content, type, align } = block;

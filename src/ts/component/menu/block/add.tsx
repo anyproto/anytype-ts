@@ -228,7 +228,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
 		
 		if (!block) {
-			return;
+			return [];
 		};
 		
 		const { type, content } = block;
@@ -315,7 +315,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (id) {
 			const item = options.find((it: any) => { return it.id == id; });
 			if (!item) {
-				return;
+				return [];
 			};
 			
 			options = item.children;
@@ -351,7 +351,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	onOver (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
+		const { rootId, blockId, onSelect } = data;
 		
 		this.setActive(item, false);
 		
@@ -370,6 +370,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
+				rootId: rootId,
+				blockId: blockId,
 				id: item.id,
 				onSelect: onSelect,
 				rebind: this.rebind,
