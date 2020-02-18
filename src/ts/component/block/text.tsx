@@ -56,28 +56,13 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let markers: any[] = [];
 		let placeHolder = 'Type anything...';
-		let ct: string[] = [ 'flex' ];
+		let ct: string[] = [];
 		let additional = null;
 		
 		if (color) {
 			ct.push('textColor textColor-' + color);
 		};
 
-		let editor = (
-			<div
-				id="value"
-				className="value"
-				contentEditable={true}
-				suppressContentEditableWarning={true}
-				onKeyDown={this.onKeyDown}
-				onKeyUp={this.onKeyUp}
-				onFocus={this.onFocus}
-				onBlur={this.onBlur}
-				onSelect={this.onSelect}
-				onPaste={this.onPaste}
-			/>
-		);
-		
 		switch (style) {
 			case I.TextStyle.Title:
 				placeHolder = Constant.default.name;
@@ -108,12 +93,10 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 				
 			case I.TextStyle.Toggle:
-				ct = [];
 				markers.push({ type: 0, className: 'toggle', active: false, onClick: this.onToggle });
 				break;
 				
 			case I.TextStyle.Checkbox:
-				ct = [];
 				markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
 				break;
 		};
@@ -122,6 +105,21 @@ class BlockText extends React.Component<Props, {}> {
 			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
 				<span className={ct.join(' ')}>{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}</span>
 			</div>
+		);
+		
+		const editor = (
+			<div
+				id="value"
+				className={[ 'value' ].concat(ct).join(' ')}
+				contentEditable={true}
+				suppressContentEditableWarning={true}
+				onKeyDown={this.onKeyDown}
+				onKeyUp={this.onKeyUp}
+				onFocus={this.onFocus}
+				onBlur={this.onBlur}
+				onSelect={this.onSelect}
+				onPaste={this.onPaste}
+			/>
 		);
 		
 		return (
@@ -187,10 +185,6 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		} else {
 			html = Mark.toHtml(html, this.marks);
-
-			if (color) {
-				html = '<span ' + Mark.paramToAttr(I.MarkType.TextColor, color) + '>' + html + '</span>';
-			};
 		};
 
 		html = html.replace(/__break__/g, '<br/>');

@@ -37,12 +37,12 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const { content } = block;
-		const { style, color, bgColor } = content;
+		const { content, bgColor } = block;
+		const { style, color } = content;
 		const sections = this.getSections();
 		
-		const Inner = (
-			<div className="inner">A</div>
+		const Inner = (item: any) => (
+			<div className={item.className}>A</div>
 		);
 		
 		const Section = (item: any) => (
@@ -62,13 +62,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			};
 			
 			if (item.icon == 'color') {
-				inner = Inner;
+				let cn = [ 'inner' ];
 				if (color) {
-					icon.push('textColor textColor-' + color);
+					cn.push('textColor textColor-' + color);
 				};
 				if (bgColor) {
-					icon.push('bgColor bgColor-' + bgColor);
+					cn.push('bgColor bgColor-' + bgColor);
 				};
+				inner = <Inner className={cn.join(' ')} />;
 			};
 			
 			return (
@@ -129,7 +130,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		const { content, type, align } = block;
 		const { style } = content;
-		
+
+		let ca: string[] = [ 'align', DataUtil.alignIcon(align) ];		
+				
 		let sections = [
 			{ 
 				children: [
@@ -141,7 +144,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			},
 			{ 
 				children: [
-					{ id: 'align', icon: 'align ' + DataUtil.alignIcon(align), name: 'Align', arrow: true },
+					{ id: 'align', icon: ca.join(' '), name: 'Align', arrow: true },
 					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]

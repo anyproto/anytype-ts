@@ -196,6 +196,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					if (isOpen) {
 						break;
 					};
+					
 					commonStore.menuOpen('blockMore', { 
 						element: '#button-' + blockId + '-more',
 						type: I.MenuType.Vertical,
@@ -252,6 +253,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Left,
 						data: {
+							rootId: rootId,
+							blockId: blockId,
+							blockIds: blockIds,
 							valueText: (markText ? markText.param : ''),
 							valueBg: (markBg ? markBg.param : ''),
 							onChangeText: (param: string) => {

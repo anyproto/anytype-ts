@@ -407,7 +407,7 @@ class Block extends React.Component<Props, {}> {
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		
 		x = Math.max(160, x);
-		x = Math.min(sum * Constant.size.editorPage - 60, x);
+		x = Math.min(sum * Constant.size.editorPage - 30, x);
 		x = x / (sum * Constant.size.editorPage);
 		
 		return { sum: sum, percent: x };

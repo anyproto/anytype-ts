@@ -147,7 +147,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const { blocks } = blockStore;
-		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
+		const block = (blocks[rootId] || []).find((it: I.Block) => { return it.id == blockId; });
 		
 		if (!block) {
 			return [];
@@ -156,8 +156,17 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		const { type, content } = block;
 		
 		let sections = [];
+		let canColor = true;
 		
-		if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
+		if (type != I.BlockType.Text) {
+			canColor = false;
+		};
+		
+		if ((type == I.BlockType.Text) && ([ I.TextStyle.Code, I.TextStyle.Checkbox, I.TextStyle.Toggle ].indexOf(content.style) >= 0)) {
+			canColor = false;
+		};
+		
+		if (canColor) {
 			sections.push({ name: 'Text color', children: DataUtil.menuGetTextColors() });
 		};
 		
