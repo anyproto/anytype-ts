@@ -10,19 +10,12 @@ interface Props extends I.BlockFile {
 	rootId: string;
 };
 
-interface State {
-	isPlaying: boolean;
-};
-
 const $ = require('jquery');
 
 @observer
-class BlockVideo extends React.Component<Props, State> {
+class BlockVideo extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	state = {
-		isPlaying: false,
-	};
 
 	constructor (props: any) {
 		super(props);
@@ -38,7 +31,6 @@ class BlockVideo extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { isPlaying } = this.state;
 		const { id, fields, content } = this.props;
 		const { width } = fields;
 		const { state, hash } = content;
@@ -67,8 +59,8 @@ class BlockVideo extends React.Component<Props, State> {
 				
 			case I.FileState.Done:
 				element = (
-					<div className={[ 'wrap', (isPlaying ? 'isPlaying' : '') ].join(' ')} style={css}>
-						<video controls={isPlaying} preload="auto" src={commonStore.fileUrl(hash)} />
+					<div className="wrap" style={css}>
+						<video controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
 						<Icon className="play" onClick={this.onPlay} />
 						<Icon className="resize" onMouseDown={this.onResizeStart} />
 						<Icon id={'block-video-menu-' + id} className="dots" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
@@ -94,22 +86,6 @@ class BlockVideo extends React.Component<Props, State> {
 		this._isMounted = true;
 	};
 	
-	componentDidUpdate () {
-		const { isPlaying } = this.state;
-		
-		if (isPlaying) {
-			const node = $(ReactDOM.findDOMNode(this));
-			const video = node.find('video');
-			
-			video.get(0).play();
-			
-			video.unbind('ended');
-			video.on('ended', () => {
-				this.setState({ isPlaying: false });
-			});
-		};
-	};
-	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -125,7 +101,22 @@ class BlockVideo extends React.Component<Props, State> {
 	};
 	
 	onPlay () {
-		this.setState({ isPlaying: true });
+		const node = $(ReactDOM.findDOMNode(this));
+		const video = node.find('video');
+		const el = video.get(0);
+		
+		video.unbind('ended pause play');
+		el.play();
+		
+		video.on('play', () => {
+			el.controls = true;
+			node.addClass('isPlaying');
+		});
+		
+		video.on('ended', () => {
+			el.controls = false;
+			node.removeClass('isPlaying');
+		});
 	};
 	
 	onResizeStart (e: any) {
