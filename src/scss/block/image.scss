@@ -21,6 +21,8 @@
 			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; cursor: pointer; z-index: 1;
 		}
 	}
+	.block.blockImage > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	
 	.block.blockImage:hover {
 		.icon.resize { opacity: 1; }
 		.icon.dots { opacity: 1; }

@@ -10,7 +10,7 @@ module.exports = (env) => {
 	
 		devtool: 'source-map',
 		
-		entry: './src/ts/app.tsx',
+		entry: './src/ts/entry.tsx',
 	
 		resolve: {
 			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
