@@ -27,7 +27,7 @@
 		.dropTarget.isOver.right { border-radius: 4px 0px 0px 4px !important; }
 		
 		.selectionOver { 
-			position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: #837940; opacity: 0.1; border-radius: 4px;
+			position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: Highlight; opacity: 0.5; border-radius: 4px;
 			display: none; 
 		}
 	}
