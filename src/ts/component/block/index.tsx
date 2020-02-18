@@ -111,13 +111,12 @@ class Block extends React.Component<Props, {}> {
 						break;
 						
 					case I.FileType.Image: 
-						cn.push('blockImage');
-						//blockComponent = <BlockImage {...this.props} width={fields.width || 1} />;
+						cn.push('blockMedia');
 						blockComponent = <BlockImage {...this.props} />;
 						break;
 						
 					case I.FileType.Video: 
-						cn.push('blockVideo');
+						cn.push('blockMedia');
 						blockComponent = <BlockVideo {...this.props} />;
 						break;
 				};
