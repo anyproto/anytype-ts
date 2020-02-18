@@ -137,8 +137,10 @@ class EditorPage extends React.Component<Props, {}> {
 			this.uiHide();
 		};
 		
+		this.uiBlockHide = true;
 		focus.apply(); 
 		window.scrollTo(0, this.scrollTop);
+		this.uiBlockHide = false;
 	};
 	
 	componentWillUnmount () {
@@ -146,6 +148,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		
+		this.uiHidden = false;
 		keyboard.disableBack(false);
 		this.unbind();
 		this.close(rootId);
