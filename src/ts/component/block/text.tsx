@@ -197,11 +197,41 @@ class BlockText extends React.Component<Props, {}> {
 		value.get(0).innerHTML = html;
 		
 		if (html != text) {
-			value.find('a').unbind('click.link').on('click.link', function (e: any) {
-				e.preventDefault();
-				ipcRenderer.send('urlOpen', $(this).attr('href'));
-			});
+			this.renderLinks();
 		};
+	};
+	
+	renderLinks () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#value');
+		const links = value.find('a');
+		const self = this;
+		
+		if (!links.length) {
+			return;
+		};
+		
+		links.unbind('click.link mouseenter.link mouseleave.link');
+			
+		links.on('click.link', function (e: any) {
+			e.preventDefault();
+			ipcRenderer.send('urlOpen', $(this).attr('href'));
+		});
+			
+		links.on('mouseenter.link', function (e: any) {
+			let range = $(this).data('range').split('-');
+			
+			Util.linkPreviewShow($(this).attr('href'), $(this), I.MenuDirection.Bottom, {
+				range: { 
+					from: Number(range[0]) || 0,
+					to: Number(range[1]) || 0, 
+				},
+				marks: self.marks,
+				onChange: (marks: I.Mark[]) => {
+					self.setMarks(marks);
+				}
+			});
+		});
 	};
 	
 	getValue (): string {
@@ -269,7 +299,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if ((k == Key.enter) && !e.shiftKey && (style != I.TextStyle.Code)) {
-			this.blockSetText(this.marks);
+			this.setText(this.marks);
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
@@ -431,10 +461,10 @@ class BlockText extends React.Component<Props, {}> {
 		onKeyUp(e, value, this.marks);
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.blockSetText(this.marks); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
 	};
 	
-	blockSetText (marks: I.Mark[]) {
+	setText (marks: I.Mark[]) {
 		const { id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const value = this.getValue();
@@ -452,7 +482,7 @@ class BlockText extends React.Component<Props, {}> {
 		DataUtil.blockSetText(rootId, block, value, marks);
 	};
 	
-	blockSetMarks (marks: I.Mark[]) {
+	setMarks (marks: I.Mark[]) {
 		const { id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const text = String(content.text || '');
@@ -482,7 +512,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { onBlur, content } = this.props;
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.blockSetText(this.marks);
+		this.setText(this.marks);
 		this.placeHolderHide();
 		keyboard.setFocus(false);
 		onBlur(e);
@@ -560,7 +590,7 @@ class BlockText extends React.Component<Props, {}> {
 				onChange: (marks: I.Mark[]) => {
 					this.marks = Util.objectCopy(marks);
 					focus.set(id, { from: currentFrom, to: currentTo });
-					this.blockSetMarks(marks);
+					this.setMarks(marks);
 				},
 			},
 		});

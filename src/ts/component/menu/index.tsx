@@ -15,6 +15,7 @@ import MenuBlockColor from './block/color';
 import MenuBlockAction from './block/action';
 import MenuBlockMore from './block/more';
 import MenuBlockAlign from './block/align';
+import MenuBlockLink from './block/link';
 
 import MenuDataviewPropertyList from './dataview/property/list';
 import MenuDataviewPropertyEdit from './dataview/property/edit';
@@ -64,6 +65,7 @@ class Menu extends React.Component<Props, {}> {
 			blockColor:				 MenuBlockColor,
 			blockMore:				 MenuBlockMore,
 			blockAlign:				 MenuBlockAlign,
+			blockLink:				 MenuBlockLink,
 			
 			dataviewPropertyList:	 MenuDataviewPropertyList,
 			dataviewPropertyEdit:	 MenuDataviewPropertyEdit,
@@ -140,8 +142,14 @@ class Menu extends React.Component<Props, {}> {
 				return;
 			};
 			
-			const el = $(element.replace(/\//g, '\\/'));
-			if (!el.length) {
+			let el = null;
+			if ('object' == typeof(element)) {
+				el = element;
+			} else {
+				el = $(element.replace(/\//g, '\\/'));
+			};
+			
+			if (!el || !el.length) {
 				console.error('[Menu.position] element not found', element);
 				return;
 			};

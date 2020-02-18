@@ -7,9 +7,6 @@ import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
-	commonStore?: any;
-	authStore?: any;
-	blockStore?: any;
 	dataset?: any;
 };
 

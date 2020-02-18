@@ -207,8 +207,10 @@ class Mark {
 				continue;
 			};
 			
+			let data = 'data-range="' + mark.range.from + '-' + mark.range.to + '"';
+			
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
-				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + '>' + r[mark.range.from];
+				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + ' ' + data + '>' + r[mark.range.from];
 				r[mark.range.to - 1] += '</' + t + '>';
 			};
 		};
@@ -221,6 +223,7 @@ class Mark {
 		
 		html = html.replace(/&nbsp;/g, ' ');
 		html = html.replace(/<br\/?>/g, '\n');
+		html = html.replace(/data-[^=]+="[^"]+"/g, '');
 
 		let text = html;
 		let marks: any[] = [];

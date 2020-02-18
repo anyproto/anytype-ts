@@ -56,11 +56,11 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, childrenIds, type, fields, content, cnt, css, index, className } = this.props;
+		const { id, rootId, childrenIds, type, fields, content, cnt, css, index, align, className } = this.props;
 		const { style } = content || {};
 		
 		let canSelect = true;
-		let cn: string[] = [ 'block', (index ? 'index-' + index : '') ];
+		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align ];
 		let cd: string[] = [];
 		let blockComponent = null;
 		

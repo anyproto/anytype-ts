@@ -34,9 +34,9 @@ class DataUtil {
 		return ret;
 	};
 	
-	styleIcon (s: I.TextStyle): string {
+	styleIcon (v: I.TextStyle): string {
 		let icon = '';
-		switch (s) {
+		switch (v) {
 			default:
 			case I.TextStyle.Paragraph:	 icon = 'text'; break;
 			case I.TextStyle.Header1:	 icon = 'header1'; break;
@@ -52,9 +52,9 @@ class DataUtil {
 		return icon;
 	};
 	
-	styleClassText (s: I.TextStyle): string {
+	styleClassText (v: I.TextStyle): string {
 		let c = '';
-		switch (s) {
+		switch (v) {
 			default:
 			case I.TextStyle.Paragraph:	 c = 'paragraph'; break;
 			case I.TextStyle.Title:		 c = 'title'; break;
@@ -69,6 +69,17 @@ class DataUtil {
 			case I.TextStyle.Checkbox:	 c = 'checkbox'; break;
 		};
 		return c;
+	};
+	
+	alignIcon (v: I.BlockAlign): string {
+		let icon = '';
+		switch (v) {
+			default:
+			case I.BlockAlign.Left:		 icon = 'left'; break;
+			case I.BlockAlign.Center:	 icon = 'center'; break;
+			case I.BlockAlign.Right:	 icon = 'right'; break;
+		};
+		return icon;
 	};
 	
 	selectionGet (props: any): string[] {

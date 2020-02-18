@@ -127,7 +127,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { content, type } = block;
+		const { content, type, align } = block;
 		const { style } = content;
 		
 		let sections = [
@@ -141,7 +141,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			},
 			{ 
 				children: [
-					{ id: 'align', icon: 'align left', name: 'Align', arrow: true },
+					{ id: 'align', icon: 'align ' + DataUtil.alignIcon(align), name: 'Align', arrow: true },
 					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]

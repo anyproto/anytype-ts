@@ -34,6 +34,10 @@
 	
 	.block.isResizing { cursor: col-resize; user-select: none; }
 	
+	.block.align0 > .wrapContent { text-align: left; }
+	.block.align1 > .wrapContent { text-align: center; }
+	.block.align2 > .wrapContent { text-align: right; }
+	
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange; border-radius: 0px 0px 4px 4px !important; }
 	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange; border-radius: 4px 4px 0px 0px !important; }

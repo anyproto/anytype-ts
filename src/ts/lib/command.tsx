@@ -19,6 +19,13 @@ const ConfigGet = (callBack?: (message: any) => void) => {
 	dispatcher.call('configGet', {}, callBack);
 };
 
+const LinkPreview = (url: string, callBack?: (message: any) => void) => {
+	const request = {
+		url: url,
+	};
+	dispatcher.call('linkPreview', request, callBack);
+};
+
 const WalletCreate = (path: string, callBack?: (message: any) => void) => {
 	const request = {
 		rootPath: path,
@@ -318,6 +325,7 @@ export {
 	
 	ImageGetBlob,
 	ConfigGet,
+	LinkPreview,
 	
 	WalletCreate,
 	WalletRecover,

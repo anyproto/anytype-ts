@@ -1,6 +1,7 @@
 import { I, C } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
+const raf = require('raf');
 const $ = require('jquery');
 const loadImage = window.require('blueimp-load-image');
 const fs = window.require('fs');
@@ -18,6 +19,7 @@ class Util {
 	
 	icons: any[] = [];
 	timeoutTooltip: number = 0;
+	timeoutLinkPreview: number = 0;
 	
 	constructor () {
 		this.icons = Object.keys(EmojiData.emojis);
@@ -270,11 +272,9 @@ class Util {
 		if (!node.length) {
 			return;
 		};
-		
+
 		window.clearTimeout(this.timeoutTooltip);
 		this.timeoutTooltip = window.setTimeout(() => {
-			this.tooltipHide();
-			
 			let win = $(window);
 			let obj = $('#tooltip');
 			let offset = node.offset();
@@ -298,15 +298,86 @@ class Util {
 			
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 
-			window.setTimeout(() => {
+			raf(() => {
 				obj.css({ left: x, top: y, opacity: 1 });
-			}, 10);
+			});
 		}, 250);
 	};
 	
 	tooltipHide () {
+		let obj = $('#tooltip');
+		
+		obj.css({ opacity: 0 });
 		window.clearTimeout(this.timeoutTooltip);
-		$('#tooltip').hide();
+		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, 200);
+	};
+	
+	linkPreviewShow (url: string, node: any, typeY: I.MenuDirection, param: any) {
+		if (!node.length) {
+			return;
+		};
+		
+		let win = $(window);
+		let obj = $('#linkPreview');
+		
+		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
+			window.clearTimeout(this.timeoutLinkPreview);
+		});
+		
+		window.clearTimeout(this.timeoutLinkPreview);
+		this.timeoutLinkPreview = window.setTimeout(() => {
+			commonStore.linkPreviewSet({
+				url: url,
+				...param,
+			});
+			
+			let offset = node.offset();
+			let x = offset.left - obj.outerWidth() / 2 + node.outerWidth() / 2;
+			let y = 0;
+			let css: any = { opacity: 0 };
+			
+			if (typeY == I.MenuDirection.Top) {
+				y = offset.top - obj.outerHeight() - 4;
+				css.transform = 'translate3d(0px,-60px,0px)';
+			};
+			
+			if (typeY == I.MenuDirection.Bottom) {
+				y = offset.top + node.outerHeight() + 4;
+				css.transform = 'translate3d(0px,60px,0px)';
+			};
+			
+			x = Math.min(win.width() - obj.outerWidth() - 12, x);
+			
+			css.left = x;
+			css.top = y;
+			
+			obj.show().css(css).data({ dir: typeY });
+			raf(() => {
+				obj.css({ opacity: 1, transform: 'translate3d(0px,0px,0px)' });
+
+				obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
+					this.linkPreviewHide();
+				});
+			});
+		}, 500);
+	};
+	
+	linkPreviewHide () {
+		let obj = $('#linkPreview');
+		let typeY = obj.data('dir');
+		let css: any = { opacity: 0 };
+			
+		if (typeY == I.MenuDirection.Top) {
+			css.transform = 'translate3d(0px,-60px,0px)';
+		};
+			
+		if (typeY == I.MenuDirection.Bottom) {
+			css.transform = 'translate3d(0px,60px,0px)';
+		};
+		
+		obj.css(css);
+		window.clearTimeout(this.timeoutLinkPreview);
+		this.timeoutLinkPreview = window.setTimeout(() => { obj.hide(); }, 200);
 	};
 	
 	lbBr (s: string) {
@@ -354,6 +425,9 @@ class Util {
 	};
 	
 	urlFix (url: string): string {
+		if (!url) {
+			return '';
+		};
 		if (!url.match(/:\/\//)) {
 			url = 'http://' + url;
 		};
