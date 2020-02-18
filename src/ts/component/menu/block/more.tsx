@@ -111,6 +111,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return [];
 		};
 		
+		const { fields } = block;
+		 
 		let items = [];
 		
 		if (block.type == I.BlockType.Page) {
@@ -119,7 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 			];
 			
-			if (block.fields.isArchived) {
+			if (fields.isArchived) {
 				items.push({ id: 'remove', icon: 'remove', name: 'Delete' });
 			} else {
 				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });				

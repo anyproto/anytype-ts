@@ -130,7 +130,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { blocks, root } = blockStore;
 		
 		let tree = blockStore.prepareTree(root, blocks[root] || []);
-		tree = tree.filter((it: any) => { return !it.fields.isArchived; });
+		tree = tree.filter((it: any) => { return !it.content.fields.isArchived; });
 		
 		let size = Constant.index.document;
 		let win = $(window);

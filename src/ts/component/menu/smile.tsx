@@ -42,8 +42,6 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		let id = 1;
 		
-		console.log('Page', page);
-		
 		const Item = (item: any) => (
 			<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.smile); }}>
 				<div className="smile">
@@ -63,7 +61,6 @@ class MenuSmile extends React.Component<Props, State> {
 							return null;
 						};
 						
-						console.log(id);
 						return <Item key={i} id={smile} smile={smile} />;
 					})}
 				</div>
