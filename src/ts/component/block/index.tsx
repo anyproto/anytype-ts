@@ -348,6 +348,8 @@ class Block extends React.Component<Props, {}> {
 		
 		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
 		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e, index, offset); }));
+		
+		node.find('.resizable').trigger('resizeStart', [ e ]);
 	};
 
 	onResize (e: any, index: number, offset: number) {
@@ -371,7 +373,7 @@ class Block extends React.Component<Props, {}> {
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
 		
-		node.find('.resizable').trigger('resize');
+		node.find('.resizable').trigger('resize', [ e ]);
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
@@ -393,6 +395,8 @@ class Block extends React.Component<Props, {}> {
 			{ blockId: prevBlock.id, fields: { width: res.percent * res.sum } },
 			{ blockId: currentBlock.id, fields: { width: (1 - res.percent) * res.sum } },
 		]);
+		
+		node.find('.resizable').trigger('resizeEnd', [ e ]);
 	};
 	
 	calcWidth (x: number, index: number) {
@@ -402,8 +406,8 @@ class Block extends React.Component<Props, {}> {
 		const dw = 1 / childBlocks.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		
-		x = Math.max(60, x);
-		x = Math.min(sum * Constant.size.editorPage - 35, x);
+		x = Math.max(160, x);
+		x = Math.min(sum * Constant.size.editorPage - 60, x);
 		x = x / (sum * Constant.size.editorPage);
 		
 		return { sum: sum, percent: x };

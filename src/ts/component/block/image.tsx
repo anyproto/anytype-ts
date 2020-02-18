@@ -43,7 +43,7 @@ class BlockImage extends React.Component<Props, {}> {
 		let css: any = {};
 		
 		if (width) {
-			css.width = this.checkWidth(width);
+			css.width = width;
 		};
 		
 		switch (state) {
@@ -62,9 +62,9 @@ class BlockImage extends React.Component<Props, {}> {
 				
 			case I.FileState.Done:
 				element = (
-					<div style={css} className="wrap">
-						<img className="img" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} />
-						<Icon className="resize" onMouseDown={this.onResizeStart} />
+					<div className="wrap resizable" style={css}>
+						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} />
+						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 						<Icon id={'block-image-menu-' + id} className="dots" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 					</div>
 				);
@@ -86,10 +86,34 @@ class BlockImage extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.bind();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+	
+	bind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.unbind('resizeStart resize resizeEnd');
+		node.on('resizeStart', (e: any, oe: any) => { this.onResizeStart(oe, true); });
+		node.on('resize', (e: any, oe: any) => { this.onResize(oe, true); });
+		node.on('resizeEnd', (e: any, oe: any) => { this.onResizeEnd(oe, true); });
+	};
+	
+	unbind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.unbind('resize');
 	};
 	
 	onChangeUrl (e: any, url: string) {
@@ -102,9 +126,13 @@ class BlockImage extends React.Component<Props, {}> {
 		C.BlockUpload(rootId, id, '', path);
 	};
 	
-	onResizeStart (e: any) {
+	onResizeStart (e: any, checkMax: boolean) {
 		e.preventDefault();
 		e.stopPropagation();
+		
+		if (!this._isMounted) {
+			return;
+		};
 		
 		const { dataset } = this.props;
 		const { selection } = dataset;
@@ -112,7 +140,7 @@ class BlockImage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		focus.clear(true);
-		this.unbind();
+		win.unbind('mousemove.media mouseup.media');
 		
 		if (selection) {
 			selection.hide();
@@ -120,13 +148,17 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		node.addClass('isResizing');
-		win.on('mousemove.image', (e: any) => { this.onResize(e); });
-		win.on('mouseup.image', (e: any) => { this.onResizeEnd(e); });
+		win.on('mousemove.media', (e: any) => { this.onResize(e, checkMax); });
+		win.on('mouseup.media', (e: any) => { this.onResizeEnd(e, checkMax); });
 	};
 	
-	onResize (e: any) {
+	onResize (e: any, checkMax: boolean) {
 		e.preventDefault();
 		e.stopPropagation();
+		
+		if (!this._isMounted) {
+			return;
+		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -135,10 +167,14 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
-		node.css({ width: this.checkWidth(e.pageX - rect.x + 20) });
+		node.css({ width: this.getWidth(checkMax, e.pageX - rect.x + 20) });
 	};
 	
-	onResizeEnd (e: any) {
+	onResizeEnd (e: any, checkMax: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -147,9 +183,10 @@ class BlockImage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const win = $(window);
 		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
 		
-		this.unbind();
+		win.unbind('mousemove.media mouseup.media');
 		
 		if (selection) {
 			selection.setPreventSelect(false);
@@ -158,7 +195,7 @@ class BlockImage extends React.Component<Props, {}> {
 		node.removeClass('isResizing');
 		
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { width: this.checkWidth(e.pageX - rect.x + 20) } },
+			{ blockId: id, fields: { width: this.getWidth(checkMax, e.pageX - rect.x + 20) } },
 		]);
 	};
 	
@@ -214,12 +251,16 @@ class BlockImage extends React.Component<Props, {}> {
 		return commonStore.imageUrl(hash, Constant.size.image);
 	};
 	
-	unbind () {
-		$(window).unbind('mousemove.image mouseup.image');
-	};
-	
-	checkWidth (v: number) {
-		return Math.max(60, v);
+	getWidth (checkMax: boolean, v: number): number {
+		const { id, fields } = this.props;
+		const { width } = fields;
+		
+		const el = $('.selectable.c' + $.escapeSelector(id));
+		if (!el.length) {
+			return width;
+		};
+		
+		return Math.min(el.width(), Math.max(160, checkMax ? width : v));
 	};
 	
 };
