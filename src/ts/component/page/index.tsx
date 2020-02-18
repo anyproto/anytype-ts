@@ -73,6 +73,7 @@ class Page extends React.Component<Props, {}> {
 		
 		commonStore.popupCloseAll();
 		commonStore.menuCloseAll();
+		Util.linkPreviewHide(true);
 		
 		$(window).on('resize.page', () => { this.resize(); });
 	};
@@ -83,6 +84,7 @@ class Page extends React.Component<Props, {}> {
 		
 		commonStore.popupCloseAll();
 		commonStore.menuCloseAll();
+		Util.linkPreviewHide(true);
 	};
 	
 	componentWillUnmount () {

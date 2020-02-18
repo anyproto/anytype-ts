@@ -112,7 +112,7 @@ class LinkPreview extends React.Component<Props, {}> {
 			alert('Link copied to clipboard!');
 		});
 		
-		Util.linkPreviewHide();
+		Util.linkPreviewHide(false);
 	};
 	
 	onEdit (e: any) {
@@ -132,7 +132,7 @@ class LinkPreview extends React.Component<Props, {}> {
 			}
 		});
 		
-		Util.linkPreviewHide();
+		Util.linkPreviewHide(false);
 	};
 	
 	onUnlink (e: any) {
@@ -142,7 +142,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		marks = Mark.toggle(marks, { type: I.MarkType.Link, param: '', range: { from: range.from, to: range.to } });
 		onChange(marks);
 		
-		Util.linkPreviewHide();
+		Util.linkPreviewHide(false);
 	};
 	
 };

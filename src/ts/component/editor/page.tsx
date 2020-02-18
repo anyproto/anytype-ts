@@ -137,12 +137,8 @@ class EditorPage extends React.Component<Props, {}> {
 			this.uiHide();
 		};
 		
-		//this.uiBlockHide = true;
-		
 		focus.apply(); 
 		window.scrollTo(0, this.scrollTop);
-		
-		//this.uiBlockHide = false;
 	};
 	
 	componentWillUnmount () {
@@ -792,6 +788,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		this.scrollTop = top;
+		Util.linkPreviewHide(false);
 	};
 	
 	onCopy (e: any) {

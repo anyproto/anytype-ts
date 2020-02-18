@@ -356,14 +356,22 @@ class Util {
 				obj.css({ opacity: 1, transform: 'translate3d(0px,0px,0px)' });
 
 				obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-					this.linkPreviewHide();
+					this.linkPreviewHide(false);
 				});
 			});
 		}, 500);
 	};
 	
-	linkPreviewHide () {
+	linkPreviewHide (force: boolean) {
+		window.clearTimeout(this.timeoutLinkPreview);
+		
 		let obj = $('#linkPreview');
+		
+		if (force) {
+			obj.hide();
+			return;
+		};
+		
 		let typeY = obj.data('dir');
 		let css: any = { opacity: 0 };
 			
@@ -376,7 +384,6 @@ class Util {
 		};
 		
 		obj.css(css);
-		window.clearTimeout(this.timeoutLinkPreview);
 		this.timeoutLinkPreview = window.setTimeout(() => { obj.hide(); }, 200);
 	};
 	
