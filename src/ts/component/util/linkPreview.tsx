@@ -15,6 +15,8 @@ interface State {
 	imageUrl: string;
 };
 
+const { ipcRenderer } = window.require('electron');
+
 @observer
 class LinkPreview extends React.Component<Props, {}> {
 	
@@ -34,6 +36,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		this.onCopy = this.onCopy.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onUnlink = this.onUnlink.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
@@ -57,13 +60,15 @@ class LinkPreview extends React.Component<Props, {}> {
 						<div id="button-edit" className="item" onClick={this.onEdit}>Edit link</div>
 						<div id="button-unlink" className="item" onClick={this.onUnlink}>Unlink</div>
 					</div>
-					{imageUrl ? <div className="img" style={style} /> : ''}
-					<div className="info">
-						<div className="name">{title}</div>
-						<div className="descr">{description}</div>
-						<div className="link">
-							{faviconUrl ? <Icon className="fav" icon={faviconUrl} /> : ''}
-							{url}
+					<div className="cp" onClick={this.onClick}>
+						{imageUrl ? <div className="img" style={style} /> : ''}
+						<div className="info">
+							<div className="name">{title}</div>
+							<div className="descr">{description}</div>
+							<div className="link">
+								{faviconUrl ? <Icon className="fav" icon={faviconUrl} /> : ''}
+								{url}
+							</div>
 						</div>
 					</div>
 				</React.Fragment>
@@ -94,7 +99,13 @@ class LinkPreview extends React.Component<Props, {}> {
 		};
 	};
 	
-	onCopy () {
+	onClick (e: any) {
+		const { linkPreview } = commonStore;
+		
+		ipcRenderer.send('urlOpen', linkPreview.url);
+	};
+	
+	onCopy (e: any) {
 		const { linkPreview } = commonStore;
 		
 		Util.clipboardCopy({ text: linkPreview.url }, () => {
@@ -104,7 +115,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		Util.linkPreviewHide();
 	};
 	
-	onEdit () {
+	onEdit (e: any) {
 		const { linkPreview } = commonStore;
 		let { marks, range, onChange } =  linkPreview;
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
@@ -124,7 +135,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		Util.linkPreviewHide();
 	};
 	
-	onUnlink () {
+	onUnlink (e: any) {
 		const { linkPreview } = commonStore;
 		let { marks, range, onChange } =  linkPreview;
 		

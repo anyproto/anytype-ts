@@ -338,12 +338,12 @@ class Util {
 			
 			if (typeY == I.MenuDirection.Top) {
 				y = offset.top - obj.outerHeight() - 4;
-				css.transform = 'translate3d(0px,-60px,0px)';
+				css.transform = 'translate3d(0px,-24px,0px)';
 			};
 			
 			if (typeY == I.MenuDirection.Bottom) {
 				y = offset.top + node.outerHeight() + 4;
-				css.transform = 'translate3d(0px,60px,0px)';
+				css.transform = 'translate3d(0px,24px,0px)';
 			};
 			
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
