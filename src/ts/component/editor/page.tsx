@@ -515,9 +515,14 @@ class EditorPage extends React.Component<Props, {}> {
 					
 					if (type == I.MarkType.Link) {
 						let mark = Mark.getInRange(marks, type, range);
-						commonStore.popupOpen('prompt', {
+						commonStore.menuOpen('blockLink', {
+							type: I.MenuType.Horizontal,
+							element: $('#menuBlockContext'),
+							offsetX: 0,
+							offsetY: -44,
+							vertical: I.MenuDirection.Top,
+							horizontal: I.MenuDirection.Center,
 							data: {
-								placeHolder: 'Please enter URL',
 								value: (mark ? mark.param : ''),
 								onChange: (param: string) => {
 									param = Util.urlFix(param);
@@ -535,7 +540,6 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		// Cursor keys
-		
 		if ((k == Key.up) || (k == Key.down)) {
 			if (commonStore.menuIsOpen()) {
 				return;
@@ -722,7 +726,7 @@ class EditorPage extends React.Component<Props, {}> {
 					
 					// Background colors
 					if (item.isBgColor) {
-						C.BlockListSetTextBackgroundColor(rootId, [ id ], item.value, cb);
+						C.BlockListSetBackgroundColor(rootId, [ id ], item.value, cb);
 					} else 
 					
 					// Actions
@@ -742,7 +746,7 @@ class EditorPage extends React.Component<Props, {}> {
 					
 					// Align
 					if (item.isAlign) {
-						
+						C.BlockListSetAlign(rootId, [ id ], item.value, cb);
 					} else 
 					
 					// Blocks

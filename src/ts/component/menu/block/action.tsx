@@ -157,11 +157,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		};
 		
 		if (type != I.BlockType.Text) {
-			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn', 'color' ].indexOf(it.id) < 0; });
-		};
-		
-		if (style == I.TextStyle.Code) {
-			sections[0].children = sections[0].children.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
+			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
 		};
 		
 		if (type == I.BlockType.Icon) {
@@ -352,7 +348,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						commonStore.menuClose(this.props.id);
 					};
 					menuParam.data.onChangeBg = (color: string) => {
-						C.BlockListSetTextBackgroundColor(rootId, blockIds, color, (message: any) => {
+						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
 							focus.set(message.blockId, { from: length, to: length });
 							focus.apply();
 						});
@@ -364,6 +360,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					
 				case 'align':
 					menuParam.data.onChange = (align: I.BlockAlign) => {
+						C.BlockListSetAlign(rootId, blockIds, align);
 						commonStore.menuClose(this.props.id);
 					};
 					

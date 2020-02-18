@@ -169,24 +169,6 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 	dispatcher.call('blockSetTextChecked', request, callBack);
 };
 
-const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	const request = {
-		contextId: contextId,
-		blockIds: blockIds,
-		color: color,
-	};
-	dispatcher.call('blockListSetTextColor', request, callBack);
-};
-
-const BlockListSetTextBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	const request = {
-		contextId: contextId,
-		blockIds: blockIds,
-		color: color,
-	};
-	dispatcher.call('blockListSetTextBackgroundColor', request, callBack);
-};
-
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -291,6 +273,15 @@ const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.T
 	dispatcher.call('blockListSetTextStyle', request, callBack);
 };
 
+const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		color: color,
+	};
+	dispatcher.call('blockListSetTextColor', request, callBack);
+};
+
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map((it: any) => {
 		it.fields = Struct.encodeStruct(it.fields || {});
@@ -302,6 +293,24 @@ const BlockListSetFields = (contextId: string, fields: any, callBack?: (message:
 		blockFields: fields,
 	};
 	dispatcher.call('blockListSetFields', request, callBack);	
+};
+
+const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		color: color,
+	};
+	dispatcher.call('blockListSetBackgroundColor', request, callBack);
+};
+
+const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockAlign, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		align: align,
+	};
+	dispatcher.call('blockListSetAlign', request, callBack);
 };
 
 export {
@@ -342,8 +351,9 @@ export {
 	BlockSetFields,
 	
 	BlockListDuplicate,
+	BlockListSetBackgroundColor,
 	BlockListSetTextColor,
-	BlockListSetTextBackgroundColor,
 	BlockListSetTextStyle,
 	BlockListSetFields,
+	BlockListSetAlign,
 };

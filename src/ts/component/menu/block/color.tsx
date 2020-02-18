@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
 import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -143,11 +143,25 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 	
 	getSections () {
-		let id = 0;
-		let sections = [
-			{ name: 'Text color', children: DataUtil.menuGetTextColors() },
-			{ name: 'Background color', children: DataUtil.menuGetBgColors() },
-		];
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const { blocks } = blockStore;
+		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
+		
+		if (!block) {
+			return [];
+		};
+		
+		const { type, content } = block;
+		
+		let sections = [];
+		
+		if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
+			sections.push({ name: 'Text color', children: DataUtil.menuGetTextColors() });
+		};
+		
+		sections.push({ name: 'Background color', children: DataUtil.menuGetBgColors() });
 		return sections;
 	};
 	

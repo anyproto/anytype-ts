@@ -44,6 +44,8 @@ export interface Block {
 	restrictions?: Restrictions;
 	parentId?: string;
 	fields: any;
+	align: BlockAlign;
+	backgroundColor: string;
 	content: any;
 	childrenIds: string[];
 	childBlocks: Block[];

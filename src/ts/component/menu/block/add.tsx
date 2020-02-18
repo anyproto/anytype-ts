@@ -227,6 +227,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
 		
+		if (!block) {
+			return;
+		};
+		
+		const { type, content } = block;
+		
 		let sections: any[] = [
 			{ 
 				id: 'text', icon: 'text', name: 'Text', color: 'yellow', arrow: true, children: [
@@ -280,9 +286,13 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			sections = sections.concat([
 				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: DataUtil.menuGetActions(block) },
 				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: DataUtil.menuGetAlign() },
-				{ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() },
 				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: DataUtil.menuGetBgColors() },
 			]);
+			
+			if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
+				let idx = sections.findIndex((it: any) => { return it.id == 'align'; });
+				sections.splice(++idx, 0, { id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
+			};
 			
 			sections = sections.filter((s: any) => {
 				s.children = (s.children || []).filter((c: any) => { return c.name.match(reg); });
