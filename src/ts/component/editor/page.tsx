@@ -414,10 +414,11 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const root = blocks[rootId].find((item: I.Block) => { return item.id == rootId; });
 		const index = blocks[rootId].findIndex((item: I.Block) => { return item.id == focused; });
-		const { content } = block;
+		const { type, content } = block;
 
 		let length = String(text || '').length;
 		let k = e.which;
+		let isTitle = (type == I.BlockType.Text) && (content.style == I.TextStyle.Title);
 		
 		this.uiHide();
 		
@@ -475,7 +476,8 @@ class EditorPage extends React.Component<Props, {}> {
 				});
 			};
 			
-			if (range.to && (range.from != range.to)) {
+			// Mark-up
+			if (!isTitle && range.to && (range.from != range.to)) {
 				let call = false;
 				let type = 0;
 				

@@ -266,6 +266,7 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const k = e.which;
 		const value = this.getValue();
+		const isTitle = style == I.TextStyle.Title;
 		
 		// Indent block
 		if (k == Key.tab) {
@@ -306,7 +307,7 @@ class BlockText extends React.Component<Props, {}> {
 			commonStore.menuClose('blockAdd');
 		};
 		
-		if (!value && (k == Key.slash)) {
+		if (!value && !isTitle && (k == Key.slash)) {
 			onMenuAdd(id);
 		};
 		
