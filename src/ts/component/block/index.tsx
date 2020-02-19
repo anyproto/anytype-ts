@@ -33,6 +33,7 @@ interface Props extends I.Block, RouteComponentProps<any> {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const THROTTLE = 20;
+const SNAP = 0.02;
 
 class Block extends React.Component<Props, {}> {
 
@@ -446,6 +447,14 @@ class Block extends React.Component<Props, {}> {
 		x = Math.max(offset, x);
 		x = Math.min(sum * Constant.size.editorPage - offset, x);
 		x = x / (sum * Constant.size.editorPage);
+		
+		// Snap
+		if (x > 0.5 - SNAP && x < 0.5) {
+			x = 0.5;
+		};
+		if (x < 0.5 + SNAP && x > 0.5) {
+			x = 0.5;
+		};
 		
 		return { sum: sum, percent: x };
 	};
