@@ -99,7 +99,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		if (block.content.style == I.LinkStyle.Archive) {
 			commonStore.popupOpen('archive', {});
 		} else {
-			DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);			
+			DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
 		};
 	};
 	
@@ -118,10 +118,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const tree = this.getTree();
 		const current = tree[oldIndex];
 		const target = tree[newIndex];
-		const block = blocks[root].find((it: I.Block) => { return it.id == root; });
-		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom; 
+		const block = (blocks[root] || []).find((it: I.Block) => { return it.id == root; });
+		
+		if (!current || !target || !block) {
+			return;
+		};
+		
+		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+		const oidx = block.childrenIds.indexOf(current.id);
+		const nidx = block.childrenIds.indexOf(target.id);
 
-		//block.childrenIds = arrayMove(block.childrenIds, oldIndex, newIndex);
+		block.childrenIds = arrayMove(block.childrenIds, oidx, nidx);
 		C.BlockListMove(root, [ current.id ], target.id, position);
 	};
 	
