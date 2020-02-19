@@ -27,13 +27,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.getTree = this.getTree.bind(this);
 	};
 	
 	render () {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
-		const { blocks, root } = blockStore;
-		const tree = blockStore.prepareTree(root, blocks[root] || []);
+		const { root } = blockStore;
 		
 		return (
 			<div>
@@ -59,6 +59,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							onAdd={this.onAdd}
 							onSortEnd={this.onSortEnd}
 							rootId={root}
+							getTree={this.getTree}
 							helperContainer={() => { return $('#documents').get(0); }} 
 						/>
 					</div>
@@ -73,9 +74,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		this.resize();
-	};
-	
-	componentWillUnmount () {
 	};
 	
 	onSettings (e: any) {
@@ -116,7 +114,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		const { blocks, root } = blockStore;
-		const tree = blockStore.prepareTree(root, blocks[root] || []);
+		const tree = this.getTree();
 		const current = tree[oldIndex];
 		const target = tree[newIndex];
 		const block = blocks[root].find((it: I.Block) => { return it.id == root; });
@@ -127,19 +125,16 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		const { blocks, root } = blockStore;
+		const tree = this.getTree();
+		const size = Constant.index.document;
+		const win = $(window);
+		const wh = win.height();
+		const ww = win.width();
+		const node = $(ReactDOM.findDOMNode(this));
+		const body = node.find('#body');
+		const documents = node.find('#documents');
+		const cnt = Math.floor((ww -  size.margin * 2) / (size.width + size.margin));
 		
-		let tree = blockStore.prepareTree(root, blocks[root] || []);
-		tree = tree.filter((it: any) => { return !(it.content.fields || {}).isArchived; });
-		
-		let size = Constant.index.document;
-		let win = $(window);
-		let wh = win.height();
-		let ww = win.width();
-		let node = $(ReactDOM.findDOMNode(this));
-		let body = node.find('#body');
-		let documents = node.find('#documents');
-		let cnt = Math.floor((ww -  size.margin * 2) / (size.width + size.margin));
 		let width = cnt * (size.width + size.margin);
 		let height = size.height + size.margin;
 		
@@ -149,6 +144,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 			
 		body.css({ width: width - size.margin });
 		documents.css({ marginTop: wh - 134 - height });
+	};
+	
+	getTree () {
+		const { blocks, root } = blockStore;
+		let tree = blockStore.prepareTree(root, blocks[root] || []);
+		tree = tree.filter((it: any) => { return !(it.content.fields || {}).isArchived; });
+		return tree;
 	};
 
 };
