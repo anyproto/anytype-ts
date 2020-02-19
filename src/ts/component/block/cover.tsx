@@ -8,6 +8,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Block, RouteComponentProps<any> {
 	rootId: string;
+	dataset?: any;
 };
 
 interface State {
@@ -19,6 +20,7 @@ const $ = require('jquery');
 @observer
 class BlockCover extends React.Component<Props, State> {
 	
+	_isMounted = false;
 	state = {
 		isEditing: false,
 	};
@@ -29,6 +31,14 @@ class BlockCover extends React.Component<Props, State> {
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		
+		this.onScaleStart = this.onScaleStart.bind(this);
+		this.onScaleMove = this.onScaleMove.bind(this);
+		this.onScaleEnd = this.onScaleEnd.bind(this);
+		
+		this.onDragStart = this.onDragStart.bind(this);
+		this.onDragMove = this.onDragMove.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
 	};
 	
 	render() {
@@ -39,13 +49,13 @@ class BlockCover extends React.Component<Props, State> {
 		if (isEditing) {
 			elements = (
 				<React.Fragment>
-					<div key="btn-drag" className="btn black drag">
+					<div key="btn-drag" className="btn black drag" onMouseDown={this.onDragStart}>
 						<Icon />
 						<div className="txt">Drag image to reposition</div>
 					</div>
 					
 					<div className="dragWrap">
-						<Drag onMove={(v: number) => { this.onDragMove(v); }} onEnd={(v: number) => { this.onDragEnd(v); }} />
+						<Drag onStart={(v: number) => { this.onScaleStart(v); }} onMove={(v: number) => { this.onScaleMove(v); }} onEnd={(v: number) => { this.onScaleEnd(v); }} />
 						<div id="drag-value" className="number">100%</div>
 					</div>
 					
@@ -78,6 +88,14 @@ class BlockCover extends React.Component<Props, State> {
 		);
 	};
 	
+	componentDidMount () {
+		this._isMounted = true;
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+	
 	onEdit (e: any) {
 		this.setState({ isEditing: true });
 	};
@@ -90,7 +108,71 @@ class BlockCover extends React.Component<Props, State> {
 		this.setState({ isEditing: false });
 	};
 	
-	onDragMove (v: number) {
+	onDragStart (e: any) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const { dataset } = this.props;
+		const { selection } = dataset;
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		selection.setPreventSelect(true);
+		node.addClass('isDragging')
+		
+		win.unbind('mousemove.cover mouseup.cover');
+		win.on('mousemove.cover', (e: any) => { this.onDragMove(e); });
+		win.on('mouseup.cover', (e: any) => { this.onDragEnd(e); });
+	};
+	
+	onDragMove (e: any) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const rect = (ReactDOM.findDOMNode(this) as Element).getBoundingClientRect() as DOMRect;
+		const px = this.checkPercent((e.pageX - rect.x) / rect.width);
+		const py = this.checkPercent((e.pageY - rect.y) / rect.height);
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const cover = node.find('#cover');
+		
+		cover.css({ backgroundPosition: (px * 100) + '% ' + (py * 100) + '%' });
+	};
+	
+	onDragEnd (e: any) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const { dataset } = this.props;
+		const { selection } = dataset;
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		selection.setPreventSelect(false);
+		
+		win.unbind('mousemove.cover mouseup.cover');
+		node.removeClass('isDragging')
+	};
+	
+	onScaleStart (v: number) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const { dataset } = this.props;
+		const { selection } = dataset;
+		
+		selection.setPreventSelect(true);
+	};
+	
+	onScaleMove (v: number) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#drag-value');
 		const cover = node.find('#cover');
@@ -98,10 +180,22 @@ class BlockCover extends React.Component<Props, State> {
 		v = Math.ceil((v + 1) * 100);
 		
 		value.text(v + '%');
-		cover.css({ backgroundSize: v + '% ' + v + '%' });
+		cover.css({ backgroundSize: v + '% auto' });
 	};
 	
-	onDragEnd (v: number) {
+	onScaleEnd (v: number) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const { dataset } = this.props;
+		const { selection } = dataset;
+		
+		selection.setPreventSelect(true);
+	};
+	
+	checkPercent (p: number): number {
+		return Math.min(1, Math.max(0, p));
 	};
 	
 };

@@ -228,12 +228,19 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onToggle (e: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		if (!this._isMounted) {
+			return;
+		};
 		
+		const node = $(ReactDOM.findDOMNode(this));
 		node.hasClass('isToggled') ? node.removeClass('isToggled') : node.addClass('isToggled');
 	};
 	
 	onDragStart (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { dataset, id, type, content } = this.props;
 		const { selection, onDragStart } = dataset;
 		
@@ -300,6 +307,10 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMenuClick (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -325,16 +336,28 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onFocus (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.addClass('isFocused');
 	};
 	
 	onBlur (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('isFocused');
 	};
 	
 	onResizeStart (e: any, index: number) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { dataset, childBlocks } = this.props;
 		const { selection } = dataset;
 		const win = $(window);
@@ -358,6 +381,10 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	onResize (e: any, index: number, offset: number) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		e.preventDefault();
 		e.stopPropagation();
 		
@@ -382,6 +409,10 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const { dataset, childBlocks, rootId } = this.props;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -410,9 +441,10 @@ class Block extends React.Component<Props, {}> {
 		const currentBlock = childBlocks[index];
 		const dw = 1 / childBlocks.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
+		const offset = Constant.size.blockMenu + 50;
 		
-		x = Math.max(30, x);
-		x = Math.min(sum * Constant.size.editorPage - 30, x);
+		x = Math.max(offset, x);
+		x = Math.min(sum * Constant.size.editorPage - offset, x);
 		x = x / (sum * Constant.size.editorPage);
 		
 		return { sum: sum, percent: x };
@@ -425,7 +457,6 @@ class Block extends React.Component<Props, {}> {
 		
 		const { rootId, id, childBlocks, type, content } = this.props;
 		const { style } = content;
-		
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!childBlocks.length || (type != I.BlockType.Layout) || (style != I.LayoutStyle.Row)) {

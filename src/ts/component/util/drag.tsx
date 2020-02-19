@@ -6,6 +6,7 @@ import { Icon } from 'ts/component';
 interface Props {
 	className: string;
 	value: number;
+	onStart?(v: number): void;
 	onMove?(v: number): void;
 	onEnd?(v: number): void;
 };
@@ -58,9 +59,9 @@ class Drag extends React.Component<Props, {}> {
 		this.fill = this.node.find('#fill');
 		this.icon = this.node.find('#icon');
 		
-		this.ox = this.node.offset().left;
 		this.nw = this.node.width();
 		this.iw = this.icon.width();
+		this.ox = this.node.offset().left;
 		
 		this.node.unbind('mousedown.drag touchstart.drag').on('mousedown.drag touchstart.drag', (e: any) => {
 			this.start(e);
@@ -82,13 +83,19 @@ class Drag extends React.Component<Props, {}> {
 	};
 	
 	start (e: any) {
+		const { onStart } = this.props;
 		const win = $(window);
 		
-		this.move(e.pageX - this.ox);
+		this.move(e.pageX - this.ox - this.iw / 2);
+		this.node.addClass('isDragging');
 		
 		win.unbind('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
-			this.move(e.pageX - this.ox);
+			this.move(e.pageX - this.ox - this.iw / 2);
 		});
+		
+		if (onStart) {
+			onStart(this.value);
+		};
 	};
 	
 	move (x: number) {
@@ -119,6 +126,7 @@ class Drag extends React.Component<Props, {}> {
 		const win = $(window);
 		
 		win.unbind('mousemove.drag touchmove.drag');
+		this.node.removeClass('isDragging');
 		
 		if (onEnd) {
 			onEnd(this.value);

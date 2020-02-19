@@ -6,9 +6,16 @@
 	.wrapContent { position: relative; z-index: 1; width: 100%; height: 100%; }
 	
 	.wrap { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+	.wrap.isDragging { cursor: move; }
+	.wrap.isDragging {
+		.elements { opacity: 0; }
+	}
 	
-	.cover { position: absolute; background-image: url('~img/cover/4.jpg'); background-size: 100% 100%; backgroun-position: center center; }
-	.elements { width: 704px; height: calc(100% - 40px); position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; transition: opacity 0.2s ease-in-out; }
+	.cover { position: absolute; background-image: url('~img/cover/4.jpg'); background-size: 100% auto; background-position: 50% 50%; }
+	.elements { 
+		width: 704px; height: calc(100% - 40px); position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; 
+		opacity: 0; transition: opacity 0.2s ease-in-out; 
+	}
 	.elements:hover { opacity: 1; }
 	
 	.elements {
@@ -40,7 +47,7 @@
 			.txt { line-height: 18px; }
 		}
 		
-		.btn.drag { position: absolute; width: 196px; top: 50%; left: 50%; margin: -12px 0px 0px -98px; }
+		.btn.drag { position: absolute; cursor: move; width: 196px; top: 50%; left: 50%; margin: -12px 0px 0px -98px; }
 		.btn.drag {
 			.icon { background-image: url('~img/icon/cover/drag.svg'); }
 		}
