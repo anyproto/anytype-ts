@@ -29,8 +29,8 @@ class ListIndex extends React.Component<Props, {}> {
 	
 	render () {
 		const { onSelect, onAdd, helperContainer, rootId, getTree } = this.props;
-		const { blocks } = blockStore;
-		const length = blocks.length;
+		const { blocks, root } = blockStore;
+		const length = (blocks[root] || []).length;
 		const tree = getTree();
 		
 		const Item = SortableElement((item: any) => {
@@ -38,7 +38,7 @@ class ListIndex extends React.Component<Props, {}> {
 			let fields = content.fields || {};
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
-					<Smile key={'smile-' + item.id} className="c48" icon={fields.icon} size={24} />
+					<Smile className="c48" icon={fields.icon} size={24} />
 					<div className="name">{fields.name}</div>
 				</div>
 			);

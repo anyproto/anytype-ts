@@ -15,7 +15,7 @@ class PopupArchive extends React.Component<Props, {}> {
 
 	render () {
 		const { blocks, archive } = blockStore;
-		const tree = blockStore.prepareTree(archive, blocks[archive] || []);
+		const tree = blockStore.prepareTree(archive, blocks[archive]);
 		
 		const Item = (item: any) => {
 			let content = item.content || {};

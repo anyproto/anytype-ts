@@ -29,7 +29,7 @@ class PopupTree extends React.Component<Props, {}> {
 		const { rootId, type } = data;
 		const { blocks } = blockStore;
 		const { account } = authStore;
-		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []); 
+		const tree = blockStore.prepareTree(rootId, blocks[rootId]); 
 		
 		const home = { 
 			id: 'root', 

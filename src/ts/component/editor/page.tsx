@@ -55,7 +55,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const tree = blockStore.prepareTree(rootId, blocks[rootId] || []);
+		const tree = blockStore.prepareTree(rootId, blocks[rootId]);
 		const withIcon = root && root.fields.icon;
 		const withCover = true;
 		
@@ -163,7 +163,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs] || []);
+		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
 		
 		let bc: any[] = [];
 		let lastTargetId = '';
