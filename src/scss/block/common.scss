@@ -51,7 +51,7 @@
 	
 	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }
 	
-	.block.isSelected .selectionOver { display: block; }
+	.block > .wrapContent > .selectable.isSelected > .selectionOver { display: block; }
 	
 	.block.blockIcon > .wrapMenu { visibility: hidden; }
 }
