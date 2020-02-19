@@ -39,7 +39,7 @@ class BlockCover extends React.Component<Props, State> {
 		if (isEditing) {
 			elements = (
 				<React.Fragment>
-					<div className="btn black drag">
+					<div key="btn-drag" className="btn black drag">
 						<Icon />
 						<div className="txt">Drag image to reposition</div>
 					</div>
@@ -50,8 +50,8 @@ class BlockCover extends React.Component<Props, State> {
 					</div>
 					
 					<div className="buttons">
-						<div className="btn" onClick={this.onSave}>Save changes</div>
-						<div className="btn" onClick={this.onCancel}>Cancel</div>
+						<div className="btn white" onClick={this.onSave}>Save changes</div>
+						<div className="btn white" onClick={this.onCancel}>Cancel</div>
 					</div>
 				</React.Fragment>
 			);
@@ -59,7 +59,7 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						<div className="btn addCover" onClick={this.onEdit}>
+						<div className="btn white addCover" onClick={this.onEdit}>
 							<Icon />
 							<div className="txt">Update cover image</div>
 						</div>

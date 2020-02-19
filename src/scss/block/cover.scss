@@ -24,11 +24,13 @@
 		}
 	
 		.btn { 
-			font-weight: 500; font-size: 13px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block; background: rgba(255,255,255,0.7);
+			font-weight: 500; font-size: 13px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block;
 			padding: 0px 8px; border-radius: 4px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out; text-align: center;
 		}
 		.btn:last-child { margin: 0px; }
-		.btn:hover { background: rgba(255,255,255,0.9); }
+		
+		.btn.white { background: rgba(255,255,255,0.7); }
+		.btn.white:hover { background: rgba(255,255,255,0.9); }
 		
 		.btn.black { color: #fff; background: rgba(0,0,0,0.5); }
 		.btn.black:hover { background: rgba(0,0,0,0.7); }
