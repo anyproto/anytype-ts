@@ -1,0 +1,10 @@
+.input-drag { height: 100%; position: relative; }
+
+.input-drag {
+	.back { width: 100%; height: 2px; background: rgba(255,255,255,0.5); position: absolute; top: 50%; left: 0px; margin-top: -1px; }
+	.fill { height: 2px; background: #fff; width: 0px; position: absolute; left: 0px; top: 50%; margin-top: -1px; }
+	.icon { 
+		width: 12px; height: 12px; border: 2px solid #fff; border-radius: 12px;
+		position: absolute; left: 0px; top: 50%; margin-top: -6px; transition: none; 
+	}
+}

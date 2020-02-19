@@ -1,9 +1,50 @@
 @import "~scss/_vars";
 
-.block.blockCover { 
-	background-size: cover; background-repeat: no-repeat; background-position: center center; 
-	background-image: url('~img/cover/4.jpg'); position: absolute; left: 24px; top: 0px; height: 296px; width: calc(100% - 48px);
-}
+.block.blockCover { position: absolute; left: 24px; top: 0px; height: 296px; width: calc(100% - 48px); }
 .block.blockCover {
+	.wrapMenu { display: none; }
+	.wrapContent { position: relative; z-index: 1; width: 100%; height: 100%; }
 	
+	.wrap { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+	
+	.cover { position: absolute; background-image: url('~img/cover/4.jpg'); background-size: 100% 100%; backgroun-position: center center; }
+	.elements { width: 704px; height: calc(100% - 40px); position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; transition: opacity 0.2s ease-in-out; }
+	.elements:hover { opacity: 1; }
+	
+	.elements {
+		.buttons { position: absolute; right: 0px; bottom: 8px; }
+		
+		.dragWrap { 
+			width: 160px; height: 24px; background: rgba(0,0,0,0.5); position: absolute; left: 50%; bottom: 8px; margin-left: -80px;
+			border-radius: 4px; padding: 0px 8px; display: flex; 
+		}
+		.dragWrap {
+			.input-drag { width: 96px; margin-right: 8px; }
+			.number { width: calc(100% - 106px); font-size: 13px; color: #fff; font-weight: 500; text-align: right; }
+		}
+	
+		.btn { 
+			font-weight: 500; font-size: 13px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block; background: rgba(255,255,255,0.7);
+			padding: 0px 8px; border-radius: 4px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out; text-align: center;
+		}
+		.btn:last-child { margin: 0px; }
+		.btn:hover { background: rgba(255,255,255,0.9); }
+		
+		.btn.black { color: #fff; background: rgba(0,0,0,0.5); }
+		.btn.black:hover { background: rgba(0,0,0,0.7); }
+		
+		.btn {
+			.icon { width: 16px; height: 16px; margin: -2px 6px 0px 0px; }
+			.txt { line-height: 18px; }
+		}
+		
+		.btn.drag { position: absolute; width: 196px; top: 50%; left: 50%; margin: -12px 0px 0px -98px; }
+		.btn.drag {
+			.icon { background-image: url('~img/icon/cover/drag.svg'); }
+		}
+		
+		.btn.addCover {
+			.icon { background-image: url('~img/icon/add/cover1.svg'); }
+		}
+	}
 }

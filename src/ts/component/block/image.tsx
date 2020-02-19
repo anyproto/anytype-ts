@@ -260,7 +260,7 @@ class BlockImage extends React.Component<Props, {}> {
 			return width;
 		};
 		
-		return Math.min(el.width(), Math.max(160, checkMax ? width : v));
+		return Math.min(el.width(), Math.max(20, checkMax ? width : v));
 	};
 	
 };

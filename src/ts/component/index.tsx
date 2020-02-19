@@ -43,6 +43,7 @@ import Button from './util/button';
 import Error from './util/error';
 import Select from './util/select';
 import Tooltip from './util/tooltip';
+import Drag from './util/drag';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
@@ -74,6 +75,7 @@ export {
 	Button,
 	Select,
 	Tooltip,
+	Drag,
 	Tag,
 	Loader,
 	Progress,

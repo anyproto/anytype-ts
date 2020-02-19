@@ -24,7 +24,7 @@ const THROTTLE = 20;
 
 @observer
 class EditorPage extends React.Component<Props, {}> {
-
+	
 	_isMounted: boolean = false;
 	id: string = '';
 	timeoutHover: number = 0;

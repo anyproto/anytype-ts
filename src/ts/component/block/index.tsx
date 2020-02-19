@@ -36,8 +36,12 @@ const THROTTLE = 20;
 
 class Block extends React.Component<Props, {}> {
 
+	public static defaultProps = {
+		align: I.BlockAlign.Left,
+	};
+
 	_isMounted: boolean = false;
-	
+		
 	constructor (props: any) {
 		super(props);
 		
@@ -157,6 +161,7 @@ class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.Cover:
+				canSelect = false;
 				cn.push('blockCover');
 				blockComponent = <BlockCover {...this.props} />;
 				break;
@@ -406,7 +411,7 @@ class Block extends React.Component<Props, {}> {
 		const dw = 1 / childBlocks.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		
-		x = Math.max(160, x);
+		x = Math.max(30, x);
 		x = Math.min(sum * Constant.size.editorPage - 30, x);
 		x = x / (sum * Constant.size.editorPage);
 		

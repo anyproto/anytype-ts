@@ -34,6 +34,7 @@ import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/tooltip.scss';
 import 'scss/component/linkPreview.scss';
+import 'scss/component/drag.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
