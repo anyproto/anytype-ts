@@ -24,6 +24,8 @@ class BlockCover extends React.Component<Props, State> {
 	state = {
 		isEditing: false,
 	};
+	rect: DOMRect = null;
+	cover: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -81,7 +83,7 @@ class BlockCover extends React.Component<Props, State> {
 		return (
 			<div className="wrap">
 				<div id="cover" className="cover" />
-				<div className="elements">
+				<div id="elements" className="elements">
 					{elements}
 				</div>
 			</div>
@@ -117,6 +119,10 @@ class BlockCover extends React.Component<Props, State> {
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const elements = node.find('#elements');
+		
+		this.rect = (elements.get(0) as Element).getBoundingClientRect() as DOMRect;
+		this.cover = node.find('#cover');
 		
 		selection.setPreventSelect(true);
 		node.addClass('isDragging')
@@ -127,18 +133,14 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onDragMove (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || !this.rect) {
 			return false;
 		};
 		
-		const rect = (ReactDOM.findDOMNode(this) as Element).getBoundingClientRect() as DOMRect;
-		const px = this.checkPercent((e.pageX - rect.x) / rect.width);
-		const py = this.checkPercent((e.pageY - rect.y) / rect.height);
+		const px = this.checkPercent((e.pageX - this.rect.x) / this.rect.width);
+		const py = this.checkPercent((e.pageY - this.rect.y) / this.rect.height);
 		
-		const node = $(ReactDOM.findDOMNode(this));
-		const cover = node.find('#cover');
-		
-		cover.css({ backgroundPosition: (px * 100) + '% ' + (py * 100) + '%' });
+		this.cover.css({ backgroundPosition: (px * 100) + '% ' + (py * 100) + '%' });
 	};
 	
 	onDragEnd (e: any) {
