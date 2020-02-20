@@ -660,8 +660,25 @@ class EditorPage extends React.Component<Props, {}> {
 		const { dataset, rootId } = this.props;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
+		const map = blockStore.getMap(blocks[rootId]);
 		
-		selection.set(blocks[rootId].map((item: I.Block) => { return item.id; }));
+		// Filter layout blocks from selection
+		// Filter anything except page and layouts from parents
+		const ids = (blocks[rootId] || []).map((it: I.Block) => {
+			let item = map[it.id];
+			if (item.type == I.BlockType.Layout) {
+				return '';
+			};
+			if (item.parentId) {
+				let parent = map[item.parentId];
+				if ([ I.BlockType.Layout, I.BlockType.Page ].indexOf(parent.type) < 0) {
+					return '';
+				};
+			};
+			return it.id;
+		}).filter((it: string) => { return it != ''; });
+		
+		selection.set(ids);
 		window.getSelection().empty();
 		keyboard.setFocus(false);
 		focus.clear(true);

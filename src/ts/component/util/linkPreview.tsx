@@ -79,7 +79,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		
 		return (
 			<div id="linkPreview" className="linkPreview">
-				{content}
+				<div className="content">{content}</div>
 			</div>
 		);
 	};

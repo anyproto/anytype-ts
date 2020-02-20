@@ -1,11 +1,12 @@
 @import "~scss/_vars";
 
 .linkPreview {
-	background: #fff; box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.35); border-radius: 8px; position: absolute; left: 0px; top: 0px;
-	width: 320px; z-index: 100; display: none; opacity: 0; transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+	position: absolute; left: 0px; top: 0px; width: 320px; z-index: 100; display: none; opacity: 0; 
+	transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .linkPreview {
+	.content { background: #fff; box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.35); border-radius: 8px; }
 	.loaderWrapper { margin: 8px auto; }
 	.name { font-size: 15px; line-height: 20px; height: 20px; letter-spacing: -0.08px; color: $colorBlack; overflow: hidden; }
 	.descr { font-size: 13px; line-height: 18px; height: 36px; letter-spacing: 0.08px; color: #6c6a5f; overflow: hidden; margin: 2px 0px 5px 0px; }
