@@ -7,6 +7,7 @@ const COVER = 3;
 
 interface LinkPreview {
 	url: string;
+	element: any;
 	rootId: string;
 	blockId: string;
 	range: I.TextRange;

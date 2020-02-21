@@ -713,6 +713,11 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+		
+		if (!block) {
+			return;
+		};
+		
 		const { type, content } = block;
 		const { style, text, hash } = content;
 		

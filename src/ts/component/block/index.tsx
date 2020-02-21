@@ -222,6 +222,8 @@ class Block extends React.Component<Props, {}> {
 		if (selection) {
 			selection.set(selection.get());
 		};
+		
+		console.log('UPDATE');
 	};
 	
 	componentWillUnmount () {
