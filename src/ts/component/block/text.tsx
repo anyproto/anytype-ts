@@ -215,8 +215,11 @@ class BlockText extends React.Component<Props, {}> {
 		});
 			
 		links.on('mouseenter.link', function (e: any) {
-			let range = $(this).data('range').split('-');
+			if ($('#linkPreview').hasClass('active')) {
+				return;
+			};
 			
+			let range = $(this).data('range').split('-');
 			Util.linkPreviewShow($(this).attr('href'), $(this), {
 				range: { 
 					from: Number(range[0]) || 0,

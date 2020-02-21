@@ -320,10 +320,6 @@ class Util {
 		let win = $(window);
 		let obj = $('#linkPreview');
 		
-		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			window.clearTimeout(this.timeoutLinkPreview);
-		});
-		
 		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
 			this.linkPreviewHide(false);
 		});
@@ -356,7 +352,7 @@ class Util {
 			let oy = 4;
 			let border = 12;
 			
-			obj.removeClass('top bottom');
+			obj.removeClass('top bottom').addClass('active');
 			poly.css({ top: 'auto', bottom: 'auto' });
 			
 			if (offset.top + oh + nh >= st + wh) {
@@ -394,12 +390,12 @@ class Util {
 		let obj = $('#linkPreview');
 		
 		if (force) {
-			obj.hide();
+			obj.hide().removeClass('active');
 			return;
 		};
 		
 		obj.css({ opacity: 0 });
-		this.timeoutLinkPreview = window.setTimeout(() => { obj.hide(); }, 200);
+		this.timeoutLinkPreview = window.setTimeout(() => { obj.hide().removeClass('active'); }, 200);
 	};
 	
 	lbBr (s: string) {
