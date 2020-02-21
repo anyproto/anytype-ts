@@ -312,7 +312,7 @@ class Util {
 		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, 200);
 	};
 	
-	linkPreviewShow (url: string, node: any, typeY: I.MenuDirection, param: any) {
+	linkPreviewShow (url: string, node: any, param: any) {
 		if (!node.length) {
 			return;
 		};
@@ -328,7 +328,7 @@ class Util {
 			this.linkPreviewHide(false);
 		});
 		
-		this.linkPreviewHide(true);
+		this.linkPreviewHide(false);
 		
 		window.clearTimeout(this.timeoutLinkPreview);
 		this.timeoutLinkPreview = window.setTimeout(() => {
@@ -347,28 +347,44 @@ class Util {
 			let ow = obj.outerWidth();
 			let oh = obj.outerHeight();
 			let y = 0;
-			let css: any = { opacity: 0, left: 0, top: 0 };
+			let css: any = { opacity: 0, left: 0, top: 0, paddingTop: 0 };
+			let typeY = I.MenuDirection.Bottom;
+			let poly = obj.find('.polygon');
+			let ps = (1 - nw / ow) / 2 * 100;
+			let pe = ps + nw / ow * 100;
+			
+			obj.removeClass('top bottom');
+			poly.css({ height: nh, top: 'auto', bottom: 'auto' });
+			
+			if (offset.top + oh >= st + wh) {
+				typeY = I.MenuDirection.Top;
+			};
 			
 			if (typeY == I.MenuDirection.Top) {
-				css.paddingBottom = nh;
 				css.transform = 'translate3d(0px,-' + nh + 'px,0px)';
 				
-				css.top = offset.top - oh - 4;
+				css.top = offset.top - oh
+				obj.addClass('top');
+				
+				poly.css({ bottom: -nh, clipPath: 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)' });
 			};
 			
 			if (typeY == I.MenuDirection.Bottom) {
 				css.paddingTop = nh;
 				css.transform = 'translate3d(0px,' + nh + 'px,0px)';
 
-				css.top = offset.top + 4;				
+				css.top = offset.top + 4;
 				css.top = Math.max(12, css.top);
 				css.top = Math.min(dh - oh - 12, css.top);
+				obj.addClass('bottom');
+				
+				poly.css({ top: 0, clipPath: 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)' });
 			};
 			
 			css.left = offset.left - ow / 2 + nw / 2;
 			css.left = Math.max(12, css.left);
 			css.left = Math.min(ww - ow - 12, css.left);
-		
+			
 			obj.show().css(css).data({ dir: typeY });
 			raf(() => {
 				obj.css({ opacity: 1, transform: 'translate3d(0px,0px,0px)' });

@@ -79,6 +79,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		
 		return (
 			<div id="linkPreview" className="linkPreview">
+				<div className="polygon" />
 				<div className="content">{content}</div>
 			</div>
 		);

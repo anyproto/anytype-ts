@@ -188,4 +188,4 @@ class App extends React.Component<Props, State> {
 	
 };
 
-export default hot(App);
+export default App;
