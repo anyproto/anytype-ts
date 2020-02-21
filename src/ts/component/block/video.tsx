@@ -25,6 +25,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
+		this.onResizeInit = this.onResizeInit.bind(this);
 		this.onMenuDown = this.onMenuDown.bind(this);
 		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onPlay = this.onPlay.bind(this);
@@ -104,6 +105,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		node.on('resizeStart', (e: any, oe: any) => { this.onResizeStart(oe, true); });
 		node.on('resize', (e: any, oe: any) => { this.onResize(oe, true); });
 		node.on('resizeEnd', (e: any, oe: any) => { this.onResizeEnd(oe, true); });
+		node.on('resizeInit', (e: any, oe: any) => { this.onResizeInit(); });
 	};
 	
 	unbind () {
@@ -142,6 +144,23 @@ class BlockVideo extends React.Component<Props, {}> {
 			el.controls = false;
 			node.removeClass('isPlaying');
 		});
+	};
+	
+	onResizeInit () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (!node.hasClass('wrap')) {
+			return;
+		};
+		
+		const width = this.getWidth(true, 0);
+		const height = width / 16 * 9;
+		
+		node.css({ width: width, height: height });
 	};
 	
 	onResizeStart (e: any, checkMax: boolean) {

@@ -217,13 +217,11 @@ class Block extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { dataset, id } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		
 		if (selection) {
 			selection.set(selection.get());
 		};
-		
-		console.log('UPDATE');
 	};
 	
 	componentWillUnmount () {

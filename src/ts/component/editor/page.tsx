@@ -131,6 +131,9 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this));		
+		const resizable = node.find('.resizable');
+		
 		this.open();
 		
 		if (this.uiHidden) {
@@ -141,6 +144,10 @@ class EditorPage extends React.Component<Props, {}> {
 		focus.apply(); 
 		window.scrollTo(0, this.scrollTop);
 		this.uiBlockHide = false;
+		
+		if (resizable.length) {
+			resizable.trigger('resizeInit');
+		};
 	};
 	
 	componentWillUnmount () {
