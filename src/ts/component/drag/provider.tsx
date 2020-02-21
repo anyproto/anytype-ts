@@ -124,12 +124,23 @@ class DragProvider extends React.Component<Props, {}> {
 			targetId = parent.id;
 		};
 		
-		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
-		C.BlockListMove(rootId, this.ids || [], targetId, position, () => {
-			if (selection) {
-				selection.set(this.ids);
+		console.log('[onDrop]', type, targetId, this.type, this.ids, position, e.dataTransfer.files);
+		
+		if (e.dataTransfer.files && e.dataTransfer.files.length) {
+			const paths: string[] = [];
+			
+			for (let file of e.dataTransfer.files) {
+				paths.push(file.path);
 			};
-		});
+			
+			C.ExternalDropFiles(rootId, targetId, paths, () => {});
+		} else {
+			C.BlockListMove(rootId, this.ids || [], targetId, position, () => {
+				if (selection) {
+					selection.set(this.ids);
+				};
+			});
+		};
 	};
 	
 	unbind () {

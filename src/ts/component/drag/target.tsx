@@ -210,13 +210,11 @@ class DropTarget extends React.Component<Props, {}> {
 			return;
 		};
 		
-		console.log('Files', e.dataTransfer.items);
-		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.removeClass('isOver top bottom left right middle');
 		
 		if (this.canDrop && onDrop && (this.position != I.BlockPosition.None)) {
-			onDrop(e, dropType, id, this.position);			
+			onDrop(e, dropType, id, this.position);
 		};
 	};
 	

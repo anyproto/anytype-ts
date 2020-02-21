@@ -68,6 +68,15 @@ const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => 
 	dispatcher.call('accountStop', request, callBack);
 };
 
+const ExternalDropFiles = (contextId: string, blockId: string, paths: string[], callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		focusedBlockId: blockId,
+		localFilePaths: paths,
+	};
+	dispatcher.call('externalDropFiles', request, callBack);
+};
+
 const BlockOpen = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
 	const request = {
 		blockId: blockId,
@@ -334,6 +343,8 @@ export {
 	AccountRecover,
 	AccountSelect,
 	AccountStop,
+	
+	ExternalDropFiles,
 	
 	BlockOpen,
 	BlockOpenBreadcrumbs,
