@@ -209,7 +209,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archive':
 				C.BlockSetPageIsArchived(rootId, blockId, true, (message: any) => {
-					C.BlockCutBreadcrumbs(breadcrumbs, tree.length - 1, (message: any) => {
+					C.BlockCutBreadcrumbs(breadcrumbs, (tree.length > 0 ? tree.length - 1 : 0), (message: any) => {
 						if (prev) {
 							history.push('/main/edit/' + prev.content.targetBlockId + '/link/' + prev.id);
 						} else {

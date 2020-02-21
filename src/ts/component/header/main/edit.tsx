@@ -101,7 +101,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { breadcrumbs, blocks } = blockStore;
 		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
 		
-		C.BlockCutBreadcrumbs(breadcrumbs, tree.length - 1, (message: any) => {
+		C.BlockCutBreadcrumbs(breadcrumbs, (tree.length > 0 ? tree.length - 1 : 0), (message: any) => {
 			this.props.history.goBack();			
 		});
 	};

@@ -372,6 +372,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const ids = selection.get(true);
+		const map = blockStore.getMap(blocks[rootId]);
 		
 		if (e.ctrlKey || e.metaKey) {
 			if (k == Key.a) {
@@ -405,6 +406,40 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 			this.blockRemove();
 		};
+		
+		// Indent block
+		if (k == Key.tab) {
+			e.preventDefault();
+			
+			if (!ids.length) {
+				return;
+			};
+			
+			const block = map[ids[0]];
+			const parent = map[block.parentId];
+			const next = blockStore.getNextBlock(rootId, block.id, -1);
+			
+			let canTab = true;
+			if (block.content.style == I.TextStyle.Title) {
+				canTab = false;
+			};
+			if (parent && (parent.content.style == I.TextStyle.Title)) {
+				canTab = false;
+			};
+			if (next && (next.content.style == I.TextStyle.Title)) {
+				canTab = false;
+			};
+			
+			if (canTab) {
+				const cb = () => { selection.set(ids); };
+				
+				if (e.shiftKey) {
+					C.BlockListMove(rootId, ids, block.parentId, I.BlockPosition.Bottom, cb);
+				} else {
+					C.BlockListMove(rootId, ids, next.id, (block.parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom), cb);
+				};
+			};
+		};
 	};
 	
 	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
@@ -412,14 +447,15 @@ class EditorPage extends React.Component<Props, {}> {
 		const { focused, range } = focus;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
+		const map = blockStore.getMap(blocks[rootId]);
 		
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == focused; });
+		const block = map[focused];
 		if (!block) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const root = blocks[rootId].find((item: I.Block) => { return item.id == rootId; });
+		const root = map[rootId];
 		const index = blocks[rootId].findIndex((item: I.Block) => { return item.id == focused; });
 		const { type, content } = block;
 
@@ -463,13 +499,11 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			// Open action menu
 			if (k == Key.slash) {
-				const el = node.find('#' + $.escapeSelector(focused));
-				
 				commonStore.menuOpen('blockAction', { 
 					element: '#block-' + focused,
 					type: I.MenuType.Vertical,
-					offsetX: 50,
-					offsetY: -el.outerHeight(),
+					offsetX: Constant.size.blockMenu,
+					offsetY: 0,
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Left,
 					data: {
@@ -623,6 +657,33 @@ class EditorPage extends React.Component<Props, {}> {
 				this.blockMerge(block);
 			} else {
 				this.blockRemove(block);
+			};
+		};
+		
+		// Indent block
+		if (k == Key.tab) {
+			e.preventDefault();
+			
+			const parent = blocks[rootId].find((it: any) => { return it.id == block.parentId; });
+			const next = blockStore.getNextBlock(rootId, block.id, -1);
+			
+			let canTab = true;
+			if (content.style == I.TextStyle.Title) {
+				canTab = false;
+			};
+			if (parent && (parent.content.style == I.TextStyle.Title)) {
+				canTab = false;
+			};
+			if (next && (next.content.style == I.TextStyle.Title)) {
+				canTab = false;
+			};
+
+			if (canTab) {
+				if (e.shiftKey) {
+					C.BlockListMove(rootId, [ block.id ], block.parentId, I.BlockPosition.Bottom);
+				} else {
+					C.BlockListMove(rootId, [ block.id ], next.id, (block.parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom));
+				};
 			};
 		};
 		

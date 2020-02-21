@@ -271,33 +271,6 @@ class BlockText extends React.Component<Props, {}> {
 		const value = this.getValue();
 		const isTitle = style == I.TextStyle.Title;
 		
-		// Indent block
-		if (k == Key.tab) {
-			e.preventDefault();
-			
-			const parent = blocks[rootId].find((it: any) => { return it.id == parentId; });
-			const next = blockStore.getNextBlock(rootId, id, -1);
-			
-			let canTab = true;
-			if (style == I.TextStyle.Title) {
-				canTab = false;
-			};
-			if (parent && (parent.content.style == I.TextStyle.Title)) {
-				canTab = false;
-			};
-			if (next && (next.content.style == I.TextStyle.Title)) {
-				canTab = false;
-			};
-
-			if (canTab) {
-				if (e.shiftKey) {
-					C.BlockListMove(rootId, [ id ], parentId, I.BlockPosition.Bottom);
-				} else {
-					C.BlockListMove(rootId, [ id ], next.id, (parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom));
-				};
-			};
-		};
-		
 		if ((k == Key.enter) && !e.shiftKey && (style != I.TextStyle.Code)) {
 			e.preventDefault();
 			

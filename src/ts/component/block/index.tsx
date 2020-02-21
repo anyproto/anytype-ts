@@ -314,15 +314,14 @@ class Block extends React.Component<Props, {}> {
 		
 		const { dataset, id, rootId } = this.props;
 		const { selection } = dataset;
-		const node = $(ReactDOM.findDOMNode(this));
 		
 		commonStore.menuOpen('blockAction', { 
 			element: '#block-' + id,
 			type: I.MenuType.Vertical,
-			offsetX: node.outerWidth() - 26,
-			offsetY: -node.outerHeight(),
+			offsetX: Constant.size.blockMenu,
+			offsetY: 0,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Left,
 			data: {
 				blockId: id,
 				blockIds: DataUtil.selectionGet(this.props),
