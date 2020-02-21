@@ -410,14 +410,16 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				break;
 				
 			case 'copy':
-				const lastId = blockIds[blockIds.length - 1];
-				const last = blocks[rootId].find((it: I.Block) => { return it.id == lastId; });
-							
 				C.BlockListDuplicate(rootId, blockIds, blockIds[blockIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
-					if (last) {
-						const length = String(last.content.text || '').length;
-						focus.set(last.id, { from: length, to: length });
-						focus.apply();
+					if (message.blockIds && message.blockIds.length) {
+						const lastId = message.blockIds[message.blockIds.length - 1];
+						const last = blocks[rootId].find((it: I.Block) => { return it.id == lastId; });
+						
+						if (last) {
+							const length = String(last.content.text || '').length;
+							focus.set(last.id, { from: length, to: length });
+							focus.apply();
+						};
 					};
 				});
 				break;
