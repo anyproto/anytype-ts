@@ -1,9 +1,9 @@
 @import "~scss/_vars";
 
 @keyframes subnavHoverHelp {
-	0% { display: block; }
-	99% { display: block; }
-	100% { display: none; }
+	0% { height: 200%; }
+	99% { height: 200%; }
+	100% { height: 0%; }
 }
 
 .menus {
@@ -52,12 +52,13 @@
 		.item.active { background: #f3f2ec; }
 		
 		.item.withChildren:hover::before, .item.withChildren:hover::after {
-			content: ""; position: absolute; z-index: 1000; right: 0px; width: 100%; height: 75%; animation: subnavHoverHelp 1s;
-			opacity: 0.3; background: pink;
+			content: ""; position: absolute; z-index: 1000; right: 0px; width: 100%; height: 200%; 
+			animation: subnavHoverHelp 1s; animation-iteration-count: 1; animation-fill-mode: forwards;
+			/*opacity: 0.3; background: pink;*/
 		}
 		
-		.item.withChildren:hover::before { bottom: -75%; clip-path: polygon(0% 0%, 100% 0%, 100% 100%); }		
-		.item.withChildren:hover::after { top: -75%; clip-path: polygon(0% 100%, 100% 0%, 100% 100%); }
+		.item.withChildren:hover::before { bottom: -200%; clip-path: polygon(0% 0%, 100% 0%, 100% 100%); }		
+		.item.withChildren:hover::after { top: -200%; clip-path: polygon(0% 100%, 100% 0%, 100% 100%); }
 		
 		.icon { width: 24px; height: 24px; margin-right: 8px; }
 		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
