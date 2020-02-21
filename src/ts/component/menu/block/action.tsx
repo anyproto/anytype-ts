@@ -137,7 +137,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			{ 
 				children: [
 					//{ id: 'move', icon: 'move', name: 'Move to' },
-					//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
 					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
 				] 
@@ -410,23 +410,15 @@ class MenuBlockAction extends React.Component<Props, {}> {
 				break;
 				
 			case 'copy':
-				commonStore.popupOpen('tree', { 
-					data: { 
-						type: 'copy', 
-						rootId: root,
-						onConfirm: (id: string) => {
-							const lastId = blockIds[blockIds.length - 1];
-							const last = blocks[rootId].find((it: I.Block) => { return it.id == lastId; });
+				const lastId = blockIds[blockIds.length - 1];
+				const last = blocks[rootId].find((it: I.Block) => { return it.id == lastId; });
 							
-							C.BlockListDuplicate(rootId, blockIds, blockIds[blockIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
-								if (last) {
-									const length = String(last.content.text || '').length;
-									focus.set(last.id, { from: length, to: length });
-									focus.apply();									
-								};
-							});
-						}
-					}, 
+				C.BlockListDuplicate(rootId, blockIds, blockIds[blockIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
+					if (last) {
+						const length = String(last.content.text || '').length;
+						focus.set(last.id, { from: length, to: length });
+						focus.apply();
+					};
 				});
 				break;
 				
