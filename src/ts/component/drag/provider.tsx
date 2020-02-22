@@ -124,7 +124,7 @@ class DragProvider extends React.Component<Props, {}> {
 			targetId = parent.id;
 		};
 		
-		console.log('[onDrop]', type, targetId, this.type, this.ids, position, e.dataTransfer.files);
+		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
 		
 		if (e.dataTransfer.files && e.dataTransfer.files.length) {
 			const paths: string[] = [];
@@ -133,7 +133,9 @@ class DragProvider extends React.Component<Props, {}> {
 				paths.push(file.path);
 			};
 			
-			C.ExternalDropFiles(rootId, targetId, paths, () => {});
+			console.log('[onDrop] paths', paths);
+			
+			C.ExternalDropFiles(rootId, targetId, position, paths, () => {});
 		} else {
 			C.BlockListMove(rootId, this.ids || [], targetId, position, () => {
 				if (selection) {

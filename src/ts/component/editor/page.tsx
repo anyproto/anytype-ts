@@ -1021,12 +1021,11 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		let length = String(next.content.text || '').length;
+		
 		C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
-			if (next) {
-				let l = String(next.content.text || '').length;
-				focus.set(next.id, { from: l, to: l });
-				focus.apply();				
-			};
+			focus.set(next.id, { from: length, to: length });
+			focus.apply();				
 		});
 	};
 	
