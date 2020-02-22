@@ -379,7 +379,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const ids = selection.get(true);
+		const ids = selection.get();
 		const map = blockStore.getMap(blocks[rootId]);
 		
 		if (e.ctrlKey || e.metaKey) {
