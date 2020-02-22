@@ -44,6 +44,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onLastClick = this.onLastClick.bind(this);
 	};
 
 	render () {
@@ -95,6 +96,8 @@ class EditorPage extends React.Component<Props, {}> {
 							)
 						})}
 					</div>
+					
+					<div className="lastBlock" onClick={this.onLastClick} />
 				</div>
 			</div>
 		);
@@ -120,6 +123,9 @@ class EditorPage extends React.Component<Props, {}> {
 			}; 
 			this.onPaste(e); 
 		});
+		
+		this.resize();
+		win.on('resize.editor', (e: any) => { this.resize(); });
 		
 		ipcRenderer.on('copyDocument', (e: any) => {
 			const json = JSON.stringify({ blocks: blocks[rootId] }, null, 5);
@@ -148,6 +154,8 @@ class EditorPage extends React.Component<Props, {}> {
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
 		};
+		
+		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -220,7 +228,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor');
+		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor');
 	};
 	
 	uiHide () {
@@ -980,7 +988,7 @@ class EditorPage extends React.Component<Props, {}> {
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 		
-		C.BlockCreate(param, rootId, focused.id, position, (message: any) => {
+		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 			
@@ -1067,7 +1075,7 @@ class EditorPage extends React.Component<Props, {}> {
 			if (next) {
 				let l = String(next.content.text || '').length;
 				focus.set(next.id, { from: l, to: l });
-				focus.apply();				
+				focus.apply();
 			};
 		});
 	};
@@ -1082,6 +1090,53 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		return true;
+	};
+	
+	onLastClick (e: any) {
+		const { rootId } = this.props;
+		const { blocks } = blockStore;
+		const tree = blockStore.prepareTree(rootId, blocks[rootId]);
+		const last = tree[tree.length - 1];
+		
+		let create = false;
+		let length = 0;
+		
+		if (!last) {
+			create = true;
+		} else {
+			if (last.type != I.BlockType.Text) {
+				create = true;
+			} else {
+				length = String(last.content.text || '').length;
+				if (length) {
+					create = true;
+				};
+			};
+		};
+		
+		if (create) {
+			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
+		} else {
+			focus.set(last.id, { from: length, to: length });
+			focus.apply();
+		};
+	};
+	
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		if (!node.hasClass('editorWrapper')) {
+			return;
+		};
+		
+		const last = node.find('.lastBlock').css({ height: 0 });
+		const height = Math.max(100, win.height() - node.outerHeight());
+		
+		last.css({ height: height });
 	};
 	
 };
