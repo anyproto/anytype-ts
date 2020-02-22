@@ -97,7 +97,7 @@ class EditorPage extends React.Component<Props, {}> {
 						})}
 					</div>
 					
-					<div className="lastBlock" onClick={this.onLastClick} />
+					<div className="blockLast" onClick={this.onLastClick} />
 				</div>
 			</div>
 		);
@@ -1132,7 +1132,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const last = node.find('.lastBlock').css({ height: 0 });
+		const last = node.find('.blockLast').css({ height: 0 });
 		const height = Math.max(100, win.height() - node.outerHeight());
 		
 		last.css({ height: height });
