@@ -127,6 +127,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
 		
+		ipcRenderer.removeAllListeners('copyDocument');
 		ipcRenderer.on('copyDocument', (e: any) => {
 			const json = JSON.stringify({ blocks: blocks[rootId] }, null, 5);
 
