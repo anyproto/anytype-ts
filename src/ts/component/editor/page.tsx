@@ -213,7 +213,8 @@ class EditorPage extends React.Component<Props, {}> {
 				
 				focus.set(title.id, { from: length, to: length });
 			};
-			
+
+			this.resize();
 			window.setTimeout(() => { focus.apply(); }, 1);
 		});
 	};
