@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Drag } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Block, RouteComponentProps<any> {
@@ -30,6 +30,7 @@ class BlockCover extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onMenu = this.onMenu.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
@@ -71,7 +72,7 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						<div className="btn white addCover" onClick={this.onEdit}>
+						<div id="button-cover-edit" className="btn white addCover" onClick={this.onMenu}>
 							<Icon />
 							<div className="txt">Update cover image</div>
 						</div>
@@ -96,6 +97,21 @@ class BlockCover extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+	
+	onMenu (e: any) {
+		const { id } = this.props;
+		
+		commonStore.menuOpen('blockCover', {
+			element: '#button-cover-edit',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 17,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+			},
+		});
 	};
 	
 	onEdit (e: any) {

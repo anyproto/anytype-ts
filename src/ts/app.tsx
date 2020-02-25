@@ -72,6 +72,7 @@ import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';
 import 'scss/menu/block/link.scss';
 import 'scss/menu/block/icon.scss';
+import 'scss/menu/block/cover.scss';
 
 import 'scss/menu/dataview/sort.scss';
 import 'scss/menu/dataview/filter.scss';
