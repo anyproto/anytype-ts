@@ -1,7 +1,8 @@
+@import "~scss/_vars";
+
 .icon.text { background-image: url('~img/icon/menu/action/block/text0.svg'); }
 .icon.list { background-image: url('~img/icon/menu/action/block/list0.svg'); }
 .icon.page { background-image: url('~img/icon/menu/action/block/page0.svg'); }
-
 
 .icon.header1 { background-image: url('~img/icon/menu/action/block/header10.svg'); }
 .icon.header2 { background-image: url('~img/icon/menu/action/block/header20.svg'); }
@@ -50,7 +51,7 @@
 
 .icon.color {
 	.inner { 
-		border: 1px solid #dfddd0; width: 22px; height: 22px; line-height: 22px; text-align: center;
+		border: 1px solid $colorLightGrey; width: 22px; height: 22px; line-height: 22px; text-align: center;
 		font-weight: 500; font-size: 15px; position: absolute; left: 50%; top: 50%; margin: -11px 0px 0px -11px; border-radius: 2px;
 	}
 }

@@ -57,12 +57,12 @@
 			}
 			.item:nth-child(4n + 4) { margin-right: 0px; }
 			.item:hover, .item.active:hover { border: 2px solid $colorOrange; }
-			.item.active { border: 1px solid #dfddd0; }
+			.item.active { border: 1px solid $colorLightGrey; }
 			
 			.item {
 				.cover.upload { 
 					background-image: url('~img/icon/popup/settings/upload0.svg'); background-size: 24px 24px;
-					border: 1px solid #dfddd0; background-position: center center;
+					border: 1px solid $colorLightGrey; background-position: center center;
 				}
 			}
 			

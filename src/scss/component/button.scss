@@ -21,7 +21,7 @@ input.button { line-height: 1; }
 }
 
 .button.simple { 
-	height: auto; line-height: 1; padding: 0px; color: #aca996; font-weight: bold; line-height: 1.43; 
+	height: auto; line-height: 1; padding: 0px; color: $colorDarkGrey; font-weight: bold; line-height: 1.43; 
 	letter-spacing: 0.1px; 
 }
 .button.simple:hover { color: $colorBlack; }

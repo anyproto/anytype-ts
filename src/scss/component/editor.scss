@@ -21,7 +21,7 @@
 		.side.right { text-align: right; }
 		
 		.btn { 
-			font-weight: 500; font-size: 13px; color: #aca996; cursor: pointer; display: inline-block; transition: $transitionFast; opacity: 0;
+			font-weight: 500; font-size: 13px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast; opacity: 0;
 		}
 		.btn:hover { color: $colorBlack; }
 		.btn {

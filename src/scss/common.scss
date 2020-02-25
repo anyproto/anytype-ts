@@ -53,16 +53,16 @@ a { color: $colorBlack; }
 .dropTarget.targetBot.isOver.bottom { box-shadow: 0px 2px 0px $colorOrange inset; }
 
 .textColor-black { color: $colorBlack !important; }
-.textColor-grey { color: #aca996 !important; }
-.textColor-yellow { color: #ecd91b !important; }
-.textColor-orange { color: #ffb522 !important; }
-.textColor-red { color: #f55522 !important; }
-.textColor-pink { color: #e51ca0 !important; }
-.textColor-purple { color: #ab50cc !important; }
-.textColor-blue { color: #3e58eb !important; }
-.textColor-ice { color: #2aa7ee !important; }
-.textColor-teal { color: #0fc8ba !important; }
-.textColor-lime { color: #5dd400 !important; }
+.textColor-grey { color: $colorDarkGrey !important; }
+.textColor-yellow { color: $colorYellow !important; }
+.textColor-orange { color: $colorOrange !important; }
+.textColor-red { color: $colorRed !important; }
+.textColor-pink { color: $colorPink !important; }
+.textColor-purple { color: $colorPurple !important; }
+.textColor-blue { color: $colorBlue !important; }
+.textColor-ice { color: $colorIce !important; }
+.textColor-teal { color: $colorTeal !important; }
+.textColor-lime { color: $colorLime !important; }
 
 .bgColor-grey { background: #f3f2ec !important; }
 .bgColor-yellow { background: #fef9cc !important; }

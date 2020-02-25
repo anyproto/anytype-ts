@@ -1,7 +1,42 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockCover { width: 408px; }
+	.menu.menuBlockCover { width: 408px; padding: 0px; }
 	.menu.menuBlockCover {
+		.head { border-bottom: 1px solid #eae9e0; padding: 12px 16px 10px 16px; font-weight: 500; color: $colorDarkGrey; }
+		.head {
+			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
+			.btn:hover { color: $colorBlack }
+			.btn:last-child { margin: 0px; }
+		}
+		
+		.section:first-child { padding-top: 8px; }
+		.section:last-child { padding-bottom: 8px; }
+		
+		.items { padding: 0px 16px; }
+	
+		.item { 
+			width: 88px; height: 48px; border-radius: 2px; margin: 0px 8px 8px 0px; display: inline-block; 
+			vertical-align: top;
+		}
+		.item:nth-child(4n+4) { margin-right: 0px; }
+		
+		.item.yellow { background: $colorYellow; }
+		.item.orange { background: $colorOrange; }
+		.item.red { background: $colorRed; }
+		.item.pink { background: $colorPink; }
+		.item.purple { background: $colorPurple; }
+		.item.blue { background: $colorBlue; }
+		.item.ice { background: $colorIce; }
+		.item.teal { background: $colorTeal; }
+		.item.green { background: $colorLime; }
+		.item.lightgrey { background: $colorLightGrey; }
+		.item.darkgrey { background: $colorDarkGrey; }
+		.item.black { background: $colorBlack; }
+		
+		.item.c1.yellow { background: linear-gradient(180deg, $colorOrange 0%, $colorYellow 105.47%); }
+		.item.c1.red { background: linear-gradient(180deg, $colorRed 0%, $colorPink 105.47%); }
+		.item.c1.blue { background: linear-gradient(180deg, $colorPurple 0%, $colorBlue 105.47%); }
+		.item.c1.teal { background: linear-gradient(180deg, $colorIce 0%, $colorTeal 105.47%); }
 	}
 }

@@ -4,8 +4,8 @@
 	.block.blockBookmark {
 		.dropTarget { border-radius: 4px; }
 	
-		.inner { display: flex; border-radius: inherit; border: 1px solid #dfddd0; transition: border-color 0.2s ease-in-out; cursor: pointer; }
-		.inner:hover { border-color: #aca996; }
+		.inner { display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; cursor: pointer; }
+		.inner:hover { border-color: $colorDarkGrey; }
 		
 		.inner {
 			.side.left { width: 66.67%; padding: 12px 16px 13px 16px; }

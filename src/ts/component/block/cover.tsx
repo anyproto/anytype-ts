@@ -72,7 +72,7 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						<div id="button-cover-edit" className="btn white addCover" onClick={this.onMenu}>
+						<div id="button-cover-edit" className={[ 'btn', 'white', 'addCover', (commonStore.menuIsOpen('blockCover') ? 'active' : '') ].join(' ')} onClick={this.onMenu}>
 							<Icon />
 							<div className="txt">Update cover image</div>
 						</div>

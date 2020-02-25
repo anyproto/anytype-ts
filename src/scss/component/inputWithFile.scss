@@ -1,16 +1,16 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	line-height: 24px; padding: 11px; border-radius: 4px; border: solid 1px #dfddd0; color: #aca996;
+	line-height: 24px; padding: 11px; border-radius: 4px; border: solid 1px $colorLightGrey; color: $colorDarkGrey;
 	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden;
 }
 .inputWithFile {
 	.txt { line-height: 23px; padding-top: 1px; height: 24px; overflow: hidden; width: calc(100% - 30px); }
 	.fileWrap { display: inline-block; vertical-align: top; }
-	.fileWrap .border { border-bottom: 1px solid #aca996; display: inline-block; line-height: 1; transition: $transitionFast; }
+	.fileWrap .border { border-bottom: 1px solid $colorDarkGrey; display: inline-block; line-height: 1; transition: $transitionFast; }
 	.fileWrap:hover .border { cursor: pointer; color: $colorBlack; }
 
-	.input::placeholder { color: #aca996; }
+	.input::placeholder { color: $colorDarkGrey; }
 	.urlToggle { cursor: text; display: inline-block; }
 
 	#form { display: inline-block; vertical-align: top; }

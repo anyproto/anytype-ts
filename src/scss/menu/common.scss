@@ -40,7 +40,7 @@
 		.content { overflow-y: auto; max-height: 450px; }
 	
 		.title { 
-			font-size: 13px; line-height: 18px; margin: 0px; padding: 7px 16px; font-weight: 400; color: #aca996;
+			font-size: 13px; line-height: 18px; margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey;
 			letter-spacing: 0.08px; 
 		}
 	
@@ -71,17 +71,17 @@
 		
 		.name { display: inline-block; vertical-align: middle; }
 		
-		.section { border-bottom: 1px solid #dfddd0; padding: 8px 0px; }
+		.section { border-bottom: 1px solid $colorLightGrey; padding: 8px 0px; }
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { border: 0px; padding-bottom: 0px; }
 		.section > .name { 
-			padding: 4px 16px; margin-bottom: 6px; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #aca996; display: block; 
+			padding: 4px 16px; margin-bottom: 6px; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: $colorDarkGrey; display: block; 
 		}
 	}
 	
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 10px 16px; border-right: 1px solid #dfddd0; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 10px 16px; border-right: 1px solid $colorLightGrey; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
 		.icon { width: 24px; height: 24px; margin-right: 12px; border-radius: 4px; background-size: 24px 24px; cursor: pointer; }

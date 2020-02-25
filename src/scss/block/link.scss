@@ -4,20 +4,20 @@
 	.block.blockLink { white-space: nowrap; }
 	.block.blockLink {
 		.name {
-			display: inline-block; vertical-align: top; height: 22px; letter-spacing: 0.1px; max-width: calc(100% - 28px); border-bottom: 1px solid #aca996;
+			display: inline-block; vertical-align: top; height: 22px; letter-spacing: 0.1px; max-width: calc(100% - 28px); border-bottom: 1px solid $colorDarkGrey;
 			padding-top: 1px; overflow: hidden; cursor: pointer;
 		}
 		.smile { margin-right: 4px; }
 		
 		.archive {
 			border-radius: 3px; background-color: #f3f2ec; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 8px;
-			font-size: 13px; line-height: 18px; letter-spacing: 0.1px; color: #aca996; padding: 0px 6px; display: none;
+			font-size: 13px; line-height: 18px; letter-spacing: 0.1px; color: $colorDarkGrey; padding: 0px 6px; display: none;
 		}
 	}
 	
 	.block.blockLink > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
 	.block.blockLink > .wrapContent > .selectable > .dropTarget > .isArchived {
-		.name { color: #aca996; border-color: #dfddd0; }
+		.name { color: $colorDarkGrey; border-color: $colorLightGrey; }
 		.archive { display: inline-block; }
 	}
 }

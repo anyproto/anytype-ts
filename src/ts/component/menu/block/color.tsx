@@ -36,18 +36,21 @@ class MenuBlockColor extends React.Component<Props, {}> {
 					{item.children.map((action: any, i: number) => {
 						let icn: string[] = [ 'inner' ];
 						let cn = [];
+						
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + action.value);
 							if (action.value == valueText) {
 								cn.push('active');
 							};
 						};
+						
 						if (action.isBgColor) {
 							icn.push('bgColor bgColor-' + action.value);
 							if (action.value == valueBg) {
 								cn.push('active');
 							};
 						};
+						
 						let inner = (
 							<div className={icn.join(' ')}>A</div>
 						);

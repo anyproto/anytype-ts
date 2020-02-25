@@ -9,13 +9,13 @@
 		}
 		.day:hover { background: $colorOrange; color: #fff; font-weight: 500; }
 		
-		.day.th { color: #aca996; cursor: default; }
+		.day.th { color: $colorDarkGrey; cursor: default; }
 		.day.th:hover { background: none; font-weight: 400; }
 		
-		.day.active { color: #f55522; font-weight: 500; }
+		.day.active { color: $colorRed; font-weight: 500; }
 		.day.active:hover { background: $colorOrange; color: #fff; font-weight: 500; }
 		
-		.day.dis { color: #aca996; }
+		.day.dis { color: $colorDarkGrey; }
 		.day.dis:hover { color: #fff; }
 		
 		.month { height: 28px; line-height: 28px; font-size: 13px; letter-spacing: 0.1px; position: relative; margin-bottom: 4px; }

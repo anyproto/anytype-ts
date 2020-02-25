@@ -5,7 +5,7 @@
 	.block.blockText {
 		.wrap { flex: auto; position: relative; padding: 0px; }
 		.value { -webkit-user-modify: read-write-plaintext-only; }
-		.placeHolder { color: #aca996; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; width: 100%; height: 100%; }
+		.placeHolder { color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; width: 100%; height: 100%; }
 		
 		a { cursor: pointer; }
 		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; border-radius: 2px; }
@@ -27,16 +27,16 @@
 				
 				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; }
 				
-				.textColor-grey .icon { background-color: #aca996 !important; }
-				.textColor-yellow .icon { background-color: #ecd91b !important; }
-				.textColor-orange .icon { background-color: #ffb522 !important; }
-				.textColor-red .icon { background-color: #f55522 !important; }
-				.textColor-pink .icon { background-color: #e51ca0 !important; }
-				.textColor-purple .icon { background-color: #ab50cc !important; }
-				.textColor-blue .icon { background-color: #3e58eb !important; }
-				.textColor-ice .icon { background-color: #2aa7ee !important; }
-				.textColor-teal .icon { background-color: #0fc8ba !important; }
-				.textColor-lime .icon { background-color: #5dd400 !important; }
+				.textColor-grey .icon { background-color: $colorDarkGrey !important; }
+				.textColor-yellow .icon { background-color: $colorYellow !important; }
+				.textColor-orange .icon { background-color: $colorOrange !important; }
+				.textColor-red .icon { background-color: $colorRed !important; }
+				.textColor-pink .icon { background-color: $colorPink !important; }
+				.textColor-purple .icon { background-color: $colorPurple !important; }
+				.textColor-blue .icon { background-color: $colorBlue !important; }
+				.textColor-ice .icon { background-color: $colorIce !important; }
+				.textColor-teal .icon { background-color: $colorTeal !important; }
+				.textColor-lime .icon { background-color: $colorLime !important; }
 			}
 			
 			.marker.check, .marker.toggle { width: 24px; height: 22px; line-height: 22px; margin-right: 4px; cursor: pointer; }
@@ -59,7 +59,7 @@
 		}
 	}
 	
-	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: #aca996 !important; }
+	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 	
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
 	
@@ -83,7 +83,7 @@
 	.block.blockText.code {
 		.select { 
 			position: absolute; top: 16px; left: 16px; z-index: 1; font-size: 13px; height: 18px; border: 0px;
-			font-weight: 500; color: #aca996; 
+			font-weight: 500; color: $colorDarkGrey; 
 		}
 		.select {
 			.current { padding: 0px 16px 0px 0px; }

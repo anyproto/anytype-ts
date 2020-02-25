@@ -50,7 +50,7 @@
 		
 		.item.add {
 			.icon.plus { width: 48px; height: 48px; margin-right: 12px; background-size: 16px 16px; background-image: url('~img/icon/plus/account0.svg'); }
-			.name { color: #aca996; transition: $transitionFast; }
+			.name { color: $colorDarkGrey; transition: $transitionFast; }
 		}
 		.item.add:hover {
 			.icon.plus { background-image: url('~img/icon/plus/account1.svg'); }

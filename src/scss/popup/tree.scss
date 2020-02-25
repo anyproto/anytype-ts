@@ -34,7 +34,7 @@
 					display: inline-block; vertical-align: middle; width: 20px; height: 20px; margin-right: 4px;
 					position: relative; background-size: 6px 10px; background-position: center center; background-repeat: no-repeat;
 				}
-				.dot { width: 2px; height: 2px; background-color: #aca996; position: absolute; left: 9px; top: 9px; }
+				.dot { width: 2px; height: 2px; background-color: $colorDarkGrey; position: absolute; left: 9px; top: 9px; }
 				.smile { 
 					display: inline-block; vertical-align: middle; width: 24px; height: 24px; text-align: center; margin-right: 4px;
 					line-height: 24px;
@@ -60,7 +60,7 @@
 		.buttons { padding: 12px; border-top: 1px solid #ebe9e0; }
 		.buttons {
 			.button { height: 32px; line-height: 32px; }
-			.button.grey { box-shadow: 0px 0px; color: #aca996; }
+			.button.grey { box-shadow: 0px 0px; color: $colorDarkGrey; }
 			.button.grey:hover { color: #000; }
 		}
 	}

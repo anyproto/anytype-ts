@@ -11,7 +11,7 @@
 			.icon.user { vertical-align: top; margin-right: 8px; }
 			.info { display: inline-block; vertical-align: top; width: calc(100% - 48px); }
 			.name { font-size: 15px !important; font-weight: 500; line-height: 24px; }
-			.description { font-size: 13px; line-height: 18px; color: #aca996; margin-top: -2px; }
+			.description { font-size: 13px; line-height: 18px; color: $colorDarkGrey; margin-top: -2px; }
 			.icon.check { margin: -2px 4px 0px 0px; display: none; width: 12px; height: 12px; background-image: url('~img/icon/menu/account/check.svg'); }
 		}
 		.item.active {
@@ -21,7 +21,7 @@
 		
 		.item.add {
 			.icon.plus { width: 40px; height: 40px; margin-right: 8px; background-size: 16px 16px; background-image: url('~img/icon/plus/account0.svg'); }
-			.name { color: #aca996; transition: $transitionFast; }
+			.name { color: $colorDarkGrey; transition: $transitionFast; }
 		}
 		.item.add:hover {
 			.icon.plus { background-image: url('~img/icon/plus/account1.svg'); }
