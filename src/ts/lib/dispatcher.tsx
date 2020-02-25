@@ -247,19 +247,30 @@ class Dispatcher {
 					};
 					break;
 				
+				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':
-					const type = Number(data.process.type);
+					const type = Number(data.process.type) || 0;
+					const state = Number(data.process.state) || 0;
 					const status = translate('progress' + type);
-				
-					commonStore.progressSet({
-						id: String(data.process.id || ''),
-						status: status,
-						current: Number(data.process.progress.done),
-						total: Number(data.process.progress.total),
-						isUnlocked: true,
-						canCancel: true,
-					});
+					
+					switch (state) {
+						case I.ProgressState.Running:
+						case I.ProgressState.Done:
+							commonStore.progressSet({
+								id: String(data.process.id || ''),
+								status: status,
+								current: Number(data.process.progress.done),
+								total: Number(data.process.progress.total),
+								isUnlocked: true,
+								canCancel: true,
+							});
+							break;
+						
+						case I.ProgressState.Canceled:
+							commonStore.progressClear();
+							break;
+					};
 					break;
 			};
 		};

@@ -20,7 +20,7 @@ class CommonStore {
 	@observable public menuList: I.Menu[] = [];
 	@observable public coverNum: number = 0;
 	@observable public coverImage: string = '';
-	@observable public progressObj: I.Progress = { status: '', current: 0, total: 0 };
+	@observable public progressObj: I.Progress = {};
 	@observable public filterString: string = '';
 	@observable public gatewayUrl: string = '';
 	@observable public linkPreviewObj: LinkPreview;
@@ -97,7 +97,7 @@ class CommonStore {
 	
 	@action
 	progressClear () {
-		this.progressObj = { status: '', current: 0, total: 0 };
+		this.progressObj = {};
 	};
 	
 	@action
