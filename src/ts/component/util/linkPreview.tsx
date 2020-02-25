@@ -42,9 +42,10 @@ class LinkPreview extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { loading, title, description, url, faviconUrl, imageUrl } = this.state;
+		let { loading, title, description, url, faviconUrl, imageUrl } = this.state;
 		const { linkPreview } = commonStore;
 		
+		let cn = [ 'linkPreview', (imageUrl ? 'withImage' : '') ];
 		let content = null;
 		let style: any = {};
 		if (imageUrl) {
@@ -78,7 +79,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id="linkPreview" className="linkPreview">
+			<div id="linkPreview" className={cn.join(' ')}>
 				<div className="polygon" />
 				<div className="content">{content}</div>
 			</div>
@@ -122,7 +123,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		const { linkPreview } = commonStore;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		let { marks, range, onChange } =  linkPreview;
+		let { marks, range, onChange } = linkPreview;
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
 		
 		commonStore.menuOpen('blockLink', {
