@@ -97,7 +97,7 @@ class DataUtil {
 		return ids;
 	};
 	
-	pageInit (props: any) {
+	pageInit (callBack?: () => void) {
 		const { breadcrumbs } = blockStore;
 		
 		C.ConfigGet((message: any) => {
@@ -119,7 +119,11 @@ class DataUtil {
 				});
 			};
 			
-			C.BlockOpen(root, []);
+			C.BlockOpen(root, [], (message: any) => {
+				if (callBack) {
+					callBack();
+				};
+			});
 		});
 	};
 	

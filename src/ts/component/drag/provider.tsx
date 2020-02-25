@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragLayer } from 'ts/component';
-import { I, C, focus, keyboard } from 'ts/lib';
+import { I, C, focus, keyboard, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -60,6 +60,7 @@ class DragProvider extends React.Component<Props, {}> {
 		this.unbind();
 		this.setDragImage(e);
 		keyboard.setDrag(true);
+		Util.linkPreviewHide(false);
 		
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));

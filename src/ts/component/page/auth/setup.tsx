@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, Smile, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, translate, keyboard, C } from 'ts/lib';
+import { Storage, translate, keyboard, C, DataUtil } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -104,7 +104,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
 		const pin = debug ? '' : Storage.get('pin');
-		const pageId = debug ? Storage.get('pageId') : '';
+		const pageId = Storage.get('pageId');
 		
 		if (!phrase) {
 			return;
@@ -124,15 +124,17 @@ class PageAuthSetup extends React.Component<Props, State> {
 					if (message.account) {
 						authStore.accountSet(message.account);
 						
-						if (pin) {
-							history.push('/auth/pin-check');
-							keyboard.setPinCheck();
-						} else 
-						if (pageId) {
-							history.push('/main/edit/' + pageId);
-						} else {
-							history.push('/main/index');
-						};
+						DataUtil.pageInit(() => {
+							if (pin) {
+								history.push('/auth/pin-check');
+								keyboard.setPinCheck();
+							} else 
+							if (pageId) {
+								history.push('/main/edit/' + pageId);
+							} else {
+								history.push('/main/index');
+							};
+						});
 					};
 				});
 			} else {

@@ -70,7 +70,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		DataUtil.pageInit(this.props);
+		DataUtil.pageInit();
 	};
 	
 	componentDidUpdate () {

@@ -45,7 +45,6 @@ class LinkPreview extends React.Component<Props, {}> {
 		let { loading, title, description, url, faviconUrl, imageUrl } = this.state;
 		const { linkPreview } = commonStore;
 		
-		let cn = [ 'linkPreview', (imageUrl ? 'withImage' : '') ];
 		let content = null;
 		let style: any = {};
 		if (imageUrl) {
@@ -79,7 +78,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id="linkPreview" className={cn.join(' ')}>
+			<div id="linkPreview" className="linkPreview">
 				<div className="polygon" />
 				<div className="content">{content}</div>
 			</div>
@@ -87,20 +86,27 @@ class LinkPreview extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { loading, url } = this.state;
+		const { loading, url, imageUrl } = this.state;
 		const { linkPreview } = commonStore;
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!loading && linkPreview.url && (linkPreview.url != url)) {
 			this.setState({ loading: true });
 			
 			C.LinkPreview(linkPreview.url, (message: any) => {
 				this.setState({
-					...message.linkPreview,
+					type: Number(message.linkPreview.type) || 0,
+					title: String(message.linkPreview.title || ''),
+					description: String(message.linkPreview.description || ''),
+					faviconUrl: String(message.linkPreview.faviconUrl || ''),
+					imageUrl: String(message.linkPreview.imageUrl || ''),
 					loading: false,
 					url: linkPreview.url,
 				});
 			});
 		};
+		
+		imageUrl ? node.addClass('withImage') : node.removeClass('withImage');
 	};
 	
 	onClick (e: any) {

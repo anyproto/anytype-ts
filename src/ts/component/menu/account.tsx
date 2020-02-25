@@ -68,7 +68,7 @@ class MenuAccount extends React.Component<Props, {}> {
 			} else
 			if (message.account) {
 				authStore.accountSet(message.account);
-				DataUtil.pageInit(this.props);
+				DataUtil.pageInit();
 			};
 		});
 	};

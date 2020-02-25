@@ -318,8 +318,9 @@ class Util {
 			return;
 		};
 		
-		let win = $(window);
-		let obj = $('#linkPreview');
+		const win = $(window);
+		const obj = $('#linkPreview');
+		const poly = obj.find('.polygon');
 		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
 			window.clearTimeout(this.timeoutLinkPreview);
@@ -352,13 +353,12 @@ class Util {
 			let y = 0;
 			let css: any = { opacity: 0, left: 0, top: 0 };
 			let typeY = I.MenuDirection.Bottom;
-			let poly = obj.find('.polygon');
 			let ps = (1 - nw / ow) / 2 * 100;
 			let pe = ps + nw / ow * 100;
 			let oy = 4;
 			let border = 12;
 			
-			obj.removeClass('top bottom');
+			obj.removeClass('top bottom withImage');
 			poly.css({ top: 'auto', bottom: 'auto' });
 			
 			if (offset.top + oh + nh >= st + wh) {
