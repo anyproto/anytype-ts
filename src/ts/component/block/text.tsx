@@ -80,7 +80,7 @@ class BlockText extends React.Component<Props, {}> {
 				};
 				
 				additional = (
-					<Select initial="Language" id="lang" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
+					<Select initial="Language" id={'lang-' + id} value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
 				);
 				break;
 				
