@@ -110,6 +110,7 @@ class BlockCover extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
+				onEdit: this.onEdit
 			},
 		});
 	};

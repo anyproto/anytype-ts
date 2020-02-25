@@ -11,6 +11,8 @@ class MenuBlockCover extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
+		
+		this.onEdit = this.onEdit.bind(this);
 	};
 
 	render () {
@@ -35,7 +37,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			<div>
 				<div className="head">
 					<div className="btn">Upload image</div>
-					<div className="btn">Reposition</div>
+					<div className="btn" onClick={this.onEdit}>Reposition</div>
 					<div className="btn">Remove</div>
 				</div>
 				<div className="sections">
@@ -45,6 +47,15 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+	
+	onEdit (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onEdit } = data;
+	
+		onEdit();
+		commonStore.menuClose(this.props.id);
 	};
 	
 	getSections () {

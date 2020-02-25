@@ -1,9 +1,9 @@
-import { ImageSize, Avatar, Image, Account, DragItem, Progress, ProgressType, ProgressState } from './common';
+import { ImageSize, Avatar, Image, Account, DragItem } from './common';
+import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
 import { BlockType, BlockPosition, BlockAlign, Restrictions, Block } from './block';
-
 import { 
 	ViewType,
 	View,  
