@@ -88,10 +88,10 @@ class DataUtil {
 		
 		let ids: string[] = [];
 		if (selection) {
-			ids = selection.get(true);
+			ids = selection.get();
 			if (ids.length <= 1) {
 				selection.set([ id ]);
-				ids = selection.get(true);
+				ids = selection.get();
 			};
 		};
 		return ids;

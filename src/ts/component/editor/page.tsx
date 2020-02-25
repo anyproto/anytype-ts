@@ -97,7 +97,7 @@ class EditorPage extends React.Component<Props, {}> {
 						})}
 					</div>
 					
-					<div className="lastBlock" onClick={this.onLastClick} />
+					<div className="blockLast" onClick={this.onLastClick} />
 				</div>
 			</div>
 		);
@@ -127,6 +127,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
 		
+		ipcRenderer.removeAllListeners('copyDocument');
 		ipcRenderer.on('copyDocument', (e: any) => {
 			const json = JSON.stringify({ blocks: blocks[rootId] }, null, 5);
 
@@ -379,7 +380,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const ids = selection.get(true);
+		const ids = selection.get();
 		const map = blockStore.getMap(blocks[rootId]);
 		
 		if (e.ctrlKey || e.metaKey) {
@@ -1021,12 +1022,11 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		let length = String(next.content.text || '').length;
+		
 		C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
-			if (next) {
-				let l = String(next.content.text || '').length;
-				focus.set(next.id, { from: l, to: l });
-				focus.apply();				
-			};
+			focus.set(next.id, { from: length, to: length });
+			focus.apply();				
 		});
 	};
 	
@@ -1133,7 +1133,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const last = node.find('.lastBlock').css({ height: 0 });
+		const last = node.find('.blockLast').css({ height: 0 });
 		const height = Math.max(100, win.height() - node.outerHeight());
 		
 		last.css({ height: height });

@@ -68,10 +68,11 @@ const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => 
 	dispatcher.call('accountStop', request, callBack);
 };
 
-const ExternalDropFiles = (contextId: string, blockId: string, paths: string[], callBack?: (message: any) => void) => {
+const ExternalDropFiles = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
-		focusedBlockId: blockId,
+		dropTargetId: targetId,
+		position: position,
 		localFilePaths: paths,
 	};
 	dispatcher.call('externalDropFiles', request, callBack);
