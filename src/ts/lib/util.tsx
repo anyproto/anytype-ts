@@ -20,6 +20,7 @@ class Util {
 	icons: any[] = [];
 	timeoutTooltip: number = 0;
 	timeoutLinkPreview: number = 0;
+	linkPreviewOpen: boolean = false;
 	
 	constructor () {
 		this.icons = Object.keys(EmojiData.emojis);
@@ -320,6 +321,10 @@ class Util {
 		let win = $(window);
 		let obj = $('#linkPreview');
 		
+		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
+			window.clearTimeout(this.timeoutLinkPreview);
+		});
+		
 		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
 			this.linkPreviewHide(false);
 		});
@@ -328,6 +333,7 @@ class Util {
 		
 		window.clearTimeout(this.timeoutLinkPreview);
 		this.timeoutLinkPreview = window.setTimeout(() => {
+			
 			commonStore.linkPreviewSet({
 				url: url,
 				element: node,
@@ -352,7 +358,7 @@ class Util {
 			let oy = 4;
 			let border = 12;
 			
-			obj.removeClass('top bottom').addClass('active');
+			obj.removeClass('top bottom');
 			poly.css({ top: 'auto', bottom: 'auto' });
 			
 			if (offset.top + oh + nh >= st + wh) {
@@ -377,25 +383,32 @@ class Util {
 			css.left = Math.max(border, css.left);
 			css.left = Math.min(ww - ow - border, css.left);
 			
-			obj.show().css(css).data({ dir: typeY });
-			raf(() => {
+			obj.show().css(css);
+			raf(() => { 
 				obj.css({ opacity: 1 });
+				this.linkPreviewOpen = true; 
 			});
 		}, 500);
 	};
 	
 	linkPreviewHide (force: boolean) {
+		if (!this.linkPreviewOpen) {
+			return;
+		};
+		
+		const obj = $('#linkPreview');
 		window.clearTimeout(this.timeoutLinkPreview);
 		
-		let obj = $('#linkPreview');
-		
 		if (force) {
-			obj.hide().removeClass('active');
+			obj.hide();
 			return;
 		};
 		
 		obj.css({ opacity: 0 });
-		this.timeoutLinkPreview = window.setTimeout(() => { obj.hide().removeClass('active'); }, 200);
+		this.timeoutLinkPreview = window.setTimeout(() => { 
+			obj.hide();
+			this.linkPreviewOpen = false; 
+		}, 200);
 	};
 	
 	lbBr (s: string) {

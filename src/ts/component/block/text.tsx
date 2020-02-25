@@ -207,7 +207,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		links.unbind('click.link mouseenter.link mouseleave.link');
+		links.unbind('click.link mouseenter.link');
 			
 		links.on('click.link', function (e: any) {
 			e.preventDefault();
@@ -215,10 +215,6 @@ class BlockText extends React.Component<Props, {}> {
 		});
 			
 		links.on('mouseenter.link', function (e: any) {
-			if ($('#linkPreview').hasClass('active')) {
-				return;
-			};
-			
 			let range = $(this).data('range').split('-');
 			Util.linkPreviewShow($(this).attr('href'), $(this), {
 				range: { 
