@@ -53,7 +53,7 @@
 		
 		.item.withChildren:hover::before, .item.withChildren:hover::after {
 			content: ""; position: absolute; z-index: 1000; right: 0px; width: 100%; height: 200%; 
-			animation: subnavHoverHelp 1s; animation-iteration-count: 1; animation-fill-mode: forwards;
+			animation: subnavHoverHelp 0.75s; animation-iteration-count: 1; animation-fill-mode: forwards;
 			/*opacity: 0.3; background: pink;*/
 		}
 		
