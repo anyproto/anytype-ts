@@ -279,7 +279,7 @@ class BlockText extends React.Component<Props, {}> {
 			this.setText(this.marks);
 		};
 		
-		if ((k == Key.backspace) && (range.from == 0) && (range.to == 0)) {
+		if ((k == Key.backspace) && range && (range.from == 0) && (range.to == 0)) {
 			this.setText(this.marks);
 		};
 		

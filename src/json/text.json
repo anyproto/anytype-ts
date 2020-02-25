@@ -1,4 +1,6 @@
 {
+	"progress0": { "en": "Copying files %d/%d" },
+
 	"authSelectTitle": { "en": "Organize everything" },
 	"authSelectLabel": { "en": "With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." },
 	"authSelectLogin": { "en": "Login" },

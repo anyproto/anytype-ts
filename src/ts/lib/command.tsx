@@ -26,6 +26,13 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.call('linkPreview', request, callBack);
 };
 
+const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
+	const request = {
+		id: id,
+	};
+	dispatcher.call('processCancel', request, callBack);
+};
+
 const WalletCreate = (path: string, callBack?: (message: any) => void) => {
 	const request = {
 		rootPath: path,
@@ -336,6 +343,7 @@ export {
 	ImageGetBlob,
 	ConfigGet,
 	LinkPreview,
+	ProcessCancel,
 	
 	WalletCreate,
 	WalletRecover,

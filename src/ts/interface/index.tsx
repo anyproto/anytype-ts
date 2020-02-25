@@ -1,4 +1,4 @@
-import { ImageSize, Avatar, Image, Account, DragItem, Progress } from './common';
+import { ImageSize, Avatar, Image, Account, DragItem, Progress, ProgressType } from './common';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
@@ -35,6 +35,7 @@ export {
 	Account,
 	DragItem,
 	Progress,
+	ProgressType,
 	
 	PopupParam, 
 	Popup,

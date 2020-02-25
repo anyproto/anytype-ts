@@ -19,7 +19,8 @@ class Util {
 	
 	icons: any[] = [];
 	timeoutTooltip: number = 0;
-	timeoutLinkPreview: number = 0;
+	timeoutLinkPreviewShow: number = 0;
+	timeoutLinkPreviewHide: number = 0;
 	linkPreviewOpen: boolean = false;
 	
 	constructor () {
@@ -323,7 +324,7 @@ class Util {
 		const poly = obj.find('.polygon');
 		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			window.clearTimeout(this.timeoutLinkPreview);
+			window.clearTimeout(this.timeoutLinkPreviewShow);
 		});
 		
 		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
@@ -332,15 +333,8 @@ class Util {
 		
 		this.linkPreviewHide(false);
 		
-		window.clearTimeout(this.timeoutLinkPreview);
-		this.timeoutLinkPreview = window.setTimeout(() => {
-			
-			commonStore.linkPreviewSet({
-				url: url,
-				element: node,
-				...param,
-			});
-			
+		window.clearTimeout(this.timeoutLinkPreviewShow);
+		this.timeoutLinkPreviewShow = window.setTimeout(() => {
 			let ww = win.width();
 			let wh = win.height();
 			let dh = $(document).height();
@@ -358,7 +352,7 @@ class Util {
 			let oy = 4;
 			let border = 12;
 			
-			obj.removeClass('top bottom withImage');
+			obj.removeClass('top bottom');
 			poly.css({ top: 'auto', bottom: 'auto' });
 			
 			if (offset.top + oh + nh >= st + wh) {
@@ -376,12 +370,18 @@ class Util {
 				css.top = offset.top + nh + oy;
 				obj.addClass('bottom');
 				
-				poly.css({ height: nh, top: -nh, clipPath: 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)' });
+				poly.css({ height: nh + oy, top: -nh - oy, clipPath: 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)' });
 			};
 			
 			css.left = offset.left - ow / 2 + nw / 2;
 			css.left = Math.max(border, css.left);
 			css.left = Math.min(ww - ow - border, css.left);
+			
+			commonStore.linkPreviewSet({
+				url: url,
+				element: node,
+				...param,
+			});
 			
 			obj.show().css(css);
 			raf(() => { 
@@ -397,7 +397,7 @@ class Util {
 		};
 		
 		const obj = $('#linkPreview');
-		window.clearTimeout(this.timeoutLinkPreview);
+		window.clearTimeout(this.timeoutLinkPreviewShow);
 		
 		if (force) {
 			obj.hide();
@@ -405,7 +405,7 @@ class Util {
 		};
 		
 		obj.css({ opacity: 0 });
-		this.timeoutLinkPreview = window.setTimeout(() => { 
+		this.timeoutLinkPreviewHide = window.setTimeout(() => { 
 			obj.hide();
 			this.linkPreviewOpen = false; 
 		}, 200);

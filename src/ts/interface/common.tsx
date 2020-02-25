@@ -21,8 +21,16 @@ export enum DragItem {
 	Menu = 'menu',
 };
 
+export enum ProgressType {
+	File = 0,
+};
+
 export interface Progress {
-	status: string;
+	id?: string;
+	type?: ProgressType;
+	status?: string;
 	current?: number;
 	total?: number;
+	isUnlocked?: boolean;
+	canCancel?: boolean;
 };

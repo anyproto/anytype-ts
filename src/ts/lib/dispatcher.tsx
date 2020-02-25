@@ -1,5 +1,5 @@
-import { authStore, blockStore } from 'ts/store';
-import { Util, I, StructDecode, focus, keyboard, Storage } from 'ts/lib';
+import { authStore, commonStore, blockStore } from 'ts/store';
+import { Util, I, StructDecode, focus, keyboard, Storage, translate } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
@@ -245,6 +245,21 @@ class Dispatcher {
 							keyboard.setFocus(false);
 						};
 					};
+					break;
+				
+				case 'processUpdate':
+				case 'processDone':
+					const type = Number(data.process.type);
+					const status = translate('progress' + type);
+				
+					commonStore.progressSet({
+						id: String(data.process.id || ''),
+						status: status,
+						current: Number(data.process.progress.done),
+						total: Number(data.process.progress.total),
+						isUnlocked: true,
+						canCancel: true,
+					});
 					break;
 			};
 		};

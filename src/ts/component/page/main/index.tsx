@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { commonStore, authStore, blockStore} from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate} from 'ts/lib';
+import { I, C, Util, DataUtil, translate, Storage } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
@@ -70,7 +70,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		DataUtil.pageInit();
+		//DataUtil.pageInit();
+		Storage.set('pageId', '');
 	};
 	
 	componentDidUpdate () {
