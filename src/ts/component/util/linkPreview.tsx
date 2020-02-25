@@ -79,7 +79,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		
 		return (
 			<div id="linkPreview" className="linkPreview">
-				<div className="polygon" />
+				<div className="polygon" onClick={this.onClick} />
 				<div className="content">{content}</div>
 			</div>
 		);
@@ -111,8 +111,7 @@ class LinkPreview extends React.Component<Props, {}> {
 	
 	onClick (e: any) {
 		const { linkPreview } = commonStore;
-		
-		ipcRenderer.send('urlOpen', linkPreview.url);
+		ipcRenderer.send('urlOpen', linkPreview.url);			
 	};
 	
 	onCopy (e: any) {
