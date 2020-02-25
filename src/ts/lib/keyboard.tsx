@@ -42,6 +42,8 @@ class Keyboard {
 		if (k == Key.escape) {
 			e.preventDefault();
 			commonStore.popupCloseAll();
+			commonStore.menuCloseAll();
+			Util.linkPreviewHide(false);
 		};
 		
 		if (e.ctrlKey || e.metaKey) {
