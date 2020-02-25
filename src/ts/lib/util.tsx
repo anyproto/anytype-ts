@@ -352,6 +352,8 @@ class Util {
 			let oy = 4;
 			let border = 12;
 			
+			console.log(offset);
+			
 			obj.removeClass('top bottom').addClass('active');
 			poly.css({ top: 'auto', bottom: 'auto' });
 			

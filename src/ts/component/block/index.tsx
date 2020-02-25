@@ -365,7 +365,7 @@ class Block extends React.Component<Props, {}> {
 		const prevBlock = childBlocks[index - 1];
 		const currentBlock = childBlocks[index];
 		
-		let offset = node.find('#block-' + $.escapeSelector(prevBlock.id)).offset().left + Constant.size.blockMenu;
+		const offset = node.find('#block-' + $.escapeSelector(prevBlock.id)).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setPreventSelect(true);

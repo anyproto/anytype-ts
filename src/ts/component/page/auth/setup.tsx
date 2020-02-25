@@ -104,6 +104,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
 		const pin = debug ? '' : Storage.get('pin');
+		const pageId = Storage.get('pageId');
 		
 		if (!phrase) {
 			return;
@@ -126,6 +127,9 @@ class PageAuthSetup extends React.Component<Props, State> {
 						if (pin) {
 							history.push('/auth/pin-check');
 							keyboard.setPinCheck();
+						} else 
+						if (pageId) {
+							history.push('/main/edit/' + pageId);
 						} else {
 							history.push('/main/index');
 						};

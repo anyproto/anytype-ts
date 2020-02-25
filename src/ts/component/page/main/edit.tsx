@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
+import { Storage } from 'ts/lib';
 import { HeaderMainEdit as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
@@ -23,6 +24,19 @@ class PageMainEdit extends React.Component<Props, {}> {
 				</DragProvider>
 			</SelectionProvider>
 		);
+	};
+	
+	componentDidMount () {
+		this.setId();
+	};
+	
+	componentDidUpdate () {
+		this.setId();
+	};
+	
+	setId () {
+		const { match } = this.props;
+		Storage.set('pageId', match.params.id);
 	};
 	
 };
