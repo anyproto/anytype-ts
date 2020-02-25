@@ -59,7 +59,7 @@
 		}
 	}
 	
-	.block.blockText.isChecked { color: #aca996; }
+	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: #aca996 !important; }
 	
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
 	

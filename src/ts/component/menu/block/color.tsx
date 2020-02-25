@@ -162,7 +162,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 			canColor = false;
 		};
 		
-		if ((type == I.BlockType.Text) && ([ I.TextStyle.Code, I.TextStyle.Checkbox, I.TextStyle.Toggle ].indexOf(content.style) >= 0)) {
+		if ((type == I.BlockType.Text) && ([ I.TextStyle.Code, I.TextStyle.Checkbox ].indexOf(content.style) >= 0)) {
 			canColor = false;
 		};
 		
