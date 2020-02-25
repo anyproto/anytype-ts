@@ -33,16 +33,16 @@ class BlockVideo extends React.Component<Props, {}> {
 
 	render () {
 		const { id, fields, content } = this.props;
-		const { width } = fields;
 		const { state, hash } = content;
 		const accept = [ 'mp4', 'm4v' ];
 		
+		let { width } = fields;
 		let element = null;
 		let css: any = {};
 		
 		if (width) {
-			css.width = width;
-			css.height = css.width / 16 * 9;
+			css.width = (width * 100) + '%';
+			css.height = this.getHeight(width);
 		};
 		
 		switch (state) {
@@ -157,10 +157,10 @@ class BlockVideo extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const width = this.getWidth(true, 0);
-		const height = width / 16 * 9;
+		const w = this.getWidth(true, 0);
+		const h = this.getHeight(w);
 		
-		node.css({ width: width, height: height });
+		node.css({ width: (w * 100) + '%', height: h });
 	};
 	
 	onResizeStart (e: any, checkMax: boolean) {
@@ -204,10 +204,10 @@ class BlockVideo extends React.Component<Props, {}> {
 		};
 		
 		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const width = this.getWidth(checkMax, e.pageX - rect.x + 20);
-		const height = width / 16 * 9;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		const h = this.getHeight(w);
 		
-		node.css({ width: width, height: height });
+		node.css({ width: (w * 100) + '%', height: h });
 	};
 	
 	onResizeEnd (e: any, checkMax: boolean) {
@@ -225,17 +225,17 @@ class BlockVideo extends React.Component<Props, {}> {
 		
 		const win = $(window);
 		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		win.unbind('mousemove.media mouseup.media');
+		node.removeClass('isResizing');
 		
 		if (selection) {
 			selection.setPreventSelect(false);
 		};
 		
-		node.removeClass('isResizing');
-		
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { width: this.getWidth(checkMax, e.pageX - rect.x + 20) } },
+			{ blockId: id, fields: { width: w } },
 		]);
 	};
 	
@@ -280,7 +280,21 @@ class BlockVideo extends React.Component<Props, {}> {
 			return width;
 		};
 		
-		return Math.min(el.width(), Math.max(160, checkMax ? width : v));
+		const ew = el.width();
+		const w = Math.min(ew, Math.max(20, checkMax ? width * ew : v));
+		
+		return Math.min(1, Math.max(0, w / ew));
+	};
+	
+	getHeight (p: number) {
+		const { id } = this.props;
+		const el = $('.selectable.c' + $.escapeSelector(id));
+		
+		if (!el.length) {
+			return 0;
+		};
+		
+		return p * el.width() / 16 * 9;
 	};
 	
 };

@@ -43,7 +43,7 @@ class BlockImage extends React.Component<Props, {}> {
 		let css: any = {};
 		
 		if (width) {
-			css.width = width;
+			css.width = (width * 100) + '%';
 		};
 		
 		switch (state) {
@@ -167,7 +167,9 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
-		node.css({ width: this.getWidth(checkMax, e.pageX - rect.x + 20) });
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		
+		node.css({ width: (w * 100) + '%' });
 	};
 	
 	onResizeEnd (e: any, checkMax: boolean) {
@@ -185,17 +187,17 @@ class BlockImage extends React.Component<Props, {}> {
 		
 		const win = $(window);
 		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		win.unbind('mousemove.media mouseup.media');
+		node.removeClass('isResizing');
 		
 		if (selection) {
 			selection.setPreventSelect(false);
 		};
 		
-		node.removeClass('isResizing');
-		
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { width: this.getWidth(checkMax, e.pageX - rect.x + 20) } },
+			{ blockId: id, fields: { width: w } },
 		]);
 	};
 	
@@ -254,13 +256,16 @@ class BlockImage extends React.Component<Props, {}> {
 	getWidth (checkMax: boolean, v: number): number {
 		const { id, fields } = this.props;
 		const { width } = fields;
-		
 		const el = $('.selectable.c' + $.escapeSelector(id));
+		
 		if (!el.length) {
 			return width;
 		};
 		
-		return Math.min(el.width(), Math.max(20, checkMax ? width : v));
+		const ew = el.width();
+		const w = Math.min(ew, Math.max(20, checkMax ? width * ew : v));
+		
+		return Math.min(1, Math.max(0, w / ew));
 	};
 	
 };
