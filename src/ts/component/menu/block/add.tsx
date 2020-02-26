@@ -30,10 +30,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const options = this.getItems();
 		const sections = this.getSections();
 		
-		const Inner = (
-			<div className="inner">A</div>
-		);
-		
 		const Item = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 				{item.icon ? <Icon className={item.icon} inner={item.inner} /> : ''}
@@ -44,7 +40,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		const Section = (item: any) => (
 			<div className="section">
-				<div className="name">{item.name}</div>
+				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
 						let icn: string[] = [ 'inner' ];
@@ -77,13 +73,13 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			<div>
 				{filter ? (
 					<React.Fragment>
+						{!sections.length ? <div className="item empty">No items match filter</div> : ''}
 						{sections.map((item: any, i: number) => (
 							<Section key={i} {...item} />
 						))}
 					</React.Fragment>
 				) : (
 					<React.Fragment>
-						{!options.length ? <div className="item empty">No items match filter</div> : ''}
 						{options.map((item: any, i: number) => (
 							<Item key={i} {...item} />
 						))}

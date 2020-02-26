@@ -51,48 +51,59 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content, bgColor } = block;
 		const { style, color } = content;
-		const options = this.getItems();
 		const sections = this.getSections();
 		
-		const Inner = (item: any) => (
-			<div className={item.className}>A</div>
+		const Item = (item: any) => (
+			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				{item.icon ? <Icon className={item.icon} inner={item.inner} /> : ''}
+				<div className="name">{item.name}</div>
+				{item.arrow ? <Icon className="arrow" /> : ''}
+			</div>
 		);
 		
 		const Section = (item: any) => (
 			<div className="section">
-				{item.children.map((action: any, i: number) => {
-					return <Item key={i} {...action} />;
-				})}
+				{item.name ? <div className="name">{item.name}</div> : ''}
+				<div className="items">
+					{item.children.map((action: any, i: number) => {
+						let icn: string[] = [ 'inner' ];
+						
+						if (action.id == 'turn') {
+							action.icon = DataUtil.styleIcon(style);
+						};
+						
+						if (action.id == 'color') {
+							if (color) {
+								icn.push('textColor textColor-' + color);
+							};
+							if (bgColor) {
+								icn.push('bgColor bgColor-' + bgColor);
+							};
+						};
+						
+						if (action.isBlock) {
+							action.color = item.color;
+						};
+						
+						if (action.isTextColor) {
+							icn.push('textColor textColor-' + action.value);
+						};
+						if (action.isBgColor) {
+							icn.push('bgColor bgColor-' + action.value);
+						};
+						
+						if (action.isTextColor || action.isBgColor) {
+							action.icon = 'color';
+							action.inner = (
+								<div className={icn.join(' ')}>A</div>
+							);
+						};
+						
+						return <Item key={i} {...action} />;
+					})}
+				</div>
 			</div>
 		);
-		
-		const Item = (item: any) => {
-			let icon = [ item.icon ];
-			let inner = null;
-			
-			if (item.icon == 'turn') {
-				icon = [ DataUtil.styleIcon(style) ];
-			};
-			
-			if (item.icon == 'color') {
-				let cn = [ 'inner' ];
-				if (color) {
-					cn.push('textColor textColor-' + color);
-				};
-				if (bgColor) {
-					cn.push('bgColor bgColor-' + bgColor);
-				};
-				inner = <Inner className={cn.join(' ')} />;
-			};
-			
-			return (
-				<div id={'item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-					{item.icon ? <Icon className={icon.join(' ')} inner={inner} /> : ''}
-					<div className="name">{item.name}</div>
-					{item.arrow ? <Icon className="arrow" /> : ''}
-				</div>
-			);
-		};
 		
 		return (
 			<div>
@@ -100,20 +111,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 					<Input placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				</div>
 				
-				{!filter ? (
-					<React.Fragment>
-						{sections.map((item: any, i: number) => (
-							<Section key={i} {...item} />
-						))}
-					</React.Fragment>
-				) : (
-					<React.Fragment>
-						{!options.length ? <div className="item empty">No items match filter</div> : ''}
-						{options.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
-					</React.Fragment>
-				)}
+				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
+				{sections.map((item: any, i: number) => (
+					<Section key={i} {...item} />
+				))}
 			</div>
 		);
 	};
@@ -158,6 +159,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getSections () {
+		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
@@ -173,7 +175,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		let ca: string[] = [ 'align', DataUtil.alignIcon(align) ];		
 				
-		let sections = [
+		let sections: any[] = [
 			{ 
 				children: [
 					//{ id: 'move', icon: 'move', name: 'Move to' },
@@ -185,7 +187,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			{ 
 				children: [
 					{ id: 'align', icon: ca.join(' '), name: 'Align', arrow: true },
-					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
+					{ id: 'color', icon: 'color', name: 'Change color', arrow: true, isTextColor: true },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
 			}
@@ -207,6 +209,26 @@ class MenuBlockAction extends React.Component<Props, State> {
 			sections = sections.filter((it: any, i: number) => { return i > 0; });
 		};
 		
+		if (filter) {
+			const reg = new RegExp(filter, 'gi');
+			
+			sections = [
+				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: DataUtil.menuGetActions(block) },
+				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: DataUtil.menuGetAlign() },
+				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: DataUtil.menuGetBgColors() },
+			];
+			
+			if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
+				let idx = sections.findIndex((it: any) => { return it.id == 'align'; });
+				sections.splice(++idx, 0, { id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
+			};
+			
+			sections = sections.filter((s: any) => {
+				s.children = (s.children || []).filter((c: any) => { return c.name.match(reg); });
+				return s.children.length > 0;
+			});
+		};
+		
 		return sections;
 	};
 	
@@ -217,11 +239,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let items: any[] = [];
 		for (let section of sections) {
 			items = items.concat(section.children);
-		};
-		
-		if (filter) {
-			const reg = new RegExp(filter, 'gi');
-			items = items.filter((it: any) => { return it.name.match(reg); });
 		};
 		
 		return items;

@@ -254,9 +254,9 @@ class DataUtil {
 	
 	menuGetAlign () {
 		return [
-			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Left' },
-			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Center' },
-			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Right' },
+			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Left', isAlign: true },
+			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Center', isAlign: true },
+			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Right', isAlign: true },
 		];
 	};
 	
