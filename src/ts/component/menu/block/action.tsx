@@ -81,10 +81,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 							};
 						};
 						
-						if (action.isBlock) {
-							action.color = item.color;
-						};
-						
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + action.value);
 						};
@@ -212,15 +208,25 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (filter) {
 			const reg = new RegExp(filter, 'gi');
 			
-			sections = [
-				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: DataUtil.menuGetActions(block) },
-				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: DataUtil.menuGetAlign() },
-				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: DataUtil.menuGetBgColors() },
-			];
+			sections = [];
+			
+			if (type == I.BlockType.Text) {
+				sections = sections.concat([
+					{ id: 'turnText', icon: '', name: 'Text', color: '', children: DataUtil.menuGetBlockText() },
+					{ id: 'turnList', icon: '', name: 'List', color: '', children: DataUtil.menuGetBlockList() },
+					{ id: 'turnObject', icon: '', name: 'Object', color: '', children: DataUtil.menuGetTurnObject() },
+				]);
+			};
+			
+			sections = sections.concat([
+				{ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetBlockPage() },
+				{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
+				{ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() },
+				{ id: 'bgColor', icon: '', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() },
+			]);
 			
 			if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
-				let idx = sections.findIndex((it: any) => { return it.id == 'align'; });
-				sections.splice(++idx, 0, { id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			
 			sections = sections.filter((s: any) => {
@@ -459,7 +465,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		switch (item.id) {
 			case 'download':
-				ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+				if (content.hash) {
+					ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+				};
 				break;
 					
 			case 'move':
@@ -501,6 +509,47 @@ class MenuBlockAction extends React.Component<Props, State> {
 						focus.apply();				
 					};
 				});
+				break;
+				
+			default:
+				// Text colors
+				if (item.isTextColor) {
+					C.BlockListSetTextColor(rootId, blockIds, item.value);
+				} else 
+					
+				// Background colors
+				if (item.isBgColor) {
+					C.BlockListSetBackgroundColor(rootId, blockIds, item.value);
+				} else 
+					
+				// Align
+				if (item.isAlign) {
+					C.BlockListSetAlign(rootId, blockIds, item.value);
+				} else 
+					
+				// Blocks
+				if (item.isBlock) {
+					if (item.type == I.BlockType.Page) {
+						commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
+						
+						let param: any = {
+							type: item.type,
+							fields: {
+								name: Constant.default.name,
+							},
+							content: {
+								style: I.PageStyle.Empty,
+							},
+						};
+						
+						C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Replace, (message: any) => {
+							commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
+						});
+					} else {
+						C.BlockListSetTextStyle(rootId, blockIds, item.id);
+					};
+				};
+			
 				break;
 		};
 	};

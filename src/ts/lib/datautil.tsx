@@ -195,6 +195,61 @@ class DataUtil {
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {});
 	};
 	
+	menuGetBlockText () {
+		return [
+			{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text', color: 'yellow', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1', color: 'yellow', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2', color: 'yellow', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3', color: 'yellow', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted', color: 'yellow', isBlock: true },
+		];
+	};
+	
+	menuGetBlockList () {
+		return [
+			{ type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox', color: 'green', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list', color: 'green', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list', color: 'green', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle', color: 'green', isBlock: true },
+		];
+	};
+	
+	menuGetBlockPage () {
+		return [
+			{ type: I.BlockType.Page, icon: 'page', name: 'Page', color: 'blue', isBlock: true },
+			/*
+			{ id: 'existing', icon: 'existing', name: 'Existing Page', color: 'blue', isBlock: true },
+			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
+			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
+			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
+			{ id: 'contact', icon: 'contact', name: 'Contact', color: 'blue', isBlock: true },
+			*/
+		];
+	};
+	
+	menuGetTurnObject() {
+		return [
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet', color: 'red', isBlock: true },
+		];
+	};
+	
+	menuGetBlockObject () {
+		return [
+			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', name: 'File', color: 'red', isBlock: true },
+			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', name: 'Picture', color: 'red', isBlock: true },
+			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', name: 'Video', color: 'red', isBlock: true },
+			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', name: 'Bookmark', color: 'red', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code', color: 'red', isBlock: true },
+		];
+	};
+	
+	menuGetBlockOther () {
+		return [
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider', color: 'purple', isBlock: true },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider', color: 'purple', isBlock: true },
+		];
+	};
+	
 	// Action menu
 	menuGetActions (block: I.Block) {
 		if (!block) {

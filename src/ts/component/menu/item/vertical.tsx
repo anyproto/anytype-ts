@@ -5,6 +5,8 @@ import { I } from 'ts/lib';
 interface Props extends I.MenuItem {
 	inner?: any;
 	className?: string;
+	color?: string;
+	isActive?: boolean;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 };
@@ -12,11 +14,17 @@ interface Props extends I.MenuItem {
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, inner, name, className, onClick, onMouseEnter } = this.props;
+		const { id, icon, inner, name, color, isActive, className, onClick, onMouseEnter } = this.props;
 		
 		let cn = [ 'item' ];
 		if (className) {
 			cn.push(className);
+		};
+		if (color) {
+			cn.push(color + ' withColor');
+		};
+		if (isActive) {
+			cn.push('active');
 		};
 		
 		return (

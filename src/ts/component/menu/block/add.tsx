@@ -230,50 +230,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { type, content } = block;
 		
 		let sections: any[] = [
-			{ 
-				id: 'text', icon: 'text', name: 'Text', color: 'yellow', arrow: true, children: [
-					{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text', isBlock: true },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1', isBlock: true },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2', isBlock: true },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3', isBlock: true },
-					{ type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted', isBlock: true },
-				] as any [],
-			},
-			{ 
-				id: 'list', icon: 'list', name: 'List', color: 'green', arrow: true, children: [
-					{ type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox', isBlock: true },
-					{ type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted', isBlock: true },
-					{ type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered', isBlock: true },
-					{ type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle', isBlock: true },
-				] as any [],
-			},
-			{ 
-				id: 'page', icon: 'page', name: 'Page', color: 'blue', arrow: true, children: [
-					{ type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true },
-					{ id: 'existing', icon: 'existing', name: 'Existing Page', isBlock: true },
-					/*
-					{ id: 'task', icon: 'task', name: 'Task' },
-					{ id: 'dataview', icon: 'page', name: 'Database' },
-					{ id: 'set', icon: 'set', name: 'Set' },
-					{ id: 'contact', icon: 'contact', name: 'Contact' },
-					*/
-				] as any [],
-			},
-			{ 
-				id: 'file', icon: 'file', name: 'Object', color: 'red', arrow: true, children: [
-					{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', name: 'File', isBlock: true },
-					{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', name: 'Picture', isBlock: true },
-					{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', name: 'Video', isBlock: true },
-					{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', name: 'Bookmark', isBlock: true },
-					{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code', isBlock: true },	
-				] as any [],
-			},
-			{ 
-				id: 'other', icon: 'line', name: 'Other', color: 'purple', arrow: true, children: [
-					{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider', isBlock: true },
-					{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider', isBlock: true },
-				] as any [],
-			},
+			{ id: 'text', icon: 'text', name: 'Text', color: 'yellow', arrow: true, children: DataUtil.menuGetBlockText() },
+			{ id: 'list', icon: 'list', name: 'List', color: 'green', arrow: true, children: DataUtil.menuGetBlockList() },
+			{ id: 'page', icon: 'page', name: 'Page', color: 'blue', arrow: true, children: DataUtil.menuGetBlockPage() },
+			{ id: 'file', icon: 'file', name: 'Object', color: 'red', arrow: true, children: DataUtil.menuGetBlockObject() },
+			{ id: 'other', icon: 'line', name: 'Other', color: 'purple', arrow: true, children: DataUtil.menuGetBlockOther() },
 		];
 		
 		if (filter) {
@@ -286,8 +247,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			]);
 			
 			if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
-				let idx = sections.findIndex((it: any) => { return it.id == 'align'; });
-				sections.splice(++idx, 0, { id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			
 			sections = sections.filter((s: any) => {

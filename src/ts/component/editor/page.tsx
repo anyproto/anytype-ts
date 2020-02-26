@@ -846,7 +846,9 @@ class EditorPage extends React.Component<Props, {}> {
 						switch (item.id) {
 							
 							case 'download':
-								ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+								if (content.hash) {
+									ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+								};
 								break;
 								
 							case 'remove':
