@@ -334,7 +334,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#item-' + item.id);
 		const offsetX = node.outerWidth() + 1;
-		const offsetY = node.offset().top - el.offset().top - 40;
+		const offsetY = -el.outerHeight() - 8;
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
@@ -404,6 +404,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					break;
 					
 				case 'color':
+					menuParam.offsetY = node.offset().top - el.offset().top - 40;
 					menuParam.data.valueText = color;
 					menuParam.data.valueBg = bgColor;
 				
