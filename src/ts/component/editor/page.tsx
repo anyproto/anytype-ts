@@ -365,7 +365,9 @@ class EditorPage extends React.Component<Props, {}> {
 		if (keyboard.drag) {
 			add.css({ opacity: 0 });
 			items.removeClass('showMenu isAdding top bottom');
-			hovered.addClass('showMenu');
+			if (hovered) {
+				hovered.addClass('showMenu');
+			};
 		};
 	};
 	
@@ -425,28 +427,36 @@ class EditorPage extends React.Component<Props, {}> {
 				return;
 			};
 			
-			const block = map[ids[0]];
-			const parent = map[block.parentId];
-			const next = blockStore.getNextBlock(rootId, block.id, -1);
-			
-			let canTab = true;
-			if (block.content.style == I.TextStyle.Title) {
-				canTab = false;
-			};
-			if (parent && (parent.content.style == I.TextStyle.Title)) {
-				canTab = false;
-			};
-			if (next && (next.content.style == I.TextStyle.Title)) {
-				canTab = false;
-			};
-			
-			if (canTab) {
-				const cb = () => { selection.set(ids); };
+			// Indent block
+			if (k == Key.tab) {
+				e.preventDefault();
 				
-				if (e.shiftKey) {
-					C.BlockListMove(rootId, ids, block.parentId, I.BlockPosition.Bottom, cb);
-				} else {
-					C.BlockListMove(rootId, ids, next.id, (block.parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom), cb);
+				if (!ids.length) {
+					return;
+				};
+				
+				const block = map[ids[0]];
+				const parent = map[block.parentId];
+				const next = blockStore.getNextBlock(rootId, block.id, -1);
+				const obj = e.shiftKey ? parent : next;
+				
+				let canTab = true;
+				
+				if (!obj) {
+					canTab = false;
+				} else 
+				if ((obj.type == I.BlockType.Text) && (obj.content.style == I.TextStyle.Title)) {
+					canTab = false;
+				} else 
+				if (obj.type == I.BlockType.Layout) {
+					canTab = false;
+				} else 
+				if ((block.type == I.BlockType.Text) && (block.content.style == I.TextStyle.Title)) {
+					canTab = false;
+				};
+				
+				if (canTab) {
+					C.BlockListMove(rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 				};
 			};
 		};
@@ -676,24 +686,25 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			const parent = blocks[rootId].find((it: any) => { return it.id == block.parentId; });
 			const next = blockStore.getNextBlock(rootId, block.id, -1);
+			const obj = e.shiftKey ? parent : next;
 			
 			let canTab = true;
-			if (content.style == I.TextStyle.Title) {
+			
+			if (!obj) {
+				canTab = false;
+			} else 
+			if ((obj.type == I.BlockType.Text) && (obj.content.style == I.TextStyle.Title)) {
+				canTab = false;
+			} else 
+			if (obj.type == I.BlockType.Layout) {
+				canTab = false;
+			} else 
+			if (isTitle) {
 				canTab = false;
 			};
-			if (parent && (parent.content.style == I.TextStyle.Title)) {
-				canTab = false;
-			};
-			if (next && (next.content.style == I.TextStyle.Title)) {
-				canTab = false;
-			};
-
+			
 			if (canTab) {
-				if (e.shiftKey) {
-					C.BlockListMove(rootId, [ block.id ], block.parentId, I.BlockPosition.Bottom);
-				} else {
-					C.BlockListMove(rootId, [ block.id ], next.id, (block.parentId == next.parentId ? I.BlockPosition.Inner : I.BlockPosition.Bottom));
-				};
+				C.BlockListMove(rootId, [ block.id ], obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
 		};
 		
