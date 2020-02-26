@@ -89,7 +89,10 @@ class DataUtil {
 		let ids: string[] = [];
 		if (selection) {
 			ids = selection.get();
-			if (ids.length <= 1) {
+			console.log(ids.length, ids.indexOf(id));
+			if (ids.indexOf(id) < 0) {
+				console.log(111);
+				selection.clear(true);
 				selection.set([ id ]);
 				ids = selection.get();
 			};

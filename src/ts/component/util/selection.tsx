@@ -332,8 +332,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.unbindMouse();
 	};
 	
-	clear () {
-		if (!this._isMounted || this.preventClear) {
+	clear (force?: false) {
+		if (!this._isMounted || (this.preventClear && !force)) {
 			return
 		};
 		

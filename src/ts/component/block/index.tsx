@@ -267,7 +267,14 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let ids = [ id ];
+		let ids = DataUtil.selectionGet(this.props);
+		
+		if (selection) {
+			selection.setPreventSelect(true);
+			selection.setPreventClear(true);
+		};
+		
+		/*
 		if (selection) {
 			let selectedIds = selection.get();
 			if (selectedIds.length && (selectedIds.indexOf(id) >= 0)) {
@@ -279,6 +286,7 @@ class Block extends React.Component<Props, {}> {
 			selection.setPreventSelect(true);
 			selection.setPreventClear(true);
 		};
+		*/
 		
 		if (onDragStart) {
 			onDragStart(e, I.DragItem.Block, ids, this);				
