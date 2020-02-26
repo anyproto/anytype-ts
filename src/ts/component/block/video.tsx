@@ -281,7 +281,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		};
 		
 		const ew = el.width();
-		const w = Math.min(ew, Math.max(20, checkMax ? width * ew : v));
+		const w = Math.min(ew, Math.max(160, checkMax ? width * ew : v));
 		
 		return Math.min(1, Math.max(0, w / ew));
 	};

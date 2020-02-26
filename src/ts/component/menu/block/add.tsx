@@ -75,7 +75,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				{!options.length ? <div className="item empty">No items match filter</div> : ''}
 				{filter ? (
 					<React.Fragment>
 						{sections.map((item: any, i: number) => (
@@ -84,6 +83,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					</React.Fragment>
 				) : (
 					<React.Fragment>
+						{!options.length ? <div className="item empty">No items match filter</div> : ''}
 						{options.map((item: any, i: number) => (
 							<Item key={i} {...item} />
 						))}

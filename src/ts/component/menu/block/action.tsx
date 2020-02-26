@@ -6,17 +6,24 @@ import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
+interface State {
+	filter: string;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
 @observer
-class MenuBlockAction extends React.Component<Props, {}> {
+class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
+	focus: boolean = false;
 	timeout: number = 0;
 	n: number = 0;
+	state = {
+		filter: '',
+	};
 	
 	constructor (props: any) {
 		super(props);
@@ -24,9 +31,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		this.rebind = this.rebind.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onClick = this.onClick.bind(this);
+		
+		this.onFilterFocus = this.onFilterFocus.bind(this);
+		this.onFilterBlur = this.onFilterBlur.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
 	render () {
+		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
@@ -39,6 +51,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		const { content, bgColor } = block;
 		const { style, color } = content;
+		const options = this.getItems();
 		const sections = this.getSections();
 		
 		const Inner = (item: any) => (
@@ -83,9 +96,24 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				{sections.map((section: any, i: number) => {
-					return <Section key={i} {...section} />;
-				})}
+				<div className="filter">
+					<Input placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+				</div>
+				
+				{!filter ? (
+					<React.Fragment>
+						{sections.map((item: any, i: number) => (
+							<Section key={i} {...item} />
+						))}
+					</React.Fragment>
+				) : (
+					<React.Fragment>
+						{!options.length ? <div className="item empty">No items match filter</div> : ''}
+						{options.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
@@ -100,6 +128,18 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 		this.unbind();
+	};
+	
+	onFilterFocus (e: any) {
+		this.focus = true;
+	};
+	
+	onFilterBlur (e: any) {
+		this.focus = false;
+	};
+	
+	onFilterChange (e: any, v: string) {
+		this.setState({ filter: String(v || '').replace(/[\/\\\*]/g, '') });
 	};
 	
 	rebind () {
@@ -171,12 +211,19 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	getItems () {
+		const { filter } = this.state;
 		const sections = this.getSections();
 		
 		let items: any[] = [];
 		for (let section of sections) {
 			items = items.concat(section.children);
 		};
+		
+		if (filter) {
+			const reg = new RegExp(filter, 'gi');
+			items = items.filter((it: any) => { return it.name.match(reg); });
+		};
+		
 		return items;
 	};
 	
@@ -189,7 +236,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.focus) {
 			return;
 		};
 		
