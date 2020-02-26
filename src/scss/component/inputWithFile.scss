@@ -34,11 +34,17 @@
 }
 .inputWithFile.noFile.isSmall .txt { height: 24px; }
 
-.inputWithFile.focused {
+.inputWithFile.isFocused {
 	.fileWrap { display: none; }
 	#form { width: 100%; }
 }
 
 .inputWithFile.isSmall.isFocused {
 	.txt { display: inline-block; }
+	.fileWrap { display: block; }
+}
+
+.inputWithFile.isIcon { cursor: pointer; }
+.inputWithFile.isIcon {
+	#text { display: none; }
 }

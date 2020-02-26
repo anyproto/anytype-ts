@@ -7,7 +7,10 @@ const { dialog } = window.require('electron').remote;
 
 const $ = require('jquery');
 const raf = require('raf');
-const SMALL_WIDTH = 220;
+const SMALL_WIDTH = 248;
+const ICON_WIDTH = 170;
+
+enum Size { Icon = 0, Small = 1, Full = 2 };
 
 interface Props {
 	icon?: string;
@@ -21,7 +24,7 @@ interface Props {
 
 interface State {
 	focused: boolean;
-	isSmall: boolean;
+	size: Size;
 };
 
 class InputWithFile extends React.Component<Props, State> {
@@ -34,7 +37,7 @@ class InputWithFile extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	state = {
 		focused: false,
-		isSmall: false 
+		size: Size.Full,
 	};
 	
 	t = 0;
@@ -51,7 +54,7 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { focused, isSmall } = this.state;
+		const { focused, size } = this.state;
 		const { icon, textUrl, textFile, withFile } = this.props;
 
 		let cn = [ 'inputWithFile', 'resizable' ];		
@@ -59,15 +62,25 @@ class InputWithFile extends React.Component<Props, State> {
 		let onFocus = focused ? () => {} : this.onFocus;
 		let onBlur = focused ? this.onBlur : () => {};
 		let or = ' or ';
+		let onClick = (e: any) => {};
+		let isSmall = size == Size.Small;
+		let isIcon = size == Size.Icon;
 		
 		if (!withFile) {
 			cn.push('noFile');
 		};
+		
 		if (isSmall) {
 			cn.push('isSmall');
 		};
+		
+		if (isIcon) {
+			cn.push('isIcon');
+			onClick = (e: any) => { this.onClickFile(e); };
+		};
+		
 		if (focused) {
-			cn.push('focused');
+			cn.push('isFocused');
 		};
 		
 		if (withFile && focused) {
@@ -75,7 +88,7 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div className={cn.join(' ')} onClick={onClick}>
 				{icon ? <Icon className={icon} /> : ''}
 			
 				<div id="text" className="txt">
@@ -145,11 +158,18 @@ class InputWithFile extends React.Component<Props, State> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
-			const width = node.find('#text').width();
-			const isSmall = width < SMALL_WIDTH ? true : false;
+			const width = node.width();
 			
-			if (isSmall != this.state.isSmall) {
-				this.setState({ isSmall: isSmall });	
+			let size = Size.Full;
+			if (width <= SMALL_WIDTH) {
+				size = Size.Small;
+			};
+			if (width <= ICON_WIDTH) {
+				size = Size.Icon;
+			};
+			
+			if (size != this.state.size) {
+				this.setState({ size: size });	
 			};
 		});
 	};
