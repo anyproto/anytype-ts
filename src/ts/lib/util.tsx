@@ -459,6 +459,9 @@ class Util {
 		if (!url) {
 			return '';
 		};
+		if (url.match(/^(mailto|tel):/)) {
+			return url;
+		};
 		if (!url.match(/:\/\//)) {
 			url = 'http://' + url;
 		};
