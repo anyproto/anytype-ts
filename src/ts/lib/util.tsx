@@ -323,6 +323,8 @@ class Util {
 		const obj = $('#linkPreview');
 		const poly = obj.find('.polygon');
 		
+		obj.removeClass('top bottom');
+		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
 			window.clearTimeout(this.timeoutLinkPreviewShow);
 		});
@@ -335,59 +337,12 @@ class Util {
 		
 		window.clearTimeout(this.timeoutLinkPreviewShow);
 		this.timeoutLinkPreviewShow = window.setTimeout(() => {
-			let ww = win.width();
-			let wh = win.height();
-			let dh = $(document).height();
-			let st = win.scrollTop();
-			let offset = node.offset();
-			let nw = node.outerWidth();
-			let nh = node.outerHeight();
-			let ow = obj.outerWidth();
-			let oh = obj.outerHeight();
-			let y = 0;
-			let css: any = { opacity: 0, left: 0, top: 0 };
-			let typeY = I.MenuDirection.Bottom;
-			let ps = (1 - nw / ow) / 2 * 100;
-			let pe = ps + nw / ow * 100;
-			let oy = 4;
-			let border = 12;
-			
-			obj.removeClass('top bottom');
-			poly.css({ top: 'auto', bottom: 'auto' });
-			
-			if (offset.top + oh + nh >= st + wh) {
-				typeY = I.MenuDirection.Top;
-			};
-			
-			if (typeY == I.MenuDirection.Top) {
-				css.top = offset.top - oh - oy;
-				obj.addClass('top');
-				
-				poly.css({ height: nh + oy, bottom: -nh - oy, clipPath: 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)' });
-			};
-			
-			if (typeY == I.MenuDirection.Bottom) {
-				css.top = offset.top + nh + oy;
-				obj.addClass('bottom');
-				
-				poly.css({ height: nh + oy, top: -nh - oy, clipPath: 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)' });
-			};
-			
-			css.left = offset.left - ow / 2 + nw / 2;
-			css.left = Math.max(border, css.left);
-			css.left = Math.min(ww - ow - border, css.left);
-			
 			commonStore.linkPreviewSet({
 				url: url,
 				element: node,
 				...param,
 			});
-			
-			obj.show().css(css);
-			raf(() => { 
-				obj.css({ opacity: 1 });
-				this.linkPreviewOpen = true; 
-			});
+			this.linkPreviewOpen = true;
 		}, 500);
 	};
 	
@@ -397,6 +352,8 @@ class Util {
 		};
 		
 		const obj = $('#linkPreview');
+		
+		obj.removeClass('top bottom withImage');
 		window.clearTimeout(this.timeoutLinkPreviewShow);
 		
 		if (force) {

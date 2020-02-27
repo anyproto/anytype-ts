@@ -794,6 +794,7 @@ class EditorPage extends React.Component<Props, {}> {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
+			$('.placeHolder.c' + $.escapeSelector(blockId)).text(Constant.placeHolder.filter);
 			this.onMenuAdd(blockId);
 		});
 	};
@@ -826,6 +827,7 @@ class EditorPage extends React.Component<Props, {}> {
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet('');
+				$('.placeHolder.c' + $.escapeSelector(id)).text(Constant.placeHolder.default);
 			},
 			data: {
 				blockId: id,

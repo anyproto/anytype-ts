@@ -55,7 +55,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { text, marks, style, checked, number, color, bgColor } = content;
 		
 		let markers: any[] = [];
-		let placeHolder = 'Type anything...';
+		let placeHolder = Constant.placeHolder.default;
 		let ct: string[] = [];
 		let additional = null;
 		
@@ -131,7 +131,7 @@ class BlockText extends React.Component<Props, {}> {
 				</div>
 				{additional}
 				<div className="wrap">
-					<span className="placeHolder">{placeHolder}</span>
+					<span className={[ 'placeHolder', 'c' + id ].join(' ')}>{placeHolder}</span>
 					{editor}
 				</div>
 			</div>
@@ -595,6 +595,15 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeHolder').hide();
+	};
+	
+	placeHolderSet (v: string) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder').text(v);
 	};
 	
 	placeHolderShow () {

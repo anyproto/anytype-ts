@@ -17,6 +17,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const { ipcRenderer } = window.require('electron');
 
 @observer
@@ -65,10 +66,10 @@ class LinkPreview extends React.Component<Props, {}> {
 					<div className="cp" onClick={this.onClick}>
 						{imageUrl ? <div className="img" style={style} /> : ''}
 						<div className="info">
-							<div className="name">{title}</div>
-							<div className="descr">{description}</div>
+							{title ? <div className="name">{title}</div> : ''}
+							{description ? <div className="descr">{description}</div> : ''}
 							<div className="link">
-								{faviconUrl ? <Icon className="fav" icon={faviconUrl} /> : ''}
+								{faviconUrl ? <Icon icon={faviconUrl} className="fav" /> : ''}
 								{url}
 							</div>
 						</div>
@@ -107,6 +108,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		};
 		
 		imageUrl ? node.addClass('withImage') : node.removeClass('withImage');
+		this.show();
 	};
 	
 	onClick (e: any) {
@@ -159,6 +161,62 @@ class LinkPreview extends React.Component<Props, {}> {
 		onChange(marks);
 		
 		Util.linkPreviewHide(false);
+	};
+	
+	show () {
+		const { linkPreview } = commonStore;
+		const { element } = linkPreview;
+		const win = $(window);
+		const obj = $('#linkPreview');
+		const poly = obj.find('.polygon');
+		const ww = win.width();
+		const wh = win.height();
+		const dh = $(document).height();
+		const st = win.scrollTop();
+		const offset = element.offset();
+		const nw = element.outerWidth();
+		const nh = element.outerHeight();
+		const ow = obj.outerWidth();
+		const oh = obj.outerHeight();
+		const oy = 4;
+		const border = 12;
+		const ps = (1 - nw / ow) / 2 * 100;
+		const pe = ps + nw / ow * 100;
+		
+		obj.removeClass('top bottom');
+		
+		let css: any = { opacity: 0, left: 0, top: 0 };
+		let typeY = I.MenuDirection.Bottom;
+			
+		poly.css({ top: 'auto', bottom: 'auto' });
+			
+		if (offset.top + oh + nh >= st + wh) {
+			typeY = I.MenuDirection.Top;
+		};
+		
+		if (typeY == I.MenuDirection.Top) {
+			css.top = offset.top - oh - oy;
+			obj.addClass('top');
+				
+			poly.css({ height: nh + oy, bottom: -nh - oy, clipPath: 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)' });
+		};
+			
+		if (typeY == I.MenuDirection.Bottom) {
+			css.top = offset.top + nh + oy;
+			obj.addClass('bottom');
+				
+			poly.css({ height: nh + oy, top: -nh - oy, clipPath: 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)' });
+		};
+			
+		css.left = offset.left - ow / 2 + nw / 2;
+		css.left = Math.max(border, css.left);
+		css.left = Math.min(ww - ow - border, css.left);
+		
+		obj.show().css(css);
+		
+		raf(() => { 
+			obj.css({ opacity: 1 });
+		});
 	};
 	
 };
