@@ -18,7 +18,10 @@
 		.inner.vertical { display: block; padding-top: 112px; }
 		.inner.vertical {
 			.side.left { width: 100%; border-radius: 0px; }
-			.side.right { position: absolute; top: 1px; left: 1px; height: 112px; width: calc(100% - 2px); border-radius: 4px 4px 0px 0px; }
+			.side.right { 
+				position: absolute; top: 0px; left: 0px; height: 112px; width: 100%; border-radius: 4px 4px 0px 0px;
+				border-bottom: 1px solid #eae9e0; 
+			}
 			
 			.img { background-position: center center; }
 		}

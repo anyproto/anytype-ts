@@ -138,6 +138,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));		
 		const resizable = node.find('.resizable');
 		
@@ -149,7 +150,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		this.uiBlockHide = true;
 		focus.apply(); 
-		window.scrollTo(0, this.scrollTop);
+		win.scrollTop(this.scrollTop);
 		this.uiBlockHide = false;
 		
 		if (resizable.length) {
@@ -497,7 +498,7 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (k == Key.z) {
 				e.preventDefault();
-				focus.clear(true);
+				//focus.clear(true);
 				e.shiftKey ? C.BlockRedo(rootId) : C.BlockUndo(rootId);
 			};
 			
