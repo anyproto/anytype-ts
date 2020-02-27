@@ -255,8 +255,10 @@ class BlockImage extends React.Component<Props, {}> {
 	
 	getWidth (checkMax: boolean, v: number): number {
 		const { id, fields } = this.props;
-		const { width } = fields;
 		const el = $('.selectable.c' + $.escapeSelector(id));
+		
+		let { width } = fields;
+		width = Number(width) || 1;
 		
 		if (!el.length) {
 			return width;
