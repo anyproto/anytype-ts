@@ -775,7 +775,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		if (!this.hoverId) {
+		if (!this.hoverId || (this.hoverPosition == I.BlockPosition.None)) {
 			return;
 		};
 		
@@ -785,6 +785,10 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!block) {
+			return;
+		};
+		
+		if ((block.type == I.BlockType.Text) && (block.content.style == I.TextStyle.Title) && (this.hoverPosition != I.BlockPosition.Bottom)) {
 			return;
 		};
 		
