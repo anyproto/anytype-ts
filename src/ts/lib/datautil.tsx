@@ -21,7 +21,7 @@ class DataUtil {
 		
 		let map = {} as any;
 		for (let item of list) {
-			map[item[field]] = item
+			map[item[field]] = item;
 		};
 		return map;
 	};

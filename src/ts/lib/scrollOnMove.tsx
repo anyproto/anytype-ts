@@ -47,7 +47,7 @@ export default (e: any) => {
 		clearTimeout(timer);
 
 		if (adjustWindowScroll()) {
-			timer = window.setTimeout(checkForWindowScroll, 20);
+			timer = window.setTimeout(checkForWindowScroll, 30);
 		};
 	})();
 
@@ -60,7 +60,7 @@ export default (e: any) => {
 		let canScrollRight = (currentScrollX < maxScrollX);
 		let nextScrollX = currentScrollX;
 		let nextScrollY = currentScrollY;
-		let maxStep = 30;
+		let maxStep = 50;
 
 		if (isInLeftEdge && canScrollLeft) {
 			let intensity = (edgeLeft - viewportX) / BORDER;

@@ -830,6 +830,14 @@ class EditorPage extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
+				const { filter } = commonStore;
+				const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+
+				// Clear filter in block text on close
+				if ('/' + filter == block.content.text) {
+					DataUtil.blockSetText(rootId, block, '', []);
+				};
+				
 				focus.apply();
 				commonStore.filterSet('');
 				$('.placeHolder.c' + $.escapeSelector(id)).text(Constant.placeHolder.default);
@@ -853,8 +861,8 @@ class EditorPage extends React.Component<Props, {}> {
 						switch (item.id) {
 							
 							case 'download':
-								if (content.hash) {
-									ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+								if (hash) {
+									ipcRenderer.send('download', commonStore.fileUrl(hash));
 								};
 								break;
 								

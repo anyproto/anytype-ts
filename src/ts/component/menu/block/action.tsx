@@ -170,7 +170,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { style } = content;
 
 		let ca: string[] = [ 'align', DataUtil.alignIcon(align) ];		
-				
+	
 		let sections: any[] = [
 			{ 
 				children: [
@@ -328,6 +328,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		
+		window.clearTimeout(this.timeout);
+		
 		if (!block) {
 			return;
 		};
@@ -377,7 +379,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			},
 		};
 		
-		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			switch (item.id) {
 				case 'turn':
