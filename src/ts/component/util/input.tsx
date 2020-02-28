@@ -166,6 +166,16 @@ class Input extends React.Component<Props, State> {
 		});
 	};
 	
+	blur () {
+		setTimeout(() => {
+			if (!this._isMounted) {
+				return;
+			};
+			
+			$(ReactDOM.findDOMNode(this)).blur(); 
+		});
+	};
+	
 	select () {
 		this.setState({ selected: true });
 	};

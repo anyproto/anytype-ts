@@ -21,6 +21,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	focus: boolean = false;
 	timeout: number = 0;
 	n: number = 0;
+	refFilter: any = null;
 	state = {
 		filter: '',
 	};
@@ -104,7 +105,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return (
 			<div>
 				<div className="filter">
-					<Input placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+					<Input ref={(ref: any) => { this.refFilter = ref; }} placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				</div>
 				
 				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
@@ -128,6 +129,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	onFilterFocus (e: any) {
+		commonStore.menuClose('blockStyle');
+		commonStore.menuClose('blockColor');
+		commonStore.menuClose('blockAlign');
+		
+		Util.menuSetActive(this.props.id);
 		this.focus = true;
 	};
 	
@@ -328,8 +334,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { blocks } = blockStore;
 		const block = blocks[rootId].find((it: I.Block) => { return it.id == blockId; });
 		
-		window.clearTimeout(this.timeout);
-		
 		if (!block) {
 			return;
 		};
@@ -346,6 +350,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
+		window.clearTimeout(this.timeout);
 		
 		if ((item.id == 'turn') && commonStore.menuIsOpen('blockStyle')) {
 			return;
@@ -363,6 +368,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
+		this.refFilter.blur();
 		let menuParam: I.MenuParam = {
 			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,

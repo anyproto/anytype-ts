@@ -160,6 +160,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		this.focused = focus.focused;
 		
+		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
@@ -190,7 +191,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			height: rect.height - 10,
 		});
 		
-		scrollOnMove(e);
+		scrollOnMove.onMouseMove(e);
 		this.moved = true;
 	};
 	
@@ -217,6 +218,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
+		scrollOnMove.onMouseUp(e);
 		this.hide();
 		this.lastIds = [];
 		this.focused = '';
