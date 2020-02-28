@@ -209,7 +209,11 @@ class BlockText extends React.Component<Props, {}> {
 		
 		links.each((i: number, item: any) => {
 			item = $(item);
-			item.html(item.text().replace(/\s/g, '&nbsp;'));
+			let t = item.text();
+			t = t.replace(/\s/g, '&nbsp;');
+			t = t.replace(/\-/g, '&#8209;');
+			t = t.replace(/‐/g, '&#8209;');
+			item.html(t);
 		});
 		
 		links.unbind('click.link mouseenter.link');
