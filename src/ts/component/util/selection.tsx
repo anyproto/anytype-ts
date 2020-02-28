@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, C, Key, focus, keyboard } from 'ts/lib';
+import { I, C, Key, focus, keyboard, scrollOnMove } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -166,6 +166,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
+		e.preventDefault();
+		
 		if (!this._isMounted) {
 			return
 		};
@@ -188,6 +190,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			height: rect.height - 10,
 		});
 		
+		scrollOnMove(e);
 		this.moved = true;
 	};
 	
