@@ -11,6 +11,7 @@ interface Props extends I.BlockBookmark {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const { ipcRenderer } = window.require('electron');
 
 @observer
 class BlockBookmark extends React.Component<Props, {}> {
@@ -21,6 +22,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onChangeUrl = this.onChangeUrl.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -35,7 +37,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 			};
 			
 			element = (
-				<div className="inner resizable">
+				<div className="inner resizable" onClick={this.onClick}>
 					<div className="side left">
 						<div className="name">{title}</div>
 						<div className="descr">{description}</div>
@@ -76,6 +78,13 @@ class BlockBookmark extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+	};
+	
+	onClick (e: any) {
+		const { content } = this.props;
+		const { url } = content;
+		
+		ipcRenderer.send('urlOpen', url);			
 	};
 	
 	onChangeUrl (e: any, url: string) {

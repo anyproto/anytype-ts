@@ -138,6 +138,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));		
 		const resizable = node.find('.resizable');
 		
@@ -149,7 +150,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		this.uiBlockHide = true;
 		focus.apply(); 
-		window.scrollTo(0, this.scrollTop);
+		win.scrollTop(this.scrollTop);
 		this.uiBlockHide = false;
 		
 		if (resizable.length) {
@@ -497,7 +498,7 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (k == Key.z) {
 				e.preventDefault();
-				focus.clear(true);
+				//focus.clear(true);
 				e.shiftKey ? C.BlockRedo(rootId) : C.BlockUndo(rootId);
 			};
 			
@@ -775,7 +776,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		if (!this.hoverId) {
+		if (!this.hoverId || (this.hoverPosition == I.BlockPosition.None)) {
 			return;
 		};
 		
@@ -788,12 +789,17 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		if ((block.type == I.BlockType.Text) && (block.content.style == I.TextStyle.Title) && (this.hoverPosition != I.BlockPosition.Bottom)) {
+			return;
+		};
+		
 		commonStore.filterSet('');
 		
 		this.blockCreate(block, this.hoverPosition, {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
+			$('.placeHolder.c' + $.escapeSelector(blockId)).text(Constant.placeHolder.filter);
 			this.onMenuAdd(blockId);
 		});
 	};
@@ -824,8 +830,17 @@ class EditorPage extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
+				const { filter } = commonStore;
+				const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
+
+				// Clear filter in block text on close
+				if ('/' + filter == block.content.text) {
+					DataUtil.blockSetText(rootId, block, '', []);
+				};
+				
 				focus.apply();
 				commonStore.filterSet('');
+				$('.placeHolder.c' + $.escapeSelector(id)).text(Constant.placeHolder.default);
 			},
 			data: {
 				blockId: id,
@@ -846,7 +861,9 @@ class EditorPage extends React.Component<Props, {}> {
 						switch (item.id) {
 							
 							case 'download':
-								ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+								if (hash) {
+									ipcRenderer.send('download', commonStore.fileUrl(hash));
+								};
 								break;
 								
 							case 'remove':
@@ -972,19 +989,20 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		e.preventDefault();
-		
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const { dataset, rootId } = this.props;
 		const { blocks } = blockStore;
 		const { selection } = dataset;
 		const { focused, range } = focus;
-
 		const data: any = {
 			text: cb.getData('text/plain'),
 			html: cb.getData('text/html'),
 			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
 		};
+		
+		let id = '';
+		let from = 0;
+		let to = 0;
 		
 		C.BlockPaste(rootId, focused, range, selection.get(true), data, (message: any) => {
 			if (message.blockIds && message.blockIds.length) {
@@ -992,9 +1010,17 @@ class EditorPage extends React.Component<Props, {}> {
 				const block = (blocks[rootId] || []).find((it: any) => { return it.id == lastId; });
 				const length = String(block.content.text || '').length;
 				
-				focus.set(block.id, { from: length, to: length });
-				focus.apply(true);
+				id = block.id;
+				from = length;
+				to = length;
+			} else {
+				id = focused;
+				from = range.to;
+				to = range.to;
 			};
+			
+			focus.set(id, { from: from, to: to });
+			focus.apply();
 		});
 	};
 	

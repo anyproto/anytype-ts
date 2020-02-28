@@ -16,6 +16,11 @@
 		"menu": 60 
 	},
 	
+	"placeHolder": {
+		"default": "Type anything...",
+		"filter": "Type to filter..."
+	},
+	
 	"size": {
 		"editorPage": 704,
 		"blockMenu": 48,

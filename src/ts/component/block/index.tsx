@@ -267,20 +267,14 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		let ids = [ id ];
-		if (selection) {
-			let selectedIds = selection.get();
-			if (selectedIds.length && (selectedIds.indexOf(id) >= 0)) {
-				ids = selectedIds;
+		if (onDragStart) {
+			let ids = DataUtil.selectionGet(this.props);
+		
+			if (selection) {
+				selection.setPreventSelect(true);
+				selection.setPreventClear(true);
 			};
 			
-			selection.set(ids);
-			selection.hide();
-			selection.setPreventSelect(true);
-			selection.setPreventClear(true);
-		};
-		
-		if (onDragStart) {
 			onDragStart(e, I.DragItem.Block, ids, this);				
 		};
 	};
@@ -374,7 +368,7 @@ class Block extends React.Component<Props, {}> {
 		node.addClass('isResizing');
 		keyboard.setResize(true);
 		
-		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
+		win.on('mousemove.block', throttle((e: any) => { this.onResize(e, index, offset); }, THROTTLE));
 		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e, index, offset); }));
 		
 		node.find('.resizable').trigger('resizeStart', [ e ]);

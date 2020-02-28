@@ -255,15 +255,17 @@ class BlockImage extends React.Component<Props, {}> {
 	
 	getWidth (checkMax: boolean, v: number): number {
 		const { id, fields } = this.props;
-		const { width } = fields;
 		const el = $('.selectable.c' + $.escapeSelector(id));
+		
+		let { width } = fields;
+		width = Number(width) || 1;
 		
 		if (!el.length) {
 			return width;
 		};
 		
 		const ew = el.width();
-		const w = Math.min(ew, Math.max(20, checkMax ? width * ew : v));
+		const w = Math.min(ew, Math.max(60, checkMax ? width * ew : v));
 		
 		return Math.min(1, Math.max(0, w / ew));
 	};

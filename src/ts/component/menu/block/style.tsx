@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util, dispatcher } from 'ts/lib';
+import { I, keyboard, Key, Util, DataUtil, dispatcher } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -26,16 +26,9 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		
 		const Section = (item: any) => (
 			<div className="section">
-				{item.children.map((action: any, i: number) => {
-					let cn = [];
-					if (item.color) {
-						cn.push(item.color + ' withColor');
-					};
-					if (action.id == active) {
-						cn.push('active');
-					};
-					return <MenuItemVertical key={i} {...action} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }}  />;
-				})}
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical key={i} {...action} isActive={action.id == active} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }}  />
+				))}
 			</div>
 		);
 		
@@ -95,33 +88,10 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	
 	getSections () {
 		return [
-			{ 
-				color: 'yellow',
-				children: [
-					{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted' },
-				] as any [],
-			},
-			{ 
-				color: 'green',
-				children: [
-					{ type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list' },
-					{ type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle' },
-				] as any [],
-			},
-			{ 
-				color: 'blue',
-				children: [ { type: I.BlockType.Page, icon: 'page', name: 'Page' } ] as any [],
-			},
-			{ 
-				color: 'red',
-				children: [ { type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet' } ] as any [],
-			},
+			{ children: DataUtil.menuGetBlockText() },
+			{ children: DataUtil.menuGetBlockList() },
+			{ children: DataUtil.menuGetBlockPage() },
+			{ children: DataUtil.menuGetTurnObject() },
 		];
 	};
 	

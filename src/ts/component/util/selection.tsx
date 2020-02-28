@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, C, Key, focus, keyboard } from 'ts/lib';
+import { I, C, Key, focus, keyboard, scrollOnMove } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -160,12 +160,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		this.focused = focus.focused;
 		
+		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
 	};
 	
 	onMouseMove (e: any) {
+		e.preventDefault();
+		
 		if (!this._isMounted) {
 			return
 		};
@@ -188,6 +191,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			height: rect.height - 10,
 		});
 		
+		scrollOnMove.onMouseMove(e);
 		this.moved = true;
 	};
 	
@@ -214,6 +218,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
+		scrollOnMove.onMouseUp(e);
 		this.hide();
 		this.lastIds = [];
 		this.focused = '';
@@ -332,8 +337,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.unbindMouse();
 	};
 	
-	clear () {
-		if (!this._isMounted || this.preventClear) {
+	clear (force?: false) {
+		if (!this._isMounted || (this.preventClear && !force)) {
 			return
 		};
 		
@@ -390,6 +395,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 			block.addClass('isSelected');
 			block.find('.selectable.c' + id).addClass('isSelected');
 			block.find('.children.c' + id + ' .block').addClass('isSelected no-select');
+		};
+		
+		// Hide placeholder and remove focus
+		if (ids.length > 0) {
+			focus.clear(true);
+			keyboard.setFocus(false);
+			node.find('.block.isFocused').removeClass('isFocused');
+			node.find('.placeHolder').hide();
 		};
 		
 		node.find('.no-select').removeClass('no-select');

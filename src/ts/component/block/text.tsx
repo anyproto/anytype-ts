@@ -55,7 +55,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { text, marks, style, checked, number, color, bgColor } = content;
 		
 		let markers: any[] = [];
-		let placeHolder = 'Type anything...';
+		let placeHolder = Constant.placeHolder.default;
 		let ct: string[] = [];
 		let additional = null;
 		
@@ -131,7 +131,7 @@ class BlockText extends React.Component<Props, {}> {
 				</div>
 				{additional}
 				<div className="wrap">
-					<span className="placeHolder">{placeHolder}</span>
+					<span className={[ 'placeHolder', 'c' + id ].join(' ')}>{placeHolder}</span>
 					{editor}
 				</div>
 			</div>
@@ -209,7 +209,11 @@ class BlockText extends React.Component<Props, {}> {
 		
 		links.each((i: number, item: any) => {
 			item = $(item);
-			item.html(item.text().replace(/\s/g, '&nbsp;'));
+			let t = item.text();
+			t = t.replace(/\s/g, '&nbsp;');
+			t = t.replace(/\-/g, '&#8209;');
+			t = t.replace(/‐/g, '&#8209;');
+			item.html(t);
 		});
 		
 		links.unbind('click.link mouseenter.link');
@@ -221,7 +225,13 @@ class BlockText extends React.Component<Props, {}> {
 			
 		links.on('mouseenter.link', function (e: any) {
 			let range = $(this).data('range').split('-');
-			Util.linkPreviewShow($(this).attr('href'), $(this), {
+			let url = $(this).attr('href');
+			
+			if (!url.match(/^https?:\/\//)) {
+				return;
+			};
+			
+			Util.linkPreviewShow(url, $(this), {
 				range: { 
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
@@ -589,6 +599,15 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeHolder').hide();
+	};
+	
+	placeHolderSet (v: string) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder').text(v);
 	};
 	
 	placeHolderShow () {

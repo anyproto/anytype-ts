@@ -273,7 +273,9 @@ class BlockVideo extends React.Component<Props, {}> {
 	
 	getWidth (checkMax: boolean, v: number): number {
 		const { id, fields } = this.props;
-		const { width } = fields;
+		
+		let { width } = fields;
+		width = Number(width) || 1;
 		
 		const el = $('.selectable.c' + $.escapeSelector(id));
 		if (!el.length) {
@@ -281,7 +283,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		};
 		
 		const ew = el.width();
-		const w = Math.min(ew, Math.max(20, checkMax ? width * ew : v));
+		const w = Math.min(ew, Math.max(160, checkMax ? width * ew : v));
 		
 		return Math.min(1, Math.max(0, w / ew));
 	};

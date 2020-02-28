@@ -6,17 +6,25 @@ import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
+interface State {
+	filter: string;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
 @observer
-class MenuBlockAction extends React.Component<Props, {}> {
+class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
+	focus: boolean = false;
 	timeout: number = 0;
 	n: number = 0;
+	refFilter: any = null;
+	state = {
+		filter: '',
+	};
 	
 	constructor (props: any) {
 		super(props);
@@ -24,9 +32,14 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		this.rebind = this.rebind.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onClick = this.onClick.bind(this);
+		
+		this.onFilterFocus = this.onFilterFocus.bind(this);
+		this.onFilterBlur = this.onFilterBlur.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
 	render () {
+		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
@@ -41,51 +54,64 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { style, color } = content;
 		const sections = this.getSections();
 		
-		const Inner = (item: any) => (
-			<div className={item.className}>A</div>
+		const Item = (item: any) => (
+			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				{item.icon ? <Icon className={item.icon} inner={item.inner} /> : ''}
+				<div className="name">{item.name}</div>
+				{item.arrow ? <Icon className="arrow" /> : ''}
+			</div>
 		);
 		
 		const Section = (item: any) => (
 			<div className="section">
-				{item.children.map((action: any, i: number) => {
-					return <Item key={i} {...action} />;
-				})}
+				{item.name ? <div className="name">{item.name}</div> : ''}
+				<div className="items">
+					{item.children.map((action: any, i: number) => {
+						let icn: string[] = [ 'inner' ];
+						
+						if (action.id == 'turn') {
+							action.icon = DataUtil.styleIcon(style);
+						};
+						
+						if (action.id == 'color') {
+							if (color) {
+								icn.push('textColor textColor-' + color);
+							};
+							if (bgColor) {
+								icn.push('bgColor bgColor-' + bgColor);
+							};
+						};
+						
+						if (action.isTextColor) {
+							icn.push('textColor textColor-' + action.value);
+						};
+						if (action.isBgColor) {
+							icn.push('bgColor bgColor-' + action.value);
+						};
+						
+						if (action.isTextColor || action.isBgColor) {
+							action.icon = 'color';
+							action.inner = (
+								<div className={icn.join(' ')}>A</div>
+							);
+						};
+						
+						return <Item key={i} {...action} />;
+					})}
+				</div>
 			</div>
 		);
 		
-		const Item = (item: any) => {
-			let icon = [ item.icon ];
-			let inner = null;
-			
-			if (item.icon == 'turn') {
-				icon = [ DataUtil.styleIcon(style) ];
-			};
-			
-			if (item.icon == 'color') {
-				let cn = [ 'inner' ];
-				if (color) {
-					cn.push('textColor textColor-' + color);
-				};
-				if (bgColor) {
-					cn.push('bgColor bgColor-' + bgColor);
-				};
-				inner = <Inner className={cn.join(' ')} />;
-			};
-			
-			return (
-				<div id={'item-' + item.id} className={[ 'item', (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-					{item.icon ? <Icon className={icon.join(' ')} inner={inner} /> : ''}
-					<div className="name">{item.name}</div>
-					{item.arrow ? <Icon className="arrow" /> : ''}
-				</div>
-			);
-		};
-		
 		return (
 			<div>
-				{sections.map((section: any, i: number) => {
-					return <Section key={i} {...section} />;
-				})}
+				<div className="filter">
+					<Input ref={(ref: any) => { this.refFilter = ref; }} placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+				</div>
+				
+				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
+				{sections.map((item: any, i: number) => (
+					<Section key={i} {...item} />
+				))}
 			</div>
 		);
 	};
@@ -100,6 +126,23 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 		this.unbind();
+	};
+	
+	onFilterFocus (e: any) {
+		commonStore.menuClose('blockStyle');
+		commonStore.menuClose('blockColor');
+		commonStore.menuClose('blockAlign');
+		
+		Util.menuSetActive(this.props.id);
+		this.focus = true;
+	};
+	
+	onFilterBlur (e: any) {
+		this.focus = false;
+	};
+	
+	onFilterChange (e: any, v: string) {
+		this.setState({ filter: String(v || '').replace(/[\/\\\*]/g, '') });
 	};
 	
 	rebind () {
@@ -118,6 +161,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	getSections () {
+		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
@@ -132,8 +176,8 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const { style } = content;
 
 		let ca: string[] = [ 'align', DataUtil.alignIcon(align) ];		
-				
-		let sections = [
+	
+		let sections: any[] = [
 			{ 
 				children: [
 					//{ id: 'move', icon: 'move', name: 'Move to' },
@@ -145,7 +189,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			{ 
 				children: [
 					{ id: 'align', icon: ca.join(' '), name: 'Align', arrow: true },
-					{ id: 'color', icon: 'color', name: 'Change color', arrow: true },
+					{ id: 'color', icon: 'color', name: 'Change color', arrow: true, isTextColor: true },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
 			}
@@ -167,16 +211,48 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			sections = sections.filter((it: any, i: number) => { return i > 0; });
 		};
 		
+		if (filter) {
+			const reg = new RegExp(filter, 'gi');
+			
+			sections = [];
+			
+			if (type == I.BlockType.Text) {
+				sections = sections.concat([
+					{ id: 'turnText', icon: '', name: 'Text', color: '', children: DataUtil.menuGetBlockText() },
+					{ id: 'turnList', icon: '', name: 'List', color: '', children: DataUtil.menuGetBlockList() },
+					{ id: 'turnObject', icon: '', name: 'Object', color: '', children: DataUtil.menuGetTurnObject() },
+				]);
+			};
+			
+			sections = sections.concat([
+				{ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetBlockPage() },
+				{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
+				{ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() },
+				{ id: 'bgColor', icon: '', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() },
+			]);
+			
+			if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
+				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
+			};
+			
+			sections = sections.filter((s: any) => {
+				s.children = (s.children || []).filter((c: any) => { return c.name.match(reg); });
+				return s.children.length > 0;
+			});
+		};
+		
 		return sections;
 	};
 	
 	getItems () {
+		const { filter } = this.state;
 		const sections = this.getSections();
 		
 		let items: any[] = [];
 		for (let section of sections) {
 			items = items.concat(section.children);
 		};
+		
 		return items;
 	};
 	
@@ -189,7 +265,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.focus) {
 			return;
 		};
 		
@@ -270,10 +346,11 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#item-' + item.id);
 		const offsetX = node.outerWidth() + 1;
-		const offsetY = node.offset().top - el.offset().top - 40;
+		const offsetY = -el.outerHeight() - 8;
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
+		window.clearTimeout(this.timeout);
 		
 		if ((item.id == 'turn') && commonStore.menuIsOpen('blockStyle')) {
 			return;
@@ -291,6 +368,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			return;
 		};
 		
+		this.refFilter.blur();
 		let menuParam: I.MenuParam = {
 			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,
@@ -307,7 +385,6 @@ class MenuBlockAction extends React.Component<Props, {}> {
 			},
 		};
 		
-		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			switch (item.id) {
 				case 'turn':
@@ -340,6 +417,7 @@ class MenuBlockAction extends React.Component<Props, {}> {
 					break;
 					
 				case 'color':
+					menuParam.offsetY = node.offset().top - el.offset().top - 40;
 					menuParam.data.valueText = color;
 					menuParam.data.valueBg = bgColor;
 				
@@ -394,7 +472,9 @@ class MenuBlockAction extends React.Component<Props, {}> {
 		
 		switch (item.id) {
 			case 'download':
-				ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+				if (content.hash) {
+					ipcRenderer.send('download', commonStore.fileUrl(content.hash));
+				};
 				break;
 					
 			case 'move':
@@ -436,6 +516,47 @@ class MenuBlockAction extends React.Component<Props, {}> {
 						focus.apply();				
 					};
 				});
+				break;
+				
+			default:
+				// Text colors
+				if (item.isTextColor) {
+					C.BlockListSetTextColor(rootId, blockIds, item.value);
+				} else 
+					
+				// Background colors
+				if (item.isBgColor) {
+					C.BlockListSetBackgroundColor(rootId, blockIds, item.value);
+				} else 
+					
+				// Align
+				if (item.isAlign) {
+					C.BlockListSetAlign(rootId, blockIds, item.value);
+				} else 
+					
+				// Blocks
+				if (item.isBlock) {
+					if (item.type == I.BlockType.Page) {
+						commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
+						
+						let param: any = {
+							type: item.type,
+							fields: {
+								name: Constant.default.name,
+							},
+							content: {
+								style: I.PageStyle.Empty,
+							},
+						};
+						
+						C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Replace, (message: any) => {
+							commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
+						});
+					} else {
+						C.BlockListSetTextStyle(rootId, blockIds, item.id);
+					};
+				};
+			
 				break;
 		};
 	};
