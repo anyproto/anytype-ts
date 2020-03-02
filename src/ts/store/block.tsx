@@ -1,5 +1,5 @@
 import { observable, action, computed, set, toJS } from 'mobx';
-import { I, Util, StructDecode, StructEncode } from 'ts/lib';
+import { I, M, Util, StructDecode, StructEncode } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
@@ -142,7 +142,7 @@ class BlockStore {
 		let map: any = {};
 		
 		for (let item of list) {
-			map[item.id] = item;
+			map[item.id] = new M.Block(item);
 		};
 		
 		for (let item of list) {
@@ -208,7 +208,6 @@ class BlockStore {
 			content: {} as any,
 			align: Number(block.align) || 0,
 			bgColor: String(block.backgroundColor || ''),
-			restrictions: block.restrictions || {} as I.Restrictions,
 		};
 		
 		if (block.fields) {

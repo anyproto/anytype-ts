@@ -117,11 +117,11 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		const parent = map[t.parentId];
 		
-		if ((type == I.DragItem.Menu) && (target.type == I.BlockType.Link)) {
+		if ((type == I.DragItem.Menu) && target.isLink()) {
 			targetId = target.content.targetBlockId;
 		};
 		
-		if (parent && (parent.type == I.BlockType.Layout) && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
+		if (parent && parent.isLayout() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 			targetId = parent.id;
 		};
 		
