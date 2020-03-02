@@ -1,10 +1,17 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron');
 const { is, appMenu } = require('electron-util');
+const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
 const path = require('path');
 const os = require('os');
+const log = require('electron-log');
 const dataPath = app.getPath('userData');
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+
+let win = null;
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -22,7 +29,7 @@ function createWindow () {
 		param.frame = false;
 	};
 	
-	let win = new BrowserWindow(param);
+	win = new BrowserWindow(param);
 	
 	/*
 	BrowserWindow.addDevToolsExtension(
@@ -110,6 +117,50 @@ function createWindow () {
 	
 	]);
 	Menu.setApplicationMenu(menu);
+	
+	// Auto updates
+	autoUpdater.checkForUpdatesAndNotify();
 };
 
 app.on('ready', createWindow);
+
+autoUpdater.on('checking-for-update', () => {
+	setStatus('Checking for update...', app.getVersion());
+});
+
+autoUpdater.on('update-available', (info) => {
+	setStatus('Update available.', app.getVersion());
+});
+
+autoUpdater.on('update-not-available', (info) => {
+	setStatus('Update not available.', app.getVersion());
+});
+
+autoUpdater.on('error', (err) => {
+	setStatus('Error in auto-updater. ' + err, app.getVersion());
+});
+
+autoUpdater.on('download-progress', (progress) => {
+	let msg = [
+		'Download speed: ' + progress.bytesPerSecond,
+		'-',
+		'Downloaded: ' + progress.percent + '%',
+		'(' + progress.transferred + '/' + progress.total + ')'
+	];
+	setStatus(msg.join(' '), app.getVersion());
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+	setTimeout(function () {
+		setStatus('Update downloaded... Restarting App in 5 seconds', app.getVersion());
+		win.webContents.send('updateReady');
+		autoUpdater.quitAndInstall();
+	}, 5000);
+});
+
+function setStatus (text, ver) {
+	if (win) {
+		log.info(text);
+		win.webContents.send('message', text, ver);
+	};
+};

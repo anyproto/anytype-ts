@@ -84,6 +84,7 @@
 		"install": "^0.13.0",
 		"is": "^3.3.0",
 		"jquery": "^3.4.1",
+		"lazy-val": "^1.0.4",
 		"lodash": "^4.17.15",
 		"lowlight": "^1.13.1",
 		"mem": "^6.0.1",
@@ -170,7 +171,12 @@
 			"node_modules/highlight.js/lib/highlight.js",
 			"node_modules/highlight.js/lib/languages/*",
 			"node_modules/fault",
-			"node_modules/format"
+			"node_modules/format",
+			"node_modules/lazy-val",
+			"node_modules/builder-util-runtime",
+			"node_modules/debug",
+			"node_modules/ms",
+			"node_modules/semver"
 		],
 		"dmg": {
 			"sign": false
