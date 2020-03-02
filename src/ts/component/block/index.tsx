@@ -391,6 +391,9 @@ class Block extends React.Component<Props, {}> {
 		node.addClass('isResizing');
 		keyboard.setResize(true);
 		
+		node.find('.colResize.active').removeClass('active');
+		node.find('.colResize.c' + index).addClass('active');
+		
 		win.on('mousemove.block', throttle((e: any) => { this.onResize(e, index, offset); }, THROTTLE));
 		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e, index, offset); }));
 		
@@ -419,9 +422,6 @@ class Block extends React.Component<Props, {}> {
 		prevNode.css({ width: w1 * 100 + '%' });
 		currentNode.css({ width: w2 * 100 + '%' });
 		
-		node.find('.colResize.active').removeClass('active');
-		node.find('.colResize.c' + index).addClass('active');
-		
 		node.find('.resizable').trigger('resize', [ e ]);
 	};
 
@@ -443,6 +443,8 @@ class Block extends React.Component<Props, {}> {
 		this.unbind();
 		node.removeClass('isResizing');
 		keyboard.setResize(false);
+		
+		node.find('.colResize.active').removeClass('active');
 		
 		C.BlockListSetFields(rootId, [
 			{ blockId: prevBlock.id, fields: { width: res.percent * res.sum } },
@@ -476,7 +478,7 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || keyboard.resize) {
 			return;
 		};
 		
@@ -511,7 +513,9 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMouseLeave (e: any) {
-		$('.colResize.active').removeClass('active');
+		if (!keyboard.resize) {
+			$('.colResize.active').removeClass('active');
+		};
 	};
 	
 	unbind () {

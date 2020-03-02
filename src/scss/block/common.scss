@@ -43,6 +43,9 @@
 	.block.align2 > .wrapContent { text-align: right; }
 	
 	.block.isResizing { cursor: col-resize; user-select: none; }
+	.block.isResizing {
+		.icon.dnd { display: none; }
+	}
 	
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange; border-radius: 0px 0px 4px 4px !important; }
