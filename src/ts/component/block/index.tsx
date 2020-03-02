@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, keyboard } from 'ts/lib';
+import { I, C, Util, DataUtil, keyboard, focus } from 'ts/lib';
 import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
 import { commonStore, blockStore } from 'ts/store';
@@ -47,6 +47,7 @@ class Block extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onToggle = this.onToggle.bind(this);
+		this.onToggleClick = this.onToggleClick.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
@@ -68,6 +69,7 @@ class Block extends React.Component<Props, {}> {
 		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align ];
 		let cd: string[] = [];
 		let blockComponent = null;
+		let empty = null;
 		
 		if (className) {
 			cn.push(className);
@@ -87,6 +89,14 @@ class Block extends React.Component<Props, {}> {
 				
 				if (content.style == I.TextStyle.Title) {
 					canSelect = false;
+				};
+				
+				if (content.style == I.TextStyle.Toggle) {
+					if (!childrenIds.length) {
+						empty = (
+							<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
+						);
+					};
 				};
 				
 				blockComponent = <BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
@@ -205,6 +215,7 @@ class Block extends React.Component<Props, {}> {
 						</React.Fragment>
 					): ''}
 					
+					{empty}
 					{childrenIds.length ? <ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} /> : ''}
 				</div>
 			</div>
@@ -235,6 +246,18 @@ class Block extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.hasClass('isToggled') ? node.removeClass('isToggled') : node.addClass('isToggled');
+	};
+	
+	onToggleClick (e: any) {
+		const { rootId, id } = this.props;
+		const param = {
+			type: I.BlockType.Text
+		};
+		
+		C.BlockCreate(param, rootId, id, I.BlockPosition.Inner, (message: any) => {
+			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.apply();
+		});
 	};
 	
 	onDragStart (e: any) {

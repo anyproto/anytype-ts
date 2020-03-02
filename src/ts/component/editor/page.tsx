@@ -645,9 +645,11 @@ class EditorPage extends React.Component<Props, {}> {
 						});
 					};
 					
-					const l = String(next.content.text || '').length;
-					focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-					focus.apply();
+					if (next) {
+						const l = String(next.content.text || '').length;
+						focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+						focus.apply();
+					};
 				} else
 				if (e.shiftKey) {
 					if (selection.get(true).length < 1) {
@@ -663,7 +665,15 @@ class EditorPage extends React.Component<Props, {}> {
 					});
 					
 					if (next) {
+						const mapped = map[next.id];
+						const parent = map[mapped.parentId];
 						const l = String(next.content.text || '').length;
+						
+						// Auto-open toggle blocks 
+						if (parent && (parent.type == I.BlockType.Text) && (parent.content.style == I.TextStyle.Toggle)) {
+							node.find('#block-' + $.escapeSelector(parent.id)).addClass('isToggled');
+						};
+						
 						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
 						focus.apply();
 					};
@@ -793,6 +803,10 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		if (block.type == I.BlockType.Layout) {
+			return;
+		};
+		
 		commonStore.filterSet('');
 		
 		this.blockCreate(block, this.hoverPosition, {
@@ -834,7 +848,7 @@ class EditorPage extends React.Component<Props, {}> {
 				const block = blocks[rootId].find((item: I.Block) => { return item.id == id; });
 
 				// Clear filter in block text on close
-				if ('/' + filter == block.content.text) {
+				if (block && ('/' + filter == block.content.text)) {
 					DataUtil.blockSetText(rootId, block, '', []);
 				};
 				
