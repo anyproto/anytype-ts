@@ -323,8 +323,6 @@ class Util {
 		const obj = $('#linkPreview');
 		const poly = obj.find('.polygon');
 		
-		obj.removeClass('top bottom');
-		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
 			window.clearTimeout(this.timeoutLinkPreviewShow);
 		});
@@ -365,7 +363,7 @@ class Util {
 			obj.hide();
 			this.linkPreviewOpen = false;
 			obj.removeClass('top bottom withImage'); 
-		}, 200);
+		}, 250);
 	};
 	
 	lbBr (s: string) {
