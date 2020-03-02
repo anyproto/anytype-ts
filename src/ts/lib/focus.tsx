@@ -24,7 +24,8 @@ class Focus {
 		this.range.to = 0;
 		
 		if (withRange) {
-			window.getSelection().empty();	
+			window.getSelection().empty();
+			window.focus();
 		};
 	};
 	
