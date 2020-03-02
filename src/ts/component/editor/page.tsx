@@ -653,8 +653,8 @@ class EditorPage extends React.Component<Props, {}> {
 				} else
 				if (e.shiftKey) {
 					if (selection.get(true).length < 1) {
-						window.getSelection().empty();
 						selection.set([ focused ]);
+						focus.clear(true);
 						
 						commonStore.menuClose('blockContext');
 						commonStore.menuClose('blockAction');
@@ -779,7 +779,6 @@ class EditorPage extends React.Component<Props, {}> {
 		}).filter((it: string) => { return it != ''; });
 		
 		selection.set(ids);
-		window.getSelection().empty();
 		keyboard.setFocus(false);
 		focus.clear(true);
 		commonStore.menuClose('blockContext');

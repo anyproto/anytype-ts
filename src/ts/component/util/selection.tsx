@@ -93,7 +93,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			// Move selection with arrows
 			if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
-				window.getSelection().empty();
+				focus.clear(true);
 				
 				let next;
 				if (dir < 0) {
@@ -321,6 +321,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			keyboard.setFocus(false);
 			window.getSelection().empty();
+			window.focus();
 		};
 		
 		this.set(this.get());
