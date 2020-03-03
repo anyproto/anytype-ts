@@ -176,7 +176,12 @@
 			"node_modules/builder-util-runtime",
 			"node_modules/debug",
 			"node_modules/ms",
-			"node_modules/semver"
+			"node_modules/semver",
+			"node_modules/js-yaml",
+			"node_modules/fs-extra",
+			"node_modules/universalify",
+			"node_modules/graceful-fs",
+			"node_modules/jsonfile"
 		],
 		"dmg": {
 			"sign": false

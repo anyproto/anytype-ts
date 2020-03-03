@@ -181,6 +181,10 @@ class App extends React.Component<Props, State> {
 			history.push('/help/index');
 		});
 		
+		ipcRenderer.on('message', (e: any, text: string, version: string) => {
+			console.log('[Message]', text, version);
+		});
+		
 		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
 			keyboard.setPinCheck();
 			keyboard.disableMouse(false);

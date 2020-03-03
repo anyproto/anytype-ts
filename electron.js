@@ -116,51 +116,44 @@ function createWindow () {
 		},
 	
 	]);
+	
 	Menu.setApplicationMenu(menu);
 	
-	// Auto updates
 	autoUpdater.checkForUpdatesAndNotify();
+	autoUpdater.on('checking-for-update', () => {
+		setStatus('Checking for update');
+	});
+	
+	autoUpdater.on('update-available', (info) => {
+		setStatus('Update available');
+	});
+	autoUpdater.on('update-not-available', (info) => {
+		setStatus('Update not available');
+	});
+	autoUpdater.on('error', (err) => { setStatus('Error: ' + err); });
+	autoUpdater.on('download-progress', (progress) => {
+		let msg = [
+			'Download speed: ' + progress.bytesPerSecond,
+			'-',
+			'Downloaded: ' + progress.percent + '%',
+			'(' + progress.transferred + '/' + progress.total + ')'
+		];
+		setStatus(msg.join(' '));
+	});
+
+	autoUpdater.on('update-downloaded', (info) => {
+		setTimeout(function () {
+			setStatus('Update downloaded... Restarting App in 5 seconds');
+			win.webContents.send('updateReady');
+			autoUpdater.quitAndInstall();
+		}, 5000);
+	});
+
+	function setStatus (text) {
+		log.info(win);
+		log.info(text);
+		win.webContents.send('message', text, app.getVersion());
+	};
 };
 
 app.on('ready', createWindow);
-
-autoUpdater.on('checking-for-update', () => {
-	setStatus('Checking for update...', app.getVersion());
-});
-
-autoUpdater.on('update-available', (info) => {
-	setStatus('Update available.', app.getVersion());
-});
-
-autoUpdater.on('update-not-available', (info) => {
-	setStatus('Update not available.', app.getVersion());
-});
-
-autoUpdater.on('error', (err) => {
-	setStatus('Error in auto-updater. ' + err, app.getVersion());
-});
-
-autoUpdater.on('download-progress', (progress) => {
-	let msg = [
-		'Download speed: ' + progress.bytesPerSecond,
-		'-',
-		'Downloaded: ' + progress.percent + '%',
-		'(' + progress.transferred + '/' + progress.total + ')'
-	];
-	setStatus(msg.join(' '), app.getVersion());
-});
-
-autoUpdater.on('update-downloaded', (info) => {
-	setTimeout(function () {
-		setStatus('Update downloaded... Restarting App in 5 seconds', app.getVersion());
-		win.webContents.send('updateReady');
-		autoUpdater.quitAndInstall();
-	}, 5000);
-});
-
-function setStatus (text, ver) {
-	if (win) {
-		log.info(text);
-		win.webContents.send('message', text, ver);
-	};
-};
