@@ -32,7 +32,7 @@ class Dispatcher {
 		let { focused } = focus;
 		let event = com.anytype.Event.decode(item.data);
 		let rootId = event.contextId;
-		let blocks = blockStore.blocks[rootId];
+		let blocks = blockStore.blocks.get(rootId);
 		let types = [];
 		let debug = Storage.get('debugMW');
 		

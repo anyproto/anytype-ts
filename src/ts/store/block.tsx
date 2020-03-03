@@ -8,7 +8,7 @@ class BlockStore {
 	@observable public rootId: string = '';
 	@observable public archiveId: string = '';
 	@observable public breadcrumbsId: string = '';
-	@observable public blockObject: any = {};
+	@observable public blockObject: any = new Map();
 	
 	@computed
 	get root (): string {
@@ -47,42 +47,44 @@ class BlockStore {
 	
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		this.blockObject[rootId] = blocks;
+		this.blockObject.set(rootId, observable(blocks));
+	};
+	
+	blocksGet (rootId: string) {
+		return this.blockObject.get(rootId) || [];
 	};
 	
 	@action
 	blockAdd (rootId: string, block: I.Block) {
-		this.blockObject[rootId].push(block as I.Block);
+		let list = this.blockObject.get(rootId);
+		list.push(block as I.Block);
 	};
 	
 	@action
 	blockUpdate (rootId: string, block: any) {
-		let item = (this.blockObject[rootId] || []).find((item: I.Block) => { return item.id == block.id; });
-		if (!item) {
-			return;
-		};
+		let list = this.blockObject.get(rootId);
+		let item = list.find((item: I.Block) => { return item.id == block.id; });
 		
 		set(item, block);
 	};
 	
 	@action
 	blockDelete (rootId: string, id: string) {
-		if (!this.blockObject[rootId]) {
-			return;
-		};
+		let list = this.blockObject.get(rootId);
+		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
 		
-		this.blockObject[rootId] = this.blockObject[rootId].filter((item: I.Block) => { return item.id != id; });
+		list.splice(idx, 1);
 	};
 	
 	@action
 	blocksClear (rootId: string) {
-		this.blockObject[rootId] = [];
+		this.blockObject.delete(rootId);
 	};
 	
 	// If check is present find next block if check passes or continue to next block in "dir" direction, else just return next block; 
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
-			let tree = this.prepareTree(rootId, this.blockObject[rootId]);
+			let tree = this.prepareTree(rootId);
 			list = this.unwrapTree(tree);
 		};
 		
@@ -106,7 +108,7 @@ class BlockStore {
 		};
 		
 		if (!list) {
-			let tree = this.prepareTree(rootId, this.blockObject[rootId]);
+			let tree = this.prepareTree(rootId);
 			list = this.unwrapTree(tree);
 		};
 		
@@ -162,7 +164,8 @@ class BlockStore {
 		return map;
 	};
 	
-	prepareTree (rootId: string, list: I.Block[]) {
+	prepareTree (rootId: string) {
+		let list = this.blocksGet(rootId);
 		let ret: any = [];
 		let map: any = this.getMap(list);
 		

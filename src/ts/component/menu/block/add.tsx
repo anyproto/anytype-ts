@@ -220,8 +220,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { blocks } = blockStore;
-		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
+		const list = blockStore.blocksGet(rootId);
+		const block = list.find((item: I.Block) => { return item.id == blockId; });
 		
 		if (!block) {
 			return [];

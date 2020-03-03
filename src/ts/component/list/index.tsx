@@ -30,7 +30,6 @@ class ListIndex extends React.Component<Props, {}> {
 	render () {
 		const { onSelect, onAdd, helperContainer, rootId, getTree } = this.props;
 		const { blocks, root } = blockStore;
-		const length = (blocks[root] || []).length;
 		const tree = getTree();
 		
 		const Item = SortableElement((item: any) => {

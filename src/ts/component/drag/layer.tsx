@@ -45,7 +45,8 @@ class DragLayer extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const { blocks } = blockStore;
-		const map = blockStore.getMap(blocks[rootId] || []);
+		const list = blocks.get(rootId);
+		const map = blockStore.getMap(list);
 		
 		let content = null;
 		switch (type) {

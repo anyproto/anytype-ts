@@ -14,8 +14,8 @@ interface Props extends I.Popup {
 class PopupArchive extends React.Component<Props, {}> {
 
 	render () {
-		const { blocks, archive } = blockStore;
-		const tree = blockStore.prepareTree(archive, blocks[archive]);
+		const { archive } = blockStore;
+		const tree = blockStore.prepareTree(archive);
 		
 		const Item = (item: any) => {
 			let content = item.content || {};

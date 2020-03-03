@@ -31,7 +31,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const { breadcrumbs, blocks } = blockStore;
 		const { account } = authStore;
-		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
+		const tree = blockStore.prepareTree(breadcrumbs);
 		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
@@ -99,7 +99,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	
 	onBack (e: any) {
 		const { breadcrumbs, blocks } = blockStore;
-		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
+		const tree = blockStore.prepareTree(breadcrumbs);
 		
 		C.BlockCutBreadcrumbs(breadcrumbs, (tree.length > 0 ? tree.length - 1 : 0), (message: any) => {
 			this.props.history.goBack();			

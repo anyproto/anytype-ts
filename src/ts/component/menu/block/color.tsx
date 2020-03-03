@@ -149,8 +149,8 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { blocks } = blockStore;
-		const block = (blocks[rootId] || []).find((it: I.Block) => { return it.id == blockId; });
+		const list = blockStore.blocksGet(rootId);
+		const block = list.find((it: I.Block) => { return it.id == blockId; });
 		
 		if (!block) {
 			return [];

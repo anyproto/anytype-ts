@@ -33,8 +33,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	render () {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
-		const { blocks, root } = blockStore;
-		const length = (blocks[root] || []).length;
+		const { root } = blockStore;
 		
 		return (
 			<div>
@@ -70,7 +69,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		//DataUtil.pageInit();
 		Storage.set('pageId', '');
 	};
 	
@@ -116,10 +114,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		const { blocks, root } = blockStore;
+		const list = blocks.get(root);
 		const tree = this.getTree();
 		const current = tree[oldIndex];
 		const target = tree[newIndex];
-		const block = (blocks[root] || []).find((it: I.Block) => { return it.id == root; });
+		const block = list.find((it: I.Block) => { return it.id == root; });
 		
 		if (!current || !target || !block) {
 			return;
@@ -158,7 +157,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	getTree () {
 		const { blocks, root } = blockStore;
 
-		let tree = blockStore.prepareTree(root, blocks[root]);
+		let tree = blockStore.prepareTree(root);
 		tree = tree.filter((it: any) => { return !(it.content.fields || {}).isArchived; });
 		
 		return tree;

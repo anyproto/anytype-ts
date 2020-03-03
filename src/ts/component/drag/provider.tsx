@@ -48,13 +48,14 @@ class DragProvider extends React.Component<Props, {}> {
 		const { selection } = dataset;
 		const { blocks } = blockStore;
 		const win = $(window);
+		const list = blocks.get(rootId);
 		
 		e.stopPropagation();
 		focus.clear(true);
 		
 		console.log('[onDragStart]', type, ids);
 		
-		this.map = blockStore.getMap(blocks[rootId]);
+		this.map = blockStore.getMap(list);
 		this.set(type, ids);
 		this.refLayer.show(type, this.ids, component);
 		this.unbind();
@@ -103,8 +104,9 @@ class DragProvider extends React.Component<Props, {}> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
 		const { blocks, root } = blockStore;
-		const target = blocks[rootId].find((it: any) => { return it.id == targetId; });
-		const map = blockStore.getMap(blocks[rootId]);
+		const list = blocks.get(rootId);
+		const target = list.find((it: any) => { return it.id == targetId; });
+		const map = blockStore.getMap(list);
 		
 		if (!target) {
 			return;

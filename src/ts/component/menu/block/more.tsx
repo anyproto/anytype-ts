@@ -104,8 +104,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
+		const list = blockStore.blocksGet(rootId);
+		const block = list.find((item: I.Block) => { return item.id == blockId; });
 
 		if (!block) {
 			return [];
@@ -148,15 +148,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, history } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, linkPage, linkId, rootId, onSelect, match } = data;
-		const { blocks, root, breadcrumbs } = blockStore;
-		const block = (blocks[rootId] || []).find((it: I.Block) => { return it.id == blockId; });
+		const { root, breadcrumbs } = blockStore;
+		const list = blockStore.blocksGet(rootId);
+		const block = list.find((it: I.Block) => { return it.id == blockId; });
 		
 		if (!block) {
 			return;
 		};
 		
 		const length = String(block.content.text || '').length;
-		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
+		const tree = blockStore.prepareTree(breadcrumbs);
 		const prev = tree[tree.length - 2];
 		
 		let close = true;

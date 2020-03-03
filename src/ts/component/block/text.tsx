@@ -460,6 +460,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { blocks } = blockStore;
 		const value = this.getValue();
 		const text = String(content.text || '');
+		const list = blocks.get(rootId);
 		
 		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
 			return;
@@ -469,7 +470,7 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		const block = blocks[rootId].find((it: any) => { return it.id == id; });
+		const block = list.find((it: any) => { return it.id == id; });
 		DataUtil.blockSetText(rootId, block, value, marks);
 	};
 	
@@ -477,7 +478,8 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, rootId, content } = this.props;
 		const { blocks } = blockStore;
 		const text = String(content.text || '');
-		const block = blocks[rootId].find((it: any) => { return it.id == id; });
+		const list = blocks.get(rootId);
+		const block = list.find((it: any) => { return it.id == id; });
 		
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
