@@ -41,6 +41,7 @@ jobs:
         env:
           APPLEID: ${{ secrets.APPLEID }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
 
       - name: Make artifacts dir
         run: | 
