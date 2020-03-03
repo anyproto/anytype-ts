@@ -205,7 +205,14 @@
 		},
 		"win": {
 			"target": "nsis",
-			"icon": "electron/icon.ico"
+			"icon": "electron/icon.ico",
+			"publish": [
+				{
+					"provider": "spaces",
+					"name": "at9412003",
+					"region": "fra1"
+				}
+			]
 		},
 		"linux": {
 			"icon": "electron/icon.png",
@@ -213,14 +220,14 @@
 				"snap",
 				"AppImage"
 			],
-			"description": "Anytype"
-		},
-		"publish": [
-			{
-				"provider": "spaces",
-				"name": "at9412003",
-				"region": "fra1"
-			}
-		]
+			"description": "Anytype",
+			"publish": [
+				{
+					"provider": "spaces",
+					"name": "at9412003",
+					"region": "fra1"
+				}
+			]
+		}
 	}
 }
