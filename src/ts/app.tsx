@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
+import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
 import { C, dispatcher, keyboard, Storage } from 'ts/lib';
@@ -102,6 +103,14 @@ const rootStore = {
 	authStore: authStore,
 	blockStore: blockStore,
 };
+
+enableLogging({
+	predicate: () => true,
+    action: true,
+    reaction: true,
+    transaction: true,
+    compute: true,
+});
 
 class App extends React.Component<Props, State> {
 	

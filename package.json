@@ -91,6 +91,7 @@
 		"mobx": "^5.15.4",
 		"mobx-decorators": "^6.0.1",
 		"mobx-devtools-mst": "^0.9.21",
+		"mobx-logger": "^0.7.1",
 		"mobx-react": "^6.1.8",
 		"mobx-state-tree": "^3.15.0",
 		"node-sass": "^4.13.1",

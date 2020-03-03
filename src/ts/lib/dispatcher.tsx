@@ -31,10 +31,10 @@ class Dispatcher {
 	event (item: any) {
 		let { focused } = focus;
 		let event = com.anytype.Event.decode(item.data);
-		let contextId = event.contextId;
-		let blocks = Util.objectCopy(blockStore.blocks[contextId] || []);
+		let rootId = event.contextId;
+		let blocks = blockStore.blocks[rootId];
 		let types = [];
-		let debug = Storage.get('debugMW'); 
+		let debug = Storage.get('debugMW');
 		
 		if (PROFILE) {
 			for (let message of event.messages) {
@@ -45,7 +45,7 @@ class Dispatcher {
 		};
 		
 		if (debug) {
-			console.log('[Dispatcher.event] contextId', contextId, 'event', JSON.stringify(event, null, 5));
+			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 5));
 		};
 		
 		for (let message of event.messages) {
@@ -66,13 +66,15 @@ class Dispatcher {
 					
 				case 'blockShow':
 					blocks = data.blocks.map((it: any) => {
-						return blockStore.prepareBlockFromProto(it);
+						return new M.Block(blockStore.prepareBlockFromProto(it));
 					});
+					
+					blockStore.blocksSet(rootId, blocks);
 					break;
 				
 				case 'blockAdd':
 					for (let block of data.blocks) {
-						blocks.push(blockStore.prepareBlockFromProto(block));
+						blockStore.blockAdd(rootId, new M.Block(blockStore.prepareBlockFromProto(block)));
 					};
 					break;
 					
@@ -83,6 +85,7 @@ class Dispatcher {
 					};
 					
 					block.childrenIds = data.childrenIds || [];
+					blockStore.blockUpdate(rootId, block);
 					break;
 					
 				case 'blockSetIcon':
@@ -92,6 +95,7 @@ class Dispatcher {
 					};
 					
 					block.content.name = data.name.value;
+					blockStore.blockUpdate(rootId, block);
 					break;
 					
 				case 'blockSetFields':
@@ -103,6 +107,8 @@ class Dispatcher {
 					if (null !== data.fields) {
 						block.fields = StructDecode.decodeStruct(data.fields);
 					};
+					
+					blockStore.blockUpdate(rootId, block);
 					break;
 					
 				case 'blockSetLink':
@@ -115,6 +121,8 @@ class Dispatcher {
 						block.content.fields = StructDecode.decodeStruct(data.fields.value);
 						block.content.fields.name = String(block.content.fields.name || Constant.default.name);
 					};
+					
+					blockStore.blockUpdate(rootId, block);
 					break;
 					
 				case 'blockSetText':
@@ -153,6 +161,8 @@ class Dispatcher {
 					if (null !== data.color) {
 						block.content.color = String(data.color.value || '');
 					};
+					
+					blockStore.blockUpdate(rootId, block);
 					break;
 					
 				case 'blockSetFile':
@@ -184,6 +194,8 @@ class Dispatcher {
 					if (null !== data.state) {
 						block.content.state = Number(data.state.value) || 0;
 					};
+					
+					blockStore.blockUpdate(rootId, block);
 					break;
 					
 				case 'blockSetBookmark':
@@ -224,6 +236,7 @@ class Dispatcher {
 					};
 					
 					block.bgColor = String(data.backgroundColor || '');
+					blockStore.blockUpdate(rootId, block);
 					break;
 					
 				case 'blockSetAlign':
@@ -233,11 +246,12 @@ class Dispatcher {
 					};
 					
 					block.align = Number(data.align) || 0;
+					blockStore.blockUpdate(rootId, block);
 					break;
 					
 				case 'blockDelete':
 					for (let blockId of data.blockIds) {
-						blocks = blocks.filter((item: I.Block) => { return item.id != blockId; });
+						blockStore.blockDelete(rootId, blockId);
 						
 						// Remove focus if block is deleted
 						if (focused == blockId) {
@@ -274,9 +288,6 @@ class Dispatcher {
 					break;
 			};
 		};
-		
-		blocks = blocks.map((it: any) => { return new M.Block(it); });
-		blockStore.blocksSet(contextId, blocks);
 		
 		if (PROFILE) {
 			console.profileEnd(types.join(', '));

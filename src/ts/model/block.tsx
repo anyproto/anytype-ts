@@ -8,10 +8,10 @@ class Block implements I.Block {
 	@observable bgColor: string = '';
 	@observable fields: any = {};
 	@observable content: any = {};
+	@observable childrenIds: string[] = [];
 
 	id: string = '';
 	parentId: string = '';
-	childrenIds: string[] = [];
 	childBlocks: I.Block[] = [];
 	
 	constructor (props: I.Block) {

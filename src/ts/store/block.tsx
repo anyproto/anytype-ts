@@ -52,7 +52,6 @@ class BlockStore {
 	
 	@action
 	blockAdd (rootId: string, block: I.Block) {
-		this.blockObject[rootId] = this.blockObject[rootId] || [];
 		this.blockObject[rootId].push(block as I.Block);
 	};
 	
