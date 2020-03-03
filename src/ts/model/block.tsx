@@ -1,5 +1,5 @@
 import { I } from 'ts/lib';
-import { observable } from 'mobx';
+import { observable, intercept } from 'mobx';
 
 class Block implements I.Block {
 	
@@ -15,15 +15,34 @@ class Block implements I.Block {
 	childBlocks: I.Block[] = [];
 	
 	constructor (props: I.Block) {
-		this.id = String(props.id || '');
-		this.parentId = String(props.parentId || '');
-		this.type = props.type;
-		this.align = Number(props.align) || I.BlockAlign.Left;
-		this.bgColor = String(props.bgColor || '');
-		this.fields = props.fields || {};
-		this.content = props.content || {};
-		this.childrenIds = props.childrenIds || [];
-		this.childBlocks = props.childBlocks || [];
+		let self = this;
+		
+		self.id = String(props.id || '');
+		self.parentId = String(props.parentId || '');
+		self.type = props.type;
+		self.align = Number(props.align) || I.BlockAlign.Left;
+		self.bgColor = String(props.bgColor || '');
+		self.fields = props.fields || {};
+		self.content = props.content || {};
+		self.childrenIds = props.childrenIds || [];
+		self.childBlocks = props.childBlocks || [];
+
+		const disposer = intercept(self as any, (change: any) => {
+			console.log('Change', change, 'old', self[name]);
+			console.trace();
+			return change;
+		});
+	};
+	
+	update (props: any) {
+		let changes: any = {};
+		let self = this as any;
+		
+		for (let p in props) {
+			if (self[p] !== props[p]) {
+				self[p] = props[p];
+			};
+		};
 	};
 	
 	isPage () { 

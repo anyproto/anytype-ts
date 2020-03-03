@@ -106,10 +106,10 @@ const rootStore = {
 
 enableLogging({
 	predicate: () => true,
-    action: true,
-    reaction: true,
-    transaction: true,
-    compute: true,
+	action: true,
+	reaction: true,
+	transaction: true,
+	compute: true,
 });
 
 class App extends React.Component<Props, State> {

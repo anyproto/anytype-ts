@@ -101,6 +101,7 @@
 		"protobufjs": "^6.8.8",
 		"raf": "^3.4.1",
 		"react": "^16.13.0",
+		"react-addons-shallow-compare": "^15.6.2",
 		"react-dom": "^16.13.0",
 		"react-hot-loader": "^4.12.19",
 		"react-router-dom": "^5.1.2",

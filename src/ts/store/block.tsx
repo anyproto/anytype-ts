@@ -47,7 +47,7 @@ class BlockStore {
 	
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		this.blockObject.set(rootId, observable(blocks));
+		this.blockObject.set(rootId, observable(blocks, { deep: false }));
 	};
 	
 	blocksGet (rootId: string) {
@@ -65,7 +65,7 @@ class BlockStore {
 		let list = this.blockObject.get(rootId);
 		let item = list.find((item: I.Block) => { return item.id == block.id; });
 		
-		set(item, block);
+		item.update(block);
 	};
 	
 	@action
