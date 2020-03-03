@@ -1,9 +1,9 @@
 name: Release
 
-on: 
-  push:
-    tags:        
-      - v*
+#on: 
+#  push:
+#    tags:        
+#      - v*
 
 jobs:
   release:
@@ -37,6 +37,7 @@ jobs:
           github_token: ${{secrets.TOKEN}}
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
           mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
         env:
           APPLEID: ${{ secrets.APPLEID }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
