@@ -150,7 +150,6 @@ function createWindow () {
 	});
 
 	function setStatus (text) {
-		log.info(win);
 		log.info(text);
 		win.webContents.send('message', text, app.getVersion());
 	};
