@@ -9,6 +9,7 @@ class BlockStore {
 	@observable public archiveId: string = '';
 	@observable public breadcrumbsId: string = '';
 	@observable public blockObject: any = new Map();
+	@observable public treeObject: any = new Map();
 	
 	@computed
 	get root (): string {
@@ -47,7 +48,9 @@ class BlockStore {
 	
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
+		const map = this.getMap(blocks);
 		const list = observable(blocks, { deep: false });
+		
 		intercept(list, (change: any) => {
 			console.log('Change list', change);
 			console.trace();
@@ -55,21 +58,21 @@ class BlockStore {
 		});
 		
 		this.blockObject.set(rootId, list);
-		
-		intercept(this.blockObject, rootId, (change: any) => {
-			console.log('Change object', change);
-			console.trace();
-			return change;
-		});
+		this.treeObject.set(rootId, map[rootId]);
 	};
 	
 	@action
 	blocksClear (rootId: string) {
 		this.blockObject.delete(rootId);
+		this.treeObject.delete(rootId);
 	};
 	
 	blocksGet (rootId: string) {
 		return this.blockObject.get(rootId) || [];
+	};
+	
+	treeGet (rootId: string) {
+		return this.treeObject.get(rootId);
 	};
 	
 	@action

@@ -48,8 +48,12 @@ class EditorPage extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId } = this.props;
-		const map = blockStore.getMap(blockStore.blocksGet(rootId));
-		const root = map[rootId];
+		//const map = blockStore.getMap(blockStore.blocksGet(rootId));
+		const root = blockStore.treeGet(rootId);
+		
+		console.log(root);
+		
+		//const root = map[rootId];
 		
 		if (!root) {
 			return null;
