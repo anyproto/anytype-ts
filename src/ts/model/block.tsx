@@ -28,7 +28,7 @@ class Block implements I.Block {
 		self.childBlocks = props.childBlocks || [];
 
 		const disposer = intercept(self as any, (change: any) => {
-			console.log('Change', change, 'old', self[name]);
+			console.log('Change block', change, 'old', self[name]);
 			console.trace();
 			return change;
 		});

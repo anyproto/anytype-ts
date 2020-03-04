@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
+import { blockStore } from 'ts/store';
 import { HeaderMainEdit as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -20,7 +21,7 @@ class PopupEditorPage extends React.Component<Props, {}> {
 				<DragProvider rootId={id}>
 					<Header {...this.props} rootId={id} />
 							
-					<EditorPage history={history} location={location} match={match} rootId={id} addOffsetX={-Constant.size.blockMenu} />
+					<EditorPage history={history} location={location} match={match} rootId={id} />
 				</DragProvider>
 			</SelectionProvider>
 		);

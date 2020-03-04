@@ -18,12 +18,12 @@ import BlockCover from './cover';
 
 interface Props extends I.Block, RouteComponentProps<any> {
 	index?: number;
-	blockStore?: any;
 	rootId: string;
 	dataset?: any;
 	cnt?: number;
 	css?: any;
 	className?: string;
+	block: I.Block;
 	onKeyDown? (e: any, text?: string): void;
 	onKeyUp? (e: any, text?: string): void;
 	onMenuAdd? (id: string): void;
@@ -62,7 +62,8 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, childrenIds, type, fields, content, cnt, css, index, align, bgColor, className } = this.props;
+		const { rootId, cnt, css, index, className, block } = this.props;
+		const { id, childrenIds, type, fields, content, align, bgColor } = block;
 		const { style } = content || {};
 		
 		let canSelect = true;

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, dispatcher, focus, keyboard } from 'ts/lib';
+import { I, C, M, Key, Util, DataUtil, Mark, dispatcher, focus, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -13,7 +13,6 @@ import Controls from './controls';
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
-	addOffsetX: number;
 };
 
 const { ipcRenderer } = window.require('electron');
@@ -49,16 +48,16 @@ class EditorPage extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId } = this.props;
-		const list = blockStore.blocksGet(rootId);
-		const root = list.find((it: any) => { return it.id == rootId; });
-
+		const map = blockStore.getMap(blockStore.blocksGet(rootId));
+		const root = map[rootId];
+		
 		if (!root) {
 			return null;
 		};
 		
-		const tree = blockStore.prepareTree(rootId);
-		const withIcon = root && root.fields.icon;
+		const withIcon = root.fields.icon;
 		const withCover = true;
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper' ];
 		
@@ -75,19 +74,20 @@ class EditorPage extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')}>
 				<Controls {...this.props} />
-				{withCover ? <Block {...this.props} id="" fields={{}} content={{}} childrenIds={[]} childBlocks={[]} type={I.BlockType.Cover} /> : ''}
+				{withCover ? <Block {...this.props} key={cover.id} block={cover} {...cover} /> : ''}
 				
 				<div className="editor">
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 					
-						{tree.map((item: I.Block, i: number) => {
+						{root.childBlocks.map((block: I.Block, i: number) => {
 							return (
 								<Block 
-									key={item.id} 
-									index={i}
-									{...item} 
+									key={block.id} 
 									{...this.props}
+									index={i}
+									{...block}
+									block={block}
 									onKeyDown={this.onKeyDownBlock} 
 									onKeyUp={this.onKeyUpBlock}
 									onMenuAdd={this.onMenuAdd}
@@ -272,7 +272,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { addOffsetX, rootId } = this.props;
+		const { rootId } = this.props;
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -333,7 +333,7 @@ class EditorPage extends React.Component<Props, {}> {
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
-			let ax = hoveredRect.x - (rectContainer.x + addOffsetX) + 2;
+			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });

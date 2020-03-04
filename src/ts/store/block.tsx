@@ -1,4 +1,4 @@
-import { observable, action, computed, set, toJS } from 'mobx';
+import { observable, action, computed, set, intercept } from 'mobx';
 import { I, M, Util, StructDecode, StructEncode } from 'ts/lib';
 
 const com = require('proto/commands.js');
@@ -47,7 +47,25 @@ class BlockStore {
 	
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		this.blockObject.set(rootId, observable(blocks, { deep: false }));
+		const list = observable(blocks, { deep: false });
+		intercept(list, (change: any) => {
+			console.log('Change list', change);
+			console.trace();
+			return change;
+		});
+		
+		this.blockObject.set(rootId, list);
+		
+		intercept(this.blockObject, rootId, (change: any) => {
+			console.log('Change object', change);
+			console.trace();
+			return change;
+		});
+	};
+	
+	@action
+	blocksClear (rootId: string) {
+		this.blockObject.delete(rootId);
 	};
 	
 	blocksGet (rootId: string) {
@@ -74,11 +92,6 @@ class BlockStore {
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
 		
 		list.splice(idx, 1);
-	};
-	
-	@action
-	blocksClear (rootId: string) {
-		this.blockObject.delete(rootId);
 	};
 	
 	// If check is present find next block if check passes or continue to next block in "dir" direction, else just return next block; 
@@ -248,18 +261,8 @@ class BlockStore {
 				item.content.marker = content.marker;
 				item.content.marks = marks;
 			};
-						
-			if (type == I.BlockType.Layout) {
-				//item.content.style = content.style;
-			};
-			
-			if (type == I.BlockType.Div) {
-				//item.content.style = content.style;
-			};
 			
 			if (type == I.BlockType.Link) {
-				//item.content.style = content.style;
-				
 				if (item.content.style == I.LinkStyle.Page) {
 					item.content.fields = item.content.fields || {};
 					item.content.fields.name = String(item.content.fields.name || Constant.default.name);

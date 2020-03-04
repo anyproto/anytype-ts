@@ -5,6 +5,7 @@ import { Icon, Drag } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { trace } from 'mobx';
 
 interface Props extends I.Block, RouteComponentProps<any> {
 	rootId: string;
@@ -46,6 +47,10 @@ class BlockCover extends React.Component<Props, State> {
 	
 	render() {
 		const { isEditing } = this.state;
+		
+		trace(true);
+		console.log('COVER RENDER');
+		console.trace();
 		
 		let elements = null;
 		

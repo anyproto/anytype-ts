@@ -56,7 +56,7 @@ class DragLayer extends React.Component<Props, State> {
 						{ids.map((id: string, i: number) => {
 							const block = map[id] || {};
 
-							return <Block key={id} {...block} rootId={rootId} index={i} />
+							return <Block key={id} block={block} {...block} rootId={rootId} index={i} />
 						})}
 					</div>
 				);
