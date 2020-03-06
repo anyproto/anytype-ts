@@ -221,7 +221,7 @@ class Block extends React.Component<Props, {}> {
 					): ''}
 					
 					{empty}
-					{childrenIds.length ? <ListChildren {...this.props} block={block} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} /> : ''}
+					<ListChildren {...this.props} block={block} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 				</div>
 			</div>
 		);

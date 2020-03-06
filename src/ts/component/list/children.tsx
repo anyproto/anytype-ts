@@ -25,7 +25,8 @@ class ListChildren extends React.Component<Props, {}> {
 		const { style } = content;
 		const map = blockStore.structureGet(rootId);
 		const element = map[id] || {};
-		const list = blockStore.getChildren(rootId, id);
+		const children = blockStore.getChildren(rootId, id);
+		const length = children.length;
 		
 		let childrenIds = element.childrenIds || [];
 		let ColResize: any = (): any => null;
@@ -47,7 +48,7 @@ class ListChildren extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
-				{list.map((item: any, i: number) => {
+				{children.map((item: any, i: number) => {
 					let css: any = {};
 					let cn = [];
 					
@@ -58,8 +59,7 @@ class ListChildren extends React.Component<Props, {}> {
 					if (i == 0) {
 						cn.push('first');
 					};
-					
-					if (i == list.length - 1) {
+					if (i == length - 1) {
 						cn.push('last');
 					};
 					

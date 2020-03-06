@@ -101,8 +101,6 @@ class Dispatcher {
 				continue;
 			};
 			
-			console.log('TYPE', type, data);
-			
 			switch (type) {
 				
 				case 'accountShow':

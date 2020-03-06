@@ -452,11 +452,12 @@ class EditorPage extends React.Component<Props, State> {
 					return;
 				};
 				
-				const block = map[ids[0]];
-				const parent = map[block.parentId];
-				const next = blockStore.getNextBlock(rootId, block.id, -1);
+				const first = blockStore.getLeaf(rootId, ids[0]);
+				const element = map[first.id];
+				const parent = blockStore.getLeaf(rootId, element.parentId);
+				const next = blockStore.getNextBlock(rootId, first.id, -1);
 				const obj = e.shiftKey ? parent : next;
-				const canTab = obj && !obj.isTitle() && !obj.isLayout() && !block.isTitle() && !obj.isPage();
+				const canTab = obj && !obj.isTitle() && !obj.isLayout() && !first.isTitle() && !obj.isPage();
 				
 				if (canTab) {
 					C.BlockListMove(rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
@@ -476,7 +477,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const root = blockStore.treeGet(rootId);
+		const map = blockStore.structureGet(rootId);
 		const { type, content } = block;
 
 		let length = String(text || '').length;
@@ -629,6 +630,8 @@ class EditorPage extends React.Component<Props, State> {
 				e.preventDefault();
 				
 				if (e.ctrlKey || e.metaKey) {
+					const root = map[rootId];
+					
 					if (dir < 0) {
 						next = blockStore.getNextBlock(rootId, root.childrenIds[0], -dir, (item: any) => {
 							return item.isText();
@@ -686,7 +689,8 @@ class EditorPage extends React.Component<Props, State> {
 		if (k == Key.tab) {
 			e.preventDefault();
 			
-			const parent = blockStore.getLeaf(rootId, block.parentId);
+			const element = map[block.id];
+			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = e.shiftKey ? parent : next;
 			const canTab = obj && !obj.isTitle() && !obj.isLayout() && !obj.isPage() && !block.isTitle();
