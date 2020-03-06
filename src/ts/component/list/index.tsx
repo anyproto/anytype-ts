@@ -34,8 +34,9 @@ class ListIndex extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const { childrenIds } = element;
-		const children = blockStore.getChildren(root, root, (it: any) => {
+		let childrenIds = element.childrenIds || [];
+		let length = childrenIds.length;
+		let children = blockStore.getChildren(root, root, (it: any) => {
 			return !(it.content.fields || {}).isArchived;
 		});
 		

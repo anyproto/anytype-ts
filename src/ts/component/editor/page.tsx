@@ -142,11 +142,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		ipcRenderer.removeAllListeners('copyDocument');
 		ipcRenderer.on('copyDocument', (e: any) => {
-			const json = JSON.stringify({ blocks: blockStore.treeGet(rootId) }, null, 5);
-
-			Util.clipboardCopy({ text: json }, () => {
-				alert('Document copied to clipboard');
-			});
 		});
 	};
 	

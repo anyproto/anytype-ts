@@ -123,18 +123,21 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const list = this.getList();
 		const current = list[oldIndex];
 		const target = list[newIndex];
-		const block = blockStore.treeGet(root);
+		const map = blockStore.structureGet(root);
+		const element = map[root];
 		
-		if (!current || !target || !block) {
+		if (!current || !target || !element) {
 			return;
 		};
 		
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-		const oidx = block.childrenIds.indexOf(current.id);
-		const nidx = block.childrenIds.indexOf(target.id);
+		const oidx = element.childrenIds.indexOf(current.id);
+		const nidx = element.childrenIds.indexOf(target.id);
 
-		block.childrenIds = arrayMove(block.childrenIds, oidx, nidx);
-		blockStore.blockUpdate(root, block);
+		blockStore.blockUpdateStructure(root, {
+			id: root,
+			childrenIds: arrayMove(element.childrenIds, oidx, nidx),
+		});
 		
 		C.BlockListMove(root, [ current.id ], target.id, position);
 	};

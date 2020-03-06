@@ -61,15 +61,6 @@ class BlockStore {
 		this.treeObject.delete(rootId);
 	};
 	
-	treeGet (rootId: string) {
-		let map = this.treeObject.get(rootId) || {};
-		return map[rootId] || {};
-	};
-	
-	blocksGet (rootId: string) {
-		return this.blockObject.get(rootId) || [];
-	};
-	
 	structureGet (rootId: string) {
 		return this.treeObject.get(rootId) || {};
 	};
