@@ -7,7 +7,6 @@ const protobuf = require('protobufjs');
 const Constant = require('json/constant.json');
 
 const DEBUG = true;
-const PROFILE = false;
 
 class Dispatcher {
 
@@ -32,20 +31,64 @@ class Dispatcher {
 		let { focused } = focus;
 		let event = com.anytype.Event.decode(item.data);
 		let rootId = event.contextId;
-		let blocks = blockStore.blocks.get(rootId);
 		let types = [];
 		let debug = Storage.get('debugMW');
 		
-		if (PROFILE) {
-			for (let message of event.messages) {
-				let type = message.value;
-				types.push(message.value);
-			};
-			console.profile(types.join(', '));
-		};
-		
 		if (debug) {
-			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 5));
+			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 3));
+		};
+
+		let parentIds: any = {};
+		let childrenIds: any = {};
+		
+		event.messages.sort((c1, c2) => {
+			let type1 = c1.value;
+			let type2 = c2.value;
+			
+			if ((type1 == 'blockAdd') && (type2 != 'blockAdd')) {
+				return -1;
+			};
+			if ((type2 == 'blockAdd') && (type1 != 'blockAdd')) {
+				return 1;
+			};
+			
+			if ((type1 == 'blockDelete') && (type2 != 'blockDelete')) {
+				return -1;
+			};
+			if ((type2 == 'blockDelete') && (type1 != 'blockDelete')) {
+				return 1;
+			};
+			
+			return 0;
+		});
+		
+		for (let message of event.messages) {
+			let type = message.value;
+			let data = message[type] || {};
+			
+			switch (type) {
+				case 'blockSetChildrenIds':
+					const ids = data.childrenIds || [];
+					for (let id of ids) {
+						parentIds[id] = data.id;
+					};
+					if (ids.length) {
+						childrenIds[data.id] = ids;
+					};
+					break;
+					
+				case 'blockAdd':
+					for (let block of data.blocks) {
+						const ids = block.childrenIds || [];
+						for (let id of ids) {
+							parentIds[id] = block.id;
+						};
+						if (ids.length) {
+							childrenIds[block.id] = ids;
+						};
+					};
+					break;
+			};
 		};
 		
 		for (let message of event.messages) {
@@ -58,6 +101,8 @@ class Dispatcher {
 				continue;
 			};
 			
+			console.log('TYPE', type, data);
+			
 			switch (type) {
 				
 				case 'accountShow':
@@ -65,8 +110,8 @@ class Dispatcher {
 					break;
 					
 				case 'blockShow':
-					blocks = data.blocks.map((it: any) => {
-						return new M.Block(blockStore.prepareBlockFromProto(it));
+					let blocks = data.blocks.map((it: any) => {
+						return blockStore.prepareBlockFromProto(it);
 					});
 					
 					blockStore.blocksSet(rootId, blocks);
@@ -74,24 +119,36 @@ class Dispatcher {
 				
 				case 'blockAdd':
 					for (let block of data.blocks) {
-						blockStore.blockAdd(rootId, new M.Block(blockStore.prepareBlockFromProto(block)));
+						block = blockStore.prepareBlockFromProto(block);
+						block.parentId = String(parentIds[block.id] || '');
+						
+						blockStore.blockAdd(rootId, block, (childrenIds[block.parentId] || []).indexOf(block.id));
+					};
+					break;
+					
+				case 'blockDelete':
+					for (let blockId of data.blockIds) {
+						blockStore.blockDelete(rootId, blockId);
+						
+						// Remove focus if block is deleted
+						if (focused == blockId) {
+							focus.clear(true);
+							keyboard.setFocus(false);
+						};
 					};
 					break;
 					
 				case 'blockSetChildrenIds':
-					block = blocks.find((it: any) => { return it.id == data.id; });
-					if (!block) {
-						return;
-					};
-					
-					block.childrenIds = data.childrenIds || [];
-					blockStore.blockUpdate(rootId, block);
+					blockStore.blockUpdateStructure(rootId, { 
+						id: data.id,
+						childrenIds: data.childrenIds,
+					});
 					break;
 					
 				case 'blockSetIcon':
-					block = blocks.find((it: any) => { return it.id == data.id; });
+					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {
-						return;
+						break;
 					};
 					
 					block.content.name = data.name.value;
@@ -99,9 +156,9 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetFields':
-					block = blocks.find((it: any) => { return it.id == data.id; });
+					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {
-						return;
+						break;
 					};
 					
 					if (null !== data.fields) {
@@ -112,9 +169,9 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetLink':
-					block = blocks.find((it: any) => { return it.id == data.id; });
+					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {
-						return;
+						break;
 					};
 					
 					if (null !== data.fields) {
@@ -126,9 +183,9 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetText':
-					block = blocks.find((it: any) => { return it.id == data.id; });
+					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {
-						return;
+						break;
 					};
 					
 					if (null !== data.text) {
@@ -166,9 +223,9 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetFile':
-					block = blocks.find((it: any) => { return it.id == data.id; });
+					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {
-						return;
+						break;
 					};
 					
 					if (null !== data.name) {
@@ -199,9 +256,9 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetBookmark':
-					block = blocks.find((it: any) => { return it.id == data.id; });
+					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {
-						return;
+						break;
 					};
 					
 					if (null !== data.url) {
@@ -230,9 +287,9 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetBackgroundColor':
-					block = blocks.find((it: any) => { return it.id == data.id; });
+					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {
-						return;
+						break;
 					};
 					
 					block.bgColor = String(data.backgroundColor || '');
@@ -240,27 +297,15 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetAlign':
-					block = blocks.find((it: any) => { return it.id == data.id; });
+					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {
-						return;
+						break;
 					};
 					
 					block.align = Number(data.align) || 0;
 					blockStore.blockUpdate(rootId, block);
 					break;
 					
-				case 'blockDelete':
-					for (let blockId of data.blockIds) {
-						blockStore.blockDelete(rootId, blockId);
-						
-						// Remove focus if block is deleted
-						if (focused == blockId) {
-							focus.clear(true);
-							keyboard.setFocus(false);
-						};
-					};
-					break;
-				
 				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':
@@ -288,10 +333,6 @@ class Dispatcher {
 					break;
 			};
 		};
-		
-		if (PROFILE) {
-			console.profileEnd(types.join(', '));
-		};
 	};
 	
 	call (type: string, data: any, callBack?: (message: any) => void) {
@@ -306,7 +347,7 @@ class Dispatcher {
 		
 		if (debug) {
 			t0 = performance.now();
-			console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 5));
+			console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 3));
 		};
 		
 		try {

@@ -8,8 +8,9 @@ class BlockStore {
 	@observable public rootId: string = '';
 	@observable public archiveId: string = '';
 	@observable public breadcrumbsId: string = '';
-	@observable public blockObject: any = new Map();
-	@observable public treeObject: any = new Map();
+	
+	public treeObject: any = new Map();
+	public blockObject: any = new Map();
 	
 	@computed
 	get root (): string {
@@ -24,11 +25,6 @@ class BlockStore {
 	@computed
 	get breadcrumbs (): string {
 		return this.breadcrumbsId;
-	};
-	
-	@computed
-	get blocks (): any {
-		return this.blockObject;
 	};
 	
 	@action
@@ -48,17 +44,15 @@ class BlockStore {
 	
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		const map = this.getMap(blocks);
-		const list = observable(blocks, { deep: false });
+		blocks = blocks.map((it: any) => { return new M.Block(it); });
 		
-		intercept(list, (change: any) => {
-			console.log('Change list', change);
-			console.trace();
-			return change;
-		});
+		let map = this.getStructure(blocks);
+		for (let id in map) {
+			map[id] = observable(map[id]);
+		};
 		
-		this.blockObject.set(rootId, list);
-		this.treeObject.set(rootId, map[rootId]);
+		this.blockObject.set(rootId, blocks);
+		this.treeObject.set(rootId, map);
 	};
 	
 	@action
@@ -67,41 +61,110 @@ class BlockStore {
 		this.treeObject.delete(rootId);
 	};
 	
+	treeGet (rootId: string) {
+		let map = this.treeObject.get(rootId) || {};
+		return map[rootId] || {};
+	};
+	
 	blocksGet (rootId: string) {
 		return this.blockObject.get(rootId) || [];
 	};
 	
-	treeGet (rootId: string) {
-		return this.treeObject.get(rootId);
+	structureGet (rootId: string) {
+		return this.treeObject.get(rootId) || {};
 	};
 	
 	@action
-	blockAdd (rootId: string, block: I.Block) {
-		let list = this.blockObject.get(rootId);
-		list.push(block as I.Block);
+	blockAdd (rootId: string, block: I.Block, index: number) {
+		block = new M.Block(block);
+		
+		let blocks = this.blockObject.get(rootId) || [];
+		let map = this.treeObject.get(rootId) || {};
+		
+		blocks.push(block);
+		
+		map[block.id] = observable({
+			id: block.id,
+			parentId: block.parentId,
+			childrenIds: block.childrenIds,
+		});
+		
+		intercept(map[block.id] as any, (change: any) => {
+			console.log('Stucture change', change);
+			return change;
+		});
 	};
 	
 	@action
 	blockUpdate (rootId: string, block: any) {
-		let list = this.blockObject.get(rootId);
-		let item = list.find((item: I.Block) => { return item.id == block.id; });
+		let blocks = this.blockObject.get(rootId) || [];
+		let element = blocks.find((it: any) => { return it.id == block.id; });
 		
-		item.update(block);
+		Object.assign(element, block);
+	};
+	
+	@action
+	blockUpdateStructure (rootId: string, block: any) {
+		let map = this.treeObject.get(rootId) || {};
+		
+		set(map[block.id], 'childrenIds', block.childrenIds);
+		block.childrenIds.map((id: string) => {
+			set(map[id], 'parentId', block.id);
+		});
 	};
 	
 	@action
 	blockDelete (rootId: string, id: string) {
-		let list = this.blockObject.get(rootId);
-		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
+		let blocks = this.blockObject.get(rootId) || [];
+		let map = this.treeObject.get(rootId) || {};
 		
-		list.splice(idx, 1);
+		let element = map[id] || {};
+		let parent = map[element.parentId] || {};
+		
+		blocks = blocks.filter((it: any) => { return it.id != id; });
+		delete(map[id]);
+	};
+	
+	getLeaf (rootId: string, id: string): any {
+		let blocks = this.blockObject.get(rootId) || [];
+		return blocks.find((it: any) => { return it.id == id; });
+	};
+	
+	filterBlocks (rootId: string, filter?: (it: any) => boolean) {
+		let blocks = this.blockObject.get(rootId) || [];
+		return blocks.filter((it: any) => {
+			if (filter) {
+				return filter(it);
+			};
+			return true;
+		});
+	};
+	
+	getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {
+		let blocks = this.blockObject.get(rootId) || [];
+		let map = this.treeObject.get(rootId) || {};
+		let element = map[id] || {};
+		
+		let childBlocks = (element.childrenIds || []).map((it: string) => {
+			return blocks.find((item: any) => { return item.id == it; });
+		}).filter((it: any) => {
+			if (!it) {
+				console.log('!!!undefined!!!');
+				return false;
+			};
+			if (filter) {
+				return filter(it);
+			};
+			return true;
+		});
+		return childBlocks;
 	};
 	
 	// If check is present find next block if check passes or continue to next block in "dir" direction, else just return next block; 
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
-			let tree = this.prepareTree(rootId);
-			list = this.unwrapTree(tree);
+			let root = this.wrapTree(rootId);
+			list = this.unwrapTree([ root ]);
 		};
 		
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -124,8 +187,8 @@ class BlockStore {
 		};
 		
 		if (!list) {
-			let tree = this.prepareTree(rootId);
-			list = this.unwrapTree(tree);
+			let root = this.wrapTree(rootId);
+			list = this.unwrapTree([ root ]);
 		};
 		
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -144,6 +207,8 @@ class BlockStore {
 	};
 	
 	setNumbers (list: I.Block[]) {
+		list = list || [];
+		
 		let n = 0;
 		for (let item of list) {
 			n = (item.type == I.BlockType.Text && item.content.style == I.TextStyle.Numbered) ? n + 1 : 0;
@@ -153,44 +218,44 @@ class BlockStore {
 		};
 	};
 	
-	getMap (list: I.Block[]) {
+	getStructure (list: I.Block[]) {
 		list = Util.objectCopy(list || []);
 		
 		let map: any = {};
-		
-		for (let item of list) {
-			map[item.id] = new M.Block(item);
-		};
-		
-		for (let item of list) {
-			let childrenIds = item.childrenIds || [];
-			for (let id of childrenIds) {
-				if (!map[id]) {
-					continue;
-				};
-				
-				map[id].parentId = item.id;
-				
-				if (map[item.id]) {
-					map[item.id].childBlocks.push(map[id]);
-				};
+		list.map((item: any) => {
+			map[item.id] = { 
+				id: item.id, 
+				childrenIds: item.childrenIds 
 			};
+		});
+		
+		for (let id in map) {
+			let item = map[id];
+			(item.childrenIds || []).map((id: string) => {
+				map[id].parentId = item.id;
+			});
 		};
 		
 		return map;
 	};
 	
 	prepareTree (rootId: string) {
-		let list = this.blocksGet(rootId);
-		let ret: any = [];
-		let map: any = this.getMap(list);
+		let children = this.getChildren(rootId, rootId);
+		this.setNumbers(children);
+		return children;
+	};
+	
+	wrapTree (rootId: string) {
+		let list = this.blockObject.get(rootId) || [];
+		let map = this.treeObject.get(rootId) || {};
 		
-		if (map[rootId]) {
-			ret = map[rootId].childBlocks;
-			this.setNumbers(ret);
+		let ret: any = {};
+		for (let id in map) {
+			ret[id] = this.getLeaf(rootId, id);
+			ret[id].parentId = map[id].parentId;
+			ret[id].childBlocks = this.getChildren(rootId, id);
 		};
-		
-		return ret;
+		return ret[rootId];
 	};
 	
 	unwrapTree (tree: I.Block[]) {
@@ -198,13 +263,9 @@ class BlockStore {
 		
 		let ret = [] as I.Block[];
 		for (let item of tree) {
-			let cb = item.childBlocks;
-			
-			delete(item.childBlocks);
 			ret.push(item);
-			
-			if (cb && cb.length) {
-				ret = ret.concat(this.unwrapTree(cb));
+			if (item.childBlocks && item.childBlocks.length) {
+				ret = ret.concat(this.unwrapTree(item.childBlocks));
 			};
 		};
 		return ret;
@@ -219,9 +280,7 @@ class BlockStore {
 		let item: I.Block = {
 			id: block.id,
 			type: type,
-			parentId: '',
 			childrenIds: block.childrenIds || [],
-			childBlocks: [] as I.Block[],
 			fields: {} as any,
 			content: {} as any,
 			align: Number(block.align) || 0,

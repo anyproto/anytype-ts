@@ -52,11 +52,7 @@ class Util {
 	};
 	
 	arrayValues (a: any) {
-		let r: any[] = [];
-		for (let k in a) {
-			r.push(a[k]);
-		};
-		return r;
+		return a.hasOwnProperty('length') ? a : Object.values(a);
 	};
 	
 	clipboardCopy (data: any, callBack?: () => void) {

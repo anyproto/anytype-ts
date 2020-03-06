@@ -29,9 +29,13 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId } = this.props;
-		const { breadcrumbs, blocks } = blockStore;
+		const { breadcrumbs } = blockStore;
 		const { account } = authStore;
-		const tree = blockStore.prepareTree(breadcrumbs);
+		
+		const map = blockStore.structureGet(breadcrumbs);
+		const element = map[breadcrumbs] || {};
+		const childrenIds = element.childrenIds || [];
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
@@ -60,7 +64,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
-					{tree.map((item: any, i: any) => (
+					{children.map((item: any, i: any) => (
 						<PathItem key={item.id} {...item} index={i + 1} />
 					))}
 				</div>
@@ -98,10 +102,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onBack (e: any) {
-		const { breadcrumbs, blocks } = blockStore;
-		const tree = blockStore.prepareTree(breadcrumbs);
+		const { breadcrumbs } = blockStore;
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
-		C.BlockCutBreadcrumbs(breadcrumbs, (tree.length > 0 ? tree.length - 1 : 0), (message: any) => {
+		C.BlockCutBreadcrumbs(breadcrumbs, (children.length > 0 ? children.length - 1 : 0), (message: any) => {
 			this.props.history.goBack();			
 		});
 	};

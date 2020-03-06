@@ -39,5 +39,5 @@ export interface Block {
 	bgColor?: string;
 	content: any;
 	childrenIds: string[];
-	childBlocks?: Block[];
+	childBlocks?: any[];
 };

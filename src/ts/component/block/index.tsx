@@ -16,7 +16,7 @@ import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
 
-interface Props extends I.Block, RouteComponentProps<any> {
+interface Props extends RouteComponentProps<any> {
 	index?: number;
 	rootId: string;
 	dataset?: any;
@@ -63,9 +63,13 @@ class Block extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, cnt, css, index, className, block } = this.props;
-		const { id, childrenIds, type, fields, content, align, bgColor } = block;
+		const { id, type, fields, content, align, bgColor } = block;
 		const { style } = content || {};
 		
+		const map = blockStore.structureGet(rootId);
+		const element = map[id] || {};
+		
+		let childrenIds = element.childrenIds || [];
 		let canSelect = true;
 		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align ];
 		let cd: string[] = [];
@@ -100,7 +104,7 @@ class Block extends React.Component<Props, {}> {
 					};
 				};
 				
-				blockComponent = <BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
+				blockComponent = <BlockText {...this.props} {...block} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
 				break;
 				
 			case I.BlockType.Layout:
@@ -115,7 +119,7 @@ class Block extends React.Component<Props, {}> {
 			
 				canSelect = false;
 				cn.push('blockIcon');
-				blockComponent = <BlockIcon {...this.props} />;
+				blockComponent = <BlockIcon {...this.props} {...block} />;
 				break;
 				
 			case I.BlockType.File:
@@ -123,29 +127,29 @@ class Block extends React.Component<Props, {}> {
 					default: 
 					case I.FileType.File: 
 						cn.push('blockFile');
-						blockComponent = <BlockFile {...this.props} />;
+						blockComponent = <BlockFile {...this.props} {...block} />;
 						break;
 						
 					case I.FileType.Image: 
 						cn.push('blockMedia');
-						blockComponent = <BlockImage {...this.props} />;
+						blockComponent = <BlockImage {...this.props} {...block} />;
 						break;
 						
 					case I.FileType.Video: 
 						cn.push('blockMedia');
-						blockComponent = <BlockVideo {...this.props} />;
+						blockComponent = <BlockVideo {...this.props} {...block} />;
 						break;
 				};
 				break;
 				
 			case I.BlockType.Bookmark:
 				cn.push('blockBookmark');
-				blockComponent = <BlockBookmark {...this.props} />;
+				blockComponent = <BlockBookmark {...this.props} {...block} />;
 				break;
 			
 			case I.BlockType.Dataview:
 				cn.push('blockDataview');
-				blockComponent = <BlockDataview {...this.props} />;
+				blockComponent = <BlockDataview {...this.props} {...block} />;
 				break;
 				
 			case I.BlockType.Div:
@@ -169,33 +173,33 @@ class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.Link:
 				cn.push('blockLink');
-				blockComponent = <BlockLink {...this.props} />;
+				blockComponent = <BlockLink {...this.props} {...block} />;
 				break;
 				
 			case I.BlockType.Cover:
 				canSelect = false;
 				cn.push('blockCover');
-				blockComponent = <BlockCover {...this.props} />;
+				blockComponent = <BlockCover {...this.props} block={block} />;
 				break;
 		};
 		
-		let element = (
+		let object = (
 			<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
 				{blockComponent}
 			</DropTarget>
 		);
 		
 		if (canSelect) {
-			element = (
+			object = (
 				<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
-					{element}
+					{object}
 					<div className="selectionOver" />
 				</div>
 			);
 		} else {
-			element = (
+			object = (
 				<div className="selectable">
-					{element}
+					{object}
 				</div>
 			);
 		};
@@ -207,7 +211,7 @@ class Block extends React.Component<Props, {}> {
 				</div>
 				
 				<div className="wrapContent">
-					{element}
+					{object}
 					
 					{(type == I.BlockType.Layout) && (content.style == I.LayoutStyle.Row) ? (
 						<React.Fragment>
@@ -217,7 +221,7 @@ class Block extends React.Component<Props, {}> {
 					): ''}
 					
 					{empty}
-					{childrenIds.length ? <ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} /> : ''}
+					{childrenIds.length ? <ListChildren {...this.props} block={block} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} /> : ''}
 				</div>
 			</div>
 		);
@@ -228,12 +232,14 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { dataset, id } = this.props;
+		const { dataset} = this.props;
 		const { selection } = dataset || {};
 		
 		if (selection) {
 			selection.set(selection.get());
 		};
+
+		focus.apply();
 	};
 	
 	componentWillUnmount () {
@@ -250,7 +256,8 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onToggleClick (e: any) {
-		const { rootId, id } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
 		const param = {
 			type: I.BlockType.Text
 		};
@@ -266,7 +273,8 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, id, type, content } = this.props;
+		const { dataset, block } = this.props;
+		const { id, type, content } = block;
 		const { selection, onDragStart } = dataset;
 		
 		if (!dataset) {
@@ -299,7 +307,7 @@ class Block extends React.Component<Props, {}> {
 				selection.setPreventClear(true);
 			};
 			
-			onDragStart(e, I.DragItem.Block, ids, this);				
+			onDragStart(e, I.DragItem.Block, ids, this);
 		};
 	};
 	
@@ -312,12 +320,12 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		if (dataset && onDrop) {
-			onDrop(e, type, targetId, position);			
+			onDrop(e, type, targetId, position);
 		};
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset;
 		
 		if (selection) {
@@ -330,7 +338,8 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		
 		commonStore.menuOpen('blockAction', { 
@@ -376,7 +385,8 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, childBlocks } = this.props;
+		const { dataset, block } = this.props;
+		const { childBlocks } = block;
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -409,7 +419,8 @@ class Block extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		const { childBlocks } = this.props;		
+		const { block } = this.props;
+		const { childBlocks } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
 		const prevNode = node.find('#block-' + $.escapeSelector(prevBlock.id));
@@ -431,7 +442,8 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, childBlocks, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { childBlocks } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlock = childBlocks[index - 1];
@@ -456,7 +468,8 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	calcWidth (x: number, index: number) {
-		const { childBlocks } = this.props;
+		const { block } = this.props;
+		const { childBlocks } = block;
 		const prevBlock = childBlocks[index - 1];
 		const currentBlock = childBlocks[index];
 		const dw = 1 / childBlocks.length;
@@ -483,7 +496,8 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId, id, childBlocks, type, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, childBlocks, type, content } = block;
 		const { style } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		

@@ -7,9 +7,10 @@ import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { trace } from 'mobx';
 
-interface Props extends I.Block, RouteComponentProps<any> {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
+	block: any;
 };
 
 interface State {
@@ -47,10 +48,6 @@ class BlockCover extends React.Component<Props, State> {
 	
 	render() {
 		const { isEditing } = this.state;
-		
-		trace(true);
-		console.log('COVER RENDER');
-		console.trace();
 		
 		let elements = null;
 		
@@ -105,8 +102,6 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onMenu (e: any) {
-		const { id } = this.props;
-		
 		commonStore.menuOpen('blockCover', {
 			element: '#button-cover-edit',
 			type: I.MenuType.Vertical,

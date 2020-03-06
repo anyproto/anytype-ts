@@ -27,13 +27,21 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
-		this.getTree = this.getTree.bind(this);
 	};
 	
 	render () {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
 		const { root } = blockStore;
+		const map = blockStore.structureGet(root);
+		const element = map[root] || {};
+		
+		if (!element) {
+			return null;
+		};
+		
+		const { childrenIds } = element;
+		const list = this.getList();
 		
 		return (
 			<div>
@@ -58,8 +66,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
 							onSortEnd={this.onSortEnd}
-							rootId={root}
-							getTree={this.getTree}
 							helperContainer={() => { return $('#documents').get(0); }} 
 						/>
 					</div>
@@ -103,7 +109,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, '', Constant.default.name);
+		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.default.name);
 	};
 	
 	onSortEnd (result: any) {
@@ -113,12 +119,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blocks, root } = blockStore;
-		const list = blocks.get(root);
-		const tree = this.getTree();
-		const current = tree[oldIndex];
-		const target = tree[newIndex];
-		const block = list.find((it: I.Block) => { return it.id == root; });
+		const { root } = blockStore;
+		const list = this.getList();
+		const current = list[oldIndex];
+		const target = list[newIndex];
+		const block = blockStore.treeGet(root);
 		
 		if (!current || !target || !block) {
 			return;
@@ -129,11 +134,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const nidx = block.childrenIds.indexOf(target.id);
 
 		block.childrenIds = arrayMove(block.childrenIds, oidx, nidx);
+		blockStore.blockUpdate(root, block);
+		
 		C.BlockListMove(root, [ current.id ], target.id, position);
 	};
 	
 	resize () {
-		const tree = this.getTree();
+		const list = this.getList();
 		const size = Constant.index.document;
 		const win = $(window);
 		const wh = win.height();
@@ -146,7 +153,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		let width = cnt * (size.width + size.margin);
 		let height = size.height + size.margin;
 		
-		if (tree.length + 1 > cnt) {
+		if (list.length + 1 > cnt) {
 			height *= 2;
 		};
 		
@@ -154,13 +161,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 		documents.css({ marginTop: wh - 134 - height });
 	};
 	
-	getTree () {
-		const { blocks, root } = blockStore;
-
-		let tree = blockStore.prepareTree(root);
-		tree = tree.filter((it: any) => { return !(it.content.fields || {}).isArchived; });
-		
-		return tree;
+	getList () {
+		const { root } = blockStore;
+		return blockStore.getChildren(root, root, (it: any) => {
+			return !(it.content.fields || {}).isArchived;
+		});
 	};
 
 };

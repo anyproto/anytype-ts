@@ -27,8 +27,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { data } = param;
 		const { range } = focus;
 		const { blockId, rootId } = data;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((item: I.Block) => { return item.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return null;
@@ -106,8 +105,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { data } = param;
 		const { range } = focus;
 		const { blockId, blockIds, rootId, onChange, dataset } = data;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((item: I.Block) => { return item.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;

@@ -1,18 +1,19 @@
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { observable, intercept } from 'mobx';
 
 class Block implements I.Block {
 	
+	id: string = '';
+	parentId: string = '';
+	childBlocks: I.Block[] = [];
+	number: number = 0;
+	
+	@observable childrenIds: string[] = [];
 	@observable type: I.BlockType = I.BlockType.Text;
 	@observable align: I.BlockAlign = I.BlockAlign.Left;
 	@observable bgColor: string = '';
 	@observable fields: any = {};
 	@observable content: any = {};
-	@observable childrenIds: string[] = [];
-
-	id: string = '';
-	parentId: string = '';
-	childBlocks: I.Block[] = [];
 	
 	constructor (props: I.Block) {
 		let self = this;
@@ -26,23 +27,11 @@ class Block implements I.Block {
 		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
 		self.childBlocks = props.childBlocks || [];
-
-		const disposer = intercept(self as any, (change: any) => {
-			console.log('Change block', change, 'old', self[name]);
-			console.trace();
+		
+		intercept(self as any, (change: any) => {
+			console.log('Block change', change);
 			return change;
 		});
-	};
-	
-	update (props: any) {
-		let changes: any = {};
-		let self = this as any;
-		
-		for (let p in props) {
-			if (self[p] !== props[p]) {
-				self[p] = props[p];
-			};
-		};
 	};
 	
 	isPage () { 
@@ -51,6 +40,14 @@ class Block implements I.Block {
 	
 	isLayout () {
 		return this.type == I.BlockType.Layout;
+	};
+	
+	isRow () {
+		return (this.type == I.BlockType.Layout) && (this.content.style == I.LayoutStyle.Row);
+	};
+	
+	isColumn () {
+		return (this.type == I.BlockType.Layout) && (this.content.style == I.LayoutStyle.Column);
 	};
 	
 	isLink () {

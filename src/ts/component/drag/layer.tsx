@@ -44,9 +44,6 @@ class DragLayer extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const { blocks } = blockStore;
-		const list = blocks.get(rootId);
-		const map = blockStore.getMap(list);
 		
 		let content = null;
 		switch (type) {
@@ -54,7 +51,7 @@ class DragLayer extends React.Component<Props, State> {
 				content = (
 					<div className="blocks">
 						{ids.map((id: string, i: number) => {
-							const block = map[id] || {};
+							const block = blockStore.getLeaf(rootId, id);
 
 							return <Block key={id} block={block} {...block} rootId={rootId} index={i} />
 						})}

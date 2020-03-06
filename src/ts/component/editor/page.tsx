@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Block, Icon } from 'ts/component';
+import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, Mark, dispatcher, focus, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -15,6 +15,10 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 };
 
+interface State {
+	loading: boolean;
+};
+
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -22,7 +26,7 @@ const raf = require('raf');
 const THROTTLE = 20;
 
 @observer
-class EditorPage extends React.Component<Props, {}> {
+class EditorPage extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	id: string = '';
@@ -33,6 +37,9 @@ class EditorPage extends React.Component<Props, {}> {
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
 	uiBlockHide: boolean = false;
+	state = {
+		loading: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -47,18 +54,22 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { loading } = this.state;
+		if (loading) {
+			return <Loader />;
+		};
+		
 		const { rootId } = this.props;
-		//const map = blockStore.getMap(blockStore.blocksGet(rootId));
-		const root = blockStore.treeGet(rootId);
-		
-		console.log(root);
-		
-		//const root = map[rootId];
+		const root = blockStore.getLeaf(rootId, rootId);
+		const map = blockStore.structureGet(rootId);
+		const element = map[rootId] || {};
+		const { childrenIds } = element;
 		
 		if (!root) {
 			return null;
 		};
 		
+		const list = blockStore.getChildren(rootId, rootId);
 		const withIcon = root.fields.icon;
 		const withCover = true;
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
@@ -84,13 +95,12 @@ class EditorPage extends React.Component<Props, {}> {
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 					
-						{root.childBlocks.map((block: I.Block, i: number) => {
+						{list.map((block: I.Block, i: number) => {
 							return (
 								<Block 
 									key={block.id} 
 									{...this.props}
 									index={i}
-									{...block}
 									block={block}
 									onKeyDown={this.onKeyDownBlock} 
 									onKeyUp={this.onKeyUpBlock}
@@ -132,7 +142,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		ipcRenderer.removeAllListeners('copyDocument');
 		ipcRenderer.on('copyDocument', (e: any) => {
-			const json = JSON.stringify({ blocks: blockStore.blocksGet(rootId) }, null, 5);
+			const json = JSON.stringify({ blocks: blockStore.treeGet(rootId) }, null, 5);
 
 			Util.clipboardCopy({ text: json }, () => {
 				alert('Document copied to clipboard');
@@ -183,14 +193,14 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const list = blockStore.blocksGet(rootId);
-		const tree = blockStore.prepareTree(breadcrumbs);
+		this.setState({ loading: true });
 		
+		let children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		let bc: any[] = [];
 		let lastTargetId = '';
 		
-		if (tree.length) {
-			let last = tree[tree.length - 1];
+		if (children.length) {
+			let last = children[children.length - 1];
 			if (last) {
 				lastTargetId = last.content.targetBlockId;
 			};
@@ -203,11 +213,10 @@ class EditorPage extends React.Component<Props, {}> {
 		this.id = rootId;
 		C.BlockOpen(this.id, bc, (message: any) => {
 			const { rootId } = this.props;
-			const list = blockStore.blocksGet(rootId);
 			const { focused, range } = focus;
-			
-			const focusedBlock = list.find((it: any) => { return it.id == focused; });
-			const title = list.find((it: any) => { return it.isTitle(); });
+
+			const focusedBlock = blockStore.getLeaf(rootId, focused);
+			const title = blockStore.filterBlocks(rootId, (it: any) => { return it.isTitle(); })[0];
 			
 			if (!focusedBlock && title) {
 				let text = String(title.content.text || '');
@@ -221,6 +230,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 			this.resize();
 			window.setTimeout(() => { focus.apply(); }, 1);
+			
+			window.setTimeout(() => {
+				this.setState({ loading: false });
+			}, 300);
 		});
 	};
 	
@@ -287,8 +300,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const list = blockStore.blocksGet(rootId);
-		const root = list.find((it: any) => { return it.id == rootId });
+		const root = blockStore.getLeaf(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
@@ -344,7 +356,7 @@ class EditorPage extends React.Component<Props, {}> {
 			items.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
-				const block = list.find((it: any) => { return it.id == this.hoverId; });
+				const block = blockStore.getLeaf(rootId, this.hoverId);
 				
 				let canAdd = true;
 				if (block) {
@@ -389,8 +401,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const ids = selection.get();
-		const list = blockStore.blocksGet(rootId);
-		const map = blockStore.getMap(list);
+		const map = blockStore.structureGet(rootId);
 		
 		if (e.ctrlKey || e.metaKey) {
 			if (k == Key.a) {
@@ -458,17 +469,14 @@ class EditorPage extends React.Component<Props, {}> {
 		const { dataset, rootId } = this.props;
 		const { focused, range } = focus;
 		const { selection } = dataset;
-		const list = blockStore.blocksGet(rootId);
-		const map = blockStore.getMap(list);
 		
-		const block = map[focused];
+		const block = blockStore.getLeaf(rootId, focused);
 		if (!block) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const root = map[rootId];
-		const index = list.findIndex((item: I.Block) => { return item.id == focused; });
+		const root = blockStore.treeGet(rootId);
 		const { type, content } = block;
 
 		let length = String(text || '').length;
@@ -649,8 +657,7 @@ class EditorPage extends React.Component<Props, {}> {
 					next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => { return item.isText(); });
 					
 					if (next) {
-						const mapped = map[next.id];
-						const parent = map[mapped.parentId];
+						const parent = blockStore.getLeaf(rootId, next.parentId);
 						const l = String(next.content.text || '').length;
 						
 						// Auto-open toggle blocks 
@@ -679,7 +686,7 @@ class EditorPage extends React.Component<Props, {}> {
 		if (k == Key.tab) {
 			e.preventDefault();
 			
-			const parent = list.find((it: any) => { return it.id == block.parentId; });
+			const parent = blockStore.getLeaf(rootId, block.parentId);
 			const next = blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = e.shiftKey ? parent : next;
 			const canTab = obj && !obj.isTitle() && !obj.isLayout() && !obj.isPage() && !block.isTitle();
@@ -696,6 +703,7 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 			
 			e.preventDefault();
+			console.log(JSON.stringify(block, null, 3));
 			
 			if ((range.from == length) && (range.to == length)) {
 				let param: any = {
@@ -729,23 +737,20 @@ class EditorPage extends React.Component<Props, {}> {
 	selectAll () {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
-		const list = blockStore.blocksGet(rootId);
-		const map = blockStore.getMap(list);
-		
-		// Filter layout blocks from selection
-		// Filter anything except page and layouts from parents
-		const ids = list.map((it: I.Block) => {
-			let item = map[it.id];
-			if (!item.parentId || item.isLayout()) {
-				return '';
+		const map = blockStore.structureGet(rootId);
+		const ids = blockStore.filterBlocks(rootId, (it: any) => {
+			if (it.isLayout()) {
+				return false;
 			};
 			
-			let parent = map[item.parentId];
+			let element = map[it.id];
+			let parent = blockStore.getLeaf(rootId, element.parentId);
 			if (!parent || (!parent.isPage() && !parent.isLayout())) {
-				return '';
+				return false;
 			};
-			return it.id;
-		}).filter((it: string) => { return it; });
+			
+			return true;
+		}).map((it: any) => { return it.id; });
 		
 		selection.set(ids);
 		keyboard.setFocus(false);
@@ -759,8 +764,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const { rootId } = this.props;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((item: I.Block) => { return item.id == this.hoverId; });
+		const block = blockStore.getLeaf(rootId, this.hoverId);
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!block || (block.isTitle() && (this.hoverPosition != I.BlockPosition.Bottom)) || block.isLayout() || block.isIcon()) {
@@ -780,9 +784,7 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	onMenuAdd (id: string) {
 		const { rootId } = this.props;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((item: I.Block) => { return item.id == id; });
-		
+		const block = blockStore.getLeaf(rootId, id);
 		if (!block) {
 			return;
 		};
@@ -805,7 +807,7 @@ class EditorPage extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
 				const { filter } = commonStore;
-				const block = list.find((item: I.Block) => { return item.id == id; });
+				const block = blockStore.getLeaf(rootId, id);;
 
 				// Clear filter in block text on close
 				if (block && ('/' + filter == block.content.text)) {
@@ -901,23 +903,21 @@ class EditorPage extends React.Component<Props, {}> {
 	onCopy (e: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
-		const list = blockStore.blocksGet(rootId);
 		const ids = selection.get(true);
 
 		if (!ids.length) {
 			return;
 		};
 		
-		const root = list.find((it: any) => { return it.id == rootId; });
+		const root = blockStore.getLeaf(rootId, rootId);
 		
 		let text: any = [];
 		let ret: any[] = [ root ];
 		
-		ret = ret.concat(ids.map((id: any) => {
-			return list.find((el: I.Block) => { return el.id == id; });
+		ret = ret.concat(blockStore.filterBlocks(rootId, (it: any) => {
+			return ids.indexOf(it.id) >= 0;
 		}));
 		ret = ret.concat(this.getCopyLayoutBlockList(ids));
-		ret = blockStore.unwrapTree(blockStore.prepareTree(rootId));
 		
 		for (let block of ret) {
 			if (block.type  == I.BlockType.Text) {
@@ -935,37 +935,35 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	// Recursevily get parent layout blocks
 	getCopyLayoutBlockList (ids: string[]) {
-		const { rootId } = this.props;
-		
-		let list = blockStore.blocksGet(rootId);
 		if (!ids.length) {
 			return [];
 		};
 		
+		const { rootId } = this.props;
+		const map = blockStore.structureGet(rootId);
+		
 		let ret: any[] = [];
 		for (let id of ids) {
-			let block = list.find((el: I.Block) => { 
-				return (el.childrenIds.indexOf(id) >= 0) && (el.type == I.BlockType.Layout); 
-			});
+			let element = map[id];
+			let parent = blockStore.getLeaf(rootId, element.parentId);
 			
-			if (!block) {
+			if (!parent.isLayout()) {
 				continue;
 			};
 			
-			ret.push(block);
-			if (block.content.style == I.LayoutStyle.Column) {
-				ret = ret.concat(this.getCopyLayoutBlockList([ block.id ]));
+			ret.push(parent);
+			
+			if (parent.isColumn()) {
+				ret = ret.concat(this.getCopyLayoutBlockList([ parent.id ]));
 			};
 		};
 		
-		ret = Util.arrayValues(DataUtil.unique(list, 'id'));
 		return ret;
 	};
 	
 	onPaste (e: any) {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const { dataset, rootId } = this.props;
-		const list = blockStore.blocksGet(rootId);
 		const { selection } = dataset;
 		const { focused, range } = focus;
 		const data: any = {
@@ -981,7 +979,7 @@ class EditorPage extends React.Component<Props, {}> {
 		C.BlockPaste(rootId, focused, range, selection.get(true), data, (message: any) => {
 			if (message.blockIds && message.blockIds.length) {
 				const lastId = message.blockIds[message.blockIds.length - 1];
-				const block = list.find((it: any) => { return it.id == lastId; });
+				const block = blockStore.getLeaf(rootId, lastId);
 				const length = String(block.content.text || '').length;
 				
 				id = block.id;
@@ -1081,8 +1079,8 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	onLastClick (e: any) {
 		const { rootId } = this.props;
-		const tree = blockStore.prepareTree(rootId);
-		const last = tree[tree.length - 1];
+		const children = blockStore.getChildren(rootId, rootId);
+		const last = children[children.length - 1];
 		
 		let create = false;
 		let length = 0;

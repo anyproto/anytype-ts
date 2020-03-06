@@ -73,8 +73,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((it: I.Block) => { return it.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 		return block ? block.content.style : 0;
 	};
 	

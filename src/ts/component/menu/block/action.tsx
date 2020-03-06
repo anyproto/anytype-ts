@@ -43,8 +43,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((item: I.Block) => { return item.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return null;
@@ -165,8 +164,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((item: I.Block) => { return item.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return [];
@@ -331,8 +329,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { onSelect, blockId, blockIds, rootId, dataset } = data;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((it: I.Block) => { return it.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return;
@@ -460,8 +457,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const { root } = blockStore;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((it: I.Block) => { return it.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return;
@@ -494,7 +490,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				C.BlockListDuplicate(rootId, blockIds, blockIds[blockIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
 					if (message.blockIds && message.blockIds.length) {
 						const lastId = message.blockIds[message.blockIds.length - 1];
-						const last = list.find((it: I.Block) => { return it.id == lastId; });
+						const last = blockStore.getLeaf(rootId, lastId);
 						
 						if (last) {
 							const length = String(last.content.text || '').length;

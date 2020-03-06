@@ -141,7 +141,7 @@ class BlockText extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { content } = this.props;
 		
-		this.marks = Util.objectCopy(content.marks);
+		this.marks = Util.objectCopy(content.marks || []);
 		this._isMounted = true;
 		this.setValue();
 	};
@@ -149,7 +149,7 @@ class BlockText extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		const { content } = this.props;
 		
-		this.marks = Util.objectCopy(content.marks);
+		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue();
 	};
 	
@@ -264,7 +264,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { onKeyDown, onMenuAdd, id, parentId, rootId, content } = this.props;
+		const { onKeyDown, onMenuAdd, rootId, id, parentId, content } = this.props;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -275,7 +275,6 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blocks } = blockStore;
 		const { style } = content;
 		const range = this.getRange();
 		const k = e.which;
@@ -457,10 +456,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setText (marks: I.Mark[]) {
 		const { id, rootId, content } = this.props;
-		const { blocks } = blockStore;
 		const value = this.getValue();
 		const text = String(content.text || '');
-		const list = blocks.get(rootId);
 		
 		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
 			return;
@@ -470,16 +467,14 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		const block = list.find((it: any) => { return it.id == id; });
+		const block = blockStore.getLeaf(rootId, id);
 		DataUtil.blockSetText(rootId, block, value, marks);
 	};
 	
 	setMarks (marks: I.Mark[]) {
 		const { id, rootId, content } = this.props;
-		const { blocks } = blockStore;
 		const text = String(content.text || '');
-		const list = blocks.get(rootId);
-		const block = list.find((it: any) => { return it.id == id; });
+		const block = blockStore.getLeaf(rootId, id);
 		
 		if (content.style == I.TextStyle.Code) {
 			marks = [];

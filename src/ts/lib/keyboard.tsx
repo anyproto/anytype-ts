@@ -28,8 +28,6 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const { blocks, root } = blockStore;
-		
 		let k = e.which;
 		
 		if (!this.focus) {

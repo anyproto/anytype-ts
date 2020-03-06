@@ -27,16 +27,15 @@ class PopupTree extends React.Component<Props, {}> {
 		const { param, } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
-		const { blocks } = blockStore;
 		const { account } = authStore;
-		const tree = blockStore.prepareTree(rootId); 
+		const tree = blockStore.wrapTree(rootId); 
 		
 		const home = { 
 			id: 'root', 
 			content: { 
 				fields: { name: account.name || 'Home' } 
 			}, 
-			childBlocks: tree 
+			childBlocks: tree.childBlocks,
 		};
 		const items = [ home ];
 		const titles: any = {
@@ -133,8 +132,7 @@ class PopupTree extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		const { data } = param;
 		const { onConfirm } = data;
-		const list = blockStore.blocksGet(root);
-		const block = list.find((it: any) => { return it.id == this.id; });
+		const block = blockStore.getLeaf(root, this.id);
 		
 		if (!block) {
 			return;

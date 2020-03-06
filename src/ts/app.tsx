@@ -112,6 +112,12 @@ enableLogging({
 	compute: true,
 });
 
+declare global {
+	interface Window { getStore: any; }
+};
+
+window.getStore = () => { return rootStore; };
+
 class App extends React.Component<Props, State> {
 	
 	state = {

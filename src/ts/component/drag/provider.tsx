@@ -46,16 +46,14 @@ class DragProvider extends React.Component<Props, {}> {
 	onDragStart (e: any, type: string, ids: string[], component: any) {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
-		const { blocks } = blockStore;
 		const win = $(window);
-		const list = blocks.get(rootId);
 		
 		e.stopPropagation();
 		focus.clear(true);
 		
 		console.log('[onDragStart]', type, ids);
 		
-		this.map = blockStore.getMap(list);
+		this.map = blockStore.structureGet(rootId);
 		this.set(type, ids);
 		this.refLayer.show(type, this.ids, component);
 		this.unbind();
@@ -103,21 +101,18 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
-		const { blocks, root } = blockStore;
-		const list = blocks.get(rootId);
-		const target = list.find((it: any) => { return it.id == targetId; });
-		const map = blockStore.getMap(list);
+		const target = blockStore.getLeaf(rootId, targetId);
 		
 		if (!target) {
 			return;
 		};
 		
-		const t = map[targetId];
+		const t = this.map[targetId];
 		if (!t) {
 			return;
 		};
 		
-		const parent = map[t.parentId];
+		const parent = blockStore.getLeaf(rootId, t.parentId);
 		
 		if ((type == I.DragItem.Menu) && target.isLink()) {
 			targetId = target.content.targetBlockId;

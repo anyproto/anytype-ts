@@ -104,8 +104,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((item: I.Block) => { return item.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return [];
@@ -149,16 +148,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, blockIds, linkPage, linkId, rootId, onSelect, match } = data;
 		const { root, breadcrumbs } = blockStore;
-		const list = blockStore.blocksGet(rootId);
-		const block = list.find((it: I.Block) => { return it.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return;
 		};
 		
 		const length = String(block.content.text || '').length;
-		const tree = blockStore.prepareTree(breadcrumbs);
-		const prev = tree[tree.length - 2];
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const prev = children[children.length - 2];
 		
 		let close = true;
 		
@@ -210,7 +208,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archive':
 				C.BlockSetPageIsArchived(rootId, blockId, true, (message: any) => {
-					C.BlockCutBreadcrumbs(breadcrumbs, (tree.length > 0 ? tree.length - 1 : 0), (message: any) => {
+					C.BlockCutBreadcrumbs(breadcrumbs, (children.length > 0 ? children.length - 1 : 0), (message: any) => {
 						if (prev) {
 							history.push('/main/edit/' + prev.content.targetBlockId + '/link/' + prev.id);
 						} else {
