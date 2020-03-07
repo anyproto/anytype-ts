@@ -106,9 +106,6 @@ class BlockStore {
 		let blocks = this.blockObject.get(rootId) || [];
 		let map = this.treeObject.get(rootId) || {};
 		
-		let element = map[id] || {};
-		let parent = map[element.parentId] || {};
-		
 		blocks = blocks.filter((it: any) => { return it.id != id; });
 		delete(map[id]);
 	};
@@ -122,7 +119,7 @@ class BlockStore {
 		return blocks.find((it: any) => { return it.id == id; });
 	};
 	
-	filterBlocks (rootId: string, filter?: (it: any) => boolean) {
+	getBlocks (rootId: string, filter?: (it: any) => boolean) {
 		let blocks = this.blockObject.get(rootId) || [];
 		return blocks.filter((it: any) => {
 			if (filter) {
@@ -152,7 +149,7 @@ class BlockStore {
 		return childBlocks;
 	};
 	
-	// If check is present find next block if check passes or continue to next block in "dir" direction, else just return next block; 
+	// If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block; 
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
 			let root = this.wrapTree(rootId);
@@ -203,10 +200,11 @@ class BlockStore {
 		let cb = (list: any[]) => {
 			let n = 0;
 			for (let item of list) {
-				n = item.isNumbered() ? n + 1 : 0;
-				
 				if (item.isNumbered()) {
+					n++;
 					$('.markerInner.c' + $.escapeSelector(item.id)).text(n ? n + '.' : '');
+				} else {
+					n = 0;
 				};
 				
 				cb(item.childBlocks);

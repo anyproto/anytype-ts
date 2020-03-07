@@ -210,7 +210,7 @@ class EditorPage extends React.Component<Props, State> {
 			const { focused, range } = focus;
 
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
-			const title = blockStore.filterBlocks(rootId, (it: any) => { return it.isTitle(); })[0];
+			const title = blockStore.getBlocks(rootId, (it: any) => { return it.isTitle(); })[0];
 			
 			if (!focusedBlock && title) {
 				let text = String(title.content.text || '');
@@ -738,7 +738,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
 		const map = blockStore.getMap(rootId);
-		const ids = blockStore.filterBlocks(rootId, (it: any) => {
+		const ids = blockStore.getBlocks(rootId, (it: any) => {
 			if (it.isLayout()) {
 				return false;
 			};
@@ -914,7 +914,7 @@ class EditorPage extends React.Component<Props, State> {
 		let text: any = [];
 		let ret: any[] = [ root ];
 		
-		ret = ret.concat(blockStore.filterBlocks(rootId, (it: any) => {
+		ret = ret.concat(blockStore.getBlocks(rootId, (it: any) => {
 			return ids.indexOf(it.id) >= 0;
 		}));
 		ret = ret.concat(this.getCopyLayoutBlockList(ids));

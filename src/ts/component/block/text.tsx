@@ -7,9 +7,10 @@ import { getRange } from 'selection-ranges';
 import { commonStore, blockStore } from 'ts/store';
 import 'highlight.js/styles/github.css';
 
-interface Props extends I.BlockText {
+interface Props {
 	rootId: string;
 	dataset?: any;
+	block: any;
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
@@ -51,7 +52,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, fields, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, fields, content } = block;
 		const { text, marks, style, checked, color, bgColor } = content;
 		
 		let markers: any[] = [];
@@ -145,7 +147,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block
 		
 		this.marks = Util.objectCopy(content.marks || []);
 		this._isMounted = true;
@@ -153,7 +156,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { id, content } = this.props;
+		const { block } = this.props;
+		const { id, content } = block
 		const { focused } = focus;
 		
 		this.marks = Util.objectCopy(content.marks || []);
@@ -170,7 +174,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	setValue (v?: string) {
-		const { id, rootId, fields, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, fields, content } = block
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
@@ -275,7 +280,9 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { onKeyDown, onMenuAdd, rootId, id, parentId, content } = this.props;
+		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
+		const { id, content } = block;
+		const { style } = content;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -286,7 +293,6 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { style } = content;
 		const range = this.getRange();
 		const k = e.which;
 		const value = this.getValue();
@@ -322,7 +328,8 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { onKeyUp, id, rootId, content } = this.props;
+		const { onKeyUp, rootId, block } = this.props;
+		const { id, content } = block;
 		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
@@ -466,7 +473,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	setText (marks: I.Mark[]) {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const value = this.getValue();
 		const text = String(content.text || '');
 		
@@ -478,14 +486,13 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		const block = blockStore.getLeaf(rootId, id);
 		DataUtil.blockSetText(rootId, block, value, marks);
 	};
 	
 	setMarks (marks: I.Mark[]) {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const text = String(content.text || '');
-		const block = blockStore.getLeaf(rootId, id);
 		
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
@@ -508,7 +515,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		const { onBlur, content } = this.props;
+		const { onBlur } = this.props;
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.setText(this.marks);
@@ -519,7 +526,6 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onPaste (e: any) {
 		const { onPaste } = this.props;
-
 		onPaste(e);
 	};
 	
@@ -528,7 +534,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onCheck (e: any) {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { checked } = content;
 		
 		focus.clear(true);
@@ -536,7 +543,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onLang (v: string) {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const l = String(content.text || '').length;
 		
 		C.BlockListSetFields(rootId, [
@@ -548,7 +556,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { id, rootId, content, dataset } = this.props;
+		const { rootId, dataset, block } = this.props;
+		const { id, content } = block;
 		const { from, to } = focus.range;
 		const { style } = content;
 		

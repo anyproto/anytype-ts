@@ -106,7 +106,7 @@ class Block extends React.Component<Props, {}> {
 					};
 				};
 				
-				blockComponent = <BlockText {...this.props} {...block} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
+				blockComponent = <BlockText {...this.props} block={block} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
 				break;
 				
 			case I.BlockType.Layout:

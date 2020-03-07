@@ -46,7 +46,7 @@ class Controls extends React.Component<Props, {}> {
 	
 	onAddIcon (e: any) {
 		const { rootId } = this.props;
-		const block = blockStore.filterBlocks(rootId, (it: any) => { return it.isIcon(); })[0];
+		const block = blockStore.getBlocks(rootId, (it: any) => { return it.isIcon(); })[0];
 		
 		commonStore.menuOpen('smile', { 
 			element: '#button-add-icon',
