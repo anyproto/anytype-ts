@@ -46,11 +46,7 @@ class BlockStore {
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
 		blocks = blocks.map((it: any) => { return new M.Block(it); });
-		
 		let map = this.getStructure(blocks);
-		for (let id in map) {
-			map[id] = observable(map[id]);
-		};
 		
 		this.blockObject.set(rootId, blocks);
 		this.treeObject.set(rootId, map);
@@ -60,10 +56,6 @@ class BlockStore {
 	blocksClear (rootId: string) {
 		this.blockObject.delete(rootId);
 		this.treeObject.delete(rootId);
-	};
-	
-	structureGet (rootId: string) {
-		return this.treeObject.get(rootId) || {};
 	};
 	
 	@action
@@ -119,6 +111,10 @@ class BlockStore {
 		
 		blocks = blocks.filter((it: any) => { return it.id != id; });
 		delete(map[id]);
+	};
+	
+	getMap (rootId: string) {
+		return this.treeObject.get(rootId) || {};
 	};
 	
 	getLeaf (rootId: string, id: string): any {
@@ -208,7 +204,10 @@ class BlockStore {
 			let n = 0;
 			for (let item of list) {
 				n = item.isNumbered() ? n + 1 : 0;
-				$('.markerInner.c' + $.escapeSelector(item.id)).text(n ? n + '.' : '');
+				
+				if (item.isNumbered()) {
+					$('.markerInner.c' + $.escapeSelector(item.id)).text(n ? n + '.' : '');
+				};
 				
 				cb(item.childBlocks);
 			};

@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, keyboard, focus } from 'ts/lib';
 import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
+import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
 
 import BlockDataview from './dataview';
@@ -35,6 +36,7 @@ const Constant = require('json/constant.json');
 const THROTTLE = 20;
 const SNAP = 0.02;
 
+@observer
 class Block extends React.Component<Props, {}> {
 
 	public static defaultProps = {
@@ -64,9 +66,9 @@ class Block extends React.Component<Props, {}> {
 	render () {
 		const { rootId, cnt, css, index, className, block } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
-		const { style } = content || {};
+		const { style, checked } = content || {};
 		
-		const map = blockStore.structureGet(rootId);
+		const map = blockStore.getMap(rootId);
 		const element = map[id] || {};
 		
 		let childrenIds = element.childrenIds || [];
@@ -86,17 +88,17 @@ class Block extends React.Component<Props, {}> {
 		
 		switch (type) {
 			case I.BlockType.Text:
-				cn.push('blockText ' + DataUtil.styleClassText(content.style));
+				cn.push('blockText ' + DataUtil.styleClassText(style));
 				
-				if (content.checked) {
+				if (checked) {
 					cn.push('isChecked');
 				};
 				
-				if (content.style == I.TextStyle.Title) {
+				if (style == I.TextStyle.Title) {
 					canSelect = false;
 				};
 				
-				if (content.style == I.TextStyle.Toggle) {
+				if (style == I.TextStyle.Toggle) {
 					if (!childrenIds.length) {
 						empty = (
 							<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>

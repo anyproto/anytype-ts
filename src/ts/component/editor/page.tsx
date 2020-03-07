@@ -61,7 +61,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const map = blockStore.structureGet(rootId);
+		const map = blockStore.getMap(rootId);
 		const element = map[rootId] || {};
 		const { childrenIds } = element;
 		
@@ -397,7 +397,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const ids = selection.get();
-		const map = blockStore.structureGet(rootId);
+		const map = blockStore.getMap(rootId);
 		
 		if (e.ctrlKey || e.metaKey) {
 			if (k == Key.a) {
@@ -473,7 +473,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const map = blockStore.structureGet(rootId);
+		const map = blockStore.getMap(rootId);
 		const { type, content } = block;
 
 		let length = String(text || '').length;
@@ -737,7 +737,7 @@ class EditorPage extends React.Component<Props, State> {
 	selectAll () {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
-		const map = blockStore.structureGet(rootId);
+		const map = blockStore.getMap(rootId);
 		const ids = blockStore.filterBlocks(rootId, (it: any) => {
 			if (it.isLayout()) {
 				return false;
@@ -940,7 +940,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const map = blockStore.structureGet(rootId);
+		const map = blockStore.getMap(rootId);
 		
 		let ret: any[] = [];
 		for (let id of ids) {

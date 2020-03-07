@@ -93,11 +93,11 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 				
 			case I.TextStyle.Toggle:
-				markers.push({ type: 0, className: 'toggle', active: false, onClick: this.onToggle });
+				markers.push({ type: I.TextStyle.Toggle, className: 'toggle', active: false, onClick: this.onToggle });
 				break;
 				
 			case I.TextStyle.Checkbox:
-				markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
+				markers.push({ type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheck });
 				break;
 		};
 		

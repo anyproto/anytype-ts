@@ -53,7 +53,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		console.log('[onDragStart]', type, ids);
 		
-		this.map = blockStore.structureGet(rootId);
+		this.map = blockStore.getMap(rootId);
 		this.set(type, ids);
 		this.refLayer.show(type, this.ids, component);
 		this.unbind();

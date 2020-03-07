@@ -29,7 +29,7 @@ class PopupArchive extends React.Component<Props, State> {
 		};
 		
 		const { archive } = blockStore;
-		const map = blockStore.structureGet(archive);
+		const map = blockStore.getMap(archive);
 		const element = map[archive] || {};
 		
 		if (!element) {

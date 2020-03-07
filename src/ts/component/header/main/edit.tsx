@@ -32,7 +32,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { breadcrumbs } = blockStore;
 		const { account } = authStore;
 		
-		const map = blockStore.structureGet(breadcrumbs);
+		const map = blockStore.getMap(breadcrumbs);
 		const element = map[breadcrumbs] || {};
 		const childrenIds = element.childrenIds || [];
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);

@@ -23,7 +23,7 @@ class ListChildren extends React.Component<Props, {}> {
 		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block } = this.props;
 		const { id, type, content } = block;
 		const { style } = content;
-		const map = blockStore.structureGet(rootId);
+		const map = blockStore.getMap(rootId);
 		const element = map[id] || {};
 		const children = blockStore.getChildren(rootId, id);
 		const length = children.length;

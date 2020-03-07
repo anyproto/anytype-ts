@@ -27,7 +27,7 @@ class ListIndex extends React.Component<Props, {}> {
 	render () {
 		const { onSelect, onAdd, helperContainer } = this.props;
 		const { root } = blockStore;
-		const map = blockStore.structureGet(root);
+		const map = blockStore.getMap(root);
 		const element = map[root] || {};
 		
 		if (!element) {

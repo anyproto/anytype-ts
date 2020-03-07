@@ -33,7 +33,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
 		const { root } = blockStore;
-		const map = blockStore.structureGet(root);
+		const map = blockStore.getMap(root);
 		const element = map[root] || {};
 		
 		if (!element) {
@@ -123,7 +123,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const list = this.getList();
 		const current = list[oldIndex];
 		const target = list[newIndex];
-		const map = blockStore.structureGet(root);
+		const map = blockStore.getMap(root);
 		const element = map[root];
 		
 		if (!current || !target || !element) {
