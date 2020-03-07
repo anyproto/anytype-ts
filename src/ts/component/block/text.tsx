@@ -52,7 +52,7 @@ class BlockText extends React.Component<Props, {}> {
 
 	render () {
 		const { id, rootId, fields, content } = this.props;
-		const { text, marks, style, checked, number, color, bgColor } = content;
+		const { text, marks, style, checked, color, bgColor } = content;
 		
 		let markers: any[] = [];
 		let placeHolder = Constant.placeHolder.default;
@@ -101,11 +101,17 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 		};
 		
-		const Marker = (item: any) => (
-			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				<span className={ct.join(' ')}>{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}</span>
-			</div>
-		);
+		const Marker = (item: any) => {
+			let cm = [ 'marker', item.className, (item.active ? 'active' : '') ].join(' ');
+			let ci = [ 'markerInner', 'c' + id ].concat(ct).join(' ');
+			let inner: any = item.type == I.TextStyle.Numbered ? '' : <Icon />;
+			
+			return (
+				<div className={cm} onClick={item.onClick}>
+					<span className={ci}>{inner}</span>
+				</div>
+			);
+		};
 		
 		const editor = (
 			<div
@@ -147,10 +153,15 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { content } = this.props;
+		const { id, content } = this.props;
+		const { focused } = focus;
 		
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue();
+		
+		if (focused == id) {
+			focus.apply();
+		};
 	};
 	
 	componentWillUnmount () {

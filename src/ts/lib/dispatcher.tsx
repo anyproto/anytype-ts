@@ -331,6 +331,8 @@ class Dispatcher {
 					break;
 			};
 		};
+		
+		blockStore.setNumbers(rootId);
 	};
 	
 	call (type: string, data: any, callBack?: (message: any) => void) {

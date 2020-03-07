@@ -28,6 +28,10 @@ class ListChildren extends React.Component<Props, {}> {
 		const children = blockStore.getChildren(rootId, id);
 		const length = children.length;
 		
+		if (!length) {
+			return null;
+		};
+		
 		let childrenIds = element.childrenIds || [];
 		let ColResize: any = (): any => null;
 		let cn = [ 'children', 'c' + id ];

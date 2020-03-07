@@ -3,6 +3,7 @@ import { I, M, Util, StructDecode, StructEncode } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -81,7 +82,10 @@ class BlockStore {
 		});
 		
 		intercept(map[block.id] as any, (change: any) => {
-			console.log('Stucture change', change);
+			if (change.newValue === map[block.id][change.name]) {
+				return null;
+			};
+			console.log('Stucture change', change, map[block.id][change.name]);
 			return change;
 		});
 	};
@@ -92,6 +96,7 @@ class BlockStore {
 		let element = blocks.find((it: any) => { return it.id == block.id; });
 		
 		Object.assign(element, block);
+		this.setNumbers(rootId);
 	};
 	
 	@action
@@ -197,27 +202,31 @@ class BlockStore {
 		};
 	};
 	
-	setNumbers (list: I.Block[]) {
-		list = list || [];
-		
-		let n = 0;
-		for (let item of list) {
-			n = (item.type == I.BlockType.Text && item.content.style == I.TextStyle.Numbered) ? n + 1 : 0;
-			item.content.number = n;
-			
-			this.setNumbers(item.childBlocks);
+	setNumbers (rootId: string) {
+		let root = this.wrapTree(rootId);
+		let cb = (list: any[]) => {
+			let n = 0;
+			for (let item of list) {
+				n = item.isNumbered() ? n + 1 : 0;
+				$('.markerInner.c' + $.escapeSelector(item.id)).text(n ? n + '.' : '');
+				
+				cb(item.childBlocks);
+			};
 		};
+		cb(root.childBlocks);
 	};
 	
 	getStructure (list: I.Block[]) {
 		list = Util.objectCopy(list || []);
 		
 		let map: any = {};
+		
 		list.map((item: any) => {
-			map[item.id] = { 
-				id: item.id, 
-				childrenIds: item.childrenIds 
-			};
+			map[item.id] = observable({ 
+				id: item.id,
+				parentId: '',
+				childrenIds: item.childrenIds || [],
+			});
 		});
 		
 		for (let id in map) {
@@ -228,12 +237,6 @@ class BlockStore {
 		};
 		
 		return map;
-	};
-	
-	prepareTree (rootId: string) {
-		let children = this.getChildren(rootId, rootId);
-		this.setNumbers(children);
-		return children;
 	};
 	
 	wrapTree (rootId: string) {
@@ -249,8 +252,8 @@ class BlockStore {
 		return ret[rootId];
 	};
 	
-	unwrapTree (tree: I.Block[]) {
-		tree = tree || [] as I.Block[];
+	unwrapTree (tree: any[]): any[] {
+		tree = tree || [];
 		
 		let ret = [] as I.Block[];
 		for (let item of tree) {

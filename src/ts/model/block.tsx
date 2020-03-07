@@ -6,7 +6,6 @@ class Block implements I.Block {
 	id: string = '';
 	parentId: string = '';
 	childBlocks: I.Block[] = [];
-	number: number = 0;
 	
 	@observable childrenIds: string[] = [];
 	@observable type: I.BlockType = I.BlockType.Text;
@@ -29,7 +28,10 @@ class Block implements I.Block {
 		self.childBlocks = props.childBlocks || [];
 		
 		intercept(self as any, (change: any) => {
-			console.log('Block change', change);
+			if (change.newValue === self[change.name]) {
+				return null;
+			};
+			console.log('Block change', change, self[change.name]);
 			return change;
 		});
 	};
@@ -68,6 +70,10 @@ class Block implements I.Block {
 	
 	isToggle () {
 		return this.isText() && (this.content.style == I.TextStyle.Toggle);
+	};
+	
+	isNumbered () {
+		return this.isText() && (this.content.style == I.TextStyle.Numbered);
 	};
 };
 

@@ -207,7 +207,6 @@ class EditorPage extends React.Component<Props, State> {
 		this.close(this.id);
 		this.id = rootId;
 		C.BlockOpen(this.id, bc, (message: any) => {
-			const { rootId } = this.props;
 			const { focused, range } = focus;
 
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
@@ -228,6 +227,8 @@ class EditorPage extends React.Component<Props, State> {
 			
 			window.setTimeout(() => {
 				this.setState({ loading: false });
+				
+				blockStore.setNumbers(rootId);
 			}, 300);
 		});
 	};
