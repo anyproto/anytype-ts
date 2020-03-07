@@ -5,10 +5,10 @@ import { I, C, DataUtil, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockFile {
+interface Props {
 	dataset?: any;
-	width?: any;
 	rootId: string;
+	block: any;
 };
 
 const $ = require('jquery');
@@ -34,7 +34,8 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { content, fields, id } = this.props;
+		const { block } = this.props;
+		const { id, fields, content } = block;
 		const { width } = fields;
 		const { state } = content;
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
@@ -117,12 +118,16 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onChangeUrl (e: any, url: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, '', path);
 	};
 	
@@ -177,7 +182,8 @@ class BlockImage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -215,7 +221,8 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		
 		if (selection) {
@@ -224,7 +231,8 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onMenuClick (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -247,18 +255,19 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	getUrl () {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		const { state, hash } = content;
 		
 		return commonStore.imageUrl(hash, Constant.size.image);
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {
-		const { id, fields } = this.props;
+		const { block } = this.props;
+		const { id, fields } = block;
 		const el = $('.selectable.c' + $.escapeSelector(id));
 		
-		let { width } = fields;
-		width = Number(width) || 1;
+		let width = Number(fields.width) || 1;
 		
 		if (!el.length) {
 			return width;

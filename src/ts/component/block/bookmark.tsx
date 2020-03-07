@@ -5,8 +5,9 @@ import { I, C } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockBookmark {
+interface Props {
 	rootId: string;
+	block: any;
 };
 
 const $ = require('jquery');
@@ -26,7 +27,8 @@ class BlockBookmark extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, content } = this.props;
+		const { block } = this.props;
+		const { id, rootId, content } = block;
 		const { url, title, description, imageHash, faviconHash } = content;
 		
 		let element = null;
@@ -81,14 +83,17 @@ class BlockBookmark extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		const { url } = content;
 		
 		ipcRenderer.send('urlOpen', url);			
 	};
 	
 	onChangeUrl (e: any, url: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockBookmarkFetch(rootId, id, url);
 	};
 	

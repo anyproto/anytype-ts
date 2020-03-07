@@ -5,9 +5,10 @@ import { I, C, DataUtil, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockFile {
+interface Props {
 	dataset?: any;
 	rootId: string;
+	block: any;
 };
 
 const $ = require('jquery');
@@ -32,7 +33,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, fields, content } = this.props;
+		const { block } = this.props;
+		const { id, fields, content } = block;
 		const { state, hash } = content;
 		const accept = [ 'mp4', 'm4v' ];
 		
@@ -118,12 +120,16 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	onChangeUrl (e: any, url: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, '', path);
 	};
 	
@@ -215,7 +221,8 @@ class BlockVideo extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -240,7 +247,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		
 		if (selection) {
@@ -249,7 +257,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	onMenuClick (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -272,7 +281,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {
-		const { id, fields } = this.props;
+		const { block } = this.props;
+		const { id, fields } = block;
 		
 		let { width } = fields;
 		width = Number(width) || 1;
@@ -289,7 +299,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	getHeight (p: number) {
-		const { id } = this.props;
+		const { block } = this.props;
+		const { id } = block;
 		const el = $('.selectable.c' + $.escapeSelector(id));
 		
 		if (!el.length) {

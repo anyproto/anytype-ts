@@ -6,8 +6,9 @@ import { I, C, Util, DataUtil } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Block, RouteComponentProps<any> {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
+	block: any;
 };
 
 const Constant = require('json/constant.json');
@@ -23,7 +24,8 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 
 	render() {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { fields } = content;
 		const { icon, name, isArchived } = fields || {};
 		
@@ -37,7 +39,8 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { content, id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { targetBlockId } = content;
 		
 		if (targetBlockId != rootId) {
@@ -46,7 +49,8 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 	
 	onSelect (icon: string) {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		const { targetBlockId } = content;
 		
 		C.BlockSetIconName(targetBlockId, targetBlockId + '-icon', icon);

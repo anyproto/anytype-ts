@@ -106,7 +106,7 @@ class Block extends React.Component<Props, {}> {
 					};
 				};
 				
-				blockComponent = <BlockText {...this.props} block={block} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
+				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
 				break;
 				
 			case I.BlockType.Layout:
@@ -121,7 +121,7 @@ class Block extends React.Component<Props, {}> {
 			
 				canSelect = false;
 				cn.push('blockIcon');
-				blockComponent = <BlockIcon {...this.props} {...block} />;
+				blockComponent = <BlockIcon {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
@@ -129,24 +129,24 @@ class Block extends React.Component<Props, {}> {
 					default: 
 					case I.FileType.File: 
 						cn.push('blockFile');
-						blockComponent = <BlockFile {...this.props} {...block} />;
+						blockComponent = <BlockFile {...this.props} />;
 						break;
 						
 					case I.FileType.Image: 
 						cn.push('blockMedia');
-						blockComponent = <BlockImage {...this.props} {...block} />;
+						blockComponent = <BlockImage {...this.props} />;
 						break;
 						
 					case I.FileType.Video: 
 						cn.push('blockMedia');
-						blockComponent = <BlockVideo {...this.props} {...block} />;
+						blockComponent = <BlockVideo {...this.props} />;
 						break;
 				};
 				break;
 				
 			case I.BlockType.Bookmark:
 				cn.push('blockBookmark');
-				blockComponent = <BlockBookmark {...this.props} {...block} />;
+				blockComponent = <BlockBookmark {...this.props} />;
 				break;
 			
 			case I.BlockType.Dataview:
@@ -175,7 +175,7 @@ class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.Link:
 				cn.push('blockLink');
-				blockComponent = <BlockLink {...this.props} {...block} />;
+				blockComponent = <BlockLink {...this.props} />;
 				break;
 				
 			case I.BlockType.Cover:

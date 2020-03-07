@@ -4,10 +4,9 @@ import { I, C, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockFile {
-	commonStore?: any;
-	blockStore?: any;
+interface Props {
 	rootId: string;
+	block: any;
 };
 
 const Constant = require('json/constant.json');
@@ -28,7 +27,8 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { state, hash, size, name, mime } = content;
 		
 		let element = null;
@@ -82,17 +82,22 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 	
 	onChangeUrl (e: any, url: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, '', path);
 	};
 	
 	onOpen (e: any) {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		const { hash } = content;
 		const icon = this.getIcon();
 		
@@ -109,12 +114,15 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 	
 	onDownload (e: any) {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
+		
 		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 	};
 	
 	getIcon (): string {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		
 		let icon = '';
 		let t: string[] = [];

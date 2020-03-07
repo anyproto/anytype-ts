@@ -227,7 +227,6 @@ class EditorPage extends React.Component<Props, State> {
 			
 			window.setTimeout(() => {
 				this.setState({ loading: false });
-				
 				blockStore.setNumbers(rootId);
 			}, 300);
 		});
