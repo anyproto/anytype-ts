@@ -35,8 +35,9 @@ class ListChildren extends React.Component<Props, {}> {
 		let childrenIds = element.childrenIds || [];
 		let ColResize: any = (): any => null;
 		let cn = [ 'children', 'c' + id ];
+		let isRow = block.isRow();
 		
-		if (block.isRow()) {
+		if (isRow) {
 			ColResize = (item: any) => (
 				<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={(e: any) => { onResizeStart(e, item.index); }}>
 					<div className="inner">
@@ -56,7 +57,7 @@ class ListChildren extends React.Component<Props, {}> {
 					let css: any = {};
 					let cn = [];
 					
-					if (block.isRow()) {
+					if (isRow) {
 						css.width = (item.fields.width || 1 / length ) * 100 + '%';
 					};
 					

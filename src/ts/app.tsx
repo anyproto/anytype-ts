@@ -104,6 +104,7 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
+/*
 enableLogging({
 	predicate: () => true,
 	action: true,
@@ -111,6 +112,7 @@ enableLogging({
 	transaction: true,
 	compute: true,
 });
+*/
 
 declare global {
 	interface Window { getStore: any; }
