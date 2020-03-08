@@ -10,7 +10,7 @@ import { trace } from 'mobx';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
-	block: any;
+	block: I.Block;
 };
 
 interface State {

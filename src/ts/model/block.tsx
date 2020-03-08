@@ -5,7 +5,6 @@ class Block implements I.Block {
 	
 	id: string = '';
 	parentId: string = '';
-	childBlocks: I.Block[] = [];
 	
 	@observable childrenIds: string[] = [];
 	@observable type: I.BlockType = I.BlockType.Text;
@@ -25,7 +24,6 @@ class Block implements I.Block {
 		self.fields = props.fields || {};
 		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
-		self.childBlocks = props.childBlocks || [];
 		
 		intercept(self as any, (change: any) => {
 			if (change.newValue === self[change.name]) {

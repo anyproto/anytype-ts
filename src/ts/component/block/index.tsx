@@ -148,7 +148,7 @@ class Block extends React.Component<Props, {}> {
 			
 			case I.BlockType.Dataview:
 				cn.push('blockDataview');
-				blockComponent = <BlockDataview {...this.props} {...block} />;
+				blockComponent = <BlockDataview {...this.props} />;
 				break;
 				
 			case I.BlockType.Div:
@@ -212,7 +212,7 @@ class Block extends React.Component<Props, {}> {
 				<div className="wrapContent">
 					{object}
 					
-					{(type == I.BlockType.Layout) && (content.style == I.LayoutStyle.Row) ? (
+					{block.isRow() ? (
 						<React.Fragment>
 							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
 							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
@@ -220,7 +220,7 @@ class Block extends React.Component<Props, {}> {
 					): ''}
 					
 					{empty}
-					<ListChildren {...this.props} block={block} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
+					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 				</div>
 			</div>
 		);
@@ -502,24 +502,26 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		const { rootId, block } = this.props;
-		const { id, childBlocks, type, content } = block;
-		const { style } = content;
+		const { id } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!childBlocks.length || (type != I.BlockType.Layout) || (style != I.LayoutStyle.Row)) {
+		if (!block.isRow()) {
 			return;
 		};
 		
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const length = childrenIds.length;
+		const children = blockStore.getChildren(rootId, id);
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
 		const p = (e.pageX - rect.x) / (Constant.size.editorPage + 50);
 		
 		let c = 0;
 		let num = 0;
 		
-		for (let i in childBlocks) {
-			const child = childBlocks[i];
+		for (let i in children) {
+			const child = children[i];
 			
-			c += child.fields.width || 1 / childBlocks.length;
+			c += child.fields.width || 1 / length;
 			if ((p >= c - 0.1) && (p <= c + 0.1)) {
 				num = Number(i) + 1;
 				break;

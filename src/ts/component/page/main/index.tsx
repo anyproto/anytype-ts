@@ -134,10 +134,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const oidx = element.childrenIds.indexOf(current.id);
 		const nidx = element.childrenIds.indexOf(target.id);
 
-		blockStore.blockUpdateStructure(root, {
-			id: root,
-			childrenIds: arrayMove(element.childrenIds, oidx, nidx),
-		});
+		blockStore.blockUpdateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
 		
 		C.BlockListMove(root, [ current.id ], target.id, position);
 	};

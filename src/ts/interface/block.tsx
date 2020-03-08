@@ -39,5 +39,14 @@ export interface Block {
 	bgColor?: string;
 	content: any;
 	childrenIds: string[];
-	childBlocks?: any[];
+	isPage?(): boolean;
+	isLayout?(): boolean;
+	isRow?(): boolean;
+	isColumn?(): boolean;
+	isLink?(): boolean;
+	isIcon?(): boolean;
+	isText?(): boolean;
+	isTitle?(): boolean;
+	isToggle?(): boolean;
+	isNumbered?(): boolean;
 };

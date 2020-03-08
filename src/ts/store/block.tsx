@@ -82,21 +82,21 @@ class BlockStore {
 	};
 	
 	@action
-	blockUpdate (rootId: string, block: any) {
+	blockUpdate (rootId: string, param: any) {
 		let blocks = this.blockObject.get(rootId) || [];
-		let element = blocks.find((it: any) => { return it.id == block.id; });
+		let element = blocks.find((it: any) => { return it.id == param.id; });
 		
-		Object.assign(element, block);
+		Object.assign(element, param);
 		this.setNumbers(rootId);
 	};
 	
 	@action
-	blockUpdateStructure (rootId: string, block: any) {
+	blockUpdateStructure (rootId: string, id: string, childrenIds: string[]) {
 		let map = this.treeObject.get(rootId) || {};
 		
-		set(map[block.id], 'childrenIds', block.childrenIds);
-		block.childrenIds.map((id: string) => {
-			set(map[id], 'parentId', block.id);
+		set(map[id], 'childrenIds', childrenIds);
+		childrenIds.map((it: string) => {
+			set(map[it], 'parentId', id);
 		});
 	};
 	

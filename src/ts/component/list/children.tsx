@@ -21,8 +21,7 @@ class ListChildren extends React.Component<Props, {}> {
 	
 	render () {
 		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block } = this.props;
-		const { id, type, content } = block;
-		const { style } = content;
+		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const children = blockStore.getChildren(rootId, id);
 		const length = childrenIds.length;
@@ -68,7 +67,7 @@ class ListChildren extends React.Component<Props, {}> {
 					
 					return (
 						<React.Fragment key={item.id}>
-							{(i > 0) && (style == I.LayoutStyle.Row) ? <ColResize index={i} /> : ''}
+							{(i > 0) && isRow ? <ColResize index={i} /> : ''}
 							<Block {...this.props} block={item} cnt={length} css={css} className={cn.join(' ')} index={i} />
 						</React.Fragment>
 					);

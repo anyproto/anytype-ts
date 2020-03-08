@@ -137,10 +137,7 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetChildrenIds':
-					blockStore.blockUpdateStructure(rootId, { 
-						id: data.id,
-						childrenIds: data.childrenIds,
-					});
+					blockStore.blockUpdateStructure(rootId, data.id, data.childrenIds);
 					break;
 					
 				case 'blockSetIcon':

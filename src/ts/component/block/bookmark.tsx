@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
-	block: any;
+	block: I.Block;
 };
 
 const $ = require('jquery');
@@ -27,8 +27,8 @@ class BlockBookmark extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block } = this.props;
-		const { id, rootId, content } = block;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { url, title, description, imageHash, faviconHash } = content;
 		
 		let element = null;

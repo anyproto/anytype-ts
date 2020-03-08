@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
-	block: any;
+	block: I.Block;
 };
 
 const Constant = require('json/constant.json');

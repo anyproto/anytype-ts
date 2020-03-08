@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 interface Props {
 	dataset?: any;
 	rootId: string;
-	block: any;
+	block: I.Block;
 };
 
 const $ = require('jquery');

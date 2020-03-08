@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
-	block: any;
+	block: I.Block;
 };
 
 const Constant = require('json/constant.json');

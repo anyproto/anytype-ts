@@ -10,7 +10,7 @@ import 'highlight.js/styles/github.css';
 interface Props {
 	rootId: string;
 	dataset?: any;
-	block: any;
+	block: I.Block;
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
