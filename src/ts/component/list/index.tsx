@@ -27,16 +27,15 @@ class ListIndex extends React.Component<Props, {}> {
 	render () {
 		const { onSelect, onAdd, helperContainer } = this.props;
 		const { root } = blockStore;
-		const map = blockStore.getMap(root);
-		const element = map[root] || {};
+		const element = blockStore.getLeaf(root, root);
 		
 		if (!element) {
 			return null;
 		};
 		
-		let childrenIds = element.childrenIds || [];
-		let length = childrenIds.length;
-		let children = blockStore.getChildren(root, root, (it: any) => {
+		const childrenIds = blockStore.getChildrenIds(root, root);
+		const length = childrenIds.length;
+		const children = blockStore.getChildren(root, root, (it: any) => {
 			return !(it.content.fields || {}).isArchived;
 		});
 		

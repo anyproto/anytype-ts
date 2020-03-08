@@ -32,9 +32,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { breadcrumbs } = blockStore;
 		const { account } = authStore;
 		
-		const map = blockStore.getMap(breadcrumbs);
-		const element = map[breadcrumbs] || {};
-		const childrenIds = element.childrenIds || [];
+		const childrenIds = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
 		const PathItemHome = (item: any) => (

@@ -29,14 +29,14 @@ class PopupArchive extends React.Component<Props, State> {
 		};
 		
 		const { archive } = blockStore;
-		const map = blockStore.getMap(archive);
-		const element = map[archive] || {};
+		const element = blockStore.getLeaf(archive, archive);
 		
 		if (!element) {
 			return null;
 		};
 		
-		const { childrenIds } = element;
+		const childrenIds = blockStore.getChildrenIds(archive, archive);
+		const length = childrenIds.length;
 		const children = blockStore.getChildren(archive, archive);
 		
 		const Item = (item: any) => {

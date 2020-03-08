@@ -33,14 +33,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
 		const { root } = blockStore;
-		const map = blockStore.getMap(root);
-		const element = map[root] || {};
-		
+		const element = blockStore.getLeaf(root, root);
+
 		if (!element) {
 			return null;
 		};
 		
-		const { childrenIds } = element;
+		const childrenIds = blockStore.getChildrenIds(root, root);
+		const length = childrenIds.length;
 		const list = this.getList();
 		
 		return (

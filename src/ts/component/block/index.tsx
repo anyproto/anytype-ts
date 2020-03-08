@@ -67,11 +67,8 @@ class Block extends React.Component<Props, {}> {
 		const { rootId, cnt, css, index, className, block } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 		const { style, checked } = content || {};
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		
-		const map = blockStore.getMap(rootId);
-		const element = map[id] || {};
-		
-		let childrenIds = element.childrenIds || [];
 		let canSelect = true;
 		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align ];
 		let cd: string[] = [];
@@ -387,15 +384,14 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { childBlocks } = block;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const prevBlock = childBlocks[index - 1];
-		const currentBlock = childBlocks[index];
-		
-		const offset = node.find('#block-' + $.escapeSelector(prevBlock.id)).offset().left + Constant.size.blockMenu;
+		const prevBlockId = childrenIds[index - 1];
+		const offset = node.find('#block-' + $.escapeSelector(prevBlockId)).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setPreventSelect(true);
@@ -421,13 +417,16 @@ class Block extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		const { block } = this.props;
-		const { childBlocks } = block;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		
 		const node = $(ReactDOM.findDOMNode(this));
-		const prevBlock = childBlocks[index - 1];
-		const prevNode = node.find('#block-' + $.escapeSelector(prevBlock.id));
-		const currentBlock = childBlocks[index];
-		const currentNode = node.find('#block-' + $.escapeSelector(currentBlock.id));
+		const prevBlockId = childrenIds[index - 1];
+		const currentBlockId = childrenIds[index];
+		
+		const prevNode = node.find('#block-' + $.escapeSelector(prevBlockId));
+		const currentNode = node.find('#block-' + $.escapeSelector(currentBlockId));
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		const w1 = res.percent * res.sum;
@@ -445,11 +444,12 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		const { dataset, rootId, block } = this.props;
-		const { childBlocks } = block;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
-		const prevBlock = childBlocks[index - 1];
-		const currentBlock = childBlocks[index];
+		const prevBlockId = childrenIds[index - 1];
+		const currentBlockId = childrenIds[index];
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		if (selection) {
@@ -462,19 +462,22 @@ class Block extends React.Component<Props, {}> {
 		node.find('.colResize.active').removeClass('active');
 		
 		C.BlockListSetFields(rootId, [
-			{ blockId: prevBlock.id, fields: { width: res.percent * res.sum } },
-			{ blockId: currentBlock.id, fields: { width: (1 - res.percent) * res.sum } },
+			{ blockId: prevBlockId, fields: { width: res.percent * res.sum } },
+			{ blockId: currentBlockId, fields: { width: (1 - res.percent) * res.sum } },
 		]);
 		
 		node.find('.resizable').trigger('resizeEnd', [ e ]);
 	};
 	
 	calcWidth (x: number, index: number) {
-		const { block } = this.props;
-		const { childBlocks } = block;
-		const prevBlock = childBlocks[index - 1];
-		const currentBlock = childBlocks[index];
-		const dw = 1 / childBlocks.length;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const prevBlockId = childrenIds[index - 1];
+		const prevBlock = blockStore.getLeaf(rootId, prevBlockId);
+		const currentBlockId = childrenIds[index];
+		const currentBlock = blockStore.getLeaf(rootId, currentBlockId);
+		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		const offset = Constant.size.blockMenu + 50;
 		

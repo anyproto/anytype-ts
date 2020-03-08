@@ -61,14 +61,12 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const map = blockStore.getMap(rootId);
-		const element = map[rootId] || {};
-		const { childrenIds } = element;
 		
 		if (!root) {
 			return null;
 		};
 		
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
 		const withIcon = root.fields.icon;
 		const withCover = true;

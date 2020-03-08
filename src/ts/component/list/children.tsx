@@ -23,16 +23,14 @@ class ListChildren extends React.Component<Props, {}> {
 		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block } = this.props;
 		const { id, type, content } = block;
 		const { style } = content;
-		const map = blockStore.getMap(rootId);
-		const element = map[id] || {};
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const children = blockStore.getChildren(rootId, id);
-		const length = children.length;
+		const length = childrenIds.length;
 		
 		if (!length) {
 			return null;
 		};
 		
-		let childrenIds = element.childrenIds || [];
 		let ColResize: any = (): any => null;
 		let cn = [ 'children', 'c' + id ];
 		let isRow = block.isRow();

@@ -68,7 +68,6 @@ class BlockStore {
 		blocks.push(block);
 		
 		map[block.id] = observable({
-			id: block.id,
 			parentId: block.parentId,
 			childrenIds: block.childrenIds,
 		});
@@ -127,6 +126,13 @@ class BlockStore {
 			};
 			return true;
 		});
+	};
+	
+	getChildrenIds (rootId: string, id: string): string[] {
+		const map = this.treeObject.get(rootId) || {};
+		const element = map[id] || {};
+		
+		return element.childrenIds || [];	
 	};
 	
 	getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {
@@ -220,7 +226,6 @@ class BlockStore {
 		
 		list.map((item: any) => {
 			map[item.id] = observable({ 
-				id: item.id,
 				parentId: '',
 				childrenIds: item.childrenIds || [],
 			});
