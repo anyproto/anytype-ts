@@ -253,6 +253,15 @@ const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: an
 	dispatcher.call('blockCopy', request, callBack);	
 };
 
+const BlockExportPrint = (contextId: string, callBack?: (message: any) => void) => {
+	const request: any = {
+		contextId: contextId
+	};
+
+
+	dispatcher.call('blockExport', request, callBack);
+};
+
 const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], data: any, callBack?: (message: any) => void) => {
 	data = Util.objectCopy(data);
 	
@@ -372,6 +381,7 @@ export {
 	BlockBookmarkFetch,
 	BlockUpload,
 	BlockCopy,
+	BlockExportPrint,
 	BlockPaste,
 	
 	BlockSetTextText,
