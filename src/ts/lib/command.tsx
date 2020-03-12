@@ -253,11 +253,11 @@ const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: an
 	dispatcher.call('blockCopy', request, callBack);	
 };
 
-const BlockExportPrint = (contextId: string, callBack?: (message: any) => void) => {
+const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
 	const request: any = {
-		contextId: contextId
+		contextId: contextId,
+		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
-
 
 	dispatcher.call('blockExport', request, callBack);
 };

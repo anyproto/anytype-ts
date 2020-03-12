@@ -979,8 +979,18 @@ class EditorPage extends React.Component<Props, {}> {
 
 	onExportPrint (e: any) {
 		const { dataset, rootId } = this.props;
+		const { blocks } = blockStore;
+		const { selection } = dataset;
 
-		C.BlockExportPrint(rootId, (message: any) => {
+		const root = (blocks[rootId] || []).find((it: any) => { return it.id == rootId; });
+
+		let text: any = [];
+		let list: any[] = [ root ];
+
+		list = blocks[rootId]
+		list = blockStore.unwrapTree(blockStore.prepareTree(rootId, list));
+
+		C.BlockExportPrint(rootId, list, (message: any) => {
 			console.log(message.path);
 		});
 	};
