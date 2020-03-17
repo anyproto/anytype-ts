@@ -34,18 +34,14 @@ class Focus {
 			return;
 		};
 		
-		const el = $('#block-' + $.escapeSelector(this.focused));
+		const el = $('.focusable.c' + $.escapeSelector(this.focused));
 		if (!el.length) {
 			return;
 		};
-		
-		const value = el.find('.value');
-		if (!value.length) {
-			return;
-		};
-		
-		value.focus();
-		setRange(value.get(0), { start: this.range.from, end: this.range.to });
+
+		$('.focusable.isFocused').removeClass('isFocused');
+		el.focus().addClass('isFocused');
+		setRange(el.get(0), { start: this.range.from, end: this.range.to });
 		keyboard.setFocus(true);
 	};
 	

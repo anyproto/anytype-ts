@@ -39,6 +39,7 @@ export interface Block {
 	bgColor?: string;
 	content: any;
 	childrenIds: string[];
+	isFocusable?(): boolean;
 	isPage?(): boolean;
 	isLayout?(): boolean;
 	isRow?(): boolean;

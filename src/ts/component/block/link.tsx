@@ -9,6 +9,8 @@ import { observer } from 'mobx-react';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	block: I.Block;
+	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 };
 
 const Constant = require('json/constant.json');
@@ -19,6 +21,8 @@ class BlockLink extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 	};
@@ -28,14 +32,23 @@ class BlockLink extends React.Component<Props, {}> {
 		const { id, content } = block;
 		const { fields } = content;
 		const { icon, name, isArchived } = fields || {};
+		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 		
 		return (
-			<div className={isArchived ? 'isArchived' : ''}>
+			<div className={cn.join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} icon={icon} canEdit={true} onSelect={this.onSelect} />
 				<div className="name" onClick={this.onClick}>{name}</div>
 				<div className="archive">Archived</div>
 			</div>
 		);
+	};
+	
+	onKeyDown (e: any) {
+		this.props.onKeyDown(e, '', []);
+	};
+	
+	onKeyUp (e: any) {
+		this.props.onKeyUp(e, '', []);
 	};
 	
 	onClick (e: any) {

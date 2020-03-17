@@ -130,18 +130,16 @@ class EditorPage extends React.Component<Props, State> {
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
 		win.on('paste.editor', (e: any) => {
-			if (keyboard.focus) {
-				return;
-			}; 
-			this.onPaste(e); 
+			if (!keyboard.focus) {
+				this.onPaste(e); 
+			};
 		});
 		
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
 		
 		ipcRenderer.removeAllListeners('copyDocument');
-		ipcRenderer.on('copyDocument', (e: any) => {
-		});
+		ipcRenderer.on('copyDocument', (e: any) => {});
 	};
 	
 	componentDidUpdate () {
@@ -615,7 +613,22 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			const dir = (k == Key.up) ? -1 : 1;
+			
+			let canFocus = false;
 			let next;
+			
+			if (
+				block.isText() && 
+				(
+					((range.from == 0) && (k == Key.up)) || 
+					((range.to == length) && (k == Key.down))
+				)
+			) {
+				canFocus = true;
+			} else 
+			if (!block.isText()) {
+				canFocus = block.isFocusable();
+			};
 			
 			// Move block
 			if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
@@ -630,10 +643,7 @@ class EditorPage extends React.Component<Props, State> {
 				return;
 			};
 			
-			if (
-				((range.from == 0) && (k == Key.up)) ||
-				((range.to == length) && (k == Key.down))
-			) {
+			if (canFocus) {
 				e.preventDefault();
 				
 				if (e.ctrlKey || e.metaKey) {
@@ -664,7 +674,7 @@ class EditorPage extends React.Component<Props, State> {
 						commonStore.menuClose('blockAction');
 					};
 				} else {
-					next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => { return item.isText(); });
+					next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 					
 					if (next) {
 						const parent = blockStore.getLeaf(rootId, next.parentId);
@@ -683,11 +693,12 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		// Backspace
-		if ((k == Key.backspace) && (range.from == 0 && range.to == 0)) {
-			const ids = selection.get(true);
-			if (length && !ids.length) {
-				this.blockMerge(block);
-			} else {
+		if (k == Key.backspace) {
+			if (block.isText() && !range.to) {
+				const ids = selection.get(true);
+				ids.length ? this.blockRemove(block) : this.blockMerge(block);
+			};
+			if (!block.isText()) {
 				this.blockRemove(block);
 			};
 		};
@@ -714,7 +725,6 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			e.preventDefault();
-			console.log(JSON.stringify(block, null, 3));
 			
 			if ((range.from == length) && (range.to == length)) {
 				let param: any = {

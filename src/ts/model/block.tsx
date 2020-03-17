@@ -34,6 +34,10 @@ class Block implements I.Block {
 		});
 	};
 	
+	isFocusable () {
+		return !this.isLayout();
+	};
+	
 	isPage () { 
 		return this.type == I.BlockType.Page;
 	};

@@ -58,13 +58,10 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let markers: any[] = [];
 		let placeHolder = Constant.placeHolder.default;
-		let ct: string[] = [];
+		let ct = color ? 'textColor textColor-' + color : '';
+		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct ];
 		let additional = null;
 		
-		if (color) {
-			ct.push('textColor textColor-' + color);
-		};
-
 		switch (style) {
 			case I.TextStyle.Title:
 				placeHolder = Constant.default.name;
@@ -105,7 +102,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const Marker = (item: any) => {
 			let cm = [ 'marker', item.className, (item.active ? 'active' : '') ].join(' ');
-			let ci = [ 'markerInner', 'c' + id ].concat(ct).join(' ');
+			let ci = [ 'markerInner', 'c' + id, ct ].join(' ');
 			let inner: any = item.type == I.TextStyle.Numbered ? '' : <Icon />;
 			
 			return (
@@ -118,7 +115,7 @@ class BlockText extends React.Component<Props, {}> {
 		const editor = (
 			<div
 				id="value"
-				className={[ 'value' ].concat(ct).join(' ')}
+				className={cv.join(' ')}
 				contentEditable={true}
 				suppressContentEditableWarning={true}
 				onKeyDown={this.onKeyDown}

@@ -254,13 +254,11 @@ class BlockStore {
 	};
 	
 	wrapTree (rootId: string) {
-		let list = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
-		
 		let ret: any = {};
 		for (let id in map) {
 			ret[id] = this.getLeaf(rootId, id);
-			ret[id].parentId = map[id].parentId;
+			ret[id].parentId = String(map[id].parentId || '');
 			ret[id].childBlocks = this.getChildren(rootId, id);
 		};
 		return ret[rootId];
