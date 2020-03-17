@@ -958,7 +958,7 @@ class EditorPage extends React.Component<Props, State> {
 			let element = map[id];
 			let parent = blockStore.getLeaf(rootId, element.parentId);
 			
-			if (!parent.isLayout()) {
+			if (!parent || !parent.isLayout()) {
 				continue;
 			};
 			

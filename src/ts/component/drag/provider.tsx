@@ -102,17 +102,14 @@ class DragProvider extends React.Component<Props, {}> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
 		const target = blockStore.getLeaf(rootId, targetId);
+		const map = blockStore.getMap(rootId);
+		const element = map[targetId];
 		
-		if (!target) {
+		if (!target || !element) {
 			return;
 		};
 		
-		const t = this.map[targetId];
-		if (!t) {
-			return;
-		};
-		
-		const parent = blockStore.getLeaf(rootId, t.parentId);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
 		
 		if ((type == I.DragItem.Menu) && target.isLink()) {
 			targetId = target.content.targetBlockId;
@@ -135,6 +132,8 @@ class DragProvider extends React.Component<Props, {}> {
 			
 			C.ExternalDropFiles(rootId, targetId, position, paths, () => {});
 		} else {
+			
+			
 			C.BlockListMove(rootId, this.ids || [], targetId, position, () => {
 				if (selection) {
 					selection.set(this.ids);

@@ -19,12 +19,26 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { data } = param;
 		const { options, value } = data;
 		
-		const Item = (item: any) => (
-			<div className={'item ' + (item.id == value ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
-				{item.icon ? <Icon className={item.icon} /> : ''}
-				<div className="name">{item.name}</div>
-			</div>
-		);
+		console.log(options);
+		
+		const Item = (item: any) => {
+			let cn = [ 'item' ];
+			
+			if (item.id == value) {
+				cn.push('active');
+			};
+			
+			if (item.isInitial) {
+				cn.push('initial');
+			};
+			
+			return (
+				<div className={cn.join(' ')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
+					{item.icon ? <Icon className={item.icon} /> : ''}
+					<div className="name">{item.name}</div>
+				</div>
+			);
+		};
 		
 		return (
 			<div className="items">

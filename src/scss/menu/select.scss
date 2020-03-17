@@ -2,11 +2,15 @@
 
 .menus {
 	.menu.menuSelect {
-		.content { max-height: 200px; }
+		.content { max-height: 220px; }
 		
 		.item { padding: 2px 12px; }
 		.item:hover { background: #f3f2ec; }
 		
 		.name { font-size: 13px; }
+		
+		.item.initial {
+			.name { color: $colorDarkGrey; }
+		}
 	}
 }

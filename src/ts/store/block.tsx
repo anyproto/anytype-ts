@@ -208,6 +208,10 @@ class BlockStore {
 	
 	setNumbers (rootId: string) {
 		let root = this.wrapTree(rootId);
+		if (!root) {
+			return;
+		};
+		
 		let cb = (list: any[]) => {
 			let n = 0;
 			for (let item of list) {
@@ -221,6 +225,7 @@ class BlockStore {
 				cb(item.childBlocks);
 			};
 		};
+		
 		cb(root.childBlocks);
 	};
 	
