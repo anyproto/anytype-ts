@@ -1010,6 +1010,14 @@ class EditorPage extends React.Component<Props, State> {
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 		
+		// Save block properties when replacing
+		if (position == I.BlockPosition.Replace) {
+			const map = blockStore.getMap(rootId);
+			const element = map[focused.id];
+			
+			param.childrenIds = element.childrenIds;
+		};
+		
 		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
@@ -1022,6 +1030,14 @@ class EditorPage extends React.Component<Props, State> {
 	
 	blockCreatePage (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
+		
+		// Save block properties when replacing
+		if (position == I.BlockPosition.Replace) {
+			const map = blockStore.getMap(rootId);
+			const element = map[focused.id];
+			
+			param.childrenIds = element.childrenIds;
+		};
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		C.BlockCreatePage(param, rootId, focused.id, position, (message: any) => {

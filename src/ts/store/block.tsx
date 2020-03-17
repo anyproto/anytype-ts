@@ -83,10 +83,12 @@ class BlockStore {
 	
 	@action
 	blockUpdate (rootId: string, param: any) {
-		let blocks = this.getBlocks(rootId);
-		let element = blocks.find((it: any) => { return it.id == param.id; });
+		let block = this.getLeaf(rootId, param.id);
+		if (!block) {
+			return;
+		};
 		
-		Object.assign(element, param);
+		set(block, param);
 		this.setNumbers(rootId);
 	};
 	

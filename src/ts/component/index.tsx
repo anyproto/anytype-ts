@@ -12,6 +12,7 @@ import ListMenu from './list/menu';
 import ListIndex from './list/index';
 import ListChildren from './list/children';
 
+import HeaderItemPath from './header/item/path';
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
 import HeaderMainEdit from './header/main/edit';
@@ -61,6 +62,7 @@ export {
 	ListMenu,
 	ListIndex,
 	ListChildren,
+	HeaderItemPath,
 	HeaderAuth,
 	HeaderMainIndex,
 	HeaderMainEdit,
