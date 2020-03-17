@@ -50,6 +50,7 @@ class EditorPage extends React.Component<Props, State> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onExportPrint = this.onExportPrint.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 	};
 
@@ -487,7 +488,11 @@ class EditorPage extends React.Component<Props, State> {
 			if (k == Key.c) {
 				this.onCopy(e);
 			};
-			
+
+			if (k == Key.p) {
+				this.onExportPrint(e);
+			};
+
 			if (k == Key.z) {
 				e.preventDefault();
 				//focus.clear(true);
@@ -929,7 +934,16 @@ class EditorPage extends React.Component<Props, State> {
 			Util.clipboardCopy({ text: text, html: message.html, anytype: ret });
 		});
 	};
-	
+
+	onExportPrint (e: any) {
+		const { rootId } = this.props;
+		const list: any[] = blockStore.unwrapTree([ blockStore.wrapTree(rootId) ]);
+
+		C.BlockExportPrint(rootId, list, (message: any) => {
+			console.log(message.path);
+		});
+	};
+
 	// Recursevily get parent layout blocks
 	getCopyLayoutBlockList (ids: string[]) {
 		if (!ids.length) {

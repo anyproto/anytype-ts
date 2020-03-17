@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.2.1",
+	"version": "0.2.8",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -178,7 +178,12 @@
 			"node_modules/builder-util-runtime",
 			"node_modules/debug",
 			"node_modules/ms",
-			"node_modules/semver"
+			"node_modules/semver",
+			"node_modules/js-yaml",
+			"node_modules/fs-extra",
+			"node_modules/universalify",
+			"node_modules/graceful-fs",
+			"node_modules/jsonfile"
 		],
 		"dmg": {
 			"sign": false
@@ -207,7 +212,14 @@
 		},
 		"win": {
 			"target": "nsis",
-			"icon": "electron/icon.ico"
+			"icon": "electron/icon.ico",
+			"publish": [
+				{
+					"provider": "spaces",
+					"name": "at9412003",
+					"region": "fra1"
+				}
+			]
 		},
 		"linux": {
 			"icon": "electron/icon.png",
@@ -215,14 +227,14 @@
 				"snap",
 				"AppImage"
 			],
-			"description": "Anytype"
-		},
-		"publish": [
-			{
-				"provider": "spaces",
-				"name": "at9412003",
-				"region": "fra1"
-			}
-		]
+			"description": "Anytype",
+			"publish": [
+				{
+					"provider": "spaces",
+					"name": "at9412003",
+					"region": "fra1"
+				}
+			]
+		}
 	}
 }
