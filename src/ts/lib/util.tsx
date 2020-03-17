@@ -400,7 +400,7 @@ class Util {
 		
 		const el = menu.find('#item-' + item.id);
 		el.addClass('active');
-
+		
 		if (scroll) {
 			const content = menu.find('.content');
 			

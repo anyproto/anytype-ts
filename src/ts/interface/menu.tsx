@@ -21,4 +21,11 @@ export interface MenuItem {
 	id?: string;
 	icon: string;
 	name: string;
+	inner?: any;
+	color?: string;
+	arrow?: boolean;
+	className?: string;
+	isActive?: boolean;
+	onClick?(e: any): void;
+	onMouseEnter?(e: any): void;
 };

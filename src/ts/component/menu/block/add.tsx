@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
+import { Icon, MenuItemVertical } from 'ts/component';
 import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -30,14 +30,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const options = this.getItems();
 		const sections = this.getSections();
 		
-		const Item = (item: any) => (
-			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-				{item.icon ? <Icon className={item.icon} inner={item.inner} /> : ''}
-				<div className="name">{item.name}</div>
-				{item.arrow ? <Icon className="arrow" /> : ''}
-			</div>
-		);
-		
 		const Section = (item: any) => (
 			<div className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
@@ -63,7 +55,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 							);
 						};
 						
-						return <Item key={i} {...action} />;
+						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -81,7 +73,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				) : (
 					<React.Fragment>
 						{options.map((item: any, i: number) => (
-							<Item key={i} {...item} />
+							<MenuItemVertical key={i} {...item} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
 						))}
 					</React.Fragment>
 				)}

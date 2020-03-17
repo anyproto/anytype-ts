@@ -27,9 +27,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				{items.map((action: any, i: number) => {
-					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
-				})}
+				{items.map((action: any, i: number) => (
+					<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
+				))}
 			</div>
 		);
 	};

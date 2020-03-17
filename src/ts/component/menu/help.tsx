@@ -32,8 +32,8 @@ class MenuHelp extends React.Component<Props, {}> {
 		
 		return (
 			<div className="items">
-				{items.map((item: I.MenuItem, i) => (
-					<MenuItemVertical key={item.icon} {...item} onClick={(e: any) => { this.onClick(e, item); }} />
+				{items.map((item: I.MenuItem, i: number) => (
+					<MenuItemVertical key={i} {...item} onClick={(e: any) => { this.onClick(e, item); }} />
 				))}
 			</div>
 		);

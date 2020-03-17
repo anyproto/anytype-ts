@@ -35,8 +35,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
-		console.log(children);
-		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
 				<Icon className="home" />
