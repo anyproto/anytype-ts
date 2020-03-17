@@ -50,7 +50,7 @@ class EditorPage extends React.Component<Props, State> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
-		this.onExportPrint = this.onExportPrint.bind(this);
+		this.onPrint = this.onPrint.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 	};
 
@@ -405,7 +405,12 @@ class EditorPage extends React.Component<Props, State> {
 			
 			if (k == Key.c) {
 				e.preventDefault();
-				this.onCopy(e);
+				this.onCopy(e, false);
+			};
+			
+			if (k == Key.x) {
+				e.preventDefault();
+				this.onCopy(e, true);
 			};
 			
 			if (k == Key.z) {
@@ -486,11 +491,15 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			if (k == Key.c) {
-				this.onCopy(e);
+				this.onCopy(e, false);
+			};
+			
+			if (k == Key.x) {
+				this.onCopy(e, true);
 			};
 
 			if (k == Key.p) {
-				this.onExportPrint(e);
+				this.onPrint(e);
 			};
 
 			if (k == Key.z) {
@@ -902,7 +911,7 @@ class EditorPage extends React.Component<Props, State> {
 		Util.linkPreviewHide(false);
 	};
 	
-	onCopy (e: any) {
+	onCopy (e: any, cut: boolean) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
 		const ids = selection.get(true);
@@ -912,6 +921,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const root = blockStore.getLeaf(rootId, rootId);
+		const cmd = cut ? 'BlockCut': 'BlockCopy';
 		
 		let text: any = [];
 		let ret: any[] = [ root ];
@@ -929,13 +939,13 @@ class EditorPage extends React.Component<Props, State> {
 		text = text.join('\n');
 		
 		Util.clipboardCopy({ text: text, html: null, anytype: ret });
-		C.BlockCopy(rootId, ret, (message: any) => {
+		C[cmd](rootId, ret, (message: any) => {
 			console.log(message.html);
 			Util.clipboardCopy({ text: text, html: message.html, anytype: ret });
 		});
 	};
-
-	onExportPrint (e: any) {
+	
+	onPrint (e: any) {
 		const { rootId } = this.props;
 		const list: any[] = blockStore.unwrapTree([ blockStore.wrapTree(rootId) ]);
 

@@ -125,6 +125,7 @@ export enum Key {
 	p			 = 80,
 	s			 = 83,
 	v			 = 86,
+	x			 = 88,
 	y			 = 89,
 	z			 = 90,
 	slash		 = 191,

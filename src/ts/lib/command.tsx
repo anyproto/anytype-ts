@@ -253,6 +253,16 @@ const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: an
 	dispatcher.call('blockCopy', request, callBack);	
 };
 
+const BlockCut = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
+	blocks = Util.objectCopy(blocks);
+	
+	const request: any = {
+		contextId: contextId,
+		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
+	};
+	dispatcher.call('blockCut', request, callBack);	
+};
+
 const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
 	blocks = Util.objectCopy(blocks);
 	
@@ -382,6 +392,7 @@ export {
 	BlockBookmarkFetch,
 	BlockUpload,
 	BlockCopy,
+	BlockCut,
 	BlockExportPrint,
 	BlockPaste,
 	
