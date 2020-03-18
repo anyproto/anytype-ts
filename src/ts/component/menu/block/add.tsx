@@ -15,7 +15,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	_isMounted = false;
 	n: number = -1;
-	t: number = 0;
+	timeout: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -82,6 +82,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { id } = this.props;
+		
 		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
@@ -90,6 +92,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			this.n = 0;
 			this.setActive();
 		};
+		
+		const menu = $('#' + Util.toCamelCase('menu-' + id));
+		menu.unbind('mouseleave').on('mouseleave', () => {
+			window.clearTimeout(this.timeout);
+		});
 	};
 	
 	componentDidUpdate () {
@@ -138,7 +145,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+		this.props.setActiveItem(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -309,21 +316,25 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const offsetX = node.outerWidth() + 1;
 
-		commonStore.menuOpen('blockAddSub', { 
-			element: '#item-' + item.id,
-			type: I.MenuType.Vertical,
-			offsetX: offsetX,
-			offsetY: -40,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			data: {
-				rootId: rootId,
-				blockId: blockId,
-				id: item.id,
-				onSelect: onSelect,
-				rebind: this.rebind,
-			}
-		});
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			commonStore.menuOpen('blockAddSub', { 
+				element: '#item-' + item.id,
+				type: I.MenuType.Vertical,
+				offsetX: offsetX,
+				offsetY: -40,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				isSub: true,
+				data: {
+					rootId: rootId,
+					blockId: blockId,
+					id: item.id,
+					onSelect: onSelect,
+					rebind: this.rebind,
+				}
+			});
+		}, Constant.delay.menu);
 	};
 	
 	onClick (e: any, item: any) {

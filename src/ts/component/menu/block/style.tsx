@@ -82,7 +82,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+		this.props.setActiveItem(items[this.n], scroll);
 	};
 	
 	getSections () {

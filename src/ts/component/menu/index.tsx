@@ -45,6 +45,7 @@ class Menu extends React.Component<Props, {}> {
 		super(props);
 		
 		this.position = this.position.bind(this);
+		this.setActiveItem = this.setActiveItem.bind(this);
 	};
 
 	render () {
@@ -98,7 +99,7 @@ class Menu extends React.Component<Props, {}> {
 		return (
 			<div id={menuId} className={cn.join(' ')}>
 				<div className="content">
-					<Component {...this.props} />
+					<Component {...this.props} setActiveItem={this.setActiveItem} />
 				</div>
 			</div>
 		);
@@ -213,15 +214,38 @@ class Menu extends React.Component<Props, {}> {
 					let py = Math.abs(y - coords.y);
 					 
 					poly.show().css({
-						width: px,
+						width: px - 4,
 						height: height,
-						left: coords.x,
+						left: coords.x + 4,
 						top: y,
 						clipPath: 'polygon(0px ' + py + 'px, 100% 0%, 100% 100%)'
 					});
 				};
 			};
 		});
+	};
+	
+	setActiveItem (item?: any, scroll?: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.find('.item.active').removeClass('active');
+		
+		if (!item) {
+			return;
+		};
+		
+		const el = node.find('#item-' + item.id).addClass('active');
+		
+		if (scroll) {
+			const content = node.find('.content');
+			const top = Math.max(0, content.scrollTop() + el.position().top - BORDER);
+			
+			content.scrollTop(top);
+		};
 	};
 	
 };
