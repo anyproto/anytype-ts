@@ -913,44 +913,25 @@ class EditorPage extends React.Component<Props, State> {
 	onCopy (e: any, cut: boolean) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
-		const ids = selection.get(true);
-
+		
+		let ids = selection.get(true);
 		if (!ids.length) {
 			return;
 		};
 		
-		const root = blockStore.getLeaf(rootId, rootId);
+		ids = ids.concat(this.getLayoutIds(ids));
+		
+		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 		const cmd = cut ? 'BlockCut': 'BlockCopy';
 		
 		let text: any = [];
-		let ret: any[] = [ root ];
-		
-		ret = ret.concat(blockStore.getBlocks(rootId, (it: any) => {
+		let ret = blockStore.unwrapTree(tree).filter((it: I.Block) => {
 			return ids.indexOf(it.id) >= 0;
-		}));
-		ret = ret.concat(this.getLayouts(ids));
-		
-		const map = blockStore.getStructure(ret);
-		const tree: any = {}; 
-		
-		for (let block of ret) {
-			const element = map[block.id];
-			
-			block.parentId = element.parentId;
-			block.childBlocks = element.childrenIds.map((it: string) => {
-				return blockStore.getLeaf(rootId, it);
-			});
-			
-			if (block.isText()) {
-				text.push(String(block.content.text || ''));
-			};
-			
-			tree[block.id] = block;
-		};
-		
-		ret = blockStore.unwrapTree(tree[rootId].childBlocks);
+		});
+		ret = Util.arrayUniqueObjects(ret, 'id');
+
 		ret.map((it: I.Block) => {
-			if (it.isText()) {
+			if (it.type == I.BlockType.Text) {
 				text.push(String(it.content.text || ''));
 			};
 		});
@@ -971,7 +952,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 
-	getLayouts (ids: string[]) {
+	getLayoutIds (ids: string[]) {
 		if (!ids.length) {
 			return [];
 		};
@@ -988,10 +969,10 @@ class EditorPage extends React.Component<Props, State> {
 				continue;
 			};
 			
-			ret.push(parent);
+			ret.push(parent.id);
 			
 			if (parent.isColumn()) {
-				ret = ret.concat(this.getLayouts([ parent.id ]));
+				ret = ret.concat(this.getLayoutIds([ parent.id ]));
 			};
 		};
 		

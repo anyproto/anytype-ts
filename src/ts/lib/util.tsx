@@ -51,6 +51,19 @@ class Util {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
+	arrayUniqueObjects (array: any[], prop: string) {
+		const res: any[] = [];
+		const map = new Map();
+		
+		for (const item of array) {
+			if (!map.has(item[prop])){
+				map.set(item[prop], true);
+				res.push(item);
+			};
+		};
+		return res;
+	};
+	
 	arrayValues (a: any) {
 		return a.hasOwnProperty('length') ? a : Object.values(a);
 	};

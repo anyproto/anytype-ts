@@ -248,6 +248,33 @@ class BlockStore {
 		return map;
 	};
 	
+	getTree (rootId: string, list: I.Block[]) {
+		list = Util.objectCopy(list || []);
+		
+		let map: any = {};
+		
+		for (let item of list) {
+			map[item.id] = item;
+		};
+		
+		for (let item of list) {
+			let childrenIds = item.childrenIds || [];
+			for (let id of childrenIds) {
+				if (!map[id]) {
+					continue;
+				};
+				
+				map[id].parentId = item.id;
+				
+				if (map[item.id]) {
+					map[item.id].childBlocks.push(map[id]);
+				};
+			};
+		};
+		
+		return map[rootId].childBlocks;
+	};
+	
 	wrapTree (rootId: string) {
 		let map = this.getMap(rootId);
 		let ret: any = {};
@@ -264,9 +291,12 @@ class BlockStore {
 		
 		let ret = [] as I.Block[];
 		for (let item of tree) {
+			let cb = item.childBlocks;
+			delete(item.childBlocks);
+			
 			ret.push(item);
-			if (item.childBlocks && item.childBlocks.length) {
-				ret = ret.concat(this.unwrapTree(item.childBlocks));
+			if (cb && cb.length) {
+				ret = ret.concat(this.unwrapTree(cb));
 			};
 		};
 		return ret;
