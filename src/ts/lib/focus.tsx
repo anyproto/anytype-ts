@@ -51,10 +51,7 @@ class Focus {
 		el.focus().addClass('isFocused');
 		
 		setRange(el.get(0), { start: this.range.from, end: this.range.to });
-		
-		if (el.hasClass('value')) {
-			keyboard.setFocus(true);
-		};
+		keyboard.setFocus(el.hasClass('value'));
 	};
 	
 };
