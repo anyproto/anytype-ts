@@ -194,8 +194,6 @@ class InputWithFile extends React.Component<Props, State> {
 	onChangeUrl (e: any, force: boolean) {
 		const { onChangeUrl } = this.props;
 		
-		focus.clear(true);
-		
 		window.clearTimeout(this.t);
 		this.t = window.setTimeout(() => {
 			if (!this.urlRef) {
@@ -220,7 +218,6 @@ class InputWithFile extends React.Component<Props, State> {
 		
 		e.preventDefault();
 		e.stopPropagation();
-		focus.clear(true);
 		
 		let options: any = { 
 			properties: [ 'openFile' ], 

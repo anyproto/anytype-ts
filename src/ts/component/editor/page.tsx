@@ -698,7 +698,7 @@ class EditorPage extends React.Component<Props, State> {
 				const ids = selection.get(true);
 				ids.length ? this.blockRemove(block) : this.blockMerge(block);
 			};
-			if (!block.isText()) {
+			if (!block.isText() && !keyboard.focus) {
 				this.blockRemove(block);
 			};
 		};
@@ -721,6 +721,10 @@ class EditorPage extends React.Component<Props, State> {
 		// Enter
 		if (k == Key.enter) {
 			if (e.shiftKey || commonStore.menuIsOpen() || (content.style == I.TextStyle.Code)) {
+				return;
+			};
+			
+			if (!block.isText() && keyboard.focus) {
 				return;
 			};
 			
