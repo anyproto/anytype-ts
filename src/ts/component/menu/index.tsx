@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Key, Util } from 'ts/lib';
+import { I, keyboard, Key, Util } from 'ts/lib';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -115,8 +115,15 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { isSub } = param;
+		
 		this._isMounted = false;
 		this.unbind();
+		
+		if (isSub) {
+			$('#menu-polygon').hide();
+		};
 	};
 	
 	unbind () {
@@ -137,7 +144,7 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { param } = this.props;
-		const { element, vertical, horizontal, offsetX, offsetY } = param;
+		const { element, type, vertical, horizontal, offsetX, offsetY, isSub } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -196,6 +203,24 @@ class Menu extends React.Component<Props, {}> {
 			y = Math.min(wh - height - BORDER, y);
 			
 			node.css({ left: x, top: y });
+			
+			if (isSub) {
+				const coords = keyboard.coords;
+				const poly = $('#menu-polygon');
+				
+				if (type == I.MenuType.Vertical) {
+					let px = Math.abs(x - coords.x);
+					let py = Math.abs(y - coords.y);
+					 
+					poly.show().css({
+						width: px,
+						height: height,
+						left: coords.x,
+						top: y,
+						clipPath: 'polygon(0px ' + py + 'px, 100% 0%, 100% 100%)'
+					});
+				};
+			};
 		});
 	};
 	

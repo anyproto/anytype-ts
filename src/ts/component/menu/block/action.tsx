@@ -365,6 +365,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			offsetY: offsetY,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
+			isSub: true,
 			data: {
 				blockId: blockId,
 				blockIds: blockIds,

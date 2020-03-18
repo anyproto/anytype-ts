@@ -12,6 +12,7 @@ class Keyboard {
 	drag: boolean = false;
 	back: boolean = true;
 	mouse: boolean = true;
+	coords: any = { x: 0, y: 0 };
 	timeoutPin: number = 0;
 	
 	init (history: any) {
@@ -92,6 +93,10 @@ class Keyboard {
 	
 	disableMouse (v: boolean) {
 		this.mouse = !v;
+	};
+	
+	setCoords (x: number, y: number) {
+		this.coords = { x: x, y: y };
 	};
 	
 	isArrow (k: number): boolean {

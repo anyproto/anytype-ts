@@ -27,6 +27,7 @@ class ListMenu extends React.Component<Props, {}> {
 					<Menu history={history} key={i} {...item} />
 				))}
 				{menus.length ? <Dimmer onClick={this.onClose} /> : ''}
+				<div id="menu-polygon" />
 			</div>
 		);
 	};

@@ -205,6 +205,7 @@ class App extends React.Component<Props, State> {
 		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
 			keyboard.setPinCheck();
 			keyboard.disableMouse(false);
+			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
 	};
 	

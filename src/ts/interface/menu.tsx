@@ -9,6 +9,7 @@ export interface MenuParam {
 	offsetX: number;
 	offsetY: number;
 	data?: any;
+	isSub?: boolean;
 	onClose?(): void;
 };
 
