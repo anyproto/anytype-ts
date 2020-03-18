@@ -398,7 +398,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (e.ctrlKey || e.metaKey) {
 			if (k == Key.a) {
 				e.preventDefault();
-				this.selectAll();
+				this.onSelectAll();
 			};
 			
 			if (k == Key.c) {
@@ -485,7 +485,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (e.ctrlKey || e.metaKey) {
 			if ((k == Key.a) && (range.from == 0) && (range.to == length)) {
 				e.preventDefault();
-				this.selectAll();
+				this.onSelectAll();
 			};
 			
 			if (k == Key.c) {
@@ -759,26 +759,12 @@ class EditorPage extends React.Component<Props, State> {
 	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
 	};
 	
-	selectAll () {
+	onSelectAll () {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
-		const map = blockStore.getMap(rootId);
-		const ids = blockStore.getBlocks(rootId, (it: any) => {
-			if (it.isLayout()) {
-				return false;
-			};
-			
-			let element = map[it.id];
-			let parent = blockStore.getLeaf(rootId, element.parentId);
-			if (!parent || (!parent.isPage() && !parent.isLayout())) {
-				return false;
-			};
-			
-			return true;
-		}).map((it: any) => { return it.id; });
+		const ids = blockStore.getBlocks(rootId, (it: any) => { return it.isSelectable(); }).map((it: any) => { return it.id; }); 
 		
 		selection.set(ids);
-		focus.clear(true);
 		commonStore.menuClose('blockContext');
 	};
 	
@@ -942,13 +928,32 @@ class EditorPage extends React.Component<Props, State> {
 		ret = ret.concat(blockStore.getBlocks(rootId, (it: any) => {
 			return ids.indexOf(it.id) >= 0;
 		}));
-		ret = ret.concat(this.getCopyLayoutBlockList(ids));
+		ret = ret.concat(this.getLayouts(ids));
+		
+		const map = blockStore.getStructure(ret);
+		const tree: any = {}; 
 		
 		for (let block of ret) {
-			if (block.type  == I.BlockType.Text) {
-				text.push(block.content.text);
+			const element = map[block.id];
+			
+			block.parentId = element.parentId;
+			block.childBlocks = element.childrenIds.map((it: string) => {
+				return blockStore.getLeaf(rootId, it);
+			});
+			
+			if (block.isText()) {
+				text.push(String(block.content.text || ''));
 			};
+			
+			tree[block.id] = block;
 		};
+		
+		ret = blockStore.unwrapTree(tree[rootId].childBlocks);
+		ret.map((it: I.Block) => {
+			if (it.isText()) {
+				text.push(String(it.content.text || ''));
+			};
+		});
 		text = text.join('\n');
 		
 		Util.clipboardCopy({ text: text, html: null, anytype: ret });
@@ -966,8 +971,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 
-	// Recursevily get parent layout blocks
-	getCopyLayoutBlockList (ids: string[]) {
+	getLayouts (ids: string[]) {
 		if (!ids.length) {
 			return [];
 		};
@@ -987,7 +991,7 @@ class EditorPage extends React.Component<Props, State> {
 			ret.push(parent);
 			
 			if (parent.isColumn()) {
-				ret = ret.concat(this.getCopyLayoutBlockList([ parent.id ]));
+				ret = ret.concat(this.getLayouts([ parent.id ]));
 			};
 		};
 		

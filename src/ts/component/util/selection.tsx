@@ -108,6 +108,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 			} else 
 			// Expand selection by arrows
 			if (e.shiftKey) {
+				focus.clear(true);
+				
 				let idx = (dir < 0) ? 0 : ids.length - 1;
 				let method = '';
 				

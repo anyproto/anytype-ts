@@ -150,10 +150,6 @@ class BlockStore {
 		let childBlocks = (element.childrenIds || []).map((it: string) => {
 			return blocks.find((item: any) => { return item.id == it; });
 		}).filter((it: any) => {
-			if (!it) {
-				console.log('!!!undefined!!!');
-				return false;
-			};
 			if (filter) {
 				return filter(it);
 			};
@@ -165,8 +161,7 @@ class BlockStore {
 	// If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block; 
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
-			let root = this.wrapTree(rootId);
-			list = this.unwrapTree([ root ]);
+			list = this.unwrapTree([ this.wrapTree(rootId) ]);
 		};
 		
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -189,8 +184,7 @@ class BlockStore {
 		};
 		
 		if (!list) {
-			let root = this.wrapTree(rootId);
-			list = this.unwrapTree([ root ]);
+			list = this.unwrapTree([ this.wrapTree(rootId) ]);
 		};
 		
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -237,16 +231,17 @@ class BlockStore {
 		let map: any = {};
 		
 		list.map((item: any) => {
-			map[item.id] = observable({ 
+			map[item.id] = observable({
 				parentId: '',
 				childrenIds: item.childrenIds || [],
 			});
 		});
 		
 		for (let id in map) {
-			let item = map[id];
-			(item.childrenIds || []).map((id: string) => {
-				map[id].parentId = item.id;
+			(map[id].childrenIds || []).map((it: string) => { 
+				if (map[it]) {
+					map[it].parentId = id;
+				};
 			});
 		};
 		
