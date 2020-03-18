@@ -524,8 +524,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		const { onPaste } = this.props;
-		onPaste(e);
+		e.preventDefault();
+		this.props.onPaste(e);
 	};
 	
 	onToggle (e: any) {
