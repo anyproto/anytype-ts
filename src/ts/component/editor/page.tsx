@@ -621,7 +621,7 @@ class EditorPage extends React.Component<Props, State> {
 				block.isText() && 
 				(
 					((range.from == 0) && (k == Key.up)) || 
-					((range.to == length) && (k == Key.down))
+					((range.to >= length) && (k == Key.down))
 				)
 			) {
 				canFocus = true;
@@ -1107,11 +1107,11 @@ class EditorPage extends React.Component<Props, State> {
 		let blockIds = [];
 		
 		if (ids.length) {
-			next = blockStore.getNextBlock(rootId, ids[0], -1, (item: any) => { return item.isText(); });
+			next = blockStore.getNextBlock(rootId, ids[0], -1);
 			blockIds = ids;
 		} else 
 		if (focused) {
-			next = blockStore.getNextBlock(rootId, focused.id, -1, (item: any) => { return item.isText(); });
+			next = blockStore.getNextBlock(rootId, focused.id, -1);
 			blockIds = [ focused.id ];
 		};
 		

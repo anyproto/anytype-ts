@@ -187,6 +187,7 @@ class BlockText extends React.Component<Props, {}> {
 		let html = text;
 		
 		if (style == I.TextStyle.Code) {
+			//html = html.replace(/\n$/, '');
 			//html = html.replace(/\n/g, '__break__');
 			//html = html.replace(/&nbsp;/g, ' ');
 			
@@ -292,13 +293,13 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const range = this.getRange();
 		const k = e.which;
-		const value = this.getValue();
+		const value = this.getValue().replace(/\n$/, '');
 		const isTitle = style == I.TextStyle.Title;
 		
 		if ((k == Key.enter) && !e.shiftKey && (style != I.TextStyle.Code)) {
 			e.preventDefault();
 			
-			this.setValue(value.replace(/\n$/, ''));
+			this.setValue(value);
 			this.setText(this.marks);
 		};
 		
@@ -319,6 +320,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
 		};
+		
 		onKeyDown(e, value, this.marks);
 	};
 	

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, Button } from 'ts/component';
-import { focus, Util } from 'ts/lib';
+import { I, focus, Util } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
 
@@ -18,6 +18,7 @@ interface Props {
 	textFile?: string;
 	withFile?: boolean;
 	accept?: string[];
+	block?: I.Block;
 	onChangeUrl? (e: any, url: string): void;
 	onChangeFile? (e: any, path: string): void;
 };
@@ -49,7 +50,6 @@ class InputWithFile extends React.Component<Props, State> {
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onClickFile = this.onClickFile.bind(this);
 	};
 	
@@ -95,7 +95,7 @@ class InputWithFile extends React.Component<Props, State> {
 					<form id="form" onSubmit={this.onSubmit}>
 						{focused ? (
 							<span>
-								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
+								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeHolder={placeHolder} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
 								<Button type="input" className="dn" />
 							</span>
 						) : (
@@ -120,11 +120,14 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
+		const { block } = this.props;
+		
 		this.resize();
 		this.bind();
 		
 		if (this.state.focused && this.urlRef) {
 			this.urlRef.focus();
+			focus.set(block.id, { from: 0, to: 0 });
 		};
 	};
 	
@@ -186,9 +189,6 @@ class InputWithFile extends React.Component<Props, State> {
 	
 	focus () {
 		this.setState({ focused: true });
-	};
-	
-	onKeyDown (e: any) {
 	};
 	
 	onChangeUrl (e: any, force: boolean) {

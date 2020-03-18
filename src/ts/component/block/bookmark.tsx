@@ -59,7 +59,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 			);
 		} else {
 			element = (
-				<InputWithFile icon="bookmark" textFile="Paste a link" withFile={false} onChangeUrl={this.onChangeUrl} />
+				<InputWithFile block={block} icon="bookmark" textFile="Paste a link" withFile={false} onChangeUrl={this.onChangeUrl} />
 			);
 		};
 		

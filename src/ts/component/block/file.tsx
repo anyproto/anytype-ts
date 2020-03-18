@@ -7,6 +7,8 @@ import { observer } from 'mobx-react';
 interface Props {
 	rootId: string;
 	block: I.Block;
+	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 };
 
 const Constant = require('json/constant.json');
@@ -20,6 +22,8 @@ class BlockFile extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
@@ -36,7 +40,7 @@ class BlockFile extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
@@ -67,9 +71,9 @@ class BlockFile extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div className={[ 'focusable', 'c' + id ].join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{element}
-			</React.Fragment>
+			</div>
 		);
 	};
 	
@@ -79,6 +83,14 @@ class BlockFile extends React.Component<Props, {}> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+	
+	onKeyDown (e: any) {
+		this.props.onKeyDown(e, '', []);
+	};
+	
+	onKeyUp (e: any) {
+		this.props.onKeyUp(e, '', []);
 	};
 	
 	onChangeUrl (e: any, url: string) {

@@ -36,12 +36,12 @@
 		.icon.dots { opacity: 1; }
 	}
 	
-	.block.blockMedia > .wrapContent > .selectable.isSelected > .dropTarget > .wrap {
+	.block.blockMedia > .wrapContent > .selectable.isSelected > .dropTarget > .focusable > .wrap {
 		.icon.resize { opacity: 1; }
 		.icon.dots { opacity: 1; }
 	}
 	
-	.block.blockMedia > .wrapContent > .selectable > .dropTarget > .wrap.isPlaying {
+	.block.blockMedia > .wrapContent > .selectable > .dropTarget > .focusable > .wrap.isPlaying {
 		.icon.resize { display: none; }
 		.icon.dots { display: none; }
 		.icon.play { display: none; }
