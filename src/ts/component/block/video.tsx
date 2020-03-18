@@ -190,12 +190,12 @@ class BlockVideo extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		focus.clear(true);
+		focus.set(block.id, { from: 0, to: 0 });
 		win.unbind('mousemove.media mouseup.media');
 		
 		if (selection) {
