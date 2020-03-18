@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, Button } from 'ts/component';
-import { I, focus, Util } from 'ts/lib';
+import { I, keyboard, focus, Util } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
 
@@ -120,20 +120,30 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
+		const { focused } = focus;
 		const { block } = this.props;
 		
 		this.resize();
 		this.bind();
 		
-		if (this.state.focused && this.urlRef) {
-			this.urlRef.focus();
+		if (this.state.focused) {
+			if (this.urlRef) {
+				this.urlRef.focus();
+			};
 			focus.set(block.id, { from: 0, to: 0 });
 		};
 	};
 	
 	componentWillUnmount () {
+		const { focused } = focus;
+		const { block } = this.props;
+		
 		this._isMounted = false;
 		this.unbind();
+		
+		if (focused == block.id) {
+			keyboard.setFocus(false);
+		};
 	};
 	
 	bind () {

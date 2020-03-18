@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, InputWithFile } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -99,7 +99,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		const { content } = block;
 		const { url } = content;
 		
-		ipcRenderer.send('urlOpen', url);			
+		ipcRenderer.send('urlOpen', url);
 	};
 	
 	onChangeUrl (e: any, url: string) {
