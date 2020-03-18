@@ -19,6 +19,8 @@ class Focus {
 	};
 	
 	clear (withRange: boolean) {
+		const el = $('.focusable.c' + $.escapeSelector(this.focused));
+		
 		this.focused = '';
 		this.range.from = 0;
 		this.range.to = 0;
@@ -26,6 +28,12 @@ class Focus {
 		if (withRange) {
 			window.getSelection().empty();
 			window.focus();
+		};
+		
+		$('.focusable.isFocused').removeClass('isFocused');
+		
+		if (!el.length || el.hasClass('value')) {
+			keyboard.setFocus(false);
 		};
 	};
 	
@@ -41,8 +49,12 @@ class Focus {
 
 		$('.focusable.isFocused').removeClass('isFocused');
 		el.focus().addClass('isFocused');
+		
 		setRange(el.get(0), { start: this.range.from, end: this.range.to });
-		keyboard.setFocus(true);
+		
+		if (el.hasClass('value')) {
+			keyboard.setFocus(true);
+		};
 	};
 	
 };

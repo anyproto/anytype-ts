@@ -131,7 +131,6 @@ class Dispatcher {
 						// Remove focus if block is deleted
 						if (focused == blockId) {
 							focus.clear(true);
-							keyboard.setFocus(false);
 						};
 					};
 					break;

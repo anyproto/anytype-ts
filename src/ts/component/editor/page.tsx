@@ -774,7 +774,6 @@ class EditorPage extends React.Component<Props, State> {
 		}).map((it: any) => { return it.id; });
 		
 		selection.set(ids);
-		keyboard.setFocus(false);
 		focus.clear(true);
 		commonStore.menuClose('blockContext');
 	};
@@ -950,7 +949,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		Util.clipboardCopy({ text: text, html: null, anytype: ret });
 		C[cmd](rootId, ret, (message: any) => {
-			console.log(message.html);
 			Util.clipboardCopy({ text: text, html: message.html, anytype: ret });
 		});
 	};
