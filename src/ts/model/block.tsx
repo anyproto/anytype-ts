@@ -42,6 +42,10 @@ class Block implements I.Block {
 		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
 	};
 	
+	isDraggable () {
+		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
+	};
+	
 	isPage () { 
 		return this.type == I.BlockType.Page;
 	};

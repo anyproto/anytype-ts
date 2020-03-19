@@ -273,26 +273,13 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		const { dataset, block } = this.props;
-		const { id, type, content } = block;
 		const { selection, onDragStart } = dataset;
 		
 		if (!dataset) {
 			return;
 		};
 		
-		const { style } = content;
-
-		let canDrag = true;
-		
-		if (type == I.BlockType.Icon) {
-			canDrag = false;
-		};
-		
-		if (style == I.TextStyle.Title) {
-			canDrag = false;
-		};
-		
-		if (!canDrag) {
+		if (!block.isDraggable()) {
 			e.preventDefault();
 			e.stopPropagation();
 			return;
@@ -473,14 +460,18 @@ class Block extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		
 		const prevBlockId = childrenIds[index - 1];
 		const prevBlock = blockStore.getLeaf(rootId, prevBlockId);
+		
 		const currentBlockId = childrenIds[index];
 		const currentBlock = blockStore.getLeaf(rootId, currentBlockId);
+		
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
-		const offset = Constant.size.blockMenu + 50;
+		const offset = Constant.size.blockMenu * 2;
 		
+		x += Constant.size.blockMenu / 2;
 		x = Math.max(offset, x);
 		x = Math.min(sum * Constant.size.editorPage - offset, x);
 		x = x / (sum * Constant.size.editorPage);

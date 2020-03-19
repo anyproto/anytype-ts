@@ -41,6 +41,7 @@ export interface Block {
 	childrenIds: string[];
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
+	isDraggable?(): boolean;
 	isPage?(): boolean;
 	isLayout?(): boolean;
 	isRow?(): boolean;

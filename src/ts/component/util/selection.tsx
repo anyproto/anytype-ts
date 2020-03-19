@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, C, Key, focus, keyboard, scrollOnMove } from 'ts/lib';
+import { I, M, C, Key, focus, keyboard, scrollOnMove } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -149,6 +149,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const { focused, range } = focus;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = $('#selection-rect');
@@ -202,7 +203,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return
 		};
 		
+		const { rootId } = this.props;
 		const { focused, range } = focus;
+		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+		const list = blockStore.unwrapTree(tree);
 		
 		if (!this.moved) {
 			if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
@@ -213,9 +217,21 @@ class SelectionProvider extends React.Component<Props, {}> {
 				let focus = $('.selectable.c' + $.escapeSelector(this.focused));
 				let target = $(e.target.closest('.selectable'));
 				
-				if (target.length && e.shiftKey && (target.data('id') != this.focused)) {
-					focus.addClass('isSelected');
-					target.addClass('isSelected');
+				if (target.length && e.shiftKey) {
+					let idxStart = list.findIndex((it: I.Block) => { return it.id == focused; });
+					let idxEnd = list.findIndex((it: I.Block) => { return it.id == target.data('id'); });
+					let start = idxStart < idxEnd ? idxStart : idxEnd;
+					let end = idxStart < idxEnd ? idxEnd : idxStart;
+					
+					let slice = list.slice(start, end + 1).
+						map((it: I.Block) => { return new M.Block(it); }).
+						filter((it: I.Block) => {
+							return it.isSelectable(); 
+						}).map((it: I.Block) => { 
+							return it.id; 
+						});
+					
+					this.set(slice);
 				};
 			};
 		};
