@@ -97,9 +97,15 @@ class BlockStore {
 		let map = this.getMap(rootId);
 		
 		set(map[id], 'childrenIds', childrenIds);
-		childrenIds.map((it: string) => {
-			set(map[it], 'parentId', id);
-		});
+		
+		// Update parentId
+		for (let id in map) {
+			(map[id].childrenIds || []).map((it: string) => { 
+				if (map[it]) {
+					map[it].parentId = id;
+				};
+			});
+		};
 	};
 	
 	@action
