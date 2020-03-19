@@ -1064,12 +1064,15 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		let length = String(next.content.text || '').length;
-		
-		C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
-			focus.set(next.id, { from: length, to: length });
-			focus.apply();				
-		});
+		if (next.isText()) {
+			let length = String(next.content.text || '').length;
+			C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
+				focus.set(next.id, { from: length, to: length });
+				focus.apply();				
+			});
+		} else {
+			C.BlockUnlink(rootId, [ next.id ], (message: any) => {});
+		};
 	};
 	
 	blockSplit (focused: I.Block, start: number) {
