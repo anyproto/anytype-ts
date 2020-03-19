@@ -46,6 +46,7 @@ class Menu extends React.Component<Props, {}> {
 		
 		this.position = this.position.bind(this);
 		this.setActiveItem = this.setActiveItem.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
@@ -97,7 +98,7 @@ class Menu extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={menuId} className={cn.join(' ')}>
+			<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
 				<div className="content">
 					<Component {...this.props} setActiveItem={this.setActiveItem} />
 				</div>
@@ -223,6 +224,15 @@ class Menu extends React.Component<Props, {}> {
 				};
 			};
 		});
+	};
+	
+	onMouseLeave (e: any) {
+		const { param } = this.props;
+		const { isSub } = param;
+		
+		if (isSub) {
+			$('#menu-polygon').hide();
+		};
 	};
 	
 	setActiveItem (item?: any, scroll?: boolean) {
