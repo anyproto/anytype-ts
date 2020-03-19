@@ -315,6 +315,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const offsetX = node.outerWidth() + 1;
+		
+		commonStore.menuClose('blockAddSub');
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {

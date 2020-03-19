@@ -268,14 +268,18 @@ class BlockStore {
 		for (let item of list) {
 			let childrenIds = item.childrenIds || [];
 			for (let id of childrenIds) {
-				if (!map[id]) {
+				const child = map[id];
+				const element = map[item.id];
+				
+				if (!child) {
 					continue;
 				};
 				
-				map[id].parentId = item.id;
+				child.parentId = item.id;
 				
-				if (map[item.id]) {
-					map[item.id].childBlocks.push(map[id]);
+				if (element) {
+					element.childBlocks = element.childBlocks || [];
+					element.childBlocks.push(child);
 				};
 			};
 		};

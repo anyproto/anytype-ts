@@ -156,7 +156,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		this.marks = Util.objectCopy(content.marks || []);
 		this._isMounted = true;
-		this.setValue();
+		this.setValue(content.text);
 	};
 	
 	componentDidUpdate () {
@@ -165,7 +165,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { focused } = focus;
 		
 		this.marks = Util.objectCopy(content.marks || []);
-		this.setValue();
+		this.setValue(content.text);
 		
 		if (focused == id) {
 			focus.apply();
@@ -177,16 +177,16 @@ class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutKeyUp);
 	};
 	
-	setValue (v?: string) {
+	setValue (v: string) {
 		const { rootId, block } = this.props;
 		const { id, fields, content } = block
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		
-		let { text, style, color, bgColor, number } = content;
+		let { style, color, bgColor, number } = content;
+		let text = String(v || '');
 		
-		text = String(v || text || '');
 		if ((style == I.TextStyle.Title) && (text == Constant.default.name)) {
 			text = '';
 		};
