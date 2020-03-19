@@ -322,7 +322,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			return 0;
 		};
 		
-		return p * el.width() / 16 * 9;
+		return Math.floor(p * el.width() / 16 * 9);
 	};
 	
 };

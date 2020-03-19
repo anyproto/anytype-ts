@@ -34,12 +34,17 @@ class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	range: any = null;
 	timeoutKeyUp: number = 0;
+	timeoutContext: number = 0;
+	timeoutClick: number = 0;
 	from: any = null;
 	marks: I.Mark[] = [];
+	clicks: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
+		this.onMouseDown = this.onMouseDown.bind(this);
+		this.onMouseUp = this.onMouseUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
@@ -124,6 +129,8 @@ class BlockText extends React.Component<Props, {}> {
 				onBlur={this.onBlur}
 				onSelect={this.onSelect}
 				onPaste={this.onPaste}
+				onMouseDown={this.onMouseDown}
+				onMouseUp={this.onMouseUp}
 			/>
 		);
 		
@@ -581,26 +588,53 @@ class BlockText extends React.Component<Props, {}> {
 		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 		
-		commonStore.menuClose('blockAdd');
-		commonStore.menuOpen('blockContext', {
-			element: '#block-' + id,
-			type: I.MenuType.Horizontal,
-			offsetX: x,
-			offsetY: -y,
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Left,
-			data: {
-				blockId: id,
-				blockIds: [ id ],
-				rootId: rootId,
-				dataset: dataset,
-				onChange: (marks: I.Mark[]) => {
-					this.marks = Util.objectCopy(marks);
-					focus.set(id, { from: currentFrom, to: currentTo });
-					this.setMarks(marks);
+		window.clearTimeout(this.timeoutContext);
+		this.timeoutContext = window.setTimeout(() => {
+			commonStore.menuClose('blockAdd');
+			commonStore.menuOpen('blockContext', {
+				element: '#block-' + id,
+				type: I.MenuType.Horizontal,
+				offsetX: x,
+				offsetY: -y,
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Left,
+				data: {
+					blockId: id,
+					blockIds: [ id ],
+					rootId: rootId,
+					dataset: dataset,
+					onChange: (marks: I.Mark[]) => {
+						this.marks = Util.objectCopy(marks);
+						focus.set(id, { from: currentFrom, to: currentTo });
+						this.setMarks(marks);
+					},
 				},
-			},
-		});
+			});
+		}, 150);
+	};
+	
+	onMouseDown (e: any) {
+		const { dataset, block } = this.props;
+		const { selection } = dataset;
+		const { id } = block;
+		
+		window.clearTimeout(this.timeoutClick);
+
+		this.clicks++;
+		if (this.clicks == 3) {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			this.clicks = 0;
+			selection.set([ id ]);
+			commonStore.menuClose('blockContext');
+			window.clearTimeout(this.timeoutContext);
+		};
+	};
+	
+	onMouseUp (e: any) {
+		window.clearTimeout(this.timeoutClick);
+		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
 	};
 	
 	placeHolderCheck () {

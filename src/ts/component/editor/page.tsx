@@ -1065,17 +1065,22 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
+		let length = 0;
+		
 		if (next.isText()) {
-			let length = String(next.content.text || '').length;
+			length = String(next.content.text || '').length;
 			C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
 				focus.set(next.id, { from: length, to: length });
 				focus.apply();				
 			});
 		} else {
-			C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
-				focus.set(next.id, { from: 0, to: 0 });
-				focus.apply();
-			});
+			length = String(focused.content.text || '').length;
+			if (!length) {
+				C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
+					focus.set(next.id, { from: 0, to: 0 });
+					focus.apply();
+				});
+			};
 		};
 	};
 	
@@ -1101,8 +1106,6 @@ class EditorPage extends React.Component<Props, State> {
 		let ids = selection.get();
 		let blockIds = [];
 		
-		console.log(ids, focused);
-		
 		if (ids.length) {
 			next = blockStore.getNextBlock(rootId, ids[0], -1);
 			blockIds = ids;
@@ -1111,8 +1114,6 @@ class EditorPage extends React.Component<Props, State> {
 			next = blockStore.getNextBlock(rootId, focused.id, -1);
 			blockIds = [ focused.id ];
 		};
-		
-		console.log(blockIds);
 		
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
 			if (next) {
