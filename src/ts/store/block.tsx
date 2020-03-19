@@ -215,6 +215,8 @@ class BlockStore {
 		};
 		
 		let cb = (list: any[]) => {
+			list = list || [];
+			
 			let n = 0;
 			for (let item of list) {
 				if (item.isNumbered()) {

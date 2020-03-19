@@ -31,7 +31,6 @@ class Dispatcher {
 		let { focused } = focus;
 		let event = com.anytype.Event.decode(item.data);
 		let rootId = event.contextId;
-		let types = [];
 		let debug = Storage.get('debugMW');
 		
 		if (debug) {
@@ -41,26 +40,7 @@ class Dispatcher {
 		let parentIds: any = {};
 		let childrenIds: any = {};
 		
-		event.messages.sort((c1, c2) => {
-			let type1 = c1.value;
-			let type2 = c2.value;
-			
-			if ((type1 == 'blockAdd') && (type2 != 'blockAdd')) {
-				return -1;
-			};
-			if ((type2 == 'blockAdd') && (type1 != 'blockAdd')) {
-				return 1;
-			};
-			
-			if ((type1 == 'blockDelete') && (type2 != 'blockDelete')) {
-				return -1;
-			};
-			if ((type2 == 'blockDelete') && (type1 != 'blockDelete')) {
-				return 1;
-			};
-			
-			return 0;
-		});
+		event.messages.sort(this.sort);
 		
 		for (let message of event.messages) {
 			let type = message.value;
@@ -329,6 +309,27 @@ class Dispatcher {
 		};
 		
 		blockStore.setNumbers(rootId);
+	};
+	
+	sort (c1, c2) {
+		let type1 = c1.value;
+		let type2 = c2.value;
+			
+		if ((type1 == 'blockAdd') && (type2 != 'blockAdd')) {
+			return -1;
+		};
+		if ((type2 == 'blockAdd') && (type1 != 'blockAdd')) {
+			return 1;
+		};
+			
+		if ((type1 == 'blockDelete') && (type2 != 'blockDelete')) {
+			return -1;
+		};
+		if ((type2 == 'blockDelete') && (type1 != 'blockDelete')) {
+			return 1;
+		};
+		
+		return 0;
 	};
 	
 	call (type: string, data: any, callBack?: (message: any) => void) {
