@@ -471,7 +471,6 @@ class Block extends React.Component<Props, {}> {
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		const offset = Constant.size.blockMenu * 2;
 		
-		x += Constant.size.blockMenu / 2;
 		x = Math.max(offset, x);
 		x = Math.min(sum * Constant.size.editorPage - offset, x);
 		x = x / (sum * Constant.size.editorPage);
