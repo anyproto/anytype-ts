@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block { padding: 1px 0px; word-break: break-word; display: flex; flex: auto; position: relative; }
+	.block { word-break: break-word; display: flex; flex: auto; position: relative; }
 	.block {
 		.wrapMenu { width: 48px; text-align: right; }
 		.wrapContent { width: calc(100% - 48px); position: relative; }
@@ -21,6 +21,7 @@
 			.line { height: 100%; width: 2px; background: #ebe9e0; position: absolute; left: 50%; top: 0px; margin-left: -1px; }
 		}
 		
+		.dropTarget { padding: 1px 0px; }
 		.dropTarget.isOver.top { border-radius: 0px 0px 4px 4px !important; }
 		.dropTarget.isOver.bottom { border-radius: 4px 4px 0px 0px !important; }
 		.dropTarget.isOver.left { border-radius: 0px 4px 4px 0px !important; }
