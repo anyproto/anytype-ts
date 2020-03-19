@@ -391,6 +391,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
+		const block = blockStore.getLeaf(rootId, focused);
 		const node = $(ReactDOM.findDOMNode(this));
 		const ids = selection.get();
 		const map = blockStore.getMap(rootId);
@@ -430,7 +431,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (k == Key.backspace) {
 			e.preventDefault();
-			this.blockRemove();
+			this.blockRemove(block);
 		};
 		
 		// Indent block
@@ -1071,7 +1072,10 @@ class EditorPage extends React.Component<Props, State> {
 				focus.apply();				
 			});
 		} else {
-			C.BlockUnlink(rootId, [ next.id ], (message: any) => {});
+			C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
+				focus.set(next.id, { from: 0, to: 0 });
+				focus.apply();
+			});
 		};
 	};
 	
@@ -1097,6 +1101,8 @@ class EditorPage extends React.Component<Props, State> {
 		let ids = selection.get();
 		let blockIds = [];
 		
+		console.log(ids, focused);
+		
 		if (ids.length) {
 			next = blockStore.getNextBlock(rootId, ids[0], -1);
 			blockIds = ids;
@@ -1105,6 +1111,8 @@ class EditorPage extends React.Component<Props, State> {
 			next = blockStore.getNextBlock(rootId, focused.id, -1);
 			blockIds = [ focused.id ];
 		};
+		
+		console.log(blockIds);
 		
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
 			if (next) {
