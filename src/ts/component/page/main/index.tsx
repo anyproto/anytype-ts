@@ -136,7 +136,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		blockStore.blockUpdateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
 		
-		C.BlockListMove(root, [ current.id ], target.id, position);
+		C.BlockListMove(root, root, [ current.id ], target.id, position);
 	};
 	
 	resize () {

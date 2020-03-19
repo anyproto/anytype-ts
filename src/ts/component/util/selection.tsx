@@ -103,7 +103,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				};
 				
 				if (next && ids.indexOf(next.id) < 0) {
-					C.BlockListMove(rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));
+					C.BlockListMove(rootId, rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));
 				};
 			} else 
 			// Expand selection by arrows

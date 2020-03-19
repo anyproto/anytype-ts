@@ -458,7 +458,7 @@ class EditorPage extends React.Component<Props, State> {
 				const canTab = obj && !obj.isTitle() && !obj.isLayout() && !first.isTitle() && !obj.isPage();
 				
 				if (canTab) {
-					C.BlockListMove(rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
+					C.BlockListMove(rootId, rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 				};
 			};
 		};
@@ -639,7 +639,7 @@ class EditorPage extends React.Component<Props, State> {
 					return !item.isIcon() && !item.isTitle();
 				});
 				if (next) {
-					C.BlockListMove(rootId, [ focused ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
+					C.BlockListMove(rootId, rootId, [ focused ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
 				};
 				return;
 			};
@@ -715,7 +715,7 @@ class EditorPage extends React.Component<Props, State> {
 			const canTab = obj && !obj.isTitle() && !obj.isLayout() && !obj.isPage() && !block.isTitle();
 			
 			if (canTab) {
-				C.BlockListMove(rootId, [ block.id ], obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
+				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
 		};
 		

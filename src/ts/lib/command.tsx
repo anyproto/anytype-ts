@@ -288,9 +288,10 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.call('blockPaste', request, callBack);	
 };
 
-const BlockListMove = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockListMove = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
+		targetContextId: targetContextId,
 		blockIds: blockIds,
 		dropTargetId: targetId,
 		position: position,

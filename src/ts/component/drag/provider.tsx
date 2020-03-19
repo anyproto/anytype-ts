@@ -111,8 +111,11 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		
-		if ((type == I.DragItem.Menu) && target.isLink()) {
-			targetId = target.content.targetBlockId;
+		let targetContextId = rootId;
+		
+		if (target.isLink() && (position == I.BlockPosition.Inner)) {
+			targetContextId = target.content.targetBlockId;
+			targetId = '';
 		};
 		
 		if (parent && parent.isLayout() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
@@ -132,9 +135,7 @@ class DragProvider extends React.Component<Props, {}> {
 			
 			C.ExternalDropFiles(rootId, targetId, position, paths, () => {});
 		} else {
-			
-			
-			C.BlockListMove(rootId, this.ids || [], targetId, position, () => {
+			C.BlockListMove(rootId, targetContextId, this.ids || [], targetId, position, () => {
 				if (selection) {
 					selection.set(this.ids);
 				};
