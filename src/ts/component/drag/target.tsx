@@ -145,8 +145,6 @@ class DropTarget extends React.Component<Props, {}> {
 			this.position = I.BlockPosition.Inner;
 		};
 		
-		console.log('1', this.position);
-		
 		node.removeClass('top bottom left right middle');
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			node.addClass('isOver ' + this.getDirectionClass(this.position));
