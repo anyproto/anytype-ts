@@ -85,6 +85,14 @@ class Block implements I.Block {
 	isNumbered () {
 		return this.isText() && (this.content.style == I.TextStyle.Numbered);
 	};
+	
+	isBulleted () {
+		return this.isText() && (this.content.style == I.TextStyle.Bulleted);
+	};
+	
+	isCheckbox () {
+		return this.isText() && (this.content.style == I.TextStyle.Checkbox);
+	};
 };
 
 export default Block;

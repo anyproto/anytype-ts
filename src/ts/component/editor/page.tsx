@@ -740,8 +740,9 @@ class EditorPage extends React.Component<Props, State> {
 				};
 				let replace = false;
 				
-				// If block is non-empty list - create new list block of the same style, otherwise - replace empty list block with paragraph
-				if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered ].indexOf(block.content.style) >= 0) {
+				// If block is non-empty list - create new list block of the same style, 
+				// otherwise - replace empty list block with paragraph
+				if (block.isNumbered() || block.isBulleted() || block.isCheckbox()) {
 					if (!length) {
 						replace = true;
 					} else {
@@ -749,7 +750,11 @@ class EditorPage extends React.Component<Props, State> {
 					};
 				};
 				
-				this.blockCreate(block, replace ? I.BlockPosition.Replace : I.BlockPosition.Bottom, param);
+				if (replace) {
+					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+				} else {
+					this.blockCreate(block, I.BlockPosition.Bottom, param);
+				};
 			} else 
 			if (!block.isTitle()) {
 				this.blockSplit(block, range.from);

@@ -52,4 +52,6 @@ export interface Block {
 	isTitle?(): boolean;
 	isToggle?(): boolean;
 	isNumbered?(): boolean;
+	isBulleted?(): boolean;
+	isCheckbox?(): boolean;
 };
