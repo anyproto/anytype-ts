@@ -64,6 +64,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 		const { breadcrumbs } = blockStore;
 		const isAdd = match.params.id == 'add';
 		const isSelect = match.params.id == 'select';
+		const pageId = Storage.get('pageId');
 		
 		let k = e.which;
 		let input = this.refObj[id];
@@ -92,7 +93,11 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 				history.push('/auth/setup/select');
 			} else {
 				C.BlockCutBreadcrumbs(breadcrumbs, 0, (message: any) => {
-					this.props.history.push('/main/index');
+					if (pageId) {
+						history.push('/main/edit/' + pageId);
+					} else {
+						history.push('/main/index');
+					};
 				});
 			};
 		} else {

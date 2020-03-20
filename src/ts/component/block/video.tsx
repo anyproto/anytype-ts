@@ -1,13 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Icon, Loader, Error } from 'ts/component';
-import { I, C, DataUtil, focus } from 'ts/lib';
+import { I, C, keyboard, DataUtil, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockFile {
+interface Props {
 	dataset?: any;
 	rootId: string;
+	block: I.Block;
+	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 };
 
 const $ = require('jquery');
@@ -20,6 +23,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
@@ -32,7 +37,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, fields, content } = this.props;
+		const { block } = this.props;
+		const { id, fields, content } = block;
 		const { state, hash } = content;
 		const accept = [ 'mp4', 'm4v' ];
 		
@@ -49,7 +55,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile icon="video" textFile="Upload a video" accept={accept} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="video" textFile="Upload a video" accept={accept} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
@@ -78,9 +84,9 @@ class BlockVideo extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div className={[ 'focusable', 'c' + id ].join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{element}
-			</React.Fragment>
+			</div>
 		);
 	};
 	
@@ -117,13 +123,25 @@ class BlockVideo extends React.Component<Props, {}> {
 		node.unbind('resize');
 	};
 	
+	onKeyDown (e: any) {
+		this.props.onKeyDown(e, '', []);
+	};
+	
+	onKeyUp (e: any) {
+		this.props.onKeyUp(e, '', []);
+	};
+	
 	onChangeUrl (e: any, url: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, '', path);
 	};
 	
@@ -152,15 +170,16 @@ class BlockVideo extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('.wrap');
 		
-		if (!node.hasClass('wrap')) {
+		if (!wrap.length) {
 			return;
 		};
 		
 		const w = this.getWidth(true, 0);
 		const h = this.getHeight(w);
 		
-		node.css({ width: (w * 100) + '%', height: h });
+		wrap.css({ width: (w * 100) + '%', height: h });
 	};
 	
 	onResizeStart (e: any, checkMax: boolean) {
@@ -171,12 +190,12 @@ class BlockVideo extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		focus.clear(true);
+		focus.set(block.id, { from: 0, to: 0 });
 		win.unbind('mousemove.media mouseup.media');
 		
 		if (selection) {
@@ -198,16 +217,17 @@ class BlockVideo extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('.wrap');
 		
-		if (!node.hasClass('wrap')) {
+		if (!wrap.length) {
 			return;
 		};
 		
-		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		const h = this.getHeight(w);
 		
-		node.css({ width: (w * 100) + '%', height: h });
+		wrap.css({ width: (w * 100) + '%', height: h });
 	};
 	
 	onResizeEnd (e: any, checkMax: boolean) {
@@ -215,16 +235,18 @@ class BlockVideo extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('.wrap');
 		
-		if (!node.hasClass('wrap')) {
+		if (!wrap.length) {
 			return;
 		};
 		
 		const win = $(window);
-		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		win.unbind('mousemove.media mouseup.media');
@@ -240,7 +262,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		
 		if (selection) {
@@ -249,7 +272,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	onMenuClick (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -272,7 +296,8 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {
-		const { id, fields } = this.props;
+		const { block } = this.props;
+		const { id, fields } = block;
 		
 		let { width } = fields;
 		width = Number(width) || 1;
@@ -289,14 +314,15 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	getHeight (p: number) {
-		const { id } = this.props;
+		const { block } = this.props;
+		const { id } = block;
 		const el = $('.selectable.c' + $.escapeSelector(id));
 		
 		if (!el.length) {
 			return 0;
 		};
 		
-		return p * el.width() / 16 * 9;
+		return Math.floor(p * el.width() / 16 * 9);
 	};
 	
 };

@@ -46,7 +46,6 @@ class DragProvider extends React.Component<Props, {}> {
 	onDragStart (e: any, type: string, ids: string[], component: any) {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
-		const { blocks } = blockStore;
 		const win = $(window);
 		
 		e.stopPropagation();
@@ -54,7 +53,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		console.log('[onDragStart]', type, ids);
 		
-		this.map = blockStore.getMap(blocks[rootId]);
+		this.map = blockStore.getMap(rootId);
 		this.set(type, ids);
 		this.refLayer.show(type, this.ids, component);
 		this.unbind();
@@ -102,26 +101,24 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
-		const { blocks, root } = blockStore;
-		const target = blocks[rootId].find((it: any) => { return it.id == targetId; });
-		const map = blockStore.getMap(blocks[rootId]);
+		const target = blockStore.getLeaf(rootId, targetId);
+		const map = blockStore.getMap(rootId);
+		const element = map[targetId];
 		
-		if (!target) {
+		if (!target || !element) {
 			return;
 		};
 		
-		const t = map[targetId];
-		if (!t) {
-			return;
+		const parent = blockStore.getLeaf(rootId, element.parentId);
+		
+		let targetContextId = rootId;
+		
+		if (target.isLink() && (position == I.BlockPosition.Inner)) {
+			targetContextId = target.content.targetBlockId;
+			targetId = '';
 		};
 		
-		const parent = map[t.parentId];
-		
-		if ((type == I.DragItem.Menu) && (target.type == I.BlockType.Link)) {
-			targetId = target.content.targetBlockId;
-		};
-		
-		if (parent && (parent.type == I.BlockType.Layout) && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
+		if (parent && parent.isLayout() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 			targetId = parent.id;
 		};
 		
@@ -138,7 +135,7 @@ class DragProvider extends React.Component<Props, {}> {
 			
 			C.ExternalDropFiles(rootId, targetId, position, paths, () => {});
 		} else {
-			C.BlockListMove(rootId, this.ids || [], targetId, position, () => {
+			C.BlockListMove(rootId, targetContextId, this.ids || [], targetId, position, () => {
 				if (selection) {
 					selection.set(this.ids);
 				};

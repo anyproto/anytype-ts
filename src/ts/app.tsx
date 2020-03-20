@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, Route, Link } from 'react-router-dom';
 import { Provider } from 'mobx-react';
+import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
 import { C, dispatcher, keyboard, Storage } from 'ts/lib';
@@ -103,6 +104,22 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
+/*
+enableLogging({
+	predicate: () => true,
+	action: true,
+	reaction: true,
+	transaction: true,
+	compute: true,
+});
+*/
+
+declare global {
+	interface Window { getStore: any; }
+};
+
+window.getStore = () => { return rootStore; };
+
 class App extends React.Component<Props, State> {
 	
 	state = {
@@ -188,6 +205,7 @@ class App extends React.Component<Props, State> {
 		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
 			keyboard.setPinCheck();
 			keyboard.disableMouse(false);
+			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
 	};
 	

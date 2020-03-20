@@ -51,12 +51,21 @@ class Util {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
-	arrayValues (a: any) {
-		let r: any[] = [];
-		for (let k in a) {
-			r.push(a[k]);
+	arrayUniqueObjects (array: any[], prop: string) {
+		const res: any[] = [];
+		const map = new Map();
+		
+		for (const item of array) {
+			if (!map.has(item[prop])){
+				map.set(item[prop], true);
+				res.push(item);
+			};
 		};
-		return r;
+		return res;
+	};
+	
+	arrayValues (a: any) {
+		return a.hasOwnProperty('length') ? a : Object.values(a);
 	};
 	
 	clipboardCopy (data: any, callBack?: () => void) {
@@ -387,31 +396,6 @@ class Util {
 			ret = ret.concat(map[field]);
 		};
 		return ret;
-	};
-	
-	// Helper method to set active element in menu with keyboard and scroll to it
-	menuSetActive (id: string, item?: any, offset?: number, scroll?: boolean) {
-		const menu = $('#' + this.toCamelCase('menu-' + id));
-		if (!menu || !menu.length) {
-			return;
-		};
-		
-		menu.find('.item.active').removeClass('active');
-		
-		if (!item) {
-			return;
-		};
-		
-		const el = menu.find('#item-' + item.id);
-		el.addClass('active');
-
-		if (scroll) {
-			const content = menu.find('.content');
-			
-			let top = content.scrollTop() + el.position().top - Number(offset) || 0;
-			top = Math.max(0, top);
-			menu.find('.content').scrollTop(top);
-		};
 	};
 	
 	urlFix (url: string): string {

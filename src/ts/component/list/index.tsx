@@ -7,12 +7,9 @@ import { observer } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
 
 interface Props {
-	blockStore?: any;
-	rootId: string;
 	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
 	onSortEnd?(result: any): void;
-	getTree?(): I.Block[];
 	helperContainer?(): any;
 };
 
@@ -28,10 +25,19 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { onSelect, onAdd, helperContainer, rootId, getTree } = this.props;
-		const { blocks, root } = blockStore;
-		const length = (blocks[root] || []).length;
-		const tree = getTree();
+		const { onSelect, onAdd, helperContainer } = this.props;
+		const { root } = blockStore;
+		const element = blockStore.getLeaf(root, root);
+		
+		if (!element) {
+			return null;
+		};
+		
+		const childrenIds = blockStore.getChildrenIds(root, root);
+		const length = childrenIds.length;
+		const children = blockStore.getChildren(root, root, (it: any) => {
+			return !(it.content.fields || {}).isArchived;
+		});
 		
 		const Item = SortableElement((item: any) => {
 			let content = item.content || {};
@@ -68,7 +74,7 @@ class ListIndex extends React.Component<Props, {}> {
 				axis="xy" 
 				transitionDuration={150}
 				distance={10}
-				list={tree} 
+				list={children} 
 				helperClass="dragging"
 				helperContainer={helperContainer} 
 				onSortEnd={this.onSortEnd} 

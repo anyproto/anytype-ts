@@ -73,8 +73,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { blocks } = blockStore;
-		const block = (blocks[rootId] || []).find((it: I.Block) => { return it.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 		return block ? block.content.style : 0;
 	};
 	
@@ -83,7 +82,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+		this.props.setActiveItem(items[this.n], scroll);
 	};
 	
 	getSections () {

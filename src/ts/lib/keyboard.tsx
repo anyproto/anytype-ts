@@ -12,6 +12,7 @@ class Keyboard {
 	drag: boolean = false;
 	back: boolean = true;
 	mouse: boolean = true;
+	coords: any = { x: 0, y: 0 };
 	timeoutPin: number = 0;
 	
 	init (history: any) {
@@ -28,8 +29,6 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const { blocks, root } = blockStore;
-		
 		let k = e.which;
 		
 		if (!this.focus) {
@@ -96,6 +95,10 @@ class Keyboard {
 		this.mouse = !v;
 	};
 	
+	setCoords (x: number, y: number) {
+		this.coords = { x: x, y: y };
+	};
+	
 	isArrow (k: number): boolean {
 		return [ Key.up, Key.down, Key.left, Key.right ].indexOf(k) >= 0;
 	};
@@ -124,8 +127,10 @@ export enum Key {
 	i			 = 73,
 	k			 = 75,
 	n			 = 78,
+	p			 = 80,
 	s			 = 83,
 	v			 = 86,
+	x			 = 88,
 	y			 = 89,
 	z			 = 90,
 	slash		 = 191,

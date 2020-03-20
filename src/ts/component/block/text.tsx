@@ -7,9 +7,10 @@ import { getRange } from 'selection-ranges';
 import { commonStore, blockStore } from 'ts/store';
 import 'highlight.js/styles/github.css';
 
-interface Props extends I.BlockText {
+interface Props {
 	rootId: string;
 	dataset?: any;
+	block: I.Block;
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
@@ -33,12 +34,17 @@ class BlockText extends React.Component<Props, {}> {
 	refLang: any = null;
 	range: any = null;
 	timeoutKeyUp: number = 0;
+	timeoutContext: number = 0;
+	timeoutClick: number = 0;
 	from: any = null;
 	marks: I.Mark[] = [];
+	clicks: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
+		this.onMouseDown = this.onMouseDown.bind(this);
+		this.onMouseUp = this.onMouseUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
@@ -51,18 +57,16 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, fields, content } = this.props;
-		const { text, marks, style, checked, number, color, bgColor } = content;
+		const { rootId, block } = this.props;
+		const { id, fields, content } = block;
+		const { text, marks, style, checked, color, bgColor } = content;
 		
 		let markers: any[] = [];
 		let placeHolder = Constant.placeHolder.default;
-		let ct: string[] = [];
+		let ct = color ? 'textColor textColor-' + color : '';
+		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct ];
 		let additional = null;
 		
-		if (color) {
-			ct.push('textColor textColor-' + color);
-		};
-
 		switch (style) {
 			case I.TextStyle.Title:
 				placeHolder = Constant.default.name;
@@ -93,24 +97,30 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 				
 			case I.TextStyle.Toggle:
-				markers.push({ type: 0, className: 'toggle', active: false, onClick: this.onToggle });
+				markers.push({ type: I.TextStyle.Toggle, className: 'toggle', active: false, onClick: this.onToggle });
 				break;
 				
 			case I.TextStyle.Checkbox:
-				markers.push({ type: 0, className: 'check', active: checked, onClick: this.onCheck });
+				markers.push({ type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheck });
 				break;
 		};
 		
-		const Marker = (item: any) => (
-			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				<span className={ct.join(' ')}>{(item.type == I.TextStyle.Numbered) && number ? number + '.' : <Icon />}</span>
-			</div>
-		);
+		const Marker = (item: any) => {
+			let cm = [ 'marker', item.className, (item.active ? 'active' : '') ].join(' ');
+			let ci = [ 'markerInner', 'c' + id, ct ].join(' ');
+			let inner: any = item.type == I.TextStyle.Numbered ? '' : <Icon />;
+			
+			return (
+				<div className={cm} onClick={item.onClick}>
+					<span className={ci}>{inner}</span>
+				</div>
+			);
+		};
 		
 		const editor = (
 			<div
 				id="value"
-				className={[ 'value' ].concat(ct).join(' ')}
+				className={cv.join(' ')}
 				contentEditable={true}
 				suppressContentEditableWarning={true}
 				onKeyDown={this.onKeyDown}
@@ -119,6 +129,8 @@ class BlockText extends React.Component<Props, {}> {
 				onBlur={this.onBlur}
 				onSelect={this.onSelect}
 				onPaste={this.onPaste}
+				onMouseDown={this.onMouseDown}
+				onMouseUp={this.onMouseUp}
 			/>
 		);
 		
@@ -139,18 +151,25 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block
 		
-		this.marks = Util.objectCopy(content.marks);
+		this.marks = Util.objectCopy(content.marks || []);
 		this._isMounted = true;
-		this.setValue();
+		this.setValue(content.text);
 	};
 	
 	componentDidUpdate () {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { id, content } = block
+		const { focused } = focus;
 		
-		this.marks = Util.objectCopy(content.marks);
-		this.setValue();
+		this.marks = Util.objectCopy(content.marks || []);
+		this.setValue(content.text);
+		
+		if (focused == id) {
+			focus.apply();
+		};
 	};
 	
 	componentWillUnmount () {
@@ -158,15 +177,16 @@ class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutKeyUp);
 	};
 	
-	setValue (v?: string) {
-		const { id, rootId, fields, content } = this.props;
+	setValue (v: string) {
+		const { rootId, block } = this.props;
+		const { id, fields, content } = block
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		
-		let { text, style, color, bgColor, number } = content;
+		let { style, color, bgColor, number } = content;
+		let text = String(v || '');
 		
-		text = String(v || text || '');
 		if ((style == I.TextStyle.Title) && (text == Constant.default.name)) {
 			text = '';
 		};
@@ -174,8 +194,9 @@ class BlockText extends React.Component<Props, {}> {
 		let html = text;
 		
 		if (style == I.TextStyle.Code) {
-			html = html.replace(/\n/g, '__break__');
-			html = html.replace(/&nbsp;/g, ' ');
+			//html = html.replace(/\n$/, '');
+			//html = html.replace(/\n/g, '__break__');
+			//html = html.replace(/&nbsp;/g, ' ');
 			
 			let { lang } = fields || {};
 			let res = low.highlight(String(lang || 'js'), html);
@@ -184,7 +205,7 @@ class BlockText extends React.Component<Props, {}> {
 				html = rehype().stringify({ type: 'root', children: res.value }).toString();
 			};
 			
-			html = html.replace(/__break__/g, '<br/>');
+			//html = html.replace(/__break__/g, '<br/>');
 		} else {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
@@ -264,7 +285,9 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { onKeyDown, onMenuAdd, id, parentId, rootId, content } = this.props;
+		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
+		const { id, content } = block;
+		const { style } = content;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -275,17 +298,15 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { blocks } = blockStore;
-		const { style } = content;
 		const range = this.getRange();
 		const k = e.which;
-		const value = this.getValue();
+		const value = this.getValue().replace(/\n$/, '');
 		const isTitle = style == I.TextStyle.Title;
 		
 		if ((k == Key.enter) && !e.shiftKey && (style != I.TextStyle.Code)) {
 			e.preventDefault();
 			
-			this.setValue(value.replace(/\n$/, ''));
+			this.setValue(value);
 			this.setText(this.marks);
 		};
 		
@@ -306,13 +327,15 @@ class BlockText extends React.Component<Props, {}> {
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
 		};
+		
 		onKeyDown(e, value, this.marks);
 	};
 	
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { onKeyUp, id, rootId, content } = this.props;
+		const { onKeyUp, rootId, block } = this.props;
+		const { id, content } = block;
 		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
@@ -456,8 +479,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	setText (marks: I.Mark[]) {
-		const { id, rootId, content } = this.props;
-		const { blocks } = blockStore;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const value = this.getValue();
 		const text = String(content.text || '');
 		
@@ -469,15 +492,13 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		const block = blocks[rootId].find((it: any) => { return it.id == id; });
 		DataUtil.blockSetText(rootId, block, value, marks);
 	};
 	
 	setMarks (marks: I.Mark[]) {
-		const { id, rootId, content } = this.props;
-		const { blocks } = blockStore;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const text = String(content.text || '');
-		const block = blocks[rootId].find((it: any) => { return it.id == id; });
 		
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
@@ -500,7 +521,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		const { onBlur, content } = this.props;
+		const { onBlur } = this.props;
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.setText(this.marks);
@@ -510,9 +531,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		const { onPaste } = this.props;
-
-		onPaste(e);
+		e.preventDefault();
+		this.props.onPaste(e);
 	};
 	
 	onToggle (e: any) {
@@ -520,7 +540,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onCheck (e: any) {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { checked } = content;
 		
 		focus.clear(true);
@@ -528,7 +549,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onLang (v: string) {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const l = String(content.text || '').length;
 		
 		C.BlockListSetFields(rootId, [
@@ -540,7 +562,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { id, rootId, content, dataset } = this.props;
+		const { rootId, dataset, block } = this.props;
+		const { id, content } = block;
 		const { from, to } = focus.range;
 		const { style } = content;
 		
@@ -550,11 +573,9 @@ class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 		
-		if (style == I.TextStyle.Title) {
-			return;
-		};
+		commonStore.menuClose('blockContext');
 		
-		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
+		if (block.isTitle() || !currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
 			return;
 		};
 			
@@ -565,26 +586,54 @@ class BlockText extends React.Component<Props, {}> {
 		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 		
-		commonStore.menuClose('blockAdd');
-		commonStore.menuOpen('blockContext', {
-			element: '#block-' + id,
-			type: I.MenuType.Horizontal,
-			offsetX: x,
-			offsetY: -y,
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Left,
-			data: {
-				blockId: id,
-				blockIds: [ id ],
-				rootId: rootId,
-				dataset: dataset,
-				onChange: (marks: I.Mark[]) => {
-					this.marks = Util.objectCopy(marks);
-					focus.set(id, { from: currentFrom, to: currentTo });
-					this.setMarks(marks);
+		window.clearTimeout(this.timeoutContext);
+		this.timeoutContext = window.setTimeout(() => {
+			commonStore.menuClose('blockAdd');
+			commonStore.menuOpen('blockContext', {
+				element: '#block-' + id,
+				type: I.MenuType.Horizontal,
+				offsetX: x,
+				offsetY: -y,
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Left,
+				passThrough: true,
+				data: {
+					blockId: id,
+					blockIds: [ id ],
+					rootId: rootId,
+					dataset: dataset,
+					onChange: (marks: I.Mark[]) => {
+						this.marks = Util.objectCopy(marks);
+						focus.set(id, { from: currentFrom, to: currentTo });
+						this.setMarks(marks);
+					},
 				},
-			},
-		});
+			});
+		}, 150);
+	};
+	
+	onMouseDown (e: any) {
+		const { dataset, block } = this.props;
+		const { selection } = dataset;
+		const { id } = block;
+		
+		window.clearTimeout(this.timeoutClick);
+
+		this.clicks++;
+		if (this.clicks == 3) {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			this.clicks = 0;
+			selection.set([ id ]);
+			commonStore.menuClose('blockContext');
+			window.clearTimeout(this.timeoutContext);
+		};
+	};
+	
+	onMouseUp (e: any) {
+		window.clearTimeout(this.timeoutClick);
+		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
 	};
 	
 	placeHolderCheck () {

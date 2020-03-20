@@ -28,9 +28,9 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				{items.map((action: any, i: number) => {
-					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
-				})}
+				{items.map((action: any, i: number) => (
+					<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
+				))}
 			</div>
 		);
 	};
@@ -64,7 +64,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+		this.props.setActiveItem(items[this.n], scroll);
 	};
 	
 	getItems () {

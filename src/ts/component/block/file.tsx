@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, Util } from 'ts/lib';
+import { I, C, keyboard, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockFile {
-	commonStore?: any;
-	blockStore?: any;
+interface Props {
 	rootId: string;
+	block: I.Block;
+	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 };
 
 const Constant = require('json/constant.json');
@@ -21,6 +22,8 @@ class BlockFile extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
@@ -28,7 +31,8 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { state, hash, size, name, mime } = content;
 		
 		let element = null;
@@ -36,7 +40,7 @@ class BlockFile extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
@@ -67,9 +71,9 @@ class BlockFile extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div className={[ 'focusable', 'c' + id ].join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{element}
-			</React.Fragment>
+			</div>
 		);
 	};
 	
@@ -81,18 +85,31 @@ class BlockFile extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 	
+	onKeyDown (e: any) {
+		this.props.onKeyDown(e, '', []);
+	};
+	
+	onKeyUp (e: any) {
+		this.props.onKeyUp(e, '', []);
+	};
+	
 	onChangeUrl (e: any, url: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, '', path);
 	};
 	
 	onOpen (e: any) {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		const { hash } = content;
 		const icon = this.getIcon();
 		
@@ -109,12 +126,15 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 	
 	onDownload (e: any) {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
+		
 		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 	};
 	
 	getIcon (): string {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		
 		let icon = '';
 		let t: string[] = [];

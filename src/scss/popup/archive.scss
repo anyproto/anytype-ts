@@ -3,6 +3,7 @@
 .popups {
 	.popupArchive { width: 672px; padding: 48px; }
 	.popupArchive {
+		.content { height: 522px; }
 		.title { margin-bottom: 12px; }
 		.items { border-top: 1px solid #eae9e0; overflow: auto; height: 470px; padding: 20px 0px; }
 		

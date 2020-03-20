@@ -30,23 +30,28 @@ export enum BlockAlign {
 	Right	 = 2,
 };
 
-export interface Restrictions {
-	read: boolean;
-	edit: boolean;
-	remove: boolean;
-	drag: boolean;
-	dropOn: boolean;
-};
-
 export interface Block {
 	id: string;
 	type: BlockType;
-	restrictions?: Restrictions;
 	parentId?: string;
 	fields: any;
 	align?: BlockAlign;
 	bgColor?: string;
 	content: any;
 	childrenIds: string[];
-	childBlocks: Block[];
+	isFocusable?(): boolean;
+	isSelectable?(): boolean;
+	isDraggable?(): boolean;
+	isPage?(): boolean;
+	isLayout?(): boolean;
+	isRow?(): boolean;
+	isColumn?(): boolean;
+	isLink?(): boolean;
+	isIcon?(): boolean;
+	isText?(): boolean;
+	isTitle?(): boolean;
+	isToggle?(): boolean;
+	isNumbered?(): boolean;
+	isBulleted?(): boolean;
+	isCheckbox?(): boolean;
 };

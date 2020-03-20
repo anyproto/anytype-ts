@@ -27,9 +27,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				{items.map((action: any, i: number) => {
-					return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
-				})}
+				{items.map((action: any, i: number) => (
+					<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
+				))}
 			</div>
 		);
 	};
@@ -55,7 +55,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+		this.props.setActiveItem(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -104,8 +104,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { blocks } = blockStore;
-		const block = blocks[rootId].find((item: I.Block) => { return item.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return [];
@@ -148,16 +147,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, history } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, linkPage, linkId, rootId, onSelect, match } = data;
-		const { blocks, root, breadcrumbs } = blockStore;
-		const block = (blocks[rootId] || []).find((it: I.Block) => { return it.id == blockId; });
+		const { root, breadcrumbs } = blockStore;
+		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return;
 		};
 		
 		const length = String(block.content.text || '').length;
-		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
-		const prev = tree[tree.length - 2];
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const prev = children[children.length - 2];
 		
 		let close = true;
 		
@@ -209,7 +208,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archive':
 				C.BlockSetPageIsArchived(rootId, blockId, true, (message: any) => {
-					C.BlockCutBreadcrumbs(breadcrumbs, (tree.length > 0 ? tree.length - 1 : 0), (message: any) => {
+					C.BlockCutBreadcrumbs(breadcrumbs, (children.length > 0 ? children.length - 1 : 0), (message: any) => {
 						if (prev) {
 							history.push('/main/edit/' + prev.content.targetBlockId + '/link/' + prev.id);
 						} else {

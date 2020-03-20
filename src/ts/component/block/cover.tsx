@@ -5,10 +5,12 @@ import { Icon, Drag } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { trace } from 'mobx';
 
-interface Props extends I.Block, RouteComponentProps<any> {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
+	block: I.Block;
 };
 
 interface State {
@@ -100,8 +102,6 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onMenu (e: any) {
-		const { id } = this.props;
-		
 		commonStore.menuOpen('blockCover', {
 			element: '#button-cover-edit',
 			type: I.MenuType.Vertical,

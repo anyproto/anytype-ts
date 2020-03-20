@@ -79,6 +79,7 @@ class DropTarget extends React.Component<Props, {}> {
 		let ey = e.pageY;
 		let domRect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
 		let { x, y, width, height } = domRect;
+		let isFileDrop = (e.dataTransfer.items && e.dataTransfer.items.length) || (e.dataTransfer.files && e.dataTransfer.files.length);
 		
 		y += win.scrollTop();
 		
@@ -91,7 +92,7 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		this.canDrop = true;
 		
-		if (dragProvider.type == I.DragItem.Block) {
+		if (!isFileDrop && (dragProvider.type == I.DragItem.Block)) {
 			let parentIds: string[] = [];
 			this.getParentIds(id, parentIds);
 			
@@ -101,12 +102,7 @@ class DropTarget extends React.Component<Props, {}> {
 					break;
 				};
 			};
-		} else 
-		if ((e.dataTransfer.items && e.dataTransfer.items.length) || (e.dataTransfer.files && e.dataTransfer.files.length)) {
-			// File drop
 		};
-		
-		this.position = I.BlockPosition.None;
 		
 		if ((ey >= y) && (ey <= rect.y)) {
 			this.position = I.BlockPosition.Top;

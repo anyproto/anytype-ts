@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
+import { Icon, MenuItemVertical } from 'ts/component';
 import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -15,7 +15,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	_isMounted = false;
 	n: number = -1;
-	t: number = 0;
+	timeout: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -29,14 +29,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const options = this.getItems();
 		const sections = this.getSections();
-		
-		const Item = (item: any) => (
-			<div id={'item-' + item.id} className={[ 'item', item.color, (item.color ? 'withColor' : ''), (item.arrow ? 'withChildren' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-				{item.icon ? <Icon className={item.icon} inner={item.inner} /> : ''}
-				<div className="name">{item.name}</div>
-				{item.arrow ? <Icon className="arrow" /> : ''}
-			</div>
-		);
 		
 		const Section = (item: any) => (
 			<div className="section">
@@ -63,7 +55,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 							);
 						};
 						
-						return <Item key={i} {...action} />;
+						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -81,7 +73,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				) : (
 					<React.Fragment>
 						{options.map((item: any, i: number) => (
-							<Item key={i} {...item} />
+							<MenuItemVertical key={i} {...item} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
 						))}
 					</React.Fragment>
 				)}
@@ -90,6 +82,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { id } = this.props;
+		
 		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
@@ -98,6 +92,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			this.n = 0;
 			this.setActive();
 		};
+		
+		const menu = $('#' + Util.toCamelCase('menu-' + id));
+		menu.unbind('mouseleave').on('mouseleave', () => {
+			window.clearTimeout(this.timeout);
+		});
 	};
 	
 	componentDidUpdate () {
@@ -146,7 +145,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		Util.menuSetActive(this.props.id, items[this.n], 12, scroll);
+		this.props.setActiveItem(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -220,8 +219,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { blocks } = blockStore;
-		const block = (blocks[rootId] || []).find((item: I.Block) => { return item.id == blockId; });
+		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return [];
@@ -317,22 +315,28 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const offsetX = node.outerWidth() + 1;
+		
+		commonStore.menuClose('blockAddSub');
 
-		commonStore.menuOpen('blockAddSub', { 
-			element: '#item-' + item.id,
-			type: I.MenuType.Vertical,
-			offsetX: offsetX,
-			offsetY: -40,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			data: {
-				rootId: rootId,
-				blockId: blockId,
-				id: item.id,
-				onSelect: onSelect,
-				rebind: this.rebind,
-			}
-		});
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			commonStore.menuOpen('blockAddSub', { 
+				element: '#item-' + item.id,
+				type: I.MenuType.Vertical,
+				offsetX: offsetX,
+				offsetY: -40,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				isSub: true,
+				data: {
+					rootId: rootId,
+					blockId: blockId,
+					id: item.id,
+					onSelect: onSelect,
+					rebind: this.rebind,
+				}
+			});
+		}, Constant.delay.menu);
 	};
 	
 	onClick (e: any, item: any) {

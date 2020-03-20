@@ -4,8 +4,9 @@ import { I, C } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockIcon {
+interface Props {
 	rootId: string;
+	block: I.Block;
 };
 
 const com = require('proto/commands.js');
@@ -20,7 +21,8 @@ class BlockIcon extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { id, content } = this.props;
+		const { block } = this.props;
+		const { id, content } = block;
 		const { name } = content;
 		
 		return (
@@ -31,7 +33,9 @@ class BlockIcon extends React.Component<Props, {}> {
 	};
 	
 	onSelect (icon: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockSetIconName(rootId, id, icon);
 	};
 	

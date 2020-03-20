@@ -4,12 +4,12 @@ const { notarize } = require('electron-notarize');
 exports.default = async function notarizing(context) {
 	if (process.env.ELECTRON_SKIP_NOTARIZE) {
 		return;
-	}
+	};
 	
 	const { electronPlatformName, appOutDir } = context;
 	if (electronPlatformName !== 'darwin') {
 		return;
-	}
+	};
 	
 	const appName = context.packager.appInfo.productFilename;
 	

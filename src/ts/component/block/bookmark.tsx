@@ -1,12 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, InputWithFile } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockBookmark {
+interface Props {
 	rootId: string;
+	block: I.Block;
+	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 };
 
 const $ = require('jquery');
@@ -21,12 +24,15 @@ class BlockBookmark extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { url, title, description, imageHash, faviconHash } = content;
 		
 		let element = null;
@@ -53,14 +59,14 @@ class BlockBookmark extends React.Component<Props, {}> {
 			);
 		} else {
 			element = (
-				<InputWithFile icon="bookmark" textFile="Paste a link" withFile={false} onChangeUrl={this.onChangeUrl} />
+				<InputWithFile block={block} icon="bookmark" textFile="Paste a link" withFile={false} onChangeUrl={this.onChangeUrl} />
 			);
 		};
 		
 		return (
-			<React.Fragment>
+			<div className={[ 'focusable', 'c' + id ].join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{element}
-			</React.Fragment>
+			</div>
 		);
 	};
 	
@@ -80,15 +86,26 @@ class BlockBookmark extends React.Component<Props, {}> {
 		this.unbind();
 	};
 	
+	onKeyDown (e: any) {
+		this.props.onKeyDown(e, '', []);
+	};
+	
+	onKeyUp (e: any) {
+		this.props.onKeyUp(e, '', []);
+	};
+	
 	onClick (e: any) {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		const { url } = content;
 		
-		ipcRenderer.send('urlOpen', url);			
+		ipcRenderer.send('urlOpen', url);
 	};
 	
 	onChangeUrl (e: any, url: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockBookmarkFetch(rootId, id, url);
 	};
 	
@@ -116,9 +133,10 @@ class BlockBookmark extends React.Component<Props, {}> {
 		};
 			
 		const node = $(ReactDOM.findDOMNode(this));
+		const inner = node.find('.inner');
 		const width = node.width();
 		
-		width <= Constant.size.editorPage / 2 ? node.addClass('vertical') : node.removeClass('vertical');
+		width <= Constant.size.editorPage / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
 	};
 	
 };

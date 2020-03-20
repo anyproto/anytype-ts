@@ -1,14 +1,17 @@
-import { observable, action, computed, set, toJS } from 'mobx';
-import { I, Util, StructDecode, StructEncode } from 'ts/lib';
+import { observable, action, computed, set, intercept } from 'mobx';
+import { I, M, Util, StructDecode, StructEncode } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 class BlockStore {
 	@observable public rootId: string = '';
 	@observable public archiveId: string = '';
 	@observable public breadcrumbsId: string = '';
-	@observable public blockObject: any = {};
+	
+	public treeObject: any = new Map();
+	public blockObject: any = new Map();
 	
 	@computed
 	get root (): string {
@@ -23,11 +26,6 @@ class BlockStore {
 	@computed
 	get breadcrumbs (): string {
 		return this.breadcrumbsId;
-	};
-	
-	@computed
-	get blocks (): any {
-		return this.blockObject;
 	};
 	
 	@action
@@ -47,44 +45,129 @@ class BlockStore {
 	
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		this.blockObject[rootId] = blocks;
-	};
-	
-	@action
-	blockAdd (rootId: string, block: I.Block) {
-		this.blockObject[rootId] = this.blockObject[rootId] || [];
-		this.blockObject[rootId].push(block as I.Block);
-	};
-	
-	@action
-	blockUpdate (rootId: string, block: any) {
-		let item = (this.blockObject[rootId] || []).find((item: I.Block) => { return item.id == block.id; });
-		if (!item) {
-			return;
-		};
+		blocks = blocks.map((it: any) => { return new M.Block(it); });
+		let map = this.getStructure(blocks);
 		
-		set(item, block);
-	};
-	
-	@action
-	blockDelete (rootId: string, id: string) {
-		if (!this.blockObject[rootId]) {
-			return;
-		};
-		
-		this.blockObject[rootId] = this.blockObject[rootId].filter((item: I.Block) => { return item.id != id; });
+		this.blockObject.set(rootId, blocks);
+		this.treeObject.set(rootId, map);
 	};
 	
 	@action
 	blocksClear (rootId: string) {
-		this.blockObject[rootId] = [];
+		this.blockObject.delete(rootId);
+		this.treeObject.delete(rootId);
 	};
 	
-	// If check is present find next block if check passes or continue to next block in "dir" direction, else just return next block; 
+	@action
+	blockAdd (rootId: string, block: I.Block, index: number) {
+		block = new M.Block(block);
+		
+		let blocks = this.getBlocks(rootId);
+		let map = this.getMap(rootId);
+		
+		blocks.push(block);
+		
+		map[block.id] = observable({
+			parentId: block.parentId,
+			childrenIds: block.childrenIds,
+		});
+		
+		intercept(map[block.id] as any, (change: any) => {
+			if (change.newValue === map[block.id][change.name]) {
+				return null;
+			};
+			console.log('Stucture change', change, map[block.id][change.name]);
+			return change;
+		});
+	};
+	
+	@action
+	blockUpdate (rootId: string, param: any) {
+		let block = this.getLeaf(rootId, param.id);
+		if (!block) {
+			return;
+		};
+		
+		set(block, param);
+		this.setNumbers(rootId);
+	};
+	
+	@action
+	blockUpdateStructure (rootId: string, id: string, childrenIds: string[]) {
+		let map = this.getMap(rootId);
+		
+		set(map[id], 'childrenIds', childrenIds);
+		
+		// Update parentId
+		for (let id in map) {
+			(map[id].childrenIds || []).map((it: string) => { 
+				if (map[it]) {
+					map[it].parentId = id;
+				};
+			});
+		};
+	};
+	
+	@action
+	blockDelete (rootId: string, id: string) {
+		let blocks = this.getBlocks(rootId);
+		let map = this.getMap(rootId);
+		
+		blocks = blocks.filter((it: any) => { return it.id != id; });
+		delete(map[id]);
+	};
+	
+	getMap (rootId: string) {
+		return this.treeObject.get(rootId) || {};
+	};
+	
+	getLeaf (rootId: string, id: string): any {
+		let blocks = this.getBlocks(rootId);
+		return blocks.find((it: any) => { return it.id == id; });
+	};
+	
+	getBlocks (rootId: string, filter?: (it: any) => boolean) {
+		let blocks = this.blockObject.get(rootId) || [];
+		
+		if (!filter) {
+			return blocks;
+		};
+		
+		return blocks.filter((it: any) => {
+			if (filter) {
+				return filter(it);
+			};
+			return true;
+		});
+	};
+	
+	getChildrenIds (rootId: string, id: string): string[] {
+		const map = this.getMap(rootId);
+		const element = map[id] || {};
+		
+		return element.childrenIds || [];	
+	};
+	
+	getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {
+		let blocks = this.getBlocks(rootId);
+		let map = this.getMap(rootId);
+		let element = map[id] || {};
+		
+		let childBlocks = (element.childrenIds || []).map((it: string) => {
+			return blocks.find((item: any) => { return item.id == it; });
+		}).filter((it: any) => {
+			if (filter) {
+				return filter(it);
+			};
+			return true;
+		});
+		return childBlocks;
+	};
+	
+	// If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block; 
 	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
-			let tree = this.prepareTree(rootId, this.blockObject[rootId]);
-			list = this.unwrapTree(tree);
+			list = this.unwrapTree([ this.wrapTree(rootId) ]);
 		};
 		
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -107,8 +190,7 @@ class BlockStore {
 		};
 		
 		if (!list) {
-			let tree = this.prepareTree(rootId, this.blockObject[rootId]);
-			list = this.unwrapTree(tree);
+			list = this.unwrapTree([ this.wrapTree(rootId) ]);
 		};
 		
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -126,17 +208,55 @@ class BlockStore {
 		};
 	};
 	
-	setNumbers (list: I.Block[]) {
-		let n = 0;
-		for (let item of list) {
-			n = (item.type == I.BlockType.Text && item.content.style == I.TextStyle.Numbered) ? n + 1 : 0;
-			item.content.number = n;
-			
-			this.setNumbers(item.childBlocks);
+	setNumbers (rootId: string) {
+		let root = this.wrapTree(rootId);
+		if (!root) {
+			return;
 		};
+		
+		let cb = (list: any[]) => {
+			list = list || [];
+			
+			let n = 0;
+			for (let item of list) {
+				if (item.isNumbered()) {
+					n++;
+					$('.markerInner.c' + $.escapeSelector(item.id)).text(n ? n + '.' : '');
+				} else {
+					n = 0;
+				};
+				
+				cb(item.childBlocks);
+			};
+		};
+		
+		cb(root.childBlocks);
 	};
 	
-	getMap (list: I.Block[]) {
+	getStructure (list: I.Block[]) {
+		list = Util.objectCopy(list || []);
+		
+		let map: any = {};
+		
+		list.map((item: any) => {
+			map[item.id] = observable({
+				parentId: '',
+				childrenIds: item.childrenIds || [],
+			});
+		});
+		
+		for (let id in map) {
+			(map[id].childrenIds || []).map((it: string) => { 
+				if (map[it]) {
+					map[it].parentId = id;
+				};
+			});
+		};
+		
+		return map;
+	};
+	
+	getTree (rootId: string, list: I.Block[]) {
 		list = Util.objectCopy(list || []);
 		
 		let map: any = {};
@@ -148,43 +268,45 @@ class BlockStore {
 		for (let item of list) {
 			let childrenIds = item.childrenIds || [];
 			for (let id of childrenIds) {
-				if (!map[id]) {
+				const child = map[id];
+				const element = map[item.id];
+				
+				if (!child) {
 					continue;
 				};
 				
-				map[id].parentId = item.id;
+				child.parentId = item.id;
 				
-				if (map[item.id]) {
-					map[item.id].childBlocks.push(map[id]);
+				if (element) {
+					element.childBlocks = element.childBlocks || [];
+					element.childBlocks.push(child);
 				};
 			};
 		};
 		
-		return map;
+		return map[rootId].childBlocks;
 	};
 	
-	prepareTree (rootId: string, list: I.Block[]) {
-		let ret: any = [];
-		let map: any = this.getMap(list);
-		
-		if (map[rootId]) {
-			ret = map[rootId].childBlocks;
-			this.setNumbers(ret);
+	wrapTree (rootId: string) {
+		let map = this.getMap(rootId);
+		let ret: any = {};
+		for (let id in map) {
+			ret[id] = this.getLeaf(rootId, id);
+			ret[id].parentId = String(map[id].parentId || '');
+			ret[id].childBlocks = this.getChildren(rootId, id);
 		};
-		
-		return ret;
+		return ret[rootId];
 	};
 	
-	unwrapTree (tree: I.Block[]) {
-		tree = tree || [] as I.Block[];
+	unwrapTree (tree: any[]): any[] {
+		tree = tree || [];
 		
 		let ret = [] as I.Block[];
 		for (let item of tree) {
 			let cb = item.childBlocks;
-			
 			delete(item.childBlocks);
-			ret.push(item);
 			
+			ret.push(item);
 			if (cb && cb.length) {
 				ret = ret.concat(this.unwrapTree(cb));
 			};
@@ -201,14 +323,11 @@ class BlockStore {
 		let item: I.Block = {
 			id: block.id,
 			type: type,
-			parentId: '',
 			childrenIds: block.childrenIds || [],
-			childBlocks: [] as I.Block[],
 			fields: {} as any,
 			content: {} as any,
 			align: Number(block.align) || 0,
 			bgColor: String(block.backgroundColor || ''),
-			restrictions: block.restrictions || {} as I.Restrictions,
 		};
 		
 		if (block.fields) {
@@ -247,18 +366,8 @@ class BlockStore {
 				item.content.marker = content.marker;
 				item.content.marks = marks;
 			};
-						
-			if (type == I.BlockType.Layout) {
-				//item.content.style = content.style;
-			};
-			
-			if (type == I.BlockType.Div) {
-				//item.content.style = content.style;
-			};
 			
 			if (type == I.BlockType.Link) {
-				//item.content.style = content.style;
-				
 				if (item.content.style == I.LinkStyle.Page) {
 					item.content.fields = item.content.fields || {};
 					item.content.fields.name = String(item.content.fields.name || Constant.default.name);

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Key, Util } from 'ts/lib';
+import { I, keyboard, Key, Util } from 'ts/lib';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -45,6 +45,8 @@ class Menu extends React.Component<Props, {}> {
 		super(props);
 		
 		this.position = this.position.bind(this);
+		this.setActiveItem = this.setActiveItem.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
@@ -96,9 +98,9 @@ class Menu extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={menuId} className={cn.join(' ')}>
+			<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
 				<div className="content">
-					<Component {...this.props} />
+					<Component {...this.props} setActiveItem={this.setActiveItem} />
 				</div>
 			</div>
 		);
@@ -115,8 +117,15 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { isSub } = param;
+		
 		this._isMounted = false;
 		this.unbind();
+		
+		if (isSub) {
+			$('#menu-polygon').hide();
+		};
 	};
 	
 	unbind () {
@@ -137,7 +146,7 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { param } = this.props;
-		const { element, vertical, horizontal, offsetX, offsetY } = param;
+		const { element, type, vertical, horizontal, offsetX, offsetY, isSub } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -196,7 +205,57 @@ class Menu extends React.Component<Props, {}> {
 			y = Math.min(wh - height - BORDER, y);
 			
 			node.css({ left: x, top: y });
+			
+			if (isSub) {
+				const coords = keyboard.coords;
+				const poly = $('#menu-polygon');
+				
+				if (type == I.MenuType.Vertical) {
+					let px = Math.abs(x - coords.x);
+					let py = Math.abs(y - coords.y);
+					 
+					poly.show().css({
+						width: px - 4,
+						height: height,
+						left: coords.x + 4,
+						top: y,
+						clipPath: 'polygon(0px ' + py + 'px, 100% 0%, 100% 100%)'
+					});
+				};
+			};
 		});
+	};
+	
+	onMouseLeave (e: any) {
+		const { param } = this.props;
+		const { isSub } = param;
+		
+		if (isSub) {
+			$('#menu-polygon').hide();
+		};
+	};
+	
+	setActiveItem (item?: any, scroll?: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.find('.item.active').removeClass('active');
+		
+		if (!item) {
+			return;
+		};
+		
+		const el = node.find('#item-' + item.id).addClass('active');
+		
+		if (scroll) {
+			const content = node.find('.content');
+			const top = Math.max(0, content.scrollTop() + el.position().top - BORDER);
+			
+			content.scrollTop(top);
+		};
 	};
 	
 };

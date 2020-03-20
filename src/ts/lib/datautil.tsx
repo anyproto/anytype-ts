@@ -83,7 +83,8 @@ class DataUtil {
 	};
 	
 	selectionGet (props: any): string[] {
-		const { dataset, id } = props;
+		const { dataset, block } = props;
+		const { id } = block;
 		const { selection } = dataset;
 		
 		let ids: string[] = [];
@@ -152,9 +153,7 @@ class DataUtil {
 			e.persist();
 		};
 		
-		console.log(props);
-		
-		const { root, blocks } = blockStore;
+		const { root } = blockStore;
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
 		const block = {
@@ -170,7 +169,7 @@ class DataUtil {
 
 		C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			this.pageOpen(e, props, message.blockId, message.targetId);
+			//this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();
 		});	
 	};
@@ -180,18 +179,10 @@ class DataUtil {
 			return;
 		};
 		
-		text = String(text || '');
-		marks = marks || [];
-		
-		let param = {
-			id: block.id,
-			content: Util.objectCopy(block.content),
-		};
-		param.content.text = text;
-		param.content.marks = marks;
-		block.content = param.content;
+		block.content.text = String(text || '');
+		block.content.marks = marks || [];
 			
-		blockStore.blockUpdate(rootId, param);
+		blockStore.blockUpdate(rootId, block);
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {});
 	};
 	

@@ -19,6 +19,8 @@ class Focus {
 	};
 	
 	clear (withRange: boolean) {
+		const el = $('.focusable.c' + $.escapeSelector(this.focused));
+		
 		this.focused = '';
 		this.range.from = 0;
 		this.range.to = 0;
@@ -27,6 +29,12 @@ class Focus {
 			window.getSelection().empty();
 			window.focus();
 		};
+		
+		$('.focusable.isFocused').removeClass('isFocused');
+		
+		if (!el.length || el.hasClass('value')) {
+			keyboard.setFocus(false);
+		};
 	};
 	
 	apply () {
@@ -34,19 +42,16 @@ class Focus {
 			return;
 		};
 		
-		const el = $('#block-' + $.escapeSelector(this.focused));
+		const el = $('.focusable.c' + $.escapeSelector(this.focused));
 		if (!el.length) {
 			return;
 		};
+
+		$('.focusable.isFocused').removeClass('isFocused');
+		el.focus().addClass('isFocused');
 		
-		const value = el.find('.value');
-		if (!value.length) {
-			return;
-		};
-		
-		value.focus();
-		setRange(value.get(0), { start: this.range.from, end: this.range.to });
-		keyboard.setFocus(true);
+		setRange(el.get(0), { start: this.range.from, end: this.range.to });
+		keyboard.setFocus(el.hasClass('value'));
 	};
 	
 };

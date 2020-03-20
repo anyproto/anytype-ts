@@ -253,6 +253,26 @@ const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: an
 	dispatcher.call('blockCopy', request, callBack);	
 };
 
+const BlockCut = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
+	blocks = Util.objectCopy(blocks);
+	
+	const request: any = {
+		contextId: contextId,
+		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
+	};
+	dispatcher.call('blockCut', request, callBack);	
+};
+
+const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
+	blocks = Util.objectCopy(blocks);
+	
+	const request: any = {
+		contextId: contextId,
+		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
+	};
+	dispatcher.call('blockExport', request, callBack);
+};
+
 const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], data: any, callBack?: (message: any) => void) => {
 	data = Util.objectCopy(data);
 	
@@ -268,9 +288,10 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.call('blockPaste', request, callBack);	
 };
 
-const BlockListMove = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockListMove = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
+		targetContextId: targetContextId,
 		blockIds: blockIds,
 		dropTargetId: targetId,
 		position: position,
@@ -372,6 +393,8 @@ export {
 	BlockBookmarkFetch,
 	BlockUpload,
 	BlockCopy,
+	BlockCut,
+	BlockExportPrint,
 	BlockPaste,
 	
 	BlockSetTextText,

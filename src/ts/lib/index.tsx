@@ -6,10 +6,11 @@ import Util from './util';
 import DataUtil from './datautil';
 import Mark from './mark';
 import { focus } from './focus';
-import * as I from 'ts/interface';
 import { StructDecode, StructEncode } from './struct';
-import * as C from './command';
 import { scrollOnMove } from './scrollOnMove';
+import * as I from 'ts/interface';
+import * as M from 'ts/model';
+import * as C from './command';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
@@ -37,6 +38,7 @@ export {
 	Mark,
 	I,
 	C,
+	M,
 	translate,
 	scrollOnMove,
 	StructDecode, 

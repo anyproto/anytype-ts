@@ -1,7 +1,6 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockMedia { padding: 7px 0px; }
 	.block.blockMedia.isResizing * { cursor: nwse-resize; }
 	
 	.block.blockMedia {
@@ -10,6 +9,7 @@
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
 		.media { width: 100%; display: block; }
+		video { height: 100%; }
 		
 		.icon.resize {
 			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px;
@@ -28,19 +28,19 @@
 		}
 		.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 	}
-	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
+	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; padding: 7px 0px; }
 	
 	.block.blockMedia:hover {
 		.icon.resize { opacity: 1; }
 		.icon.dots { opacity: 1; }
 	}
 	
-	.block.blockMedia > .wrapContent > .selectable.isSelected > .dropTarget > .wrap {
+	.block.blockMedia > .wrapContent > .selectable.isSelected > .dropTarget > .focusable > .wrap {
 		.icon.resize { opacity: 1; }
 		.icon.dots { opacity: 1; }
 	}
 	
-	.block.blockMedia > .wrapContent > .selectable > .dropTarget > .wrap.isPlaying {
+	.block.blockMedia > .wrapContent > .selectable > .dropTarget > .focusable > .wrap.isPlaying {
 		.icon.resize { display: none; }
 		.icon.dots { display: none; }
 		.icon.play { display: none; }

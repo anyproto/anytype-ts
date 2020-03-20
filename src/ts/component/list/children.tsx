@@ -2,10 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block } from 'ts/component';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { dispatcher, I, Util} from 'ts/lib';
 
-interface Props extends I.Block, RouteComponentProps<any> {
+interface Props extends RouteComponentProps<any> {
+	rootId: string;
+	block: any;
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
@@ -17,9 +20,11 @@ class ListChildren extends React.Component<Props, {}> {
 	refObj: any = {};
 	
 	render () {
-		const { onMouseMove, onMouseLeave, onResizeStart, childBlocks, id, type, content } = this.props;
-		const { style } = content;
-		const length = childBlocks.length;
+		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block } = this.props;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const children = blockStore.getChildren(rootId, id);
+		const length = childrenIds.length;
 		
 		if (!length) {
 			return null;
@@ -27,45 +32,43 @@ class ListChildren extends React.Component<Props, {}> {
 		
 		let ColResize: any = (): any => null;
 		let cn = [ 'children', 'c' + id ];
+		let isRow = block.isRow();
 		
-		if (type == I.BlockType.Layout) {
-			if (style == I.LayoutStyle.Row) {
-				ColResize = (item: any) => (
-					<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={(e: any) => { onResizeStart(e, item.index); }}>
-						<div className="inner">
-							<div className="line" />
-						</div>
+		if (isRow) {
+			ColResize = (item: any) => (
+				<div className={[ 'colResize', 'c' + item.index ].join(' ')} onMouseDown={(e: any) => { onResizeStart(e, item.index); }}>
+					<div className="inner">
+						<div className="line" />
 					</div>
-				);
-			};
+				</div>
+			);
 		};
 		
-		if ((type == I.BlockType.Text) && (style == I.TextStyle.Toggle)) {
+		if (block.isToggle()) {
 			cn.push('canToggle');
 		};
 		
 		return (
 			<div className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
-				{childBlocks.map((item: any, i: number) => {
+				{children.map((item: any, i: number) => {
 					let css: any = {};
 					let cn = [];
 					
-					if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
+					if (isRow) {
 						css.width = (item.fields.width || 1 / length ) * 100 + '%';
 					};
 					
 					if (i == 0) {
 						cn.push('first');
 					};
-					
-					if (i == childBlocks.length - 1) {
+					if (i == length - 1) {
 						cn.push('last');
 					};
 					
 					return (
 						<React.Fragment key={item.id}>
-							{(i > 0) && (style == I.LayoutStyle.Row) ? <ColResize index={i} /> : ''}
-							<Block ref={(ref: any) => this.refObj[item.id] = ref} {...this.props} {...item} cnt={length} css={css} className={cn.join(' ')} index={i} />
+							{(i > 0) && isRow ? <ColResize index={i} /> : ''}
+							<Block {...this.props} block={item} cnt={length} css={css} className={cn.join(' ')} index={i} />
 						</React.Fragment>
 					);
 				})}

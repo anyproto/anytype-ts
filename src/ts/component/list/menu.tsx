@@ -21,12 +21,18 @@ class ListMenu extends React.Component<Props, {}> {
 		const { history } = this.props;
 		const { menus } = commonStore;
 		
+		let cd = '';
+		if ((menus.length == 1) && (menus[0].param || {}).passThrough) {
+			cd = 'through';
+		};
+		
 		return (
 			<div className="menus">
 				{menus.map((item: I.Menu, i: number) => (
 					<Menu history={history} key={i} {...item} />
 				))}
-				{menus.length ? <Dimmer onClick={this.onClose} /> : ''}
+				{menus.length ? <Dimmer onClick={this.onClose} className={cd} /> : ''}
+				<div id="menu-polygon" />
 			</div>
 		);
 	};

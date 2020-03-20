@@ -11,8 +11,9 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props extends I.BlockDataview {
+interface Props {
 	rootId: string;
+	block: I.Block;
 };
 interface State {
 	view: string;
@@ -32,7 +33,8 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, rootId, content } = this.props;
+		const { rootId, block } = this.props;
+		const { id, content } = block;
 		const { views, data, properties } = content;
 		const view = this.state.view || content.view;
 		const viewItem = views.find((item: any) => { return item.id == view; });
@@ -66,7 +68,7 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		return (
 			<React.Fragment>
-				<Controls {...this.props} view={view} viewType={viewItem.type} onView={this.onView} />
+				<Controls {...this.props} {...block} view={view} viewType={viewItem.type} onView={this.onView} />
 				<div className="content">
 					<ViewComponent {...this.props} />
 				</div>

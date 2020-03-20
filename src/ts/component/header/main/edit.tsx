@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Smile, DropTarget } from 'ts/component';
+import { Icon, Smile, DropTarget, HeaderItemPath } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -29,9 +29,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId } = this.props;
-		const { breadcrumbs, blocks } = blockStore;
+		const { breadcrumbs } = blockStore;
 		const { account } = authStore;
-		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
+		
+		const childrenIds = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
 		const PathItemHome = (item: any) => (
 			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
@@ -41,18 +43,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			</DropTarget>
 		);
 		
-		const PathItem = (item: any) => {
-			let content = item.content || {};
-			let fields = content.fields || {}; 
-			return (
-				<DropTarget {...this.props} className="item" id={item.id} rootId={rootId} dropType={I.DragItem.Menu} onClick={(e: any) => { this.onPath(e, item); }} onDrop={this.onDrop}>
-					<Smile icon={fields.icon} />
-					<div className="name">{fields.name}</div>
-					<Icon className="arrow" />
-				</DropTarget>
-			);
-		};
-		
 		return (
 			<div className="header headerMainEdit">
 				<div className="path">
@@ -60,8 +50,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
-					{tree.map((item: any, i: any) => (
-						<PathItem key={item.id} {...item} index={i + 1} />
+					{children.map((item: any, i: any) => (
+						<HeaderItemPath key={item.id} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={i + 1} />
 					))}
 				</div>
 				
@@ -84,24 +74,24 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		});
 	};
 	
-	onPath (e: any, block: any) {
+	onPath (e: any, block: I.Block, index: number) {
 		e.persist();
 		
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
 		
 		if (block.content.targetBlockId != rootId) {
-			C.BlockCutBreadcrumbs(breadcrumbs, block.index, (message: any) => {
+			C.BlockCutBreadcrumbs(breadcrumbs, index, (message: any) => {
 				DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
 			});
 		};
 	};
 	
 	onBack (e: any) {
-		const { breadcrumbs, blocks } = blockStore;
-		const tree = blockStore.prepareTree(breadcrumbs, blocks[breadcrumbs]);
+		const { breadcrumbs } = blockStore;
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
-		C.BlockCutBreadcrumbs(breadcrumbs, (tree.length > 0 ? tree.length - 1 : 0), (message: any) => {
+		C.BlockCutBreadcrumbs(breadcrumbs, (children.length > 0 ? children.length - 1 : 0), (message: any) => {
 			this.props.history.goBack();			
 		});
 	};

@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block { padding: 1px 0px; word-break: break-word; display: flex; flex: auto; position: relative; }
+	.block { word-break: break-word; display: flex; flex: auto; position: relative; }
 	.block {
 		.wrapMenu { width: 48px; text-align: right; }
 		.wrapContent { width: calc(100% - 48px); position: relative; }
@@ -21,6 +21,7 @@
 			.line { height: 100%; width: 2px; background: #ebe9e0; position: absolute; left: 50%; top: 0px; margin-left: -1px; }
 		}
 		
+		.dropTarget { padding: 1px 0px; }
 		.dropTarget.isOver.top { border-radius: 0px 0px 4px 4px !important; }
 		.dropTarget.isOver.bottom { border-radius: 4px 4px 0px 0px !important; }
 		.dropTarget.isOver.left { border-radius: 0px 4px 4px 0px !important; }
@@ -28,8 +29,10 @@
 		
 		.selectionOver { 
 			position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: Highlight; opacity: 0.5; border-radius: 4px;
-			display: none; pointer-events: none;
+			display: none; pointer-events: none; z-index: 10;
 		}
+		
+		.focusable { border-radius: inherit; }
 		
 		.emptyToggle { 
 			display: none; margin-left: 28px; color: $colorDarkGrey; position: relative; z-index: 2; cursor: pointer;
@@ -62,6 +65,9 @@
 	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }
 	
 	.block > .wrapContent > .selectable.isSelected > .selectionOver { display: block; }
+	.block > .wrapContent > .selectable.isSelected { 
+		.placeHolder { display: none !important; } 
+	}
 	
 	.block.blockIcon > .wrapMenu { visibility: hidden; }
 }

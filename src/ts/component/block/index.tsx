@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, keyboard, focus } from 'ts/lib';
 import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
+import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
 
 import BlockDataview from './dataview';
@@ -16,14 +17,14 @@ import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
 
-interface Props extends I.Block, RouteComponentProps<any> {
+interface Props extends RouteComponentProps<any> {
 	index?: number;
-	blockStore?: any;
 	rootId: string;
 	dataset?: any;
 	cnt?: number;
 	css?: any;
 	className?: string;
+	block: I.Block;
 	onKeyDown? (e: any, text?: string): void;
 	onKeyUp? (e: any, text?: string): void;
 	onMenuAdd? (id: string): void;
@@ -35,6 +36,7 @@ const Constant = require('json/constant.json');
 const THROTTLE = 20;
 const SNAP = 0.02;
 
+@observer
 class Block extends React.Component<Props, {}> {
 
 	public static defaultProps = {
@@ -62,8 +64,10 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, rootId, childrenIds, type, fields, content, cnt, css, index, align, bgColor, className } = this.props;
-		const { style } = content || {};
+		const { rootId, cnt, css, index, className, block } = this.props;
+		const { id, type, fields, content, align, bgColor } = block;
+		const { style, checked } = content || {};
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		
 		let canSelect = true;
 		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align ];
@@ -81,17 +85,17 @@ class Block extends React.Component<Props, {}> {
 		
 		switch (type) {
 			case I.BlockType.Text:
-				cn.push('blockText ' + DataUtil.styleClassText(content.style));
+				cn.push('blockText ' + DataUtil.styleClassText(style));
 				
-				if (content.checked) {
+				if (checked) {
 					cn.push('isChecked');
 				};
 				
-				if (content.style == I.TextStyle.Title) {
+				if (style == I.TextStyle.Title) {
 					canSelect = false;
 				};
 				
-				if (content.style == I.TextStyle.Toggle) {
+				if (style == I.TextStyle.Toggle) {
 					if (!childrenIds.length) {
 						empty = (
 							<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
@@ -99,7 +103,7 @@ class Block extends React.Component<Props, {}> {
 					};
 				};
 				
-				blockComponent = <BlockText onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} {...this.props} />;
+				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
 				break;
 				
 			case I.BlockType.Layout:
@@ -174,27 +178,27 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Cover:
 				canSelect = false;
 				cn.push('blockCover');
-				blockComponent = <BlockCover {...this.props} />;
+				blockComponent = <BlockCover {...this.props} block={block} />;
 				break;
 		};
 		
-		let element = (
+		let object = (
 			<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
 				{blockComponent}
 			</DropTarget>
 		);
 		
 		if (canSelect) {
-			element = (
+			object = (
 				<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
-					{element}
+					{object}
 					<div className="selectionOver" />
 				</div>
 			);
 		} else {
-			element = (
+			object = (
 				<div className="selectable">
-					{element}
+					{object}
 				</div>
 			);
 		};
@@ -206,9 +210,9 @@ class Block extends React.Component<Props, {}> {
 				</div>
 				
 				<div className="wrapContent">
-					{element}
+					{object}
 					
-					{(type == I.BlockType.Layout) && (content.style == I.LayoutStyle.Row) ? (
+					{block.isRow() ? (
 						<React.Fragment>
 							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
 							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
@@ -216,7 +220,7 @@ class Block extends React.Component<Props, {}> {
 					): ''}
 					
 					{empty}
-					{childrenIds.length ? <ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} /> : ''}
+					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 				</div>
 			</div>
 		);
@@ -227,12 +231,14 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { dataset, id } = this.props;
+		const { dataset} = this.props;
 		const { selection } = dataset || {};
 		
 		if (selection) {
 			selection.set(selection.get());
 		};
+
+		focus.apply();
 	};
 	
 	componentWillUnmount () {
@@ -249,7 +255,8 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onToggleClick (e: any) {
-		const { rootId, id } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
 		const param = {
 			type: I.BlockType.Text
 		};
@@ -265,26 +272,14 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, id, type, content } = this.props;
+		const { dataset, block } = this.props;
 		const { selection, onDragStart } = dataset;
 		
 		if (!dataset) {
 			return;
 		};
 		
-		const { style } = content;
-
-		let canDrag = true;
-		
-		if (type == I.BlockType.Icon) {
-			canDrag = false;
-		};
-		
-		if (style == I.TextStyle.Title) {
-			canDrag = false;
-		};
-		
-		if (!canDrag) {
+		if (!block.isDraggable()) {
 			e.preventDefault();
 			e.stopPropagation();
 			return;
@@ -298,7 +293,7 @@ class Block extends React.Component<Props, {}> {
 				selection.setPreventClear(true);
 			};
 			
-			onDragStart(e, I.DragItem.Block, ids, this);				
+			onDragStart(e, I.DragItem.Block, ids, this);
 		};
 	};
 	
@@ -311,12 +306,12 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		if (dataset && onDrop) {
-			onDrop(e, type, targetId, position);			
+			onDrop(e, type, targetId, position);
 		};
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset;
 		
 		if (selection) {
@@ -329,7 +324,8 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		
 		commonStore.menuOpen('blockAction', { 
@@ -375,14 +371,14 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, childBlocks } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const prevBlock = childBlocks[index - 1];
-		const currentBlock = childBlocks[index];
-		
-		const offset = node.find('#block-' + $.escapeSelector(prevBlock.id)).offset().left + Constant.size.blockMenu;
+		const prevBlockId = childrenIds[index - 1];
+		const offset = node.find('#block-' + $.escapeSelector(prevBlockId)).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setPreventSelect(true);
@@ -408,12 +404,16 @@ class Block extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		const { childBlocks } = this.props;		
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		
 		const node = $(ReactDOM.findDOMNode(this));
-		const prevBlock = childBlocks[index - 1];
-		const prevNode = node.find('#block-' + $.escapeSelector(prevBlock.id));
-		const currentBlock = childBlocks[index];
-		const currentNode = node.find('#block-' + $.escapeSelector(currentBlock.id));
+		const prevBlockId = childrenIds[index - 1];
+		const currentBlockId = childrenIds[index];
+		
+		const prevNode = node.find('#block-' + $.escapeSelector(prevBlockId));
+		const currentNode = node.find('#block-' + $.escapeSelector(currentBlockId));
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		const w1 = res.percent * res.sum;
@@ -430,11 +430,13 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, childBlocks, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
-		const prevBlock = childBlocks[index - 1];
-		const currentBlock = childBlocks[index];
+		const prevBlockId = childrenIds[index - 1];
+		const currentBlockId = childrenIds[index];
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		if (selection) {
@@ -447,20 +449,27 @@ class Block extends React.Component<Props, {}> {
 		node.find('.colResize.active').removeClass('active');
 		
 		C.BlockListSetFields(rootId, [
-			{ blockId: prevBlock.id, fields: { width: res.percent * res.sum } },
-			{ blockId: currentBlock.id, fields: { width: (1 - res.percent) * res.sum } },
+			{ blockId: prevBlockId, fields: { width: res.percent * res.sum } },
+			{ blockId: currentBlockId, fields: { width: (1 - res.percent) * res.sum } },
 		]);
 		
 		node.find('.resizable').trigger('resizeEnd', [ e ]);
 	};
 	
 	calcWidth (x: number, index: number) {
-		const { childBlocks } = this.props;
-		const prevBlock = childBlocks[index - 1];
-		const currentBlock = childBlocks[index];
-		const dw = 1 / childBlocks.length;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		
+		const prevBlockId = childrenIds[index - 1];
+		const prevBlock = blockStore.getLeaf(rootId, prevBlockId);
+		
+		const currentBlockId = childrenIds[index];
+		const currentBlock = blockStore.getLeaf(rootId, currentBlockId);
+		
+		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
-		const offset = Constant.size.blockMenu + 50;
+		const offset = Constant.size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
 		x = Math.min(sum * Constant.size.editorPage - offset, x);
@@ -482,24 +491,27 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId, id, childBlocks, type, content } = this.props;
-		const { style } = content;
+		const { rootId, block } = this.props;
+		const { id } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!childBlocks.length || (type != I.BlockType.Layout) || (style != I.LayoutStyle.Row)) {
+		if (!block.isRow()) {
 			return;
 		};
 		
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const length = childrenIds.length;
+		const children = blockStore.getChildren(rootId, id);
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
 		const p = (e.pageX - rect.x) / (Constant.size.editorPage + 50);
 		
 		let c = 0;
 		let num = 0;
 		
-		for (let i in childBlocks) {
-			const child = childBlocks[i];
+		for (let i in children) {
+			const child = children[i];
 			
-			c += child.fields.width || 1 / childBlocks.length;
+			c += child.fields.width || 1 / length;
 			if ((p >= c - 0.1) && (p <= c + 0.1)) {
 				num = Number(i) + 1;
 				break;

@@ -1,14 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, DataUtil, focus } from 'ts/lib';
+import { I, C, keyboard, DataUtil, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockFile {
+interface Props {
 	dataset?: any;
-	width?: any;
 	rootId: string;
+	block: I.Block;
+	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 };
 
 const $ = require('jquery');
@@ -23,6 +25,8 @@ class BlockImage extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
@@ -34,7 +38,8 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { content, fields, id } = this.props;
+		const { block } = this.props;
+		const { id, fields, content } = block;
 		const { width } = fields;
 		const { state } = content;
 		const accept = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ];
@@ -50,7 +55,7 @@ class BlockImage extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile icon="image" textFile="Upload a picture" accept={accept} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="image" textFile="Upload a picture" accept={accept} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
@@ -78,9 +83,9 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div className={[ 'focusable', 'c' + id ].join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{element}
-			</React.Fragment>
+			</div>
 		);
 	};
 	
@@ -116,13 +121,25 @@ class BlockImage extends React.Component<Props, {}> {
 		node.unbind('resize');
 	};
 	
+	onKeyDown (e: any) {
+		this.props.onKeyDown(e, '', []);
+	};
+	
+	onKeyUp (e: any) {
+		this.props.onKeyUp(e, '', []);
+	};
+	
 	onChangeUrl (e: any, url: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
-		const { id, rootId } = this.props;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
 		C.BlockUpload(rootId, id, '', path);
 	};
 	
@@ -134,12 +151,12 @@ class BlockImage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		focus.clear(true);
+		focus.set(block.id, { from: 0, to: 0 });
 		win.unbind('mousemove.media mouseup.media');
 		
 		if (selection) {
@@ -161,15 +178,16 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('.wrap');
 		
-		if (!node.hasClass('wrap')) {
+		if (!wrap.length) {
 			return;
 		};
 		
-		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
-		node.css({ width: (w * 100) + '%' });
+		wrap.css({ width: (w * 100) + '%' });
 	};
 	
 	onResizeEnd (e: any, checkMax: boolean) {
@@ -177,16 +195,18 @@ class BlockImage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('.wrap');
 		
-		if (!node.hasClass('wrap')) {
+		if (!wrap.length) {
 			return;
 		};
 		
 		const win = $(window);
-		const rect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		win.unbind('mousemove.media mouseup.media');
@@ -215,7 +235,8 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		
 		if (selection) {
@@ -224,7 +245,8 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onMenuClick (e: any) {
-		const { dataset, id, rootId } = this.props;
+		const { dataset, rootId, block } = this.props;
+		const { id } = block;
 		const { selection } = dataset;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -247,18 +269,19 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	getUrl () {
-		const { content } = this.props;
+		const { block } = this.props;
+		const { content } = block;
 		const { state, hash } = content;
 		
 		return commonStore.imageUrl(hash, Constant.size.image);
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {
-		const { id, fields } = this.props;
+		const { block } = this.props;
+		const { id, fields } = block;
 		const el = $('.selectable.c' + $.escapeSelector(id));
 		
-		let { width } = fields;
-		width = Number(width) || 1;
+		let width = Number(fields.width) || 1;
 		
 		if (!el.length) {
 			return width;
