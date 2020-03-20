@@ -10,6 +10,7 @@ export interface MenuParam {
 	offsetY: number;
 	data?: any;
 	isSub?: boolean;
+	passThrough?: boolean;
 	onClose?(): void;
 };
 

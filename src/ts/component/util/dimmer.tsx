@@ -5,6 +5,7 @@ const $ = require('jquery');
 const raf = require('raf');
 
 interface Props {
+	className?: string;
 	onClick?(e: any): void;
 };
 
@@ -13,10 +14,15 @@ class Dimmer extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 
 	render () {
-		const { onClick } = this.props;
+		const { className, onClick } = this.props;
+		
+		let cn = [ 'dimmer' ];
+		if (className) {
+			cn.push(className);
+		};
 		
 		return (
-			<div id="dimmer" className="dimmer" onClick={onClick} />
+			<div id="dimmer" className={cn.join(' ')} onClick={onClick} />
 		);
 	};
 	

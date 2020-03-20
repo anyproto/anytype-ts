@@ -1049,19 +1049,19 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
+		let nl = String(next.content.text || '').length;
 		let length = 0;
 		
-		if (next.isText()) {
-			length = String(next.content.text || '').length;
+		if (next.isText() && !next.isTitle()) {
 			C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
-				focus.set(next.id, { from: length, to: length });
+				focus.set(next.id, { from: nl, to: nl });
 				focus.apply();				
 			});
 		} else {
 			length = String(focused.content.text || '').length;
 			if (!length) {
 				C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
-					focus.set(next.id, { from: 0, to: 0 });
+					focus.set(next.id, { from: nl, to: nl });
 					focus.apply();
 				});
 			};

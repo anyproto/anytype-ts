@@ -216,10 +216,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 				
 				let focus = $('.selectable.c' + $.escapeSelector(this.focused));
 				let target = $(e.target.closest('.selectable'));
+				let targetId = target.data('id');
 				
-				if (target.length && e.shiftKey) {
+				if (target.length && e.shiftKey && (targetId != this.focused)) {
 					let idxStart = list.findIndex((it: I.Block) => { return it.id == focused; });
-					let idxEnd = list.findIndex((it: I.Block) => { return it.id == target.data('id'); });
+					let idxEnd = list.findIndex((it: I.Block) => { return it.id == targetId; });
 					let start = idxStart < idxEnd ? idxStart : idxEnd;
 					let end = idxStart < idxEnd ? idxEnd : idxStart;
 					

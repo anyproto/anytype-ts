@@ -598,6 +598,7 @@ class BlockText extends React.Component<Props, {}> {
 				offsetY: -y,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Left,
+				passThrough: true,
 				data: {
 					blockId: id,
 					blockIds: [ id ],

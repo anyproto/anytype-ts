@@ -34,6 +34,7 @@ input, textarea, select { font-family: 'Lcg'; }
 .txt { vertical-align: middle; display: inline-block; line-height: 1; }
 .flex { display: flex; }
 .cp { cursor: pointer; }
+.through { pointer-events: none; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 
