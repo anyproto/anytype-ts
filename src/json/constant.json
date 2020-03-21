@@ -1,6 +1,7 @@
 {
 	"pinSize": 6,
 	"intercom": "zy2yo0vf",
+	"sentry": "https://92e58263fe71444b8a36c0770c66b961@sentry.io/1401268",
 	
 	"default": {
 		"name": "Untitled",

@@ -8,6 +8,7 @@ import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } fro
 import { commonStore, authStore, blockStore } from './store';
 import { C, dispatcher, keyboard, Storage } from 'ts/lib';
 import { throttle } from 'lodash';
+import * as Sentry from '@sentry/browser';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -93,6 +94,7 @@ interface State {
 };
 
 const THROTTLE = 20;
+const Constant =  require('json/constant.json');
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 const memoryHistory = require('history').createMemoryHistory;
@@ -113,6 +115,19 @@ enableLogging({
 	compute: true,
 });
 */
+
+//if (___ENV___ && (___ENV___ == 'production')) {
+	Sentry.init({
+		//release: ___GIT_VERSION___,
+		dsn: Constant.sentry,
+		integrations: [
+			new Sentry.Integrations.GlobalHandlers({
+				onerror: true,
+				onunhandledrejection: true
+			})
+		]
+	});
+//};
 
 declare global {
 	interface Window { getStore: any; }
