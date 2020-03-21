@@ -34,7 +34,11 @@ class MenuBlockLink extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.ref.focus();
+		window.setTimeout(() => { 
+			if (this.ref) {
+				this.ref.focus(); 
+			};
+		}, 100);
 	};
 	
 	onLink (e: any) {

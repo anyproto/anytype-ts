@@ -347,6 +347,8 @@ class BlockText extends React.Component<Props, {}> {
 			commonStore.filterSet(value);
 		};
 		
+		commonStore.menuClose('blockContext');
+		
 		// Make div
 		if (value == '---') {
 			C.BlockCreate({ type: I.BlockType.Div }, rootId, id, I.BlockPosition.Replace);
@@ -572,8 +574,6 @@ class BlockText extends React.Component<Props, {}> {
 		const { range } = focus;
 		const currentFrom = range.from;
 		const currentTo = range.to;
-		
-		commonStore.menuClose('blockContext');
 		
 		if (block.isTitle() || !currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
 			return;
