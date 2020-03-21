@@ -21,13 +21,16 @@ class DragProvider extends React.Component<Props, {}> {
 	type: string = '';
 	ids: string[] = [];
 	map: any;
+	preventCommonDrop: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
 		
+		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragMove = this.onDragMove.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
+		this.onDropCommon = this.onDropCommon.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 	};
 	
@@ -36,11 +39,31 @@ class DragProvider extends React.Component<Props, {}> {
 		const children = this.injectProps(this.props.children);
 		
 		return (
-			<React.Fragment>
+			<div className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
 				<DragLayer ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
 				{children}
-			</React.Fragment>
+			</div>
 		);
+	};
+	
+	onDropCommon (e: any) {
+		if (this.preventCommonDrop || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const { rootId } = this.props;
+		const paths: string[] = [];
+		for (let file of e.dataTransfer.files) {
+			paths.push(file.path);
+		};
+			
+		console.log('[selection.onDrop] paths', paths);
+			
+		C.ExternalDropFiles(rootId, '', I.BlockPosition.Bottom, paths);
+	};
+	
+	onDragOver (e: any) {
+		e.preventDefault();	
 	};
 	
 	onDragStart (e: any, type: string, ids: string[], component: any) {
@@ -125,6 +148,8 @@ class DragProvider extends React.Component<Props, {}> {
 		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
 		
 		if (e.dataTransfer.files && e.dataTransfer.files.length) {
+			this.preventCommonDrop = true;
+			
 			const paths: string[] = [];
 			
 			for (let file of e.dataTransfer.files) {
@@ -133,7 +158,9 @@ class DragProvider extends React.Component<Props, {}> {
 			
 			console.log('[onDrop] paths', paths);
 			
-			C.ExternalDropFiles(rootId, targetId, position, paths, () => {});
+			C.ExternalDropFiles(rootId, targetId, position, paths, (message: any) => {
+				this.preventCommonDrop = false;
+			});
 		} else {
 			C.BlockListMove(rootId, targetContextId, this.ids || [], targetId, position, () => {
 				if (selection) {
