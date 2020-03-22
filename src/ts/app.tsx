@@ -106,6 +106,9 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
+const { app } = window.require('electron').remote;
+const version = app.getVersion();
+
 /*
 enableLogging({
 	predicate: () => true,
@@ -116,9 +119,11 @@ enableLogging({
 });
 */
 
+console.log('[Version]', version);
+
 //if (___ENV___ && (___ENV___ == 'production')) {
 	Sentry.init({
-		//release: ___GIT_VERSION___,
+		release: version,
 		dsn: Constant.sentry,
 		integrations: [
 			new Sentry.Integrations.GlobalHandlers({
