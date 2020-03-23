@@ -1,20 +1,23 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Title, Smile, Icon, Button } from 'ts/component';
+import { Title, Smile, Icon, Button, Input } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 const $ = require('jquery');
 
-interface Props extends I.Popup {
-	type: string;
+interface Props extends I.Popup {};
+interface State {
+	expanded: boolean;
 };
 
 @observer
-class PopupTree extends React.Component<Props, {}> {
+class PopupTree extends React.Component<Props, State> {
 	
-	id: string = '';
+	state = {
+		expanded: false,
+	};
 	
 	constructor (props: any) {
 		super (props);
@@ -24,126 +27,92 @@ class PopupTree extends React.Component<Props, {}> {
 	};
 	
 	render () {
+		const { expanded } = this.state;
 		const { param, } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
 		const { account } = authStore;
-		const tree = blockStore.wrapTree(rootId); 
-		
-		const home = { 
-			id: 'root', 
-			content: { 
-				fields: { name: account.name || 'Home' } 
-			}, 
-			childBlocks: tree.childBlocks,
-		};
-		const items = [ home ];
-		const titles: any = {
-			copy: 'Duplicate to',
-			move: 'Move to',
-			link: 'Link to'
-		};
+		const { root } = blockStore;
+		const tree = blockStore.getTree(root, blockStore.getBlocks(root));
 		
 		const Item = (item: any) => {
-			let content = item.content || {};
-			let fields = content.fields || {};
+			const { content } = item;
+			const { fields } = content;
+			
 			return (
-				<div>
-					<div id={'item' + item.id} className={'item c' + item.index + (item.childBlocks.length ? ' withChildren' : '')}>
-						<div className="arrow" onMouseDown={(e: any) => { this.onToggle(e, item.id); }}>
-							<div className="dot" />
-						</div>
-						<span onMouseDown={(e: any) => { this.onClick(e, item.id); }}>
-							{item.id == 'root' ? <Icon className="home" /> : <Smile icon={fields.icon} />}
-							<div className="name">
-								<div className="txt">{fields.name}</div>
-							</div>
-						</span>
+				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+					<Smile icon={fields.icon} className="c48" size={24} />
+					<div className="info">
+						<div className="name">{fields.name}</div>
+						<div className="descr">We can both help with building an it's a distillation of themes found on ...</div>
 					</div>
-					{item.childBlocks.length ? (
-						<div id={'children' + item.id} className="children">
-							{item.childBlocks.map((child: any, i: number) => {
-								let index = item.index + 1;
-								return <Item key={i} {...this.props} {...child} index={index} />;
-							})}
-						</div>
-					) : ''}
 				</div>
 			);
 		};
 		
 		return (
-			<div>
-				<div className="head">
-					<Title text={titles[type]} />
-				</div>
-				
-				<div className="items">
-					{items.map((item: any, i: number) => {
-						return <Item key={item.id} {...item} index={1} />;
-					})}
-				</div>
-				
-				<div className="buttons">
-					<Button text="Confirm" className="orange" onClick={this.onConfirm} />
-					<Button text="Cancel" className="grey" onClick={this.onCancel} />
-				</div>
+			<div className={expanded ? 'expanded' : ''}>
+				{expanded ? (
+					<div>
+					</div>
+				) : (
+					<div>
+						<div className="head">
+							<Input placeHolder="Type to search..." />
+						</div>
+						<div className="items">
+							{tree.map((item: any, i: number) => {
+								return <Item key={i} {...item} />;
+							})}
+						</div>
+					</div>
+				)}
 			</div>
 		);
 	};
 	
-	onToggle (e: any, id: string) {
-		let node = $(ReactDOM.findDOMNode(this));
-		let item = node.find('#item' + id);
-		let children = node.find('#children' + id);
-		let isActive = item.hasClass('active');
-		let height = 0;
-		
-		if (isActive) {
-			item.removeClass('active');
-			children.css({ overflow: 'visible', height: 'auto' });
-			height = children.height();
-			children.css({ overflow: 'hidden', height: height });
-
-			setTimeout(() => { children.css({ height: 0 }); }, 15);
-			setTimeout(() => { children.hide(); }, 215);
-		} else {
-			item.addClass('active');
-			children.show();
-			children.css({ overflow: 'visible', height: 'auto' });
-			height = children.height();
-
-			children.css({ overflow: 'hidden', height: 0 });
-			setTimeout(() => { children.css({ height: height }); }, 15);
-			setTimeout(() => { children.css({ overflow: 'visible', height: 'auto' }); }, 215);
-		};
+	componentDidMount () {
+		this.init();
 	};
 	
-	onClick (e: any, id: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.item.selected').removeClass('selected');
-		node.find('#item' + $.escapeSelector(id)).addClass('selected');
+	componentDidUpdate () {
+		this.init();
+	};
+	
+	componentWillUnmount () {
+		$(window).unbind('resize.tree');
+	};
+	
+	init () {
+		const { expanded } = this.state;
+		const win = $(window);
+		const obj = $('#popupTree');
 		
-		this.id = id;
+		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
+		this.resize();
+		win.unbind('resize.tree').on('resize.tree', () => { this.resize(); });
+	};
+	
+	resize () {
+		const win = $(window);
+		const obj = $('#popupTree');
+		const head = obj.find('.head');
+		const items = obj.find('.items');
+		
+		items.css({ height: win.height() - head.outerHeight() - 128 });
+	};
+	
+	onClick (e: any, item: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.find('.item.active').removeClass('active');
+		node.find('#item-' + $.escapeSelector(item.id)).addClass('active');
 	};
 	
 	onConfirm (e: any) {
-		const { param } = this.props;
-		const { root } = blockStore;
-		const { data } = param;
-		const { onConfirm } = data;
-		const block = blockStore.getLeaf(root, this.id);
-		
-		if (!block) {
-			return;
-		};
-		
-		commonStore.popupClose(this.props.id);
-		onConfirm(block.content.targetBlockId);
 	};
 	
 	onCancel (e: any) {
-		commonStore.popupClose(this.props.id);
 	};
 	
 };
