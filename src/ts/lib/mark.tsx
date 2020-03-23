@@ -196,24 +196,73 @@ class Mark {
 	
 	toHtml (text: string, marks: I.Mark[]) {
 		text = String(text || '');
-		marks = this.checkRanges(text, marks || []).sort(this.sort);
+		marks = this.checkRanges(text, marks || []);
+		
+		marks.sort((c1: I.Mark, c2: I.Mark) => {
+			if (c1.range.from > c2.range.from) return 1;
+			if (c1.range.from < c2.range.from) return -1;
+			if (c1.range.to > c2.range.to) return 1;
+			if (c1.range.to < c2.range.to) return -1;
+		});
 		
 		let r = text.split('');
-		for (let mark of marks) {
+		let parts: I.Mark[] = [];
+		
+		for (let i = 0; i < marks.length; ++i) {
+			let mark = marks[i];
+			let last = parts[parts.length - 1];
+		
+			if (!last) {
+				parts.push(Util.objectCopy(mark));
+			} else {
+				if (mark.range.from >= last.range.to) {
+					parts.push(Util.objectCopy(mark));
+				} else 
+				if ((mark.range.from < last.range.to) && (mark.range.to > last.range.from)) {
+					parts.push({
+						...last,
+						range: { from: mark.range.from, to: last.range.to }
+					});
+					
+					parts.push({
+						...mark,
+						range: { from: mark.range.from, to: last.range.to }
+					});
+		
+					parts.push({
+						...mark,
+						range: { from: last.range.to, to: mark.range.to }
+					});
+		
+					last.range.to = mark.range.from;
+				};
+			};
+		};
+		
+		for (let i = 0; i < parts.length; ++i) {
+			let mark = parts[i];
+			if (mark.range.from == mark.range.to) {
+				parts.splice(i, 1);
+				i--;
+			};
+		};
+		
+		for (let mark of parts) {
 			let t = Tags[mark.type];
 			let attr = this.paramToAttr(mark.type, mark.param);
-			
+				
 			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor ].indexOf(mark.type) >= 0) {
 				continue;
 			};
-			
+				
 			let data = 'data-range="' + mark.range.from + '-' + mark.range.to + '"';
-			
+				
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
 				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + ' ' + data + '>' + r[mark.range.from];
 				r[mark.range.to - 1] += '</' + t + '>';
 			};
 		};
+		
 		return r.join('');
 	};
 	
