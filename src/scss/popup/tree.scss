@@ -13,18 +13,30 @@
 		.items { padding: 16px; overflow-x: hidden; overflow-y: auto; }
 		.items {
 			.item { 
-				border-radius: 8px; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; margin-bottom: 8px; padding: 12px 16px; 
+				border-radius: 8px; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; margin-bottom: 8px; padding: 12px 30px 12px 16px; 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 72px; line-height: 48px;
 			}
-			.item:hover { box-shadow: 0px 0px 0px 1px $colorDarkGrey inset; }
-			.item.active { box-shadow: 0px 0px 0px 2px $colorOrange inset; }
+			.item:hover, .item.active { box-shadow: 0px 0px 0px 2px $colorOrange inset; }
+			
+			.item:hover, .item.active {
+				.icon.arrow { opacity: 1; }
+				.info { border-color: $colorLightGrey; }
+			}
+			
 			.item:last-child { margin: 0px; }
 			
 			.item {
 				.smile { position: absolute; left: 16px; top: 12px; }
-				.info { padding-left: 56px; display: inline-block; vertical-align: middle; width: 100%; }
+				.info { 
+					padding: 0px 8px 0px 56px; display: inline-block; vertical-align: middle; width: 100%; 
+					border-right: 1px solid rgba(255,255,255,0); transition: $transitionFast;
+				}
 				.name { width: 100%; line-height: 24px; height: 24px; overflow: hidden; }
 				.descr { width: 100%; font-size: 13px; line-height: 18px; height: 18px; overflow: hidden; color: #6c6a5f; }
+				.icon.arrow { 
+					width: 6px; height: 10px; position: absolute; right: 12px; top: 50%; margin-top: -5px;
+					background-image: url('~img/arrow/tree.svg'); opacity: 0; 
+				}
 			}
 		}
 	}

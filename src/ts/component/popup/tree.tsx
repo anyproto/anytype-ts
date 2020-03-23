@@ -46,6 +46,7 @@ class PopupTree extends React.Component<Props, State> {
 						<div className="name">{fields.name}</div>
 						<div className="descr">We can both help with building an it's a distillation of themes found on ...</div>
 					</div>
+					<Icon className="arrow" />
 				</div>
 			);
 		};
@@ -103,10 +104,6 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		node.find('.item.active').removeClass('active');
-		node.find('#item-' + $.escapeSelector(item.id)).addClass('active');
 	};
 	
 	onConfirm (e: any) {
