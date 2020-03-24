@@ -30,6 +30,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	nodes: any = null;
 	preventSelect: boolean = false;
 	preventClear: boolean = false;
+	rects: any = {};
 	
 	constructor (props: any) {
 		super(props);
@@ -162,6 +163,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.moved = false;
 		this.lastIds = [];
 		this.focused = focus.focused;
+		this.cacheRects();
 		
 		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
@@ -239,6 +241,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		scrollOnMove.onMouseUp(e);
 		this.hide();
+		
+		this.rects = {};
 		this.lastIds = [];
 		this.focused = '';
 		this.range = null;
@@ -258,6 +262,21 @@ class SelectionProvider extends React.Component<Props, {}> {
 		return rect;
 	};
 	
+	cacheRects () {
+		this.nodes.each((i: number, el: any) => {
+			let item = $(el);
+			let id = String(item.data('id') || '');
+			let offset = item.offset();
+			
+			this.rects[id] = {
+				x: offset.left,
+				y: offset.top,
+				width: item.width(),
+				height: item.height(),
+			};
+		});	
+	};
+	
 	checkNodes (e: any) {
 		if (!this._isMounted) {
 			return
@@ -275,14 +294,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.nodes.each((i: number, el: any) => {
 			let item = $(el);
 			let id = String(item.data('id') || '');
-			let block = node.find('#block-' + $.escapeSelector(id));
-			let elRect = el.getBoundingClientRect() as DOMRect;
 			
-			elRect.y += scrollTop;
-			
-			if (!this.rectsCollide(rect, elRect)) {
+			if (!this.rectsCollide(rect, this.rects[id])) {
 				return;
 			};
+			
+			const block = node.find('#block-' + $.escapeSelector(id));
 			
 			if ((e.ctrlKey || e.metaKey)) {
 				if (this.lastIds.indexOf(id) < 0) {
@@ -359,7 +376,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	clear (force?: false) {
 		if (!this._isMounted || (this.preventClear && !force)) {
-			return
+			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
@@ -398,6 +415,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	set (ids: string[]) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		this.clear();
 		
