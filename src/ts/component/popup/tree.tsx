@@ -10,6 +10,7 @@ const $ = require('jquery');
 interface Props extends I.Popup {};
 interface State {
 	expanded: boolean;
+	filter: string;
 };
 
 @observer
@@ -17,23 +18,36 @@ class PopupTree extends React.Component<Props, State> {
 	
 	state = {
 		expanded: false,
+		filter: '',
 	};
+	ref: any = null;
+	timeout: number = 0;
 	
 	constructor (props: any) {
 		super (props);
 		
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 		this.onConfirm = this.onConfirm.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 	};
 	
 	render () {
-		const { expanded } = this.state;
+		const { expanded, filter } = this.state;
 		const { param, } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
 		const { account } = authStore;
 		const { root } = blockStore;
-		const tree = blockStore.getTree(root, blockStore.getBlocks(root));
+		
+		let tree = blockStore.getTree(root, blockStore.getBlocks(root));
+		
+		if (filter) {
+			const reg = new RegExp(filter, 'gi');
+			tree = tree.filter((it: I.Block) => { 
+				return String(it.content.fields.name || '').match(reg); 
+			});
+		};
 		
 		const Item = (item: any) => {
 			const { content } = item;
@@ -58,10 +72,11 @@ class PopupTree extends React.Component<Props, State> {
 					</div>
 				) : (
 					<div>
-						<div className="head">
-							<Input placeHolder="Type to search..." />
-						</div>
+						<form className="head" onSubmit={this.onSubmit}>
+							<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to search..." onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+						</form>
 						<div className="items">
+							{!tree.length ? <div className="empty">No items match criteria</div> : ''}
 							{tree.map((item: any, i: number) => {
 								return <Item key={i} {...item} />;
 							})}
@@ -74,6 +89,7 @@ class PopupTree extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this.init();
+		this.ref.focus();
 	};
 	
 	componentDidUpdate () {
@@ -82,6 +98,7 @@ class PopupTree extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		$(window).unbind('resize.tree');
+		window.clearTimeout(this.timeout);
 	};
 	
 	init () {
@@ -90,6 +107,7 @@ class PopupTree extends React.Component<Props, State> {
 		const obj = $('#popupTree');
 		
 		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
+		
 		this.resize();
 		win.unbind('resize.tree').on('resize.tree', () => { this.resize(); });
 	};
@@ -101,6 +119,19 @@ class PopupTree extends React.Component<Props, State> {
 		const items = obj.find('.items');
 		
 		items.css({ height: win.height() - head.outerHeight() - 128 });
+	};
+	
+	onSubmit (e: any) {
+		e.preventDefault();
+		
+		this.onKeyUp(e, true);
+	};
+	
+	onKeyUp (e: any, force: boolean) {
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
+		}, force ? 0 : 50);
 	};
 	
 	onClick (e: any, item: any) {

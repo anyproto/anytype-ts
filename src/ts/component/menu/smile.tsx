@@ -22,7 +22,8 @@ class MenuSmile extends React.Component<Props, State> {
 
 	ref: any = null;
 	id: string = '';
-	t: number = 0;
+	timeoutMenu: number = 0;
+	timeoutFilter: number = 0;
 	state = {
 		filter: '',
 		page: 0,
@@ -31,6 +32,7 @@ class MenuSmile extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onRandom = this.onRandom.bind(this);
 		this.onRemove = this.onRemove.bind(this);
@@ -76,7 +78,7 @@ class MenuSmile extends React.Component<Props, State> {
 				</div>
 				
 				<form className="filter" onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." value={filter} onKeyUp={this.onSubmit} />
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 				</form>
 				
 				<div className="items">
@@ -99,6 +101,7 @@ class MenuSmile extends React.Component<Props, State> {
 	componentDidMount () {
 		keyboard.setFocus(true);
 		this.bind();
+		this.ref.focus();
 	};
 	
 	componentDidUpdate () {
@@ -115,7 +118,8 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentWillUnmount () {
-		window.clearTimeout(this.t);
+		window.clearTimeout(this.timeoutMenu);
+		window.clearTimeout(this.timeoutFilter);
 		keyboard.setFocus(false);
 		commonStore.menuClose('smileSkin');
 		this.unbind();
@@ -179,8 +183,14 @@ class MenuSmile extends React.Component<Props, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		let filter = this.ref.getValue().replace(/[\/\\\*]/g, '');
-		this.setState({ filter: filter });
+		this.onKeyUp(e, true);
+	};
+	
+	onKeyUp (e: any, force: boolean) {
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
+		}, force ? 0 : 50);
 	};
 	
 	onRandom () {
@@ -203,10 +213,10 @@ class MenuSmile extends React.Component<Props, State> {
 		const item = EmojiData.emojis[id];
 		
 		this.id = id;
-		window.clearTimeout(this.t);
+		window.clearTimeout(this.timeoutMenu);
 		
 		if (item && item.skin_variations) {
-			this.t = window.setTimeout(() => {
+			this.timeoutMenu = window.setTimeout(() => {
 				win.unbind('mouseup.smile');
 				
 				commonStore.menuOpen('smileSkin', {
@@ -236,7 +246,7 @@ class MenuSmile extends React.Component<Props, State> {
 			if (this.id) {
 				this.onSelect(id);
 			};
-			window.clearTimeout(this.t);
+			window.clearTimeout(this.timeoutMenu);
 			win.unbind('mouseup.smile')
 		});
 	};

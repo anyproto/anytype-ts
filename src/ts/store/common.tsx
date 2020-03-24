@@ -225,7 +225,7 @@ class CommonStore {
 	
 	@action
 	filterSet (v: string) {
-		this.filterString = String(v || '').replace(/[\/\\\*]/g, '');
+		this.filterString = Util.filterFix(v);
 	};
 	
 	@action

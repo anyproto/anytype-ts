@@ -398,17 +398,21 @@ class Util {
 		return ret;
 	};
 	
-	urlFix (url: string): string {
-		if (!url) {
+	urlFix (v: string): string {
+		if (!v) {
 			return '';
 		};
-		if (url.match(/^(mailto|tel):/)) {
-			return url;
+		if (v.match(/^(mailto|tel):/)) {
+			return v;
 		};
-		if (!url.match(/:\/\//)) {
-			url = 'http://' + url;
+		if (!v.match(/:\/\//)) {
+			v = 'http://' + v;
 		};
-		return url;
+		return v;
+	};
+	
+	filterFix (v: string) {
+		return String(v || '').replace(/[\/\\\*]/g, '');
 	};
 	
 };
