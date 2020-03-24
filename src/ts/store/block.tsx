@@ -349,7 +349,7 @@ class BlockStore {
 			if (type == I.BlockType.Text) {
 				let marks: any = [];
 				
-				if (content.marks && content.marks.marks.length) {
+				if (content.marks && content.marks.marks && content.marks.marks.length) {
 					for (let mark of content.marks.marks) {
 						marks.push({
 							type: Number(mark.type) || 0,

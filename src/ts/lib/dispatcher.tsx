@@ -347,7 +347,7 @@ class Dispatcher {
 			console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 3));
 		};
 		
-		analytics.event(Util.toUpperCamelCase(type));
+		analytics.event(Util.toUpperCamelCase(type), data);
 		
 		try {
 			this.service[type](data, (message: any) => {
