@@ -163,7 +163,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.moved = false;
 		this.lastIds = [];
 		this.focused = focus.focused;
-		this.cacheRects();
+		
+		this.nodes.each((i: number, item: any) => {
+			this.cacheRect($(item));
+		});	
 		
 		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
@@ -265,19 +268,21 @@ class SelectionProvider extends React.Component<Props, {}> {
 		return rect;
 	};
 	
-	cacheRects () {
-		this.nodes.each((i: number, el: any) => {
-			let item = $(el);
-			let id = String(item.data('id') || '');
-			let offset = item.offset();
-			
-			this.rects[id] = {
-				x: offset.left,
-				y: offset.top,
-				width: item.width(),
-				height: item.height(),
-			};
-		});	
+	cacheRect (obj: any) {
+		const id = String(obj.data('id') || '');
+		
+		if (this.rects[id]) {
+			return;
+		};
+		
+		const offset = obj.offset();
+		
+		this.rects[id] = {
+			x: offset.left,
+			y: offset.top,
+			width: obj.width(),
+			height: obj.height(),
+		};
 	};
 	
 	checkNodes (e: any) {
@@ -294,9 +299,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 			this.clear();
 		};
 		
-		this.nodes.each((i: number, el: any) => {
-			let item = $(el);
+		this.nodes.each((i: number, item: any) => {
+			item = $(item);
 			let id = String(item.data('id') || '');
+			
+			this.cacheRect(item);
 			
 			if (!this.rectsCollide(rect, this.rects[id])) {
 				return;
