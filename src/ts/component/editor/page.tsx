@@ -996,6 +996,13 @@ class EditorPage extends React.Component<Props, State> {
 			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
 		};
 		
+		
+		let reg = new RegExp(/((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?/gi);
+		let match = data.text.match(reg);
+		let url = match && match[0];
+		
+		console.log(url);
+		
 		let id = '';
 		let from = 0;
 		let to = 0;

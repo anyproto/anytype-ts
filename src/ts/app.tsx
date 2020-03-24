@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
-import { C, dispatcher, keyboard, Storage } from 'ts/lib';
+import { C, dispatcher, keyboard, Storage, analytics } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -191,6 +191,7 @@ class App extends React.Component<Props, State> {
 		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
+		analytics.init();
 		
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath + '/data');
