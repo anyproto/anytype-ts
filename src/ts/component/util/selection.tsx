@@ -305,7 +305,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			this.cacheRect(item);
 			
-			if (!this.rectsCollide(rect, this.rects[id])) {
+			if (!this.rects[id] || !this.rectsCollide(rect, this.rects[id])) {
 				return;
 			};
 			
