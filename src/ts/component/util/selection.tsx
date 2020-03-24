@@ -216,23 +216,26 @@ class SelectionProvider extends React.Component<Props, {}> {
 			} else {
 				this.checkNodes(e);
 				
-				let focus = $('.selectable.c' + $.escapeSelector(this.focused));
+				let first = this.focused;
+				let ids = this.get(true);
+				
+				if (ids.length > 0) {
+					first = ids[0];
+				};
+				
 				let target = $(e.target.closest('.selectable'));
 				let targetId = target.data('id');
 				
-				if (target.length && e.shiftKey && (targetId != this.focused)) {
-					let idxStart = list.findIndex((it: I.Block) => { return it.id == focused; });
+				if (target.length && e.shiftKey && (targetId != first)) {
+					let idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
 					let idxEnd = list.findIndex((it: I.Block) => { return it.id == targetId; });
 					let start = idxStart < idxEnd ? idxStart : idxEnd;
 					let end = idxStart < idxEnd ? idxEnd : idxStart;
 					
 					let slice = list.slice(start, end + 1).
 						map((it: I.Block) => { return new M.Block(it); }).
-						filter((it: I.Block) => {
-							return it.isSelectable(); 
-						}).map((it: I.Block) => { 
-							return it.id; 
-						});
+						filter((it: I.Block) => { return it.isSelectable(); }).
+						map((it: I.Block) => { return it.id; });
 					
 					this.set(slice);
 				};
