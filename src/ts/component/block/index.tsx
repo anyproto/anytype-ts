@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, keyboard, focus } from 'ts/lib';
+import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'ts/lib';
 import { Icon, DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
@@ -227,7 +227,14 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { rootId, block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		
 		this._isMounted = true;
+
+		if (block.isToggle()) {
+			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
+		};
 	};
 	
 	componentDidUpdate () {
@@ -250,8 +257,23 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		node.hasClass('isToggled') ? node.removeClass('isToggled') : node.addClass('isToggled');
+		
+		let toggle = Storage.get('toggle') || {};
+		
+		toggle[rootId] = toggle[rootId] || [];
+		
+		if (node.hasClass('isToggled')) {
+			node.removeClass('isToggled');
+			toggle[rootId] = toggle[rootId].filter((it: string) => { return it != block.id; });
+		} else {
+			node.addClass('isToggled');
+			toggle[rootId].push(block.id);
+		};
+		
+		toggle[rootId] = [ ...new Set(toggle[rootId]) ];
+		Storage.set('toggle', toggle);
 	};
 	
 	onToggleClick (e: any) {

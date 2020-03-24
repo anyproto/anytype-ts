@@ -30,6 +30,12 @@ class Storage {
 		delete(this.storage[key]);
 	};
 	
+	checkToggle (rootId: string, id: string): boolean {
+		const map = this.get('toggle');
+		const list = map[rootId] || [];
+		return list.indexOf(id) >= 0;
+	};
+	
 };
 
 export default new Storage();
