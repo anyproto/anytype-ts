@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Util, Storage } from 'ts/lib';
+import { Util, Storage, analytics } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 import PageAuthSelect from './auth/select';
@@ -22,6 +22,24 @@ import PageHelpShortcuts from './help/shortcuts';
 
 const $ = require('jquery');
 const raf = require('raf');
+const Components: any = {
+	'/':					 PageAuthSelect,
+	'auth/select':			 PageAuthSelect,
+	'auth/register':		 PageAuthRegister,
+	'auth/login':			 PageAuthLogin,
+	'auth/pin-select':		 PageAuthPinSelect,
+	'auth/pin-confirm':		 PageAuthPinConfirm,
+	'auth/pin-check':		 PageAuthPinCheck,
+	'auth/setup':			 PageAuthSetup,
+	'auth/account-select':	 PageAuthAccountSelect,
+	'auth/success':			 PageAuthSuccess,
+			
+	'main/index':			 PageMainIndex,
+	'main/edit':			 PageMainEdit,
+			
+	'help/index':			 PageHelpIndex,
+	'help/shortcuts':		 PageHelpShortcuts,
+};
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -32,25 +50,6 @@ class Page extends React.Component<Props, {}> {
 
 	render () {
 		const { match } = this.props;
-		const Components: any = {
-			'/':					 PageAuthSelect,
-			'auth/select':			 PageAuthSelect,
-			'auth/register':		 PageAuthRegister,
-			'auth/login':			 PageAuthLogin,
-			'auth/pin-select':		 PageAuthPinSelect,
-			'auth/pin-confirm':		 PageAuthPinConfirm,
-			'auth/pin-check':		 PageAuthPinCheck,
-			'auth/setup':			 PageAuthSetup,
-			'auth/account-select':	 PageAuthAccountSelect,
-			'auth/success':			 PageAuthSuccess,
-			
-			'main/index':			 PageMainIndex,
-			'main/edit':			 PageMainEdit,
-			
-			'help/index':			 PageHelpIndex,
-			'help/shortcuts':		 PageHelpShortcuts,
-		};
-		
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
 		
@@ -70,6 +69,7 @@ class Page extends React.Component<Props, {}> {
 		this.setBodyClass();
 		this.resize();
 		this.unbind();
+		this.event();
 		
 		commonStore.popupCloseAll();
 		commonStore.menuCloseAll();
@@ -81,11 +81,22 @@ class Page extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		this.setBodyClass();
 		this.resize();
+		this.event();
 		
 		commonStore.popupCloseAll();
 		commonStore.menuCloseAll();
 		Util.linkPreviewHide(true);
 	};
+	
+	event () {
+		const { match } = this.props;
+		const path = [ match.params.page, match.params.action ].join('/');
+		const Component = Components[path];
+		
+		if (Component) {
+			analytics.event(Component.name);
+		};
+	}
 	
 	componentWillUnmount () {
 		this._isMounted = false;

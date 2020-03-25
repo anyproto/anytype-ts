@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore } from 'ts/store';
-import { Util, I, M, StructDecode, focus, keyboard, Storage, translate } from 'ts/lib';
+import { Util, I, M, StructDecode, focus, keyboard, Storage, translate, analytics } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
@@ -346,6 +346,8 @@ class Dispatcher {
 			t0 = performance.now();
 			console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 3));
 		};
+		
+		analytics.event(Util.toUpperCamelCase(type), data);
 		
 		try {
 			this.service[type](data, (message: any) => {

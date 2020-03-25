@@ -1,5 +1,5 @@
 import { observable, action, computed, set } from 'mobx';
-import { I, Storage, Util } from 'ts/lib';
+import { I, Storage, Util, analytics } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -105,6 +105,8 @@ class CommonStore {
 		this.popupClose(id, () => {
 			this.popupList.push({ id: id, param: param });
 		});
+		
+		analytics.event(Util.toCamelCase('Popup-' + id));
 	};
 	
 	@action
@@ -172,12 +174,15 @@ class CommonStore {
 		param.offsetY = Number(param.offsetY) || 0;
 		
 		if (!param.element) {
-			throw 'Element is not defined';
+			console.error('Element is not defined');
+			return;
 		};
 		
 		this.menuClose(id, () => {
-			this.menuList.push({ id: id, param: param });			
+			this.menuList.push({ id: id, param: param });
 		});
+		
+		analytics.event(Util.toCamelCase('Menu-' + id));
 	};
 	
 	menuIsOpen (id?: string): boolean {

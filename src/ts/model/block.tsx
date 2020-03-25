@@ -74,6 +74,14 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Text;
 	};
 	
+	isFile () {
+		return this.type == I.BlockType.File;
+	};
+	
+	isDiv () {
+		return this.type == I.BlockType.Div;
+	};
+	
 	isTitle () {
 		return this.isText() && (this.content.style == I.TextStyle.Title);
 	};

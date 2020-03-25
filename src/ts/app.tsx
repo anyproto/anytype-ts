@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
-import { C, dispatcher, keyboard, Storage } from 'ts/lib';
+import { C, dispatcher, keyboard, Storage, analytics } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -97,6 +97,7 @@ const THROTTLE = 20;
 const Constant =  require('json/constant.json');
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
+const os = window.require('os');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
 const Routes: RouteElement[] = require('json/route.json');
@@ -108,6 +109,12 @@ const rootStore = {
 
 const { app } = window.require('electron').remote;
 const version = app.getVersion();
+
+const platforms: any = {
+	win32:	 'Windows',
+	darwin:	 'Mac',
+	linux:	 'Linux',
+};
 
 /*
 enableLogging({
@@ -180,7 +187,14 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
-		C.VersionGet();
+		C.VersionGet((message: any) => {
+			analytics.setVersionName(version);
+			analytics.setUserProperties({
+				middleVersion: message.version,
+				deviceType: 'Desktop',
+				platform: platforms[os.platform()],
+			});
+		});
 		
 		const win = $(window);
 		const phrase = Storage.get('phrase');
@@ -191,6 +205,7 @@ class App extends React.Component<Props, State> {
 		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
+		analytics.init();
 		
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath + '/data');

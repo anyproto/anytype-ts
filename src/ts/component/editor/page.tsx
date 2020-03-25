@@ -996,6 +996,13 @@ class EditorPage extends React.Component<Props, State> {
 			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
 		};
 		
+		
+		let reg = new RegExp(/((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?/gi);
+		let match = data.text.match(reg);
+		let url = match && match[0];
+		
+		console.log(url);
+		
 		let id = '';
 		let from = 0;
 		let to = 0;
@@ -1004,6 +1011,10 @@ class EditorPage extends React.Component<Props, State> {
 			if (message.blockIds && message.blockIds.length) {
 				const lastId = message.blockIds[message.blockIds.length - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
+				if (!block) {
+					return;
+				};
+				
 				const length = String(block.content.text || '').length;
 				
 				id = block.id;

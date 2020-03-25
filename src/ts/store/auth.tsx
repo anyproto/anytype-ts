@@ -1,5 +1,5 @@
 import { observable, action, computed, set } from 'mobx';
-import { I, Storage } from 'ts/lib';
+import { I, Storage, analytics } from 'ts/lib';
 
 class AuthStore {
 	@observable public dataPath: string = '';
@@ -65,6 +65,8 @@ class AuthStore {
 	accountSet (account: I.Account) {
 		Storage.set('accountId', account.id);
 		this.accountItem = account as I.Account;
+		
+		analytics.profile(account);
 	};
 	
 	@action
