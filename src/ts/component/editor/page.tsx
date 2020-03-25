@@ -88,7 +88,7 @@ class EditorPage extends React.Component<Props, State> {
 		return (
 			<div className={cn.join(' ')}>
 				<Controls {...this.props} />
-				{withCover ? <Block {...this.props} key={cover.id} block={cover} {...cover} /> : ''}
+				{withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
 				
 				<div className="editor">
 					<div className="blocks">
