@@ -7,10 +7,13 @@ const Constant = require('json/constant.json');
 class Analytics {
 	
 	isInit: boolean =  false;
+	instance: any = null;
 	
 	init () {
 		console.log('[Analytics.init]', Constant.amplitude);
-		amplitude.getInstance().init(Constant.amplitude, null, {
+		this.instance = amplitude.getInstance();
+		
+		this.instance.init(Constant.amplitude, null, {
 			batchEvents: true,
 			saveEvents: true,
 			includeUtm: true,
@@ -21,12 +24,17 @@ class Analytics {
 	
 	profile (profile: any) {
 		console.log('[Analytics.profile]', profile.id);
-		amplitude.getInstance().setUserId(profile.id);
+		this.instance.setUserId(profile.id);
 	};
 	
 	setUserProperties (obj: any) {
 		console.log('[Analytics.setUserProperties]', obj);
-		amplitude.getInstance().setUserProperties(obj);
+		this.instance.setUserProperties(obj);
+	};
+	
+	setVersionName (name: string) {
+		console.log('[Analytics.setVersionName]', name);
+		this.instance.setVersionName(name);
 	};
 	
 	getDictionary (type: string, style: number) {
@@ -85,7 +93,7 @@ class Analytics {
 		};
 		
 		console.log('[Analytics.event]', code, param);
-		amplitude.getInstance().logEvent(code, param);
+		this.instance.logEvent(code, param);
 	};
 	
 };

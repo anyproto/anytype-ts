@@ -188,8 +188,8 @@ class App extends React.Component<Props, State> {
 	
 	init () {
 		C.VersionGet((message: any) => {
+			analytics.setVersionName(version);
 			analytics.setUserProperties({
-				clientVersion: version,
 				middleVersion: message.version,
 				deviceType: 'Desktop',
 				platform: platforms[os.platform()],
