@@ -575,10 +575,14 @@ class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 		
+		if (!currentTo || (currentFrom == currentTo)) {
+			commonStore.menuClose('blockContext');
+		};
+		
 		if (block.isTitle() || !currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
 			return;
 		};
-			
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		const offset = node.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;

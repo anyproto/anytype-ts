@@ -48,6 +48,8 @@ export interface Block {
 	isColumn?(): boolean;
 	isLink?(): boolean;
 	isIcon?(): boolean;
+	isFile?(): boolean;
+	isDiv?(): boolean;
 	isText?(): boolean;
 	isTitle?(): boolean;
 	isToggle?(): boolean;
