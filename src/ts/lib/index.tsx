@@ -8,6 +8,7 @@ import Mark from './mark';
 import { focus } from './focus';
 import { StructDecode, StructEncode } from './struct';
 import { scrollOnMove } from './scrollOnMove';
+import { analytics } from './analytics';
 import * as I from 'ts/interface';
 import * as M from 'ts/model';
 import * as C from './command';
@@ -40,6 +41,7 @@ export {
 	C,
 	M,
 	translate,
+	analytics,
 	scrollOnMove,
 	StructDecode, 
 	StructEncode,

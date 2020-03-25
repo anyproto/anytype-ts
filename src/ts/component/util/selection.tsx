@@ -30,6 +30,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	nodes: any = null;
 	preventSelect: boolean = false;
 	preventClear: boolean = false;
+	rects: any = {};
 	
 	constructor (props: any) {
 		super(props);
@@ -163,6 +164,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		this.focused = focus.focused;
 		
+		this.nodes.each((i: number, item: any) => {
+			this.cacheRect($(item));
+		});	
+		
 		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
@@ -214,23 +219,26 @@ class SelectionProvider extends React.Component<Props, {}> {
 			} else {
 				this.checkNodes(e);
 				
-				let focus = $('.selectable.c' + $.escapeSelector(this.focused));
+				let first = this.focused;
+				let ids = this.get(true);
+				
+				if (ids.length > 0) {
+					first = ids[0];
+				};
+				
 				let target = $(e.target.closest('.selectable'));
 				let targetId = target.data('id');
 				
-				if (target.length && e.shiftKey && (targetId != this.focused)) {
-					let idxStart = list.findIndex((it: I.Block) => { return it.id == focused; });
+				if (target.length && e.shiftKey && (targetId != first)) {
+					let idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
 					let idxEnd = list.findIndex((it: I.Block) => { return it.id == targetId; });
 					let start = idxStart < idxEnd ? idxStart : idxEnd;
 					let end = idxStart < idxEnd ? idxEnd : idxStart;
 					
 					let slice = list.slice(start, end + 1).
 						map((it: I.Block) => { return new M.Block(it); }).
-						filter((it: I.Block) => {
-							return it.isSelectable(); 
-						}).map((it: I.Block) => { 
-							return it.id; 
-						});
+						filter((it: I.Block) => { return it.isSelectable(); }).
+						map((it: I.Block) => { return it.id; });
 					
 					this.set(slice);
 				};
@@ -239,6 +247,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		scrollOnMove.onMouseUp(e);
 		this.hide();
+		
+		this.rects = {};
 		this.lastIds = [];
 		this.focused = '';
 		this.range = null;
@@ -258,6 +268,23 @@ class SelectionProvider extends React.Component<Props, {}> {
 		return rect;
 	};
 	
+	cacheRect (obj: any) {
+		const id = String(obj.data('id') || '');
+		
+		if (this.rects[id]) {
+			return;
+		};
+		
+		const offset = obj.offset();
+		
+		this.rects[id] = {
+			x: offset.left,
+			y: offset.top,
+			width: obj.width(),
+			height: obj.height(),
+		};
+	};
+	
 	checkNodes (e: any) {
 		if (!this._isMounted) {
 			return
@@ -272,17 +299,17 @@ class SelectionProvider extends React.Component<Props, {}> {
 			this.clear();
 		};
 		
-		this.nodes.each((i: number, el: any) => {
-			let item = $(el);
+		this.nodes.each((i: number, item: any) => {
+			item = $(item);
 			let id = String(item.data('id') || '');
-			let block = node.find('#block-' + $.escapeSelector(id));
-			let elRect = el.getBoundingClientRect() as DOMRect;
 			
-			elRect.y += scrollTop;
+			this.cacheRect(item);
 			
-			if (!this.rectsCollide(rect, elRect)) {
+			if (!this.rects[id] || !this.rectsCollide(rect, this.rects[id])) {
 				return;
 			};
+			
+			const block = node.find('#block-' + $.escapeSelector(id));
 			
 			if ((e.ctrlKey || e.metaKey)) {
 				if (this.lastIds.indexOf(id) < 0) {
@@ -359,7 +386,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	clear (force?: false) {
 		if (!this._isMounted || (this.preventClear && !force)) {
-			return
+			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
@@ -398,6 +425,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	set (ids: string[]) {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		this.clear();
 		
