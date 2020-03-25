@@ -198,66 +198,46 @@ class Mark {
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 		
-		marks.sort((c1: I.Mark, c2: I.Mark) => {
-			if (c1.range.from > c2.range.from) return 1;
-			if (c1.range.from < c2.range.from) return -1;
-			if (c1.range.to > c2.range.to) return 1;
-			if (c1.range.to < c2.range.to) return -1;
-		});
-		
 		let r = text.split('');
 		let parts: I.Mark[] = [];
-		
-		for (let i = 0; i < marks.length; ++i) {
-			let mark = marks[i];
-			let last = parts[parts.length - 1];
-		
-			if (!last) {
-				parts.push(Util.objectCopy(mark));
-			} else {
-				if (mark.range.from >= last.range.to) {
-					parts.push(Util.objectCopy(mark));
-				} else 
-				if ((mark.range.from < last.range.to) && (mark.range.to > last.range.from)) {
-					
-					if (last.range.to > mark.range.from) {
-						parts.push({
-							...last,
-							range: { from: mark.range.from, to: last.range.to }
-						});
-					};
-					
-					if (last.range.to > mark.range.from) {
-						parts.push({
-							...mark,
-							range: { from: mark.range.from, to: last.range.to }
-						});
-					};
-		
-					if (mark.range.to > last.range.to) {
-						parts.push({
-							...mark,
-							range: { from: last.range.to, to: mark.range.to }
-						});
-					};
-					
-					last.range.to = mark.range.from;
-				};
-			};
+		let borders: any[] = [];
+		let ranges: any[] = [];
+
+		for (let mark of marks) {
+			borders.push(Number(mark.range.from));
+			borders.push(Number(mark.range.to));
 		};
-		
-		for (let i = 0; i < parts.length; ++i) {
-			let mark = parts[i];
-			if (mark.range.from == mark.range.to) {
-				parts.splice(i, 1);
-				i--;
+
+		borders.sort(function (c1, c2) {
+			if (c1 > c2) return 1;
+			if (c1 < c2) return -1;
+			return 0;
+		});
+		borders = [ ...new Set(borders) ];
+
+		for (let i = 0; i < borders.length; ++i) {
+			if (!borders[i + 1]) {
+				break;
+			};
+			ranges.push({ from: borders[i], to: borders[i + 1] });
+		};
+
+		for (let range of ranges) {
+			for (let mark of marks) {
+				if (mark.range.from <= range.from && mark.range.to >= range.to) {
+					parts.push({
+						type: mark.type,
+						param: mark.param,
+						range: { from: range.from, to: range.to }
+					});
+				};
 			};
 		};
 		
 		for (let mark of parts) {
 			let t = Tags[mark.type];
 			let attr = this.paramToAttr(mark.type, mark.param);
-				
+			
 			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor ].indexOf(mark.type) >= 0) {
 				continue;
 			};

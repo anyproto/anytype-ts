@@ -68,10 +68,12 @@ class PopupTree extends React.Component<Props, State> {
 		return (
 			<div className={expanded ? 'expanded' : ''}>
 				{expanded ? (
-					<div>
-					</div>
+					<React.Fragment>
+						<div className="items">
+						</div>
+					</React.Fragment>
 				) : (
-					<div>
+					<React.Fragment>
 						<form className="head" onSubmit={this.onSubmit}>
 							<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to search..." onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 						</form>
@@ -81,7 +83,7 @@ class PopupTree extends React.Component<Props, State> {
 								return <Item key={i} {...item} />;
 							})}
 						</div>
-					</div>
+					</React.Fragment>
 				)}
 			</div>
 		);
@@ -119,6 +121,7 @@ class PopupTree extends React.Component<Props, State> {
 		const items = obj.find('.items');
 		
 		items.css({ height: win.height() - head.outerHeight() - 128 });
+		obj.css({ marginLeft: -obj.width() / 2 });
 	};
 	
 	onSubmit (e: any) {
@@ -135,6 +138,7 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
+		this.setState({ expanded: true });
 	};
 	
 	onConfirm (e: any) {

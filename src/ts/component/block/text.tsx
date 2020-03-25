@@ -230,11 +230,18 @@ class BlockText extends React.Component<Props, {}> {
 		
 		links.each((i: number, item: any) => {
 			item = $(item);
-			let t = item.text();
-			t = t.replace(/\s/g, '&nbsp;');
-			t = t.replace(/\-/g, '&#8209;');
-			t = t.replace(/‐/g, '&#8209;');
-			item.html(t);
+			let text = item.text();
+			let html = item.html();
+			
+			text = text.replace(/\s/g, '&nbsp;');
+			text = text.replace(/\-/g, '&#8209;');
+			text = text.replace(/‐/g, '&#8209;');
+			
+			html = html.replace(/>([^<]+)</, function (s, p1) {
+				return '>' + text + '<';
+			});
+			
+			item.html(html);
 		});
 		
 		links.unbind('click.link mouseenter.link');
@@ -346,8 +353,6 @@ class BlockText extends React.Component<Props, {}> {
 		if (commonStore.menuIsOpen('blockAdd')) {
 			commonStore.filterSet(value);
 		};
-		
-		commonStore.menuClose('blockContext');
 		
 		// Make div
 		if (value == '---') {
