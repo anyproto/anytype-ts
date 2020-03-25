@@ -219,21 +219,28 @@ class Mark {
 					parts.push(Util.objectCopy(mark));
 				} else 
 				if ((mark.range.from < last.range.to) && (mark.range.to > last.range.from)) {
-					parts.push({
-						...last,
-						range: { from: mark.range.from, to: last.range.to }
-					});
 					
-					parts.push({
-						...mark,
-						range: { from: mark.range.from, to: last.range.to }
-					});
+					if (last.range.to > mark.range.from) {
+						parts.push({
+							...last,
+							range: { from: mark.range.from, to: last.range.to }
+						});
+					};
+					
+					if (last.range.to > mark.range.from) {
+						parts.push({
+							...mark,
+							range: { from: mark.range.from, to: last.range.to }
+						});
+					};
 		
-					parts.push({
-						...mark,
-						range: { from: last.range.to, to: mark.range.to }
-					});
-		
+					if (mark.range.to > last.range.to) {
+						parts.push({
+							...mark,
+							range: { from: last.range.to, to: mark.range.to }
+						});
+					};
+					
 					last.range.to = mark.range.from;
 				};
 			};
