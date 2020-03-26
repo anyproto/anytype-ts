@@ -77,7 +77,7 @@ module.exports = (env) => {
 				'___GIT_VERSION___': JSON.stringify(gitRevision.version()),
 				'___GIT_COMMIT___': JSON.stringify(gitRevision.commithash()),
 				'___GIT_BRANCH___': JSON.stringify(gitRevision.branch()),
-				//'process.env.NODE_ENV': JSON.stringify('production'),
+				'process.env.NODE_ENV': JSON.stringify('production'),
 			}),
 			
 			/*

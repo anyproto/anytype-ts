@@ -107,7 +107,7 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
-const { app } = window.require('electron').remote;
+const { app, process } = window.require('electron').remote;
 const version = app.getVersion();
 
 const platforms: any = {
@@ -116,6 +116,7 @@ const platforms: any = {
 	linux:	 'Linux',
 };
 
+/*
 enableLogging({
 	predicate: () => true,
 	action: true,
@@ -123,10 +124,11 @@ enableLogging({
 	transaction: true,
 	compute: true,
 });
+*/
 
 console.log('[Version]', version);
 
-//if (___ENV___ && (___ENV___ == 'production')) {
+if (process.env.NODE_ENV == 'production') {
 	Sentry.init({
 		release: version,
 		dsn: Constant.sentry,
@@ -137,7 +139,7 @@ console.log('[Version]', version);
 			})
 		]
 	});
-//};
+};
 
 declare global {
 	interface Window { getStore: any; }
