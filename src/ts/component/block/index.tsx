@@ -112,10 +112,6 @@ class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.Icon:
-				if (!content.name) {
-					return null;
-				};
-			
 				canSelect = false;
 				cn.push('blockIcon');
 				blockComponent = <BlockIcon {...this.props} />;

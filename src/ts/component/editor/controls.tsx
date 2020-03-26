@@ -46,11 +46,6 @@ class Controls extends React.Component<Props, {}> {
 	
 	onAddIcon (e: any) {
 		const { rootId } = this.props;
-		const block = blockStore.getBlocks(rootId, (it: any) => { return it.isIcon(); })[0];
-		
-		if (!block) {
-			return;
-		};
 		
 		commonStore.menuOpen('smile', { 
 			element: '#button-add-icon',
@@ -60,9 +55,10 @@ class Controls extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onSelect: (id: string) => {
-					id = id ? ':' + id + ':' : '';
-					C.BlockSetIconName(rootId, block.id, id);
+				onSelect: (icon: string) => {
+					C.BlockSetDetails(rootId, [ 
+						{ key: 'icon', value: (icon ? ':' + icon + ':' : '') } 
+					]);
 				}
 			}
 		});

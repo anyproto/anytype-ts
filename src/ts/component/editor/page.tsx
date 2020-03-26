@@ -69,11 +69,12 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
-		const detail = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetail(rootId, rootId);
 		
-		const withIcon = detail.icon;
+		const withIcon = details.icon;
 		const withCover = true;
 		
+		const icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.Icon, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper' ];
@@ -88,6 +89,8 @@ class EditorPage extends React.Component<Props, State> {
 			cn.push('withCover');
 		};
 		
+		console.log('withIcon', withIcon);
+		
 		return (
 			<div className={cn.join(' ')}>
 				<Controls {...this.props} />
@@ -96,6 +99,8 @@ class EditorPage extends React.Component<Props, State> {
 				<div className="editor">
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
+					
+						{withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
 					
 						{list.map((block: I.Block, i: number) => {
 							return (

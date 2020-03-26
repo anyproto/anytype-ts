@@ -66,7 +66,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { content } = block;
 		const { targetBlockId } = content;
 		
-		C.BlockSetIconName(targetBlockId, targetBlockId + '-icon', icon);
+		C.BlockSetDetails(targetBlockId, [ { key: 'icon', value: icon } ]);
 	};
 	
 };
