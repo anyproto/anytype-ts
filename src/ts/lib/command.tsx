@@ -138,12 +138,12 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.call('blockCreate', request, callBack);
 };
 
-const BlockCreatePage = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
-		block: blockStore.prepareBlockToProto(block),
 		contextId: contextId,
 		targetId: targetId,
 		position: position,
+		details: (new StructEncode()).encodeStruct(details || {});
 	};
 	dispatcher.call('blockCreatePage', request, callBack);
 };

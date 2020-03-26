@@ -156,18 +156,12 @@ class DataUtil {
 		const { root } = blockStore;
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
-		const block = {
-			type: I.BlockType.Page,
-			fields: { 
-				icon: icon, 
-				name: name,
-			},
-			content: {
-				style: I.PageStyle.Empty,
-			},
+		const details = {
+			icon: icon, 
+			name: name,
 		};
 
-		C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
+		C.BlockCreatePage(root, '', details, I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			//this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();
