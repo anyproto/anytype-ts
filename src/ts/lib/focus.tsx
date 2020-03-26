@@ -19,7 +19,7 @@ class Focus {
 	};
 	
 	clear (withRange: boolean) {
-		const el = $('.focusable.c' + $.escapeSelector(this.focused));
+		const el = $('.focusable.c' + this.focused);
 		
 		this.focused = '';
 		this.range.from = 0;
@@ -42,7 +42,7 @@ class Focus {
 			return;
 		};
 		
-		const el = $('.focusable.c' + $.escapeSelector(this.focused));
+		const el = $('.focusable.c' + this.focused);
 		if (!el.length) {
 			return;
 		};

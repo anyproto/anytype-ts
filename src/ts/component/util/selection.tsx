@@ -309,7 +309,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				return;
 			};
 			
-			const block = node.find('#block-' + $.escapeSelector(id));
+			const block = node.find('#block-' + id);
 			
 			if ((e.ctrlKey || e.metaKey)) {
 				if (this.lastIds.indexOf(id) < 0) {
@@ -436,8 +436,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = ids;
 		
 		for (let id of ids) {
-			id = $.escapeSelector(id);
-			
 			let block = node.find('#block-' + id);
 			if (block.hasClass('no-select')) {
 				continue;
@@ -472,7 +470,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 			
 			if (withChildren) {
-				node.find('.children.c' + $.escapeSelector(id) + ' .selectable').each((c: number, child: any) => {
+				node.find('.children.c' + id + ' .selectable').each((c: number, child: any) => {
 					child = $(child);
 					
 					let id = String(child.data('id') || '');

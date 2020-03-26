@@ -268,7 +268,7 @@ class BlockStore {
 			for (let item of list) {
 				if (item.isNumbered()) {
 					n++;
-					$('.markerInner.c' + $.escapeSelector(item.id)).text(n ? n + '.' : '');
+					$('.markerInner.c' + item.id).text(n ? n + '.' : '');
 				} else {
 					n = 0;
 				};

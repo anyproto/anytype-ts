@@ -396,7 +396,7 @@ class Block extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
-		const offset = node.find('#block-' + $.escapeSelector(prevBlockId)).offset().left + Constant.size.blockMenu;
+		const offset = node.find('#block-' + prevBlockId).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setPreventSelect(true);
@@ -430,8 +430,8 @@ class Block extends React.Component<Props, {}> {
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		
-		const prevNode = node.find('#block-' + $.escapeSelector(prevBlockId));
-		const currentNode = node.find('#block-' + $.escapeSelector(currentBlockId));
+		const prevNode = node.find('#block-' + prevBlockId);
+		const currentNode = node.find('#block-' + currentBlockId);
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		const w1 = res.percent * res.sum;

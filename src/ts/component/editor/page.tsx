@@ -697,7 +697,7 @@ class EditorPage extends React.Component<Props, State> {
 						
 						// Auto-open toggle blocks 
 						if (parent && parent.isToggle()) {
-							node.find('#block-' + $.escapeSelector(parent.id)).addClass('isToggled');
+							node.find('#block-' + parent.id).addClass('isToggled');
 						};
 						
 						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
@@ -807,7 +807,7 @@ class EditorPage extends React.Component<Props, State> {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
-			$('.placeHolder.c' + $.escapeSelector(blockId)).text(Constant.placeHolder.filter);
+			$('.placeHolder.c' + blockId).text(Constant.placeHolder.filter);
 			this.onMenuAdd(blockId);
 		});
 	};
@@ -846,7 +846,7 @@ class EditorPage extends React.Component<Props, State> {
 				
 				focus.apply();
 				commonStore.filterSet('');
-				$('.placeHolder.c' + $.escapeSelector(id)).text(Constant.placeHolder.default);
+				$('.placeHolder.c' + id).text(Constant.placeHolder.default);
 			},
 			data: {
 				blockId: id,
