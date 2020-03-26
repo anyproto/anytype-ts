@@ -129,7 +129,7 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetDetails':
-					
+					blockStore.detailsSet(rootId, [ data ]);
 					break;
 					
 				case 'blockSetFields':

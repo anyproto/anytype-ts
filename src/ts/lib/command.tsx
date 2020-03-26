@@ -143,7 +143,7 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 		contextId: contextId,
 		targetId: targetId,
 		position: position,
-		details: (new StructEncode()).encodeStruct(details || {});
+		details: (new StructEncode()).encodeStruct(details || {}),
 	};
 	dispatcher.call('blockCreatePage', request, callBack);
 };

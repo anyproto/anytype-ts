@@ -12,7 +12,7 @@ class BlockStore {
 	
 	public treeObject: Map<string, any[]> = new Map();
 	public blockObject: Map<string, any[]> = new Map();
-	@observable public detailsObject: Map<string, any> = new Map();
+	public detailsObject: any = {};
 	
 	@computed
 	get root (): string {
@@ -45,8 +45,16 @@ class BlockStore {
 	};
 	
 	@action
-	detailsSet (id: string, details: any[]) {
-		console.log('detailsSet', details);
+	detailsSet (rootId: string, details: any[]) {
+		this.detailsObject[rootId] = this.detailsObject[rootId] || observable({});
+		
+		for (let item of details) {
+			if (!item.id || !item.details) {
+				continue;
+			};
+			
+			set(this.detailsObject[rootId], item.id, observable(StructDecode.decodeStruct(item.details)));
+		};
 	};
 	
 	@action
@@ -318,6 +326,11 @@ class BlockStore {
 			};
 		};
 		return ret;
+	};
+	
+	getDetails (rootId: string, id?: string) {
+		const root = this.detailsObject[rootId] || {};
+		return id ? root[id] || {} : root;
 	};
 	
 	prepareBlockFromProto (block: any): I.Block {

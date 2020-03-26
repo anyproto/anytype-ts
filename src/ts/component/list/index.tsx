@@ -38,10 +38,11 @@ class ListIndex extends React.Component<Props, {}> {
 		const children = blockStore.getChildren(root, root, (it: any) => {
 			return !(it.content.fields || {}).isArchived;
 		});
+		const details = blockStore.getDetails(root);
 		
 		const Item = SortableElement((item: any) => {
 			let content = item.content || {};
-			let fields = content.fields || {};
+			let fields = details[content.targetBlockId] || {};
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
 					<Smile className="c48" icon={fields.icon} size={24} />
