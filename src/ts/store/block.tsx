@@ -12,7 +12,7 @@ class BlockStore {
 	
 	public treeObject: Map<string, any[]> = new Map();
 	public blockObject: Map<string, any[]> = new Map();
-	public detailsObject: any = {};
+	public detailObject: Map<string, Map<string, any>> = new Map();
 	
 	@computed
 	get root (): string {
@@ -46,14 +46,47 @@ class BlockStore {
 	
 	@action
 	detailsSet (rootId: string, details: any[]) {
-		this.detailsObject[rootId] = this.detailsObject[rootId] || observable({});
+		let map = observable(new Map());
 		
 		for (let item of details) {
 			if (!item.id || !item.details) {
 				continue;
 			};
 			
-			set(this.detailsObject[rootId], item.id, observable(StructDecode.decodeStruct(item.details)));
+			map.set(item.id, StructDecode.decodeStruct(item.details));
+		};
+		
+		intercept(map as any, (change: any) => {
+			console.log('Details change', change, map[change.name]);
+			return change;
+		});
+		
+		this.detailObject.set(rootId, map);
+	};
+	
+	@action
+	detailsUpdate (rootId: string, item: any) {
+		if (!item.id || !item.details) {
+			return;
+		};
+		
+		let map = this.detailObject.get(rootId);
+		let create = false;
+		
+		if (!map) {
+			map = observable(new Map());
+			create = true;
+		};
+		
+		map.set(item.id, StructDecode.decodeStruct(item.details));
+		
+		if (create) {
+			intercept(map as any, (change: any) => {
+				console.log('Details change', change, map[change.name]);
+				return change;
+			});
+			
+			this.detailObject.set(rootId, map);
 		};
 	};
 	
@@ -328,9 +361,14 @@ class BlockStore {
 		return ret;
 	};
 	
-	getDetails (rootId: string, id?: string) {
-		const root = this.detailsObject[rootId] || {};
-		return id ? root[id] || {} : root;
+	getDetailMap (rootId: string) {
+		return this.detailObject.get(rootId) || new Map();
+	};
+	
+	getDetail (rootId: string, id: string): any {
+		const map = this.getDetailMap(rootId);
+		const item = map.get(id);
+		return item || {};
 	};
 	
 	prepareBlockFromProto (block: any): I.Block {

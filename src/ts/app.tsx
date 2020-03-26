@@ -116,7 +116,6 @@ const platforms: any = {
 	linux:	 'Linux',
 };
 
-/*
 enableLogging({
 	predicate: () => true,
 	action: true,
@@ -124,7 +123,6 @@ enableLogging({
 	transaction: true,
 	compute: true,
 });
-*/
 
 console.log('[Version]', version);
 
