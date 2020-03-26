@@ -75,6 +75,7 @@ class EditorPage extends React.Component<Props, State> {
 		const withCover = true;
 		
 		const icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.Icon, childrenIds: [], fields: {}, content: {} });
+		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Text, childrenIds: [], fields: {}, content: { style: I.TextStyle.Title } });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper' ];
@@ -89,8 +90,6 @@ class EditorPage extends React.Component<Props, State> {
 			cn.push('withCover');
 		};
 		
-		console.log('withIcon', withIcon);
-		
 		return (
 			<div className={cn.join(' ')}>
 				<Controls {...this.props} />
@@ -101,6 +100,13 @@ class EditorPage extends React.Component<Props, State> {
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 					
 						{withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
+						<Block 
+							{...this.props} key={title.id} block={title}
+							onKeyDown={this.onKeyDownBlock} 
+							onKeyUp={this.onKeyUpBlock}
+							onMenuAdd={this.onMenuAdd}
+							onPaste={this.onPaste} 
+						/>
 					
 						{list.map((block: I.Block, i: number) => {
 							return (
