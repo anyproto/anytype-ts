@@ -202,6 +202,7 @@ class App extends React.Component<Props, State> {
 		
 		let debugUI = Boolean(Storage.get('debugUI'));
 		let debugMW = Boolean(Storage.get('debugMW'));
+		let debugAN = Boolean(Storage.get('debugAN'));
 		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
@@ -227,6 +228,11 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('toggleDebugMW', (e: any) => {
 			debugMW = !debugMW;
 			Storage.set('debugMW', Number(debugMW));
+		});
+		
+		ipcRenderer.on('toggleDebugAN', (e: any) => {
+			debugAN = !debugAN;
+			Storage.set('debugAN', Number(debugAN));
 		});
 		
 		ipcRenderer.on('help', (e: any) => {

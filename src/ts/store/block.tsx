@@ -10,8 +10,9 @@ class BlockStore {
 	@observable public archiveId: string = '';
 	@observable public breadcrumbsId: string = '';
 	
-	public treeObject: any = new Map();
-	public blockObject: any = new Map();
+	public treeObject: Map<string, any[]> = new Map();
+	public blockObject: Map<string, any[]> = new Map();
+	@observable public detailsObject: Map<string, any> = new Map();
 	
 	@computed
 	get root (): string {
@@ -41,6 +42,11 @@ class BlockStore {
 	@action
 	breadcrumbsSet (id: string) {
 		this.breadcrumbsId = String(id || '');
+	};
+	
+	@action
+	detailsSet (id: string, details: any[]) {
+		console.log('detailsSet', details);
 	};
 	
 	@action

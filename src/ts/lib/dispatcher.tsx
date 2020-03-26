@@ -6,8 +6,6 @@ const bindings = require('bindings')('addon');
 const protobuf = require('protobufjs');
 const Constant = require('json/constant.json');
 
-const DEBUG = true;
-
 class Dispatcher {
 
 	service: any = null;
@@ -93,6 +91,7 @@ class Dispatcher {
 					});
 					
 					blockStore.blocksSet(rootId, blocks);
+					blockStore.detailsSet(rootId, data.details);
 					break;
 				
 				case 'blockAdd':
@@ -127,6 +126,10 @@ class Dispatcher {
 					
 					block.content.name = data.name.value;
 					blockStore.blockUpdate(rootId, block);
+					break;
+					
+				case 'blockSetDetails':
+					
 					break;
 					
 				case 'blockSetFields':

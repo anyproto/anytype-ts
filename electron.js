@@ -95,15 +95,21 @@ function createWindow () {
 					}
 				},
 				{
-					label: 'UI Debug',
+					label: 'Debug interface',
 					click: function () {
 						win.webContents.send('toggleDebugUI');
 					}
 				},
 				{
-					label: 'MW Debug',
+					label: 'Debug middleware',
 					click: function () {
 						win.webContents.send('toggleDebugMW');
+					}
+				},
+				{
+					label: 'Debug analytics',
+					click: function () {
+						win.webContents.send('toggleDebugAN');
 					}
 				},
 				{

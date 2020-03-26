@@ -48,6 +48,10 @@ class Controls extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const block = blockStore.getBlocks(rootId, (it: any) => { return it.isIcon(); })[0];
 		
+		if (!block) {
+			return;
+		};
+		
 		commonStore.menuOpen('smile', { 
 			element: '#button-add-icon',
 			type: I.MenuType.Vertical,
