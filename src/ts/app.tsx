@@ -53,6 +53,7 @@ import 'scss/block/bookmark.scss';
 import 'scss/block/div.scss';
 import 'scss/block/layout.scss';
 import 'scss/block/icon.scss';
+import 'scss/block/title.scss';
 import 'scss/block/cover.scss';
 
 import 'scss/popup/common.scss';

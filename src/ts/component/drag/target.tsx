@@ -126,7 +126,7 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		// You can drop only on bottom of Title
-		if ((type == I.BlockType.Text) && (style == I.TextStyle.Title) && ([ I.BlockPosition.Left, I.BlockPosition.Right, I.BlockPosition.Top, I.BlockPosition.Inner ].indexOf(this.position) >= 0)) {
+		if (type == I.BlockType.Title) {
 			this.position = I.BlockPosition.None;
 		};
 		

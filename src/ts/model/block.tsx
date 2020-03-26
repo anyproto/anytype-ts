@@ -83,7 +83,7 @@ class Block implements I.Block {
 	};
 	
 	isTitle () {
-		return this.isText() && (this.content.style == I.TextStyle.Title);
+		return this.type == I.BlockType.Title;
 	};
 	
 	isToggle () {

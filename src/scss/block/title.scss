@@ -1,0 +1,10 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockTitle { padding: 12px 0px 24px 0px; }
+	.block.blockTitle {
+		.input { padding: 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
+	}
+	.block.blockTitle > .wrapContent > .selectable > .dropTarget { padding-top: 3px; padding-bottom: 2px; }
+	.block.blockTitle > .wrapMenu { visibility: hidden; }
+}

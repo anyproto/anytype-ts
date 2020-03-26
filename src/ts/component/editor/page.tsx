@@ -75,7 +75,7 @@ class EditorPage extends React.Component<Props, State> {
 		const withCover = true;
 		
 		const icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.Icon, childrenIds: [], fields: {}, content: {} });
-		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Text, childrenIds: [], fields: {}, content: { style: I.TextStyle.Title } });
+		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper' ];
@@ -221,16 +221,12 @@ class EditorPage extends React.Component<Props, State> {
 			const { focused, range } = focus;
 
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
-			const title = blockStore.getBlocks(rootId, (it: any) => { return it.isTitle(); })[0];
+			const details = blockStore.getDetail(rootId, rootId);
 			
-			if (!focusedBlock && title) {
-				let text = String(title.content.text || '');
-				if (text == Constant.default.name) {
-					text = '';
-				};
-				let length = text.length;
+			if (!focusedBlock) {
+				let length = String(details.name || '').length;
 				
-				focus.set(title.id, { from: length, to: length });
+				focus.set(rootId + '-title', { from: length, to: length });
 			};
 
 			this.resize();
@@ -307,25 +303,26 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const root = blockStore.getLeaf(rootId, rootId);
+		const details = blockStore.getDetail(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const withIcon = root && root.fields.icon;
+		const withIcon = details.icon;
 		const withCover = true;
 
-		let offset = 130;
+		let offset = 170;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
 		
 		if (withCover && withIcon) {
-			offset = 360;
+			offset = 408;
 		} else
 		if (withCover) {
-			offset = 360;
+			offset = 408;
 		} else 
 		if (withIcon) {
-			offset = 184;
+			offset = 224;
 		};
 		
 		// Find hovered block by mouse coords
@@ -364,17 +361,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
 				
-				let canAdd = true;
 				if (block) {
-					if (block.isIcon()) {
-						canAdd = false;
-					};
-					if (block.isTitle() && (this.hoverPosition == I.BlockPosition.Top)) {
-						canAdd = false;
-					};
-				};
-				
-				if (canAdd) {
 					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 				};
 			};

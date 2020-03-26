@@ -68,10 +68,6 @@ class BlockText extends React.Component<Props, {}> {
 		let additional = null;
 		
 		switch (style) {
-			case I.TextStyle.Title:
-				placeHolder = Constant.default.name;
-				break;
-				
 			case I.TextStyle.Quote:
 				additional = (
 					<div className="line" />
@@ -186,11 +182,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let { style, color, bgColor, number } = content;
 		let text = String(v || '');
-		
-		if ((style == I.TextStyle.Title) && (text == Constant.default.name)) {
-			text = '';
-		};
-		
 		let html = text;
 		
 		if (style == I.TextStyle.Code) {
@@ -308,7 +299,6 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const k = e.which;
 		const value = this.getValue().replace(/\n$/, '');
-		const isTitle = style == I.TextStyle.Title;
 		
 		if ((k == Key.enter) && !e.shiftKey && (style != I.TextStyle.Code)) {
 			e.preventDefault();
@@ -326,7 +316,7 @@ class BlockText extends React.Component<Props, {}> {
 			commonStore.menuClose('blockAdd');
 		};
 		
-		if (!value && !isTitle && (k == Key.slash)) {
+		if (!value && (k == Key.slash)) {
 			onMenuAdd(id);
 		};
 		
@@ -584,7 +574,7 @@ class BlockText extends React.Component<Props, {}> {
 			commonStore.menuClose('blockContext');
 		};
 		
-		if (block.isTitle() || !currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
+		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
 			return;
 		};
 		

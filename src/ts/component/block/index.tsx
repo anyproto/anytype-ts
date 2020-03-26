@@ -11,6 +11,7 @@ import BlockDataview from './dataview';
 import BlockText from './text';
 import BlockImage from './image';
 import BlockIcon from './icon';
+import BlockTitle from './title';
 import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
@@ -91,10 +92,6 @@ class Block extends React.Component<Props, {}> {
 					cn.push('isChecked');
 				};
 				
-				if (style == I.TextStyle.Title) {
-					canSelect = false;
-				};
-				
 				if (style == I.TextStyle.Toggle) {
 					if (!childrenIds.length) {
 						empty = (
@@ -115,6 +112,12 @@ class Block extends React.Component<Props, {}> {
 				canSelect = false;
 				cn.push('blockIcon');
 				blockComponent = <BlockIcon {...this.props} />;
+				break;
+				
+			case I.BlockType.Title:
+				canSelect = false;
+				cn.push('blockTitle');
+				blockComponent = <BlockTitle {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
