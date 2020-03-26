@@ -10,6 +10,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 import ContentIcon from './icon';
+import ContentTitle from './title';
 import ContentText from './text';
 import ContentLink from './link';
 
@@ -25,6 +26,11 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Icon:
 				cn.push('blockIcon');
 				content = <ContentIcon {...this.props} />;
+				break;
+				
+			case I.BlockType.Title:
+				cn.push('blockTitle');
+				content = <ContentTitle {...this.props} />;
 				break;
 									
 			case I.BlockType.Text:

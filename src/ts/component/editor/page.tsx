@@ -219,24 +219,28 @@ class EditorPage extends React.Component<Props, State> {
 		this.id = rootId;
 		C.BlockOpen(this.id, bc, (message: any) => {
 			const { focused, range } = focus;
-
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
-			const details = blockStore.getDetail(rootId, rootId);
 			
 			if (!focusedBlock) {
-				let length = String(details.name || '').length;
-				
-				focus.set(rootId + '-title', { from: length, to: length });
+				this.focusTitle();
 			};
 
 			this.resize();
-			window.setTimeout(() => { focus.apply(); }, 1);
 			
 			window.setTimeout(() => {
 				this.setState({ loading: false });
 				blockStore.setNumbers(rootId);
 			}, 300);
 		});
+	};
+	
+	focusTitle () {
+		const { rootId } = this.props;
+		const details = blockStore.getDetail(rootId, rootId);
+		const length = String(details.name || '').length;
+		
+		focus.set(rootId + '-title', { from: length, to: length });
+		window.setTimeout(() => { focus.apply(); });
 	};
 	
 	close (id: string) {
@@ -1064,7 +1068,7 @@ class EditorPage extends React.Component<Props, State> {
 		let nl = String(next.content.text || '').length;
 		let length = 0;
 		
-		if (next.isText() && !next.isTitle()) {
+		if (next.isText()) {
 			C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
 				focus.set(next.id, { from: nl, to: nl });
 				focus.apply();				
@@ -1073,8 +1077,12 @@ class EditorPage extends React.Component<Props, State> {
 			length = String(focused.content.text || '').length;
 			if (!length) {
 				C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
-					focus.set(next.id, { from: nl, to: nl });
-					focus.apply();
+					if (next.isFocusable()) {
+						focus.set(next.id, { from: nl, to: nl });
+						focus.apply();
+					} else {
+						this.focusTitle();
+					};
 				});
 			};
 		};
@@ -1112,10 +1120,12 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
-			if (next) {
+			if (next && next.isFocusable()) {
 				let l = String(next.content.text || '').length;
 				focus.set(next.id, { from: l, to: l });
 				focus.apply();
+			} else {
+				this.focusTitle();
 			};
 		});
 	};

@@ -35,7 +35,7 @@ class Block implements I.Block {
 	};
 	
 	isFocusable () {
-		return !this.isLayout();
+		return !this.isPage() && !this.isLayout();
 	};
 	
 	isSelectable () {

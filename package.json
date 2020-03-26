@@ -81,6 +81,7 @@
 		"file-loader": "^4.3.0",
 		"file-type": "^12.4.2",
 		"fs": "0.0.1-security",
+		"get-input-selection": "^1.1.4",
 		"highlight.js": "^9.18.1",
 		"history": "^4.10.1",
 		"install": "^0.13.0",

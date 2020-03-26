@@ -18,7 +18,7 @@ class PageHelpShortcuts extends React.Component<Props, {}> {
 
 		const blocks: any[] = [
 			{ type: I.BlockType.Icon, icon: ':keyboard:' },
-			{ type: I.BlockType.Text, style: I.TextStyle.Title, text: 'Keyboard & Shortcuts' },
+			{ type: I.BlockType.Title, text: 'Keyboard & Shortcuts' },
 			{ type: I.BlockType.Text, style: I.TextStyle.Header1, text: 'Application' },
 			{ type: I.BlockType.Text, style: I.TextStyle.Header3, text: 'Basic keys' },
 			{ type: I.BlockType.Text, style: I.TextStyle.Bulleted, text: 'Use <b>cmd</b> & <b>Option</b> in MacOS and <b>ctrl<b> & <b>Alt</b> in Windows or Linux' },

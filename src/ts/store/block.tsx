@@ -57,6 +57,10 @@ class BlockStore {
 		};
 		
 		intercept(map as any, (change: any) => {
+			if (change.newValue === map[change.name]) {
+				return null;
+			};
+				
 			console.log('Details change', change, map[change.name]);
 			return change;
 		});
@@ -82,6 +86,9 @@ class BlockStore {
 		
 		if (create) {
 			intercept(map as any, (change: any) => {
+				if (change.newValue === map[change.name]) {
+					return null;
+				};
 				console.log('Details change', change, map[change.name]);
 				return change;
 			});
