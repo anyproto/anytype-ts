@@ -139,6 +139,7 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 };
 
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	console.trace();
 	const request = {
 		contextId: contextId,
 		targetId: targetId,

@@ -175,17 +175,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 								};
 								
 								if (item.type == I.BlockType.Page) {
-									const param: any = {
-										type: item.type,
-										fields: {
-											name: Constant.default.name,
-										},
-										content: {
-											style: I.PageStyle.Empty,
-										}
-									};
-									
-									C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Bottom, (message: any) => {
+									C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
 										C.BlockUnlink(rootId, [ blockId ]);
 									});
 								};

@@ -14,6 +14,8 @@ const Constant = require('json/constant.json');
 @observer
 class BlockTitle extends React.Component<Props, {}> {
 
+	timeout: number = 0;
+
 	constructor (props: any) {
 		super(props);
 		
@@ -24,7 +26,11 @@ class BlockTitle extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
 		const { id } = block;
-		const { name } = details;
+		
+		let { name } = details;
+		if (name == Constant.default.name) {
+			name = '';
+		};
 		
 		return (
 			<React.Fragment>
@@ -36,7 +42,10 @@ class BlockTitle extends React.Component<Props, {}> {
 	onChange (e: any, value: string) {
 		const { rootId } = this.props;
 		
-		C.BlockSetDetails(rootId, [ { key: 'name', value: value } ]);
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			C.BlockSetDetails(rootId, [ { key: 'name', value: value } ]);
+		}, 500);
 	};
 	
 };

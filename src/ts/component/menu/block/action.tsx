@@ -395,17 +395,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							const param: any = {
-								type: item.type,
-								fields: {
-									name: String(text || Constant.default.name),
-								},
-								content: {
-									style: I.PageStyle.Empty,
-								}
-							};
-							
-							C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Replace);
+							C.BlockCreatePage(rootId, blockId, { name: String(text || Constant.default.name) }, I.BlockPosition.Replace);
 						};
 						
 						commonStore.menuClose(this.props.id);
@@ -536,18 +526,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Page) {
 						commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-						
-						let param: any = {
-							type: item.type,
-							fields: {
-								name: Constant.default.name,
-							},
-							content: {
-								style: I.PageStyle.Empty,
-							},
-						};
-						
-						C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Replace, (message: any) => {
+						C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Replace, (message: any) => {
 							commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 						});
 					} else {

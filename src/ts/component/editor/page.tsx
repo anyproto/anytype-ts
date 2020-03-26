@@ -891,12 +891,7 @@ class EditorPage extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							param.fields = {
-								name: Constant.default.name,
-							};
-							param.content.style = I.PageStyle.Empty;
-							
-							this.blockCreatePage(block, I.BlockPosition.Replace, param);
+							this.blockCreatePage(block, { name: Constant.default.name }, I.BlockPosition.Replace);
 						} else {
 							this.blockCreate(block, I.BlockPosition.Replace, param);
 						};
@@ -1045,11 +1040,11 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 	
-	blockCreatePage (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
+	blockCreatePage (focused: I.Block, details: any, position: I.BlockPosition, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-		C.BlockCreatePage(param, rootId, focused.id, position, (message: any) => {
+		C.BlockCreatePage(rootId, focused.id, details, position, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (callBack) {
