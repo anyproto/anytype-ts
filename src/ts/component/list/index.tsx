@@ -42,8 +42,8 @@ class ListIndex extends React.Component<Props, {}> {
 		const size = map.size;
 		
 		const Item = SortableElement((item: any) => {
-			let content = item.content || {};
-			let details = map.get(content.targetBlockId) || {};
+			const content = item.content || {};
+			const details = blockStore.getDetail(root, content.targetBlockId);
 			
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>

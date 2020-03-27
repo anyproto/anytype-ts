@@ -374,8 +374,11 @@ class BlockStore {
 	
 	getDetail (rootId: string, id: string): any {
 		const map = this.getDetailMap(rootId);
-		const item = map.get(id);
-		return item || {};
+		const item = Util.objectCopy(map.get(id) || {});
+		
+		item.name = String(item.name || Constant.default.name);
+		
+		return item;
 	};
 	
 	prepareBlockFromProto (block: any): I.Block {

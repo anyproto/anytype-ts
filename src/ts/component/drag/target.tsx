@@ -30,10 +30,11 @@ class DropTarget extends React.Component<Props, {}> {
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
-		const { children, className, onClick } = this.props;
+		const { children, className } = this.props;
 		
 		let cn = [ 'dropTarget' ];
 		if (className) {
@@ -41,7 +42,7 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop} onClick={onClick}>
+			<div className={cn.join(' ')} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop} onClick={this.onClick}>
 				{children}
 			</div>
 		);
@@ -211,6 +212,14 @@ class DropTarget extends React.Component<Props, {}> {
 		
 		if (this.canDrop && onDrop && (this.position != I.BlockPosition.None)) {
 			onDrop(e, dropType, id, this.position);
+		};
+	};
+	
+	onClick (e: any) {
+		const { onClick } = this.props;
+		
+		if (onClick) {
+			onClick(e);
 		};
 	};
 	
