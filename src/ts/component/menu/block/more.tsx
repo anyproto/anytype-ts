@@ -110,7 +110,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return [];
 		};
 		
-		const { fields } = block;
+		const { content } = block;
+		const details = blockStore.getDetail(rootId, content.targetBlockId);
 		 
 		let items = [];
 		
@@ -120,10 +121,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 			];
 			
-			if (fields.isArchived) {
+			if (details.isArchived) {
 				items.push({ id: 'remove', icon: 'remove', name: 'Delete' });
 			} else {
-				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });				
+				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });
 			};
 		} else {
 			items = [
