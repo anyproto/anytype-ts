@@ -72,7 +72,7 @@ class Block extends React.Component<Props, {}> {
 		
 		let canSelect = true;
 		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align ];
-		let cd: string[] = [];
+		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
 		
@@ -182,7 +182,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		let object = (
-			<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
+			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
 				{blockComponent}
 			</DropTarget>
 		);
@@ -208,7 +208,7 @@ class Block extends React.Component<Props, {}> {
 					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 				</div>
 				
-				<div className="wrapContent">
+				<div className={cd.join(' ')}>
 					{object}
 					
 					{block.isRow() ? (
