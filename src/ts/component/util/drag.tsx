@@ -32,6 +32,8 @@ class Drag extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
+		
+		this.start = this.start.bind(this);
 	};
 	
 	render () {
@@ -43,7 +45,7 @@ class Drag extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div className={cn.join(' ')} onMouseDown={this.start}>
 				<div id="back" className="back"></div>
 				<div id="fill" className="fill"></div>
 				<Icon id="icon" />
@@ -62,14 +64,6 @@ class Drag extends React.Component<Props, {}> {
 		this.nw = this.node.width();
 		this.iw = this.icon.width();
 		this.ox = this.node.offset().left;
-		
-		this.node.unbind('mousedown.drag touchstart.drag').on('mousedown.drag touchstart.drag', (e: any) => {
-			this.start(e);
-		});
-		
-		win.unbind('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
-			this.end(e);
-		});
 		
 		this.setValue(this.props.value);
 	};
@@ -91,6 +85,10 @@ class Drag extends React.Component<Props, {}> {
 		
 		win.unbind('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
 			this.move(e.pageX - this.ox - this.iw / 2);
+		});
+		
+		win.unbind('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
+			this.end(e);
 		});
 		
 		if (onStart) {
@@ -125,7 +123,7 @@ class Drag extends React.Component<Props, {}> {
 		const { onEnd } = this.props;
 		const win = $(window);
 		
-		win.unbind('mousemove.drag touchmove.drag');
+		win.unbind('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
 		this.node.removeClass('isDragging');
 		
 		if (onEnd) {

@@ -4,7 +4,7 @@
 	.fill { height: 2px; background: #fff; width: 0px; position: absolute; left: 0px; top: 50%; margin-top: -1px; }
 	.icon { 
 		width: 12px; height: 12px; border: 2px solid #fff; border-radius: 12px; position: absolute; left: 0px; top: 50%; 
-		margin-top: -6px; transition: none; cursor: col-resize;
+		margin-top: -6px; transition: none; cursor: grab;
 	}
 }
-.input-drag.isDragging { cursor: col-resize; }
+.input-drag.isDragging { cursor: grab; }

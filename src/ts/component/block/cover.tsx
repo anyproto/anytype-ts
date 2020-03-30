@@ -73,7 +73,7 @@ class BlockCover extends React.Component<Props, State> {
 					</div>
 					
 					<div className="dragWrap">
-						<Drag ref={(ref: any) => { this.refDrag = ref; }} onStart={(v: number) => { this.onScaleStart(v); }} onMove={(v: number) => { this.onScaleMove(v); }} onEnd={(v: number) => { this.onScaleEnd(v); }} />
+						<Drag ref={(ref: any) => { this.refDrag = ref; }} onStart={this.onScaleStart} onMove={this.onScaleMove} onEnd={this.onScaleEnd} />
 						<div id="drag-value" className="number">100%</div>
 					</div>
 					
@@ -167,19 +167,14 @@ class BlockCover extends React.Component<Props, State> {
 		const { coverX, coverY, coverScale } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('#cover');
-		const value = node.find('#drag-value');
-		const scale = Math.ceil((coverScale + 1) * 100);
-		
-		if (this.refDrag) {
-			this.refDrag.setValue(coverScale);
-			value.text(scale + '%');
-		};
 		
 		raf(() => {
-			cover.css({ 
-				backgroundPosition: (coverX * 100) + '% ' + (coverY * 100) + '%',
-				backgroundSize: scale + '% auto',
-			});
+			if (this.refDrag) {
+				this.refDrag.setValue(coverScale);
+			};
+		
+			this.onScaleMove(coverScale);
+			cover.css({ backgroundPosition: (coverX * 100) + '% ' + (coverY * 100) + '%' });
 		});
 	};
 	
@@ -261,9 +256,9 @@ class BlockCover extends React.Component<Props, State> {
 		const value = node.find('#drag-value');
 		const cover = node.find('#cover');
 		
-		v = Math.ceil((v + 1) * 100);
+		v = (v + 1) * 100;
 		
-		value.text(v + '%');
+		value.text(Math.ceil(v) + '%');
 		cover.css({ backgroundSize: v + '% auto' });
 	};
 	
