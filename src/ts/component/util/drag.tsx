@@ -77,6 +77,9 @@ class Drag extends React.Component<Props, {}> {
 	};
 	
 	start (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+		
 		const { onStart } = this.props;
 		const win = $(window);
 		
