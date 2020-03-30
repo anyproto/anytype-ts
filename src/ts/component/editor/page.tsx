@@ -72,7 +72,7 @@ class EditorPage extends React.Component<Props, State> {
 		const details = blockStore.getDetail(rootId, rootId);
 		
 		const withIcon = details.icon;
-		const withCover = details.coverId;
+		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
 		const icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.Icon, childrenIds: [], fields: {}, content: {} });
 		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
@@ -313,7 +313,7 @@ class EditorPage extends React.Component<Props, State> {
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
 		const withIcon = details.icon;
-		const withCover = true;
+		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
 		let offset = 170;
 		let hovered: any = null;
