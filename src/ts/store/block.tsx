@@ -308,7 +308,7 @@ class BlockStore {
 		return map;
 	};
 	
-	getTree (rootId: string, list: I.Block[]) {
+	getTree (rootId: string, list: I.Block[]): I.Block[] {
 		list = Util.objectCopy(list || []);
 		
 		let map: any = {};
@@ -336,7 +336,7 @@ class BlockStore {
 			};
 		};
 		
-		return map[rootId].childBlocks;
+		return map[rootId] ? map[rootId].childBlocks : [];
 	};
 	
 	wrapTree (rootId: string) {
