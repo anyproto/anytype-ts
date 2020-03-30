@@ -51,16 +51,18 @@
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.active { background: #f3f2ec; }
 		
-		.icon { width: 24px; height: 24px; margin-right: 8px; }
-		.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
-		.icon.delete { 
-			width: 18px; height: 18px; background-size: 10px 10px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
-			position: absolute; right: 12px; top: 50%; margin: -9px 0px 0px 0px;
+		.item {
+			.name { display: inline-block; vertical-align: middle; margin-top: 2px; }
+			
+			.icon { width: 24px; height: 24px; margin-right: 8px; }
+			.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
+			.icon.delete { 
+				width: 18px; height: 18px; background-size: 10px 10px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
+				position: absolute; right: 12px; top: 50%; margin: -9px 0px 0px 0px;
+			}
+			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
+			.icon.trash { width: 16px; height: 16px; background-image: url('~img/icon/menu/trash.svg'); }
 		}
-		.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
-		.icon.trash { width: 16px; height: 16px; background-image: url('~img/icon/menu/trash.svg'); }
-		
-		.name { display: inline-block; vertical-align: middle; }
 		
 		.section { border-bottom: 1px solid $colorLightGrey; padding: 8px 0px; }
 		.section:first-child { padding-top: 0px; }
