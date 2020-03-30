@@ -50,6 +50,8 @@ export interface Block {
 	isLink?(): boolean;
 	isIcon?(): boolean;
 	isFile?(): boolean;
+	isImage?(): boolean;
+	isVideo?(): boolean;
 	isDiv?(): boolean;
 	isText?(): boolean;
 	isTitle?(): boolean;

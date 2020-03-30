@@ -448,8 +448,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const { root } = blockStore;
-		const block = blockStore.getLeaf(rootId, blockId);
 		
+		let block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -460,7 +460,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		switch (item.id) {
 			case 'download':
-				if (content.hash) {
+				if (!content.hash) {
+					break;
+				};
+				
+				if (block.isImage()) {
+					ipcRenderer.send('download', commonStore.imageUrl(content.hash, Constant.size.image));
+				} else {
 					ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 				};
 				break;

@@ -54,11 +54,11 @@ class Block implements I.Block {
 	};
 	
 	isRow () {
-		return (this.type == I.BlockType.Layout) && (this.content.style == I.LayoutStyle.Row);
+		return this.isLayout() && (this.content.style == I.LayoutStyle.Row);
 	};
 	
 	isColumn () {
-		return (this.type == I.BlockType.Layout) && (this.content.style == I.LayoutStyle.Column);
+		return this.isLayout() && (this.content.style == I.LayoutStyle.Column);
 	};
 	
 	isLink () {
@@ -75,6 +75,14 @@ class Block implements I.Block {
 	
 	isFile () {
 		return this.type == I.BlockType.File;
+	};
+	
+	isImage () {
+		return this.isFile() && (this.content.type == I.FileType.Image);
+	};
+	
+	isVideo () {
+		return this.isFile() && (this.content.type == I.FileType.Video);
 	};
 	
 	isDiv () {
