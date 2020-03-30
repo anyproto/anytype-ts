@@ -88,11 +88,11 @@ class DataUtil {
 		
 		let ids: string[] = [];
 		if (selection) {
-			ids = selection.get();
+			ids = selection.get(true);
 			if (ids.indexOf(id) < 0) {
 				selection.clear(true);
 				selection.set([ id ]);
-				ids = selection.get();
+				ids = selection.get(true);
 			};
 		};
 		return ids;
