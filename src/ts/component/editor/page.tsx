@@ -72,7 +72,7 @@ class EditorPage extends React.Component<Props, State> {
 		const details = blockStore.getDetail(rootId, rootId);
 		
 		const withIcon = details.icon;
-		const withCover = true;
+		const withCover = details.coverId;
 		
 		const icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.Icon, childrenIds: [], fields: {}, content: {} });
 		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });

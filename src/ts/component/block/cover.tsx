@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Drag } from 'ts/component';
+import { Icon, Drag, Cover } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -48,6 +48,8 @@ class BlockCover extends React.Component<Props, State> {
 	
 	render() {
 		const { isEditing } = this.state;
+		const { rootId } = this.props;
+		const details = blockStore.getDetail(rootId, rootId);
 		
 		let elements = null;
 		
@@ -85,7 +87,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		return (
 			<div className="wrap">
-				<div id="cover" className="cover" />
+				<Cover id="cover" type={details.coverType} className={details.coverId} />
 				<div id="elements" className="elements">
 					{elements}
 				</div>
@@ -102,6 +104,8 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onMenu (e: any) {
+		const { rootId } = this.props;
+		
 		commonStore.menuOpen('blockCover', {
 			element: '#button-cover-edit',
 			type: I.MenuType.Vertical,
@@ -110,7 +114,14 @@ class BlockCover extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
-				onEdit: this.onEdit
+				rootId: rootId,
+				onEdit: this.onEdit,
+				onSelect: (type: I.CoverType, id: string) => {
+					C.BlockSetDetails(rootId, [ 
+						{ key: 'coverType', value: type },
+						{ key: 'coverId', value: id },
+					]);
+				}
 			},
 		});
 	};

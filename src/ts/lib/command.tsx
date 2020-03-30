@@ -26,6 +26,15 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.call('linkPreview', request, callBack);
 };
 
+const UploadFile = (url: string, localPath: string, type: I.FileType, callBack?: (message: any) => void) => {
+	const request = {
+		url: url,
+		localPath: localPath,
+		type: type,
+	};
+	dispatcher.call('uploadFile', request, callBack);
+};
+
 const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
 	const request = {
 		id: id,
@@ -369,6 +378,7 @@ export {
 	ImageGetBlob,
 	ConfigGet,
 	LinkPreview,
+	UploadFile,
 	ProcessCancel,
 	
 	WalletCreate,

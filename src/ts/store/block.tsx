@@ -61,8 +61,6 @@ class BlockStore {
 			if (Util.objectCompare(change.newValue, item)) {
 				return null;
 			};
-				
-			console.log('Details change', change, item);
 			return change;
 		});
 		
@@ -91,8 +89,6 @@ class BlockStore {
 				if (Util.objectCompare(change.newValue, item)) {
 					return null;
 				};
-					
-				console.log('Details change', change, item);
 				return change;
 			});
 			

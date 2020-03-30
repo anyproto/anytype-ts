@@ -11,7 +11,7 @@
 		.elements { opacity: 0; }
 	}
 	
-	.cover { position: absolute; background-image: url('~img/cover/4.jpg'); background-size: 100% auto; background-position: 50% 50%; }
+	.cover { position: absolute; background-size: 100% auto; background-position: 50% 50%; }
 	.elements { width: 704px; height: calc(100% - 40px); position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; }
 	.elements:hover { 
 		.btn { opacity: 1 !important; }
@@ -31,7 +31,7 @@
 	
 		.btn { 
 			font-weight: 500; font-size: 13px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block; opacity: 0;
-			padding: 0px 8px; border-radius: 4px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out; text-align: center;
+			padding: 0px 8px; border-radius: 4px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out; text-align: center;
 		}
 		.btn.active { opacity: 1; }
 		.btn:last-child { margin: 0px; }

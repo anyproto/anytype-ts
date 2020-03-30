@@ -20,3 +20,9 @@ export enum DragItem {
 	Block = 'block',
 	Menu = 'menu',
 };
+
+export enum CoverType {
+	Image	 = 0,
+	Color	 = 1,
+	Gradient = 2,
+};

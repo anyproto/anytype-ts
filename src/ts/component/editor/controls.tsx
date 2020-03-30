@@ -34,7 +34,7 @@ class Controls extends React.Component<Props, {}> {
 					</div>
 					
 					<div className="side right">
-						<div className="btn addCover" onClick={this.onAddCover}>
+						<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
 							<Icon />
 							<div className="txt">Add cover image</div>
 						</div>
@@ -65,7 +65,25 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onAddCover (e: any) {
+		const { rootId } = this.props;
 		
+		commonStore.menuOpen('blockCover', { 
+			element: '#button-add-cover',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				onSelect: (type: I.CoverType, id: string) => {
+					C.BlockSetDetails(rootId, [ 
+						{ key: 'coverType', value: type },
+						{ key: 'coverId', value: id },
+					]);
+				}
+			}
+		});
 	};
 	
 };
