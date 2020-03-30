@@ -51,8 +51,8 @@
 	}
 	
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange; border-radius: 0px 0px 4px 4px !important; }
-	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange; border-radius: 4px 4px 0px 0px !important; }
+	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange inset; border-radius: 0px 0px 4px 4px !important; }
+	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange inset; border-radius: 4px 4px 0px 0px !important; }
 	
 	.block.isAddingMenu.mTop > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange inset; border-radius: 0px 0px 4px 4px !important; }
 	.block.isAddingMenu.mBottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange inset; border-radius: 4px 4px 0px 0px !important; }
