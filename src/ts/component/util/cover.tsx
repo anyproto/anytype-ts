@@ -21,12 +21,13 @@ class Cover extends React.Component<Props, {}> {
 		let cn = [ 'cover', 'type' + type ];
 		let style: any = {};
 		
-		if (num) {
-			cn.push('c' + num);
-		};
 		if (className) {
 			cn.push(className);
 		};
+		
+		if (num) {
+			cn.push('c' + num);
+		} else
 		if (image) {
 			style.backgroundImage = 'url("' + image + '")';
 		};

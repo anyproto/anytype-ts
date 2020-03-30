@@ -119,7 +119,7 @@ class PopupSettings extends React.Component<Props, State> {
 				);
 				
 				if (coverImg) {
-					covers.unshift({ id: -1, image: coverImg });
+					covers.unshift({ id: 0, image: coverImg });
 				};
 				
 				content = (
@@ -294,6 +294,7 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	
 	onCover (num: number) {
+		console.log('num', num);
 		commonStore.coverSetNum(num);
 	};
 	

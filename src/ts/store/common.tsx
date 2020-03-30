@@ -3,7 +3,6 @@ import { I, Storage, Util, analytics } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
-const COVER = 3;
 
 interface LinkPreview {
 	url: string;
@@ -42,7 +41,7 @@ class CommonStore {
 	
 	@computed
 	get coverId(): number {
-		return Number(this.coverNum || Storage.get('coverNum')) || COVER;
+		return Number(this.coverNum || Storage.get('coverNum')) || 0;
 	};
 	
 	@computed

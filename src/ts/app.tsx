@@ -204,6 +204,12 @@ class App extends React.Component<Props, State> {
 		let debugUI = Boolean(Storage.get('debugUI'));
 		let debugMW = Boolean(Storage.get('debugMW'));
 		let debugAN = Boolean(Storage.get('debugAN'));
+		let coverNum = Number(Storage.get('coverNum'));
+		let coverImg = Number(Storage.get('coverImg'));
+		
+		if (!coverNum && !coverImg) {
+			commonStore.coverSetNum(Constant.default.cover);
+		};
 		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);

@@ -45,7 +45,7 @@ class MenuHelp extends React.Component<Props, {}> {
 		
 		commonStore.menuClose(this.props.id);
 		
-		switch (item.id) {
+		switch (item.icon) {
 			case 'help':
 				history.push('/help/index');
 				break;
