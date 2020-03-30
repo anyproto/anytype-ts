@@ -114,7 +114,7 @@ class PopupSettings extends React.Component<Props, State> {
 				
 				const Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item.id); }}>
-						<Cover num={item.id} image={item.image} />
+						<Cover type={I.CoverType.Image} num={item.id} image={item.image} />
 					</div>
 				);
 				
@@ -130,7 +130,7 @@ class PopupSettings extends React.Component<Props, State> {
 						<div className="row">
 							<Label text="Upload wallpaper. For best results upload high resolution images." />
 							<div className="fileWrap item" onClick={this.onFileClick}>
-								<Cover type={I.CoverType.Image} image={preview} className="upload" />
+								<Cover className="upload" />
 							</div>
 						</div>
 						
