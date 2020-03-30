@@ -43,7 +43,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			<div>
 				<div className="head">
 					<div className="btn" onClick={this.onUpload}>Upload image</div>
-					{details.coverType == I.CoverType.Image ? (
+					{details.coverType && (details.coverType == I.CoverType.Image) ? (
 						<div className="btn" onClick={this.onEdit}>Reposition</div>
 					) : ''}
 					<div className="btn" onClick={this.onRemove}>Remove</div>
@@ -78,7 +78,16 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			};
 
 			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
 				
+				C.BlockSetDetails(rootId, [ 
+					{ key: 'coverType', value: I.CoverType.Image },
+					{ key: 'coverId', value: message.hash },
+				]);
+				
+				commonStore.menuClose(this.props.id);
 			});
 		});
 	};

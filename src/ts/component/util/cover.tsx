@@ -27,7 +27,7 @@ class Cover extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
-		if ((num == -1) && image) {
+		if (image) {
 			style.backgroundImage = 'url("' + image + '")';
 		};
 		

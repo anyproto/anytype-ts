@@ -5,28 +5,28 @@
 	top: 0px; width: 100%; height: 100%;
 }
 
-.cover.type0.c1 { background-image: url('~img/cover/1.jpg'); }
-.cover.type0.c2 { background-image: url('~img/cover/2.jpg'); }
-.cover.type0.c3 { background-image: url('~img/cover/3.jpg'); }
-.cover.type0.c4 { background-image: url('~img/cover/4.jpg'); }
-.cover.type0.c5 { background-image: url('~img/cover/5.jpg'); }
-.cover.type0.c6 { background-image: url('~img/cover/6.jpg'); }
-.cover.type0.c7 { background-image: url('~img/cover/7.jpg'); }
+.cover.type1.c1 { background-image: url('~img/cover/1.jpg'); }
+.cover.type1.c2 { background-image: url('~img/cover/2.jpg'); }
+.cover.type1.c3 { background-image: url('~img/cover/3.jpg'); }
+.cover.type1.c4 { background-image: url('~img/cover/4.jpg'); }
+.cover.type1.c5 { background-image: url('~img/cover/5.jpg'); }
+.cover.type1.c6 { background-image: url('~img/cover/6.jpg'); }
+.cover.type1.c7 { background-image: url('~img/cover/7.jpg'); }
 
-.cover.type1.yellow { background: $colorYellow; }
-.cover.type1.orange { background: $colorOrange; }
-.cover.type1.red { background: $colorRed; }
-.cover.type1.pink { background: $colorPink; }
-.cover.type1.purple { background: $colorPurple; }
-.cover.type1.blue { background: $colorBlue; }
-.cover.type1.ice { background: $colorIce; }
-.cover.type1.teal { background: $colorTeal; }
-.cover.type1.green { background: $colorLime; }
-.cover.type1.lightgrey { background: $colorLightGrey; }
-.cover.type1.darkgrey { background: $colorDarkGrey; }
-.cover.type1.black { background: $colorBlack; }
+.cover.type2.yellow { background: $colorYellow; }
+.cover.type2.orange { background: $colorOrange; }
+.cover.type2.red { background: $colorRed; }
+.cover.type2.pink { background: $colorPink; }
+.cover.type2.purple { background: $colorPurple; }
+.cover.type2.blue { background: $colorBlue; }
+.cover.type2.ice { background: $colorIce; }
+.cover.type2.teal { background: $colorTeal; }
+.cover.type2.green { background: $colorLime; }
+.cover.type2.lightgrey { background: $colorLightGrey; }
+.cover.type2.darkgrey { background: $colorDarkGrey; }
+.cover.type2.black { background: $colorBlack; }
 		
-.cover.type2.yellow { background: linear-gradient(180deg, $colorOrange 0%, $colorYellow 105.47%); }
-.cover.type2.red { background: linear-gradient(180deg, $colorRed 0%, $colorPink 105.47%); }
-.cover.type2.blue { background: linear-gradient(180deg, $colorPurple 0%, $colorBlue 105.47%); }
-.cover.type2.teal { background: linear-gradient(180deg, $colorIce 0%, $colorTeal 105.47%); }
+.cover.type3.yellow { background: linear-gradient(180deg, $colorOrange 0%, $colorYellow 105.47%); }
+.cover.type3.red { background: linear-gradient(180deg, $colorRed 0%, $colorPink 105.47%); }
+.cover.type3.blue { background: linear-gradient(180deg, $colorPurple 0%, $colorBlue 105.47%); }
+.cover.type3.teal { background: linear-gradient(180deg, $colorIce 0%, $colorTeal 105.47%); }

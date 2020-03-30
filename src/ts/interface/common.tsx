@@ -22,7 +22,8 @@ export enum DragItem {
 };
 
 export enum CoverType {
-	Image	 = 0,
-	Color	 = 1,
-	Gradient = 2,
+	None	 = 0,
+	Image	 = 1,
+	Color	 = 2,
+	Gradient = 3,
 };
