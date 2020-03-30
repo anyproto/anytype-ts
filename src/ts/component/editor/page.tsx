@@ -991,11 +991,10 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset;
 		const { focused, range } = focus;
 		const data: any = {
-			text: cb.getData('text/plain'),
-			html: cb.getData('text/html'),
-			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
+			text: String(cb.getData('text/plain') || ''),
+			html: String(cb.getData('text/html') || ''),
+			anytype: JSON.parse(String(cb.getData('application/anytype') || '[]')),
 		};
-		
 		
 		let reg = new RegExp(/((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?/gi);
 		let match = data.text.match(reg);
