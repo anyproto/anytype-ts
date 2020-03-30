@@ -129,7 +129,6 @@ class BlockStore {
 			if (change.newValue === map[block.id][change.name]) {
 				return null;
 			};
-			console.log('Stucture change', change, map[block.id][change.name]);
 			return change;
 		});
 	};

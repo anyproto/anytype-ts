@@ -29,7 +29,6 @@ class Block implements I.Block {
 			if (change.newValue === self[change.name]) {
 				return null;
 			};
-			console.log('Block change', change, self[change.name]);
 			return change;
 		});
 	};
