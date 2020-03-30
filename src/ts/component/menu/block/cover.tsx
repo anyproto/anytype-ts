@@ -85,6 +85,9 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				C.BlockSetDetails(rootId, [ 
 					{ key: 'coverType', value: I.CoverType.Image },
 					{ key: 'coverId', value: message.hash },
+					{ key: 'coverX', value: 0 },
+					{ key: 'coverY', value: 0 },
+					{ key: 'coverScale', value: 0 },
 				]);
 				
 				commonStore.menuClose(this.props.id);
@@ -109,6 +112,9 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		C.BlockSetDetails(rootId, [ 
 			{ key: 'coverType', value: 0 },
 			{ key: 'coverId', value: '' },
+			{ key: 'coverX', value: 0 },
+			{ key: 'coverY', value: 0 },
+			{ key: 'coverScale', value: 0 },
 		]);
 		
 		commonStore.menuClose(this.props.id);

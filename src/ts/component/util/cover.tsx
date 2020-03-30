@@ -7,6 +7,7 @@ interface Props {
 	className?: string;
 	type?: number;
 	onClick?(e: any): void;
+	onMouseDown?(e: any): void;
 };
 
 class Cover extends React.Component<Props, {}> {
@@ -16,7 +17,7 @@ class Cover extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, num, image, type, className, onClick } = this.props;
+		const { id, num, image, type, className, onClick, onMouseDown } = this.props;
 		
 		let cn = [ 'cover', 'type' + type ];
 		let style: any = {};
@@ -33,7 +34,7 @@ class Cover extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')} onClick={onClick} style={style} />
+			<div id={id} className={cn.join(' ')} onClick={onClick} onMouseDown={onMouseDown} style={style} />
 		);
 	};
 	
