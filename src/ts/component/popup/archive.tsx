@@ -38,14 +38,17 @@ class PopupArchive extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(archive, archive);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(archive, archive);
+		const map = blockStore.getDetailMap(archive);
+		const size = map.size;
 		
 		const Item = (item: any) => {
-			let content = item.content || {};
-			let fields = content.fields || {}; 
+			const content = item.content || {};
+			const details = blockStore.getDetail(archive, content.targetBlockId);
+			
 			return (
 				<div className="item">
-					<Smile icon={fields.icon} />
-					<div className="name">{fields.name}</div>
+					<Smile icon={details.icon} />
+					<div className="name">{details.name}</div>
 					<div className="buttons">
 						<div className="btn" onClick={(e: any) => { this.onReturn(item); }}>Put back</div>
 						<div className="btn" onClick={(e: any) => { this.onDelete(item); }}>Delete</div>
