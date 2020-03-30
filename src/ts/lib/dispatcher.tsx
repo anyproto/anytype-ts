@@ -118,16 +118,6 @@ class Dispatcher {
 					blockStore.blockUpdateStructure(rootId, data.id, data.childrenIds);
 					break;
 					
-				case 'blockSetIcon':
-					block = blockStore.getLeaf(rootId, data.id);
-					if (!block) {
-						break;
-					};
-					
-					block.content.name = data.name.value;
-					blockStore.blockUpdate(rootId, block);
-					break;
-					
 				case 'blockSetDetails':
 					blockStore.detailsUpdate(rootId, data);
 					break;

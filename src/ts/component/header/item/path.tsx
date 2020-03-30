@@ -18,8 +18,9 @@ class HeaderItemPath extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, index, onPath, onDrop } = this.props;
+		const { breadcrumbs } = blockStore;
 		const { id, content } = block;
-		const details = blockStore.getDetail(rootId, content.targetBlockId);
+		const details = blockStore.getDetail(breadcrumbs, content.targetBlockId);
 		const { icon, name } = details;
 		
 		return (

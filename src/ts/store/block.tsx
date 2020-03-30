@@ -380,7 +380,6 @@ class BlockStore {
 		const item = Util.objectCopy(map.get(id) || {});
 		
 		item.name = String(item.name || Constant.default.name);
-		
 		return item;
 	};
 	
