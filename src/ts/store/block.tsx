@@ -336,7 +336,7 @@ class BlockStore {
 			};
 		};
 		
-		return map[rootId] ? map[rootId].childBlocks : [];
+		return (map[rootId] || {}).childBlocks || [];
 	};
 	
 	wrapTree (rootId: string) {
