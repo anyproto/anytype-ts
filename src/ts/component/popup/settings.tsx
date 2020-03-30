@@ -294,7 +294,6 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	
 	onCover (num: number) {
-		console.log('num', num);
 		commonStore.coverSetNum(num);
 	};
 	
