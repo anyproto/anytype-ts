@@ -150,10 +150,16 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onSave (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+		
 		this.setState({ isEditing: false });
 	};
 	
 	onCancel (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+		
 		this.setState({ isEditing: false });
 	};
 	
