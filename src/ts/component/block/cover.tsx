@@ -99,7 +99,11 @@ class BlockCover extends React.Component<Props, State> {
 		
 		return (
 			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart}>
-				<img id="cover" src={image} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
+				{image ? (
+					<img id="cover" src={image} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
+				) : (
+					<Cover id="cover" type={details.coverType} className={details.coverId} />
+				)}
 				<div id="elements" className="elements">
 					{elements}
 				</div>
