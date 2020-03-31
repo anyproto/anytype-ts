@@ -285,7 +285,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: 'black', isTextColor: true }
+			{ id: 'color-black', name: 'Black', value: '', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
 			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, isTextColor: true });
@@ -294,7 +294,9 @@ class DataUtil {
 	};
 	
 	menuGetBgColors () {
-		let items: any[] = [];
+		let items: any[] = [
+			{ id: 'color-default', name: 'Default highlight', value: '', isBgColor: true }
+		];
 		for (let i in Constant.textColor) {
 			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
 		};
