@@ -32,6 +32,8 @@ class BlockCover extends React.Component<Props, State> {
 	rect: any = {};
 	x: number = 0;
 	y: number = 0;
+	cx: number = 0;
+	cy: number =  0;
 	
 	constructor (props: any) {
 		super(props);
@@ -172,17 +174,19 @@ class BlockCover extends React.Component<Props, State> {
 		const details = blockStore.getDetail(rootId, rootId);
 		const { coverX, coverY, coverScale } = details;
 		const node = $(ReactDOM.findDOMNode(this));
-
-		this.cover = node.find('#cover');
 		
-		raf(() => {
+		const cb = (e: any) => {
 			if (this.refDrag) {
 				this.refDrag.setValue(coverScale);
 			};
 			
+			this.rect = (node.get(0) as Element).getBoundingClientRect();
 			this.onScaleMove(coverScale);
-			this.cover.css({ transform: 'translate3d(' + (coverX * 100) + '%, ' + (coverY * 100) + '%, 0px)' });
-		});
+		};
+
+		this.cover = node.find('#cover');
+		this.cover.get(0).onload = cb;
+		raf(cb);
 	};
 	
 	onDragStart (e: any) {
@@ -190,7 +194,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		const { isEditing } = this.state;
 		
-		if (!this._isMounted) {
+		if (!this._isMounted || !isEditing) {
 			return false;
 		};
 		
@@ -199,12 +203,8 @@ class BlockCover extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		this.rect = (node.get(0) as Element).getBoundingClientRect();
 		this.x = e.pageX - this.rect.x - this.x;
 		this.y = e.pageY - this.rect.y - this.y;
-		
-		this.rect.mx = this.cover.width() - this.rect.width;
-		this.rect.my = this.cover.height() - this.rect.height;
 		
 		selection.setPreventSelect(true);
 		node.addClass('isDragging');
@@ -223,16 +223,10 @@ class BlockCover extends React.Component<Props, State> {
 		const details = blockStore.getDetail(rootId, rootId);
 		const { coverScale } = details;
 		
-		let x = e.pageX - this.rect.x - this.x;
-		let y = e.pageY - this.rect.y - this.y;
+		this.cx = e.pageX - this.rect.x - this.x;
+		this.cy = e.pageY - this.rect.y - this.y;
 		
-		x = Math.min(0, x);
-		x = Math.max(-this.rect.mx, x);
-		
-		y = Math.min(0, y);
-		y = Math.max(-this.rect.my, y);
-		
-		this.cover.css({ transform: `translate3d(${x}px,${y}px,0px)` });
+		this.setTransform(this.cx, this.cy);
 	};
 	
 	onDragEnd (e: any) {
@@ -253,8 +247,8 @@ class BlockCover extends React.Component<Props, State> {
 		this.y = e.pageY - this.rect.y - this.y;
 		
 		C.BlockSetDetails(rootId, [ 
-			{ key: 'coverX', value: (this.x / this.rect.width) },
-			{ key: 'coverY', value: (this.y / this.rect.height) },
+			{ key: 'coverX', value: (this.cx / this.rect.cw) },
+			{ key: 'coverY', value: (this.cy / this.rect.ch) },
 		]);
 	};
 	
@@ -274,12 +268,22 @@ class BlockCover extends React.Component<Props, State> {
 			return false;
 		};
 		
+		const { rootId } = this.props;
+		const details = blockStore.getDetail(rootId, rootId);
+		const { coverX, coverY } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#drag-value');
 		
 		v = (v + 1) * 100;
 		value.text(Math.ceil(v) + '%');
 		this.cover.css({ width: v + '%' });
+		
+		this.rect.cw = this.cover.width();
+		this.rect.ch = this.cover.height();
+		this.x = coverX * this.rect.cw;
+		this.y = coverY * this.rect.ch;
+		
+		this.setTransform(this.x, this.y);
 	};
 	
 	onScaleEnd (v: number) {
@@ -294,6 +298,16 @@ class BlockCover extends React.Component<Props, State> {
 		C.BlockSetDetails(rootId, [ 
 			{ key: 'coverScale', value: v },
 		]);
+	};
+	
+	setTransform (x: number, y: number) {
+		let mx = this.rect.cw - this.rect.width;
+		let my = this.rect.ch - this.rect.height;
+		
+		x = Math.max(-mx, Math.min(0, x));
+		y = Math.max(-my, Math.min(0, y));
+		
+		this.cover.css({ transform: `translate3d(${x}px,${y}px,0px)` });
 	};
 	
 	checkPercent (p: number): number {
