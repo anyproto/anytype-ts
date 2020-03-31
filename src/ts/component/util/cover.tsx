@@ -25,7 +25,6 @@ class Cover extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
-		
 		if (num) {
 			cn.push('c' + num);
 		} else

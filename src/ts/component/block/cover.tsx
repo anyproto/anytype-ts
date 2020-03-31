@@ -27,12 +27,11 @@ class BlockCover extends React.Component<Props, State> {
 	state = {
 		isEditing: false,
 	};
-	rect: DOMRect = null;
 	cover: any = null;
 	refDrag: any = null;
-	coords: any = { x: 0, y: 0 };
-	px: number = 0;
-	py: number = 0;
+	rect: any = {};
+	x: number = 0;
+	y: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -78,8 +77,8 @@ class BlockCover extends React.Component<Props, State> {
 					</div>
 					
 					<div className="buttons">
-						<div className="btn white" onClick={this.onSave}>Save changes</div>
-						<div className="btn white" onClick={this.onCancel}>Cancel</div>
+						<div className="btn white" onMouseDown={this.onSave}>Save changes</div>
+						<div className="btn white" onMouseDown={this.onCancel}>Cancel</div>
 					</div>
 				</React.Fragment>
 			);
@@ -98,7 +97,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		return (
 			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart}>
-				<Cover id="cover" type={details.coverType} image={image} className={details.coverId} />
+				<img id="cover" src={image} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
 				<div id="elements" className="elements">
 					{elements}
 				</div>
@@ -132,6 +131,7 @@ class BlockCover extends React.Component<Props, State> {
 			data: {
 				rootId: rootId,
 				onEdit: this.onEdit,
+				onUpload: this.onEdit,
 				onSelect: (type: I.CoverType, id: string) => {
 					C.BlockSetDetails(rootId, [ 
 						{ key: 'coverType', value: type },
@@ -172,22 +172,25 @@ class BlockCover extends React.Component<Props, State> {
 		const details = blockStore.getDetail(rootId, rootId);
 		const { coverX, coverY, coverScale } = details;
 		const node = $(ReactDOM.findDOMNode(this));
-		const cover = node.find('#cover');
+
+		this.cover = node.find('#cover');
 		
 		raf(() => {
 			if (this.refDrag) {
 				this.refDrag.setValue(coverScale);
 			};
-		
+			
 			this.onScaleMove(coverScale);
-			cover.css({ backgroundPosition: (coverX * 100) + '% ' + (coverY * 100) + '%' });
+			this.cover.css({ transform: 'translate3d(' + (coverX * 100) + '%, ' + (coverY * 100) + '%, 0px)' });
 		});
 	};
 	
 	onDragStart (e: any) {
+		e.preventDefault();
+		
 		const { isEditing } = this.state;
 		
-		if (!this._isMounted || !isEditing) {
+		if (!this._isMounted) {
 			return false;
 		};
 		
@@ -195,14 +198,13 @@ class BlockCover extends React.Component<Props, State> {
 		const { selection } = dataset;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const elements = node.find('#elements');
 		
-		this.cover = node.find('#cover');
-		this.rect = (elements.get(0) as Element).getBoundingClientRect() as DOMRect;
-		this.coords = { 
-			x: e.pageX - this.rect.x, 
-			y: e.pageY - this.rect.y, 
-		};
+		this.rect = (node.get(0) as Element).getBoundingClientRect();
+		this.x = e.pageX - this.rect.x - this.x;
+		this.y = e.pageY - this.rect.y - this.y;
+		
+		this.rect.mx = this.cover.width() - this.rect.width;
+		this.rect.my = this.cover.height() - this.rect.height;
 		
 		selection.setPreventSelect(true);
 		node.addClass('isDragging');
@@ -217,9 +219,20 @@ class BlockCover extends React.Component<Props, State> {
 			return false;
 		};
 		
-		this.px = this.checkPercent((e.pageX - this.coords.x) / this.rect.width);
-		this.py = this.checkPercent((e.pageY - this.coords.y) / this.rect.height);
-		this.cover.css({ backgroundPosition: (this.px * 100) + '% ' + (this.py * 100) + '%' });
+		const { rootId } = this.props;
+		const details = blockStore.getDetail(rootId, rootId);
+		const { coverScale } = details;
+		
+		let x = e.pageX - this.rect.x - this.x;
+		let y = e.pageY - this.rect.y - this.y;
+		
+		x = Math.min(0, x);
+		x = Math.max(-this.rect.mx, x);
+		
+		y = Math.min(0, y);
+		y = Math.max(-this.rect.my, y);
+		
+		this.cover.css({ transform: `translate3d(${x}px,${y}px,0px)` });
 	};
 	
 	onDragEnd (e: any) {
@@ -236,9 +249,12 @@ class BlockCover extends React.Component<Props, State> {
 		win.unbind('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
 		
+		this.x = e.pageX - this.rect.x - this.x;
+		this.y = e.pageY - this.rect.y - this.y;
+		
 		C.BlockSetDetails(rootId, [ 
-			{ key: 'coverX', value: this.px },
-			{ key: 'coverY', value: this.py },
+			{ key: 'coverX', value: (this.x / this.rect.width) },
+			{ key: 'coverY', value: (this.y / this.rect.height) },
 		]);
 	};
 	
@@ -260,12 +276,10 @@ class BlockCover extends React.Component<Props, State> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#drag-value');
-		const cover = node.find('#cover');
 		
 		v = (v + 1) * 100;
-		
 		value.text(Math.ceil(v) + '%');
-		cover.css({ backgroundSize: v + '% auto' });
+		this.cover.css({ width: v + '%' });
 	};
 	
 	onScaleEnd (v: number) {
@@ -276,8 +290,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset;
 		
-		selection.setPreventSelect(true);
-		
+		selection.setPreventSelect(false);
 		C.BlockSetDetails(rootId, [ 
 			{ key: 'coverScale', value: v },
 		]);

@@ -60,7 +60,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 	onUpload (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId, onUpload } = data;
 		
 		let options: any = { 
 			properties: [ 'openFile' ], 
@@ -90,6 +90,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 					{ key: 'coverScale', value: 0 },
 				]);
 				
+				onUpload();
 				commonStore.menuClose(this.props.id);
 			});
 		});
