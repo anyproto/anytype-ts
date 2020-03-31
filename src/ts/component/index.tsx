@@ -19,6 +19,7 @@ import HeaderMainEdit from './header/main/edit';
 import HeaderHelpIndex from './header/help/index';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
+import FooterMainEdit from './footer/main/edit';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -69,6 +70,7 @@ export {
 	HeaderHelpIndex,
 	FooterAuth,
 	FooterMainIndex,
+	FooterMainEdit,
 	Dimmer,
 	Switch,
 	Input,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Key, translate } from 'ts/lib';
+import { I, Key, translate } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -38,7 +38,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 		
         return (
 			<div>
-				<Cover num={coverId} image={coverImg} />
+				<Cover type={I.CoverType.Image} num={coverId} image={coverImg} />
 				<Header />
 				<Footer />
 				

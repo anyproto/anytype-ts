@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { dispatcher, Util, translate } from 'ts/lib';
+import { I, dispatcher, Util, translate } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
 
@@ -38,7 +38,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 
 		return (
 			<div>
-				<Cover num={coverId} image={coverImg} />
+				<Cover type={I.CoverType.Image} num={coverId} image={coverImg} />
 				<Header />
 				<Footer />
 				

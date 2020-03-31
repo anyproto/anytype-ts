@@ -26,6 +26,15 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.call('linkPreview', request, callBack);
 };
 
+const UploadFile = (url: string, localPath: string, type: I.FileType, callBack?: (message: any) => void) => {
+	const request = {
+		url: url,
+		localPath: localPath,
+		type: type,
+	};
+	dispatcher.call('uploadFile', request, callBack);
+};
+
 const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
 	const request = {
 		id: id,
@@ -138,12 +147,13 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.call('blockCreate', request, callBack);
 };
 
-const BlockCreatePage = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	console.trace();
 	const request = {
-		block: blockStore.prepareBlockToProto(block),
 		contextId: contextId,
 		targetId: targetId,
 		position: position,
+		details: Struct.encodeStruct(details || {}),
 	};
 	dispatcher.call('blockCreatePage', request, callBack);
 };
@@ -163,15 +173,6 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 		blockIds: blockIds,
 	};
 	dispatcher.call('blockUnlink', request, callBack);
-};
-
-const BlockSetIconName = (contextId: string, blockId: string, name: string, callBack?: (message: any) => void) => {
-	const request = {
-		contextId: contextId,
-		blockId: blockId,
-		name: name,
-	};
-	dispatcher.call('blockSetIconName', request, callBack);
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
@@ -200,6 +201,19 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 		fields: Struct.encodeStruct(fields || {}),
 	};
 	dispatcher.call('blockSetFields', request, callBack);
+};
+
+const BlockSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
+	details = details.map((it: any) => { 
+		it.value = Struct.encodeValue(it.value);
+		return it; 
+	});
+	
+	const request = {
+		contextId: contextId,
+		details: details,
+	};
+	dispatcher.call('blockSetDetails', request, callBack);
 };
 
 const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
@@ -364,6 +378,7 @@ export {
 	ImageGetBlob,
 	ConfigGet,
 	LinkPreview,
+	UploadFile,
 	ProcessCancel,
 	
 	WalletCreate,
@@ -386,7 +401,6 @@ export {
 	BlockCreatePage,
 	BlockSetPageIsArchived,
 	BlockUnlink,
-	BlockSetIconName,
 	BlockListMove,
 	BlockMerge,
 	BlockSplit,
@@ -400,6 +414,7 @@ export {
 	BlockSetTextText,
 	BlockSetTextChecked,
 	BlockSetFields,
+	BlockSetDetails,
 	
 	BlockListDuplicate,
 	BlockListSetBackgroundColor,

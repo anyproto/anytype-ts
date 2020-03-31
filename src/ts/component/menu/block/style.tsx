@@ -86,12 +86,26 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 	
 	getSections () {
-		return [
-			{ children: DataUtil.menuGetBlockText() },
-			{ children: DataUtil.menuGetBlockList() },
-			{ children: DataUtil.menuGetBlockPage() },
-			{ children: DataUtil.menuGetTurnObject() },
-		];
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+		
+		if (block.isText()) {
+			return [
+				{ children: DataUtil.menuGetBlockText() },
+				{ children: DataUtil.menuGetBlockList() },
+				{ children: DataUtil.menuGetBlockPage() },
+				{ children: DataUtil.menuGetTurnObject() },
+			];
+		} else
+		if (block.isDiv()) {
+			return [
+				{ children: DataUtil.menuGetBlockOther() },
+			];
+		} else {
+			return [];
+		};
 	};
 	
 	getItems () {

@@ -53,6 +53,7 @@ import 'scss/block/bookmark.scss';
 import 'scss/block/div.scss';
 import 'scss/block/layout.scss';
 import 'scss/block/icon.scss';
+import 'scss/block/title.scss';
 import 'scss/block/cover.scss';
 
 import 'scss/popup/common.scss';
@@ -107,7 +108,7 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
-const { app } = window.require('electron').remote;
+const { app, process } = window.require('electron').remote;
 const version = app.getVersion();
 
 const platforms: any = {
@@ -128,7 +129,7 @@ enableLogging({
 
 console.log('[Version]', version);
 
-//if (___ENV___ && (___ENV___ == 'production')) {
+if (process.env.NODE_ENV == 'production') {
 	Sentry.init({
 		release: version,
 		dsn: Constant.sentry,
@@ -139,7 +140,7 @@ console.log('[Version]', version);
 			})
 		]
 	});
-//};
+};
 
 declare global {
 	interface Window { getStore: any; }
@@ -202,6 +203,13 @@ class App extends React.Component<Props, State> {
 		
 		let debugUI = Boolean(Storage.get('debugUI'));
 		let debugMW = Boolean(Storage.get('debugMW'));
+		let debugAN = Boolean(Storage.get('debugAN'));
+		let coverNum = Number(Storage.get('coverNum'));
+		let coverImg = Number(Storage.get('coverImg'));
+		
+		if (!coverNum && !coverImg) {
+			commonStore.coverSetNum(Constant.default.cover);
+		};
 		
 		ipcRenderer.send('appLoaded', true);
 		keyboard.init(history);
@@ -227,6 +235,11 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('toggleDebugMW', (e: any) => {
 			debugMW = !debugMW;
 			Storage.set('debugMW', Number(debugMW));
+		});
+		
+		ipcRenderer.on('toggleDebugAN', (e: any) => {
+			debugAN = !debugAN;
+			Storage.set('debugAN', Number(debugAN));
 		});
 		
 		ipcRenderer.on('help', (e: any) => {

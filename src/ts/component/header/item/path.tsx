@@ -18,9 +18,10 @@ class HeaderItemPath extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, index, onPath, onDrop } = this.props;
+		const { breadcrumbs } = blockStore;
 		const { id, content } = block;
-		const { fields } = content || {};
-		const { icon, name } = fields;
+		const details = blockStore.getDetail(breadcrumbs, content.targetBlockId);
+		const { icon, name } = details;
 		
 		return (
 			<DropTarget className="item" id={id} rootId={rootId} dropType={I.DragItem.Menu} onClick={(e: any) => { onPath(e, block, index); }} onDrop={onDrop}>

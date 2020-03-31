@@ -38,7 +38,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Cover num={coverId} image={coverImg} />
+				<Cover type={I.CoverType.Image} num={coverId} image={coverImg} />
 				<Header />
 				<Footer />
 				

@@ -34,20 +34,32 @@ class DataUtil {
 		return ret;
 	};
 	
-	styleIcon (v: I.TextStyle): string {
+	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
-		switch (v) {
-			default:
-			case I.TextStyle.Paragraph:	 icon = 'text'; break;
-			case I.TextStyle.Header1:	 icon = 'header1'; break;
-			case I.TextStyle.Header2:	 icon = 'header2'; break;
-			case I.TextStyle.Header3:	 icon = 'header3'; break;
-			case I.TextStyle.Quote:		 icon = 'quote'; break;
-			case I.TextStyle.Code:		 icon = 'kbd'; break;
-			case I.TextStyle.Bulleted:	 icon = 'list'; break;
-			case I.TextStyle.Numbered:	 icon = 'numbered'; break;
-			case I.TextStyle.Toggle:	 icon = 'toggle'; break;
-			case I.TextStyle.Checkbox:	 icon = 'checkbox'; break;
+		switch (type) {
+			case I.BlockType.Text:
+				switch (v) {
+					default:
+					case I.TextStyle.Paragraph:	 icon = 'text'; break;
+					case I.TextStyle.Header1:	 icon = 'header1'; break;
+					case I.TextStyle.Header2:	 icon = 'header2'; break;
+					case I.TextStyle.Header3:	 icon = 'header3'; break;
+					case I.TextStyle.Quote:		 icon = 'quote'; break;
+					case I.TextStyle.Code:		 icon = 'kbd'; break;
+					case I.TextStyle.Bulleted:	 icon = 'list'; break;
+					case I.TextStyle.Numbered:	 icon = 'numbered'; break;
+					case I.TextStyle.Toggle:	 icon = 'toggle'; break;
+					case I.TextStyle.Checkbox:	 icon = 'checkbox'; break;
+				};
+				break;
+				
+			case I.BlockType.Div:
+				switch (v) {
+					default:
+					case I.DivStyle.Line:		 icon = 'line'; break;
+					case I.DivStyle.Dot:		 icon = 'dot'; break;
+				};
+				break;
 		};
 		return icon;
 	};
@@ -57,7 +69,6 @@ class DataUtil {
 		switch (v) {
 			default:
 			case I.TextStyle.Paragraph:	 c = 'paragraph'; break;
-			case I.TextStyle.Title:		 c = 'title'; break;
 			case I.TextStyle.Header1:	 c = 'header1'; break;
 			case I.TextStyle.Header2:	 c = 'header2'; break;
 			case I.TextStyle.Header3:	 c = 'header3'; break;
@@ -89,11 +100,11 @@ class DataUtil {
 		
 		let ids: string[] = [];
 		if (selection) {
-			ids = selection.get();
+			ids = selection.get(true);
 			if (ids.indexOf(id) < 0) {
 				selection.clear(true);
 				selection.set([ id ]);
-				ids = selection.get();
+				ids = selection.get(true);
 			};
 		};
 		return ids;
@@ -156,18 +167,12 @@ class DataUtil {
 		const { root } = blockStore;
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
-		const block = {
-			type: I.BlockType.Page,
-			fields: { 
-				icon: icon, 
-				name: name,
-			},
-			content: {
-				style: I.PageStyle.Empty,
-			},
+		const details = {
+			icon: icon, 
+			name: name,
 		};
 
-		C.BlockCreatePage(block, root, '', I.BlockPosition.Bottom, (message: any) => {
+		C.BlockCreatePage(root, '', details, I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			//this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();
@@ -247,9 +252,6 @@ class DataUtil {
 			return;
 		};
 		
-		const { content, type } = block;
-		const { style } = content;
-		
 		let items: any[] = [
 			//{ id: 'move', icon: 'move', name: 'Move to' },
 			//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
@@ -258,18 +260,18 @@ class DataUtil {
 		];
 		
 		// Restrictions
-		if (type == I.BlockType.File) {
+		if (block.isFile()) {
 			let idx = items.findIndex((it: any) => { return it.id == 'remove'; });
 			items.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
 			//items.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
 			//items.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
 		};
 		
-		if (type != I.BlockType.Text) {
-			items = items.filter((it: any) => { return [ 'turn', 'color' ].indexOf(it.id) < 0; });
+		if (!block.isText() && !block.isDiv()) {
+			items = items.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
 		};
 		
-		if (style == I.TextStyle.Code) {
+		if (!block.isText() || block.isCode()) {
 			items = items.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
 		};
 		
@@ -283,7 +285,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: 'black', isTextColor: true }
+			{ id: 'color-black', name: 'Black', value: '', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
 			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, isTextColor: true });
@@ -292,7 +294,9 @@ class DataUtil {
 	};
 	
 	menuGetBgColors () {
-		let items: any[] = [];
+		let items: any[] = [
+			{ id: 'color-default', name: 'Default highlight', value: '', isBgColor: true }
+		];
 		for (let i in Constant.textColor) {
 			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
 		};

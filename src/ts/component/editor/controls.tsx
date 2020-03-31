@@ -34,7 +34,7 @@ class Controls extends React.Component<Props, {}> {
 					</div>
 					
 					<div className="side right">
-						<div className="btn addCover" onClick={this.onAddCover}>
+						<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
 							<Icon />
 							<div className="txt">Add cover image</div>
 						</div>
@@ -46,7 +46,6 @@ class Controls extends React.Component<Props, {}> {
 	
 	onAddIcon (e: any) {
 		const { rootId } = this.props;
-		const block = blockStore.getBlocks(rootId, (it: any) => { return it.isIcon(); })[0];
 		
 		commonStore.menuOpen('smile', { 
 			element: '#button-add-icon',
@@ -56,16 +55,35 @@ class Controls extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onSelect: (id: string) => {
-					id = id ? ':' + id + ':' : '';
-					C.BlockSetIconName(rootId, block.id, id);
+				onSelect: (icon: string) => {
+					C.BlockSetDetails(rootId, [ 
+						{ key: 'icon', value: (icon ? ':' + icon + ':' : '') } 
+					]);
 				}
 			}
 		});
 	};
 	
 	onAddCover (e: any) {
+		const { rootId } = this.props;
 		
+		commonStore.menuOpen('blockCover', { 
+			element: '#button-add-cover',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				onSelect: (type: I.CoverType, id: string) => {
+					C.BlockSetDetails(rootId, [ 
+						{ key: 'coverType', value: type },
+						{ key: 'coverId', value: id },
+					]);
+				}
+			}
+		});
 	};
 	
 };

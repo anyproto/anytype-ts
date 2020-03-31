@@ -8,6 +8,7 @@ export enum BlockType {
 	File		 = 'file',
 	Bookmark	 = 'bookmark',
 	Icon		 = 'icon',
+	Title		 = 'title',
 	Div			 = 'div',
 	Link		 = 'link',
 	Cover		 = 'cover',
@@ -49,6 +50,8 @@ export interface Block {
 	isLink?(): boolean;
 	isIcon?(): boolean;
 	isFile?(): boolean;
+	isImage?(): boolean;
+	isVideo?(): boolean;
 	isDiv?(): boolean;
 	isText?(): boolean;
 	isTitle?(): boolean;
@@ -56,4 +59,10 @@ export interface Block {
 	isNumbered?(): boolean;
 	isBulleted?(): boolean;
 	isCheckbox?(): boolean;
+	isCode?(): boolean;
+	isHeader?(): boolean;
+	isHeader1?(): boolean;
+	isHeader2?(): boolean;
+	isHeader3?(): boolean;
+	isQuote?(): boolean;
 };

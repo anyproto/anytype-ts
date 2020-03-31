@@ -51,6 +51,29 @@ class Util {
 		return JSON.parse(JSON.stringify(o));
 	};
 	
+	objectCompare (o1: any, o2: any): boolean {
+		o1 = o1 || {};
+		o2 = o2 || {};
+		
+		let k1 = Object.keys(o1);
+		let k2 = Object.keys(o2);
+		let v1 = Object.values(o1);
+		let v2 = Object.values(o2);
+		let sort = (c1: any, c2: any) => {
+			if (c1 > c2) return 1;
+			if (c1 < c2) return -1;
+			return 0;
+		};
+		
+		k1.sort(sort);
+		k2.sort(sort);
+		v1.sort(sort);
+		v2.sort(sort);
+		
+		return (JSON.stringify(k1) === JSON.stringify(k2)) && 
+			(JSON.stringify(v1) === JSON.stringify(v2));
+	};
+	
 	arrayUniqueObjects (array: any[], prop: string) {
 		const res: any[] = [];
 		const map = new Map();

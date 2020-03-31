@@ -17,7 +17,7 @@ class PageHelpIndex extends React.Component<Props, {}> {
 
 		const blocks: any[] = [
 			{ type: I.BlockType.Icon, icon: ':question:' },
-			{ type: I.BlockType.Text, style: I.TextStyle.Title, text: 'Help' },
+			{ type: I.BlockType.Title, text: 'Help' },
 			{ type: I.BlockType.Link, icon: ':keyboard:', name: 'Keyboard & Shortcuts', contentId: 'shortcuts' },
 		];
 

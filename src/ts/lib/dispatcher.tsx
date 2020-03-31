@@ -6,8 +6,6 @@ const bindings = require('bindings')('addon');
 const protobuf = require('protobufjs');
 const Constant = require('json/constant.json');
 
-const DEBUG = true;
-
 class Dispatcher {
 
 	service: any = null;
@@ -93,6 +91,7 @@ class Dispatcher {
 					});
 					
 					blockStore.blocksSet(rootId, blocks);
+					blockStore.detailsSet(rootId, data.details);
 					break;
 				
 				case 'blockAdd':
@@ -119,14 +118,8 @@ class Dispatcher {
 					blockStore.blockUpdateStructure(rootId, data.id, data.childrenIds);
 					break;
 					
-				case 'blockSetIcon':
-					block = blockStore.getLeaf(rootId, data.id);
-					if (!block) {
-						break;
-					};
-					
-					block.content.name = data.name.value;
-					blockStore.blockUpdate(rootId, block);
+				case 'blockSetDetails':
+					blockStore.detailsUpdate(rootId, data);
 					break;
 					
 				case 'blockSetFields':

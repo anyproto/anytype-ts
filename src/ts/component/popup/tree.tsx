@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Title, Smile, Icon, Button, Input } from 'ts/component';
+import { Title, Smile, Icon, Button, Input, Cover } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -11,6 +11,7 @@ interface Props extends I.Popup {};
 interface State {
 	expanded: boolean;
 	filter: string;
+	id: string;
 };
 
 @observer
@@ -19,6 +20,7 @@ class PopupTree extends React.Component<Props, State> {
 	state = {
 		expanded: false,
 		filter: '',
+		id: '',
 	};
 	ref: any = null;
 	timeout: number = 0;
@@ -33,34 +35,62 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { expanded, filter } = this.state;
+		const { expanded, filter, id } = this.state;
 		const { param, } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
 		const { account } = authStore;
 		const { root } = blockStore;
+		const map = blockStore.getDetailMap(root);
+		const size = map.size;
 		
 		let tree = blockStore.getTree(root, blockStore.getBlocks(root));
+		let selected = null;
 		
 		if (filter) {
 			const reg = new RegExp(filter, 'gi');
 			tree = tree.filter((it: I.Block) => { 
-				return String(it.content.fields.name || '').match(reg); 
+				const content = it.content || {};
+				const details = blockStore.getDetail(root, content.targetBlockId);
+				
+				return String(details.name || '').match(reg); 
 			});
 		};
 		
+		if (expanded) {
+			selected = blockStore.getLeaf(root, id);
+		};
+		
 		const Item = (item: any) => {
-			const { content } = item;
-			const { fields } = content;
+			const content = item.content || {};
+			const details = blockStore.getDetail(root, content.targetBlockId);
 			
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
-					<Smile icon={fields.icon} className="c48" size={24} />
+					<Smile icon={details.icon} className="c48" size={24} />
 					<div className="info">
-						<div className="name">{fields.name}</div>
+						<div className="name">{details.name}</div>
 						<div className="descr">We can both help with building an it's a distillation of themes found on ...</div>
 					</div>
 					<Icon className="arrow" />
+				</div>
+			);
+		};
+		
+		const Selected = (item: any) => {
+			const content = item.content || {};
+			const details = blockStore.getDetail(root, content.targetBlockId);
+			
+			return (
+				<div className="selected">
+					<Smile icon={details.icon} className="c48" size={24} />
+					<div className="name">{details.name}</div>
+					<div className="descr">We can both help with building an it's a distillation of themes found on ...</div>
+					<Cover type={I.CoverType.Image} />
+					<div className="buttons">
+						<Button text="Open" className="orange" onClick={this.onConfirm} />
+						<Button text="Cancel" className="grey" onClick={this.onCancel} />
+					</div>
 				</div>
 			);
 		};
@@ -69,20 +99,45 @@ class PopupTree extends React.Component<Props, State> {
 			<div className={expanded ? 'expanded' : ''}>
 				{expanded ? (
 					<React.Fragment>
-						<div className="items">
+						<div className="head">
+							
+						</div>
+						<div className="sides">
+							<div className="items left">
+								{tree.map((item: any, i: number) => {
+									return <Item key={i} {...item} />;
+								})}
+							</div>
+							<div className="items center">
+								<Selected {...selected} />
+							</div>
+							<div className="items right">
+								{tree.map((item: any, i: number) => {
+									return <Item key={i} {...item} />;
+								})}
+							</div>
 						</div>
 					</React.Fragment>
 				) : (
 					<React.Fragment>
 						<form className="head" onSubmit={this.onSubmit}>
+							<Icon className="search" />
 							<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to search..." onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 						</form>
-						<div className="items">
-							{!tree.length ? <div className="empty">No items match criteria</div> : ''}
-							{tree.map((item: any, i: number) => {
-								return <Item key={i} {...item} />;
-							})}
-						</div>
+						{!tree.length ? (
+							<div className="empty">
+								<div className="txt">
+									<b>There is no pages named "{filter}"</b>
+									Try creating a new one or search for something else.
+								</div>
+							</div>
+						) : (
+							<div className="items">
+								{tree.map((item: any, i: number) => {
+									return <Item key={i} {...item} />;
+								})}
+							</div>
+						)}
 					</React.Fragment>
 				)}
 			</div>
@@ -104,6 +159,8 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	init () {
+		console.log('init');
+		
 		const { expanded } = this.state;
 		const win = $(window);
 		const obj = $('#popupTree');
@@ -115,12 +172,19 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	resize () {
+		const { expanded } = this.state;
 		const win = $(window);
 		const obj = $('#popupTree');
 		const head = obj.find('.head');
 		const items = obj.find('.items');
+		const sides = obj.find('.sides');
+		const empty = obj.find('.empty');
+		const offset = expanded ? 32 : 0;
+		const height = win.height() - head.outerHeight() - 128;
 		
-		items.css({ height: win.height() - head.outerHeight() - 128 });
+		sides.css({ height: height });
+		items.css({ height: height - offset });
+		empty.css({ height: height, lineHeight: height + 'px' });
 		obj.css({ marginLeft: -obj.width() / 2 });
 	};
 	
@@ -138,7 +202,7 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		this.setState({ expanded: true });
+		this.setState({ expanded: true, id: item.id });
 	};
 	
 	onConfirm (e: any) {

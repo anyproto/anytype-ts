@@ -33,7 +33,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const { content } = block;
+		const { type, content } = block;
 		const { marks, style } = content;
 		
 		let canMark = true;
@@ -46,12 +46,12 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		];
 		
 		// You can't mark code, as it's highlighted automatically
-		if ([ I.TextStyle.Code ].indexOf(style) >= 0) {
+		if (block.isCode()) {
 			canMark = false;
 		};
 		
 		// You can't make headers bold, since they are already bold
-		if ([ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].indexOf(style) >= 0) {
+		if (block.isHeader()) {
 			markActions = markActions.filter((it: any) => { return [ I.MarkType.Bold, I.MarkType.Code ].indexOf(it.type) < 0; });
 		};
 		
@@ -60,7 +60,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			markActions = markActions.filter((it: any) => { return [ I.MarkType.Italic, I.MarkType.Code ].indexOf(it.type) < 0; });
 		};
 		
-		let icon = DataUtil.styleIcon(style);
+		let icon = DataUtil.styleIcon(type, style);
 		let colorMark = Mark.getInRange(marks, I.MarkType.TextColor, range);
 		let bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range);
 
@@ -175,17 +175,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 								};
 								
 								if (item.type == I.BlockType.Page) {
-									const param: any = {
-										type: item.type,
-										fields: {
-											name: Constant.default.name,
-										},
-										content: {
-											style: I.PageStyle.Empty,
-										}
-									};
-									
-									C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Bottom, (message: any) => {
+									C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
 										C.BlockUnlink(rootId, [ blockId ]);
 									});
 								};

@@ -29,13 +29,12 @@ class Block implements I.Block {
 			if (change.newValue === self[change.name]) {
 				return null;
 			};
-			console.log('Block change', change, self[change.name]);
 			return change;
 		});
 	};
 	
 	isFocusable () {
-		return !this.isLayout();
+		return !this.isPage() && !this.isLayout();
 	};
 	
 	isSelectable () {
@@ -55,11 +54,11 @@ class Block implements I.Block {
 	};
 	
 	isRow () {
-		return (this.type == I.BlockType.Layout) && (this.content.style == I.LayoutStyle.Row);
+		return this.isLayout() && (this.content.style == I.LayoutStyle.Row);
 	};
 	
 	isColumn () {
-		return (this.type == I.BlockType.Layout) && (this.content.style == I.LayoutStyle.Column);
+		return this.isLayout() && (this.content.style == I.LayoutStyle.Column);
 	};
 	
 	isLink () {
@@ -78,12 +77,36 @@ class Block implements I.Block {
 		return this.type == I.BlockType.File;
 	};
 	
+	isImage () {
+		return this.isFile() && (this.content.type == I.FileType.Image);
+	};
+	
+	isVideo () {
+		return this.isFile() && (this.content.type == I.FileType.Video);
+	};
+	
 	isDiv () {
 		return this.type == I.BlockType.Div;
 	};
 	
 	isTitle () {
-		return this.isText() && (this.content.style == I.TextStyle.Title);
+		return this.type == I.BlockType.Title;
+	};
+	
+	isHeader () {
+		return this.isText() && (this.isHeader1() || this.isHeader2() || this.isHeader3());
+	};
+	
+	isHeader1 () {
+		return this.isText() && (this.content.style == I.TextStyle.Header1);
+	};
+	
+	isHeader2 () {
+		return this.isText() && (this.content.style == I.TextStyle.Header2);
+	};
+	
+	isHeader3 () {
+		return this.isText() && (this.content.style == I.TextStyle.Header3);
 	};
 	
 	isToggle () {
@@ -100,6 +123,14 @@ class Block implements I.Block {
 	
 	isCheckbox () {
 		return this.isText() && (this.content.style == I.TextStyle.Checkbox);
+	};
+	
+	isCode () {
+		return this.isText() && (this.content.style == I.TextStyle.Code);
+	};
+	
+	isQuote () {
+		return this.isText() && (this.content.style == I.TextStyle.Quote);
 	};
 };
 

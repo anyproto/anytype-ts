@@ -30,8 +30,8 @@ class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { rootId, block } = this.props;
 		const { id, content } = block;
-		const { fields } = content;
-		const { icon, name, isArchived } = fields || {};
+		const details = blockStore.getDetail(rootId, content.targetBlockId);
+		const { icon, name, isArchived } = details;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 		
 		return (
@@ -66,7 +66,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { content } = block;
 		const { targetBlockId } = content;
 		
-		C.BlockSetIconName(targetBlockId, targetBlockId + '-icon', icon);
+		C.BlockSetDetails(targetBlockId, [ { key: 'icon', value: icon } ]);
 	};
 	
 };

@@ -302,7 +302,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		let { width } = fields;
 		width = Number(width) || 1;
 		
-		const el = $('.selectable.c' + $.escapeSelector(id));
+		const el = $('.selectable.c' + id);
 		if (!el.length) {
 			return width;
 		};
@@ -316,7 +316,7 @@ class BlockVideo extends React.Component<Props, {}> {
 	getHeight (p: number) {
 		const { block } = this.props;
 		const { id } = block;
-		const el = $('.selectable.c' + $.escapeSelector(id));
+		const el = $('.selectable.c' + id);
 		
 		if (!el.length) {
 			return 0;

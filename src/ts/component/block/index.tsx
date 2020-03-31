@@ -11,6 +11,7 @@ import BlockDataview from './dataview';
 import BlockText from './text';
 import BlockImage from './image';
 import BlockIcon from './icon';
+import BlockTitle from './title';
 import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
@@ -71,7 +72,7 @@ class Block extends React.Component<Props, {}> {
 		
 		let canSelect = true;
 		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align ];
-		let cd: string[] = [];
+		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
 		
@@ -91,10 +92,6 @@ class Block extends React.Component<Props, {}> {
 					cn.push('isChecked');
 				};
 				
-				if (style == I.TextStyle.Title) {
-					canSelect = false;
-				};
-				
 				if (style == I.TextStyle.Toggle) {
 					if (!childrenIds.length) {
 						empty = (
@@ -112,13 +109,15 @@ class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.Icon:
-				if (!content.name) {
-					return null;
-				};
-			
 				canSelect = false;
 				cn.push('blockIcon');
 				blockComponent = <BlockIcon {...this.props} />;
+				break;
+				
+			case I.BlockType.Title:
+				canSelect = false;
+				cn.push('blockTitle');
+				blockComponent = <BlockTitle {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
@@ -183,7 +182,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		let object = (
-			<DropTarget {...this.props} className={cd.join(' ')} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
+			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
 				{blockComponent}
 			</DropTarget>
 		);
@@ -209,7 +208,7 @@ class Block extends React.Component<Props, {}> {
 					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 				</div>
 				
-				<div className="wrapContent">
+				<div className={cd.join(' ')}>
 					{object}
 					
 					{block.isRow() ? (
@@ -400,7 +399,7 @@ class Block extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
-		const offset = node.find('#block-' + $.escapeSelector(prevBlockId)).offset().left + Constant.size.blockMenu;
+		const offset = node.find('#block-' + prevBlockId).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
 			selection.setPreventSelect(true);
@@ -434,8 +433,8 @@ class Block extends React.Component<Props, {}> {
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		
-		const prevNode = node.find('#block-' + $.escapeSelector(prevBlockId));
-		const currentNode = node.find('#block-' + $.escapeSelector(currentBlockId));
+		const prevNode = node.find('#block-' + prevBlockId);
+		const currentNode = node.find('#block-' + currentBlockId);
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		const w1 = res.percent * res.sum;

@@ -60,10 +60,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 					{item.children.map((action: any, i: number) => {
 						let icn: string[] = [ 'inner' ];
 						
-						if (action.id == 'turn') {
-							action.icon = DataUtil.styleIcon(style);
-						};
-						
 						if (action.id == 'color') {
 							if (color) {
 								icn.push('textColor textColor-' + color);
@@ -170,23 +166,21 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return [];
 		};
 		
-		const { content, type, align } = block;
+		const { type, align, content } = block;
 		const { style } = content;
 
-		let ca: string[] = [ 'align', DataUtil.alignIcon(align) ];		
-	
 		let sections: any[] = [
 			{ 
 				children: [
-					{ id: 'move', icon: 'move', name: 'Move to' },
+					//{ id: 'move', icon: 'move', name: 'Move to' },
 					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
-					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
+					{ id: 'turn', icon: DataUtil.styleIcon(type, style), name: 'Turn into', arrow: true },
 				] 
 			},
 			{ 
 				children: [
-					{ id: 'align', icon: ca.join(' '), name: 'Align', arrow: true },
+					{ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true },
 					{ id: 'color', icon: 'color', name: 'Change color', arrow: true, isTextColor: true },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
@@ -194,31 +188,36 @@ class MenuBlockAction extends React.Component<Props, State> {
 		];
 		
 		// Restrictions
-		if (type == I.BlockType.File) {
+		if (block.isFile()) {
 			let idx = sections[0].children.findIndex((it: any) => { return it.id == 'remove'; });
 			sections[0].children.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
 			//sections[0].children.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
 			//sections[0].children.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
 		};
 		
-		if (type != I.BlockType.Text) {
+		if (!block.isText() && !block.isDiv()) {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
 		};
 		
-		if (type == I.BlockType.Icon) {
+		if (block.isIcon()) {
 			sections = sections.filter((it: any, i: number) => { return i > 0; });
 		};
 		
 		if (filter) {
 			const reg = new RegExp(filter, 'gi');
-			
 			sections = [];
 			
-			if (type == I.BlockType.Text) {
+			if (block.isText()) {
 				sections = sections.concat([
 					{ id: 'turnText', icon: '', name: 'Text', color: '', children: DataUtil.menuGetBlockText() },
 					{ id: 'turnList', icon: '', name: 'List', color: '', children: DataUtil.menuGetBlockList() },
 					{ id: 'turnObject', icon: '', name: 'Object', color: '', children: DataUtil.menuGetTurnObject() },
+				]);
+			};
+			
+			if (block.isDiv()) {
+				sections = sections.concat([
+					{ id: 'turnDiv', icon: '', name: 'Divider', color: '', children: DataUtil.menuGetBlockOther() },
 				]);
 			};
 			
@@ -229,7 +228,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				{ id: 'bgColor', icon: '', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() },
 			]);
 			
-			if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
+			if (!block.isCode()) {
 				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			
@@ -395,17 +394,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							const param: any = {
-								type: item.type,
-								fields: {
-									name: String(text || Constant.default.name),
-								},
-								content: {
-									style: I.PageStyle.Empty,
-								}
-							};
-							
-							C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Replace);
+							C.BlockCreatePage(rootId, blockId, { name: String(text || Constant.default.name) }, I.BlockPosition.Replace);
 						};
 						
 						commonStore.menuClose(this.props.id);
@@ -458,8 +447,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const { root } = blockStore;
-		const block = blockStore.getLeaf(rootId, blockId);
 		
+		let block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -470,7 +459,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		switch (item.id) {
 			case 'download':
-				if (content.hash) {
+				if (!content.hash) {
+					break;
+				};
+				
+				if (block.isImage()) {
+					ipcRenderer.send('download', commonStore.imageUrl(content.hash, Constant.size.image));
+				} else {
 					ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 				};
 				break;
@@ -536,18 +531,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Page) {
 						commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-						
-						let param: any = {
-							type: item.type,
-							fields: {
-								name: Constant.default.name,
-							},
-							content: {
-								style: I.PageStyle.Empty,
-							},
-						};
-						
-						C.BlockCreatePage(param, rootId, blockId, I.BlockPosition.Replace, (message: any) => {
+						C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Replace, (message: any) => {
 							commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 						});
 					} else {

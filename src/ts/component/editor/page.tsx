@@ -69,8 +69,13 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
-		const withIcon = root.fields.icon;
-		const withCover = true;
+		const details = blockStore.getDetail(rootId, rootId);
+		
+		const withIcon = details.icon;
+		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
+		
+		const icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.Icon, childrenIds: [], fields: {}, content: {} });
+		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper' ];
@@ -93,6 +98,15 @@ class EditorPage extends React.Component<Props, State> {
 				<div className="editor">
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
+					
+						{withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
+						<Block 
+							{...this.props} key={title.id} block={title}
+							onKeyDown={this.onKeyDownBlock} 
+							onKeyUp={this.onKeyUpBlock}
+							onMenuAdd={this.onMenuAdd}
+							onPaste={this.onPaste} 
+						/>
 					
 						{list.map((block: I.Block, i: number) => {
 							return (
@@ -205,28 +219,28 @@ class EditorPage extends React.Component<Props, State> {
 		this.id = rootId;
 		C.BlockOpen(this.id, bc, (message: any) => {
 			const { focused, range } = focus;
-
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
-			const title = blockStore.getBlocks(rootId, (it: any) => { return it.isTitle(); })[0];
 			
-			if (!focusedBlock && title) {
-				let text = String(title.content.text || '');
-				if (text == Constant.default.name) {
-					text = '';
-				};
-				let length = text.length;
-				
-				focus.set(title.id, { from: length, to: length });
+			if (!focusedBlock) {
+				this.focusTitle();
 			};
 
 			this.resize();
-			window.setTimeout(() => { focus.apply(); }, 1);
 			
 			window.setTimeout(() => {
 				this.setState({ loading: false });
 				blockStore.setNumbers(rootId);
 			}, 300);
 		});
+	};
+	
+	focusTitle () {
+		const { rootId } = this.props;
+		const details = blockStore.getDetail(rootId, rootId);
+		const length = String(details.name || '').length;
+		
+		focus.set(rootId + '-title', { from: length, to: length });
+		window.setTimeout(() => { focus.apply(); });
 	};
 	
 	close (id: string) {
@@ -293,25 +307,26 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const root = blockStore.getLeaf(rootId, rootId);
+		const details = blockStore.getDetail(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const withIcon = root && root.fields.icon;
-		const withCover = true;
+		const withIcon = details.icon;
+		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
-		let offset = 130;
+		let offset = 170;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
 		
 		if (withCover && withIcon) {
-			offset = 360;
+			offset = 408;
 		} else
 		if (withCover) {
-			offset = 360;
+			offset = 408;
 		} else 
 		if (withIcon) {
-			offset = 184;
+			offset = 224;
 		};
 		
 		// Find hovered block by mouse coords
@@ -350,17 +365,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
 				
-				let canAdd = true;
 				if (block) {
-					if (block.isIcon()) {
-						canAdd = false;
-					};
-					if (block.isTitle() && (this.hoverPosition == I.BlockPosition.Top)) {
-						canAdd = false;
-					};
-				};
-				
-				if (canAdd) {
 					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 				};
 			};
@@ -683,7 +688,7 @@ class EditorPage extends React.Component<Props, State> {
 						
 						// Auto-open toggle blocks 
 						if (parent && parent.isToggle()) {
-							node.find('#block-' + $.escapeSelector(parent.id)).addClass('isToggled');
+							node.find('#block-' + parent.id).addClass('isToggled');
 						};
 						
 						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
@@ -793,7 +798,7 @@ class EditorPage extends React.Component<Props, State> {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
-			$('.placeHolder.c' + $.escapeSelector(blockId)).text(Constant.placeHolder.filter);
+			$('.placeHolder.c' + blockId).text(Constant.placeHolder.filter);
 			this.onMenuAdd(blockId);
 		});
 	};
@@ -832,7 +837,7 @@ class EditorPage extends React.Component<Props, State> {
 				
 				focus.apply();
 				commonStore.filterSet('');
-				$('.placeHolder.c' + $.escapeSelector(id)).text(Constant.placeHolder.default);
+				$('.placeHolder.c' + id).text(Constant.placeHolder.default);
 			},
 			data: {
 				blockId: id,
@@ -890,12 +895,7 @@ class EditorPage extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							param.fields = {
-								name: Constant.default.name,
-							};
-							param.content.style = I.PageStyle.Empty;
-							
-							this.blockCreatePage(block, I.BlockPosition.Replace, param);
+							this.blockCreatePage(block, { name: Constant.default.name }, I.BlockPosition.Replace);
 						} else {
 							this.blockCreate(block, I.BlockPosition.Replace, param);
 						};
@@ -991,11 +991,10 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset;
 		const { focused, range } = focus;
 		const data: any = {
-			text: cb.getData('text/plain'),
-			html: cb.getData('text/html'),
-			anytype: JSON.parse(cb.getData('application/anytype') || '[]'),
+			text: String(cb.getData('text/plain') || ''),
+			html: String(cb.getData('text/html') || ''),
+			anytype: JSON.parse(String(cb.getData('application/anytype') || '[]')),
 		};
-		
 		
 		let reg = new RegExp(/((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?/gi);
 		let match = data.text.match(reg);
@@ -1044,11 +1043,11 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 	
-	blockCreatePage (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
+	blockCreatePage (focused: I.Block, details: any, position: I.BlockPosition, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-		C.BlockCreatePage(param, rootId, focused.id, position, (message: any) => {
+		C.BlockCreatePage(rootId, focused.id, details, position, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (callBack) {
@@ -1068,7 +1067,7 @@ class EditorPage extends React.Component<Props, State> {
 		let nl = String(next.content.text || '').length;
 		let length = 0;
 		
-		if (next.isText() && !next.isTitle()) {
+		if (next.isText()) {
 			C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
 				focus.set(next.id, { from: nl, to: nl });
 				focus.apply();				
@@ -1077,8 +1076,12 @@ class EditorPage extends React.Component<Props, State> {
 			length = String(focused.content.text || '').length;
 			if (!length) {
 				C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
-					focus.set(next.id, { from: nl, to: nl });
-					focus.apply();
+					if (next.isFocusable()) {
+						focus.set(next.id, { from: nl, to: nl });
+						focus.apply();
+					} else {
+						this.focusTitle();
+					};
 				});
 			};
 		};
@@ -1116,10 +1119,12 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
-			if (next) {
+			if (next && next.isFocusable()) {
 				let l = String(next.content.text || '').length;
 				focus.set(next.id, { from: l, to: l });
 				focus.apply();
+			} else {
+				this.focusTitle();
 			};
 		});
 	};

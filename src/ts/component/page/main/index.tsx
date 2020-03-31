@@ -42,10 +42,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const list = this.getList();
+		const map = blockStore.getDetailMap(root);
+		const size = map.size;
 		
 		return (
 			<div>
-				<Cover num={coverId} image={coverImg} />
+				<Cover type={I.CoverType.Image} num={coverId} image={coverImg} />
 				<Header {...this.props} />
 				<Footer />
 				
@@ -164,7 +166,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	getList () {
 		const { root } = blockStore;
 		return blockStore.getChildren(root, root, (it: any) => {
-			return !(it.content.fields || {}).isArchived;
+			const details = blockStore.getDetail(root, it.content.targetBlockId);
+			return !details.isArchived;
 		});
 	};
 

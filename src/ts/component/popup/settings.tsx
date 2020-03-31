@@ -114,12 +114,12 @@ class PopupSettings extends React.Component<Props, State> {
 				
 				const Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item.id); }}>
-						<Cover num={item.id} image={item.image} />
+						<Cover type={I.CoverType.Image} num={item.id} image={item.image} />
 					</div>
 				);
 				
 				if (coverImg) {
-					covers.unshift({ id: -1, image: coverImg });
+					covers.unshift({ id: 0, image: coverImg });
 				};
 				
 				content = (
@@ -130,7 +130,7 @@ class PopupSettings extends React.Component<Props, State> {
 						<div className="row">
 							<Label text="Upload wallpaper. For best results upload high resolution images." />
 							<div className="fileWrap item" onClick={this.onFileClick}>
-								<Cover image={preview} className="upload" />
+								<Cover className="upload" />
 							</div>
 						</div>
 						

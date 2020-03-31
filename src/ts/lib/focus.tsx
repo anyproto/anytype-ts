@@ -19,7 +19,7 @@ class Focus {
 	};
 	
 	clear (withRange: boolean) {
-		const el = $('.focusable.c' + $.escapeSelector(this.focused));
+		const el = $('.focusable.c' + this.focused);
 		
 		this.focused = '';
 		this.range.from = 0;
@@ -42,16 +42,25 @@ class Focus {
 			return;
 		};
 		
-		const el = $('.focusable.c' + $.escapeSelector(this.focused));
-		if (!el.length) {
+		const node = $('.focusable.c' + this.focused);
+		if (!node.length) {
 			return;
 		};
-
-		$('.focusable.isFocused').removeClass('isFocused');
-		el.focus().addClass('isFocused');
 		
-		setRange(el.get(0), { start: this.range.from, end: this.range.to });
-		keyboard.setFocus(el.hasClass('value'));
+		$('.focusable.isFocused').removeClass('isFocused');
+		node.addClass('isFocused');
+
+		const el = node.get(0);
+		
+		el.focus();
+		
+		if (node.hasClass('input')) {
+			el.setSelectionRange(this.range.from, this.range.to);
+		} else
+		if (node.attr('contenteditable')) {
+			keyboard.setFocus(true);
+			setRange(el, { start: this.range.from, end: this.range.to });
+		};
 	};
 	
 };

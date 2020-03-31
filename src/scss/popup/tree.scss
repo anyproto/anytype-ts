@@ -5,12 +5,17 @@
 	.popup.popupTree.expanded { width: 1136px; margin: 0px 0px 0px -578px; }
 	
 	.popup.popupTree {
-		.head { padding: 12px 16px; border-bottom: 1px solid #ebe9e0; }
+		.head { padding: 16px; border-bottom: 1px solid #ebe9e0; }
 		.head {
-			.input { padding: 0px; }
+			.icon.search { margin-right: 8px; vertical-align: top; }
+			.input { padding: 0px; height: 24px; vertical-align: top; width: calc(100% - 32px); }
 		}
 		
-		.empty { text-align: center; }
+		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
+		.empty {
+			b { display: block; font-weight: 400; color: $colorBlack; }
+			.txt { line-height: 24px; color: $colorDarkGrey; }
+		}
 		
 		.items { padding: 16px; overflow-x: hidden; overflow-y: auto; }
 		.items {
@@ -39,6 +44,36 @@
 					width: 6px; height: 10px; position: absolute; right: 12px; top: 50%; margin-top: -5px;
 					background-image: url('~img/arrow/tree.svg'); opacity: 0; 
 				}
+			}
+		}
+	}
+	
+	.popup.popupTree.expanded {
+		.head { padding: 10px 12px 16px 12px; border: 0px; }
+		.sides { display: flex; padding: 16px; }
+		
+		.items { width: 33.33%; }
+		.items {
+			.item {
+				.info { border: 0px; }
+				.icon.arrow { opacity: 1; right: -16px; }
+			}
+		}
+		
+		.selected { padding: 16px; border: 2px solid $colorOrange; border-radius: 8px; }
+		.selected {
+			.smile { margin-bottom: 8px; }
+			.descr { font-size: 13px; line-height: 18px; height: 18px; overflow: hidden; color: #6c6a5f; }
+			.cover { position: static; height: 156px; margin: 12px 0px 16px 0px; background-color: #C4C4C4; }
+			.buttons {
+				.button { margin-right: 12px; }
+				.button:last-child { margin: 0px; }
+			}
+		}
+		
+		.items.right {
+			.item {
+				.icon.arrow { opacity: 1; right: auto; left: -16px; }
 			}
 		}
 	}

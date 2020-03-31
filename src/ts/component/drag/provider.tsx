@@ -180,7 +180,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		$('.selectable.isDragging').removeClass('isDragging');
 		for (let id of this.ids) {
-			$($.escapeSelector('.selectable.c' + id)).addClass('isDragging');
+			$('.selectable.c' + id).addClass('isDragging');
 		};
 	};
 	

@@ -10,8 +10,9 @@ class BlockStore {
 	@observable public archiveId: string = '';
 	@observable public breadcrumbsId: string = '';
 	
-	public treeObject: any = new Map();
-	public blockObject: any = new Map();
+	public treeObject: Map<string, any[]> = new Map();
+	public blockObject: Map<string, any[]> = new Map();
+	public detailObject: Map<string, Map<string, any>> = new Map();
 	
 	@computed
 	get root (): string {
@@ -41,6 +42,58 @@ class BlockStore {
 	@action
 	breadcrumbsSet (id: string) {
 		this.breadcrumbsId = String(id || '');
+	};
+	
+	@action
+	detailsSet (rootId: string, details: any[]) {
+		let map = observable(new Map());
+		
+		for (let item of details) {
+			if (!item.id || !item.details) {
+				continue;
+			};
+			
+			map.set(item.id, StructDecode.decodeStruct(item.details));
+		};
+		
+		intercept(map as any, (change: any) => {
+			let item = map.get(change.name);
+			if (Util.objectCompare(change.newValue, item)) {
+				return null;
+			};
+			return change;
+		});
+		
+		this.detailObject.set(rootId, map);
+	};
+	
+	@action
+	detailsUpdate (rootId: string, item: any) {
+		if (!item.id || !item.details) {
+			return;
+		};
+		
+		let map = this.detailObject.get(rootId);
+		let create = false;
+		
+		if (!map) {
+			map = observable(new Map());
+			create = true;
+		};
+		
+		map.set(item.id, StructDecode.decodeStruct(item.details));
+		
+		if (create) {
+			intercept(map as any, (change: any) => {
+				let item = map.get(change.name);
+				if (Util.objectCompare(change.newValue, item)) {
+					return null;
+				};
+				return change;
+			});
+			
+			this.detailObject.set(rootId, map);
+		};
 	};
 	
 	@action
@@ -76,7 +129,6 @@ class BlockStore {
 			if (change.newValue === map[block.id][change.name]) {
 				return null;
 			};
-			console.log('Stucture change', change, map[block.id][change.name]);
 			return change;
 		});
 	};
@@ -221,7 +273,7 @@ class BlockStore {
 			for (let item of list) {
 				if (item.isNumbered()) {
 					n++;
-					$('.markerInner.c' + $.escapeSelector(item.id)).text(n ? n + '.' : '');
+					$('.markerInner.c' + item.id).text(n ? n + '.' : '');
 				} else {
 					n = 0;
 				};
@@ -256,7 +308,7 @@ class BlockStore {
 		return map;
 	};
 	
-	getTree (rootId: string, list: I.Block[]) {
+	getTree (rootId: string, list: I.Block[]): I.Block[] {
 		list = Util.objectCopy(list || []);
 		
 		let map: any = {};
@@ -284,7 +336,7 @@ class BlockStore {
 			};
 		};
 		
-		return map[rootId].childBlocks;
+		return (map[rootId] || {}).childBlocks || [];
 	};
 	
 	wrapTree (rootId: string) {
@@ -312,6 +364,18 @@ class BlockStore {
 			};
 		};
 		return ret;
+	};
+	
+	getDetailMap (rootId: string) {
+		return this.detailObject.get(rootId) || new Map();
+	};
+	
+	getDetail (rootId: string, id: string): any {
+		const map = this.getDetailMap(rootId);
+		const item = Util.objectCopy(map.get(id) || {});
+		
+		item.name = String(item.name || Constant.default.name);
+		return item;
 	};
 	
 	prepareBlockFromProto (block: any): I.Block {

@@ -15,28 +15,10 @@
 		
 		.items { padding: 0px 16px; }
 	
-		.item { 
+		.cover { 
 			width: 88px; height: 48px; border-radius: 2px; margin: 0px 8px 8px 0px; display: inline-block; 
-			vertical-align: top;
+			vertical-align: top; position: static;
 		}
-		.item:nth-child(4n+4) { margin-right: 0px; }
-		
-		.item.yellow { background: $colorYellow; }
-		.item.orange { background: $colorOrange; }
-		.item.red { background: $colorRed; }
-		.item.pink { background: $colorPink; }
-		.item.purple { background: $colorPurple; }
-		.item.blue { background: $colorBlue; }
-		.item.ice { background: $colorIce; }
-		.item.teal { background: $colorTeal; }
-		.item.green { background: $colorLime; }
-		.item.lightgrey { background: $colorLightGrey; }
-		.item.darkgrey { background: $colorDarkGrey; }
-		.item.black { background: $colorBlack; }
-		
-		.item.c1.yellow { background: linear-gradient(180deg, $colorOrange 0%, $colorYellow 105.47%); }
-		.item.c1.red { background: linear-gradient(180deg, $colorRed 0%, $colorPink 105.47%); }
-		.item.c1.blue { background: linear-gradient(180deg, $colorPurple 0%, $colorBlue 105.47%); }
-		.item.c1.teal { background: linear-gradient(180deg, $colorIce 0%, $colorTeal 105.47%); }
+		.cover:nth-child(4n+4) { margin-right: 0px; }
 	}
 }
