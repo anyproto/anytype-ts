@@ -59,4 +59,10 @@ export interface Block {
 	isNumbered?(): boolean;
 	isBulleted?(): boolean;
 	isCheckbox?(): boolean;
+	isCode?(): boolean;
+	isHeader?(): boolean;
+	isHeader1?(): boolean;
+	isHeader2?(): boolean;
+	isHeader3?(): boolean;
+	isQuote?(): boolean;
 };
