@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Util, Storage, analytics } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
+import PageAuthNotice from './auth/notice';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinSelect from './auth/pin/select';
@@ -51,6 +52,13 @@ class Page extends React.Component<Props, {}> {
 	render () {
 		const { match } = this.props;
 		const path = [ match.params.page, match.params.action ].join('/');
+		const showNotice = !Boolean(Storage.get('firstRun'));
+		
+		if (showNotice) {
+			Components['/'] = PageAuthNotice;
+			Storage.set('firstRun', 1);
+		};
+		
 		const Component = Components[path];
 		
 		if (!Component) {
