@@ -90,7 +90,9 @@ class MenuBlockCover extends React.Component<Props, {}> {
 					{ key: 'coverScale', value: 0 },
 				]);
 				
-				onUpload();
+				if (onUpload) {
+					onUpload();
+				};
 				commonStore.menuClose(this.props.id);
 			});
 		});
@@ -101,7 +103,9 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onEdit } = data;
 	
-		onEdit();
+		if (onEdit) {
+			onEdit();	
+		};
 		commonStore.menuClose(this.props.id);
 	};
 	
@@ -131,7 +135,9 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			commonStore.menuClose(this.props.id);
 		};
 		
-		onSelect(item.type, item.value);
+		if (onSelect) {
+			onSelect(item.type, item.value);
+		};
 	};
 	
 	getSections () {
