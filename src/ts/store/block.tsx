@@ -453,6 +453,8 @@ class BlockStore {
 		
 		let block: any = {
 			id: String(data.id || ''),
+			align: Number(data.align) || 0,
+			backgroundColor: String(data.bgColor || ''),
 		};
 		
 		if (data.childrenIds) {
