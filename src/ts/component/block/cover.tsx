@@ -59,16 +59,10 @@ class BlockCover extends React.Component<Props, State> {
 		const { coverType, coverId } = details;
 		
 		let elements = null;
-		let image = '';
-		
-		if (coverType == I.CoverType.Image) {
-			image = commonStore.imageUrl(coverId, 2048);
-		};
-		
 		if (isEditing) {
 			elements = (
 				<React.Fragment>
-					<div key="btn-drag" className="btn black drag" onMouseDown={this.onDragStart}>
+					<div key="btn-drag" className="btn black drag">
 						<Icon />
 						<div className="txt">Drag image to reposition</div>
 					</div>
@@ -99,8 +93,8 @@ class BlockCover extends React.Component<Props, State> {
 		
 		return (
 			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart}>
-				{image ? (
-					<img id="cover" src={image} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
+				{coverType == I.CoverType.Image ? (
+					<img id="cover" src={commonStore.imageUrl(coverId, 2048)} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
 				) : (
 					<Cover id="cover" type={details.coverType} className={details.coverId} />
 				)}
@@ -113,15 +107,19 @@ class BlockCover extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.init();
+		this.resize();
+		
+		const win = $(window);
+		win.unbind('resize').on('resize', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
-		this.init();
+		this.resize();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		$(window).unbind('resize');
 	};
 	
 	onMenu (e: any) {
@@ -169,7 +167,7 @@ class BlockCover extends React.Component<Props, State> {
 		this.setState({ isEditing: false });
 	};
 	
-	init () {
+	resize () {
 		if (!this._isMounted) {
 			return false;
 		};
@@ -209,7 +207,8 @@ class BlockCover extends React.Component<Props, State> {
 		
 		this.x = e.pageX - this.rect.x - this.x;
 		this.y = e.pageY - this.rect.y - this.y;
-		
+		this.onDragMove(e);
+
 		selection.setPreventSelect(true);
 		node.addClass('isDragging');
 		
@@ -226,11 +225,10 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
 		const { coverScale } = details;
+		const { x, y} = this.setTransform(e.pageX - this.rect.x - this.x, e.pageY - this.rect.y - this.y);
 		
-		this.cx = e.pageX - this.rect.x - this.x;
-		this.cy = e.pageY - this.rect.y - this.y;
-		
-		this.setTransform(this.cx, this.cy);
+		this.cx = x;
+		this.cy = y;
 	};
 	
 	onDragEnd (e: any) {
@@ -312,6 +310,7 @@ class BlockCover extends React.Component<Props, State> {
 		y = Math.max(-my, Math.min(0, y));
 		
 		this.cover.css({ transform: `translate3d(${x}px,${y}px,0px)` });
+		return { x: x, y: y };
 	};
 	
 	checkPercent (p: number): number {

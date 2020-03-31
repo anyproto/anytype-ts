@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { I } from 'ts/lib';
 
 interface Props {
 	id?: string;
@@ -34,9 +35,10 @@ class Cover extends React.Component<Props, {}> {
 		if (num) {
 			cn.push('c' + num);
 		} else
-		if (image) {
+		if ((type == I.CoverType.Image) && image) {
 			style.backgroundImage = `url("${image}")`;
-			style.backgroundSize = '';
+			style.backgroundPosition = `${Math.abs(x * 100)}% ${Math.abs(y * 100)}%`;
+			style.backgroundSize = ((scale + 1) * 100) + '%';
 		};
 		
 		return (
