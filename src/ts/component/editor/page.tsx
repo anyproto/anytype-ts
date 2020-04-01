@@ -757,7 +757,7 @@ class EditorPage extends React.Component<Props, State> {
 				};
 			} else 
 			if (!block.isTitle()) {
-				this.blockSplit(block, range.from, I.TextStyle.Paragraph);
+				this.blockSplit(block, range.from, block.content.style);
 			};
 		};
 	};
