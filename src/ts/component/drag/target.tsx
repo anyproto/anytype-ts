@@ -12,7 +12,7 @@ interface Props {
 	disabled?: boolean;
 	dataset?: any;
 	onClick?(e: any): void;
-	onDrop?(e: any, dropType: string, targetId: string, position: I.BlockPosition): void;
+	onDrop?(e: any, dropType: string, rootId: string, targetId: string, position: I.BlockPosition): void;
 };
 
 const $ = require('jquery');
@@ -64,24 +64,20 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 
 		const { id, disabled, dataset, dropType, style, type, className } = this.props;
-		if (disabled) {
-			return;
-		};
-		
 		const { dragProvider } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!dragProvider) {
+		if (disabled || !dragProvider) {
 			return;
 		};
 		
-		let win = $(window);
-		let ex = e.pageX;
-		let ey = e.pageY;
-		let domRect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
-		let { x, y, width, height } = domRect;
-		let isFileDrop = (e.dataTransfer.items && e.dataTransfer.items.length) || (e.dataTransfer.files && e.dataTransfer.files.length);
+		const node = $(ReactDOM.findDOMNode(this));
+		const win = $(window);
+		const ex = e.pageX;
+		const ey = e.pageY;
+		const domRect = (node.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const isFileDrop = (e.dataTransfer.items && e.dataTransfer.items.length) || (e.dataTransfer.files && e.dataTransfer.files.length);
 		
+		let { x, y, width, height } = domRect;
 		y += win.scrollTop();
 		
 		let rect = {
@@ -202,7 +198,7 @@ class DropTarget extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { disabled, onDrop, dropType, id } = this.props;
+		const { disabled, onDrop, dropType, rootId, id } = this.props;
 		if (disabled) {
 			return;
 		};
@@ -211,7 +207,7 @@ class DropTarget extends React.Component<Props, {}> {
 		node.removeClass('isOver top bottom left right middle');
 		
 		if (this.canDrop && onDrop && (this.position != I.BlockPosition.None)) {
-			onDrop(e, dropType, id, this.position);
+			onDrop(e, dropType, rootId, id, this.position);
 		};
 	};
 	

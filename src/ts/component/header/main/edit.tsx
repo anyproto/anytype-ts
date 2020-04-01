@@ -51,7 +51,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
 					{children.map((item: any, i: any) => (
-						<HeaderItemPath key={item.id} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={i + 1} />
+						<HeaderItemPath {...this.props} key={item.id} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={i + 1} />
 					))}
 				</div>
 				
@@ -100,9 +100,14 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.props.history.goForward();
 	};
 	
-	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
-		if (this.props.dataset && this.props.dataset.onDrop) {
-			this.props.dataset.onDrop(e, type, targetId, position);			
+	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
+		const { dataset } = this.props;
+		const { onDrop } = dataset || {};
+		
+		console.log('onDrop', type, rootId, targetId, position);
+		
+		if (onDrop) {
+			onDrop(e, type, rootId, targetId, position);
 		};
 	};
 	

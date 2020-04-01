@@ -6,11 +6,12 @@ import { authStore, commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
+	dataset?: any;
 	rootId: string;
 	block: I.Block;
 	index: number;
 	onPath (e: any, block: I.Block, index: number): void;
-	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition): void;
+	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition): void;
 };
 
 @observer
@@ -24,14 +25,16 @@ class HeaderItemPath extends React.Component<Props, {}> {
 		const { icon, name } = details;
 		
 		return (
-			<DropTarget className="item" id={id} rootId={rootId} dropType={I.DragItem.Menu} onClick={(e: any) => { onPath(e, block, index); }} onDrop={onDrop}>
+			<DropTarget {...this.props} className="item" id={id} rootId={breadcrumbs} dropType={I.DragItem.Menu} onClick={(e: any) => { onPath(e, block, index); }} onDrop={onDrop}>
 				<Smile icon={icon} />
 				<div className="name">{name}</div>
 				<Icon className="arrow" />
 			</DropTarget>
 		);
 	};
-	
+
+
+ 	
 };
 
 export default HeaderItemPath;

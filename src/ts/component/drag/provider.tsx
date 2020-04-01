@@ -117,13 +117,13 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 	};
 	
-	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
+	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
 		if (position == I.BlockPosition.None) {
 			return;
 		};
 		
-		const { rootId, dataset } = this.props;
-		const { selection } = dataset;
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
 		const target = blockStore.getLeaf(rootId, targetId);
 		const map = blockStore.getMap(rootId);
 		const element = map[targetId];
@@ -135,8 +135,10 @@ class DragProvider extends React.Component<Props, {}> {
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		
 		let targetContextId = rootId;
+		let contextId = rootId;
 		
 		if (target.isLink() && (position == I.BlockPosition.Inner)) {
+			contextId = this.props.rootId;
 			targetContextId = target.content.targetBlockId;
 			targetId = '';
 		};
@@ -158,11 +160,11 @@ class DragProvider extends React.Component<Props, {}> {
 			
 			console.log('[onDrop] paths', paths);
 			
-			C.ExternalDropFiles(rootId, targetId, position, paths, (message: any) => {
+			C.ExternalDropFiles(contextId, targetId, position, paths, (message: any) => {
 				this.preventCommonDrop = false;
 			});
 		} else {
-			C.BlockListMove(rootId, targetContextId, this.ids || [], targetId, position, () => {
+			C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
 				if (selection) {
 					selection.set(this.ids);
 				};

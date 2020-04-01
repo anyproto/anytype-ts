@@ -318,7 +318,7 @@ class Block extends React.Component<Props, {}> {
 		};
 	};
 	
-	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
+	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
 		const { selection, onDrop } = dataset;
 		
@@ -327,7 +327,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		if (dataset && onDrop) {
-			onDrop(e, type, targetId, position);
+			onDrop(e, type, rootId, targetId, position);
 		};
 	};
 	
