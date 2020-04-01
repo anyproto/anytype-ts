@@ -109,6 +109,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.rebind();
 		this.setActive();
+		this.refFilter.focus();
 		
 		const menu = $('#' + Util.toCamelCase('menu-' + id));
 		menu.unbind('mouseleave').on('mouseleave', () => {
@@ -267,8 +268,19 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	onKeyDown (e: any) {
-		if (!this._isMounted || this.focus) {
+		if (!this._isMounted) {
 			return;
+		};
+		
+		const k = e.which;
+		
+		if (this.focus) {
+			if (k == Key.down) {
+				this.refFilter.blur();
+				this.n = -1;
+			} else {
+				return;
+			};
 		};
 		
 		e.preventDefault();
@@ -278,7 +290,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { param } = this.props;
 		const { data } = param;
-		const k = e.which;
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
