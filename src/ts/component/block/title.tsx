@@ -9,6 +9,7 @@ import getInputSelection from 'get-input-selection';
 interface Props {
 	rootId: string;
 	block: I.Block;
+	onPaste? (e: any): void;
 };
 
 const $ = require('jquery');
@@ -27,7 +28,9 @@ class BlockTitle extends React.Component<Props, {}> {
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 	};
 
 	render (): any {
@@ -50,6 +53,8 @@ class BlockTitle extends React.Component<Props, {}> {
 					onBlur={this.onBlur}
 					onSelect={this.onSelect}  
 					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onPaste={this.onPaste}
 					className={'focusable c' + id} 
 				/>
 			</React.Fragment>
@@ -114,6 +119,13 @@ class BlockTitle extends React.Component<Props, {}> {
 		};
 	};
 	
+	onKeyUp (e: any) {
+		e.persist();
+		
+		const k = e.which;
+		const { rootId } = this.props;
+	};
+	
 	onChange (e: any, value: string) {
 		const { rootId } = this.props;
 		
@@ -121,6 +133,11 @@ class BlockTitle extends React.Component<Props, {}> {
 		this.timeout = window.setTimeout(() => {
 			C.BlockSetDetails(rootId, [ { key: 'name', value: value } ]);
 		}, 500);
+	};
+	
+	onPaste (e: any) {
+		e.preventDefault();
+		this.props.onPaste(e);
 	};
 	
 	getRange () {

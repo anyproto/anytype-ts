@@ -19,6 +19,7 @@ const $ = require('jquery');
 class BlockVideo extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	div: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -95,6 +96,10 @@ class BlockVideo extends React.Component<Props, {}> {
 		this.bind();
 	};
 	
+	componentDidUpdate () {
+		this.onResizeInit();
+	};
+	
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
@@ -106,12 +111,22 @@ class BlockVideo extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		const video = node.find('video');
+		const el = video.get(0);
 		
-		node.unbind('resizeStart resize resizeEnd');
+		this.unbind();
+		
 		node.on('resizeStart', (e: any, oe: any) => { this.onResizeStart(oe, true); });
 		node.on('resize', (e: any, oe: any) => { this.onResize(oe, true); });
 		node.on('resizeEnd', (e: any, oe: any) => { this.onResizeEnd(oe, true); });
 		node.on('resizeInit', (e: any, oe: any) => { this.onResizeInit(); });
+		
+		if (video.length) {
+			video.on('canplay', (e: any) => {
+				this.div = el.videoWidth / el.videoHeight;
+				this.onResizeInit();
+			});
+		};
 	};
 	
 	unbind () {
@@ -120,7 +135,10 @@ class BlockVideo extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize');
+		const video = node.find('video');
+		
+		node.unbind('resizeInit resizeStart resize resizeEnd');
+		video.unbind('canplay');
 	};
 	
 	onKeyDown (e: any) {
@@ -322,7 +340,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			return 0;
 		};
 		
-		return Math.floor(p * el.width() / 16 * 9);
+		return Math.floor(p * el.width() / (this.div || 1));
 	};
 	
 };
