@@ -22,6 +22,10 @@
 		.section > .name { padding: 4px 16px; margin-bottom: 6px; }
 	}
 	
+	.menu.menuBlockColor {
+		.content { max-height: 500px; }
+	}
+	
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menu.menuBlockStyle {
 		.item.withColor.active {
 			.icon.text { background-image: url('~img/icon/menu/action/block/text1.svg'); }

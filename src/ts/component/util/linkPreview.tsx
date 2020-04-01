@@ -95,6 +95,10 @@ class LinkPreview extends React.Component<Props, {}> {
 			this.setState({ loading: true });
 			
 			C.LinkPreview(linkPreview.url, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
 				this.setState({
 					type: Number(message.linkPreview.type) || 0,
 					title: String(message.linkPreview.title || ''),

@@ -97,7 +97,7 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		this.onResizeInit();
+		this.bind();
 	};
 	
 	componentWillUnmount () {
