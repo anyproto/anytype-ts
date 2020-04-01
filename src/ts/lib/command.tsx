@@ -225,11 +225,12 @@ const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callB
 	dispatcher.call('blockMerge', request, callBack);
 };
 
-const BlockSplit = (contextId: string, blockId: string, position: number, callBack?: (message: any) => void) => {
+const BlockSplit = (contextId: string, blockId: string, position: number, style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
 		blockId: blockId,
 		cursorPosition: position,
+		style: style,
 	};
 	dispatcher.call('blockSplit', request, callBack);
 };

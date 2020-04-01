@@ -737,12 +737,7 @@ class EditorPage extends React.Component<Props, State> {
 			e.preventDefault();
 			
 			if ((range.from == length) && (range.to == length)) {
-				let param: any = {
-					type: I.BlockType.Text,
-					content: {
-						style: I.TextStyle.Paragraph,
-					},
-				};
+				let style = I.TextStyle.Paragraph;
 				let replace = false;
 				
 				// If block is non-empty list - create new list block of the same style, 
@@ -751,18 +746,18 @@ class EditorPage extends React.Component<Props, State> {
 					if (!length) {
 						replace = true;
 					} else {
-						param.content.style = block.content.style;
+						style = block.content.style;
 					};
 				};
 				
 				if (replace) {
 					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
-					this.blockCreate(block, I.BlockPosition.Bottom, param);
+					this.blockSplit(block, range.from, style);
 				};
 			} else 
 			if (!block.isTitle()) {
-				this.blockSplit(block, range.from);
+				this.blockSplit(block, range.from, I.TextStyle.Paragraph);
 			};
 		};
 	};
@@ -1087,11 +1082,11 @@ class EditorPage extends React.Component<Props, State> {
 		};
 	};
 	
-	blockSplit (focused: I.Block, start: number) {
+	blockSplit (focused: I.Block, start: number, style: I.TextStyle) {
 		const { rootId } = this.props;
 		
-		C.BlockSplit(rootId, focused.id, start, (message: any) => {
-			focus.set(message.blockId, { from: 0, to: 0 });
+		C.BlockSplit(rootId, focused.id, start, style, (message: any) => {
+			focus.set(focused.id, { from: 0, to: 0 });
 			focus.apply();
 		});
 	};
