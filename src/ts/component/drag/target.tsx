@@ -127,6 +127,11 @@ class DropTarget extends React.Component<Props, {}> {
 			this.position = I.BlockPosition.None;
 		};
 		
+		// You cant drop in Headers
+		if ((this.position == I.BlockPosition.Inner) && (type == I.BlockType.Text) && [ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3, I.TextStyle.Header4 ].indexOf(style) >= 0) {
+			this.position = I.BlockPosition.None;
+		};
+		
 		// You can drop vertically on Layout.Row
 		if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row) && (this.position != I.BlockPosition.None)) {
 			if (className == 'targetTop') {
