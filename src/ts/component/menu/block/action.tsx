@@ -393,6 +393,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 							});
 						};
 						
+						if (item.type == I.BlockType.Div) {
+							C.BlockListSetDivStyle(rootId, blockIds, item.id, (message: any) => {
+								focus.set(message.blockId, { from: 0, to: 0 });
+								focus.apply();
+							});
+						};
+						
 						if (item.type == I.BlockType.Page) {
 							C.BlockCreatePage(rootId, blockId, { name: String(text || Constant.default.name) }, I.BlockPosition.Replace);
 						};

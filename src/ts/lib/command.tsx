@@ -333,6 +333,15 @@ const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.T
 	dispatcher.call('blockListSetTextStyle', request, callBack);
 };
 
+const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		style: style,
+	};
+	dispatcher.call('blockListSetDivStyle', request, callBack);
+};
+
 const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -421,6 +430,7 @@ export {
 	BlockListSetBackgroundColor,
 	BlockListSetTextColor,
 	BlockListSetTextStyle,
+	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
 };

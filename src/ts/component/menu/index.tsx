@@ -145,7 +145,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	position () {
-		const { param } = this.props;
+		const { id, param } = this.props;
 		const { element, type, vertical, horizontal, offsetX, offsetY, isSub } = param;
 		
 		raf(() => {
@@ -161,7 +161,7 @@ class Menu extends React.Component<Props, {}> {
 			};
 			
 			if (!el || !el.length) {
-				console.error('[Menu.position] element not found', element);
+				console.error('[Menu.position]', id, 'element not found', element);
 				return;
 			};
 

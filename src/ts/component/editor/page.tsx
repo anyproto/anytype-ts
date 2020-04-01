@@ -36,7 +36,6 @@ class EditorPage extends React.Component<Props, State> {
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
-	uiBlockHide: boolean = false;
 	state = {
 		loading: false,
 	};
@@ -166,11 +165,8 @@ class EditorPage extends React.Component<Props, State> {
 		if (this.uiHidden) {
 			this.uiHide();
 		};
-		
-		this.uiBlockHide = true;
-		focus.apply(); 
-		win.scrollTop(this.scrollTop);
-		this.uiBlockHide = false;
+
+		focus.apply();
 		
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -258,10 +254,6 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	uiHide () {
-		if (this.uiBlockHide) {
-			return;
-		};
-		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
@@ -788,6 +780,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		commonStore.filterSet('');
+		focus.clear(true);
 		
 		this.blockCreate(block, this.hoverPosition, {
 			type: I.BlockType.Text,
@@ -1160,6 +1153,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		
 		if (!node.hasClass('editorWrapper')) {
 			return;
 		};

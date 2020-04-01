@@ -174,6 +174,13 @@ class MenuBlockContext extends React.Component<Props, {}> {
 									});
 								};
 								
+								if (item.type == I.BlockType.Div) {
+									C.BlockListSetDivStyle(rootId, blockIds, item.id, (message: any) => {
+										focus.set(message.blockId, { from: 0, to: 0 });
+										focus.apply();
+									});
+								};
+								
 								if (item.type == I.BlockType.Page) {
 									C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
 										C.BlockUnlink(rootId, [ blockId ]);
