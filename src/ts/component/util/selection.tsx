@@ -214,7 +214,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const list = blockStore.unwrapTree(tree);
 		
 		if (!this.moved) {
-			if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
+			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 				this.clear();
 			} else {
 				this.checkNodes(e);
@@ -295,7 +295,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scrollTop = $(window).scrollTop();
 		
-		if (!e.shiftKey && !(e.ctrlKey || e.metaKey)) {
+		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
 		};
 		
@@ -321,6 +321,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 						block.addClass('isSelected');
 					};
 				};
+			} else
+			if (e.altKey) {
+				item.removeClass('isSelected');
+				block.removeClass('isSelected');
 			} else 
 			if (!item.hasClass('isSelected')) {
 				item.addClass('isSelected');
