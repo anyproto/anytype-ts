@@ -189,6 +189,19 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 					
+				case 'blockSetDiv':
+					block = blockStore.getLeaf(rootId, data.id);
+					if (!block) {
+						break;
+					};
+					
+					if (null !== data.style) {
+						block.content.style = Number(data.style.value) || 0;
+					};
+					
+					blockStore.blockUpdate(rootId, block);
+					break;
+					
 				case 'blockSetFile':
 					block = blockStore.getLeaf(rootId, data.id);
 					if (!block) {

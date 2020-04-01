@@ -234,6 +234,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 			
 			sections = sections.filter((s: any) => {
 				s.children = (s.children || []).filter((c: any) => { return c.name.match(reg); });
+				s.children = s.children.map((it: any) => {
+					it.key = it.id;
+					it.id = s.id + '-' + it.id;
+					return it;
+				});
 				return s.children.length > 0;
 			});
 		};
@@ -256,7 +261,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
 		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
+			this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
 		this.props.setActiveItem(items[this.n], scroll);
 	};
@@ -541,8 +546,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 						C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Replace, (message: any) => {
 							commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 						});
+					} else 
+					if (item.type == I.BlockType.Div) {
+						C.BlockListSetDivStyle(rootId, blockIds, item.key);
 					} else {
-						C.BlockListSetTextStyle(rootId, blockIds, item.id);
+						C.BlockListSetTextStyle(rootId, blockIds, item.key);
 					};
 				};
 			

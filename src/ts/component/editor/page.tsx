@@ -831,6 +831,7 @@ class EditorPage extends React.Component<Props, State> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
+					
 					// Text colors
 					if (item.isTextColor) {
 						C.BlockListSetTextColor(rootId, [ id ], item.value, cb);
@@ -843,7 +844,7 @@ class EditorPage extends React.Component<Props, State> {
 					
 					// Actions
 					if (item.isAction) {
-						switch (item.id) {
+						switch (item.key) {
 							
 							case 'download':
 								if (hash) {
@@ -871,15 +872,15 @@ class EditorPage extends React.Component<Props, State> {
 						};
 							
 						if (item.type == I.BlockType.Text) {
-							param.content.style = item.id;
+							param.content.style = item.key;
 						};
 						
 						if (item.type == I.BlockType.File) {
-							param.content.type = item.id;
+							param.content.type = item.key;
 						};
 						
 						if (item.type == I.BlockType.Div) {
-							param.content.style = item.id;
+							param.content.style = item.key;
 						};
 						
 						if (item.type == I.BlockType.Page) {

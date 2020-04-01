@@ -254,6 +254,15 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			});
 		};
 		
+		sections = sections.map((s: any) => {
+			s.children = s.children.map((it: any) => {
+				it.key = it.id;
+				it.id = s.id + '-' + it.id;
+				return it;
+			});
+			return s;
+		});
+		
 		return sections;
 	};
 	
