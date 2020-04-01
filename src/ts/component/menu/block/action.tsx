@@ -275,12 +275,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const k = e.which;
 		
 		if (this.focus) {
-			if (k == Key.down) {
-				this.refFilter.blur();
-				this.n = -1;
-			} else {
+			if (k != Key.down) {
 				return;
 			};
+			this.refFilter.blur();
+			this.n = -1;
 		};
 		
 		e.preventDefault();

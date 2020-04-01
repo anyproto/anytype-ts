@@ -27,4 +27,8 @@
 	.block.blockLayout.c1 > .wrapContent > .children > .block.last {
 		.inputWithFile { margin-bottom: 0px; }
 	}	
+	
+	/* Div */
+	.block.blockLayout.c2 > .wrapMenu { display: none; }
+	.block.blockLayout.c2 > .wrapContent { width: 100%; overflow: visible; }
 }
