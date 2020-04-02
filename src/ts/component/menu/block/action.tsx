@@ -416,7 +416,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockCreatePage(rootId, blockId, { name: String(text || Constant.default.name) }, I.BlockPosition.Replace);
+							C.BlockListMoveToNewPage(rootId, blockIds, { name: String(text || Constant.default.name) });
 						};
 						
 						commonStore.menuClose(this.props.id);

@@ -313,6 +313,15 @@ const BlockListMove = (contextId: string, targetContextId: string, blockIds: str
 	dispatcher.call('blockListMove', request, callBack);
 };
 
+const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		details: Struct.encodeStruct(details || {}),
+	};
+	dispatcher.call('blockListMoveToNewPage', request, callBack);
+};
+
 const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -411,6 +420,7 @@ export {
 	BlockSetPageIsArchived,
 	BlockUnlink,
 	BlockListMove,
+	BlockListMoveToNewPage,
 	BlockMerge,
 	BlockSplit,
 	BlockBookmarkFetch,
