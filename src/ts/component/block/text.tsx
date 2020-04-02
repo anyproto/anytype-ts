@@ -458,7 +458,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
-			this.setValue('');
+			DataUtil.blockSetText(rootId, block, '', []);
 			return;
 		};
 		
@@ -674,8 +674,10 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('.value').get(0) as Element);
+		const value = this.getValue();
+		const ret = range ? { from: range.start, to: range.end } : null;
 		
-		return range ? { from: range.start, to: range.end } : null;
+		return Util.rangeFix(value, ret);
 	};
 	
 };

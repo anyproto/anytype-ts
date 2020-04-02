@@ -438,6 +438,18 @@ class Util {
 		return String(v || '').replace(/[\/\\\*]/g, '');
 	};
 	
+	rangeFix (text: string, range: I.TextRange) {
+		if (!range) {
+			return null;
+		};
+		
+		console.log(text);
+		console.log(text.length);
+		console.log([ ...text ].length);
+		
+		return range;
+	};
+	
 };
 
 export default new Util();
