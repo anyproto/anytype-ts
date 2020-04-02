@@ -26,6 +26,8 @@ class Progress extends React.Component<Props, {}> {
 			return null;
 		};
 		
+		console.log(progress);
+		
 		const text = Util.sprintf(status, current, total);
 		
 		let cn = [ 'progress', (isUnlocked ? 'isUnlocked' : '') ];

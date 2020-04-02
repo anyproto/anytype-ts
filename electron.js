@@ -145,8 +145,10 @@ function createWindow () {
 			'(' + progress.transferred + '/' + progress.total + ')'
 		];
 		setStatus(msg.join(' '));
+		
+		win.webContents.send('progress', progress);
 	});
-
+	
 	autoUpdater.on('update-downloaded', (info) => {
 		setTimeout(function () {
 			setStatus('Update downloaded... Restarting App in 5 seconds');

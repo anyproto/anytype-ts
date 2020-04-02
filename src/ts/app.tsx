@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
-import { C, dispatcher, keyboard, Storage, analytics } from 'ts/lib';
+import { C, Util, dispatcher, keyboard, Storage, analytics } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -248,6 +248,15 @@ class App extends React.Component<Props, State> {
 		
 		ipcRenderer.on('message', (e: any, text: string, version: string) => {
 			console.log('[Message]', text, version);
+		});
+		
+		ipcRenderer.on('progress', (e: any, progress: any) => {
+			commonStore.progressSet({ 
+				status: 'Downloading update... %s/%s', 
+				current: Util.fileSize(progress.transferred), 
+				total: Util.fileSize(progress.total),
+				isUnlocked: true,
+			});
 		});
 		
 		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
