@@ -2,6 +2,7 @@ import { I, Util, Mark, dispatcher, StructEncode } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 const Struct = new StructEncode();
+const Constant = require('json/constant.json');
 
 const VersionGet = (callBack?: (message: any) => void) => {
 	dispatcher.call('versionGet', {}, callBack);
@@ -148,11 +149,14 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 };
 
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	details = details || {};
+	details.name = String(details.name || Constant.default.name);
+	
 	const request = {
 		contextId: contextId,
 		targetId: targetId,
 		position: position,
-		details: Struct.encodeStruct(details || {}),
+		details: Struct.encodeStruct(details),
 	};
 	dispatcher.call('blockCreatePage', request, callBack);
 };

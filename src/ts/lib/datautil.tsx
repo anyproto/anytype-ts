@@ -174,7 +174,7 @@ class DataUtil {
 
 		C.BlockCreatePage(root, '', details, I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			//this.pageOpen(e, props, message.blockId, message.targetId);
+			this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();
 		});	
 	};

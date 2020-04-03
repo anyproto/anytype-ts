@@ -173,7 +173,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [
 			{ 
 				children: [
-					{ id: 'move', icon: 'move', name: 'Move to' },
+					//{ id: 'move', icon: 'move', name: 'Move to' },
 					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
 					{ id: 'turn', icon: DataUtil.styleIcon(type, style), name: 'Turn into', arrow: true },
@@ -416,7 +416,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListMoveToNewPage(rootId, blockIds, { name: String(text || Constant.default.name) });
+							commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
+							C.BlockCreatePage(rootId, blockId, { name: text }, I.BlockPosition.Replace, (message: any) => {
+								DataUtil.pageOpen(e, this.props, message.blockId, message.targetId);
+								commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
+							});
 						};
 						
 						commonStore.menuClose(this.props.id);
@@ -553,7 +557,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Page) {
 						commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-						C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Replace, (message: any) => {
+						C.BlockCreatePage(rootId, blockId, { name: content.text }, I.BlockPosition.Replace, (message: any) => {
+							DataUtil.pageOpen(e, this.props, message.blockId, message.targetId);
 							commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 						});
 					} else 

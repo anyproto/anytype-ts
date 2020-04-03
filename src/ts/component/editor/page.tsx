@@ -1037,6 +1037,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		C.BlockCreatePage(rootId, focused.id, details, position, (message: any) => {
+			DataUtil.pageOpen({}, this.props, message.blockId, message.targetId);
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (callBack) {
