@@ -1,5 +1,8 @@
 import { I, Util } from 'ts/lib';
 
+const runes = require('runes');
+const Tags = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'tc', 'hlc' ];
+
 enum Overlap {
 	Equal		 = 0,		 // a == b
 	Outer		 = 1,		 // b inside a
@@ -11,8 +14,6 @@ enum Overlap {
 	Before		 = 7,		 // a ... b
 	After		 = 8,		 // b ... a
 };
-
-const Tags = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'tc', 'hlc' ];
 
 class Mark {
 	

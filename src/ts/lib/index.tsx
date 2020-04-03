@@ -12,6 +12,7 @@ import { analytics } from './analytics';
 import * as I from 'ts/interface';
 import * as M from 'ts/model';
 import * as C from './command';
+import * as Docs from 'ts/docs';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
@@ -40,6 +41,7 @@ export {
 	I,
 	C,
 	M,
+	Docs,
 	translate,
 	analytics,
 	scrollOnMove,

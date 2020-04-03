@@ -62,6 +62,7 @@ import 'scss/popup/archive.scss';
 import 'scss/popup/tree.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
+import 'scss/popup/new.scss';
 import 'scss/popup/editor/page.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
@@ -264,6 +265,7 @@ class App extends React.Component<Props, State> {
 			keyboard.disableMouse(false);
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
+		
 	};
 	
 };
