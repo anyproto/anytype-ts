@@ -98,6 +98,8 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 					} else {
 						history.push('/main/index');
 					};
+					
+					commonStore.popupOpen('new', {});
 				});
 			};
 		} else {

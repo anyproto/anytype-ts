@@ -908,10 +908,11 @@ class EditorPage extends React.Component<Props, State> {
 	onCopy (e: any, cut: boolean) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
+		const { focused, range } = focus;
 		
 		let ids = selection.get(true);
 		if (!ids.length) {
-			return;
+			ids = [ focused ];
 		};
 		
 		ids = ids.concat(this.getLayoutIds(ids));
@@ -919,6 +920,7 @@ class EditorPage extends React.Component<Props, State> {
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 		const cmd = cut ? 'BlockCut': 'BlockCopy';
 		
+		let data: any = {};
 		let text: any = [];
 		let ret = blockStore.unwrapTree(tree).filter((it: I.Block) => {
 			return ids.indexOf(it.id) >= 0;
@@ -932,9 +934,19 @@ class EditorPage extends React.Component<Props, State> {
 		});
 		text = text.join('\n');
 		
-		Util.clipboardCopy({ text: text, html: null, anytype: ret });
+		data = { 
+			text: text, 
+			html: null, 
+			anytype: { 
+				range: range,
+				blocks: ret, 
+			}
+		};
+		
+		Util.clipboardCopy(data);
 		C[cmd](rootId, ret, (message: any) => {
-			Util.clipboardCopy({ text: text, html: message.html, anytype: ret });
+			data.html = message.html;
+			Util.clipboardCopy(data);
 		});
 	};
 	
@@ -989,13 +1001,11 @@ class EditorPage extends React.Component<Props, State> {
 		let match = data.text.match(reg);
 		let url = match && match[0];
 		
-		console.log(url);
-		
 		let id = '';
 		let from = 0;
 		let to = 0;
 		
-		C.BlockPaste(rootId, focused, range, selection.get(true), data, (message: any) => {
+		C.BlockPaste(rootId, focused, range, data.anytype.range, selection.get(true), { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
 			if (message.blockIds && message.blockIds.length) {
 				const lastId = message.blockIds[message.blockIds.length - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
