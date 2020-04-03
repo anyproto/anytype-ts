@@ -442,10 +442,15 @@ class Util {
 		if (!range) {
 			return null;
 		};
+
+		let sf = text.substring(0, range.from);		
+		let st = text.substring(0, range.to);
 		
-		console.log(text);
-		console.log(text.length);
-		console.log([ ...text ].length);
+		console.log(range.from, range.to);
+		console.log(sf, sf.length, [ ...sf ].length);
+		console.log(st, st.length, [ ...st ].length);
+		
+		
 		
 		return range;
 	};

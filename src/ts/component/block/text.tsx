@@ -339,6 +339,10 @@ class BlockText extends React.Component<Props, {}> {
 		const k = e.which;
 		
 		let cmdParsed = false;
+		let cb = (message: any) => {
+			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.apply();
+		};
 		
 		if (commonStore.menuIsOpen('blockAdd')) {
 			commonStore.filterSet(value);
@@ -346,85 +350,85 @@ class BlockText extends React.Component<Props, {}> {
 		
 		// Make div
 		if (value == '---') {
-			C.BlockCreate({ type: I.BlockType.Div }, rootId, id, I.BlockPosition.Replace);
+			C.BlockCreate({ type: I.BlockType.Div }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make file
 		if (value == '/file') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.File } }, rootId, id, I.BlockPosition.Replace);
+			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.File } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make image
 		if (value == '/image') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Image } }, rootId, id, I.BlockPosition.Replace);
+			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Image } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make video
 		if (value == '/video') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace);
+			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make video
 		if (value == '/video') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace);
+			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make list
 		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && (style != I.TextStyle.Bulleted)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Bulleted);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Bulleted } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make checkbox
 		if ((value == '[]') && (style != I.TextStyle.Checkbox)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Checkbox);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Checkbox } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make numbered
 		if ((value == '1. ') && (style != I.TextStyle.Numbered)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Numbered);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Numbered } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h1
 		if ((value == '# ') && (style != I.TextStyle.Header1)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header1);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header1 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h2
 		if ((value == '## ') && (style != I.TextStyle.Header2)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header2);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header2 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h3
 		if ((value == '### ') && (style != I.TextStyle.Header3)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Header3);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header3 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make toggle
 		if ((value == '> ') && (style != I.TextStyle.Toggle)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Toggle);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Toggle } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make quote
 		if ((value == '" ') && (style != I.TextStyle.Quote)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Quote);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Quote } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make code
 		if ((value == '/code') && (style != I.TextStyle.Code)) {
-			C.BlockListSetTextStyle(rootId, [ id ], I.TextStyle.Code);
+			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
@@ -445,20 +449,18 @@ class BlockText extends React.Component<Props, {}> {
 		// Delete
 		if (value == '/delete') {
 			const next = blockStore.getNextBlock(rootId, id, -1);
-			
-			C.BlockUnlink(rootId, [ id ]);
-			cmdParsed = true;
-			
 			if (next) {
 				const length = String(next.content.text || '').length;
 				focus.set(next.id, { from: length, to: length });
 				focus.apply();
 			};
+			
+			C.BlockUnlink(rootId, [ id ]);
+			cmdParsed = true;
 		};
 		
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
-			DataUtil.blockSetText(rootId, block, '', []);
 			return;
 		};
 		
@@ -674,10 +676,8 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('.value').get(0) as Element);
-		const value = this.getValue();
-		const ret = range ? { from: range.start, to: range.end } : null;
 		
-		return Util.rangeFix(value, ret);
+		return range ? { from: range.start, to: range.end } : null;
 	};
 	
 };
