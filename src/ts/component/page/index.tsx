@@ -20,6 +20,7 @@ import PageMainEdit from './main/edit';
 
 import PageHelpIndex from './help/index';
 import PageHelpShortcuts from './help/shortcuts';
+import PageHelpNew from './help/new';
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -40,6 +41,7 @@ const Components: any = {
 			
 	'help/index':			 PageHelpIndex,
 	'help/shortcuts':		 PageHelpShortcuts,
+	'help/new':				 PageHelpNew,
 };
 
 interface Props extends RouteComponentProps<any> {};
