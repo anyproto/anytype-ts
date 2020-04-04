@@ -1089,6 +1089,9 @@ class EditorPage extends React.Component<Props, State> {
 	
 	blockSplit (focused: I.Block, start: number, style: I.TextStyle) {
 		const { rootId } = this.props;
+		const { content } = focused;
+		
+		start = Util.lengthFixOut(content.text, start);
 		
 		C.BlockSplit(rootId, focused.id, start, style, (message: any) => {
 			focus.set(focused.id, { from: 0, to: 0 });
