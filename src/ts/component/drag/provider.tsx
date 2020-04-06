@@ -143,7 +143,7 @@ class DragProvider extends React.Component<Props, {}> {
 			targetId = '';
 		};
 		
-		if (parent && parent.isLayout() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
+		if (parent && parent.isColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 			targetId = parent.id;
 		};
 		
