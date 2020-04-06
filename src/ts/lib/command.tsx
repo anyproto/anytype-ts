@@ -247,10 +247,10 @@ const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, cal
 	dispatcher.call('blockBookmarkFetch', request, callBack);	
 };
 
-const BlockBookmarkCreateAndFetch = (contextId: string, blockId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
+const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
 	const request: any = {
 		contextId: contextId,
-		blockId: blockId,
+		targetId: targetId,
 		position: position,
 		url: url,
 	};
@@ -271,10 +271,10 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 	dispatcher.call('blockUpload', request, callBack);	
 };
 
-const BlockFileCreateAndUpload = (contextId: string, blockId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
+const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
 	const request: any = {
 		contextId: contextId,
-		blockId: blockId,
+		targetId: targetId,
 		position: position,
 	};
 	if (url) {
