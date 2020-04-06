@@ -188,7 +188,9 @@ class DataUtil {
 		block.content.marks = marks || [];
 			
 		blockStore.blockUpdate(rootId, block);
-		C.BlockSetTextText(rootId, block.id, text, marks);
+		C.BlockSetTextText(rootId, block.id, text, marks, () => {
+			blockStore.setNumbers(rootId);
+		});
 	};
 	
 	menuGetBlockText () {

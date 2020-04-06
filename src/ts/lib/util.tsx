@@ -443,6 +443,12 @@ class Util {
 		return [...s].length;
 	};
 	
+	rangeFixOut (text: string, range: I.TextRange): I.TextRange {
+		range.from = this.lengthFixOut(text, range.from);
+		range.to = this.lengthFixOut(text, range.to);
+		return range;
+	};
+	
 };
 
 export default new Util();

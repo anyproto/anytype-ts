@@ -13,6 +13,8 @@ autoUpdater.logger.transports.file.level = 'info';
 
 let win = null;
 
+console.log('env', process.env.NODE_ENV);
+
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
 	
@@ -45,7 +47,6 @@ function createWindow () {
 	};
 	
 	ipcMain.on('appLoaded', () => {
-		console.log('appLoaded');
 		win.webContents.send('dataPath', dataPath);
 	});
 	

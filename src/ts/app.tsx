@@ -86,6 +86,8 @@ import 'scss/menu/dataview/calendar.scss';
 import 'scss/menu/dataview/tag.scss';
 import 'scss/menu/dataview/account.scss';
 
+import 'scss/media/print.scss';
+
 interface RouteElement { path: string; };
 interface Props {
 	commonStore?: any;
@@ -109,9 +111,8 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
-const { app, process } = window.require('electron').remote;
+const { app } = window.require('electron').remote;
 const version = app.getVersion();
-
 const platforms: any = {
 	win32:	 'Windows',
 	darwin:	 'Mac',
@@ -128,9 +129,9 @@ enableLogging({
 });
 */
 
-console.log('[Version]', version);
+console.log('[Version]', version, 'isPackaged', app.isPackaged);
 
-if (process.env.NODE_ENV == 'production') {
+if (app.isPackaged) {
 	Sentry.init({
 		release: version,
 		dsn: Constant.sentry,

@@ -261,12 +261,12 @@ class BlockStore {
 	};
 	
 	setNumbers (rootId: string) {
-		let root = this.wrapTree(rootId);
+		const root = this.wrapTree(rootId);
 		if (!root) {
 			return;
 		};
 		
-		let cb = (list: any[]) => {
+		const cb = (list: any[]) => {
 			list = list || [];
 			
 			let n = 0;

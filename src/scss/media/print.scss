@@ -1,0 +1,14 @@
+@media print {
+	@page {
+		size: A4;
+		margin: 0;
+	}
+	
+	.header { display: none; }
+	
+	.blocks {
+		.block.blockMedia {
+			.icon.play { display: none; }
+		}
+	}
+}

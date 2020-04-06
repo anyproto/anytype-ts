@@ -419,6 +419,10 @@ class EditorPage extends React.Component<Props, State> {
 				C.BlockRedo(rootId);
 			};
 			
+			if (k == Key.p) {
+				this.onPrint(e);
+			};
+			
 			if (k == Key.d) {
 				e.preventDefault();
 				focus.clear(true);
@@ -745,11 +749,11 @@ class EditorPage extends React.Component<Props, State> {
 				if (replace) {
 					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
-					this.blockSplit(block, range.from, style);
+					this.blockSplit(block, range, style);
 				};
 			} else 
 			if (!block.isTitle()) {
-				this.blockSplit(block, range.from, block.content.style);
+				this.blockSplit(block, range, block.content.style);
 			};
 		};
 	};
@@ -951,12 +955,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onPrint (e: any) {
-		const { rootId } = this.props;
-		const list: any[] = blockStore.unwrapTree([ blockStore.wrapTree(rootId) ]);
-
-		C.BlockExportPrint(rootId, list, (message: any) => {
-			console.log(message.path);
-		});
+		window.print();
 	};
 
 	getLayoutIds (ids: string[]) {
@@ -1087,13 +1086,13 @@ class EditorPage extends React.Component<Props, State> {
 		};
 	};
 	
-	blockSplit (focused: I.Block, start: number, style: I.TextStyle) {
+	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
 		const { rootId } = this.props;
 		const { content } = focused;
 		
-		start = Util.lengthFixOut(content.text, start);
+		range = Util.rangeFixOut(content.text, range);
 		
-		C.BlockSplit(rootId, focused.id, start, style, (message: any) => {
+		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
 			focus.set(focused.id, { from: 0, to: 0 });
 			focus.apply();
 		});

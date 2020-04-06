@@ -46,7 +46,13 @@ class Block extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<div className="wrapContent">{content}</div>
+				<div className="wrapContent">
+					<div className="selectable">
+						<div className="dropTarget">
+							{content}
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	};
