@@ -53,12 +53,16 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Layout;
 	};
 	
-	isRow (): boolean {
+	isLayoutRow (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Row);
 	};
 	
-	isColumn (): boolean {
+	isLayoutColumn (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Column);
+	};
+	
+	isLayoutDiv (): boolean {
+		return this.isLayout() && (this.content.style == I.LayoutStyle.Div);
 	};
 	
 	isLink (): boolean {

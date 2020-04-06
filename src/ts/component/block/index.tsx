@@ -211,7 +211,7 @@ class Block extends React.Component<Props, {}> {
 				<div className={cd.join(' ')}>
 					{object}
 					
-					{block.isRow() ? (
+					{block.isLayoutRow() ? (
 						<React.Fragment>
 							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
 							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
@@ -516,7 +516,7 @@ class Block extends React.Component<Props, {}> {
 		const { id } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!block.isRow()) {
+		if (!block.isLayoutRow()) {
 			return;
 		};
 		

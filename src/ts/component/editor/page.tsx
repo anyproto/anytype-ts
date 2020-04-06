@@ -977,7 +977,7 @@ class EditorPage extends React.Component<Props, State> {
 			
 			ret.push(parent.id);
 			
-			if (parent.isColumn()) {
+			if (parent.isLayoutColumn()) {
 				ret = ret.concat(this.getLayoutIds([ parent.id ]));
 			};
 		};
@@ -986,8 +986,6 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onPaste (e: any, force?: boolean, data?: any) {
-		e.persist();
-		
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;

@@ -45,8 +45,9 @@ export interface Block {
 	isDraggable?(): boolean;
 	isPage?(): boolean;
 	isLayout?(): boolean;
-	isRow?(): boolean;
-	isColumn?(): boolean;
+	isLayoutRow?(): boolean;
+	isLayoutColumn?(): boolean;
+	isLayoutDiv?(): boolean;
 	isLink?(): boolean;
 	isIcon?(): boolean;
 	isFile?(): boolean;
