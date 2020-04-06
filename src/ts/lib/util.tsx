@@ -439,7 +439,7 @@ class Util {
 	};
 	
 	lengthFixOut (text: string, len: number): number {
-		const s = text.substring(0, len);
+		const s = String(text || '').substring(0, len);
 		return [...s].length;
 	};
 	

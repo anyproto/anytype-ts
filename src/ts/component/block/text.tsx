@@ -615,7 +615,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onMouseDown (e: any) {
 		const { dataset, block } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const { id } = block;
 		
 		window.clearTimeout(this.timeoutClick);
