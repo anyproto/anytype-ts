@@ -3,6 +3,8 @@ import { blockStore } from 'ts/store';
 import { I, M, Util, Storage } from 'ts/lib';
 
 const Constant = require('json/constant.json');
+const { process } = window.require('electron').remote;
+const isProduction = process.env.NODE_ENV == 'production';
 
 class Analytics {
 	
@@ -10,6 +12,10 @@ class Analytics {
 	instance: any = null;
 	
 	init () {
+		if (!isProduction) {
+			return;
+		};
+		
 		//console.log('[Analytics.init]', Constant.amplitude);
 		this.instance = amplitude.getInstance();
 		
@@ -23,21 +29,37 @@ class Analytics {
 	};
 	
 	profile (profile: any) {
+		if (!isProduction) {
+			return;
+		};
+		
 		//console.log('[Analytics.profile]', profile.id);
 		this.instance.setUserId(profile.id);
 	};
 	
 	setUserProperties (obj: any) {
+		if (!isProduction) {
+			return;
+		};
+		
 		//console.log('[Analytics.setUserProperties]', obj);
 		this.instance.setUserProperties(obj);
 	};
 	
 	setVersionName (name: string) {
+		if (!isProduction) {
+			return;
+		};
+		
 		//console.log('[Analytics.setVersionName]', name);
 		this.instance.setVersionName(name);
 	};
 	
 	event (code: string, data?: any) {
+		if (!isProduction) {
+			return;
+		};
+		
 		const debugAN = Boolean(Storage.get('debugAN'));
 		
 		if (!code || !this.isInit) {
