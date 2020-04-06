@@ -1003,7 +1003,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);
-		const reg = new RegExp(/((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?/gi);
+		const reg = new RegExp(/^((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
