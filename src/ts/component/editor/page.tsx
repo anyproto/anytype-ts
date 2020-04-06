@@ -985,20 +985,55 @@ class EditorPage extends React.Component<Props, State> {
 		return ret;
 	};
 	
-	onPaste (e: any) {
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+	onPaste (e: any, force?: boolean, data?: any) {
+		e.persist();
+		
 		const { dataset, rootId } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const { focused, range } = focus;
-		const data: any = {
-			text: String(cb.getData('text/plain') || ''),
-			html: String(cb.getData('text/html') || ''),
-			anytype: JSON.parse(String(cb.getData('application/anytype') || '[]')),
+		
+		if (!data) {
+			const cb = e.clipboardData || e.originalEvent.clipboardData;
+			
+			data = {
+				text: String(cb.getData('text/plain') || ''),
+				html: String(cb.getData('text/html') || ''),
+				anytype: JSON.parse(String(cb.getData('application/anytype') || '[]')),
+			};
 		};
 		
-		let reg = new RegExp(/((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?/gi);
-		let match = data.text.match(reg);
-		let url = match && match[0];
+		const block = blockStore.getLeaf(rootId, focused);
+		const reg = new RegExp(/((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?/gi);
+		const match = data.text.match(reg);
+		const url = match && match[0];
+		
+		if (url && !force) {
+			commonStore.menuOpen('select', { 
+				element: '#block-' + focused,
+				type: I.MenuType.Vertical,
+				offsetX: Constant.size.blockMenu,
+				offsetY: 4,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				data: {
+					value: '',
+					options: [
+						{ id: 'cancel', name: 'Dismiss' },
+						{ id: 'bookmark', name: 'Create bookmark' },
+						//{ id: 'embed', name: 'Create embed' },
+					],
+					onSelect: (event: any, id: string) => {
+						if (id == 'cancel') {
+							this.onPaste(e, true, data);
+						};
+						if (id == 'bookmark') {
+							C.BlockBookmarkCreateAndFetch(rootId, focused, block.getLength() ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
+						};
+					},
+				}
+			});
+			return;
+		};
 		
 		let id = '';
 		let from = 0;
@@ -1012,7 +1047,7 @@ class EditorPage extends React.Component<Props, State> {
 					return;
 				};
 				
-				const length = String(block.content.text || '').length;
+				const length = block.getLength();
 				
 				id = block.id;
 				from = length;

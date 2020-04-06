@@ -65,4 +65,5 @@ export interface Block {
 	isHeader2?(): boolean;
 	isHeader3?(): boolean;
 	isQuote?(): boolean;
+	getLength?(): number;
 };

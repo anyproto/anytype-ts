@@ -247,6 +247,16 @@ const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, cal
 	dispatcher.call('blockBookmarkFetch', request, callBack);	
 };
 
+const BlockBookmarkCreateAndFetch = (contextId: string, blockId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
+	const request: any = {
+		contextId: contextId,
+		blockId: blockId,
+		position: position,
+		url: url,
+	};
+	dispatcher.call('blockBookmarkCreateAndFetch', request, callBack);	
+};
+
 const BlockUpload = (contextId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) => {
 	const request: any = {
 		contextId: contextId,
@@ -259,6 +269,21 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 		request.filePath = path;
 	};
 	dispatcher.call('blockUpload', request, callBack);	
+};
+
+const BlockFileCreateAndUpload = (contextId: string, blockId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
+	const request: any = {
+		contextId: contextId,
+		blockId: blockId,
+		position: position,
+	};
+	if (url) {
+		request.url = url;
+	};
+	if (path) {
+		request.filePath = path;
+	};
+	dispatcher.call('blockFileCreateAndUpload', request, callBack);	
 };
 
 const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
@@ -429,7 +454,9 @@ export {
 	BlockMerge,
 	BlockSplit,
 	BlockBookmarkFetch,
+	BlockBookmarkCreateAndFetch,
 	BlockUpload,
+	BlockFileCreateAndUpload,
 	BlockCopy,
 	BlockCut,
 	BlockExportPrint,

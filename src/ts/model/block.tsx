@@ -33,104 +33,108 @@ class Block implements I.Block {
 		});
 	};
 	
-	isFocusable () {
+	isFocusable (): boolean {
 		return !this.isPage() && !this.isLayout();
 	};
 	
-	isSelectable () {
+	isSelectable (): boolean {
 		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
 	};
 	
-	isDraggable () {
+	isDraggable (): boolean {
 		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
 	};
 	
-	isPage () { 
+	isPage (): boolean { 
 		return this.type == I.BlockType.Page;
 	};
 	
-	isLayout () {
+	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;
 	};
 	
-	isRow () {
+	isRow (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Row);
 	};
 	
-	isColumn () {
+	isColumn (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Column);
 	};
 	
-	isLink () {
+	isLink (): boolean {
 		return this.type == I.BlockType.Link;
 	};
 	
-	isIcon () {
+	isIcon (): boolean {
 		return this.type == I.BlockType.Icon;
 	};
 	
-	isText () {
+	isText (): boolean {
 		return this.type == I.BlockType.Text;
 	};
 	
-	isFile () {
+	isFile (): boolean {
 		return this.type == I.BlockType.File;
 	};
 	
-	isImage () {
+	isImage (): boolean {
 		return this.isFile() && (this.content.type == I.FileType.Image);
 	};
 	
-	isVideo () {
+	isVideo (): boolean {
 		return this.isFile() && (this.content.type == I.FileType.Video);
 	};
 	
-	isDiv () {
+	isDiv (): boolean {
 		return this.type == I.BlockType.Div;
 	};
 	
-	isTitle () {
+	isTitle (): boolean {
 		return this.type == I.BlockType.Title;
 	};
 	
-	isHeader () {
+	isHeader (): boolean {
 		return this.isText() && (this.isHeader1() || this.isHeader2() || this.isHeader3());
 	};
 	
-	isHeader1 () {
+	isHeader1 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header1);
 	};
 	
-	isHeader2 () {
+	isHeader2 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header2);
 	};
 	
-	isHeader3 () {
+	isHeader3 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header3);
 	};
 	
-	isToggle () {
+	isToggle (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Toggle);
 	};
 	
-	isNumbered () {
+	isNumbered (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Numbered);
 	};
 	
-	isBulleted () {
+	isBulleted (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Bulleted);
 	};
 	
-	isCheckbox () {
+	isCheckbox (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Checkbox);
 	};
 	
-	isCode () {
+	isCode (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Code);
 	};
 	
-	isQuote () {
+	isQuote (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Quote);
+	};
+	
+	getLength (): number {
+		return String(this.content.text || '').length;
 	};
 };
 
