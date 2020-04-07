@@ -182,11 +182,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 								};
 								
 								if (item.type == I.BlockType.Page) {
-									commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-									C.BlockCreatePage(rootId, blockId, { name: content.text }, I.BlockPosition.Replace, (message: any) => {
-										DataUtil.pageOpen(e, this.props, message.blockId, message.targetId);
-										commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-									});
+									DataUtil.moveToPage(rootId, blockIds, { name: content.text }, blockId);
 								};
 								
 								commonStore.menuClose(this.props.id);

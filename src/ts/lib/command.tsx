@@ -343,11 +343,13 @@ const BlockListMove = (contextId: string, targetContextId: string, blockIds: str
 	dispatcher.call('blockListMove', request, callBack);
 };
 
-const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, callBack?: (message: any) => void) => {
+const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
 		blockIds: blockIds,
 		details: Struct.encodeStruct(details || {}),
+		dropTargetId: targetId,
+		position: position,
 	};
 	dispatcher.call('blockListMoveToNewPage', request, callBack);
 };

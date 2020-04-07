@@ -416,11 +416,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-							C.BlockCreatePage(rootId, blockId, { name: text }, I.BlockPosition.Replace, (message: any) => {
-								DataUtil.pageOpen(e, this.props, message.blockId, message.targetId);
-								commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-							});
+							this.moveToPage();
 						};
 						
 						commonStore.menuClose(this.props.id);
@@ -556,11 +552,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				// Blocks
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Page) {
-						commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-						C.BlockCreatePage(rootId, blockId, { name: content.text }, I.BlockPosition.Replace, (message: any) => {
-							DataUtil.pageOpen(e, this.props, message.blockId, message.targetId);
-							commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-						});
+						this.moveToPage();
 					} else 
 					if (item.type == I.BlockType.Div) {
 						C.BlockListSetDivStyle(rootId, blockIds, item.key);
@@ -571,6 +563,21 @@ class MenuBlockAction extends React.Component<Props, State> {
 			
 				break;
 		};
+	};
+
+	moveToPage () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, blockIds, rootId } = data;
+		const { root } = blockStore;
+		
+		let block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+		
+		const { content } = block;
+		DataUtil.moveToPage(rootId, blockIds, { name: content.text }, blockId);
 	};
 
 };
