@@ -32,7 +32,7 @@ class ListChildren extends React.Component<Props, {}> {
 		
 		let ColResize: any = (): any => null;
 		let cn = [ 'children', 'c' + id ];
-		let isRow = block.isRow();
+		let isRow = block.isLayoutRow();
 		
 		if (isRow) {
 			ColResize = (item: any) => (

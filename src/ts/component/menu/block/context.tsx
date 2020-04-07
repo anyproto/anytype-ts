@@ -182,9 +182,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 								};
 								
 								if (item.type == I.BlockType.Page) {
-									C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
-										C.BlockUnlink(rootId, [ blockId ]);
-									});
+									DataUtil.moveToPage(rootId, blockIds, { name: content.text }, blockId);
 								};
 								
 								commonStore.menuClose(this.props.id);

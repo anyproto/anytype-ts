@@ -2,6 +2,7 @@ import { I, Util, Mark, dispatcher, StructEncode } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 const Struct = new StructEncode();
+const Constant = require('json/constant.json');
 
 const VersionGet = (callBack?: (message: any) => void) => {
 	dispatcher.call('versionGet', {}, callBack);
@@ -148,11 +149,14 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 };
 
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	details = details || {};
+	details.name = String(details.name || Constant.default.name);
+	
 	const request = {
 		contextId: contextId,
 		targetId: targetId,
 		position: position,
-		details: Struct.encodeStruct(details || {}),
+		details: Struct.encodeStruct(details),
 	};
 	dispatcher.call('blockCreatePage', request, callBack);
 };
@@ -224,11 +228,11 @@ const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callB
 	dispatcher.call('blockMerge', request, callBack);
 };
 
-const BlockSplit = (contextId: string, blockId: string, position: number, style: I.TextStyle, callBack?: (message: any) => void) => {
+const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
 		blockId: blockId,
-		cursorPosition: position,
+		range: range,
 		style: style,
 	};
 	dispatcher.call('blockSplit', request, callBack);
@@ -243,6 +247,16 @@ const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, cal
 	dispatcher.call('blockBookmarkFetch', request, callBack);	
 };
 
+const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
+	const request: any = {
+		contextId: contextId,
+		targetId: targetId,
+		position: position,
+		url: url,
+	};
+	dispatcher.call('blockBookmarkCreateAndFetch', request, callBack);	
+};
+
 const BlockUpload = (contextId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) => {
 	const request: any = {
 		contextId: contextId,
@@ -255,6 +269,21 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 		request.filePath = path;
 	};
 	dispatcher.call('blockUpload', request, callBack);	
+};
+
+const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
+	const request: any = {
+		contextId: contextId,
+		targetId: targetId,
+		position: position,
+	};
+	if (url) {
+		request.url = url;
+	};
+	if (path) {
+		request.filePath = path;
+	};
+	dispatcher.call('blockFileCreateAndUpload', request, callBack);	
 };
 
 const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
@@ -287,13 +316,14 @@ const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (mess
 	dispatcher.call('blockExport', request, callBack);
 };
 
-const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], data: any, callBack?: (message: any) => void) => {
+const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, copyRange: I.TextRange, blockIds: string[], data: any, callBack?: (message: any) => void) => {
 	data = Util.objectCopy(data);
 	
 	const request: any = {
 		contextId: contextId,
 		focusedBlockId: focusedId,
 		selectedTextRange: range,
+		copyTextRange: copyRange,
 		selectedBlockIds: blockIds,
 		textSlot: data.text,
 		htmlSlot: data.html,
@@ -313,11 +343,13 @@ const BlockListMove = (contextId: string, targetContextId: string, blockIds: str
 	dispatcher.call('blockListMove', request, callBack);
 };
 
-const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, callBack?: (message: any) => void) => {
+const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
 		blockIds: blockIds,
 		details: Struct.encodeStruct(details || {}),
+		dropTargetId: targetId,
+		position: position,
 	};
 	dispatcher.call('blockListMoveToNewPage', request, callBack);
 };
@@ -424,7 +456,9 @@ export {
 	BlockMerge,
 	BlockSplit,
 	BlockBookmarkFetch,
+	BlockBookmarkCreateAndFetch,
 	BlockUpload,
+	BlockFileCreateAndUpload,
 	BlockCopy,
 	BlockCut,
 	BlockExportPrint,

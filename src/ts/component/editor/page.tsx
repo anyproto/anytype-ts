@@ -381,7 +381,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { root } = blockStore;
 		const { selection } = dataset;
-		const { focused } = focus;
+		const { focused, range } = focus;
 		const k = e.which;
 		
 		if (keyboard.focus) {
@@ -417,6 +417,10 @@ class EditorPage extends React.Component<Props, State> {
 			if (k == Key.y) {
 				e.preventDefault();
 				C.BlockRedo(rootId);
+			};
+			
+			if (k == Key.p) {
+				this.onPrint(e);
 			};
 			
 			if (k == Key.d) {
@@ -465,8 +469,8 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { focused, range } = focus;
 		const { selection } = dataset;
-		
 		const block = blockStore.getLeaf(rootId, focused);
+		
 		if (!block) {
 			return;
 		};
@@ -701,7 +705,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 		};
 		
-		// Indent block
+		// Tab, indent block
 		if (k == Key.tab) {
 			e.preventDefault();
 			
@@ -718,11 +722,14 @@ class EditorPage extends React.Component<Props, State> {
 		
 		// Enter
 		if (k == Key.enter) {
-			if (e.shiftKey || commonStore.menuIsOpen() || (content.style == I.TextStyle.Code)) {
+			if (e.shiftKey || block.isCode() || (!block.isText() && keyboard.focus)) {
 				return;
 			};
 			
-			if (!block.isText() && keyboard.focus) {
+			const menus = commonStore.menus;
+			const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
+			
+			if (menuCheck) {
 				return;
 			};
 			
@@ -745,11 +752,11 @@ class EditorPage extends React.Component<Props, State> {
 				if (replace) {
 					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
 				} else {
-					this.blockSplit(block, range.from, style);
+					this.blockSplit(block, range, style);
 				};
 			} else 
 			if (!block.isTitle()) {
-				this.blockSplit(block, range.from, block.content.style);
+				this.blockSplit(block, range, block.content.style);
 			};
 		};
 	};
@@ -908,10 +915,11 @@ class EditorPage extends React.Component<Props, State> {
 	onCopy (e: any, cut: boolean) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset;
+		const { focused, range } = focus;
 		
 		let ids = selection.get(true);
 		if (!ids.length) {
-			return;
+			ids = [ focused ];
 		};
 		
 		ids = ids.concat(this.getLayoutIds(ids));
@@ -919,6 +927,7 @@ class EditorPage extends React.Component<Props, State> {
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 		const cmd = cut ? 'BlockCut': 'BlockCopy';
 		
+		let data: any = {};
 		let text: any = [];
 		let ret = blockStore.unwrapTree(tree).filter((it: I.Block) => {
 			return ids.indexOf(it.id) >= 0;
@@ -932,19 +941,24 @@ class EditorPage extends React.Component<Props, State> {
 		});
 		text = text.join('\n');
 		
-		Util.clipboardCopy({ text: text, html: null, anytype: ret });
+		data = { 
+			text: text, 
+			html: null, 
+			anytype: { 
+				range: range,
+				blocks: ret, 
+			}
+		};
+		
+		Util.clipboardCopy(data);
 		C[cmd](rootId, ret, (message: any) => {
-			Util.clipboardCopy({ text: text, html: message.html, anytype: ret });
+			data.html = message.html;
+			Util.clipboardCopy(data);
 		});
 	};
 	
 	onPrint (e: any) {
-		const { rootId } = this.props;
-		const list: any[] = blockStore.unwrapTree([ blockStore.wrapTree(rootId) ]);
-
-		C.BlockExportPrint(rootId, list, (message: any) => {
-			console.log(message.path);
-		});
+		window.print();
 	};
 
 	getLayoutIds (ids: string[]) {
@@ -966,7 +980,7 @@ class EditorPage extends React.Component<Props, State> {
 			
 			ret.push(parent.id);
 			
-			if (parent.isColumn()) {
+			if (parent.isLayoutColumn()) {
 				ret = ret.concat(this.getLayoutIds([ parent.id ]));
 			};
 		};
@@ -974,28 +988,59 @@ class EditorPage extends React.Component<Props, State> {
 		return ret;
 	};
 	
-	onPaste (e: any) {
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+	onPaste (e: any, force?: boolean, data?: any) {
 		const { dataset, rootId } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const { focused, range } = focus;
-		const data: any = {
-			text: String(cb.getData('text/plain') || ''),
-			html: String(cb.getData('text/html') || ''),
-			anytype: JSON.parse(String(cb.getData('application/anytype') || '[]')),
+		
+		if (!data) {
+			const cb = e.clipboardData || e.originalEvent.clipboardData;
+			
+			data = {
+				text: String(cb.getData('text/plain') || ''),
+				html: String(cb.getData('text/html') || ''),
+				anytype: JSON.parse(String(cb.getData('application/anytype') || '[]')),
+			};
 		};
 		
-		let reg = new RegExp(/((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?/gi);
-		let match = data.text.match(reg);
-		let url = match && match[0];
+		const block = blockStore.getLeaf(rootId, focused);
+		const reg = new RegExp(/^((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		const match = data.text.match(reg);
+		const url = match && match[0];
 		
-		console.log(url);
+		if (url && !force) {
+			commonStore.menuOpen('select', { 
+				element: '#block-' + focused,
+				type: I.MenuType.Vertical,
+				offsetX: Constant.size.blockMenu,
+				offsetY: 4,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				data: {
+					value: '',
+					options: [
+						{ id: 'cancel', name: 'Dismiss' },
+						{ id: 'bookmark', name: 'Create bookmark' },
+						//{ id: 'embed', name: 'Create embed' },
+					],
+					onSelect: (event: any, id: string) => {
+						if (id == 'cancel') {
+							this.onPaste(e, true, data);
+						};
+						if (id == 'bookmark') {
+							C.BlockBookmarkCreateAndFetch(rootId, focused, block.getLength() ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
+						};
+					},
+				}
+			});
+			return;
+		};
 		
 		let id = '';
 		let from = 0;
 		let to = 0;
 		
-		C.BlockPaste(rootId, focused, range, selection.get(true), data, (message: any) => {
+		C.BlockPaste(rootId, focused, range, data.anytype.range, selection.get(true), { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
 			if (message.blockIds && message.blockIds.length) {
 				const lastId = message.blockIds[message.blockIds.length - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
@@ -1003,7 +1048,7 @@ class EditorPage extends React.Component<Props, State> {
 					return;
 				};
 				
-				const length = String(block.content.text || '').length;
+				const length = block.getLength();
 				
 				id = block.id;
 				from = length;
@@ -1037,6 +1082,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		C.BlockCreatePage(rootId, focused.id, details, position, (message: any) => {
+			DataUtil.pageOpen({}, this.props, message.blockId, message.targetId);
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (callBack) {
@@ -1058,28 +1104,37 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (next.isText()) {
 			C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
 				focus.set(next.id, { from: nl, to: nl });
-				focus.apply();				
+				focus.apply();
 			});
 		} else {
 			length = String(focused.content.text || '').length;
 			if (!length) {
 				C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+					
 					if (next.isFocusable()) {
 						focus.set(next.id, { from: nl, to: nl });
 						focus.apply();
-					} else {
-						this.focusTitle();
 					};
 				});
 			};
 		};
 	};
 	
-	blockSplit (focused: I.Block, start: number, style: I.TextStyle) {
+	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
 		const { rootId } = this.props;
+		const { content } = focused;
 		
-		C.BlockSplit(rootId, focused.id, start, style, (message: any) => {
+		range = Util.rangeFixOut(content.text, range);
+		
+		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
 			focus.set(focused.id, { from: 0, to: 0 });
 			focus.apply();
 		});

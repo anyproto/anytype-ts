@@ -119,6 +119,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
+				{ id: 'print', icon: 'print', name: 'Print' },
 			];
 			
 			if (details.isArchived) {
@@ -176,6 +177,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'redo':
 				C.BlockRedo(rootId);
 				close = false;
+				break;
+				
+			case 'print':
+				window.setTimeout(() => {
+					window.print();
+				}, 300);
 				break;
 			
 			case 'move':

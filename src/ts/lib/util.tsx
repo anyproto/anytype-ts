@@ -438,20 +438,14 @@ class Util {
 		return String(v || '').replace(/[\/\\\*]/g, '');
 	};
 	
-	rangeFix (text: string, range: I.TextRange) {
-		if (!range) {
-			return null;
-		};
-
-		let sf = text.substring(0, range.from);		
-		let st = text.substring(0, range.to);
-		
-		console.log(range.from, range.to);
-		console.log(sf, sf.length, [ ...sf ].length);
-		console.log(st, st.length, [ ...st ].length);
-		
-		
-		
+	lengthFixOut (text: string, len: number): number {
+		const s = String(text || '').substring(0, len);
+		return [...s].length;
+	};
+	
+	rangeFixOut (text: string, range: I.TextRange): I.TextRange {
+		range.from = this.lengthFixOut(text, range.from);
+		range.to = this.lengthFixOut(text, range.to);
 		return range;
 	};
 	

@@ -3,14 +3,28 @@ import { blockStore } from 'ts/store';
 import { I, M, Util, Storage } from 'ts/lib';
 
 const Constant = require('json/constant.json');
+const { app } = window.require('electron').remote;
+const isProduction = app.isPackaged;
 
 class Analytics {
 	
 	isInit: boolean =  false;
 	instance: any = null;
+	debug: boolean = false;
+	
+	constructor () {
+		this.debug = Boolean(Storage.get('debugAN'));
+	};
 	
 	init () {
-		//console.log('[Analytics.init]', Constant.amplitude);
+		if (!isProduction) {
+			return;
+		};
+		
+		if (this.debug) {
+			console.log('[Analytics.init]', Constant.amplitude);	
+		};
+		
 		this.instance = amplitude.getInstance();
 		
 		this.instance.init(Constant.amplitude, null, {
@@ -23,29 +37,47 @@ class Analytics {
 	};
 	
 	profile (profile: any) {
-		//console.log('[Analytics.profile]', profile.id);
+		if (!isProduction) {
+			return;
+		};
+		
+		if (this.debug) {
+			console.log('[Analytics.profile]', profile.id);
+		};
+		
 		this.instance.setUserId(profile.id);
 	};
 	
 	setUserProperties (obj: any) {
-		//console.log('[Analytics.setUserProperties]', obj);
+		if (!isProduction) {
+			return;
+		};
+		
+		if (this.debug) {
+			console.log('[Analytics.setUserProperties]', obj);
+		};
+		
 		this.instance.setUserProperties(obj);
 	};
 	
 	setVersionName (name: string) {
-		//console.log('[Analytics.setVersionName]', name);
+		if (!isProduction) {
+			return;
+		};
+		
+		if (this.debug) {
+			console.log('[Analytics.setVersionName]', name);
+		};
+		
 		this.instance.setVersionName(name);
 	};
 	
 	event (code: string, data?: any) {
-		const debugAN = Boolean(Storage.get('debugAN'));
-		
-		if (!code || !this.isInit) {
+		if (!isProduction || !code || !this.isInit) {
 			return;
 		};
 		
 		let param: any = {};
-		
 		switch (code) {
 			case 'BlockCreate':
 			case 'BlockReplace':
@@ -65,9 +97,10 @@ class Analytics {
 				break;
 		};
 		
-		if (debugAN) {
+		if (this.debug) {
 			console.log('[Analytics.event]', code, param);
 		};
+		
 		this.instance.logEvent(code, param);
 	};
 	

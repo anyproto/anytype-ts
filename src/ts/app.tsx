@@ -62,6 +62,7 @@ import 'scss/popup/archive.scss';
 import 'scss/popup/tree.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
+import 'scss/popup/new.scss';
 import 'scss/popup/editor/page.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
@@ -84,6 +85,8 @@ import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/calendar.scss';
 import 'scss/menu/dataview/tag.scss';
 import 'scss/menu/dataview/account.scss';
+
+import 'scss/media/print.scss';
 
 interface RouteElement { path: string; };
 interface Props {
@@ -108,9 +111,8 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
-const { app, process } = window.require('electron').remote;
+const { app } = window.require('electron').remote;
 const version = app.getVersion();
-
 const platforms: any = {
 	win32:	 'Windows',
 	darwin:	 'Mac',
@@ -127,9 +129,9 @@ enableLogging({
 });
 */
 
-console.log('[Version]', version);
+console.log('[Version]', version, 'isPackaged', app.isPackaged);
 
-if (process.env.NODE_ENV == 'production') {
+if (app.isPackaged) {
 	Sentry.init({
 		release: version,
 		dsn: Constant.sentry,
@@ -264,6 +266,7 @@ class App extends React.Component<Props, State> {
 			keyboard.disableMouse(false);
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
+		
 	};
 	
 };

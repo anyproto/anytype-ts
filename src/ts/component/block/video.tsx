@@ -40,7 +40,7 @@ class BlockVideo extends React.Component<Props, {}> {
 	render () {
 		const { block } = this.props;
 		const { id, fields, content } = block;
-		const { state, hash } = content;
+		const { state, hash, type, mime } = content;
 		const accept = [ 'mp4', 'm4v' ];
 		
 		let { width } = fields;

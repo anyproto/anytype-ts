@@ -174,9 +174,16 @@ class DataUtil {
 
 		C.BlockCreatePage(root, '', details, I.BlockPosition.Bottom, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			//this.pageOpen(e, props, message.blockId, message.targetId);
+			this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();
 		});	
+	};
+	
+	moveToPage (rootId: string, blockIds: string[], details: any, targetId: string) {
+		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
+		C.BlockListMoveToNewPage(rootId, blockIds, details, targetId, I.BlockPosition.Replace, (message: any) => {
+			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
+		});
 	};
 	
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[]) {
@@ -188,7 +195,9 @@ class DataUtil {
 		block.content.marks = marks || [];
 			
 		blockStore.blockUpdate(rootId, block);
-		C.BlockSetTextText(rootId, block.id, text, marks);
+		C.BlockSetTextText(rootId, block.id, text, marks, () => {
+			blockStore.setNumbers(rootId);
+		});
 	};
 	
 	menuGetBlockText () {

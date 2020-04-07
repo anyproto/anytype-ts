@@ -261,21 +261,24 @@ class BlockStore {
 	};
 	
 	setNumbers (rootId: string) {
-		let root = this.wrapTree(rootId);
+		const root = this.wrapTree(rootId);
 		if (!root) {
 			return;
 		};
 		
-		let cb = (list: any[]) => {
+		const cb = (list: any[]) => {
 			list = list || [];
 			
 			let n = 0;
 			for (let item of list) {
-				if (item.isNumbered()) {
-					n++;
-					$('.markerInner.c' + item.id).text(n ? n + '.' : '');
-				} else {
-					n = 0;
+				
+				if (!item.isLayout()) {
+					if (item.isNumbered()) {
+						n++;
+						$('.markerInner.c' + item.id).text(n ? n + '.' : '');
+					} else {
+						n = 0;
+					};
 				};
 				
 				cb(item.childBlocks);

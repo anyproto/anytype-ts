@@ -173,7 +173,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [
 			{ 
 				children: [
-					{ id: 'move', icon: 'move', name: 'Move to' },
+					//{ id: 'move', icon: 'move', name: 'Move to' },
 					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
 					{ id: 'turn', icon: DataUtil.styleIcon(type, style), name: 'Turn into', arrow: true },
@@ -416,7 +416,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListMoveToNewPage(rootId, blockIds, { name: String(text || Constant.default.name) });
+							this.moveToPage();
 						};
 						
 						commonStore.menuClose(this.props.id);
@@ -467,8 +467,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
+		const { blockId, blockIds, rootId, dataset } = data;
 		const { root } = blockStore;
+		const { selection } = dataset || {};
 		
 		let block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
@@ -505,7 +506,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 				
 			case 'copy':
-				C.BlockListDuplicate(rootId, blockIds, blockIds[blockIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
+				let ids = selection.get();
+				if (!ids.length) {
+					ids = [ blockId ];
+				};
+				
+				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {
 					if (message.blockIds && message.blockIds.length) {
 						const lastId = message.blockIds[message.blockIds.length - 1];
 						const last = blockStore.getLeaf(rootId, lastId);
@@ -552,10 +558,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				// Blocks
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Page) {
-						commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-						C.BlockCreatePage(rootId, blockId, { name: Constant.default.name }, I.BlockPosition.Replace, (message: any) => {
-							commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-						});
+						this.moveToPage();
 					} else 
 					if (item.type == I.BlockType.Div) {
 						C.BlockListSetDivStyle(rootId, blockIds, item.key);
@@ -566,6 +569,21 @@ class MenuBlockAction extends React.Component<Props, State> {
 			
 				break;
 		};
+	};
+
+	moveToPage () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, blockIds, rootId } = data;
+		const { root } = blockStore;
+		
+		let block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+		
+		const { content } = block;
+		DataUtil.moveToPage(rootId, blockIds, { name: content.text }, blockId);
 	};
 
 };
