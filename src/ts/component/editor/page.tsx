@@ -1093,7 +1093,9 @@ class EditorPage extends React.Component<Props, State> {
 	
 	blockMerge (focused: I.Block) {
 		const { rootId } = this.props;
-		const next = blockStore.getNextBlock(rootId, focused.id, -1);
+		const next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => {
+			return it.isFocusable();
+		});
 		
 		if (!next) {
 			return;
