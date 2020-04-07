@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupNew { width: 864px; padding: 40px 80px 20px 80px; }
+	.popup.popupNew { width: 864px; padding: 40px 0px 20px 80px; }
 	.popup.popupNew {
 		.head { display: flex; position: absolute; top: 0px; left: 0px; width: 100%; padding: 10px 20px; color: $colorDarkGrey; }
 		.head {
