@@ -381,8 +381,10 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { root } = blockStore;
 		const { selection } = dataset;
-		const { focused } = focus;
+		const { focused, range } = focus;
 		const k = e.which;
+		
+		console.log(k, keyboard.focus);
 		
 		if (keyboard.focus) {
 			return;
@@ -463,14 +465,16 @@ class EditorPage extends React.Component<Props, State> {
 				};
 			};
 		};
+		
+		console.log('Editor', k);
 	};
 	
 	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
 		const { dataset, rootId } = this.props;
 		const { focused, range } = focus;
 		const { selection } = dataset;
-		
 		const block = blockStore.getLeaf(rootId, focused);
+		
 		if (!block) {
 			return;
 		};
@@ -705,7 +709,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 		};
 		
-		// Indent block
+		// Tab, indent block
 		if (k == Key.tab) {
 			e.preventDefault();
 			
@@ -720,13 +724,18 @@ class EditorPage extends React.Component<Props, State> {
 			};
 		};
 		
+		console.log('Block', k);
+		
 		// Enter
 		if (k == Key.enter) {
-			if (e.shiftKey || commonStore.menuIsOpen() || (content.style == I.TextStyle.Code)) {
+			if (e.shiftKey || block.isCode() || (!block.isText() && keyboard.focus)) {
 				return;
 			};
 			
-			if (!block.isText() && keyboard.focus) {
+			const menus = commonStore.menus;
+			const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
+			
+			if (menuCheck) {
 				return;
 			};
 			
