@@ -72,9 +72,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					</React.Fragment>
 				) : (
 					<React.Fragment>
-						{options.map((item: any, i: number) => (
-							<MenuItemVertical key={i} {...item} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
-						))}
+						{options.map((item: any, i: number) => {
+							return <MenuItemVertical key={i} {...item} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
+						})}
 					</React.Fragment>
 				)}
 			</div>

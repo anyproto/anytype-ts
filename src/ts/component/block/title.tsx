@@ -101,10 +101,12 @@ class BlockTitle extends React.Component<Props, {}> {
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
-			const blocks = blockStore.unwrapTree(tree);
-			const first = blocks[0];
-
+			const map = blockStore.getMap(rootId);
+			const root = map[rootId];
+			const next = blockStore.getFirstBlock(rootId, root.childrenIds[0], -1, (it: any) => {
+				return !it.isLayoutDiv() && !it.isPage();
+			});
+			
 			const param = {
 				type: I.BlockType.Text,
 				content: {
@@ -112,7 +114,7 @@ class BlockTitle extends React.Component<Props, {}> {
 				},
 			};
 			
-			C.BlockCreate(param, rootId, (first ? first.id : ''), I.BlockPosition.Top, (message: any) => {
+			C.BlockCreate(param, rootId, (next ? next.id : ''), I.BlockPosition.Top, (message: any) => {
 				focus.set(message.blockId, { from: 0, to: 0 });
 				focus.apply();
 			});
