@@ -1104,18 +1104,24 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (next.isText()) {
 			C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
 				focus.set(next.id, { from: nl, to: nl });
-				focus.apply();				
+				focus.apply();
 			});
 		} else {
 			length = String(focused.content.text || '').length;
 			if (!length) {
 				C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+					
 					if (next.isFocusable()) {
 						focus.set(next.id, { from: nl, to: nl });
 						focus.apply();
-					} else {
-						this.focusTitle();
 					};
 				});
 			};
