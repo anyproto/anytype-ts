@@ -467,8 +467,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
+		const { blockId, blockIds, rootId, dataset } = data;
 		const { root } = blockStore;
+		const { selection } = dataset || {};
 		
 		let block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
@@ -505,7 +506,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 				
 			case 'copy':
-				C.BlockListDuplicate(rootId, blockIds, blockIds[blockIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
+				let ids = selection.get();
+				if (!ids.length) {
+					ids = [ blockId ];
+				};
+				
+				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {
 					if (message.blockIds && message.blockIds.length) {
 						const lastId = message.blockIds[message.blockIds.length - 1];
 						const last = blockStore.getLeaf(rootId, lastId);
