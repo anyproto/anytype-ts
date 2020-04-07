@@ -384,8 +384,6 @@ class EditorPage extends React.Component<Props, State> {
 		const { focused, range } = focus;
 		const k = e.which;
 		
-		console.log(k, keyboard.focus);
-		
 		if (keyboard.focus) {
 			return;
 		};
@@ -465,8 +463,6 @@ class EditorPage extends React.Component<Props, State> {
 				};
 			};
 		};
-		
-		console.log('Editor', k);
 	};
 	
 	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
@@ -723,8 +719,6 @@ class EditorPage extends React.Component<Props, State> {
 				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
 		};
-		
-		console.log('Block', k);
 		
 		// Enter
 		if (k == Key.enter) {
