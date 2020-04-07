@@ -14,6 +14,6 @@ export default [
 	{ type: I.BlockType.Text, style: I.TextStyle.Bulleted, text: 'Dashboard. Add your favorite documents, sort, and archive.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '</br><b>Create a new home for your information — private and free</b>.</br></br>' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Thank you for building a new web together. Writing us a review, bug or feature request moving all of us forward. 🙏' },
-	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Don’t forget to <font style="color: #f55522;">save your seed phrase</font> in case you want to log out. All the new features will come in automatic updates, so don`t be worry about the outdated app.' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Don’t forget to <span class="textColor textColor-red">save your seed phrase</span> in case you want to log out. All the new features will come in automatic updates, so don`t be worry about the outdated app.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '</br><font style="text-align: right; color:#aca996"><i>03 March 2020</i></font>' },
 ];
