@@ -184,16 +184,28 @@ class LinkPreview extends React.Component<Props, {}> {
 		const oh = obj.outerHeight();
 		const oy = 4;
 		const border = 12;
-		const ps = (1 - nw / ow) / 2 * 100;
-		const pe = ps + nw / ow * 100;
+
+		let css: any = { opacity: 0, left: 0, top: 0 };
+		let pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + oy };
+		let typeY = I.MenuDirection.Bottom;		
+		let ps = (1 - nw / ow) / 2 * 100;
+		let pe = ps + nw / ow * 100;
+		let cpTop = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
+		let cpBot = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
+		
+		if (ow < nw) {
+			pcss.width = nw;
+			pcss.left = (ow - nw) / 2;
+			ps = (nw - ow) / nw / 2 * 100;
+			pe = (1 - (nw - ow) / nw / 2) * 100;
+			
+			cpTop = 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)';
+			cpBot = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
+		};
 		
 		obj.removeClass('top bottom');
+		poly.css(pcss);
 		
-		let css: any = { opacity: 0, left: 0, top: 0 };
-		let typeY = I.MenuDirection.Bottom;
-			
-		poly.css({ top: 'auto', bottom: 'auto' });
-			
 		if (offset.top + oh + nh >= st + wh) {
 			typeY = I.MenuDirection.Top;
 		};
@@ -202,14 +214,14 @@ class LinkPreview extends React.Component<Props, {}> {
 			css.top = offset.top - oh - oy;
 			obj.addClass('top');
 				
-			poly.css({ height: nh + oy, bottom: -nh - oy, clipPath: 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)' });
+			poly.css({ bottom: -nh - oy, clipPath: cpTop });
 		};
 			
 		if (typeY == I.MenuDirection.Bottom) {
 			css.top = offset.top + nh + oy;
 			obj.addClass('bottom');
 				
-			poly.css({ height: nh + oy, top: -nh - oy, clipPath: 'polygon(0% 100%, ' + ps + '% 0%, ' + pe + '% 0%, 100% 100%)' });
+			poly.css({ top: -nh - oy, clipPath: cpBot });
 		};
 			
 		css.left = offset.left - ow / 2 + nw / 2;
