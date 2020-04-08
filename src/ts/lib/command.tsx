@@ -354,6 +354,14 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 	dispatcher.call('blockListMoveToNewPage', request, callBack);
 };
 
+const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+	};
+	dispatcher.call('blockListConvertChildrenToPages', request, callBack);
+};
+
 const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -451,8 +459,6 @@ export {
 	BlockCreatePage,
 	BlockSetPageIsArchived,
 	BlockUnlink,
-	BlockListMove,
-	BlockListMoveToNewPage,
 	BlockMerge,
 	BlockSplit,
 	BlockBookmarkFetch,
@@ -469,6 +475,9 @@ export {
 	BlockSetFields,
 	BlockSetDetails,
 	
+	BlockListMove,
+	BlockListMoveToNewPage,
+	BlockListConvertChildrenToPages,
 	BlockListDuplicate,
 	BlockListSetBackgroundColor,
 	BlockListSetTextColor,

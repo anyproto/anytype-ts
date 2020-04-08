@@ -182,7 +182,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 								};
 								
 								if (item.type == I.BlockType.Page) {
-									DataUtil.moveToPage(rootId, blockIds, { name: content.text }, blockId);
+									C.BlockListConvertChildrenToPages(rootId, blockIds);
 								};
 								
 								commonStore.menuClose(this.props.id);

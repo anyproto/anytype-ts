@@ -179,13 +179,6 @@ class DataUtil {
 		});	
 	};
 	
-	moveToPage (rootId: string, blockIds: string[], details: any, targetId: string) {
-		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-		C.BlockListMoveToNewPage(rootId, blockIds, details, targetId, I.BlockPosition.Replace, (message: any) => {
-			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-		});
-	};
-	
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[]) {
 		if (!block) {
 			return;

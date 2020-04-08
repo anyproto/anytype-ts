@@ -574,16 +574,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 	moveToPage () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
-		const { root } = blockStore;
+		const { blockId, blockIds, rootId, dataset } = data;
+		const { selection } = dataset || {};
 		
-		let block = blockStore.getLeaf(rootId, blockId);
-		if (!block) {
-			return;
+		let ids = selection.get();
+		if (!ids.length) {
+			ids = [ blockId ];
 		};
 		
-		const { content } = block;
-		DataUtil.moveToPage(rootId, blockIds, { name: content.text }, blockId);
+		C.BlockListConvertChildrenToPages(rootId, ids);
 	};
 
 };
