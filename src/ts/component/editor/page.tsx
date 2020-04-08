@@ -716,7 +716,9 @@ class EditorPage extends React.Component<Props, State> {
 			const canTab = obj && !obj.isTitle() && !obj.isLayout() && !obj.isPage() && !block.isTitle();
 			
 			if (canTab) {
-				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
+				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+					focus.apply();
+				});
 			};
 		};
 		

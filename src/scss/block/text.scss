@@ -10,7 +10,7 @@
 			width: 100%; height: 100%; cursor: text; 
 		}
 		
-		a { cursor: pointer; }
+		a { cursor: pointer; color: inherit; }
 		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; border-radius: 2px; }
 		
 		.markers { white-space: nowrap; }
