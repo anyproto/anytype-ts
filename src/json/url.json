@@ -1,4 +1,6 @@
 {
 	"feature": "mailto:hello@anytype.io",
-	"community": "https://t.me/anytype"
+	"community": "https://t.me/anytype",
+	"telegram": "https://t.me/anytype",
+	"twitter": "https://twitter.com/AnytypeLabs"
 }

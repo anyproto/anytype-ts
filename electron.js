@@ -14,7 +14,7 @@ autoUpdater.logger.transports.file.level = 'info';
 let win = null;
 let csp = [
 	"default-src 'self' https://widget.intercom.io https://js.intercomcdn.com",
-	"img-src 'self' http://127.0.0.1:* data:",
+	"img-src 'self' http://*:* https://*:* data:",
 	"style-src 'unsafe-inline'",
 	"font-src data: https://js.intercomcdn.com",
 ];

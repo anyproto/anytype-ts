@@ -11,6 +11,9 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	history: any;
 };
 
+const Url = require('json/url.json');
+const { ipcRenderer } = window.require('electron');
+
 class PopupNew extends React.Component<Props, {}> {
 	
 	render () {
@@ -22,8 +25,8 @@ class PopupNew extends React.Component<Props, {}> {
 					</div>
 					<div className="side right">
 						<Label text="Stay tuned for Anytype’s news " />
-						<Icon className="telegram" />
-						<Icon className="twitter" />
+						<Icon onClick={(e) => { this.onUrl(Url.telegram); }} className="telegram" />
+						<Icon onClick={(e) => { this.onUrl(Url.twitter); }} className="twitter" />
 					</div>
 				</div>
 				<div className="editor">
@@ -35,6 +38,10 @@ class PopupNew extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+	
+	onUrl (url: string) {
+		ipcRenderer.send('urlOpen', url);
 	};
 	
 };
