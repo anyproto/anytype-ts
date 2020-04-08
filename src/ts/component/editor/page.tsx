@@ -1061,8 +1061,7 @@ class EditorPage extends React.Component<Props, State> {
 				to = range.to;
 			};
 			
-			focus.set(id, { from: from, to: to });
-			focus.apply();
+			this.focus(id, from, to);
 		});
 	};
 	
@@ -1070,8 +1069,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
-			focus.set(message.blockId, { from: 0, to: 0 });
-			focus.apply();
+			this.focus(message.blockId, 0, 0);
 			
 			if (callBack) {
 				callBack(message.blockId);
@@ -1102,32 +1100,24 @@ class EditorPage extends React.Component<Props, State> {
 		if (!next) {
 			return;
 		};
+
+		const nl = String(next.content.text || '').length;
 		
-		let nl = String(next.content.text || '').length;
-		let length = 0;
+		let length = 0;		
+		let cb = (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+			
+			this.focus(next.id, nl, nl);
+		};
 		
 		if (next.isText()) {
-			C.BlockMerge(rootId, next.id, focused.id, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-				
-				focus.set(next.id, { from: nl, to: nl });
-				focus.apply();
-			});
+			C.BlockMerge(rootId, next.id, focused.id, cb);
 		} else {
 			length = String(focused.content.text || '').length;
 			if (!length) {
-				C.BlockUnlink(rootId, [ focused.id ], (message: any) => {
-					if (message.error.code) {
-						return;
-					};
-					
-					if (next.isFocusable()) {
-						focus.set(next.id, { from: nl, to: nl });
-						focus.apply();
-					};
-				});
+				C.BlockUnlink(rootId, [ focused.id ], cb);
 			};
 		};
 	};
@@ -1140,6 +1130,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
 			focus.scroll();
+			this.resize();
 		});
 	};
 	
@@ -1166,10 +1157,13 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+			
 			if (next && next.isFocusable()) {
-				let l = String(next.content.text || '').length;
-				focus.set(next.id, { from: l, to: l });
-				focus.apply();
+				let length = String(next.content.text || '').length;
+				this.focus(next.id, length, length);
 			};
 		});
 	};
@@ -1198,8 +1192,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (create) {
 			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
-			focus.set(last.id, { from: length, to: length });
-			focus.apply();
+			this.focus(last.id, length, length);
 		};
 	};
 	
@@ -1216,9 +1209,15 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const last = node.find('.blockLast').css({ height: 0 });
-		const height = Math.max(100, win.height() - node.outerHeight());
+		const height = Math.max(100, win.height() - (node.outerHeight() + 40));
 		
 		last.css({ height: height });
+	};
+	
+	focus (id: string, from: number, to: number) {
+		focus.set(id, { from: from, to: to });
+		focus.apply();
+		this.resize();
 	};
 	
 };

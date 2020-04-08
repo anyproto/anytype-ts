@@ -79,7 +79,7 @@ class Focus {
 		const y = node.offset().top;
 		
 		if (y >= top + wh - 100) {
-			$('html, body').animate({ scrollTop: y - wh + 100 }, 150);
+			$('html, body').stop(true, true).animate({ scrollTop: y - wh + 100 }, 150);
 		};
 	};
 	
