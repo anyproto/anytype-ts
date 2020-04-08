@@ -2,6 +2,7 @@ import { I, keyboard } from 'ts/lib';
 import { getRange, setRange } from 'selection-ranges';
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 class Focus {
 	
@@ -77,9 +78,10 @@ class Focus {
 		const top = win.scrollTop();
 		const wh = win.height();
 		const y = node.offset().top;
+		const offset = Constant.size.lastBlock + Constant.size.header;
 		
-		if (y >= top + wh - 140) {
-			$('html, body').stop(true, true).animate({ scrollTop: y - wh + 140 }, 150);
+		if (y >= top + wh - offset) {
+			$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 150);
 		};
 	};
 	
