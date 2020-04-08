@@ -1,4 +1,4 @@
-import { I, C } from 'ts/lib';
+import { I, C, keyboard } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const raf = require('raf');
@@ -347,7 +347,7 @@ class Util {
 	};
 	
 	linkPreviewShow (url: string, node: any, param: any) {
-		if (!node.length) {
+		if (!node.length || !keyboard.preview) {
 			return;
 		};
 		

@@ -14,6 +14,7 @@ class Keyboard {
 	mouse: boolean = true;
 	coords: any = { x: 0, y: 0 };
 	timeoutPin: number = 0;
+	preview: boolean = false;
 	
 	init (history: any) {
 		this.history = history;
@@ -93,6 +94,10 @@ class Keyboard {
 	
 	disableMouse (v: boolean) {
 		this.mouse = !v;
+	};
+	
+	disablePreview (v: boolean) {
+		this.preview = !v;
 	};
 	
 	setCoords (x: number, y: number) {

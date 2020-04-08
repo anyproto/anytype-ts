@@ -162,7 +162,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.y = e.pageY;
 		this.moved = false;
 		this.lastIds = [];
-		this.focused = focus.focused;
+		this.focused = focused;
+		keyboard.disablePreview(true);
 		
 		this.nodes.each((i: number, item: any) => {
 			this.cacheRect($(item));
@@ -245,6 +246,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
+		keyboard.disablePreview(false);
 		scrollOnMove.onMouseUp(e);
 		this.hide();
 		
