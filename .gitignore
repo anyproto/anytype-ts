@@ -2,8 +2,6 @@
 .project
 .settings/
 node_modules/
-dist/main.js
-dist/main.js.map
 build
 build.zip
 addon

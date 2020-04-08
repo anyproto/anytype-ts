@@ -1,1 +1,6 @@
-[^.]*
+Anytype-*
+latest-mac.yml
+builder-effective-config.yaml
+mac/*
+main.js
+main.js.map
