@@ -1169,8 +1169,6 @@ class EditorPage extends React.Component<Props, State> {
 				let l = String(next.content.text || '').length;
 				focus.set(next.id, { from: l, to: l });
 				focus.apply();
-			} else {
-				this.focusTitle();
 			};
 		});
 	};
