@@ -27,7 +27,7 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus { transition: background-color 5000s ease-in-out 0s; }
 input, textarea, select { font-family: 'Lcg'; }
 
-#drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 24px; z-index: -1; user-select: none; }
+#drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 40px; z-index: -1; user-select: none; }
 #root > .loaderWrapper { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; }
 
 .dn { display: none !important; }
