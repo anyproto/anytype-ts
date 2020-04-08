@@ -5,6 +5,6 @@
 	.block.blockTitle {
 		.input { padding: 0px; font-size: inherit; line-height: inherit; letter-spacing: inherit; font-weight: inherit; height: auto; }
 	}
-	.block.blockTitle > .wrapContent > .selectable > .dropTarget { padding-top: 3px; padding-bottom: 2px; }
+	.block.blockTitle > .wrapContent > .selectable > .dropTarget { padding: 3px 0px 2px 0px; }
 	.block.blockTitle > .wrapMenu { visibility: hidden; }
 }

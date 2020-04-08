@@ -63,16 +63,21 @@
 	}
 	
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
+
+	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 4px 0px 2px 0px; }
 	
-	.block.blockText > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockText.header1 { padding: 23px 0px 1px 0px; }
+	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget { 
+		font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; 
+	}
 	
-	.block.blockText.title { padding: 12px 0px 24px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
-	.block.blockText.title > .wrapContent > .selectable > .dropTarget { padding-top: 3px; padding-bottom: 2px; }
-	.block.blockText.title > .wrapMenu { visibility: hidden; }
-	 
-	.block.blockText.header1 { padding: 23px 0px 1px 0px; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; }
-	.block.blockText.header2 { padding: 15px 0px 1px 0px; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; }
-	.block.blockText.header3 { padding: 15px 0px 1px 0px; font-size: 17px; line-height: 24px; font-weight: 600; }
+	.block.blockText.header2 { padding: 15px 0px 1px 0px; }
+	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget { 
+		font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; 
+	}
+	
+	.block.blockText.header3 { padding: 15px 0px 1px 0px; }
+	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget { font-size: 17px; line-height: 24px; font-weight: 600; }
 	
 	.block.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; font-style: italic; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 4px; }
