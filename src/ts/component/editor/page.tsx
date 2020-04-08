@@ -1137,8 +1137,7 @@ class EditorPage extends React.Component<Props, State> {
 		range = Util.rangeFixOut(content.text, range);
 		
 		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
-			focus.set(focused.id, { from: 0, to: 0 });
-			focus.apply();
+			focus.scroll();
 		});
 	};
 	

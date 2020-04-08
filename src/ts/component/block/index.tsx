@@ -237,14 +237,18 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { dataset} = this.props;
+		const { block, dataset } = this.props;
+		const { id, content } = block
 		const { selection } = dataset || {};
+		const { focused } = focus;
 		
 		if (selection) {
 			selection.set(selection.get());
 		};
 
-		focus.apply();
+		if (focused == id) {
+			focus.apply();
+		};
 	};
 	
 	componentWillUnmount () {

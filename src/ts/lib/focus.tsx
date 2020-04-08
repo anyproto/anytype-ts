@@ -49,7 +49,7 @@ class Focus {
 		
 		$('.focusable.isFocused').removeClass('isFocused');
 		node.addClass('isFocused');
-
+		
 		const el = node.get(0);
 		
 		el.focus();
@@ -60,6 +60,26 @@ class Focus {
 		if (node.attr('contenteditable')) {
 			keyboard.setFocus(true);
 			setRange(el, { start: this.range.from, end: this.range.to });
+		};
+	};
+	
+	scroll () {
+		if (!this.focused) {
+			return;
+		};
+		
+		const node = $('.focusable.c' + this.focused);
+		if (!node.length) {
+			return;
+		};
+		
+		const win = $(window);
+		const top = win.scrollTop();
+		const wh = win.height();
+		const y = node.offset().top;
+		
+		if (y >= top + wh - 100) {
+			$('html, body').animate({ scrollTop: y - wh + 100 }, 150);
 		};
 	};
 	
