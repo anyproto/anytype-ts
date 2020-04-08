@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session } = require('electron');
 const { is, appMenu } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -12,11 +12,24 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 
 let win = null;
-
-console.log('env', process.env.NODE_ENV);
+let csp = [
+	"default-src 'self' https://widget.intercom.io https://js.intercomcdn.com",
+	"img-src 'self' http://127.0.0.1:* data:",
+	"style-src 'unsafe-inline'",
+	"font-src data: https://js.intercomcdn.com",
+];
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+	
+	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+		callback({
+			responseHeaders: {
+				...details.responseHeaders,
+				'Content-Security-Policy': [ csp.join('; ') ]
+			}
+		})
+	});
 	
 	let param = {
 		width: width,
