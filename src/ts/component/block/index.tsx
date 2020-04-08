@@ -307,7 +307,10 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		if (onDragStart) {
-			let ids = DataUtil.selectionGet(this.props);
+			let ids = selection.get();
+			if (!ids.length) {
+				ids = [ block.id ];
+			};
 		
 			if (selection) {
 				selection.setPreventSelect(true);

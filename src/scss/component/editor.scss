@@ -10,6 +10,8 @@
 			transition: opacity 0.05s ease-in-out, background 0.05s ease-in-out, border-color 0.05s ease-in-out; 
 		}
 		.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); background-color: $colorOrange; border-color: $colorOrange; }
+		
+		.blockLast { margin-left: -50px; }
 	}
 	
 	.controls { 
