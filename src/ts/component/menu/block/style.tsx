@@ -91,6 +91,10 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
+		if (!block) {
+			return [];
+		};
+		
 		if (block.isText()) {
 			return [
 				{ children: DataUtil.menuGetBlockText() },
