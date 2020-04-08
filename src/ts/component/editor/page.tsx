@@ -1156,11 +1156,11 @@ class EditorPage extends React.Component<Props, State> {
 		let blockIds = [];
 		
 		if (ids.length) {
-			next = blockStore.getNextBlock(rootId, ids[0], -1);
+			next = blockStore.getNextBlock(rootId, ids[0], -1, (it: any) => { return it.isFocusable(); });
 			blockIds = ids;
 		} else 
 		if (focused) {
-			next = blockStore.getNextBlock(rootId, focused.id, -1);
+			next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => { return it.isFocusable(); });
 			blockIds = [ focused.id ];
 		};
 		
