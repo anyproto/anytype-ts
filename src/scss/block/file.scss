@@ -36,4 +36,5 @@
 	
 	.block.blockFile > .wrapContent > .selectable > .dropTarget { @include text-overflow-nw;  }
 	.block.blockFile > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockFile > .wrapContent > .selectable.isSelected .download { display: none; }
 }
