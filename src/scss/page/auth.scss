@@ -44,7 +44,7 @@
 			.icon.user { width: 48px; height: 48px; line-height: 50px; font-size: 21px; letter-spacing: -0.16px; margin-right: 12px; }
 			.name { 
 				font-size: 18px; line-height: 26px; display: inline-block; vertical-align: middle; width: calc(100% - 60px); height: 26px; 
-				overflow: hidden; font-weight: 600; margin-top: 2px; text-overflow: ellipsis; white-space: nowrap; 
+				font-weight: 600; margin-top: 2px; @include text-overflow-nw;   
 			}
 		}
 		

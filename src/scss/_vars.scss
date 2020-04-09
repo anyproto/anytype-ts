@@ -12,3 +12,6 @@ $colorTeal: #0fc8ba;
 $colorLime: #5dd400;
 
 $transitionFast: all 0.2s ease-in-out;
+
+@mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
+@mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
