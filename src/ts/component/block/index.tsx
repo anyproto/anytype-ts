@@ -298,7 +298,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		const { dataset, block } = this.props;
-		const { selection, onDragStart } = dataset;
+		const { selection, onDragStart } = dataset || {};
 		
 		if (!dataset) {
 			return;
@@ -327,7 +327,7 @@ class Block extends React.Component<Props, {}> {
 	
 	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
-		const { selection, onDrop } = dataset;
+		const { selection, onDrop } = dataset || {};
 		
 		if (selection) {
 			selection.setPreventClear(false);
@@ -340,10 +340,16 @@ class Block extends React.Component<Props, {}> {
 	
 	onMenuDown (e: any) {
 		const { dataset } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
+		const win = $(window);
 		
 		if (selection) {
 			selection.setPreventClear(true);
+			
+			win.unbind('mouseup.selectionBlock').on('mouseup.selectionBlock', () => {
+				selection.setPreventClear(false);
+				win.unbind('mouseup.selectionBlock');
+			});
 		};
 	};
 	
@@ -354,7 +360,7 @@ class Block extends React.Component<Props, {}> {
 		
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		
 		commonStore.menuOpen('blockAction', { 
 			element: '#block-' + id,
@@ -402,7 +408,7 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
@@ -461,7 +467,7 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];

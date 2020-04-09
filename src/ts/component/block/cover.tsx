@@ -201,7 +201,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { dataset } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -237,7 +237,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId, dataset } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -260,7 +260,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { dataset } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		
 		selection.setPreventSelect(true);
 	};
@@ -294,7 +294,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId, dataset } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		
 		selection.setPreventSelect(false);
 		C.BlockSetDetails(rootId, [ 

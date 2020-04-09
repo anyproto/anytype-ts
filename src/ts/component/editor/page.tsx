@@ -380,7 +380,7 @@ class EditorPage extends React.Component<Props, State> {
 	onKeyDownEditor (e: any) {
 		const { dataset, rootId } = this.props;
 		const { root } = blockStore;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const { focused, range } = focus;
 		const k = e.which;
 		
@@ -468,7 +468,7 @@ class EditorPage extends React.Component<Props, State> {
 	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
 		const { dataset, rootId } = this.props;
 		const { focused, range } = focus;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
 		
 		if (!block) {
@@ -759,7 +759,7 @@ class EditorPage extends React.Component<Props, State> {
 	
 	onSelectAll () {
 		const { dataset, rootId } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const ids = blockStore.getBlocks(rootId, (it: any) => { return it.isSelectable(); }).map((it: any) => { return it.id; }); 
 		
 		selection.set(ids);
@@ -907,7 +907,7 @@ class EditorPage extends React.Component<Props, State> {
 	
 	onCopy (e: any, cut: boolean) {
 		const { dataset, rootId } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const { focused, range } = focus;
 		
 		let ids = selection.get(true);
@@ -1127,7 +1127,7 @@ class EditorPage extends React.Component<Props, State> {
 	
 	blockRemove (focused?: I.Block) {
 		const { rootId, dataset } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		
 		commonStore.menuClose('blockAdd');
 		commonStore.menuClose('blockAddSub');

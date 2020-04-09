@@ -152,7 +152,7 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		const { dataset, block } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -197,7 +197,7 @@ class BlockImage extends React.Component<Props, {}> {
 		
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrap = node.find('.wrap');
 		
@@ -235,19 +235,24 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset, rootId, block } = this.props;
-		const { id } = block;
-		const { selection } = dataset;
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		const win = $(window);
 		
 		if (selection) {
 			selection.setPreventClear(true);
+			
+			win.unbind('mouseup.selectionBlock').on('mouseup.selectionBlock', () => {
+				selection.setPreventClear(false);
+				win.unbind('mouseup.selectionBlock');
+			});
 		};
 	};
 	
 	onMenuClick (e: any) {
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		commonStore.menuOpen('blockAction', { 

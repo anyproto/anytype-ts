@@ -96,7 +96,7 @@ class DataUtil {
 	selectionGet (props: any): string[] {
 		const { dataset, block } = props;
 		const { id } = block;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		
 		let ids: string[] = [];
 		if (selection) {

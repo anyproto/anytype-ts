@@ -123,10 +123,7 @@ class LinkPreview extends React.Component<Props, {}> {
 	onCopy (e: any) {
 		const { linkPreview } = commonStore;
 		
-		Util.clipboardCopy({ text: linkPreview.url }, () => {
-			alert('Link copied to clipboard!');
-		});
-		
+		Util.clipboardCopy({ text: linkPreview.url });
 		Util.linkPreviewHide(false);
 	};
 	

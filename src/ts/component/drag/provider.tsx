@@ -68,7 +68,7 @@ class DragProvider extends React.Component<Props, {}> {
 	
 	onDragStart (e: any, type: string, ids: string[], component: any) {
 		const { rootId, dataset } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		const win = $(window);
 		
 		e.stopPropagation();
@@ -103,7 +103,7 @@ class DragProvider extends React.Component<Props, {}> {
 	
 	onDragEnd (e: any) {
 		const { dataset } = this.props;
-		const { selection } = dataset;
+		const { selection } = dataset || {};
 		
 		$('.selectable.isDragging').removeClass('isDragging');
 		
