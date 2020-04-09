@@ -317,6 +317,8 @@ class Block extends React.Component<Props, {}> {
 			
 		let ids: string[] = selection.get(false);
 			
+		console.log(ids, block.id);
+			
 		if (ids.indexOf(block.id) < 0) {
 			selection.clear(true);
 			selection.set([ block.id ]);
@@ -343,17 +345,11 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset, block } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const win = $(window);
 		
 		if (selection) {
 			selection.setPreventClear(true);
-			
-			win.unbind('mouseup.selectionBlock').on('mouseup.selectionBlock', () => {
-				selection.setPreventClear(false);
-				win.unbind('mouseup.selectionBlock');
-			});
 		};
 	};
 	
