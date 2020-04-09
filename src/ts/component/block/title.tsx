@@ -58,6 +58,7 @@ class BlockTitle extends React.Component<Props, {}> {
 					onFocus={this.onFocus}
 					onBlur={this.onBlur}
 					onPaste={this.onPaste}
+					onSelect={this.onSelect}
 				>{name}</div>
 				<span className={[ 'placeHolder', 'c' + id ].join(' ')}>{Constant.default.name}</span>
 			</div>
