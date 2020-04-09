@@ -1,14 +1,13 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockFile { white-space: nowrap; }
 	.block.blockFile {
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 13px; line-height: 24px; height: 24px; }
 		
 		.name {
-			min-width: 40px; max-width: calc(100% - 180px); height: 22px; line-height: 22px; display: inline-block; overflow: hidden;
-			vertical-align: top; padding-top: 1px; cursor: pointer; text-overflow: ellipsis; white-space: nowrap; 
+			min-width: 40px; max-width: calc(100% - 180px); height: 22px; line-height: 22px; display: inline-block;
+			vertical-align: top; padding-top: 1px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 		}
 		.size {
 			max-width: 100px; font-size: 13px; height: 22px; line-height: 22px; letter-spacing: 0.1px; color: $colorDarkGrey; margin: 0px 8px;
@@ -35,5 +34,6 @@
 		.download { opacity: 1; }
 	}
 	
+	.block.blockFile > .wrapContent > .selectable > .dropTarget { white-space: nowrap; overflow: hidden; }
 	.block.blockFile > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
 }
