@@ -16,7 +16,7 @@
 		
 		.item {
 			.smile { margin-right: 4px; }
-			.name { display: inline-block; vertical-align: middle; width: calc(100% - 28px); }
+			.name { display: inline-block; vertical-align: middle; width: calc(100% - 128px); @include text-overflow-nw; }
 			.buttons { position: absolute; right: 10px; top: 4px; opacity: 0; transition: $transitionFast; }
 			.buttons {
 				.btn { display: inline-block; vertical-align: middle; margin-right: 20px; color: $colorDarkGrey; cursor: pointer; }

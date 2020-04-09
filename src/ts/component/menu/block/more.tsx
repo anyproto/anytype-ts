@@ -123,7 +123,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			];
 			
 			if (details.isArchived) {
-				items.push({ id: 'remove', icon: 'remove', name: 'Delete' });
+				//items.push({ id: 'remove', icon: 'remove', name: 'Delete' });
 			} else {
 				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });
 			};

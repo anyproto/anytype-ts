@@ -284,8 +284,7 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		
 		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
-		const { id, content } = block;
-		const { style } = content;
+		const { id } = block;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -295,19 +294,19 @@ class BlockText extends React.Component<Props, {}> {
 			e.preventDefault();
 			return;
 		};
-		
+
+		const k = e.which;		
 		const range = this.getRange();
-		const k = e.which;
 		const value = this.getValue().replace(/\n$/, '');
 		
-		if ((k == Key.enter) && !e.shiftKey && (style != I.TextStyle.Code)) {
+		if ((k == Key.enter) && !e.shiftKey && block.isCode()) {
 			e.preventDefault();
 			
 			this.setValue(value);
 			this.setText(this.marks);
 		};
 		
-		if ((k == Key.backspace) && range && (range.from == 0) && (range.to == 0)) {
+		if ((k == Key.backspace) && range && !range.from && !range.to) {
 			this.setText(this.marks);
 		};
 		
@@ -379,55 +378,55 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		// Make list
-		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && (style != I.TextStyle.Bulleted)) {
+		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && !block.isBulleted()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Bulleted } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make checkbox
-		if ((value == '[]') && (style != I.TextStyle.Checkbox)) {
+		if ((value == '[]') && !block.isCheckbox()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Checkbox } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make numbered
-		if ((value == '1. ') && (style != I.TextStyle.Numbered)) {
+		if ((value == '1. ') && !block.isNumbered()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Numbered } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h1
-		if ((value == '# ') && (style != I.TextStyle.Header1)) {
+		if ((value == '# ') && !block.isHeader1()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header1 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h2
-		if ((value == '## ') && (style != I.TextStyle.Header2)) {
+		if ((value == '## ') && block.isHeader2()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header2 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h3
-		if ((value == '### ') && (style != I.TextStyle.Header3)) {
+		if ((value == '### ') && block.isHeader3()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header3 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make toggle
-		if ((value == '> ') && (style != I.TextStyle.Toggle)) {
+		if ((value == '> ') && block.isToggle()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Toggle } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make quote
-		if ((value == '" ') && (style != I.TextStyle.Quote)) {
+		if ((value == '" ') && block.isQuote()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Quote } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make code
-		if ((value == '/code') && (style != I.TextStyle.Code)) {
+		if ((value == '/code') && block.isCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
