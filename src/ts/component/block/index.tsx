@@ -300,7 +300,7 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, block } = this.props;
 		const { selection, onDragStart } = dataset || {};
 		
-		if (!dataset) {
+		if (!selection) {
 			return;
 		};
 		
@@ -310,19 +310,23 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if (onDragStart) {
-			let ids = selection.get();
-			if (!ids.length) {
-				ids = [ block.id ];
-			};
-		
-			if (selection) {
-				selection.setPreventSelect(true);
-				selection.setPreventClear(true);
-			};
+		if (!onDragStart) {
+			return;
 			
-			onDragStart(e, I.DragItem.Block, ids, this);
 		};
+			
+		let ids: string[] = selection.get(false);
+			
+		if (ids.indexOf(block.id) < 0) {
+			selection.clear(true);
+			selection.set([ block.id ]);
+			ids = selection.get(false);
+		};
+				
+		selection.setPreventSelect(true);
+		selection.setPreventClear(true);
+		
+		onDragStart(e, I.DragItem.Block, ids, this);
 	};
 	
 	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
@@ -339,7 +343,7 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMenuDown (e: any) {
-		const { dataset } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
 		

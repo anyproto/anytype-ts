@@ -394,6 +394,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		if (!this._isMounted || (this.preventClear && !force)) {
 			return;
 		};
+
+		this.rects = {};
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.isSelected').removeClass('isSelected');
