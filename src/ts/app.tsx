@@ -261,6 +261,10 @@ class App extends React.Component<Props, State> {
 			});
 		});
 		
+		ipcRenderer.on('update', (e: any) => {
+			Storage.delete('popupNewBlock');
+		});
+		
 		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
 			keyboard.setPinCheck();
 			keyboard.disableMouse(false);

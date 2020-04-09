@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Label, Icon } from 'ts/component';
-import { I, Docs } from 'ts/lib';
+import { I, Docs, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -38,6 +38,10 @@ class PopupNew extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+	
+	componentDidMount () {
+		Storage.set('popupNewBlock', 1);
 	};
 	
 	onUrl (url: string) {

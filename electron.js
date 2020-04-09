@@ -149,6 +149,8 @@ function createWindow () {
 	});
 	autoUpdater.on('update-not-available', (info) => {
 		setStatus('Update not available');
+		
+		win.webContents.send('update');
 	});
 	autoUpdater.on('error', (err) => { setStatus('Error: ' + err); });
 	autoUpdater.on('download-progress', (progress) => {
