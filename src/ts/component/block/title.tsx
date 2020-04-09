@@ -107,6 +107,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		if (k == Key.enter) {
 			e.preventDefault();
 			
+			const value = this.getValue();
 			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage(); });
 			const param = {
 				type: I.BlockType.Text,
@@ -115,9 +116,11 @@ class BlockTitle extends React.Component<Props, {}> {
 				},
 			};
 			
-			C.BlockCreate(param, rootId, (next ? next.id : ''), I.BlockPosition.Top, (message: any) => {
-				focus.set(message.blockId, { from: 0, to: 0 });
-				focus.apply();
+			C.BlockSetDetails(rootId, [ { key: 'name', value: value } ], () => {
+				C.BlockCreate(param, rootId, (next ? next.id : ''), I.BlockPosition.Top, (message: any) => {
+					focus.set(message.blockId, { from: 0, to: 0 });
+					focus.apply();
+				});
 			});
 		};
 		

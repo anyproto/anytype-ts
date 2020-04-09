@@ -15,6 +15,7 @@ let win = null;
 let csp = [
 	"default-src 'self' https://widget.intercom.io https://js.intercomcdn.com",
 	"img-src 'self' http://*:* https://*:* data: blob:",
+	"media-src 'self' http://*:* https://*:* data: blob:",
 	"style-src 'unsafe-inline'",
 	"font-src data: https://js.intercomcdn.com",
 ];
