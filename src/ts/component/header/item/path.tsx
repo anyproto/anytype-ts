@@ -27,7 +27,7 @@ class HeaderItemPath extends React.Component<Props, {}> {
 		return (
 			<DropTarget {...this.props} className="item" id={id} rootId={breadcrumbs} dropType={I.DragItem.Menu} onClick={(e: any) => { onPath(e, block, index); }} onDrop={onDrop}>
 				<Smile icon={icon} />
-				<div className="name">{name}</div>
+				<div className="name">{Util.shorten(name, 16)}</div>
 				<Icon className="arrow" />
 			</DropTarget>
 		);

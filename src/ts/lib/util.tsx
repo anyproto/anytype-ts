@@ -91,6 +91,15 @@ class Util {
 		return a.hasOwnProperty('length') ? a : Object.values(a);
 	};
 	
+	shorten (s: string, l: number, noEnding?: boolean) {
+		s = String(s || '');
+		l = Number(l) || 16;
+		if (s.length > l) {
+			s = s.substr(0, l) + (!noEnding ? '...' : '');
+		};
+		return s;
+	};
+	
 	clipboardCopy (data: any, callBack?: () => void) {
 		const handler = (e: any) => {
 			e.preventDefault();

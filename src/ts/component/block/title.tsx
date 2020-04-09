@@ -4,7 +4,7 @@ import { Input } from 'ts/component';
 import { I, C, keyboard, Key, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import getInputSelection from 'get-input-selection';
+import { getRange } from 'selection-ranges';
 
 interface Props {
 	rootId: string;
@@ -43,21 +43,24 @@ class BlockTitle extends React.Component<Props, {}> {
 			name = '';
 		};
 		
+		const cv = [ 'value', 'focusable', 'c' + id ];
+		
 		return (
-			<React.Fragment>
-				<Input 
-					placeHolder={Constant.default.name} 
-					value={name} 
+			<div>
+				<div
+					id="value"
+					className={cv.join(' ')}
+					contentEditable={true}
+					suppressContentEditableWarning={true}
 					onChange={this.onChange}
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-					onSelect={this.onSelect}  
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
 					onPaste={this.onPaste}
-					className={'focusable c' + id} 
-				/>
-			</React.Fragment>
+				>{name}</div>
+				<span className={[ 'placeHolder', 'c' + id ].join(' ')}>{Constant.default.name}</span>
+			</div>
 		);
 	};
 	
@@ -81,10 +84,12 @@ class BlockTitle extends React.Component<Props, {}> {
 	
 	onFocus (e: any) {
 		keyboard.setFocus(true);
+		this.placeHolderCheck();
 	};
 	
 	onBlur (e: any) {
 		keyboard.setFocus(false);
+		this.placeHolderHide();
 	};
 	
 	onSelect (e: any) {
@@ -114,22 +119,37 @@ class BlockTitle extends React.Component<Props, {}> {
 				focus.apply();
 			});
 		};
+		
+		if (!keyboard.isSpecial(k)) {
+			this.placeHolderHide();
+		};
 	};
 	
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const k = e.which;
-		const { rootId } = this.props;
+		this.onChange(e);
+		this.placeHolderCheck();
 	};
 	
-	onChange (e: any, value: string) {
+	onChange (e: any) {
 		const { rootId } = this.props;
+		const value = this.getValue();
 		
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			C.BlockSetDetails(rootId, [ { key: 'name', value: value } ]);
 		}, 500);
+	};
+	
+	getValue (): string {
+		if (!this._isMounted) {
+			return '';
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('.value');
+		return String(value.get(0).innerText || '');
 	};
 	
 	onPaste (e: any) {
@@ -143,9 +163,32 @@ class BlockTitle extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const range = getInputSelection(node.get(0) as Element);
+		const range = getRange(node.find('.value').get(0) as Element);
 		
 		return range ? { from: range.start, to: range.end } : null;
+	};
+	
+	placeHolderCheck () {
+		const value = this.getValue();
+		value.length ? this.placeHolderHide() : this.placeHolderShow();			
+	};
+	
+	placeHolderHide () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder').hide();
+	};
+	
+	placeHolderShow () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder').show();
 	};
 	
 };
