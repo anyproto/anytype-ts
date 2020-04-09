@@ -38,7 +38,7 @@
 					padding: 0px 8px 0px 56px; display: inline-block; vertical-align: middle; width: 100%; 
 					border-right: 1px solid rgba(255,255,255,0); transition: $transitionFast;
 				}
-				.name { width: 100%; line-height: 24px; height: 24px; overflow: hidden; text-overflow: ellipsis; }
+				.name { width: 100%; line-height: 24px; height: 24px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 				.descr { width: 100%; font-size: 13px; line-height: 18px; height: 18px; overflow: hidden; text-overflow: ellipsis; color: #6c6a5f; }
 				.icon.arrow { 
 					width: 6px; height: 10px; position: absolute; right: 12px; top: 50%; margin-top: -5px;
