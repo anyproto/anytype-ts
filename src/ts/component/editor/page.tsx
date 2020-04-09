@@ -651,15 +651,8 @@ class EditorPage extends React.Component<Props, State> {
 				if (e.ctrlKey || e.metaKey) {
 					const root = map[rootId];
 					
-					if (dir < 0) {
-						next = blockStore.getFirstBlock(rootId, root.childrenIds[0], dir, (item: any) => {
-							return item.isText();
-						});
-					} else {
-						next = blockStore.getFirstBlock(rootId, root.childrenIds[root.childrenIds.length - 1], -dir, (item: any) => {
-							return item.isText();
-						});
-					};
+					next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isText(); });
+					console.log('NEXT', next);
 					
 					if (next) {
 						const l = String(next.content.text || '').length;

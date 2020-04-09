@@ -101,12 +101,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			const map = blockStore.getMap(rootId);
-			const root = map[rootId];
-			const next = blockStore.getFirstBlock(rootId, root.childrenIds[0], -1, (it: any) => {
-				return !it.isLayoutDiv() && !it.isPage();
-			});
-			
+			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage(); });
 			const param = {
 				type: I.BlockType.Text,
 				content: {

@@ -235,29 +235,9 @@ class BlockStore {
 		};
 	};
 	
-	// Find first block if check passes, if not - continue to next block in "dir" direction
-	getFirstBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
-		if (!check) {
-			return;
-		};
-		
-		if (!list) {
-			list = this.unwrapTree([ this.wrapTree(rootId) ]);
-		};
-		
-		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
-		if (idx + dir < 0 || idx + dir > list.length - 1) {
-			return null;
-		};
-		
-		let ret = list[idx];
-		let next = list[idx + dir];
-		
-		if (ret) {
-			return check(ret) ? ret : this.getFirstBlock(rootId, next.id, dir, check, list);
-		} else {
-			return ret;
-		};
+	getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
+		const list = this.unwrapTree([ this.wrapTree(rootId) ]).filter(check);
+		return dir > 0 ? list[0] : list[list.length - 1];
 	};
 	
 	setNumbers (rootId: string) {
