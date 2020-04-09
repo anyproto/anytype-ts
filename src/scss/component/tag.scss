@@ -5,7 +5,7 @@
 	display: inline-block; vertical-align: middle; cursor: pointer; max-width: 100%;
 }
 .tag {
-	.inner { display: inline-block; width: 100%; overflow: hidden; vertical-align: top; }
+	.inner { display: inline-block; width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: top; }
 }
 .tag.grey { color: #8c9ea5; background: #ebeff1; }
 .tag.yellow { color: #b2a616; background: #fbf5b8; }

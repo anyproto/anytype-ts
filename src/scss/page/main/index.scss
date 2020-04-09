@@ -26,6 +26,7 @@
 			.name { 
 				font-size: 15px; font-weight: 500; line-height: 24px; height: 24px; letter-spacing: -0.1px; width: 100%;
 				overflow: hidden; word-break: break-word; position: absolute; left: 0px; bottom: 12px; padding: 0px 16px;
+				text-overflow: ellipsis;
 			}
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }

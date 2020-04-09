@@ -9,9 +9,9 @@
 .linkPreview {
 	.content { background: #fff; box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.35); border-radius: 8px; position: relative; height: 100%; }
 	.loaderWrapper { margin: 0px; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
-	.name { font-size: 15px; line-height: 20px; height: 20px; letter-spacing: -0.08px; color: $colorBlack; overflow: hidden; }
-	.descr { font-size: 13px; line-height: 18px; height: 36px; letter-spacing: 0.08px; color: #6c6a5f; overflow: hidden; margin: 2px 0px 5px 0px; }
-	.link { font-size: 13px; line-height: 18px; height: 18px; letter-spacing: 0.08px; color: $colorBlack; overflow: hidden; white-space: nowrap; }
+	.name { font-size: 15px; line-height: 20px; height: 20px; letter-spacing: -0.08px; color: $colorBlack; overflow: hidden; text-overflow: ellipsis; }
+	.descr { font-size: 13px; line-height: 18px; height: 36px; letter-spacing: 0.08px; color: #6c6a5f; overflow: hidden; text-overflow: ellipsis; margin: 2px 0px 5px 0px; }
+	.link { font-size: 13px; line-height: 18px; height: 18px; letter-spacing: 0.08px; color: $colorBlack; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 	.polygon { position: absolute; left: 0px; width: 100%; cursor: pointer; }
 		
 	.img {
