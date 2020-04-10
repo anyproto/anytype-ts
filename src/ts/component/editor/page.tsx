@@ -774,7 +774,7 @@ class EditorPage extends React.Component<Props, State> {
 		const block = blockStore.getLeaf(rootId, this.hoverId);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!block || (block.isTitle() && (this.hoverPosition != I.BlockPosition.Bottom)) || block.isLayout() || block.isIcon()) {
+		if (!block || (block.isTitle() && (this.hoverPosition != I.BlockPosition.Bottom)) || block.isLayoutColumn() || block.isIcon()) {
 			return;
 		};
 		

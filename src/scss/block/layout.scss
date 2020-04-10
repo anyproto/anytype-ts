@@ -14,6 +14,9 @@
 	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetTop { top: -15px; }
 	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetBot { bottom: -15px; }
 	
+	.block.blockLayout.c0.isAdding.top > .wrapContent > .dropTarget.targetTop { box-shadow: 0px -2px 0px $colorOrange inset; }
+	.block.blockLayout.c0.isAdding.bottom > .wrapContent > .dropTarget.targetBot { box-shadow: 0px 2px 0px $colorOrange inset; }
+	
 	/* Column */
 	.block.blockLayout.c1 { padding: 0px; }
 	.block.blockLayout.c1 > .wrapMenu { display: none; }
