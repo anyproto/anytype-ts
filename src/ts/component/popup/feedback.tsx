@@ -16,6 +16,7 @@ interface State {
 	success: boolean;
 };
 
+const $ = require('jquery');
 const Url = require('json/url.json');
 
 class PopupFeedback extends React.Component<Props, State> {
@@ -79,6 +80,10 @@ class PopupFeedback extends React.Component<Props, State> {
 		);
 	};
 	
+	componentDidUpdate () {
+		this.resize();
+	};
+	
 	onCheck (e: any) {
 		this.setState({ checked: !this.state.checked });
 	};
@@ -123,6 +128,11 @@ class PopupFeedback extends React.Component<Props, State> {
 		};
 		
 		console.log(request);
+	};
+	
+	resize () {
+		const obj = $('#popupFeedback');
+		obj.css({ marginTop: -obj.height() / 2 });
 	};
 	
 };
