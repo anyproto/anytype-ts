@@ -24,11 +24,11 @@ class MenuHelp extends React.Component<Props, {}> {
 	
 	render () {
 		const items: I.MenuItem[] = [
-			{ icon: 'help', name: 'Help' },
-			{ icon: 'feedback', name: 'Feedback' },
-			//{ icon: 'chat', name: 'Chat with Us' },
-			{ icon: 'feature', name: 'Suggest a Feature' },
-			{ icon: 'community', name: 'Join our Community' }
+			{ id: 'help', icon: 'help', name: 'Help' },
+			{ id: 'feedback', icon: 'feature', name: 'Feedback' },
+			//{ id: 'chat', icon: 'chat', name: 'Chat with Us' },
+			//{ id: 'feature', icon: 'feature', name: 'Suggest a Feature' },
+			{ id: 'community', icon: 'community', name: 'Join our Community' }
 		];
 		
 		return (
@@ -46,7 +46,7 @@ class MenuHelp extends React.Component<Props, {}> {
 		
 		commonStore.menuClose(this.props.id);
 		
-		switch (item.icon) {
+		switch (item.id) {
 			case 'help':
 				history.push('/help/index');
 				break;
