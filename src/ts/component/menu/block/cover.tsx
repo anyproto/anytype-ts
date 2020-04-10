@@ -77,6 +77,8 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				return;
 			};
 			
+			commonStore.menuClose(this.props.id);
+			
 			if (onUploadStart) {
 				onUploadStart();
 			};
@@ -97,8 +99,6 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				if (onUpload) {
 					onUpload();
 				};
-				
-				commonStore.menuClose(this.props.id);
 			});
 		});
 	};

@@ -6,4 +6,4 @@
 }
 .textarea::placeholder { color: #d2d0c2; }
 
-.textarea.withError { border-color: $colorRed !important; }
+.textarea.withError { border-color: #f6a085 !important; border-width: 2px !important; border-radius: 1px; }

@@ -118,7 +118,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			element: '#button-' + rootId + '-more',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
-			offsetY: 4,
+			offsetY: 8,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {

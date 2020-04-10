@@ -462,6 +462,10 @@ class Util {
 		});
 	};
 	
+	emailCheck (v: string) {
+		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(String(v || ''));
+	};
+	
 };
 
 export default new Util();

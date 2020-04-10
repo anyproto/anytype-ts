@@ -8,7 +8,11 @@
 		.input { height: 40px; border: 1px solid #DFDDD0; padding: 0px 16px; }
 		.textarea { height: 160px; padding: 16px; border: 1px solid #DFDDD0; background: none; font-family: 'Lcg'; }
 		
-		.icon.checkbox { margin: -2px 8px 0px 0px; }
+		.icon.checkbox { margin: 2px 8px 0px 0px; }
+		.small { font-size: 13px; line-height: 20px; width: calc(100% - 24px); }
+		
+		.error { margin: 0px; color: #e89d00; line-height: 40px; width: calc(100% - 100px); }
+		.button { margin-right: 16px; width: 84px; }
 		
 		.row { margin-bottom: 16px; }
 		.row:last-child { margin: 0px; }

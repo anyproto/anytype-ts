@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Input, Icon, Textarea, Button, Error } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
 
@@ -41,7 +41,6 @@ class PopupFeedback extends React.Component<Props, State> {
 			<div className="wrapper">
 				<Title text="Feedback" />
 				<Label text="Issues, bugs, feedback or help? Write us what’s in your mind." />
-				<Error text={error} />
 				
 				<form onSubmit={this.onSubmit}>
 					<div className="row flex">
@@ -53,13 +52,14 @@ class PopupFeedback extends React.Component<Props, State> {
 						<Textarea ref={(ref: any) => { this.refMessage = ref; }} placeHolder="Feedback like &quot;I pressed Enter and this happened&quot;" />
 					</div>
 					
-					<div className="row">
+					<div className="row flex">
 						<Icon className={'checkbox ' + (checked ? 'active' : '')} onClick={this.onCheck} />
-						Send anonymous metadata: OS, app version and IP. It doesn't contain personal information and will help us solve your issue.
+						<div className="small">Send anonymous metadata: OS, app version and IP. It doesn't contain personal information and will help us solve your issue.</div>
 					</div>
 					
-					<div className="buttons">
-						<Button className="orange" type="input" text="Submit" />
+					<div className="row flex">
+						<Button className="orange" type="input" text="Submit" /> 
+						<Error text={error} />
 					</div>
 				</form>
 			</div>
@@ -75,14 +75,30 @@ class PopupFeedback extends React.Component<Props, State> {
 		
 		e.preventDefault();
 		
+		this.refEmail.setError(false);
+		this.refMessage.setError(false);
+		
 		const request: any = {
 			name: this.refName.getValue(),
 			email: this.refEmail.getValue(),
 			message: this.refMessage.getValue(),
 		};
 		
+		let error = '';
+		let fld: any = null;
+		
+		if (request.email && !Util.emailCheck(request.email)) {
+			error = 'Please enter valid email';
+			fld = this.refEmail;
+		} else
 		if (!request.message) {
-			this.setState({ error: 'Please enter feedback message' });
+			error = 'Please enter feedback message';
+			fld = this.refMessage;
+		};
+		
+		if (error) {
+			this.setState({ error: error });
+			fld.setError(true);
 			return;
 		};
 		
