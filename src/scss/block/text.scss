@@ -80,7 +80,7 @@
 	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget { font-size: 17px; line-height: 24px; font-weight: 600; }
 	
 	.block.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; font-style: italic; }
-	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 4px; }
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { padding: 4px 4px !important; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: calc(100% + 8px); position: absolute; left: 11px; top: -4px; background: $colorOrange; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
