@@ -53,12 +53,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						{Util.sprintf(translate('indexHi'), Util.shorten(account.name, 16))}
+						<span className="dn">{Util.sprintf(translate('indexHi'), Util.shorten(account.name, 16))}</span>
 						
 						<div className="rightMenu">
 							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={this.onSettings} />
 							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} tooltip="Accounts" onClick={this.onAccount} />
-							<IconUser {...account} tooltip="Your profile" onClick={this.onProfile} />
+							<IconUser {...account} tooltip="Your profile" onClick={this.onProfile} className="dn" />
 						</div>
 					</div>
 					
