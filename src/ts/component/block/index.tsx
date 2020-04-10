@@ -51,6 +51,7 @@ class Block extends React.Component<Props, {}> {
 		
 		this.onToggle = this.onToggle.bind(this);
 		this.onToggleClick = this.onToggleClick.bind(this);
+		this.onEmptyClick = this.onEmptyClick.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
@@ -220,6 +221,10 @@ class Block extends React.Component<Props, {}> {
 					
 					{empty}
 					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
+					
+					{block.isLayoutColumn() ? (
+						<div className="columnEmpty" onClick={this.onEmptyClick} />
+					) : ''}
 				</div>
 			</div>
 		);
@@ -566,6 +571,25 @@ class Block extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('mousemove.block mouseup.block');
+	};
+	
+	onEmptyClick () {
+		const { rootId, block } = this.props;
+		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+		
+		if (!block.isLayoutColumn() || !childrenIds.length) {
+			return;
+		};
+		
+		const param =  {
+			type: I.BlockType.Text,
+			style: I.TextStyle.Paragraph,
+		};
+		
+		C.BlockCreate(param, rootId, childrenIds[childrenIds.length - 1], I.BlockPosition.Bottom, (message: any) => {
+			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.apply();
+		});
 	};
 	
 };
