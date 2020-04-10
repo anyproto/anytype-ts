@@ -102,7 +102,7 @@ class PopupFeedback extends React.Component<Props, State> {
 		const request: any = {
 			name: this.refName.getValue(),
 			email: this.refEmail.getValue(),
-			message: this.refMessage.getValue(),
+			comments: this.refMessage.getValue(),
 			event_id: '',
 		};
 		
@@ -113,7 +113,7 @@ class PopupFeedback extends React.Component<Props, State> {
 			error = 'Please enter valid email';
 			fld = this.refEmail;
 		} else
-		if (!request.message) {
+		if (!request.comments) {
 			error = 'Please enter feedback message';
 			fld = this.refMessage;
 		};
@@ -124,22 +124,31 @@ class PopupFeedback extends React.Component<Props, State> {
 			return;
 		};
 		
-		if (checked) {
+		request.name = request.name || 'blank';
+		request.email = request.email || 'example@example.com';
+		
+		//if (checked) {
 			Sentry.captureMessage('Feedback');
 			request.event_id = Sentry.lastEventId();
-		};
+		//};
 		
 		this.setState({ loading: true });
 		
 		$.ajax({
-			url: '',
+			url: Url.feedback,
 			data: JSON.stringify(request),
 			type: 'POST',
-			contentType: 'application/json',
 			success: (data: any) => {
 				this.setState({ success: true, loading: false });
 			},
 			error: (xhr: any, status: string, error: string) => {
+				let err = {};
+				
+				try {
+					err = JSON.parse(xhr.responseText || '{}s');
+				} catch (e) {};
+				
+				console.log(err);
 				this.setState({ loading: false, error: 'Feedback upload failed' });
 			}
 		});
