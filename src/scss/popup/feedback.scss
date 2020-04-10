@@ -1,8 +1,10 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupFeedback { width: 672px; padding: 46px; }
+	.popup.popupFeedback { width: 672px; }
 	.popup.popupFeedback {
+		.wrapper { padding: 48px; }
+	
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; margin-bottom: 16px; }
 		.label { margin-bottom: 10px; }
 		.input { height: 40px; border: 1px solid #DFDDD0; padding: 0px 16px; }
@@ -12,7 +14,7 @@
 		.small { font-size: 13px; line-height: 20px; width: calc(100% - 24px); }
 		
 		.error { margin: 0px; color: #e89d00; line-height: 40px; width: calc(100% - 100px); }
-		.button { margin-right: 16px; width: 84px; }
+		.button.submit { margin-right: 16px; width: 84px; }
 		
 		.row { margin-bottom: 16px; }
 		.row:last-child { margin: 0px; }
@@ -21,5 +23,10 @@
 			.input:last-child { margin: 0px; }
 		}
 		
+		.wrapper.success { padding: 32px 48px 48px 48px; }
+		.wrapper.success {
+			.smile { margin-bottom: 12px; }
+			.label { margin-bottom: 27px; }
+		}
 	}
 }

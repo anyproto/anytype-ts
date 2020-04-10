@@ -23,12 +23,13 @@ class MenuHelp extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const items: I.MenuItem[] = [
-			{ id: 'help', icon: 'help', name: 'Help' },
-			{ id: 'feedback', icon: 'feature', name: 'Feedback' },
+		const items: any[] = [
+			{ id: 'help', name: 'Help & support' },
+			{ id: 'shortcuts', name: 'Shortcuts' },
+			{ id: 'feedback', name: 'Give feedback' },
+			{ id: 'community', name: 'Join community' },
 			//{ id: 'chat', icon: 'chat', name: 'Chat with Us' },
 			//{ id: 'feature', icon: 'feature', name: 'Suggest a Feature' },
-			{ id: 'community', icon: 'community', name: 'Join our Community' }
 		];
 		
 		return (
@@ -55,6 +56,7 @@ class MenuHelp extends React.Component<Props, {}> {
 				commonStore.popupOpen('feedback', {});
 				break;
 				
+			/*
 			case 'chat':
 				let param: any = {
 					app_id: Constant.intercom,
@@ -73,6 +75,7 @@ class MenuHelp extends React.Component<Props, {}> {
 			case 'feature':
 				ipcRenderer.send('urlOpen', Url.feature);
 				break;
+			*/
 				
 			case 'community':
 				ipcRenderer.send('urlOpen', Url.community);

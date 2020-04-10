@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Input, Icon, Textarea, Button, Error } from 'ts/component';
+import { Title, Label, Input, Icon, Textarea, Button, Error, Smile } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
@@ -13,6 +13,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 interface State {
 	error: string;
 	checked: boolean;
+	success: boolean;
 };
 
 const Url = require('json/url.json');
@@ -25,6 +26,7 @@ class PopupFeedback extends React.Component<Props, State> {
 	state = {
 		error: '',
 		checked: false,
+		success: false,
 	};
 	
 	constructor (props: any) {
@@ -35,33 +37,44 @@ class PopupFeedback extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { error, checked } = this.state;
+		const { error, checked, success } = this.state;
 		
 		return (
-			<div className="wrapper">
-				<Title text="Feedback" />
-				<Label text="Issues, bugs, feedback or help? Write us what’s in your mind." />
-				
-				<form onSubmit={this.onSubmit}>
-					<div className="row flex">
-						<Input ref={(ref: any) => { this.refName = ref; }} placeHolder="Name (Optional)" />
-						<Input ref={(ref: any) => { this.refEmail = ref; }} placeHolder="E-mail (Optional)" />
-					</div>
-					
-					<div className="row">
-						<Textarea ref={(ref: any) => { this.refMessage = ref; }} placeHolder="Feedback like &quot;I pressed Enter and this happened&quot;" />
-					</div>
-					
-					<div className="row flex">
-						<Icon className={'checkbox ' + (checked ? 'active' : '')} onClick={this.onCheck} />
-						<div className="small">Send anonymous metadata: OS, app version and IP. It doesn't contain personal information and will help us solve your issue.</div>
-					</div>
-					
-					<div className="row flex">
-						<Button className="orange" type="input" text="Submit" /> 
-						<Error text={error} />
-					</div>
-				</form>
+			<div className={[ 'wrapper', (success ? 'success' : '') ].join(' ')}>
+				{success ? (
+					<React.Fragment>
+						<Smile className="c64" size={32} icon=":relieved:" />
+						<Title text="Your feedback was sent" />
+						<Label text="Thank you for making the new web together!<br />If you left email we will get in touch soon." />
+						<Button className="orange" text="Back to dashboard" onClick={() => { commonStore.popupClose(this.props.id); }} />
+					</React.Fragment>
+				) : (
+					<React.Fragment>
+						<Title text="Feedback" />
+						<Label text="Issues, bugs, feedback or help? Write us what’s in your mind." />
+						
+						<form onSubmit={this.onSubmit}>
+							<div className="row flex">
+								<Input ref={(ref: any) => { this.refName = ref; }} placeHolder="Name (Optional)" />
+								<Input ref={(ref: any) => { this.refEmail = ref; }} placeHolder="E-mail (Optional)" />
+							</div>
+							
+							<div className="row">
+								<Textarea ref={(ref: any) => { this.refMessage = ref; }} placeHolder="Feedback like &quot;I pressed Enter and this happened&quot;" />
+							</div>
+							
+							<div className="row flex">
+								<Icon className={'checkbox ' + (checked ? 'active' : '')} onClick={this.onCheck} />
+								<div className="small">Send anonymous metadata: OS, app version and IP. It doesn't contain personal information and will help us solve your issue.</div>
+							</div>
+							
+							<div className="row flex">
+								<Button className="orange submit" type="input" text="Submit" /> 
+								<Error text={error} />
+							</div>
+						</form>
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
@@ -102,7 +115,7 @@ class PopupFeedback extends React.Component<Props, State> {
 			return;
 		};
 		
-		commonStore.popupClose(this.props.id);
+		this.setState({ success: true });
 		
 		if (checked) {
 			Sentry.captureMessage('Feedback');
