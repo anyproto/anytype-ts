@@ -173,6 +173,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
+				authStore.accountSet(account);
+				
 				DataUtil.pageInit(() => {
 					history.push('/main/index');
 				});
