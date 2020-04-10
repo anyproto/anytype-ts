@@ -4,7 +4,6 @@ import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import * as Sentry from '@sentry/browser';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -53,8 +52,7 @@ class MenuHelp extends React.Component<Props, {}> {
 				break;
 			
 			case 'feedback':
-				Sentry.captureMessage('Feedback');
-				Sentry.showReportDialog({ eventId: Sentry.lastEventId() });
+				commonStore.popupOpen('feedback', {});
 				break;
 				
 			case 'chat':

@@ -3,7 +3,6 @@ import { RouteComponentProps } from 'react-router';
 import { Label, Icon } from 'ts/component';
 import { I, Docs, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 import Block from 'ts/component/page/help/item/block';
 
