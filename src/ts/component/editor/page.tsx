@@ -997,6 +997,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);
+		const length = block.getLength();
 		const reg = new RegExp(/^((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		const match = data.text.match(reg);
 		const url = match && match[0];
@@ -1021,7 +1022,7 @@ class EditorPage extends React.Component<Props, State> {
 							this.onPaste(e, true, data);
 						};
 						if (id == 'bookmark') {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, block.getLength() ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
+							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
 						};
 					},
 				}

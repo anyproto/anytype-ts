@@ -236,12 +236,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	setActiveItem (item?: any, scroll?: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		const node = $(ReactDOM.findDOMNode(this));
-		
 		node.find('.item.active').removeClass('active');
 		
 		if (!item) {

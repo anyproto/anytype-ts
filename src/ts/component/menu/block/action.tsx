@@ -149,7 +149,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		//window.clearTimeout(this.timeout);
 	};
 	
 	unbind () {
