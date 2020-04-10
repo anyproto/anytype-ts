@@ -11,7 +11,7 @@ class CellBool extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<Icon className={'checkBox ' + (data ? 'active' : '')} />
+				<Icon className={'checkbox ' + (data ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};
