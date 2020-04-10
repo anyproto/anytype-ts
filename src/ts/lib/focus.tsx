@@ -26,14 +26,15 @@ class Focus {
 		this.range.from = 0;
 		this.range.to = 0;
 		
+		$('.focusable.isFocused').removeClass('isFocused');
+
+		if (!el.length || el.hasClass('value')) {
+			keyboard.setFocus(false);
+		};
+		
 		if (withRange) {
 			window.getSelection().empty();
 			window.focus();
-		};
-		
-		$('.focusable.isFocused').removeClass('isFocused');
-		
-		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);
 		};
 	};
