@@ -138,6 +138,7 @@
 		"asarUnpack": [
 			"dist/main.js",
 			"dist/index.html",
+			"dist/run.js",
 			"build"
 		],
 		"extraResources": [],
