@@ -2,7 +2,7 @@
 	"progress0": { "en": "Copying files %s/%s" },
 
 	"authInviteTitle": { "en": "Welcome to Anytype" },
-	"authInviteLabel": { "en": "Enter your invitation code. If you haven't got one just go to <a href=\"http://anytype.io\">anytype.io</a> and sign up to the waiting list. We are inviting people on the rolling bases." },
+	"authInviteLabel": { "en": "Enter your invitation code. If you haven't got one just go to <a href=\"https://anytype.io\">anytype.io</a> and sign up to the waiting list. We are inviting people on the rolling bases." },
 	"authInvitePlaceholder": { "en": "Code" },
 	"authInviteLogin": { "en": "Enter" },
 

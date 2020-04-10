@@ -1,6 +1,7 @@
 import { I, C, keyboard } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
+const { ipcRenderer } = window.require('electron');
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = window.require('blueimp-load-image');
@@ -452,6 +453,13 @@ class Util {
 		range.from = this.lengthFixOut(text, range.from);
 		range.to = this.lengthFixOut(text, range.to);
 		return range;
+	};
+	
+	renderLink (obj: any) {
+		obj.find('a').unbind('click').on('click', function (e: any) {
+			e.preventDefault();
+			ipcRenderer.send('urlOpen', $(this).attr('href'));
+		});
 	};
 	
 };
