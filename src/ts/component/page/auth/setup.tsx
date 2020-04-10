@@ -12,6 +12,7 @@ interface State {
 	error: string;
 };
 
+const Errors = require('json/error.json');
 const com = require('proto/commands.js');
 const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
@@ -28,7 +29,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { match } = this.props;
+		const { match, history } = this.props;
 		const { coverId, coverImg } = commonStore;
 		const { icon, error } = this.state;
 		
@@ -56,6 +57,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 					<Smile className="c64" icon={icon} size={36} />
 					<Title text={title} />
 					<Error text={error} />
+					{error ? <Button className="orange" text="Back" onClick={() => { history.goBack(); }} /> : ''}
 				</Frame>
 			</div>
 		);
@@ -146,9 +148,11 @@ class PageAuthSetup extends React.Component<Props, State> {
 	add () {
 		const { history, match } = this.props;
 		
-		C.AccountCreate(authStore.name, authStore.icon, (message: any) => {
+		C.AccountCreate(authStore.name, authStore.icon, authStore.code, (message: any) => {
 			if (message.error.code) {
-				this.setError(message.error.description);
+				const error = Errors.AccountCreate[message.error.code] || message.error.description;
+				
+				this.setError(error);
 			} else
 			if (message.account) {
 				authStore.accountSet(message.account);

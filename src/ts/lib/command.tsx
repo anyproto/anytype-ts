@@ -58,10 +58,11 @@ const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any)
 	dispatcher.call('walletRecover', request, callBack);
 };
 
-const AccountCreate = (name: string, path: string, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, path: string, code: string, callBack?: (message: any) => void) => {
 	const request = {
 		name: name, 
 		avatarLocalPath: path,
+		alphaInviteCode: code,
 	};
 	dispatcher.call('accountCreate', request, callBack);
 };
