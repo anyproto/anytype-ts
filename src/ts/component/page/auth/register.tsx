@@ -101,7 +101,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 		};
 		
 		if (!error) {
-			history.push('/auth/setup/' + match.params.id);	
+			history.push('/auth/invite/' + match.params.id);
 		} else {
 			this.setState({ error: error });
 		};

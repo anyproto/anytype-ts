@@ -9,6 +9,7 @@ class AuthStore {
 	@observable public icon: string = '';
 	@observable public name: string = '';
 	@observable public phrase: string = '';
+	@observable public code: string = '';
 	
 	@computed
 	get accounts(): I.Account[] {
@@ -40,6 +41,11 @@ class AuthStore {
 	phraseSet (v: string) {
 		this.phrase = v;
 		Storage.set('phrase', v);
+	};
+	
+	@action
+	codeSet (v: string) {
+		this.code = v;
 	};
 	
 	@action

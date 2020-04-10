@@ -62,13 +62,10 @@ class PageAuthInvite extends React.Component<Props, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { history } = this.props;
-		const { path } = authStore;
+		const { match, history } = this.props;
 		
-		this.ref.setError(false);
-		
-		const value = this.ref.getValue();
-		history.push('/auth/select');
+		authStore.codeSet(this.ref.getValue());
+		history.push('/auth/setup/' + match.params.id);	
 	};
 	
 };

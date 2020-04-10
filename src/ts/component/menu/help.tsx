@@ -4,6 +4,7 @@ import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import * as Sentry from '@sentry/browser';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -25,6 +26,7 @@ class MenuHelp extends React.Component<Props, {}> {
 	render () {
 		const items: I.MenuItem[] = [
 			{ icon: 'help', name: 'Help' },
+			{ icon: 'feedback', name: 'Feedback' },
 			//{ icon: 'chat', name: 'Chat with Us' },
 			{ icon: 'feature', name: 'Suggest a Feature' },
 			{ icon: 'community', name: 'Join our Community' }
@@ -48,6 +50,11 @@ class MenuHelp extends React.Component<Props, {}> {
 		switch (item.icon) {
 			case 'help':
 				history.push('/help/index');
+				break;
+			
+			case 'feedback':
+				Sentry.captureMessage('Feedback');
+				Sentry.showReportDialog({ eventId: Sentry.lastEventId() });
 				break;
 				
 			case 'chat':

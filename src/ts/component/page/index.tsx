@@ -26,7 +26,8 @@ import PageHelpNew from './help/new';
 const $ = require('jquery');
 const raf = require('raf');
 const Components: any = {
-	'/':					 PageAuthInvite,
+	'/':					 PageAuthSelect,
+	'auth/invite':			 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
 	'auth/register':		 PageAuthRegister,
 	'auth/login':			 PageAuthLogin,

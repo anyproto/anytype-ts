@@ -18,6 +18,8 @@ let csp = [
 	"media-src 'self' http://*:* https://*:* data: blob:",
 	"style-src 'unsafe-inline'",
 	"font-src data: https://js.intercomcdn.com",
+	"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.io",
+	"script-src-elem http://localhost:8080 https://sentry.io https://widget.intercom.io https://js.intercomcdn.com"
 ];
 
 function createWindow () {

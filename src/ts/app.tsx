@@ -131,18 +131,16 @@ enableLogging({
 
 console.log('[Version]', version, 'isPackaged', app.isPackaged);
 
-if (app.isPackaged) {
-	Sentry.init({
-		release: version,
-		dsn: Constant.sentry,
-		integrations: [
-			new Sentry.Integrations.GlobalHandlers({
-				onerror: true,
-				onunhandledrejection: true
-			})
-		]
-	});
-};
+Sentry.init({
+	release: version,
+	dsn: Constant.sentry,
+	integrations: [
+		new Sentry.Integrations.GlobalHandlers({
+			onerror: true,
+			onunhandledrejection: true
+		})
+	]
+});
 
 declare global {
 	interface Window { getStore: any; }
