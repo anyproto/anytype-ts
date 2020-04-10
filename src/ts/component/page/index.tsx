@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Util, Storage, analytics } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
+import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -25,7 +26,7 @@ import PageHelpNew from './help/new';
 const $ = require('jquery');
 const raf = require('raf');
 const Components: any = {
-	'/':					 PageAuthSelect,
+	'/':					 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
 	'auth/register':		 PageAuthRegister,
 	'auth/login':			 PageAuthLogin,

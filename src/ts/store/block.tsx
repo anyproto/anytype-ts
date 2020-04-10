@@ -68,7 +68,7 @@ class BlockStore {
 	};
 	
 	@action
-	detailsUpdate (rootId: string, item: any) {
+	detailsUpdate (rootId: string, item: any, decode: boolean) {
 		if (!item.id || !item.details) {
 			return;
 		};
@@ -81,7 +81,7 @@ class BlockStore {
 			create = true;
 		};
 		
-		map.set(item.id, StructDecode.decodeStruct(item.details));
+		map.set(item.id, decode ? StructDecode.decodeStruct(item.details) : item.details);
 		
 		if (create) {
 			intercept(map as any, (change: any) => {

@@ -89,8 +89,12 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
+		const { rootId } = this.props;
+		
 		keyboard.setFocus(false);
 		this.placeHolderHide();
+		
+		C.BlockSetDetails(rootId, [ { key: 'name', value: this.getValue() } ]);
 	};
 	
 	onSelect (e: any) {
@@ -137,12 +141,24 @@ class BlockTitle extends React.Component<Props, {}> {
 	
 	onChange (e: any) {
 		const { rootId } = this.props;
+		const { breadcrumbs } = blockStore;
 		const value = this.getValue();
+		const details = blockStore.getDetail(rootId, rootId);
+		
+		details.name = value;
+		
+		const param = { 
+			id: rootId,
+			details: details
+		};
+		
+		blockStore.detailsUpdate(rootId, param, false);
+		blockStore.detailsUpdate(breadcrumbs, param, false);
 		
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			C.BlockSetDetails(rootId, [ { key: 'name', value: this.getValue() } ]);
-		}, 500);
+		}, 1000);
 	};
 	
 	getValue (): string {
