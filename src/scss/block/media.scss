@@ -40,7 +40,7 @@
 		.icon.dots { opacity: 1; }
 	}
 	
-	.block.blockMedia > .wrapContent > .selectable > .dropTarget > .focusable > .wrap.isPlaying {
+	.block.blockMedia > .wrapContent > .selectable > .dropTarget > .focusable.isPlaying > .wrap {
 		.icon.resize { display: none; }
 		.icon.dots { display: none; }
 		.icon.play { display: none; }

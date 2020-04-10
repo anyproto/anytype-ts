@@ -214,7 +214,7 @@ class DataUtil {
 	
 	menuGetBlockPage () {
 		return [
-			{ type: I.BlockType.Page, icon: 'page', name: 'Page', color: 'blue', isBlock: true },
+			{ type: I.BlockType.Page, id: 0, icon: 'page', name: 'Page', color: 'blue', isBlock: true },
 			/*
 			{ id: 'existing', icon: 'existing', name: 'Existing Page', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
