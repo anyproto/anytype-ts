@@ -40,6 +40,7 @@ export interface Block {
 	bgColor?: string;
 	content: any;
 	childrenIds: string[];
+	isIndentable?(): boolean;
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
 	isDraggable?(): boolean;

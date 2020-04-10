@@ -33,6 +33,10 @@ class Block implements I.Block {
 		});
 	};
 	
+	isIndentable (): boolean {
+		return !this.isTitle() && !this.isLayout() && !this.isPage() && !this.isDiv() && !this.isHeader();
+	};
+	
 	isFocusable (): boolean {
 		return !this.isPage() && !this.isLayout();
 	};
