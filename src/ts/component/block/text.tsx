@@ -299,7 +299,7 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const value = this.getValue().replace(/\n$/, '');
 		
-		if ((k == Key.enter) && !e.shiftKey && block.isCode()) {
+		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
 			
 			this.setValue(value);
