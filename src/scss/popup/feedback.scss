@@ -3,6 +3,11 @@
 .popups {
 	.popup.popupFeedback { width: 672px; }
 	.popup.popupFeedback {
+		.loaderWrapper { 
+			position: absolute; left: 0px; top: 0px; z-index: 1; width: 100%; height: 100%; background: rgba(255,255,255,0.7);
+			border-radius: 12px; 
+		}
+	
 		.wrapper { padding: 48px; }
 	
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; margin-bottom: 16px; }

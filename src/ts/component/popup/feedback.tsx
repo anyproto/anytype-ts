@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Input, Icon, Textarea, Button, Error, Smile } from 'ts/component';
+import { Title, Label, Input, Icon, Textarea, Button, Error, Smile, Loader } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
@@ -14,6 +14,7 @@ interface State {
 	error: string;
 	checked: boolean;
 	success: boolean;
+	loading: boolean;
 };
 
 const $ = require('jquery');
@@ -28,6 +29,7 @@ class PopupFeedback extends React.Component<Props, State> {
 		error: '',
 		checked: false,
 		success: false,
+		loading: false,
 	};
 	
 	constructor (props: any) {
@@ -38,10 +40,11 @@ class PopupFeedback extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { error, checked, success } = this.state;
+		const { error, checked, success, loading } = this.state;
 		
 		return (
 			<div className={[ 'wrapper', (success ? 'success' : '') ].join(' ')}>
+				{loading ? <Loader /> : ''}
 				{success ? (
 					<React.Fragment>
 						<Smile className="c64" size={32} icon=":relieved:" />
@@ -100,6 +103,7 @@ class PopupFeedback extends React.Component<Props, State> {
 			name: this.refName.getValue(),
 			email: this.refEmail.getValue(),
 			message: this.refMessage.getValue(),
+			event_id: '',
 		};
 		
 		let error = '';
@@ -120,14 +124,25 @@ class PopupFeedback extends React.Component<Props, State> {
 			return;
 		};
 		
-		this.setState({ success: true });
-		
 		if (checked) {
 			Sentry.captureMessage('Feedback');
-			request.eventId = Sentry.lastEventId();
+			request.event_id = Sentry.lastEventId();
 		};
 		
-		console.log(request);
+		this.setState({ loading: true });
+		
+		$.ajax({
+			url: '',
+			data: JSON.stringify(request),
+			type: 'POST',
+			contentType: 'application/json',
+			success: (data: any) => {
+				this.setState({ success: true, loading: false });
+			},
+			error: (xhr: any, status: string, error: string) => {
+				this.setState({ loading: false, error: 'Feedback upload failed' });
+			}
+		});
 	};
 	
 	resize () {
