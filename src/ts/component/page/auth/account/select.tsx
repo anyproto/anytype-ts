@@ -28,9 +28,10 @@ class PageAccountSelect extends React.Component<Props, State> {
 	render () {
 		const { coverId, coverImg } = commonStore;
 		const { error } = this.state;
+		const { accounts } = authStore;
 		
 		const Item = (item: any) => (
-			<div className="item" onClick={(e) => { this.onSelect(e, item as I.Account); }}>
+			<div className="item" onClick={(e) => { this.onSelect(item as I.Account); }}>
 				<IconUser {...item} />
 				<div className="name">{item.name}</div>
 			</div>
@@ -47,7 +48,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 					<Error text={error} />
 					
 					<div className="list">
-						{authStore.accounts.map((item: I.Account, i: number) => (
+						{accounts.map((item: I.Account, i: number) => (
 							<Item key={i} {...item} />	
 						))}
 						<div className="item add dn" onMouseDown={this.onAdd}>
@@ -74,8 +75,16 @@ class PageAccountSelect extends React.Component<Props, State> {
 			});
 		});
 	};
+	
+	componentDidUpdate () {
+		const { accounts } = authStore;
+		
+		if (accounts && accounts.length) {
+			this.onSelect(accounts[0]);
+		};
+	};
 
-	onSelect (e: any, account: I.Account) {
+	onSelect (account: I.Account) {
 		const { history } = this.props;
 		const pin = Storage.get('pin');
 		

@@ -166,15 +166,18 @@ class PageAuthSetup extends React.Component<Props, State> {
 	
 	select () {
 		const { history } = this.props;
-		const { account, path } = authStore; 
+		const { account, path } = authStore;
 		
 		C.AccountSelect(account.id, path, (message: any) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
-			} else {
-				history.push('/main/index');
+			} else
+			if (message.account) {
+				DataUtil.pageInit(() => {
+					history.push('/main/index');
+				});
 			};
-		});
+		}); 
 	};
 	
 	setError (v: string) {

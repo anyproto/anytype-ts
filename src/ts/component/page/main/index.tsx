@@ -53,7 +53,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						{Util.sprintf(translate('indexHi'), account.name)}
+						{Util.sprintf(translate('indexHi'), Util.shorten(account.name, 16))}
 						
 						<div className="rightMenu">
 							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={this.onSettings} />
