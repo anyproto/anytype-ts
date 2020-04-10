@@ -1,10 +1,10 @@
 {
 	"progress0": { "en": "Copying files %s/%s" },
 	
-	"authInviteTitle": { "en": "Organize everything" },
-	"authInviteLabel": { "en": "Organize everything" },
-	"authInvitePlaceholder": { "en": "Organize everything" },
-	"authInviteLogin": { "en": "Login" },
+	"authInviteTitle": { "en": "Welcome to Anytype!" },
+	"authInviteLabel": { "en": "Enter your invitation code" },
+	"authInvitePlaceholder": { "en": "Code" },
+	"authInviteLogin": { "en": "Enter" },
 
 	"authSelectTitle": { "en": "Organize everything" },
 	"authSelectLabel": { "en": "With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." },

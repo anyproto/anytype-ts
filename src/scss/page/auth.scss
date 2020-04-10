@@ -17,6 +17,11 @@
 	.button:last-child { margin: 0px; }
 }
 
+.pageIndexIndex, .pageAuthInvite {
+	.form { display: flex; }
+	.input { margin-right: 16px; }
+}
+
 .pageAuthLogin {
 	.label { margin-bottom: 9px; }
 }

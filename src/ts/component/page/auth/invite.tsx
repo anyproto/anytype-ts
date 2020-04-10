@@ -40,8 +40,8 @@ class PageAuthInvite extends React.Component<Props, State> {
 					<Label text={translate('authInviteLabel')} />
 					<Error text={error} />
 							
-					<form onSubmit={this.onSubmit}>
-						<Input ref={(ref: any) => this.ref = ref} placeHolder={translate('authInvitePlaceholder')} />
+					<form className="form" onSubmit={this.onSubmit}>
+						<Input ref={(ref: any) => this.ref = ref} type="password" placeHolder={translate('authInvitePlaceholder')} />
 						<div className="buttons">
 							<Button type="input" text={translate('authInviteLogin')} className="orange" />
 						</div>
