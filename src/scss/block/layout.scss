@@ -19,8 +19,11 @@
 	
 	/* Column */
 	.block.blockLayout.c1 { padding: 0px; }
+	.block.blockLayout.c1 {
+		.columnEmpty { flex-grow: 1; }
+	}
 	.block.blockLayout.c1 > .wrapMenu { display: none; }
-	.block.blockLayout.c1 > .wrapContent { width: 100%; }
+	.block.blockLayout.c1 > .wrapContent { width: 100%; display: flex; flex-flow: column; }
 	
 	.block.blockLayout.c1 > .wrapContent > .children > .block.first > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
 	.block.blockLayout.c1 > .wrapContent > .children > .block.first {
