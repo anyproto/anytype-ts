@@ -60,7 +60,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 	onUpload (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, onUpload } = data;
+		const { rootId, onUpload, onUploadStart } = data;
 		
 		let options: any = { 
 			properties: [ 'openFile' ], 
@@ -75,6 +75,10 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		dialog.showOpenDialog(null, options, (files: any) => {
 			if ((files == undefined) || !files.length) {
 				return;
+			};
+			
+			if (onUploadStart) {
+				onUploadStart();
 			};
 
 			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
@@ -93,6 +97,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				if (onUpload) {
 					onUpload();
 				};
+				
 				commonStore.menuClose(this.props.id);
 			});
 		});

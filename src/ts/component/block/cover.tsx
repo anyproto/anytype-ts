@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Drag, Cover } from 'ts/component';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { Icon, Drag, Cover, Loader } from 'ts/component';
+import { I, C, Util, DataUtil, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { trace } from 'mobx';
@@ -14,7 +14,8 @@ interface Props extends RouteComponentProps<any> {
 };
 
 interface State {
-	isEditing: boolean;
+	editing: boolean;
+	loading: boolean;
 };
 
 const $ = require('jquery');
@@ -25,7 +26,8 @@ class BlockCover extends React.Component<Props, State> {
 	
 	_isMounted = false;
 	state = {
-		isEditing: false,
+		editing: false,
+		loading: false,
 	};
 	cover: any = null;
 	refDrag: any = null;
@@ -42,6 +44,8 @@ class BlockCover extends React.Component<Props, State> {
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+		this.onUploadStart = this.onUploadStart.bind(this);
 		
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
@@ -53,13 +57,13 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	render() {
-		const { isEditing } = this.state;
+		const { editing, loading } = this.state;
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
 		const { coverType, coverId } = details;
 		
 		let elements = null;
-		if (isEditing) {
+		if (editing) {
 			elements = (
 				<React.Fragment>
 					<div key="btn-drag" className="btn black drag">
@@ -92,7 +96,8 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart}>
+			<div className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart}>
+				{loading ? <Loader /> : ''}
 				{coverType == I.CoverType.Image ? (
 					<img id="cover" src={commonStore.imageUrl(coverId, 2048)} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
 				) : (
@@ -125,6 +130,8 @@ class BlockCover extends React.Component<Props, State> {
 	onMenu (e: any) {
 		const { rootId } = this.props;
 		
+		focus.clear(true);
+		
 		commonStore.menuOpen('blockCover', {
 			element: '#button-cover-edit',
 			type: I.MenuType.Vertical,
@@ -135,7 +142,8 @@ class BlockCover extends React.Component<Props, State> {
 			data: {
 				rootId: rootId,
 				onEdit: this.onEdit,
-				onUpload: this.onEdit,
+				onUploadStart: this.onUploadStart,
+				onUpload: this.onUpload,
 				onSelect: (type: I.CoverType, id: string) => {
 					C.BlockSetDetails(rootId, [ 
 						{ key: 'coverType', value: type },
@@ -150,21 +158,29 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onEdit (e: any) {
-		this.setState({ isEditing: true });
+		this.setState({ editing: true });
+	};
+	
+	onUploadStart () {
+		this.setState({ loading: true });
+	};
+	
+	onUpload () {
+		this.setState({ loading: false, editing: true });
 	};
 	
 	onSave (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		this.setState({ isEditing: false });
+		this.setState({ editing: false });
 	};
 	
 	onCancel (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		this.setState({ isEditing: false });
+		this.setState({ editing: false });
 	};
 	
 	resize () {
@@ -176,6 +192,10 @@ class BlockCover extends React.Component<Props, State> {
 		const details = blockStore.getDetail(rootId, rootId);
 		const { coverX, coverY, coverScale } = details;
 		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (!node.hasClass('wrap')) {
+			return;
+		};
 		
 		const cb = (e: any) => {
 			if (this.refDrag) {
@@ -194,9 +214,9 @@ class BlockCover extends React.Component<Props, State> {
 	onDragStart (e: any) {
 		e.preventDefault();
 		
-		const { isEditing } = this.state;
+		const { editing } = this.state;
 		
-		if (!this._isMounted || !isEditing) {
+		if (!this._isMounted || !editing) {
 			return false;
 		};
 		

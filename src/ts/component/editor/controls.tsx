@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -21,8 +21,6 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		
-		
 		return (
 			<div className="controls">
 				<div className="sides">
@@ -47,6 +45,8 @@ class Controls extends React.Component<Props, {}> {
 	onAddIcon (e: any) {
 		const { rootId } = this.props;
 		
+		focus.clear(true);
+		
 		commonStore.menuOpen('smile', { 
 			element: '#button-add-icon',
 			type: I.MenuType.Vertical,
@@ -66,6 +66,8 @@ class Controls extends React.Component<Props, {}> {
 	
 	onAddCover (e: any) {
 		const { rootId } = this.props;
+		
+		focus.clear(true);
 		
 		commonStore.menuOpen('blockCover', { 
 			element: '#button-add-cover',
