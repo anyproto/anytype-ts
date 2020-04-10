@@ -1,5 +1,5 @@
 import { I, C, Util, DataUtil, Storage } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, authStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -75,8 +75,10 @@ class Keyboard {
 	};
 	
 	setPinCheck () {
+		const { account } = authStore;
 		const pin = Storage.get('pin');
-		if (!pin) {
+		
+		if (!pin || !account) {
 			return;
 		};
 		
