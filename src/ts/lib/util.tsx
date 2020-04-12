@@ -49,7 +49,7 @@ class Util {
 	};
 	
 	objectCopy (o: any): any {
-		return JSON.parse(JSON.stringify(o));
+		return JSON.parse(JSON.stringify(o || {}));
 	};
 	
 	objectCompare (o1: any, o2: any): boolean {
