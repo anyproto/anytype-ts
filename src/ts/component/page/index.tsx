@@ -102,12 +102,11 @@ class Page extends React.Component<Props, {}> {
 	
 	event () {
 		const { match } = this.props;
-		const path = [ match.params.page, match.params.action ].join('/');
-		const Component = Components[path];
+		const page = String(match.params.page || 'index');
+		const action = String(match.params.action || 'index');
+		const path = [ 'page', page, action ].join('-');
 		
-		if (Component) {
-			analytics.event(Component.name);
-		};
+		analytics.event(Util.toUpperCamelCase(path));
 	}
 	
 	componentWillUnmount () {

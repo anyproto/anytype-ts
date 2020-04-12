@@ -13,7 +13,7 @@ class Analytics {
 	debug: boolean = false;
 	
 	constructor () {
-		this.debug = Boolean(Storage.get('debugAN'));
+		this.debug = Number(Storage.get('debugAN')) ? true : false;
 	};
 	
 	init () {
