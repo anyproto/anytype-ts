@@ -51,6 +51,10 @@ class MenuHelp extends React.Component<Props, {}> {
 			case 'help':
 				history.push('/help/index');
 				break;
+				
+			case 'shortcuts':
+				history.push('/help/shortcuts');
+				break;
 			
 			case 'feedback':
 				commonStore.popupOpen('feedback', {});
