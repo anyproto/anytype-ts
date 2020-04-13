@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconUser, Smile } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { dispatcher, I, Util} from 'ts/lib';
+import { I, Util} from 'ts/lib';
 
 interface Props {
 	onSelect?(e: any, item: any): void;

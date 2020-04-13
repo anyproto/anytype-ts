@@ -107,7 +107,7 @@ class Page extends React.Component<Props, {}> {
 		const path = [ 'page', page, action ].join('-');
 		
 		analytics.event(Util.toUpperCamelCase(path));
-	}
+	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;

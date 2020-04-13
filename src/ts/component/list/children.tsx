@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Block } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { dispatcher, I, Util} from 'ts/lib';
+import { I, Util} from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;

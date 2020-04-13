@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, Mark, dispatcher, focus, keyboard } from 'ts/lib';
+import { I, C, M, Key, Util, DataUtil, Mark, focus, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 

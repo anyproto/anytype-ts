@@ -28,7 +28,6 @@ class MenuHelp extends React.Component<Props, {}> {
 			{ id: 'shortcuts', name: 'Shortcuts' },
 			{ id: 'feedback', name: 'Give feedback' },
 			{ id: 'community', name: 'Join community' },
-			//{ id: 'chat', icon: 'chat', name: 'Chat with Us' },
 			//{ id: 'feature', icon: 'feature', name: 'Suggest a Feature' },
 		];
 		
@@ -61,21 +60,6 @@ class MenuHelp extends React.Component<Props, {}> {
 				break;
 				
 			/*
-			case 'chat':
-				let param: any = {
-					app_id: Constant.intercom,
-					user_id: 'blank'
-				};
-				if (account) {
-					param.user_id = account.id;
-					param.name = account.name;
-				};
-				
-				Intercom('boot', param);
-				Intercom('show');
-				Intercom('onHide', () => { Intercom('shutdown'); });
-				break;
-				
 			case 'feature':
 				ipcRenderer.send('urlOpen', Url.feature);
 				break;

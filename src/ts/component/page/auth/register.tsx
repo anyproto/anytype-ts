@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, dispatcher, Util, translate } from 'ts/lib';
+import { I, Util, translate } from 'ts/lib';
 
 const { dialog } = window.require('electron').remote;
 

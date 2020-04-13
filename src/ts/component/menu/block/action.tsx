@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, dispatcher, focus } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, focus } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
