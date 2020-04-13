@@ -530,6 +530,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onPaste (e: any) {
 		e.preventDefault();
+		
+		this.setText(this.marks);
 		this.props.onPaste(e);
 	};
 	
