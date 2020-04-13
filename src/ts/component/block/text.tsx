@@ -32,11 +32,9 @@ class BlockText extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refLang: any = null;
-	range: any = null;
 	timeoutKeyUp: number = 0;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
-	from: any = null;
 	marks: I.Mark[] = [];
 	clicks: number = 0;
 
