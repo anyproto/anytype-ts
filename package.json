@@ -34,7 +34,6 @@
 		"@babel/core": "^7.9.0",
 		"@types/history": "^4.7.5",
 		"@types/i18n": "^0.8.6",
-		"@types/intercom-web": "^2.8.7",
 		"@types/is": "0.0.21",
 		"@types/jquery": "^3.3.34",
 		"@types/lodash": "^4.14.149",
