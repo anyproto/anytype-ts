@@ -14,7 +14,6 @@ interface Props {
 };
 
 const $ = require('jquery');
-const fs = window.require('fs');
 const Constant = require('json/constant.json');
 
 @observer
