@@ -195,12 +195,14 @@ class BlockText extends React.Component<Props, {}> {
 			html = html.replace(/\n/g, '<br/>');
 		};
 		
+		/*
 		html = html.replace(/:([0-9a-z+_-]+):/g, (s: string, p: string) => {
 			if (EmojiData.emojis[p]) {
 				return String.fromCodePoint(parseInt(EmojiData.emojis[p].b, 16));
 			};
 			return s;
 		});
+		*/
 
 		value.get(0).innerHTML = html;
 		
