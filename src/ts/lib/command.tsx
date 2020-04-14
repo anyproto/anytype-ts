@@ -431,6 +431,13 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	dispatcher.call('blockListSetAlign', request, callBack);
 };
 
+const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => void) => {
+	const request = {
+		blockId: contextId,
+	};
+	dispatcher.call('blockGetPublicWebURL', request, callBack);
+};
+
 export {
 	VersionGet,
 	
@@ -486,4 +493,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
+	
+	BlockGetPublicWebURL,
 };

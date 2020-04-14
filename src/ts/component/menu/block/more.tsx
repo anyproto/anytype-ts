@@ -120,6 +120,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
+				{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 			
 			if (details.isArchived) {
@@ -183,6 +184,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				window.setTimeout(() => {
 					window.print();
 				}, 300);
+				break;
+				
+			case 'export':
+				C.BlockGetPublicWebURL(rootId, (message: any) => {
+				});
 				break;
 			
 			case 'move':
