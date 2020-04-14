@@ -71,7 +71,9 @@ function createWindow () {
 	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
-		shell.openExternal(url);
+		shell.openExternal(url).catch((error) => {
+			console.log(error);
+		});
 	});
 	
 	ipcMain.on('download', async (e, url) => {
