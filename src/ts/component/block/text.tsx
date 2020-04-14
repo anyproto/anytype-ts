@@ -26,6 +26,7 @@ const low = window.require('lowlight');
 const rehype = require('rehype');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+const EmojiData = require('emoji-mart/data/apple.json');
 
 @observer
 class BlockText extends React.Component<Props, {}> {
@@ -193,6 +194,13 @@ class BlockText extends React.Component<Props, {}> {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
 		};
+		
+		html = html.replace(/:([0-9a-z+_-]+):/g, (s: string, p: string) => {
+			if (EmojiData.emojis[p]) {
+				return String.fromCodePoint(parseInt(EmojiData.emojis[p].b, 16));
+			};
+			return s;
+		});
 
 		value.get(0).innerHTML = html;
 		
@@ -460,6 +468,8 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		this.marks = this.getMarksFromHtml();
+		this.setValue(value);
+		focus.apply();
 		
 		this.placeHolderCheck();
 		onKeyUp(e, value, this.marks);
