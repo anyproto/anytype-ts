@@ -468,8 +468,6 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		this.marks = this.getMarksFromHtml();
-		this.setValue(value);
-		focus.apply();
 		
 		this.placeHolderCheck();
 		onKeyUp(e, value, this.marks);

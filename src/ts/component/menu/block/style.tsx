@@ -74,6 +74,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		
 		return block ? block.content.style : 0;
 	};
 	
@@ -95,8 +96,10 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 			return [];
 		};
 		
+		let sections: any[] = [];
+		
 		if (block.isText()) {
-			return [
+			sections = [
 				{ children: DataUtil.menuGetBlockText() },
 				{ children: DataUtil.menuGetBlockList() },
 				{ children: DataUtil.menuGetBlockPage() },
@@ -104,12 +107,23 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 			];
 		} else
 		if (block.isDiv()) {
-			return [
+			sections = [
 				{ children: DataUtil.menuGetBlockOther() },
 			];
 		} else {
-			return [];
+			sections = [];
 		};
+		
+		sections = sections.map((s: any, i: number) => {
+			s.children = s.children.map((it: any) => {
+				it.key = it.id;
+				it.id = i + '-' + it.id;
+				return it;
+			});
+			return s;
+		});
+		
+		return sections;
 	};
 	
 	getItems () {
