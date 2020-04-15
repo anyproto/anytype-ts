@@ -10,6 +10,7 @@ interface Props extends I.Menu {
 };
 
 const $ = require('jquery');
+const { ipcRenderer } = window.require('electron');
 
 @observer
 class MenuBlockMore extends React.Component<Props, {}> {
@@ -188,6 +189,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'export':
 				C.BlockGetPublicWebURL(rootId, (message: any) => {
+					if (message.url) {
+						ipcRenderer.send('urlOpen', message.url);
+					};
 				});
 				break;
 			
