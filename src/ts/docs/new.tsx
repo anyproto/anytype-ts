@@ -1,7 +1,7 @@
 import { I } from 'ts/lib';
 
 export default [
-	{ type: I.BlockType.Icon, icon: ':wave:' },
+	{ type: I.BlockType.IconPage, icon: ':wave:' },
 	{ type: I.BlockType.Title, text: 'Introducing Anytype' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'We fully reworked the design and baked it with cutting edge technologies to make your experience safe, secure and convenient.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Anytype now is <font style="background-color: #fef9cc;">ready for your personal usage</font>.' },

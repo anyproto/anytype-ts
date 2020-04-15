@@ -52,7 +52,8 @@ import 'scss/block/link.scss';
 import 'scss/block/bookmark.scss';
 import 'scss/block/div.scss';
 import 'scss/block/layout.scss';
-import 'scss/block/icon.scss';
+import 'scss/block/iconPage.scss';
+import 'scss/block/iconUser.scss';
 import 'scss/block/title.scss';
 import 'scss/block/cover.scss';
 

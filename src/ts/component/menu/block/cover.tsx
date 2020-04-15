@@ -62,7 +62,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, onUpload, onUploadStart } = data;
 		
-		let options: any = { 
+		const options: any = { 
 			properties: [ 'openFile' ], 
 			filters: [
 				{ 

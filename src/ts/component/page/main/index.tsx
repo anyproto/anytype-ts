@@ -110,8 +110,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		history.push('/main/edit/' + profile);
 	};
 	
-	onSelect (e: any, block: any) {
-		if (block.isLinkArchive()) {
+	onSelect (e: any, block: I.Block) {
+		if (block.content.style == I.LinkStyle.Archive) {
 			commonStore.popupOpen('archive', {});
 		} else {
 			DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);

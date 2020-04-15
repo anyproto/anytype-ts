@@ -21,6 +21,7 @@ class Block implements I.Block {
 		self.parentId = String(props.parentId || '');
 		self.type = props.type;
 		self.align = Number(props.align) || I.BlockAlign.Left;
+		self.pageType = Number(props.pageType) || I.PageType.Page;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
 		self.content = props.content || {};
@@ -54,6 +55,10 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Page;
 	};
 	
+	isPageProfile (): boolean { 
+		return this.isPage() && (this.pageType == I.PageType.Profile);
+	};
+	
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;
 	};
@@ -79,7 +84,15 @@ class Block implements I.Block {
 	};
 	
 	isIcon (): boolean {
-		return this.type == I.BlockType.Icon;
+		return this.isIconPage() || this.isIconUser();
+	};
+	
+	isIconPage (): boolean {
+		return this.type == I.BlockType.IconPage;
+	};
+	
+	isIconUser (): boolean {
+		return this.type == I.BlockType.IconUser;
 	};
 	
 	isText (): boolean {

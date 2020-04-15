@@ -10,7 +10,8 @@ import { commonStore, blockStore } from 'ts/store';
 import BlockDataview from './dataview';
 import BlockText from './text';
 import BlockImage from './image';
-import BlockIcon from './icon';
+import BlockIconPage from './iconPage';
+import BlockIconUser from './iconUser';
 import BlockTitle from './title';
 import BlockVideo from './video';
 import BlockFile from './file';
@@ -109,10 +110,16 @@ class Block extends React.Component<Props, {}> {
 				cn.push('blockLayout c' + content.style);
 				break;
 				
-			case I.BlockType.Icon:
+			case I.BlockType.IconPage:
 				canSelect = false;
-				cn.push('blockIcon');
-				blockComponent = <BlockIcon {...this.props} />;
+				cn.push('blockIconPage');
+				blockComponent = <BlockIconPage {...this.props} />;
+				break;
+				
+			case I.BlockType.IconUser:
+				canSelect = false;
+				cn.push('blockIconUser');
+				blockComponent = <BlockIconUser {...this.props} />;
 				break;
 				
 			case I.BlockType.Title:

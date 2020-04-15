@@ -118,7 +118,7 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		// You can't drop on Icon
-		if (type == I.BlockType.Icon) {
+		if (type == I.BlockType.IconPage) {
 			this.position = I.BlockPosition.None;
 		};
 		

@@ -73,11 +73,18 @@ class EditorPage extends React.Component<Props, State> {
 		const withIcon = details.icon;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
-		const icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.Icon, childrenIds: [], fields: {}, content: {} });
 		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper' ];
+		let icon = null;
+		
+		if (root.isPageProfile()) {
+			cn.push('isProfile');
+			icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconUser, childrenIds: [], fields: {}, content: {} });
+		} else {
+			icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], fields: {}, content: {} });
+		};
 		
 		if (withIcon && withCover) {
 			cn.push('withIconAndCover');

@@ -1,3 +1,5 @@
+import { I } from 'ts/lib';
+
 export enum BlockType {
 	Empty		 = '',
 	Page		 = 'page',
@@ -6,7 +8,8 @@ export enum BlockType {
 	Text		 = 'text',
 	File		 = 'file',
 	Bookmark	 = 'bookmark',
-	Icon		 = 'icon',
+	IconPage	 = 'iconPage',
+	IconUser	 = 'iconUser',
 	Title		 = 'title',
 	Div			 = 'div',
 	Link		 = 'link',
@@ -33,6 +36,7 @@ export enum BlockAlign {
 export interface Block {
 	id: string;
 	type: BlockType;
+	pageType?: I.PageType;
 	parentId?: string;
 	fields: any;
 	align?: BlockAlign;
@@ -44,6 +48,7 @@ export interface Block {
 	isSelectable?(): boolean;
 	isDraggable?(): boolean;
 	isPage?(): boolean;
+	isPageProfile?(): boolean;
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;
 	isLayoutColumn?(): boolean;
@@ -51,6 +56,8 @@ export interface Block {
 	isLink?(): boolean;
 	isLinkArchive?(): boolean;
 	isIcon?(): boolean;
+	isIconPage?(): boolean;
+	isIconUser?(): boolean;
 	isFile?(): boolean;
 	isImage?(): boolean;
 	isVideo?(): boolean;
