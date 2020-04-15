@@ -265,12 +265,20 @@ class App extends React.Component<Props, State> {
 			Storage.delete('popupNewBlock');
 		});
 		
-		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
+		win.unbind('mousemove.common beforeunload.common');
+		
+		win.on('mousemove.common', throttle((e: any) => {
 			keyboard.setPinCheck();
 			keyboard.disableMouse(false);
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
 		
+		win.on('beforeunload', (e: any) => {
+			C.Shutdown((message: any) => {
+				ipcRenderer.send('appClose');
+			});
+			return false;
+		});
 	};
 	
 };

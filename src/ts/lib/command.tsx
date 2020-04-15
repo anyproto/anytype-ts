@@ -20,6 +20,10 @@ const ConfigGet = (callBack?: (message: any) => void) => {
 	dispatcher.call('configGet', {}, callBack);
 };
 
+const Shutdown = (callBack?: (message: any) => void) => {
+	dispatcher.call('shutdown', {}, callBack);
+};
+
 const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	const request = {
 		url: url,
@@ -443,6 +447,7 @@ export {
 	
 	ImageGetBlob,
 	ConfigGet,
+	Shutdown,
 	LinkPreview,
 	UploadFile,
 	ProcessCancel,

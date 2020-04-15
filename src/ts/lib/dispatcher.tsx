@@ -90,7 +90,6 @@ class Dispatcher {
 						if (it.id == rootId) {
 							it.type = I.BlockType.Page;
 							it.pageType = data.type;
-							console.log(it);
 						};
 						return it;
 					});

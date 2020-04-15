@@ -230,10 +230,10 @@ class EditorPage extends React.Component<Props, State> {
 
 			this.resize();
 			
-			window.setTimeout(() => {
+			//window.setTimeout(() => {
 				this.setState({ loading: false });
 				blockStore.setNumbers(rootId);
-			}, 300);
+			//}, 300);
 		});
 	};
 	
