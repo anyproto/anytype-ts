@@ -22,6 +22,7 @@ class MenuSmile extends React.Component<Props, State> {
 
 	ref: any = null;
 	id: string = '';
+	skin: number = 1;
 	timeoutMenu: number = 0;
 	timeoutFilter: number = 0;
 	state = {
@@ -44,13 +45,15 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		let id = 1;
 		
-		const Item = (item: any) => (
-			<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.smile); }}>
-				<div className="smile">
-					<Emoji native={true} emoji={':' + item.smile + ':'} set="apple" size={24} />
+		const Item = (item: any) => {
+			return (
+				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
+					<div className="smile">
+						<Emoji native={true} emoji={':' + item.smile + ':'} skin={item.skin} set="apple" size={24} />
+					</div>
 				</div>
-			</div>
-		);
+			);
+		};
 		
 		const Section = (item: any) => (
 			<div className="section">
@@ -63,7 +66,7 @@ class MenuSmile extends React.Component<Props, State> {
 							return null;
 						};
 						
-						return <Item key={i} id={smile} smile={smile} />;
+						return <Item key={i} id={id} {...smile} />;
 					})}
 				</div>
 			</div>
@@ -102,6 +105,7 @@ class MenuSmile extends React.Component<Props, State> {
 		keyboard.setFocus(true);
 		this.bind();
 		this.ref.focus();
+		this.skin = Number(Storage.get('skin')) || 1; 
 	};
 	
 	componentDidUpdate () {
@@ -156,9 +160,19 @@ class MenuSmile extends React.Component<Props, State> {
 		if (filter) {
 			sections = sections.filter((s: any) => {
 				s.emojis = (s.emojis || []).filter((c: any) => { return c.match(reg); });
+				s.emojis = s.emojis.map((it: string) => { 
+					return { smile: it, skin: this.skin }; 
+				});
 				return s.emojis.length > 0;
 			});
 		};
+		
+		sections = sections.map((s: any) => {
+			s.emojis = s.emojis.map((it: string) => { 
+				return { smile: it, skin: this.skin }; 
+			});
+			return s;
+		});
 		
 		if (lastIds && lastIds.length) {
 			sections.unshift({
@@ -194,21 +208,26 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	onRandom () {
-		this.onSelect(Util.randomSmile().replace(/:/g, ''));
+		this.onSelect(Util.randomSmile().replace(/:/g, ''), 1);
 	};
 	
-	onSelect (id: string) {
+	onSelect (id: string, skin: number) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
-		this.setLastIds(id);
+		this.skin = Number(skin) || 1;
+		Storage.set('skin', this.skin);
+		
+		this.setLastIds(id, skin);
+		
+		const text = $(Emoji({ html: true, emoji: id, skin: this.skin, size: 24, native: true })).text();
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(id);
+		onSelect(text);
 	};
 	
-	onMouseDown (id: string) {
+	onMouseDown (n: number, id: string, skin: number) {
 		const win = $(window);
 		const item = EmojiData.emojis[id];
 		
@@ -221,7 +240,7 @@ class MenuSmile extends React.Component<Props, State> {
 				
 				commonStore.menuOpen('smileSkin', {
 					type: I.MenuType.Horizontal,
-					element: '.menuSmile #item-' + id,
+					element: '.menuSmile #item-' + n,
 					offsetX: 0,
 					offsetY: 4,
 					vertical: I.MenuDirection.Top,
@@ -229,7 +248,8 @@ class MenuSmile extends React.Component<Props, State> {
 					data: {
 						smileId: id,
 						onSelect: (skin: number) => {
-							this.onSelect(id + '::skin-tone-' + skin);
+							this.onSelect(id, skin);
+							this.forceUpdate();
 						}
 					},
 					onClose: () => {
@@ -244,21 +264,21 @@ class MenuSmile extends React.Component<Props, State> {
 				return;
 			};
 			if (this.id) {
-				this.onSelect(id);
+				this.onSelect(id, skin);
 			};
 			window.clearTimeout(this.timeoutMenu);
 			win.unbind('mouseup.smile')
 		});
 	};
 	
-	setLastIds (id: string) {
+	setLastIds (id: string, skin: number) {
 		if (!id) {
 			return;
 		};
 		
 		let ids = Storage.get('smileIds') || [];
 		
-		ids.unshift(id);
+		ids.unshift({ smile: id, skin: skin });
 		ids = [ ...new Set(ids) ];
 		ids = ids.slice(0, LIMIT);
 		
@@ -267,7 +287,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	onRemove () {
-		this.onSelect('');
+		this.onSelect('', 1);
 	};
 	
 };
