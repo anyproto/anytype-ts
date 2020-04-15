@@ -57,7 +57,7 @@ class Controls extends React.Component<Props, {}> {
 			data: {
 				onSelect: (icon: string) => {
 					C.BlockSetDetails(rootId, [ 
-						{ key: 'icon', value: (icon ? ':' + icon + ':' : '') } 
+						{ key: 'icon', value: icon } 
 					]);
 				}
 			}

@@ -8,6 +8,7 @@ const $ = require('jquery');
 class BlockStore {
 	@observable public rootId: string = '';
 	@observable public archiveId: string = '';
+	@observable public profileId: string = '';
 	@observable public breadcrumbsId: string = '';
 	
 	public treeObject: Map<string, any[]> = new Map();
@@ -25,6 +26,11 @@ class BlockStore {
 	};
 	
 	@computed
+	get profile (): string {
+		return this.profileId;
+	};
+	
+	@computed
 	get breadcrumbs (): string {
 		return this.breadcrumbsId;
 	};
@@ -37,6 +43,11 @@ class BlockStore {
 	@action
 	archiveSet (id: string) {
 		this.archiveId = String(id || '');
+	};
+	
+	@action
+	profileSet (id: string) {
+		this.profileId = String(id || '');
 	};
 	
 	@action

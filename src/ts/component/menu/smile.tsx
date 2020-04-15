@@ -224,7 +224,7 @@ class MenuSmile extends React.Component<Props, State> {
 		const text = $(Emoji({ html: true, emoji: id, skin: this.skin, size: 24, native: true })).text();
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(text);
+		onSelect(String(text || ''));
 	};
 	
 	onMouseDown (n: number, id: string, skin: number) {

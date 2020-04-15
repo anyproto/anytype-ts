@@ -87,7 +87,13 @@ class Dispatcher {
 					
 				case 'blockShow':
 					let blocks = data.blocks.map((it: any) => {
-						return blockStore.prepareBlockFromProto(it);
+						it = blockStore.prepareBlockFromProto(it);
+						if (it.id == rootId) {
+							it.type = I.BlockType.Page;
+							it.pageType = data.type;
+							console.log(it);
+						};
+						return it;
 					});
 					
 					blockStore.blocksSet(rootId, blocks);

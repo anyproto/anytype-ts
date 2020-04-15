@@ -5,9 +5,10 @@ class Block implements I.Block {
 	
 	id: string = '';
 	parentId: string = '';
+	pageType: I.PageType = 0;
+	type: I.BlockType = I.BlockType.Empty;
 	
 	@observable childrenIds: string[] = [];
-	@observable type: I.BlockType = I.BlockType.Text;
 	@observable align: I.BlockAlign = I.BlockAlign.Left;
 	@observable bgColor: string = '';
 	@observable fields: any = {};
@@ -71,6 +72,10 @@ class Block implements I.Block {
 	
 	isLink (): boolean {
 		return this.type == I.BlockType.Link;
+	};
+	
+	isLinkArchive (): boolean {
+		return this.isLink() && (this.content.style == I.LinkStyle.Archive);
 	};
 	
 	isIcon (): boolean {

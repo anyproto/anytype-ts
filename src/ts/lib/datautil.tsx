@@ -122,8 +122,10 @@ class DataUtil {
 			};
 
 			commonStore.gatewaySet(message.gatewayUrl);
+			
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
+			blockStore.profileSet(message.profileBlockId);
 			
 			if (!breadcrumbs) {
 				C.BlockOpenBreadcrumbs((message: any) => {

@@ -1,9 +1,8 @@
 export enum BlockType {
-	Dashboard	 = 'dashboard',
+	Empty		 = '',
 	Page		 = 'page',
 	Dataview	 = 'dataview',
 	Layout		 = 'layout',
-	
 	Text		 = 'text',
 	File		 = 'file',
 	Bookmark	 = 'bookmark',
@@ -50,6 +49,7 @@ export interface Block {
 	isLayoutColumn?(): boolean;
 	isLayoutDiv?(): boolean;
 	isLink?(): boolean;
+	isLinkArchive?(): boolean;
 	isIcon?(): boolean;
 	isFile?(): boolean;
 	isImage?(): boolean;

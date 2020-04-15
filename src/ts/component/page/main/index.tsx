@@ -32,7 +32,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	render () {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
-		const { root } = blockStore;
+		const { root, profile } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 
 		if (!element) {
@@ -58,7 +58,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 						<div className="rightMenu">
 							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={this.onSettings} />
 							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} tooltip="Accounts" onClick={this.onAccount} />
-							<IconUser {...account} tooltip="Your profile" onClick={this.onProfile} className="dn" />
+							<IconUser {...account} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
@@ -100,10 +100,18 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
+		const { history } = this.props;
+		const { profile } = blockStore;
+		
+		if (!profile) {
+			return;
+		};
+		
+		history.push('/main/edit/' + profile);
 	};
 	
 	onSelect (e: any, block: any) {
-		if (block.content.style == I.LinkStyle.Archive) {
+		if (block.isLinkArchive()) {
 			commonStore.popupOpen('archive', {});
 		} else {
 			DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
