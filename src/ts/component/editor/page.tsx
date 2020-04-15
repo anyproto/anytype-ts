@@ -228,12 +228,9 @@ class EditorPage extends React.Component<Props, State> {
 				this.focusTitle();
 			};
 
+			this.setState({ loading: false });
 			this.resize();
-			
-			//window.setTimeout(() => {
-				this.setState({ loading: false });
-				blockStore.setNumbers(rootId);
-			//}, 300);
+			blockStore.setNumbers(rootId);
 		});
 	};
 	

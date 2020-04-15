@@ -84,6 +84,15 @@ class Dispatcher {
 					authStore.accountAdd(data.account);
 					break;
 					
+				case 'accountDetails':
+					const details = StructDecode.decodeStruct(data.details);
+					const account = authStore.account;
+					
+					account.name = String(details.name || '');
+					//account.icon = String(details.icon || '');
+					
+					break;
+					
 				case 'blockShow':
 					let blocks = data.blocks.map((it: any) => {
 						it = blockStore.prepareBlockFromProto(it);
