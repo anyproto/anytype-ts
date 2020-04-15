@@ -135,6 +135,7 @@ console.log('[Version]', version, 'isPackaged', app.isPackaged);
 
 Sentry.init({
 	release: version,
+	environment: (app.isPackaged ? 'production' : 'development'),
 	dsn: Constant.sentry,
 	integrations: [
 		new Sentry.Integrations.GlobalHandlers({
