@@ -16,7 +16,7 @@ class Dispatcher {
 		
 		const handler = (item: any) => {
 			try {
-				this.event(item);
+				this.event(com.anytype.Event.decode(item.data));
 			} catch (e) {
 				console.error(e);
 			};
@@ -25,9 +25,8 @@ class Dispatcher {
 		bindings.setEventHandler(handler);
 	};
 	
-	event (item: any) {
+	event (event: any) {
 		let { focused } = focus;
-		let event = com.anytype.Event.decode(item.data);
 		let rootId = event.contextId;
 		let debug = Storage.get('debugMW');
 		
@@ -371,13 +370,17 @@ class Dispatcher {
 					console.error('[Dispatcher.call]', type, 'code:', message.error.code, 'description:', message.error.description);
 				};
 				
+				if (message.event) {
+					this.event(message.event);
+				};
+				
 				if (callBack) {
 					callBack(message);
 				};
 				
 				if (debug) {
 					t1 = performance.now();
-					console.log('[Dispatcher.call] callBack', type, message, Math.ceil(t1 - t0) + 'ms');					
+					console.log('[Dispatcher.call] CallBack', type, JSON.stringify(message, null, 3), Math.ceil(t1 - t0) + 'ms');					
 				};
 			});
 		} catch (e) {
