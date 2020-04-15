@@ -10,6 +10,8 @@ interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 };
 
+const { dialog } = window.require('electron').remote;
+
 @observer
 class Controls extends React.Component<Props, {}> {
 
@@ -44,8 +46,23 @@ class Controls extends React.Component<Props, {}> {
 	
 	onAddIcon (e: any) {
 		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		
+		if (!root) {
+			return;
+		};
 		
 		focus.clear(true);
+		
+		if (root.isPageProfile()) {
+			this.onAddIconUser();
+		} else {
+			this.onAddIconPage();
+		};
+	};
+	
+	onAddIconPage () {
+		const { rootId } = this.props;
 		
 		commonStore.menuOpen('smile', { 
 			element: '#button-add-icon',
@@ -61,6 +78,35 @@ class Controls extends React.Component<Props, {}> {
 					]);
 				}
 			}
+		});
+	};
+	
+	onAddIconUser () {
+		const { rootId } = this.props;
+		const options: any = { 
+			properties: [ 'openFile' ], 
+			filters: [
+				{ 
+					name: '', 
+					extensions: [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ] 
+				},
+			],
+		};
+		
+		dialog.showOpenDialog(null, options, (files: any) => {
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+			
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
+				C.BlockSetDetails(rootId, [ 
+					{ key: 'icon', value: message.hash },
+				]);
+			});
 		});
 	};
 	
