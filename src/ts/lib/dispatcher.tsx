@@ -89,8 +89,6 @@ class Dispatcher {
 					const account = authStore.account;
 					
 					account.name = String(details.name || '');
-					//account.icon = String(details.icon || '');
-					
 					break;
 					
 				case 'blockShow':
@@ -99,6 +97,8 @@ class Dispatcher {
 						if (it.id == rootId) {
 							it.type = I.BlockType.Page;
 							it.pageType = data.type;
+							
+							console.log(it);
 						};
 						return it;
 					});
@@ -351,9 +351,9 @@ class Dispatcher {
 		return 0;
 	};
 	
-	call (type: string, data: any, callBack?: (message: any) => void) {
+	public request (type: string, data: any, callBack?: (message: any) => void) {
 		if (!this.service[type]) {
-			console.error('[Dispatcher.call] Service not found: ', type);
+			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
 		
@@ -363,7 +363,7 @@ class Dispatcher {
 		
 		if (debug) {
 			t0 = performance.now();
-			console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 3));
+			console.log('[Dispatcher.request]', type, JSON.stringify(data, null, 3));
 		};
 		
 		analytics.event(Util.toUpperCamelCase(type), data);
@@ -375,7 +375,7 @@ class Dispatcher {
 				message.error.description = String(message.error.description || '');
 				
 				if (message.error.code) {
-					console.error('[Dispatcher.call]', type, 'code:', message.error.code, 'description:', message.error.description);
+					console.error('[Dispatcher.request]', type, 'code:', message.error.code, 'description:', message.error.description);
 				};
 				
 				if (message.event) {
@@ -388,7 +388,7 @@ class Dispatcher {
 				
 				if (debug) {
 					t1 = performance.now();
-					console.log('[Dispatcher.call] CallBack', type, JSON.stringify(message, null, 3), Math.ceil(t1 - t0) + 'ms');					
+					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3), Math.ceil(t1 - t0) + 'ms');					
 				};
 			});
 		} catch (e) {

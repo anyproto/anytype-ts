@@ -5,7 +5,7 @@ const Struct = new StructEncode();
 const Constant = require('json/constant.json');
 
 const VersionGet = (callBack?: (message: any) => void) => {
-	dispatcher.call('versionGet', {}, callBack);
+	dispatcher.request('versionGet', {}, callBack);
 };
 
 const ImageGetBlob = (hash: string, size: I.ImageSize, callBack?: (message: any) => void) => {
@@ -13,22 +13,22 @@ const ImageGetBlob = (hash: string, size: I.ImageSize, callBack?: (message: any)
 		hash: hash,
 		size: size
 	};
-	dispatcher.call('imageGetBlob', request, callBack);
+	dispatcher.request('imageGetBlob', request, callBack);
 };
 
 const ConfigGet = (callBack?: (message: any) => void) => {
-	dispatcher.call('configGet', {}, callBack);
+	dispatcher.request('configGet', {}, callBack);
 };
 
 const Shutdown = (callBack?: (message: any) => void) => {
-	dispatcher.call('shutdown', {}, callBack);
+	dispatcher.request('shutdown', {}, callBack);
 };
 
 const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	const request = {
 		url: url,
 	};
-	dispatcher.call('linkPreview', request, callBack);
+	dispatcher.request('linkPreview', request, callBack);
 };
 
 const UploadFile = (url: string, localPath: string, type: I.FileType, callBack?: (message: any) => void) => {
@@ -37,21 +37,21 @@ const UploadFile = (url: string, localPath: string, type: I.FileType, callBack?:
 		localPath: localPath,
 		type: type,
 	};
-	dispatcher.call('uploadFile', request, callBack);
+	dispatcher.request('uploadFile', request, callBack);
 };
 
 const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
 	const request = {
 		id: id,
 	};
-	dispatcher.call('processCancel', request, callBack);
+	dispatcher.request('processCancel', request, callBack);
 };
 
 const WalletCreate = (path: string, callBack?: (message: any) => void) => {
 	const request = {
 		rootPath: path,
 	};
-	dispatcher.call('walletCreate', request, callBack);
+	dispatcher.request('walletCreate', request, callBack);
 };
 
 const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any) => void) => {
@@ -59,7 +59,7 @@ const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any)
 		rootPath: path,
 		mnemonic: mnemonic,
 	};
-	dispatcher.call('walletRecover', request, callBack);
+	dispatcher.request('walletRecover', request, callBack);
 };
 
 const AccountCreate = (name: string, path: string, code: string, callBack?: (message: any) => void) => {
@@ -68,11 +68,11 @@ const AccountCreate = (name: string, path: string, code: string, callBack?: (mes
 		avatarLocalPath: path,
 		alphaInviteCode: code,
 	};
-	dispatcher.call('accountCreate', request, callBack);
+	dispatcher.request('accountCreate', request, callBack);
 };
 
 const AccountRecover = (callBack?: (message: any) => void) => {
-	dispatcher.call('accountRecover', {}, callBack);
+	dispatcher.request('accountRecover', {}, callBack);
 };
 
 const AccountSelect = (id: string, path: string, callBack?: (message: any) => void) => {
@@ -80,14 +80,14 @@ const AccountSelect = (id: string, path: string, callBack?: (message: any) => vo
 		id: id,
 		rootPath: path,
 	};
-	dispatcher.call('accountSelect', request, callBack);
+	dispatcher.request('accountSelect', request, callBack);
 };
 
 const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
 	const request = {
 		removeData: removeData,
 	};
-	dispatcher.call('accountStop', request, callBack);
+	dispatcher.request('accountStop', request, callBack);
 };
 
 const ExternalDropFiles = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
@@ -97,7 +97,7 @@ const ExternalDropFiles = (contextId: string, targetId: string, position: I.Bloc
 		position: position,
 		localFilePaths: paths,
 	};
-	dispatcher.call('externalDropFiles', request, callBack);
+	dispatcher.request('externalDropFiles', request, callBack);
 };
 
 const BlockOpen = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
@@ -105,12 +105,12 @@ const BlockOpen = (blockId: string, breadcrumbsIds: string[], callBack?: (messag
 		blockId: blockId,
 		breadcrumbsIds: breadcrumbsIds,
 	};
-	dispatcher.call('blockOpen', request, callBack);
+	dispatcher.request('blockOpen', request, callBack);
 };
 
 const BlockOpenBreadcrumbs = (callBack?: (message: any) => void) => {
 	const request = {};
-	dispatcher.call('blockOpenBreadcrumbs', request, callBack);
+	dispatcher.request('blockOpenBreadcrumbs', request, callBack);
 };
 
 const BlockCutBreadcrumbs = (id: string, index: number, callBack?: (message: any) => void) => {
@@ -118,7 +118,7 @@ const BlockCutBreadcrumbs = (id: string, index: number, callBack?: (message: any
 		breadcrumbsId: id,
 		index: index,
 	};
-	dispatcher.call('blockCutBreadcrumbs', request, callBack);
+	dispatcher.request('blockCutBreadcrumbs', request, callBack);
 };
 
 const BlockClose = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
@@ -126,21 +126,21 @@ const BlockClose = (blockId: string, breadcrumbsIds: string[], callBack?: (messa
 		blockId: blockId,
 		breadcrumbsIds: breadcrumbsIds,
 	};
-	dispatcher.call('blockClose', request, callBack);
+	dispatcher.request('blockClose', request, callBack);
 };
 
 const BlockUndo = (contextId: string, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
 	};
-	dispatcher.call('blockUndo', request, callBack);
+	dispatcher.request('blockUndo', request, callBack);
 };
 
 const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
 	};
-	dispatcher.call('blockRedo', request, callBack);
+	dispatcher.request('blockRedo', request, callBack);
 };
 
 const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
@@ -150,7 +150,7 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 		targetId: targetId,
 		position: position,
 	};
-	dispatcher.call('blockCreate', request, callBack);
+	dispatcher.request('blockCreate', request, callBack);
 };
 
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
@@ -163,7 +163,7 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 		position: position,
 		details: Struct.encodeStruct(details),
 	};
-	dispatcher.call('blockCreatePage', request, callBack);
+	dispatcher.request('blockCreatePage', request, callBack);
 };
 
 const BlockSetPageIsArchived = (contextId: string, blockId: string, isArchived: boolean, callBack?: (message: any) => void) => {
@@ -172,7 +172,7 @@ const BlockSetPageIsArchived = (contextId: string, blockId: string, isArchived: 
 		blockId: blockId,
 		isArchived: isArchived,
 	};
-	dispatcher.call('blockSetPageIsArchived', request, callBack);
+	dispatcher.request('blockSetPageIsArchived', request, callBack);
 };
 
 const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
@@ -180,7 +180,7 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 		contextId: contextId,
 		blockIds: blockIds,
 	};
-	dispatcher.call('blockUnlink', request, callBack);
+	dispatcher.request('blockUnlink', request, callBack);
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
@@ -190,7 +190,7 @@ const BlockSetTextText = (contextId: string, blockId: string, text: string, mark
 		text: text,
 		marks: { marks: Mark.checkRanges(text, marks) },
 	};
-	dispatcher.call('blockSetTextText', request, callBack);
+	dispatcher.request('blockSetTextText', request, callBack);
 };
 
 const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
@@ -199,7 +199,7 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 		blockId: blockId,
 		checked: checked,
 	};
-	dispatcher.call('blockSetTextChecked', request, callBack);
+	dispatcher.request('blockSetTextChecked', request, callBack);
 };
 
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
@@ -208,7 +208,7 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 		blockId: blockId,
 		fields: Struct.encodeStruct(fields || {}),
 	};
-	dispatcher.call('blockSetFields', request, callBack);
+	dispatcher.request('blockSetFields', request, callBack);
 };
 
 const BlockSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
@@ -221,7 +221,7 @@ const BlockSetDetails = (contextId: string, details: any[], callBack?: (message:
 		contextId: contextId,
 		details: details,
 	};
-	dispatcher.call('blockSetDetails', request, callBack);
+	dispatcher.request('blockSetDetails', request, callBack);
 };
 
 const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
@@ -230,7 +230,7 @@ const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callB
 		firstBlockId: blockId1,
 		secondBlockId: blockId2,
 	};
-	dispatcher.call('blockMerge', request, callBack);
+	dispatcher.request('blockMerge', request, callBack);
 };
 
 const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, callBack?: (message: any) => void) => {
@@ -240,7 +240,7 @@ const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, styl
 		range: range,
 		style: style,
 	};
-	dispatcher.call('blockSplit', request, callBack);
+	dispatcher.request('blockSplit', request, callBack);
 };
 
 const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, callBack?: (message: any) => void) => {
@@ -249,7 +249,7 @@ const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, cal
 		blockId: blockId,
 		url: url,
 	};
-	dispatcher.call('blockBookmarkFetch', request, callBack);	
+	dispatcher.request('blockBookmarkFetch', request, callBack);	
 };
 
 const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
@@ -259,7 +259,7 @@ const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, positi
 		position: position,
 		url: url,
 	};
-	dispatcher.call('blockBookmarkCreateAndFetch', request, callBack);	
+	dispatcher.request('blockBookmarkCreateAndFetch', request, callBack);	
 };
 
 const BlockUpload = (contextId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) => {
@@ -273,7 +273,7 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 	if (path) {
 		request.filePath = path;
 	};
-	dispatcher.call('blockUpload', request, callBack);	
+	dispatcher.request('blockUpload', request, callBack);	
 };
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
@@ -288,7 +288,7 @@ const BlockFileCreateAndUpload = (contextId: string, targetId: string, position:
 	if (path) {
 		request.filePath = path;
 	};
-	dispatcher.call('blockFileCreateAndUpload', request, callBack);	
+	dispatcher.request('blockFileCreateAndUpload', request, callBack);	
 };
 
 const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
@@ -298,7 +298,7 @@ const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: an
 		contextId: contextId,
 		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
-	dispatcher.call('blockCopy', request, callBack);	
+	dispatcher.request('blockCopy', request, callBack);	
 };
 
 const BlockCut = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
@@ -308,7 +308,7 @@ const BlockCut = (contextId: string, blocks: I.Block[], callBack?: (message: any
 		contextId: contextId,
 		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
-	dispatcher.call('blockCut', request, callBack);	
+	dispatcher.request('blockCut', request, callBack);	
 };
 
 const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
@@ -318,7 +318,7 @@ const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (mess
 		contextId: contextId,
 		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
-	dispatcher.call('blockExport', request, callBack);
+	dispatcher.request('blockExport', request, callBack);
 };
 
 const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, copyRange: I.TextRange, blockIds: string[], data: any, callBack?: (message: any) => void) => {
@@ -334,7 +334,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, co
 		htmlSlot: data.html,
 		anySlot: (data.anytype || []).map((it: any) => { return blockStore.prepareBlockToProto(it); }),
 	};
-	dispatcher.call('blockPaste', request, callBack);	
+	dispatcher.request('blockPaste', request, callBack);	
 };
 
 const BlockListMove = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
@@ -345,7 +345,7 @@ const BlockListMove = (contextId: string, targetContextId: string, blockIds: str
 		dropTargetId: targetId,
 		position: position,
 	};
-	dispatcher.call('blockListMove', request, callBack);
+	dispatcher.request('blockListMove', request, callBack);
 };
 
 const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
@@ -356,7 +356,7 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 		dropTargetId: targetId,
 		position: position,
 	};
-	dispatcher.call('blockListMoveToNewPage', request, callBack);
+	dispatcher.request('blockListMoveToNewPage', request, callBack);
 };
 
 const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
@@ -364,7 +364,7 @@ const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], 
 		contextId: contextId,
 		blockIds: blockIds,
 	};
-	dispatcher.call('blockListConvertChildrenToPages', request, callBack);
+	dispatcher.request('blockListConvertChildrenToPages', request, callBack);
 };
 
 const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
@@ -374,7 +374,7 @@ const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: str
 		targetId: targetId,
 		position: position,
 	};
-	dispatcher.call('blockListDuplicate', request, callBack);
+	dispatcher.request('blockListDuplicate', request, callBack);
 };
 
 const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
@@ -383,7 +383,7 @@ const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.T
 		blockIds: blockIds,
 		style: style,
 	};
-	dispatcher.call('blockListSetTextStyle', request, callBack);
+	dispatcher.request('blockListSetTextStyle', request, callBack);
 };
 
 const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
@@ -392,7 +392,7 @@ const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.Te
 		blockIds: blockIds,
 		style: style,
 	};
-	dispatcher.call('blockListSetDivStyle', request, callBack);
+	dispatcher.request('blockListSetDivStyle', request, callBack);
 };
 
 const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
@@ -401,7 +401,7 @@ const BlockListSetTextColor = (contextId: string, blockIds: string[], color: str
 		blockIds: blockIds,
 		color: color,
 	};
-	dispatcher.call('blockListSetTextColor', request, callBack);
+	dispatcher.request('blockListSetTextColor', request, callBack);
 };
 
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
@@ -414,7 +414,7 @@ const BlockListSetFields = (contextId: string, fields: any, callBack?: (message:
 		contextId: contextId,
 		blockFields: fields,
 	};
-	dispatcher.call('blockListSetFields', request, callBack);	
+	dispatcher.request('blockListSetFields', request, callBack);	
 };
 
 const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
@@ -423,7 +423,7 @@ const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], colo
 		blockIds: blockIds,
 		color: color,
 	};
-	dispatcher.call('blockListSetBackgroundColor', request, callBack);
+	dispatcher.request('blockListSetBackgroundColor', request, callBack);
 };
 
 const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockAlign, callBack?: (message: any) => void) => {
@@ -432,14 +432,14 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 		blockIds: blockIds,
 		align: align,
 	};
-	dispatcher.call('blockListSetAlign', request, callBack);
+	dispatcher.request('blockListSetAlign', request, callBack);
 };
 
 const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => void) => {
 	const request = {
 		blockId: contextId,
 	};
-	dispatcher.call('blockGetPublicWebURL', request, callBack);
+	dispatcher.request('blockGetPublicWebURL', request, callBack);
 };
 
 export {

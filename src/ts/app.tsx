@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
-import { C, Util, keyboard, Storage, analytics } from 'ts/lib';
+import { C, Util, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -145,10 +145,16 @@ Sentry.init({
 });
 
 declare global {
-	interface Window { getStore: any; }
+	interface Window { 
+		Store: any; 
+		Cmd: any; 
+		Dispatcher: any; 
+	}
 };
 
-window.getStore = () => { return rootStore; };
+window.Store = () => { return rootStore; };
+window.Cmd = () => { return C; };
+window.Dispatcher = () => { return dispatcher; };
 
 class App extends React.Component<Props, State> {
 	
