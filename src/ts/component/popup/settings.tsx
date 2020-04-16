@@ -44,6 +44,7 @@ class PopupSettings extends React.Component<Props, State> {
 		this.onBlurPin = this.onBlurPin.bind(this);
 		this.onChangePin = this.onChangePin.bind(this);
 		this.onSelectPin = this.onSelectPin.bind(this);
+		this.onTurnOffPin = this.onTurnOffPin.bind(this);
 		this.onFileClick = this.onFileClick.bind(this);
 	};
 	
