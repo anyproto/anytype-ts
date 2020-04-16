@@ -89,6 +89,9 @@ class PopupSettings extends React.Component<Props, State> {
 							<div className="row" onClick={() => { this.onPage('pinIndex'); }}>
 								<Icon className="pin" />
 								<Label text="Pin code" />
+								<div className="status">
+									{pin ? 'On' : 'Off'}
+								</div>
 								<Icon className="arrow" />
 							</div>
 						</div>
@@ -178,16 +181,16 @@ class PopupSettings extends React.Component<Props, State> {
 						
 						{pin ? (
 							<div className="buttons">
-								<Button text="Turn pin code off" className="orange" onClick={this.onTurnOffPin} />
-								<Button text="Change pin code" className="orange" onClick={() => {
-									this.onConfirmPin = this.onSelectPin(); 
+								<Button text="Turn pin code off" className="blank" onClick={this.onTurnOffPin} />
+								<Button text="Change pin code" className="blank" onClick={() => {
+									this.onConfirmPin = this.onSelectPin; 
 									this.onPage('pinConfirm');
 								}} />
 							</div>
 						): (
 							<div className="buttons">
-								<Button text="Turn pin code on" className="orange" onClick={() => {
-									this.onConfirmPin = this.onSelectPin(); 
+								<Button text="Turn pin code on" className="blank" onClick={() => {
+									this.onConfirmPin = this.onSelectPin; 
 									this.onPage('pinSelect');
 								}} />
 							</div>
@@ -230,7 +233,7 @@ class PopupSettings extends React.Component<Props, State> {
 						{head}
 						
 						<Title text="Pin code" />
-						<Label text="To continue, first verify that it's you. Enter your pin code" />
+						<Label text="To continue, first verify that it’s you. Enter current pin code" />
 						<div className="inputs">
 							{inputs.map((item: any, i: number) => (
 								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />

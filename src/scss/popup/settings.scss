@@ -39,6 +39,8 @@
 				}
 				
 				.side { width: 50%; }
+				
+				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -11px; height: 24px; color: $colorDarkGrey; }
 			}
 			
 			.logout { color: $colorDarkGrey; cursor: pointer; text-align: center; }
@@ -92,10 +94,11 @@
 			.input-password { font-size: 36px; }
 			.input:last-child { margin: 0px; }
 			
-			.button { 
+			.button.blank { 
 				padding: 20px 0px; width: 100%; display: block; height: auto; line-height: 24px; background: none; color: #e89d00;
-				border-bottom: 1px solid #eae9e0;
+				border: 0px; border-radius: 0px; border-bottom: 1px solid #eae9e0;
 			}
+			.button.blank:hover { color: $colorBlack; }
 		}
 
 	}
