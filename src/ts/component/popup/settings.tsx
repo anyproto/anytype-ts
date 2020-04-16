@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 
 const { dialog } = window.require('electron').remote;
 const $ = require('jquery');
+const raf = require('raf');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
 
@@ -59,7 +60,6 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'index':
 				content = (
 					<div>
-						<Icon className="close" onClick={this.onClose} />
 						<Title text="Settings" />
 						
 						<div className="rows">
@@ -80,25 +80,6 @@ class PopupSettings extends React.Component<Props, State> {
 								<Label text="Pin code" />
 								<Icon className="arrow" />
 							</div>
-							
-							<div className="row flex dn">
-								<div className="side left">
-									<Icon className="notify" />
-									<Label text="Notifications" />
-								</div>
-								<div className="side right">
-									<div className="switches">
-										<div className="item">
-											<div className="name">Updates</div>
-											<Switch value={true} className="green" />
-										</div>
-										<div className="item">
-											<div className="name">New invites</div>
-											<Switch className="green" />
-										</div>
-									</div>
-								</div>
-							</div>
 						</div>
 						
 						<div className="logout" onClick={this.onLogout}>Log out</div>
@@ -107,9 +88,15 @@ class PopupSettings extends React.Component<Props, State> {
 				break;
 				
 			case 'wallpaper':
-				let covers = [];
-				for (let i = 1; i <= 7; ++i) {
-					covers.push({ id: i, image: '' });
+				let covers1 = [];
+				let covers2 = [];
+				
+				for (let i = 1; i <= 10; ++i) {
+					covers1.push({ id: i, image: '' });
+				};
+				
+				for (let i = 11; i <= 17; ++i) {
+					covers2.push({ id: i, image: '' });
 				};
 				
 				const Item = (item: any) => (
@@ -119,7 +106,7 @@ class PopupSettings extends React.Component<Props, State> {
 				);
 				
 				if (coverImg) {
-					covers.unshift({ id: 0, image: coverImg });
+					covers2.unshift({ id: 0, image: coverImg });
 				};
 				
 				content = (
@@ -127,17 +114,26 @@ class PopupSettings extends React.Component<Props, State> {
 						<Icon className="back" onClick={() => { this.onPage('index'); }} />
 						<Title text="Wallpaper" />
 						
-						<div className="row">
-							<Label text="Upload wallpaper. For best results upload high resolution images." />
+						<div className="row first">
+							<Label text="Choose or upload the wallpaper. For best results upload high resolution images." />
 							<div className="fileWrap item" onClick={this.onFileClick}>
 								<Cover className="upload" />
 							</div>
 						</div>
 						
 						<div className="row">
-							<Label text="Choose wallpaper" />
+							<Label className="name" text="Colours" />
 							<div className="covers">
-								{covers.map((item: any, i: number) => (
+								{covers1.map((item: any, i: number) => (
+									<Item key={i} {...item} active={item.id == coverId} />
+								))}
+							</div>
+						</div>
+						
+						<div className="row last">
+							<Label className="name" text="Pictures" />
+							<div className="covers">
+								{covers2.map((item: any, i: number) => (
 									<Item key={i} {...item} active={item.id == coverId} />
 								))}
 							</div>
@@ -205,10 +201,22 @@ class PopupSettings extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={page}>
+			<div className={'tab ' + Util.toCamelCase('tab-' + page)}>
 				{content}
 			</div>
 		);
+	};
+	
+	componentDidMount () {
+		this.init();
+	};
+	
+	componentDidUpdate () {
+		this.init();
+	};
+	
+	componentWillUnmount () {
+		$(window).unbind('resize.settings');
 	};
 	
 	onFileClick (e: any) {
@@ -303,6 +311,18 @@ class PopupSettings extends React.Component<Props, State> {
 		C.AccountStop(false);
 		authStore.logout();
 		history.push('/');
+	};
+	
+	init () {
+		this.resize();
+		$(window).unbind('resize.settings').on('resize.settings', () => { this.resize(); });
+	};
+	
+	resize () {
+		const obj = $('#popupSettings');
+		raf(() => {
+			obj.css({ marginTop: -obj.outerHeight() / 2 });
+		});
 	};
 	
 };

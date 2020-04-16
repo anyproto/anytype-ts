@@ -1,8 +1,10 @@
 @import "~scss/_vars";
 
 .popups {
-	.popupSettings { width: 672px; height: 530px; padding: 33px 48px 44px 48px; }
+	.popupSettings { width: 672px; }
 	.popupSettings {
+		.content { height: 100%; }
+	
 		.icon { transition: none; }
 	
 		.icon.close { width: 16px; height: 16px; cursor: pointer; background-image: url('~img/icon/popup/close0.svg'); margin-bottom: 24px; }
@@ -14,16 +16,17 @@
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; margin-bottom: 15px; }
 		.inputs { margin-bottom: 32px; }
 		
-		.index {
+		.tab { padding: 48px; }
+		
+		.tabIndex {
 			.rows { margin-bottom: 20px; }
-			.row { padding: 22px 0px; border-bottom: 1px solid #e0ded2; cursor: pointer; position: relative; }
+			.row { padding: 22px 0px; border-bottom: 1px solid #eae9e0; cursor: pointer; position: relative; }
 			.row.flex { display: flex; }
 			.row {
-				.icon { width: 20px; height: 20px; margin: -2px 12px 0px 0px; }
-				.icon.wallpaper { background-size: 18px 18px; background-image: url('~img/icon/popup/settings/wallpaper.svg'); }
-				.icon.phrase { background-size: 18px 18px; background-image: url('~img/icon/popup/settings/phrase.svg'); }
-				.icon.pin { background-size: 16px 20px; background-image: url('~img/icon/popup/settings/pin.svg'); }
-				.icon.notify { background-size: 18px 20px; background-image: url('~img/icon/popup/settings/notify.svg'); }
+				.icon { width: 28px; height: 28px; margin: -2px 12px 0px 0px; }
+				.icon.wallpaper { background-image: url('~img/icon/popup/settings/wallpaper.svg'); }
+				.icon.phrase { background-image: url('~img/icon/popup/settings/phrase.svg'); }
+				.icon.pin { background-image: url('~img/icon/popup/settings/pin.svg'); }
 				
 				.label { display: inline-block; vertical-align: middle; font-weight: 500; }
 				.icon.arrow { 
@@ -32,32 +35,33 @@
 				}
 				
 				.side { width: 50%; }
-				
-				.switches {
-					.item { margin-bottom: 8px; }
-					.item:last-child { margin: 0px; }
-					.name { display: inline-block; vertical-align: middle; width: calc(100% - 28px); }
-				}
 			}
 			
-			.logout { color: #ff6745; cursor: pointer; font-weight: 500; }
+			.logout { color: $colorDarkGrey; cursor: pointer; text-align: center; }
 			.logout:hover { color: $colorBlack; }
 		}
 		
-		.wallpaper {
+		.tabWallpaper { overflow-y: scroll; height: 520px; }
+		
+		.tabWallpaper {
 			.covers { margin-left: -4px; width: 596px; }
 			
-			.row { margin-bottom: 24px; }
-			.row:lsat-child { margin: 0px; }
+			.row { margin-bottom: 8px; }
+			.row.first { margin-bottom: 24px; }
+			.row.last { margin: 0px; }
+			
 			.label { margin-bottom: 8px; } 
+			.label.name { margin-bottom: 11px; font-size: 13px; line-height: 18px; color: $colorDarkGrey; }
 			
 			.item { 
-				width: 140px; height: 88px; display: inline-block; vertical-align: top; margin: 0px 8px 8px 0px; cursor: pointer;
+				width: 108px; height: 70px; display: inline-block; vertical-align: top; margin: 0px 10px 16px 0px; cursor: pointer;
 				position: relative; border: 1px solid rgba(0,0,0,0); border-radius: 4px;
 			}
-			.item:nth-child(4n + 4) { margin-right: 0px; }
+			.item:nth-child(5n + 5) { margin-right: 0px; }
 			.item:hover, .item.active:hover { border: 2px solid $colorOrange; }
 			.item.active { border: 1px solid $colorLightGrey; }
+			
+			.item.fileWrap { margin: 0px; }
 			
 			.item {
 				.cover.upload { 
@@ -69,12 +73,12 @@
 			.cover { position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); }
 		}
 		
-		.phrase {
+		.tabPhrase {
 			.label { margin-bottom: 25px; }
 			.textarea { border-radius: 4px; padding: 24px 32px; }
 		}
 		
-		.pinSelect, .pinConfirm {
+		.tabPinSelect, .tabPinConfirm {
 			.label { margin-bottom: 25px; }
 			.input { 
 				width: 40px; height: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px;
