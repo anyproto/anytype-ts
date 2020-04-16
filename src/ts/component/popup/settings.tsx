@@ -372,6 +372,12 @@ class PopupSettings extends React.Component<Props, State> {
 	init () {
 		this.resize();
 		$(window).unbind('resize.settings').on('resize.settings', () => { this.resize(); });
+		
+		window.setTimeout(() => {
+			if (this.refObj[1]) {
+				this.refObj[1].focus();
+			};
+		}, 15);
 	};
 	
 	resize () {
