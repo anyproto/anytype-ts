@@ -269,7 +269,7 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isNumbered()) {
 						n++;
-						$('.markerInner.c' + item.id).text(n ? n + '.' : '');
+						$('#marker-' + item.id).text(n ? n + '.' : '');
 					} else {
 						n = 0;
 					};
@@ -279,7 +279,9 @@ class BlockStore {
 			};
 		};
 		
-		cb(root.childBlocks);
+		window.setTimeout(() => {
+			cb(root.childBlocks);
+		}, 10);
 	};
 	
 	getStructure (list: I.Block[]) {

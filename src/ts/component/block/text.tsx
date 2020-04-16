@@ -107,7 +107,7 @@ class BlockText extends React.Component<Props, {}> {
 			
 			return (
 				<div className={cm} onClick={item.onClick}>
-					<span className={ci}>{inner}</span>
+					<span id={'marker-' + id } className={ci}>{inner}</span>
 				</div>
 			);
 		};
