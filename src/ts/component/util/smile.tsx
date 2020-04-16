@@ -51,14 +51,21 @@ class Smile extends React.Component<Props, State> {
 			cn.push('canEdit');
 		};
 		
-		let data: any = null;
+		let colons = '';
 		if (icon) {
-			data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+			if (icon.match(':')) {
+				colons = icon;
+			} else {
+				const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+				if (data) {
+					colons = data.colons;
+				};
+			};
 		};
 		
 		return (
 			<div id={id} className={cn.join(' ')} onClick={this.onClick}>
-				{data ? <Emoji native={true} emoji={data.colons} set="apple" size={size} /> : <Icon className="blank" />}
+				{colons ? <Emoji native={true} emoji={colons} set="apple" size={size} /> : <Icon className="blank" />}
 			</div>
 		);
 	};

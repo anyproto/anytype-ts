@@ -30,6 +30,7 @@ class PopupSettings extends React.Component<Props, State> {
 		page: 'index',
 		preview: '',
 	};
+	onConfirmPin: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -50,9 +51,19 @@ class PopupSettings extends React.Component<Props, State> {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
 		const { page, preview } = this.state;
+		const pin = Storage.get('pin');
 		
 		let content = null;
 		let inputs = [];
+		
+		let head = (
+			<div className="head">
+				<div className="element" onClick={() => { this.onPage('index'); }}>
+					<Icon className="back" />
+					Settings
+				</div>
+			</div>
+		);
 		
 		switch (page) {
 			
@@ -75,7 +86,7 @@ class PopupSettings extends React.Component<Props, State> {
 								<Icon className="arrow" />
 							</div>
 							
-							<div className="row" onClick={() => { this.onPage('pinSelect'); }}>
+							<div className="row" onClick={() => { this.onPage('pinIndex'); }}>
 								<Icon className="pin" />
 								<Label text="Pin code" />
 								<Icon className="arrow" />
@@ -111,7 +122,8 @@ class PopupSettings extends React.Component<Props, State> {
 				
 				content = (
 					<div>
-						<Icon className="back" onClick={() => { this.onPage('index'); }} />
+						{head}
+						
 						<Title text="Wallpaper" />
 						
 						<div className="row first">
@@ -145,13 +157,42 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'phrase':
 				content = (
 					<div>
-						<Icon className="back" onClick={() => { this.onPage('index'); }} />
+						{head}
+						
 						<Title text="Keychain phrase" />
 						<Label text="Your Keychain phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place." />
 						<div className="inputs">
 							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
 						</div>
-						<Button text="I've written it down" className="orange" onClick={() => { this.onPage('index'); }} />
+					</div>
+				);
+				break;
+				
+			case 'pinIndex':
+				content = (
+					<div>
+						{head}
+						
+						<Title text="Pin code" />
+						<Label text="The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or keychain phrase. So, please, remember your pin code" />
+						
+						{pin ? (
+							<div className="buttons">
+								<Button text="Turn pin code off" className="orange" onClick={this.onTurnOffPin} />
+								<Button text="Change pin code" className="orange" onClick={() => {
+									this.onConfirmPin = this.onSelectPin(); 
+									this.onPage('pinConfirm');
+								}} />
+							</div>
+						): (
+							<div className="buttons">
+								<Button text="Turn pin code on" className="orange" onClick={() => {
+									this.onConfirmPin = this.onSelectPin(); 
+									this.onPage('pinSelect');
+								}} />
+							</div>
+						)}
+						
 					</div>
 				);
 				break;
@@ -164,7 +205,8 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						<Icon className="back" onClick={() => { this.onPage('index'); }} />
+						{head}
+						
 						<Title text="Pin code" />
 						<Label text="The pin code will protect your secret phrase. As we do not store your secret phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or secret phrase. So, please, remember your pin code." />
 						<div className="inputs">
@@ -185,7 +227,8 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						<Icon className="back" onClick={() => { this.onPage('index'); }} />
+						{head}
+						
 						<Title text="Pin code" />
 						<Label text="To continue, first verify that it's you. Enter your pin code" />
 						<div className="inputs">
@@ -273,7 +316,11 @@ class PopupSettings extends React.Component<Props, State> {
 		let pin = this.getPin();
 		if (pin.length == Constant.pinSize) {
 			this.pin = pin;
-			this.onSelectPin();
+			
+			if (this.onConfirmPin) {
+				this.onConfirmPin();
+				this.onConfirmPin = null;
+			};
 		};
 	};
 	
@@ -282,6 +329,11 @@ class PopupSettings extends React.Component<Props, State> {
 			Storage.set('pin', sha1(this.pin));
 		};
 		
+		this.onPage('index');
+	};
+	
+	onTurnOffPin () {
+		Storage.delete('pin');
 		this.onPage('index');
 	};
 	
