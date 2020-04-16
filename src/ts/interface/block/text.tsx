@@ -16,14 +16,15 @@ export enum TextStyle {
 };
 
 export enum MarkType {
-	Strike	 = 0,
-	Code	 = 1,
-	Italic	 = 2,
-	Bold	 = 3,
-	Under	 = 4,
-	Link	 = 5,
-	TextColor = 6,
-	BgColor	 = 7,
+	Strike		 = 0,
+	Code		 = 1,
+	Italic		 = 2,
+	Bold		 = 3,
+	Under		 = 4,
+	Link		 = 5,
+	TextColor	 = 6,
+	BgColor		 = 7,
+	Smile		 = 8,
 };
 
 export interface TextRange {

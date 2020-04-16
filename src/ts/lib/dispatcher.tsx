@@ -97,8 +97,6 @@ class Dispatcher {
 						if (it.id == rootId) {
 							it.type = I.BlockType.Page;
 							it.pageType = data.type;
-							
-							console.log(it);
 						};
 						return it;
 					});
@@ -360,6 +358,7 @@ class Dispatcher {
 		let debug = Storage.get('debugMW');
 		let t0 = 0;
 		let t1 = 0;
+		let t2 = 0;
 		
 		if (debug) {
 			t0 = performance.now();
@@ -370,6 +369,8 @@ class Dispatcher {
 		
 		try {
 			this.service[type](data, (message: any) => {
+				t1 = performance.now();
+				
 				message.error = message.error || {};
 				message.error.code = Number(message.error.code) || 0;
 				message.error.description = String(message.error.description || '');
@@ -387,8 +388,8 @@ class Dispatcher {
 				};
 				
 				if (debug) {
-					t1 = performance.now();
-					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3), Math.ceil(t1 - t0) + 'ms');					
+					t2 = performance.now();
+					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3), 'Middle time:', Math.ceil(t1 - t0) + 'ms', 'Render time:', Math.ceil(t2 - t1) + 'ms', 'Total time:', Math.ceil(t2 - t0) + 'ms');
 				};
 			});
 		} catch (e) {

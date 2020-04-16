@@ -280,12 +280,14 @@ class App extends React.Component<Props, State> {
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
 		
-		win.on('beforeunload', (e: any) => {
-			C.Shutdown((message: any) => {
-				ipcRenderer.send('appClose');
+		if (app.isPackaged) {
+			win.on('beforeunload', (e: any) => {
+				C.Shutdown((message: any) => {
+					ipcRenderer.send('appClose');
+				});
+				return false;
 			});
-			return false;
-		});
+		};
 	};
 	
 };

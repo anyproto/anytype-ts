@@ -1,7 +1,9 @@
 import { I, Util } from 'ts/lib';
+import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 
 const runes = require('runes');
-const Tags = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'tc', 'hlc' ];
+const Tags = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'tc', 'hlc', 'emo' ];
+const EmojiData = require('emoji-mart/data/apple.json');
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -203,7 +205,7 @@ class Mark {
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
 		let ranges: any[] = [];
-
+		
 		for (let mark of marks) {
 			borders.push(Number(mark.range.from));
 			borders.push(Number(mark.range.to));
@@ -242,11 +244,16 @@ class Mark {
 			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor ].indexOf(mark.type) >= 0) {
 				continue;
 			};
-				
+			
 			let data = 'data-range="' + mark.range.from + '-' + mark.range.to + '"';
+			let from = r[mark.range.from];
+			let to = r[mark.range.to - 1];
+			
+			if ((mark.type == I.MarkType.Smile) && mark.param) {
+			};
 				
-			if (r[mark.range.from] && r[mark.range.to - 1]) {
-				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + ' ' + data + '>' + r[mark.range.from];
+			if (from && to) {
+				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + ' ' + data + '>' + from;
 				r[mark.range.to - 1] += '</' + t + '>';
 			};
 		};
@@ -270,7 +277,7 @@ class Mark {
 			p2 = String(p2 || '').trim();
 			p3 = String(p3 || '').trim();
 
-			let end = p1 == '/';			
+			let end = p1 == '/';
 			let offset = Number(text.indexOf(s)) || 0;
 			let type = Tags.indexOf(p2)
 
