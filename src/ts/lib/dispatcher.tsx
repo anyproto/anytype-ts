@@ -389,7 +389,12 @@ class Dispatcher {
 				
 				if (debug) {
 					t2 = performance.now();
-					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3), 'Middle time:', Math.ceil(t1 - t0) + 'ms', 'Render time:', Math.ceil(t2 - t1) + 'ms', 'Total time:', Math.ceil(t2 - t0) + 'ms');
+					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3));
+					console.log(
+						'Middle time:', Math.ceil(t1 - t0) + 'ms', 
+						'Render time:', Math.ceil(t2 - t1) + 'ms', 
+						'Total time:', Math.ceil(t2 - t0) + 'ms'
+					);
 				};
 			});
 		} catch (e) {
