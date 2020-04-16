@@ -157,22 +157,19 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		let sections = Util.objectCopy(EmojiData.categories);
 		
-		if (filter) {
-			sections = sections.filter((s: any) => {
-				s.emojis = (s.emojis || []).filter((c: any) => { return c.match(reg); });
-				s.emojis = s.emojis.map((it: string) => { 
-					return { smile: it, skin: this.skin }; 
-				});
-				return s.emojis.length > 0;
-			});
-		};
-		
 		sections = sections.map((s: any) => {
 			s.emojis = s.emojis.map((it: string) => { 
 				return { smile: it, skin: this.skin }; 
 			});
 			return s;
 		});
+		
+		if (filter) {
+			sections = sections.filter((s: any) => {
+				s.emojis = (s.emojis || []).filter((c: any) => { return c.smile.match(reg); });
+				return s.emojis.length > 0;
+			});
+		};
 		
 		if (lastIds && lastIds.length) {
 			sections.unshift({

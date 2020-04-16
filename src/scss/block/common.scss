@@ -69,5 +69,6 @@
 		.placeHolder { display: none !important; } 
 	}
 	
-	.block.blockIcon > .wrapMenu { visibility: hidden; }
+	.block.blockIconPage > .wrapMenu { visibility: hidden; }
+	.block.blockIconUser > .wrapMenu { visibility: hidden; }
 }
