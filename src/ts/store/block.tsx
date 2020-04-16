@@ -219,6 +219,9 @@ class BlockStore {
 		let childBlocks = (element.childrenIds || []).map((it: string) => {
 			return blocks.find((item: any) => { return item.id == it; });
 		}).filter((it: any) => {
+			if (!it) {
+				return false;
+			};
 			if (filter) {
 				return filter(it);
 			};

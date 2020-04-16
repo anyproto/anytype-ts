@@ -51,10 +51,6 @@ class ListChildren extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{children.map((item: any, i: number) => {
-					if (!item) {
-						return null;
-					};
-					
 					let css: any = {};
 					let cn = [];
 					
