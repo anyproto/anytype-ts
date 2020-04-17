@@ -168,14 +168,14 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							dataset: dataset,
 							onSelect: (item: any) => {
 								if (item.type == I.BlockType.Text) {
-									C.BlockListSetTextStyle(rootId, blockIds, item.id, (message: any) => {
+									C.BlockListSetTextStyle(rootId, blockIds, item.key, (message: any) => {
 										focus.set(message.blockId, { from: length, to: length });
 										focus.apply();
 									});
 								};
 								
 								if (item.type == I.BlockType.Div) {
-									C.BlockListSetDivStyle(rootId, blockIds, item.id, (message: any) => {
+									C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
 										focus.set(message.blockId, { from: 0, to: 0 });
 										focus.apply();
 									});
@@ -226,7 +226,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						data: {
 							value: (mark ? mark.param : ''),
 							onChange: (param: string) => {
-								param = Util.urlFix(param);
 								marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
 								onChange(marks);
 								commonStore.menuClose(this.props.id);

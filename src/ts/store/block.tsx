@@ -8,6 +8,7 @@ const $ = require('jquery');
 class BlockStore {
 	@observable public rootId: string = '';
 	@observable public archiveId: string = '';
+	@observable public profileId: string = '';
 	@observable public breadcrumbsId: string = '';
 	
 	public treeObject: Map<string, any[]> = new Map();
@@ -25,6 +26,11 @@ class BlockStore {
 	};
 	
 	@computed
+	get profile (): string {
+		return this.profileId;
+	};
+	
+	@computed
 	get breadcrumbs (): string {
 		return this.breadcrumbsId;
 	};
@@ -37,6 +43,11 @@ class BlockStore {
 	@action
 	archiveSet (id: string) {
 		this.archiveId = String(id || '');
+	};
+	
+	@action
+	profileSet (id: string) {
+		this.profileId = String(id || '');
 	};
 	
 	@action
@@ -208,6 +219,9 @@ class BlockStore {
 		let childBlocks = (element.childrenIds || []).map((it: string) => {
 			return blocks.find((item: any) => { return item.id == it; });
 		}).filter((it: any) => {
+			if (!it) {
+				return false;
+			};
 			if (filter) {
 				return filter(it);
 			};
@@ -255,7 +269,7 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isNumbered()) {
 						n++;
-						$('.markerInner.c' + item.id).text(n ? n + '.' : '');
+						$('#marker-' + item.id).text(n ? n + '.' : '');
 					} else {
 						n = 0;
 					};
@@ -265,7 +279,9 @@ class BlockStore {
 			};
 		};
 		
-		cb(root.childBlocks);
+		window.setTimeout(() => {
+			cb(root.childBlocks);
+		}, 10);
 	};
 	
 	getStructure (list: I.Block[]) {

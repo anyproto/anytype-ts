@@ -68,3 +68,6 @@
 .editorWrapper.withIconAndCover {
 	.controls { display: none; }
 }
+
+.editorWrapper.isProfile.withIcon { padding-top: 56px; }
+.editorWrapper.isProfile.withIconAndCover { padding-top: 190px; }

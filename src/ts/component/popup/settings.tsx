@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 
 const { dialog } = window.require('electron').remote;
 const $ = require('jquery');
+const raf = require('raf');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
 
@@ -29,6 +30,7 @@ class PopupSettings extends React.Component<Props, State> {
 		page: 'index',
 		preview: '',
 	};
+	onConfirmPin: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -42,6 +44,7 @@ class PopupSettings extends React.Component<Props, State> {
 		this.onBlurPin = this.onBlurPin.bind(this);
 		this.onChangePin = this.onChangePin.bind(this);
 		this.onSelectPin = this.onSelectPin.bind(this);
+		this.onTurnOffPin = this.onTurnOffPin.bind(this);
 		this.onFileClick = this.onFileClick.bind(this);
 	};
 	
@@ -49,9 +52,19 @@ class PopupSettings extends React.Component<Props, State> {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
 		const { page, preview } = this.state;
+		const pin = Storage.get('pin');
 		
 		let content = null;
 		let inputs = [];
+		
+		let head = (
+			<div className="head">
+				<div className="element" onClick={() => { this.onPage('index'); }}>
+					<Icon className="back" />
+					Settings
+				</div>
+			</div>
+		);
 		
 		switch (page) {
 			
@@ -59,7 +72,6 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'index':
 				content = (
 					<div>
-						<Icon className="close" onClick={this.onClose} />
 						<Title text="Settings" />
 						
 						<div className="rows">
@@ -75,29 +87,13 @@ class PopupSettings extends React.Component<Props, State> {
 								<Icon className="arrow" />
 							</div>
 							
-							<div className="row" onClick={() => { this.onPage('pinSelect'); }}>
+							<div className="row" onClick={() => { this.onPage('pinIndex'); }}>
 								<Icon className="pin" />
 								<Label text="Pin code" />
+								<div className="status">
+									{pin ? 'On' : 'Off'}
+								</div>
 								<Icon className="arrow" />
-							</div>
-							
-							<div className="row flex dn">
-								<div className="side left">
-									<Icon className="notify" />
-									<Label text="Notifications" />
-								</div>
-								<div className="side right">
-									<div className="switches">
-										<div className="item">
-											<div className="name">Updates</div>
-											<Switch value={true} className="green" />
-										</div>
-										<div className="item">
-											<div className="name">New invites</div>
-											<Switch className="green" />
-										</div>
-									</div>
-								</div>
 							</div>
 						</div>
 						
@@ -107,9 +103,15 @@ class PopupSettings extends React.Component<Props, State> {
 				break;
 				
 			case 'wallpaper':
-				let covers = [];
-				for (let i = 1; i <= 7; ++i) {
-					covers.push({ id: i, image: '' });
+				let covers1 = [];
+				let covers2 = [];
+				
+				for (let i = 1; i <= 10; ++i) {
+					covers1.push({ id: i, image: '' });
+				};
+				
+				for (let i = 11; i <= 17; ++i) {
+					covers2.push({ id: i, image: '' });
 				};
 				
 				const Item = (item: any) => (
@@ -119,25 +121,35 @@ class PopupSettings extends React.Component<Props, State> {
 				);
 				
 				if (coverImg) {
-					covers.unshift({ id: 0, image: coverImg });
+					covers2.unshift({ id: 0, image: coverImg });
 				};
 				
 				content = (
 					<div>
-						<Icon className="back" onClick={() => { this.onPage('index'); }} />
+						{head}
+						
 						<Title text="Wallpaper" />
 						
-						<div className="row">
-							<Label text="Upload wallpaper. For best results upload high resolution images." />
+						<div className="row first">
+							<Label text="Choose or upload the wallpaper. For best results upload high resolution images." />
 							<div className="fileWrap item" onClick={this.onFileClick}>
 								<Cover className="upload" />
 							</div>
 						</div>
 						
 						<div className="row">
-							<Label text="Choose wallpaper" />
+							<Label className="name" text="Colours" />
 							<div className="covers">
-								{covers.map((item: any, i: number) => (
+								{covers1.map((item: any, i: number) => (
+									<Item key={i} {...item} active={item.id == coverId} />
+								))}
+							</div>
+						</div>
+						
+						<div className="row last">
+							<Label className="name" text="Pictures" />
+							<div className="covers">
+								{covers2.map((item: any, i: number) => (
 									<Item key={i} {...item} active={item.id == coverId} />
 								))}
 							</div>
@@ -149,13 +161,42 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'phrase':
 				content = (
 					<div>
-						<Icon className="back" onClick={() => { this.onPage('index'); }} />
+						{head}
+						
 						<Title text="Keychain phrase" />
 						<Label text="Your Keychain phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place." />
 						<div className="inputs">
 							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" />
 						</div>
-						<Button text="I've written it down" className="orange" onClick={() => { this.onPage('index'); }} />
+					</div>
+				);
+				break;
+				
+			case 'pinIndex':
+				content = (
+					<div>
+						{head}
+						
+						<Title text="Pin code" />
+						<Label text="The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or keychain phrase. So, please, remember your pin code" />
+						
+						{pin ? (
+							<div className="buttons">
+								<Button text="Turn pin code off" className="blank" onClick={this.onTurnOffPin} />
+								<Button text="Change pin code" className="blank" onClick={() => {
+									this.onConfirmPin = this.onSelectPin; 
+									this.onPage('pinConfirm');
+								}} />
+							</div>
+						): (
+							<div className="buttons">
+								<Button text="Turn pin code on" className="blank" onClick={() => {
+									this.onConfirmPin = this.onSelectPin; 
+									this.onPage('pinSelect');
+								}} />
+							</div>
+						)}
+						
 					</div>
 				);
 				break;
@@ -168,7 +209,8 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						<Icon className="back" onClick={() => { this.onPage('index'); }} />
+						{head}
+						
 						<Title text="Pin code" />
 						<Label text="The pin code will protect your secret phrase. As we do not store your secret phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or secret phrase. So, please, remember your pin code." />
 						<div className="inputs">
@@ -189,9 +231,10 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						<Icon className="back" onClick={() => { this.onPage('index'); }} />
+						{head}
+						
 						<Title text="Pin code" />
-						<Label text="To continue, first verify that it's you. Enter your pin code" />
+						<Label text="To continue, first verify that it’s you. Enter current pin code" />
 						<div className="inputs">
 							{inputs.map((item: any, i: number) => (
 								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />
@@ -205,10 +248,22 @@ class PopupSettings extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={page}>
+			<div className={'tab ' + Util.toCamelCase('tab-' + page)}>
 				{content}
 			</div>
 		);
+	};
+	
+	componentDidMount () {
+		this.init();
+	};
+	
+	componentDidUpdate () {
+		this.init();
+	};
+	
+	componentWillUnmount () {
+		$(window).unbind('resize.settings');
 	};
 	
 	onFileClick (e: any) {
@@ -265,7 +320,11 @@ class PopupSettings extends React.Component<Props, State> {
 		let pin = this.getPin();
 		if (pin.length == Constant.pinSize) {
 			this.pin = pin;
-			this.onSelectPin();
+			
+			if (this.onConfirmPin) {
+				this.onConfirmPin();
+				this.onConfirmPin = null;
+			};
 		};
 	};
 	
@@ -274,6 +333,11 @@ class PopupSettings extends React.Component<Props, State> {
 			Storage.set('pin', sha1(this.pin));
 		};
 		
+		this.onPage('index');
+	};
+	
+	onTurnOffPin () {
+		Storage.delete('pin');
 		this.onPage('index');
 	};
 	
@@ -303,6 +367,24 @@ class PopupSettings extends React.Component<Props, State> {
 		C.AccountStop(false);
 		authStore.logout();
 		history.push('/');
+	};
+	
+	init () {
+		this.resize();
+		$(window).unbind('resize.settings').on('resize.settings', () => { this.resize(); });
+		
+		window.setTimeout(() => {
+			if (this.refObj[1]) {
+				this.refObj[1].focus();
+			};
+		}, 15);
+	};
+	
+	resize () {
+		const obj = $('#popupSettings');
+		raf(() => {
+			obj.css({ marginTop: -obj.outerHeight() / 2 });
+		});
 	};
 	
 };

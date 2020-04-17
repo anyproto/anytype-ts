@@ -144,7 +144,6 @@ class LinkPreview extends React.Component<Props, {}> {
 			data: {
 				value: (mark ? mark.param : ''),
 				onChange: (param: string) => {
-					param = Util.urlFix(param);
 					marks = Mark.toggle(marks, { type: I.MarkType.Link, param: param, range: range });
 					onChange(marks);
 				}

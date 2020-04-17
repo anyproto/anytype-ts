@@ -10,6 +10,7 @@ interface Props extends I.Menu {
 };
 
 const $ = require('jquery');
+const { ipcRenderer } = window.require('electron');
 
 @observer
 class MenuBlockMore extends React.Component<Props, {}> {
@@ -120,6 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
+				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 			
 			if (details.isArchived) {
@@ -183,6 +185,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				window.setTimeout(() => {
 					window.print();
 				}, 300);
+				break;
+				
+			case 'export':
+				C.BlockGetPublicWebURL(rootId, (message: any) => {
+					if (message.url) {
+						ipcRenderer.send('urlOpen', message.url);
+					};
+				});
 				break;
 			
 			case 'move':

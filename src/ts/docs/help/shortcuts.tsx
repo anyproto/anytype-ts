@@ -1,7 +1,7 @@
 import { I } from 'ts/lib';
 
 export default [
-	{ type: I.BlockType.Icon, icon: ':keyboard:' },
+	{ type: I.BlockType.IconPage, icon: '⌨️' },
 	{ type: I.BlockType.Title, text: 'Keyboard & Shortcuts' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Header1, text: 'Application' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Header3, text: 'Basic keys' },

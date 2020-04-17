@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
-import { C, Util, keyboard, Storage, analytics } from 'ts/lib';
+import { C, Util, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -52,7 +52,8 @@ import 'scss/block/link.scss';
 import 'scss/block/bookmark.scss';
 import 'scss/block/div.scss';
 import 'scss/block/layout.scss';
-import 'scss/block/icon.scss';
+import 'scss/block/iconPage.scss';
+import 'scss/block/iconUser.scss';
 import 'scss/block/title.scss';
 import 'scss/block/cover.scss';
 
@@ -134,6 +135,7 @@ console.log('[Version]', version, 'isPackaged', app.isPackaged);
 
 Sentry.init({
 	release: version,
+	environment: (app.isPackaged ? 'production' : 'development'),
 	dsn: Constant.sentry,
 	integrations: [
 		new Sentry.Integrations.GlobalHandlers({
@@ -144,10 +146,16 @@ Sentry.init({
 });
 
 declare global {
-	interface Window { getStore: any; }
+	interface Window { 
+		Store: any; 
+		Cmd: any; 
+		Dispatcher: any; 
+	}
 };
 
-window.getStore = () => { return rootStore; };
+window.Store = () => { return rootStore; };
+window.Cmd = () => { return C; };
+window.Dispatcher = () => { return dispatcher; };
 
 class App extends React.Component<Props, State> {
 	
@@ -207,6 +215,7 @@ class App extends React.Component<Props, State> {
 		let debugAN = Boolean(Storage.get('debugAN'));
 		let coverNum = Number(Storage.get('coverNum'));
 		let coverImg = Number(Storage.get('coverImg'));
+		let noShutdown = Number(Storage.get('noShutdown'));
 		
 		if (!coverNum && !coverImg) {
 			commonStore.coverSetNum(Constant.default.cover);
@@ -264,12 +273,22 @@ class App extends React.Component<Props, State> {
 			Storage.delete('popupNewBlock');
 		});
 		
-		win.unbind('mousemove.common').on('mousemove.common', throttle((e: any) => {
+		win.unbind('mousemove.common beforeunload.common');
+		
+		win.on('mousemove.common', throttle((e: any) => {
 			keyboard.setPinCheck();
 			keyboard.disableMouse(false);
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
 		
+		if (!noShutdown) {
+			win.on('beforeunload', (e: any) => {
+				C.Shutdown((message: any) => {
+					ipcRenderer.send('appClose');
+				});
+				return false;
+			});
+		};
 	};
 	
 };

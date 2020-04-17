@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Select } from 'ts/component';
+import { Icon, Select, Marker } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -100,18 +100,6 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 		};
 		
-		const Marker = (item: any) => {
-			let cm = [ 'marker', item.className, (item.active ? 'active' : '') ].join(' ');
-			let ci = [ 'markerInner', 'c' + id, ct ].join(' ');
-			let inner: any = item.type == I.TextStyle.Numbered ? '' : <Icon />;
-			
-			return (
-				<div className={cm} onClick={item.onClick}>
-					<span className={ci}>{inner}</span>
-				</div>
-			);
-		};
-		
 		const editor = (
 			<div
 				id="value"
@@ -133,7 +121,7 @@ class BlockText extends React.Component<Props, {}> {
 			<div className="flex">
 				<div className="markers">
 					{markers.map((item: any, i: number) => (
-						<Marker key={i} {...item} />
+						<Marker key={i} {...item} id={id} color={color} />
 					))}
 				</div>
 				{additional}
@@ -195,12 +183,14 @@ class BlockText extends React.Component<Props, {}> {
 			html = html.replace(/\n/g, '<br/>');
 		};
 		
+		/*
 		html = html.replace(/:([0-9a-z+_-]+):/g, (s: string, p: string) => {
 			if (EmojiData.emojis[p]) {
 				return String.fromCodePoint(parseInt(EmojiData.emojis[p].b, 16));
 			};
 			return s;
 		});
+		*/
 
 		value.get(0).innerHTML = html;
 		
@@ -302,7 +292,6 @@ class BlockText extends React.Component<Props, {}> {
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
 			
-			this.setValue(value);
 			this.setText(this.marks);
 		};
 		
@@ -468,8 +457,6 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		this.marks = this.getMarksFromHtml();
-		this.setValue(value);
-		focus.apply();
 		
 		this.placeHolderCheck();
 		onKeyUp(e, value, this.marks);

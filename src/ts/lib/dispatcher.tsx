@@ -16,7 +16,7 @@ class Dispatcher {
 		
 		const handler = (item: any) => {
 			try {
-				this.event(item);
+				this.event(com.anytype.Event.decode(item.data));
 			} catch (e) {
 				console.error(e);
 			};
@@ -25,9 +25,8 @@ class Dispatcher {
 		bindings.setEventHandler(handler);
 	};
 	
-	event (item: any) {
+	event (event: any) {
 		let { focused } = focus;
-		let event = com.anytype.Event.decode(item.data);
 		let rootId = event.contextId;
 		let debug = Storage.get('debugMW');
 		
@@ -85,9 +84,24 @@ class Dispatcher {
 					authStore.accountAdd(data.account);
 					break;
 					
+				case 'accountDetails':
+					const details = StructDecode.decodeStruct(data.details);
+					const account = authStore.account;
+					
+					account.name = String(details.name || '');
+					account.avatar = { 
+						image: { hash: String(details.iconUser || '') }
+					};
+					break;
+					
 				case 'blockShow':
 					let blocks = data.blocks.map((it: any) => {
-						return blockStore.prepareBlockFromProto(it);
+						it = blockStore.prepareBlockFromProto(it);
+						if (it.id == rootId) {
+							it.type = I.BlockType.Page;
+							it.pageType = data.type;
+						};
+						return it;
 					});
 					
 					blockStore.blocksSet(rootId, blocks);
@@ -338,31 +352,38 @@ class Dispatcher {
 		return 0;
 	};
 	
-	call (type: string, data: any, callBack?: (message: any) => void) {
+	public request (type: string, data: any, callBack?: (message: any) => void) {
 		if (!this.service[type]) {
-			console.error('[Dispatcher.call] Service not found: ', type);
+			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
 		
 		let debug = Storage.get('debugMW');
 		let t0 = 0;
 		let t1 = 0;
+		let t2 = 0;
 		
 		if (debug) {
 			t0 = performance.now();
-			console.log('[Dispatcher.call]', type, JSON.stringify(data, null, 3));
+			console.log('[Dispatcher.request]', type, JSON.stringify(data, null, 3));
 		};
 		
 		analytics.event(Util.toUpperCamelCase(type), data);
 		
 		try {
 			this.service[type](data, (message: any) => {
+				t1 = performance.now();
+				
 				message.error = message.error || {};
 				message.error.code = Number(message.error.code) || 0;
 				message.error.description = String(message.error.description || '');
 				
 				if (message.error.code) {
-					console.error('[Dispatcher.call]', type, 'code:', message.error.code, 'description:', message.error.description);
+					console.error('[Dispatcher.request]', type, 'code:', message.error.code, 'description:', message.error.description);
+				};
+				
+				if (message.event) {
+					this.event(message.event);
 				};
 				
 				if (callBack) {
@@ -370,8 +391,13 @@ class Dispatcher {
 				};
 				
 				if (debug) {
-					t1 = performance.now();
-					console.log('[Dispatcher.call] callBack', type, message, Math.ceil(t1 - t0) + 'ms');					
+					t2 = performance.now();
+					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3));
+					console.log(
+						'Middle time:', Math.ceil(t1 - t0) + 'ms', 
+						'Render time:', Math.ceil(t2 - t1) + 'ms', 
+						'Total time:', Math.ceil(t2 - t0) + 'ms'
+					);
 				};
 			});
 		} catch (e) {

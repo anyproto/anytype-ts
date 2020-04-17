@@ -35,6 +35,7 @@ function createWindow () {
 	});
 	
 	let param = {
+		show: false,
 		width: width,
 		height: height,
 		webPreferences: {
@@ -48,6 +49,14 @@ function createWindow () {
 	};
 	
 	win = new BrowserWindow(param);
+	
+	win.once('ready-to-show', () => {
+		win.show()
+	});
+	
+	win.on('closed', () => {
+		win = null;
+	});
 	
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
 		BrowserWindow.addDevToolsExtension(
@@ -67,11 +76,14 @@ function createWindow () {
 	});
 	
 	ipcMain.on('appClose', () => {
-		app.quit();
+		console.log('appClose');
+		app.exit();
 	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
-		shell.openExternal(url);
+		shell.openExternal(url).catch((error) => {
+			console.log(error);
+		});
 	});
 	
 	ipcMain.on('download', async (e, url) => {

@@ -5,9 +5,10 @@ class Block implements I.Block {
 	
 	id: string = '';
 	parentId: string = '';
+	pageType: I.PageType = 0;
+	type: I.BlockType = I.BlockType.Empty;
 	
 	@observable childrenIds: string[] = [];
-	@observable type: I.BlockType = I.BlockType.Text;
 	@observable align: I.BlockAlign = I.BlockAlign.Left;
 	@observable bgColor: string = '';
 	@observable fields: any = {};
@@ -20,6 +21,7 @@ class Block implements I.Block {
 		self.parentId = String(props.parentId || '');
 		self.type = props.type;
 		self.align = Number(props.align) || I.BlockAlign.Left;
+		self.pageType = Number(props.pageType) || I.PageType.Page;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
 		self.content = props.content || {};
@@ -53,6 +55,10 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Page;
 	};
 	
+	isPageProfile (): boolean { 
+		return this.isPage() && (this.pageType == I.PageType.Profile);
+	};
+	
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;
 	};
@@ -73,8 +79,20 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Link;
 	};
 	
+	isLinkArchive (): boolean {
+		return this.isLink() && (this.content.style == I.LinkStyle.Archive);
+	};
+	
 	isIcon (): boolean {
-		return this.type == I.BlockType.Icon;
+		return this.isIconPage() || this.isIconUser();
+	};
+	
+	isIconPage (): boolean {
+		return this.type == I.BlockType.IconPage;
+	};
+	
+	isIconUser (): boolean {
+		return this.type == I.BlockType.IconUser;
 	};
 	
 	isText (): boolean {

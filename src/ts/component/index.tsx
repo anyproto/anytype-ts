@@ -46,6 +46,7 @@ import Error from './util/error';
 import Select from './util/select';
 import Tooltip from './util/tooltip';
 import Drag from './util/drag';
+import Marker from './util/marker';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
@@ -80,6 +81,7 @@ export {
 	Select,
 	Tooltip,
 	Drag,
+	Marker,
 	Tag,
 	Loader,
 	Progress,

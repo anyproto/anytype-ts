@@ -10,7 +10,7 @@ interface Props {
 };
 
 @observer
-class BlockIcon extends React.Component<Props, {}> {
+class BlockIconPage extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -38,4 +38,4 @@ class BlockIcon extends React.Component<Props, {}> {
 	
 };
 
-export default BlockIcon;
+export default BlockIconPage;

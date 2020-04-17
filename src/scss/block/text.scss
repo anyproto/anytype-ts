@@ -27,19 +27,7 @@
 			
 			.marker.bullet {
 				span { min-width: 28px; line-height: 1; display: inline-block; text-align: center; padding-right: 4px; }
-				
-				.icon { width: 6px; height: 6px; background: $colorBlack; border-radius: 100%; }
-				
-				.textColor-grey .icon { background-color: $colorDarkGrey !important; }
-				.textColor-yellow .icon { background-color: $colorYellow !important; }
-				.textColor-orange .icon { background-color: $colorOrange !important; }
-				.textColor-red .icon { background-color: $colorRed !important; }
-				.textColor-pink .icon { background-color: $colorPink !important; }
-				.textColor-purple .icon { background-color: $colorPurple !important; }
-				.textColor-blue .icon { background-color: $colorBlue !important; }
-				.textColor-ice .icon { background-color: $colorIce !important; }
-				.textColor-teal .icon { background-color: $colorTeal !important; }
-				.textColor-lime .icon { background-color: $colorLime !important; }
+				img { width: 6px; height: 6px; display: inline-block; vertical-align: top; margin-top: 2px; }
 			}
 			
 			.marker.check, .marker.toggle { width: 24px; height: 22px; line-height: 22px; margin-right: 4px; cursor: pointer; }
@@ -81,7 +69,9 @@
 	
 	.block.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; font-style: italic; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { padding: 4px 4px !important; }
-	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { width: 2px; height: calc(100% + 8px); position: absolute; left: 11px; top: -4px; background: $colorOrange; }
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { 
+		width: 0px; height: calc(100% + 8px); position: absolute; left: 11px; top: -4px; border-left: 2px solid $colorOrange; 
+	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
 	

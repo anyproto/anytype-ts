@@ -122,8 +122,10 @@ class DataUtil {
 			};
 
 			commonStore.gatewaySet(message.gatewayUrl);
+			
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
+			blockStore.profileSet(message.profileBlockId);
 			
 			if (!breadcrumbs) {
 				C.BlockOpenBreadcrumbs((message: any) => {
@@ -149,6 +151,7 @@ class DataUtil {
 			}
 		};
 
+		/*
 		if (commonStore.popupIsOpen('editorPage')) {
 			commonStore.popupUpdate('editorPage', param);
 		} else 
@@ -157,6 +160,9 @@ class DataUtil {
 		} else {
 			history.push('/main/edit/' + targetId + '/link/' + linkId);
 		};
+		*/
+		
+		history.push('/main/edit/' + targetId + '/link/' + linkId);
 	};
 	
 	pageCreate (e: any, props: any, icon: string, name: string) {

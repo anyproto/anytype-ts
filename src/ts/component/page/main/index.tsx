@@ -32,7 +32,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	render () {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
-		const { root } = blockStore;
+		const { root, profile } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 
 		if (!element) {
@@ -53,12 +53,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						<span className="dn">{Util.sprintf(translate('indexHi'), Util.shorten(account.name, 16))}</span>
+						{account.name ? Util.sprintf(translate('indexHi'), Util.shorten(account.name, 24)) : ''}
 						
 						<div className="rightMenu">
 							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={this.onSettings} />
 							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} tooltip="Accounts" onClick={this.onAccount} />
-							<IconUser {...account} tooltip="Your profile" onClick={this.onProfile} className="dn" />
+							<IconUser {...account} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
@@ -100,9 +100,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
+		const { history } = this.props;
+		const { profile } = blockStore;
+		
+		if (!profile) {
+			return;
+		};
+		
+		history.push('/main/edit/' + profile);
 	};
 	
-	onSelect (e: any, block: any) {
+	onSelect (e: any, block: I.Block) {
 		if (block.content.style == I.LinkStyle.Archive) {
 			commonStore.popupOpen('archive', {});
 		} else {

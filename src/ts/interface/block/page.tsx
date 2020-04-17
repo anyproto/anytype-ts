@@ -1,13 +1,11 @@
 import { I } from 'ts/lib';
 
-export enum PageStyle {
-	Empty		 = 0,
-};
+export enum PageType {
+	Page		 = 0,
+	Home		 = 1,
+	Profile		 = 2,
+	Archive		 = 3,
+	Breadcrumbs	 = 4,
+}
 
-export interface ContentPage {
-	style: PageStyle;
-};
-
-export interface BlockPage extends I.Block {
-	content: ContentPage;
-};
+export interface BlockPage extends I.Block {};

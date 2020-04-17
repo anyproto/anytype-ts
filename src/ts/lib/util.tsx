@@ -427,19 +427,6 @@ class Util {
 		return ret;
 	};
 	
-	urlFix (v: string): string {
-		if (!v) {
-			return '';
-		};
-		if (v.match(/^(mailto|tel):/)) {
-			return v;
-		};
-		if (!v.match(/:\/\//)) {
-			v = 'http://' + v;
-		};
-		return v;
-	};
-	
 	filterFix (v: string) {
 		return String(v || '').replace(/[\/\\\*]/g, '');
 	};

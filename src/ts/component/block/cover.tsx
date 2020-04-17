@@ -302,6 +302,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		this.rect.cw = this.cover.width();
 		this.rect.ch = this.cover.height();
+		
 		this.x = coverX * this.rect.cw;
 		this.y = coverY * this.rect.ch;
 		

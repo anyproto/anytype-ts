@@ -215,8 +215,6 @@ class InputWithFile extends React.Component<Props, State> {
 				return;
 			};
 			
-			url = Util.urlFix(url);
-			
 			if (onChangeUrl) {
 				onChangeUrl(e, url);
 			};

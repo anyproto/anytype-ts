@@ -23,8 +23,8 @@ class Block extends React.Component<Props, {}> {
 		let content = null;
 		
 		switch (type) {
-			case I.BlockType.Icon:
-				cn.push('blockIcon');
+			case I.BlockType.IconPage:
+				cn.push('blockIconPage');
 				content = <ContentIcon {...this.props} />;
 				break;
 				

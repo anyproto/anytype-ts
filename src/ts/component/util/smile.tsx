@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Emoji } from 'emoji-mart';
+import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 import { Icon } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { I } from 'ts/lib';
@@ -18,6 +18,9 @@ interface Props {
 interface State {
 	icon: string;
 };
+
+const EmojiData = require('emoji-mart/data/apple.json');
+const blank = require('img/blank/smile.svg');
 
 class Smile extends React.Component<Props, State> {
 	
@@ -39,7 +42,7 @@ class Smile extends React.Component<Props, State> {
 	
 	render () {
 		const { id, size, className, canEdit } = this.props;
-		const icon = this.state.icon || this.props.icon;
+		const icon = String(this.state.icon || this.props.icon || '');
 		
 		let cn = [ 'smile' ];
 		if (className) {
@@ -49,9 +52,21 @@ class Smile extends React.Component<Props, State> {
 			cn.push('canEdit');
 		};
 		
+		let colons = '';
+		if (icon) {
+			if (icon.match(':')) {
+				colons = icon;
+			} else {
+				const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+				if (data) {
+					colons = data.colons;
+				};
+			};
+		};
+		
 		return (
 			<div id={id} className={cn.join(' ')} onClick={this.onClick}>
-				{icon ? <Emoji native={true} emoji={icon} set="apple" size={size} /> : <Icon className="blank" />}
+				{colons ? <Emoji native={true} emoji={colons} set="apple" size={size} /> : <img src={blank} className="icon blank" />}
 			</div>
 		);
 	};
@@ -71,10 +86,9 @@ class Smile extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onSelect: (id: string) => {
-					id = id ? ':' + id + ':' : '';
-					this.setState({ icon: id });
-					onSelect(id);
+				onSelect: (icon: string) => {
+					this.setState({ icon: icon });
+					onSelect(icon);
 				}
 			}
 		});

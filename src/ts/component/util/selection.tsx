@@ -211,8 +211,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const { focused, range } = focus;
-		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
-		const list = blockStore.unwrapTree(tree);
 		
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
@@ -231,10 +229,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 				let targetId = target.data('id');
 				
 				if (target.length && e.shiftKey && (targetId != first)) {
-					let idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
-					let idxEnd = list.findIndex((it: I.Block) => { return it.id == targetId; });
-					let start = idxStart < idxEnd ? idxStart : idxEnd;
-					let end = idxStart < idxEnd ? idxEnd : idxStart;
+					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+					const list = blockStore.unwrapTree(tree);
+					const idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
+					const idxEnd = list.findIndex((it: I.Block) => { return it.id == targetId; });
+					const start = idxStart < idxEnd ? idxStart : idxEnd;
+					const end = idxStart < idxEnd ? idxEnd : idxStart;
 					
 					let slice = list.slice(start, end + 1).
 						map((it: I.Block) => { return new M.Block(it); }).
