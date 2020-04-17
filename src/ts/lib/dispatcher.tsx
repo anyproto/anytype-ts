@@ -89,6 +89,9 @@ class Dispatcher {
 					const account = authStore.account;
 					
 					account.name = String(details.name || '');
+					account.avatar = { 
+						image: { hash: String(details.iconUser || '') }
+					};
 					break;
 					
 				case 'blockShow':

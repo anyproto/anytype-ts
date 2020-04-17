@@ -6,7 +6,6 @@ export interface Avatar {
 
 export interface Image {
 	hash: string;
-	sizes: ImageSize[];
 };
 
 export interface Account {

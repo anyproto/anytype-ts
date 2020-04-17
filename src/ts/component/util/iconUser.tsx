@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Label } from 'ts/component';
-import { I, C, Util, cache } from 'ts/lib';
+import { I, Util } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 interface Props {
 	name?: string;
@@ -57,7 +58,7 @@ class IconUser extends React.Component<Props, State> {
 		};
 		
 		if (avatar) {
-			//icon = commonStore.imageUrl(avatar, Constant.size.image);
+			icon = commonStore.imageUrl(avatar.image.hash, 256);
 		};
 		
 		if (icon) {
