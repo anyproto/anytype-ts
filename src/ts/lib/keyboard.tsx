@@ -84,6 +84,7 @@ class Keyboard {
 		
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
+			const pin = Storage.get('pin');
 			if (pin) {
 				this.history.push('/auth/pin-check');				
 			};
