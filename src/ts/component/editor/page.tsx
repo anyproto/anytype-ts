@@ -956,7 +956,8 @@ class EditorPage extends React.Component<Props, State> {
 			
 			if (cut) {
 				commonStore.menuClose('blockContext');
-				focus.clear(true);
+				focus.set(focused, { from: range.from, to: range.from });
+				focus.apply();
 			};
 		};
 		
