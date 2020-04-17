@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Select } from 'ts/component';
+import { Icon, Select, Marker } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -100,18 +100,6 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 		};
 		
-		const Marker = (item: any) => {
-			let cm = [ 'marker', item.className, (item.active ? 'active' : '') ].join(' ');
-			let ci = [ 'markerInner', 'c' + id, ct ].join(' ');
-			let inner: any = item.type == I.TextStyle.Numbered ? '' : <Icon />;
-			
-			return (
-				<div className={cm} onClick={item.onClick}>
-					<span id={'marker-' + id } className={ci}>{inner}</span>
-				</div>
-			);
-		};
-		
 		const editor = (
 			<div
 				id="value"
@@ -133,7 +121,7 @@ class BlockText extends React.Component<Props, {}> {
 			<div className="flex">
 				<div className="markers">
 					{markers.map((item: any, i: number) => (
-						<Marker key={i} {...item} />
+						<Marker key={i} {...item} id={id} color={color} />
 					))}
 				</div>
 				{additional}

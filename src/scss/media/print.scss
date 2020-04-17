@@ -24,5 +24,12 @@
 		.block.blockText {
 			.placeHolder { display: none !important; }
 		}
+		
+		.block.blockBookmark {
+			.side.left { width: 100% !important; }
+			.side.right { display: none; }
+			
+			.inner.vertical { padding: 0px; }
+		}
 	}
 }
