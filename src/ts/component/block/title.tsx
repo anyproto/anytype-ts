@@ -80,7 +80,10 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		const { rootId } = this.props;
+		
 		this._isMounted = false;
+		C.BlockSetDetails(rootId, [ { key: 'name', value: this.getValue() } ]);
 	};
 	
 	onFocus (e: any) {

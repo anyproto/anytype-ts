@@ -301,12 +301,13 @@ const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: an
 	dispatcher.request('blockCopy', request, callBack);	
 };
 
-const BlockCut = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
+const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = Util.objectCopy(blocks);
 	
 	const request: any = {
 		contextId: contextId,
 		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
+		selectedTextRange: range,
 	};
 	dispatcher.request('blockCut', request, callBack);	
 };

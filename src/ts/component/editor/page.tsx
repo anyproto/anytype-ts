@@ -911,8 +911,8 @@ class EditorPage extends React.Component<Props, State> {
 	onCopy (e: any, cut: boolean) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
-		const { focused, range } = focus;
-		
+
+		let { focused, range } = focus;
 		let ids = selection.get(true);
 		if (!ids.length) {
 			ids = [ focused ];
@@ -920,37 +920,47 @@ class EditorPage extends React.Component<Props, State> {
 		
 		ids = ids.concat(this.getLayoutIds(ids));
 		
+		const focusBlock = blockStore.getLeaf(rootId, focused);
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
-		const cmd = cut ? 'BlockCut': 'BlockCopy';
 		
-		let data: any = {};
-		let text: any = [];
-		let ret = blockStore.unwrapTree(tree).filter((it: I.Block) => {
+		let text: string[] = [];
+		let blocks = blockStore.unwrapTree(tree).filter((it: I.Block) => {
 			return ids.indexOf(it.id) >= 0;
 		});
-		ret = Util.arrayUniqueObjects(ret, 'id');
+		blocks = Util.arrayUniqueObjects(blocks, 'id');
 
-		ret.map((it: I.Block) => {
+		blocks.map((it: I.Block) => {
 			if (it.type == I.BlockType.Text) {
 				text.push(String(it.content.text || ''));
 			};
 		});
-		text = text.join('\n');
 		
-		data = { 
-			text: text, 
+		if (focusBlock) {
+			range = Util.rangeFixOut(focusBlock.content.text, range);
+		};
+		
+		const data = { 
+			text: text.join('\n'), 
 			html: null, 
 			anytype: { 
 				range: range,
-				blocks: ret, 
+				blocks: blocks, 
 			}
 		};
 		
-		Util.clipboardCopy(data);
-		C[cmd](rootId, ret, (message: any) => {
+		const cb = (message: any) => {
 			data.html = message.html;
 			Util.clipboardCopy(data);
-		});
+		};
+		
+		Util.clipboardCopy(data);
+		
+		if (cut) {
+			commonStore.menuClose('blockContext');
+			C.BlockCut(rootId, blocks, range, cb);
+		} else {
+			C.BlockCopy(rootId, blocks, cb);
+		};
 	};
 	
 	onPrint (e: any) {
