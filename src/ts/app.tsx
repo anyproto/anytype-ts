@@ -215,6 +215,7 @@ class App extends React.Component<Props, State> {
 		let debugAN = Boolean(Storage.get('debugAN'));
 		let coverNum = Number(Storage.get('coverNum'));
 		let coverImg = Number(Storage.get('coverImg'));
+		let noShutdown = Number(Storage.get('noShutdown'));
 		
 		if (!coverNum && !coverImg) {
 			commonStore.coverSetNum(Constant.default.cover);
@@ -280,7 +281,7 @@ class App extends React.Component<Props, State> {
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
 		
-		if (app.isPackaged) {
+		if (!noShutdown) {
 			win.on('beforeunload', (e: any) => {
 				C.Shutdown((message: any) => {
 					ipcRenderer.send('appClose');
