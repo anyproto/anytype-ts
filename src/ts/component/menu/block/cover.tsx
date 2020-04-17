@@ -83,7 +83,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				onUploadStart();
 			};
 
-			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

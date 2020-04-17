@@ -19,17 +19,16 @@ class BlockIconUser extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
-		this.onSelect = this.onSelect.bind(this);
 	};
 
 	render (): any {
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
-		const { name, icon } = details;
+		const { name, iconUser } = details;
 		
 		return (
 			<React.Fragment>
-				<IconUser name={name} icon={icon ? commonStore.imageUrl(icon, 256) : ''} onClick={this.onClick} className="c96" />
+				<IconUser name={name} icon={iconUser ? commonStore.imageUrl(iconUser, 256) : ''} onClick={this.onClick} className="c96" />
 			</React.Fragment>
 		);
 	};
@@ -52,7 +51,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 				],
 				onSelect: (event: any, id: string) => {
 					if (id == 'remove') {
-						C.BlockSetDetails(rootId, [ { key: 'icon', value: '' } ]);
+						C.BlockSetDetails(rootId, [ { key: 'iconUser', value: '' } ]);
 					};
 					if (id == 'upload') {
 						this.onUpload();
@@ -80,22 +79,16 @@ class BlockIconUser extends React.Component<Props, {}> {
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 				
 				C.BlockSetDetails(rootId, [ 
-					{ key: 'icon', value: message.hash },
+					{ key: 'iconUser', value: message.hash },
 				]);
 			});
 		});
-	};
-	
-	onSelect (icon: string) {
-		const { rootId } = this.props;
-		
-		C.BlockSetDetails(rootId, [ { key: 'icon', value: icon } ]);
 	};
 	
 };

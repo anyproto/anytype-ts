@@ -31,11 +31,12 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('linkPreview', request, callBack);
 };
 
-const UploadFile = (url: string, localPath: string, type: I.FileType, callBack?: (message: any) => void) => {
+const UploadFile = (url: string, localPath: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
 	const request = {
 		url: url,
 		localPath: localPath,
 		type: type,
+		disableEncryption: enc,
 	};
 	dispatcher.request('uploadFile', request, callBack);
 };

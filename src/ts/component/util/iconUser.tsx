@@ -45,7 +45,7 @@ class IconUser extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { className, name, color, onClick } = this.props;
+		const { className, avatar, name, color, onClick } = this.props;
 		
 		let icon = this.state.icon || this.props.icon || '';
 		let cn = [ 'icon', 'user' ];
@@ -54,6 +54,10 @@ class IconUser extends React.Component<Props, State> {
 		
 		if (className) {
 			cn.push(className);
+		};
+		
+		if (avatar) {
+			//icon = commonStore.imageUrl(avatar, Constant.size.image);
 		};
 		
 		if (icon) {
@@ -73,46 +77,11 @@ class IconUser extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.load();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 		Util.tooltipHide();
-	};
-	
-	load () {
-		const { avatar } = this.props;
-		if (!avatar) {
-			return;
-		};
-		
-		const { image } = avatar;
-		if (!image || !image.hash) {
-			return;
-		};
-		
-		let set = (s: string) => {
-			this.setState({ icon: 'data:image/jpeg;base64,' + s });
-		};
-		
-		let key = [ 'image', image.hash, I.ImageSize.Large ].join('.');
-		let s = cache.get(key);
-			
-		if (s) {
-			set(s);
-			return;
-		};
-			
-		C.ImageGetBlob(image.hash, I.ImageSize.Large, (message: any) => {
-			if (!this._isMounted || message.error.code) {
-				return;
-			};
-
-			s = message.blob.toString('base64');
-			cache.set(key, s);
-			set(s);
-		});
 	};
 	
 	shortName (s: string): string {
