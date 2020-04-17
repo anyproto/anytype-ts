@@ -20,6 +20,7 @@ interface State {
 };
 
 const EmojiData = require('emoji-mart/data/apple.json');
+const blank = require('img/blank/smile.svg');
 
 class Smile extends React.Component<Props, State> {
 	
@@ -65,7 +66,7 @@ class Smile extends React.Component<Props, State> {
 		
 		return (
 			<div id={id} className={cn.join(' ')} onClick={this.onClick}>
-				{colons ? <Emoji native={true} emoji={colons} set="apple" size={size} /> : <Icon className="blank" />}
+				{colons ? <Emoji native={true} emoji={colons} set="apple" size={size} /> : <img src={blank} className="icon blank" />}
 			</div>
 		);
 	};
