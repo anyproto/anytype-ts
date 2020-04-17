@@ -913,6 +913,9 @@ class EditorPage extends React.Component<Props, State> {
 
 		let { focused, range } = focus;
 		let ids = selection.get(true);
+		
+		range = Util.objectCopy(range);
+		
 		if (!ids.length) {
 			ids = [ focused ];
 		};
@@ -950,12 +953,16 @@ class EditorPage extends React.Component<Props, State> {
 		const cb = (message: any) => {
 			data.html = message.html;
 			Util.clipboardCopy(data);
+			
+			if (cut) {
+				commonStore.menuClose('blockContext');
+				focus.clear(true);
+			};
 		};
 		
 		Util.clipboardCopy(data);
 		
 		if (cut) {
-			commonStore.menuClose('blockContext');
 			C.BlockCut(rootId, blocks, range, cb);
 		} else {
 			C.BlockCopy(rootId, blocks, cb);
@@ -982,7 +989,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 
 			let parent = blockStore.getLeaf(rootId, element.parentId);
-			if (!parent || !parent.isLayout()) {
+			if (!parent || !parent.isLayout() || parent.isLayoutDiv()) {
 				continue;
 			};
 			
@@ -1064,8 +1071,8 @@ class EditorPage extends React.Component<Props, State> {
 				to = length;
 			} else {
 				id = focused;
-				from = range.to;
-				to = range.to;
+				from = message.caretPosition;
+				to = message.caretPosition;
 			};
 			
 			this.focus(id, from, to);
