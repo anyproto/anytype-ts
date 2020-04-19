@@ -97,6 +97,10 @@ class Menu extends React.Component<Props, {}> {
 			return <div>Component {id} not found</div>
 		};
 		
+		if (param.className) {
+			cn.push(param.className);
+		};
+		
 		return (
 			<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
 				<div className="content">

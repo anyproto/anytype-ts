@@ -49,11 +49,11 @@ class BlockIconUser extends React.Component<Props, {}> {
 					{ id: 'upload', name: 'Upload' },
 					{ id: 'remove', name: 'Remove' },
 				],
-				onSelect: (event: any, id: string) => {
-					if (id == 'remove') {
+				onSelect: (event: any, item: any) => {
+					if (item.id == 'remove') {
 						C.BlockSetDetails(rootId, [ { key: 'iconUser', value: '' } ]);
 					};
-					if (id == 'upload') {
+					if (item.id == 'upload') {
 						this.onUpload();
 					};
 				},

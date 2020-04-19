@@ -13,4 +13,9 @@
 			.name { color: $colorDarkGrey; }
 		}
 	}
+	
+	.menu.menuSelect.skip { width: 320px; }
+	.menu.menuSelect.skip {
+		.name { font-size: 15px; margin: 0px; width: calc(100% - 28px); @include text-overflow-nw; }
+	}
 }

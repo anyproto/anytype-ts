@@ -62,6 +62,11 @@
 			}
 			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
 			.icon.trash { width: 16px; height: 16px; background-image: url('~img/icon/menu/trash.svg'); }
+			
+			.smile { margin-right: 4px; }
+			.smile {
+				.icon.blank { margin: 0px; width: 18px; height: 18px; }
+			}
 		}
 		
 		.section { border-bottom: 1px solid $colorLightGrey; padding: 8px 0px; }

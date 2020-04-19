@@ -1039,11 +1039,11 @@ class EditorPage extends React.Component<Props, State> {
 						{ id: 'bookmark', name: 'Create bookmark' },
 						//{ id: 'embed', name: 'Create embed' },
 					],
-					onSelect: (event: any, id: string) => {
-						if (id == 'cancel') {
+					onSelect: (event: any, item: any) => {
+						if (item.id == 'cancel') {
 							this.onPaste(e, true, data);
 						};
-						if (id == 'bookmark') {
+						if (item.id == 'bookmark') {
 							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
 						};
 					},

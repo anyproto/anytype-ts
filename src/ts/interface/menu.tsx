@@ -11,6 +11,7 @@ export interface MenuParam {
 	data?: any;
 	isSub?: boolean;
 	passThrough?: boolean;
+	className?: string;
 	onClose?(): void;
 };
 
@@ -23,6 +24,7 @@ export interface Menu {
 export interface MenuItem {
 	id?: string;
 	icon?: string;
+	withSmile?: boolean;
 	name: string;
 	inner?: any;
 	color?: string;

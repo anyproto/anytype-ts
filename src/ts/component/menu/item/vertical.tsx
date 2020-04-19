@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { Icon, Smile } from 'ts/component';
 import { I } from 'ts/lib';
 
 interface Props extends I.MenuItem {};
@@ -7,7 +7,9 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, inner, name, color, arrow, isActive, className, onClick, onMouseEnter } = this.props;
+		const { id, icon, withSmile, inner, name, color, arrow, isActive, className, onClick, onMouseEnter } = this.props;
+		
+		console.log(this.props);
 		
 		let cn = [ 'item' ];
 		if (className) {
@@ -23,9 +25,16 @@ class MenuItemVertical extends React.Component<Props, {}> {
 			cn.push('active');
 		};
 		
+		let element = null;
+		if (withSmile) {
+			element = <Smile icon={icon} />;
+		} else if (icon) {
+			element = <Icon className={icon} inner={inner} />;
+		};
+		
 		return (
 			<div id={'item-' + id} className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter}>
-				{icon ? <Icon className={icon} inner={inner} /> : ''}
+				{element}
 				<div className="name">{name}</div>
 				{arrow ? <Icon className="arrow" /> : ''}
 			</div>
