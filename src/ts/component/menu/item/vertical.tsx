@@ -9,8 +9,6 @@ class MenuItemVertical extends React.Component<Props, {}> {
 	render () {
 		const { id, icon, withSmile, inner, name, color, arrow, isActive, className, onClick, onMouseEnter } = this.props;
 		
-		console.log(this.props);
-		
 		let cn = [ 'item' ];
 		if (className) {
 			cn.push(className);
