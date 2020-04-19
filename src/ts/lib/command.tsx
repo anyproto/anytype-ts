@@ -114,12 +114,12 @@ const BlockOpenBreadcrumbs = (callBack?: (message: any) => void) => {
 	dispatcher.request('blockOpenBreadcrumbs', request, callBack);
 };
 
-const BlockCutBreadcrumbs = (id: string, index: number, callBack?: (message: any) => void) => {
+const BlockSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
 	const request = {
-		breadcrumbsId: id,
-		index: index,
+		breadcrumbsId: contextId,
+		ids: pageIds,
 	};
-	dispatcher.request('blockCutBreadcrumbs', request, callBack);
+	dispatcher.request('blockSetBreadcrumbs', request, callBack);
 };
 
 const BlockClose = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
@@ -466,7 +466,7 @@ export {
 	
 	BlockOpen,
 	BlockOpenBreadcrumbs,
-	BlockCutBreadcrumbs,
+	BlockSetBreadcrumbs,
 	BlockClose,
 	BlockUndo,
 	BlockRedo,

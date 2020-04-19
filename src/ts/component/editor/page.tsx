@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, Mark, focus, keyboard } from 'ts/lib';
+import { I, C, M, Key, Util, DataUtil, Mark, focus, keyboard, crumbs } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -204,23 +204,22 @@ class EditorPage extends React.Component<Props, State> {
 		
 		this.setState({ loading: true });
 		
-		let children = blockStore.getChildren(breadcrumbs, breadcrumbs);
-		let bc: any[] = [];
+		let cr = crumbs.get(I.CrumbsType.Page);
 		let lastTargetId = '';
 		
-		if (children.length) {
-			let last = children[children.length - 1];
-			if (last) {
-				lastTargetId = last.content.targetBlockId;
-			};
+		if (cr.ids.length) {
+			lastTargetId = cr.ids[cr.ids.length - 1];
 		};
 		if (!lastTargetId || (lastTargetId != rootId)) {
-			bc = [ breadcrumbs ];
+			cr = crumbs.set(I.CrumbsType.Page, rootId);
 		};
+		
+		C.BlockSetBreadcrumbs(breadcrumbs, cr.ids);
 		
 		this.close(this.id);
 		this.id = rootId;
-		C.BlockOpen(this.id, bc, (message: any) => {
+		
+		C.BlockOpen(this.id, [ breadcrumbs ], (message: any) => {
 			const { focused, range } = focus;
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
 			

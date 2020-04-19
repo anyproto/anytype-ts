@@ -26,3 +26,8 @@ export enum CoverType {
 	Color	 = 2,
 	Gradient = 3,
 };
+
+export enum CrumbsType {
+	Page	 = 'page',
+	Popup	 = 'popup',
+};

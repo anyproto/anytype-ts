@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -226,13 +226,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archive':
 				C.BlockSetPageIsArchived(rootId, blockId, true, (message: any) => {
-					C.BlockCutBreadcrumbs(breadcrumbs, (children.length > 0 ? children.length - 1 : 0), (message: any) => {
-						if (prev) {
-							history.push('/main/edit/' + prev.content.targetBlockId + '/link/' + prev.id);
-						} else {
-							history.push('/main/index');
-						};
-					});
+					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
+					
+					if (prev) {
+						history.push('/main/edit/' + prev.content.targetBlockId + '/link/' + prev.id);
+					} else {
+						history.push('/main/index');
+					};
 				});
 				break;
 				

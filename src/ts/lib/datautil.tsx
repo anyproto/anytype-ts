@@ -1,4 +1,4 @@
-import { I, C, Util, focus } from 'ts/lib';
+import { I, C, Util, focus, Storage, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -130,7 +130,6 @@ class DataUtil {
 			if (!breadcrumbs) {
 				C.BlockOpenBreadcrumbs((message: any) => {
 					blockStore.breadcrumbsSet(message.blockId);
-					C.BlockCutBreadcrumbs(message.blockId, 0);
 				});
 			};
 			

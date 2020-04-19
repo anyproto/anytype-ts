@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, C, Key, Storage, Util, translate } from 'ts/lib';
+import { I, C, Key, Storage, Util, translate, crumbs } from 'ts/lib';
 import { commonStore, authStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -92,17 +92,17 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 			if (isSelect) {
 				history.push('/auth/setup/select');
 			} else {
-				C.BlockCutBreadcrumbs(breadcrumbs, 0, (message: any) => {
-					if (pageId) {
-						history.push('/main/edit/' + pageId);
-					} else {
-						history.push('/main/index');
-					};
+				crumbs.delete(I.CrumbsType.Page);
+				
+				if (pageId) {
+					history.push('/main/edit/' + pageId);
+				} else {
+					history.push('/main/index');
+				};
 					
-					if (!Storage.get('popupNewBlock')) {
-						commonStore.popupOpen('new', {});
-					};
-				});
+				if (!Storage.get('popupNewBlock')) {
+					commonStore.popupOpen('new', {});
+				};
 			};
 		} else {
 			this.setState({ error: translate('authPinCheckError') });

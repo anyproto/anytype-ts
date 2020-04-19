@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { commonStore, authStore, blockStore} from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, Storage } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, Storage, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
@@ -78,6 +78,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		Storage.set('pageId', '');
+		crumbs.delete(I.CrumbsType.Page);
 	};
 	
 	componentDidUpdate () {
@@ -115,6 +116,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			commonStore.popupOpen('archive', {});
 		} else {
 			DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
+			crumbs.init(I.CrumbsType.Page);
 		};
 	};
 	

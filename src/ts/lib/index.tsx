@@ -9,6 +9,7 @@ import { focus } from './focus';
 import { StructDecode, StructEncode } from './struct';
 import { scrollOnMove } from './scrollOnMove';
 import { analytics } from './analytics';
+import { crumbs } from './crumbs';
 import * as I from 'ts/interface';
 import * as M from 'ts/model';
 import * as C from './command';
@@ -44,6 +45,7 @@ export {
 	Docs,
 	translate,
 	analytics,
+	crumbs,
 	scrollOnMove,
 	StructDecode, 
 	StructEncode,

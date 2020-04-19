@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile, DropTarget, HeaderItemPath } from 'ts/component';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs } from 'ts/lib';
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -51,7 +51,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
 					{children.map((item: any, i: any) => (
-						<HeaderItemPath {...this.props} key={item.id} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={i + 1} />
+						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={i + 1} />
 					))}
 				</div>
 				
@@ -69,31 +69,22 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onHome (e: any) {
 		const { breadcrumbs } = blockStore;
 		
-		C.BlockCutBreadcrumbs(breadcrumbs, 0, (message: any) => {
-			this.props.history.push('/main/index');
-		});
+		this.props.history.push('/main/index');
 	};
 	
 	onPath (e: any, block: I.Block, index: number) {
 		e.persist();
 		
-		const { rootId } = this.props;
-		const { breadcrumbs } = blockStore;
-		
-		if (block.content.targetBlockId != rootId) {
-			C.BlockCutBreadcrumbs(breadcrumbs, index, (message: any) => {
-				DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
-			});
-		};
+		crumbs.cut(I.CrumbsType.Page, index);
+		DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
 	};
 	
 	onBack (e: any) {
 		const { breadcrumbs } = blockStore;
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
-		C.BlockCutBreadcrumbs(breadcrumbs, (children.length > 0 ? children.length - 1 : 0), (message: any) => {
-			this.props.history.goBack();			
-		});
+		crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
+		this.props.history.goBack();
 	};
 	
 	onForward (e: any) {
