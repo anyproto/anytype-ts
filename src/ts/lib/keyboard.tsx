@@ -15,6 +15,7 @@ class Keyboard {
 	coords: any = { x: 0, y: 0 };
 	timeoutPin: number = 0;
 	preview: boolean = false;
+	pressed: any = {};
 	
 	init (history: any) {
 		this.history = history;
@@ -60,6 +61,18 @@ class Keyboard {
 	
 	onKeyUp (e: any) {
 		let k = e.which;
+	};
+	
+	setPressed (k: number) {
+		this.pressed[k] = true;
+	};
+	
+	unsetPressed (k: number) {
+		delete(this.pressed[k]);
+	};
+	
+	countPressed () {
+		return Util.objectLength(this.pressed);
 	};
 	
 	setFocus (v: boolean) {

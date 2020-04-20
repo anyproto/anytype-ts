@@ -329,8 +329,6 @@ class Block extends React.Component<Props, {}> {
 			
 		let ids: string[] = selection.get(false);
 			
-		console.log(ids, block.id);
-			
 		if (ids.indexOf(block.id) < 0) {
 			selection.clear(true);
 			selection.set([ block.id ]);

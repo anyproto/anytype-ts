@@ -173,7 +173,7 @@ class CommonStore {
 		param.offsetY = Number(param.offsetY) || 0;
 		
 		if (!param.element) {
-			console.error('Element is not defined');
+			console.error('[menuOpen] Element is not defined');
 			return;
 		};
 		

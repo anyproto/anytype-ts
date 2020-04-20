@@ -15,7 +15,6 @@ interface Props {
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 	onMenuAdd? (id: string): void;
 	onPaste? (e: any): void;
 };
@@ -290,6 +289,10 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const value = this.getValue().replace(/\n$/, '');
 		
+		if (!e.metaKey) {
+			keyboard.setPressed(k);
+		};
+		
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
 			
@@ -320,12 +323,14 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { onKeyUp, rootId, block } = this.props;
+		const { rootId, block } = this.props;
 		const { id, content } = block;
 		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
 		const k = e.which;
+		
+		keyboard.unsetPressed(k);
 		
 		let cmdParsed = false;
 		let cb = (message: any) => {
@@ -460,7 +465,6 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = this.getMarksFromHtml();
 		
 		this.placeHolderCheck();
-		onKeyUp(e, value, this.marks);
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
