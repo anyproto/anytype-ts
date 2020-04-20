@@ -233,9 +233,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter);
+			sections = DataUtil.menuSectionsMap(sections);
 		};
-		
-		sections = DataUtil.menuSectionsMap(sections);
 		
 		return sections;
 	};
@@ -337,6 +336,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { onSelect, blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		
+		console.log();
 		
 		if (!block) {
 			return;

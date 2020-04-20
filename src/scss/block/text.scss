@@ -28,23 +28,11 @@
 				img { width: 6px; height: 6px; display: inline-block; vertical-align: top; margin-top: 2px; }
 			}
 			
-			.marker.check, .marker.toggle { width: 24px; height: 22px; line-height: 22px; margin-right: 4px; cursor: pointer; }
+			.marker.check, .marker.toggle { width: 24px; height: 24px; line-height: 24px; margin-right: 4px; cursor: pointer; }
 			.marker.check, .marker.toggle {
-				.icon { position: absolute; display: block; left: 50%; top: 50%; }
+				img { width: 24px; height: 24px; margin-top: -1px; }
 			}
 			
-			.marker.toggle {
-				.icon { width: 10px; height: 10px; background-size: 6px 10px; background-image: url('~img/icon/marker/toggle.svg'); margin: -5px 0px 0px -5px; }
-			}
-			
-			.marker.check {
-				.icon {
-					width: 18px; height: 18px; background-image: url('~img/icon/marker/check0.svg'); margin: -9px 0px 0px -9px;
-				}
-			}
-			.marker.check.active {
-				.icon { background-image: url('~img/icon/marker/check1.svg'); }
-			}
 		}
 	}
 	
