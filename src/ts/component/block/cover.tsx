@@ -52,6 +52,10 @@ class BlockCover extends React.Component<Props, State> {
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
 		
+		this.onDragOver = this.onDragOver.bind(this);
+		this.onDragLeave = this.onDragLeave.bind(this);
+		
+		this.onDrop = this.onDrop.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragMove = this.onDragMove.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
@@ -97,7 +101,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart}>
+			<div className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop}>
 				{loading ? <Loader /> : ''}
 				{coverType == I.CoverType.Image ? (
 					<img id="cover" src={commonStore.imageUrl(coverId, 2048)} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
@@ -322,6 +326,56 @@ class BlockCover extends React.Component<Props, State> {
 		C.BlockSetDetails(rootId, [ 
 			{ key: 'coverScale', value: v },
 		]);
+	};
+	
+	onDragOver (e: any) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('isDraggingOver');
+	};
+	
+	onDragLeave (e: any) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.removeClass('isDraggingOver');
+	};
+	
+	onDrop (e: any) {
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const { rootId, dataset } = this.props;
+		const { preventCommonDrop } = dataset || {};
+		const file = e.dataTransfer.files[0].path;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.removeClass('isDraggingOver');
+		preventCommonDrop(true);
+		this.setState({ loading: true });
+		
+		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+			this.setState({ loading: false });
+			preventCommonDrop(false);
+			
+			if (message.error.code) {
+				return;
+			};
+			
+			C.BlockSetDetails(rootId, [ 
+				{ key: 'coverType', value: I.CoverType.Image },
+				{ key: 'coverId', value: message.hash },
+				{ key: 'coverX', value: 0 },
+				{ key: 'coverY', value: 0 },
+				{ key: 'coverScale', value: 0 },
+			]);
+		});
 	};
 	
 	setTransform (x: number, y: number) {

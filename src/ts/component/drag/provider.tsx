@@ -21,7 +21,7 @@ class DragProvider extends React.Component<Props, {}> {
 	type: string = '';
 	ids: string[] = [];
 	map: any;
-	preventCommonDrop: boolean = false;
+	commonDropPrevented: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -32,6 +32,7 @@ class DragProvider extends React.Component<Props, {}> {
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.onDropCommon = this.onDropCommon.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.preventCommonDrop = this.preventCommonDrop.bind(this);
 	};
 	
 	render () {
@@ -47,7 +48,7 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDropCommon (e: any) {
-		if (this.preventCommonDrop || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (this.commonDropPrevented || !e.dataTransfer.files || !e.dataTransfer.files.length) {
 			return;
 		};
 		
@@ -150,7 +151,7 @@ class DragProvider extends React.Component<Props, {}> {
 		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
 		
 		if (e.dataTransfer.files && e.dataTransfer.files.length) {
-			this.preventCommonDrop = true;
+			this.commonDropPrevented = true;
 			
 			const paths: string[] = [];
 			
@@ -161,7 +162,7 @@ class DragProvider extends React.Component<Props, {}> {
 			console.log('[onDrop] paths', paths);
 			
 			C.ExternalDropFiles(contextId, targetId, position, paths, (message: any) => {
-				this.preventCommonDrop = false;
+				this.commonDropPrevented = false;
 			});
 		} else {
 			C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
@@ -210,9 +211,14 @@ class DragProvider extends React.Component<Props, {}> {
 			dataset.dragProvider = this;
 			dataset.onDragStart = this.onDragStart;
 			dataset.onDrop = this.onDrop;
+			dataset.preventCommonDrop = this.preventCommonDrop;
 			
 			return React.cloneElement(child, { dataset: dataset });
 		});
+	};
+	
+	preventCommonDrop (v: boolean) {
+		this.commonDropPrevented = Boolean(v);
 	};
 	
 };
