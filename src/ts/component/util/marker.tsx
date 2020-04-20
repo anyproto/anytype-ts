@@ -45,8 +45,6 @@ class Marker extends React.Component<Props, {}> {
 		
 		let inner: any = null;
 		
-		console.log(type);
-		
 		if (type == I.TextStyle.Bulleted) {
 			inner = (
 				<span id={'marker-' + id} className={ci.join(' ')}>
