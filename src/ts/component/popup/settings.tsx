@@ -267,7 +267,14 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	
 	onFileClick (e: any) {
-		dialog.showOpenDialog({ properties: [ 'openFile' ] }, (files: any) => {
+		const options: any = { 
+			properties: [ 'openFile' ], 
+			filters: [
+				{ name: '', extensions: Constant.extension.image }
+			] 
+		};
+		
+		dialog.showOpenDialog(null, options, (files: any) => {
 			if ((files == undefined) || !files.length) {
 				return;
 			};

@@ -20,6 +20,7 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
+const Constant = require('json/constant.json');
 
 @observer
 class BlockCover extends React.Component<Props, State> {
@@ -298,7 +299,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		v = (v + 1) * 100;
 		value.text(Math.ceil(v) + '%');
-		this.cover.css({ width: v + '%' });
+		this.cover.css({ height: 'auto', width: v + '%' });
 		
 		this.rect.cw = this.cover.width();
 		this.rect.ch = this.cover.height();
@@ -330,7 +331,16 @@ class BlockCover extends React.Component<Props, State> {
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
 		
-		this.cover.css({ transform: `translate3d(${x}px,${y}px,0px)` });
+		let css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
+		
+		if (this.rect.ch < this.rect.height) {
+			css.transform = 'translate3d(0px,0px,0px)';
+			css.height = this.rect.height;
+			css.width = 'auto';
+		};
+		
+		this.cover.css(css);
+		
 		return { x: x, y: y };
 	};
 	

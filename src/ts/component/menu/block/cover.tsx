@@ -8,6 +8,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const { dialog } = window.require('electron').remote;
+const Constant = require('json/constant.json');
 
 @observer
 class MenuBlockCover extends React.Component<Props, {}> {
@@ -65,10 +66,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const options: any = { 
 			properties: [ 'openFile' ], 
 			filters: [
-				{ 
-					name: '', 
-					extensions: [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ] 
-				},
+				{ name: '', extensions: Constant.extension.image }
 			],
 		};
 		

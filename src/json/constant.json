@@ -23,6 +23,11 @@
 		"filter": "Type to filter..."
 	},
 	
+	"extension": {
+		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
+		"video": [ "mp4", "m4v" ]
+	},
+	
 	"size": {
 		"editorPage": 704,
 		"blockMenu": 48,
