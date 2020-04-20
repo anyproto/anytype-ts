@@ -59,7 +59,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color, bgColor } = content;
 		
-		let markers: any[] = [];
+		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct ];
@@ -71,6 +71,7 @@ class BlockText extends React.Component<Props, {}> {
 					<div className="line" />
 				);
 				break;
+				
 			case I.TextStyle.Code:
 				let options = [];
 				for (let i in Constant.codeLang) {
@@ -83,19 +84,19 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 				
 			case I.TextStyle.Bulleted:
-				markers.push({ type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} });
+				marker = { type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} };
 				break;
 				
 			case I.TextStyle.Numbered:
-				markers.push({ type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} });
+				marker = { type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} };
 				break;
 				
 			case I.TextStyle.Toggle:
-				markers.push({ type: I.TextStyle.Toggle, className: 'toggle', active: false, onClick: this.onToggle });
+				marker = { type: I.TextStyle.Toggle, className: 'toggle', active: false, onClick: this.onToggle };
 				break;
 				
 			case I.TextStyle.Checkbox:
-				markers.push({ type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheck });
+				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheck };
 				break;
 		};
 		
@@ -120,9 +121,7 @@ class BlockText extends React.Component<Props, {}> {
 		return (
 			<div className="flex">
 				<div className="markers">
-					{markers.map((item: any, i: number) => (
-						<Marker key={i} {...item} id={id} color={color} />
-					))}
+					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
 				</div>
 				{additional}
 				<div className="wrap">

@@ -27,7 +27,7 @@ class Marker extends React.Component<Props, {}> {
 		const { id, type, color, className, active, onClick } = this.props;
 		
 		let cn = [ 'marker' ];
-		let ci = [];
+		let ci = [ 'markerInner', 'c' + type ];
 		
 		if (className) {
 			cn.push(className);

@@ -260,16 +260,17 @@ class BlockStore {
 			return;
 		};
 		
+		$('.markerNumber').remove();
+		
 		const cb = (list: any[]) => {
 			list = list || [];
 			
 			let n = 0;
 			for (let item of list) {
-				
 				if (!item.isLayout()) {
 					if (item.isNumbered()) {
 						n++;
-						$('#marker-' + item.id).text(n ? n + '.' : '');
+						$('#marker-' + item.id).html('<span class="markerNumber">' + n + '.</span>');
 					} else {
 						n = 0;
 					};

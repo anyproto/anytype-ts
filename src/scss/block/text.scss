@@ -21,9 +21,7 @@
 			}
 			
 			.marker.number { vertical-align: baseline; line-height: 24px; }
-			.marker.number {
-				span { min-width: 28px; line-height: 1; display: inline-block; text-align: center; padding-right: 4px; }
-			}
+			.marker.number > span { min-width: 28px; line-height: 1; display: inline-block; text-align: center; padding-right: 4px; }
 			
 			.marker.bullet {
 				span { min-width: 28px; line-height: 1; display: inline-block; text-align: center; padding-right: 4px; }
