@@ -104,6 +104,8 @@ class Dispatcher {
 						return it;
 					});
 					
+					blocks.unshift({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
+					
 					blockStore.blocksSet(rootId, blocks);
 					blockStore.detailsSet(rootId, data.details);
 					break;
@@ -372,11 +374,14 @@ class Dispatcher {
 		
 		try {
 			this.service[type](data, (message: any) => {
-				t1 = performance.now();
+				if (debug) {
+					t1 = performance.now();
+				};
 				
-				message.error = message.error || {};
-				message.error.code = Number(message.error.code) || 0;
-				message.error.description = String(message.error.description || '');
+				message.error = {
+					code: String(message.error.code || ''),
+					description: String(message.error.description || ''), 
+				};
 				
 				if (message.error.code) {
 					console.error('[Dispatcher.request]', type, 'code:', message.error.code, 'description:', message.error.description);

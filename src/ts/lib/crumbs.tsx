@@ -37,6 +37,10 @@ class Crumbs {
 	};
 	
 	cut (key: I.CrumbsType, index: number) {
+		if (!blockStore.breadcrumbs) {
+			return;
+		};
+		
 		let k = this.key(key);
 		let obj: any = Storage.get(k) || {};
 		

@@ -69,22 +69,24 @@ class EditorPage extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
 		const details = blockStore.getDetail(rootId, rootId);
+		const title = blockStore.getLeaf(rootId, rootId + '-title');
 		
 		const withIcon = details.icon;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
-		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper' ];
-		let icon = null;
+		let icon: any = { id: rootId + '-icon', childrenIds: [], fields: {}, content: {} };
 		
 		if (root.isPageProfile()) {
 			cn.push('isProfile');
-			icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconUser, childrenIds: [], fields: {}, content: {} });
+			icon.type = I.BlockType.IconUser;
 		} else {
-			icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], fields: {}, content: {} });
+			icon.type = I.BlockType.IconPage;
 		};
+		
+		icon = new M.Block(icon);
 		
 		if (withIcon && withCover) {
 			cn.push('withIconAndCover');
@@ -214,7 +216,9 @@ class EditorPage extends React.Component<Props, State> {
 			cr = crumbs.set(I.CrumbsType.Page, rootId);
 		};
 		
-		C.BlockSetBreadcrumbs(breadcrumbs, cr.ids);
+		if (breadcrumbs) {
+			C.BlockSetBreadcrumbs(breadcrumbs, cr.ids);
+		};
 		
 		this.close(this.id);
 		this.id = rootId;

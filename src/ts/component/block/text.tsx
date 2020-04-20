@@ -114,6 +114,7 @@ class BlockText extends React.Component<Props, {}> {
 				onPaste={this.onPaste}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
+				onDragStart={(e: any) => { e.preventDefault(); }}
 			/>
 		);
 		
