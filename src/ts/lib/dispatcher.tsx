@@ -90,7 +90,7 @@ class Dispatcher {
 					
 					account.name = String(details.name || '');
 					account.avatar = { 
-						image: { hash: String(details.icon || '') }
+						image: { hash: String(details.iconImage || '') }
 					};
 					break;
 					

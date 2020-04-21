@@ -104,7 +104,7 @@ class Controls extends React.Component<Props, {}> {
 				};
 				
 				C.BlockSetDetails(rootId, [ 
-					{ key: 'icon', value: message.hash },
+					{ key: 'iconImage', value: message.hash },
 				]);
 			});
 		});

@@ -4,6 +4,7 @@ import { I, M, Util, StructDecode, StructEncode } from 'ts/lib';
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+const raf = require('raf');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -280,7 +281,7 @@ class BlockStore {
 			};
 		};
 		
-		cb(root.childBlocks);
+		raf(() => { cb(root.childBlocks); });
 	};
 	
 	getStructure (list: I.Block[]) {

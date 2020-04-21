@@ -15,7 +15,7 @@
 	.block.blockLayout.c0 > .wrapContent > .dropTarget.targetBot { bottom: -15px; }
 
 	/* Column */
-	.block.blockLayout.c1 { padding: 0px; }
+	.block.blockLayout.c1 { padding: 0px; margin: 0px; }
 	.block.blockLayout.c1 {
 		.columnEmpty { flex-grow: 1; }
 	}
@@ -26,6 +26,8 @@
 	.block.blockLayout.c1 > .wrapContent > .children > .block.first {
 		.inputWithFile { margin-top: 0px; }
 	}
+	
+	.block.blockLayout.c1 > .wrapContent > .children > .block.last { margin: 0px; }
 	.block.blockLayout.c1 > .wrapContent > .children > .block.last > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
 	.block.blockLayout.c1 > .wrapContent > .children > .block.last {
 		.inputWithFile { margin-bottom: 0px; }

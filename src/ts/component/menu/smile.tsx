@@ -275,9 +275,23 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		let ids = Storage.get('smileIds') || [];
 		
-		ids.unshift({ smile: id, skin: skin });
-		ids = [ ...new Set(ids) ];
+		ids = ids.map((it: any) => {
+			it.key = [ it.smile, it.skin ].join(',');
+			return it;
+		});
+		
+		ids.unshift({ 
+			smile: id, 
+			skin: skin, 
+			key: [ id, skin ].join(',') 
+		});
+		
+		ids = Util.arrayUniqueObjects(ids, 'key');
 		ids = ids.slice(0, LIMIT);
+		ids = ids.map((it: any) => {
+			delete(it.key);
+			return it;
+		});
 		
 		Storage.delete('smileIds');
 		Storage.set('smileIds', ids);

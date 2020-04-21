@@ -106,12 +106,19 @@ class EditorPage extends React.Component<Props, State> {
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 					
-						{withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
+						{withIcon ? (
+							<Block 
+								{...this.props} key={icon.id} block={icon} 
+								className="root" 
+							/>	
+						) : ''}
+						
 						<Block 
 							{...this.props} key={title.id} block={title}
 							onKeyDown={this.onKeyDownBlock} 
 							onMenuAdd={this.onMenuAdd}
-							onPaste={this.onPaste} 
+							onPaste={this.onPaste}
+							className="root" 
 						/>
 					
 						{list.map((block: I.Block, i: number) => {
@@ -121,6 +128,7 @@ class EditorPage extends React.Component<Props, State> {
 									{...this.props}
 									index={i}
 									block={block}
+									className="root"
 									onKeyDown={this.onKeyDownBlock} 
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}

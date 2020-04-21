@@ -31,6 +31,7 @@ class Marker extends React.Component<Props, {}> {
 		
 		let cn = [ 'marker' ];
 		let ci = [ 'markerInner', 'c' + type ];
+		let inner: any = null;
 		
 		if (className) {
 			cn.push(className);
@@ -43,30 +44,30 @@ class Marker extends React.Component<Props, {}> {
 			ci.push('textColor textColor-' + color);
 		};
 		
-		let inner: any = null;
-		
-		if (type == I.TextStyle.Bulleted) {
-			inner = (
-				<span id={'marker-' + id} className={ci.join(' ')}>
-					<img src={Bullets[color] || Bullets.black} />
-				</span>
-			);
-		};
-		
-		if (type == I.TextStyle.Numbered) {
-			inner = <span id={'marker-' + id} className={ci.join(' ')} />
-		};
-		
-		if (type == I.TextStyle.Checkbox) {
-			inner = <img src={active ? Checkbox1 : Checkbox0} />;
-		};
-		
-		if (type == I.TextStyle.Toggle) {
-			inner = <img src={Toggle} />;
+		switch (type) {
+			case I.TextStyle.Bulleted:
+				inner = (
+					<span id={'marker-' + id} className={ci.join(' ')}>
+						<img src={Bullets[color] || Bullets.black} />
+					</span>
+				);
+				break;
+				
+			case I.TextStyle.Numbered:
+				inner = <span id={'marker-' + id} className={ci.join(' ')} />
+				break;
+				
+			case I.TextStyle.Checkbox:
+				inner = <img src={active ? Checkbox1 : Checkbox0} />;
+				break;
+			
+			case I.TextStyle.Toggle:
+				inner = <img src={Toggle} />;
+				break;
 		};
 		
 		return (
-			<div className={cn.join(' ')} data-id={id} onClick={onClick}>
+			<div className={cn.join(' ')} onClick={onClick}>
 				{inner}
 			</div>
 		);

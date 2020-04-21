@@ -79,13 +79,15 @@ class Util {
 			(JSON.stringify(v1) === JSON.stringify(v2));
 	};
 	
-	arrayUniqueObjects (array: any[], prop: string) {
+	arrayUniqueObjects (array: any[], k: string) {
 		const res: any[] = [];
 		const map = new Map();
 		
 		for (const item of array) {
-			if (!map.has(item[prop])){
-				map.set(item[prop], true);
+			console.log(k, item[k], map.has(item[k]));
+			
+			if (!map.has(item[k])){
+				map.set(item[k], true);
 				res.push(item);
 			};
 		};
