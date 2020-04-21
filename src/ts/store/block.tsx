@@ -260,23 +260,17 @@ class BlockStore {
 			return;
 		};
 		
-		let nodes: any = {};
-		
 		$('.markerNumber').remove();
-		$('.marker').each((i, item) => {
-			item = $(item);
-			nodes[item.data('id')] = item;
-		});
 		
 		const cb = (list: any[]) => {
 			list = list || [];
 			
 			let n = 0;
 			for (let item of list) {
-				if (nodes[item.id] && !item.isLayout()) {
+				if (!item.isLayout()) {
 					if (item.isNumbered()) {
 						n++;
-						nodes[item.id].html(`<span class="markerNumber">${n}.</span>`);
+						$('#marker-' + item.id).html(`<span class="markerNumber">${n}.</span>`);
 					} else {
 						n = 0;
 					};
@@ -286,7 +280,7 @@ class BlockStore {
 			};
 		};
 		
-		window.setTimeout(() => { cb(root.childBlocks); }, 10);
+		cb(root.childBlocks);
 	};
 	
 	getStructure (list: I.Block[]) {
