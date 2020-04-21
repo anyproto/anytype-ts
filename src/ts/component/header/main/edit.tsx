@@ -36,6 +36,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const slice = children.length > LIMIT ? children.slice(children.length - LIMIT, children.length) : children;
+		const n = children.length - LIMIT;
 		
 		const PathItemHome = (item: any) => (
 			<div className="item"onClick={this.onHome}>
@@ -52,6 +53,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			</div>
 		);
 		
+		
 		return (
 			<div className="header headerMainEdit">
 				<div className="path">
@@ -61,7 +63,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<PathItemHome />
 					{children.length > LIMIT ? <PathItemSkip /> : ''}
 					{slice.map((item: any, i: any) => (
-						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={LIMIT + i + 1} />
+						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={n + i + 1} />
 					))}
 				</div>
 				
