@@ -69,7 +69,7 @@
 	.block.isToggled > .wrapContent > .emptyToggle { display: block; }
 	.block.isToggled > .wrapContent > .selectable > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
 	
-	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }
+	.block.isDragging > .wrapContent > .selectable > .dropTarget { opacity: 0.3; }
 	
 	.block > .wrapContent > .selectable.isSelected > .selectionOver { display: block; }
 	.block > .wrapContent > .selectable.isSelected { 

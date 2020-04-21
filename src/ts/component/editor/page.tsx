@@ -357,6 +357,15 @@ class EditorPage extends React.Component<Props, State> {
 		
 		window.clearTimeout(this.timeoutHover);
 		
+		if (keyboard.drag) {
+			add.css({ opacity: 0 });
+			items.removeClass('showMenu isAdding top bottom');
+			if (hovered) {
+				hovered.addClass('showMenu');
+			};
+			return;
+		};
+		
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
@@ -378,14 +387,6 @@ class EditorPage extends React.Component<Props, State> {
 				add.css({ opacity: 0 });
 				items.removeClass('showMenu isAdding top bottom');
 			}, 10);
-		};
-		
-		if (keyboard.drag) {
-			add.css({ opacity: 0 });
-			items.removeClass('showMenu isAdding top bottom');
-			if (hovered) {
-				hovered.addClass('showMenu');
-			};
 		};
 	};
 	

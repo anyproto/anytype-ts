@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { DragLayer } from 'ts/component';
 import { I, C, focus, keyboard, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
 };
@@ -41,7 +42,7 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		return (
 			<div className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
-				<DragLayer ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
+				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
 				{children}
 			</div>
 		);
@@ -78,8 +79,8 @@ class DragProvider extends React.Component<Props, {}> {
 		console.log('[onDragStart]', type, ids);
 		
 		this.map = blockStore.getMap(rootId);
+		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
-		this.refLayer.show(type, this.ids, component);
 		this.unbind();
 		this.setDragImage(e);
 		keyboard.setDrag(true);
@@ -106,7 +107,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
-		$('.selectable.isDragging').removeClass('isDragging');
+		$('.block.isDragging').removeClass('isDragging');
 		
 		this.refLayer.hide();
 		this.unbind();
@@ -181,9 +182,9 @@ class DragProvider extends React.Component<Props, {}> {
 		this.type = type;
 		this.ids = ids.map((id: any) => { return id.toString(); });
 		
-		$('.selectable.isDragging').removeClass('isDragging');
+		$('.block.isDragging').removeClass('isDragging');
 		for (let id of this.ids) {
-			$('#selectable-' + id).addClass('isDragging');
+			$('#block-' + id).addClass('isDragging');
 		};
 	};
 	

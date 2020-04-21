@@ -1,14 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Block } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, M, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 const $ = require('jquery');
 const raf = require('raf');
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
 };
 
@@ -46,14 +47,20 @@ class DragLayer extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		let content = null;
+		
 		switch (type) {
 			case I.DragItem.Block:
+				const blocks = ids.map((id: string) => {
+					let block = Util.objectCopy(blockStore.getLeaf(rootId, id));
+					
+					block.id = '';
+					return new M.Block(block);
+				});
+			
 				content = (
 					<div className="blocks">
-						{ids.map((id: string, i: number) => {
-							const block = blockStore.getLeaf(rootId, id);
-
-							return <Block key={id} block={block} {...block} rootId={rootId} index={i} />
+						{blocks.map((block: any, i: number) => {
+							return <Block key={i} {...this.props} block={block} rootId={rootId} index={i} />
 						})}
 					</div>
 				);

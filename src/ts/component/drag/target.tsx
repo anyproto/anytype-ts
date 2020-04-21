@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
+import { throttle } from 'lodash';
 
 interface Props {
 	id: string;
@@ -16,6 +17,7 @@ interface Props {
 };
 
 const $ = require('jquery');
+const THROTTLE = 20;
 
 class DropTarget extends React.Component<Props, {}> {
 	
@@ -42,7 +44,7 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop} onClick={this.onClick}>
+			<div className={cn.join(' ')} onDrop={this.onDrop} onClick={this.onClick}>
 				{children}
 			</div>
 		);
@@ -50,10 +52,22 @@ class DropTarget extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this._isMounted = true;
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		this.unbind();
+		
+		node.on('dragover.target', (e: any) => { this.onDragOver(e.originalEvent); });
+		node.on('dragleave.target', (e: any) => { this.onDragLeave(e); });
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+	
+	unbind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.unbind('dragover.target dragleave.target');
 	};
 	
 	onDragOver (e: any) {
@@ -193,9 +207,8 @@ class DropTarget extends React.Component<Props, {}> {
 		if (!this._isMounted) {
 			return;
 		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.removeClass('isOver top bottom left right middle');
+
+		this.clear();
 	};
 	
 	onDrop (e: any) {
@@ -208,8 +221,7 @@ class DropTarget extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.removeClass('isOver top bottom left right middle');
+		this.clear();
 		
 		if (this.canDrop && onDrop && (this.position != I.BlockPosition.None)) {
 			onDrop(e, dropType, rootId, id, this.position);
@@ -222,6 +234,10 @@ class DropTarget extends React.Component<Props, {}> {
 		if (onClick) {
 			onClick(e);
 		};
+	};
+	
+	clear () {
+		$('.isOver').removeClass('isOver top bottom left right middle')
 	};
 	
 };
