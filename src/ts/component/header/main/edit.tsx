@@ -32,18 +32,17 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	render () {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
-		const { account } = authStore;
 		
 		const childrenIds = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const slice = children.length > LIMIT ? children.slice(LIMIT, children.length) : children;
 		
 		const PathItemHome = (item: any) => (
-			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
+			<div className="item"onClick={this.onHome}>
 				<Icon className="home" />
-				<div className="name">{Util.shorten(account.name || 'Home', 16)}</div>
+				<div className="name">Home</div>
 				<Icon className="arrow" />
-			</DropTarget>
+			</div>
 		);
 		
 		const PathItemSkip = (item: any) => (

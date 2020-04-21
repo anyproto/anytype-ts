@@ -50,11 +50,11 @@
 		.icon.dnd { display: none; }
 	}
 	
-	.block.isAdding.top::before, .block.isAddingMenu.mTop::before {
+	.block.isAdding.top::before {
 		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; top: -2px;
 	}
 	
-	.block.isAdding.bottom::after, .block.isAddingMenu.mBottom::after {
+	.block.isAdding.bottom::after {
 		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; bottom: -2px;
 	}
 	
@@ -63,8 +63,6 @@
 
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
 	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
-	.block.isAddingMenu.mTop > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
-	.block.isAddingMenu.mBottom > .wrapContent > .selectable > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
 
 	.block > .wrapContent > .children.canToggle { display: none; }
 	.block.isToggled > .wrapContent > .children { display: block; }
