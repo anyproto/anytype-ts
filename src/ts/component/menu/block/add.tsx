@@ -252,9 +252,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter);
+			sections = DataUtil.menuSectionsMap(sections);
 		};
-		
-		sections = DataUtil.menuSectionsMap(sections);
 		
 		return sections;
 	};
@@ -282,6 +281,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					children: [],
 				});
 			};
+		};
+		
+		if (filter) {
+			let list: any[] = [];
+			for (let item of options) {
+				list = list.concat(item.children || []);
+			};
+			options = list;
 		};
 		
 		return options;

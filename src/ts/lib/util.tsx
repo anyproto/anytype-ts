@@ -84,8 +84,6 @@ class Util {
 		const map = new Map();
 		
 		for (const item of array) {
-			console.log(k, item[k], map.has(item[k]));
-			
 			if (!map.has(item[k])){
 				map.set(item[k], true);
 				res.push(item);

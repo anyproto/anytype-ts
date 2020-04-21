@@ -337,8 +337,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { onSelect, blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
-		console.log();
-		
 		if (!block) {
 			return;
 		};

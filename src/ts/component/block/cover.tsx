@@ -195,25 +195,28 @@ class BlockCover extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
-		const { coverX, coverY, coverScale } = details;
+		const { coverX, coverY, coverScale, coverType } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!node.hasClass('wrap')) {
 			return;
 		};
 		
-		const cb = (e: any) => {
-			if (this.refDrag) {
-				this.refDrag.setValue(coverScale);
-			};
-			
-			this.rect = (node.get(0) as Element).getBoundingClientRect();
-			this.onScaleMove(coverScale);
-		};
-
 		this.cover = node.find('#cover');
-		this.cover.get(0).onload = cb;
-		raf(cb);
+		
+		if (coverType == I.CoverType.Image) {
+			const cb = (e: any) => {
+				if (this.refDrag) {
+					this.refDrag.setValue(coverScale);
+				};
+				
+				this.rect = (node.get(0) as Element).getBoundingClientRect();
+				this.onScaleMove(coverScale);
+			};
+	
+			this.cover.get(0).onload = cb;
+			raf(cb);
+		};
 	};
 	
 	onDragStart (e: any) {
@@ -394,7 +397,6 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		this.cover.css(css);
-		
 		return { x: x, y: y };
 	};
 	

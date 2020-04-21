@@ -11,7 +11,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const Constant = require('json/constant.json');
-const LIMIT = 1;
+const LIMIT = 3;
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
@@ -35,7 +35,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		
 		const childrenIds = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
-		const slice = children.length > LIMIT ? children.slice(LIMIT, children.length) : children;
+		const slice = children.length > LIMIT ? children.slice(children.length - LIMIT, children.length) : children;
 		
 		const PathItemHome = (item: any) => (
 			<div className="item"onClick={this.onHome}>
@@ -85,7 +85,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onSkip (e: any) {
 		const { breadcrumbs } = blockStore;
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
-		const slice = children.slice(0, LIMIT);
+		const slice = children.slice(0, children.length - LIMIT);
 	
 		let options = [];
 		for (let i in slice) {
@@ -97,7 +97,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				targetId: item.content.targetBlockId,
 				index: i,
 				withSmile: true,
-				icon: details.icon,
+				icon: details.iconEmoji,
 				name: details.name,
 			});
 		};

@@ -378,7 +378,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
 				
-				if (block) {
+				if (block && !block.isLayoutColumn()) {
 					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 				};
 			};
