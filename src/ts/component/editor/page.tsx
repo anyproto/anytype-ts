@@ -716,7 +716,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		// Enter
-		if ((k == Key.enter) && (keyboard.countPressed() == 1)) {
+		if (k == Key.enter) {
 			if (e.shiftKey || block.isCode() || (!block.isText() && keyboard.focus)) {
 				return;
 			};
