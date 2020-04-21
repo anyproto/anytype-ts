@@ -66,7 +66,7 @@ class Marker extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onClick={onClick}>
+			<div className={cn.join(' ')} data-id={id} onClick={onClick}>
 				{inner}
 			</div>
 		);

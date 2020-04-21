@@ -30,8 +30,9 @@ class ListChildren extends React.Component<Props, {}> {
 			return null;
 		};
 		
+		const cn = [ 'children', (block.isToggle() ? 'canToggle' : '') ];
+		
 		let ColResize: any = (): any => null;
-		let cn = [ 'children', 'c' + id ];
 		let isRow = block.isLayoutRow();
 		
 		if (isRow) {
@@ -44,12 +45,8 @@ class ListChildren extends React.Component<Props, {}> {
 			);
 		};
 		
-		if (block.isToggle()) {
-			cn.push('canToggle');
-		};
-		
 		return (
-			<div className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
+			<div id={'block-children-' + id} className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{children.map((item: any, i: number) => {
 					let css: any = {};
 					let cn = [];
