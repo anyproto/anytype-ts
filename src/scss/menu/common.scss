@@ -39,10 +39,7 @@
 			.input { padding: 0px; height: 22px; }
 		}
 	
-		.title { 
-			font-size: 13px; line-height: 18px; margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey;
-			letter-spacing: 0.08px; 
-		}
+		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey; }
 	
 		.item { 
 			padding: 4px 14px; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
@@ -73,7 +70,7 @@
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { border: 0px; padding-bottom: 0px; }
 		.section > .name { 
-			padding: 4px 16px; margin-bottom: 2px; font-size: 11px; line-height: 18px; letter-spacing: 0.4px; color: $colorDarkGrey; 
+			padding: 4px 16px; margin-bottom: 2px; @include text-very-small; 
 			display: block; text-transform: uppercase; 
 		}
 	}

@@ -5,7 +5,7 @@
 	
 	.block.blockMedia {
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
-		.error { margin: 0px; font-size: 13px; line-height: 18px; }
+		.error { margin: 0px; @include text-small; }
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
 		.media { width: 100%; display: block; }

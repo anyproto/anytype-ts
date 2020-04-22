@@ -68,8 +68,8 @@
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.code {
 		.select { 
-			position: absolute; top: 16px; left: 16px; z-index: 1; font-size: 13px; height: 18px; border: 0px;
-			font-weight: 500; color: $colorDarkGrey; 
+			position: absolute; top: 16px; left: 16px; z-index: 1; @include text-small; border: 0px; font-weight: 500; 
+			color: $colorDarkGrey; 
 		}
 		.select {
 			.current { padding: 0px 16px 0px 0px; }

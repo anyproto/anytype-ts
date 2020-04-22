@@ -39,7 +39,7 @@
 					border-right: 1px solid rgba(255,255,255,0); transition: $transitionFast;
 				}
 				.name { width: 100%; line-height: 24px; height: 24px; @include text-overflow-nw;  }
-				.descr { width: 100%; font-size: 13px; line-height: 18px; height: 18px; @include text-overflow; color: #6c6a5f; }
+				.descr { width: 100%; @include text-small; height: 18px; @include text-overflow; color: #6c6a5f; }
 				.icon.arrow { 
 					width: 6px; height: 10px; position: absolute; right: 12px; top: 50%; margin-top: -5px;
 					background-image: url('~img/arrow/tree.svg'); opacity: 0; 
@@ -63,7 +63,7 @@
 		.selected { padding: 16px; border: 2px solid $colorOrange; border-radius: 8px; }
 		.selected {
 			.smile { margin-bottom: 8px; }
-			.descr { font-size: 13px; line-height: 18px; height: 18px; color: #6c6a5f; @include text-overflow; }
+			.descr { @include text-small; height: 18px; color: #6c6a5f; @include text-overflow; }
 			.cover { position: static; height: 156px; margin: 12px 0px 16px 0px; background-color: #C4C4C4; }
 			.buttons {
 				.button { margin-right: 12px; }

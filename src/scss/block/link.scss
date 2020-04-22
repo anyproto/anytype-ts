@@ -4,14 +4,14 @@
 	.block.blockLink { white-space: nowrap; }
 	.block.blockLink {
 		.name {
-			display: inline-block; vertical-align: top; height: 24px; letter-spacing: 0.1px; max-width: calc(100% - 28px); border-bottom: 1px solid $colorDarkGrey;
+			display: inline-block; vertical-align: top; height: 24px; letter-spacing: 0.1px; max-width: calc(100% - 30px); border-bottom: 1px solid $colorDarkGrey;
 			padding-top: 1px; cursor: pointer; @include text-overflow-nw;   
 		}
 		.smile { margin-right: 6px; }
 		
 		.archive {
 			border-radius: 3px; background-color: #f3f2ec; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 8px;
-			font-size: 13px; line-height: 18px; letter-spacing: 0.1px; color: $colorDarkGrey; padding: 0px 6px; display: none;
+			@include text-small; color: $colorDarkGrey; padding: 0px 6px; display: none;
 		}
 	}
 	

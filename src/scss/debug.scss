@@ -12,6 +12,11 @@ html.debug {
 		.block.blockLayout.c1 { border-color: rgba(0,0,255,0.3); }
 		
 		.block.blockLayout.c2 { border-width: 2px; border-color: rgba(0,255,0,0.3); }
+		
+		.blockLink {
+			.smile { background-color: rgba(0,0,255,0.1); }
+			.name { background-color: rgba(0,0,255,0.1); }
+		}
 	}
 	
 	.blockLast { background: rgba(0,0,255,0.1); }
