@@ -447,24 +447,24 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = ids;
 		
 		for (let id of ids) {
-			let block = node.find('#block-' + id);
-			if (block.hasClass('no-select')) {
+			let block = $('#block-' + id);
+			if (block.hasClass('noSelect')) {
 				continue;
 			};
 			
 			block.addClass('isSelected');
-			block.find('#selectable-' + id).addClass('isSelected');
-			block.find('#block-children-' + id + ' .block').addClass('isSelected no-select');
+			$('#selectable-' + id).addClass('isSelected');
+			$('#block-children-' + id + ' .block').addClass('isSelected noSelect');
 		};
 		
 		// Hide placeholder and remove focus
 		if (ids.length > 0) {
 			focus.clear(true);
-			node.find('.block.isFocused').removeClass('isFocused');
-			node.find('.placeHolder').hide();
+			$('.block.isFocused').removeClass('isFocused');
+			$('.placeHolder').hide();
 		};
 		
-		node.find('.no-select').removeClass('no-select');
+		$('.noSelect').removeClass('noSelect');
 	};
 	
 	get (withChildren?: boolean): string[] {

@@ -197,7 +197,7 @@ class Block extends React.Component<Props, {}> {
 		
 		if (canSelect) {
 			object = (
-				<div id={'selectable-' + id} className="selectable" data-id={id} data-type={type}>
+				<div id={'selectable-' + id} className="selectable" data-id={id}>
 					{object}
 					<div className="selectionOver" />
 				</div>
