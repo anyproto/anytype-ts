@@ -61,11 +61,15 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 		
 		let icon = DataUtil.styleIcon(type, style);
-		let colorMark = Mark.getInRange(marks, I.MarkType.TextColor, range);
-		let bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range);
+		let colorMark = Mark.getInRange(marks, I.MarkType.TextColor, range) || {};
+		let bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 
 		let color = (
-			<div className={[ 'inner', (colorMark ? 'textColor textColor-' + colorMark.param : ''), (bgMark ? 'bgColor bgColor-' + bgMark.param : '') ].join(' ')}>A</div>
+			<div className={[ 'inner', 'textColor textColor-' + (colorMark.param || 'black') ].join(' ')} />
+		);
+		
+		let background = (
+			<div className={[ 'inner', 'bgColor bgColor-' + (bgMark.param || 'default') ].join(' ')} />
 		);
 		
 		return (
@@ -88,7 +92,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				
 				{canMark ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-color'} arrow={true} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} inner={color} tooltip="Text colors" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
+						<Icon id={'button-' + blockId + '-color'} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
+						<Icon id={'button-' + blockId + '-background'} className={[ 'color', (commonStore.menuIsOpen('blockBackground') ? 'active' : '') ].join(' ')} inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
 					</div>
 				) : ''}
 				
@@ -241,8 +246,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						break;
 					};
 					
-					let markText = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
-					let markBg = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
+					mark = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to }) || {};
 					
 					commonStore.menuOpen('blockColor', { 
 						element: '#button-' + blockId + '-color',
@@ -255,14 +259,36 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							rootId: rootId,
 							blockId: blockId,
 							blockIds: blockIds,
-							valueText: (markText ? markText.param : ''),
-							valueBg: (markBg ? markBg.param : ''),
-							onChangeText: (param: string) => {
+							value: String(mark.param || ''),
+							onChange: (param: string) => {
 								marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
 								onChange(marks);
 								commonStore.menuClose(this.props.id);
-							},
-							onChangeBg: (param: string) => {
+							}
+						},
+					});
+					break;
+					
+				case I.MarkType.BgColor:
+					if (isOpen) {
+						break;
+					};
+					
+					mark = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to }) || {};
+					
+					commonStore.menuOpen('blockBackground', { 
+						element: '#button-' + blockId + '-background',
+						type: I.MenuType.Vertical,
+						offsetX: -16,
+						offsetY: 11,
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Left,
+						data: {
+							rootId: rootId,
+							blockId: blockId,
+							blockIds: blockIds,
+							value: String(mark.param || ''),
+							onChange: (param: string) => {
 								marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
 								onChange(marks);
 								commonStore.menuClose(this.props.id);

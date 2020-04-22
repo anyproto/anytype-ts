@@ -278,6 +278,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
 			commonStore.menuIsOpen('blockColor') ||
+			commonStore.menuIsOpen('blockBackground') ||
 			commonStore.menuIsOpen('blockMore') 
 		) {
 			e.preventDefault();

@@ -80,10 +80,10 @@
 	
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 10px 16px; border-right: 1px solid $colorLightGrey; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 12px 16px; height: 44px; border-right: 1px solid $colorLightGrey; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
-		.icon { width: 24px; height: 24px; margin-right: 12px; border-radius: 4px; background-size: 24px 24px; cursor: pointer; }
+		.icon { width: 20px; height: 20px; margin-right: 12px; cursor: pointer; }
 		.icon:last-child { margin: 0px; }
 		
 		.icon {
