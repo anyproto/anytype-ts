@@ -23,24 +23,25 @@
 			.icon.plus-new { background-image: url('~img/icon/plus/new1.svg'); }
 		}
 	}
+	
+	.icon { width: 20px; height: 20px; cursor: pointer; margin-right: 4px; vertical-align: top; }
 
 	.path { white-space: nowrap; }
 	.path {
-		.item { display: inline-block; vertical-align: middle; color: #6c6a5f; margin-right: 4px; cursor: pointer; transition: $transitionFast; }
+		.item { display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 4px; cursor: pointer; transition: $transitionFast; }
 		.item {
-			.icon.home { margin-right: 4px; }
-			.icon.arrow { width: 6px; height: 10px; padding-top: 2px; background-image: url('~img/arrow/path.svg'); }
+			.icon.arrow { margin: 0px; width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); vertical-align: middle; }
 			.smile { margin-right: 4px; }
-			.name { display: inline-block; vertical-align: middle; margin-right: 8px; padding-top: 2px; line-height: 22px; }
+			.name { display: inline-block; vertical-align: middle; margin-right: 8px; line-height: 20px; }
 		}
+		.item:last-child { margin: 0px; }
 		.item:last-child {
 			.icon.arrow { display: none; }
+			.name { margin: 0px; }
 		}
 		.item:hover { color: $colorBlack; }
 	}
 	
-	.icon { width: 20px; height: 20px; cursor: pointer; margin-right: 4px; }
-
 	.icon.nav { background-image: url('~img/icon/nav0.svg'); }
 	.icon.nav:hover { background-image: url('~img/icon/nav1.svg'); }
 

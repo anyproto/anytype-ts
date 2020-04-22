@@ -1,14 +1,16 @@
 @import "~scss/_vars";
 
-.smile { display: inline-block; vertical-align: top; width: 24px; height: 24px; text-align: center; line-height: 24px; }
+.smile { display: inline-block; vertical-align: top; text-align: center; width: 20px; height: 20px; line-height: 20px; }
 .smile {
 	.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
 	.emoji-mart-emoji {
 		span { height: 100%; display: inline-block; vertical-align: middle; /*background-image: url('~img/emoji.png') !important;*/ }
 	}
 	
-	.icon.blank { width: 18px; height: 18px; background-image: url('~img/blank/smile.svg'); }
+	.icon.blank { width: 16px; height: 16px; background-image: url('~img/blank/smile.svg'); }
 }
+
+.smile.c24 { width: 24px; height: 24px; line-height: 24px; }
 
 .smile.c48 { width: 48px; height: 48px; border-radius: 100%; background-color: #f7f5f0; line-height: 48px; }
 .smile.c48 {

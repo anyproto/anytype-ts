@@ -18,15 +18,25 @@ html.debug {
 	
 	.focusable.isFocused { border: 1px solid rgba(255,127,127,0.3); }
 	
+	.header {
+		.icon { background-color: rgba(0,0,255,0.1); }
+		.smile { background-color: rgba(0,0,255,0.1); }
+		.path {
+			.item {
+				.name { background-color: rgba(0,0,255,0.1); }
+			}
+		}
+	}
+	
 	.menus {
 		.menu.vertical {
-			.item { background: rgba(0,0,255,0.1); }
+			.item { background-color: rgba(0,0,255,0.1); }
 			.item {
 				.icon { background-color: rgba(0,0,255,0.1); }
 				.name { background-color: rgba(0,0,255,0.1); }
 			}
 			
-			.section > .name { background: rgba(0,0,255,0.1); }
+			.section > .name { background-color: rgba(0,0,255,0.1); }
 		}
 	}
 } 

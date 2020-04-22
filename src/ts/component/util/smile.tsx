@@ -27,7 +27,7 @@ class Smile extends React.Component<Props, State> {
 	private static defaultProps = {
 		offsetX: 0,
 		offsetY: 0,
-		size: 18
+		size: 16
 	};
 	
 	state = {
