@@ -121,7 +121,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, Util.randomSmile(), Constant.default.name);
+		DataUtil.pageCreate(e, this.props, { iconEmoji: Util.randomSmile(), name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+			Util.scrollTopEnd();
+		});
 	};
 	
 	onSortEnd (result: any) {

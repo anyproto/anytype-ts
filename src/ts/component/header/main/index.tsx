@@ -29,7 +29,9 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, '', Constant.default.name);
+		DataUtil.pageCreate(e, this.props, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+			Util.scrollTopEnd();
+		});
 	};
 	
 };

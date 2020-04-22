@@ -164,7 +164,7 @@ class DataUtil {
 		history.push('/main/edit/' + targetId + '/link/' + linkId);
 	};
 	
-	pageCreate (e: any, props: any, icon: string, name: string) {
+	pageCreate (e: any, props: any, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
 		if (e && e.persist) {
 			e.persist();
 		};
@@ -172,12 +172,7 @@ class DataUtil {
 		const { root } = blockStore;
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
-		const details = {
-			iconEmoji: icon, 
-			name: name,
-		};
-
-		C.BlockCreatePage(root, '', details, I.BlockPosition.Bottom, (message: any) => {
+		C.BlockCreatePage(root, '', details, position, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();

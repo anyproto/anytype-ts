@@ -52,7 +52,9 @@ class Keyboard {
 			// Create new page
 			if (k == Key.n) {
 				e.preventDefault();
-				DataUtil.pageCreate(e, { history: this.history }, '', Constant.default.name);
+				DataUtil.pageCreate(e, { history: this.history }, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+					Util.scrollTopEnd();
+				});
 			};
 		};
 		
