@@ -160,7 +160,7 @@ class BlockImage extends React.Component<Props, {}> {
 		
 		if (selection) {
 			selection.hide();
-			selection.setPreventSelect(true);
+			selection.preventSelect(true);
 		};
 		
 		node.addClass('isResizing');
@@ -212,7 +212,7 @@ class BlockImage extends React.Component<Props, {}> {
 		node.removeClass('isResizing');
 		
 		if (selection) {
-			selection.setPreventSelect(false);
+			selection.preventSelect(false);
 		};
 		
 		C.BlockListSetFields(rootId, [
@@ -239,10 +239,10 @@ class BlockImage extends React.Component<Props, {}> {
 		const win = $(window);
 		
 		if (selection) {
-			selection.setPreventClear(true);
+			selection.preventClear(true);
 			
 			win.unbind('mouseup.selectionBlock').on('mouseup.selectionBlock', () => {
-				selection.setPreventClear(false);
+				selection.preventClear(false);
 				win.unbind('mouseup.selectionBlock');
 			});
 		};
@@ -267,7 +267,7 @@ class BlockImage extends React.Component<Props, {}> {
 				rootId: rootId,
 			},
 			onClose: () => {
-				selection.setPreventClear(false);
+				selection.preventClear(false);
 			}
 		});
 	};

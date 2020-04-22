@@ -243,7 +243,7 @@ class BlockCover extends React.Component<Props, State> {
 		this.y = e.pageY - this.rect.y - this.y;
 		this.onDragMove(e);
 
-		selection.setPreventSelect(true);
+		selection.preventSelect(true);
 		node.addClass('isDragging');
 		
 		win.unbind('mousemove.cover mouseup.cover');
@@ -275,7 +275,7 @@ class BlockCover extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		selection.setPreventSelect(false);
+		selection.preventSelect(false);
 		win.unbind('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
 		
@@ -296,7 +296,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
-		selection.setPreventSelect(true);
+		selection.preventSelect(true);
 	};
 	
 	onScaleMove (v: number) {
@@ -331,7 +331,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 		
-		selection.setPreventSelect(false);
+		selection.preventSelect(false);
 		C.BlockSetDetails(rootId, [ 
 			{ key: 'coverScale', value: v },
 		]);

@@ -98,15 +98,18 @@ class DataUtil {
 		const { id } = block;
 		const { selection } = dataset || {};
 		
-		let ids: string[] = [];
-		if (selection) {
-			ids = selection.get(true);
-			if (ids.indexOf(id) < 0) {
-				selection.clear(true);
-				selection.set([ id ]);
-				ids = selection.get(true);
-			};
+		if (!selection) {
+			return [];
 		};
+		
+		let ids: string[] = selection.get(true);
+		
+		if (ids.indexOf(id) < 0) {
+			selection.clear(true);
+			selection.set([ id ]);
+			ids = selection.get(true);
+		};
+		
 		return ids;
 	};
 	
