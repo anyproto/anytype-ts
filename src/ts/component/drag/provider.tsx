@@ -92,7 +92,7 @@ class DragProvider extends React.Component<Props, {}> {
 		if (selection) {
 			selection.set(this.ids);
 			selection.hide();
-			selection.setPreventSelect(true);
+			selection.preventSelect(true);
 		};
 	};
 	
@@ -114,8 +114,8 @@ class DragProvider extends React.Component<Props, {}> {
 		keyboard.setDrag(false);
 		
 		if (selection) {
-			selection.setPreventSelect(false);
-			selection.setPreventClear(false);
+			selection.preventSelect(false);
+			selection.preventClear(false);
 		};
 	};
 	

@@ -332,11 +332,11 @@ class Block extends React.Component<Props, {}> {
 		if (ids.indexOf(block.id) < 0) {
 			selection.clear(true);
 			selection.set([ block.id ]);
-			ids = selection.get(false);
+			ids = [ block.id ];
 		};
 				
-		selection.setPreventSelect(true);
-		selection.setPreventClear(true);
+		selection.preventSelect(true);
+		selection.preventClear(true);
 		
 		onDragStart(e, I.DragItem.Block, ids, this);
 	};
@@ -346,7 +346,7 @@ class Block extends React.Component<Props, {}> {
 		const { selection, onDrop } = dataset || {};
 		
 		if (selection) {
-			selection.setPreventClear(false);
+			selection.preventClear(false);
 		};
 		
 		if (dataset && onDrop) {
@@ -359,7 +359,7 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		
 		if (selection) {
-			selection.setPreventClear(true);
+			selection.preventClear(true);
 		};
 	};
 	
@@ -386,7 +386,7 @@ class Block extends React.Component<Props, {}> {
 				dataset: dataset,
 			},
 			onClose: () => {
-				selection.setPreventClear(false);
+				selection.preventClear(false);
 				selection.clear();
 			}
 		});
@@ -425,7 +425,7 @@ class Block extends React.Component<Props, {}> {
 		const offset = node.find('#block-' + prevBlockId).offset().left + Constant.size.blockMenu;
 		
 		if (selection) {
-			selection.setPreventSelect(true);
+			selection.preventSelect(true);
 		};
 		this.unbind();
 		node.addClass('isResizing');
@@ -484,7 +484,7 @@ class Block extends React.Component<Props, {}> {
 		const res = this.calcWidth(e.pageX - offset, index);
 		
 		if (selection) {
-			selection.setPreventSelect(false);	
+			selection.preventSelect(false);	
 		};
 		this.unbind();
 		node.removeClass('isResizing');

@@ -551,7 +551,7 @@ class EditorPage extends React.Component<Props, State> {
 						rootId: rootId,
 					},
 					onClose: () => {
-						selection.setPreventClear(false);
+						selection.preventClear(false);
 					}
 				});
 			};
@@ -919,13 +919,9 @@ class EditorPage extends React.Component<Props, State> {
 
 		let { focused, range } = focus;
 		let ids = selection.get(true);
-		
-		range = Util.objectCopy(range);
-		
 		if (!ids.length) {
 			ids = [ focused ];
 		};
-		
 		ids = ids.concat(this.getLayoutIds(ids));
 		
 		const focusBlock = blockStore.getLeaf(rootId, focused);
@@ -943,6 +939,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 		});
 		
+		range = Util.objectCopy(range);
 		if (focusBlock) {
 			range = Util.rangeFixOut(focusBlock.content.text, range);
 		};

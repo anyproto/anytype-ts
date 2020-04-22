@@ -13,6 +13,7 @@ interface Props {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const THROTTLE = 20;
 const THRESHOLD = 10;
 
@@ -23,13 +24,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 	x: number = 0;
 	y: number = 0;
 	dir: number = 0;
+	ids: string[] = [];
 	lastIds: string[] = [];
 	moved: boolean = false;
 	focused: string = '';
 	range: any = null;
 	nodes: any = null;
-	preventSelect: boolean = false;
-	preventClear: boolean = false;
+	isSelectionPrevented: boolean = false;
+	isClearPrevented: boolean = false;
 	rects: any = {};
 	
 	constructor (props: any) {
@@ -145,7 +147,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return
 		};
 		
-		if (this.preventSelect) {
+		if (this.isSelectionPrevented) {
 			this.hide();
 			return;
 		};
@@ -167,7 +169,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		this.nodes.each((i: number, item: any) => {
 			this.cacheRect($(item));
-		});	
+		});
 		
 		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
@@ -182,7 +184,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return
 		};
 		
-		if (this.preventSelect) {
+		if (this.isSelectionPrevented) {
 			this.hide();
 			return;
 		};
@@ -332,8 +334,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		const { focused, range } = focus;
 		const rect = this.getRect(e);
-		const node = $(ReactDOM.findDOMNode(this));
-		const scrollTop = $(window).scrollTop();
 		
 		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
@@ -341,7 +341,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		this.nodes.each((i: number, item: any) => { this.checkEachNode(e, rect, $(item)); });
 		
-		const selected = node.find('.selectable.isSelected');
+		const selected = $('.selectable.isSelected');
 		const length = selected.length;
 		if (!length) {
 			return;
@@ -363,7 +363,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			if (this.range) {
 				if (this.range.end && (this.range.start != this.range.end)) {
-					node.find('.isSelected').removeClass('isSelected');
+					$('.isSelected').removeClass('isSelected');
 				};
 				
 				if (!range) {
@@ -381,7 +381,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 			window.focus();
 		};
 		
-		this.set(this.get());
+		raf(() => {
+			this.set(this.get());
+		});
 	};
 	
 	hide () {
@@ -396,12 +398,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	clear (force?: false) {
-		if (!this._isMounted || (this.preventClear && !force)) {
+		if (!this._isMounted || (this.isClearPrevented && !force)) {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.isSelected').removeClass('isSelected');
+		$('.isSelected').removeClass('isSelected');
 	};
 	
 	unbind () {
@@ -427,12 +428,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 	
-	setPreventSelect (v: boolean) {
-		this.preventSelect = v;
+	preventSelect (v: boolean) {
+		this.isSelectionPrevented = v;
 	};
 	
-	setPreventClear (v: boolean) {
-		this.preventClear = v;
+	preventClear (v: boolean) {
+		this.isClearPrevented = v;
 	};
 	
 	set (ids: string[]) {
@@ -440,8 +441,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
+		const { focused } = focus;
+		
 		this.clear();
+		
+		if (!ids.length) {
+			return;
+		};
 		
 		ids = [ ...new Set(ids) ];
 		this.lastIds = ids;
@@ -454,11 +462,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 			
 			block.addClass('isSelected');
 			$('#selectable-' + id).addClass('isSelected');
-			$('#block-children-' + id + ' .block').addClass('isSelected noSelect');
+			
+			const childrenIds = blockStore.getChildrenIds(rootId, id);
+			for (let childId of childrenIds) {
+				$('#block-' + childId).addClass('isSelected noSelect');
+			};
 		};
 		
 		// Hide placeholder and remove focus
-		if (ids.length > 0) {
+		if (focused) {
 			focus.clear(true);
 			$('.block.isFocused').removeClass('isFocused');
 			$('.placeHolder').hide();
@@ -468,6 +480,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	get (withChildren?: boolean): string[] {
+		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let ids = [] as string[];
@@ -481,14 +494,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 			
 			if (withChildren) {
-				node.find('#block-children-' + id + ' .selectable').each((c: number, child: any) => {
-					child = $(child);
-					
-					let id = String(child.data('id') || '');
-					if (id) {
-						ids.push(id);
-					};
-				});
+				const childrenIds = blockStore.getChildrenIds(rootId, id);
+				ids = ids.concat(childrenIds);
 			};
 		});
 		
