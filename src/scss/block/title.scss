@@ -7,6 +7,7 @@
 			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
 			width: 100%; height: 100%; cursor: text; 
 		}
+		.value { -webkit-user-modify: read-write-plaintext-only; }
 	}
 	.block.blockTitle > .wrapContent > .selectable > .dropTarget { padding: 3px 0px 2px 0px; }
 	.block.blockTitle > .wrapMenu { visibility: hidden; }
