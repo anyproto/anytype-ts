@@ -173,7 +173,7 @@ class DataUtil {
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
 		const details = {
-			icon: icon, 
+			iconEmoji: icon, 
 			name: name,
 		};
 
