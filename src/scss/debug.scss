@@ -13,9 +13,13 @@ html.debug {
 		
 		.block.blockLayout.c2 { border-width: 2px; border-color: rgba(0,255,0,0.3); }
 		
-		.blockLink {
+		.block.blockLink {
 			.smile { background-color: rgba(0,0,255,0.1); }
 			.name { background-color: rgba(0,0,255,0.1); }
+		}
+		
+		.block.blockText {
+			.marker { background-color: rgba(0,0,255,0.1); }
 		}
 	}
 	

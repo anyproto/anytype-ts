@@ -14,7 +14,8 @@
 	.urlToggle { cursor: text; display: inline-block; }
 
 	#form { display: inline-block; vertical-align: top; }
-	#url { height: 20px; vertical-align: top; padding: 0px; }
+	#form > span { display: inline-block; width: 100%; }
+	#url { height: 20px; line-height: 20px; vertical-align: top; padding: 0px; }
 
 	.icon { width: 20px; height: 20px; margin: 0px 6px 0px 0px; transition: none; vertical-align: top; }
 	.icon.image { background-image: url('~img/icon/menu/action/block/picture0.svg'); }

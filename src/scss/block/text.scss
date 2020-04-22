@@ -15,20 +15,22 @@
 		
 		.markers { white-space: nowrap; }
 		.markers {
-			.marker { text-align: center; display: inline-block; vertical-align: top; position: relative; }
+			.marker { 
+				text-align: center; display: inline-block; vertical-align: top; position: relative; width: 24px; height: 24px; 
+				line-height: 24px; margin-right: 6px;
+			}
 			.marker {
 				.icon { display: inline-block; }
 			}
 			
-			.marker.number { vertical-align: baseline; line-height: 24px; }
-			.marker.number > span { min-width: 28px; line-height: 1; display: inline-block; text-align: center; padding-right: 6px; }
+			.marker.number { vertical-align: baseline; min-width: 24px; width: auto; }
+			.marker.number > span { min-width: 100%; display: inline-block; text-align: center; }
 			
 			.marker.bullet {
-				span { min-width: 28px; line-height: 1; display: inline-block; text-align: center; padding-right: 6px; }
-				img { width: 6px; height: 6px; display: inline-block; vertical-align: top; margin-top: 4px; }
+				img { width: 6px; height: 6px; position: absolute; left: 50%; top: 50%; margin: -3px 0px 0px -3px; }
 			}
 			
-			.marker.check, .marker.toggle { width: 24px; height: 24px; line-height: 24px; margin-right: 6px; cursor: pointer; }
+			.marker.check, .marker.toggle { cursor: pointer; }
 			.marker.check, .marker.toggle {
 				img { width: 100%; height: 100%; }
 			}

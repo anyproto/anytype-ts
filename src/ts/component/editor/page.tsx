@@ -44,6 +44,7 @@ class EditorPage extends React.Component<Props, State> {
 		super(props);
 		
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
+		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
@@ -129,7 +130,8 @@ class EditorPage extends React.Component<Props, State> {
 									index={i}
 									block={block}
 									className="root"
-									onKeyDown={this.onKeyDownBlock} 
+									onKeyDown={this.onKeyDownBlock}
+									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
 								/>
@@ -763,6 +765,9 @@ class EditorPage extends React.Component<Props, State> {
 				this.blockSplit(block, range, block.content.style);
 			};
 		};
+	};
+	
+	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
 	};
 	
 	onSelectAll () {
