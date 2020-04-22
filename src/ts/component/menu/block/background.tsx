@@ -11,7 +11,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 @observer
-class MenuBlockColor extends React.Component<Props, {}> {
+class MenuBlockBackground extends React.Component<Props, {}> {
 	
 	n: number = 0;
 	
@@ -31,7 +31,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		return (
 			<div>
 				{items.map((action: any, i: number) => {
-					let inner = <div className={'inner textColor textColor-' + action.value} />;
+					let inner = <div className={'inner bgColor bgColor-' + action.value} />;
 					return <MenuItemVertical id={id++} key={i} {...action} icon="color" inner={inner} className={action.value == value ? 'active' : ''} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
 				})}
 			</div>
@@ -114,7 +114,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 	
 	getItems () {
-		return DataUtil.menuGetTextColors();
+		return DataUtil.menuGetBgColors();
 	};
 	
 	onOver (e: any, item: any) {
@@ -135,4 +135,4 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	
 };
 
-export default MenuBlockColor;
+export default MenuBlockBackground;

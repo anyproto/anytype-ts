@@ -298,19 +298,19 @@ class DataUtil {
 	
 	menuGetBgColors () {
 		let items: any[] = [
-			{ id: 'color-default', name: 'Default highlight', value: '', isBgColor: true }
+			{ id: 'color-default', name: 'Default', value: 'default', isBgColor: true }
 		];
 		for (let i in Constant.textColor) {
-			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i] + ' highlight', value: i, isBgColor: true });
+			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i], value: i, isBgColor: true });
 		};
 		return items;
 	};
 	
 	menuGetAlign () {
 		return [
-			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Left', isAlign: true },
-			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Center', isAlign: true },
-			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Right', isAlign: true },
+			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
+			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
+			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
 		];
 	};
 	

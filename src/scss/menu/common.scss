@@ -45,16 +45,16 @@
 		}
 	
 		.item { 
-			padding: 4px 16px; font-size: 15px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
+			padding: 4px 14px; font-size: 15px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
 			transition: all 0.05s ease-in-out; width: 100%;
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.active { background: #f3f2ec; }
 		
 		.item {
-			.name { display: inline-block; vertical-align: middle; margin-top: 2px; }
+			.name { display: inline-block; vertical-align: middle; }
 			
-			.icon { width: 24px; height: 24px; margin-right: 8px; }
+			.icon { width: 20px; height: 20px; margin-right: 6px; }
 			.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
 			.icon.delete { 
 				width: 18px; height: 18px; background-size: 10px 10px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
@@ -73,7 +73,8 @@
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { border: 0px; padding-bottom: 0px; }
 		.section > .name { 
-			padding: 4px 16px; margin-bottom: 6px; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: $colorDarkGrey; display: block; 
+			padding: 4px 16px; margin-bottom: 2px; font-size: 11px; line-height: 18px; letter-spacing: 0.4px; color: $colorDarkGrey; 
+			display: block; text-transform: uppercase; 
 		}
 	}
 	

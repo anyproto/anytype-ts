@@ -2,9 +2,6 @@
 
 .menus {
 	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuBlockMore {
-		.item {
-			.name { line-height: 1; }
-		}
 		.item.empty { font-size: 13px; line-height: 18px; padding-top: 8px; }
 		
 		.item.yellow.active { background: #fef3c5 !important; }

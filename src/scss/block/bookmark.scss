@@ -26,10 +26,7 @@
 			.img { background-position: center center; }
 		}
 
-		.name { 
-			font-size: 15px; line-height: 20px; height: 20px; letter-spacing: -0.08px; color: $colorBlack; 
-			@include text-overflow-nw;  
-		}
+		.name { height: 24px; letter-spacing: -0.08px; color: $colorBlack; @include text-overflow-nw; }
 		.descr { 
 			font-size: 13px; line-height: 18px; height: 36px; letter-spacing: 0.08px; color: #6c6a5f; margin: 2px 0px 5px 0px;
 			@include text-overflow;

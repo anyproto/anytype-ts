@@ -17,4 +17,15 @@ html.debug {
 	.blockLast { background: rgba(0,0,255,0.1); }
 	
 	.focusable.isFocused { border: 1px solid rgba(255,127,127,0.3); }
+	
+	.menus {
+		.menu.vertical {
+			.item { background: rgba(0,0,255,0.1); }
+			.item {
+				.icon { background-color: rgba(0,0,255,0.1); }
+			}
+			
+			.section > .name { background: rgba(0,0,255,0.1); }
+		}
+	}
 } 
