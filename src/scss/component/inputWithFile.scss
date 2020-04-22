@@ -1,11 +1,11 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	line-height: 24px; padding: 11px; border-radius: 4px; border: solid 1px $colorLightGrey; color: $colorDarkGrey;
-	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden;
+	line-height: 20px; padding: 12px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorDarkGrey;
+	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden; font-size: 14px;
 }
 .inputWithFile {
-	.txt { line-height: 23px; padding-top: 1px; height: 24px; overflow: hidden; width: calc(100% - 30px); }
+	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }
 	.fileWrap { display: inline-block; vertical-align: top; }
 	.fileWrap .border { border-bottom: 1px solid $colorDarkGrey; display: inline-block; line-height: 1; transition: $transitionFast; }
 	.fileWrap:hover .border { cursor: pointer; color: $colorBlack; }
@@ -14,13 +14,13 @@
 	.urlToggle { cursor: text; display: inline-block; }
 
 	#form { display: inline-block; vertical-align: top; }
-	#url { height: 23px; vertical-align: top; padding: 0px; }
+	#url { height: 20px; vertical-align: top; padding: 0px; }
 
-	.icon { width: 24px; height: 24px; margin: 0px 6px 0px 0px; transition: none; vertical-align: top; }
-	.icon.image { background-image: url('~img/icon/add/image.svg'); }
-	.icon.video { background-image: url('~img/icon/add/video.svg'); }
-	.icon.file { background-image: url('~img/icon/add/file.svg'); }
-	.icon.bookmark { background-image: url('~img/icon/add/bookMark.svg'); }
+	.icon { width: 20px; height: 20px; margin: 0px 6px 0px 0px; transition: none; vertical-align: top; }
+	.icon.image { background-image: url('~img/icon/menu/action/block/picture0.svg'); }
+	.icon.video { background-image: url('~img/icon/menu/action/block/video0.svg'); }
+	.icon.file { background-image: url('~img/icon/menu/action/block/file0.svg'); }
+	.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark0.svg'); }
 }
 
 .inputWithFile.isSmall {
