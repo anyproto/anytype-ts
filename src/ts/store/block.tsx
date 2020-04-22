@@ -281,7 +281,7 @@ class BlockStore {
 			};
 		};
 		
-		raf(() => { cb(root.childBlocks); });
+		window.setTimeout(() => { cb(root.childBlocks); }, 10);
 	};
 	
 	getStructure (list: I.Block[]) {

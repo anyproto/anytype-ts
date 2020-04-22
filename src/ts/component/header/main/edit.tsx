@@ -129,6 +129,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onPath (e: any, block: I.Block, index: number) {
+		const { rootId } = this.props;
+		
+		if (rootId == block.content.targetBlockId) {
+			return;
+		};
+		
 		e.persist();
 		
 		crumbs.cut(I.CrumbsType.Page, index);
