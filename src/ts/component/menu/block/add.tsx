@@ -252,9 +252,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter);
-			sections = DataUtil.menuSectionsMap(sections);
 		};
 		
+		sections = DataUtil.menuSectionsMap(sections);
 		return sections;
 	};
 	
