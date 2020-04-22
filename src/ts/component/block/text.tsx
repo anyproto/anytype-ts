@@ -514,6 +514,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onBlur (e: any) {
 		const { onBlur } = this.props;
+	
+		commonStore.menuClose('blockContext');
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.setText(this.marks);

@@ -77,6 +77,13 @@ class DragLayer extends React.Component<Props, State> {
 		this._isMounted = true;
 	};
 	
+	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.find('.block').attr({ id: '' });
+		node.find('.selectable').attr({ id: '' });
+	};
+	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};

@@ -60,12 +60,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 					{item.children.map((action: any, i: number) => {
 						let icn: string[] = [ 'inner' ];
 						
-						if ((action.id == 'color') && color) {
-							icn.push('textColor textColor-' + color);
+						if (action.id == 'color') {
+							icn.push('textColor textColor-' + (color || 'black'));
 						};
 						
-						if ((action.id == 'background') && bgColor) {
-							icn.push('bgColor bgColor-' + bgColor);
+						if (action.id == 'background') {
+							icn.push('bgColor bgColor-' + (bgColor || 'default'));
 						};
 						
 						if (action.isTextColor) {
@@ -173,7 +173,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					//{ id: 'move', icon: 'move', name: 'Move to' },
 					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
-					{ id: 'turn', icon: DataUtil.styleIcon(type, style), name: 'Turn into', arrow: true },
+					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
 				] 
 			},
 			{ 

@@ -27,6 +27,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onDrop = this.onDrop.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onNavigation = this.onNavigation.bind(this);
 	};
 
 	render () {
@@ -59,6 +60,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="plus-edit" onClick={this.onAdd} />
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
+					<Icon className="nav" onClick={this.onNavigation} />
 					<PathItemHome />
 					{children.length > LIMIT ? <PathItemSkip /> : ''}
 					{slice.map((item: any, i: any) => (
@@ -154,6 +156,19 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		if (onDrop) {
 			onDrop(e, type, rootId, targetId, position);
 		};
+	};
+	
+	onNavigation (e: any) {
+		const { rootId } = this.props;
+		
+		commonStore.popupOpen('tree', { 
+			data: { 
+				type: 'move', 
+				rootId: rootId,
+				onConfirm: (id: string) => {
+				},
+			}, 
+		});
 	};
 	
 	onMore (e: any) {

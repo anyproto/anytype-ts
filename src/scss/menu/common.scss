@@ -6,7 +6,7 @@
 	
 	.menu { 
 		border-radius: 8px; color: $colorBlack; position: absolute; z-index: 103; text-align: left; padding: 8px 0px;
-		box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.35); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 	}
 	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
@@ -36,7 +36,7 @@
 		
 		.filter { border-bottom: 1px solid #eae9e0; padding: 4px 16px 12px 16px; }
 		.filter {
-			.input { padding: 0px; height: 24px; }
+			.input { padding: 0px; height: 22px; }
 		}
 	
 		.title { 
@@ -45,16 +45,16 @@
 		}
 	
 		.item { 
-			padding: 4px 14px; font-size: 15px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
+			padding: 4px 14px; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
 			transition: all 0.05s ease-in-out; width: 100%;
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.active { background: #f3f2ec; }
 		
 		.item {
-			.name { display: inline-block; vertical-align: middle; }
+			.name { display: inline-block; vertical-align: top; }
 			
-			.icon { width: 20px; height: 20px; margin-right: 6px; }
+			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; }
 			.icon.dnd { width: 7px; height: 12px; background-image: url('~img/icon/dnd.svg'); margin-right: 10px; }
 			.icon.delete { 
 				width: 18px; height: 18px; background-size: 10px 10px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
@@ -80,7 +80,7 @@
 	
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 12px 16px; height: 44px; border-right: 1px solid $colorLightGrey; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorLightGrey; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
 		.icon { width: 20px; height: 20px; margin-right: 12px; cursor: pointer; }
