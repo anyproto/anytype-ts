@@ -13,5 +13,6 @@
 				.wrapContent { width: calc(100% - 46px); }
 			}
 		}
+		.block:last-child { margin: 0px; }
 	}
 }

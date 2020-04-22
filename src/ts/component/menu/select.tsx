@@ -130,7 +130,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { onSelect } = data;
 		
 		commonStore.menuClose('select');
-		onSelect(e, item.id);
+		onSelect(e, item);
 	};
 	
 };

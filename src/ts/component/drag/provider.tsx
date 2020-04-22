@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { DragLayer } from 'ts/component';
 import { I, C, focus, keyboard, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
 };
@@ -21,7 +22,7 @@ class DragProvider extends React.Component<Props, {}> {
 	type: string = '';
 	ids: string[] = [];
 	map: any;
-	preventCommonDrop: boolean = false;
+	commonDropPrevented: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -32,6 +33,7 @@ class DragProvider extends React.Component<Props, {}> {
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.onDropCommon = this.onDropCommon.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.preventCommonDrop = this.preventCommonDrop.bind(this);
 	};
 	
 	render () {
@@ -40,14 +42,14 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		return (
 			<div className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
-				<DragLayer ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
+				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
 				{children}
 			</div>
 		);
 	};
 	
 	onDropCommon (e: any) {
-		if (this.preventCommonDrop || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (this.commonDropPrevented || !e.dataTransfer.files || !e.dataTransfer.files.length) {
 			return;
 		};
 		
@@ -77,8 +79,8 @@ class DragProvider extends React.Component<Props, {}> {
 		console.log('[onDragStart]', type, ids);
 		
 		this.map = blockStore.getMap(rootId);
+		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
-		this.refLayer.show(type, this.ids, component);
 		this.unbind();
 		this.setDragImage(e);
 		keyboard.setDrag(true);
@@ -105,7 +107,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
-		$('.selectable.isDragging').removeClass('isDragging');
+		$('.block.isDragging').removeClass('isDragging');
 		
 		this.refLayer.hide();
 		this.unbind();
@@ -150,7 +152,7 @@ class DragProvider extends React.Component<Props, {}> {
 		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
 		
 		if (e.dataTransfer.files && e.dataTransfer.files.length) {
-			this.preventCommonDrop = true;
+			this.commonDropPrevented = true;
 			
 			const paths: string[] = [];
 			
@@ -161,7 +163,7 @@ class DragProvider extends React.Component<Props, {}> {
 			console.log('[onDrop] paths', paths);
 			
 			C.ExternalDropFiles(contextId, targetId, position, paths, (message: any) => {
-				this.preventCommonDrop = false;
+				this.commonDropPrevented = false;
 			});
 		} else {
 			C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
@@ -180,9 +182,9 @@ class DragProvider extends React.Component<Props, {}> {
 		this.type = type;
 		this.ids = ids.map((id: any) => { return id.toString(); });
 		
-		$('.selectable.isDragging').removeClass('isDragging');
+		$('.block.isDragging').removeClass('isDragging');
 		for (let id of this.ids) {
-			$('.selectable.c' + id).addClass('isDragging');
+			$('#block-' + id).addClass('isDragging');
 		};
 	};
 	
@@ -210,9 +212,14 @@ class DragProvider extends React.Component<Props, {}> {
 			dataset.dragProvider = this;
 			dataset.onDragStart = this.onDragStart;
 			dataset.onDrop = this.onDrop;
+			dataset.preventCommonDrop = this.preventCommonDrop;
 			
 			return React.cloneElement(child, { dataset: dataset });
 		});
+	};
+	
+	preventCommonDrop (v: boolean) {
+		this.commonDropPrevented = Boolean(v);
 	};
 	
 };

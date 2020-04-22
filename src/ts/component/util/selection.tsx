@@ -273,7 +273,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	cacheRect (obj: any) {
 		const id = String(obj.data('id') || '');
 		
-		if (this.rects[id]) {
+		if (!id || this.rects[id]) {
 			return;
 		};
 		
@@ -285,6 +285,44 @@ class SelectionProvider extends React.Component<Props, {}> {
 			width: obj.width(),
 			height: obj.height(),
 		};
+	};
+	
+	checkEachNode (e: any, rect: any, item: any) {
+		const id = String(item.data('id') || '');
+		
+		if (!id) {
+			return;
+		};
+			
+		this.cacheRect(item);
+			
+		if (!this.rects[id] || !this.rectsCollide(rect, this.rects[id])) {
+			return;
+		};
+
+		const block = $('#block-' + id);
+			
+		if ((e.ctrlKey || e.metaKey)) {
+			if (this.lastIds.indexOf(id) < 0) {
+				if (item.hasClass('isSelected')) {
+					item.removeClass('isSelected');
+					block.removeClass('isSelected');
+				} else {
+					item.addClass('isSelected');
+					block.addClass('isSelected');
+				};
+			};
+		} else
+		if (e.altKey) {
+			item.removeClass('isSelected');
+			block.removeClass('isSelected');
+		} else 
+		if (!item.hasClass('isSelected')) {
+			item.addClass('isSelected');
+			block.addClass('isSelected');
+		};
+			
+		this.lastIds.push(id);
 	};
 	
 	checkNodes (e: any) {
@@ -301,40 +339,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			this.clear();
 		};
 		
-		this.nodes.each((i: number, item: any) => {
-			item = $(item);
-			let id = String(item.data('id') || '');
-			
-			this.cacheRect(item);
-			
-			if (!this.rects[id] || !this.rectsCollide(rect, this.rects[id])) {
-				return;
-			};
-			
-			const block = node.find('#block-' + id);
-			
-			if ((e.ctrlKey || e.metaKey)) {
-				if (this.lastIds.indexOf(id) < 0) {
-					if (item.hasClass('isSelected')) {
-						item.removeClass('isSelected');
-						block.removeClass('isSelected');
-					} else {
-						item.addClass('isSelected');
-						block.addClass('isSelected');
-					};
-				};
-			} else
-			if (e.altKey) {
-				item.removeClass('isSelected');
-				block.removeClass('isSelected');
-			} else 
-			if (!item.hasClass('isSelected')) {
-				item.addClass('isSelected');
-				block.addClass('isSelected');
-			};
-			
-			this.lastIds.push(id);
-		});
+		this.nodes.each((i: number, item: any) => { this.checkEachNode(e, rect, $(item)); });
 		
 		const selected = node.find('.selectable.isSelected');
 		const length = selected.length;
@@ -395,8 +400,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.rects = {};
-		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.isSelected').removeClass('isSelected');
 	};
@@ -444,24 +447,24 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = ids;
 		
 		for (let id of ids) {
-			let block = node.find('#block-' + id);
-			if (block.hasClass('no-select')) {
+			let block = $('#block-' + id);
+			if (block.hasClass('noSelect')) {
 				continue;
 			};
 			
 			block.addClass('isSelected');
-			block.find('.selectable.c' + id).addClass('isSelected');
-			block.find('.children.c' + id + ' .block').addClass('isSelected no-select');
+			$('#selectable-' + id).addClass('isSelected');
+			$('#block-children-' + id + ' .block').addClass('isSelected noSelect');
 		};
 		
 		// Hide placeholder and remove focus
 		if (ids.length > 0) {
 			focus.clear(true);
-			node.find('.block.isFocused').removeClass('isFocused');
-			node.find('.placeHolder').hide();
+			$('.block.isFocused').removeClass('isFocused');
+			$('.placeHolder').hide();
 		};
 		
-		node.find('.no-select').removeClass('no-select');
+		$('.noSelect').removeClass('noSelect');
 	};
 	
 	get (withChildren?: boolean): string[] {
@@ -478,7 +481,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 			
 			if (withChildren) {
-				node.find('.children.c' + id + ' .selectable').each((c: number, child: any) => {
+				node.find('#block-children-' + id + ' .selectable').each((c: number, child: any) => {
 					child = $(child);
 					
 					let id = String(child.data('id') || '');

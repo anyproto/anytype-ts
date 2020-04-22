@@ -115,8 +115,8 @@ class Select extends React.Component<Props, State> {
 			data: {
 				value: value,
 				options: options,
-				onSelect: (e: any, id: string) => {
-					this.setValue(id);
+				onSelect: (e: any, item: any) => {
+					this.setValue(item.id);
 					this.hide();
 				}
 			}

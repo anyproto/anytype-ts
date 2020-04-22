@@ -80,7 +80,9 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		this.save();
 		this._isMounted = false;
+		window.clearTimeout(this.timeout);
 	};
 	
 	onFocus (e: any) {
@@ -89,12 +91,9 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		const { rootId } = this.props;
-		
 		keyboard.setFocus(false);
 		this.placeHolderHide();
-		
-		C.BlockSetDetails(rootId, [ { key: 'name', value: this.getValue() } ]);
+		this.save();
 	};
 	
 	onSelect (e: any) {
@@ -156,9 +155,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		blockStore.detailsUpdate(breadcrumbs, param, false);
 		
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			C.BlockSetDetails(rootId, [ { key: 'name', value: this.getValue() } ]);
-		}, 1000);
+		this.timeout = window.setTimeout(() => { this.save(); }, 1000);
 	};
 	
 	getValue (): string {
@@ -208,6 +205,13 @@ class BlockTitle extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeHolder').show();
+	};
+	
+	save () {
+		const { rootId } = this.props;
+		const value = this.getValue();
+
+		C.BlockSetDetails(rootId, [ { key: 'name', value: value } ]);
 	};
 	
 };

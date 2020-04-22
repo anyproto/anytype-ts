@@ -14,6 +14,7 @@ interface Props {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class BlockVideo extends React.Component<Props, {}> {
@@ -41,7 +42,6 @@ class BlockVideo extends React.Component<Props, {}> {
 		const { block } = this.props;
 		const { id, fields, content } = block;
 		const { state, hash, type, mime } = content;
-		const accept = [ 'mp4', 'm4v' ];
 		
 		let { width } = fields;
 		let element = null;
@@ -56,7 +56,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="video" textFile="Upload a video" accept={accept} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="video" textFile="Upload a video" accept={Constant.extension.video} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
 				);
 				break;
 				
@@ -320,7 +320,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		let { width } = fields;
 		width = Number(width) || 1;
 		
-		const el = $('.selectable.c' + id);
+		const el = $('#selectable-' + id);
 		if (!el.length) {
 			return width;
 		};
@@ -334,7 +334,7 @@ class BlockVideo extends React.Component<Props, {}> {
 	getHeight (p: number) {
 		const { block } = this.props;
 		const { id } = block;
-		const el = $('.selectable.c' + id);
+		const el = $('#selectable-' + id);
 		
 		if (!el.length) {
 			return 0;

@@ -47,6 +47,7 @@
 	.controls:hover {
 		.btn { opacity: 1; }
 	}
+	.controls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
 .editorWrapper.withIcon { padding-top: 40px; }

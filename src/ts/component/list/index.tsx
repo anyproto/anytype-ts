@@ -48,7 +48,7 @@ class ListIndex extends React.Component<Props, {}> {
 			
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
-					<Smile className="c48" icon={details.icon} size={24} />
+					<Smile className="c48" icon={details.iconEmoji} size={24} />
 					<div className="name">{details.name}</div>
 				</div>
 			);

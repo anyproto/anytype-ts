@@ -158,6 +158,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		const { param } = this.props;
 		const { data } = param;
+		const { subMenuId } = data;
 		const k = e.which;
 		const items = this.getItems();
 		const l = items.length;
@@ -199,7 +200,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				break;
 				
 			case Key.enter:
-			case Key.space:
 				e.preventDefault();
 				
 				if (item) {
@@ -207,7 +207,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				};
 				break;
 			
-			case Key.left:	
+			case Key.left:
+				if (this.props.id == 'blockAddSub') {
+					commonStore.menuClose(this.props.id);
+				};
+				break;
+				
 			case Key.escape:
 				commonStore.menuClose(this.props.id);
 				break;
@@ -236,8 +241,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		];
 		
 		if (filter) {
-			const reg = new RegExp(filter, 'gi');
-			
 			sections = sections.concat([
 				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: DataUtil.menuGetActions(block) },
 				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: DataUtil.menuGetAlign() },
@@ -248,20 +251,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			
-			sections = sections.filter((s: any) => {
-				s.children = (s.children || []).filter((c: any) => { return c.name.match(reg); });
-				return s.children.length > 0;
-			});
+			sections = DataUtil.menuSectionsFilter(sections, filter);
+			sections = DataUtil.menuSectionsMap(sections);
 		};
-		
-		sections = sections.map((s: any) => {
-			s.children = s.children.map((it: any) => {
-				it.key = it.id;
-				it.id = s.id + '-' + it.id;
-				return it;
-			});
-			return s;
-		});
 		
 		return sections;
 	};
@@ -269,14 +261,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { id } = data;
+		const { subMenuId } = data;
 		const sections = this.getSections();
 		const { filter } = commonStore;
 		
 		let options: any[] = sections;
 		
-		if (id) {
-			const item = options.find((it: any) => { return it.id == id; });
+		if (subMenuId) {
+			const item = options.find((it: any) => { return it.id == subMenuId; });
 			if (!item) {
 				return [];
 			};
@@ -292,14 +284,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		if (filter) {
-			let reg = new RegExp(filter, 'gi');
 			let list: any[] = [];
-			
 			for (let item of options) {
 				list = list.concat(item.children || []);
 			};
-			
-			options = list.filter((it: any) => { return it.name.match(reg); });
+			options = list;
 		};
 		
 		return options;
@@ -340,7 +329,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				data: {
 					rootId: rootId,
 					blockId: blockId,
-					id: item.id,
+					subMenuId: item.id,
 					onSelect: onSelect,
 					rebind: this.rebind,
 				}

@@ -1,18 +1,18 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block { word-break: break-word; display: flex; flex: auto; position: relative; margin: 1px 0px; }
+	.block { word-break: break-word; display: flex; flex: auto; position: relative; margin: 0px 0px 2px 0px; }
 	.block {
 		.wrapMenu { width: 48px; text-align: right; }
 		.wrapContent { width: calc(100% - 48px); position: relative; }
 		
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
-			width: 12px; background-size: 2px 8px; opacity: 0; cursor: move; vertical-align: top; 
-			border: 1px solid #d2d0c2; border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 6px;
+			width: 12px; background-size: 2px 10px; opacity: 0; cursor: grab; vertical-align: top; 
+			border: 1px solid #dfddd0; border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 6px;
 			background-image: url('~img/icon/block/menu0.svg');
 		}
-		.icon.dnd:hover { background-image: url('~img/icon/block/menu1.svg'); border: 2px solid $colorOrange; }
+		.icon.dnd:hover { background-image: url('~img/icon/block/menu2.svg'); border: 2px solid $colorOrange; }
 		
 		.colResize { width: 0px; position: relative; opacity: 0; }
 		.colResize.active { opacity: 1; }
@@ -50,19 +50,26 @@
 		.icon.dnd { display: none; }
 	}
 	
+	.block.isAdding.top::before {
+		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; top: -2px;
+	}
+	
+	.block.isAdding.bottom::after {
+		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; bottom: -2px;
+	}
+	
+	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange inset; border-radius: 0px 0px 4px 4px !important; }
-	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange inset; border-radius: 4px 4px 0px 0px !important; }
-	
-	.block.isAddingMenu.mTop > .wrapContent > .selectable > .dropTarget { box-shadow: 0px 2px $colorOrange inset; border-radius: 0px 0px 4px 4px !important; }
-	.block.isAddingMenu.mBottom > .wrapContent > .selectable > .dropTarget { box-shadow: 0px -2px $colorOrange inset; border-radius: 4px 4px 0px 0px !important; }
-	
+
+	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
+	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
+
 	.block > .wrapContent > .children.canToggle { display: none; }
 	.block.isToggled > .wrapContent > .children { display: block; }
 	.block.isToggled > .wrapContent > .emptyToggle { display: block; }
 	.block.isToggled > .wrapContent > .selectable > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
 	
-	.block > .wrapContent > .selectable.isDragging > .dropTarget { opacity: 0.3; }
+	.block.isDragging > .wrapContent > .selectable > .dropTarget { opacity: 0.3; }
 	
 	.block > .wrapContent > .selectable.isSelected > .selectionOver { display: block; }
 	.block > .wrapContent > .selectable.isSelected { 

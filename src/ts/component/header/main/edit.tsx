@@ -11,6 +11,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const Constant = require('json/constant.json');
+const LIMIT = 3;
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
@@ -19,6 +20,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onHome = this.onHome.bind(this);
+		this.onSkip = this.onSkip.bind(this);
 		this.onPath = this.onPath.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
@@ -30,18 +32,27 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	render () {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
-		const { account } = authStore;
 		
 		const childrenIds = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const slice = children.length > LIMIT ? children.slice(children.length - LIMIT, children.length) : children;
+		const n = children.length - LIMIT;
 		
 		const PathItemHome = (item: any) => (
-			<DropTarget {...this.props} className="item" id={rootId} rootId="" dropType={I.DragItem.Menu} onClick={this.onHome} onDrop={this.onDrop}>
+			<div className="item"onClick={this.onHome}>
 				<Icon className="home" />
-				<div className="name">{Util.shorten(account.name || 'Home', 16)}</div>
+				<div className="name">Home</div>
 				<Icon className="arrow" />
-			</DropTarget>
+			</div>
 		);
+		
+		const PathItemSkip = (item: any) => (
+			<div id="button-header-skip" className="item" onClick={this.onSkip}>
+				<div className="name">...</div>
+				<Icon className="arrow" />
+			</div>
+		);
+		
 		
 		return (
 			<div className="header headerMainEdit">
@@ -50,8 +61,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
 					<PathItemHome />
-					{children.map((item: any, i: any) => (
-						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={i + 1} />
+					{children.length > LIMIT ? <PathItemSkip /> : ''}
+					{slice.map((item: any, i: any) => (
+						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={n + i + 1} />
 					))}
 				</div>
 				
@@ -63,13 +75,54 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, '', Constant.default.name);
+		DataUtil.pageCreate(e, this.props, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+			Util.scrollTopEnd();
+		});
 	};
 	
 	onHome (e: any) {
 		const { breadcrumbs } = blockStore;
 		
 		this.props.history.push('/main/index');
+	};
+	
+	onSkip (e: any) {
+		const { breadcrumbs } = blockStore;
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const slice = children.slice(0, children.length - LIMIT);
+	
+		let options = [];
+		for (let i in slice) {
+			const item = slice[i];
+			const details = blockStore.getDetail(breadcrumbs, item.content.targetBlockId);
+			
+			options.push({
+				id: item.id,
+				targetId: item.content.targetBlockId,
+				index: i,
+				withSmile: true,
+				icon: details.iconEmoji,
+				name: details.name,
+			});
+		};
+		
+		commonStore.menuOpen('select', { 
+			element: '#button-header-skip',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 8,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			className: 'skip',
+			data: {
+				value: '',
+				options: options,
+				onSelect: (event: any, item: any) => {
+					crumbs.cut(I.CrumbsType.Page, item.index);
+					DataUtil.pageOpen(e, this.props, item.id, item.targetId);
+				},
+			}
+		});
 	};
 	
 	onPath (e: any, block: I.Block, index: number) {
@@ -115,9 +168,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: rootId,
-				match: match,
-				onSelect: (item: any) => {
-				},
+				match: match
 			}
 		});
 	};

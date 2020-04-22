@@ -20,6 +20,7 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
+const Constant = require('json/constant.json');
 
 @observer
 class BlockCover extends React.Component<Props, State> {
@@ -50,6 +51,10 @@ class BlockCover extends React.Component<Props, State> {
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
+		
+		this.onDragOver = this.onDragOver.bind(this);
+		this.onDragLeave = this.onDragLeave.bind(this);
+		this.onDrop = this.onDrop.bind(this);
 		
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragMove = this.onDragMove.bind(this);
@@ -96,7 +101,13 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart}>
+			<div 
+				className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} 
+				onMouseDown={this.onDragStart} 
+				onDragOver={this.onDragOver} 
+				onDragLeave={this.onDragLeave} 
+				onDrop={this.onDrop}
+			>
 				{loading ? <Loader /> : ''}
 				{coverType == I.CoverType.Image ? (
 					<img id="cover" src={commonStore.imageUrl(coverId, 2048)} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
@@ -115,7 +126,7 @@ class BlockCover extends React.Component<Props, State> {
 		this.resize();
 		
 		const win = $(window);
-		win.unbind('resize').on('resize', () => { this.resize(); });
+		win.unbind('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
@@ -124,7 +135,7 @@ class BlockCover extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		$(window).unbind('resize');
+		$(window).unbind('resize.cover');
 	};
 	
 	onMenu (e: any) {
@@ -190,25 +201,28 @@ class BlockCover extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
-		const { coverX, coverY, coverScale } = details;
+		const { coverX, coverY, coverScale, coverType } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!node.hasClass('wrap')) {
 			return;
 		};
 		
-		const cb = (e: any) => {
-			if (this.refDrag) {
-				this.refDrag.setValue(coverScale);
-			};
-			
-			this.rect = (node.get(0) as Element).getBoundingClientRect();
-			this.onScaleMove(coverScale);
-		};
-
 		this.cover = node.find('#cover');
-		this.cover.get(0).onload = cb;
-		raf(cb);
+		
+		if (coverType == I.CoverType.Image) {
+			const cb = (e: any) => {
+				if (this.refDrag) {
+					this.refDrag.setValue(coverScale);
+				};
+				
+				this.rect = (node.get(0) as Element).getBoundingClientRect();
+				this.onScaleMove(coverScale);
+			};
+	
+			this.cover.get(0).onload = cb;
+			raf(cb);
+		};
 	};
 	
 	onDragStart (e: any) {
@@ -298,7 +312,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		v = (v + 1) * 100;
 		value.text(Math.ceil(v) + '%');
-		this.cover.css({ width: v + '%' });
+		this.cover.css({ height: 'auto', width: v + '%' });
 		
 		this.rect.cw = this.cover.width();
 		this.rect.ch = this.cover.height();
@@ -323,6 +337,56 @@ class BlockCover extends React.Component<Props, State> {
 		]);
 	};
 	
+	onDragOver (e: any) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('isDraggingOver');
+	};
+	
+	onDragLeave (e: any) {
+		if (!this._isMounted) {
+			return false;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.removeClass('isDraggingOver');
+	};
+	
+	onDrop (e: any) {
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const { rootId, dataset } = this.props;
+		const { preventCommonDrop } = dataset || {};
+		const file = e.dataTransfer.files[0].path;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.removeClass('isDraggingOver');
+		preventCommonDrop(true);
+		this.setState({ loading: true });
+		
+		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+			this.setState({ loading: false });
+			preventCommonDrop(false);
+			
+			if (message.error.code) {
+				return;
+			};
+			
+			C.BlockSetDetails(rootId, [ 
+				{ key: 'coverType', value: I.CoverType.Image },
+				{ key: 'coverId', value: message.hash },
+				{ key: 'coverX', value: 0 },
+				{ key: 'coverY', value: 0 },
+				{ key: 'coverScale', value: 0 },
+			]);
+		});
+	};
+	
 	setTransform (x: number, y: number) {
 		let mx = this.rect.cw - this.rect.width;
 		let my = this.rect.ch - this.rect.height;
@@ -330,7 +394,15 @@ class BlockCover extends React.Component<Props, State> {
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
 		
-		this.cover.css({ transform: `translate3d(${x}px,${y}px,0px)` });
+		let css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
+		
+		if (this.rect.ch < this.rect.height) {
+			css.transform = 'translate3d(0px,0px,0px)';
+			css.height = this.rect.height;
+			css.width = 'auto';
+		};
+		
+		this.cover.css(css);
 		return { x: x, y: y };
 	};
 	

@@ -18,7 +18,7 @@ class PopupEditorPage extends React.Component<Props, {}> {
 		
 		return (
 			<SelectionProvider rootId={id} container=".popupEditorPage .content">
-				<DragProvider rootId={id}>
+				<DragProvider {...this.props} rootId={id}>
 					<Header {...this.props} rootId={id} />
 							
 					<EditorPage history={history} location={location} match={match} rootId={id} />

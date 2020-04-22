@@ -232,15 +232,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			
-			sections = sections.filter((s: any) => {
-				s.children = (s.children || []).filter((c: any) => { return c.name.match(reg); });
-				s.children = s.children.map((it: any) => {
-					it.key = it.id;
-					it.id = s.id + '-' + it.id;
-					return it;
-				});
-				return s.children.length > 0;
-			});
+			sections = DataUtil.menuSectionsFilter(sections, filter);
+			sections = DataUtil.menuSectionsMap(sections);
 		};
 		
 		return sections;

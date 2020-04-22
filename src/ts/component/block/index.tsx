@@ -197,7 +197,7 @@ class Block extends React.Component<Props, {}> {
 		
 		if (canSelect) {
 			object = (
-				<div className={[ 'selectable', 'c' + id ].join(' ')} data-id={id} data-type={type}>
+				<div id={'selectable-' + id} className="selectable" data-id={id}>
 					{object}
 					<div className="selectionOver" />
 				</div>
@@ -328,8 +328,6 @@ class Block extends React.Component<Props, {}> {
 		};
 			
 		let ids: string[] = selection.get(false);
-			
-		console.log(ids, block.id);
 			
 		if (ids.indexOf(block.id) < 0) {
 			selection.clear(true);

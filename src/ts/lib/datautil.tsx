@@ -164,7 +164,7 @@ class DataUtil {
 		history.push('/main/edit/' + targetId + '/link/' + linkId);
 	};
 	
-	pageCreate (e: any, props: any, icon: string, name: string) {
+	pageCreate (e: any, props: any, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
 		if (e && e.persist) {
 			e.persist();
 		};
@@ -172,12 +172,7 @@ class DataUtil {
 		const { root } = blockStore;
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 
-		const details = {
-			icon: icon, 
-			name: name,
-		};
-
-		C.BlockCreatePage(root, '', details, I.BlockPosition.Bottom, (message: any) => {
+		C.BlockCreatePage(root, '', details, position, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();
@@ -201,9 +196,9 @@ class DataUtil {
 	menuGetBlockText () {
 		return [
 			{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text', color: 'yellow', isBlock: true },
-			{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1', color: 'yellow', isBlock: true },
-			{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2', color: 'yellow', isBlock: true },
-			{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3', color: 'yellow', isBlock: true },
+			{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1', color: 'yellow', isBlock: true, aliases: [ 'h1' ] },
+			{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2', color: 'yellow', isBlock: true, aliases: [ 'h2' ] },
+			{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3', color: 'yellow', isBlock: true, aliases: [ 'h3' ] },
 			{ type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted', color: 'yellow', isBlock: true },
 		];
 	};
@@ -316,6 +311,49 @@ class DataUtil {
 			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Center', isAlign: true },
 			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Right', isAlign: true },
 		];
+	};
+	
+	menuSectionsFilter (sections: any[], filter: string) {
+		const reg = new RegExp(filter, 'gi');
+		
+		sections = sections.filter((s: any) => {
+			if (s.name.match(reg)) {
+				return true;
+			};
+			s.children = (s.children || []).filter((c: any) => { 
+				let ret = false;
+				if (c.name.match(reg)) {
+					ret = true;
+				} else 
+				if (c.aliases && c.aliases.length) {
+					for (let alias of c.aliases) {
+						if (alias.match(reg)) {
+							ret = true;
+							break;
+						};
+					};
+				};
+				
+				return ret; 
+			});
+			
+			return s.children.length > 0;
+		});
+		
+		return sections;
+	};
+	
+	menuSectionsMap (sections: any[]) {
+		sections = sections.map((s: any) => {
+			s.children = s.children.map((it: any) => {
+				it.key = it.id;
+				it.id = s.id + '-' + it.id;
+				return it;
+			});
+			return s;
+		});
+		
+		return sections;
 	};
 	
 	linkId (match: any) {

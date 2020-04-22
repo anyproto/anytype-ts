@@ -15,6 +15,9 @@ const Constant = require('json/constant.json');
 const Bullets = {
 	black:	 require('img/icon/bullet/black.svg'),
 };
+const Checkbox0 = require('img/icon/marker/check0.svg');
+const Checkbox1 = require('img/icon/marker/check1.svg');
+const Toggle = require('img/icon/marker/toggle.svg');
 
 for (let c in Constant.textColor) {
 	Bullets[c] = require(`img/icon/bullet/${c}.svg`);
@@ -27,7 +30,8 @@ class Marker extends React.Component<Props, {}> {
 		const { id, type, color, className, active, onClick } = this.props;
 		
 		let cn = [ 'marker' ];
-		let ci = [];
+		let ci = [ 'markerInner', 'c' + type ];
+		let inner: any = null;
 		
 		if (className) {
 			cn.push(className);
@@ -40,15 +44,31 @@ class Marker extends React.Component<Props, {}> {
 			ci.push('textColor textColor-' + color);
 		};
 		
-		let inner: any = null;
-		
-		if (type == I.TextStyle.Bulleted) {
-			inner = <img src={Bullets[color] || Bullets.black} />;
+		switch (type) {
+			case I.TextStyle.Bulleted:
+				inner = (
+					<span id={'marker-' + id} className={ci.join(' ')}>
+						<img src={Bullets[color] || Bullets.black} />
+					</span>
+				);
+				break;
+				
+			case I.TextStyle.Numbered:
+				inner = <span id={'marker-' + id} className={ci.join(' ')} />
+				break;
+				
+			case I.TextStyle.Checkbox:
+				inner = <img src={active ? Checkbox1 : Checkbox0} />;
+				break;
+			
+			case I.TextStyle.Toggle:
+				inner = <img src={Toggle} />;
+				break;
 		};
 		
 		return (
 			<div className={cn.join(' ')} onClick={onClick}>
-				<span id={'marker-' + id} className={ci.join(' ')}>{inner}</span>
+				{inner}
 			</div>
 		);
 	};

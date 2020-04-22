@@ -52,6 +52,10 @@ class Util {
 		return JSON.parse(JSON.stringify(o || {}));
 	};
 	
+	objectLength (o: any) {
+		return o.hasOwnProperty('length') ? o.length : Object.keys(o).length;
+	};
+	
 	objectCompare (o1: any, o2: any): boolean {
 		o1 = o1 || {};
 		o2 = o2 || {};
@@ -75,13 +79,13 @@ class Util {
 			(JSON.stringify(v1) === JSON.stringify(v2));
 	};
 	
-	arrayUniqueObjects (array: any[], prop: string) {
+	arrayUniqueObjects (array: any[], k: string) {
 		const res: any[] = [];
 		const map = new Map();
 		
 		for (const item of array) {
-			if (!map.has(item[prop])){
-				map.set(item[prop], true);
+			if (!map.has(item[k])){
+				map.set(item[k], true);
 				res.push(item);
 			};
 		};
@@ -437,6 +441,7 @@ class Util {
 	};
 	
 	rangeFixOut (text: string, range: I.TextRange): I.TextRange {
+		range = this.objectCopy(range);
 		range.from = this.lengthFixOut(text, range.from);
 		range.to = this.lengthFixOut(text, range.to);
 		return range;

@@ -15,6 +15,7 @@ class Keyboard {
 	coords: any = { x: 0, y: 0 };
 	timeoutPin: number = 0;
 	preview: boolean = false;
+	pressed: any = {};
 	
 	init (history: any) {
 		this.history = history;
@@ -51,7 +52,9 @@ class Keyboard {
 			// Create new page
 			if (k == Key.n) {
 				e.preventDefault();
-				DataUtil.pageCreate(e, { history: this.history }, '', Constant.default.name);
+				DataUtil.pageCreate(e, { history: this.history }, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+					Util.scrollTopEnd();
+				});
 			};
 		};
 		
@@ -60,6 +63,18 @@ class Keyboard {
 	
 	onKeyUp (e: any) {
 		let k = e.which;
+	};
+	
+	setPressed (k: number) {
+		this.pressed[k] = true;
+	};
+	
+	unsetPressed (k: number) {
+		delete(this.pressed[k]);
+	};
+	
+	countPressed () {
+		return Util.objectLength(this.pressed);
 	};
 	
 	setFocus (v: boolean) {

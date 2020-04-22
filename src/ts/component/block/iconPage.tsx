@@ -21,11 +21,11 @@ class BlockIconPage extends React.Component<Props, {}> {
 	render (): any {
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
-		const { icon } = details;
+		const { iconEmoji } = details;
 		
 		return (
 			<React.Fragment>
-				<Smile id={'block-icon-' + rootId} canEdit={true} size={32} icon={icon} offsetX={0} offsetY={16} onSelect={this.onSelect} className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+				<Smile id={'block-icon-' + rootId} canEdit={true} size={32} icon={iconEmoji} offsetX={0} offsetY={16} onSelect={this.onSelect} className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};
@@ -33,7 +33,7 @@ class BlockIconPage extends React.Component<Props, {}> {
 	onSelect (icon: string) {
 		const { rootId } = this.props;
 		
-		C.BlockSetDetails(rootId, [ { key: 'icon', value: icon } ]);
+		C.BlockSetDetails(rootId, [ { key: 'iconEmoji', value: icon } ]);
 	};
 	
 };

@@ -4,6 +4,7 @@ import { I, M, Util, StructDecode, StructEncode } from 'ts/lib';
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+const raf = require('raf');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -260,16 +261,17 @@ class BlockStore {
 			return;
 		};
 		
+		$('.markerNumber').remove();
+		
 		const cb = (list: any[]) => {
 			list = list || [];
 			
 			let n = 0;
 			for (let item of list) {
-				
 				if (!item.isLayout()) {
 					if (item.isNumbered()) {
 						n++;
-						$('#marker-' + item.id).text(n ? n + '.' : '');
+						$('#marker-' + item.id).html(`<span class="markerNumber">${n}.</span>`);
 					} else {
 						n = 0;
 					};
@@ -279,9 +281,7 @@ class BlockStore {
 			};
 		};
 		
-		window.setTimeout(() => {
-			cb(root.childBlocks);
-		}, 10);
+		raf(() => { cb(root.childBlocks); });
 	};
 	
 	getStructure (list: I.Block[]) {

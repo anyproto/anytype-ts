@@ -44,7 +44,6 @@ class EditorPage extends React.Component<Props, State> {
 		super(props);
 		
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
-		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
@@ -69,22 +68,24 @@ class EditorPage extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
 		const details = blockStore.getDetail(rootId, rootId);
+		const title = blockStore.getLeaf(rootId, rootId + '-title');
 		
 		const withIcon = details.icon;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
-		const title = new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper' ];
-		let icon = null;
+		let icon: any = { id: rootId + '-icon', childrenIds: [], fields: {}, content: {} };
 		
 		if (root.isPageProfile()) {
 			cn.push('isProfile');
-			icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconUser, childrenIds: [], fields: {}, content: {} });
+			icon.type = I.BlockType.IconUser;
 		} else {
-			icon = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], fields: {}, content: {} });
+			icon.type = I.BlockType.IconPage;
 		};
+		
+		icon = new M.Block(icon);
 		
 		if (withIcon && withCover) {
 			cn.push('withIconAndCover');
@@ -105,13 +106,19 @@ class EditorPage extends React.Component<Props, State> {
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 					
-						{withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
+						{withIcon ? (
+							<Block 
+								{...this.props} key={icon.id} block={icon} 
+								className="root" 
+							/>	
+						) : ''}
+						
 						<Block 
 							{...this.props} key={title.id} block={title}
 							onKeyDown={this.onKeyDownBlock} 
-							onKeyUp={this.onKeyUpBlock}
 							onMenuAdd={this.onMenuAdd}
-							onPaste={this.onPaste} 
+							onPaste={this.onPaste}
+							className="root" 
 						/>
 					
 						{list.map((block: I.Block, i: number) => {
@@ -121,8 +128,8 @@ class EditorPage extends React.Component<Props, State> {
 									{...this.props}
 									index={i}
 									block={block}
+									className="root"
 									onKeyDown={this.onKeyDownBlock} 
-									onKeyUp={this.onKeyUpBlock}
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
 								/>
@@ -214,7 +221,9 @@ class EditorPage extends React.Component<Props, State> {
 			cr = crumbs.set(I.CrumbsType.Page, rootId);
 		};
 		
-		C.BlockSetBreadcrumbs(breadcrumbs, cr.ids);
+		if (breadcrumbs) {
+			C.BlockSetBreadcrumbs(breadcrumbs, cr.ids);
+		};
 		
 		this.close(this.id);
 		this.id = rootId;
@@ -348,6 +357,15 @@ class EditorPage extends React.Component<Props, State> {
 		
 		window.clearTimeout(this.timeoutHover);
 		
+		if (keyboard.drag) {
+			add.css({ opacity: 0 });
+			items.removeClass('showMenu isAdding top bottom');
+			if (hovered) {
+				hovered.addClass('showMenu');
+			};
+			return;
+		};
+		
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
@@ -360,7 +378,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
 				
-				if (block) {
+				if (block && !block.isLayoutColumn() && !block.isLayoutDiv()) {
 					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 				};
 			};
@@ -369,14 +387,6 @@ class EditorPage extends React.Component<Props, State> {
 				add.css({ opacity: 0 });
 				items.removeClass('showMenu isAdding top bottom');
 			}, 10);
-		};
-		
-		if (keyboard.drag) {
-			add.css({ opacity: 0 });
-			items.removeClass('showMenu isAdding top bottom');
-			if (hovered) {
-				hovered.addClass('showMenu');
-			};
 		};
 	};
 	
@@ -755,9 +765,6 @@ class EditorPage extends React.Component<Props, State> {
 		};
 	};
 	
-	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
-	};
-	
 	onSelectAll () {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
@@ -885,7 +892,7 @@ class EditorPage extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							this.blockCreatePage(block, { name: Constant.default.name }, I.BlockPosition.Replace);
+							DataUtil.pageCreate(e, this.props, { name: Constant.default.name }, I.BlockPosition.Replace);
 						} else {
 							this.blockCreate(block, I.BlockPosition.Replace, param);
 						};
@@ -1039,11 +1046,11 @@ class EditorPage extends React.Component<Props, State> {
 						{ id: 'bookmark', name: 'Create bookmark' },
 						//{ id: 'embed', name: 'Create embed' },
 					],
-					onSelect: (event: any, id: string) => {
-						if (id == 'cancel') {
+					onSelect: (event: any, item: any) => {
+						if (item.id == 'cancel') {
 							this.onPaste(e, true, data);
 						};
-						if (id == 'bookmark') {
+						if (item.id == 'bookmark') {
 							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
 						};
 					},
@@ -1084,20 +1091,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
 			this.focus(message.blockId, 0, 0);
-			
-			if (callBack) {
-				callBack(message.blockId);
-			};
-		});
-	};
-	
-	blockCreatePage (focused: I.Block, details: any, position: I.BlockPosition, callBack?: (blockId: string) => void) {
-		const { rootId } = this.props;
-		
-		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-		C.BlockCreatePage(rootId, focused.id, details, position, (message: any) => {
-			DataUtil.pageOpen({}, this.props, message.blockId, message.targetId);
-			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (callBack) {
 				callBack(message.blockId);

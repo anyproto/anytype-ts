@@ -15,7 +15,6 @@ interface Props {
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 	onMenuAdd? (id: string): void;
 	onPaste? (e: any): void;
 };
@@ -60,7 +59,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color, bgColor } = content;
 		
-		let markers: any[] = [];
+		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct ];
@@ -72,6 +71,7 @@ class BlockText extends React.Component<Props, {}> {
 					<div className="line" />
 				);
 				break;
+				
 			case I.TextStyle.Code:
 				let options = [];
 				for (let i in Constant.codeLang) {
@@ -84,19 +84,19 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 				
 			case I.TextStyle.Bulleted:
-				markers.push({ type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} });
+				marker = { type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} };
 				break;
 				
 			case I.TextStyle.Numbered:
-				markers.push({ type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} });
+				marker = { type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} };
 				break;
 				
 			case I.TextStyle.Toggle:
-				markers.push({ type: I.TextStyle.Toggle, className: 'toggle', active: false, onClick: this.onToggle });
+				marker = { type: I.TextStyle.Toggle, className: 'toggle', active: false, onClick: this.onToggle };
 				break;
 				
 			case I.TextStyle.Checkbox:
-				markers.push({ type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheck });
+				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheck };
 				break;
 		};
 		
@@ -114,15 +114,14 @@ class BlockText extends React.Component<Props, {}> {
 				onPaste={this.onPaste}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
+				onDragStart={(e: any) => { e.preventDefault(); }}
 			/>
 		);
 		
 		return (
 			<div className="flex">
 				<div className="markers">
-					{markers.map((item: any, i: number) => (
-						<Marker key={i} {...item} id={id} color={color} />
-					))}
+					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
 				</div>
 				{additional}
 				<div className="wrap">
@@ -289,6 +288,10 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const value = this.getValue().replace(/\n$/, '');
 		
+		if (!e.metaKey) {
+			keyboard.setPressed(k);
+		};
+		
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
 			
@@ -319,12 +322,14 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { onKeyUp, rootId, block } = this.props;
+		const { rootId, block } = this.props;
 		const { id, content } = block;
 		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
 		const k = e.which;
+		
+		keyboard.unsetPressed(k);
 		
 		let cmdParsed = false;
 		let cb = (message: any) => {
@@ -459,7 +464,6 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = this.getMarksFromHtml();
 		
 		this.placeHolderCheck();
-		onKeyUp(e, value, this.marks);
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
