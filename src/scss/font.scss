@@ -23,3 +23,20 @@
 	font-family: 'Lcg'; font-style: bold; font-weight: 600;
 	src: url('~font/lcg/bold.otf') format('opentype');
 }
+
+@font-face {
+	font-family: 'Inter'; font-style: normal; font-weight: 400;
+	src: url('~font/inter/regular.woff') format('woff');
+}
+@font-face {
+	font-family: 'Inter'; font-style: italic; font-weight: 400;
+	src: url('~font/inter/italic.woff') format('woff');
+}
+@font-face {
+	font-family: 'Inter'; font-style: normal; font-weight: 500;
+	src: url('~font/inter/medium.woff') format('woff');
+}
+@font-face {
+	font-family: 'Inter'; font-style: bold; font-weight: 600;
+	src: url('~font/inter/bold.woff') format('woff');
+}
