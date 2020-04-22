@@ -70,7 +70,7 @@ class EditorPage extends React.Component<Props, State> {
 		const details = blockStore.getDetail(rootId, rootId);
 		const title = blockStore.getLeaf(rootId, rootId + '-title');
 		
-		const withIcon = details.icon;
+		const withIcon = details.iconEmoji;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
@@ -316,7 +316,7 @@ class EditorPage extends React.Component<Props, State> {
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const withIcon = details.icon;
+		const withIcon = details.iconEmoji;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
 		let offset = 170;

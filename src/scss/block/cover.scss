@@ -43,11 +43,11 @@
 		}
 		.dragWrap {
 			.input-drag { width: 96px; margin-right: 8px; }
-			.number { width: calc(100% - 106px); font-size: 13px; color: #fff; font-weight: 500; text-align: right; }
+			.number { width: calc(100% - 106px); font-size: 14px; color: #fff; font-weight: 500; text-align: right; }
 		}
 	
 		.btn { 
-			font-weight: 500; font-size: 13px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block; opacity: 0;
+			font-weight: 500; font-size: 14px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block; opacity: 0;
 			padding: 0px 8px; border-radius: 4px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out; text-align: center;
 		}
 		.btn.active { opacity: 1; }
@@ -64,7 +64,7 @@
 			.txt { line-height: 18px; }
 		}
 		
-		.btn.drag { position: absolute; cursor: grab; width: 196px; top: 50%; left: 50%; margin: -12px 0px 0px -98px; }
+		.btn.drag { position: absolute; cursor: grab; width: 210px; top: 50%; left: 50%; margin: -12px 0px 0px -105px; }
 		.btn.drag {
 			.icon { background-image: url('~img/icon/cover/drag.svg'); }
 		}

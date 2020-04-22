@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockCover { width: 408px; padding: 0px; }
 	.menu.menuBlockCover {
-		.head { border-bottom: 1px solid #eae9e0; padding: 12px 16px 10px 16px; font-weight: 500; color: $colorDarkGrey; }
+		.head { border-bottom: 1px solid #eae9e0; padding: 11px 16px; font-weight: 500; color: $colorDarkGrey; }
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
 			.btn:hover { color: $colorBlack }
