@@ -54,8 +54,8 @@ class BlockCover extends React.Component<Props, State> {
 		
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
-		
 		this.onDrop = this.onDrop.bind(this);
+		
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragMove = this.onDragMove.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
@@ -101,7 +101,13 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} onMouseDown={this.onDragStart} onDragOver={this.onDragOver} onDragLeave={this.onDragLeave} onDrop={this.onDrop}>
+			<div 
+				className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} 
+				onMouseDown={this.onDragStart} 
+				onDragOver={this.onDragOver} 
+				onDragLeave={this.onDragLeave} 
+				onDrop={this.onDrop}
+			>
 				{loading ? <Loader /> : ''}
 				{coverType == I.CoverType.Image ? (
 					<img id="cover" src={commonStore.imageUrl(coverId, 2048)} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
@@ -120,7 +126,7 @@ class BlockCover extends React.Component<Props, State> {
 		this.resize();
 		
 		const win = $(window);
-		win.unbind('resize').on('resize', () => { this.resize(); });
+		win.unbind('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
@@ -129,7 +135,7 @@ class BlockCover extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		$(window).unbind('resize');
+		$(window).unbind('resize.cover');
 	};
 	
 	onMenu (e: any) {
