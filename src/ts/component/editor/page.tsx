@@ -892,7 +892,7 @@ class EditorPage extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							DataUtil.pageCreate(e, this.props, { name: Constant.default.name }, I.BlockPosition.Replace);
+							DataUtil.pageCreate(e, this.props, rootId, block.id, { name: Constant.default.name }, I.BlockPosition.Replace);
 						} else {
 							this.blockCreate(block, I.BlockPosition.Replace, param);
 						};

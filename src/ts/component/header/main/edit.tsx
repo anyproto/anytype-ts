@@ -53,7 +53,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			</div>
 		);
 		
-		
 		return (
 			<div className="header headerMainEdit">
 				<div className="path">
@@ -75,7 +74,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+		const { rootId } = this.props;
+		
+		DataUtil.pageCreate(e, this.props, rootId, '', { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
 			Util.scrollTopEnd();
 		});
 	};

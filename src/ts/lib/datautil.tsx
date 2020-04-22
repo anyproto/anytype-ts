@@ -167,15 +167,13 @@ class DataUtil {
 		history.push('/main/edit/' + targetId + '/link/' + linkId);
 	};
 	
-	pageCreate (e: any, props: any, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
+	pageCreate (e: any, props: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
 		if (e && e.persist) {
 			e.persist();
 		};
 		
-		const { root } = blockStore;
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-
-		C.BlockCreatePage(root, '', details, position, (message: any) => {
+		C.BlockCreatePage(rootId, targetId, details, position, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			this.pageOpen(e, props, message.blockId, message.targetId);
 			Util.scrollTopEnd();

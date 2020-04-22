@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
+import { blockStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any>  {};
 
@@ -29,7 +30,9 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate(e, this.props, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+		const { root } = blockStore;
+		
+		DataUtil.pageCreate(e, this.props, root, '', { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
 			Util.scrollTopEnd();
 		});
 	};

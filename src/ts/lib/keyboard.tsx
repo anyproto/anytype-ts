@@ -31,6 +31,8 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
+		const { root } = blockStore;
+		
 		let k = e.which;
 		
 		if (!this.focus) {
@@ -52,7 +54,7 @@ class Keyboard {
 			// Create new page
 			if (k == Key.n) {
 				e.preventDefault();
-				DataUtil.pageCreate(e, { history: this.history }, { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+				DataUtil.pageCreate(e, { history: this.history }, root, '', { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
 					Util.scrollTopEnd();
 				});
 			};
