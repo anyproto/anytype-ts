@@ -164,10 +164,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockStyle', { 
 						element: '#button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,
-						offsetX: -16,
+						offsetX: 0,
 						offsetY: 11,
 						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Left,
+						horizontal: I.MenuDirection.Center,
 						data: {
 							rootId: rootId,
 							blockId: blockId,
