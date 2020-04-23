@@ -214,8 +214,10 @@ class DataUtil {
 	};
 	
 	menuGetBlockPage () {
+		let id = 0;
 		return [
-			{ type: I.BlockType.Page, id: 0, icon: 'page', name: 'Page', color: 'blue', isBlock: true },
+			{ type: I.BlockType.Page, id: ++id, icon: 'page', name: 'Page', color: 'blue', isBlock: true },
+			{ type: I.BlockType.Dataview, id: ++id, icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			/*
 			{ id: 'existing', icon: 'existing', name: 'Existing Page', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
