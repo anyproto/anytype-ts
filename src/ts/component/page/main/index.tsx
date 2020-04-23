@@ -49,7 +49,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			<div>
 				<Cover type={I.CoverType.Image} num={coverId} image={coverImg} />
 				<Header {...this.props} />
-				<Footer />
+				<Footer {...this.props} />
 				
 				<div id="body" className="wrapper">
 					<div className="title">
@@ -164,7 +164,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('#body');
 		const documents = node.find('#documents');
-		const cnt = Math.floor((ww -  size.margin * 2) / (size.width + size.margin));
+		const cnt = Math.floor((ww - 210) / (size.width + size.margin));
 		
 		let width = cnt * (size.width + size.margin);
 		let height = size.height + size.margin;

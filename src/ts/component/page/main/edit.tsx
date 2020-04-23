@@ -27,7 +27,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					</DragProvider>
 				</SelectionProvider>
 				
-				<Footer />
+				<Footer {...this.props} />
 			</div>
 		);
 	};

@@ -13,11 +13,9 @@
 
 		.item {
 			.icon { margin-right: 4px; }
-			.icon.plus-new { background-image: url('~img/icon/plus/new0.svg'); }
 			.name { display: inline-block; vertical-align: top; line-height: 20px; }
 		}
 		.item:hover {
-			.icon.plus-new { background-image: url('~img/icon/plus/new1.svg'); }
 		}
 	}
 	
@@ -50,9 +48,6 @@
 	
 	.icon.nav { background-image: url('~img/icon/nav0.svg'); }
 	.icon.nav:hover { background-image: url('~img/icon/nav1.svg'); }
-
-	.icon.plus-edit { background-image: url('~img/icon/plus/edit0.svg'); }
-	.icon.plus-edit:hover { background-image: url('~img/icon/plus/edit1.svg'); }
 
 	.icon.back, .icon.forward { background-image: url('~img/icon/back0.svg'); }
 	.icon.forward { transform: rotateZ(180deg); }

@@ -25,7 +25,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 	};
@@ -57,7 +56,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		return (
 			<div className="header headerMainEdit">
 				<div className="path">
-					<Icon className="plus-edit" onClick={this.onAdd} />
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
 					<Icon className="nav" onClick={this.onNavigation} />
@@ -73,14 +71,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
-	};
-	
-	onAdd (e: any) {
-		const { rootId } = this.props;
-		
-		DataUtil.pageCreate(e, this.props, rootId, '', { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
-			Util.scrollTopEnd();
-		});
 	};
 	
 	onHome (e: any) {
