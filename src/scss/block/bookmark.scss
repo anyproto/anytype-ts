@@ -1,8 +1,9 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockBookmark { margin: 7px 0px; }
 	.block.blockBookmark {
-		.dropTarget { border-radius: 4px; }
+		.dropTarget { border-radius: 6px; }
 	
 		.inner { 
 			display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; 
@@ -12,14 +13,14 @@
 		
 		.inner {
 			.side.left { width: 66.67%; padding: 12px 16px 13px 16px; }
-			.side.right { width: 33.33%; border-radius: 0px 2px 2px 0px; overflow: hidden; }
+			.side.right { width: 33.33%; border-radius: 0px 4px 4px 0px; overflow: hidden; }
 		}
 		
 		.inner.vertical { display: block; padding-top: 112px; }
 		.inner.vertical {
 			.side.left { width: 100%; border-radius: 0px; }
 			.side.right { 
-				position: absolute; top: 0px; left: 0px; height: 112px; width: 100%; border-radius: 4px 4px 0px 0px;
+				position: absolute; top: 0px; left: 0px; height: 112px; width: 100%; border-radius: 6px 6px 0px 0px;
 				border-bottom: 1px solid #eae9e0; 
 			}
 			
@@ -38,5 +39,5 @@
 		.icon.fav { width: 16px; height: 16px; margin: -4px 4px 0px 0px; }
 	}
 	
-	.block.blockBookmark > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockBookmark > .wrapContent > .selectable > .dropTarget { padding-top: 0px; padding-bottom: 0px; }
 }
