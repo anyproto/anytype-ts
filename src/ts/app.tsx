@@ -214,10 +214,10 @@ class App extends React.Component<Props, State> {
 		let debugMW = Boolean(Storage.get('debugMW'));
 		let debugAN = Boolean(Storage.get('debugAN'));
 		let coverNum = Number(Storage.get('coverNum'));
-		let coverImg = Number(Storage.get('coverImg'));
+		let coverImage = String(Storage.get('coverImage'));
 		let noShutdown = Number(Storage.get('noShutdown'));
 		
-		if (!coverNum && !coverImg) {
+		if (!coverNum && !coverImage) {
 			commonStore.coverSetNum(Constant.default.cover);
 		};
 		

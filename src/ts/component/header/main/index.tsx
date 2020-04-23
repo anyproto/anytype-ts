@@ -22,7 +22,8 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 				<Icon className="logo" />
 				<div className="menu">
 					<div className="item" onClick={this.onAdd}>
-						<Icon className="plus-new" />New
+						<Icon className="plus-new" />
+						<div className="name">New</div>
 					</div>
 				</div>
 			</div>
