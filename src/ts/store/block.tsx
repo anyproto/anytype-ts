@@ -261,8 +261,6 @@ class BlockStore {
 			return;
 		};
 		
-		$('.markerNumber').remove();
-		
 		const cb = (list: any[]) => {
 			list = list || [];
 			
@@ -271,7 +269,7 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isNumbered()) {
 						n++;
-						$('#marker-' + item.id).html(`<span class="markerNumber">${n}.</span>`);
+						$('#marker-' + item.id).text(`${n}.`);
 					} else {
 						n = 0;
 					};
