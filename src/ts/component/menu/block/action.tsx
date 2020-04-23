@@ -239,7 +239,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getItems () {
-		const { filter } = this.state;
 		const sections = this.getSections();
 		
 		let items: any[] = [];

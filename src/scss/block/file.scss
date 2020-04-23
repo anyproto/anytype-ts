@@ -6,11 +6,11 @@
 		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
 		
 		.name {
-			@include text-common; min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block;
+			min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block;
 			vertical-align: top; cursor: pointer; @include text-overflow-nw;  
 		}
 		.size {
-			max-width: 100px; font-size: 12px; height: 24px; line-height: 24px; letter-spacing: 0.1px; color: $colorDarkGrey; margin: 0px 8px;
+			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorDarkGrey; margin: 0px 8px;
 			display: inline-block; vertical-align: top;
 		}
 		.download {

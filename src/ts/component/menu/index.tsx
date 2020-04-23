@@ -65,7 +65,6 @@ class Menu extends React.Component<Props, {}> {
 			blockAction:			 MenuBlockAction,
 			blockStyle:				 MenuBlockStyle,
 			blockAdd:				 MenuBlockAdd,
-			blockAddSub:			 MenuBlockAdd,
 			blockColor:				 MenuBlockColor,
 			blockBackground:		 MenuBlockBackground,
 			blockMore:				 MenuBlockMore,

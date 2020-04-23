@@ -23,7 +23,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 		return (
 			<div className="footer">
 				<Icon id="button-help" className={'help ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
-				<Icon id="button-plus" className="plusBig" onClick={this.onAdd} />
+				<Icon id="button-plus" className="plusBig dark" onClick={this.onAdd} />
 			</div>
 		);
 	};

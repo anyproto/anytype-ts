@@ -51,11 +51,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 						if (action.isTextColor || action.isBgColor) {
 							action.icon = 'color';
 							action.inner = (
-								<div className={icn.join(' ')}>A</div>
+								<div className={icn.join(' ')} />
 							);
 						};
 						
-						return <MenuItemVertical key={action.id + '-' + i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+						return <MenuItemVertical key={action.id + '-' + i} {...action} withDescription={action.isBlock} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -63,20 +63,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				{filter ? (
-					<React.Fragment>
-						{!sections.length ? <div className="item empty">No items match filter</div> : ''}
-						{sections.map((item: any, i: number) => (
-							<Section key={i} {...item} />
-						))}
-					</React.Fragment>
-				) : (
-					<React.Fragment>
-						{options.map((item: any, i: number) => (
-							<MenuItemVertical key={item.id} {...item} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
-						))}
-					</React.Fragment>
-				)}
+				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
+				{sections.map((item: any, i: number) => (
+					<Section key={i} {...item} />
+				))}
 			</div>
 		);
 	};
@@ -87,11 +77,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
-		
-		if (this.props.id == 'blockAddSub') {
-			this.n = 0;
-			this.setActive();
-		};
 		
 		const menu = $('#' + Util.toCamelCase('menu-' + id));
 		menu.unbind('mouseleave').on('mouseleave', () => {
@@ -107,12 +92,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const obj = $('#menuBlockAdd');
 		
-		if (filter) {
-			obj.addClass('withFilter');
-			commonStore.menuClose('blockAddSub');
-		} else {
-			obj.removeClass('withFilter');
-		};
+		filter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 	};
 	
 	componentWillUnmount () {
@@ -186,19 +166,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				this.setActive(null, true);
 				break;
 				
-			case Key.right:
-				if ((this.props.id == 'blockAddSub') && (this.n == -1)) {
-					this.n++;
-					if (this.n > l - 1) {
-						this.n = 0;
-					};
-					this.setActive();
-				} else 
-				if (item) {
-					this.onOver(e, item);
-				};
-				break;
-				
 			case Key.enter:
 				e.preventDefault();
 				
@@ -207,12 +174,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				};
 				break;
 			
-			case Key.left:
-				if (this.props.id == 'blockAddSub') {
-					commonStore.menuClose(this.props.id);
-				};
-				break;
-				
 			case Key.escape:
 				commonStore.menuClose(this.props.id);
 				break;
@@ -233,22 +194,22 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { type, content } = block;
 		
 		let sections: any[] = [
-			{ id: 'text', icon: 'text', name: 'Text', color: 'yellow', arrow: true, children: DataUtil.menuGetBlockText() },
-			{ id: 'list', icon: 'list', name: 'List', color: 'green', arrow: true, children: DataUtil.menuGetBlockList() },
-			{ id: 'page', icon: 'page', name: 'Page', color: 'blue', arrow: true, children: DataUtil.menuGetBlockPage() },
-			{ id: 'file', icon: 'file', name: 'Object', color: 'red', arrow: true, children: DataUtil.menuGetBlockObject() },
-			{ id: 'other', icon: 'line', name: 'Other', color: 'purple', arrow: true, children: DataUtil.menuGetBlockOther() },
+			{ id: 'text', icon: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
+			{ id: 'list', icon: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
+			{ id: 'page', icon: 'page', name: 'Page', color: 'blue', children: DataUtil.menuGetBlockPage() },
+			{ id: 'file', icon: 'file', name: 'Object', color: 'red', children: DataUtil.menuGetBlockObject() },
+			{ id: 'other', icon: 'line', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
 		];
 		
 		if (filter) {
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: 'Actions', color: '', arrow: true, children: DataUtil.menuGetActions(block) },
-				{ id: 'align', icon: 'align', name: 'Align', color: '', arrow: true, children: DataUtil.menuGetAlign() },
-				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', arrow: true, children: DataUtil.menuGetBgColors() },
+				{ id: 'action', icon: 'action', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
+				{ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign() },
+				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() },
 			]);
 			
 			if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
-				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: DataUtil.menuGetTextColors() });
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter);
@@ -259,39 +220,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { subMenuId } = data;
 		const sections = this.getSections();
-		const { filter } = commonStore;
 		
-		let options: any[] = sections;
-		
-		if (subMenuId) {
-			const item = options.find((it: any) => { return it.id == subMenuId; });
-			if (!item) {
-				return [];
-			};
-			
-			options = item.children;
-			for (let i in options) {
-				options[i] = Object.assign(options[i], {
-					parentId: item.id,
-					color: item.color,
-					children: [],
-				});
-			};
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
 		};
 		
-		if (filter) {
-			let list: any[] = [];
-			for (let item of options) {
-				list = list.concat(item.children || []);
-			};
-			options = list;
-		};
-		
-		return options;
+		return items;
 	};
 	
 	onMouseEnter (e: any, item: any) {
@@ -301,40 +237,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	onOver (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, onSelect } = data;
-		
 		this.setActive(item, false);
-		
-		if (!item.arrow || !commonStore.menuIsOpen('blockAdd')) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		const offsetX = node.outerWidth() + 1;
-		
-		commonStore.menuClose('blockAddSub');
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			commonStore.menuOpen('blockAddSub', { 
-				element: '#item-' + item.id,
-				type: I.MenuType.Vertical,
-				offsetX: offsetX,
-				offsetY: -40,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				isSub: true,
-				data: {
-					rootId: rootId,
-					blockId: blockId,
-					subMenuId: item.id,
-					onSelect: onSelect,
-					rebind: this.rebind,
-				}
-			});
-		}, Constant.delay.menu);
 	};
 	
 	onClick (e: any, item: any) {
@@ -349,7 +252,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		commonStore.menuClose('blockAdd');
-		commonStore.menuClose('blockAddSub');
 		onSelect(e, item);
 	};
 	

@@ -1148,7 +1148,6 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		
 		commonStore.menuClose('blockAdd');
-		commonStore.menuClose('blockAddSub');
 		commonStore.menuClose('blockAction');
 		commonStore.menuClose('blockContext');
 

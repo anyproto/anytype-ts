@@ -1,30 +1,21 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuBlockMore {
+	.menu.menuBlockAdd, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuBlockMore {
 		.item.empty { font-size: 12px; line-height: 18px; padding-top: 8px; }
-		
-		.item.yellow.active { background: #fef3c5 !important; }
-		.item.green.active { background: #d6f5f3 !important; }
-		.item.blue.active { background: #d6effd !important; }
-		.item.red.active { background: #ffebe5 !important; }
-		.item.purple.active { background: #f4e3fa !important; }
 	
 		.icon { width: 24px; height: 24px; background-size: 100% 100%; }
 		.icon.arrow { position: absolute; right: 10px; top: 4px; margin: 0px; background-image: url('~img/arrow/menu.svg'); }
 	}
 	
-	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter { width: 288px !important; padding: 12px 0px; }
-	.menu.menuBlockAdd.withFilter, .menu.menuBlockAddSub.withFilter {
-		.section > .name { padding: 4px 16px; margin-bottom: 6px; }
-	}
+	.menu.menuBlockAdd { width: 360px !important; padding: 12px 0px; }
 	
 	.menu.menuBlockColor {
 		.content { max-height: 500px; }
 	}
 	
-	.menu.menuBlockAdd, .menu.menuBlockAddSub, .menu.menuBlockStyle {
-		.item.withColor.active {
+	.menu.menuBlockAdd, .menu.menuBlockStyle {
+		.item.withColor {
 			.icon.text { background-image: url('~img/icon/menu/action/block/text1.svg'); }
 			.icon.list { background-image: url('~img/icon/menu/action/block/list1.svg'); }
 			

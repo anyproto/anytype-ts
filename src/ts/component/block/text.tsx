@@ -304,7 +304,6 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
-			commonStore.menuClose('blockAddSub');
 			commonStore.menuClose('blockAdd');
 		};
 		

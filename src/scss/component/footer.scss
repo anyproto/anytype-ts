@@ -5,8 +5,11 @@
 	.copy { width: 120px; position: fixed; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: #fff; }
 	
 	#button-help { position: fixed; right: 12px; bottom: 12px; cursor: pointer; z-index: 10; }
+	
 	.plusBig { 
 		width: 48px; height: 48px; background-color: #fff; border-radius: 100%; position: fixed; left: 12px; bottom: 12px; z-index: 10;
 		background-image: url('~img/icon/plus/big.svg'); background-size: 24px 24px; cursor: pointer;
 	}
+	
+	.plusBig.dark { border: 1px solid #dfddd0; }
 }

@@ -1,4 +1,4 @@
-import { I, C, Util, focus, Storage, crumbs } from 'ts/lib';
+import { I, C, Util, focus, Storage, crumbs, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -196,27 +196,57 @@ class DataUtil {
 	
 	menuGetBlockText () {
 		return [
-			{ type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text', color: 'yellow', isBlock: true },
-			{ type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1', color: 'yellow', isBlock: true, aliases: [ 'h1' ] },
-			{ type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2', color: 'yellow', isBlock: true, aliases: [ 'h2' ] },
-			{ type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3', color: 'yellow', isBlock: true, aliases: [ 'h3' ] },
-			{ type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted', color: 'yellow', isBlock: true },
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text', color: 'yellow', isBlock: true,
+				description: translate('blockDescriptionParagraph'),
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1', color: 'yellow', isBlock: true, 
+				description: translate('blockDescriptionHeader1'), aliases: [ 'h1' ],
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2', color: 'yellow', isBlock: true, 
+				description: translate('blockDescriptionHeader2'), aliases: [ 'h2' ] 
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3', color: 'yellow', isBlock: true, 
+				description: translate('blockDescriptionHeader3'), aliases: [ 'h3' ] 
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted', color: 'yellow', isBlock: true,
+				description: translate('blockDescriptionQuote'), 
+			},
 		];
 	};
 	
 	menuGetBlockList () {
 		return [
-			{ type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox', color: 'green', isBlock: true },
-			{ type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list', color: 'green', isBlock: true },
-			{ type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list', color: 'green', isBlock: true },
-			{ type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle', color: 'green', isBlock: true },
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox', color: 'green', isBlock: true,
+				description: translate('blockDescriptionCheckbox'),  
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list', color: 'green', isBlock: true,
+				description: translate('blockDescriptionBulleted'), 
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list', color: 'green', isBlock: true,
+				description: translate('blockDescriptionNumbered'), 
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle', color: 'green', isBlock: true,
+				description: translate('blockDescriptionToggle'), 
+			},
 		];
 	};
 	
 	menuGetBlockPage () {
 		let id = 0;
 		return [
-			{ type: I.BlockType.Page, id: ++id, icon: 'page', name: 'Page', color: 'blue', isBlock: true },
+			{ 
+				type: I.BlockType.Page, id: ++id, icon: 'page', name: 'Page', color: 'blue', isBlock: true,
+				description: translate('blockDescriptionPage'), 
+			},
 			{ type: I.BlockType.Dataview, id: ++id, icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			/*
 			{ id: 'existing', icon: 'existing', name: 'Existing Page', color: 'blue', isBlock: true },
@@ -236,18 +266,39 @@ class DataUtil {
 	
 	menuGetBlockObject () {
 		return [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', name: 'File', color: 'red', isBlock: true },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', name: 'Picture', color: 'red', isBlock: true },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', name: 'Video', color: 'red', isBlock: true },
-			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', name: 'Bookmark', color: 'red', isBlock: true },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code', color: 'red', isBlock: true },
+			{ 
+				type: I.BlockType.File, id: I.FileType.File, icon: 'file', name: 'File', color: 'red', isBlock: true,
+				description: translate('blockDescriptionFile'), 
+			},
+			{ 
+				type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', name: 'Picture', color: 'red', isBlock: true,
+				description: translate('blockDescriptionImage'), 
+			},
+			{ 
+				type: I.BlockType.File, id: I.FileType.Video, icon: 'video', name: 'Video', color: 'red', isBlock: true,
+				description: translate('blockDescriptionImage'), 
+			},
+			{ 
+				type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', name: 'Bookmark', color: 'red', isBlock: true,
+				description: translate('blockDescriptionBookmark'), 
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code', color: 'red', isBlock: true,
+				description: translate('blockDescriptionCode'), 
+			},
 		];
 	};
 	
 	menuGetBlockOther () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider', color: 'purple', isBlock: true },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider', color: 'purple', isBlock: true },
+			{ 
+				type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider', color: 'purple', isBlock: true,
+				description: translate('blockDescriptionLine'),  
+			},
+			{ 
+				type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider', color: 'purple', isBlock: true,
+				description: translate('blockDescriptionDot'),  
+			},
 		];
 	};
 	

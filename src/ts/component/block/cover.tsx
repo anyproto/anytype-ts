@@ -37,6 +37,7 @@ class BlockCover extends React.Component<Props, State> {
 	y: number = 0;
 	cx: number = 0;
 	cy: number =  0;
+	loaded: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -177,6 +178,7 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onUpload () {
+		this.loaded = false;
 		this.setState({ loading: false, editing: true });
 	};
 	
@@ -212,7 +214,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		if (coverType == I.CoverType.Image) {
 			const el = this.cover.get(0);
-			const cb = (e: any) => {
+			const cb = () => {
 				if (this.refDrag) {
 					this.refDrag.setValue(coverScale);
 				};
@@ -220,10 +222,16 @@ class BlockCover extends React.Component<Props, State> {
 				this.rect = (node.get(0) as Element).getBoundingClientRect();
 				this.onScaleMove(coverScale);
 				this.cover.css({ opacity: 1 });
+				this.loaded = true;
 			};
-	
-			this.cover.css({ opacity: 0 });
-			el.onload = cb;
+			
+			if (this.loaded) {
+				cb();
+			} else {
+				this.cover.css({ opacity: 0 });
+				el.onload = cb;
+			};
+			
 			el.src = commonStore.imageUrl(coverId, 2048);
 		};
 	};
