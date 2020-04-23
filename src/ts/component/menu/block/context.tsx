@@ -142,6 +142,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockMore');
 		commonStore.menuClose('blockColor');
+		commonStore.menuClose('blockBackground');
 		commonStore.menuClose('select');
 		
 		window.clearTimeout(this.timeout);
@@ -204,10 +205,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockMore', { 
 						element: '#button-' + blockId + '-more',
 						type: I.MenuType.Vertical,
-						offsetX: -16,
+						offsetX: 0,
 						offsetY: 11,
 						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Left,
+						horizontal: I.MenuDirection.Center,
 						data: {
 							rootId: rootId,
 							blockId: blockId,
@@ -251,10 +252,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockColor', { 
 						element: '#button-' + blockId + '-color',
 						type: I.MenuType.Vertical,
-						offsetX: -16,
+						offsetX: 0,
 						offsetY: 11,
 						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Left,
+						horizontal: I.MenuDirection.Center,
 						data: {
 							rootId: rootId,
 							blockId: blockId,
@@ -279,10 +280,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockBackground', { 
 						element: '#button-' + blockId + '-background',
 						type: I.MenuType.Vertical,
-						offsetX: -16,
+						offsetX: 0,
 						offsetY: 11,
 						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Left,
+						horizontal: I.MenuDirection.Center,
 						data: {
 							rootId: rootId,
 							blockId: blockId,
