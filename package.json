@@ -48,7 +48,7 @@
 		"@types/react-router-dom": "^4.3.5",
 		"babel-loader": "^8.1.0",
 		"babel-preset-env": "^1.7.0",
-		"electron": "^6.1.10",
+		"electron": "^8.2.3",
 		"electron-builder": "^21.2.0",
 		"electron-notarize": "^0.2.1",
 		"git-revision-webpack-plugin": "^3.0.6",
@@ -118,7 +118,8 @@
 		"sha1": "^1.1.1",
 		"source-map-loader": "^0.2.4",
 		"sprintf-kit": "^2.0.0",
-		"typescript": "^3.8.3"
+		"typescript": "^3.8.3",
+		"xtend": "^4.0.2"
 	},
 	"build": {
 		"afterSign": "electron/notarize.js",

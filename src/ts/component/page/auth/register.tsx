@@ -6,13 +6,14 @@ import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, Util, translate } from 'ts/lib';
 
-const { dialog } = window.require('electron').remote;
-
 interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
 	preview: string;
 };
+
+const { dialog } = window.require('electron').remote;
+const Constant = require('json/constant.json');
 
 @observer
 class PageAuthRegister extends React.Component<Props, State> {
@@ -68,7 +69,13 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 
 	onFileClick (e: any) {
-		dialog.showOpenDialog({ properties: [ 'openFile' ] }, (files: any) => {
+		const options: any = { 
+			properties: [ 'openFile' ], 
+			filters: [ { name: '', extensions: Constant.extension.image } ]
+		};
+		
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};

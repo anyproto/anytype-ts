@@ -63,18 +63,13 @@ class BlockIconUser extends React.Component<Props, {}> {
 	
 	onUpload () {
 		const { rootId } = this.props;
-		
 		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [
-				{ 
-					name: '', 
-					extensions: [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ] 
-				},
-			],
+			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
 		
-		dialog.showOpenDialog(null, options, (files: any) => {
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};
