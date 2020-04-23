@@ -1,19 +1,19 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSmile { width: 408px; user-select: none; }
+	.menu.menuSmile { width: 384px; user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; max-height: 488px; }
-		.head { color: $colorDarkGrey; font-weight: 500; padding: 4px 16px; border-bottom: 1px solid #eae9e0; }
+		.head { color: $colorDarkGrey; font-weight: 500; padding: 3px 16px 11px 16px; border-bottom: 1px solid #eae9e0; }
 		.head {
 			.btn { display: inline-block; vertical-align: middle; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
 			.btn:last-child { margin-right: 0px; }
 			.btn:hover { color: $colorBlack; }
 		}
 		
-		.filter { padding: 4px 16px; border-bottom: 1px solid #eae9e0; }
+		.filter { padding: 11px 16px; border-bottom: 1px solid #eae9e0; }
 		.filter {
-			.input-text { padding: 0px; height: 32px; }
+			.input-text { padding: 0px; height: 22px; }
 		}
 	
 		.items { overflow: auto; height: 392px; }
@@ -29,19 +29,23 @@
 		.section > .list { padding: 0px 12px; }
 		
 		.item { 
-			cursor: pointer; width: 32px; height: 32px; position: relative; border-radius: 4px; display: inline-block;
+			cursor: pointer; width: 40px; height: 40px; position: relative; border-radius: 6px; display: inline-block;
 			vertical-align: top; padding: 0px;
 		}
 		.item:hover, .item.active { background: #f3f2ec; }
 		.item {
-			.smile { position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -12px; }
+			.smile { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
 			.smile .emoji-mart-emoji span { margin-top: 2px; }
 		}
 	}
 	
 	.menu.menuSmileSkin { padding: 10px; white-space: nowrap; }
 	.menu.menuSmileSkin {
-		.item { display: inline-block; vertical-align: top; margin-right: 8px; cursor: pointer; }
+		.item { display: inline-block; vertical-align: top; width: 40px; height: 40px; cursor: pointer; position: relative; }
+		.item {
+			.smile { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
+			.smile .emoji-mart-emoji span { margin-top: 2px; }
+		}
 		.item:last-child { margin: 0px; }
 	}
 }

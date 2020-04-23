@@ -42,7 +42,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
 			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
 			{ type: I.MarkType.Link, icon: 'link', name: 'Link' },
-			{ type: I.MarkType.Code, icon: 'code', name: 'Code' },
+			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code' },
 		];
 		
 		// You can't mark code, as it's highlighted automatically

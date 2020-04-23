@@ -27,7 +27,7 @@ class MenuSmileSkin extends React.Component<Props, {}> {
 		const Item = (item: any) => (
 			<div className="item" onClick={(e: any) => { this.onClick(item.skin); }}>
 				<div className="smile">
-					<Emoji native={true} emoji={':' + smileId + '::skin-tone-' + item.skin + ':'} set="apple" size={24} />
+					<Emoji native={true} emoji={':' + smileId + '::skin-tone-' + item.skin + ':'} set="apple" size={32} />
 				</div>
 			</div>
 		);
