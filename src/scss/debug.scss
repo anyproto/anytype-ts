@@ -18,6 +18,13 @@ html.debug {
 			.name { background-color: rgba(0,0,255,0.1); }
 		}
 		
+		.block.blockFile {
+			.icon { background-color: rgba(0,0,255,0.1); }
+			.name { background-color: rgba(0,0,255,0.1); }
+			.size { background-color: rgba(0,0,255,0.1); }
+			.download { background-color: rgba(0,0,255,0.1); }
+		}
+		
 		.block.blockText {
 			.marker { background-color: rgba(0,0,255,0.1); }
 		}
