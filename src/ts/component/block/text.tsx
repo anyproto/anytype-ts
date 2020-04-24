@@ -559,9 +559,13 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, content } = block;
 		const { from, to } = focus.range;
 		const { style } = content;
+		const { selection } = dataset || {};
+		const ids = selection.get(true);
 		
-		focus.set(id, this.getRange());
-		keyboard.setFocus(true);
+		if (!ids.length) {
+			focus.set(id, this.getRange());
+			keyboard.setFocus(true);
+		};
 		
 		const { range } = focus;
 		const currentFrom = range.from;

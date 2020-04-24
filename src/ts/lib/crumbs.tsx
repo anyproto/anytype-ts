@@ -13,8 +13,12 @@ class Crumbs {
 		return Util.toCamelCase(PREFIX + key);
 	};
 	
-	init (key: I.CrumbsType): void {
-		Storage.set(this.key(key), { ids: [] });
+	init (): void {
+		if (!blockStore.breadcrumbs) {
+			C.BlockOpenBreadcrumbs((message: any) => {
+				blockStore.breadcrumbsSet(message.blockId);
+			});
+		};
 	};
 	
 	get (key: I.CrumbsType): CrumbsObject {
@@ -23,7 +27,7 @@ class Crumbs {
 		return obj;
 	};
 	
-	add (key: I.CrumbsType, id: string): CrumbsObject {
+	add (key: I.CrumbsType, id: string, callBack?: () => void): CrumbsObject {
 		if (!id) {
 			return;
 		};
@@ -34,15 +38,11 @@ class Crumbs {
 		obj.ids = obj.ids || [];
 		obj.ids.push(id);
 		
-		this.save(key, obj);
+		this.save(key, obj, callBack);
 		return obj;
 	};
 	
-	cut (key: I.CrumbsType, index: number): CrumbsObject {
-		if (!blockStore.breadcrumbs) {
-			return;
-		};
-		
+	cut (key: I.CrumbsType, index: number, callBack?: () => void): CrumbsObject {
 		let k = this.key(key);
 		let obj = this.get(key);
 		
@@ -51,27 +51,29 @@ class Crumbs {
 		obj.ids = obj.ids || [];
 		obj.ids = obj.ids.slice(0, index);
 		
-		this.save(key, obj);
+		this.save(key, obj, callBack);
 		return obj;
 	};
 	
-	restore (key: I.CrumbsType): CrumbsObject {
+	restore (key: I.CrumbsType, callBack?: () => void): CrumbsObject {
 		let k = this.key(key);
 		let obj = this.get(key);
 		let prev: CrumbsObject = (Storage.get(k + '-prev') || { ids: [] }) as CrumbsObject;
 		
 		Storage.set(k + '-prev', obj, true);
-		this.save(key, prev);
+		this.save(key, obj, callBack);
 		return obj;
 	};
 	
-	save (key: I.CrumbsType, obj: CrumbsObject) {
-		let k = this.key(key);
+	save (key: I.CrumbsType, obj: CrumbsObject, callBack?: () => void) {
+		Storage.set(this.key(key), obj, true);
 		
-		Storage.delete(k);
-		Storage.set(k, obj);
 		if (blockStore.breadcrumbs) {
-			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, obj.ids);
+			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, obj.ids, (message: any) => {
+				if (callBack) {
+					callBack();
+				};
+			});
 		};
 	};
 	

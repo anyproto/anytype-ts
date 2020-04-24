@@ -475,7 +475,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		// Hide placeholder and remove focus
-		if (focused) {
+		if (ids.length) {
 			focus.clear(true);
 			$('.block.isFocused').removeClass('isFocused');
 			$('.placeHolder').hide();

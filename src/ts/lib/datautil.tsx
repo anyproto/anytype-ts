@@ -114,8 +114,6 @@ class DataUtil {
 	};
 	
 	pageInit (callBack?: () => void) {
-		const { breadcrumbs } = blockStore;
-		
 		C.ConfigGet((message: any) => {
 			const root = message.homeBlockId;
 			
@@ -130,11 +128,7 @@ class DataUtil {
 			blockStore.archiveSet(message.archiveBlockId);
 			blockStore.profileSet(message.profileBlockId);
 			
-			if (!breadcrumbs) {
-				C.BlockOpenBreadcrumbs((message: any) => {
-					blockStore.breadcrumbsSet(message.blockId);
-				});
-			};
+			crumbs.init();
 			
 			C.BlockOpen(root, [], (message: any) => {
 				if (callBack) {

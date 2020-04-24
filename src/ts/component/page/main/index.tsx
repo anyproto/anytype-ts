@@ -115,8 +115,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 		if (block.content.style == I.LinkStyle.Archive) {
 			commonStore.popupOpen('archive', {});
 		} else {
-			DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
-			crumbs.init(I.CrumbsType.Page);
+			crumbs.cut(I.CrumbsType.Page, 0, () => {
+				DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
+			});
 		};
 	};
 	

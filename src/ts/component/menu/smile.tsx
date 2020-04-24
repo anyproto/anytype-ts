@@ -293,8 +293,7 @@ class MenuSmile extends React.Component<Props, State> {
 			return it;
 		});
 		
-		Storage.delete('smileIds');
-		Storage.set('smileIds', ids);
+		Storage.set('smileIds', ids, true);
 	};
 	
 	onRemove () {
