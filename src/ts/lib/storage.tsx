@@ -14,7 +14,11 @@ class Storage {
 		return JSON.parse(o);
 	};
 	
-	set (key: string, obj: any): void {
+	set (key: string, obj: any, del?: boolean): void {
+		if (del) {
+			this.delete(key);
+		};
+		
 		let o = this.get(key);
 		if ('object' == typeof(o)) {
 			for (let i in obj) {

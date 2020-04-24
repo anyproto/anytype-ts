@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile, DropTarget, HeaderItemPath } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, Storage } from 'ts/lib';
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -135,11 +135,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { breadcrumbs } = blockStore;
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
-		crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
+		crumbs.restore(I.CrumbsType.Page);
 		this.props.history.goBack();
 	};
 	
 	onForward (e: any) {
+		crumbs.restore(I.CrumbsType.Page);
 		this.props.history.goForward();
 	};
 	

@@ -220,11 +220,11 @@ class EditorPage extends React.Component<Props, State> {
 			lastTargetId = cr.ids[cr.ids.length - 1];
 		};
 		if (!lastTargetId || (lastTargetId != rootId)) {
-			cr = crumbs.set(I.CrumbsType.Page, rootId);
+			cr = crumbs.add(I.CrumbsType.Page, rootId);
 		};
 		
-		if (breadcrumbs) {
-			C.BlockSetBreadcrumbs(breadcrumbs, cr.ids);
+		if (blockStore.breadcrumbs) {
+			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, cr.ids);
 		};
 		
 		this.close(this.id);
