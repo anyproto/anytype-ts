@@ -519,13 +519,17 @@ class EditorPage extends React.Component<Props, State> {
 
 			if (k == Key.z) {
 				e.preventDefault();
-				const cb = (message: any) => { focus.clear(true); };
+				const cb = (message: any) => { 
+					focus.clear(false); 
+				};
 				e.shiftKey ? C.BlockRedo(rootId, cb) : C.BlockUndo(rootId, cb);
 			};
 			
 			if (k == Key.y) {
 				e.preventDefault();
-				C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+				C.BlockRedo(rootId, (message: any) => { 
+					focus.clear(false); 
+				});
 			};
 			
 			if (k == Key.d) {

@@ -60,7 +60,7 @@
 			.row.last { margin: 0px; }
 			
 			.label { margin-bottom: 8px; } 
-			.label.name { margin-bottom: 11px; @include text-small; color: $colorDarkGrey; }
+			.label.name { margin-bottom: 11px; @include text-small; color: $colorDarkGrey; text-transform: uppercase; }
 			
 			.item { 
 				width: 108px; height: 70px; display: inline-block; vertical-align: top; margin: 0px 10px 16px 0px; cursor: pointer;
