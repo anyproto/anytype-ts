@@ -271,7 +271,7 @@ class EditorPage extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		$('.header').css({ opacity: 0 });
+		//$('.header').css({ opacity: 0 });
 		$('.footer').css({ opacity: 0 });
 		$('.icon.dnd').css({ opacity: 0 });
 		$('#button-add').css({ opacity: 0 });
@@ -287,7 +287,7 @@ class EditorPage extends React.Component<Props, State> {
 	uiShow () {
 		const win = $(window);
 		
-		$('.header').css({ opacity: 1 });
+		//$('.header').css({ opacity: 1 });
 		$('.footer').css({ opacity: 1 });
 		$('.icon.dnd').css({ opacity: '' });
 		$('#button-add').css({ opacity: '' });
