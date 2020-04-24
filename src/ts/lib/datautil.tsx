@@ -247,8 +247,8 @@ class DataUtil {
 				type: I.BlockType.Page, id: ++id, icon: 'page', name: 'Page', color: 'blue', isBlock: true,
 				description: translate('blockDescriptionPage'), 
 			},
-			{ type: I.BlockType.Dataview, id: ++id, icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			/*
+			{ type: I.BlockType.Dataview, id: ++id, icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'existing', icon: 'existing', name: 'Existing Page', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
