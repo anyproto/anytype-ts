@@ -344,6 +344,7 @@ class Util {
 				y = offset.top + node.outerHeight() + 12 - st;
 			};
 			
+			x = Math.max(12, x);
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 
 			raf(() => {

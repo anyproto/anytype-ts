@@ -23,7 +23,7 @@ class FooterMainIndex extends React.Component<Props, {}> {
 		return (
 			<div className="footer">
 				<Icon id="button-help" className={'help light ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
-				<Icon id="button-plus" className="plusBig" onClick={this.onAdd} />
+				<Icon id="button-plus" className="plusBig" onClick={this.onAdd} tooltip="Add new page" tooltipY={I.MenuDirection.Top} />
 			</div>
 		);
 	};
