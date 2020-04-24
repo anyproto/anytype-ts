@@ -64,4 +64,14 @@ html.debug {
 		.icon { background-color: rgba(0,0,255,0.1); }
 		.txt { background-color: rgba(0,0,255,0.1); }
 	}
+	
+	.popups {
+		.popupArchive {
+			.item {
+				.check { background-color: rgba(0,0,255,0.1); }
+				.smile { background-color: rgba(0,0,255,0.1); }
+				.name { background-color: rgba(0,0,255,0.1); line-height: 24px; height: 24px; }
+			}
+		}
+	};
 } 

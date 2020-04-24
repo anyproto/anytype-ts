@@ -3,26 +3,38 @@
 .popups {
 	.popupArchive { width: 672px; padding: 48px; }
 	.popupArchive {
+	
+		.head { padding-bottom: 10px; border-bottom: 1px solid #eae9e0; }
+		.head {
+			.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; margin-bottom: 10px; }
+			.sides { display: flex; }
+			.side { width: 50%; }
+			.side.right { text-align: right; }
+		}
+		
+		.btn { 
+			display: inline-block; vertical-align: middle; margin-right: 20px; color: $colorDarkGrey; cursor: pointer;
+			transition: $transitionFast; 
+		}
+		.btn:last-child { margin: 0px; }
+		.btn:hover { color: $colorBlack; }
+	
 		.content { height: 522px; }
 		.title { margin-bottom: 12px; }
-		.items { border-top: 1px solid #eae9e0; overflow: auto; height: 470px; padding: 20px 0px; }
+		.items { overflow: auto; height: 470px; padding: 12px 0px; }
 		
-		.item { margin-bottom: 6px; padding: 4px 0px; transition: $transitionFast; border-radius: 4px; position: relative; }
+		.item { margin-bottom: 2px; padding: 3px 0px; transition: $transitionFast; border-radius: 4px; position: relative; cursor: pointer; }
 		.item:last-child  { margin: 0px; }
-		.item:hover { background: #f7f5f0; }
-		.item:hover {
-			.buttons { opacity: 1; }
+		.item.active { background: #f7f5f0; }
+		
+		.item.active {
+			.checkbox { background-image: url('~img/icon/checkbox1.svg'); }
 		}
 		
 		.item {
+			.checkbox { margin-right: 4px; }
 			.smile { margin-right: 4px; }
-			.name { display: inline-block; vertical-align: middle; width: calc(100% - 128px); @include text-overflow-nw; }
-			.buttons { position: absolute; right: 10px; top: 4px; opacity: 0; transition: $transitionFast; }
-			.buttons {
-				.btn { display: inline-block; vertical-align: middle; margin-right: 20px; color: $colorDarkGrey; cursor: pointer; }
-				.btn:last-child { margin: 0px; }
-				.btn:hover { color: $colorBlack; }
-			}
+			.name { display: inline-block; vertical-align: middle; width: calc(100% - 56px); @include text-overflow-nw; }
 		}
 	}
 }

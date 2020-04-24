@@ -15,8 +15,8 @@
 		.input { height: 40px; border: 1px solid #DFDDD0; padding: 0px 16px; }
 		.textarea { height: 160px; padding: 16px; border: 1px solid #DFDDD0; background: none; font-family: 'Inter'; }
 		
-		.icon.checkbox { margin: 2px 8px 0px 0px; }
-		.small { @include text-small; width: calc(100% - 24px); }
+		.icon.checkbox { margin-right: 4px; }
+		.small { @include text-small; width: calc(100% - 28px); }
 		
 		.error { margin: 0px; color: #e89d00; line-height: 40px; width: calc(100% - 100px); }
 		.button.submit { margin-right: 16px; width: 84px; }
