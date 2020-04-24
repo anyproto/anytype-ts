@@ -159,7 +159,7 @@ class EditorPage extends React.Component<Props, State> {
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
 		win.on('paste.editor', (e: any) => {
-			if (!keyboard.focus) {
+			if (!keyboard.isFocused) {
 				this.onPaste(e); 
 			};
 		});
@@ -351,7 +351,7 @@ class EditorPage extends React.Component<Props, State> {
 			this.hoverId = hovered.data('id');
 		};
 		
-		if (keyboard.resize || commonStore.menuIsOpen()) {
+		if (keyboard.isResizing || commonStore.menuIsOpen()) {
 			hovered = null;
 		};
 		
@@ -359,7 +359,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		window.clearTimeout(this.timeoutHover);
 		
-		if (keyboard.drag) {
+		if (keyboard.isDragging) {
 			add.css({ opacity: 0 });
 			items.removeClass('showMenu isAdding top bottom');
 			if (hovered) {
@@ -399,7 +399,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { focused, range } = focus;
 		const k = e.which;
 		
-		if (keyboard.focus) {
+		if (keyboard.isFocused) {
 			return;
 		};
 		
@@ -704,7 +704,7 @@ class EditorPage extends React.Component<Props, State> {
 				const ids = selection.get(true);
 				ids.length ? this.blockRemove(block) : this.blockMerge(block);
 			};
-			if (!block.isText() && !keyboard.focus) {
+			if (!block.isText() && !keyboard.isFocused) {
 				this.blockRemove(block);
 			};
 		};
@@ -728,7 +728,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		// Enter
 		if (k == Key.enter) {
-			if (e.shiftKey || block.isCode() || (!block.isText() && keyboard.focus)) {
+			if (e.shiftKey || block.isCode() || (!block.isText() && keyboard.isFocused)) {
 				return;
 			};
 			

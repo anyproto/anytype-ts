@@ -231,7 +231,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	onMouseEnter (e: any, item: any) {
-		if (keyboard.mouse) {
+		if (!keyboard.isMouseDisabled) {
 			this.onOver(e, item);
 		};
 	};

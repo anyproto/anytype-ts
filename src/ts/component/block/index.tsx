@@ -531,7 +531,7 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
-		if (!this._isMounted || keyboard.resize) {
+		if (!this._isMounted|| keyboard.isResizing) {
 			return;
 		};
 		
@@ -539,7 +539,7 @@ class Block extends React.Component<Props, {}> {
 		const { id } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!block.isLayoutRow()) {
+		if (!block.isLayoutRow() || keyboard.isDragging) {
 			return;
 		};
 		
@@ -569,7 +569,7 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onMouseLeave (e: any) {
-		if (!keyboard.resize) {
+		if (!keyboard.isResizing) {
 			$('.colResize.active').removeClass('active');
 		};
 	};

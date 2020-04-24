@@ -7,15 +7,16 @@ const Constant = require('json/constant.json');
 class Keyboard {
 	
 	history: any = null;
-	focus: boolean = false;
-	resize: boolean = false;
-	drag: boolean = false;
-	back: boolean = true;
-	mouse: boolean = true;
 	coords: any = { x: 0, y: 0 };
 	timeoutPin: number = 0;
-	preview: boolean = false;
 	pressed: any = {};
+	
+	isDragging: boolean = false;
+	isResizing: boolean = false;
+	isFocused: boolean = false;
+	isPreviewDisabled: boolean = false;
+	isMouseDisabled: boolean = false;
+	isBackDisabled: boolean = false;
 	
 	init (history: any) {
 		this.history = history;
@@ -35,8 +36,8 @@ class Keyboard {
 		
 		let k = e.which;
 		
-		if (!this.focus) {
-			if ((k == Key.backspace) && this.back) {
+		if (!this.isFocused) {
+			if ((k == Key.backspace) && !this.isBackDisabled) {
 				e.preventDefault();
 				this.history.goBack();
 			};
@@ -80,15 +81,15 @@ class Keyboard {
 	};
 	
 	setFocus (v: boolean) {
-		this.focus = v;
+		this.isFocused = v;
 	};
 	
 	setResize (v: boolean) {
-		this.resize = v;
+		this.isResizing = v;
 	};
 	
 	setDrag (v: boolean) {
-		this.drag = v;
+		this.isDragging = v;
 	};
 	
 	setPinCheck () {
@@ -109,15 +110,15 @@ class Keyboard {
 	};
 	
 	disableBack (v: boolean) {
-		this.back = !v;
+		this.isBackDisabled = v;
 	};
 	
 	disableMouse (v: boolean) {
-		this.mouse = !v;
+		this.isMouseDisabled = v;
 	};
 	
 	disablePreview (v: boolean) {
-		this.preview = !v;
+		this.isPreviewDisabled = v;
 	};
 	
 	setCoords (x: number, y: number) {

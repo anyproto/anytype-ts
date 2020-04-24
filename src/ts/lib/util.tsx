@@ -361,7 +361,7 @@ class Util {
 	};
 	
 	linkPreviewShow (url: string, node: any, param: any) {
-		if (!node.length || !keyboard.preview) {
+		if (!node.length || !keyboard.isPreviewDisabled) {
 			return;
 		};
 		

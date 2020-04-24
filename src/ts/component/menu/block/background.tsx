@@ -118,10 +118,9 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 	};
 	
 	onOver (e: any, item: any) {
-		if (!keyboard.mouse) {
-			return;
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item, false);
 		};
-		this.setActive(item, false);
 	};
 	
 	onClick (e: any, item: any) {
