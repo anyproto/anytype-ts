@@ -95,6 +95,10 @@ class BlockBookmark extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
+		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
+			return;
+		};
+		
 		const { block } = this.props;
 		const { content } = block;
 		const { url } = content;
