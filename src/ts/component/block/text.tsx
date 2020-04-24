@@ -581,6 +581,7 @@ class BlockText extends React.Component<Props, {}> {
 		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
 		
+		keyboard.setFocus(true);
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
 			commonStore.menuClose('blockAdd');
