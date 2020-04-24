@@ -66,7 +66,7 @@ class PopupArchive extends React.Component<Props, State> {
 							<div className="btn" onClick={(e: any) => { this.onSelectAll(); }}>Select all</div>
 						</div>
 						<div className="side right">
-							<div className="btn" onClick={(e: any) => { this.onReturn(); }}>Put back</div>
+							<div className="btn" onClick={(e: any) => { this.onReturn(); }}>Put it back</div>
 							<div className="btn" onClick={(e: any) => { this.onDelete(); }}>Delete</div>
 						</div>
 					</div>
@@ -87,6 +87,13 @@ class PopupArchive extends React.Component<Props, State> {
 		C.BlockOpen(archive, [], (message: any) => {
 			this.setState({ loading: false });
 		});
+		
+		this.ids = [];
+		this.checkButtons();
+	};
+	
+	componentDidUpdate () {
+		this.checkButtons();
 	};
 	
 	componentWillUnmount () {
@@ -108,6 +115,8 @@ class PopupArchive extends React.Component<Props, State> {
 		};
 		
 		this.ids = [ ...new Set(this.ids) ];
+
+		this.checkButtons();
 	};
 	
 	onSelectAll () {
@@ -125,6 +134,15 @@ class PopupArchive extends React.Component<Props, State> {
 		for (let id of this.ids) {
 			node.find('#item-' + id).addClass('active');
 		};
+		
+		this.checkButtons();
+	};
+	
+	checkButtons () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('.side.right');
+		
+		el.css({ opacity: (this.ids.length ? 1 : 0) });
 	};
 	
 	onReturn () {

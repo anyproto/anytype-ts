@@ -9,7 +9,7 @@
 			.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; margin-bottom: 10px; }
 			.sides { display: flex; }
 			.side { width: 50%; }
-			.side.right { text-align: right; }
+			.side.right { text-align: right; transition: $transitionFast; }
 		}
 		
 		.btn { 
