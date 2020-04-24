@@ -37,6 +37,7 @@ class BlockCover extends React.Component<Props, State> {
 	y: number = 0;
 	cx: number = 0;
 	cy: number =  0;
+	loaded: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -110,7 +111,7 @@ class BlockCover extends React.Component<Props, State> {
 			>
 				{loading ? <Loader /> : ''}
 				{coverType == I.CoverType.Image ? (
-					<img id="cover" src={commonStore.imageUrl(coverId, 2048)} className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
+					<img id="cover" src="" className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
 				) : (
 					<Cover id="cover" type={details.coverType} className={details.coverId} />
 				)}
@@ -177,6 +178,7 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onUpload () {
+		this.loaded = false;
 		this.setState({ loading: false, editing: true });
 	};
 	
@@ -201,7 +203,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
-		const { coverX, coverY, coverScale, coverType } = details;
+		const { coverX, coverY, coverId, coverScale, coverType } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!node.hasClass('wrap')) {
@@ -211,17 +213,26 @@ class BlockCover extends React.Component<Props, State> {
 		this.cover = node.find('#cover');
 		
 		if (coverType == I.CoverType.Image) {
-			const cb = (e: any) => {
+			const el = this.cover.get(0);
+			const cb = () => {
 				if (this.refDrag) {
 					this.refDrag.setValue(coverScale);
 				};
 				
 				this.rect = (node.get(0) as Element).getBoundingClientRect();
 				this.onScaleMove(coverScale);
+				this.cover.css({ opacity: 1 });
+				this.loaded = true;
 			};
-	
-			this.cover.get(0).onload = cb;
-			raf(cb);
+			
+			if (this.loaded) {
+				cb();
+			} else {
+				this.cover.css({ opacity: 0 });
+				el.onload = cb;
+			};
+			
+			el.src = commonStore.imageUrl(coverId, 2048);
 		};
 	};
 	

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
 import { I, M, C, Key, focus, keyboard, scrollOnMove } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { throttle } from 'lodash';
 
 interface Props {
@@ -248,6 +248,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
+		let ids = this.get(true);
+		if (ids.length > 0) {
+			commonStore.menuClose('blockContext');
+		};
+		
 		keyboard.disablePreview(false);
 		scrollOnMove.onMouseUp(e);
 		this.hide();
@@ -470,7 +475,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		// Hide placeholder and remove focus
-		if (focused) {
+		if (ids.length) {
 			focus.clear(true);
 			$('.block.isFocused').removeClass('isFocused');
 			$('.placeHolder').hide();

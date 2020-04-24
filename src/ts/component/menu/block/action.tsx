@@ -61,12 +61,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 						let icn: string[] = [ 'inner' ];
 						
 						if (action.id == 'color') {
-							if (color) {
-								icn.push('textColor textColor-' + color);
-							};
-							if (bgColor) {
-								icn.push('bgColor bgColor-' + bgColor);
-							};
+							icn.push('textColor textColor-' + (color || 'black'));
+						};
+						
+						if (action.id == 'background') {
+							icn.push('bgColor bgColor-' + (bgColor || 'default'));
 						};
 						
 						if (action.isTextColor) {
@@ -78,9 +77,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						
 						if (action.isTextColor || action.isBgColor) {
 							action.icon = 'color';
-							action.inner = (
-								<div className={icn.join(' ')}>A</div>
-							);
+							action.inner = <div className={icn.join(' ')} />;
 						};
 						
 						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
@@ -126,6 +123,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	onFilterFocus (e: any) {
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');
+		commonStore.menuClose('blockBackground');
 		commonStore.menuClose('blockAlign');
 		
 		this.focus = true;
@@ -175,13 +173,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 					//{ id: 'move', icon: 'move', name: 'Move to' },
 					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
-					{ id: 'turn', icon: DataUtil.styleIcon(type, style), name: 'Turn into', arrow: true },
+					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
 				] 
 			},
 			{ 
 				children: [
 					{ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true },
-					{ id: 'color', icon: 'color', name: 'Change color', arrow: true, isTextColor: true },
+					{ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true },
+					{ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
 			}
@@ -225,11 +224,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 				{ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetBlockPage() },
 				{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
 				{ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() },
-				{ id: 'bgColor', icon: '', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() },
+				{ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() },
 			]);
 			
 			if (!block.isCode()) {
-				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: 'Color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter);
@@ -240,7 +239,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getItems () {
-		const { filter } = this.state;
 		const sections = this.getSections();
 		
 		let items: any[] = [];
@@ -322,7 +320,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	onMouseEnter (e: any, item: any) {
-		if (keyboard.mouse) {
+		if (!keyboard.isMouseDisabled) {
 			this.onOver(e, item);
 		};
 	};
@@ -363,8 +361,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
+		if ((item.id == 'background') && commonStore.menuIsOpen('blockBackground')) {
+			return;
+		};
+		
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockColor');
+		commonStore.menuClose('blockBackground');
 		commonStore.menuClose('blockAlign');
 		
 		if (!item.arrow) {
@@ -419,18 +422,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				case 'color':
 					menuParam.offsetY = node.offset().top - el.offset().top - 40;
-					menuParam.data.valueText = color;
-					menuParam.data.valueBg = bgColor;
-				
-					menuParam.data.onChangeText = (color: string) => {
+					menuParam.data.value = color;
+					menuParam.data.onChange = (color: string) => {
 						C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
-							focus.set(message.blockId, { from: length, to: length });
-							focus.apply();
-						});
-						commonStore.menuClose(this.props.id);
-					};
-					menuParam.data.onChangeBg = (color: string) => {
-						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
 							focus.set(message.blockId, { from: length, to: length });
 							focus.apply();
 						});
@@ -438,6 +432,20 @@ class MenuBlockAction extends React.Component<Props, State> {
 					};
 					
 					commonStore.menuOpen('blockColor', menuParam);
+					break;
+					
+				case 'background':
+					menuParam.offsetY = node.offset().top - el.offset().top - 40;
+					menuParam.data.value = bgColor;
+					menuParam.data.onChange = (color: string) => {
+						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
+							focus.set(message.blockId, { from: length, to: length });
+							focus.apply();
+						});
+						commonStore.menuClose(this.props.id);
+					};
+					
+					commonStore.menuOpen('blockBackground', menuParam);
 					break;
 					
 				case 'align':

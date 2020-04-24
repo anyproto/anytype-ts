@@ -26,9 +26,9 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		
 		const Section = (item: any) => (
 			<div className="section">
-				{item.children.map((action: any, i: number) => (
-					<MenuItemVertical key={i} {...action} isActive={action.id == active} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }}  />
-				))}
+				{item.children.map((action: any, i: number) => {
+					return <MenuItemVertical key={i} {...action} isActive={action.id == active} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }}  />
+				})}
 			</div>
 		);
 		
@@ -180,10 +180,9 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 	
 	onOver (e: any, item: any) {
-		if (!keyboard.mouse) {
-			return;
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item, false);
 		};
-		this.setActive(item, false);
 	};
 	
 	onClick (e: any, item: any) {

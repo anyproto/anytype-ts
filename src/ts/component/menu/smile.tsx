@@ -49,7 +49,7 @@ class MenuSmile extends React.Component<Props, State> {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
 					<div className="smile">
-						<Emoji native={true} emoji={':' + item.smile + ':'} skin={item.skin} set="apple" size={24} />
+						<Emoji native={true} emoji={':' + item.smile + ':'} skin={item.skin} set="apple" size={32} />
 					</div>
 				</div>
 			);
@@ -293,8 +293,7 @@ class MenuSmile extends React.Component<Props, State> {
 			return it;
 		});
 		
-		Storage.delete('smileIds');
-		Storage.set('smileIds', ids);
+		Storage.set('smileIds', ids, true);
 	};
 	
 	onRemove () {

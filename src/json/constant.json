@@ -7,7 +7,7 @@
 		"name": "Untitled",
 		"icon": ":page_facing_up:",
 		"lang": "en",
-		"cover": 3
+		"cover": 13
 	},
 	
 	"langs": [
@@ -36,7 +36,7 @@
 		"lastBlock": 100,
 		
 		"menuBlockContext": {
-			"default": 380,
+			"default": 400,
 			"code": 130,
 			"header1": 330,
 			"header2": 330,

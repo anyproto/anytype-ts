@@ -12,6 +12,7 @@ import MenuBlockContext from './block/context';
 import MenuBlockStyle from './block/style';
 import MenuBlockAdd from './block/add';
 import MenuBlockColor from './block/color';
+import MenuBlockBackground from './block/background';
 import MenuBlockCover from './block/cover';
 import MenuBlockAction from './block/action';
 import MenuBlockMore from './block/more';
@@ -64,8 +65,8 @@ class Menu extends React.Component<Props, {}> {
 			blockAction:			 MenuBlockAction,
 			blockStyle:				 MenuBlockStyle,
 			blockAdd:				 MenuBlockAdd,
-			blockAddSub:			 MenuBlockAdd,
 			blockColor:				 MenuBlockColor,
+			blockBackground:		 MenuBlockBackground,
 			blockMore:				 MenuBlockMore,
 			blockAlign:				 MenuBlockAlign,
 			blockLink:				 MenuBlockLink,

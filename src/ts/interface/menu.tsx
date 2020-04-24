@@ -24,13 +24,15 @@ export interface Menu {
 export interface MenuItem {
 	id?: string;
 	icon?: string;
-	withSmile?: boolean;
-	name: string;
+	name?: string;
+	description?: string;
 	inner?: any;
 	color?: string;
 	arrow?: boolean;
 	className?: string;
 	isActive?: boolean;
+	withSmile?: boolean;
+	withDescription?: boolean;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 };

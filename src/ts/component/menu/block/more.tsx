@@ -121,7 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
-				{ id: 'export', icon: 'export', name: 'Export to web' },
+				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 			
 			if (details.isArchived) {
@@ -141,10 +141,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	onOver (e: any, item: any) {
-		if (!keyboard.mouse) {
-			return;
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item, false);
 		};
-		this.setActive(item, false);
 	};
 	
 	onClick (e: any, item: any) {

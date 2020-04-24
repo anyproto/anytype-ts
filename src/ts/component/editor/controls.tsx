@@ -12,6 +12,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { dialog } = window.require('electron').remote;
+const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 @observer
@@ -95,7 +96,7 @@ class Controls extends React.Component<Props, {}> {
 			data: {
 				onSelect: (icon: string) => {
 					C.BlockSetDetails(rootId, [ 
-						{ key: 'icon', value: icon } 
+						{ key: 'iconEmoji', value: icon } 
 					]);
 				}
 			}
@@ -106,15 +107,11 @@ class Controls extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [
-				{ 
-					name: '', 
-					extensions: [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ] 
-				},
-			],
+			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
 		
-		dialog.showOpenDialog(null, options, (files: any) => {
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};

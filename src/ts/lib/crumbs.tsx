@@ -1,56 +1,80 @@
 import { I, C, Util, Storage } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
+interface CrumbsObject {
+	ids: string[];
+};
+
 const PREFIX = 'crumbs-';
 
 class Crumbs {
 	
-	key (key: string) {
+	key (key: string): string {
 		return Util.toCamelCase(PREFIX + key);
 	};
 	
-	init (key: I.CrumbsType): void {
-		Storage.set(this.key(key), { ids: [] });
+	init (): void {
+		if (!blockStore.breadcrumbs) {
+			C.BlockOpenBreadcrumbs((message: any) => {
+				blockStore.breadcrumbsSet(message.blockId);
+			});
+		};
 	};
 	
-	get (key: I.CrumbsType): any {
-		let obj = Storage.get(this.key(key)) || {};
+	get (key: I.CrumbsType): CrumbsObject {
+		let obj = (Storage.get(this.key(key)) || { ids: [] }) as CrumbsObject;
 		obj.ids = obj.ids || [];
 		return obj;
 	};
 	
-	set (key: I.CrumbsType, id: string) {
+	add (key: I.CrumbsType, id: string, callBack?: () => void): CrumbsObject {
 		if (!id) {
 			return;
 		};
 		
 		let k = this.key(key);
-		let obj: any = Storage.get(k) || {};
+		let obj = this.get(key);
 		
 		obj.ids = obj.ids || [];
 		obj.ids.push(id);
 		
-		Storage.delete(k);
-		Storage.set(k, obj);
-
+		this.save(key, obj, callBack);
 		return obj;
 	};
 	
-	cut (key: I.CrumbsType, index: number) {
-		if (!blockStore.breadcrumbs) {
-			return;
-		};
-		
+	cut (key: I.CrumbsType, index: number, callBack?: () => void): CrumbsObject {
 		let k = this.key(key);
-		let obj: any = Storage.get(k) || {};
+		let obj = this.get(key);
+		
+		Storage.set(k + '-prev', obj, true);
 		
 		obj.ids = obj.ids || [];
 		obj.ids = obj.ids.slice(0, index);
 		
-		Storage.set(k, obj);
-		C.BlockSetBreadcrumbs(blockStore.breadcrumbs, obj.ids);
-		
+		this.save(key, obj, callBack);
 		return obj;
+	};
+	
+	restore (key: I.CrumbsType, callBack?: () => void): CrumbsObject {
+		let k = this.key(key);
+		let obj = this.get(key);
+		let prev: CrumbsObject = (Storage.get(k + '-prev') || { ids: [] }) as CrumbsObject;
+		
+		Storage.set(k + '-prev', obj, true);
+		this.save(key, obj, callBack);
+		return obj;
+	};
+	
+	save (key: I.CrumbsType, obj: CrumbsObject, callBack?: () => void) {
+		Storage.set(this.key(key), obj, true);
+		
+		if (blockStore.breadcrumbs) {
+			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, obj.ids, (message: any) => {
+				if (callBack) {
+					callBack();
+				};
+			});
+		};
 	};
 	
 	delete (key: I.CrumbsType) {

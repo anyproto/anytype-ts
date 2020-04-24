@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .select { 
-	border-radius: 4px; border: solid 1px #d2d0c2; display: inline-block; vertical-align: middle; font-size: 13px; line-height: 18px;
-	letter-spacing: 0.08px; transition: $transitionFast; position: relative; cursor: pointer; font-family: 'Lcg';
+	border-radius: 4px; border: solid 1px #d2d0c2; display: inline-block; vertical-align: middle; @include text-small;
+	letter-spacing: 0.08px; transition: $transitionFast; position: relative; cursor: pointer; font-family: 'Inter';
 }
 
 .select:hover { background: #f7f5f0; }

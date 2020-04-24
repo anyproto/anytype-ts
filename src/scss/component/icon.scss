@@ -7,7 +7,7 @@
 
 .arrow { background-position: center center; transition: $transitionFast; background-repeat: no-repeat; background-size: 100% 100%; }
 
-.icon.home { width: 24px; height: 24px; background-image: url('~img/icon/home.svg'); }
+.icon.home { background-image: url('~img/icon/home0.svg'); }
 .icon.search { width: 24px; height: 24px; background-image: url('~img/icon/search.svg'); }
 
 .icon.help { width: 22px; height: 22px; background-image: url('~img/icon/help/dark0.svg'); }
@@ -16,7 +16,7 @@
 .icon.help.light { background-image: url('~img/icon/help/light0.svg'); }
 .icon.help.light:hover { background-image: url('~img/icon/help/light0.svg'); }
 
-.icon.checkbox { width: 16px; height: 16px; background-image: url('~img/icon/checkbox0.svg'); cursor: pointer; }
+.icon.checkbox { width: 24px; height: 24px; background-image: url('~img/icon/checkbox0.svg'); cursor: pointer; }
 .icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
 
 .icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/light/title.svg'); }

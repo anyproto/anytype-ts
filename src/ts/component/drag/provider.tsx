@@ -89,6 +89,8 @@ class DragProvider extends React.Component<Props, {}> {
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
 		
+		$('.colResize.active').removeClass('active');
+		
 		if (selection) {
 			selection.set(this.ids);
 			selection.hide();

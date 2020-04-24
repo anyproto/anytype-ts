@@ -92,8 +92,6 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 			if (isSelect) {
 				history.push('/auth/setup/select');
 			} else {
-				crumbs.delete(I.CrumbsType.Page);
-				
 				if (pageId) {
 					history.push('/main/edit/' + pageId);
 				} else {

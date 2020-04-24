@@ -44,6 +44,7 @@ class EditorPage extends React.Component<Props, State> {
 		super(props);
 		
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
+		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
@@ -70,7 +71,7 @@ class EditorPage extends React.Component<Props, State> {
 		const details = blockStore.getDetail(rootId, rootId);
 		const title = blockStore.getLeaf(rootId, rootId + '-title');
 		
-		const withIcon = details.icon;
+		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
@@ -129,7 +130,8 @@ class EditorPage extends React.Component<Props, State> {
 									index={i}
 									block={block}
 									className="root"
-									onKeyDown={this.onKeyDownBlock} 
+									onKeyDown={this.onKeyDownBlock}
+									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
 								/>
@@ -157,7 +159,7 @@ class EditorPage extends React.Component<Props, State> {
 		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
 		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
 		win.on('paste.editor', (e: any) => {
-			if (!keyboard.focus) {
+			if (!keyboard.isFocused) {
 				this.onPaste(e); 
 			};
 		});
@@ -218,11 +220,11 @@ class EditorPage extends React.Component<Props, State> {
 			lastTargetId = cr.ids[cr.ids.length - 1];
 		};
 		if (!lastTargetId || (lastTargetId != rootId)) {
-			cr = crumbs.set(I.CrumbsType.Page, rootId);
+			cr = crumbs.add(I.CrumbsType.Page, rootId);
 		};
 		
-		if (breadcrumbs) {
-			C.BlockSetBreadcrumbs(breadcrumbs, cr.ids);
+		if (blockStore.breadcrumbs) {
+			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, cr.ids);
 		};
 		
 		this.close(this.id);
@@ -269,7 +271,7 @@ class EditorPage extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		$('.header').css({ opacity: 0 });
+		//$('.header').css({ opacity: 0 });
 		$('.footer').css({ opacity: 0 });
 		$('.icon.dnd').css({ opacity: 0 });
 		$('#button-add').css({ opacity: 0 });
@@ -285,7 +287,7 @@ class EditorPage extends React.Component<Props, State> {
 	uiShow () {
 		const win = $(window);
 		
-		$('.header').css({ opacity: 1 });
+		//$('.header').css({ opacity: 1 });
 		$('.footer').css({ opacity: 1 });
 		$('.icon.dnd').css({ opacity: '' });
 		$('#button-add').css({ opacity: '' });
@@ -316,7 +318,7 @@ class EditorPage extends React.Component<Props, State> {
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const withIcon = details.icon;
+		const withIcon = details.iconEmoji;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
 		let offset = 170;
@@ -349,7 +351,7 @@ class EditorPage extends React.Component<Props, State> {
 			this.hoverId = hovered.data('id');
 		};
 		
-		if (keyboard.resize || commonStore.menuIsOpen()) {
+		if (keyboard.isResizing || commonStore.menuIsOpen()) {
 			hovered = null;
 		};
 		
@@ -357,7 +359,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		window.clearTimeout(this.timeoutHover);
 		
-		if (keyboard.drag) {
+		if (keyboard.isDragging) {
 			add.css({ opacity: 0 });
 			items.removeClass('showMenu isAdding top bottom');
 			if (hovered) {
@@ -397,7 +399,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { focused, range } = focus;
 		const k = e.which;
 		
-		if (keyboard.focus) {
+		if (keyboard.isFocused) {
 			return;
 		};
 		
@@ -517,13 +519,17 @@ class EditorPage extends React.Component<Props, State> {
 
 			if (k == Key.z) {
 				e.preventDefault();
-				const cb = (message: any) => { focus.clear(true); };
+				const cb = (message: any) => { 
+					focus.clear(false); 
+				};
 				e.shiftKey ? C.BlockRedo(rootId, cb) : C.BlockUndo(rootId, cb);
 			};
 			
 			if (k == Key.y) {
 				e.preventDefault();
-				C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+				C.BlockRedo(rootId, (message: any) => { 
+					focus.clear(false); 
+				});
 			};
 			
 			if (k == Key.d) {
@@ -702,7 +708,7 @@ class EditorPage extends React.Component<Props, State> {
 				const ids = selection.get(true);
 				ids.length ? this.blockRemove(block) : this.blockMerge(block);
 			};
-			if (!block.isText() && !keyboard.focus) {
+			if (!block.isText() && !keyboard.isFocused) {
 				this.blockRemove(block);
 			};
 		};
@@ -726,7 +732,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		// Enter
 		if (k == Key.enter) {
-			if (e.shiftKey || block.isCode() || (!block.isText() && keyboard.focus)) {
+			if (e.shiftKey || block.isCode() || (!block.isText() && keyboard.isFocused)) {
 				return;
 			};
 			
@@ -763,6 +769,9 @@ class EditorPage extends React.Component<Props, State> {
 				this.blockSplit(block, range, block.content.style);
 			};
 		};
+	};
+	
+	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
 	};
 	
 	onSelectAll () {
@@ -1143,7 +1152,6 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		
 		commonStore.menuClose('blockAdd');
-		commonStore.menuClose('blockAddSub');
 		commonStore.menuClose('blockAction');
 		commonStore.menuClose('blockContext');
 

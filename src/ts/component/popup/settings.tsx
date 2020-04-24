@@ -107,22 +107,22 @@ class PopupSettings extends React.Component<Props, State> {
 				let covers2 = [];
 				
 				for (let i = 1; i <= 10; ++i) {
-					covers1.push({ id: i, image: '' });
+					covers1.push({ id: i, image: '', type: I.CoverType.Color });
 				};
 				
 				for (let i = 11; i <= 17; ++i) {
-					covers2.push({ id: i, image: '' });
+					covers2.push({ id: i, image: '', type: I.CoverType.Image });
+				};
+				
+				if (coverImg) {
+					covers2.unshift({ id: 0, image: coverImg, type: I.CoverType.Upload });
 				};
 				
 				const Item = (item: any) => (
-					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item.id); }}>
+					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
 						<Cover type={I.CoverType.Image} num={item.id} image={item.image} />
 					</div>
 				);
-				
-				if (coverImg) {
-					covers2.unshift({ id: 0, image: coverImg });
-				};
 				
 				content = (
 					<div>
@@ -269,12 +269,11 @@ class PopupSettings extends React.Component<Props, State> {
 	onFileClick (e: any) {
 		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [
-				{ name: '', extensions: Constant.extension.image }
-			] 
+			filters: [ { name: '', extensions: Constant.extension.image } ] 
 		};
 		
-		dialog.showOpenDialog(null, options, (files: any) => {
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};
@@ -364,8 +363,8 @@ class PopupSettings extends React.Component<Props, State> {
 		this.setState({ page: id });
 	};
 	
-	onCover (num: number) {
-		commonStore.coverSetNum(num);
+	onCover (item: any) {
+		commonStore.coverSetNum(item.id);
 	};
 	
 	onLogout (e: any) {

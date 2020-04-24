@@ -88,6 +88,8 @@ class BlockTitle extends React.Component<Props, {}> {
 	onFocus (e: any) {
 		keyboard.setFocus(true);
 		this.placeHolderCheck();
+		
+		commonStore.menuClose('blockContext');
 	};
 	
 	onBlur (e: any) {
@@ -169,8 +171,8 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		e.preventDefault();
-		this.props.onPaste(e);
+		//e.preventDefault();
+		//this.props.onPaste(e);
 	};
 	
 	getRange () {

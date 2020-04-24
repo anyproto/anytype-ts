@@ -4,18 +4,14 @@
 	.menu.menuSelect {
 		.content { max-height: 220px; }
 		
-		.item { padding: 2px 12px; }
-		.item:hover { background: #f3f2ec; }
-		
-		.name { font-size: 13px; }
-		
+		.item.initial { padding: 2px 16px; line-height: 18px; margin-bottom: 2px; }
 		.item.initial {
-			.name { color: $colorDarkGrey; }
+			.name { text-transform: uppercase; @include text-very-small; }
 		}
 	}
 	
 	.menu.menuSelect.skip { width: 320px; }
 	.menu.menuSelect.skip {
-		.name { font-size: 15px; margin: 0px; width: calc(100% - 28px); @include text-overflow-nw; }
+		.name { margin: 0px; width: calc(100% - 24px); @include text-overflow-nw; }
 	}
 }

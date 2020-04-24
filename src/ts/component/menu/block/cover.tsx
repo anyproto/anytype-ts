@@ -62,15 +62,13 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onUpload, onUploadStart } = data;
-		
 		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [
-				{ name: '', extensions: Constant.extension.image }
-			],
+			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
 		
-		dialog.showOpenDialog(null, options, (files: any) => {
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};

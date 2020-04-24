@@ -46,11 +46,7 @@ class Marker extends React.Component<Props, {}> {
 		
 		switch (type) {
 			case I.TextStyle.Bulleted:
-				inner = (
-					<span id={'marker-' + id} className={ci.join(' ')}>
-						<img src={Bullets[color] || Bullets.black} />
-					</span>
-				);
+				inner = <img src={Bullets[color] || Bullets.black} />
 				break;
 				
 			case I.TextStyle.Numbered:

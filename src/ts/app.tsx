@@ -214,10 +214,10 @@ class App extends React.Component<Props, State> {
 		let debugMW = Boolean(Storage.get('debugMW'));
 		let debugAN = Boolean(Storage.get('debugAN'));
 		let coverNum = Number(Storage.get('coverNum'));
-		let coverImg = Number(Storage.get('coverImg'));
+		let coverImage = String(Storage.get('coverImage'));
 		let noShutdown = Number(Storage.get('noShutdown'));
 		
-		if (!coverNum && !coverImg) {
+		if (!coverNum && !coverImage) {
 			commonStore.coverSetNum(Constant.default.cover);
 		};
 		
@@ -273,13 +273,18 @@ class App extends React.Component<Props, State> {
 			Storage.delete('popupNewBlock');
 		});
 		
-		win.unbind('mousemove.common beforeunload.common');
+		win.unbind('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', throttle((e: any) => {
 			keyboard.setPinCheck();
 			keyboard.disableMouse(false);
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
+		
+		win.on('blur.common', () => {
+			Util.tooltipHide();
+			Util.linkPreviewHide(true);
+		});
 		
 		if (!noShutdown) {
 			win.on('beforeunload', (e: any) => {

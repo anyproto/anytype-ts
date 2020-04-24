@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .tag {
-	padding: 0px 4px; font-size: 13px; line-height: 18px; letter-spacing: 0.08px; border-radius: 3px; white-space: nowrap;
+	padding: 0px 4px; @include text-small; border-radius: 3px; white-space: nowrap;
 	display: inline-block; vertical-align: middle; cursor: pointer; max-width: 100%;
 }
 .tag {

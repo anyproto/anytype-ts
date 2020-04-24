@@ -1,12 +1,13 @@
 import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, Util, DataUtil } from 'ts/lib';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props {
-	commonStore?: any;
-};
+interface Props extends RouteComponentProps<any>  {};
+
+const Constant = require('json/constant.json');
 
 @observer
 class FooterMainIndex extends React.Component<Props, {}> {
@@ -15,12 +16,14 @@ class FooterMainIndex extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onHelp = this.onHelp.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 
 	render () {
 		return (
 			<div className="footer">
 				<Icon id="button-help" className={'help light ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
+				<Icon id="button-plus" className="plusBig" onClick={this.onAdd} tooltip="Add new page" tooltipY={I.MenuDirection.Top} />
 			</div>
 		);
 	};
@@ -33,6 +36,14 @@ class FooterMainIndex extends React.Component<Props, {}> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right
+		});
+	};
+	
+	onAdd (e: any) {
+		const { root } = blockStore;
+		
+		DataUtil.pageCreate(e, this.props, root, '', { iconEmoji: Util.randomSmile(), name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+			Util.scrollTopEnd();
 		});
 	};
 

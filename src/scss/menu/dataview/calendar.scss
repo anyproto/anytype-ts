@@ -4,7 +4,7 @@
 	.menu.menuDataviewCalendar { padding: 16px; width: 228px; }
 	.menu.menuDataviewCalendar {
 		.day { 
-			display: inline-block; vertical-align: top; width: 28px; height: 28px; text-align: center; font-size: 13px; line-height: 30px;
+			display: inline-block; vertical-align: top; width: 28px; height: 28px; text-align: center; font-size: 12px; line-height: 30px;
 			cursor: pointer; border-radius: 4px; letter-spacing: 0.1px;
 		}
 		.day:hover { background: $colorOrange; color: #fff; font-weight: 500; }
@@ -18,7 +18,7 @@
 		.day.dis { color: $colorDarkGrey; }
 		.day.dis:hover { color: #fff; }
 		
-		.month { height: 28px; line-height: 28px; font-size: 13px; letter-spacing: 0.1px; position: relative; margin-bottom: 4px; }
+		.month { height: 28px; line-height: 28px; font-size: 12px; letter-spacing: 0.1px; position: relative; margin-bottom: 4px; }
 		.month { 
 			.name { margin: 0px; }
 			.icons { position: absolute; right: 0px; top: 0px; }
@@ -31,7 +31,7 @@
 		}
 		
 		.input { 
-			height: 28px; border-radius: 4px; border: solid 1px #d2d0c2; margin-bottom: 10px; padding: 0px 10px; font-size: 13px;
+			height: 28px; border-radius: 4px; border: solid 1px #d2d0c2; margin-bottom: 10px; padding: 0px 10px; font-size: 12px;
 			background: none;
 		}
 	}

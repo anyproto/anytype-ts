@@ -2,11 +2,6 @@
 
 .header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 20; transition: $transitionFast; }
 .header {
-	.logo {
-		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 14px; background: url('~img/logo.svg') no-repeat;
-		background-position: center center;
-	}
-
 	.menu { position: absolute; top: 8px; right: 16px; z-index: 1; color: #fff; }
 	.menu {
 		.item {
@@ -17,41 +12,53 @@
 		.item:last-child { margin-right: 0px; }
 
 		.item {
-			.icon.plus-new { margin: -4px 7px 0px 0px; width: 16px; height: 16px; background-image: url('~img/icon/plus/new0.svg'); }
+			.icon { margin-right: 4px; }
+			.name { display: inline-block; vertical-align: top; line-height: 20px; }
 		}
 		.item:hover {
-			.icon.plus-new { background-image: url('~img/icon/plus/new1.svg'); }
 		}
+	}
+	
+	.icon { width: 20px; height: 20px; cursor: pointer; margin-right: 8px; vertical-align: top; }
+	
+	.icon.logo {
+		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 14px; background: url('~img/logo.svg') no-repeat;
+		background-position: center center;
 	}
 
 	.path { white-space: nowrap; }
 	.path {
-		.item { display: inline-block; vertical-align: middle; color: #6c6a5f; margin-right: 4px; cursor: pointer; transition: $transitionFast; }
+		.item { display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 4px; cursor: pointer; transition: $transitionFast; }
 		.item {
-			.icon.home { margin-right: 4px; }
-			.icon.arrow { width: 6px; height: 10px; padding-top: 2px; background-image: url('~img/arrow/path.svg'); }
+			.icon { margin-right: 4px; }
+			.icon.arrow { margin: 0px; width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); vertical-align: middle; }
 			.smile { margin-right: 4px; }
-			.name { display: inline-block; vertical-align: middle; margin-right: 8px; padding-top: 2px; line-height: 22px; }
+			.name { display: inline-block; vertical-align: top; margin-right: 8px; line-height: 20px; }
 		}
+		.item:last-child { margin: 0px; }
 		.item:last-child {
 			.icon.arrow { display: none; }
+			.name { margin: 0px; }
 		}
 		.item:hover { color: $colorBlack; }
+		.item:hover {
+			.icon.home { background-image: url('~img/icon/home1.svg'); }
+		}
 	}
+	
+	.icon.nav { background-image: url('~img/icon/nav0.svg'); }
+	.icon.nav:hover { background-image: url('~img/icon/nav1.svg'); }
 
-	.icon.plus-edit { cursor: pointer; width: 24px; height: 24px; margin-right: 4px; background-image: url('~img/icon/plus/edit0.svg'); }
-	.icon.plus-edit:hover { background-image: url('~img/icon/plus/edit1.svg'); }
-
-	.icon.back, .icon.forward { width: 24px; height: 24px; margin-right: 4px; background-image: url('~img/icon/back0.svg'); cursor: pointer; }
+	.icon.back, .icon.forward { background-image: url('~img/icon/back0.svg'); }
 	.icon.forward { transform: rotateZ(180deg); }
 	.icon.back:hover, .icon.forward:hover { background-image: url('~img/icon/back1.svg'); }
 }
 
-.headerMainEdit { background: #fff; padding: 8px 0px 8px 80px; height: 40px; line-height: 24px; }
+.headerMainEdit { background: #fff; padding: 10px 0px 10px 82px; height: 40px; line-height: 20px; }
 .headerMainEdit {
 	.menu { top: 8px; right: 12px; }
 	.menu {
-		.icon.more { width: 24px; height: 24px; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer; }
+		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer; }
 		.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 	}
 }

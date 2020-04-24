@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Title, Smile, Loader } from 'ts/component';
+import { Icon, Title, Smile, Loader } from 'ts/component';
 import { I, C } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -14,12 +14,15 @@ interface State {
 	loading: boolean;
 };
 
+const $ = require('jquery');
+
 @observer
 class PopupArchive extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
 	};
+	ids: string[] = [];
 
 	render () {
 		const { loading } = this.state;
@@ -46,20 +49,28 @@ class PopupArchive extends React.Component<Props, State> {
 			const details = blockStore.getDetail(archive, content.targetBlockId);
 			
 			return (
-				<div className="item">
-					<Smile icon={details.icon} />
+				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onSelect(item); }}>
+					<Icon className="checkbox" />
+					<Smile icon={details.iconEmoji} className="c24" size={20} />
 					<div className="name">{details.name}</div>
-					<div className="buttons">
-						<div className="btn" onClick={(e: any) => { this.onReturn(item); }}>Put back</div>
-						<div className="btn dn" onClick={(e: any) => { this.onDelete(item); }}>Delete</div>
-					</div>
 				</div>
 			);
 		};
 		
 		return (
 			<div>
-				<Title text="Archive" />
+				<div className="head">
+					<Title text="Archive" />
+					<div className="sides">
+						<div className="side left">
+							<div className="btn" onClick={(e: any) => { this.onSelectAll(); }}>Select all</div>
+						</div>
+						<div className="side right">
+							<div className="btn" onClick={(e: any) => { this.onReturn(); }}>Put it back</div>
+							<div className="btn" onClick={(e: any) => { this.onDelete(); }}>Delete</div>
+						</div>
+					</div>
+				</div>
 				<div className="items">
 					{children.map((item: any, i: any) => (
 						<Item key={item.id} {...item} />
@@ -76,6 +87,13 @@ class PopupArchive extends React.Component<Props, State> {
 		C.BlockOpen(archive, [], (message: any) => {
 			this.setState({ loading: false });
 		});
+		
+		this.ids = [];
+		this.checkButtons();
+	};
+	
+	componentDidUpdate () {
+		this.checkButtons();
 	};
 	
 	componentWillUnmount () {
@@ -83,14 +101,62 @@ class PopupArchive extends React.Component<Props, State> {
 		C.BlockClose(archive, [], (message: any) => {});
 	};
 	
-	onReturn (item: any) {
-		const { archive } = blockStore;
-		C.BlockSetPageIsArchived(archive, item.content.targetBlockId, false, (message: any) => {});
+	onSelect (item: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#item-' + item.id);
+		const idx = this.ids.indexOf(item.id);
+		
+		if (idx < 0) {
+			this.ids.push(item.id);
+			el.addClass('active');
+		} else {
+			this.ids.splice(idx, 1);
+			el.removeClass('active');
+		};
+		
+		this.ids = [ ...new Set(this.ids) ];
+
+		this.checkButtons();
 	};
 	
-	onDelete (item: any) {
+	onSelectAll () {
+		const { archive } = blockStore;
+		const childrenIds = blockStore.getChildrenIds(archive, archive);
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (this.ids.length == childrenIds.length) {
+			this.ids = [];
+		} else {
+			this.ids = childrenIds;
+		};
+		
+		node.find('.item.active').removeClass('active');
+		for (let id of this.ids) {
+			node.find('#item-' + id).addClass('active');
+		};
+		
+		this.checkButtons();
+	};
+	
+	checkButtons () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('.side.right');
+		
+		el.css({ opacity: (this.ids.length ? 1 : 0) });
+	};
+	
+	onReturn () {
+		/*
+		const { archive } = blockStore;
+		C.BlockSetPageIsArchived(archive, item.content.targetBlockId, false, (message: any) => {});
+		*/
+	};
+	
+	onDelete () {
+		/*
 		const { archive } = blockStore;
 		C.BlockUnlink(archive, [ item.id ], (message: any) => {});
+		*/
 	};
 	
 };

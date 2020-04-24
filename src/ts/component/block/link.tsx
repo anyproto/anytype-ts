@@ -36,7 +36,7 @@ class BlockLink extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
-				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} icon={iconEmoji} canEdit={true} onSelect={this.onSelect} />
+				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} className="c24" canEdit={true} onSelect={this.onSelect} />
 				<div className="name" onClick={this.onClick}>{name}</div>
 				<div className="archive">Archived</div>
 			</div>

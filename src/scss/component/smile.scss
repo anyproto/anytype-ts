@@ -1,27 +1,38 @@
 @import "~scss/_vars";
 
-.smile { display: inline-block; vertical-align: top; width: 24px; height: 24px; text-align: center; line-height: 24px; }
+.smile { display: inline-block; vertical-align: top; text-align: center; position: relative; }
 .smile {
 	.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
 	.emoji-mart-emoji {
-		span { height: 100%; display: inline-block; vertical-align: middle; /*background-image: url('~img/emoji.png') !important;*/ }
+		span { height: 100%; display: inline-block; vertical-align: middle; }
 	}
 	
-	.icon.blank { width: 18px; height: 18px; background-image: url('~img/blank/smile.svg'); }
+	.icon.blank { position: absolute; left: 50%; top: 50%; background-image: url('~img/blank/smile.svg'); }
+}
+
+.smile.c20 { width: 20px; height: 20px; line-height: 20px; }
+.smile.c20 {
+	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
+	.icon.blank { width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
+}
+
+.smile.c24 { width: 24px; height: 24px; line-height: 24px; }
+.smile.c24 {
+	.icon.blank { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 }
 
 .smile.c48 { width: 48px; height: 48px; border-radius: 100%; background-color: #f7f5f0; line-height: 48px; }
 .smile.c48 {
 	.emoji-mart-emoji { font-size: 24px; height: 28px; line-height: 1em; }
 	.emoji-mart-emoji { span { height: 28px; line-height: 32px; } }
-	.icon.blank { width: 24px; height: 24px;  }
+	.icon.blank { width: 24px; height: 24px; margin: -12px 0px 0px -12px;  }
 }
 
 .smile.c64 { width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; }
 .smile.c64 {
 	.emoji-mart-emoji { font-size: 36px; height: 1em; line-height: 1em; }
-	.emoji-mart-emoji { span { height: 36px; line-height: 36px; margin: 3px 0px 0px 0px; } }
-	.icon.blank { width: 24px; height: 24px;  }
+	.emoji-mart-emoji { span { height: 36px; line-height: 36px; } }
+	.icon.blank { width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 }
 
 .smile.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }

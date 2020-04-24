@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile, DropTarget, HeaderItemPath } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, Storage } from 'ts/lib';
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -25,8 +25,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onNavigation = this.onNavigation.bind(this);
 	};
 
 	render () {
@@ -56,9 +56,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		return (
 			<div className="header headerMainEdit">
 				<div className="path">
-					<Icon className="plus-edit" onClick={this.onAdd} />
 					<Icon className="back" onClick={this.onBack} />
 					<Icon className="forward" onClick={this.onForward} />
+					<Icon className="nav" onClick={this.onNavigation} />
 					<PathItemHome />
 					{children.length > LIMIT ? <PathItemSkip /> : ''}
 					{slice.map((item: any, i: any) => (
@@ -71,14 +71,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
-	};
-	
-	onAdd (e: any) {
-		const { rootId } = this.props;
-		
-		DataUtil.pageCreate(e, this.props, rootId, '', { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
-			Util.scrollTopEnd();
-		});
 	};
 	
 	onHome (e: any) {
@@ -127,6 +119,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onPath (e: any, block: I.Block, index: number) {
+		const { rootId } = this.props;
+		
+		if (rootId == block.content.targetBlockId) {
+			return;
+		};
+		
 		e.persist();
 		
 		crumbs.cut(I.CrumbsType.Page, index);
@@ -137,11 +135,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { breadcrumbs } = blockStore;
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		
-		crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
+		crumbs.restore(I.CrumbsType.Page);
 		this.props.history.goBack();
 	};
 	
 	onForward (e: any) {
+		crumbs.restore(I.CrumbsType.Page);
 		this.props.history.goForward();
 	};
 	
@@ -154,6 +153,19 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		if (onDrop) {
 			onDrop(e, type, rootId, targetId, position);
 		};
+	};
+	
+	onNavigation (e: any) {
+		const { rootId } = this.props;
+		
+		commonStore.popupOpen('tree', { 
+			data: { 
+				type: 'move', 
+				rootId: rootId,
+				onConfirm: (id: string) => {
+				},
+			}, 
+		});
 	};
 	
 	onMore (e: any) {

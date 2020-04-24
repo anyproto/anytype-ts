@@ -12,15 +12,19 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 
 let win = null;
-let csp = [
-	"default-src 'self'",
-	"img-src 'self' http://*:* https://*:* data: blob:",
-	"media-src 'self' http://*:* https://*:* data: blob:",
-	"style-src 'unsafe-inline'",
-	"font-src data:",
-	"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/",
-	"script-src-elem http://localhost:8080 https://sentry.io"
-];
+let csp = [];
+
+if (app.isPackaged) {
+	csp = [
+		"default-src 'self'",
+		"img-src 'self' http://*:* https://*:* data: blob:",
+		"media-src 'self' http://*:* https://*:* data: blob:",
+		"style-src 'unsafe-inline'",
+		"font-src data:",
+		"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/",
+		"script-src-elem http://localhost:8080 https://sentry.io"
+	];
+};
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;

@@ -1,5 +1,7 @@
+@import "~scss/_vars";
+
 .tooltip { 
 	position: fixed; left: 0px; top: 0px; border-radius: 4px; background: #6c6a5f; padding: 3px 7px; text-transform: none;
-	font-size: 13px; line-height: 18px; letter-spacing: 0.08px; color: #fff; display: none; z-index: 1000; white-space: nowrap; transition: opacity 0.05s ease-in-out;
+	@include text-small; color: #fff; display: none; z-index: 1000; white-space: nowrap; transition: opacity 0.05s ease-in-out;
 }
 .tooltip .txt { line-height: 1; }

@@ -278,6 +278,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
 			commonStore.menuIsOpen('blockColor') ||
+			commonStore.menuIsOpen('blockBackground') ||
 			commonStore.menuIsOpen('blockMore') 
 		) {
 			e.preventDefault();
@@ -303,7 +304,6 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
-			commonStore.menuClose('blockAddSub');
 			commonStore.menuClose('blockAdd');
 		};
 		
@@ -513,7 +513,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onBlur (e: any) {
 		const { onBlur } = this.props;
-		
+	
 		window.clearTimeout(this.timeoutKeyUp);
 		this.setText(this.marks);
 		this.placeHolderHide();
@@ -559,8 +559,13 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, content } = block;
 		const { from, to } = focus.range;
 		const { style } = content;
+		const { selection } = dataset || {};
+		const ids = selection.get(true);
 		
-		focus.set(id, this.getRange());
+		if (!ids.length) {
+			focus.set(id, this.getRange());
+			keyboard.setFocus(true);
+		};
 		
 		const { range } = focus;
 		const currentFrom = range.from;

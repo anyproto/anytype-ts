@@ -24,47 +24,15 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { valueText, valueBg } = data;
-		const sections = this.getSections();
+		const { value } = data;
+		const items = this.getItems();
 		
 		let id = 0;
-		
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="name">{item.name}</div>
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						let icn: string[] = [ 'inner' ];
-						let cn = [];
-						
-						if (action.isTextColor) {
-							icn.push('textColor textColor-' + action.value);
-							if (action.value == valueText) {
-								cn.push('active');
-							};
-						};
-						
-						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + action.value);
-							if (action.value == valueBg) {
-								cn.push('active');
-							};
-						};
-						
-						let inner = (
-							<div className={icn.join(' ')}>A</div>
-						);
-						
-						return <MenuItemVertical id={id++} key={i} {...action} icon="color" inner={inner} className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
-					})}
-				</div>
-			</div>
-		);
-		
 		return (
 			<div>
-				{sections.map((section: any, i: number) => {
-					return <Section key={i} {...section} />;
+				{items.map((action: any, i: number) => {
+					let inner = <div className={'inner textColor textColor-' + action.value} />;
+					return <MenuItemVertical id={id++} key={i} {...action} icon="color" inner={inner} className={action.value == value ? 'active' : ''} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
 				})}
 			</div>
 		);
@@ -145,67 +113,23 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		};
 	};
 	
-	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
-		
-		if (!block) {
-			return [];
-		};
-		
-		const { type, content } = block;
-		
-		let sections = [];
-		let canColor = true;
-		
-		if (type != I.BlockType.Text) {
-			canColor = false;
-		};
-		
-		if ((type == I.BlockType.Text) && ([ I.TextStyle.Code, I.TextStyle.Checkbox ].indexOf(content.style) >= 0)) {
-			canColor = false;
-		};
-		
-		if (canColor) {
-			sections.push({ name: 'Text color', children: DataUtil.menuGetTextColors() });
-		};
-		
-		sections.push({ name: 'Background color', children: DataUtil.menuGetBgColors() });
-		return sections;
-	};
-	
 	getItems () {
-		const sections = this.getSections();
-		let items: any[] = [];
-		for (let section of sections) {
-			items = items.concat(section.children);
-		};
-		return items;
+		return DataUtil.menuGetTextColors();
 	};
 	
 	onOver (e: any, item: any) {
-		if (!keyboard.mouse) {
-			return;
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item, false);
 		};
-		this.setActive(item, false);
 	};
 	
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onChangeText, onChangeBg } = data;
+		const { onChange } = data;
 		
 		commonStore.menuClose(this.props.id);
-		
-		if (item.isTextColor) {
-			onChangeText(item.value);
-		};
-		
-		if (item.isBgColor) {
-			onChangeBg(item.value);
-		};
+		onChange(item.value);
 	};
 	
 };
