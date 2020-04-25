@@ -95,7 +95,7 @@ function createWindow () {
 	 	await download(win, url, { saveAs: true });
 	});
 	
-	var menu = Menu.buildFromTemplate([
+	var menu = [
 		appMenu(),
 		{
 			role: 'editMenu',
@@ -114,7 +114,10 @@ function createWindow () {
 				},
 			]
 		},
-		{
+	];
+	
+	if (!app.isPackaged) {
+		menu.push({
 			label: 'Debug',
 			submenu: [
 				{
@@ -152,11 +155,10 @@ function createWindow () {
 					}
 				},
 			]
-		},
+		});
+	};
 	
-	]);
-	
-	Menu.setApplicationMenu(menu);
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 	
 	autoUpdater.checkForUpdatesAndNotify();
 	autoUpdater.on('checking-for-update', () => {

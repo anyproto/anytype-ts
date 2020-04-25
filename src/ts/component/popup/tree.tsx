@@ -87,7 +87,7 @@ class PopupTree extends React.Component<Props, State> {
 					<Smile icon={details.icon} className="c48" size={24} />
 					<div className="name">{details.name}</div>
 					<div className="descr">We can both help with building an it's a distillation of themes found on ...</div>
-					<Cover type={coverType} image={commonStore.imageUrl(coverId, 2048)} className={coverId} x={coverX} y={coverY} scale={coverScale} />
+					<Cover type={coverType} image={commonStore.imageUrl(coverId, 2048)} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
 					<div className="buttons">
 						<Button text="Open" className="orange" onClick={this.onConfirm} />
 						<Button text="Cancel" className="grey" onClick={this.onCancel} />

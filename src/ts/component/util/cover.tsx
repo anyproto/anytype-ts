@@ -10,6 +10,7 @@ interface Props {
 	x?: number;
 	y?: number;
 	scale?: number;
+	withScale?: boolean;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 };
@@ -20,11 +21,11 @@ class Cover extends React.Component<Props, {}> {
 		type: 0,
 		x: 0.5,
 		y: 0.5,
-		scale: 1,
+		scale: 0,
 	};
 
 	render () {
-		const { id, num, image, type, x, y, scale, className, onClick, onMouseDown } = this.props;
+		const { id, num, image, type, x, y, scale, withScale, className, onClick, onMouseDown } = this.props;
 		
 		let cn = [ 'cover', 'type' + type ];
 		let style: any = {};
@@ -37,6 +38,9 @@ class Cover extends React.Component<Props, {}> {
 		} else
 		if ((type == I.CoverType.Image) && image) {
 			style.backgroundImage = `url("${image}")`;
+		};
+		
+		if (withScale) {
 			style.backgroundPosition = `${Math.abs(x * 100)}% ${Math.abs(y * 100)}%`;
 			style.backgroundSize = ((scale + 1) * 100) + '%';
 		};
