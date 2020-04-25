@@ -20,22 +20,21 @@ class Focus {
 	};
 	
 	clear (withRange: boolean) {
-		const el = $('.focusable.c' + this.focused);
-		
 		this.focused = '';
 		this.range.from = 0;
 		this.range.to = 0;
 		
 		$('.focusable.isFocused').removeClass('isFocused');
-
+		
+		const el = $('.focusable.c' + this.focused);
 		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);
 		};
 		
 		if (withRange) {
 			window.getSelection().empty();
-			window.focus();
 			keyboard.setFocus(false);
+			$(document.activeElement).blur();
 		};
 	};
 	
