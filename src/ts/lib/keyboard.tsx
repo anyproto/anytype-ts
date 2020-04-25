@@ -53,7 +53,6 @@ class Keyboard {
 		};
 		
 		if (e.ctrlKey || e.metaKey) {
-			console.log(this.match);
 			
 			// Create new page
 			if (k == Key.n) {
@@ -61,19 +60,31 @@ class Keyboard {
 				
 				let rootId = root;
 				let targetId = '';
+				let position = I.BlockPosition.Bottom;
 				
 				if (this.isEditor()) {
 					rootId = this.match.params.id;
-					targetId = (focused || '');
+					
+					let fb = blockStore.getLeaf(rootId, focused);
+					if (fb) {
+						if (fb.isTitle()) {
+							let first = blockStore.getFirstBlock (rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTitle(); });
+							if (first) {
+								targetId = first.id;
+								position = I.BlockPosition.Top;
+							};
+						} else 
+						if (fb.isFocusable()) {
+							targetId = fb.id;
+						};
+					};
 				};
 				
 				const details = { 
 					iconEmoji: Util.randomSmile(), 
 					name: Constant.default.name 
 				};
-				DataUtil.pageCreate(e, { history: this.history }, rootId, targetId, details, I.BlockPosition.Bottom, (message: any) => {
-					Util.scrollTopEnd();
-				});
+				DataUtil.pageCreate(e, { history: this.history }, rootId, targetId, details, position);
 			};
 		};
 		
