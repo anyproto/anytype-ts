@@ -897,7 +897,11 @@ class EditorPage extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							DataUtil.pageCreate(e, this.props, rootId, block.id, { name: Constant.default.name }, I.BlockPosition.Replace);
+							const details = { 
+								iconEmoji: Util.randomSmile(), 
+								name: Constant.default.name 
+							};
+							DataUtil.pageCreate(e, this.props, rootId, block.id, details, I.BlockPosition.Replace);
 						} else {
 							this.blockCreate(block, I.BlockPosition.Replace, param);
 						};

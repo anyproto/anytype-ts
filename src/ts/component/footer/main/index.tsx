@@ -41,8 +41,12 @@ class FooterMainIndex extends React.Component<Props, {}> {
 	
 	onAdd (e: any) {
 		const { root } = blockStore;
+		const details = { 
+			iconEmoji: Util.randomSmile(), 
+			name: Constant.default.name 
+		};
 		
-		DataUtil.pageCreate(e, this.props, root, '', { iconEmoji: Util.randomSmile(), name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+		DataUtil.pageCreate(e, this.props, root, '', details, I.BlockPosition.Bottom, (message: any) => {
 			Util.scrollTopEnd();
 		});
 	};

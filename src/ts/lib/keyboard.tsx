@@ -55,7 +55,11 @@ class Keyboard {
 			// Create new page
 			if (k == Key.n) {
 				e.preventDefault();
-				DataUtil.pageCreate(e, { history: this.history }, root, '', { name: Constant.default.name }, I.BlockPosition.Bottom, (message: any) => {
+				const details = { 
+					iconEmoji: Util.randomSmile(), 
+					name: Constant.default.name 
+				};
+				DataUtil.pageCreate(e, { history: this.history }, root, '', details, I.BlockPosition.Bottom, (message: any) => {
 					Util.scrollTopEnd();
 				});
 			};
