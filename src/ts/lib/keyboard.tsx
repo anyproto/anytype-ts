@@ -65,10 +65,10 @@ class Keyboard {
 				if (this.isEditor()) {
 					rootId = this.match.params.id;
 					
-					let fb = blockStore.getLeaf(rootId, focused);
+					const fb = blockStore.getLeaf(rootId, focused);
 					if (fb) {
 						if (fb.isTitle()) {
-							let first = blockStore.getFirstBlock (rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTitle(); });
+							const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTitle(); });
 							if (first) {
 								targetId = first.id;
 								position = I.BlockPosition.Top;

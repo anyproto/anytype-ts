@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, Util, DataUtil } from 'ts/lib';
+import { I, Util, DataUtil, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -43,14 +43,30 @@ class FooterMainEdit extends React.Component<Props, {}> {
 	
 	onAdd (e: any) {
 		const { rootId } = this.props;
+		const { focused } = focus;
+		const fb = blockStore.getLeaf(rootId, focused);
 		const details = { 
 			iconEmoji: Util.randomSmile(), 
 			name: Constant.default.name 
 		};
 		
-		DataUtil.pageCreate(e, this.props, rootId, '', details, I.BlockPosition.Bottom, (message: any) => {
-			Util.scrollTopEnd();
-		});
+		let targetId = '';
+		let position = I.BlockPosition.Bottom;
+		
+		if (fb) {
+			if (fb.isTitle()) {
+				const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTitle(); });
+				if (first) {
+					targetId = first.id;
+					position = I.BlockPosition.Top;
+				};
+			} else 
+			if (fb.isFocusable()) {
+				targetId = fb.id;
+			};
+		};
+		
+		DataUtil.pageCreate(e, this.props, rootId, targetId, details, position);
 	};
 
 };
