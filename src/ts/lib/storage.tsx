@@ -9,7 +9,7 @@ class Storage {
 	get (key: string): any {
 		let o = String(this.storage[key] || '');
 		if (!o) {
-			return false;
+			return;
 		};
 		return JSON.parse(o);
 	};
