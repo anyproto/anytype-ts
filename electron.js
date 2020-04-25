@@ -14,17 +14,17 @@ autoUpdater.logger.transports.file.level = 'info';
 let win = null;
 let csp = [];
 
-if (app.isPackaged) {
+//if (app.isPackaged) {
 	csp = [
-		"default-src 'self'",
+		"default-src 'self' 'unsafe-eval'",
 		"img-src 'self' http://*:* https://*:* data: blob:",
 		"media-src 'self' http://*:* https://*:* data: blob:",
 		"style-src 'unsafe-inline'",
 		"font-src data:",
-		"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/",
-		"script-src-elem http://localhost:8080 https://sentry.io"
+		"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools",
+		"script-src-elem http://localhost:8080 https://sentry.io devtools://devtools 'unsafe-inline'"
 	];
-};
+//};
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -118,7 +118,7 @@ function createWindow () {
 		},
 	];
 	
-	if (!app.isPackaged) {
+	//if (!app.isPackaged) {
 		menu.push({
 			label: 'Debug',
 			submenu: [
@@ -158,7 +158,7 @@ function createWindow () {
 				},
 			]
 		});
-	};
+	//};
 	
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 	
