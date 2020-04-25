@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Util, Storage, analytics } from 'ts/lib';
+import { Util, Storage, analytics, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
@@ -78,26 +78,35 @@ class Page extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.setBodyClass();
-		this.resize();
-		this.unbind();
-		this.event();
-		
-		commonStore.popupCloseAll();
-		commonStore.menuCloseAll();
-		Util.linkPreviewHide(true);
-		
-		$(window).on('resize.page', () => { this.resize(); });
+		this.init();
 	};
 
 	componentDidUpdate () {
+		this.init();
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.unbind();
+	};
+	
+	init () {
 		this.setBodyClass();
 		this.resize();
 		this.event();
+		this.unbind();
 		
 		commonStore.popupCloseAll();
 		commonStore.menuCloseAll();
 		Util.linkPreviewHide(true);
+		
+		keyboard.setMatch(this.props.match);
+		
+		$(window).on('resize.page', () => { this.resize(); });
+	};
+	
+	unbind () {
+		$(window).unbind('resize.page');
 	};
 	
 	event () {
@@ -107,15 +116,6 @@ class Page extends React.Component<Props, {}> {
 		const path = [ 'page', page, action ].join('-');
 		
 		analytics.event(Util.toUpperCamelCase(path));
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-	};
-	
-	unbind () {
-		$(window).unbind('resize.page');
 	};
 	
 	getClass (prefix: string) {

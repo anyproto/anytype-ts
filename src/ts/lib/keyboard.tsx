@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, Storage } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, focus } from 'ts/lib';
 import { commonStore, authStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -10,6 +10,7 @@ class Keyboard {
 	coords: any = { x: 0, y: 0 };
 	timeoutPin: number = 0;
 	pressed: any = {};
+	match: any = {};
 	
 	isDragging: boolean = false;
 	isResizing: boolean = false;
@@ -33,6 +34,7 @@ class Keyboard {
 	
 	onKeyDown (e: any) {
 		const { root } = blockStore;
+		const { focused } = focus;
 		
 		let k = e.which;
 		
@@ -51,21 +53,35 @@ class Keyboard {
 		};
 		
 		if (e.ctrlKey || e.metaKey) {
+			console.log(this.match);
 			
 			// Create new page
 			if (k == Key.n) {
 				e.preventDefault();
+				
+				let rootId = root;
+				let targetId = '';
+				
+				if (this.isEditor()) {
+					rootId = this.match.params.id;
+					targetId = (focused || '');
+				};
+				
 				const details = { 
 					iconEmoji: Util.randomSmile(), 
 					name: Constant.default.name 
 				};
-				DataUtil.pageCreate(e, { history: this.history }, root, '', details, I.BlockPosition.Bottom, (message: any) => {
+				DataUtil.pageCreate(e, { history: this.history }, rootId, targetId, details, I.BlockPosition.Bottom, (message: any) => {
 					Util.scrollTopEnd();
 				});
 			};
 		};
 		
 		this.setPinCheck();
+	};
+	
+	isEditor () {
+		return this.match && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
 	};
 	
 	onKeyUp (e: any) {
@@ -111,6 +127,10 @@ class Keyboard {
 				this.history.push('/auth/pin-check');				
 			};
 		}, 5 * 60 * 1000);
+	};
+	
+	setMatch (match: any) {
+		this.match = match;
 	};
 	
 	disableBack (v: boolean) {
