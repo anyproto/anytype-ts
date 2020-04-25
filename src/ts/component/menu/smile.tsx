@@ -153,7 +153,7 @@ class MenuSmile extends React.Component<Props, State> {
 	getSections () {
 		const { filter } = this.state;
 		const reg = new RegExp(filter, 'gi');
-		const lastIds = Storage.get('smileIds') || [];
+		const lastIds = Storage.get('lastSmileIds') || [];
 		
 		let sections = Util.objectCopy(EmojiData.categories);
 		
@@ -273,7 +273,7 @@ class MenuSmile extends React.Component<Props, State> {
 			return;
 		};
 		
-		let ids = Storage.get('smileIds') || [];
+		let ids = Storage.get('lastSmileIds') || [];
 		
 		ids = ids.map((it: any) => {
 			it.key = [ it.smile, it.skin ].join(',');
@@ -293,7 +293,7 @@ class MenuSmile extends React.Component<Props, State> {
 			return it;
 		});
 		
-		Storage.set('smileIds', ids, true);
+		Storage.set('lastSmileIds', ids, true);
 	};
 	
 	onRemove () {
