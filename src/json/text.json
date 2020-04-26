@@ -43,5 +43,23 @@
 	"authPinConfirmLabel": { "en": "This is one password you need to remember. You will need this password to login on this device." },
 	"authPinConfirmError": { "en": "Pin codes do not match" },
 
-	"indexHi": { "en": "Hi, %s" }
+	"indexHi": { "en": "Hi, %s" },
+	
+	"blockDescriptionParagraph": { "en": "Write a plain text" },
+	"blockDescriptionHeader1": { "en": "Big headline of a chapter, paragraph or section" },
+	"blockDescriptionHeader2": { "en": "Medium headline" },
+	"blockDescriptionHeader3": { "en": "Small headline" },
+	"blockDescriptionQuote": { "en": "Spotlight, that needs special attention" },
+	"blockDescriptionCheckbox": { "en": "Create and track task with to-do list" },
+	"blockDescriptionBulleted": { "en": "Simple list" },
+	"blockDescriptionNumbered": { "en": "Numbered list" },
+	"blockDescriptionToggle": { "en": "Hide and show content inside" },
+	"blockDescriptionPage": { "en": "Create new page inside this one" },
+	"blockDescriptionFile": { "en": "Store file in original state" },
+	"blockDescriptionImage": { "en": "Upload and enrich the page with image" },
+	"blockDescriptionVideo": { "en": "Upload playable video" },
+	"blockDescriptionBookmark": { "en": "Save your favorite link with summary" },
+	"blockDescriptionCode": { "en": "Capture code snippet " },
+	"blockDescriptionLine": { "en": "Separate information with line" },
+	"blockDescriptionDot": { "en": "Separate information with three dots" }
 }

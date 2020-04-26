@@ -169,7 +169,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('#body');
 		const documents = node.find('#documents');
-		const cnt = Math.floor((ww - 210) / (size.width + size.margin));
+		const cnt = Math.floor((ww - 144) / (size.width + size.margin));
 		
 		let width = cnt * (size.width + size.margin);
 		let height = size.height + size.margin;
@@ -179,7 +179,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		body.css({ width: width - size.margin });
-		documents.css({ marginTop: wh - 134 - height });
+		documents.css({ marginTop: wh - 90 - height });
 	};
 	
 	getList () {

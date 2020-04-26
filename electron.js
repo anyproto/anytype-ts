@@ -21,7 +21,7 @@ let csp = [];
 		"media-src 'self' http://*:* https://*:* data: blob:",
 		"style-src 'unsafe-inline'",
 		"font-src data:",
-		"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools",
+		"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
 		"script-src-elem http://localhost:8080 https://sentry.io devtools://devtools 'unsafe-inline'"
 	];
 //};

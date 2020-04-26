@@ -279,7 +279,7 @@ class DataUtil {
 			},
 			{ 
 				type: I.BlockType.File, id: I.FileType.Video, icon: 'video', name: 'Video', color: 'red', isBlock: true,
-				description: translate('blockDescriptionImage'), 
+				description: translate('blockDescriptionVideo'), 
 			},
 			{ 
 				type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', name: 'Bookmark', color: 'red', isBlock: true,
