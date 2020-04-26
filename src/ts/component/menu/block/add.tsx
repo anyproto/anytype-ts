@@ -197,8 +197,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			{ id: 'text', icon: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
 			{ id: 'list', icon: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
 			{ id: 'page', icon: 'page', name: 'Page', color: 'blue', children: DataUtil.menuGetBlockPage() },
-			{ id: 'file', icon: 'file', name: 'Object', color: 'red', children: DataUtil.menuGetBlockObject() },
-			{ id: 'other', icon: 'line', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
+			{ id: 'file', icon: 'file', name: 'Object', color: 'purple', children: DataUtil.menuGetBlockObject() },
+			{ id: 'other', icon: 'line', name: 'Other', color: 'red', children: DataUtil.menuGetBlockOther() },
 		];
 		
 		if (filter) {
