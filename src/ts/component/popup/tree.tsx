@@ -150,7 +150,12 @@ class PopupTree extends React.Component<Props, State> {
 		this.init();
 		this.ref.focus();
 		
-		this.index = new FlexSearch('memory', {});
+		this.index = new FlexSearch('balance', {
+			tokenize: 'strict',
+			threshold: 0,
+			resolution: 3,
+			depth: 3,
+		});
 		
 		let documents: any[] = [];
 		for (let item of tree) {
