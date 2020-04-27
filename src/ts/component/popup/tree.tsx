@@ -53,7 +53,7 @@ class PopupTree extends React.Component<Props, State> {
 			const ids = this.index.search(filter);
 			tree = tree.filter((it: I.Block) => { return ids.indexOf(it.id) >= 0; });
 		};
-		
+
 		if (expanded) {
 			selected = blockStore.getLeaf(root, id);
 		};

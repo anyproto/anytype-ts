@@ -313,26 +313,31 @@ class BlockStore {
 		for (let item of list) {
 			map[item.id] = item;
 		};
-		
+
 		for (let item of list) {
+			let element = map[item.id];
+			if (!element) {
+				continue;
+			};
+
+			let childBlocks = element.childBlocks || [];
 			let childrenIds = item.childrenIds || [];
+
 			for (let id of childrenIds) {
 				const child = map[id];
-				const element = map[item.id];
-				
 				if (!child) {
 					continue;
 				};
 				
 				child.parentId = item.id;
-				
-				if (element) {
-					element.childBlocks = element.childBlocks || [];
-					element.childBlocks.push(child);
-				};
+				childBlocks.push(child);
 			};
+
+			map[item.id].childBlocks = Util.arrayUniqueObjects(childBlocks, 'id');
 		};
 		
+		console.log('LIST', JSON.stringify((map[rootId] || {}).childBlocks, null, 3));
+
 		return (map[rootId] || {}).childBlocks || [];
 	};
 	
