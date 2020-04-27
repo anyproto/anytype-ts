@@ -93,7 +93,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		if (pin) {
 			history.push('/auth/pin-check/select');
 		} else {
-			history.push('/auth/pin-select/select');
+			history.push('/auth/setup/select');
 		};
 	};
 	
