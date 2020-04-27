@@ -9,7 +9,7 @@ interface Props {
 	color?: string;
 	icon?: string;
 	className?: string;
-	avatar?: I.Avatar;
+	avatar?: string;
 	tooltip?: string;
 	tooltipY?: I.MenuDirection;
 	onClick?(e: any): void;
@@ -58,7 +58,7 @@ class IconUser extends React.Component<Props, State> {
 		};
 		
 		if (avatar) {
-			icon = commonStore.imageUrl(avatar.image.hash, 256);
+			icon = commonStore.imageUrl(avatar, 256);
 		};
 		
 		if (icon) {

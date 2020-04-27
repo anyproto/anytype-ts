@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -26,12 +25,11 @@ class HeaderHelpIndex extends React.Component<Props, {}> {
 
 	render () {
 		const { path } = this.props;
-		const { account } = authStore;
 		
 		const PathItemHome = (item: any) => (
 			<div className="item" onClick={this.onHome}>
 				<Icon className="home" />
-				<div className="name">{account.name || 'Home'}</div>
+				<div className="name">Home</div>
 				<Icon className="arrow" />
 			</div>
 		);

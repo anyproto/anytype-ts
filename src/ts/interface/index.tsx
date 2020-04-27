@@ -1,4 +1,4 @@
-import { ImageSize, Avatar, Image, Account, DragItem, CoverType, CrumbsType } from './common';
+import { Account, DragItem, CoverType, CrumbsType } from './common';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
@@ -29,9 +29,6 @@ import { BookmarkType, ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 
 export {
-	ImageSize,
-	Avatar, 
-	Image, 
 	Account,
 	DragItem,
 	CoverType,

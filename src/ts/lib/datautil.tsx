@@ -126,7 +126,11 @@ class DataUtil {
 			
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
-			blockStore.profileSet(message.profileBlockId);
+			
+			if (message.profileBlockId) {
+				blockStore.profileSet(message.profileBlockId);
+				C.BlockOpen(message.profileBlockId, []);
+			};
 			
 			crumbs.init();
 			

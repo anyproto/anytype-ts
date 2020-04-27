@@ -8,7 +8,7 @@ const VersionGet = (callBack?: (message: any) => void) => {
 	dispatcher.request('versionGet', {}, callBack);
 };
 
-const ImageGetBlob = (hash: string, size: I.ImageSize, callBack?: (message: any) => void) => {
+const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => void) => {
 	const request = {
 		hash: hash,
 		size: size
