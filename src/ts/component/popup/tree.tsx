@@ -2,10 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Title, Smile, Icon, Button, Input, Cover } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { authStore, commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-
-const $ = require('jquery');
 
 interface Props extends I.Popup {};
 interface State {
@@ -13,6 +11,9 @@ interface State {
 	filter: string;
 	id: string;
 };
+
+const $ = require('jquery');
+const FlexSearch = require('flexsearch');
 
 @observer
 class PopupTree extends React.Component<Props, State> {
@@ -24,6 +25,7 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	ref: any = null;
 	timeout: number = 0;
+	index: any = null;
 	
 	constructor (props: any) {
 		super (props);
@@ -39,7 +41,6 @@ class PopupTree extends React.Component<Props, State> {
 		const { param, } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
-		const { account } = authStore;
 		const { root } = blockStore;
 		const map = blockStore.getDetailMap(root);
 		const size = map.size;
@@ -48,13 +49,8 @@ class PopupTree extends React.Component<Props, State> {
 		let selected = null;
 		
 		if (filter) {
-			const reg = new RegExp(filter, 'gi');
-			tree = tree.filter((it: I.Block) => { 
-				const content = it.content || {};
-				const details = blockStore.getDetail(root, content.targetBlockId);
-				
-				return String(details.name || '').match(reg); 
-			});
+			const ids = this.index.search(filter);
+			tree = tree.filter((it: I.Block) => { return ids.indexOf(it.id) >= 0; });
 		};
 		
 		if (expanded) {
@@ -147,8 +143,22 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		const { root } = blockStore;
+		const tree = blockStore.getTree(root, blockStore.getBlocks(root));
+		
 		this.init();
 		this.ref.focus();
+		
+		this.index = new FlexSearch('memory', {});
+		
+		let documents: any[] = [];
+		for (let item of tree) {
+			const content = item.content || {};
+			const details = blockStore.getDetail(root, content.targetBlockId);
+			const { name } = details;
+			
+			this.index.add(item.id, name + ' ' + 'We can both help with building an it\'s a distillation of themes found on ...');
+		};
 	};
 	
 	componentDidUpdate () {
