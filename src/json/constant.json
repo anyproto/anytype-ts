@@ -34,6 +34,7 @@
 		"image": 2048,
 		"header": 40,
 		"lastBlock": 100,
+		"cover": 2048,
 		
 		"menuBlockContext": {
 			"default": 400,

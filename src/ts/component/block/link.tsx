@@ -66,7 +66,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { content } = block;
 		const { targetBlockId } = content;
 		
-		C.BlockSetDetails(targetBlockId, [ { key: 'iconEmoji', value: icon } ]);
+		DataUtil.pageSetIcon(targetBlockId, icon, '');
 	};
 	
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Smile, Icon } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -32,8 +32,7 @@ class BlockIconPage extends React.Component<Props, {}> {
 	
 	onSelect (icon: string) {
 		const { rootId } = this.props;
-		
-		C.BlockSetDetails(rootId, [ { key: 'iconEmoji', value: icon } ]);
+		DataUtil.pageSetIcon(rootId, icon, '');
 	};
 	
 };

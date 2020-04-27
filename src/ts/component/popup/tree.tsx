@@ -14,6 +14,7 @@ interface State {
 
 const $ = require('jquery');
 const FlexSearch = require('flexsearch');
+const Constant = require('json/constant.json');
 
 @observer
 class PopupTree extends React.Component<Props, State> {
@@ -84,7 +85,7 @@ class PopupTree extends React.Component<Props, State> {
 					<Smile icon={iconEmoji} className="c48" size={24} />
 					<div className="name">{name}</div>
 					<div className="descr">We can both help with building an it's a distillation of themes found on ...</div>
-					<Cover type={coverType} image={commonStore.imageUrl(coverId, 2048)} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
+					<Cover type={coverType} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
 					<div className="buttons">
 						<Button text="Open" className="orange" onClick={this.onConfirm} />
 						<Button text="Cancel" className="grey" onClick={this.onCancel} />

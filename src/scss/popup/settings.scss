@@ -6,6 +6,11 @@
 		.content { height: 100%; }
 	
 		.icon { transition: none; }
+
+		.loaderWrapper { 
+			position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px;
+			background: rgba(255,255,255, 0.7);
+		}
 	
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; margin-bottom: 16px; }
 		.inputs { margin-bottom: 32px; }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Input } from 'ts/component';
-import { I, C, keyboard, Key, focus } from 'ts/lib';
+import { I, C, keyboard, Key, focus, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -120,7 +120,7 @@ class BlockTitle extends React.Component<Props, {}> {
 				},
 			};
 			
-			C.BlockSetDetails(rootId, [ { key: 'name', value: this.getValue() } ], () => {
+			DataUtil.pageSetName(rootId, this.getValue(), () => {
 				C.BlockCreate(param, rootId, (next ? next.id : ''), I.BlockPosition.Top, (message: any) => {
 					focus.set(message.blockId, { from: 0, to: 0 });
 					focus.apply();
@@ -213,7 +213,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const value = this.getValue();
 
-		C.BlockSetDetails(rootId, [ { key: 'name', value: value } ]);
+		DataUtil.pageSetName(rootId, value);
 	};
 	
 };

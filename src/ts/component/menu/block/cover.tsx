@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { Cover } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -84,13 +84,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 					return;
 				};
 				
-				C.BlockSetDetails(rootId, [ 
-					{ key: 'coverType', value: I.CoverType.Image },
-					{ key: 'coverId', value: message.hash },
-					{ key: 'coverX', value: 0 },
-					{ key: 'coverY', value: 0 },
-					{ key: 'coverScale', value: 0 },
-				]);
+				DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash);
 				
 				if (onUpload) {
 					onUpload();
@@ -115,14 +109,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId } = data;
 		
-		C.BlockSetDetails(rootId, [ 
-			{ key: 'coverType', value: 0 },
-			{ key: 'coverId', value: '' },
-			{ key: 'coverX', value: 0 },
-			{ key: 'coverY', value: 0 },
-			{ key: 'coverScale', value: 0 },
-		]);
-		
+		DataUtil.pageSetCover(rootId, I.CoverType.None, '');
 		commonStore.menuClose(this.props.id);
 	};
 	

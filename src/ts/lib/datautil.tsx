@@ -184,7 +184,52 @@ class DataUtil {
 			if (callBack) {
 				callBack(message);
 			};
-		});	
+		});
+	};
+	
+	pageSetIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'iconEmoji', value: emoji },
+			{ key: 'iconImage', value: image },
+		], callBack);
+	};
+	
+	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'name', value: name },
+		], callBack);
+	};
+	
+	pageSetCover (rootId: string, type: I.CoverType, coverId: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
+		x = Number(x) || 0;
+		y = Number(y) || 0;
+		scale = Number(scale) || 0;
+		
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'coverType', value: type },
+			{ key: 'coverId', value: coverId },
+			{ key: 'coverX', value: x },
+			{ key: 'coverY', value: y },
+			{ key: 'coverScale', value: scale },
+		], callBack);
+	};
+
+	pageSetCoverXY (rootId: string, x: number, y: number, callBack?: (message: any) => void) {
+		x = Number(x) || 0;
+		y = Number(y) || 0;
+		
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'coverX', value: x },
+			{ key: 'coverY', value: y },
+		], callBack);
+	};
+
+	pageSetCoverScale (rootId: string, scale: number, callBack?: (message: any) => void) {
+		scale = Number(scale) || 0;
+		
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'coverScale', value: scale },
+		], callBack);
 	};
 	
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[]) {

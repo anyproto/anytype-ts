@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Smile, IconUser } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -51,7 +51,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 				],
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'remove') {
-						C.BlockSetDetails(rootId, [ { key: 'iconImage', value: '' } ]);
+						DataUtil.pageSetIcon(rootId, '', '');
 					};
 					if (item.id == 'upload') {
 						this.onUpload();
@@ -79,9 +79,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 					return;
 				};
 				
-				C.BlockSetDetails(rootId, [ 
-					{ key: 'iconImage', value: message.hash },
-				]);
+				DataUtil.pageSetIcon(rootId, '', message.hash);
 			});
 		});
 	};
