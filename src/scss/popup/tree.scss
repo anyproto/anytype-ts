@@ -84,7 +84,8 @@
 		.selected {
 			.smile { margin-bottom: 8px; }
 			.descr { @include text-small; height: 18px; color: #6c6a5f; @include text-overflow; }
-			.cover { position: static; height: 156px; margin: 12px 0px 16px 0px; background-color: #C4C4C4; }
+			.cover { position: static; height: 156px; margin-top: 12px; background-color: #C4C4C4; }
+			.buttons { margin-top: 16px; }
 			.buttons {
 				.button { margin-right: 12px; }
 				.button:last-child { margin: 0px; }
