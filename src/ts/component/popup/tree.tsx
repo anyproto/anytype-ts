@@ -80,7 +80,7 @@ class PopupTree extends React.Component<Props, State> {
 			};
 
 			return (
-				<div className="item">
+				<div className="item" onClick={(e: any) => { item.isSearch ? this.onSearch() : this.onClick(e, item); }}>
 					{icon}
 					<div className="name">{Util.shorten(name, 16)}</div>
 					<Icon className="arrow" />
@@ -234,6 +234,10 @@ class PopupTree extends React.Component<Props, State> {
 				pagesOut: message.page.links.outbound.map((it: any) => { return this.getPage(it); }),
 			});
 		});
+	};
+
+	onSearch () {
+		this.setState({ expanded: false });
 	};
 	
 	onConfirm (e: any) {
