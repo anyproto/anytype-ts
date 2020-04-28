@@ -27,6 +27,7 @@ interface Props extends RouteComponentProps<any> {
 	css?: any;
 	className?: string;
 	block: I.Block;
+	isRootBlock?: boolean;
 	onKeyDown? (e: any, text?: string): void;
 	onKeyUp? (e: any, text?: string): void;
 	onMenuAdd? (id: string): void;
@@ -66,7 +67,7 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, cnt, css, index, className, block } = this.props;
+		const { rootId, isRootBlock, cnt, css, index, className, block } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 		const { style, checked } = content || {};
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
@@ -189,7 +190,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		let object = (
-			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
+			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} isRootBlock={isRootBlock}>
 				{blockComponent}
 			</DropTarget>
 		);
@@ -220,8 +221,8 @@ class Block extends React.Component<Props, {}> {
 					
 					{block.isLayoutRow() ? (
 						<React.Fragment>
-							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
-							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} isRootBlock={isRootBlock} />
+							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} isRootBlock={isRootBlock} />
 						</React.Fragment>
 					): ''}
 					

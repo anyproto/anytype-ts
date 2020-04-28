@@ -22,17 +22,6 @@
 	.block.blockLayout.c1 > .wrapMenu { display: none; }
 	.block.blockLayout.c1 > .wrapContent { width: 100%; display: flex; flex-flow: column; }
 	
-	.block.blockLayout.c1 > .wrapContent > .children > .block.first > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
-	.block.blockLayout.c1 > .wrapContent > .children > .block.first {
-		.inputWithFile { margin-top: 0px; }
-	}
-	
-	.block.blockLayout.c1 > .wrapContent > .children > .block.last { margin: 0px; }
-	.block.blockLayout.c1 > .wrapContent > .children > .block.last > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
-	.block.blockLayout.c1 > .wrapContent > .children > .block.last {
-		.inputWithFile { margin-bottom: 0px; }
-	}	
-	
 	/* Div */
 	.block.blockLayout.c2 > .wrapMenu { display: none; }
 	.block.blockLayout.c2 > .wrapContent { width: 100%; overflow: visible; }

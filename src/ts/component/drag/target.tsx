@@ -10,6 +10,7 @@ interface Props {
 	type?: I.BlockType;
 	dropType: I.DragItem;
 	className?: string;
+	isRootBlock?: boolean;
 	onClick?(e: any): void;
 };
 
@@ -22,7 +23,7 @@ class DropTarget extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { id, rootId, dropType, type, style, children, className } = this.props;
+		const { id, rootId, isRootBlock, dropType, type, style, children, className } = this.props;
 		
 		let cn = [ 'dropTarget' ];
 		if (className) {
@@ -30,7 +31,16 @@ class DropTarget extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onClick={this.onClick} data-id={id} data-root-id={rootId} data-drop-type={dropType} data-type={type} data-style={style}>
+			<div 
+				className={cn.join(' ')} 
+				onClick={this.onClick} 
+				data-id={id} 
+				data-root-id={rootId} 
+				data-drop-type={dropType} 
+				data-type={type} 
+				data-style={style} 
+				data-is-root={isRootBlock}
+			>
 				{children}
 			</div>
 		);

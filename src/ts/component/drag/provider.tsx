@@ -127,6 +127,15 @@ class DragProvider extends React.Component<Props, {}> {
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
+
+			item = $(item);
+			let data = item.data();
+
+			if (data.isRoot) {
+				rect.x -= 200;
+				rect.width += 400;
+			};
+
 			if ((x >= rect.x) && (x <= rect.x + rect.width) && (y >= rect.y) && (y <= rect.y + rect.height)) {
 				this.hovered = $(item);
 				hoverRect = rect;

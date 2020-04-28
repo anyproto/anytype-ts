@@ -129,7 +129,7 @@ class EditorPage extends React.Component<Props, State> {
 									{...this.props}
 									index={i}
 									block={block}
-									className="root"
+									isRootBlock={true}
 									onKeyDown={this.onKeyDownBlock}
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
