@@ -90,6 +90,9 @@ class ScrollOnMove {
 			nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX));
 			nextScrollY = Math.max(0, Math.min(maxScrollY, nextScrollY));
 	
+			// Disable move on X
+			nextScrollX = currentScrollX;
+
 			if (
 				(nextScrollX !== currentScrollX) ||
 				(nextScrollY !== currentScrollY)
