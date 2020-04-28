@@ -54,7 +54,7 @@
 		"git-revision-webpack-plugin": "^3.0.6",
 		"json-loader": "^0.5.7",
 		"sass-loader": "^8.0.2",
-		"style-loader": "^1.2.0",
+		"style-loader": "^1.2.1",
 		"ts-loader": "^6.2.2",
 		"tslint": "^5.20.1",
 		"tslint-react": "^4.2.0",

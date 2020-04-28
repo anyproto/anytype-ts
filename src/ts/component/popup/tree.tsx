@@ -76,7 +76,7 @@ class PopupTree extends React.Component<Props, State> {
 				icon = <Icon className="search" />
 			} else {
 				name = item.details.name;
-				icon = <Smile icon={item.details.iconEmoji} />;
+				icon = <Smile icon={item.details.iconEmoji} className="c24" size={20} />;
 			};
 
 			return (
