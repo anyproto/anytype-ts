@@ -34,7 +34,7 @@ class Controls extends React.Component<Props, {}> {
 	render (): any {
 		return (
 			<div 
-				className="controls"
+				className="editorControls"
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}

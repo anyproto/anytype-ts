@@ -4,13 +4,14 @@ import { I } from 'ts/lib';
 
 import Cell from '../cell';
 
-interface Props extends I.BlockDataview {};
+interface Props extends I.BlockDataview {
+	getContent(): any;
+};
 
 class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
-		const { content } = this.props;
-		const { data, properties } = content;
+		const { data, properties } = this.props.getContent();
 		
 		const Card = (item: any) => (
 			<div className="card">

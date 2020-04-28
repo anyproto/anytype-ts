@@ -8,6 +8,7 @@ interface Props extends I.BlockDataview {
 	view: string;
 	viewType: I.ViewType;
 	onView(e: any, id: string): void;
+	getContent(): any;
 };
 
 @observer
@@ -20,8 +21,8 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { view, viewType, content, onView } = this.props;
-		const { views } = content;
+		const { viewType, onView } = this.props;
+		const { view, views, data, properties } = this.props.getContent();
 		
 		const buttons: any[] = [
 			{ 
@@ -68,7 +69,7 @@ class Controls extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className="controls">
+			<div className="dataviewControls">
 				<div className="views">
 					{views.map((item: I.View, i: number) => (
 						<ViewItem key={i} {...item} active={item.id == view} />
@@ -96,8 +97,8 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { view, viewType, content } = this.props;
-		const { properties, views } = content;
+		const { view, viewType } = this.props;
+		const { properties, views } = this.props.getContent();
 		const viewItem = views.find((item: any) => { return item.id == view; });
 		
 		let data: any = { 
