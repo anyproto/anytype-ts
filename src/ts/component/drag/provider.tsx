@@ -26,6 +26,7 @@ class DragProvider extends React.Component<Props, {}> {
 	position: I.BlockPosition = I.BlockPosition.None;
 	hovered: any = null;
 	canDrop: boolean = false;
+	timeoutHover: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -119,8 +120,10 @@ class DragProvider extends React.Component<Props, {}> {
 		const items = $('.dropTarget');
 		const isFileDrag = e.dataTransfer.files && e.dataTransfer.files.length;
 
-		this.clear();
 		this.refLayer.move(x, y);
+
+		this.hovered = null;
+		this.position = I.BlockPosition.None;
 
 		let hoverRect: any = null;
 
@@ -206,8 +209,15 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 		};
 
+		window.clearTimeout(this.timeoutHover);
+
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
+			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
 			this.hovered.addClass('isOver ' + this.getDirectionClass(this.position));
+		} else {
+			this.timeoutHover = window.setTimeout(() => {
+				$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+			}, 50);
 		};
 	};
 	
