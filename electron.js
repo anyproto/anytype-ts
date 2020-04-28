@@ -39,6 +39,7 @@ function createWindow () {
 	});
 	
 	let param = {
+		backgroundColor: '#fff',
 		show: false,
 		width: width,
 		height: height,
@@ -163,6 +164,7 @@ function createWindow () {
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 	
 	autoUpdater.checkForUpdatesAndNotify();
+
 	autoUpdater.on('checking-for-update', () => {
 		setStatus('Checking for update');
 	});
@@ -170,12 +172,15 @@ function createWindow () {
 	autoUpdater.on('update-available', (info) => {
 		setStatus('Update available');
 	});
+
 	autoUpdater.on('update-not-available', (info) => {
 		setStatus('Update not available');
 		
 		win.webContents.send('update');
 	});
+
 	autoUpdater.on('error', (err) => { setStatus('Error: ' + err); });
+
 	autoUpdater.on('download-progress', (progress) => {
 		let msg = [
 			'Download speed: ' + progress.bytesPerSecond,
