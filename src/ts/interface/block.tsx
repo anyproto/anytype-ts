@@ -1,5 +1,11 @@
 import { I } from 'ts/lib';
 
+export interface PageInfo {
+	id: string;
+	snippet: string;
+	details: any;	
+};
+
 export enum BlockType {
 	Empty		 = '',
 	Page		 = 'page',

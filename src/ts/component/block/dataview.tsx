@@ -39,8 +39,6 @@ class BlockDataview extends React.Component<Props, State> {
 		const { view, views, data, properties } = this.getContent();
 		const viewItem = views.find((item: any) => { return item.id == view; });
 		
-		console.log(view, views, viewItem);
-
 		let ViewComponent: React.ReactType<{ getContent(): any; }>;
 		switch (viewItem.type) {
 			default:

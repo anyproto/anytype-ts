@@ -336,8 +336,6 @@ class BlockStore {
 			map[item.id].childBlocks = Util.arrayUniqueObjects(childBlocks, 'id');
 		};
 		
-		console.log('LIST', JSON.stringify((map[rootId] || {}).childBlocks, null, 3));
-
 		return (map[rootId] || {}).childBlocks || [];
 	};
 	

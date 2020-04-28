@@ -101,6 +101,17 @@ const ExternalDropFiles = (contextId: string, targetId: string, position: I.Bloc
 	dispatcher.request('externalDropFiles', request, callBack);
 };
 
+const NavigationListPages = (callBack?: (message: any) => void) => {
+	dispatcher.request('navigationListPages', {}, callBack);
+};
+
+const NavigationGetPageInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
+	const request = {
+		pageId: pageId,
+	};
+	dispatcher.request('navigationGetPageInfoWithLinks', request, callBack);
+};
+
 const BlockOpen = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
 	const request = {
 		blockId: blockId,
@@ -463,6 +474,9 @@ export {
 	AccountStop,
 	
 	ExternalDropFiles,
+
+	NavigationListPages,
+	NavigationGetPageInfoWithLinks,
 	
 	BlockOpen,
 	BlockOpenBreadcrumbs,
