@@ -24,7 +24,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onPath = this.onPath.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
-		this.onDrop = this.onDrop.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 	};
@@ -62,7 +61,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<PathItemHome />
 					{children.length > LIMIT ? <PathItemSkip /> : ''}
 					{slice.map((item: any, i: any) => (
-						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={n + i + 1} />
+						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} index={n + i + 1} />
 					))}
 				</div>
 				
@@ -142,17 +141,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onForward (e: any) {
 		crumbs.restore(I.CrumbsType.Page);
 		this.props.history.goForward();
-	};
-	
-	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
-		const { dataset } = this.props;
-		const { onDrop } = dataset || {};
-		
-		console.log('onDrop', type, rootId, targetId, position);
-		
-		if (onDrop) {
-			onDrop(e, type, rootId, targetId, position);
-		};
 	};
 	
 	onNavigation (e: any) {

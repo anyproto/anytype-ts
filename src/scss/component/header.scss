@@ -28,7 +28,7 @@
 
 	.path { white-space: nowrap; }
 	.path {
-		.item { display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 4px; cursor: pointer; transition: $transitionFast; }
+		.item { display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 4px; cursor: pointer; transition: color 0.2s ease-in-out; }
 		.item {
 			.icon { margin-right: 4px; }
 			.icon.arrow { margin: 0px; width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); vertical-align: middle; }

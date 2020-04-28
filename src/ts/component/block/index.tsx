@@ -56,7 +56,6 @@ class Block extends React.Component<Props, {}> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
-		this.onDrop = this.onDrop.bind(this);
 		this.onMenuDown = this.onMenuDown.bind(this);
 		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
@@ -190,7 +189,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		let object = (
-			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
+			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
 				{blockComponent}
 			</DropTarget>
 		);
@@ -221,8 +220,8 @@ class Block extends React.Component<Props, {}> {
 					
 					{block.isLayoutRow() ? (
 						<React.Fragment>
-							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
-							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
+							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
 						</React.Fragment>
 					): ''}
 					
@@ -339,19 +338,6 @@ class Block extends React.Component<Props, {}> {
 		selection.preventClear(true);
 		
 		onDragStart(e, I.DragItem.Block, ids, this);
-	};
-	
-	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
-		const { dataset } = this.props;
-		const { selection, onDrop } = dataset || {};
-		
-		if (selection) {
-			selection.preventClear(false);
-		};
-		
-		if (dataset && onDrop) {
-			onDrop(e, type, rootId, targetId, position);
-		};
 	};
 	
 	onMenuDown (e: any) {

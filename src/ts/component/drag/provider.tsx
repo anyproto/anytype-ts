@@ -24,6 +24,8 @@ class DragProvider extends React.Component<Props, {}> {
 	map: any;
 	commonDropPrevented: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
+	hovered: any = null;
+	canDrop: boolean = false;
 	
 	constructor (props: any) {
 		super(props);
@@ -50,19 +52,31 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDropCommon (e: any) {
-		if (this.commonDropPrevented || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (this.commonDropPrevented) {
 			return;
 		};
 		
 		const { rootId } = this.props;
-		const paths: string[] = [];
-		for (let file of e.dataTransfer.files) {
-			paths.push(file.path);
+	
+		let data: any = {};
+		if (this.hovered) {
+			data = this.hovered.data();
 		};
-			
-		console.log('[dragProvider.onDrop] paths', paths);
+		let targetId = String(data.id || '');
 
-		C.ExternalDropFiles(rootId, '', I.BlockPosition.Bottom, paths);
+		if (e.dataTransfer.files && e.dataTransfer.files.length) {
+			let paths: string[] = [];
+			for (let file of e.dataTransfer.files) {
+				paths.push(file.path);
+			};
+			console.log('[dragProvider.onDrop] paths', paths);
+			C.ExternalDropFiles(rootId, targetId, this.position, paths);
+		} else 
+		if (this.hovered && this.canDrop && (this.position != I.BlockPosition.None)) {
+			this.onDrop (e, data.dropType, data.rootId, targetId, this.position);
+		};
+
+		this.clear();
 	};
 	
 	onDragOver (e: any) {
@@ -88,7 +102,7 @@ class DragProvider extends React.Component<Props, {}> {
 		Util.linkPreviewHide(false);
 		
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
+		win.on('drag.drag', (e: any) => { this.onDragMove(e.originalEvent); });
 		
 		$('.colResize.active').removeClass('active');
 		
@@ -103,29 +117,43 @@ class DragProvider extends React.Component<Props, {}> {
 		const x = e.pageX;
 		const y = Math.max(0, e.pageY - $(window).scrollTop());
 		const items = $('.dropTarget');
+		const isFileDrag = e.dataTransfer.files && e.dataTransfer.files.length;
 
-		let hovered: any = null;
-		let hoverRect: any = null;
-		
+		this.clear();
 		this.refLayer.move(x, y);
+
+		let hoverRect: any = null;
 
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
 			if ((x >= rect.x) && (x <= rect.x + rect.width) && (y >= rect.y) && (y <= rect.y + rect.height)) {
-				hovered = item as Element;
+				this.hovered = $(item);
 				hoverRect = rect;
 			};
 		});
 
-		this.position = I.BlockPosition.None;
-
-		if (hovered) {
-			let checkRect: any = {
+		this.canDrop = true;
+		
+		if (this.hovered) {
+			const data = this.hovered.data();
+			const checkRect: any = {
 				x: hoverRect.x + hoverRect.width * 0.15,
 				y: hoverRect.y + hoverRect.height * 0.3,
 				width: hoverRect.x + hoverRect.width * 0.60,
 				height: hoverRect.y + hoverRect.height * 0.7
+			};
+
+			if (!isFileDrag && (this.type == I.DragItem.Block)) {
+				let parentIds: string[] = [];
+				this.getParentIds(data.id, parentIds);
+				
+				for (let dropId of this.ids) {
+					if ((dropId == data.id) || (parentIds.length && (parentIds.indexOf(dropId) >= 0))) {
+						this.canDrop = false;
+						break;
+					};
+				};
 			};
 
 			if ((y >= hoverRect.y) && (y <= checkRect.y)) {
@@ -143,48 +171,61 @@ class DragProvider extends React.Component<Props, {}> {
 			if ((x > checkRect.x) && (x < checkRect.width) && (y > checkRect.y) && (y < checkRect.height)) {
 				this.position = I.BlockPosition.Inner;
 			};
+
+			// You can't drop on Icon and Title
+			if ([ I.BlockType.IconPage, I.BlockType.IconUser, I.BlockType.Title ].indexOf(data.type) >= 0) {
+				this.position = I.BlockPosition.None;
+			};
+			
+			// You cant drop in Headers
+			if (
+				(this.position == I.BlockPosition.Inner) && 
+				(data.type == I.BlockType.Text) && 
+				[ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3, I.TextStyle.Header4 ].indexOf(data.style) >= 0
+			) {
+				this.position = I.BlockPosition.None;
+			};
+			
+			// You can drop vertically on Layout.Row
+			if ((data.type == I.BlockType.Layout) && (data.style == I.LayoutStyle.Row) && (this.position != I.BlockPosition.None)) {
+				if (this.hovered.hasClass('targetTop')) {
+					this.position = I.BlockPosition.Top;
+				};
+				if (this.hovered.hasClass('targetBot')) {
+					this.position = I.BlockPosition.Bottom;
+				};
+			};
+			
+			// You can only drop inside of menu items
+			if ((data.dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
+				this.position = I.BlockPosition.Inner;
+			};
 		};
 
-		$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
-		if ((this.position != I.BlockPosition.None)) {
-			$(hovered).addClass('isOver ' + this.getDirectionClass(this.position));
+		if ((this.position != I.BlockPosition.None) && this.canDrop) {
+			this.hovered.addClass('isOver ' + this.getDirectionClass(this.position));
 		};
-
-		/*
-		let { x, y, width, height } = domRect;
-		y += win.scrollTop();
-
-		let rect = {
-			x: x + width * 0.15,
-			y: y + height * 0.3,
-			width: x + width * 0.60,
-			height: y + height * 0.7
-		};
-		*/
-
 	};
 	
 	onDragEnd (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		
-		$('.block.isDragging').removeClass('isDragging');
-		
+
 		this.refLayer.hide();
 		this.unbind();
+		this.clear();
+
 		keyboard.setDrag(false);
 		
 		if (selection) {
 			selection.preventSelect(false);
 			selection.preventClear(false);
 		};
+
+		$('.block.isDragging').removeClass('isDragging');
 	};
 	
 	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
-		if (position == I.BlockPosition.None) {
-			return;
-		};
-		
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const target = blockStore.getLeaf(rootId, targetId);
@@ -212,27 +253,11 @@ class DragProvider extends React.Component<Props, {}> {
 		
 		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
 		
-		if (e.dataTransfer.files && e.dataTransfer.files.length) {
-			this.commonDropPrevented = true;
-			
-			const paths: string[] = [];
-			
-			for (let file of e.dataTransfer.files) {
-				paths.push(file.path);
+		C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
+			if (selection) {
+				selection.set(this.ids);
 			};
-			
-			console.log('[dragProvider.onDrop] paths', paths);
-			
-			C.ExternalDropFiles(contextId, targetId, position, paths, (message: any) => {
-				this.commonDropPrevented = false;
-			});
-		} else {
-			C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
-				if (selection) {
-					selection.set(this.ids);
-				};
-			});
-		};
+		});
 	};
 	
 	unbind () {
@@ -247,6 +272,18 @@ class DragProvider extends React.Component<Props, {}> {
 		for (let id of this.ids) {
 			$('#block-' + id).addClass('isDragging');
 		};
+	};
+
+	getParentIds (id: string, parentIds: string[]) {
+		const { rootId } = this.props;
+		const item = this.map[id];
+
+		if (!item || (item.parentId == rootId)) {
+			return;
+		};
+		
+		parentIds.push(item.parentId);
+		this.getParentIds(item.parentId, parentIds);
 	};
 
 	getDirectionClass (dir: I.BlockPosition) {
@@ -294,6 +331,12 @@ class DragProvider extends React.Component<Props, {}> {
 	
 	preventCommonDrop (v: boolean) {
 		this.commonDropPrevented = Boolean(v);
+	};
+
+	clear () {
+		$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+		this.hovered = null;
+		this.position = I.BlockPosition.None;
 	};
 	
 };

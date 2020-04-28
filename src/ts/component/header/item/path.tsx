@@ -11,14 +11,13 @@ interface Props {
 	block: I.Block;
 	index: number;
 	onPath (e: any, block: I.Block, index: number): void;
-	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition): void;
 };
 
 @observer
 class HeaderItemPath extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, index, onPath, onDrop } = this.props;
+		const { rootId, block, index, onPath } = this.props;
 		const { breadcrumbs } = blockStore;
 		const { id, content } = block;
 		const details = blockStore.getDetail(breadcrumbs, content.targetBlockId);
@@ -32,7 +31,7 @@ class HeaderItemPath extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<DropTarget {...this.props} className="item" id={id} rootId={breadcrumbs} dropType={I.DragItem.Menu} onClick={(e: any) => { onPath(e, block, index); }} onDrop={onDrop}>
+			<DropTarget {...this.props} className="item" id={id} rootId={breadcrumbs} dropType={I.DragItem.Menu} onClick={(e: any) => { onPath(e, block, index); }}>
 				{icon}
 				<div className="name">{Util.shorten(name, 16)}</div>
 				<Icon className="arrow" />
