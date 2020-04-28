@@ -56,8 +56,8 @@ class DropTarget extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		this.unbind();
 		
-		node.on('dragover.target', (e: any) => { this.onDragOver(e.originalEvent); });
-		node.on('dragleave.target', (e: any) => { this.onDragLeave(e); });
+		//node.on('dragover.target', (e: any) => { this.onDragOver(e.originalEvent); });
+		//node.on('dragleave.target', (e: any) => { this.onDragLeave(e); });
 	};
 	
 	componentWillUnmount () {

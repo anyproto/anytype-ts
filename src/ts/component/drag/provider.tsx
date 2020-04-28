@@ -23,6 +23,7 @@ class DragProvider extends React.Component<Props, {}> {
 	ids: string[] = [];
 	map: any;
 	commonDropPrevented: boolean = false;
+	position: I.BlockPosition = I.BlockPosition.None;
 	
 	constructor (props: any) {
 		super(props);
@@ -59,8 +60,8 @@ class DragProvider extends React.Component<Props, {}> {
 			paths.push(file.path);
 		};
 			
-		console.log('[selection.onDrop] paths', paths);
-			
+		console.log('[dragProvider.onDrop] paths', paths);
+
 		C.ExternalDropFiles(rootId, '', I.BlockPosition.Bottom, paths);
 	};
 	
@@ -76,7 +77,7 @@ class DragProvider extends React.Component<Props, {}> {
 		e.stopPropagation();
 		focus.clear(true);
 		
-		console.log('[onDragStart]', type, ids);
+		console.log('[dragProvider.onDragStart]', type, ids);
 		
 		this.map = blockStore.getMap(rootId);
 		this.refLayer.show(type, ids, component);
@@ -99,10 +100,68 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 	
 	onDragMove (e: any) {
-		let x = e.pageX;
-		let y = Math.max(0, e.pageY - $(window).scrollTop());
+		const x = e.pageX;
+		const y = Math.max(0, e.pageY - $(window).scrollTop());
+		const items = $('.dropTarget');
+
+		let hovered: any = null;
+		let hoverRect: any = null;
 		
 		this.refLayer.move(x, y);
+
+		// Find hovered block by mouse coords
+		items.each((i: number, item: any) => {
+			let rect = item.getBoundingClientRect() as DOMRect;
+			if ((x >= rect.x) && (x <= rect.x + rect.width) && (y >= rect.y) && (y <= rect.y + rect.height)) {
+				hovered = item as Element;
+				hoverRect = rect;
+			};
+		});
+
+		this.position = I.BlockPosition.None;
+
+		if (hovered) {
+			let checkRect: any = {
+				x: hoverRect.x + hoverRect.width * 0.15,
+				y: hoverRect.y + hoverRect.height * 0.3,
+				width: hoverRect.x + hoverRect.width * 0.60,
+				height: hoverRect.y + hoverRect.height * 0.7
+			};
+
+			if ((y >= hoverRect.y) && (y <= checkRect.y)) {
+				this.position = I.BlockPosition.Top;
+			} else 
+			if ((y >= checkRect.height) && (y <= hoverRect.y + hoverRect.height)) {
+				this.position = I.BlockPosition.Bottom;
+			} else
+			if ((x >= hoverRect.x) && (x < checkRect.x) && (y > checkRect.y) && (y < checkRect.height)) {
+				this.position = I.BlockPosition.Left;
+			} else 
+			if ((x > checkRect.width) && (x <= hoverRect.x + hoverRect.width) && (y > checkRect.y) && (y < checkRect.height)) {
+				this.position = I.BlockPosition.Right;
+			} else 
+			if ((x > checkRect.x) && (x < checkRect.width) && (y > checkRect.y) && (y < checkRect.height)) {
+				this.position = I.BlockPosition.Inner;
+			};
+		};
+
+		$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+		if ((this.position != I.BlockPosition.None)) {
+			$(hovered).addClass('isOver ' + this.getDirectionClass(this.position));
+		};
+
+		/*
+		let { x, y, width, height } = domRect;
+		y += win.scrollTop();
+
+		let rect = {
+			x: x + width * 0.15,
+			y: y + height * 0.3,
+			width: x + width * 0.60,
+			height: y + height * 0.7
+		};
+		*/
+
 	};
 	
 	onDragEnd (e: any) {
@@ -151,7 +210,7 @@ class DragProvider extends React.Component<Props, {}> {
 			targetId = parent.id;
 		};
 		
-		console.log('[onDrop]', type, targetId, this.type, this.ids, position);
+		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
 		
 		if (e.dataTransfer.files && e.dataTransfer.files.length) {
 			this.commonDropPrevented = true;
@@ -162,7 +221,7 @@ class DragProvider extends React.Component<Props, {}> {
 				paths.push(file.path);
 			};
 			
-			console.log('[onDrop] paths', paths);
+			console.log('[dragProvider.onDrop] paths', paths);
 			
 			C.ExternalDropFiles(contextId, targetId, position, paths, (message: any) => {
 				this.commonDropPrevented = false;
@@ -188,6 +247,19 @@ class DragProvider extends React.Component<Props, {}> {
 		for (let id of this.ids) {
 			$('#block-' + id).addClass('isDragging');
 		};
+	};
+
+	getDirectionClass (dir: I.BlockPosition) {
+		let c = '';
+		switch (dir) {
+			case I.BlockPosition.None:	 c = ''; break;
+			case I.BlockPosition.Top:	 c = 'top'; break;
+			case I.BlockPosition.Bottom: c = 'bottom'; break;
+			case I.BlockPosition.Left:	 c = 'left'; break;
+			case I.BlockPosition.Right:	 c = 'right'; break;
+			case I.BlockPosition.Inner:	 c = 'middle'; break;
+		};
+		return c;
 	};
 	
 	setDragImage (e: any) {
