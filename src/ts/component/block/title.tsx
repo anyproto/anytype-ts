@@ -5,6 +5,7 @@ import { I, C, keyboard, Key, focus, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
+import { isDeepStrictEqual } from 'util';
 
 interface Props {
 	rootId: string;
@@ -122,7 +123,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage(); });
+			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage() && !it.isTitle(); });
 			const param = {
 				type: I.BlockType.Text,
 				content: {

@@ -206,7 +206,7 @@ class PopupTree extends React.Component<Props, State> {
 
 		this.init();
 		this.ref.focus();
-		this.index = new FlexSearch('balance', {});
+		this.index = new FlexSearch('balance', Constant.flexSearch);
 
 		let pages: any[] = [];
 

@@ -90,7 +90,7 @@
 		.selected { padding: 16px; border: 2px solid $colorOrange; border-radius: 8px; }
 		.selected {
 			.smile { margin-bottom: 8px; }
-			.descr { @include text-small; height: 18px; color: #6c6a5f; @include text-overflow; }
+			.descr { @include text-small; color: #6c6a5f; @include text-overflow; }
 			.cover { position: static; height: 156px; margin-top: 12px; background-color: #C4C4C4; }
 			.buttons { margin-top: 16px; }
 			.buttons {
