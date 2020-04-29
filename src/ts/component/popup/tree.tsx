@@ -72,7 +72,12 @@ class PopupTree extends React.Component<Props, State> {
 		let pages = this.state.pages;
 		if (filter) {
 			const ids = this.index.search(filter);
-			pages = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
+			if (ids.length) {
+				pages = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
+			} else {
+				const reg = new RegExp(filter.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
+				pages = pages.filter((it: I.PageInfo) => { return it.text.match(reg); });
+			};
 		};
 
 		const Item = (item: any) => {
@@ -206,7 +211,12 @@ class PopupTree extends React.Component<Props, State> {
 
 		this.init();
 		this.ref.focus();
-		this.index = new FlexSearch('balance', Constant.flexSearch);
+		this.index = new FlexSearch('balance', {
+			encode: 'extra',
+    		tokenize: 'full',
+			threshold: 1,
+    		resolution: 3,
+		});
 
 		let pages: any[] = [];
 
@@ -341,6 +351,7 @@ class PopupTree extends React.Component<Props, State> {
 			id: page.id,
 			snippet: page.snippet,
 			details: details,
+			text: [ details.name, page.snippet ].join(' '),
 		};
 	};
 	

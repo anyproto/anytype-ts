@@ -77,6 +77,7 @@
 		"electron-updater": "^4.3.1",
 		"electron-util": "^0.12.3",
 		"emoji-mart": "^2.11.2",
+		"escape-string-regexp": "^4.0.0",
 		"file-loader": "^4.3.0",
 		"file-type": "^12.4.2",
 		"flexsearch": "^0.6.32",

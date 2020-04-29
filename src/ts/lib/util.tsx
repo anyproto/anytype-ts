@@ -1,6 +1,7 @@
 import { I, C, keyboard } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
+const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
 const raf = require('raf');
 const $ = require('jquery');
@@ -441,7 +442,7 @@ class Util {
 	};
 	
 	filterFix (v: string) {
-		return String(v || '').replace(/[\/\\\*]/g, '');
+		return escapeStringRegexp(String(v || '').replace(/[\/\\\*]/g, ''));
 	};
 	
 	lengthFixOut (text: string, len: number): number {

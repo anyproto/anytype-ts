@@ -4,6 +4,7 @@ export interface PageInfo {
 	id: string;
 	snippet: string;
 	details: any;	
+	text: string;
 };
 
 export enum BlockType {

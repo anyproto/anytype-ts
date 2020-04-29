@@ -1,4 +1,5 @@
 import { I, Util } from 'ts/lib';
+import { blockStore } from 'ts/store';
 import { observable, intercept } from 'mobx';
 
 class Block implements I.Block {
@@ -164,7 +165,15 @@ class Block implements I.Block {
 	};
 	
 	getLength (): number {
-		return String(this.content.text || '').length;
+		let t = '';
+		if (this.isTitle()) {
+			const details = blockStore.getDetail(this.parentId, this.parentId);
+			t = details.name;
+		} else {
+			t = this.content.text;
+		};
+
+		return String(t || '').length;
 	};
 };
 
