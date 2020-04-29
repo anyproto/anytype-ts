@@ -5,7 +5,6 @@ import { I, C } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-
 interface Props extends I.Popup {
 	history: any;
 };

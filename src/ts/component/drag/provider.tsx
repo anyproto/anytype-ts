@@ -131,8 +131,8 @@ class DragProvider extends React.Component<Props, {}> {
 		items.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
 
-			rect.x -= 200;
-			rect.width += 400;
+			rect.x -= 100;
+			rect.width += 200;
 
 			if ((x >= rect.x) && (x <= rect.x + rect.width) && (y >= rect.y) && (y <= rect.y + rect.height)) {
 				this.hovered = $(item);
@@ -145,7 +145,7 @@ class DragProvider extends React.Component<Props, {}> {
 		if (this.hovered) {
 			const data = this.hovered.data();
 			const checkRect: any = {
-				x: hoverRect.x + hoverRect.width * 0.15,
+				x: hoverRect.x + hoverRect.width * 0.3,
 				y: hoverRect.y + hoverRect.height * 0.3,
 				width: hoverRect.x + hoverRect.width * 0.60,
 				height: hoverRect.y + hoverRect.height * 0.7
