@@ -291,17 +291,25 @@ class DataUtil {
 			},
 		];
 	};
+
+	menuGetTurnPage () {
+		return [
+			{ type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true }
+		];
+	};
 	
 	menuGetBlockPage () {
-		let id = 0;
 		return [
 			{ 
-				type: I.BlockType.Page, id: ++id, icon: 'page', name: 'Page', isBlock: true,
+				type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true,
 				description: translate('blockDescriptionPage'), 
 			},
-			{ type: I.BlockType.Dataview, id: ++id, icon: 'task', name: 'Task', color: 'blue', isBlock: true },
+			{ 
+				type: I.BlockType.Page, id: 'existing', icon: 'existing', name: 'Existing Page', isBlock: true,
+				description: translate('blockDescriptionExisting'), 
+			},
+			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			/*
-			{ id: 'existing', icon: 'existing', name: 'Existing Page', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
 			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },

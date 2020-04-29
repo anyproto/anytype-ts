@@ -148,8 +148,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			data: { 
 				type: I.NavigationType.Go, 
 				rootId: rootId,
-				onConfirm: (id: string) => {
-				},
 			}, 
 		});
 	};

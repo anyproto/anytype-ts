@@ -51,7 +51,7 @@
 			}
 			
 			.item:last-child { margin: 0px; }
-			
+
 			.item {
 				.smile { position: absolute; left: 16px; top: 12px; }
 				.info { 
@@ -65,6 +65,12 @@
 					background-image: url('~img/arrow/tree.svg'); background-size: 6px 10px; opacity: 0; 
 				}
 			}
+
+			.item.empty { padding-right: 16px; cursor: default; }
+			.item.empty {
+				.name { display: inline-block; vertical-align: middle; color: $colorDarkGrey; }
+			}
+			.item.empty:hover { box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
 		}
 	}
 	
@@ -74,6 +80,7 @@
 		
 		.items { width: 33.33%; }
 		.items {
+			.item { padding-right: 16px; }
 			.item {
 				.info { border: 0px; }
 				.icon.arrow { opacity: 1; right: -28px; }
@@ -94,7 +101,7 @@
 		
 		.items.right {
 			.item {
-				.icon.arrow { opacity: 1; right: auto; left: -16px; }
+				.icon.arrow { opacity: 1; right: auto; left: -28px; }
 			}
 		}
 	}

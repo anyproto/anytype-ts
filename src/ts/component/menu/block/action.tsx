@@ -499,9 +499,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 						rootId: rootId,
 						blockId: blockId,
 						blockIds: blockIds,
-						onConfirm: (id: string) => {
-							console.log('Move', id);
-						},
 					}, 
 				});
 				break;

@@ -150,7 +150,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, history } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, linkPage, linkId, rootId, onSelect, match } = data;
-		const { root, breadcrumbs } = blockStore;
+		const { breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
@@ -198,11 +198,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				commonStore.popupOpen('tree', { 
 					data: { 
 						type: I.NavigationType.Move, 
-						rootId: root,
-						onConfirm: (id: string) => {
-							console.log('Move', id);
-						},
-					}, 
+						rootId: rootId,
+					},
 				});
 				break;
 				

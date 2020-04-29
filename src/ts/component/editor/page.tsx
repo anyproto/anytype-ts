@@ -896,11 +896,21 @@ class EditorPage extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							const details = { 
-								iconEmoji: Util.randomSmile(), 
-								name: Constant.default.name 
+							if (item.key == 'existing') {
+								commonStore.popupOpen('tree', { 
+									data: { 
+										type: I.NavigationType.Create, 
+										rootId: rootId,
+										blockId: block.id,
+									}, 
+								});
+							} else {
+								const details = { 
+									iconEmoji: Util.randomSmile(), 
+									name: Constant.default.name 
+								};
+								DataUtil.pageCreate(e, this.props, rootId, block.id, details, I.BlockPosition.Replace);
 							};
-							DataUtil.pageCreate(e, this.props, rootId, block.id, details, I.BlockPosition.Replace);
 						} else {
 							this.blockCreate(block, I.BlockPosition.Replace, param);
 						};

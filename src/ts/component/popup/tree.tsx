@@ -88,6 +88,15 @@ class PopupTree extends React.Component<Props, State> {
 			);
 		};
 
+		const ItemEmpty = (item: any) => {
+			return (
+				<div className="item empty">
+					<div className="name">{item.name}</div>
+					<Icon className="arrow" />
+				</div>
+			);
+		};
+
 		const ItemPath = (item: any) => {
 			let icon = null;
 			let name = '';
@@ -125,7 +134,7 @@ class PopupTree extends React.Component<Props, State> {
 				</div>
 			);
 		};
-		
+
 		return (
 			<div className={expanded ? 'expanded' : ''}>
 				{expanded ? (
@@ -137,17 +146,29 @@ class PopupTree extends React.Component<Props, State> {
 
 						<div key="sides" className="sides">
 							<div className="items left">
-								{pagesIn.map((item: any, i: number) => {
-									return <Item key={i} {...item} />;
-								})}
+								{!pagesIn.length ? (
+									<ItemEmpty name="No links to this page" />
+								) : (
+									<React.Fragment>
+										{pagesIn.map((item: any, i: number) => {
+											return <Item key={i} {...item} />;
+										})}
+									</React.Fragment>
+								)}
 							</div>
 							<div className="items center">
 								<Selected {...info} />
 							</div>
 							<div className="items right">
-								{pagesOut.map((item: any, i: number) => {
-									return <Item key={i} {...item} />;
-								})}
+								{!pagesOut.length ? (
+									<ItemEmpty name="No links to other pages" />
+								) : (
+									<React.Fragment>
+										{pagesOut.map((item: any, i: number) => {
+											return <Item key={i} {...item} />;
+										})}
+									</React.Fragment>
+								)}
 							</div>
 						</div>
 					</React.Fragment>
@@ -159,7 +180,7 @@ class PopupTree extends React.Component<Props, State> {
 						</form>
 
 						{!pages.length ? (
-							<div key="empty" className="empty">
+							<div id="empty "key="empty" className="empty">
 								<div className="txt">
 									<b>There is no pages named "{filter}"</b>
 									Try creating a new one or search for something else.
@@ -224,7 +245,7 @@ class PopupTree extends React.Component<Props, State> {
 		const head = obj.find('#head');
 		const items = obj.find('.items');
 		const sides = obj.find('.sides');
-		const empty = obj.find('.empty');
+		const empty = obj.find('#empty');
 		const offset = expanded ? 32 : 0;
 		const height = win.height() - head.outerHeight() - 128;
 		
@@ -264,7 +285,7 @@ class PopupTree extends React.Component<Props, State> {
 	onConfirm (e: any, item: I.PageInfo) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { rootId, type, blockIds } = data;
+		const { rootId, type, blockId, blockIds } = data;
 
 		switch (type) {
 			case I.NavigationType.Go:
@@ -275,6 +296,16 @@ class PopupTree extends React.Component<Props, State> {
 
 			case I.NavigationType.Move:
 				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
+				break;
+
+			case I.NavigationType.Create:
+				const param = {
+					type: I.BlockType.Link,
+					content: {
+						targetBlockId: item.id,
+					}
+				};
+				C.BlockCreate(param, rootId, blockId, I.BlockPosition.Replace);
 				break;
 		};
 

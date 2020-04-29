@@ -324,7 +324,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const { rootId, block } = this.props;
 		const { id, content } = block;
-		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
 		const k = e.which;
@@ -430,10 +429,7 @@ class BlockText extends React.Component<Props, {}> {
 			commonStore.popupOpen('tree', { 
 				data: { 
 					type: I.NavigationType.Move, 
-					rootId: root,
-					onConfirm: (blockId: string) => {
-						console.log('Move', blockId);
-					},
+					rootId: rootId,
 				}, 
 			});
 			cmdParsed = true;

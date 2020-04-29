@@ -102,7 +102,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 			sections = [
 				{ children: DataUtil.menuGetBlockText() },
 				{ children: DataUtil.menuGetBlockList() },
-				{ children: DataUtil.menuGetBlockPage() },
+				{ children: DataUtil.menuGetTurnPage() },
 				{ children: DataUtil.menuGetTurnObject() },
 			];
 		} else
