@@ -318,12 +318,11 @@ class PopupTree extends React.Component<Props, State> {
 
 	onClickArrow (e: any, item: I.PageInfo) {
 		e.stopPropagation();
-
 		this.onConfirm(e, item);
 	};
 
 	getPage (page: any): I.PageInfo {
-		let details = StructDecode.decodeStruct(page.details);
+		let details = StructDecode.decodeStruct(page.details || {});
 		details.name = String(details.name || Constant.default.name || '');
 
 		return {
