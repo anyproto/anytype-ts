@@ -132,7 +132,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else {
 			items = [
 				{ id: 'remove', icon: 'remove', name: 'Delete' },
-				//{ id: 'move', icon: 'move', name: 'Move to' },
+				{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 			];
 		};
@@ -197,7 +197,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'move':
 				commonStore.popupOpen('tree', { 
 					data: { 
-						type: 'move', 
+						type: I.NavigationType.Move, 
 						rootId: root,
 						onConfirm: (id: string) => {
 							console.log('Move', id);
@@ -207,20 +207,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'copy':
-				commonStore.popupOpen('tree', { 
-					data: { 
-						type: 'copy', 
-						rootId: root,
-						onConfirm: (id: string) => {
-							C.BlockListDuplicate(rootId, [ blockId ], blockId, I.BlockPosition.Bottom, (message: any) => {
-								if (message.blockIds.length) {
-									focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
-									focus.apply();
-								};
-							});
-						},
-					}, 
-				});
 				break;
 				
 			case 'archive':

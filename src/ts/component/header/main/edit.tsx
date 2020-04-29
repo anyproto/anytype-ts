@@ -73,8 +73,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onHome (e: any) {
-		const { breadcrumbs } = blockStore;
-		
 		this.props.history.push('/main/index');
 	};
 	
@@ -148,7 +146,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		
 		commonStore.popupOpen('tree', { 
 			data: { 
-				type: 'move', 
+				type: I.NavigationType.Go, 
 				rootId: rootId,
 				onConfirm: (id: string) => {
 				},

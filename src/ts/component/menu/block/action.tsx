@@ -170,7 +170,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [
 			{ 
 				children: [
-					//{ id: 'move', icon: 'move', name: 'Move to' },
+					{ id: 'move', icon: 'move', name: 'Move to' },
 					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
 					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
@@ -468,7 +468,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
-		const { root } = blockStore;
 		const { selection } = dataset || {};
 		
 		let block = blockStore.getLeaf(rootId, blockId);
@@ -496,8 +495,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'move':
 				commonStore.popupOpen('tree', { 
 					data: { 
-						type: 'move', 
-						rootId: root,
+						type: I.NavigationType.Move, 
+						rootId: rootId,
+						blockId: blockId,
+						blockIds: blockIds,
 						onConfirm: (id: string) => {
 							console.log('Move', id);
 						},

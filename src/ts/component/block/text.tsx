@@ -429,7 +429,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (value == '/move') {
 			commonStore.popupOpen('tree', { 
 				data: { 
-					type: 'move', 
+					type: I.NavigationType.Move, 
 					rootId: root,
 					onConfirm: (blockId: string) => {
 						console.log('Move', blockId);

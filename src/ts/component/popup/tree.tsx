@@ -1,11 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Title, Smile, Icon, Button, Input, Cover } from 'ts/component';
-import { I, C, Util, StructDecode } from 'ts/lib';
+import { I, C, Util, StructDecode, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup {};
+interface Props extends I.Popup {
+	history: any;
+};
+
 interface State {
 	expanded: boolean;
 	filter: string;
@@ -45,6 +48,24 @@ class PopupTree extends React.Component<Props, State> {
 	
 	render () {
 		const { expanded, filter, info, pagesIn, pagesOut } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { type } = data;
+
+		let placeHolder = '';
+		let confirm = '';
+
+		switch (type) {
+			default:
+				placeHolder = 'Search for a page...';
+				confirm = 'Open';
+				break;
+
+			case I.NavigationType.Move:
+				placeHolder = 'Move to...';
+				confirm = 'Move';
+				break;
+		};
 		
 		let pages = this.state.pages;
 		if (filter) {
@@ -62,7 +83,7 @@ class PopupTree extends React.Component<Props, State> {
 						<div className="name">{name}</div>
 						<div className="descr">{item.snippet}</div>
 					</div>
-					<Icon className="arrow" />
+					<Icon className="arrow" onClick={(e: any) => { this.onClickArrow(e, item); }} />
 				</div>
 			);
 		};
@@ -98,7 +119,7 @@ class PopupTree extends React.Component<Props, State> {
 					<div className="descr">{item.snippet}</div>
 					{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="buttons">
-						<Button text="Open" className="orange" onClick={this.onConfirm} />
+						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
 						<Button text="Cancel" className="grey" onClick={this.onCancel} />
 					</div>
 				</div>
@@ -134,7 +155,7 @@ class PopupTree extends React.Component<Props, State> {
 					<React.Fragment>
 						<form id="head" className="head" onSubmit={this.onSubmit}>
 							<Icon className="search" />
-							<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to search..." onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+							<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 						</form>
 
 						{!pages.length ? (
@@ -225,7 +246,7 @@ class PopupTree extends React.Component<Props, State> {
 		}, force ? 0 : 50);
 	};
 	
-	onClick (e: any, item: any) {
+	onClick (e: any, item: I.PageInfo) {
 		C.NavigationGetPageInfoWithLinks(item.id, (message: any) => {
 			this.setState({ 
 				expanded: true, 
@@ -240,10 +261,34 @@ class PopupTree extends React.Component<Props, State> {
 		this.setState({ expanded: false });
 	};
 	
-	onConfirm (e: any) {
+	onConfirm (e: any, item: I.PageInfo) {
+		const { param, history } = this.props;
+		const { data } = param;
+		const { rootId, type, blockIds } = data;
+
+		switch (type) {
+			case I.NavigationType.Go:
+				crumbs.cut(I.CrumbsType.Page, 0, () => {
+					history.push('/main/edit/' + item.id);
+				});
+				break;
+
+			case I.NavigationType.Move:
+				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
+				break;
+		};
+
+		commonStore.popupClose(this.props.id);
 	};
 	
 	onCancel (e: any) {
+		commonStore.popupClose(this.props.id);
+	};
+
+	onClickArrow (e: any, item: I.PageInfo) {
+		e.stopPropagation();
+
+		this.onConfirm(e, item);
 	};
 
 	getPage (page: any): I.PageInfo {

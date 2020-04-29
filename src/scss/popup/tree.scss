@@ -61,8 +61,8 @@
 				.name { width: 100%; line-height: 24px; height: 24px; @include text-overflow-nw;  }
 				.descr { width: 100%; @include text-small; height: 18px; @include text-overflow; color: #6c6a5f; }
 				.icon.arrow { 
-					width: 6px; height: 10px; position: absolute; right: 12px; top: 50%; margin-top: -5px;
-					background-image: url('~img/arrow/tree.svg'); opacity: 0; 
+					width: 30px; height: 100%; position: absolute; right: 0px; top: 0px; margin-top: 0px;
+					background-image: url('~img/arrow/tree.svg'); background-size: 6px 10px; opacity: 0; 
 				}
 			}
 		}
@@ -76,7 +76,7 @@
 		.items {
 			.item {
 				.info { border: 0px; }
-				.icon.arrow { opacity: 1; right: -16px; }
+				.icon.arrow { opacity: 1; right: -28px; }
 			}
 		}
 		

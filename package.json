@@ -120,6 +120,7 @@
 		"source-map-loader": "^0.2.4",
 		"sprintf-kit": "^2.0.0",
 		"typescript": "^3.8.3",
+		"webpack-bundle-analyzer": "^3.7.0",
 		"xtend": "^4.0.2"
 	},
 	"build": {

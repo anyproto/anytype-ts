@@ -19,3 +19,9 @@ export enum CrumbsType {
 	Page	 = 'page',
 	Popup	 = 'popup',
 };
+
+export enum NavigationType {
+	Go		 = 'go',
+	Move	 = 'move',
+	Create	 = 'create',
+};
