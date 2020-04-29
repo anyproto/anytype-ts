@@ -81,7 +81,7 @@ class Focus {
 		const offset = Constant.size.lastBlock + Constant.size.header;
 		
 		if (y >= top + wh - offset) {
-			$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 150);
+			win.scrollTop(y - wh + offset);
 		};
 	};
 	
