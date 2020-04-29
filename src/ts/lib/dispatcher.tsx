@@ -127,7 +127,8 @@ class Dispatcher {
 					
 				case 'blockSetChildrenIds':
 					root = blockStore.getLeaf(rootId, rootId);
-					if (root && root.hasTitle()) {
+					
+					if (root && root.hasTitle() && (data.childrenIds.indexOf(rootId + '-title') < 0)) {
 						data.childrenIds.unshift(rootId + '-title');
 					};
 

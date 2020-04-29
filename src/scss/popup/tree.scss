@@ -59,7 +59,7 @@
 					border-right: 1px solid rgba(255,255,255,0); transition: $transitionFast;
 				}
 				.name { width: 100%; line-height: 24px; height: 24px; @include text-overflow-nw;  }
-				.descr { width: 100%; @include text-small; height: 18px; @include text-overflow; color: #6c6a5f; }
+				.descr { width: 100%; @include text-small; height: 18px; @include text-overflow-nw; color: #6c6a5f; }
 				.icon.arrow { 
 					width: 30px; height: 100%; position: absolute; right: 0px; top: 0px; margin-top: 0px;
 					background-image: url('~img/arrow/tree.svg'); background-size: 6px 10px; opacity: 0; 
