@@ -19,12 +19,14 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 
 @observer
 class PopupTree extends React.Component<Props, State> {
 	
+	_isMounted: boolean = false;
 	state = {
 		expanded: false,
 		filter: '',
@@ -200,6 +202,8 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.init();
 		this.ref.focus();
 		this.index = new FlexSearch('balance', {});
@@ -223,6 +227,8 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	componentWillUnmount () {
+		this._isMounted = true;
+
 		$(window).unbind('resize.tree');
 		window.clearTimeout(this.timeout);
 	};
@@ -239,20 +245,26 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	resize () {
-		const { expanded } = this.state;
-		const win = $(window);
-		const obj = $('#popupTree');
-		const head = obj.find('#head');
-		const items = obj.find('.items');
-		const sides = obj.find('.sides');
-		const empty = obj.find('#empty');
-		const offset = expanded ? 32 : 0;
-		const height = win.height() - head.outerHeight() - 128;
-		
-		sides.css({ height: height });
-		items.css({ height: height - offset });
-		empty.css({ height: height, lineHeight: height + 'px' });
-		obj.css({ marginLeft: -obj.width() / 2 });
+		if (!this._isMounted) {
+			return;
+		};
+
+		raf(() => {
+			const { expanded } = this.state;
+			const win = $(window);
+			const obj = $('#popupTree');
+			const head = obj.find('#head');
+			const items = obj.find('.items');
+			const sides = obj.find('.sides');
+			const empty = obj.find('#empty');
+			const offset = expanded ? 32 : 0;
+			const height = win.height() - head.outerHeight() - 128;
+
+			sides.css({ height: height });
+			items.css({ height: height - offset });
+			empty.css({ height: height, lineHeight: height + 'px' });
+			obj.css({ marginLeft: -obj.width() / 2, marginTop: -obj.height() / 2 });
+		});
 	};
 	
 	onSubmit (e: any) {

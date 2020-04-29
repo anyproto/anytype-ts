@@ -107,6 +107,7 @@ class CommonStore {
 		});
 		
 		analytics.event(Util.toCamelCase('Popup-' + id));
+		this.menuCloseAll();
 	};
 	
 	@action
