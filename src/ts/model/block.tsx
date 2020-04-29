@@ -50,6 +50,10 @@ class Block implements I.Block {
 	isDraggable (): boolean {
 		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
 	};
+
+	hasTitle (): boolean {
+		return [ I.PageType.Page, I.PageType.Profile ].indexOf(this.pageType) >= 0;
+	};
 	
 	isPage (): boolean { 
 		return this.type == I.BlockType.Page;

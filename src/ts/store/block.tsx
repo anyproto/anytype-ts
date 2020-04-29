@@ -110,11 +110,8 @@ class BlockStore {
 	
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		blocks = blocks.map((it: any) => { return new M.Block(it); });
-		let map = this.getStructure(blocks);
-		
 		this.blockObject.set(rootId, blocks);
-		this.treeObject.set(rootId, map);
+		this.treeObject.set(rootId, this.getStructure(blocks));
 	};
 	
 	@action

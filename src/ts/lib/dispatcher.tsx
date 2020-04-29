@@ -91,11 +91,16 @@ class Dispatcher {
 							it.type = I.BlockType.Page;
 							it.pageType = data.type;
 						};
-						return it;
+						return new M.Block(it);
 					});
+
+					const root = blocks.find((it: I.Block) => { return it.id == rootId });
 					
-					blocks.unshift({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
-					
+					if (root && root.hasTitle()) {
+						root.childrenIds.unshift(rootId + '-title');
+						blocks.unshift(new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} }));
+					};
+
 					blockStore.blocksSet(rootId, blocks);
 					blockStore.detailsSet(rootId, data.details);
 					break;
@@ -377,14 +382,6 @@ class Dispatcher {
 					console.error('[Dispatcher.request]', type, 'code:', message.error.code, 'description:', message.error.description);
 				};
 				
-				if (message.event) {
-					this.event(message.event);
-				};
-				
-				if (callBack) {
-					callBack(message);
-				};
-				
 				if (debug) {
 					t2 = performance.now();
 					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3));
@@ -393,6 +390,14 @@ class Dispatcher {
 						'Render time:', Math.ceil(t2 - t1) + 'ms', 
 						'Total time:', Math.ceil(t2 - t0) + 'ms'
 					);
+				};
+
+				if (message.event) {
+					this.event(message.event);
+				};
+
+				if (callBack) {
+					callBack(message);
 				};
 			});
 		} catch (e) {

@@ -53,6 +53,7 @@ export interface Block {
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
 	isDraggable?(): boolean;
+	hasTitle?(): boolean;
 	isPage?(): boolean;
 	isPageProfile?(): boolean;
 	isLayout?(): boolean;

@@ -69,7 +69,6 @@ class EditorPage extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
 		const details = blockStore.getDetail(rootId, rootId);
-		const title = blockStore.getLeaf(rootId, rootId + '-title');
 		
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
@@ -114,14 +113,6 @@ class EditorPage extends React.Component<Props, State> {
 							/>	
 						) : ''}
 						
-						<Block 
-							{...this.props} key={title.id} block={title}
-							onKeyDown={this.onKeyDownBlock} 
-							onMenuAdd={this.onMenuAdd}
-							onPaste={this.onPaste}
-							className="root" 
-						/>
-					
 						{list.map((block: I.Block, i: number) => {
 							return (
 								<Block 
@@ -311,7 +302,6 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		const root = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetail(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
@@ -393,9 +383,8 @@ class EditorPage extends React.Component<Props, State> {
 	
 	onKeyDownEditor (e: any) {
 		const { dataset, rootId } = this.props;
-		const { root } = blockStore;
 		const { selection } = dataset || {};
-		const { focused, range } = focus;
+		const { focused } = focus;
 		const k = e.which;
 		
 		if (keyboard.isFocused) {
@@ -403,7 +392,6 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);
-		const node = $(ReactDOM.findDOMNode(this));
 		const ids = selection.get();
 		const map = blockStore.getMap(rootId);
 		
@@ -491,9 +479,8 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
-		const { type, content } = block;
 
-		let length = String(text || '').length;
+		let length = block.getLength();
 		let k = e.which;
 		
 		this.uiHide();
@@ -661,11 +648,11 @@ class EditorPage extends React.Component<Props, State> {
 				e.preventDefault();
 				
 				if (e.ctrlKey || e.metaKey) {
-					const root = map[rootId];
-					next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isText(); });
+					next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
+					console.log(next);
 					
 					if (next) {
-						const l = String(next.content.text || '').length;
+						const l = next.getLength();
 						focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
 						focus.apply();
 					};

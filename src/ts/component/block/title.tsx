@@ -106,9 +106,19 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const k = e.which;
-		const { rootId } = this.props;
+		if (!this._isMounted) {
+			return;
+		};
 		
+		const node = $(ReactDOM.findDOMNode(this));
+		const k = e.which;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const value = this.getValue();
+		const length = value.length;
+		const range = this.getRange();
+		
+		// Enter
 		if (k == Key.enter) {
 			e.preventDefault();
 			
@@ -126,6 +136,46 @@ class BlockTitle extends React.Component<Props, {}> {
 					focus.apply();
 				});
 			});
+		};
+
+		// Cursor keys
+		if (k == Key.down) {
+			if (commonStore.menuIsOpen()) {
+				return;
+			};
+
+			let canFocus = range.to >= length;
+			let next: any = null;
+
+			if (canFocus) {
+				e.preventDefault();
+
+				if (e.ctrlKey || e.metaKey) {
+					next = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.isFocusable(); });
+					
+					if (next) {
+						const l = next.getLength();
+						focus.set(next.id, { from: l, to: l });
+						focus.apply();
+					};
+				} else {
+					next = blockStore.getNextBlock(rootId, id, 1, (it: I.Block) => { return it.isFocusable(); });
+					
+					if (next) {
+						const parent = blockStore.getLeaf(rootId, next.parentId);
+						const l = next.getLength();
+						
+						// Auto-open toggle blocks 
+						if (parent && parent.isToggle()) {
+							node.find('#block-' + parent.id).addClass('isToggled');
+						};
+						
+						focus.set(next.id, { from: l, to: l });
+						focus.apply();
+					};
+				};
+			};
+			
 		};
 		
 		if (!keyboard.isSpecial(k)) {
