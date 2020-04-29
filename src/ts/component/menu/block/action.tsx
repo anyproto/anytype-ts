@@ -391,22 +391,20 @@ class MenuBlockAction extends React.Component<Props, State> {
 				dataset: dataset,
 			},
 		};
-		
+
 		this.timeout = window.setTimeout(() => {
 			switch (item.id) {
 				case 'turn':
 					menuParam.data.onSelect = (item: any) => {
 						if (item.type == I.BlockType.Text) {
 							C.BlockListSetTextStyle(rootId, blockIds, item.key, (message: any) => {
-								focus.set(message.blockId, { from: length, to: length });
-								focus.apply();
+								this.setFocus(blockIds[0]);
 							});
 						};
 						
 						if (item.type == I.BlockType.Div) {
 							C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
-								focus.set(message.blockId, { from: 0, to: 0 });
-								focus.apply();
+								this.setFocus(blockIds[0]);
 							});
 						};
 						
@@ -425,8 +423,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					menuParam.data.value = color;
 					menuParam.data.onChange = (color: string) => {
 						C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
-							focus.set(message.blockId, { from: length, to: length });
-							focus.apply();
+							this.setFocus(blockIds[0]);
 						});
 						commonStore.menuClose(this.props.id);
 					};
@@ -439,8 +436,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					menuParam.data.value = bgColor;
 					menuParam.data.onChange = (color: string) => {
 						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
-							focus.set(message.blockId, { from: length, to: length });
-							focus.apply();
+							this.setFocus(blockIds[0]);
 						});
 						commonStore.menuClose(this.props.id);
 					};
@@ -450,7 +446,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				case 'align':
 					menuParam.data.onChange = (align: I.BlockAlign) => {
-						C.BlockListSetAlign(rootId, blockIds, align);
+						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
+							this.setFocus(blockIds[0]);
+						});
 						commonStore.menuClose(this.props.id);
 					};
 					
@@ -511,14 +509,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				
 				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {
 					if (message.blockIds && message.blockIds.length) {
-						const lastId = message.blockIds[message.blockIds.length - 1];
-						const last = blockStore.getLeaf(rootId, lastId);
-						
-						if (last) {
-							const length = String(last.content.text || '').length;
-							focus.set(last.id, { from: length, to: length });
-							focus.apply();
-						};
+						this.setFocus(message.blockIds[message.blockIds.length - 1]);
 					};
 				});
 				break;
@@ -529,11 +520,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				});
 				
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
-					if (next) {
-						let l = String(next.content.text || '').length;
-						focus.set(next.id, { from: l, to: l });
-						focus.apply();				
-					};
+					this.setFocus(next.id);
 				});
 				break;
 				
@@ -561,7 +548,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 					if (item.type == I.BlockType.Div) {
 						C.BlockListSetDivStyle(rootId, blockIds, item.key);
 					} else {
-						C.BlockListSetTextStyle(rootId, blockIds, item.key);
+						C.BlockListSetTextStyle(rootId, blockIds, item.key, () => {
+							this.setFocus(blockIds[0]);
+						});
 					};
 				};
 			
@@ -581,6 +570,25 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		C.BlockListConvertChildrenToPages(rootId, ids);
+	};
+
+	setFocus (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+
+		if (!id) {
+			return;
+		};
+
+		const block = blockStore.getLeaf(rootId, id);
+		if (!block) {
+			return;
+		};
+
+		const length = block.getLength();
+		focus.set(id, { from: length, to: length });
+		focus.apply();
 	};
 
 };
