@@ -125,7 +125,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			];
 			
 			if (details.isArchived) {
-				//items.push({ id: 'remove', icon: 'remove', name: 'Delete' });
+				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
 			} else {
 				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });
 			};
@@ -220,6 +220,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'remove':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+					if (block.type == I.BlockType.Page) {
+						history.push('/main/index');
+					};
+				});
+				break;
+
+			case 'removePage':
+				C.BlockListDeletePage([ blockId ], (message: any) => {
 					if (block.type == I.BlockType.Page) {
 						history.push('/main/index');
 					};

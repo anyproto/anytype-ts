@@ -142,7 +142,7 @@ class PopupArchive extends React.Component<Props, State> {
 	
 	onReturn () {
 		const { archive } = blockStore;
-		C.BlockListSetPageIsArchived(archive, this.ids, false, () => {
+		C.BlockListSetPageIsArchived(archive, this.ids, false, (message: any) => {
 			this.ids = [];
 			this.checkButtons();
 		});
