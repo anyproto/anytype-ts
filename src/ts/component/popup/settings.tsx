@@ -216,7 +216,11 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						{head}
+						<div className="head">
+							<div className="element" onClick={() => { this.onPage('index'); }}>
+								Cancel
+							</div>
+						</div>
 						
 						<Title text="Pin code" />
 						<Label text="The pin code will protect your secret phrase. As we do not store your secret phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or secret phrase. So, please, remember your pin code." />
@@ -238,7 +242,11 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						{head}
+						<div className="head">
+							<div className="element" onClick={() => { this.onPage('index'); }}>
+								Cancel
+							</div>
+						</div>
 						
 						<Title text="Pin code" />
 						<Label text="To continue, first verify that it’s you. Enter current pin code" />
