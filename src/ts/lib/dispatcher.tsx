@@ -134,8 +134,6 @@ class Dispatcher {
 						break;
 					};
 
-					console.log(block);
-					
 					if (block.hasTitle() && (data.childrenIds.indexOf(rootId + '-title') < 0)) {
 						data.childrenIds.unshift(rootId + '-title');
 					};
