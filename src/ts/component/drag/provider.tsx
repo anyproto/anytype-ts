@@ -65,6 +65,8 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 		let targetId = String(data.id || '');
 
+		console.log(this.hovered, this.canDrop, this.position);
+
 		if (e.dataTransfer.files && e.dataTransfer.files.length) {
 			let paths: string[] = [];
 			for (let file of e.dataTransfer.files) {

@@ -34,7 +34,6 @@
 		.download { opacity: 1; }
 	}
 	
-	.block.blockFile > .wrapContent > .selectable > .dropTarget { @include text-overflow-nw;  }
-	.block.blockFile > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockFile > .wrapContent > .selectable > .dropTarget { padding: 6px 0px; @include text-overflow-nw;  }
 	.block.blockFile > .wrapContent > .selectable.isSelected .download { display: none; }
 }

@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockTitle { padding: 12px 0px 24px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
+	.block.blockTitle { padding: 12px 0px 22px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
 	.block.blockTitle {
 		.placeHolder { 
 			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
@@ -9,6 +9,6 @@
 		}
 		.value { -webkit-user-modify: read-write-plaintext-only; }
 	}
-	.block.blockTitle > .wrapContent > .selectable > .dropTarget { padding: 3px 0px 2px 0px; }
+	.block.blockTitle > .wrapContent > .selectable > .dropTarget { padding: 4px 0px 2px 0px; }
 	.block.blockTitle > .wrapMenu { visibility: hidden; }
 }

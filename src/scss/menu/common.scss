@@ -34,9 +34,9 @@
 	.menu.vertical {
 		.content { overflow-y: auto; max-height: 450px; }
 		
-		.filter { border-bottom: 1px solid #eae9e0; padding: 4px 16px 12px 16px; }
+		.filter { border-bottom: 1px solid #eae9e0; padding: 3px 16px 10px 16px; }
 		.filter {
-			.input { padding: 0px; height: 22px; }
+			.input { padding: 0px; height: 22px; vertical-align: top; }
 		}
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey; }
@@ -98,7 +98,7 @@
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { border: 0px; padding-bottom: 0px; }
 		.section > .name { 
-			padding: 4px 16px; margin-bottom: 2px; @include text-very-small; 
+			padding: 3px 16px; margin-bottom: 2px; @include text-very-small; 
 			display: block; text-transform: uppercase; 
 		}
 	}

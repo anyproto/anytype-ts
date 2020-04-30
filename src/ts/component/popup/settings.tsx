@@ -217,7 +217,7 @@ class PopupSettings extends React.Component<Props, State> {
 				content = (
 					<div>
 						<div className="head">
-							<div className="element" onClick={() => { this.onPage('index'); }}>
+							<div className="element" onClick={() => { this.onPage('pinIndex'); }}>
 								Cancel
 							</div>
 						</div>
@@ -243,7 +243,7 @@ class PopupSettings extends React.Component<Props, State> {
 				content = (
 					<div>
 						<div className="head">
-							<div className="element" onClick={() => { this.onPage('index'); }}>
+							<div className="element" onClick={() => { this.onPage('pinIndex'); }}>
 								Cancel
 							</div>
 						</div>

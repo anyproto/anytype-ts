@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	line-height: 20px; padding: 12px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorDarkGrey;
+	line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorDarkGrey;
 	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden; font-size: 14px;
 }
 .inputWithFile {

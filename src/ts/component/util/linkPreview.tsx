@@ -20,6 +20,9 @@ const $ = require('jquery');
 const raf = require('raf');
 const { ipcRenderer } = window.require('electron');
 
+const OFFSET_Y = 8;
+const BORDER = 12;
+
 @observer
 class LinkPreview extends React.Component<Props, {}> {
 	
@@ -178,11 +181,9 @@ class LinkPreview extends React.Component<Props, {}> {
 		const nh = element.outerHeight();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();
-		const oy = 4;
-		const border = 12;
 
 		let css: any = { opacity: 0, left: 0, top: 0 };
-		let pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + oy };
+		let pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y };
 		let typeY = I.MenuDirection.Bottom;		
 		let ps = (1 - nw / ow) / 2 * 100;
 		let pe = ps + nw / ow * 100;
@@ -207,22 +208,22 @@ class LinkPreview extends React.Component<Props, {}> {
 		};
 		
 		if (typeY == I.MenuDirection.Top) {
-			css.top = offset.top - oh - oy;
+			css.top = offset.top - oh - OFFSET_Y;
 			obj.addClass('top');
 				
-			poly.css({ bottom: -nh - oy, clipPath: cpTop });
+			poly.css({ bottom: -nh - OFFSET_Y, clipPath: cpTop });
 		};
 			
 		if (typeY == I.MenuDirection.Bottom) {
-			css.top = offset.top + nh + oy;
+			css.top = offset.top + nh + OFFSET_Y;
 			obj.addClass('bottom');
 				
-			poly.css({ top: -nh - oy, clipPath: cpBot });
+			poly.css({ top: -nh - OFFSET_Y, clipPath: cpBot });
 		};
 			
 		css.left = offset.left - ow / 2 + nw / 2;
-		css.left = Math.max(border, css.left);
-		css.left = Math.min(ww - ow - border, css.left);
+		css.left = Math.max(BORDER, css.left);
+		css.left = Math.min(ww - ow - BORDER, css.left);
 		
 		obj.show().css(css);
 		

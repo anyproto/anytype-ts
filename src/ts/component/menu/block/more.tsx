@@ -15,7 +15,7 @@ const { ipcRenderer } = window.require('electron');
 @observer
 class MenuBlockMore extends React.Component<Props, {}> {
 	
-	n: number = 0;
+	n: number = -1;
 	
 	constructor (props: any) {
 		super(props);

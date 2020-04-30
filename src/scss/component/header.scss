@@ -2,24 +2,8 @@
 
 .header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 20; transition: $transitionFast; }
 .header {
-	.menu { position: absolute; top: 8px; right: 16px; z-index: 1; color: #fff; }
-	.menu {
-		.item {
-			display: inline-block; vertical-align: middle; margin-right: 16px; cursor: pointer; transition: $transitionFast;
-			font-weight: bold;
-		}
-		.item:hover { color: $colorBlack; }
-		.item:last-child { margin-right: 0px; }
-
-		.item {
-			.icon { margin-right: 4px; }
-			.name { display: inline-block; vertical-align: top; line-height: 20px; }
-		}
-		.item:hover {
-		}
-	}
-	
-	.icon { width: 20px; height: 20px; cursor: pointer; margin-right: 8px; vertical-align: top; }
+	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; margin-right: 12px; }
+	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
 		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 14px; background: url('~img/logo.svg') no-repeat;
@@ -28,12 +12,15 @@
 
 	.path { white-space: nowrap; }
 	.path {
-		.item { display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 4px; cursor: pointer; transition: color 0.2s ease-in-out; }
+		.item { 
+			display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 6px; cursor: pointer; 
+			transition: color 0.2s ease-in-out; 
+		}
 		.item {
 			.icon { margin-right: 4px; }
 			.icon.arrow { margin: 0px; width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); vertical-align: middle; }
 			.smile { margin-right: 4px; }
-			.name { display: inline-block; vertical-align: top; margin-right: 8px; line-height: 20px; }
+			.name { display: inline-block; vertical-align: top; margin-right: 6px; line-height: 20px; }
 		}
 		.item:last-child { margin: 0px; }
 		.item:last-child {
@@ -54,11 +41,13 @@
 	.icon.back:hover, .icon.forward:hover { background-image: url('~img/icon/back1.svg'); }
 }
 
-.headerMainEdit { background: #fff; padding: 10px 0px 10px 82px; height: 40px; line-height: 20px; }
+.headerMainEdit { background: #fff; padding: 8px 10px 8px 82px; height: 36px; line-height: 20px; }
 .headerMainEdit {
-	.menu { top: 8px; right: 12px; }
+	.menu { position: absolute; top: 8px; right: 10px; }
 	.menu {
 		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer; }
 		.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+
+		.icon:last-child { margin: 0px; }
 	}
 }
