@@ -1,6 +1,4 @@
 [
 	{ "path": "/" },
-	{ "path": "/:page/:action/:id?" },
-	{ "path": "/:page/:action/:id/link/:linkId" },
-	{ "path": "/:page/:action/:id/link/:linkPage/:linkId" }
+	{ "path": "/:page/:action/:id?" }
 ]

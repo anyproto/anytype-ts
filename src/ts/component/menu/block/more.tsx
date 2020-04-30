@@ -149,7 +149,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, linkPage, linkId, rootId, onSelect, match } = data;
+		const { blockId, blockIds, rootId, onSelect } = data;
 		const { breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
@@ -207,11 +207,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'archive':
-				C.BlockSetPageIsArchived(rootId, blockId, true, (message: any) => {
+				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
 					
 					if (prev) {
-						history.push('/main/edit/' + prev.content.targetBlockId + '/link/' + prev.id);
+						history.push('/main/edit/' + prev.content.targetBlockId);
 					} else {
 						history.push('/main/index');
 					};

@@ -5,9 +5,5 @@
 	.popup.popupPreview {
 		.inner { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; }
 		#content { border-radius: 4px; display: block; }
-		
-		.loaderWrapper { 
-			position: absolute; z-index: 1; left: 0px; top: 0px; width: 100%; height: 100%; background: #fff; border-radius: 8px; 
-		}
 	}
 }

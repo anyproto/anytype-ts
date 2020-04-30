@@ -25,11 +25,6 @@ class PopupArchive extends React.Component<Props, State> {
 
 	render () {
 		const { loading } = this.state;
-		
-		if (loading) {
-			return <Loader />;
-		};
-		
 		const { archive } = blockStore;
 		const element = blockStore.getLeaf(archive, archive);
 		
@@ -48,7 +43,7 @@ class PopupArchive extends React.Component<Props, State> {
 			const details = blockStore.getDetail(archive, content.targetBlockId);
 			
 			return (
-				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onSelect(item); }}>
+				<div id={'item-' + content.targetBlockId} className="item" onClick={(e: any) => { this.onSelect(item); }}>
 					<Icon className="checkbox" />
 					<Smile icon={details.iconEmoji} className="c24" size={20} />
 					<div className="name">{details.name}</div>
@@ -58,6 +53,7 @@ class PopupArchive extends React.Component<Props, State> {
 		
 		return (
 			<div>
+				{loading ? <Loader /> : ''}
 				<div className="head">
 					<Title text="Archive" />
 					<div className="sides">
@@ -101,12 +97,13 @@ class PopupArchive extends React.Component<Props, State> {
 	};
 	
 	onSelect (item: any) {
+		const id = item.content.targetBlockId;
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#item-' + item.id);
-		const idx = this.ids.indexOf(item.id);
+		const el = node.find('#item-' + id);
+		const idx = this.ids.indexOf(id);
 		
 		if (idx < 0) {
-			this.ids.push(item.id);
+			this.ids.push(id);
 			el.addClass('active');
 		} else {
 			this.ids.splice(idx, 1);
@@ -114,19 +111,18 @@ class PopupArchive extends React.Component<Props, State> {
 		};
 		
 		this.ids = [ ...new Set(this.ids) ];
-
 		this.checkButtons();
 	};
 	
 	onSelectAll () {
 		const { archive } = blockStore;
-		const childrenIds = blockStore.getChildrenIds(archive, archive);
+		const children = blockStore.getChildren(archive, archive);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (this.ids.length == childrenIds.length) {
+		if (this.ids.length == children.length) {
 			this.ids = [];
 		} else {
-			this.ids = childrenIds;
+			this.ids = children.map((it: I.Block) => { return it.content.targetBlockId; });
 		};
 		
 		node.find('.item.active').removeClass('active');
@@ -145,17 +141,20 @@ class PopupArchive extends React.Component<Props, State> {
 	};
 	
 	onReturn () {
-		/*
 		const { archive } = blockStore;
-		C.BlockSetPageIsArchived(archive, item.content.targetBlockId, false, (message: any) => {});
-		*/
+		C.BlockListSetPageIsArchived(archive, this.ids, false, () => {
+			this.ids = [];
+			this.checkButtons();
+		});
 	};
 	
 	onDelete () {
-		/*
-		const { archive } = blockStore;
-		C.BlockUnlink(archive, [ item.id ], (message: any) => {});
-		*/
+		this.setState({ loading: true });
+		C.BlockListDeletePage(this.ids, (message: any) => {
+			this.ids = [];
+			this.checkButtons();
+			this.setState({ loading: false });
+		});
 	};
 	
 };

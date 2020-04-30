@@ -53,11 +53,11 @@ class BlockLink extends React.Component<Props, {}> {
 	
 	onClick (e: any) {
 		const { rootId, block } = this.props;
-		const { id, content } = block;
+		const { content } = block;
 		const { targetBlockId } = content;
 		
 		if (targetBlockId != rootId) {
-			DataUtil.pageOpen(e, this.props, id, targetBlockId);
+			DataUtil.pageOpen(e, this.props, targetBlockId);
 		};
 	};
 	

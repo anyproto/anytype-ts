@@ -142,12 +142,11 @@ class DataUtil {
 		});
 	};
 	
-	pageOpen (e: any, props: any, linkId: string, targetId: string) {
+	pageOpen (e: any, props: any, targetId: string) {
 		const { history } = props;
 		const param = {
 			data: { 
 				id: targetId,
-				link: linkId, 
 			}
 		};
 
@@ -158,11 +157,11 @@ class DataUtil {
 		if (e && (e.shiftKey || (e.ctrlKey || e.metaKey))) { 
 			commonStore.popupOpen('editorPage', param);
 		} else {
-			history.push('/main/edit/' + targetId + '/link/' + linkId);
+			history.push('/main/edit/' + targetId);
 		};
 		*/
 		
-		history.push('/main/edit/' + targetId + '/link/' + linkId);
+		history.push('/main/edit/' + targetId);
 	};
 	
 	pageCreate (e: any, props: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
@@ -179,7 +178,7 @@ class DataUtil {
 				return;
 			};
 			
-			this.pageOpen(e, props, message.blockId, message.targetId);
+			this.pageOpen(e, props, message.targetId);
 				
 			if (callBack) {
 				callBack(message);
@@ -468,16 +467,6 @@ class DataUtil {
 		});
 		
 		return sections;
-	};
-	
-	linkId (match: any) {
-		if (match.params.link) {
-			return match.params.link;
-		};
-		if (match.params.linkId) {
-			return match.params.linkId;
-		};
-		return '';
 	};
 	
 };

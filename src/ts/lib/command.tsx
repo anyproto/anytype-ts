@@ -112,6 +112,13 @@ const NavigationGetPageInfoWithLinks = (pageId: string, callBack?: (message: any
 	dispatcher.request('navigationGetPageInfoWithLinks', request, callBack);
 };
 
+const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => void) => {
+	const request = {
+		blockId: contextId,
+	};
+	dispatcher.request('blockGetPublicWebURL', request, callBack);
+};
+
 const BlockOpen = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
 	const request = {
 		blockId: blockId,
@@ -176,15 +183,6 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 		details: Struct.encodeStruct(details),
 	};
 	dispatcher.request('blockCreatePage', request, callBack);
-};
-
-const BlockSetPageIsArchived = (contextId: string, blockId: string, isArchived: boolean, callBack?: (message: any) => void) => {
-	const request = {
-		contextId: contextId,
-		blockId: blockId,
-		isArchived: isArchived,
-	};
-	dispatcher.request('blockSetPageIsArchived', request, callBack);
 };
 
 const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
@@ -449,11 +447,20 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	dispatcher.request('blockListSetAlign', request, callBack);
 };
 
-const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => void) => {
+const BlockListSetPageIsArchived = (contextId: string, blockIds: string[], isArchived: boolean, callBack?: (message: any) => void) => {
 	const request = {
-		blockId: contextId,
+		contextId: contextId,
+		blockIds: blockIds,
+		isArchived: isArchived,
 	};
-	dispatcher.request('blockGetPublicWebURL', request, callBack);
+	dispatcher.request('blockListSetPageIsArchived', request, callBack);
+};
+
+const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => void) => {
+	const request = {
+		blockIds: blockIds,
+	};
+	dispatcher.request('blockListDeletePage', request, callBack);
 };
 
 export {
@@ -479,6 +486,7 @@ export {
 	NavigationListPages,
 	NavigationGetPageInfoWithLinks,
 	
+	BlockGetPublicWebURL,
 	BlockOpen,
 	BlockOpenBreadcrumbs,
 	BlockSetBreadcrumbs,
@@ -487,7 +495,6 @@ export {
 	BlockRedo,
 	BlockCreate,
 	BlockCreatePage,
-	BlockSetPageIsArchived,
 	BlockUnlink,
 	BlockMerge,
 	BlockSplit,
@@ -515,6 +522,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	
-	BlockGetPublicWebURL,
+	BlockListSetPageIsArchived,
+	BlockListDeletePage,
 };

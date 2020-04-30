@@ -109,7 +109,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				options: options,
 				onSelect: (event: any, item: any) => {
 					crumbs.cut(I.CrumbsType.Page, item.index);
-					DataUtil.pageOpen(e, this.props, item.id, item.targetId);
+					DataUtil.pageOpen(e, this.props, item.targetId);
 				},
 			}
 		});
@@ -125,7 +125,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.persist();
 		
 		crumbs.cut(I.CrumbsType.Page, index);
-		DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
+		DataUtil.pageOpen(e, this.props, block.content.targetBlockId);
 	};
 	
 	onBack (e: any) {

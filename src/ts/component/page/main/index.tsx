@@ -116,7 +116,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			commonStore.popupOpen('archive', {});
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
-				DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
+				DataUtil.pageOpen(e, this.props, block.content.targetBlockId);
 			});
 		};
 	};
