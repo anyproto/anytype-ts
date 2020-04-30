@@ -341,8 +341,8 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onDragOver (e: any) {
-		if (!this._isMounted) {
-			return false;
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
@@ -350,8 +350,8 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted) {
-			return false;
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));

@@ -146,17 +146,17 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onDragOver (e: any) {
-		if (!this._isMounted) {
-			return false;
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
 		};
-		
+
 		const node = $(ReactDOM.findDOMNode(this));
 		node.addClass('isDraggingOver');
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted) {
-			return false;
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
