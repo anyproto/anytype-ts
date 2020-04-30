@@ -212,7 +212,7 @@ class Block extends React.Component<Props, {}> {
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
-					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
+					<div id={'button-block-menu-' + id} className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 				</div>
 				
 				<div className={cd.join(' ')}>
@@ -357,14 +357,14 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const { selection } = dataset || {};
-		
+
 		commonStore.menuOpen('blockAction', { 
-			element: '#block-' + id,
+			element: '#button-block-menu-' + id,
 			type: I.MenuType.Vertical,
-			offsetX: Constant.size.blockMenu,
+			offsetX: 20,
 			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: id,
 				blockIds: DataUtil.selectionGet(this.props),

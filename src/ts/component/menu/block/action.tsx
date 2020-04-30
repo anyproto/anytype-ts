@@ -101,23 +101,29 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { id } = this.props;
+		const { id, param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
+		const menu = $('#' + Util.toCamelCase('menu-' + id));
 		
 		this._isMounted = true;
 		this.rebind();
 		this.setActive();
 		this.refFilter.focus();
 		
-		const menu = $('#' + Util.toCamelCase('menu-' + id));
 		menu.unbind('mouseleave').on('mouseleave', () => {
 			window.clearTimeout(this.timeout);
 		});
+
+		$('#block-' + blockId).addClass('showMenu');
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 		this.unbind();
+
+		$('.showMenu').removeClass('showMenu');
 	};
 	
 	onFilterFocus (e: any) {

@@ -576,17 +576,19 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		const el = $('#block-' + id);
 		const offset = node.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
+		const pt = parseInt(el.css('paddingTop'));
 		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
-		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
-		
+		const y = rect.y - (offset.top - $(window).scrollTop()) - 4 + pt;
+
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
 			commonStore.menuClose('blockAdd');
 			commonStore.menuOpen('blockContext', {
-				element: '#block-' + id,
+				element: el,
 				type: I.MenuType.Horizontal,
 				offsetX: x,
 				offsetY: -y,
