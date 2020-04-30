@@ -73,7 +73,6 @@ class Dispatcher {
 			let type = message.value;
 			let data = message[type] || {};
 			let param: any = {};
-			let root: I.Block = null;
 			
 			if (data.error && data.error.code) {
 				continue;
@@ -95,9 +94,13 @@ class Dispatcher {
 						return new M.Block(it);
 					});
 
-					root = blocks.find((it: I.Block) => { return it.id == rootId });
-					if (root && root.hasTitle()) {
-						root.childrenIds.unshift(rootId + '-title');
+					block = blocks.find((it: I.Block) => { return it.id == rootId });
+					if (!block) {
+						break;
+					};
+
+					if (block.hasTitle()) {
+						block.childrenIds.unshift(rootId + '-title');
 						blocks.unshift(new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} }));
 					};
 
@@ -126,9 +129,14 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetChildrenIds':
-					root = blockStore.getLeaf(rootId, rootId);
+					block = blockStore.getLeaf(rootId, data.id);
+					if (!block) {
+						break;
+					};
+
+					console.log(block);
 					
-					if (root && root.hasTitle() && (data.childrenIds.indexOf(rootId + '-title') < 0)) {
+					if (block.hasTitle() && (data.childrenIds.indexOf(rootId + '-title') < 0)) {
 						data.childrenIds.unshift(rootId + '-title');
 					};
 
