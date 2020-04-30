@@ -303,12 +303,13 @@ const BlockFileCreateAndUpload = (contextId: string, targetId: string, position:
 	dispatcher.request('blockFileCreateAndUpload', request, callBack);	
 };
 
-const BlockCopy = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
+const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = Util.objectCopy(blocks);
 	
 	const request: any = {
 		contextId: contextId,
 		blocks: blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }),
+		selectedTextRange: range,
 	};
 	dispatcher.request('blockCopy', request, callBack);	
 };

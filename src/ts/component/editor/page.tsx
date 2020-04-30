@@ -929,6 +929,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		ids = ids.concat(this.getLayoutIds(ids));
 		
+		const cmd = cut ? 'BlockCut' : 'BlockCopy';
 		const focusBlock = blockStore.getLeaf(rootId, focused);
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 		
@@ -960,7 +961,11 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const cb = (message: any) => {
 			data.html = message.html;
-			Util.clipboardCopy(data);
+			Util.clipboardCopy({
+				text: message.textSlot,
+				html: message.htmlSlot,
+				anytype: message.anySlot,
+			});
 			
 			if (cut) {
 				commonStore.menuClose('blockContext');
@@ -971,11 +976,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		Util.clipboardCopy(data);
 		
-		if (cut) {
-			C.BlockCut(rootId, blocks, range, cb);
-		} else {
-			C.BlockCopy(rootId, blocks, cb);
-		};
+		C[cmd](rootId, blocks, range, cb);
 	};
 	
 	onPrint (e: any) {
