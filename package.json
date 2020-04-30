@@ -31,7 +31,7 @@
 	},
 	"homepage": "https://github.com/anytypeio/js-anytype#readme",
 	"devDependencies": {
-		"@babel/core": "^7.9.0",
+		"@babel/core": "^7.9.6",
 		"@types/history": "^4.7.5",
 		"@types/i18n": "^0.8.6",
 		"@types/is": "0.0.21",
@@ -108,7 +108,7 @@
 		"react": "^16.13.1",
 		"react-addons-shallow-compare": "^15.6.2",
 		"react-dom": "^16.13.1",
-		"react-hot-loader": "^4.12.20",
+		"react-hot-loader": "^4.12.21",
 		"react-router-dom": "^5.1.2",
 		"react-sortable-hoc": "^1.11.0",
 		"read-chunk": "^3.2.0",

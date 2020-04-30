@@ -219,7 +219,7 @@ class DragProvider extends React.Component<Props, {}> {
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
 				$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
-			}, 50);
+			}, 10);
 		};
 	};
 
