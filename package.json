@@ -205,7 +205,8 @@
 			"node_modules/write-file-atomic",
 			"node_modules/imurmurhash",
 			"node_modules/signal-exit",
-			"node_modules/lockfile"
+			"node_modules/lockfile",
+			"node_modules/at-least-node"
 		],
 		"dmg": {
 			"sign": false

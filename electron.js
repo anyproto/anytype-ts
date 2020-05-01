@@ -184,6 +184,13 @@ function createWindow () {
 	
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 	
+	storage.get('config', function (error, data) {
+		data = data || {};
+		console.log('Config: ', error, data);
+	  
+		channel = String(data.channel || 'latest');
+		autoUpdaterInit();
+	});
 };
 
 function autoUpdaterInit () {
@@ -229,20 +236,12 @@ function autoUpdaterInit () {
 			autoUpdater.quitAndInstall();
 		}, 5000);
 	});
+	
 };
 
 function setStatus (text) {
 	log.info(text);
 	win.webContents.send('message', text, app.getVersion());
 };
-
-storage.get('config', function (error, data) {
-	if (error) throw error;
-
-	console.log('Config: ', data);
-  
-	channel = String(data.channel || 'latest');
-	autoUpdaterInit();
-});
 
 app.on('ready', createWindow);
