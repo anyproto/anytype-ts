@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockTitle { padding: 12px 0px 22px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
+	.block.blockTitle { padding: 10px 0px 22px 0px; font-size: 36px; line-height: 40px; letter-spacing: -0.72px; font-weight: 600; }
 	.block.blockTitle {
 		.placeHolder { 
 			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
