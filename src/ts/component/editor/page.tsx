@@ -884,7 +884,7 @@ class EditorPage extends React.Component<Props, State> {
 						
 						if (item.type == I.BlockType.Page) {
 							if (item.key == 'existing') {
-								commonStore.popupOpen('tree', { 
+								commonStore.popupOpen('navigation', { 
 									data: { 
 										type: I.NavigationType.Create, 
 										rootId: rootId,

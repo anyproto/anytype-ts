@@ -55,9 +55,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		return (
 			<div className="header headerMainEdit">
 				<div className="path">
-					<Icon className="back" onClick={this.onBack} />
-					<Icon className="forward" onClick={this.onForward} />
-					<Icon className="nav" onClick={this.onNavigation} />
+					<Icon className="back" tooltip="Back" onClick={this.onBack} />
+					<Icon className="forward" tooltip="Forward" onClick={this.onForward} />
+					<Icon className="nav" tooltip="Navigation" onClick={this.onNavigation} />
 					<PathItemHome />
 					{children.length > LIMIT ? <PathItemSkip /> : ''}
 					{slice.map((item: any, i: any) => (
@@ -66,7 +66,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 				
 				<div className="menu">
-					<Icon id={'button-' + rootId + '-more'} className="more" onClick={this.onMore} />
+					<Icon id={'button-' + rootId + '-more'} tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);
@@ -144,7 +144,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onNavigation (e: any) {
 		const { rootId } = this.props;
 		
-		commonStore.popupOpen('tree', { 
+		commonStore.popupOpen('navigation', { 
 			data: { 
 				type: I.NavigationType.Go, 
 				rootId: rootId,

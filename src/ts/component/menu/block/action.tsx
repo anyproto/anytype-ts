@@ -497,7 +497,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 					
 			case 'move':
-				commonStore.popupOpen('tree', { 
+				commonStore.popupOpen('navigation', { 
 					data: { 
 						type: I.NavigationType.Move, 
 						rootId: rootId,

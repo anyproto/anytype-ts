@@ -1,10 +1,10 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupTree { width: 368px; margin: 0px 0px 0px -184px; }
-	.popup.popupTree.expanded { width: 1136px; margin: 0px 0px 0px -578px; }
+	.popup.popupNavigation { width: 368px; margin: 0px 0px 0px -184px; }
+	.popup.popupNavigation.expanded { width: 1136px; margin: 0px 0px 0px -578px; }
 	
-	.popup.popupTree {
+	.popup.popupNavigation {
 		.head { padding: 16px; border-bottom: 1px solid #ebe9e0; }
 		.head {
 			.icon.search { margin-right: 8px; vertical-align: top; }
@@ -74,7 +74,7 @@
 		}
 	}
 	
-	.popup.popupTree.expanded {
+	.popup.popupNavigation.expanded {
 		.head { padding: 10px 12px 16px 12px; border: 0px; }
 		.sides { display: flex; padding: 16px; }
 		

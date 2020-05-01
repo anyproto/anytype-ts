@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Title, Smile, Icon, Button, Input, Cover } from 'ts/component';
+import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
 import { I, C, Util, StructDecode, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -11,6 +11,7 @@ interface Props extends I.Popup {
 
 interface State {
 	expanded: boolean;
+	loading: boolean;
 	filter: string;
 	pages: I.PageInfo[];
 	info: I.PageInfo;
@@ -24,11 +25,12 @@ const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 
 @observer
-class PopupTree extends React.Component<Props, State> {
+class PopupNavigation extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
 		expanded: false,
+		loading: false,
 		filter: '',
 		pages: [] as I.PageInfo[],
 		info: null,
@@ -49,7 +51,7 @@ class PopupTree extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { expanded, filter, info, pagesIn, pagesOut } = this.state;
+		const { expanded, filter, info, pagesIn, pagesOut, loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
@@ -144,6 +146,7 @@ class PopupTree extends React.Component<Props, State> {
 
 		return (
 			<div className={expanded ? 'expanded' : ''}>
+				{loading ? <Loader /> : ''}
 				{expanded ? (
 					<React.Fragment>
 						<div id="head" className="path">
@@ -186,7 +189,7 @@ class PopupTree extends React.Component<Props, State> {
 							<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 						</form>
 
-						{!pages.length ? (
+						{!pages.length && !loading ? (
 							<div id="empty "key="empty" className="empty">
 								<div className="txt">
 									<b>There is no pages named "{filter}"</b>
@@ -209,8 +212,8 @@ class PopupTree extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
+		this.setState({ loading: true });
 		this.init();
-		this.ref.focus();
 		this.index = new FlexSearch('balance', {
 			encode: 'extra',
     		tokenize: 'full',
@@ -228,7 +231,8 @@ class PopupTree extends React.Component<Props, State> {
 				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
 			};
 
-			this.setState({ pages: pages });
+			this.ref.focus();
+			this.setState({ pages: pages, loading: false });
 		});
 	};
 	
@@ -246,7 +250,7 @@ class PopupTree extends React.Component<Props, State> {
 	init () {
 		const { expanded } = this.state;
 		const win = $(window);
-		const obj = $('#popupTree');
+		const obj = $('#popupNavigation');
 		
 		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
 		
@@ -262,7 +266,7 @@ class PopupTree extends React.Component<Props, State> {
 		raf(() => {
 			const { expanded } = this.state;
 			const win = $(window);
-			const obj = $('#popupTree');
+			const obj = $('#popupNavigation');
 			const head = obj.find('#head');
 			const items = obj.find('.items');
 			const sides = obj.find('.sides');
@@ -357,4 +361,4 @@ class PopupTree extends React.Component<Props, State> {
 	
 };
 
-export default PopupTree;
+export default PopupNavigation;

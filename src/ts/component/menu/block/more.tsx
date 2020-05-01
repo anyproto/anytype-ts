@@ -195,7 +195,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 			
 			case 'move':
-				commonStore.popupOpen('tree', { 
+				commonStore.popupOpen('navigation', { 
 					data: { 
 						type: I.NavigationType.Move, 
 						rootId: rootId,
