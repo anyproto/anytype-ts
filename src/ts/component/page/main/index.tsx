@@ -53,7 +53,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}
+						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
 						
 						<div className="rightMenu">
 							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={this.onSettings} />
@@ -77,8 +77,20 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const hello = node.find('#hello');
+
 		Storage.set('pageId', '');
 		crumbs.delete(I.CrumbsType.Page);
+
+		if (Storage.get('hello')) {
+			hello.remove();
+		} else {
+			window.setTimeout(() => {
+				Storage.set('hello', 1);
+				hello.addClass('hide');
+			}, 2000);
+		};
 	};
 	
 	componentDidUpdate () {

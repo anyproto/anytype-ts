@@ -13,6 +13,9 @@
 		.icon.settings { background-size: 18px 18px; background-image: url('~img/icon/settings.svg'); }
 		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); display: none; }
 	}
+
+	#hello { transition: opacity 0.5s ease-in-out; }
+	#hello.hide { opacity: 0; }
 	
 	#documents { width: calc(100% + 16px); }
 	#documents {
