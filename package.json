@@ -196,7 +196,16 @@
 			"node_modules/fs-extra",
 			"node_modules/universalify",
 			"node_modules/graceful-fs",
-			"node_modules/jsonfile"
+			"node_modules/jsonfile",
+			"node_modules/electron-json-storage",
+			"node_modules/lodash",
+			"node_modules/async",
+			"node_modules/rimraf",
+			"node_modules/mkdirp",
+			"node_modules/write-file-atomic",
+			"node_modules/imurmurhash",
+			"node_modules/signal-exit",
+			"node_modules/lockfile"
 		],
 		"dmg": {
 			"sign": false

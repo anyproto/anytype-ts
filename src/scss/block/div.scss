@@ -4,8 +4,10 @@
 	.block.blockDiv { padding: 0px; line-height: 0px; }
 	.block.blockDiv {
 		.dropTarget { height: 15px; }
-		.icon.dnd { height: 12px; margin: 2px 6px 0px 0px; }
-		.icon.dnd:hover { background-image: none; }
+		
+		.icon.dnd { height: 12px; margin: 2px 6px 0px 0px; background-image: none !important; }
+		.icon.dnd:hover { background-image: none !important; }
+
 		.div { width: 100%; position: absolute; top: 50%; left: 0px; text-align: center; }
 	}
 	.block.blockDiv.c0 {
