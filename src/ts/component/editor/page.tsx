@@ -445,24 +445,15 @@ class EditorPage extends React.Component<Props, State> {
 				return;
 			};
 			
-			// Indent block
-			if (k == Key.tab) {
-				e.preventDefault();
+			const first = blockStore.getLeaf(rootId, ids[0]);
+			const element = map[first.id];
+			const parent = blockStore.getLeaf(rootId, element.parentId);
+			const next = blockStore.getNextBlock(rootId, first.id, -1);
+			const obj = e.shiftKey ? parent : next;
+			const canTab = obj && !first.isTitle() && obj.isIndentable();
 				
-				if (!ids.length) {
-					return;
-				};
-				
-				const first = blockStore.getLeaf(rootId, ids[0]);
-				const element = map[first.id];
-				const parent = blockStore.getLeaf(rootId, element.parentId);
-				const next = blockStore.getNextBlock(rootId, first.id, -1);
-				const obj = e.shiftKey ? parent : next;
-				const canTab = obj && !first.isTitle() && !first.isHeader() && obj.isIndentable();
-				
-				if (canTab) {
-					C.BlockListMove(rootId, rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
-				};
+			if (canTab) {
+				C.BlockListMove(rootId, rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
 		};
 	};
@@ -703,7 +694,7 @@ class EditorPage extends React.Component<Props, State> {
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = e.shiftKey ? parent : next;
-			const canTab = obj && !block.isTitle() && !block.isHeader() && obj.isIndentable();
+			const canTab = obj && !block.isTitle() && obj.isIndentable();
 			
 			if (canTab) {
 				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {

@@ -69,6 +69,10 @@ class PopupNavigation extends React.Component<Props, State> {
 				placeHolder = 'Move to...';
 				confirm = 'Move';
 				break;
+
+			case I.NavigationType.Create:
+				confirm = 'Link';
+				break;
 		};
 		
 		let pages = this.state.pages;
