@@ -5,8 +5,6 @@ import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
 
-import Block from 'ts/component/page/help/item/block';
-
 interface Props extends I.Popup, RouteComponentProps<any> {
 	history: any;
 };
@@ -143,7 +141,6 @@ class PopupFeedback extends React.Component<Props, State> {
 			},
 			error: (xhr: any, status: string, error: string) => {
 				let err = {};
-				
 				try {
 					err = JSON.parse(xhr.responseText || '{}s');
 				} catch (e) {};

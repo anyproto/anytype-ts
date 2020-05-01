@@ -1,5 +1,6 @@
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { Util, I, M, StructDecode, focus, keyboard, Storage, translate, analytics } from 'ts/lib';
+import * as Sentry from '@sentry/browser';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
@@ -391,7 +392,9 @@ class Dispatcher {
 				};
 				
 				if (message.error.code) {
-					console.error('[Dispatcher.request]', type, 'code:', message.error.code, 'description:', message.error.description);
+					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
+					Sentry.captureMessage(`[Dispatcher.error] type: ${type} code: ${message.error.code} description: ${message.error.description}`);
+					analytics.event(Util.toUpperCamelCase(type + '-error'), data);
 				};
 				
 				if (debug) {
