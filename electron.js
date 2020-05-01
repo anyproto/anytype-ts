@@ -10,6 +10,7 @@ const dataPath = app.getPath('userData');
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
+autoUpdater.channel = 'latest';
 
 let win = null;
 let csp = [];
