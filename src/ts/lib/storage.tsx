@@ -39,6 +39,13 @@ class Storage {
 		const list = map[rootId] || [];
 		return list.indexOf(id) >= 0;
 	};
+
+	logout () {
+		this.delete('accountId');
+		this.delete('toggle');
+		this.delete('pageId');
+		this.delete('hello');
+	};
 	
 };
 

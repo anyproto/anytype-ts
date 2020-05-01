@@ -1,5 +1,6 @@
 import { observable, action, computed, set } from 'mobx';
-import { I, Storage, analytics } from 'ts/lib';
+import { I, Storage, analytics, crumbs } from 'ts/lib';
+import { blockStore } from 'ts/store';
 
 class AuthStore {
 	@observable public dataPath: string = '';
@@ -77,7 +78,13 @@ class AuthStore {
 	
 	@action
 	logout () {
-		Storage.set('accountId', '');
+		Storage.logout();
+
+		crumbs.delete(I.CrumbsType.Page);
+
+		blockStore.breadcrumbsSet('');
+		blockStore.blocksClearAll();
+
 		this.accountItem = null;
 		this.phraseSet('');
 	};

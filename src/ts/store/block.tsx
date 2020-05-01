@@ -1,5 +1,6 @@
 import { observable, action, computed, set, intercept } from 'mobx';
 import { I, M, Util, StructDecode, StructEncode } from 'ts/lib';
+import { MacUpdater } from 'electron-updater';
 
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
@@ -118,6 +119,13 @@ class BlockStore {
 	blocksClear (rootId: string) {
 		this.blockObject.delete(rootId);
 		this.treeObject.delete(rootId);
+	};
+
+	@action
+	blocksClearAll () {
+		this.blockObject = new Map();
+		this.treeObject = new Map();
+		this.detailObject = new Map();
 	};
 	
 	@action
