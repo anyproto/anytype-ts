@@ -8,9 +8,6 @@ token=$1;
 platform=$2;
 arch="";
 
-#js_v0.1.1_darwin-amd64.tar.gz
-#js_v0.1.1_linux-amd64.tar.gz
-
 if [ "$platform" = "ubuntu-latest" ]; then
 	arch="linux";
 fi;
@@ -33,7 +30,7 @@ fi;
 
 version=`curl -H "Authorization: token $token" -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases | jq ".[0]"`
 tag=`echo $version | jq ".tag_name"`
-asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+_$arch\";\"i\")))[0].id"`
+asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+(-rc[0-9]+)?_$arch\";\"i\")))[0].id"`
 
 if [ "$asset_id" = "" ]; then
   echo "ERROR: version not found"

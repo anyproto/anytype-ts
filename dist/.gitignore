@@ -4,3 +4,5 @@ builder-effective-config.yaml
 mac/*
 main.js
 main.js.map
+alpha-mac.yml
+beta-mac.yml
