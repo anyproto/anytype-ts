@@ -95,7 +95,6 @@ class DataUtil {
 	
 	selectionGet (props: any): string[] {
 		const { dataset, block } = props;
-		const { id } = block;
 		const { selection } = dataset || {};
 		
 		if (!selection) {
@@ -104,9 +103,9 @@ class DataUtil {
 		
 		let ids: string[] = selection.get(true);
 		
-		if (ids.indexOf(id) < 0) {
+		if (block && ids.indexOf(block.id) < 0) {
 			selection.clear(true);
-			selection.set([ id ]);
+			selection.set([ block.id ]);
 			ids = selection.get(true);
 		};
 		
