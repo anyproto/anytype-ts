@@ -62,7 +62,7 @@ class PopupArchive extends React.Component<Props, State> {
 						</div>
 						<div className="side right">
 							<div className="btn" onClick={(e: any) => { this.onReturn(); }}>Put it back</div>
-							<div className="btn" onClick={(e: any) => { this.onDelete(); }}>Delete</div>
+							<div className="btn dn" onClick={(e: any) => { this.onDelete(); }}>Delete</div>
 						</div>
 					</div>
 				</div>

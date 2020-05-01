@@ -14,7 +14,7 @@
 		
 		.btn { 
 			display: inline-block; vertical-align: middle; margin-right: 20px; color: $colorDarkGrey; cursor: pointer;
-			transition: $transitionFast; 
+			transition: $transitionFast; margin: 0px;
 		}
 		.btn:last-child { margin: 0px; }
 		.btn:hover { color: $colorBlack; }
