@@ -110,11 +110,8 @@ class BlockStore {
 	
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		blocks = blocks.map((it: any) => { return new M.Block(it); });
-		let map = this.getStructure(blocks);
-		
 		this.blockObject.set(rootId, blocks);
-		this.treeObject.set(rootId, map);
+		this.treeObject.set(rootId, this.getStructure(blocks));
 	};
 	
 	@action
@@ -313,24 +310,27 @@ class BlockStore {
 		for (let item of list) {
 			map[item.id] = item;
 		};
-		
+
 		for (let item of list) {
+			let element = map[item.id];
+			if (!element) {
+				continue;
+			};
+
+			let childBlocks = element.childBlocks || [];
 			let childrenIds = item.childrenIds || [];
+
 			for (let id of childrenIds) {
 				const child = map[id];
-				const element = map[item.id];
-				
 				if (!child) {
 					continue;
 				};
 				
 				child.parentId = item.id;
-				
-				if (element) {
-					element.childBlocks = element.childBlocks || [];
-					element.childBlocks.push(child);
-				};
+				childBlocks.push(child);
 			};
+
+			map[item.id].childBlocks = Util.arrayUniqueObjects(childBlocks, 'id');
 		};
 		
 		return (map[rootId] || {}).childBlocks || [];

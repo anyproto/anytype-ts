@@ -1,5 +1,6 @@
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { Util, I, M, StructDecode, focus, keyboard, Storage, translate, analytics } from 'ts/lib';
+import * as Sentry from '@sentry/browser';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
@@ -84,16 +85,6 @@ class Dispatcher {
 					authStore.accountAdd(data.account);
 					break;
 					
-				case 'accountDetails':
-					const details = StructDecode.decodeStruct(data.details);
-					const account = authStore.account;
-					
-					account.name = String(details.name || '');
-					account.avatar = { 
-						image: { hash: String(details.iconImage || '') }
-					};
-					break;
-					
 				case 'blockShow':
 					let blocks = data.blocks.map((it: any) => {
 						it = blockStore.prepareBlockFromProto(it);
@@ -101,11 +92,19 @@ class Dispatcher {
 							it.type = I.BlockType.Page;
 							it.pageType = data.type;
 						};
-						return it;
+						return new M.Block(it);
 					});
-					
-					blocks.unshift({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} });
-					
+
+					block = blocks.find((it: I.Block) => { return it.id == rootId });
+					if (!block) {
+						break;
+					};
+
+					if (block.hasTitle()) {
+						block.childrenIds.unshift(rootId + '-title');
+						blocks.unshift(new M.Block({ id: rootId + '-title', type: I.BlockType.Title, childrenIds: [], fields: {}, content: {} }));
+					};
+
 					blockStore.blocksSet(rootId, blocks);
 					blockStore.detailsSet(rootId, data.details);
 					break;
@@ -131,6 +130,15 @@ class Dispatcher {
 					break;
 					
 				case 'blockSetChildrenIds':
+					block = blockStore.getLeaf(rootId, data.id);
+					if (!block) {
+						break;
+					};
+
+					if (block.hasTitle() && (data.childrenIds.indexOf(rootId + '-title') < 0)) {
+						data.childrenIds.unshift(rootId + '-title');
+					};
+
 					blockStore.blockUpdateStructure(rootId, data.id, data.childrenIds);
 					break;
 					
@@ -384,15 +392,9 @@ class Dispatcher {
 				};
 				
 				if (message.error.code) {
-					console.error('[Dispatcher.request]', type, 'code:', message.error.code, 'description:', message.error.description);
-				};
-				
-				if (message.event) {
-					this.event(message.event);
-				};
-				
-				if (callBack) {
-					callBack(message);
+					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
+					Sentry.captureMessage(`[Dispatcher.error] type: ${type} code: ${message.error.code} description: ${message.error.description}`);
+					analytics.event(Util.toUpperCamelCase(type + '-error'), data);
 				};
 				
 				if (debug) {
@@ -403,6 +405,14 @@ class Dispatcher {
 						'Render time:', Math.ceil(t2 - t1) + 'ms', 
 						'Total time:', Math.ceil(t2 - t0) + 'ms'
 					);
+				};
+
+				if (message.event) {
+					this.event(message.event);
+				};
+
+				if (callBack) {
+					callBack(message);
 				};
 			});
 		} catch (e) {

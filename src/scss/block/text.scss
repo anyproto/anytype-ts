@@ -10,8 +10,12 @@
 			width: 100%; height: 100%; cursor: text; 
 		}
 		
-		a { cursor: pointer; color: inherit; }
-		kbd { display: inline; font-family: 'Mono'; line-height: 1.71; background: rgba(247,245,240,0.5); padding: 0px 4px; border-radius: 2px; }
+		a { cursor: pointer; color: inherit; border-bottom: 1px solid $colorDarkGrey; height: 22px; text-decoration: none; display: inline-block; }
+		
+		kbd { 
+			display: inline; font-family: 'Mono'; padding: 0px 4px; border-radius: 2px; background: $colorDarkGrey; 
+			background: rgba(172,169,150,0.15); margin: 0px 4px;
+		}
 		
 		.markers { white-space: nowrap; }
 		.markers {
@@ -26,10 +30,6 @@
 			.marker.number { vertical-align: baseline; min-width: 24px; width: auto; }
 			.marker.number > span { min-width: 100%; display: inline-block; text-align: center; }
 			
-			.marker.bullet {
-				img { width: 6px; height: 6px; position: absolute; left: 50%; top: 50%; margin: -3px 0px 0px -3px; }
-			}
-			
 			.marker.check, .marker.toggle { cursor: pointer; }
 			.marker.check, .marker.toggle {
 				img { width: 100%; height: 100%; }
@@ -40,39 +40,43 @@
 	
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 
-	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 4px 0px 2px 0px; }
+	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 	
-	.block.blockText.header1 { padding: 23px 0px 1px 0px; }
+	.block.blockText.header1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget { 
 		font-family: 'Lcg'; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; 
+		padding: 4px 0px 2px 0px;
 	}
 	
-	.block.blockText.header2 { padding: 15px 0px 1px 0px; }
+	.block.blockText.header2 { padding: 14px 0px 0px 0px; }
 	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget { 
-		font-family: 'Lcg';font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; 
+		font-family: 'Lcg'; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; 
+		padding: 3px 0px 2px 0px;
 	}
 	
-	.block.blockText.header3 { padding: 15px 0px 1px 0px; }
+	.block.blockText.header3 { padding: 14px 0px 0px 0px; }
 	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget { 
 		font-size: 18px; line-height: 26px; letter-spacing: 0.04px; font-weight: 600; 
+		padding: 2px 0px 3px 0px;
 	}
 	
-	.block.blockText.quote { padding: 7px 0px 7px 0px; font-size: 18px; line-height: 26px; letter-spacing: 0.04px; font-style: italic; }
-	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { padding: 4px 4px !important; }
+	.block.blockText.quote { padding: 6px 0px 6px 0px; }
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { 
+		font-size: 18px; line-height: 26px; letter-spacing: 0.04px; font-style: italic;
+		padding: 2px 0px 3px 0px;
+	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { 
-		width: 0px; height: calc(100% + 8px); position: absolute; left: 11px; top: -4px; border-left: 2px solid $colorOrange; 
+		width: 0px; height: calc(100% + 5px); position: absolute; left: 11px; top: -2px; border-left: 2px solid $colorOrange; 
 	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
 	
-	.block.blockText.code { font-family: 'Mono'; line-height: 1.71; margin: 7px 0px; }
-	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 42px 16px 16px 16px; background: rgba(247,245,240,0.5); }
+	.block.blockText.code { padding: 6px 0px; }
+	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 35px 16px 16px 16px; background: rgba(247,245,240,0.5); }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.code {
-		.select { 
-			position: absolute; top: 16px; left: 16px; z-index: 1; @include text-small; border: 0px; font-weight: 500; 
-			color: $colorDarkGrey; 
-		}
+		.value { font-family: 'Mono'; @include text-common; }
+		.select { position: absolute; top: 3px; left: 16px; z-index: 1; border: 0px;  color: $colorDarkGrey; @include text-common; }
 		.select {
 			.current { padding: 0px 16px 0px 0px; }
 		}

@@ -69,7 +69,6 @@ class EditorPage extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
 		const details = blockStore.getDetail(rootId, rootId);
-		const title = blockStore.getLeaf(rootId, rootId + '-title');
 		
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
@@ -114,14 +113,6 @@ class EditorPage extends React.Component<Props, State> {
 							/>	
 						) : ''}
 						
-						<Block 
-							{...this.props} key={title.id} block={title}
-							onKeyDown={this.onKeyDownBlock} 
-							onMenuAdd={this.onMenuAdd}
-							onPaste={this.onPaste}
-							className="root" 
-						/>
-					
 						{list.map((block: I.Block, i: number) => {
 							return (
 								<Block 
@@ -129,7 +120,6 @@ class EditorPage extends React.Component<Props, State> {
 									{...this.props}
 									index={i}
 									block={block}
-									className="root"
 									onKeyDown={this.onKeyDownBlock}
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
@@ -312,7 +302,6 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		const root = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetail(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
@@ -361,9 +350,9 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (keyboard.isDragging) {
 			add.css({ opacity: 0 });
-			items.removeClass('showMenu isAdding top bottom');
+			items.removeClass('showMenuAdd isAdding top bottom');
 			if (hovered) {
-				hovered.addClass('showMenu');
+				hovered.addClass('showMenuAdd');
 			};
 			return;
 		};
@@ -375,7 +364,7 @@ class EditorPage extends React.Component<Props, State> {
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
-			items.addClass('showMenu').removeClass('isAdding top bottom');
+			items.addClass('showMenuAdd').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
@@ -387,16 +376,15 @@ class EditorPage extends React.Component<Props, State> {
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
 				add.css({ opacity: 0 });
-				items.removeClass('showMenu isAdding top bottom');
-			}, 10);
+				items.removeClass('showMenuAdd isAdding top bottom');
+			}, 50);
 		};
 	};
 	
 	onKeyDownEditor (e: any) {
 		const { dataset, rootId } = this.props;
-		const { root } = blockStore;
 		const { selection } = dataset || {};
-		const { focused, range } = focus;
+		const { focused } = focus;
 		const k = e.which;
 		
 		if (keyboard.isFocused) {
@@ -404,7 +392,6 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);
-		const node = $(ReactDOM.findDOMNode(this));
 		const ids = selection.get();
 		const map = blockStore.getMap(rootId);
 		
@@ -458,24 +445,15 @@ class EditorPage extends React.Component<Props, State> {
 				return;
 			};
 			
-			// Indent block
-			if (k == Key.tab) {
-				e.preventDefault();
+			const first = blockStore.getLeaf(rootId, ids[0]);
+			const element = map[first.id];
+			const parent = blockStore.getLeaf(rootId, element.parentId);
+			const next = blockStore.getNextBlock(rootId, first.id, -1);
+			const obj = e.shiftKey ? parent : next;
+			const canTab = obj && !first.isTitle() && obj.isIndentable();
 				
-				if (!ids.length) {
-					return;
-				};
-				
-				const first = blockStore.getLeaf(rootId, ids[0]);
-				const element = map[first.id];
-				const parent = blockStore.getLeaf(rootId, element.parentId);
-				const next = blockStore.getNextBlock(rootId, first.id, -1);
-				const obj = e.shiftKey ? parent : next;
-				const canTab = obj && !first.isTitle() && obj.isIndentable();
-				
-				if (canTab) {
-					C.BlockListMove(rootId, rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
-				};
+			if (canTab) {
+				C.BlockListMove(rootId, rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
 		};
 	};
@@ -492,9 +470,8 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
-		const { type, content } = block;
 
-		let length = String(text || '').length;
+		let length = block.getLength();
 		let k = e.which;
 		
 		this.uiHide();
@@ -662,11 +639,11 @@ class EditorPage extends React.Component<Props, State> {
 				e.preventDefault();
 				
 				if (e.ctrlKey || e.metaKey) {
-					const root = map[rootId];
-					next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isText(); });
+					next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
+					console.log(next);
 					
 					if (next) {
-						const l = String(next.content.text || '').length;
+						const l = next.getLength();
 						focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
 						focus.apply();
 					};
@@ -897,11 +874,21 @@ class EditorPage extends React.Component<Props, State> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							const details = { 
-								iconEmoji: Util.randomSmile(), 
-								name: Constant.default.name 
+							if (item.key == 'existing') {
+								commonStore.popupOpen('navigation', { 
+									data: { 
+										type: I.NavigationType.Create, 
+										rootId: rootId,
+										blockId: block.id,
+									}, 
+								});
+							} else {
+								const details = { 
+									iconEmoji: Util.randomSmile(), 
+									name: Constant.default.name 
+								};
+								DataUtil.pageCreate(e, this.props, rootId, block.id, details, I.BlockPosition.Replace);
 							};
-							DataUtil.pageCreate(e, this.props, rootId, block.id, details, I.BlockPosition.Replace);
 						} else {
 							this.blockCreate(block, I.BlockPosition.Replace, param);
 						};
@@ -933,6 +920,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		ids = ids.concat(this.getLayoutIds(ids));
 		
+		const cmd = cut ? 'BlockCut' : 'BlockCopy';
 		const focusBlock = blockStore.getLeaf(rootId, focused);
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 		
@@ -964,7 +952,11 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const cb = (message: any) => {
 			data.html = message.html;
-			Util.clipboardCopy(data);
+			Util.clipboardCopy({
+				text: message.textSlot,
+				html: message.htmlSlot,
+				anytype: message.anySlot,
+			});
 			
 			if (cut) {
 				commonStore.menuClose('blockContext');
@@ -975,11 +967,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		Util.clipboardCopy(data);
 		
-		if (cut) {
-			C.BlockCut(rootId, blocks, range, cb);
-		} else {
-			C.BlockCopy(rootId, blocks, cb);
-		};
+		C[cmd](rootId, blocks, range, cb);
 	};
 	
 	onPrint (e: any) {
@@ -1033,7 +1021,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const block = blockStore.getLeaf(rootId, focused);
 		const length = block ? block.getLength() : 0;
-		const reg = new RegExp(/^((?:[^\s:\?#]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		const reg = new RegExp(/^((?:https?:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
@@ -1114,10 +1102,9 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 
-		const nl = String(next.content.text || '').length;
-		
-		let length = 0;		
-		let cb = (message: any) => {
+		const nl = next.getLength();
+		const length = focused.getLength();
+		const cb = (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1127,11 +1114,9 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (next.isText()) {
 			C.BlockMerge(rootId, next.id, focused.id, cb);
-		} else {
-			length = String(focused.content.text || '').length;
-			if (!length) {
-				C.BlockUnlink(rootId, [ focused.id ], cb);
-			};
+		} else 
+		if (!length) {
+			C.BlockUnlink(rootId, [ focused.id ], cb);
 		};
 	};
 	
@@ -1167,14 +1152,14 @@ class EditorPage extends React.Component<Props, State> {
 			next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => { return it.isFocusable(); });
 			blockIds = [ focused.id ];
 		};
-		
+
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 			
 			if (next && next.isFocusable()) {
-				let length = String(next.content.text || '').length;
+				let length = next.getLength();
 				this.focus(next.id, length, length);
 			};
 		});

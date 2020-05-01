@@ -3,7 +3,7 @@
 .pageMainIndex {
 	.wrapper { position: relative; z-index: 1; padding: 90px 0px 0px 0px; margin: 0px auto; }
 	
-	.title { color: #fff; position: relative; }
+	.title { color: #fff; position: relative; height: 40px; }
 	.title {
 		.rightMenu { position: absolute; right: 0px; top: 0px; }
 		.icon { width: 40px; height: 40px; vertical-align: top; margin-right: 8px; border-radius: 100%; cursor: pointer; }
@@ -13,6 +13,9 @@
 		.icon.settings { background-size: 18px 18px; background-image: url('~img/icon/settings.svg'); }
 		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); display: none; }
 	}
+
+	#hello { transition: opacity 0.5s ease-in-out; }
+	#hello.hide { opacity: 0; }
 	
 	#documents { width: calc(100% + 16px); }
 	#documents {
@@ -24,8 +27,8 @@
 		
 		.item {
 			.name { 
-				@include text-common; font-weight: 500; height: 22px; width: 100%;
-				word-break: break-word; position: absolute; left: 0px; bottom: 12px; padding: 0px 16px; @include text-overflow-nw;  
+				@include text-paragraph; font-weight: 500; height: 22px; width: 100%;
+				word-break: break-word; position: absolute; left: 0px; bottom: 16px; padding: 0px 16px; @include text-overflow-nw;  
 			}
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }

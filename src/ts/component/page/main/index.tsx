@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
-import { commonStore, authStore, blockStore} from 'ts/store';
+import { commonStore, blockStore} from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, Storage, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -30,7 +30,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
 		const { root, profile } = blockStore;
 		const element = blockStore.getLeaf(root, root);
@@ -39,6 +38,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			return null;
 		};
 		
+		const details = blockStore.getDetail(profile, profile);
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const list = this.getList();
@@ -53,12 +53,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						{account.name ? Util.sprintf(translate('indexHi'), Util.shorten(account.name, 24)) : ''}
+						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
 						
 						<div className="rightMenu">
 							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={this.onSettings} />
 							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} tooltip="Accounts" onClick={this.onAccount} />
-							<IconUser {...account} tooltip="Your profile" onClick={this.onProfile} />
+							<IconUser avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
@@ -77,8 +77,20 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const hello = node.find('#hello');
+
 		Storage.set('pageId', '');
 		crumbs.delete(I.CrumbsType.Page);
+
+		if (Storage.get('hello')) {
+			hello.remove();
+		} else {
+			window.setTimeout(() => {
+				Storage.set('hello', 1);
+				hello.addClass('hide');
+			}, 2000);
+		};
 	};
 	
 	componentDidUpdate () {
@@ -116,7 +128,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			commonStore.popupOpen('archive', {});
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
-				DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
+				DataUtil.pageOpen(e, this.props, block.content.targetBlockId);
 			});
 		};
 	};
@@ -179,7 +191,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		body.css({ width: width - size.margin });
-		documents.css({ marginTop: wh - 90 - height });
+		documents.css({ marginTop: wh - 130 - height });
 	};
 	
 	getList () {

@@ -8,9 +8,9 @@
 		.icon.arrow { position: absolute; right: 10px; top: 4px; margin: 0px; background-image: url('~img/arrow/menu.svg'); }
 	}
 	
-	.menu.menuBlockAdd { width: 360px !important; padding: 12px 0px; }
+	.menu.menuBlockAdd { width: 360px !important; }
 	.menu.menuBlockAdd {
-		.content { max-height: 362px; }
+		.content { max-height: 362px; padding: 12px 0px; }
 	}
 	.menu.menuBlockAdd {
 		.item.withColor {

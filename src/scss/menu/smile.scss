@@ -4,16 +4,16 @@
 	.menu.menuSmile { width: 384px; user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; max-height: 488px; }
-		.head { color: $colorDarkGrey; font-weight: 500; padding: 3px 16px 11px 16px; border-bottom: 1px solid #eae9e0; }
+		.head { color: $colorDarkGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid #eae9e0; }
 		.head {
-			.btn { display: inline-block; vertical-align: middle; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
+			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
 			.btn:last-child { margin-right: 0px; }
 			.btn:hover { color: $colorBlack; }
 		}
 		
-		.filter { padding: 11px 16px; border-bottom: 1px solid #eae9e0; }
+		.filter { padding: 11px 16px 10px 16px; border-bottom: 1px solid #eae9e0; }
 		.filter {
-			.input-text { padding: 0px; height: 22px; }
+			.input-text { padding: 0px; height: 22px; vertical-align: top; }
 		}
 	
 		.items { overflow: auto; height: 392px; }
@@ -23,7 +23,7 @@
 			.txt { line-height: 24px; color: $colorDarkGrey; }
 		}
 		
-		.section { padding-top: 0px; padding-bottom: 4px; border: 0px; }
+		.section { padding-top: 0px; padding-bottom: 6px; border: 0px; }
 		.section:first-child { padding-top: 8px; }
 		.section > .list { padding: 0px 12px; }
 		
@@ -38,7 +38,7 @@
 		}
 	}
 	
-	.menu.menuSmileSkin { padding: 10px; white-space: nowrap; }
+	.menu.menuSmileSkin { padding: 4px 10px; white-space: nowrap; }
 	.menu.menuSmileSkin {
 		.item { display: inline-block; vertical-align: top; width: 40px; height: 40px; cursor: pointer; position: relative; }
 		.item {

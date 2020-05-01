@@ -61,7 +61,7 @@ class CommonStore {
 	
 	@computed
 	get gateway(): string {
-		return this.gatewayUrl;
+		return String(this.gatewayUrl || Storage.get('gateway') || '');
 	};
 	
 	@action
@@ -79,14 +79,15 @@ class CommonStore {
 	@action
 	gatewaySet (v: string) {
 		this.gatewayUrl = v;
+		Storage.set('gateway', v);
 	};
 	
 	fileUrl (hash: string) {
-		return this.gatewayUrl + '/file/' + hash;
+		return this.gateway + '/file/' + hash;
 	};
 	
 	imageUrl (hash: string, width: number) {
-		return this.gatewayUrl + '/image/' + hash + '?width=' + width;
+		return this.gateway + '/image/' + hash + '?width=' + width;
 	};
 	
 	@action
@@ -106,6 +107,7 @@ class CommonStore {
 		});
 		
 		analytics.event(Util.toCamelCase('Popup-' + id));
+		this.menuCloseAll();
 	};
 	
 	@action

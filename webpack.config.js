@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env) => {
 	return {
@@ -69,6 +70,7 @@ module.exports = (env) => {
 			]
 		},
 		plugins: [
+			//new BundleAnalyzerPlugin(),
 			new webpack.DefinePlugin({
 				'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV)
 			})

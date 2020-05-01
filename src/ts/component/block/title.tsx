@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Input } from 'ts/component';
-import { I, C, keyboard, Key, focus } from 'ts/lib';
+import { I, C, keyboard, Key, focus, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
+import { isDeepStrictEqual } from 'util';
 
 interface Props {
 	rootId: string;
@@ -106,13 +107,23 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const k = e.which;
-		const { rootId } = this.props;
+		if (!this._isMounted) {
+			return;
+		};
 		
+		const node = $(ReactDOM.findDOMNode(this));
+		const k = e.which;
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const value = this.getValue();
+		const length = value.length;
+		const range = this.getRange();
+		
+		// Enter
 		if (k == Key.enter) {
 			e.preventDefault();
 			
-			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage(); });
+			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage() && !it.isTitle(); });
 			const param = {
 				type: I.BlockType.Text,
 				content: {
@@ -120,12 +131,52 @@ class BlockTitle extends React.Component<Props, {}> {
 				},
 			};
 			
-			C.BlockSetDetails(rootId, [ { key: 'name', value: this.getValue() } ], () => {
+			DataUtil.pageSetName(rootId, this.getValue(), () => {
 				C.BlockCreate(param, rootId, (next ? next.id : ''), I.BlockPosition.Top, (message: any) => {
 					focus.set(message.blockId, { from: 0, to: 0 });
 					focus.apply();
 				});
 			});
+		};
+
+		// Cursor keys
+		if (k == Key.down) {
+			if (commonStore.menuIsOpen()) {
+				return;
+			};
+
+			let canFocus = range.to >= length;
+			let next: any = null;
+
+			if (canFocus) {
+				e.preventDefault();
+
+				if (e.ctrlKey || e.metaKey) {
+					next = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.isFocusable(); });
+					
+					if (next) {
+						const l = next.getLength();
+						focus.set(next.id, { from: l, to: l });
+						focus.apply();
+					};
+				} else {
+					next = blockStore.getNextBlock(rootId, id, 1, (it: I.Block) => { return it.isFocusable(); });
+					
+					if (next) {
+						const parent = blockStore.getLeaf(rootId, next.parentId);
+						const l = next.getLength();
+						
+						// Auto-open toggle blocks 
+						if (parent && parent.isToggle()) {
+							node.find('#block-' + parent.id).addClass('isToggled');
+						};
+						
+						focus.set(next.id, { from: l, to: l });
+						focus.apply();
+					};
+				};
+			};
+			
 		};
 		
 		if (!keyboard.isSpecial(k)) {
@@ -213,7 +264,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const value = this.getValue();
 
-		C.BlockSetDetails(rootId, [ { key: 'name', value: value } ]);
+		DataUtil.pageSetName(rootId, value);
 	};
 	
 };

@@ -1,11 +1,12 @@
 import { I, Util } from 'ts/lib';
+import { blockStore } from 'ts/store';
 import { observable, intercept } from 'mobx';
 
 class Block implements I.Block {
 	
 	id: string = '';
 	parentId: string = '';
-	pageType: I.PageType = 0;
+	pageType: any = null;
 	type: I.BlockType = I.BlockType.Empty;
 	
 	@observable childrenIds: string[] = [];
@@ -21,11 +22,11 @@ class Block implements I.Block {
 		self.parentId = String(props.parentId || '');
 		self.type = props.type;
 		self.align = Number(props.align) || I.BlockAlign.Left;
-		self.pageType = Number(props.pageType) || I.PageType.Page;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
 		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
+		self.pageType = props.pageType;
 		
 		intercept(self as any, (change: any) => {
 			if (change.newValue === self[change.name]) {
@@ -49,6 +50,10 @@ class Block implements I.Block {
 	
 	isDraggable (): boolean {
 		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
+	};
+
+	hasTitle (): boolean {
+		return (undefined !== this.pageType) && [ I.PageType.Page, I.PageType.Profile ].indexOf(this.pageType) >= 0;
 	};
 	
 	isPage (): boolean { 
@@ -160,7 +165,15 @@ class Block implements I.Block {
 	};
 	
 	getLength (): number {
-		return String(this.content.text || '').length;
+		let t = '';
+		if (this.isTitle()) {
+			const details = blockStore.getDetail(this.parentId, this.parentId);
+			t = details.name;
+		} else {
+			t = this.content.text;
+		};
+
+		return String(t || '').length;
 	};
 };
 

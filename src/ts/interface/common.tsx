@@ -1,18 +1,5 @@
-export enum ImageSize { Large, Small, Thumb };
-
-export interface Avatar {
-	image?: Image;
-};
-
-export interface Image {
-	hash: string;
-};
-
 export interface Account {
 	id: string;
-	name: string;
-	color?: string;
-	avatar?: Avatar;
 };
 
 export enum DragItem {
@@ -31,4 +18,10 @@ export enum CoverType {
 export enum CrumbsType {
 	Page	 = 'page',
 	Popup	 = 'popup',
+};
+
+export enum NavigationType {
+	Go		 = 'go',
+	Move	 = 'move',
+	Create	 = 'create',
 };

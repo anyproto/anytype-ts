@@ -1,9 +1,9 @@
-import { ImageSize, Avatar, Image, Account, DragItem, CoverType, CrumbsType } from './common';
+import { Account, DragItem, CoverType, CrumbsType, NavigationType } from './common';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
-import { BlockType, BlockPosition, BlockAlign, Block } from './block';
+import { PageInfo, BlockType, BlockPosition, BlockAlign, Block } from './block';
 import { 
 	ViewType,
 	View,  
@@ -29,13 +29,11 @@ import { BookmarkType, ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 
 export {
-	ImageSize,
-	Avatar, 
-	Image, 
 	Account,
 	DragItem,
 	CoverType,
 	CrumbsType,
+	NavigationType,
 	
 	Progress,
 	ProgressType,
@@ -49,6 +47,8 @@ export {
 	MenuParam, 
 	Menu, 
 	MenuItem,
+	
+	PageInfo,
 	
 	BlockType,
 	BlockPosition,

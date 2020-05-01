@@ -26,18 +26,24 @@ class MenuSelect extends React.Component<Props, {}> {
 		return (
 			<div className="items">
 				{options.map((item: any, i: number) => {
-					return <MenuItemVertical key={i} {...item} className={item.isInitial ? 'initial' : ''} isActive={item.id == value} onClick={(e: any) => { this.onSelect(e, item); }} />
+					return <MenuItemVertical key={i} {...item} className={item.isInitial ? 'initial' : ''} isActive={item.id == value} onClick={(e: any) => { this.onSelect(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} />
 				})}
 			</div>
 		);
 	};
 	
 	componentDidMount () {
-		const { id } = this.props;
+		const { param } = this.props;
+		const { data } = param;
+		const { options, value } = data;
 		
 		this._isMounted = true;
 		this.rebind();
-		this.setActive();
+		
+		const active = options.find((it: any) => { return it.id == value });
+		if (active && !active.isInitial) {
+			this.setActive(active);
+		};
 	};
 	
 	componentWillUnmount () {
@@ -121,6 +127,12 @@ class MenuSelect extends React.Component<Props, {}> {
 			case Key.escape:
 				commonStore.menuClose(this.props.id);
 				break;
+		};
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item, false);
 		};
 	};
 	

@@ -324,7 +324,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const { rootId, block } = this.props;
 		const { id, content } = block;
-		const { root } = blockStore;
 		const { style } = content;
 		const value = this.getValue();
 		const k = e.which;
@@ -427,13 +426,10 @@ class BlockText extends React.Component<Props, {}> {
 		
 		// Move to
 		if (value == '/move') {
-			commonStore.popupOpen('tree', { 
+			commonStore.popupOpen('navigation', { 
 				data: { 
-					type: 'move', 
-					rootId: root,
-					onConfirm: (blockId: string) => {
-						console.log('Move', blockId);
-					},
+					type: I.NavigationType.Move, 
+					rootId: rootId,
 				}, 
 			});
 			cmdParsed = true;
@@ -580,17 +576,19 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		const el = $('#block-' + id);
 		const offset = node.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
+		const pt = parseInt(el.css('paddingTop'));
 		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
-		const y = rect.y - (offset.top - $(window).scrollTop()) - 4;
-		
+		const y = rect.y - (offset.top - $(window).scrollTop()) - 4 + pt;
+
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
 			commonStore.menuClose('blockAdd');
 			commonStore.menuOpen('blockContext', {
-				element: '#block-' + id,
+				element: el,
 				type: I.MenuType.Horizontal,
 				offsetX: x,
 				offsetY: -y,

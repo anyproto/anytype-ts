@@ -157,13 +157,7 @@ class BlockCover extends React.Component<Props, State> {
 				onUploadStart: this.onUploadStart,
 				onUpload: this.onUpload,
 				onSelect: (type: I.CoverType, id: string) => {
-					C.BlockSetDetails(rootId, [ 
-						{ key: 'coverType', value: type },
-						{ key: 'coverId', value: id },
-						{ key: 'coverX', value: 0 },
-						{ key: 'coverY', value: 0 },
-						{ key: 'coverScale', value: 0 },
-					]);
+					DataUtil.pageSetCover(rootId, type, id);
 				}
 			},
 		});
@@ -203,7 +197,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
-		const { coverX, coverY, coverId, coverScale, coverType } = details;
+		const { coverId, coverType } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!node.hasClass('wrap')) {
@@ -215,6 +209,9 @@ class BlockCover extends React.Component<Props, State> {
 		if (coverType == I.CoverType.Image) {
 			const el = this.cover.get(0);
 			const cb = () => {
+				const details = blockStore.getDetail(rootId, rootId);
+				const { coverScale } = details;
+
 				if (this.refDrag) {
 					this.refDrag.setValue(coverScale);
 				};
@@ -232,7 +229,7 @@ class BlockCover extends React.Component<Props, State> {
 				el.onload = cb;
 			};
 			
-			el.src = commonStore.imageUrl(coverId, 2048);
+			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
 		};
 	};
 	
@@ -292,11 +289,8 @@ class BlockCover extends React.Component<Props, State> {
 		
 		this.x = e.pageX - this.rect.x - this.x;
 		this.y = e.pageY - this.rect.y - this.y;
-		
-		C.BlockSetDetails(rootId, [ 
-			{ key: 'coverX', value: (this.cx / this.rect.cw) },
-			{ key: 'coverY', value: (this.cy / this.rect.ch) },
-		]);
+	
+		DataUtil.pageSetCoverXY(rootId, this.cx / this.rect.cw, this.cy / this.rect.ch);
 	};
 	
 	onScaleStart (v: number) {
@@ -324,7 +318,7 @@ class BlockCover extends React.Component<Props, State> {
 		v = (v + 1) * 100;
 		value.text(Math.ceil(v) + '%');
 		this.cover.css({ height: 'auto', width: v + '%' });
-		
+
 		this.rect.cw = this.cover.width();
 		this.rect.ch = this.cover.height();
 		
@@ -341,16 +335,14 @@ class BlockCover extends React.Component<Props, State> {
 		
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
-		
+
 		selection.preventSelect(false);
-		C.BlockSetDetails(rootId, [ 
-			{ key: 'coverScale', value: v },
-		]);
+		DataUtil.pageSetCoverScale(rootId, v);
 	};
 	
 	onDragOver (e: any) {
-		if (!this._isMounted) {
-			return false;
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
@@ -358,8 +350,8 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted) {
-			return false;
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
@@ -388,13 +380,7 @@ class BlockCover extends React.Component<Props, State> {
 				return;
 			};
 			
-			C.BlockSetDetails(rootId, [ 
-				{ key: 'coverType', value: I.CoverType.Image },
-				{ key: 'coverId', value: message.hash },
-				{ key: 'coverX', value: 0 },
-				{ key: 'coverY', value: 0 },
-				{ key: 'coverScale', value: 0 },
-			]);
+			DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash);
 		});
 	};
 	

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, C, focus } from 'ts/lib';
+import { I, C, focus, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -34,7 +34,7 @@ class Controls extends React.Component<Props, {}> {
 	render (): any {
 		return (
 			<div 
-				className="controls"
+				className="editorControls"
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
@@ -95,9 +95,7 @@ class Controls extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				onSelect: (icon: string) => {
-					C.BlockSetDetails(rootId, [ 
-						{ key: 'iconEmoji', value: icon } 
-					]);
+					DataUtil.pageSetIcon(rootId, icon, '');
 				}
 			}
 		});
@@ -121,9 +119,7 @@ class Controls extends React.Component<Props, {}> {
 					return;
 				};
 				
-				C.BlockSetDetails(rootId, [ 
-					{ key: 'iconImage', value: message.hash },
-				]);
+				DataUtil.pageSetIcon(rootId, '', message.hash);
 			});
 		});
 	};
@@ -143,27 +139,24 @@ class Controls extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				onSelect: (type: I.CoverType, id: string) => {
-					C.BlockSetDetails(rootId, [ 
-						{ key: 'coverType', value: type },
-						{ key: 'coverId', value: id },
-					]);
+					DataUtil.pageSetCover(rootId, type, id);
 				}
 			}
 		});
 	};
 	
 	onDragOver (e: any) {
-		if (!this._isMounted) {
-			return false;
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
 		};
-		
+
 		const node = $(ReactDOM.findDOMNode(this));
 		node.addClass('isDraggingOver');
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted) {
-			return false;
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
@@ -192,13 +185,7 @@ class Controls extends React.Component<Props, {}> {
 				return;
 			};
 			
-			C.BlockSetDetails(rootId, [ 
-				{ key: 'coverType', value: I.CoverType.Image },
-				{ key: 'coverId', value: message.hash },
-				{ key: 'coverX', value: 0 },
-				{ key: 'coverY', value: 0 },
-				{ key: 'coverScale', value: 0 },
-			]);
+			DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash);
 		});
 	};
 	

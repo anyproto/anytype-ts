@@ -120,6 +120,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { from, to } = range;
 		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));
+		const obj = $('#menuBlockContext');
 		
 		focus.apply();
 		
@@ -141,6 +142,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		commonStore.menuClose('blockStyle');
 		commonStore.menuClose('blockMore');
+		commonStore.menuClose('blockLink');
 		commonStore.menuClose('blockColor');
 		commonStore.menuClose('blockBackground');
 		commonStore.menuClose('select');
@@ -165,7 +167,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						element: '#button-' + blockId + '-switch',
 						type: I.MenuType.Vertical,
 						offsetX: 0,
-						offsetY: 11,
+						offsetY: 15,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Center,
 						data: {
@@ -206,7 +208,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						element: '#button-' + blockId + '-more',
 						type: I.MenuType.Vertical,
 						offsetX: 0,
-						offsetY: 11,
+						offsetY: 15,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Center,
 						data: {
@@ -220,25 +222,29 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					break;
 					
 				case I.MarkType.Link:
+					const offset = obj.offset();
+
 					mark = Mark.getInRange(marks, type, { from: from, to: to });
-					
-					commonStore.menuOpen('blockLink', {
-						type: I.MenuType.Horizontal,
-						element: node,
-						offsetX: 0,
-						offsetY: -node.outerHeight(),
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Center,
-						data: {
-							value: (mark ? mark.param : ''),
-							onChange: (param: string) => {
-								marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
-								onChange(marks);
-								commonStore.menuClose(this.props.id);
-								
-								window.setTimeout(() => { focus.apply(); }, 15);
+
+					commonStore.menuClose(this.props.id, () => {
+						commonStore.menuOpen('blockLink', {
+							type: I.MenuType.Horizontal,
+							element: node,
+							offsetX: 0,
+							offsetY: 0,
+							forceX: offset.left,
+							forceY: offset.top,
+							vertical: I.MenuDirection.Top,
+							horizontal: I.MenuDirection.Center,
+							data: {
+								value: (mark ? mark.param : ''),
+								onChange: (value: string) => {
+									marks = Mark.toggle(marks, { type: type, param: value, range: { from: from, to: to } });
+									onChange(marks);
+									window.setTimeout(() => { focus.apply(); }, 15);
+								}
 							}
-						}
+						});
 					});
 					break;
 					
@@ -253,7 +259,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						element: '#button-' + blockId + '-color',
 						type: I.MenuType.Vertical,
 						offsetX: 0,
-						offsetY: 11,
+						offsetY: 15,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Center,
 						data: {
@@ -281,7 +287,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						element: '#button-' + blockId + '-background',
 						type: I.MenuType.Vertical,
 						offsetX: 0,
-						offsetY: 11,
+						offsetY: 15,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Center,
 						data: {

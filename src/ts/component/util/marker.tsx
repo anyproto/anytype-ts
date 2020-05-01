@@ -15,8 +15,8 @@ const Constant = require('json/constant.json');
 const Bullets = {
 	black:	 require('img/icon/bullet/black.svg'),
 };
-const Checkbox0 = require('img/icon/marker/check0.svg');
-const Checkbox1 = require('img/icon/marker/check1.svg');
+const Checkbox0 = require('img/icon/marker/checkbox0.svg');
+const Checkbox1 = require('img/icon/marker/checkbox1.svg');
 const Toggle = require('img/icon/marker/toggle.svg');
 
 for (let c in Constant.textColor) {

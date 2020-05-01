@@ -56,7 +56,6 @@ class Block extends React.Component<Props, {}> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
-		this.onDrop = this.onDrop.bind(this);
 		this.onMenuDown = this.onMenuDown.bind(this);
 		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
@@ -190,7 +189,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		let object = (
-			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop}>
+			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
 				{blockComponent}
 			</DropTarget>
 		);
@@ -213,7 +212,7 @@ class Block extends React.Component<Props, {}> {
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
-					<div className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
+					<div id={'button-block-menu-' + id} className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 				</div>
 				
 				<div className={cd.join(' ')}>
@@ -221,8 +220,8 @@ class Block extends React.Component<Props, {}> {
 					
 					{block.isLayoutRow() ? (
 						<React.Fragment>
-							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
-							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} onDrop={this.onDrop} />
+							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
 						</React.Fragment>
 					): ''}
 					
@@ -341,19 +340,6 @@ class Block extends React.Component<Props, {}> {
 		onDragStart(e, I.DragItem.Block, ids, this);
 	};
 	
-	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
-		const { dataset } = this.props;
-		const { selection, onDrop } = dataset || {};
-		
-		if (selection) {
-			selection.preventClear(false);
-		};
-		
-		if (dataset && onDrop) {
-			onDrop(e, type, rootId, targetId, position);
-		};
-	};
-	
 	onMenuDown (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
@@ -371,14 +357,14 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const { selection } = dataset || {};
-		
+
 		commonStore.menuOpen('blockAction', { 
-			element: '#block-' + id,
+			element: '#button-block-menu-' + id,
 			type: I.MenuType.Vertical,
-			offsetX: Constant.size.blockMenu,
+			offsetX: 20,
 			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: id,
 				blockIds: DataUtil.selectionGet(this.props),

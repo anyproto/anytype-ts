@@ -4,7 +4,9 @@ import { I } from 'ts/lib';
 
 import Cell from '../cell';
 
-interface Props extends I.BlockDataview {};
+interface Props extends I.BlockDataview {
+	getContent(): any;
+};
 
 interface Column {
 	value: string;
@@ -16,8 +18,7 @@ const GROUP = '4';
 class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
-		const { content } = this.props;
-		const { data, properties } = content;
+		const { data, properties } = this.props.getContent();
 		const group = properties.find((item) => { return item.id == GROUP; });
 		const columns = this.getColumns();
 		

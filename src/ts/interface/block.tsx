@@ -1,5 +1,12 @@
 import { I } from 'ts/lib';
 
+export interface PageInfo {
+	id: string;
+	snippet: string;
+	details: any;	
+	text: string;
+};
+
 export enum BlockType {
 	Empty		 = '',
 	Page		 = 'page',
@@ -47,6 +54,7 @@ export interface Block {
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
 	isDraggable?(): boolean;
+	hasTitle?(): boolean;
 	isPage?(): boolean;
 	isPageProfile?(): boolean;
 	isLayout?(): boolean;

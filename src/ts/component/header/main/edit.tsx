@@ -24,7 +24,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onPath = this.onPath.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
-		this.onDrop = this.onDrop.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 	};
@@ -56,26 +55,24 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		return (
 			<div className="header headerMainEdit">
 				<div className="path">
-					<Icon className="back" onClick={this.onBack} />
-					<Icon className="forward" onClick={this.onForward} />
-					<Icon className="nav" onClick={this.onNavigation} />
+					<Icon className="back" tooltip="Back" onClick={this.onBack} />
+					<Icon className="forward" tooltip="Forward" onClick={this.onForward} />
+					<Icon className="nav" tooltip="Navigation" onClick={this.onNavigation} />
 					<PathItemHome />
 					{children.length > LIMIT ? <PathItemSkip /> : ''}
 					{slice.map((item: any, i: any) => (
-						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} onDrop={this.onDrop} index={n + i + 1} />
+						<HeaderItemPath {...this.props} key={i} rootId={rootId} block={item} onPath={this.onPath} index={n + i + 1} />
 					))}
 				</div>
 				
 				<div className="menu">
-					<Icon id={'button-' + rootId + '-more'} className="more" onClick={this.onMore} />
+					<Icon id={'button-' + rootId + '-more'} tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);
 	};
 	
 	onHome (e: any) {
-		const { breadcrumbs } = blockStore;
-		
 		this.props.history.push('/main/index');
 	};
 	
@@ -112,7 +109,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				options: options,
 				onSelect: (event: any, item: any) => {
 					crumbs.cut(I.CrumbsType.Page, item.index);
-					DataUtil.pageOpen(e, this.props, item.id, item.targetId);
+					DataUtil.pageOpen(e, this.props, item.targetId);
 				},
 			}
 		});
@@ -128,7 +125,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.persist();
 		
 		crumbs.cut(I.CrumbsType.Page, index);
-		DataUtil.pageOpen(e, this.props, block.id, block.content.targetBlockId);
+		DataUtil.pageOpen(e, this.props, block.content.targetBlockId);
 	};
 	
 	onBack (e: any) {
@@ -144,26 +141,13 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.props.history.goForward();
 	};
 	
-	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
-		const { dataset } = this.props;
-		const { onDrop } = dataset || {};
-		
-		console.log('onDrop', type, rootId, targetId, position);
-		
-		if (onDrop) {
-			onDrop(e, type, rootId, targetId, position);
-		};
-	};
-	
 	onNavigation (e: any) {
 		const { rootId } = this.props;
 		
-		commonStore.popupOpen('tree', { 
+		commonStore.popupOpen('navigation', { 
 			data: { 
-				type: 'move', 
+				type: I.NavigationType.Go, 
 				rootId: rootId,
-				onConfirm: (id: string) => {
-				},
 			}, 
 		});
 	};

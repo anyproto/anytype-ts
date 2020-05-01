@@ -54,6 +54,15 @@ class Keyboard {
 		
 		if (e.ctrlKey || e.metaKey) {
 			
+			// Navigation
+			if (k == Key.o) {
+				commonStore.popupOpen('navigation', { 
+					data: { 
+						type: I.NavigationType.Go, 
+					}, 
+				});
+			};
+
 			// Create new page
 			if (k == Key.n) {
 				e.preventDefault();
@@ -188,6 +197,7 @@ export enum Key {
 	i			 = 73,
 	k			 = 75,
 	n			 = 78,
+	o			 = 79,
 	p			 = 80,
 	s			 = 83,
 	v			 = 86,

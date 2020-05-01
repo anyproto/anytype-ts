@@ -15,7 +15,7 @@
 		}
 	}
 	
-	.block.blockLink > .wrapContent > .selectable > .dropTarget { padding-top: 4px; padding-bottom: 2px; }
+	.block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 	.block.blockLink > .wrapContent > .selectable > .dropTarget > .isArchived {
 		.name { color: $colorDarkGrey; border-color: $colorLightGrey; }
 		.archive { display: inline-block; }

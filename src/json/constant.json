@@ -32,8 +32,9 @@
 		"editorPage": 704,
 		"blockMenu": 48,
 		"image": 2048,
-		"header": 40,
+		"header": 38,
 		"lastBlock": 100,
+		"cover": 1920,
 		
 		"menuBlockContext": {
 			"default": 400,

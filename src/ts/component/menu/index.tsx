@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Key, Util } from 'ts/lib';
+import { I, keyboard, Util } from 'ts/lib';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -151,7 +151,7 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, offsetX, offsetY, isSub } = param;
+		const { element, type, vertical, horizontal, offsetX, offsetY, forceX, forceY, isSub } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -182,7 +182,7 @@ class Menu extends React.Component<Props, {}> {
 			
 			let x = offset.left;
 			let y = offset.top;
-			
+
 			if (vertical == I.MenuDirection.Top) {
 				y -= height + offsetY;
 			};
@@ -202,7 +202,15 @@ class Menu extends React.Component<Props, {}> {
 			if (horizontal == I.MenuDirection.Right) {
 				x -= width + offsetX - ew;
 			};
-			
+
+			if (undefined !== forceX) {
+				x = forceX;
+			};
+
+			if (undefined !== forceY) {
+				y = forceY;
+			};
+
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
 		

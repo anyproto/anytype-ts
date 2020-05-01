@@ -14,10 +14,10 @@
 		.blockLast { margin-left: -50px; }
 	}
 	
-	.controls { 
+	.editorControls { 
 		position: absolute; width: 704px; height: 112px; left: 50%; top: 0px; z-index: 1; line-height: 16px; margin-left: -352px;
 	}
-	.controls {
+	.editorControls {
 		.sides { display: flex; width: 100%; position: absolute; bottom: 16px; }
 		.side { width: 50%; }
 		.side.right { text-align: right; }
@@ -44,30 +44,30 @@
 			.icon { background-image: url('~img/icon/add/cover1.svg'); }
 		}
 	}
-	.controls:hover {
+	.editorControls:hover {
 		.btn { opacity: 1; }
 	}
-	.controls.isDraggingOver { background: rgba(255,187,44,0.3); }
+	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
 .editorWrapper.withIcon { padding-top: 40px; }
 .editorWrapper.withIcon {
-	.controls {
+	.editorControls {
 		.btn.addIcon { display: none; }
 	}
 }
 
 .editorWrapper.withCover { padding-top: 288px; }
 .editorWrapper.withCover {
-	.controls { height: 346px; }
-	.controls {
+	.editorControls { height: 346px; }
+	.editorControls {
 		.btn.addCover { display: none; }
 	}
 }
 
 .editorWrapper.withIconAndCover { padding-top: 224px; }
 .editorWrapper.withIconAndCover {
-	.controls { display: none; }
+	.editorControls { display: none; }
 }
 
 .editorWrapper.isProfile.withIcon { padding-top: 56px; }

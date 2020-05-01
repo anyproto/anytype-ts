@@ -7,7 +7,7 @@ const raf = require('raf');
 
 import PopupSettings from './settings';
 import PopupArchive from './archive';
-import PopupTree from './tree';
+import PopupNavigation from './navigation';
 import PopupNew from './new';
 import PopupPrompt from './prompt';
 import PopupPreview from './preview';
@@ -32,7 +32,7 @@ class Popup extends React.Component<Props, {}> {
 		const Components: any = {
 			settings: PopupSettings,
 			archive: PopupArchive,
-			tree: PopupTree,
+			navigation: PopupNavigation,
 			prompt: PopupPrompt,
 			new: PopupNew,
 			preview: PopupPreview,

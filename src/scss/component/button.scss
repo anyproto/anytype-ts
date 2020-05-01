@@ -2,7 +2,7 @@
 
 .button { 
 	display: inline-block; text-align: center; border: 0px;	font-weight: 600; text-decoration: none; cursor: pointer;
-	height: 40px; line-height: 42px; padding: 0px 16px; border-radius: 4px; transition: $transitionFast;
+	height: 40px; line-height: 38px; padding: 0px 16px; border-radius: 4px; transition: $transitionFast;
 	font-size: 14px; vertical-align: middle; position: relative; overflow: hidden; letter-spacing: 0.2px;
 }
 .button.orange { background: $colorOrange; color: #fff; }

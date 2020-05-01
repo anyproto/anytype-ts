@@ -95,7 +95,6 @@ class DataUtil {
 	
 	selectionGet (props: any): string[] {
 		const { dataset, block } = props;
-		const { id } = block;
 		const { selection } = dataset || {};
 		
 		if (!selection) {
@@ -104,9 +103,9 @@ class DataUtil {
 		
 		let ids: string[] = selection.get(true);
 		
-		if (ids.indexOf(id) < 0) {
+		if (block && ids.indexOf(block.id) < 0) {
 			selection.clear(true);
-			selection.set([ id ]);
+			selection.set([ block.id ]);
 			ids = selection.get(true);
 		};
 		
@@ -126,7 +125,11 @@ class DataUtil {
 			
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
-			blockStore.profileSet(message.profileBlockId);
+			
+			if (message.profileBlockId) {
+				blockStore.profileSet(message.profileBlockId);
+				C.BlockOpen(message.profileBlockId, []);
+			};
 			
 			crumbs.init();
 			
@@ -138,12 +141,11 @@ class DataUtil {
 		});
 	};
 	
-	pageOpen (e: any, props: any, linkId: string, targetId: string) {
+	pageOpen (e: any, props: any, targetId: string) {
 		const { history } = props;
 		const param = {
 			data: { 
 				id: targetId,
-				link: linkId, 
 			}
 		};
 
@@ -154,11 +156,11 @@ class DataUtil {
 		if (e && (e.shiftKey || (e.ctrlKey || e.metaKey))) { 
 			commonStore.popupOpen('editorPage', param);
 		} else {
-			history.push('/main/edit/' + targetId + '/link/' + linkId);
+			history.push('/main/edit/' + targetId);
 		};
 		*/
 		
-		history.push('/main/edit/' + targetId + '/link/' + linkId);
+		history.push('/main/edit/' + targetId);
 	};
 	
 	pageCreate (e: any, props: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
@@ -175,12 +177,57 @@ class DataUtil {
 				return;
 			};
 			
-			this.pageOpen(e, props, message.blockId, message.targetId);
+			this.pageOpen(e, props, message.targetId);
 				
 			if (callBack) {
 				callBack(message);
 			};
-		});	
+		});
+	};
+	
+	pageSetIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'iconEmoji', value: emoji },
+			{ key: 'iconImage', value: image },
+		], callBack);
+	};
+	
+	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'name', value: name },
+		], callBack);
+	};
+	
+	pageSetCover (rootId: string, type: I.CoverType, coverId: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
+		x = Number(x) || 0;
+		y = Number(y) || 0;
+		scale = Number(scale) || 0;
+		
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'coverType', value: type },
+			{ key: 'coverId', value: coverId },
+			{ key: 'coverX', value: x },
+			{ key: 'coverY', value: y },
+			{ key: 'coverScale', value: scale },
+		], callBack);
+	};
+
+	pageSetCoverXY (rootId: string, x: number, y: number, callBack?: (message: any) => void) {
+		x = Number(x) || 0;
+		y = Number(y) || 0;
+		
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'coverX', value: x },
+			{ key: 'coverY', value: y },
+		], callBack);
+	};
+
+	pageSetCoverScale (rootId: string, scale: number, callBack?: (message: any) => void) {
+		scale = Number(scale) || 0;
+		
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'coverScale', value: scale },
+		], callBack);
 	};
 	
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[]) {
@@ -242,17 +289,25 @@ class DataUtil {
 			},
 		];
 	};
+
+	menuGetTurnPage () {
+		return [
+			{ type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true }
+		];
+	};
 	
 	menuGetBlockPage () {
-		let id = 0;
 		return [
 			{ 
-				type: I.BlockType.Page, id: ++id, icon: 'page', name: 'Page', isBlock: true,
+				type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true,
 				description: translate('blockDescriptionPage'), 
 			},
+			{ 
+				type: I.BlockType.Page, id: 'existing', icon: 'existing', name: 'Existing Page', isBlock: true,
+				description: translate('blockDescriptionExisting'), 
+			},
 			/*
-			{ type: I.BlockType.Dataview, id: ++id, icon: 'task', name: 'Task', color: 'blue', isBlock: true },
-			{ id: 'existing', icon: 'existing', name: 'Existing Page', color: 'blue', isBlock: true },
+			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
 			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
@@ -411,16 +466,6 @@ class DataUtil {
 		});
 		
 		return sections;
-	};
-	
-	linkId (match: any) {
-		if (match.params.link) {
-			return match.params.link;
-		};
-		if (match.params.linkId) {
-			return match.params.linkId;
-		};
-		return '';
 	};
 	
 };

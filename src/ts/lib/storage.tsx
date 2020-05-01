@@ -35,7 +35,7 @@ class Storage {
 	};
 	
 	checkToggle (rootId: string, id: string): boolean {
-		const map = this.get('toggle');
+		const map = this.get('toggle') || {};
 		const list = map[rootId] || [];
 		return list.indexOf(id) >= 0;
 	};

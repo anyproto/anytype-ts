@@ -38,12 +38,15 @@ class BlockBookmark extends React.Component<Props, {}> {
 		let element = null;
 		if (url) {
 			let style: any = {};
+			let cn = [ 'inner', 'resizable' ];
+
 			if (imageHash) {
+				cn.push('withImage');
 				style.backgroundImage = 'url("' + commonStore.imageUrl(imageHash, 500) + '")';
 			};
 			
 			element = (
-				<div className="inner resizable" onClick={this.onClick}>
+				<div className={cn.join(' ')} onClick={this.onClick}>
 					<div className="side left">
 						<div className="name">{title}</div>
 						<div className="descr">{description}</div>

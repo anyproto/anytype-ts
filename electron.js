@@ -7,10 +7,11 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const dataPath = app.getPath('userData');
+const storage = require('electron-json-storage');
 
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
+storage.setDataPath(dataPath);
 
+let channel = '';
 let win = null;
 let csp = [];
 
@@ -39,6 +40,7 @@ function createWindow () {
 	});
 	
 	let param = {
+		backgroundColor: '#fff',
 		show: false,
 		width: width,
 		height: height,
@@ -117,11 +119,31 @@ function createWindow () {
 			]
 		},
 	];
+
+	function setChannel (c) {
+		channel = c;
+		storage.set('config', { channel: channel }, function (error) {
+			autoUpdater.channel = c;
+			autoUpdater.checkForUpdatesAndNotify();
+		});
+	};
 	
 	//if (!app.isPackaged) {
 		menu.push({
 			label: 'Debug',
 			submenu: [
+				{
+					label: 'Alpha version', accelerator: 'CmdOrCtrl+R',
+					click: function () {
+						setChannel('alpha');
+					}
+				},
+				{
+					label: 'Public version', accelerator: 'CmdOrCtrl+R',
+					click: function () {
+						setChannel('latest');
+					}
+				},
 				{
 					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
 					click: function () { win.reload(); }
@@ -162,7 +184,16 @@ function createWindow () {
 	
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 	
+};
+
+function autoUpdaterInit () {
+	console.log('Channel: ', channel);
+
+	autoUpdater.logger = log;
+	autoUpdater.logger.transports.file.level = 'info';
+	autoUpdater.channel = channel;
 	autoUpdater.checkForUpdatesAndNotify();
+
 	autoUpdater.on('checking-for-update', () => {
 		setStatus('Checking for update');
 	});
@@ -170,12 +201,15 @@ function createWindow () {
 	autoUpdater.on('update-available', (info) => {
 		setStatus('Update available');
 	});
+
 	autoUpdater.on('update-not-available', (info) => {
 		setStatus('Update not available');
 		
 		win.webContents.send('update');
 	});
+
 	autoUpdater.on('error', (err) => { setStatus('Error: ' + err); });
+
 	autoUpdater.on('download-progress', (progress) => {
 		let msg = [
 			'Download speed: ' + progress.bytesPerSecond,
@@ -195,11 +229,20 @@ function createWindow () {
 			autoUpdater.quitAndInstall();
 		}, 5000);
 	});
-
-	function setStatus (text) {
-		log.info(text);
-		win.webContents.send('message', text, app.getVersion());
-	};
 };
+
+function setStatus (text) {
+	log.info(text);
+	win.webContents.send('message', text, app.getVersion());
+};
+
+storage.get('config', function (error, data) {
+	if (error) throw error;
+
+	console.log('Config: ', data);
+  
+	channel = String(data.channel || 'latest');
+	autoUpdaterInit();
+});
 
 app.on('ready', createWindow);

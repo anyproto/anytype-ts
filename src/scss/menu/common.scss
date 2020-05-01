@@ -5,7 +5,7 @@
 	#menu-polygon { z-index: 1000; position: absolute; }
 	
 	.menu { 
-		border-radius: 8px; color: $colorBlack; position: absolute; z-index: 103; text-align: left; padding: 8px 0px;
+		border-radius: 8px; color: $colorBlack; position: absolute; z-index: 103; text-align: left; 
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 	}
@@ -30,13 +30,13 @@
 		.content { opacity: 1; }
 	}
 	
-	.menu.vertical { width: 208px; padding: 8px 0px; }
+	.menu.vertical { width: 208px; }
 	.menu.vertical {
-		.content { overflow-y: auto; max-height: 450px; }
+		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; }
 		
-		.filter { border-bottom: 1px solid #eae9e0; padding: 4px 16px 12px 16px; }
+		.filter { border-bottom: 1px solid #eae9e0; padding: 3px 16px 10px 16px; }
 		.filter {
-			.input { padding: 0px; height: 22px; }
+			.input { padding: 0px; height: 22px; vertical-align: top; }
 		}
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey; }
@@ -98,7 +98,7 @@
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { border: 0px; padding-bottom: 0px; }
 		.section > .name { 
-			padding: 4px 16px; margin-bottom: 2px; @include text-very-small; 
+			padding: 3px 16px; margin-bottom: 2px; @include text-very-small; 
 			display: block; text-transform: uppercase; 
 		}
 	}

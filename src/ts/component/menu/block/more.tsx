@@ -15,7 +15,7 @@ const { ipcRenderer } = window.require('electron');
 @observer
 class MenuBlockMore extends React.Component<Props, {}> {
 	
-	n: number = 0;
+	n: number = -1;
 	
 	constructor (props: any) {
 		super(props);
@@ -125,14 +125,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			];
 			
 			if (details.isArchived) {
-				//items.push({ id: 'remove', icon: 'remove', name: 'Delete' });
+				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
 			} else {
 				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });
 			};
 		} else {
 			items = [
 				{ id: 'remove', icon: 'remove', name: 'Delete' },
-				//{ id: 'move', icon: 'move', name: 'Move to' },
+				{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 			];
 		};
@@ -149,8 +149,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, linkPage, linkId, rootId, onSelect, match } = data;
-		const { root, breadcrumbs } = blockStore;
+		const { blockId, blockIds, rootId, onSelect } = data;
+		const { breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
@@ -195,40 +195,23 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 			
 			case 'move':
-				commonStore.popupOpen('tree', { 
+				commonStore.popupOpen('navigation', { 
 					data: { 
-						type: 'move', 
-						rootId: root,
-						onConfirm: (id: string) => {
-							console.log('Move', id);
-						},
-					}, 
+						type: I.NavigationType.Move, 
+						rootId: rootId,
+					},
 				});
 				break;
 				
 			case 'copy':
-				commonStore.popupOpen('tree', { 
-					data: { 
-						type: 'copy', 
-						rootId: root,
-						onConfirm: (id: string) => {
-							C.BlockListDuplicate(rootId, [ blockId ], blockId, I.BlockPosition.Bottom, (message: any) => {
-								if (message.blockIds.length) {
-									focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
-									focus.apply();
-								};
-							});
-						},
-					}, 
-				});
 				break;
 				
 			case 'archive':
-				C.BlockSetPageIsArchived(rootId, blockId, true, (message: any) => {
+				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
 					
 					if (prev) {
-						history.push('/main/edit/' + prev.content.targetBlockId + '/link/' + prev.id);
+						history.push('/main/edit/' + prev.content.targetBlockId);
 					} else {
 						history.push('/main/index');
 					};
@@ -237,6 +220,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'remove':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+					if (block.type == I.BlockType.Page) {
+						history.push('/main/index');
+					};
+				});
+				break;
+
+			case 'removePage':
+				C.BlockListDeletePage([ blockId ], (message: any) => {
 					if (block.type == I.BlockType.Page) {
 						history.push('/main/index');
 					};

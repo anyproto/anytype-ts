@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, IconUser, Switch, Button, Title, Label, Cover, Textarea, Input } from 'ts/component';
-import { I, C, Storage, Key, Util } from 'ts/lib';
-import { authStore, commonStore } from 'ts/store';
+import { Icon, IconUser, Switch, Button, Title, Label, Cover, Textarea, Input, Loader } from 'ts/component';
+import { I, C, Storage, Key, Util, DataUtil } from 'ts/lib';
+import { authStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 const { dialog } = window.require('electron').remote;
@@ -17,7 +17,7 @@ interface Props extends I.Popup {
 
 interface State {
 	page: string;
-	preview: string;
+	loading: boolean;
 };
 
 @observer
@@ -28,7 +28,7 @@ class PopupSettings extends React.Component<Props, State> {
 	pin: string = '';
 	state = {
 		page: 'index',
-		preview: '',
+		loading: false,
 	};
 	onConfirmPin: any = null;
 	
@@ -51,9 +51,9 @@ class PopupSettings extends React.Component<Props, State> {
 	render () {
 		const { account } = authStore;
 		const { coverId, coverImg } = commonStore;
-		const { page, preview } = this.state;
+		const { page, loading } = this.state;
 		const pin = Storage.get('pin');
-		
+
 		let content = null;
 		let inputs = [];
 		
@@ -126,6 +126,8 @@ class PopupSettings extends React.Component<Props, State> {
 				
 				content = (
 					<div>
+						{loading ? <Loader /> : ''}
+
 						{head}
 						
 						<Title text="Wallpaper" />
@@ -184,7 +186,12 @@ class PopupSettings extends React.Component<Props, State> {
 							<div className="buttons">
 								<Button text="Turn pin code off" className="blank" onClick={this.onTurnOffPin} />
 								<Button text="Change pin code" className="blank" onClick={() => {
-									this.onConfirmPin = this.onSelectPin; 
+									this.onConfirmPin = () => {
+										window.setTimeout(() => {
+											this.onConfirmPin = this.onSelectPin;
+											this.onPage('pinSelect');
+										});
+									}; 
 									this.onPage('pinConfirm');
 								}} />
 							</div>
@@ -209,13 +216,17 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						{head}
+						<div className="head">
+							<div className="element" onClick={() => { this.onPage('pinIndex'); }}>
+								Cancel
+							</div>
+						</div>
 						
 						<Title text="Pin code" />
 						<Label text="The pin code will protect your secret phrase. As we do not store your secret phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or secret phrase. So, please, remember your pin code." />
 						<div className="inputs">
 							{inputs.map((item: any, i: number) => (
-								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />
+								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={page + i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />
 							))}
 						</div>
 						<Button text="Confirm" className="orange" onClick={this.onSelectPin} />
@@ -231,20 +242,23 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						{head}
+						<div className="head">
+							<div className="element" onClick={() => { this.onPage('pinIndex'); }}>
+								Cancel
+							</div>
+						</div>
 						
 						<Title text="Pin code" />
 						<Label text="To continue, first verify that it’s you. Enter current pin code" />
 						<div className="inputs">
 							{inputs.map((item: any, i: number) => (
-								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />
+								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={page + i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />
 							))}
 						</div>
 						<Button text="Confirm" className="orange" onClick={() => { this.onPage('index'); }} />
 					</div>
 				);
 				break;
-				
 		};
 		
 		return (
@@ -267,6 +281,7 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	
 	onFileClick (e: any) {
+		const { root } = blockStore;
 		const options: any = { 
 			properties: [ 'openFile' ], 
 			filters: [ { name: '', extensions: Constant.extension.image } ] 
@@ -278,15 +293,16 @@ class PopupSettings extends React.Component<Props, State> {
 				return;
 			};
 
-			let path = files[0];
-			let param = {
-				maxWidth: 1968,
-				quality: 0.95,
-			};
-			
-			Util.loadPreviewBase64(Util.makeFileFromPath(path), param, (image: string, param: any) => {
-				commonStore.coverSetImage(image);
-				this.setState({ preview: image });
+			this.setState({ loading: true });
+
+			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
+				this.setState({ loading: false });
+				commonStore.coverSetImage(message.hash);
+				DataUtil.pageSetCover(root, I.CoverType.Image, message.hash);
 			});
 		});
 	};
@@ -326,7 +342,7 @@ class PopupSettings extends React.Component<Props, State> {
 		let pin = this.getPin();
 		if (pin.length == Constant.pinSize) {
 			this.pin = pin;
-			
+
 			if (this.onConfirmPin) {
 				this.onConfirmPin();
 				this.onConfirmPin = null;

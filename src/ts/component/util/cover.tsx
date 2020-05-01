@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 interface Props {
 	id?: string;
@@ -14,6 +15,8 @@ interface Props {
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 };
+
+const Constant = require('json/constant.json');
 
 class Cover extends React.Component<Props, {}> {
 
@@ -37,7 +40,7 @@ class Cover extends React.Component<Props, {}> {
 			cn.push('c' + num);
 		} else
 		if ((type == I.CoverType.Image) && image) {
-			style.backgroundImage = `url("${image}")`;
+			style.backgroundImage = `url("${commonStore.imageUrl(image, Constant.size.cover)}")`;
 		};
 		
 		if (withScale) {
