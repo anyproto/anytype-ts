@@ -225,6 +225,7 @@ class DragProvider extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeoutHover);
 
+		/*
 		if (this.canDrop) {
 			if ((this.position == I.BlockPosition.Top) && prev) {
 				$(prev).after(this.emptyObj);
@@ -233,6 +234,7 @@ class DragProvider extends React.Component<Props, {}> {
 				this.hovered.after(this.emptyObj);
 			};
 		};
+		*/
 
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
