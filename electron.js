@@ -133,16 +133,21 @@ function createWindow () {
 			label: 'Debug',
 			submenu: [
 				{
-					label: 'Alpha version', accelerator: 'CmdOrCtrl+R',
-					click: function () {
-						setChannel('alpha');
-					}
-				},
-				{
-					label: 'Public version', accelerator: 'CmdOrCtrl+R',
-					click: function () {
-						setChannel('latest');
-					}
+					label: 'Version',
+					submenu: [
+						{
+							label: 'Alpha',
+							click: function () {
+								setChannel('alpha');
+							}
+						},
+						{
+							label: 'Public',
+							click: function () {
+								setChannel('latest');
+							}
+						},
+					]
 				},
 				{
 					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
