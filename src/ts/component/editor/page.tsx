@@ -471,7 +471,7 @@ class EditorPage extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
 
-		let length = block.getLength();
+		let length = String(text || '').length;
 		let k = e.which;
 		
 		this.uiHide();
@@ -1121,7 +1121,6 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
-		console.trace();
 		const { rootId } = this.props;
 		const { content } = focused;
 		
@@ -1168,7 +1167,7 @@ class EditorPage extends React.Component<Props, State> {
 	
 	onLastClick (e: any) {
 		const { rootId } = this.props;
-		const children = blockStore.getChildren(rootId, rootId);
+		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isTitle(); });
 		const last = children[children.length - 1];
 		
 		let create = false;
