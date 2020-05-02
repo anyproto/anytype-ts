@@ -297,15 +297,15 @@ class DragProvider extends React.Component<Props, {}> {
 			contextId = this.props.rootId;
 			targetContextId = target.content.targetBlockId;
 			targetId = '';
+
+			if (contextId == targetContextId) {
+				console.log('Contexts are equal');
+				return;
+			};
 		};
 
 		if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 			targetId = parent.id;
-		};
-
-		if (contextId == targetContextId) {
-			console.log('Contexts are equal');
-			return;
 		};
 
 		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
