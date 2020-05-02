@@ -2,11 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { DragLayer } from 'ts/component';
-import { I, C, focus, keyboard, Util } from 'ts/lib';
+import { I, C, focus, keyboard, Util, scrollOnMove } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { randomFill } from 'crypto';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -29,6 +28,9 @@ class DragProvider extends React.Component<Props, {}> {
 	hovered: any = null;
 	canDrop: boolean = false;
 	timeoutHover: number = 0;
+	
+	objects: any = null;
+	objectData: any = {};
 	emptyObj: any = null;
 
 	constructor (props: any) {
@@ -105,6 +107,7 @@ class DragProvider extends React.Component<Props, {}> {
 		this.unbind();
 		this.setDragImage(e);
 
+		this.objects = $('.dropTarget');
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
 
@@ -115,6 +118,7 @@ class DragProvider extends React.Component<Props, {}> {
 		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
 
 		$('.colResize.active').removeClass('active');
+		scrollOnMove.onMouseDown(e);
 
 		if (selection) {
 			selection.set(this.ids);
@@ -124,9 +128,10 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	onDragMove (e: any) {
+		const { rootId } = this.props;
+
 		const x = e.pageX;
 		const y = Math.max(0, e.pageY - $(window).scrollTop());
-		const items = $('.dropTarget');
 		const isFileDrag = e.originalEvent.dataTransfer.files && e.originalEvent.dataTransfer.files.length;
 
 		this.refLayer.move(x, y);
@@ -140,14 +145,17 @@ class DragProvider extends React.Component<Props, {}> {
 		$('.dragEmpty').remove();
 
 		// Find hovered block by mouse coords
-		items.each((i: number, item: any) => {
+		this.objects.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
+			let data = $(item).data();
 
-			rect.x -= 100;
-			rect.width += 200;
+			if (data.dropType == I.DragItem.Block) {
+				rect.x -= 100;
+				rect.width += 200;
+			};
 
 			if ((x >= rect.x) && (x <= rect.x + rect.width) && (y >= rect.y) && (y <= rect.y + rect.height)) {
-				prev = items.get(i - 1);
+				prev = this.objects.get(i - 1);
 				this.hovered = $(item);
 				hoverRect = rect;
 			};
@@ -220,6 +228,10 @@ class DragProvider extends React.Component<Props, {}> {
 			// You can only drop inside of menu items
 			if ((data.dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
 				this.position = I.BlockPosition.Inner;
+
+				if (rootId == data.targetContextId) {
+					this.position = I.BlockPosition.None;
+				};
 			};
 		};
 
@@ -242,6 +254,8 @@ class DragProvider extends React.Component<Props, {}> {
 				$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
 			}, 10);
 		};
+
+		scrollOnMove.onMouseMove(e);
 	};
 
 	onDragEnd (e: any) {
@@ -260,6 +274,7 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 
 		$('.block.isDragging').removeClass('isDragging');
+		scrollOnMove.onMouseUp(e);
 	};
 
 	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
@@ -286,6 +301,11 @@ class DragProvider extends React.Component<Props, {}> {
 
 		if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 			targetId = parent.id;
+		};
+
+		if (contextId == targetContextId) {
+			console.log('Contexts are equal');
+			return;
 		};
 
 		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
