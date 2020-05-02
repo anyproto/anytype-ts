@@ -296,6 +296,7 @@ class BlockText extends React.Component<Props, {}> {
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
 			
+			console.log('setText');
 			this.setText(this.marks);
 		};
 		

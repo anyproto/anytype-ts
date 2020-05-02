@@ -13,6 +13,8 @@
 		
 		.blockLast { margin-left: -50px; }
 	}
+
+	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
 	.editorControls { 
 		position: absolute; width: 704px; height: 112px; left: 50%; top: 0px; z-index: 1; line-height: 16px; margin-left: -352px;

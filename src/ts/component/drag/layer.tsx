@@ -67,7 +67,7 @@ class DragLayer extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className="dragLayer" style={{ width: width }}>
+			<div id="dragLayer" className="dragLayer" style={{ width: width }}>
 				{content}
 			</div>
 		);
@@ -98,7 +98,7 @@ class DragLayer extends React.Component<Props, State> {
 		
 		this.setState({ type: type, width: rect.width, ids: ids });
 	};
-	
+
 	hide () {
 		if (!this._isMounted) {
 			return;

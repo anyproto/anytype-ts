@@ -6,12 +6,14 @@ import { I, C, focus, keyboard, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
+import { randomFill } from 'crypto';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
 };
 
+const raf = require('jquery');
 const $ = require('jquery');
 const THROTTLE = 20;
 
@@ -27,6 +29,7 @@ class DragProvider extends React.Component<Props, {}> {
 	hovered: any = null;
 	canDrop: boolean = false;
 	timeoutHover: number = 0;
+	emptyObj: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -101,11 +104,15 @@ class DragProvider extends React.Component<Props, {}> {
 		this.set(type, ids);
 		this.unbind();
 		this.setDragImage(e);
+
+		this.emptyObj = $('<div class="dragEmpty" />');
+		this.emptyObj.css({ height: $('#dragLayer').height() });
+
 		keyboard.setDrag(true);
 		Util.linkPreviewHide(false);
 
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', (e: any) => { this.onDragMove(e.originalEvent); });
+		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
 
 		$('.colResize.active').removeClass('active');
 
@@ -120,7 +127,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const x = e.pageX;
 		const y = Math.max(0, e.pageY - $(window).scrollTop());
 		const items = $('.dropTarget');
-		const isFileDrag = e.dataTransfer.files && e.dataTransfer.files.length;
+		const isFileDrag = e.originalEvent.dataTransfer.files && e.originalEvent.dataTransfer.files.length;
 
 		this.refLayer.move(x, y);
 
@@ -128,6 +135,9 @@ class DragProvider extends React.Component<Props, {}> {
 		this.position = I.BlockPosition.None;
 
 		let hoverRect: any = null;
+		let prev: any = null;
+
+		$('.dragEmpty').remove();
 
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
@@ -137,6 +147,7 @@ class DragProvider extends React.Component<Props, {}> {
 			rect.width += 200;
 
 			if ((x >= rect.x) && (x <= rect.x + rect.width) && (y >= rect.y) && (y <= rect.y + rect.height)) {
+				prev = items.get(i - 1);
 				this.hovered = $(item);
 				hoverRect = rect;
 			};
@@ -148,9 +159,10 @@ class DragProvider extends React.Component<Props, {}> {
 			const data = this.hovered.data();
 			const checkRect: any = {
 				x: hoverRect.x + hoverRect.width * 0.3,
-				y: hoverRect.y + hoverRect.height * 0.1,
-				width: hoverRect.x + hoverRect.width * 0.60,
-				height: hoverRect.y + hoverRect.height * 0.9
+				width: hoverRect.x + hoverRect.width * 0.6,
+
+				y: hoverRect.y + hoverRect.height * 0.3 - 2,
+				height: hoverRect.y + hoverRect.height * 0.7 + 2,
 			};
 
 			if (!isFileDrag && (this.type == I.DragItem.Block)) {
@@ -212,6 +224,15 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 
 		window.clearTimeout(this.timeoutHover);
+
+		if (this.canDrop) {
+			if ((this.position == I.BlockPosition.Top) && prev) {
+				$(prev).after(this.emptyObj);
+			};
+			if ((this.position == I.BlockPosition.Bottom)) {
+				this.hovered.after(this.emptyObj);
+			};
+		};
 
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
@@ -351,6 +372,8 @@ class DragProvider extends React.Component<Props, {}> {
 
 	clear () {
 		$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+		$('.dragEmpty').remove();
+
 		this.hovered = null;
 		this.position = I.BlockPosition.None;
 	};

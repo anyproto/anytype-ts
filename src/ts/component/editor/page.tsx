@@ -1121,6 +1121,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
+		console.trace();
 		const { rootId } = this.props;
 		const { content } = focused;
 		
