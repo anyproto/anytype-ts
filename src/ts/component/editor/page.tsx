@@ -951,7 +951,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const cb = (message: any) => {
-			//const blocks = (message.anySlot || []).map((it: any) => { return blockStore.prepareBlockFromProto(it); });
+			const blocks = (message.anySlot || []).map((it: any) => { return blockStore.prepareBlockFromProto(it); });
 
 			Util.clipboardCopy({
 				text: message.textSlot,
