@@ -951,11 +951,15 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const cb = (message: any) => {
-			data.html = message.html;
+			//const blocks = (message.anySlot || []).map((it: any) => { return blockStore.prepareBlockFromProto(it); });
+
 			Util.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
-				anytype: message.anySlot,
+				anytype: {
+					range: range,
+					blocks: blocks,
+				},
 			});
 			
 			if (cut) {
@@ -965,9 +969,9 @@ class EditorPage extends React.Component<Props, State> {
 			};
 		};
 		
-		Util.clipboardCopy(data);
-		
-		C[cmd](rootId, blocks, range, cb);
+		Util.clipboardCopy(data, () => {
+			C[cmd](rootId, blocks, range, cb);
+		});
 	};
 	
 	onPrint (e: any) {
@@ -1011,7 +1015,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
-			
+			console.log(cb.getData('application/anytype'));
 			data = {
 				text: String(cb.getData('text/plain') || ''),
 				html: String(cb.getData('text/html') || ''),
@@ -1061,6 +1065,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (message.blockIds && message.blockIds.length) {
 				const lastId = message.blockIds[message.blockIds.length - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
+				
 				if (!block) {
 					return;
 				};
@@ -1070,7 +1075,8 @@ class EditorPage extends React.Component<Props, State> {
 				id = block.id;
 				from = length;
 				to = length;
-			} else {
+			} else 
+			if (message.caretPosition >= 0) {
 				id = focused;
 				from = message.caretPosition;
 				to = message.caretPosition;

@@ -129,6 +129,7 @@ class Util {
 			};
 			
 			document.removeEventListener('copy', handler, true);
+			
 			if (callBack) {
 				callBack();
 			};
