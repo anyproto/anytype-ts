@@ -640,8 +640,6 @@ class EditorPage extends React.Component<Props, State> {
 				
 				if (e.ctrlKey || e.metaKey) {
 					next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
-					console.log(next);
-					
 					if (next) {
 						const l = next.getLength();
 						focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
@@ -1015,7 +1013,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
-			console.log(cb.getData('application/anytype'));
 			data = {
 				text: String(cb.getData('text/plain') || ''),
 				html: String(cb.getData('text/html') || ''),

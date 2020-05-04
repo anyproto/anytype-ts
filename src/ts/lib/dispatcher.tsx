@@ -399,7 +399,7 @@ class Dispatcher {
 				
 				if (debug) {
 					t2 = performance.now();
-					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3));
+					console.log('[Dispatcher.callback]', type, JSON.stringify(message, null, 3));
 					console.log(
 						'Middle time:', Math.ceil(t1 - t0) + 'ms', 
 						'Render time:', Math.ceil(t2 - t1) + 'ms', 
