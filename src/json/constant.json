@@ -42,18 +42,16 @@
 			"header1": 330,
 			"header2": 330,
 			"header3": 330
+		},
+
+		"index": {
+			"width": 192,
+			"height": 112,
+			"margin": 16,
+			"border": 72
 		}
 	},
 
-	"index": {
-		"rootId": "home",
-		"document": {
-			"width": 208,
-			"height": 112,
-			"margin": 16
-		}
-	},
-	
 	"propertyName": {
 		"0": "Title",
 		"1": "Description",

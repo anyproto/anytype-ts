@@ -155,6 +155,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				this.setError(error);
 			} else
 			if (message.account) {
+				Storage.set('accountId', message.account.id);
 				authStore.accountSet(message.account);
 				
 				if (match.params.id == 'register') {
@@ -177,7 +178,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
-				Storage.set('accountId', account.id);
+				Storage.set('accountId', message.account.id);
 				
 				DataUtil.pageInit(() => {
 					history.push('/main/index');

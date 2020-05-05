@@ -168,32 +168,45 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const nidx = element.childrenIds.indexOf(target.id);
 
 		blockStore.blockUpdateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
-		
 		C.BlockListMove(root, root, [ current.id ], target.id, position);
 	};
 	
 	resize () {
 		const list = this.getList();
-		const size = Constant.index.document;
+		const size = Constant.size.index;
 		const win = $(window);
 		const wh = win.height();
 		const ww = win.width();
 		const node = $(ReactDOM.findDOMNode(this));
 		const body = node.find('#body');
 		const documents = node.find('#documents');
-		const cnt = Math.floor((ww - 144) / (size.width + size.margin));
-		
-		let width = cnt * (size.width + size.margin);
+		const items = node.find('#documents .item');
+
+		const maxWidth = ww - size.border * 2;
+		const cnt = Math.floor(maxWidth / (size.width + size.margin));
+		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
+
 		let height = size.height + size.margin;
-		
 		if (list.length + 1 > cnt) {
 			height *= 2;
 		};
 		
-		body.css({ width: width - size.margin });
+		items.css({ width: width });
+		body.css({ width: maxWidth });
 		documents.css({ marginTop: wh - 130 - height });
+
+		if (items.length > cnt) {
+			items.each((i: number, item: any) => {
+				item = $(item);
+				item.removeClass('last');
+
+				if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
+					item.addClass('last');
+				};
+			});
+		};
 	};
-	
+
 	getList () {
 		const { root } = blockStore;
 		return blockStore.getChildren(root, root, (it: any) => {
