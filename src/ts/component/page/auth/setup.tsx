@@ -178,7 +178,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 			} else
 			if (message.account) {
 				Storage.set('accountId', account.id);
-				authStore.accountSet(account);
 				
 				DataUtil.pageInit(() => {
 					history.push('/main/index');

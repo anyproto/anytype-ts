@@ -67,7 +67,7 @@ class MenuAccount extends React.Component<Props, {}> {
 			if (message.error.code) {
 			} else
 			if (message.account) {
-				Storage.set('accountId', account.id);
+				Storage.set('accountId', id);
 				authStore.accountSet(message.account);
 				
 				DataUtil.pageInit();
