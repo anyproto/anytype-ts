@@ -147,7 +147,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		commonStore.popupOpen('navigation', { 
 			data: { 
 				type: I.NavigationType.Go, 
-				rootId: rootId,
+				id: rootId,
 			}, 
 		});
 	};

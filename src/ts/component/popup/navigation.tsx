@@ -10,6 +10,7 @@ interface Props extends I.Popup {
 };
 
 interface State {
+	isOpen: boolean;
 	expanded: boolean;
 	loading: boolean;
 	filter: string;
@@ -29,6 +30,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
+		isOpen: false,
 		expanded: false,
 		loading: false,
 		filter: '',
@@ -51,10 +53,14 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { expanded, filter, info, pagesIn, pagesOut, loading } = this.state;
+		const { expanded, filter, info, pagesIn, pagesOut, loading, isOpen } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
+
+		if (!isOpen) {
+			return null;
+		};
 
 		let placeHolder = '';
 		let confirm = '';
@@ -90,7 +96,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			let { iconEmoji, name } = item.details;
 
 			return (
-				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item.id); }}>
 					<Smile icon={iconEmoji} className="c48" size={24} />
 					<div className="info">
 						<div className="name">{name}</div>
@@ -155,7 +161,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					<React.Fragment>
 						<div id="head" className="path">
 							<ItemPath isSearch={true} />
-							<ItemPath {...info} />
+							{info ? <ItemPath {...info} /> : ''}
 						</div>
 
 						<div key="sides" className="sides">
@@ -171,7 +177,7 @@ class PopupNavigation extends React.Component<Props, State> {
 								)}
 							</div>
 							<div className="items center">
-								<Selected {...info} />
+								{info ? <Selected {...info} /> : ''}
 							</div>
 							<div className="items right">
 								{!pagesOut.length ? (
@@ -214,45 +220,40 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		const { param, history } = this.props;
+		const { data } = param;
+		const expanded = (data.id ? true : false);
+
 		this._isMounted = true;
+		this.init(expanded);
 
-		this.setState({ loading: true });
-		this.init();
-		this.index = new FlexSearch('balance', {
-			encode: 'extra',
-    		tokenize: 'full',
-			threshold: 1,
-    		resolution: 3,
-		});
+		window.setTimeout(() => {
+			this.setState({ expanded: expanded, isOpen: true });
+			this.loadSearch();
 
-		let pages: any[] = [];
-
-		C.NavigationListPages((message: any) => {
-			for (let page of message.pages) {
-				page = this.getPage(page);
-				pages.push(page);
-
-				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
+			if (expanded) {
+				this.loadPage(data.id);
 			};
-
-			this.ref.focus();
-			this.setState({ pages: pages, loading: false });
-		});
+		}, 10);
 	};
 	
 	componentDidUpdate () {
-		this.init();
+		const { expanded } = this.state;
+		this.init(expanded);
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = true;
+		this._isMounted = false;
 
 		$(window).unbind('resize.tree');
 		window.clearTimeout(this.timeout);
 	};
 	
-	init () {
-		const { expanded } = this.state;
+	init (expanded: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const win = $(window);
 		const obj = $('#popupNavigation');
 		
@@ -296,10 +297,45 @@ class PopupNavigation extends React.Component<Props, State> {
 			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
 		}, force ? 0 : 50);
 	};
-	
-	onClick (e: any, item: I.PageInfo) {
-		C.NavigationGetPageInfoWithLinks(item.id, (message: any) => {
+
+	loadSearch () {
+		this.setState({ loading: true });
+
+		this.index = new FlexSearch('balance', {
+			encode: 'extra',
+    		tokenize: 'full',
+			threshold: 1,
+    		resolution: 3,
+		});
+
+		let pages: any[] = [];
+
+		C.NavigationListPages((message: any) => {
+			for (let page of message.pages) {
+				page = this.getPage(page);
+				pages.push(page);
+
+				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
+			};
+
+			if (this.ref) {
+				this.ref.focus();
+			};
+			this.setState({ pages: pages, loading: false });
+		});
+	};
+
+	loadPage (id: string) {
+		this.setState({ loading: true });
+
+		C.NavigationGetPageInfoWithLinks(id, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			this.setState({ 
+				loading: false,
 				expanded: true, 
 				info: this.getPage(message.page.info),
 				pagesIn: message.page.links.inbound.map((it: any) => { return this.getPage(it); }),
@@ -307,11 +343,16 @@ class PopupNavigation extends React.Component<Props, State> {
 			});
 		});
 	};
-
-	onSearch () {
-		this.setState({ expanded: false });
-	};
 	
+	onClick (e: any, item: I.PageInfo) {
+		this.loadPage(item.id);
+	};
+
+	onClickArrow (e: any, item: I.PageInfo) {
+		e.stopPropagation();
+		this.onConfirm(e, item);
+	};
+
 	onConfirm (e: any, item: I.PageInfo) {
 		const { param, history } = this.props;
 		const { data } = param;
@@ -341,14 +382,13 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		commonStore.popupClose(this.props.id);
 	};
+
+	onSearch () {
+		this.setState({ expanded: false });
+	};
 	
 	onCancel (e: any) {
 		commonStore.popupClose(this.props.id);
-	};
-
-	onClickArrow (e: any, item: I.PageInfo) {
-		e.stopPropagation();
-		this.onConfirm(e, item);
 	};
 
 	getPage (page: any): I.PageInfo {

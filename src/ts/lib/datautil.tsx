@@ -299,12 +299,12 @@ class DataUtil {
 	menuGetBlockPage () {
 		return [
 			{ 
-				type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true,
-				description: translate('blockDescriptionPage'), 
-			},
-			{ 
 				type: I.BlockType.Page, id: 'existing', icon: 'existing', name: 'Existing Page', isBlock: true,
 				description: translate('blockDescriptionExisting'), 
+			},
+			{ 
+				type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true,
+				description: translate('blockDescriptionPage'), 
 			},
 			/*
 			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },

@@ -33,7 +33,7 @@ class HeaderItemPath extends React.Component<Props, {}> {
 		return (
 			<DropTarget {...this.props} className="item" id={id} rootId={breadcrumbs} dropType={I.DragItem.Menu} onClick={(e: any) => { onPath(e, block, index); }}>
 				{icon}
-				<div className="name">{Util.shorten(name, 16)}</div>
+				<div className="name">{Util.shorten(name, 32)}</div>
 				<Icon className="arrow" />
 			</DropTarget>
 		);

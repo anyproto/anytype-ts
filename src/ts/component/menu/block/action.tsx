@@ -525,7 +525,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					return it.type == I.BlockType.Text;
 				});
 				
-				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+				C.BlockUnlink(rootId, blockIds, (message: any) => {
 					this.setFocus(next.id);
 				});
 				break;
