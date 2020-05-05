@@ -197,15 +197,9 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
-		C.VersionGet((message: any) => {
-			analytics.setVersionName(version);
-			analytics.setUserProperties({
-				middleVersion: message.version,
-				deviceType: 'Desktop',
-				platform: platforms[os.platform()],
-			});
-		});
-		
+		analytics.setVersionName(version);
+		analytics.setUserProperties({ deviceType: 'Desktop', platform: platforms[os.platform()] });
+
 		const win = $(window);
 		const phrase = Storage.get('phrase');
 		const html = $('html');
