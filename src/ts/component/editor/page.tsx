@@ -959,6 +959,15 @@ class EditorPage extends React.Component<Props, State> {
 					blocks: blocks,
 				},
 			});
+
+			console.log(JSON.stringify({
+				text: message.textSlot,
+				html: message.htmlSlot,
+				anytype: {
+					range: range,
+					blocks: blocks,
+				},
+			}, null, 3));
 			
 			if (cut) {
 				commonStore.menuClose('blockContext');
@@ -1013,6 +1022,8 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
+			console.log(cb);
+
 			data = {
 				text: String(cb.getData('text/plain') || ''),
 				html: String(cb.getData('text/html') || ''),

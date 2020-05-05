@@ -449,6 +449,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
+			window.clearTimeout(this.timeoutKeyUp);
 			return;
 		};
 		
