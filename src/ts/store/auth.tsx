@@ -70,9 +70,7 @@ class AuthStore {
 	
 	@action
 	accountSet (account: I.Account) {
-		Storage.set('accountId', account.id);
 		this.accountItem = account as I.Account;
-		
 		analytics.profile(account);
 	};
 	
