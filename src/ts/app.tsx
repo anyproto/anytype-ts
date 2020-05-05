@@ -202,6 +202,7 @@ class App extends React.Component<Props, State> {
 
 		const win = $(window);
 		const phrase = Storage.get('phrase');
+		const accountId = Storage.get('accountId');
 		const html = $('html');
 		
 		let debugUI = Boolean(Storage.get('debugUI'));
@@ -221,9 +222,9 @@ class App extends React.Component<Props, State> {
 		
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath + '/data');
-
 			this.setState({ loading: false });
-			if (phrase) {
+
+			if (phrase && accountId) {
 				history.push('/auth/setup/init');
 			};
 		});

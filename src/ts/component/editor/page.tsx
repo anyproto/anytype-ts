@@ -1030,7 +1030,6 @@ class EditorPage extends React.Component<Props, State> {
 			if (message.blockIds && message.blockIds.length) {
 				const lastId = message.blockIds[message.blockIds.length - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
-				
 				if (!block) {
 					return;
 				};
