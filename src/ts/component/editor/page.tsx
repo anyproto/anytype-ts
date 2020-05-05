@@ -402,12 +402,10 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			if (k == Key.c) {
-				e.preventDefault();
 				this.onCopy(e, false);
 			};
 			
 			if (k == Key.x) {
-				e.preventDefault();
 				this.onCopy(e, true);
 			};
 			
@@ -908,6 +906,8 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onCopy (e: any, cut: boolean) {
+		e.preventDefault();
+
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 
@@ -960,15 +960,6 @@ class EditorPage extends React.Component<Props, State> {
 				},
 			});
 
-			console.log(JSON.stringify({
-				text: message.textSlot,
-				html: message.htmlSlot,
-				anytype: {
-					range: range,
-					blocks: blocks,
-				},
-			}, null, 3));
-			
 			if (cut) {
 				commonStore.menuClose('blockContext');
 				focus.set(focused, { from: range.from, to: range.from });
@@ -981,53 +972,19 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 	
-	onPrint (e: any) {
-		window.print();
-	};
-
-	getLayoutIds (ids: string[]) {
-		if (!ids.length) {
-			return [];
-		};
-		
-		const { rootId } = this.props;
-		const map = blockStore.getMap(rootId);
-		
-		let ret: any[] = [];
-		for (let id of ids) {
-			let element = map[id];
-			if (!element) {
-				continue;
-			};
-
-			let parent = blockStore.getLeaf(rootId, element.parentId);
-			if (!parent || !parent.isLayout() || parent.isLayoutDiv()) {
-				continue;
-			};
-			
-			ret.push(parent.id);
-			
-			if (parent.isLayoutColumn()) {
-				ret = ret.concat(this.getLayoutIds([ parent.id ]));
-			};
-		};
-		
-		return ret;
-	};
-	
 	onPaste (e: any, force?: boolean, data?: any) {
+		e.preventDefault();
+
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
 		
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
-			console.log(cb);
-
 			data = {
 				text: String(cb.getData('text/plain') || ''),
 				html: String(cb.getData('text/html') || ''),
-				anytype: JSON.parse(String(cb.getData('application/anytype') || '[]')),
+				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
 			};
 		};
 		
@@ -1092,6 +1049,40 @@ class EditorPage extends React.Component<Props, State> {
 			
 			this.focus(id, from, to);
 		});
+	};
+
+	onPrint (e: any) {
+		window.print();
+	};
+
+	getLayoutIds (ids: string[]) {
+		if (!ids.length) {
+			return [];
+		};
+		
+		const { rootId } = this.props;
+		const map = blockStore.getMap(rootId);
+		
+		let ret: any[] = [];
+		for (let id of ids) {
+			let element = map[id];
+			if (!element) {
+				continue;
+			};
+
+			let parent = blockStore.getLeaf(rootId, element.parentId);
+			if (!parent || !parent.isLayout() || parent.isLayoutDiv()) {
+				continue;
+			};
+			
+			ret.push(parent.id);
+			
+			if (parent.isLayoutColumn()) {
+				ret = ret.concat(this.getLayoutIds([ parent.id ]));
+			};
+		};
+		
+		return ret;
 	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
