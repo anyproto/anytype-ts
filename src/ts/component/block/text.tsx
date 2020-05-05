@@ -182,15 +182,6 @@ class BlockText extends React.Component<Props, {}> {
 			html = html.replace(/\n/g, '<br/>');
 		};
 		
-		/*
-		html = html.replace(/:([0-9a-z+_-]+):/g, (s: string, p: string) => {
-			if (EmojiData.emojis[p]) {
-				return String.fromCodePoint(parseInt(EmojiData.emojis[p].b, 16));
-			};
-			return s;
-		});
-		*/
-
 		value.get(0).innerHTML = html;
 		
 		if (html != text) {
@@ -394,31 +385,31 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		// Make h2
-		if ((value == '## ') && block.isHeader2()) {
+		if ((value == '## ') && !block.isHeader2()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header2 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h3
-		if ((value == '### ') && block.isHeader3()) {
+		if ((value == '### ') && !block.isHeader3()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header3 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make toggle
-		if ((value == '> ') && block.isToggle()) {
+		if ((value == '> ') && !block.isToggle()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Toggle } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make quote
-		if ((value == '" ') && block.isQuote()) {
+		if ((value == '" ') && !block.isQuote()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Quote } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make code
-		if ((value == '/code') && block.isCode()) {
+		if ((value == '/code') && !block.isCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
@@ -458,7 +449,6 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		this.marks = this.getMarksFromHtml();
-		
 		this.placeHolderCheck();
 		
 		window.clearTimeout(this.timeoutKeyUp);

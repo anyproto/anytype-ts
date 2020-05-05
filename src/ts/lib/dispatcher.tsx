@@ -1,10 +1,9 @@
 import { authStore, commonStore, blockStore } from 'ts/store';
-import { Util, I, M, StructDecode, focus, keyboard, Storage, translate, analytics } from 'ts/lib';
+import { Util, I, M, StructDecode, Storage, translate, analytics } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
-const protobuf = require('protobufjs');
 const Constant = require('json/constant.json');
 
 class Dispatcher {
@@ -27,9 +26,8 @@ class Dispatcher {
 	};
 	
 	event (event: any) {
-		let { focused } = focus;
-		let rootId = event.contextId;
-		let debug = Storage.get('debugMW');
+		const rootId = event.contextId;
+		const debug = Storage.get('debugMW');
 		
 		if (debug) {
 			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 3));
@@ -73,7 +71,6 @@ class Dispatcher {
 			let block: any = null;
 			let type = message.value;
 			let data = message[type] || {};
-			let param: any = {};
 			
 			if (data.error && data.error.code) {
 				continue;
@@ -121,11 +118,6 @@ class Dispatcher {
 				case 'blockDelete':
 					for (let blockId of data.blockIds) {
 						blockStore.blockDelete(rootId, blockId);
-						
-						// Remove focus if block is deleted
-						if (focused == blockId) {
-							focus.clear(true);
-						};
 					};
 					break;
 					
