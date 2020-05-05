@@ -5,6 +5,7 @@
 	"authInviteLabel": { "en": "Enter your invitation code. If you don't have one just go to <a href=\"https://anytype.io\">anytype.io</a> and sign up to the waiting list. We are inviting people on the rolling bases." },
 	"authInvitePlaceholder": { "en": "Code" },
 	"authInviteLogin": { "en": "Enter" },
+	"authInviteEmpty": { "en": "Invite code is empty" },
 
 	"authSelectTitle": { "en": "Organize everything" },
 	"authSelectLabel": { "en": "With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." },

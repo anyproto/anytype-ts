@@ -63,6 +63,12 @@ class PageAuthInvite extends React.Component<Props, State> {
 		e.preventDefault();
 		
 		const { match, history } = this.props;
+		const value = this.ref.getValue();
+
+		if (!value) {
+			this.setState({ error: translate('authInviteEmpty') });
+			return;
+		};
 		
 		authStore.codeSet(this.ref.getValue());
 		history.push('/auth/setup/' + match.params.id);	
