@@ -385,18 +385,12 @@ class Dispatcher {
 				
 				if (message.error.code) {
 					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
-					Sentry.captureMessage(`[Dispatcher.error] type: ${type} ` + JSON.stringify(message.error, null, 3));
+					Sentry.captureMessage(type + '\n' + JSON.stringify(message.error, null, 3));
 					analytics.event('Error', { cmd: type, code: message.error.code });
 				};
 				
 				if (debug) {
-					t2 = performance.now();
 					console.log('[Dispatcher.callback]', type, JSON.stringify(message, null, 3));
-					console.log(
-						'Middle time:', Math.ceil(t1 - t0) + 'ms', 
-						'Render time:', Math.ceil(t2 - t1) + 'ms', 
-						'Total time:', Math.ceil(t2 - t0) + 'ms'
-					);
 				};
 
 				if (message.event) {
@@ -405,6 +399,29 @@ class Dispatcher {
 
 				if (callBack) {
 					callBack(message);
+				};
+
+				if (debug) {
+					t2 = performance.now();
+					const mt = Math.ceil(t1 - t0);
+					const rt = Math.ceil(t2 - t1);
+					const tt = Math.ceil(t2 - t0);
+
+					console.log(
+						'Middle time:', mt + 'ms', 
+						'Render time:', rt + 'ms', 
+						'Total time:', tt + 'ms'
+					);
+
+					if (mt > 3000) {
+						Sentry.captureMessage(`${type} middleware time too long`);
+					};
+					if (rt > 3000) {
+						Sentry.captureMessage(`${type} render time too long`);
+					};
+					if (tt > 3000) {
+						Sentry.captureMessage(`${type} total time too long`);
+					};
 				};
 			});
 		} catch (e) {
