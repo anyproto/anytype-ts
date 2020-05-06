@@ -286,7 +286,10 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
-			this.setText(this.marks);
+			this.setText(this.marks, (message: any) => {
+				onKeyDown(e, value, this.marks);
+			});
+			return;
 		};
 		
 		if ((k == Key.backspace) && range && !range.from && !range.to) {
@@ -455,7 +458,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
 	};
 	
-	setText (marks: I.Mark[]) {
+	setText (marks: I.Mark[], callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const { id, content } = block;
 		const value = this.getValue();
@@ -469,7 +472,7 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		DataUtil.blockSetText(rootId, block, value, marks);
+		DataUtil.blockSetText(rootId, block, value, marks, callBack);
 	};
 	
 	setMarks (marks: I.Mark[]) {

@@ -230,7 +230,7 @@ class DataUtil {
 		], callBack);
 	};
 	
-	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[]) {
+	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], callBack?: (message: any) => void) {
 		if (!block) {
 			return;
 		};
@@ -239,8 +239,12 @@ class DataUtil {
 		block.content.marks = marks || [];
 			
 		blockStore.blockUpdate(rootId, block);
-		C.BlockSetTextText(rootId, block.id, text, marks, () => {
+		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
 			blockStore.setNumbers(rootId);
+			
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 	

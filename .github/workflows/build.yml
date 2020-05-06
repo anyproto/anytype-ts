@@ -26,7 +26,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 12.10.0
+          node-version: 14.0.0
 
       - name: Update Addon
         run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}

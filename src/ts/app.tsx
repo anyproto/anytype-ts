@@ -197,6 +197,7 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
+		analytics.init();
 		analytics.setVersionName(version);
 		analytics.setUserProperties({ deviceType: 'Desktop', platform: platforms[os.platform()] });
 
