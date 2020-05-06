@@ -213,9 +213,7 @@ class EditorPage extends React.Component<Props, State> {
 			cr = crumbs.add(I.CrumbsType.Page, rootId);
 		};
 		
-		if (blockStore.breadcrumbs) {
-			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, cr.ids);
-		};
+		crumbs.save(I.CrumbsType.Page, cr);
 		
 		this.close(this.id);
 		this.id = rootId;

@@ -70,6 +70,10 @@ class Crumbs {
 		
 		if (blockStore.breadcrumbs) {
 			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, obj.ids, (message: any) => {
+				if (message.error.code) {
+					this.delete(key);
+				};
+				
 				if (callBack) {
 					callBack();
 				};
