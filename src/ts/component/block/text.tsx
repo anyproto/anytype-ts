@@ -293,7 +293,9 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if ((k == Key.backspace) && range && !range.from && !range.to) {
-			this.setText(this.marks);
+			this.setText(this.marks, (message: any) => {
+				onKeyDown(e, value, this.marks);
+			});
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
@@ -465,6 +467,9 @@ class BlockText extends React.Component<Props, {}> {
 		const text = String(content.text || '');
 		
 		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
+			if (callBack) {
+				callBack(null);
+			};
 			return;
 		};
 		
