@@ -79,6 +79,10 @@ class Analytics {
 		
 		let param: any = {};
 		switch (code) {
+			case 'Error':
+				param = data;
+				break;
+
 			case 'BlockCreate':
 			case 'BlockReplace':
 				let block = new M.Block(blockStore.prepareBlockFromProto(data.block));
