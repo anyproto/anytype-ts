@@ -419,9 +419,6 @@ class Dispatcher {
 					if (rt > 3000) {
 						Sentry.captureMessage(`${type} render time too long`);
 					};
-					if (tt > 3000) {
-						Sentry.captureMessage(`${type} total time too long`);
-					};
 				};
 			});
 		} catch (e) {

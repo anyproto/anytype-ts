@@ -10,7 +10,7 @@
 			width: 100%; height: 100%; cursor: text; 
 		}
 		
-		a { cursor: pointer; color: inherit; border-bottom: 1px solid $colorDarkGrey; height: 22px; text-decoration: none; display: inline-block; }
+		a { cursor: pointer; color: inherit; border-bottom: 1px solid $colorDarkGrey; text-decoration: none; }
 		
 		kbd { 
 			display: inline; font-family: 'Mono'; border-radius: 2px; background: $colorDarkGrey; 
