@@ -296,6 +296,7 @@ class BlockText extends React.Component<Props, {}> {
 			this.setText(this.marks, (message: any) => {
 				onKeyDown(e, value, this.marks);
 			});
+			return;
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
