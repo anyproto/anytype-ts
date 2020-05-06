@@ -191,15 +191,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 			height *= 2;
 		};
 		
-		items.css({ width: width });
+		items.css({ width: width }).removeClass('last');
 		body.css({ width: maxWidth });
 		documents.css({ marginTop: wh - 130 - height });
 
 		if (items.length > cnt) {
 			items.each((i: number, item: any) => {
 				item = $(item);
-				item.removeClass('last');
-
 				if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
 					item.addClass('last');
 				};
