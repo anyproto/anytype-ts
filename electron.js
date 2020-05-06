@@ -26,6 +26,7 @@ storage.setDataPath(dataPath);
 if (!app.isPackaged) {
 	dataPath += '/dev';
 };
+dataPath += '/data';
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;

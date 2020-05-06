@@ -222,7 +222,7 @@ class App extends React.Component<Props, State> {
 		analytics.init();
 		
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
-			authStore.pathSet(dataPath + '/data');
+			authStore.pathSet(dataPath);
 			this.setState({ loading: false });
 
 			if (phrase && accountId) {
