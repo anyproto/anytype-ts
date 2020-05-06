@@ -386,7 +386,7 @@ class Dispatcher {
 				if (message.error.code) {
 					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
 					Sentry.captureMessage(`[Dispatcher.error] type: ${type} ` + JSON.stringify(message.error, null, 3));
-					analytics.event(Util.toUpperCamelCase(type + '-error'), data);
+					analytics.event('Error', { cmd: type, code: message.error.code });
 				};
 				
 				if (debug) {
