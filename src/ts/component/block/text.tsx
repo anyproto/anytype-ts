@@ -291,6 +291,14 @@ class BlockText extends React.Component<Props, {}> {
 			});
 			return;
 		};
+
+		if (k == Key.tab) {
+			e.preventDefault();
+			this.setText(this.marks, (message: any) => {
+				onKeyDown(e, value, this.marks);
+			});
+			return;
+		};
 		
 		if ((k == Key.backspace) && range && !range.from && !range.to) {
 			this.setText(this.marks, (message: any) => {
