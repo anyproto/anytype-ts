@@ -125,10 +125,11 @@ class Util {
 				e.clipboardData.setData('text/html', data.html);	
 			};
 			if (data.anytype) {
-				e.clipboardData.setData('application/anytype', JSON.stringify(data.anytype));
+				e.clipboardData.setData('application/json', JSON.stringify(data.anytype));
 			};
 			
 			document.removeEventListener('copy', handler, true);
+			
 			if (callBack) {
 				callBack();
 			};

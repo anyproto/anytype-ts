@@ -286,11 +286,17 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
-			this.setText(this.marks);
+			this.setText(this.marks, (message: any) => {
+				onKeyDown(e, value, this.marks);
+			});
+			return;
 		};
 		
 		if ((k == Key.backspace) && range && !range.from && !range.to) {
-			this.setText(this.marks);
+			this.setText(this.marks, (message: any) => {
+				onKeyDown(e, value, this.marks);
+			});
+			return;
 		};
 		
 		if ((value == '/') && (k == Key.backspace)) {
@@ -385,31 +391,31 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		// Make h2
-		if ((value == '## ') && block.isHeader2()) {
+		if ((value == '## ') && !block.isHeader2()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header2 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h3
-		if ((value == '### ') && block.isHeader3()) {
+		if ((value == '### ') && !block.isHeader3()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header3 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make toggle
-		if ((value == '> ') && block.isToggle()) {
+		if ((value == '> ') && !block.isToggle()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Toggle } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make quote
-		if ((value == '" ') && block.isQuote()) {
+		if ((value == '" ') && !block.isQuote()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Quote } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make code
-		if ((value == '/code') && block.isCode()) {
+		if ((value == '/code') && !block.isCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
@@ -440,6 +446,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
+			window.clearTimeout(this.timeoutKeyUp);
 			return;
 		};
 		
@@ -448,20 +455,22 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		this.marks = this.getMarksFromHtml();
-		
 		this.placeHolderCheck();
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
 	};
 	
-	setText (marks: I.Mark[]) {
+	setText (marks: I.Mark[], callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const { id, content } = block;
 		const value = this.getValue();
 		const text = String(content.text || '');
 		
 		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
+			if (callBack) {
+				callBack(null);
+			};
 			return;
 		};
 		
@@ -469,7 +478,7 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		DataUtil.blockSetText(rootId, block, value, marks);
+		DataUtil.blockSetText(rootId, block, value, marks, callBack);
 	};
 	
 	setMarks (marks: I.Mark[]) {
@@ -508,8 +517,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		e.preventDefault();
-		
+		e.persist();
+
 		this.setText(this.marks);
 		this.props.onPaste(e);
 	};

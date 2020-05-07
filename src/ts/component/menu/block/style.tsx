@@ -101,8 +101,8 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		if (block.isText()) {
 			sections = [
 				{ children: DataUtil.menuGetBlockText() },
-				{ children: DataUtil.menuGetBlockList() },
 				{ children: DataUtil.menuGetTurnPage() },
+				{ children: DataUtil.menuGetBlockList() },
 				{ children: DataUtil.menuGetTurnObject() },
 			];
 		} else

@@ -222,8 +222,6 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
-		//e.preventDefault();
-		//this.props.onPaste(e);
 	};
 	
 	getRange () {

@@ -26,7 +26,7 @@ class MenuHelp extends React.Component<Props, {}> {
 		const items: any[] = [
 			{ id: 'help', name: 'Help & support' },
 			{ id: 'shortcuts', name: 'Shortcuts' },
-			{ id: 'feedback', name: 'Give feedback' },
+			{ id: 'feedback', name: 'Give a feedback' },
 			{ id: 'community', name: 'Join community' },
 			//{ id: 'feature', icon: 'feature', name: 'Suggest a Feature' },
 		];

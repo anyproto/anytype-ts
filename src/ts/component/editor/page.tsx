@@ -213,9 +213,7 @@ class EditorPage extends React.Component<Props, State> {
 			cr = crumbs.add(I.CrumbsType.Page, rootId);
 		};
 		
-		if (blockStore.breadcrumbs) {
-			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, cr.ids);
-		};
+		crumbs.save(I.CrumbsType.Page, cr);
 		
 		this.close(this.id);
 		this.id = rootId;
@@ -402,12 +400,10 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			if (k == Key.c) {
-				e.preventDefault();
 				this.onCopy(e, false);
 			};
 			
 			if (k == Key.x) {
-				e.preventDefault();
 				this.onCopy(e, true);
 			};
 			
@@ -471,7 +467,7 @@ class EditorPage extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
 
-		let length = block.getLength();
+		let length = String(text || '').length;
 		let k = e.which;
 		
 		this.uiHide();
@@ -640,8 +636,6 @@ class EditorPage extends React.Component<Props, State> {
 				
 				if (e.ctrlKey || e.metaKey) {
 					next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
-					console.log(next);
-					
 					if (next) {
 						const l = next.getLength();
 						focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
@@ -910,6 +904,8 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onCopy (e: any, cut: boolean) {
+		e.preventDefault();
+
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 
@@ -951,13 +947,17 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const cb = (message: any) => {
-			data.html = message.html;
+			const blocks = (message.anySlot || []).map((it: any) => { return blockStore.prepareBlockFromProto(it); });
+
 			Util.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
-				anytype: message.anySlot,
+				anytype: {
+					range: range,
+					blocks: blocks,
+				},
 			});
-			
+
 			if (cut) {
 				commonStore.menuClose('blockContext');
 				focus.set(focused, { from: range.from, to: range.from });
@@ -965,57 +965,24 @@ class EditorPage extends React.Component<Props, State> {
 			};
 		};
 		
-		Util.clipboardCopy(data);
-		
-		C[cmd](rootId, blocks, range, cb);
-	};
-	
-	onPrint (e: any) {
-		window.print();
-	};
-
-	getLayoutIds (ids: string[]) {
-		if (!ids.length) {
-			return [];
-		};
-		
-		const { rootId } = this.props;
-		const map = blockStore.getMap(rootId);
-		
-		let ret: any[] = [];
-		for (let id of ids) {
-			let element = map[id];
-			if (!element) {
-				continue;
-			};
-
-			let parent = blockStore.getLeaf(rootId, element.parentId);
-			if (!parent || !parent.isLayout() || parent.isLayoutDiv()) {
-				continue;
-			};
-			
-			ret.push(parent.id);
-			
-			if (parent.isLayoutColumn()) {
-				ret = ret.concat(this.getLayoutIds([ parent.id ]));
-			};
-		};
-		
-		return ret;
+		Util.clipboardCopy(data, () => {
+			C[cmd](rootId, blocks, range, cb);
+		});
 	};
 	
 	onPaste (e: any, force?: boolean, data?: any) {
+		e.preventDefault();
+
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
 		
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
-			
 			data = {
 				text: String(cb.getData('text/plain') || ''),
 				html: String(cb.getData('text/html') || ''),
-				anytype: JSON.parse(String(cb.getData('application/anytype') || '[]')),
+				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
 			};
 		};
 		
@@ -1058,6 +1025,9 @@ class EditorPage extends React.Component<Props, State> {
 		let to = 0;
 		
 		C.BlockPaste(rootId, focused, range, data.anytype.range, selection.get(true), { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
+			if (message.isSameBlockCaret) {
+				id = focused;
+			} else 
 			if (message.blockIds && message.blockIds.length) {
 				const lastId = message.blockIds[message.blockIds.length - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
@@ -1070,7 +1040,8 @@ class EditorPage extends React.Component<Props, State> {
 				id = block.id;
 				from = length;
 				to = length;
-			} else {
+			} else 
+			if (message.caretPosition >= 0) {
 				id = focused;
 				from = message.caretPosition;
 				to = message.caretPosition;
@@ -1078,6 +1049,40 @@ class EditorPage extends React.Component<Props, State> {
 			
 			this.focus(id, from, to);
 		});
+	};
+
+	onPrint (e: any) {
+		window.print();
+	};
+
+	getLayoutIds (ids: string[]) {
+		if (!ids.length) {
+			return [];
+		};
+		
+		const { rootId } = this.props;
+		const map = blockStore.getMap(rootId);
+		
+		let ret: any[] = [];
+		for (let id of ids) {
+			let element = map[id];
+			if (!element) {
+				continue;
+			};
+
+			let parent = blockStore.getLeaf(rootId, element.parentId);
+			if (!parent || !parent.isLayout() || parent.isLayoutDiv()) {
+				continue;
+			};
+			
+			ret.push(parent.id);
+			
+			if (parent.isLayoutColumn()) {
+				ret = ret.concat(this.getLayoutIds([ parent.id ]));
+			};
+		};
+		
+		return ret;
 	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
@@ -1121,7 +1126,6 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
-		console.trace();
 		const { rootId } = this.props;
 		const { content } = focused;
 		
@@ -1168,7 +1172,7 @@ class EditorPage extends React.Component<Props, State> {
 	
 	onLastClick (e: any) {
 		const { rootId } = this.props;
-		const children = blockStore.getChildren(rootId, rootId);
+		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isTitle(); });
 		const last = children[children.length - 1];
 		
 		let create = false;

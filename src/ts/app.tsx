@@ -197,17 +197,13 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
-		C.VersionGet((message: any) => {
-			analytics.setVersionName(version);
-			analytics.setUserProperties({
-				middleVersion: message.version,
-				deviceType: 'Desktop',
-				platform: platforms[os.platform()],
-			});
-		});
-		
+		analytics.init();
+		analytics.setVersionName(version);
+		analytics.setUserProperties({ deviceType: 'Desktop', platform: platforms[os.platform()] });
+
 		const win = $(window);
 		const phrase = Storage.get('phrase');
+		const accountId = Storage.get('accountId');
 		const html = $('html');
 		
 		let debugUI = Boolean(Storage.get('debugUI'));
@@ -226,10 +222,10 @@ class App extends React.Component<Props, State> {
 		analytics.init();
 		
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
-			authStore.pathSet(dataPath + '/data');
-
+			authStore.pathSet(dataPath);
 			this.setState({ loading: false });
-			if (phrase) {
+
+			if (phrase && accountId) {
 				history.push('/auth/setup/init');
 			};
 		});

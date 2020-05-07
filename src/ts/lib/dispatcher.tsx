@@ -1,10 +1,9 @@
 import { authStore, commonStore, blockStore } from 'ts/store';
-import { Util, I, M, StructDecode, focus, keyboard, Storage, translate, analytics } from 'ts/lib';
+import { Util, I, M, StructDecode, Storage, translate, analytics } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const com = require('proto/commands.js');
 const bindings = require('bindings')('addon');
-const protobuf = require('protobufjs');
 const Constant = require('json/constant.json');
 
 class Dispatcher {
@@ -27,9 +26,8 @@ class Dispatcher {
 	};
 	
 	event (event: any) {
-		let { focused } = focus;
-		let rootId = event.contextId;
-		let debug = Storage.get('debugMW');
+		const rootId = event.contextId;
+		const debug = Storage.get('debugMW');
 		
 		if (debug) {
 			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 3));
@@ -73,7 +71,6 @@ class Dispatcher {
 			let block: any = null;
 			let type = message.value;
 			let data = message[type] || {};
-			let param: any = {};
 			
 			if (data.error && data.error.code) {
 				continue;
@@ -121,11 +118,6 @@ class Dispatcher {
 				case 'blockDelete':
 					for (let blockId of data.blockIds) {
 						blockStore.blockDelete(rootId, blockId);
-						
-						// Remove focus if block is deleted
-						if (focused == blockId) {
-							focus.clear(true);
-						};
 					};
 					break;
 					
@@ -393,18 +385,12 @@ class Dispatcher {
 				
 				if (message.error.code) {
 					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
-					Sentry.captureMessage(`[Dispatcher.error] type: ${type} code: ${message.error.code} description: ${message.error.description}`);
-					analytics.event(Util.toUpperCamelCase(type + '-error'), data);
+					Sentry.captureMessage(type + ' error\n' + JSON.stringify(message.error, null, 3));
+					analytics.event('Error', { cmd: type, code: message.error.code });
 				};
 				
 				if (debug) {
-					t2 = performance.now();
-					console.log('[Dispatcher.request] CallBack', type, JSON.stringify(message, null, 3));
-					console.log(
-						'Middle time:', Math.ceil(t1 - t0) + 'ms', 
-						'Render time:', Math.ceil(t2 - t1) + 'ms', 
-						'Total time:', Math.ceil(t2 - t0) + 'ms'
-					);
+					console.log('[Dispatcher.callback]', type, JSON.stringify(message, null, 3));
 				};
 
 				if (message.event) {
@@ -413,6 +399,26 @@ class Dispatcher {
 
 				if (callBack) {
 					callBack(message);
+				};
+
+				if (debug) {
+					t2 = performance.now();
+					const mt = Math.ceil(t1 - t0);
+					const rt = Math.ceil(t2 - t1);
+					const tt = Math.ceil(t2 - t0);
+
+					console.log(
+						'Middle time:', mt + 'ms', 
+						'Render time:', rt + 'ms', 
+						'Total time:', tt + 'ms'
+					);
+
+					if (mt > 3000) {
+						Sentry.captureMessage(`${type} middleware time too long`);
+					};
+					if (rt > 3000) {
+						Sentry.captureMessage(`${type} render time too long`);
+					};
 				};
 			});
 		} catch (e) {

@@ -6,6 +6,14 @@
 	font-family: 'Mono'; font-style: bold; font-weight: 600;
 	src: url('~font/mono/bold.ttf') format('truetype');
 }
+@font-face {
+	font-family: 'Mono'; font-style: italic; font-weight: 400;
+	src: url('~font/mono/italic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Mono'; font-style: italic; font-weight: 600;
+	src: url('~font/mono/bolditalic.ttf') format('truetype');
+}
 
 @font-face {
 	font-family: 'Lcg'; font-style: normal; font-weight: 400;
@@ -39,4 +47,8 @@
 @font-face {
 	font-family: 'Inter'; font-style: bold; font-weight: 600;
 	src: url('~font/inter/bold.woff') format('woff');
+}
+@font-face {
+	font-family: 'Inter'; font-style: italic; font-weight: 600;
+	src: url('~font/inter/bolditalic.woff') format('woff');
 }

@@ -488,8 +488,12 @@ class BlockStore {
 		if (data.fields) {
 			block.fields = (new StructEncode()).encodeStruct(data.fields || {});
 		};
+
+		const model = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)];
+		if (model) {
+			block[data.type] = model.create(data.content);
+		};
 		
-		block[data.type] = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)].create(data.content);
 		block = com.anytype.model.Block.create(block);
 		return block;
 	};
