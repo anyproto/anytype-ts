@@ -260,9 +260,15 @@ class Menu extends React.Component<Props, {}> {
 		
 		if (scroll) {
 			const content = node.find('.content');
-			const top = Math.max(0, content.scrollTop() + el.position().top - BORDER);
+			const st = content.scrollTop();
+			const pt = el.position().top;
+			const top = Math.max(0, st + pt - BORDER);
+			const ch = content.height();
+			const eh = el.height();
 			
-			content.scrollTop(top);
+			if ((pt + eh > ch) || (pt < st)) {
+				content.scrollTop(top);
+			};
 		};
 	};
 	
