@@ -107,7 +107,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 		const accountId = Storage.get('accountId');
 		const pin = debug ? '' : Storage.get('pin');
 		const pageId = Storage.get('pageId');
-		
+		const popupNewBlock = Storage.get('popupNewBlock');
+
 		if (!phrase) {
 			return;
 		};

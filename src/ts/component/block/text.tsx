@@ -57,7 +57,7 @@ class BlockText extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block } = this.props;
 		const { id, fields, content } = block;
-		const { text, marks, style, checked, color, bgColor } = content;
+		const { style, checked, color } = content;
 		
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
@@ -182,15 +182,6 @@ class BlockText extends React.Component<Props, {}> {
 			html = html.replace(/\n/g, '<br/>');
 		};
 		
-		/*
-		html = html.replace(/:([0-9a-z+_-]+):/g, (s: string, p: string) => {
-			if (EmojiData.emojis[p]) {
-				return String.fromCodePoint(parseInt(EmojiData.emojis[p].b, 16));
-			};
-			return s;
-		});
-		*/
-
 		value.get(0).innerHTML = html;
 		
 		if (html != text) {
@@ -295,8 +286,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
-			
-			console.log('setText');
 			this.setText(this.marks);
 		};
 		
