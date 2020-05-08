@@ -25,9 +25,9 @@ class Dispatcher {
 		bindings.setEventHandler(handler);
 	};
 	
-	event (event: any) {
+	event (event: any, skipDebug?: boolean) {
 		const rootId = event.contextId;
-		const debug = Storage.get('debugMW');
+		const debug = Storage.get('debugMW') && !skipDebug;
 		
 		if (debug) {
 			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 3));
@@ -394,7 +394,7 @@ class Dispatcher {
 				};
 
 				if (message.event) {
-					this.event(message.event);
+					this.event(message.event, true);
 				};
 
 				if (callBack) {

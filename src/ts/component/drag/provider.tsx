@@ -127,8 +127,6 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 		});
 
-		console.log(this.objectData);
-
 		keyboard.setDrag(true);
 		Util.linkPreviewHide(false);
 
@@ -324,7 +322,7 @@ class DragProvider extends React.Component<Props, {}> {
 			targetId = '';
 
 			if (contextId == targetContextId) {
-				console.log('Contexts are equal');
+				console.log('[dragProvider.onDrop] Contexts are equal');
 				return;
 			};
 		};

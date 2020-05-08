@@ -156,9 +156,8 @@ class BlockStore {
 		if (!block) {
 			return;
 		};
-		
+
 		set(block, param);
-		this.setNumbers(rootId);
 	};
 	
 	@action

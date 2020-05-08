@@ -19,13 +19,11 @@ interface Props {
 	onPaste? (e: any): void;
 };
 
-const com = require('proto/commands.js');
 const { ipcRenderer } = window.require('electron');
 const low = window.require('lowlight');
 const rehype = require('rehype');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
-const EmojiData = require('emoji-mart/data/apple.json');
 
 @observer
 class BlockText extends React.Component<Props, {}> {
@@ -57,7 +55,7 @@ class BlockText extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block } = this.props;
 		const { id, fields, content } = block;
-		const { style, checked, color } = content;
+		const { text, style, checked, color } = content;
 		
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
@@ -145,7 +143,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { block } = this.props;
 		const { id, content } = block
 		const { focused } = focus;
-		
+
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 		
@@ -327,8 +325,7 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		
 		const { rootId, block } = this.props;
-		const { id, content } = block;
-		const { style } = content;
+		const { id } = block;
 		const value = this.getValue();
 		const k = e.which;
 		
@@ -502,7 +499,8 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onFocus (e: any) {
-		const { onFocus } = this.props;
+		const { onFocus, dataset } = this.props;
+		const { selection } = dataset || {};
 		const value = this.getValue();
 		
 		if (value.match(/^\//)) {
@@ -511,6 +509,8 @@ class BlockText extends React.Component<Props, {}> {
 		
 		this.placeHolderCheck();
 		keyboard.setFocus(true);
+		selection.clear();
+
 		onFocus(e);
 	};
 	
@@ -518,7 +518,6 @@ class BlockText extends React.Component<Props, {}> {
 		const { onBlur } = this.props;
 	
 		window.clearTimeout(this.timeoutKeyUp);
-		this.setText(this.marks);
 		this.placeHolderHide();
 		keyboard.setFocus(false);
 		onBlur(e);
@@ -564,7 +563,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { style } = content;
 		const { selection } = dataset || {};
 		const ids = selection.get(true);
-		
+
 		if (!ids.length) {
 			focus.set(id, this.getRange());
 			keyboard.setFocus(true);

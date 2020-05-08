@@ -204,7 +204,10 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	onRandom () {
-		this.onSelect(Util.randomSmile().replace(/:/g, ''), 1);
+		const id = Util.icons[Util.rand(0, Util.icons.length - 1)];
+		const skin = Util.rand(1, 6);
+
+		this.onSelect(id, skin);
 	};
 	
 	onSelect (id: string, skin: number) {

@@ -83,10 +83,6 @@ class Page extends React.Component<Props, {}> {
 
 	componentDidUpdate () {
 		this.init();
-		
-
-		
-		console.log();
 	};
 	
 	componentWillUnmount () {

@@ -117,7 +117,7 @@ class DataUtil {
 			const root = message.homeBlockId;
 			
 			if (!root) {
-				console.error('No root defined');
+				console.error('[pageInit] No root defined');
 				return;
 			};
 
