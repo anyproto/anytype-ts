@@ -35,6 +35,8 @@
 		"header": 38,
 		"lastBlock": 100,
 		"cover": 1920,
+
+		"iconPage": 256,
 		
 		"menuBlockContext": {
 			"default": 400,

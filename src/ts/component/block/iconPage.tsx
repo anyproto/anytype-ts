@@ -16,16 +16,17 @@ class BlockIconPage extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render (): any {
 		const { rootId } = this.props;
 		const details = blockStore.getDetail(rootId, rootId);
-		const { iconEmoji } = details;
+		const { iconEmoji, iconImage } = details;
 		
 		return (
 			<React.Fragment>
-				<Smile id={'block-icon-' + rootId} canEdit={true} size={32} icon={iconEmoji} offsetX={0} offsetY={16} onSelect={this.onSelect} className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+				<Smile id={'block-icon-' + rootId} canEdit={true} size={32} icon={iconEmoji} hash={iconImage} offsetX={0} offsetY={16} onSelect={this.onSelect} onUpload={this.onUpload} className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};
@@ -33,6 +34,11 @@ class BlockIconPage extends React.Component<Props, {}> {
 	onSelect (icon: string) {
 		const { rootId } = this.props;
 		DataUtil.pageSetIcon(rootId, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const { rootId } = this.props;
+		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 	
 };

@@ -31,12 +31,12 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { id, content } = block;
 		const details = blockStore.getDetail(rootId, content.targetBlockId);
-		const { iconEmoji, name, isArchived } = details;
+		const { iconEmoji, iconImage, name, isArchived } = details;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 		
 		return (
 			<div className={cn.join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
-				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} className="c24" canEdit={true} onSelect={this.onSelect} />
+				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={true} onSelect={this.onSelect} />
 				<div className="name" onClick={this.onClick}>{name}</div>
 				<div className="archive">Archived</div>
 			</div>

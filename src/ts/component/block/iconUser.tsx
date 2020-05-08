@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Smile, IconUser } from 'ts/component';
+import { IconUser } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -28,7 +28,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<IconUser name={name} icon={iconImage ? commonStore.imageUrl(iconImage, 256) : ''} onClick={this.onClick} className="c96" />
+				<IconUser name={name} icon={iconImage ? commonStore.imageUrl(iconImage, Constant.size.iconPage) : ''} onClick={this.onClick} className="c96" />
 			</React.Fragment>
 		);
 	};
