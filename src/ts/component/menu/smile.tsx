@@ -214,13 +214,10 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		this.skin = Number(skin) || 1;
 		Storage.set('skin', this.skin);
-		
-		this.setLastIds(id, skin);
-		
-		const text = $(Emoji({ html: true, emoji: id, skin: this.skin, size: 24, native: true })).text();
+		this.setLastIds(id, this.skin);
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(String(text || ''));
+		onSelect(Util.getSmileById(id, this.skin));
 	};
 	
 	onMouseDown (n: number, id: string, skin: number) {

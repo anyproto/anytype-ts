@@ -208,12 +208,17 @@ class Util {
 		};
 		return 0;
 	};
+
+	getSmileById (id: string, skin: number): string {
+		id = String(id || '');
+		skin = Number(skin) || 1;
+		return String($(Emoji({ html: true, emoji: id, skin: skin, size: 24, native: true })).text() || '');
+	};
 	
 	randomSmile (): string {
 		const id = this.icons[this.rand(0, this.icons.length - 1)];
 		const skin = this.rand(1, 6);
-		const text = $(Emoji({ html: true, emoji: id, skin: skin, size: 24, native: true })).text();
-		return text;
+		return this.getSmileById(id, skin);
 	};
 	
 	date (format: string, timestamp: number) {
