@@ -4,7 +4,6 @@ import { Emoji } from 'emoji-mart';
 import { Input } from 'ts/component';
 import { I, Util, keyboard, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 const $ = require('jquery');
 const EmojiData = require('emoji-mart/data/apple.json');

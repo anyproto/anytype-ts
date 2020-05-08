@@ -1,5 +1,6 @@
 import { I, C, keyboard } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore } from 'ts/store';
+import { Emoji } from 'emoji-mart';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -209,7 +210,10 @@ class Util {
 	};
 	
 	randomSmile (): string {
-		return ':' + this.icons[this.rand(0, this.icons.length - 1)] + ':';
+		const id = this.icons[this.rand(0, this.icons.length - 1)];
+		const skin = this.rand(1, 6);
+		const text = $(Emoji({ html: true, emoji: id, skin: skin, size: 24, native: true })).text();
+		return text;
 	};
 	
 	date (format: string, timestamp: number) {
