@@ -16,7 +16,7 @@ const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
 const { dialog } = window.require('electron').remote;
 
-const LIMIT = 24;
+const LIMIT = 18;
 const HEIGHT = 32;
 const PAGE = 144;
 

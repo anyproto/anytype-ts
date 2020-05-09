@@ -30,7 +30,7 @@ class BlockIconPage extends React.Component<Props, {}> {
 			</React.Fragment>
 		);
 	};
-	
+
 	onSelect (icon: string) {
 		const { rootId } = this.props;
 		DataUtil.pageSetIcon(rootId, icon, '');
