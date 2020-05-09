@@ -1038,7 +1038,7 @@ class EditorPage extends React.Component<Props, State> {
 		let from = 0;
 		let to = 0;
 		
-		C.BlockPaste(rootId, focused, range, data.anytype.range, selection.get(true), { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 

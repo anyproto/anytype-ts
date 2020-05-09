@@ -333,14 +333,14 @@ const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (mess
 	dispatcher.request('blockExport', request, callBack);
 };
 
-const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, copyRange: I.TextRange, blockIds: string[], data: any, callBack?: (message: any) => void) => {
+const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
 	data = Util.objectCopy(data);
 
 	const request: any = {
 		contextId: contextId,
 		focusedBlockId: focusedId,
 		selectedTextRange: range,
-		copyTextRange: copyRange,
+		isPartOfBlock: isPartOfBlock,
 		selectedBlockIds: blockIds,
 		textSlot: data.text,
 		htmlSlot: data.html,
