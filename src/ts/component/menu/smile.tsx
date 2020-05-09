@@ -236,6 +236,7 @@ class MenuSmile extends React.Component<Props, State> {
 				};
 				
 				onUpload(message.hash);
+				commonStore.menuClose(this.props.id);
 			});
 		});
 	};
