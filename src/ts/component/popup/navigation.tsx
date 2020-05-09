@@ -356,7 +356,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	onConfirm (e: any, item: I.PageInfo) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { rootId, type, blockId, blockIds } = data;
+		const { rootId, type, blockId, blockIds, position } = data;
 
 		switch (type) {
 			case I.NavigationType.Go:
@@ -376,7 +376,7 @@ class PopupNavigation extends React.Component<Props, State> {
 						targetBlockId: item.id,
 					}
 				};
-				C.BlockCreate(param, rootId, blockId, I.BlockPosition.Replace);
+				C.BlockCreate(param, rootId, blockId, position);
 				break;
 		};
 

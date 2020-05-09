@@ -37,6 +37,8 @@
 		"cover": 1920,
 
 		"iconPage": 256,
+
+		"menuBlockAdd": 360,
 		
 		"menuBlockContext": {
 			"default": 400,

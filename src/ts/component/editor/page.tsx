@@ -460,8 +460,6 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
 
-		console.log('Block', focused, block);
-		
 		if (!block) {
 			return;
 		};
@@ -788,16 +786,29 @@ class EditorPage extends React.Component<Props, State> {
 		const { style, text, hash } = content;
 		
 		const length = String(text || '').length;
+		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const cb = (message: any) => {
 			focus.set(message.blockId, { from: length, to: length });
 			focus.apply();
 		};
+
+		const el = $('#block-' + id);
+		const offset = el.offset();
+		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		
+		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+
+		if (!rect.x && !rect.y) {
+			x = Constant.size.blockMenu;
+			y = 4;
+		};
+
 		commonStore.menuOpen('blockAdd', { 
-			element: '#block-' + id,
+			element: el,
 			type: I.MenuType.Vertical,
-			offsetX: 50,
-			offsetY: 4,
+			offsetX: x,
+			offsetY: y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
@@ -876,6 +887,7 @@ class EditorPage extends React.Component<Props, State> {
 										type: I.NavigationType.Create, 
 										rootId: rootId,
 										blockId: block.id,
+										position: position,
 									}, 
 								});
 							} else {
@@ -883,10 +895,10 @@ class EditorPage extends React.Component<Props, State> {
 									iconEmoji: Util.randomSmile(), 
 									name: Constant.default.name 
 								};
-								DataUtil.pageCreate(e, this.props, rootId, block.id, details, I.BlockPosition.Replace);
+								DataUtil.pageCreate(e, this.props, rootId, block.id, details, position);
 							};
 						} else {
-							this.blockCreate(block, I.BlockPosition.Replace, param);
+							this.blockCreate(block, position, param);
 						};
 					};
 				}

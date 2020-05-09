@@ -261,7 +261,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
+		const { onKeyDown, onMenuAdd, block } = this.props;
 		const { id } = block;
 		
 		if (
@@ -309,7 +309,7 @@ class BlockText extends React.Component<Props, {}> {
 			commonStore.menuClose('blockAdd');
 		};
 		
-		if (!value && (k == Key.slash)) {
+		if ((k == Key.slash) && !(e.ctrlKey || e.metaKey)) {
 			onMenuAdd(id);
 		};
 		
@@ -338,7 +338,10 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if (commonStore.menuIsOpen('blockAdd')) {
-			commonStore.filterSet(value);
+			let m = value.match(/\/([\w\s])*/);
+			let filter = m && m.length > 0 ? m[1] : value;
+
+			commonStore.filterSet(filter);
 		};
 		
 		// Make div
@@ -581,14 +584,12 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
 		const el = $('#block-' + id);
-		const offset = node.offset();
+		const offset = el.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
-		const pt = parseInt(el.css('paddingTop'));
-		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
-		const y = rect.y - (offset.top - $(window).scrollTop()) - 4 + pt;
+		const x = rect.x - offset.left - size / 2 + rect.width / 2;
+		const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
