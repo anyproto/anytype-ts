@@ -151,6 +151,23 @@ function createWindow () {
 					]
 				},
 				{
+					label: 'Flags',
+					submenu: [
+						{
+							label: 'Interface',
+							click: function () { win.webContents.send('toggleDebug', 'ui'); }
+						},
+						{
+							label: 'Middleware',
+							click: function () { win.webContents.send('toggleDebug', 'mw'); }
+						},
+						{
+							label: 'Analytics',
+							click: function () { win.webContents.send('toggleDebug', 'an'); }
+						},
+					]
+				},
+				{
 					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
 					click: function () { win.reload(); }
 				},
@@ -158,24 +175,6 @@ function createWindow () {
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
 					click: function () {
 						win.webContents.openDevTools();
-					}
-				},
-				{
-					label: 'Debug interface',
-					click: function () {
-						win.webContents.send('toggleDebugUI');
-					}
-				},
-				{
-					label: 'Debug middleware',
-					click: function () {
-						win.webContents.send('toggleDebugMW');
-					}
-				},
-				{
-					label: 'Debug analytics',
-					click: function () {
-						win.webContents.send('toggleDebugAN');
 					}
 				},
 				{

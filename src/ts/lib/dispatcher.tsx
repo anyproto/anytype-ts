@@ -27,7 +27,7 @@ class Dispatcher {
 	
 	event (event: any, skipDebug?: boolean) {
 		const rootId = event.contextId;
-		const debug = Storage.get('debugMW') && !skipDebug;
+		const debug = (Storage.get('debug') || {}).mw && !skipDebug;
 		
 		if (debug) {
 			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 3));
@@ -360,7 +360,8 @@ class Dispatcher {
 			return;
 		};
 		
-		let debug = Storage.get('debugMW');
+		const debug = (Storage.get('debug') || {}).mw;
+
 		let t0 = 0;
 		let t1 = 0;
 		let t2 = 0;

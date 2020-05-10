@@ -206,9 +206,7 @@ class App extends React.Component<Props, State> {
 		const accountId = Storage.get('accountId');
 		const html = $('html');
 		
-		let debugUI = Boolean(Storage.get('debugUI'));
-		let debugMW = Boolean(Storage.get('debugMW'));
-		let debugAN = Boolean(Storage.get('debugAN'));
+		let debug = Storage.get('debug') || {};
 		let coverNum = Number(Storage.get('coverNum'));
 		let coverImage = String(Storage.get('coverImage') || '');
 		let noShutdown = Number(Storage.get('noShutdown'));
@@ -230,22 +228,12 @@ class App extends React.Component<Props, State> {
 			};
 		});
 		
-		debugUI ? html.addClass('debug') : html.removeClass('debug');
+		debug.ui ? html.addClass('debug') : html.removeClass('debug');
 		
-		ipcRenderer.on('toggleDebugUI', (e: any) => {
-			debugUI = !debugUI;
-			debugUI ? html.addClass('debug') : html.removeClass('debug');
-			Storage.set('debugUI', Number(debugUI));
-		});
-		
-		ipcRenderer.on('toggleDebugMW', (e: any) => {
-			debugMW = !debugMW;
-			Storage.set('debugMW', Number(debugMW));
-		});
-		
-		ipcRenderer.on('toggleDebugAN', (e: any) => {
-			debugAN = !debugAN;
-			Storage.set('debugAN', Number(debugAN));
+		ipcRenderer.on('toggleDebug', (e: any, key: string) => {
+			debug[key] = !debug[key];
+			debug.ui ? html.addClass('debug') : html.removeClass('debug');
+			Storage.set('debug', debug, true);
 		});
 		
 		ipcRenderer.on('help', (e: any) => {

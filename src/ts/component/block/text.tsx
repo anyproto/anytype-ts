@@ -502,17 +502,18 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onFocus (e: any) {
+		e.persist();
+
 		const { onFocus, dataset } = this.props;
 		const { selection } = dataset || {};
 		const value = this.getValue();
-		
+
 		if (value.match(/^\//)) {
 			commonStore.filterSet(value);
 		};
 		
 		this.placeHolderCheck();
 		keyboard.setFocus(true);
-		selection.clear();
 
 		onFocus(e);
 	};
@@ -564,13 +565,9 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, content } = block;
 		const { from, to } = focus.range;
 		const { style } = content;
-		const { selection } = dataset || {};
-		const ids = selection.get(true);
 
-		if (!ids.length) {
-			focus.set(id, this.getRange());
-			keyboard.setFocus(true);
-		};
+		focus.set(id, this.getRange());
+		keyboard.setFocus(true);
 		
 		const { range } = focus;
 		const currentFrom = range.from;
