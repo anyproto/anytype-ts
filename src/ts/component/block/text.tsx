@@ -55,7 +55,7 @@ class BlockText extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block } = this.props;
 		const { id, fields, content } = block;
-		const { text, style, checked, color } = content;
+		const { text, marks, style, checked, color } = content;
 		
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
