@@ -76,6 +76,7 @@ class Smile extends React.Component<Props, State> {
 			};
 		} else 
 		if (hash) {
+			cn.push('withImage');
 			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className="icon image" />;
 		};
 		

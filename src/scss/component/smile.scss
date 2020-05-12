@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.smile { display: inline-block; vertical-align: top; text-align: center; position: relative; }
+.smile { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; }
 .smile {
 	.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
 	.emoji-mart-emoji {
@@ -8,7 +8,10 @@
 	}
 	
 	.icon.blank { position: absolute; left: 50%; top: 50%; background-image: url('~img/blank/smile.svg'); }
+	.icon.image { width: 100%; height: auto; position: absolute; left: 0px; top: 50%; transform: translateY(-50%); }
 }
+
+.smile.withImage { border-radius: 100%; }
 
 .smile.c20 { width: 20px; height: 20px; line-height: 20px; }
 .smile.c20 {

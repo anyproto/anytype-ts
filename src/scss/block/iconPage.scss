@@ -2,7 +2,6 @@
 
 .blocks {
 	.block.blockIconPage {
-		.smile { position: relative; z-index: 2; overflow: hidden; }
-		.icon.image { width: 100%; position: absolute; left: 0px; top: 50%; transform: translateY(-50%); }
+		.smile { position: relative; z-index: 2; }
 	}
 }
