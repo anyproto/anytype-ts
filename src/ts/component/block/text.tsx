@@ -224,10 +224,6 @@ class BlockText extends React.Component<Props, {}> {
 			let range = $(this).data('range').split('-');
 			let url = $(this).attr('href');
 			
-			if (!url.match(/^https?:\/\//)) {
-				return;
-			};
-			
 			Util.linkPreviewShow(url, $(this), {
 				range: { 
 					from: Number(range[0]) || 0,

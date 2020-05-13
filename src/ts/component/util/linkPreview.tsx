@@ -174,7 +174,6 @@ class LinkPreview extends React.Component<Props, {}> {
 		const poly = obj.find('.polygon');
 		const ww = win.width();
 		const wh = win.height();
-		const dh = $(document).height();
 		const st = win.scrollTop();
 		const offset = element.offset();
 		const nw = element.outerWidth();
