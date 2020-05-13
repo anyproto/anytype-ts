@@ -97,6 +97,10 @@ class Util {
 	arrayValues (a: any) {
 		return a.hasOwnProperty('length') ? a : Object.values(a);
 	};
+
+	stringCut (s: string, start: number, end: number): string {
+		return s.substr(0, start) + s.substr(end);
+	};
 	
 	shorten (s: string, l: number, noEnding?: boolean) {
 		s = String(s || '');

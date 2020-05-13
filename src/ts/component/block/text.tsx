@@ -15,7 +15,7 @@ interface Props {
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onMenuAdd? (id: string): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
 
@@ -259,6 +259,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const { onKeyDown, onMenuAdd, block } = this.props;
 		const { id } = block;
+		const { filter } = commonStore;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -301,12 +302,12 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if ((value == '/') && (k == Key.backspace)) {
+		if ((k == Key.backspace) && commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
 			commonStore.menuClose('blockAdd');
 		};
 		
 		if ((k == Key.slash) && !(e.ctrlKey || e.metaKey)) {
-			onMenuAdd(id);
+			onMenuAdd(id, value, range);
 		};
 		
 		focus.set(id, range);
@@ -321,6 +322,7 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		
 		const { rootId, block } = this.props;
+		const { filter } = commonStore;
 		const { id } = block;
 		const value = this.getValue();
 		const k = e.which;
@@ -334,10 +336,13 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if (commonStore.menuIsOpen('blockAdd')) {
-			let m = value.match(/\/([\w\s])*/);
-			let filter = m && m.length > 0 ? m[1] : value;
-
-			commonStore.filterSet(filter);
+			if (k == Key.space) {
+				commonStore.filterSet(0, '');
+				commonStore.menuClose('blockAdd');
+			} else {
+				const part = value.substr(filter.from, value.length).match(/^\/([^\s\/]*)/);
+				commonStore.filterSetText(part ? part[1] : '');
+			};
 		};
 		
 		// Make div
@@ -500,13 +505,7 @@ class BlockText extends React.Component<Props, {}> {
 	onFocus (e: any) {
 		e.persist();
 
-		const { onFocus, dataset } = this.props;
-		const { selection } = dataset || {};
-		const value = this.getValue();
-
-		if (value.match(/^\//)) {
-			commonStore.filterSet(value);
-		};
+		const { onFocus } = this.props;
 		
 		this.placeHolderCheck();
 		keyboard.setFocus(true);

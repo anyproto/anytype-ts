@@ -763,7 +763,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		commonStore.filterSet('');
+		commonStore.filterSet(0, '');
 		focus.clear(true);
 		
 		this.blockCreate(block, this.hoverPosition, {
@@ -771,19 +771,20 @@ class EditorPage extends React.Component<Props, State> {
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
 			$('.placeHolder.c' + blockId).text(Constant.placeHolder.filter);
-			this.onMenuAdd(blockId);
+			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
 	};
 	
-	onMenuAdd (id: string) {
+	onMenuAdd (id: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
+		
 		if (!block) {
 			return;
 		};
 		
-		const { type, content } = block;
-		const { style, text, hash } = content;
+		const { content } = block;
+		const { marks, hash } = content;
 		
 		const length = String(text || '').length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
@@ -804,6 +805,8 @@ class EditorPage extends React.Component<Props, State> {
 			y = 4;
 		};
 
+		commonStore.filterSet(range.from, '');
+
 		commonStore.menuOpen('blockAdd', { 
 			element: el,
 			type: I.MenuType.Vertical,
@@ -813,15 +816,15 @@ class EditorPage extends React.Component<Props, State> {
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
 				const { filter } = commonStore;
-				const block = blockStore.getLeaf(rootId, id);;
+				const block = blockStore.getLeaf(rootId, id);
 
 				// Clear filter in block text on close
-				if (block && ('/' + filter == block.content.text)) {
-					DataUtil.blockSetText(rootId, block, '', []);
+				if (block) {
+					DataUtil.blockSetText(rootId, block, text, marks);
 				};
-				
+
 				focus.apply();
-				commonStore.filterSet('');
+				commonStore.filterSet(0, '');
 				$('.placeHolder.c' + id).text(Constant.placeHolder.default);
 			},
 			data: {

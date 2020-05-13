@@ -138,12 +138,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		const { param } = this.props;
 		const { data } = param;
-		const { subMenuId } = data;
 		const k = e.which;
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
-		
+
 		switch (k) {
 			case Key.up:
 				if (this.n == -1) {
@@ -212,7 +211,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: DataUtil.menuGetTextColors() });
 			};
 			
-			sections = DataUtil.menuSectionsFilter(sections, filter);
+			sections = DataUtil.menuSectionsFilter(sections, filter.text);
 		};
 		
 		sections = DataUtil.menuSectionsMap(sections);
