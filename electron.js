@@ -122,9 +122,15 @@ function createWindow () {
 			submenu: [
 				{
 					label: 'Table of contents',
-					click: function () {
-						win.webContents.send('help');
-					}
+					click: function () { win.webContents.send('help', 'index'); }
+				},
+				{
+					label: 'Keyboard & Shortcuts',
+					click: function () { win.webContents.send('help', 'shortcuts'); }
+				},
+				{
+					label: 'What\'s new',
+					click: function () { win.webContents.send('help', 'new'); }
 				},
 			]
 		},

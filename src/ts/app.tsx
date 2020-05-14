@@ -237,8 +237,8 @@ class App extends React.Component<Props, State> {
 			Storage.set('debug', debug, true);
 		});
 		
-		ipcRenderer.on('help', (e: any) => {
-			history.push('/help/index');
+		ipcRenderer.on('help', (e: any, page: string) => {
+			history.push('/help/' + page);
 		});
 		
 		ipcRenderer.on('message', (e: any, text: string, version: string) => {
