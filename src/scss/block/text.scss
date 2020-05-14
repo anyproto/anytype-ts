@@ -17,7 +17,7 @@
 			background: rgba(172,169,150,0.15);
 		}
 
-		mention { cursor: pointer; white-space: nowrap; display: inline-block; }
+		mention { cursor: pointer; white-space: nowrap; display: inline-block; user-select: all; }
 		mention {
 			smile { margin-right: 6px; display: inline-block; }
 			name { border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline-block; }

@@ -282,10 +282,8 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
-
-		const html = value.html();
 		const obj = Mark.cleanHtml(value.html());
-		
+
 		return String(obj.get(0).innerText || '');
 	};
 	

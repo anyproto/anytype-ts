@@ -265,16 +265,15 @@ class Mark {
 	};
 
 	cleanHtml (html: string) {
-		let obj = $(`<div>${html}</div>`);
+		html = html.replace(/&nbsp;/g, ' ');
+		html = html.replace(/<br\/?>/g, '\n');
 
 		// Remove inner tags from mentions
+		let obj = $(`<div>${html}</div>`);
 		obj.find('mention').each((i: number, item: any) => {
 			item = $(item);
-			const name = item.find('name').text();
-
-			item.text(name);
+			item.text(item.find('name').text());
 		});
-
 		return obj;
 	};
 	
@@ -284,8 +283,6 @@ class Mark {
 		const obj = this.cleanHtml(html);
 
 		html = obj.html();
-		html = html.replace(/&nbsp;/g, ' ');
-		html = html.replace(/<br\/?>/g, '\n');
 		html = html.replace(/data-[^=]+="[^"]+"/g, '');
 		html = html.replace(/contenteditable="[^"]+"/g, '');
 
