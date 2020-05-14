@@ -241,7 +241,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { content } = block;
 		const { style } = content;
 		
-		let cn = '';
+		let cn = 'c20';
 		let size = 16;
 
 		switch (style) {

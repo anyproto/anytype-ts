@@ -20,7 +20,7 @@
 		mention { cursor: pointer; white-space: nowrap; display: inline-block; user-select: all; }
 		mention {
 			smile { margin-right: 6px; display: inline-block; }
-			name { border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline-block; }
+			name { border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline-block; line-height: calc(1em + 2px); }
 
 			.smile.c24 .emoji-mart-emoji { margin: -3px 0px 0px 0px; }
 		}
