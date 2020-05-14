@@ -20,7 +20,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;	
 	n: number = 0;
-	index: any = null;
 
 	state = {
 		pages: [],
@@ -85,9 +84,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	getSections () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
 		const { pages } = this.state;
 		const { filter } = commonStore;
 
@@ -104,15 +100,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 			});
 		};
 
-		let profiles = [
-			{ id: id++, name: 'Profile 1', icon: '' },
-			{ id: id++, name: 'Profile 2', icon: '' },
-			{ id: id++, name: 'Profile 3', icon: '' },
-		];
-
 		let sections = [
 			{ id: 'page', name: 'Mention a page', children: pageData },
-			{ id: 'profile', name: 'Mention a profile', children: profiles },
 		];
 
 		if (filter && filter.text) {
@@ -144,24 +133,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	loadSearch () {
 		this.setState({ loading: true });
-
-		this.index = new FlexSearch('balance', {
-			encode: 'extra',
-    		tokenize: 'full',
-			threshold: 1,
-    		resolution: 3,
-		});
-
 		let pages: any[] = [];
 
 		C.NavigationListPages((message: any) => {
-			for (let page of message.pages) {
-				page = this.getPage(page);
-				pages.push(page);
-
-				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
-			};
-
+			pages = message.pages.map((it: any) => { return this.getPage(it); });
 			this.setState({ pages: pages, loading: false });
 		});
 	};
@@ -183,10 +158,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 			return;
 		};
 		
-		const k = e.which;
-		
 		e.stopPropagation();
-		
+
+		const k = e.which;
 		keyboard.disableMouse(true);
 		
 		const items = this.getItems();
@@ -246,16 +220,12 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		const { content } = block;
-		const from = filter.from - 1;
-
 		content.marks = Mark.toggle(content.marks, { 
 			type: I.MarkType.Mention, 
 			param: item.key, 
 			range: { from: filter.from, to: filter.from + item.name.length },
 		});
 
-		console.log(filter.from, filter.text, filter.from + filter.text.length);
-		
 		onChange(item.name + ' ', content.marks, { from: filter.from, to: filter.from + filter.text.length + 1 });
 		commonStore.menuClose(this.props.id);
 	};
