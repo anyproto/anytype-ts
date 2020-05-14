@@ -227,12 +227,11 @@ function autoUpdaterInit () {
 	
 	autoUpdater.on('update-available', (info) => {
 		setStatus('Update available');
+		win.webContents.send('update');
 	});
 
 	autoUpdater.on('update-not-available', (info) => {
 		setStatus('Update not available');
-		
-		win.webContents.send('update');
 	});
 
 	autoUpdater.on('error', (err) => { setStatus('Error: ' + err); });
