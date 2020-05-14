@@ -1,3 +1,4 @@
+const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain, shell, Menu, session } = require('electron');
 const { is, appMenu } = require('electron-util');
@@ -18,7 +19,8 @@ let csp = [
 	"style-src 'unsafe-inline'",
 	"font-src data:",
 	"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem http://localhost:8080 https://sentry.io devtools://devtools 'unsafe-inline'"
+	"script-src-elem http://localhost:8080 https://sentry.io devtools://devtools 'unsafe-inline'",
+	"frame-src chrome-extension://react-developer-tools"
 ];
 
 storage.setDataPath(dataPath);
@@ -68,9 +70,9 @@ function createWindow () {
 	});
 	
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
-		BrowserWindow.addDevToolsExtension(
-			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.5.0_0')
-		);
+		installExtension(REACT_DEVELOPER_TOOLS)
+        .then((name) => console.log(`Added Extension:  ${name}`))
+        .catch((err) => console.log('An error occurred: ', err));
 	};
 	
 	if (is.development) {
@@ -253,14 +255,14 @@ function autoUpdaterInit () {
 			setStatus('Update downloaded... Restarting App in 5 seconds');
 			win.webContents.send('updateReady');
 			autoUpdater.quitAndInstall();
-		}, 5000);
+		}, 2000);
 	});
 	
 };
 
 function setStatus (text) {
 	log.info(text);
-	win.webContents.send('message', text, app.getVersion());
+	win.webContents.send('message', text);
 };
 
 app.on('ready', createWindow);

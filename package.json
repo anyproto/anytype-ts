@@ -72,6 +72,7 @@
 		"bindings": "^1.5.0",
 		"blueimp-load-image": "^2.31.0",
 		"css-loader": "^3.5.3",
+		"electron-devtools-installer": "^3.0.0",
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.1.8",
 		"electron-log": "^3.0.9",
