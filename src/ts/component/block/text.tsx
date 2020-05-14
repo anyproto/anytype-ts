@@ -248,7 +248,11 @@ class BlockText extends React.Component<Props, {}> {
 			};
 
 			const details = blockStore.getDetail(rootId, data.param);
-			ReactDOM.render(<Smile className="c24" icon={details.iconEmoji} hash={details.iconImage} />, item.find('smile').get(0));
+			const smile = item.find('smile');
+
+			if (smile && smile.length) {
+				ReactDOM.render(<Smile className="c24" native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
+			};
 		});
 		
 		links.unbind('click.link');

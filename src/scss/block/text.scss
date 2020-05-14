@@ -17,10 +17,12 @@
 			background: rgba(172,169,150,0.15);
 		}
 
-		mention { cursor: pointer; white-space: nowrap; }
+		mention { cursor: pointer; white-space: nowrap; display: inline-block; }
 		mention {
-			icon { margin-right: 6px; display: inline-block; }
-			name { color: $colorRed; border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; }
+			smile { margin-right: 6px; display: inline-block; }
+			name { border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline-block; }
+
+			.smile.c24 .emoji-mart-emoji { margin: -3px 0px 0px 0px; }
 		}
 		mention:hover {
 			name { border-color: $colorBlack; }

@@ -213,7 +213,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				break;
 				
 			case Key.enter:
-			case Key.space:
+				e.preventDefault();
 				if (item) {
 					this.onClick(e, item);
 				};

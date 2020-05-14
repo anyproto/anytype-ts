@@ -9,6 +9,7 @@ interface Props {
 	icon: string;
 	hash?: string;
 	size?: number;
+	native?: boolean;
 	className?: string;
 	canEdit?: boolean;
 	offsetX?: number;
@@ -33,6 +34,7 @@ class Smile extends React.Component<Props, State> {
 		offsetY: 0,
 		size: 16,
 		className: 'c20',
+		native: true,
 	};
 	
 	state = {
@@ -47,7 +49,7 @@ class Smile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, size, className, canEdit } = this.props;
+		const { id, size, native, className, canEdit } = this.props;
 		const icon = String(this.state.icon || this.props.icon || '');
 		const hash = String(this.state.hash || this.props.hash || '');
 		
@@ -72,7 +74,7 @@ class Smile extends React.Component<Props, State> {
 			};
 
 			if (colons) {
-				element = <Emoji native={true} emoji={colons} set="apple" size={size} />;
+				element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 			};
 		} else 
 		if (hash) {
