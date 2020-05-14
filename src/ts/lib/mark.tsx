@@ -136,7 +136,7 @@ class Mark {
 	};
 	
 	checkRanges (text: string, marks: I.Mark[]) {
-		marks = (marks || []).sort(this.sort);
+		marks = (marks || []).slice().sort(this.sort);
 		
 		for (let i = 0; i < marks.length; ++i) {
 			let mark = marks[i];

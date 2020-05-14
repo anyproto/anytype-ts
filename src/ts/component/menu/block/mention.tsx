@@ -7,7 +7,7 @@ interface Props extends I.Menu {};
 
 const $ = require('jquery');
 
-class MenuSelect extends React.Component<Props, {}> {
+class MenuBlockMention extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;	
 	n: number = 0;
@@ -15,35 +15,35 @@ class MenuSelect extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onSelect = this.onSelect.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { options, value } = data;
-		
+		const sections = this.getSections();
+
+		const Section = (item: any) => (
+			<div className="section">
+				{item.name ? <div className="name">{item.name}</div> : ''}
+				<div className="items">
+					{item.children.map((action: any, i: number) => {
+						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onOver(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+					})}
+				</div>
+			</div>
+		);
+
 		return (
 			<div className="items">
-				{options.map((item: any, i: number) => {
-					return <MenuItemVertical key={i} {...item} className={item.isInitial ? 'initial' : ''} isActive={item.id == value} onClick={(e: any) => { this.onSelect(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} />
-				})}
+				{sections.map((item: any, i: number) => (
+					<Section key={i} {...item} />
+				))}
 			</div>
 		);
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { options, value } = data;
-		
 		this._isMounted = true;
 		this.rebind();
-		
-		const active = options.find((it: any) => { return it.id == value });
-		if (active && !active.isInitial) {
-			this.setActive(active);
-		};
 	};
 	
 	componentWillUnmount () {
@@ -65,13 +65,35 @@ class MenuSelect extends React.Component<Props, {}> {
 	unbind () {
 		$(window).unbind('keydown.menu');
 	};
+
+	getSections () {
+		let id = 1;
+		let pages = [
+			{ id: id++, name: 'Page 1', icon: '' },
+			{ id: id++, name: 'Page 2', icon: '' },
+			{ id: id++, name: 'Page 3', icon: '' },
+		];
+		let profiles = [
+			{ id: id++, name: 'Profile 1', icon: '' },
+			{ id: id++, name: 'Profile 2', icon: '' },
+			{ id: id++, name: 'Profile 3', icon: '' },
+		];
+
+		return [
+			{ name: 'Mention a page', children: pages },
+			{ name: 'Mention a profile', children: profiles },
+		]
+	};
 	
 	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { options } = data;
+		const sections = this.getSections();
 		
-		return options || [];
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		
+		return items;
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
@@ -89,7 +111,6 @@ class MenuSelect extends React.Component<Props, {}> {
 		
 		const k = e.which;
 		
-		e.preventDefault();
 		e.stopPropagation();
 		
 		keyboard.disableMouse(true);
@@ -118,7 +139,7 @@ class MenuSelect extends React.Component<Props, {}> {
 			case Key.enter:
 			case Key.space:
 				if (item) {
-					this.onSelect(e, item);
+					this.onClick(e, item);
 				};
 				break;
 				
@@ -134,15 +155,14 @@ class MenuSelect extends React.Component<Props, {}> {
 		};
 	};
 	
-	onSelect (e: any, item: any) {
+	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(e, item);
 	};
 	
 };
 
-export default MenuSelect;
+export default MenuBlockMention;

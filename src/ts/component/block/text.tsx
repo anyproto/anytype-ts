@@ -295,21 +295,31 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if ((k == Key.backspace) && range && !range.from && !range.to) {
-			this.setText(this.marks, (message: any) => {
-				onKeyDown(e, value, this.marks);
-			});
-			return;
-		};
-		
-		if ((k == Key.backspace) && commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
-			commonStore.menuClose('blockAdd');
+		if (k == Key.backspace) {
+			if (range && !range.from && !range.to) {
+				this.setText(this.marks, (message: any) => {
+					onKeyDown(e, value, this.marks);
+				});
+				return;
+			};
+			
+			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
+				commonStore.menuClose('blockAdd');
+			};
+
+			if (commonStore.menuIsOpen('blockMention') && (range.from - 1 == filter.from)) {
+				commonStore.menuClose('blockMention');
+			};
 		};
 		
 		if ((k == Key.slash) && !(e.ctrlKey || e.metaKey)) {
 			onMenuAdd(id, value, range);
 		};
-		
+
+		if ((e.key == '@') && !commonStore.menuIsOpen('blockMention')) {
+			this.onMention();
+		};
+
 		focus.set(id, range);
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
@@ -339,6 +349,16 @@ class BlockText extends React.Component<Props, {}> {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
 				commonStore.menuClose('blockAdd');
+			} else {
+				const part = value.substr(filter.from, value.length).match(/^\/([^\s\/]*)/);
+				commonStore.filterSetText(part ? part[1] : '');
+			};
+		};
+
+		if (commonStore.menuIsOpen('blockMention')) {
+			if (k == Key.space) {
+				commonStore.filterSet(0, '');
+				commonStore.menuClose('blockMention');
 			} else {
 				const part = value.substr(filter.from, value.length).match(/^\/([^\s\/]*)/);
 				commonStore.filterSetText(part ? part[1] : '');
@@ -468,6 +488,34 @@ class BlockText extends React.Component<Props, {}> {
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
+	};
+
+	onMention () {
+		const { block } = this.props;
+		const range = this.getRange();
+		const el = $('#block-' + block.id);
+		const offset = el.offset();
+		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		
+		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+
+		if (!rect.x && !rect.y) {
+			x = Constant.size.blockMenu;
+			y = 4;
+		};
+
+		commonStore.filterSet(range.from, '');
+		commonStore.menuOpen('blockMention', {
+			element: el,
+			type: I.MenuType.Vertical,
+			offsetX: x,
+			offsetY: -y,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+			},
+		});
 	};
 	
 	setText (marks: I.Mark[], callBack?: (message: any) => void) {

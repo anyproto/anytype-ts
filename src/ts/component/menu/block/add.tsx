@@ -136,8 +136,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 		
-		const { param } = this.props;
-		const { data } = param;
 		const k = e.which;
 		const items = this.getItems();
 		const l = items.length;

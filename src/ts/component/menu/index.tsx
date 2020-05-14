@@ -18,6 +18,7 @@ import MenuBlockAction from './block/action';
 import MenuBlockMore from './block/more';
 import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
+import MenuBlockMention from './block/mention';
 
 import MenuDataviewPropertyList from './dataview/property/list';
 import MenuDataviewPropertyEdit from './dataview/property/edit';
@@ -71,6 +72,7 @@ class Menu extends React.Component<Props, {}> {
 			blockAlign:				 MenuBlockAlign,
 			blockLink:				 MenuBlockLink,
 			blockCover:				 MenuBlockCover,
+			blockMention:			 MenuBlockMention,
 			
 			dataviewPropertyList:	 MenuDataviewPropertyList,
 			dataviewPropertyEdit:	 MenuDataviewPropertyEdit,
