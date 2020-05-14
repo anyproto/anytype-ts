@@ -1,16 +1,21 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, Key, keyboard } from 'ts/lib';
+import { I, C, Key, keyboard, StructDecode, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const FlexSearch = require('flexsearch');
+const Constant = require('json/constant.json');
 
+@observer
 class MenuBlockMention extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;	
 	n: number = 0;
+	index: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -20,6 +25,7 @@ class MenuBlockMention extends React.Component<Props, {}> {
 	
 	render () {
 		const sections = this.getSections();
+		const { filter } = commonStore;
 
 		const Section = (item: any) => (
 			<div className="section">
@@ -34,6 +40,7 @@ class MenuBlockMention extends React.Component<Props, {}> {
 
 		return (
 			<div className="items">
+				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
 				{sections.map((item: any, i: number) => (
 					<Section key={i} {...item} />
 				))}
@@ -44,6 +51,7 @@ class MenuBlockMention extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
+		this.loadSearch();
 	};
 	
 	componentWillUnmount () {
@@ -67,6 +75,8 @@ class MenuBlockMention extends React.Component<Props, {}> {
 	};
 
 	getSections () {
+		const { filter } = commonStore;
+
 		let id = 1;
 		let pages = [
 			{ id: id++, name: 'Page 1', icon: '' },
@@ -79,10 +89,17 @@ class MenuBlockMention extends React.Component<Props, {}> {
 			{ id: id++, name: 'Profile 3', icon: '' },
 		];
 
-		return [
+		let sections = [
 			{ name: 'Mention a page', children: pages },
 			{ name: 'Mention a profile', children: profiles },
-		]
+		];
+
+		if (filter && filter.text) {
+			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+		};
+
+		sections = DataUtil.menuSectionsMap(sections);
+		return sections;
 	};
 	
 	getItems () {
@@ -102,6 +119,42 @@ class MenuBlockMention extends React.Component<Props, {}> {
 			this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
 		this.props.setActiveItem(items[this.n], scroll);
+	};
+
+	loadSearch () {
+		this.setState({ loading: true });
+
+		this.index = new FlexSearch('balance', {
+			encode: 'extra',
+    		tokenize: 'full',
+			threshold: 1,
+    		resolution: 3,
+		});
+
+		let pages: any[] = [];
+
+		C.NavigationListPages((message: any) => {
+			for (let page of message.pages) {
+				page = this.getPage(page);
+				pages.push(page);
+
+				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
+			};
+
+			this.setState({ pages: pages, loading: false });
+		});
+	};
+
+	getPage (page: any): I.PageInfo {
+		let details = StructDecode.decodeStruct(page.details || {});
+		details.name = String(details.name || Constant.default.name || '');
+
+		return {
+			id: page.id,
+			snippet: page.snippet,
+			details: details,
+			text: [ details.name, page.snippet ].join(' '),
+		};
 	};
 	
 	onKeyDown (e: any) {

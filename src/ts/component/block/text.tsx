@@ -360,7 +360,7 @@ class BlockText extends React.Component<Props, {}> {
 				commonStore.filterSet(0, '');
 				commonStore.menuClose('blockMention');
 			} else {
-				const part = value.substr(filter.from, value.length).match(/^\/([^\s\/]*)/);
+				const part = value.substr(filter.from, value.length).match(/^@([^\s\/]*)/);
 				commonStore.filterSetText(part ? part[1] : '');
 			};
 		};
