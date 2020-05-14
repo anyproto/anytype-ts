@@ -10,12 +10,25 @@
 			width: 100%; height: 100%; cursor: text; 
 		}
 		
-		a { cursor: pointer; color: inherit; border-bottom: 1px solid $colorDarkGrey; text-decoration: none; }
+		lnk { cursor: pointer; color: inherit; border-bottom: 1px solid $colorDarkGrey; text-decoration: none; }
 		
 		kbd { 
 			display: inline; font-family: 'Mono'; border-radius: 2px; background: $colorDarkGrey; 
 			background: rgba(172,169,150,0.15);
 		}
+
+		mention { cursor: pointer; white-space: nowrap; }
+		mention {
+			icon { margin-right: 6px; display: inline-block; }
+			name { color: $colorRed; border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; }
+		}
+		mention:hover {
+			name { border-color: $colorBlack; }
+		}
+
+		bold { font-weight: 600; }
+		italic { font-style: italic; }
+		strike { text-decoration: line-through; }
 		
 		.markers { white-space: nowrap; }
 		.markers {

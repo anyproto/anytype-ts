@@ -116,7 +116,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const st = $(window).scrollTop();
 		const { from, to } = range;
 		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));

@@ -98,8 +98,12 @@ class Util {
 		return a.hasOwnProperty('length') ? a : Object.values(a);
 	};
 
-	stringCut (s: string, start: number, end: number): string {
-		return s.substr(0, start) + s.substr(end);
+	stringCut (haystack: string, start: number, end: number): string {
+		return haystack.substr(0, start) + haystack.substr(end);
+	};
+
+	stringInsert (haystack: string, needle: string, start: number, end: number): string {
+		return haystack.substr(0, start) + needle + haystack.substr(end);
 	};
 	
 	shorten (s: string, l: number, noEnding?: boolean) {

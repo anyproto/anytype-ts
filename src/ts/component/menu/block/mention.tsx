@@ -1,21 +1,31 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, Key, keyboard, StructDecode, DataUtil } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, C, Key, keyboard, StructDecode, DataUtil, Mark } from 'ts/lib';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
+
+interface State {
+	pages: I.PageInfo[];
+	loading: boolean;
+};
 
 const $ = require('jquery');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 
 @observer
-class MenuBlockMention extends React.Component<Props, {}> {
+class MenuBlockMention extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;	
 	n: number = 0;
 	index: any = null;
+
+	state = {
+		pages: [],
+		loading: false,
+	};
 	
 	constructor (props: any) {
 		super(props);
@@ -75,14 +85,25 @@ class MenuBlockMention extends React.Component<Props, {}> {
 	};
 
 	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const { pages } = this.state;
 		const { filter } = commonStore;
 
 		let id = 1;
-		let pages = [
-			{ id: id++, name: 'Page 1', icon: '' },
-			{ id: id++, name: 'Page 2', icon: '' },
-			{ id: id++, name: 'Page 3', icon: '' },
-		];
+		let pageData = [];
+
+		for (let page of pages) {
+			pageData.push({
+				id: page.id, 
+				name: page.details.name, 
+				icon: page.details.iconEmoji,
+				hash: page.details.iconImage,
+				withSmile: true,
+			});
+		};
+
 		let profiles = [
 			{ id: id++, name: 'Profile 1', icon: '' },
 			{ id: id++, name: 'Profile 2', icon: '' },
@@ -90,8 +111,8 @@ class MenuBlockMention extends React.Component<Props, {}> {
 		];
 
 		let sections = [
-			{ name: 'Mention a page', children: pages },
-			{ name: 'Mention a profile', children: profiles },
+			{ id: 'page', name: 'Mention a page', children: pageData },
+			{ id: 'profile', name: 'Mention a profile', children: profiles },
 		];
 
 		if (filter && filter.text) {
@@ -174,6 +195,7 @@ class MenuBlockMention extends React.Component<Props, {}> {
 		
 		switch (k) {
 			case Key.up:
+				e.preventDefault();
 				this.n--;
 				if (this.n < 0) {
 					this.n = l - 1;
@@ -182,6 +204,7 @@ class MenuBlockMention extends React.Component<Props, {}> {
 				break;
 				
 			case Key.down:
+				e.preventDefault();
 				this.n++;
 				if (this.n > l - 1) {
 					this.n = 0;
@@ -209,10 +232,31 @@ class MenuBlockMention extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
+
+		console.log(item);
+
 		const { param } = this.props;
+		const { filter } = commonStore;
 		const { data } = param;
-		const { onSelect } = data;
+		const { rootId, blockId, onChange } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!block) {
+			return;
+		};
+
+		const { content } = block;
+		const from = filter.from - 1;
+
+		content.marks = Mark.toggle(content.marks, { 
+			type: I.MarkType.Mention, 
+			param: item.key, 
+			range: { from: filter.from, to: filter.from + item.name.length },
+		});
+
+		console.log(filter.from, filter.text, filter.from + filter.text.length);
 		
+		onChange(item.name + ' ', content.marks, { from: filter.from, to: filter.from + filter.text.length + 1 });
 		commonStore.menuClose(this.props.id);
 	};
 	
