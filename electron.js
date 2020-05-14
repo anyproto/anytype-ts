@@ -1,4 +1,3 @@
-const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain, shell, Menu, session } = require('electron');
 const { is, appMenu } = require('electron-util');
@@ -70,9 +69,9 @@ function createWindow () {
 	});
 	
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
-		installExtension(REACT_DEVELOPER_TOOLS)
-        .then((name) => console.log(`Added Extension:  ${name}`))
-        .catch((err) => console.log('An error occurred: ', err));
+		BrowserWindow.addDevToolsExtension(
+			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
+		);
 	};
 	
 	if (is.development) {
