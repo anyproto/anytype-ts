@@ -4,7 +4,7 @@
 	.block.blockLink { white-space: nowrap; }
 	.block.blockLink {
 		.name {
-			display: inline-block; vertical-align: top; height: 24px; letter-spacing: 0.1px; max-width: calc(100% - 30px); border-bottom: 1px solid $colorDarkGrey;
+			display: inline-block; vertical-align: top; letter-spacing: 0.1px; max-width: calc(100% - 30px); border-bottom: 1px solid $colorDarkGrey;
 			cursor: pointer; @include text-overflow-nw;   
 		}
 		.smile { margin-right: 6px; }

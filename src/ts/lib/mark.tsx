@@ -238,14 +238,15 @@ class Mark {
 		};
 		
 		for (let mark of parts) {
-			let t = Tags[mark.type];
-			let attr = this.paramToAttr(mark.type, mark.param);
+			const t = Tags[mark.type];
+			const param = String(mark.param || '');
+			const attr = this.paramToAttr(mark.type, param);
 			
 			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention ].indexOf(mark.type) >= 0) {
 				continue;
 			};
 			
-			let data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${mark.param}"`;
+			let data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${param}"`;
 			let from = r[mark.range.from];
 			let to = r[mark.range.to - 1];
 			let end = '';

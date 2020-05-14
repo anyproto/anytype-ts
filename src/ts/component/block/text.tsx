@@ -228,7 +228,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	renderMentions () {
-		const { rootId } = this.props;
+		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const links = value.find('mention');
@@ -236,6 +236,30 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if (!links.length) {
 			return;
+		};
+
+		const { content } = block;
+		const { style } = content;
+		
+		let cn = '';
+		let size = 16;
+
+		switch (style) {
+			case I.TextStyle.Header1:
+				cn = 'c32';
+				size = 28;
+				break;
+			
+			case I.TextStyle.Header2:
+				cn = 'c28';
+				size = 22;
+				break;
+
+			case I.TextStyle.Header3:
+			case I.TextStyle.Quote:
+				cn = 'c26';
+				size = 18;
+				break;
 		};
 		
 		links.each((i: number, item: any) => {
@@ -251,7 +275,7 @@ class BlockText extends React.Component<Props, {}> {
 			const smile = item.find('smile');
 
 			if (smile && smile.length) {
-				ReactDOM.render(<Smile className="c24" native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
+				ReactDOM.render(<Smile className={cn} size={size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 			};
 		});
 		
