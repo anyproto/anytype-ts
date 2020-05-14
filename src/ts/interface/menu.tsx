@@ -26,6 +26,7 @@ export interface Menu {
 export interface MenuItem {
 	id?: string;
 	icon?: string;
+	hash?: string;
 	name?: string;
 	description?: string;
 	inner?: any;

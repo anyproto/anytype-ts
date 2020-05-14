@@ -23,7 +23,6 @@ import FooterMainEdit from './footer/main/edit';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
-import MenuItemMain from './menu/item/main';
 
 import Popup from './popup';
 import Frame from './util/frame';
@@ -87,7 +86,6 @@ export {
 	Progress,
 	Menu,
 	MenuItemVertical,
-	MenuItemMain,
 	SelectionProvider,
 	Popup,
 	Frame,

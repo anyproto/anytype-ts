@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Select, Marker } from 'ts/component';
+import { RouteComponentProps } from 'react-router';
+import { Select, Marker, Smile } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore } from 'ts/store';
 import 'highlight.js/styles/github.css';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
 	block: I.Block;
@@ -184,13 +185,14 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if (html != text) {
 			this.renderLinks();
+			this.renderMentions();
 		};
 	};
 	
 	renderLinks () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
-		const links = value.find('a');
+		const links = value.find('lnk');
 		const self = this;
 		
 		if (!links.length) {
@@ -198,19 +200,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		links.each((i: number, item: any) => {
-			item = $(item);
-			let text = item.text();
-			let html = item.html();
-			
-			text = text.replace(/\s/g, '&nbsp;');
-			text = text.replace(/\-/g, '&#8209;');
-			text = text.replace(/‐/g, '&#8209;');
-			
-			html = html.replace(/>([^<]+)</, function (s, p1) {
-				return '>' + text + '<';
-			});
-			
-			item.html(html);
+			this.parseLinkContent($(item));
 		});
 		
 		links.unbind('click.link mouseenter.link');
@@ -236,6 +226,54 @@ class BlockText extends React.Component<Props, {}> {
 			});
 		});
 	};
+
+	renderMentions () {
+		const { rootId } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#value');
+		const links = value.find('mention');
+		const self = this;
+		
+		if (!links.length) {
+			return;
+		};
+		
+		links.each((i: number, item: any) => {
+			item = $(item);
+			this.parseLinkContent(item);
+
+			const data = item.data();
+			if (!data.param) {
+				return;
+			};
+
+			const details = blockStore.getDetail(rootId, data.param);
+			const smile = item.find('smile');
+
+			if (smile && smile.length) {
+				ReactDOM.render(<Smile className="c24" native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
+			};
+		});
+		
+		links.unbind('click.link');
+			
+		links.on('click.link', function (e: any) {
+			e.preventDefault();
+			self.props.history.push($(this).attr('href'));
+		});
+	};
+
+	parseLinkContent (item: any) {
+		let text = item.text();
+		let html = item.html();
+		
+		text = text.replace(/\s/g, '&nbsp;');
+		text = text.replace(/\-/g, '&#8209;');
+		text = text.replace(/‐/g, '&#8209;');
+		
+		html = html.replace(/>([^<]+)</, () => { return '>' + text + '<'; });
+		item.html(html);
+	};
 	
 	getValue (): string {
 		if (!this._isMounted) {
@@ -244,7 +282,11 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
-		return String(value.get(0).innerText || '');
+
+		const html = value.html();
+		const obj = Mark.cleanHtml(value.html());
+		
+		return String(obj.get(0).innerText || '');
 	};
 	
 	getMarksFromHtml (): I.Mark[] {
@@ -295,21 +337,31 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if ((k == Key.backspace) && range && !range.from && !range.to) {
-			this.setText(this.marks, (message: any) => {
-				onKeyDown(e, value, this.marks);
-			});
-			return;
-		};
-		
-		if ((k == Key.backspace) && commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
-			commonStore.menuClose('blockAdd');
+		if (k == Key.backspace) {
+			if (range && !range.from && !range.to) {
+				this.setText(this.marks, (message: any) => {
+					onKeyDown(e, value, this.marks);
+				});
+				return;
+			};
+			
+			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
+				commonStore.menuClose('blockAdd');
+			};
+
+			if (commonStore.menuIsOpen('blockMention') && (range.from - 1 == filter.from)) {
+				commonStore.menuClose('blockMention');
+			};
 		};
 		
 		if ((k == Key.slash) && !(e.ctrlKey || e.metaKey)) {
 			onMenuAdd(id, value, range);
 		};
-		
+
+		if ((e.key == '@') && !commonStore.menuIsOpen('blockMention')) {
+			this.onMention();
+		};
+
 		focus.set(id, range);
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
@@ -341,6 +393,16 @@ class BlockText extends React.Component<Props, {}> {
 				commonStore.menuClose('blockAdd');
 			} else {
 				const part = value.substr(filter.from, value.length).match(/^\/([^\s\/]*)/);
+				commonStore.filterSetText(part ? part[1] : '');
+			};
+		};
+
+		if (commonStore.menuIsOpen('blockMention')) {
+			if (k == Key.space) {
+				commonStore.filterSet(0, '');
+				commonStore.menuClose('blockMention');
+			} else {
+				const part = value.substr(filter.from, value.length).match(/^@([^\s\/]*)/);
 				commonStore.filterSetText(part ? part[1] : '');
 			};
 		};
@@ -468,6 +530,47 @@ class BlockText extends React.Component<Props, {}> {
 		
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
+	};
+
+	onMention () {
+		const { rootId, block } = this.props;
+		const range = this.getRange();
+		const el = $('#block-' + block.id);
+		const offset = el.offset();
+		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		
+		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+
+		if (!rect.x && !rect.y) {
+			x = Constant.size.blockMenu;
+			y = 4;
+		};
+
+		commonStore.filterSet(range.from, '');
+		commonStore.menuOpen('blockMention', {
+			element: el,
+			type: I.MenuType.Vertical,
+			offsetX: x,
+			offsetY: -y,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				onChange: (text: string, marks: I.Mark[], range: I.TextRange) => {
+					const to = range.from + text.length;
+
+					this.marks = Util.objectCopy(marks);
+					text = Util.stringInsert(block.content.text, text, range.from, range.to);
+
+					DataUtil.blockSetText(rootId, block, text, this.marks, () => {
+						focus.set(block.id, { from: to, to: to });
+						focus.apply();
+					});
+				},
+			},
+		});
 	};
 	
 	setText (marks: I.Mark[], callBack?: (message: any) => void) {

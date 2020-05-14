@@ -136,8 +136,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 		
-		const { param } = this.props;
-		const { data } = param;
 		const k = e.which;
 		const items = this.getItems();
 		const l = items.length;
@@ -200,7 +198,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			{ id: 'other', icon: 'line', name: 'Other', color: 'red', children: DataUtil.menuGetBlockOther() },
 		];
 		
-		if (filter) {
+		if (filter && filter.text) {
 			sections = sections.concat([
 				{ id: 'action', icon: 'action', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
 				{ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign() },

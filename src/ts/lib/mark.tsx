@@ -1,8 +1,8 @@
 import { I, Util } from 'ts/lib';
 import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 
-const runes = require('runes');
-const Tags = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'tc', 'hlc', 'emo' ];
+const $ = require('jquery');
+const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'smile' ];
 const EmojiData = require('emoji-mart/data/apple.json');
 
 enum Overlap {
@@ -136,7 +136,7 @@ class Mark {
 	};
 	
 	checkRanges (text: string, marks: I.Mark[]) {
-		marks = (marks || []).sort(this.sort);
+		marks = (marks || []).slice().sort(this.sort);
 		
 		for (let i = 0; i < marks.length; ++i) {
 			let mark = marks[i];
@@ -241,37 +241,57 @@ class Mark {
 			let t = Tags[mark.type];
 			let attr = this.paramToAttr(mark.type, mark.param);
 			
-			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor ].indexOf(mark.type) >= 0) {
+			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention ].indexOf(mark.type) >= 0) {
 				continue;
 			};
 			
-			let data = 'data-range="' + mark.range.from + '-' + mark.range.to + '"';
+			let data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${mark.param}"`;
 			let from = r[mark.range.from];
 			let to = r[mark.range.to - 1];
-			
-			if ((mark.type == I.MarkType.Smile) && mark.param) {
+			let end = '';
+
+			if (mark.type == I.MarkType.Mention) {
+				from = '<smile></smile><name>' + from;
+				end = '</name>';
 			};
-				
+			
 			if (from && to) {
 				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + ' ' + data + '>' + from;
-				r[mark.range.to - 1] += '</' + t + '>';
+				r[mark.range.to - 1] += end + '</' + t + '>';
 			};
 		};
 		
 		return r.join('');
 	};
+
+	cleanHtml (html: string) {
+		let obj = $(`<div>${html}</div>`);
+
+		// Remove inner tags from mentions
+		obj.find('mention').each((i: number, item: any) => {
+			item = $(item);
+			const name = item.find('name').text();
+
+			item.text(name);
+		});
+
+		return obj;
+	};
 	
 	fromHtml (html: string): any[] {
 		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]+)>|>)', 'ig');
 		const rp = new RegExp('^[^"]*"([^"]*)"$', 'i');
-		
+		const obj = this.cleanHtml(html);
+
+		html = obj.html();
 		html = html.replace(/&nbsp;/g, ' ');
 		html = html.replace(/<br\/?>/g, '\n');
 		html = html.replace(/data-[^=]+="[^"]+"/g, '');
+		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
 		let marks: any[] = [];
-		
+
 		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
@@ -293,7 +313,11 @@ class Mark {
 				let pm = p3.match(rp);
 				let param = pm ? pm[1]: '';
 				
-				param = param.replace('textColor textColor-', '').replace('bgColor bgColor-', '');
+				param = param.
+				replace('textColor textColor-', '').
+				replace('bgColor bgColor-', '').
+				replace('/main/edit/', '');
+
 				marks.push({
 					type: type,
 					range: { from: offset, to: 0 },
@@ -318,6 +342,10 @@ class Mark {
 		switch (type) {
 			case I.MarkType.Link:
 				attr = 'href="' + param + '"';
+				break;
+
+			case I.MarkType.Mention:
+				attr = 'href="/main/edit/' + param + '" contenteditable="false"';
 				break;
 				
 			case I.MarkType.TextColor:

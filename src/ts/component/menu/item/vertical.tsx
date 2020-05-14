@@ -7,7 +7,7 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, inner, name, description, color, arrow, isActive, withSmile, withDescription, className, onClick, onMouseEnter } = this.props;
+		const { id, icon, hash, inner, name, description, color, arrow, isActive, withSmile, withDescription, className, onClick, onMouseEnter } = this.props;
 		
 		let cn = [ 'item' ];
 		if (className) {
@@ -28,7 +28,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		
 		let element = null;
 		if (withSmile) {
-			element = <Smile icon={icon} />;
+			element = <Smile icon={icon} hash={hash} />;
 		} else if (icon) {
 			element = <Icon className={icon} inner={inner} />;
 		};

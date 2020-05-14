@@ -802,7 +802,7 @@ class EditorPage extends React.Component<Props, State> {
 
 		if (!rect.x && !rect.y) {
 			x = Constant.size.blockMenu;
-			y = 4;
+			y = 8;
 		};
 
 		commonStore.filterSet(range.from, '');

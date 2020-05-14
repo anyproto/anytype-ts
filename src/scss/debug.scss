@@ -27,6 +27,11 @@ html.debug {
 		
 		.block.blockText {
 			.marker { background-color: rgba(0,0,255,0.1); }
+
+			mention {
+				smile { background-color: rgba(0,0,255,0.1); }
+				name { background-color: rgba(0,0,255,0.1); }
+			}
 		}
 	}
 	
