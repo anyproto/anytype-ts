@@ -103,6 +103,15 @@ function createWindow () {
 	var menu = [
 		appMenu(),
 		{
+			role: 'fileMenu',
+			submenu: [
+				{
+					label: 'Import',
+					click: function () { win.webContents.send('import'); }
+				},
+			]
+		},
+		{
 			role: 'editMenu',
 		},
 		{
@@ -121,14 +130,6 @@ function createWindow () {
 		},
 	];
 
-	function setChannel (c) {
-		channel = c;
-		storage.set('config', { channel: channel }, function (error) {
-			autoUpdater.channel = c;
-			autoUpdater.checkForUpdatesAndNotify();
-		});
-	};
-	
 	//if (!app.isPackaged) {
 		menu.push({
 			label: 'Debug',
@@ -195,6 +196,14 @@ function createWindow () {
 	  
 		channel = String(data.channel || 'latest');
 		autoUpdaterInit();
+	});
+};
+
+function setChannel (c) {
+	channel = c;
+	storage.set('config', { channel: channel }, function (error) {
+		autoUpdater.channel = c;
+		autoUpdater.checkForUpdatesAndNotify();
 	});
 };
 

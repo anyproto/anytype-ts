@@ -113,7 +113,7 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
-const { app } = window.require('electron').remote;
+const { app, dialog } = window.require('electron').remote;
 const version = app.getVersion();
 const platforms: any = {
 	win32:	 'Windows',
@@ -250,6 +250,24 @@ class App extends React.Component<Props, State> {
 				current: Util.fileSize(progress.transferred), 
 				total: Util.fileSize(progress.total),
 				isUnlocked: true,
+			});
+		});
+
+		ipcRenderer.on('import', (e: any) => {
+			const id = Storage.get('pageId');
+			const options: any = { properties: [ 'openFile' ] };
+
+			if (!id) {
+				return;
+			};
+
+			dialog.showOpenDialog(options).then((result: any) => {
+				const files = result.filePaths;
+				if ((files == undefined) || !files.length) {
+					return;
+				};
+				
+				C.BlockImportMarkdown(id, files[0]);
 			});
 		});
 		

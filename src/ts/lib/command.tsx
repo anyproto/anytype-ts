@@ -349,6 +349,14 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.request('blockPaste', request, callBack);	
 };
 
+const BlockImportMarkdown = (contextId: string, path: string, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		importPath: path,
+	};
+	dispatcher.request('blockImportMarkdown', request, callBack);
+};
+
 const BlockListMove = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = {
 		contextId: contextId,
@@ -473,6 +481,7 @@ export {
 	UploadFile,
 	ProcessCancel,
 	
+	
 	WalletCreate,
 	WalletRecover,
 	
@@ -506,6 +515,7 @@ export {
 	BlockCut,
 	BlockExportPrint,
 	BlockPaste,
+	BlockImportMarkdown,
 	
 	BlockSetTextText,
 	BlockSetTextChecked,
