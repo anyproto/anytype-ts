@@ -256,7 +256,7 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('import', (e: any) => {
 			const id = Storage.get('pageId');
-			const options: any = { properties: [ 'openFile', 'openDirectory'] };
+			const options: any = { properties: [ 'openFile', 'openDirectory' ] };
 
 			if (!id) {
 				return;
