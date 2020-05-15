@@ -206,9 +206,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-
-		console.log(item);
-
 		const { param } = this.props;
 		const { filter } = commonStore;
 		const { data } = param;

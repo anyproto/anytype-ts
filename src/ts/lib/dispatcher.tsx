@@ -422,8 +422,8 @@ class Dispatcher {
 					};
 				};
 			});
-		} catch (e) {
-			console.error(e);
+		} catch (err) {
+			console.error(err);
 		};
 	};
 	
