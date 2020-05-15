@@ -17,11 +17,12 @@
 			background: rgba(172,169,150,0.15);
 		}
 
-		mention { cursor: pointer; white-space: nowrap; display: inline-block; user-select: all; }
+		mention { cursor: pointer; white-space: nowrap; display: inline-block; }
+		mention * { user-select: text; }
 		mention {
-			smile { margin-right: 6px; display: inline-block; }
+			smile { padding-right: 6px; display: inline; }
 			name { 
-				border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline-block; max-width: 400px; 
+				border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline; max-width: 400px; 
 				@include text-overflow-nw; vertical-align: top;
 			}
 
@@ -31,6 +32,11 @@
 		mention:hover {
 			name { border-color: $colorBlack; }
 		}
+
+		mention.c24 name bgcolor { margin-left: -30px; padding-left: 30px; }
+		mention.c26 name bgcolor { margin-left: -32px; padding-left: 32px; }
+		mention.c28 name bgcolor { margin-left: -34px; padding-left: 34px; }
+		mention.c32 name bgcolor { margin-left: -38px; padding-left: 38px; }
 
 		bold { font-weight: 600; }
 		italic { font-style: italic; }

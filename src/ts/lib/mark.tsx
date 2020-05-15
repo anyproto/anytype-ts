@@ -272,13 +272,14 @@ class Mark {
 		let obj = $(`<div>${html}</div>`);
 		obj.find('mention').each((i: number, item: any) => {
 			item = $(item);
-			item.text(item.find('name').text());
+			item.removeAttr('class');
+			item.html(item.find('name').html());
 		});
 		return obj;
 	};
 	
 	fromHtml (html: string): any[] {
-		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]+)>|>)', 'ig');
+		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
 		const rp = new RegExp('^[^"]*"([^"]*)"$', 'i');
 		const obj = this.cleanHtml(html);
 

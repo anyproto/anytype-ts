@@ -198,25 +198,25 @@ class BlockText extends React.Component<Props, {}> {
 	renderLinks () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
-		const links = value.find('lnk');
+		const items = value.find('lnk');
 		const self = this;
 		
-		if (!links.length) {
+		if (!items.length) {
 			return;
 		};
 		
-		links.each((i: number, item: any) => {
+		items.each((i: number, item: any) => {
 			this.parseLinkContent($(item));
 		});
 		
-		links.unbind('click.link mouseenter.link');
+		items.unbind('click.link mouseenter.link');
 			
-		links.on('click.link', function (e: any) {
+		items.on('click.link', function (e: any) {
 			e.preventDefault();
 			ipcRenderer.send('urlOpen', $(this).attr('href'));
 		});
 			
-		links.on('mouseenter.link', function (e: any) {
+		items.on('mouseenter.link', function (e: any) {
 			let range = $(this).data('range').split('-');
 			let url = $(this).attr('href');
 			
@@ -237,10 +237,10 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
-		const links = value.find('mention');
+		const items = value.find('mention');
 		const self = this;
 		
-		if (!links.length) {
+		if (!items.length) {
 			return;
 		};
 
@@ -267,7 +267,7 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 		};
 		
-		links.each((i: number, item: any) => {
+		items.each((i: number, item: any) => {
 			item = $(item);
 			this.parseLinkContent(item);
 
@@ -279,14 +279,13 @@ class BlockText extends React.Component<Props, {}> {
 			const details = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
 
+			item.addClass(cn);
 			if (smile && smile.length) {
 				ReactDOM.render(<Smile className={cn} size={size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 			};
 		});
 		
-		links.unbind('click.link');
-			
-		links.on('click.link', function (e: any) {
+		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
 			self.props.history.push($(this).attr('href'));
 		});
