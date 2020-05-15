@@ -68,7 +68,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
@@ -234,7 +234,7 @@ class EditorPage extends React.Component<Props, State> {
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const length = String(details.name || '').length;
 		
 		focus.set(rootId + '-title', { from: length, to: length });
@@ -300,7 +300,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');

@@ -63,6 +63,12 @@ class BlockText extends React.Component<Props, {}> {
 		let ct = color ? 'textColor textColor-' + color : '';
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct ];
 		let additional = null;
+
+		for (let mark of marks) {
+			if (mark.type == I.MarkType.Mention) {
+				const details = blockStore.getDetails(rootId, mark.param);
+			};
+		};
 		
 		switch (style) {
 			case I.TextStyle.Quote:
@@ -241,8 +247,8 @@ class BlockText extends React.Component<Props, {}> {
 		const { content } = block;
 		const { style } = content;
 		
-		let cn = 'c20';
-		let size = 16;
+		let cn = 'c24';
+		let size = 20;
 
 		switch (style) {
 			case I.TextStyle.Header1:
@@ -258,7 +264,6 @@ class BlockText extends React.Component<Props, {}> {
 			case I.TextStyle.Header3:
 			case I.TextStyle.Quote:
 				cn = 'c26';
-				size = 18;
 				break;
 		};
 		
@@ -271,7 +276,7 @@ class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			const details = blockStore.getDetail(rootId, data.param);
+			const details = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
 
 			if (smile && smile.length) {

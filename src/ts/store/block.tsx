@@ -370,12 +370,12 @@ class BlockStore {
 		return ret;
 	};
 	
-	getDetailMap (rootId: string) {
+	getDetailsMap (rootId: string) {
 		return this.detailObject.get(rootId) || new Map();
 	};
 	
-	getDetail (rootId: string, id: string): any {
-		const map = this.getDetailMap(rootId);
+	getDetails (rootId: string, id: string): any {
+		const map = this.getDetailsMap(rootId);
 		const item = Util.objectCopy(map.get(id) || {});
 		
 		item.name = String(item.name || Constant.default.name);

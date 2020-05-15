@@ -84,7 +84,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		let options = [];
 		for (let i in slice) {
 			const item = slice[i];
-			const details = blockStore.getDetail(breadcrumbs, item.content.targetBlockId);
+			const details = blockStore.getDetails(breadcrumbs, item.content.targetBlockId);
 			
 			options.push({
 				id: item.id,

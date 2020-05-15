@@ -167,7 +167,7 @@ class Block implements I.Block {
 	getLength (): number {
 		let t = '';
 		if (this.isTitle()) {
-			const details = blockStore.getDetail(this.parentId, this.parentId);
+			const details = blockStore.getDetails(this.parentId, this.parentId);
 			t = details.name;
 		} else {
 			t = this.content.text;

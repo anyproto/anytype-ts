@@ -23,7 +23,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId } = this.props;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const { name, iconImage } = details;
 		
 		return (

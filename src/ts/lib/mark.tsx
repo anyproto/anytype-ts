@@ -3,7 +3,6 @@ import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 
 const $ = require('jquery');
 const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'smile' ];
-const EmojiData = require('emoji-mart/data/apple.json');
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -228,7 +227,7 @@ class Mark {
 
 		for (let range of ranges) {
 			for (let mark of marks) {
-				if (mark.range.from <= range.from && mark.range.to >= range.to) {
+				if ((mark.range.from <= range.from) && (mark.range.to >= range.to)) {
 					parts.push({
 						type: mark.type,
 						param: mark.param,
@@ -239,30 +238,29 @@ class Mark {
 		};
 		
 		for (let mark of parts) {
-			const t = Tags[mark.type];
 			const param = String(mark.param || '');
 			const attr = this.paramToAttr(mark.type, param);
 			
-			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention ].indexOf(mark.type) >= 0) {
+			if (!attr && ([ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention ].indexOf(mark.type) >= 0)) {
 				continue;
 			};
 			
-			let data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${param}"`;
-			let from = r[mark.range.from];
-			let to = r[mark.range.to - 1];
-			let end = '';
+			const tag = Tags[mark.type];
+			const data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${param}"`;
 
+			let prefix = '';
+			let suffix = '';
 			if (mark.type == I.MarkType.Mention) {
-				from = '<smile></smile><name>' + from;
-				end = '</name>';
+				prefix = '<smile></smile><name>';
+				suffix = '</name>';
 			};
 			
-			if (from && to) {
-				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + ' ' + data + '>' + from;
-				r[mark.range.to - 1] += end + '</' + t + '>';
+			if (r[mark.range.from] && r[mark.range.to - 1]) {
+				r[mark.range.from] = `<${tag} ${attr} ${data}>${prefix}${r[mark.range.from]}`;
+				r[mark.range.to - 1] += `${suffix}</${tag}>`;
 			};
 		};
-		
+
 		return r.join('');
 	};
 
