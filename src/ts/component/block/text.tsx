@@ -380,7 +380,7 @@ class BlockText extends React.Component<Props, {}> {
 			onMenuAdd(id, value, range);
 		};
 
-		if ((e.key == '@') && !commonStore.menuIsOpen('blockMention')) {
+		if ((e.key == '@') && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
 			this.onMention();
 		};
 

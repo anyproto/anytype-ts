@@ -1001,6 +1001,7 @@ class EditorPage extends React.Component<Props, State> {
 				html: String(cb.getData('text/html') || ''),
 				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
 			};
+			data.anytype.range = data.anytype.range || { from: 0, to: 0 };
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);

@@ -90,6 +90,7 @@ class Mark {
 						mark = el;
 						add = false;
 					} else {
+						el.range.to = mark.range.from;
 						add = true;
 					};
 					break;

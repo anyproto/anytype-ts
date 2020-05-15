@@ -20,8 +20,12 @@
 		mention { cursor: pointer; white-space: nowrap; display: inline-block; user-select: all; }
 		mention {
 			smile { margin-right: 6px; display: inline-block; }
-			name { border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline-block; line-height: calc(1em + 2px); }
+			name { 
+				border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline-block; line-height: 22px; 
+				max-width: 200px; @include text-overflow-nw; vertical-align: top;
+			}
 
+			.smile.c20 .emoji-mart-emoji { margin: 0px; }
 			.smile.c24 .emoji-mart-emoji { margin: -3px 0px 0px 0px; }
 		}
 		mention:hover {
@@ -62,24 +66,36 @@
 		font-family: 'Lcg'; font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; 
 		padding: 4px 0px 2px 0px;
 	}
+	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget {
+		mention name { line-height: 30px; } 
+	};
 	
 	.block.blockText.header2 { padding: 14px 0px 0px 0px; }
 	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget { 
 		font-family: 'Lcg'; font-size: 22px; line-height: 28px; letter-spacing: -0.16px; font-weight: 600; 
 		padding: 3px 0px 2px 0px;
 	}
+	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget {
+		mention name { line-height: 26px; } 
+	};
 	
 	.block.blockText.header3 { padding: 14px 0px 0px 0px; }
 	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget { 
 		font-size: 18px; line-height: 26px; letter-spacing: 0.04px; font-weight: 600; 
 		padding: 2px 0px 3px 0px;
 	}
+	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget {
+		mention name { line-height: 24px; } 
+	};
 	
 	.block.blockText.quote { padding: 6px 0px 6px 0px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { 
 		font-size: 18px; line-height: 26px; letter-spacing: 0.04px; font-style: italic;
 		padding: 2px 0px 3px 0px;
 	}
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget {
+		mention name { line-height: 24px; } 
+	};
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { 
 		width: 0px; height: calc(100% + 5px); position: absolute; left: 11px; top: -2px; border-left: 2px solid $colorOrange; 
 	}

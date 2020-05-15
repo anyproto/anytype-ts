@@ -222,7 +222,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					
 				case I.MarkType.Link:
 					const offset = obj.offset();
-
 					mark = Mark.getInRange(marks, type, { from: from, to: to });
 
 					commonStore.menuClose(this.props.id, () => {
