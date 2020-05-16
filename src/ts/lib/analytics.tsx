@@ -17,7 +17,7 @@ class Analytics {
 	};
 	
 	init () {
-		if (!isProduction) {
+		if (!isProduction && !this.debug) {
 			return;
 		};
 		
@@ -37,7 +37,7 @@ class Analytics {
 	};
 	
 	profile (profile: any) {
-		if (!isProduction) {
+		if (!isProduction && !this.debug) {
 			return;
 		};
 		
@@ -49,7 +49,7 @@ class Analytics {
 	};
 	
 	setUserProperties (obj: any) {
-		if (!isProduction) {
+		if (!isProduction && !this.debug) {
 			return;
 		};
 		
@@ -61,7 +61,7 @@ class Analytics {
 	};
 	
 	setVersionName (name: string) {
-		if (!isProduction) {
+		if (!isProduction && !this.debug) {
 			return;
 		};
 		
@@ -73,7 +73,7 @@ class Analytics {
 	};
 	
 	event (code: string, data?: any) {
-		if (!isProduction || !code || !this.isInit) {
+		if ((!isProduction && !this.debug) || !code || !this.isInit) {
 			return;
 		};
 		

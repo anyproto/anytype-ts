@@ -9,7 +9,7 @@ const log = require('electron-log');
 const storage = require('electron-json-storage');
 
 let dataPath = app.getPath('userData');
-let channel = '';
+let config = {};
 let win = null;
 let csp = [
 	"default-src 'self' 'unsafe-eval'",
@@ -114,6 +114,16 @@ function createWindow () {
 		},
 		{
 			role: 'editMenu',
+			submenu: [
+				{
+					label: 'Undo', accelerator: 'CommandOrControl+Z',
+					click: function () { win.webContents.send('command', 'undo'); }
+				},
+				{
+					label: 'Redo', accelerator: 'CommandOrControl+Shift+Z',
+					click: function () { win.webContents.send('command', 'redo'); }
+				},
+			]
 		},
 		{
 			role: 'windowMenu',
@@ -123,15 +133,15 @@ function createWindow () {
 			submenu: [
 				{
 					label: 'Table of contents',
-					click: function () { win.webContents.send('help', 'index'); }
+					click: function () { win.webContents.send('route', '/help/index'); }
 				},
 				{
 					label: 'Keyboard & Shortcuts',
-					click: function () { win.webContents.send('help', 'shortcuts'); }
+					click: function () { win.webContents.send('route', '/help/shortcuts'); }
 				},
 				{
 					label: 'What\'s new',
-					click: function () { win.webContents.send('help', 'new'); }
+					click: function () { win.webContents.send('route', '/help/new'); }
 				},
 			]
 		},
@@ -145,13 +155,13 @@ function createWindow () {
 					label: 'Version',
 					submenu: [
 						{
-							label: 'Alpha',
+							label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
 							click: function () {
 								setChannel('alpha');
 							}
 						},
 						{
-							label: 'Public',
+							label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
 							click: function () {
 								setChannel('latest');
 							}
@@ -162,16 +172,31 @@ function createWindow () {
 					label: 'Flags',
 					submenu: [
 						{
-							label: 'Interface',
-							click: function () { win.webContents.send('toggleDebug', 'ui'); }
+							label: 'Interface', type: 'checkbox', checked: config.debugUI,
+							click: function () {
+								let value = !config.debugUI;
+								configSet({ debugUI: value }, function () {
+									win.webContents.send('toggleDebug', 'ui', value);
+								}); 
+							}
 						},
 						{
-							label: 'Middleware',
-							click: function () { win.webContents.send('toggleDebug', 'mw'); }
+							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
+							click: function () {
+								let value = !config.debugMW;
+								configSet({ debugMW: value }, function () {
+									win.webContents.send('toggleDebug', 'mw', value);
+								});
+							}
 						},
 						{
-							label: 'Analytics',
-							click: function () { win.webContents.send('toggleDebug', 'an'); }
+							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
+							click: function () {
+								let value = !config.debugAN;
+								configSet({ debugAN: value }, function () {
+									win.webContents.send('toggleDebug', 'an', value);
+								});
+							}
 						},
 					]
 				},
@@ -184,42 +209,49 @@ function createWindow () {
 					click: function () {
 						win.webContents.openDevTools();
 					}
-				},
-				{
-					label: 'Copy document',
-					click: function () {
-						win.webContents.send('copyDocument');
-					}
-				},
+				}
 			]
 		});
 	//};
 	
-	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
-	
 	storage.get('config', function (error, data) {
-		data = data || {};
-		console.log('Config: ', error, data);
-	  
-		channel = String(data.channel || 'latest');
+		config = data || {};
+		config.channel = String(config.channel || 'latest');
+
+		if (error) {
+			console.error(error);
+		};
+
+		console.log('Config: ', config);
+		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
+		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW)); 
+		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
+		
 		autoUpdaterInit();
+		Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 	});
 };
 
-function setChannel (c) {
-	channel = c;
-	storage.set('config', { channel: channel }, function (error) {
-		autoUpdater.channel = c;
+function setChannel (channel) {
+	configSet({ channel: channel }, function (error) {
+		autoUpdater.channel = channel;
 		autoUpdater.checkForUpdatesAndNotify();
 	});
 };
 
+function configSet (o, cb) {
+	config = Object.assign(config, o);
+	storage.set('config', config, function (error) {
+		if (cb) cb(error);
+	});
+};
+
 function autoUpdaterInit () {
-	console.log('Channel: ', channel);
+	console.log('Channel: ', config.channel);
 
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'info';
-	autoUpdater.channel = channel;
+	autoUpdater.channel = config.channel;
 	autoUpdater.checkForUpdatesAndNotify();
 
 	autoUpdater.on('checking-for-update', () => {

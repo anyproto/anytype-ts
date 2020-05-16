@@ -163,6 +163,14 @@ class App extends React.Component<Props, State> {
 	state = {
 		loading: true
 	};
+
+	constructor (props: any) {
+		super(props);
+
+		this.onImport = this.onImport.bind(this);
+		this.onProgress = this.onProgress.bind(this);
+		this.onCommand = this.onCommand.bind(this);
+	};
 	
 	render () {
 		const { loading } = this.state;
@@ -230,47 +238,25 @@ class App extends React.Component<Props, State> {
 		});
 		
 		debug.ui ? html.addClass('debug') : html.removeClass('debug');
-		
-		ipcRenderer.on('toggleDebug', (e: any, key: string) => {
-			debug[key] = !debug[key];
+		ipcRenderer.on('toggleDebug', (e: any, key: string, value: boolean) => {
+			debug[key] = value;
 			debug.ui ? html.addClass('debug') : html.removeClass('debug');
 			Storage.set('debug', debug, true);
 		});
 		
-		ipcRenderer.on('help', (e: any, page: string) => {
-			history.push('/help/' + page);
+		ipcRenderer.on('route', (e: any, route: string) => {
+			history.push(route);
 		});
 		
 		ipcRenderer.on('message', (e: any, text: string, version: string) => {
 			console.log('[Message]', text, version);
 		});
 		
-		ipcRenderer.on('progress', (e: any, progress: any) => {
-			commonStore.progressSet({ 
-				status: 'Downloading update... %s/%s', 
-				current: Util.fileSize(progress.transferred), 
-				total: Util.fileSize(progress.total),
-				isUnlocked: true,
-			});
-		});
+		ipcRenderer.on('progress', this.onProgress);
 
-		ipcRenderer.on('import', (e: any) => {
-			const id = Storage.get('pageId');
-			const options: any = { properties: [ 'openFile', 'openDirectory' ] };
+		ipcRenderer.on('import', this.onImport);
 
-			if (!id) {
-				return;
-			};
-
-			dialog.showOpenDialog(options).then((result: any) => {
-				const files = result.filePaths;
-				if ((files == undefined) || !files.length) {
-					return;
-				};
-				
-				C.BlockImportMarkdown(id, files[0]);
-			});
-		});
+		ipcRenderer.on('command', this.onCommand);
 		
 		ipcRenderer.on('update', (e: any) => {
 			Storage.delete('popupNewBlock');
@@ -297,6 +283,51 @@ class App extends React.Component<Props, State> {
 				return false;
 			});
 		};
+	};
+
+	onCommand (e: any, key: string) {
+		const id = Storage.get('pageId') || '';
+		if (!id) {
+			return;
+		};
+
+		switch (key) {
+			case 'undo':
+				C.BlockUndo(id);
+				break;
+
+			case 'redo':
+				C.BlockUndo(id);
+				break;
+		};
+	};
+
+	onProgress (e: any, progress: any) {
+		commonStore.progressSet({ 
+			status: 'Downloading update... %s/%s', 
+			current: Util.fileSize(progress.transferred), 
+			total: Util.fileSize(progress.total),
+			isUnlocked: true,
+		});
+	};
+
+	onImport () {
+		const { root } = blockStore;
+		const id = Storage.get('pageId') || root || '';
+		const options: any = { properties: [ 'openFile', 'openDirectory' ] };
+
+		if (!id) {
+			return;
+		};
+
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+			
+			C.BlockImportMarkdown(id, files[0]);
+		});
 	};
 	
 };

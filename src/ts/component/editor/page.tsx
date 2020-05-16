@@ -156,9 +156,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
-		
-		ipcRenderer.removeAllListeners('copyDocument');
-		ipcRenderer.on('copyDocument', (e: any) => {});
 	};
 	
 	componentDidUpdate () {

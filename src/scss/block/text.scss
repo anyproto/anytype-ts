@@ -20,17 +20,18 @@
 		mention { cursor: pointer; white-space: nowrap; display: inline-block; }
 		mention * { user-select: text; }
 		mention {
-			smile { padding-right: 6px; display: inline; }
-			name { 
-				border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast; display: inline; max-width: 400px; 
-				@include text-overflow-nw; vertical-align: top;
+			smile { padding-right: 6px; display: inline; position: relative; z-index: 1; }
+			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
+			name::after {
+				content: ""; width: 100%; height: 1px; background: $colorDarkGrey; transition: $transitionFast;
+				position: absolute; bottom: 0px; left: 0px; z-index: 1;
 			}
 
 			.smile.c20 .emoji-mart-emoji { margin: 0px; }
 			.smile.c24 .emoji-mart-emoji { margin: -3px 0px 0px 0px; }
 		}
 		mention:hover {
-			name { border-color: $colorBlack; }
+			name::after { background: $colorBlack; }
 		}
 
 		mention.c24 name bgcolor { margin-left: -30px; padding-left: 30px; }
