@@ -2,7 +2,7 @@ import { I, Util } from 'ts/lib';
 import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 
 const $ = require('jquery');
-const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'smile' ];
+const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji' ];
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -198,6 +198,8 @@ class Mark {
 	};
 	
 	toHtml (text: string, marks: I.Mark[]) {
+		const hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Smile ];
+
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 		
@@ -241,7 +243,7 @@ class Mark {
 			const param = String(mark.param || '');
 			const attr = this.paramToAttr(mark.type, param);
 			
-			if (!attr && ([ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention ].indexOf(mark.type) >= 0)) {
+			if (!attr && (hasParam.indexOf(mark.type) >= 0)) {
 				continue;
 			};
 			
@@ -268,23 +270,30 @@ class Mark {
 		html = html.replace(/&nbsp;/g, ' ');
 		html = html.replace(/<br\/?>/g, '\n');
 
-		// Remove inner tags from mentions
+		// Remove inner tags from mentions and emoji
 		let obj = $(`<div>${html}</div>`);
+		
 		obj.find('mention').each((i: number, item: any) => {
 			item = $(item);
 			item.removeAttr('class');
 			item.html(item.find('name').html());
+		});
+
+		obj.find('emoji').each((i: number, item: any) => {
+			item = $(item);
+			item.removeAttr('class');
+			item.html(' ');
 		});
 		return obj;
 	};
 	
 	fromHtml (html: string): any[] {
 		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
-		const rp = new RegExp('^[^"]*"([^"]*)"$', 'i');
+		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
 
 		html = obj.html();
-		html = html.replace(/data-[^=]+="[^"]+"/g, '');
+		html = html.replace(/data-range="[^"]+"/g, '');
 		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
@@ -311,11 +320,6 @@ class Mark {
 				let pm = p3.match(rp);
 				let param = pm ? pm[1]: '';
 				
-				param = param.
-				replace('textColor textColor-', '').
-				replace('bgColor bgColor-', '').
-				replace('/main/edit/', '');
-
 				marks.push({
 					type: type,
 					range: { from: offset, to: 0 },
@@ -326,7 +330,7 @@ class Mark {
 			text = text.replace(s, '');
 			return '';
 		});
-		
+
 		return marks;
 	};
 	
@@ -344,6 +348,10 @@ class Mark {
 
 			case I.MarkType.Mention:
 				attr = 'href="/main/edit/' + param + '" contenteditable="false"';
+				break;
+
+			case I.MarkType.Smile:
+				attr = 'contenteditable="false"';
 				break;
 				
 			case I.MarkType.TextColor:

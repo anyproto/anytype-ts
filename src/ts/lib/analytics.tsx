@@ -17,11 +17,11 @@ class Analytics {
 	};
 	
 	init () {
-		if (!isProduction && !this.debug) {
+		const debug = (Storage.get('debug') || {}).an;
+		if (!isProduction && !debug) {
 			return;
 		};
-		
-		if (this.debug) {
+		if (debug) {
 			console.log('[Analytics.init]', Constant.amplitude);	
 		};
 		
@@ -37,11 +37,11 @@ class Analytics {
 	};
 	
 	profile (profile: any) {
-		if (!isProduction && !this.debug) {
+		const debug = (Storage.get('debug') || {}).an;
+		if (!isProduction && !debug) {
 			return;
 		};
-		
-		if (this.debug) {
+		if (debug) {
 			console.log('[Analytics.profile]', profile.id);
 		};
 		
@@ -49,11 +49,11 @@ class Analytics {
 	};
 	
 	setUserProperties (obj: any) {
-		if (!isProduction && !this.debug) {
+		const debug = (Storage.get('debug') || {}).an;
+		if (!isProduction && !debug) {
 			return;
 		};
-		
-		if (this.debug) {
+		if (debug) {
 			console.log('[Analytics.setUserProperties]', obj);
 		};
 		
@@ -61,11 +61,11 @@ class Analytics {
 	};
 	
 	setVersionName (name: string) {
-		if (!isProduction && !this.debug) {
+		const debug = (Storage.get('debug') || {}).an;
+		if (!isProduction && !debug) {
 			return;
 		};
-		
-		if (this.debug) {
+		if (debug) {
 			console.log('[Analytics.setVersionName]', name);
 		};
 		
@@ -73,7 +73,8 @@ class Analytics {
 	};
 	
 	event (code: string, data?: any) {
-		if ((!isProduction && !this.debug) || !code || !this.isInit) {
+		const debug = (Storage.get('debug') || {}).an;
+		if ((!isProduction && !debug) || !code || !this.isInit) {
 			return;
 		};
 		
@@ -101,7 +102,7 @@ class Analytics {
 				break;
 		};
 		
-		if (this.debug) {
+		if (debug) {
 			console.log('[Analytics.event]', code, param);
 		};
 		

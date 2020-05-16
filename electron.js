@@ -101,7 +101,26 @@ function createWindow () {
 	 	await download(win, url, { saveAs: true });
 	});
 	
-	var menu = [
+	storage.get('config', function (error, data) {
+		config = data || {};
+		config.channel = String(config.channel || 'latest');
+
+		if (error) {
+			console.error(error);
+		};
+
+		console.log('Config: ', config);
+		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
+		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW)); 
+		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
+		
+		autoUpdaterInit();
+		menuInit();
+	});
+};
+
+function menuInit () {
+	let menu = [
 		appMenu(),
 		{
 			role: 'fileMenu',
@@ -183,27 +202,24 @@ function createWindow () {
 						{
 							label: 'Interface', type: 'checkbox', checked: config.debugUI,
 							click: function () {
-								let value = !config.debugUI;
-								configSet({ debugUI: value }, function () {
-									win.webContents.send('toggleDebug', 'ui', value);
+								configSet({ debugUI: !config.debugUI }, function () {
+									win.webContents.send('toggleDebug', 'ui', config.debugUI);
 								}); 
 							}
 						},
 						{
 							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
 							click: function () {
-								let value = !config.debugMW;
-								configSet({ debugMW: value }, function () {
-									win.webContents.send('toggleDebug', 'mw', value);
+								configSet({ debugMW: !config.debugMW }, function () {
+									win.webContents.send('toggleDebug', 'mw', config.debugMW);
 								});
 							}
 						},
 						{
 							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
 							click: function () {
-								let value = !config.debugAN;
-								configSet({ debugAN: value }, function () {
-									win.webContents.send('toggleDebug', 'an', value);
+								configSet({ debugAN: !config.debugAN }, function () {
+									win.webContents.send('toggleDebug', 'an', config.debugAN);
 								});
 							}
 						},
@@ -222,23 +238,8 @@ function createWindow () {
 			]
 		});
 	//};
-	
-	storage.get('config', function (error, data) {
-		config = data || {};
-		config.channel = String(config.channel || 'latest');
 
-		if (error) {
-			console.error(error);
-		};
-
-		console.log('Config: ', config);
-		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
-		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW)); 
-		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
-		
-		autoUpdaterInit();
-		Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
-	});
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 };
 
 function setChannel (channel) {
@@ -248,10 +249,12 @@ function setChannel (channel) {
 	});
 };
 
-function configSet (o, cb) {
-	config = Object.assign(config, o);
+function configSet (obj, callBack) {
+	config = Object.assign(config, obj);
 	storage.set('config', config, function (error) {
-		if (cb) cb(error);
+		if (callBack) {
+			callBack(error);
+		};
 	});
 };
 

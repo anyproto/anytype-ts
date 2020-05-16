@@ -17,6 +17,9 @@
 			background: rgba(172,169,150,0.15);
 		}
 
+		emoji { white-space: nowrap; display: inline-block; }
+		emoji * { user-select: text; }
+
 		mention { cursor: pointer; white-space: nowrap; display: inline-block; }
 		mention * { user-select: text; }
 		mention {

@@ -192,6 +192,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (html != text) {
 			this.renderLinks();
 			this.renderMentions();
+			this.renderEmoji();
 		};
 	};
 	
@@ -206,7 +207,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		items.each((i: number, item: any) => {
-			this.parseLinkContent($(item));
+			this.parseElement($(item));
 		});
 		
 		items.unbind('click.link mouseenter.link');
@@ -234,7 +235,6 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	renderMentions () {
-		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('mention');
@@ -244,12 +244,63 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
+		const { rootId, block } = this.props;
+		const param = this.emojiParam(block.content.style);
+		
+		items.each((i: number, item: any) => {
+			item = $(item);
+			this.parseElement(item);
+
+			const data = item.data();
+			if (!data.param) {
+				return;
+			};
+
+			const details = blockStore.getDetails(rootId, data.param);
+			const smile = item.find('smile');
+
+			item.addClass(param.class);
+			if (smile && smile.length) {
+				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
+			};
+		});
+		
+		items.unbind('click.mention').on('click.mention', function (e: any) {
+			e.preventDefault();
+			self.props.history.push($(this).attr('href'));
+		});
+	};
+
+	renderEmoji () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#value');
+		const items = value.find('emoji');
+		
+		if (!items.length) {
+			return;
+		};
+
+		const { block } = this.props;
 		const { content } = block;
 		const { style } = content;
-		
+		const param = this.emojiParam(style);
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+
+			const data = item.data();
+			if (!data.param) {
+				return;
+			};
+
+			item.addClass(param.class);
+			ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={data.param} />, item.get(0));
+		});
+	};
+
+	emojiParam (style: I.TextStyle) {
 		let cn = 'c24';
 		let size = 20;
-
 		switch (style) {
 			case I.TextStyle.Header1:
 				cn = 'c32';
@@ -266,32 +317,10 @@ class BlockText extends React.Component<Props, {}> {
 				cn = 'c26';
 				break;
 		};
-		
-		items.each((i: number, item: any) => {
-			item = $(item);
-			this.parseLinkContent(item);
-
-			const data = item.data();
-			if (!data.param) {
-				return;
-			};
-
-			const details = blockStore.getDetails(rootId, data.param);
-			const smile = item.find('smile');
-
-			item.addClass(cn);
-			if (smile && smile.length) {
-				ReactDOM.render(<Smile className={cn} size={size} native={false} asImage={true} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
-			};
-		});
-		
-		items.unbind('click.mention').on('click.mention', function (e: any) {
-			e.preventDefault();
-			self.props.history.push($(this).attr('href'));
-		});
+		return { class: cn, size: size };
 	};
 
-	parseLinkContent (item: any) {
+	parseElement (item: any) {
 		let text = item.text();
 		let html = item.html();
 		

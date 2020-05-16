@@ -241,6 +241,7 @@ class App extends React.Component<Props, State> {
 		
 		debug.ui ? html.addClass('debug') : html.removeClass('debug');
 		ipcRenderer.on('toggleDebug', (e: any, key: string, value: boolean) => {
+			console.log('[toggleDebug]', key, value);
 			debug[key] = value;
 			debug.ui ? html.addClass('debug') : html.removeClass('debug');
 			Storage.set('debug', debug, true);
