@@ -281,7 +281,7 @@ class BlockText extends React.Component<Props, {}> {
 
 			item.addClass(cn);
 			if (smile && smile.length) {
-				ReactDOM.render(<Smile className={cn} size={size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
+				ReactDOM.render(<Smile className={cn} size={size} native={false} asImage={true} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 			};
 		});
 		

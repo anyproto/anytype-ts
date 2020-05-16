@@ -8,7 +8,7 @@
 			cursor: pointer; @include text-overflow-nw; position: relative;
 		}
 		.name::after {
-			content: ""; width: 100%; height: 1px; background: $colorDarkGrey; transition: $transitionFast;
+			content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast;
 			position: absolute; bottom: 0px; left: 0px; z-index: 1;
 		}
 		.smile { margin-right: 6px; }
@@ -17,6 +17,9 @@
 			border-radius: 3px; background-color: #f3f2ec; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 8px;
 			@include text-small; color: $colorDarkGrey; padding: 0px 6px; display: none;
 		}
+	}
+	.block.blockLink:hover {
+		.name::after { border-color: $colorBlack; }
 	}
 	
 	.block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }

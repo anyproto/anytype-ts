@@ -10,6 +10,7 @@ interface Props {
 	hash?: string;
 	size?: number;
 	native?: boolean;
+	asImage?: boolean;
 	className?: string;
 	canEdit?: boolean;
 	offsetX?: number;
@@ -23,6 +24,7 @@ interface State {
 	hash: string;
 };
 
+const $ = require('jquery');
 const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
 const blank = require('img/blank/smile.svg');
@@ -49,7 +51,7 @@ class Smile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, size, native, className, canEdit } = this.props;
+		const { id, size, native, asImage, className, canEdit } = this.props;
 		const icon = String(this.state.icon || this.props.icon || '');
 		const hash = String(this.state.hash || this.props.hash || '');
 		
@@ -74,7 +76,18 @@ class Smile extends React.Component<Props, State> {
 			};
 
 			if (colons) {
-				element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
+				if (asImage) {
+					let scale = size / 64;
+					let span = $(Emoji({ html: true, emoji: colons, size: size, native: false }));
+					let style = {
+						objectPosition: span.css('backgroundPosition'),
+						transform: `scale3d(${scale}, ${scale}, 1)`,
+						margin: `-${size/2}px 0px 0px -${size/2}px`,
+					};
+					element = <img src={Constant.smile} className="smileImage" style={style} />;
+				} else {
+					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
+				};
 			};
 		} else 
 		if (hash) {

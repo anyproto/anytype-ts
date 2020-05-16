@@ -23,7 +23,7 @@
 			smile { padding-right: 6px; display: inline; position: relative; z-index: 1; }
 			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
 			name::after {
-				content: ""; width: 100%; height: 1px; background: $colorDarkGrey; transition: $transitionFast;
+				content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast;
 				position: absolute; bottom: 0px; left: 0px; z-index: 1;
 			}
 
@@ -31,7 +31,7 @@
 			.smile.c24 .emoji-mart-emoji { margin: -3px 0px 0px 0px; }
 		}
 		mention:hover {
-			name::after { background: $colorBlack; }
+			name::after { border-color: $colorBlack; }
 		}
 
 		mention.c24 name bgcolor { margin-left: -30px; padding-left: 30px; }

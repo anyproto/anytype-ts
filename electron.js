@@ -123,6 +123,15 @@ function createWindow () {
 					label: 'Redo', accelerator: 'CommandOrControl+Shift+Z',
 					click: function () { win.webContents.send('command', 'redo'); }
 				},
+				{
+					label: 'Copy', role: 'copy',
+				},
+				{
+					label: 'Cut', role: 'cut',
+				},
+				{
+					label: 'Paste', role: 'Paste',
+				},
 			]
 		},
 		{
