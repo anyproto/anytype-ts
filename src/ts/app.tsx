@@ -210,24 +210,26 @@ class App extends React.Component<Props, State> {
 		analytics.setVersionName(version);
 		analytics.setUserProperties({ deviceType: 'Desktop', platform: platforms[os.platform()] });
 
-		const win = $(window);
-		const phrase = Storage.get('phrase');
-		const accountId = Storage.get('accountId');
-		const html = $('html');
-		
-		let debug = Storage.get('debug') || {};
-		let coverNum = Number(Storage.get('coverNum'));
-		let coverImage = String(Storage.get('coverImage') || '');
-		let noShutdown = Number(Storage.get('noShutdown'));
-		
+		keyboard.init(history);
+
+		const coverNum = Number(Storage.get('coverNum'));
+		const coverImage = String(Storage.get('coverImage') || '');
 		if (!coverNum && !coverImage) {
 			commonStore.coverSetNum(Constant.default.cover);
 		};
 		
+		this.setIpcEvents();
+		this.setWindowEvents();
+	};
+
+	setIpcEvents () {
+		const phrase = Storage.get('phrase');
+		const accountId = Storage.get('accountId');
+		const debug = Storage.get('debug') || {};
+		const html = $('html');
+
 		ipcRenderer.send('appLoaded', true);
-		keyboard.init(history);
-		analytics.init();
-		
+
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
 			this.setState({ loading: false });
@@ -253,15 +255,15 @@ class App extends React.Component<Props, State> {
 		});
 		
 		ipcRenderer.on('progress', this.onProgress);
-
 		ipcRenderer.on('import', this.onImport);
-
 		ipcRenderer.on('command', this.onCommand);
-		
-		ipcRenderer.on('update', (e: any) => {
-			Storage.delete('popupNewBlock');
-		});
-		
+		ipcRenderer.on('update', (e: any) => { Storage.delete('popupNewBlock'); });
+	};
+
+	setWindowEvents () {
+		const win = $(window);
+		const noShutdown = Number(Storage.get('noShutdown'));
+
 		win.unbind('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', throttle((e: any) => {
