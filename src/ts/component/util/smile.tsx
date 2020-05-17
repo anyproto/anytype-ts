@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
-import { Icon } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { I } from 'ts/lib';
 
@@ -80,11 +79,15 @@ class Smile extends React.Component<Props, State> {
 					let scale = size / 64;
 					let span = $(Emoji({ html: true, emoji: colons, size: size, native: false }));
 					let style = {
-						objectPosition: span.css('backgroundPosition'),
-						transform: `scale3d(${scale}, ${scale}, 1)`,
-						margin: `-${size/2}px 0px 0px -${size/2}px`,
+						//objectPosition: span.css('backgroundPosition'),
+						//transform: `scale3d(${scale}, ${scale}, 1)`,
+						//margin: `-${size/2}px 0px 0px -${size/2}px`,
+						width: size,
+						height: size,
+						marginLeft: -size/2,
 					};
-					element = <img src={Constant.smile} className="smileImage" style={style} />;
+
+					element = <img src={this.srcFromColons(colons)} className="smileImage" style={style} />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};
@@ -100,6 +103,13 @@ class Smile extends React.Component<Props, State> {
 				{element}
 			</div>
 		);
+	};
+
+	srcFromColons (colons: string) {
+		let src = colons;
+		src = src.replace(/^:/, '').replace(/:$/, '');
+		src = src.replace('::', '-').replace(':', '-').replace(/_/g, '-');
+		return `./emoji/${src}.png`;
 	};
 	
 	onClick (e: any) {
@@ -117,7 +127,7 @@ class Smile extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onSelect: (icon: string) => {
+				onSelectNative: (icon: string) => {
 					this.setState({ icon: icon, hash: '' });
 					onSelect(icon);
 				},

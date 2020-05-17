@@ -143,13 +143,16 @@ function menuInit () {
 					click: function () { win.webContents.send('command', 'redo'); }
 				},
 				{
-					label: 'Copy', role: 'copy',
+					label: 'Copy', role: 'copy', visible: false,
 				},
 				{
-					label: 'Cut', role: 'cut',
+					label: 'Cut', role: 'cut', visible: false,
 				},
 				{
-					label: 'Paste', role: 'Paste',
+					label: 'Paste', role: 'paste', visible: false,
+				},
+				{
+					label: 'Select all', role: 'selectAll', visible: false,
 				},
 			]
 		},

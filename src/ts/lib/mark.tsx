@@ -241,22 +241,22 @@ class Mark {
 		
 		for (let mark of parts) {
 			const param = String(mark.param || '');
-			const attr = this.paramToAttr(mark.type, param);
-			
-			if (!attr && (hasParam.indexOf(mark.type) >= 0)) {
+			if (!param && (hasParam.indexOf(mark.type) >= 0)) {
 				continue;
 			};
 			
+			const attr = this.paramToAttr(mark.type, param);
 			const tag = Tags[mark.type];
 			const data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${param}"`;
 
 			let prefix = '';
 			let suffix = '';
-			if (mark.type == I.MarkType.Mention) {
+
+			if ((mark.type == I.MarkType.Mention) || (mark.type == I.MarkType.Smile)) {
 				prefix = '<smile></smile><name>';
 				suffix = '</name>';
 			};
-			
+
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
 				r[mark.range.from] = `<${tag} ${attr} ${data}>${prefix}${r[mark.range.from]}`;
 				r[mark.range.to - 1] += `${suffix}</${tag}>`;
@@ -273,17 +273,12 @@ class Mark {
 		// Remove inner tags from mentions and emoji
 		let obj = $(`<div>${html}</div>`);
 		
-		obj.find('mention').each((i: number, item: any) => {
+		obj.find('mention').removeAttr('class').each((i: number, item: any) => {
 			item = $(item);
-			item.removeAttr('class');
 			item.html(item.find('name').html());
 		});
 
-		obj.find('emoji').each((i: number, item: any) => {
-			item = $(item);
-			item.removeAttr('class');
-			item.html(' ');
-		});
+		obj.find('emoji').removeAttr('class').html(' ');
 		return obj;
 	};
 	

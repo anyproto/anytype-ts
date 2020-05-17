@@ -36,6 +36,8 @@ class Focus {
 			keyboard.setFocus(false);
 			$(document.activeElement).blur();
 		};
+
+		console.trace();
 	};
 	
 	apply () {

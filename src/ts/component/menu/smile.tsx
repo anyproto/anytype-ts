@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Emoji } from 'emoji-mart';
+import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 import { Input } from 'ts/component';
 import { I, C, Util, DataUtil, keyboard, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
@@ -44,13 +44,16 @@ class MenuSmile extends React.Component<Props, State> {
 	
 	render () {
 		const { filter, page } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { noHead } = data;
 		const sections = this.getSections();
 		
 		let id = 1;
 		
 		const Item = (item: any) => {
 			return (
-				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
+				<div id={'item-' + item.id} className="item" onMouseOver={() => { console.log(item.smile, item.skin); }} onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
 					<div className="smile">
 						<Emoji native={true} emoji={':' + item.smile + ':'} skin={item.skin} set="apple" size={32} />
 					</div>
@@ -77,13 +80,15 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<div className="head">
-					<div className="btn" onClick={this.onRandom}>Random emoji</div>
-					<div className="btn" onClick={this.onUpload}>Upload image</div>
-					<div className="btn" onClick={this.onRemove}>Remove</div>
-				</div>
+				{!noHead ? (
+					<div className="head">
+						<div className="btn" onClick={this.onRandom}>Random emoji</div>
+						<div className="btn" onClick={this.onUpload}>Upload image</div>
+						<div className="btn" onClick={this.onRemove}>Remove</div>
+					</div>
+				) : ''}
 				
-				<form className="filter" onSubmit={this.onSubmit}>
+				<form className={[ 'filter', (!noHead ? 'withHead' : '') ].join(' ')} onSubmit={this.onSubmit}>
 					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 				</form>
 				
@@ -244,14 +249,24 @@ class MenuSmile extends React.Component<Props, State> {
 	onSelect (id: string, skin: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
+		const { onSelectNative, onSelectText } = data;
 		
 		this.skin = Number(skin) || 1;
 		Storage.set('skin', this.skin);
 		this.setLastIds(id, this.skin);
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(Util.getSmileById(id, this.skin));
+
+		if (onSelectNative) {
+			onSelectNative(Util.getNativeSmileById(id, this.skin));
+		};
+
+		if (onSelectText) {
+			const smile = Util.getNativeSmileById(id, this.skin);
+			const data = getEmojiDataFromNative(smile, 'apple', EmojiData);
+			
+			onSelectText(data.colons);
+		};
 	};
 	
 	onMouseDown (n: number, id: string, skin: number) {

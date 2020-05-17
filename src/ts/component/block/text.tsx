@@ -293,8 +293,12 @@ class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
+			const smile = item.find('smile');
+			
 			item.addClass(param.class);
-			ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={data.param} />, item.get(0));
+			if (smile && smile.length) {
+				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={data.param} />, smile.get(0));
+			};
 		});
 	};
 
@@ -415,6 +419,11 @@ class BlockText extends React.Component<Props, {}> {
 
 		if ((e.key == '@') && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
 			this.onMention();
+		};
+
+		if ((e.key == 'e') && (e.ctrlKey || e.metaKey) && !commonStore.menuIsOpen('smile') && !block.isCode()) {
+			e.preventDefault();
+			this.onSmile();
 		};
 
 		focus.set(id, range);
@@ -621,6 +630,50 @@ class BlockText extends React.Component<Props, {}> {
 
 					DataUtil.blockSetText(rootId, block, text, this.marks, () => {
 						focus.set(block.id, { from: to, to: to });
+						focus.apply();
+					});
+				},
+			},
+		});
+	};
+
+	onSmile () {
+		const { rootId, block } = this.props;
+		const range = this.getRange();
+		const el = $('#block-' + block.id);
+		const offset = el.offset();
+		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		const { content } = block;
+		
+		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+
+		if (!rect.x && !rect.y) {
+			x = Constant.size.blockMenu;
+			y = 4;
+		};
+
+		commonStore.menuOpen('smile', {
+			element: el,
+			type: I.MenuType.Vertical,
+			offsetX: x,
+			offsetY: -y,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				noHead: true,
+				rootId: rootId,
+				blockId: block.id,
+				onSelectText: (colons: string) => {
+					this.marks = Mark.toggle(this.marks, { 
+						type: I.MarkType.Smile, 
+						param: colons, 
+						range: { from: range.from, to: range.from + 1 },
+					});
+					const text = Util.stringInsert(content.text, ' ', range.from, range.from);
+
+					DataUtil.blockSetText(rootId, block, text, this.marks, () => {
+						focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 						focus.apply();
 					});
 				},

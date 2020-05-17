@@ -94,7 +94,7 @@ class Controls extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onSelect: (icon: string) => {
+				onSelectNative: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');
 				}
 			}

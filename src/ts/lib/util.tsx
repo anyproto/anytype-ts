@@ -103,6 +103,7 @@ class Util {
 	};
 
 	stringInsert (haystack: string, needle: string, start: number, end: number): string {
+		haystack = String(haystack || '');
 		return haystack.substr(0, start) + needle + haystack.substr(end);
 	};
 	
@@ -217,7 +218,7 @@ class Util {
 		return 0;
 	};
 
-	getSmileById (id: string, skin: number): string {
+	getNativeSmileById (id: string, skin: number): string {
 		id = String(id || '');
 		skin = Number(skin) || 1;
 		return String($(Emoji({ html: true, emoji: id, skin: skin, size: 24, native: true })).text() || '');
@@ -226,7 +227,7 @@ class Util {
 	randomSmile (): string {
 		const id = this.icons[this.rand(0, this.icons.length - 1)];
 		const skin = this.rand(1, 6);
-		return this.getSmileById(id, skin);
+		return this.getNativeSmileById(id, skin);
 	};
 	
 	date (format: string, timestamp: number) {
