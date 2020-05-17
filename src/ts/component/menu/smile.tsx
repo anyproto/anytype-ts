@@ -53,7 +53,7 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		const Item = (item: any) => {
 			return (
-				<div id={'item-' + item.id} className="item" onMouseOver={() => { console.log(item.smile, item.skin); }} onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
+				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
 					<div className="smile">
 						<Emoji native={true} emoji={':' + item.smile + ':'} skin={item.skin} set="apple" size={32} />
 					</div>
