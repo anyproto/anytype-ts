@@ -76,18 +76,20 @@ class Smile extends React.Component<Props, State> {
 
 			if (colons) {
 				if (asImage) {
+					/*
 					let scale = size / 64;
 					let span = $(Emoji({ html: true, emoji: colons, size: size, native: false }));
 					let style = {
 						//objectPosition: span.css('backgroundPosition'),
 						//transform: `scale3d(${scale}, ${scale}, 1)`,
 						//margin: `-${size/2}px 0px 0px -${size/2}px`,
-						width: size,
-						height: size,
-						marginLeft: -size/2,
+						//width: size,
+						//height: size,
+						//marginLeft: -size/2,
 					};
+					*/
 
-					element = <img src={this.srcFromColons(colons)} className="smileImage" style={style} />;
+					element = <img src={this.srcFromColons(colons)} className="smileImage" />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};

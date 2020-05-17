@@ -17,11 +17,11 @@
 			background: rgba(172,169,150,0.15);
 		}
 
-		emoji { display: inline-block; user-select: text; }
-		emoji * { user-select: text; }
+		emoji { display: inline-block; user-select: all; }
+		emoji * { user-select: all; }
 
-		mention { cursor: pointer; white-space: nowrap; display: inline-block; }
-		mention * { user-select: text; }
+		mention { cursor: pointer; white-space: nowrap; display: inline-block; user-select: all; }
+		mention * { user-select: all; }
 		mention {
 			smile { padding-right: 6px; display: inline; position: relative; z-index: 1; }
 			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
