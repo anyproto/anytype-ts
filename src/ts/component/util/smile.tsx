@@ -111,6 +111,7 @@ class Smile extends React.Component<Props, State> {
 		let src = colons;
 		src = src.replace(/^:/, '').replace(/:$/, '');
 		src = src.replace('::', '-').replace(':', '-').replace(/_/g, '-');
+		src = src.replace('skin-tone', 'type');
 		return `./emoji/${src}.png`;
 	};
 	

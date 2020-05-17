@@ -19,6 +19,9 @@
 
 		emoji { display: inline-block; user-select: all; }
 		emoji * { user-select: all; }
+		emoji {
+			name { display: none; }
+		}
 
 		mention { cursor: pointer; white-space: nowrap; display: inline-block; user-select: all; }
 		mention * { user-select: all; }
