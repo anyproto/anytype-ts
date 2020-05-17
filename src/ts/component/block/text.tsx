@@ -603,6 +603,7 @@ class BlockText extends React.Component<Props, {}> {
 		const offset = el.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		
+		let value = this.getValue();
 		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
 		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
 
@@ -626,9 +627,9 @@ class BlockText extends React.Component<Props, {}> {
 					const to = range.from + text.length;
 
 					this.marks = Util.objectCopy(marks);
-					text = Util.stringInsert(block.content.text, text, range.from, range.to);
+					value = Util.stringInsert(value, text, range.from, range.to);
 
-					DataUtil.blockSetText(rootId, block, text, this.marks, () => {
+					DataUtil.blockSetText(rootId, block, value, this.marks, () => {
 						focus.set(block.id, { from: to, to: to });
 						focus.apply();
 					});
@@ -643,8 +644,8 @@ class BlockText extends React.Component<Props, {}> {
 		const el = $('#block-' + block.id);
 		const offset = el.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
-		const { content } = block;
 		
+		let value = this.getValue();
 		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
 		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
 
@@ -670,9 +671,9 @@ class BlockText extends React.Component<Props, {}> {
 						param: colons, 
 						range: { from: range.from, to: range.from + 1 },
 					});
-					const text = Util.stringInsert(content.text, ' ', range.from, range.from);
+					value = Util.stringInsert(value, ' ', range.from, range.from);
 
-					DataUtil.blockSetText(rootId, block, text, this.marks, () => {
+					DataUtil.blockSetText(rootId, block, value, this.marks, () => {
 						focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 						focus.apply();
 					});
