@@ -63,6 +63,8 @@ class Smile extends React.Component<Props, State> {
 		};
 		
 		let element = <img src={blank} className="icon blank" />;
+		let skin = 0;
+
 		if (icon) {
 			let colons = '';
 			if (icon.match(':')) {
@@ -71,25 +73,13 @@ class Smile extends React.Component<Props, State> {
 				const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
 				if (data) {
 					colons = data.colons;
+					skin = data.skin;
 				};
 			};
 
 			if (colons) {
 				if (asImage) {
-					/*
-					let scale = size / 64;
-					let span = $(Emoji({ html: true, emoji: colons, size: size, native: false }));
-					let style = {
-						//objectPosition: span.css('backgroundPosition'),
-						//transform: `scale3d(${scale}, ${scale}, 1)`,
-						//margin: `-${size/2}px 0px 0px -${size/2}px`,
-						//width: size,
-						//height: size,
-						//marginLeft: -size/2,
-					};
-					*/
-
-					element = <img src={this.srcFromColons(colons)} className="smileImage" />;
+					element = <img src={this.srcFromColons(colons, skin)} className="smileImage" />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};
@@ -107,11 +97,15 @@ class Smile extends React.Component<Props, State> {
 		);
 	};
 
-	srcFromColons (colons: string) {
-		let src = colons;
-		src = src.replace(/^:/, '').replace(/:$/, '');
-		src = src.replace('::', '-').replace(':', '-').replace(/_/g, '-');
-		src = src.replace('skin-tone', 'type');
+	srcFromColons (colons: string, skin: number) {
+		let parts = colons.split('::');
+		if (parts.length > 1) {
+			parts[1] = parts[1].replace('skin-tone-', 'type-');
+		} else
+		if (skin) {
+			parts.push('type-' + skin);
+		};
+		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
 		return `./emoji/${src}.png`;
 	};
 	
