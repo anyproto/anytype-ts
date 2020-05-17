@@ -249,7 +249,7 @@ class MenuSmile extends React.Component<Props, State> {
 	onSelect (id: string, skin: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelectNative, onSelectText } = data;
+		const { onSelect } = data;
 		
 		this.skin = Number(skin) || 1;
 		Storage.set('skin', this.skin);
@@ -257,15 +257,8 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		commonStore.menuClose(this.props.id);
 
-		if (onSelectNative) {
-			onSelectNative(Util.getNativeSmileById(id, this.skin));
-		};
-
-		if (onSelectText) {
-			const smile = Util.getNativeSmileById(id, this.skin);
-			const data = getEmojiDataFromNative(smile, 'apple', EmojiData);
-			
-			onSelectText(data.colons);
+		if (onSelect) {
+			onSelect(Util.getNativeSmileById(id, this.skin));
 		};
 	};
 	

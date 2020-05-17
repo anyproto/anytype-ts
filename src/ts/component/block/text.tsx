@@ -665,10 +665,10 @@ class BlockText extends React.Component<Props, {}> {
 				noHead: true,
 				rootId: rootId,
 				blockId: block.id,
-				onSelectText: (colons: string) => {
+				onSelect: (icon: string) => {
 					this.marks = Mark.toggle(this.marks, { 
 						type: I.MarkType.Smile, 
-						param: colons, 
+						param: icon, 
 						range: { from: range.from, to: range.from + 1 },
 					});
 					value = Util.stringInsert(value, ' ', range.from, range.from);
