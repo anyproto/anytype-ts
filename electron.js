@@ -135,24 +135,20 @@ function menuInit () {
 			role: 'editMenu',
 			submenu: [
 				{
-					label: 'Undo', accelerator: 'CommandOrControl+Z',
+					label: 'Undo', accelerator: 'CmdOrControl+Z',
 					click: function () { win.webContents.send('command', 'undo'); }
 				},
 				{
-					label: 'Redo', accelerator: 'CommandOrControl+Shift+Z',
+					label: 'Redo', accelerator: 'CmdOrControl+Shift+Z',
 					click: function () { win.webContents.send('command', 'redo'); }
 				},
-				{
-					label: 'Copy', role: 'copy', visible: false,
-				},
-				{
-					label: 'Cut', role: 'cut', visible: false,
-				},
-				{
-					label: 'Paste', role: 'paste', visible: false,
-				},
-				{
-					label: 'Select all', role: 'selectAll', visible: false,
+				{ type: 'separator' },
+				{ label: 'Copy', role: 'copy' },
+				{ label: 'Cut', role: 'cut' },
+				{ label: 'Paste', role: 'paste' },
+				{ 
+					label: 'Select all', accelerator: 'CmdOrControl+Shift+A',
+					click: function () { win.webContents.send('commandEditor', 'selectAll'); }
 				},
 			]
 		},
