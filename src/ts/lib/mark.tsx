@@ -342,7 +342,7 @@ class Mark {
 				break;
 
 			case I.MarkType.Mention:
-				attr = 'href="/main/edit/' + param + '" contenteditable="false"';
+				attr = 'contenteditable="false"';
 				break;
 
 			case I.MarkType.Smile:

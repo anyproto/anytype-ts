@@ -34,6 +34,8 @@ class Crumbs {
 		
 		let k = this.key(key);
 		let obj = this.get(key);
+
+		Storage.set(k + 'Prev', obj, true);
 		
 		obj.ids = obj.ids || [];
 		obj.ids.push(id);
@@ -46,7 +48,7 @@ class Crumbs {
 		let k = this.key(key);
 		let obj = this.get(key);
 		
-		Storage.set(k + '-prev', obj, true);
+		Storage.set(k + 'Prev', obj, true);
 		
 		obj.ids = obj.ids || [];
 		obj.ids = obj.ids.slice(0, index);
@@ -58,10 +60,10 @@ class Crumbs {
 	restore (key: I.CrumbsType, callBack?: () => void): CrumbsObject {
 		let k = this.key(key);
 		let obj = this.get(key);
-		let prev: CrumbsObject = (Storage.get(k + '-prev') || { ids: [] }) as CrumbsObject;
+		let prev: CrumbsObject = (Storage.get(k + 'Prev') || { ids: [] }) as CrumbsObject;
 		
-		Storage.set(k + '-prev', obj, true);
-		this.save(key, obj, callBack);
+		Storage.set(k + 'Prev', obj, true);
+		this.save(key, prev, callBack);
 		return obj;
 	};
 	

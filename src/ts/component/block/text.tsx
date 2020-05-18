@@ -267,7 +267,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			self.props.history.push($(this).attr('href'));
+			DataUtil.pageOpen (e, self.props, $(this).data('param'));
 		});
 	};
 
