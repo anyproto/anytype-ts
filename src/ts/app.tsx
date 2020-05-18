@@ -251,11 +251,12 @@ class App extends React.Component<Props, State> {
 			history.push(route);
 		});
 		
-		ipcRenderer.on('message', (e: any, text: string, version: string) => {
-			console.log('[Message]', text, version);
+		ipcRenderer.on('message', (e: any, text: string) => {
+			console.log('[Message]', text);
 		});
 		
 		ipcRenderer.on('progress', this.onProgress);
+		ipcRenderer.on('updateReady', () => { commonStore.progressClear(); });
 		ipcRenderer.on('import', this.onImport);
 		ipcRenderer.on('command', this.onCommand);
 		ipcRenderer.on('update', (e: any) => { Storage.delete('popupNewBlock'); });

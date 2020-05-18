@@ -326,13 +326,13 @@ class Util {
 		let m = v / (1024 * 1024);
 		let k = v / 1024;
 		if (g > 1) {
-			v = sprintf('%f Gb', this.round(g, 2));
+			v = sprintf('%fGb', this.round(g, 2));
 		} else if (m > 1) {
-			v = sprintf('%f Mb', this.round(m, 2));
+			v = sprintf('%fMb', this.round(m, 2));
 		} else if (k > 1) {
-			v = sprintf('%f Kb', this.round(k, 2));
+			v = sprintf('%fKb', this.round(k, 2));
 		} else {
-			v = sprintf('%d b', this.round(v, 0));
+			v = sprintf('%db', this.round(v, 0));
 		};
 		return v;
 	};
@@ -486,6 +486,10 @@ class Util {
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(String(v || ''));
+	};
+
+	isNumber (s: string) {
+		return String((Number(s) || 0) || '') === String(s || '');
 	};
 	
 };
