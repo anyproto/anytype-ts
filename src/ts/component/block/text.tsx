@@ -604,7 +604,7 @@ class BlockText extends React.Component<Props, {}> {
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		
 		let value = this.getValue();
-		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let x = rect.x - offset.left;
 		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
 
 		if (!rect.x && !rect.y) {
@@ -646,7 +646,7 @@ class BlockText extends React.Component<Props, {}> {
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		
 		let value = this.getValue();
-		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let x = rect.x - offset.left;
 		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
 
 		if (!rect.x && !rect.y) {
