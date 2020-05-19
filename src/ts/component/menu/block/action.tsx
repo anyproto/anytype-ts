@@ -570,7 +570,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { blockId, blockIds, rootId, dataset } = data;
 		const { selection } = dataset || {};
 		
-		let ids = selection.get();
+		let ids = [];
+		if (selection) {
+			ids = selection.get();
+		};
 		if (!ids.length) {
 			ids = [ blockId ];
 		};
