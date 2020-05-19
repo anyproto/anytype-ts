@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, Mark, focus, keyboard, crumbs } from 'ts/lib';
+import { I, C, M, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -549,7 +549,7 @@ class EditorPage extends React.Component<Props, State> {
 					horizontal: I.MenuDirection.Left,
 					data: {
 						blockId: focused,
-						blockIds: DataUtil.selectionGet(this.props),
+						blockIds: DataUtil.selectionGet(focused, this.props),
 						rootId: rootId,
 						dataset: dataset,
 					},
@@ -1174,12 +1174,22 @@ class EditorPage extends React.Component<Props, State> {
 	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
 		const { rootId } = this.props;
 		const { content } = focused;
+		const isToggle = focused.isToggle();
+
+		if (isToggle) {
+			Storage.setToggle(rootId, focused.id, false);
+		};
 		
 		range = Util.rangeFixOut(content.text, range);
 		
 		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
 			this.focus(focused.id, 0, 0);
 			focus.scroll();
+
+			if (isToggle) {
+				Storage.setToggle(rootId, message.blockId, true);
+				$('#block-' + message.blockId).addClass('isToggled');
+			};
 		});
 	};
 	

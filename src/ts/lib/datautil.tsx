@@ -93,19 +93,18 @@ class DataUtil {
 		return icon;
 	};
 	
-	selectionGet (props: any): string[] {
+	selectionGet (id: string, props: any): string[] {
 		const { dataset } = props;
 		const { selection } = dataset || {};
-		const { focused } = focus;
 		
 		if (!selection) {
 			return [];
 		};
 		
 		let ids: string[] = selection.get(true);
-		if (focused && ids.indexOf(focused) < 0) {
+		if (id && ids.indexOf(id) < 0) {
 			selection.clear(true);
-			selection.set([ focused ]);
+			selection.set([ id ]);
 			ids = selection.get(true);
 		};
 		return ids;

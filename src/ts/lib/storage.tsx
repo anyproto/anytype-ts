@@ -33,7 +33,21 @@ class Storage {
 	delete (key: string) {
 		delete(this.storage[key]);
 	};
-	
+
+	setToggle (rootId: string, id: string, value: boolean) {
+		const obj = this.get('toggle') || {};
+		
+		obj[rootId] = obj[rootId] || [];
+		if (value) {
+			obj[rootId].push(id);
+		} else {
+			obj[rootId] = obj[rootId].filter((it: string) => { return it != id; });
+		};
+		obj[rootId] = [ ...new Set(obj[rootId]) ];
+
+		this.set('toggle', obj, true);
+	};
+
 	checkToggle (rootId: string, id: string): boolean {
 		const map = this.get('toggle') || {};
 		const list = map[rootId] || [];

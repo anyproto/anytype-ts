@@ -303,7 +303,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: id,
-				blockIds: DataUtil.selectionGet(this.props),
+				blockIds: DataUtil.selectionGet(id, this.props),
 				rootId: rootId,
 				dataset: dataset,
 			},

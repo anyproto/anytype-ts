@@ -93,7 +93,7 @@ class Block extends React.Component<Props, {}> {
 					cn.push('isChecked');
 				};
 				
-				if (style == I.TextStyle.Toggle) {
+				if (block.isToggle()) {
 					if (!childrenIds.length) {
 						empty = (
 							<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
@@ -274,20 +274,13 @@ class Block extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		let toggle = Storage.get('toggle') || {};
-		
-		toggle[rootId] = toggle[rootId] || [];
-		
 		if (node.hasClass('isToggled')) {
 			node.removeClass('isToggled');
-			toggle[rootId] = toggle[rootId].filter((it: string) => { return it != block.id; });
+			Storage.setToggle(rootId, block.id, false);
 		} else {
 			node.addClass('isToggled');
-			toggle[rootId].push(block.id);
+			Storage.setToggle(rootId, block.id, true);
 		};
-		
-		toggle[rootId] = [ ...new Set(toggle[rootId]) ];
-		Storage.set('toggle', toggle);
 	};
 	
 	onToggleClick (e: any) {
@@ -367,7 +360,7 @@ class Block extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: id,
-				blockIds: DataUtil.selectionGet(this.props),
+				blockIds: DataUtil.selectionGet(id, this.props),
 				rootId: rootId,
 				dataset: dataset,
 			},
