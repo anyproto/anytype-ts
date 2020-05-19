@@ -206,10 +206,6 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		items.each((i: number, item: any) => {
-			this.parseElement($(item));
-		});
-		
 		items.unbind('click.link mouseenter.link');
 			
 		items.on('click.link', function (e: any) {
@@ -249,8 +245,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.each((i: number, item: any) => {
 			item = $(item);
-			this.parseElement(item);
-
 			const data = item.data();
 			if (!data.param) {
 				return;
@@ -324,18 +318,6 @@ class BlockText extends React.Component<Props, {}> {
 		return { class: cn, size: size };
 	};
 
-	parseElement (item: any) {
-		let text = item.text();
-		let html = item.html();
-		
-		text = text.replace(/\s/g, '&nbsp;');
-		text = text.replace(/\-/g, '&#8209;');
-		text = text.replace(/‐/g, '&#8209;');
-		
-		html = html.replace(/>([^<]+)</, () => { return '>' + text + '<'; });
-		item.html(html);
-	};
-	
 	getValue (): string {
 		if (!this._isMounted) {
 			return '';
