@@ -46,7 +46,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 			data: {
 				value: '',
 				options: [
-					{ id: 'upload', name: 'Upload' },
+					{ id: 'upload', name: 'Change' },
 					{ id: 'remove', name: 'Remove' },
 				],
 				onSelect: (event: any, item: any) => {
