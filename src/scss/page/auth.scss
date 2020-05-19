@@ -70,9 +70,7 @@
 
 	.input-text { width: 346px; vertical-align: middle; margin-right: 16px; }
 	.button { vertical-align: middle; width: 134px; padding: 0px; }	
-	.icon.user {
-		.image { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; }
-	}
+	.icon.user { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; }
 	.icon.user.active {
 		.image { background-size: cover; }
 	}
