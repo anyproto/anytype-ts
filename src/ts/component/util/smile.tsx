@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
+import { Emoji } from 'emoji-mart';
 import { commonStore } from 'ts/store';
 import { I } from 'ts/lib';
 
@@ -23,7 +23,6 @@ interface State {
 	hash: string;
 };
 
-const $ = require('jquery');
 const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
 const blank = require('img/blank/smile.svg');
@@ -70,7 +69,7 @@ class Smile extends React.Component<Props, State> {
 			if (icon.match(':')) {
 				colons = icon;
 			} else {
-				const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+				const data = commonStore.smileGet(icon);
 				if (data) {
 					colons = data.colons;
 					skin = data.skin;

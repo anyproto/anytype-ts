@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
+import { Emoji } from 'emoji-mart';
 import { Input } from 'ts/component';
 import { I, C, Util, DataUtil, keyboard, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';

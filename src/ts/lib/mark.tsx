@@ -1,5 +1,4 @@
 import { I, Util } from 'ts/lib';
-import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 
 const $ = require('jquery');
 const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji' ];
