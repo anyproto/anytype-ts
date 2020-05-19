@@ -8,7 +8,7 @@
 	}
 	
 	.icon.blank { background-image: url('~img/blank/smile.svg'); }
-	.icon.image { width: 100%; height: auto; position: absolute; left: 0px; top: 50%; transform: translateY(-50%); }
+	.icon.image { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; object-fit: cover; }
 
 	.smileImage { width: 100%; height: 100%; }
 }

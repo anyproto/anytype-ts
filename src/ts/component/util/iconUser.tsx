@@ -50,7 +50,6 @@ class IconUser extends React.Component<Props, State> {
 		
 		let icon = this.state.icon || this.props.icon || '';
 		let cn = [ 'icon', 'user' ];
-		let style: any = {};
 		let text = name || '';
 		
 		if (className) {
@@ -63,14 +62,13 @@ class IconUser extends React.Component<Props, State> {
 		
 		if (icon) {
 			text = '';
-			style.backgroundImage = 'url("' + icon + '")';
 		} else {
 			cn.push(color);
 		};
 		
 		return (
 			<div onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} className={cn.join(' ')}>
-				<div className="image" style={style} />
+				{icon ? <img src={icon} className="image" /> : ''}
 				<div className="txt">{this.shortName(text)}</div>
 			</div>
 		);
