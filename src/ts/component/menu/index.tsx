@@ -18,6 +18,7 @@ import MenuBlockAction from './block/action';
 import MenuBlockMore from './block/more';
 import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
+import MenuBlockMention from './block/mention';
 
 import MenuDataviewPropertyList from './dataview/property/list';
 import MenuDataviewPropertyEdit from './dataview/property/edit';
@@ -71,6 +72,7 @@ class Menu extends React.Component<Props, {}> {
 			blockAlign:				 MenuBlockAlign,
 			blockLink:				 MenuBlockLink,
 			blockCover:				 MenuBlockCover,
+			blockMention:			 MenuBlockMention,
 			
 			dataviewPropertyList:	 MenuDataviewPropertyList,
 			dataviewPropertyEdit:	 MenuDataviewPropertyEdit,
@@ -260,9 +262,15 @@ class Menu extends React.Component<Props, {}> {
 		
 		if (scroll) {
 			const content = node.find('.content');
-			const top = Math.max(0, content.scrollTop() + el.position().top - BORDER);
+			const st = content.scrollTop();
+			const pt = el.position().top;
+			const top = Math.max(0, st + pt - BORDER);
+			const ch = content.height();
+			const eh = el.height();
 			
-			content.scrollTop(top);
+			if ((pt + eh > ch) || (pt < st)) {
+				content.scrollTop(top);
+			};
 		};
 	};
 	

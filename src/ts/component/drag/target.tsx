@@ -6,6 +6,7 @@ import { throttle } from 'lodash';
 interface Props {
 	id: string;
 	rootId: string;
+	targetContextId?: string;
 	style?: number;
 	type?: I.BlockType;
 	dropType: I.DragItem;
@@ -22,7 +23,7 @@ class DropTarget extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { id, rootId, dropType, type, style, children, className } = this.props;
+		const { id, rootId, targetContextId, dropType, type, style, children, className } = this.props;
 		
 		let cn = [ 'dropTarget' ];
 		if (className) {
@@ -38,6 +39,7 @@ class DropTarget extends React.Component<Props, {}> {
 				data-drop-type={dropType} 
 				data-type={type} 
 				data-style={style} 
+				data-target-context-id={targetContextId} 
 			>
 				{children}
 			</div>

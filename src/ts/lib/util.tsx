@@ -1,5 +1,6 @@
 import { I, C, keyboard } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore } from 'ts/store';
+import { Emoji } from 'emoji-mart';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -95,6 +96,14 @@ class Util {
 	
 	arrayValues (a: any) {
 		return a.hasOwnProperty('length') ? a : Object.values(a);
+	};
+
+	stringCut (haystack: string, start: number, end: number): string {
+		return haystack.substr(0, start) + haystack.substr(end);
+	};
+
+	stringInsert (haystack: string, needle: string, start: number, end: number): string {
+		return haystack.substr(0, start) + needle + haystack.substr(end);
 	};
 	
 	shorten (s: string, l: number, noEnding?: boolean) {
@@ -207,15 +216,23 @@ class Util {
 		};
 		return 0;
 	};
+
+	getSmileById (id: string, skin: number): string {
+		id = String(id || '');
+		skin = Number(skin) || 1;
+		return String($(Emoji({ html: true, emoji: id, skin: skin, size: 24, native: true })).text() || '');
+	};
 	
 	randomSmile (): string {
-		return ':' + this.icons[this.rand(0, this.icons.length - 1)] + ':';
+		const id = this.icons[this.rand(0, this.icons.length - 1)];
+		const skin = this.rand(1, 6);
+		return this.getSmileById(id, skin);
 	};
 	
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
-		let a, jsdate = new Date(timestamp ? timestamp * 1000 : null);
-		let pad = (n: number, c: number) => {
+		const jsdate = new Date(timestamp ? timestamp * 1000 : null);
+		const pad = (n: number, c: number) => {
 			let s = String(n);
 			if ((s = s + '').length < c ) {
 				++c;
@@ -226,13 +243,14 @@ class Util {
 			};
 			return false;
 		};
-		let f: any = {
+		const f: any = {
 			// Day
 			d: () => {
 			   return pad(f.j(), 2);
 			},
 			D: () => {
-				let t = f.l(); return t.substr(0,3);
+				let t = f.l(); 
+				return t.substr(0,3);
 			},
 			j: () => {
 				return jsdate.getDate();
@@ -281,7 +299,7 @@ class Util {
 			},
 			w: () => {
 				return jsdate.getDay();
-			}
+			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {
 			let ret = null;

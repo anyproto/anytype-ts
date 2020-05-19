@@ -116,7 +116,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const st = $(window).scrollTop();
 		const { from, to } = range;
 		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -223,7 +222,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					
 				case I.MarkType.Link:
 					const offset = obj.offset();
-
 					mark = Mark.getInRange(marks, type, { from: from, to: to });
 
 					commonStore.menuClose(this.props.id, () => {

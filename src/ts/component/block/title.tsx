@@ -36,7 +36,7 @@ class BlockTitle extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId, block } = this.props;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const { id } = block;
 		
 		let { name } = details;
@@ -195,7 +195,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
 		const value = this.getValue();
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		
 		details.name = value;
 		

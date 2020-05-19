@@ -38,11 +38,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const details = blockStore.getDetail(profile, profile);
+		const details = blockStore.getDetails(profile, profile);
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const list = this.getList();
-		const map = blockStore.getDetailMap(root);
+		const map = blockStore.getDetailsMap(root);
 		const size = map.size;
 		
 		return (
@@ -208,7 +208,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	getList () {
 		const { root } = blockStore;
 		return blockStore.getChildren(root, root, (it: any) => {
-			const details = blockStore.getDetail(root, it.content.targetBlockId);
+			const details = blockStore.getDetails(root, it.content.targetBlockId);
 			return !details.isArchived;
 		});
 	};

@@ -29,7 +29,7 @@ interface Props extends RouteComponentProps<any> {
 	block: I.Block;
 	onKeyDown? (e: any, text?: string): void;
 	onKeyUp? (e: any, text?: string): void;
-	onMenuAdd? (id: string): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
 

@@ -112,7 +112,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const details = blockStore.getDetail(rootId, content.targetBlockId);
+		const details = blockStore.getDetails(rootId, content.targetBlockId);
 		 
 		let items = [];
 		

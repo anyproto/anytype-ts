@@ -65,7 +65,7 @@ class BlockCover extends React.Component<Props, State> {
 	render() {
 		const { editing, loading } = this.state;
 		const { rootId } = this.props;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType, coverId } = details;
 		
 		let elements = null;
@@ -196,7 +196,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const { coverId, coverType } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -209,7 +209,7 @@ class BlockCover extends React.Component<Props, State> {
 		if (coverType == I.CoverType.Image) {
 			const el = this.cover.get(0);
 			const cb = () => {
-				const details = blockStore.getDetail(rootId, rootId);
+				const details = blockStore.getDetails(rootId, rootId);
 				const { coverScale } = details;
 
 				if (this.refDrag) {
@@ -265,7 +265,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const { coverScale } = details;
 		const { x, y} = this.setTransform(e.pageX - this.rect.x - this.x, e.pageY - this.rect.y - this.y);
 		
@@ -310,7 +310,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const { coverX, coverY } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#drag-value');

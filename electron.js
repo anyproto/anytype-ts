@@ -9,7 +9,7 @@ const log = require('electron-log');
 const storage = require('electron-json-storage');
 
 let dataPath = app.getPath('userData');
-let channel = '';
+let config = {};
 let win = null;
 let csp = [
 	"default-src 'self' 'unsafe-eval'",
@@ -18,7 +18,8 @@ let csp = [
 	"style-src 'unsafe-inline'",
 	"font-src data:",
 	"connect-src http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem http://localhost:8080 https://sentry.io devtools://devtools 'unsafe-inline'"
+	"script-src-elem http://localhost:8080 https://sentry.io devtools://devtools 'unsafe-inline'",
+	"frame-src chrome-extension://react-developer-tools"
 ];
 
 storage.setDataPath(dataPath);
@@ -69,7 +70,7 @@ function createWindow () {
 	
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
 		BrowserWindow.addDevToolsExtension(
-			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.5.0_0')
+			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
 		);
 	};
 	
@@ -100,10 +101,57 @@ function createWindow () {
 	 	await download(win, url, { saveAs: true });
 	});
 	
-	var menu = [
+	storage.get('config', function (error, data) {
+		config = data || {};
+		config.channel = String(config.channel || 'latest');
+
+		if (error) {
+			console.error(error);
+		};
+
+		console.log('Config: ', config);
+		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
+		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW)); 
+		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
+		
+		autoUpdaterInit();
+		menuInit();
+	});
+};
+
+function menuInit () {
+	let menu = [
 		appMenu(),
 		{
+			role: 'fileMenu',
+			submenu: [
+				{
+					label: 'Import',
+					click: function () { win.webContents.send('import'); }
+				},
+			]
+		},
+		{
 			role: 'editMenu',
+			submenu: [
+				{
+					label: 'Undo', accelerator: 'CommandOrControl+Z',
+					click: function () { win.webContents.send('command', 'undo'); }
+				},
+				{
+					label: 'Redo', accelerator: 'CommandOrControl+Shift+Z',
+					click: function () { win.webContents.send('command', 'redo'); }
+				},
+				{
+					label: 'Copy', role: 'copy',
+				},
+				{
+					label: 'Cut', role: 'cut',
+				},
+				{
+					label: 'Paste', role: 'Paste',
+				},
+			]
 		},
 		{
 			role: 'windowMenu',
@@ -113,22 +161,20 @@ function createWindow () {
 			submenu: [
 				{
 					label: 'Table of contents',
-					click: function () {
-						win.webContents.send('help');
-					}
+					click: function () { win.webContents.send('route', '/help/index'); }
+				},
+				{
+					label: 'Keyboard & Shortcuts',
+					click: function () { win.webContents.send('route', '/help/shortcuts'); }
+				},
+				{
+					label: 'What\'s new',
+					click: function () { win.webContents.send('route', '/help/new'); }
 				},
 			]
 		},
 	];
 
-	function setChannel (c) {
-		channel = c;
-		storage.set('config', { channel: channel }, function (error) {
-			autoUpdater.channel = c;
-			autoUpdater.checkForUpdatesAndNotify();
-		});
-	};
-	
 	//if (!app.isPackaged) {
 		menu.push({
 			label: 'Debug',
@@ -137,15 +183,44 @@ function createWindow () {
 					label: 'Version',
 					submenu: [
 						{
-							label: 'Alpha',
+							label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
 							click: function () {
 								setChannel('alpha');
 							}
 						},
 						{
-							label: 'Public',
+							label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
 							click: function () {
 								setChannel('latest');
+							}
+						},
+					]
+				},
+				{
+					label: 'Flags',
+					submenu: [
+						{
+							label: 'Interface', type: 'checkbox', checked: config.debugUI,
+							click: function () {
+								configSet({ debugUI: !config.debugUI }, function () {
+									win.webContents.send('toggleDebug', 'ui', config.debugUI);
+								}); 
+							}
+						},
+						{
+							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
+							click: function () {
+								configSet({ debugMW: !config.debugMW }, function () {
+									win.webContents.send('toggleDebug', 'mw', config.debugMW);
+								});
+							}
+						},
+						{
+							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
+							click: function () {
+								configSet({ debugAN: !config.debugAN }, function () {
+									win.webContents.send('toggleDebug', 'an', config.debugAN);
+								});
 							}
 						},
 					]
@@ -159,52 +234,36 @@ function createWindow () {
 					click: function () {
 						win.webContents.openDevTools();
 					}
-				},
-				{
-					label: 'Debug interface',
-					click: function () {
-						win.webContents.send('toggleDebugUI');
-					}
-				},
-				{
-					label: 'Debug middleware',
-					click: function () {
-						win.webContents.send('toggleDebugMW');
-					}
-				},
-				{
-					label: 'Debug analytics',
-					click: function () {
-						win.webContents.send('toggleDebugAN');
-					}
-				},
-				{
-					label: 'Copy document',
-					click: function () {
-						win.webContents.send('copyDocument');
-					}
-				},
+				}
 			]
 		});
 	//};
-	
+
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
-	
-	storage.get('config', function (error, data) {
-		data = data || {};
-		console.log('Config: ', error, data);
-	  
-		channel = String(data.channel || 'latest');
-		autoUpdaterInit();
+};
+
+function setChannel (channel) {
+	configSet({ channel: channel }, function (error) {
+		autoUpdater.channel = channel;
+		autoUpdater.checkForUpdatesAndNotify();
+	});
+};
+
+function configSet (obj, callBack) {
+	config = Object.assign(config, obj);
+	storage.set('config', config, function (error) {
+		if (callBack) {
+			callBack(error);
+		};
 	});
 };
 
 function autoUpdaterInit () {
-	console.log('Channel: ', channel);
+	console.log('Channel: ', config.channel);
 
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'info';
-	autoUpdater.channel = channel;
+	autoUpdater.channel = config.channel;
 	autoUpdater.checkForUpdatesAndNotify();
 
 	autoUpdater.on('checking-for-update', () => {
@@ -213,12 +272,11 @@ function autoUpdaterInit () {
 	
 	autoUpdater.on('update-available', (info) => {
 		setStatus('Update available');
+		win.webContents.send('update');
 	});
 
 	autoUpdater.on('update-not-available', (info) => {
 		setStatus('Update not available');
-		
-		win.webContents.send('update');
 	});
 
 	autoUpdater.on('error', (err) => { setStatus('Error: ' + err); });
@@ -240,14 +298,14 @@ function autoUpdaterInit () {
 			setStatus('Update downloaded... Restarting App in 5 seconds');
 			win.webContents.send('updateReady');
 			autoUpdater.quitAndInstall();
-		}, 5000);
+		}, 2000);
 	});
 	
 };
 
 function setStatus (text) {
 	log.info(text);
-	win.webContents.send('message', text, app.getVersion());
+	win.webContents.send('message', text);
 };
 
 app.on('ready', createWindow);

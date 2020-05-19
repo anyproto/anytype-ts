@@ -2,11 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { DragLayer } from 'ts/component';
-import { I, C, focus, keyboard, Util } from 'ts/lib';
+import { I, C, focus, keyboard, Util, scrollOnMove } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { randomFill } from 'crypto';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -16,6 +15,7 @@ interface Props extends RouteComponentProps<any> {
 const raf = require('jquery');
 const $ = require('jquery');
 const THROTTLE = 20;
+const OFFSET = 100;
 
 @observer
 class DragProvider extends React.Component<Props, {}> {
@@ -26,9 +26,12 @@ class DragProvider extends React.Component<Props, {}> {
 	map: any;
 	commonDropPrevented: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
-	hovered: any = null;
+	hoverData: any = null;
 	canDrop: boolean = false;
 	timeoutHover: number = 0;
+	
+	objects: any = null;
+	objectData: any = {};
 	emptyObj: any = null;
 
 	constructor (props: any) {
@@ -63,8 +66,8 @@ class DragProvider extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 
 		let data: any = {};
-		if (this.hovered) {
-			data = this.hovered.data();
+		if (this.hoverData) {
+			data = this.hoverData;
 		};
 		let targetId = String(data.id || '');
 
@@ -76,7 +79,7 @@ class DragProvider extends React.Component<Props, {}> {
 			console.log('[dragProvider.onDrop] paths', paths);
 			C.ExternalDropFiles(rootId, targetId, this.position, paths);
 		} else
-		if (this.hovered && this.canDrop && (this.position != I.BlockPosition.None)) {
+		if (this.hoverData && this.canDrop && (this.position != I.BlockPosition.None)) {
 			this.onDrop (e, data.dropType, data.rootId, targetId, this.position);
 		};
 
@@ -103,8 +106,26 @@ class DragProvider extends React.Component<Props, {}> {
 		this.unbind();
 		this.setDragImage(e);
 
+		this.objects = $('.dropTarget');
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
+
+		this.objects.each((i: number, item: any) => {
+			item = $(item);
+
+			const data = item.data();
+			const offset = item.offset();
+
+			this.objectData[data.id] = {
+				obj: item,
+				index: i,
+				width: item.width(),
+				height: item.height(),
+				x: offset.left,
+				y: offset.top,
+				...data
+			};
+		});
 
 		keyboard.setDrag(true);
 		Util.linkPreviewHide(false);
@@ -113,6 +134,7 @@ class DragProvider extends React.Component<Props, {}> {
 		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
 
 		$('.colResize.active').removeClass('active');
+		scrollOnMove.onMouseDown(e);
 
 		if (selection) {
 			selection.set(this.ids);
@@ -122,102 +144,115 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	onDragMove (e: any) {
-		const x = e.pageX;
-		const y = Math.max(0, e.pageY - $(window).scrollTop());
-		const items = $('.dropTarget');
+		const { rootId } = this.props;
+
+		const st = $(window).scrollTop();
+		const ex = e.pageX;
+		const ey = e.pageY;
 		const isFileDrag = e.originalEvent.dataTransfer.files && e.originalEvent.dataTransfer.files.length;
 
-		this.refLayer.move(x, y);
+		this.refLayer.move(ex, Math.max(0, ey - st));
 
-		this.hovered = null;
+		this.hoverData = null;
 		this.position = I.BlockPosition.None;
 
-		let hoverRect: any = null;
 		let prev: any = null;
 
-		$('.dragEmpty').remove();
+		if (this.emptyObj) {
+			this.emptyObj.remove();
+		};
 
-		// Find hovered block by mouse coords
-		items.each((i: number, item: any) => {
-			let rect = item.getBoundingClientRect() as DOMRect;
-
-			rect.x -= 100;
-			rect.width += 200;
-
-			if ((x >= rect.x) && (x <= rect.x + rect.width) && (y >= rect.y) && (y <= rect.y + rect.height)) {
-				prev = items.get(i - 1);
-				this.hovered = $(item);
-				hoverRect = rect;
+		for (let id in this.objectData) {
+			const data = this.objectData[id];
+			
+			let { x, y, width, height } = data;
+			if (data.dropType == I.DragItem.Block) {
+				x -= OFFSET;
+				width += OFFSET * 2;
 			};
-		});
+
+			if ((ex >= x) && (ex <= x + width) && (ey >= y) && (ey <= y + height)) {
+				prev = this.objects.get(data.index - 1);
+				this.hoverData = data;
+			};
+		};
 
 		this.canDrop = true;
 
-		if (this.hovered) {
-			const data = this.hovered.data();
-			const checkRect: any = {
-				x: hoverRect.x + hoverRect.width * 0.3,
-				width: hoverRect.x + hoverRect.width * 0.6,
+		if (this.hoverData) {
+			let { x, y, width, height } = this.hoverData;
 
-				y: hoverRect.y + hoverRect.height * 0.3 - 2,
-				height: hoverRect.y + hoverRect.height * 0.7 + 2,
+			if (this.hoverData.dropType == I.DragItem.Block) {
+				x -= OFFSET;
+				width += OFFSET * 2;
+			};
+
+			const checkRect: any = {
+				x: x + width * 0.3,
+				width: x + width * 0.6,
+				y: y + height * 0.3 - 2,
+				height: y + height * 0.7 + 2,
 			};
 
 			if (!isFileDrag && (this.type == I.DragItem.Block)) {
 				let parentIds: string[] = [];
-				this.getParentIds(data.id, parentIds);
+				this.getParentIds(this.hoverData.id, parentIds);
 
 				for (let dropId of this.ids) {
-					if ((dropId == data.id) || (parentIds.length && (parentIds.indexOf(dropId) >= 0))) {
+					if ((dropId == this.hoverData.id) || (parentIds.length && (parentIds.indexOf(dropId) >= 0))) {
 						this.canDrop = false;
 						break;
 					};
 				};
 			};
 
-			if ((y >= hoverRect.y) && (y <= checkRect.y)) {
+			if ((ey >= y) && (ey <= checkRect.y)) {
 				this.position = I.BlockPosition.Top;
 			} else
-			if ((y >= checkRect.height) && (y <= hoverRect.y + hoverRect.height)) {
+			if ((ey >= checkRect.height) && (ey <= y + height)) {
 				this.position = I.BlockPosition.Bottom;
 			} else
-			if ((x >= hoverRect.x) && (x < checkRect.x) && (y > checkRect.y) && (y < checkRect.height)) {
+			if ((ex >= x) && (ex <= checkRect.x) && (ey >= checkRect.y) && (ey <= checkRect.height)) {
 				this.position = I.BlockPosition.Left;
 			} else
-			if ((x > checkRect.width) && (x <= hoverRect.x + hoverRect.width) && (y > checkRect.y) && (y < checkRect.height)) {
+			if ((ex >= checkRect.width) && (ex <= x + width) && (ey >= checkRect.y) && (ey <= checkRect.height)) {
 				this.position = I.BlockPosition.Right;
 			} else
-			if ((x > checkRect.x) && (x < checkRect.width) && (y > checkRect.y) && (y < checkRect.height)) {
+			if ((ex >= checkRect.x) && (ex <= checkRect.width) && (ey >= checkRect.y) && (ey <= checkRect.height)) {
 				this.position = I.BlockPosition.Inner;
 			};
 
 			// You can't drop on Icon and Title
-			if ([ I.BlockType.IconPage, I.BlockType.IconUser, I.BlockType.Title ].indexOf(data.type) >= 0) {
+			if ([ I.BlockType.IconPage, I.BlockType.IconUser, I.BlockType.Title ].indexOf(this.hoverData.type) >= 0) {
 				this.position = I.BlockPosition.None;
 			};
 
 			// You cant drop in Headers
 			if (
 				(this.position == I.BlockPosition.Inner) &&
-				(data.type == I.BlockType.Text) &&
-				[ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3, I.TextStyle.Header4 ].indexOf(data.style) >= 0
+				(this.hoverData.type == I.BlockType.Text) &&
+				[ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3, I.TextStyle.Header4 ].indexOf(this.hoverData.style) >= 0
 			) {
 				this.position = I.BlockPosition.None;
 			};
 
 			// You can drop vertically on Layout.Row
-			if ((data.type == I.BlockType.Layout) && (data.style == I.LayoutStyle.Row) && (this.position != I.BlockPosition.None)) {
-				if (this.hovered.hasClass('targetTop')) {
+			if ((this.hoverData.type == I.BlockType.Layout) && (this.hoverData.style == I.LayoutStyle.Row) && (this.position != I.BlockPosition.None)) {
+				if (this.hoverData.obj.hasClass('targetTop')) {
 					this.position = I.BlockPosition.Top;
 				};
-				if (this.hovered.hasClass('targetBot')) {
+				if (this.hoverData.obj.hasClass('targetBot')) {
 					this.position = I.BlockPosition.Bottom;
 				};
 			};
 
 			// You can only drop inside of menu items
-			if ((data.dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
+			if ((this.hoverData.dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
 				this.position = I.BlockPosition.Inner;
+
+				if (rootId == this.hoverData.targetContextId) {
+					this.position = I.BlockPosition.None;
+				};
 			};
 		};
 
@@ -236,12 +271,14 @@ class DragProvider extends React.Component<Props, {}> {
 
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
-			this.hovered.addClass('isOver ' + this.getDirectionClass(this.position));
+			this.hoverData.obj.addClass('isOver ' + this.getDirectionClass(this.position));
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
 				$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
 			}, 10);
 		};
+
+		scrollOnMove.onMouseMove(e);
 	};
 
 	onDragEnd (e: any) {
@@ -260,6 +297,7 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 
 		$('.block.isDragging').removeClass('isDragging');
+		scrollOnMove.onMouseUp(e);
 	};
 
 	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
@@ -282,6 +320,11 @@ class DragProvider extends React.Component<Props, {}> {
 			contextId = this.props.rootId;
 			targetContextId = target.content.targetBlockId;
 			targetId = '';
+
+			if (contextId == targetContextId) {
+				console.log('[dragProvider.onDrop] Contexts are equal');
+				return;
+			};
 		};
 
 		if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
@@ -371,11 +414,19 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	clear () {
-		$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
-		$('.dragEmpty').remove();
+		if (this.emptyObj) {
+			this.emptyObj.remove();
+			this.emptyObj = null;
+		};
 
-		this.hovered = null;
+		if (this.hoverData) {
+			this.hoverData.obj.removeClass('isOver top bottom left right middle');
+			this.hoverData = null;
+		};
+
 		this.position = I.BlockPosition.None;
+		this.objects = null;
+		this.objectData = {};
 	};
 
 };

@@ -25,9 +25,9 @@ class Dispatcher {
 		bindings.setEventHandler(handler);
 	};
 	
-	event (event: any) {
+	event (event: any, skipDebug?: boolean) {
 		const rootId = event.contextId;
-		const debug = Storage.get('debugMW');
+		const debug = (Storage.get('debug') || {}).mw && !skipDebug;
 		
 		if (debug) {
 			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 3));
@@ -360,7 +360,8 @@ class Dispatcher {
 			return;
 		};
 		
-		let debug = Storage.get('debugMW');
+		const debug = (Storage.get('debug') || {}).mw;
+
 		let t0 = 0;
 		let t1 = 0;
 		let t2 = 0;
@@ -385,7 +386,7 @@ class Dispatcher {
 				
 				if (message.error.code) {
 					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
-					Sentry.captureMessage(type + ' error\n' + JSON.stringify(message.error, null, 3));
+					Sentry.captureMessage(type + ': ' + message.error.description);
 					analytics.event('Error', { cmd: type, code: message.error.code });
 				};
 				
@@ -394,7 +395,7 @@ class Dispatcher {
 				};
 
 				if (message.event) {
-					this.event(message.event);
+					this.event(message.event, true);
 				};
 
 				if (callBack) {
@@ -421,8 +422,8 @@ class Dispatcher {
 					};
 				};
 			});
-		} catch (e) {
-			console.error(e);
+		} catch (err) {
+			console.error(err);
 		};
 	};
 	

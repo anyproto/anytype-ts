@@ -1,9 +1,8 @@
 import { I, Util } from 'ts/lib';
 import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 
-const runes = require('runes');
-const Tags = [ 's', 'kbd', 'i', 'b', 'u', 'a', 'tc', 'hlc', 'emo' ];
-const EmojiData = require('emoji-mart/data/apple.json');
+const $ = require('jquery');
+const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji' ];
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -90,6 +89,7 @@ class Mark {
 						mark = el;
 						add = false;
 					} else {
+						el.range.to = mark.range.from;
 						add = true;
 					};
 					break;
@@ -136,7 +136,7 @@ class Mark {
 	};
 	
 	checkRanges (text: string, marks: I.Mark[]) {
-		marks = (marks || []).sort(this.sort);
+		marks = (marks || []).slice().sort(this.sort);
 		
 		for (let i = 0; i < marks.length; ++i) {
 			let mark = marks[i];
@@ -198,6 +198,8 @@ class Mark {
 	};
 	
 	toHtml (text: string, marks: I.Mark[]) {
+		const hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Smile ];
+
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 		
@@ -227,7 +229,7 @@ class Mark {
 
 		for (let range of ranges) {
 			for (let mark of marks) {
-				if (mark.range.from <= range.from && mark.range.to >= range.to) {
+				if ((mark.range.from <= range.from) && (mark.range.to >= range.to)) {
 					parts.push({
 						type: mark.type,
 						param: mark.param,
@@ -238,40 +240,65 @@ class Mark {
 		};
 		
 		for (let mark of parts) {
-			let t = Tags[mark.type];
-			let attr = this.paramToAttr(mark.type, mark.param);
+			const param = String(mark.param || '');
+			const attr = this.paramToAttr(mark.type, param);
 			
-			if (!attr && [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor ].indexOf(mark.type) >= 0) {
+			if (!attr && (hasParam.indexOf(mark.type) >= 0)) {
 				continue;
 			};
 			
-			let data = 'data-range="' + mark.range.from + '-' + mark.range.to + '"';
-			let from = r[mark.range.from];
-			let to = r[mark.range.to - 1];
-			
-			if ((mark.type == I.MarkType.Smile) && mark.param) {
+			const tag = Tags[mark.type];
+			const data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${param}"`;
+
+			let prefix = '';
+			let suffix = '';
+			if (mark.type == I.MarkType.Mention) {
+				prefix = '<smile></smile><name>';
+				suffix = '</name>';
 			};
-				
-			if (from && to) {
-				r[mark.range.from] = '<' + t + (attr ? ' ' + attr : '') + ' ' + data + '>' + from;
-				r[mark.range.to - 1] += '</' + t + '>';
+			
+			if (r[mark.range.from] && r[mark.range.to - 1]) {
+				r[mark.range.from] = `<${tag} ${attr} ${data}>${prefix}${r[mark.range.from]}`;
+				r[mark.range.to - 1] += `${suffix}</${tag}>`;
 			};
 		};
-		
+
 		return r.join('');
+	};
+
+	cleanHtml (html: string) {
+		html = html.replace(/&nbsp;/g, ' ');
+		html = html.replace(/<br\/?>/g, '\n');
+
+		// Remove inner tags from mentions and emoji
+		let obj = $(`<div>${html}</div>`);
+		
+		obj.find('mention').each((i: number, item: any) => {
+			item = $(item);
+			item.removeAttr('class');
+			item.html(item.find('name').html());
+		});
+
+		obj.find('emoji').each((i: number, item: any) => {
+			item = $(item);
+			item.removeAttr('class');
+			item.html(' ');
+		});
+		return obj;
 	};
 	
 	fromHtml (html: string): any[] {
-		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]+)>|>)', 'ig');
-		const rp = new RegExp('^[^"]*"([^"]*)"$', 'i');
-		
-		html = html.replace(/&nbsp;/g, ' ');
-		html = html.replace(/<br\/?>/g, '\n');
-		html = html.replace(/data-[^=]+="[^"]+"/g, '');
+		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
+		const rp = new RegExp('data-param="([^"]*)"', 'i');
+		const obj = this.cleanHtml(html);
+
+		html = obj.html();
+		html = html.replace(/data-range="[^"]+"/g, '');
+		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
 		let marks: any[] = [];
-		
+
 		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
@@ -293,7 +320,6 @@ class Mark {
 				let pm = p3.match(rp);
 				let param = pm ? pm[1]: '';
 				
-				param = param.replace('textColor textColor-', '').replace('bgColor bgColor-', '');
 				marks.push({
 					type: type,
 					range: { from: offset, to: 0 },
@@ -304,7 +330,7 @@ class Mark {
 			text = text.replace(s, '');
 			return '';
 		});
-		
+
 		return marks;
 	};
 	
@@ -318,6 +344,14 @@ class Mark {
 		switch (type) {
 			case I.MarkType.Link:
 				attr = 'href="' + param + '"';
+				break;
+
+			case I.MarkType.Mention:
+				attr = 'href="/main/edit/' + param + '" contenteditable="false"';
+				break;
+
+			case I.MarkType.Smile:
+				attr = 'contenteditable="false"';
 				break;
 				
 			case I.MarkType.TextColor:

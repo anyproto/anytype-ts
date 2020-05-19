@@ -2,21 +2,23 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Emoji } from 'emoji-mart';
 import { Input } from 'ts/component';
-import { I, Util, keyboard, Storage } from 'ts/lib';
+import { I, C, Util, DataUtil, keyboard, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { observer } from 'mobx-react';
-
-const $ = require('jquery');
-const EmojiData = require('emoji-mart/data/apple.json');
-const LIMIT = 24;
-const HEIGHT = 32;
-const PAGE = 144;
 
 interface Props extends I.Menu {};
 interface State {
 	filter: string;
 	page: number;
 };
+
+const $ = require('jquery');
+const EmojiData = require('emoji-mart/data/apple.json');
+const Constant = require('json/constant.json');
+const { dialog } = window.require('electron').remote;
+
+const LIMIT = 18;
+const HEIGHT = 32;
+const PAGE = 144;
 
 class MenuSmile extends React.Component<Props, State> {
 
@@ -36,6 +38,7 @@ class MenuSmile extends React.Component<Props, State> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onRandom = this.onRandom.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 	};
 	
@@ -76,7 +79,7 @@ class MenuSmile extends React.Component<Props, State> {
 			<div>
 				<div className="head">
 					<div className="btn" onClick={this.onRandom}>Random emoji</div>
-					<div className="btn dn">Upload image</div>
+					<div className="btn" onClick={this.onUpload}>Upload image</div>
 					<div className="btn" onClick={this.onRemove}>Remove</div>
 				</div>
 				
@@ -205,7 +208,37 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	onRandom () {
-		this.onSelect(Util.randomSmile().replace(/:/g, ''), 1);
+		const id = Util.icons[Util.rand(0, Util.icons.length - 1)];
+		const skin = Util.rand(1, 6);
+
+		this.onSelect(id, skin);
+	};
+
+	onUpload () {
+		const { param } = this.props;
+		const { data } = param;
+		const { onUpload } = data;
+
+		const options: any = { 
+			properties: [ 'openFile' ], 
+			filters: [ { name: '', extensions: Constant.extension.image } ]
+		};
+		
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+			
+			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
+				onUpload(message.hash);
+				commonStore.menuClose(this.props.id);
+			});
+		});
 	};
 	
 	onSelect (id: string, skin: number) {
@@ -215,13 +248,10 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		this.skin = Number(skin) || 1;
 		Storage.set('skin', this.skin);
-		
-		this.setLastIds(id, skin);
-		
-		const text = $(Emoji({ html: true, emoji: id, skin: this.skin, size: 24, native: true })).text();
+		this.setLastIds(id, this.skin);
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(String(text || ''));
+		onSelect(Util.getSmileById(id, this.skin));
 	};
 	
 	onMouseDown (n: number, id: string, skin: number) {

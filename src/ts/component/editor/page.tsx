@@ -68,7 +68,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const list = blockStore.getChildren(rootId, rootId);
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
@@ -156,9 +156,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
-		
-		ipcRenderer.removeAllListeners('copyDocument');
-		ipcRenderer.on('copyDocument', (e: any) => {});
 	};
 	
 	componentDidUpdate () {
@@ -234,7 +231,7 @@ class EditorPage extends React.Component<Props, State> {
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const length = String(details.name || '').length;
 		
 		focus.set(rootId + '-title', { from: length, to: length });
@@ -300,7 +297,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
@@ -459,7 +456,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { focused, range } = focus;
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
-		
+
 		if (!block) {
 			return;
 		};
@@ -763,7 +760,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		commonStore.filterSet('');
+		commonStore.filterSet(0, '');
 		focus.clear(true);
 		
 		this.blockCreate(block, this.hoverPosition, {
@@ -771,44 +768,60 @@ class EditorPage extends React.Component<Props, State> {
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
 			$('.placeHolder.c' + blockId).text(Constant.placeHolder.filter);
-			this.onMenuAdd(blockId);
+			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
 	};
 	
-	onMenuAdd (id: string) {
+	onMenuAdd (id: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
+		
 		if (!block) {
 			return;
 		};
 		
-		const { type, content } = block;
-		const { style, text, hash } = content;
+		const { content } = block;
+		const { marks, hash } = content;
 		
 		const length = String(text || '').length;
+		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const cb = (message: any) => {
 			focus.set(message.blockId, { from: length, to: length });
 			focus.apply();
 		};
+
+		const el = $('#block-' + id);
+		const offset = el.offset();
+		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		
+		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+
+		if (!rect.x && !rect.y) {
+			x = Constant.size.blockMenu;
+			y = 8;
+		};
+
+		commonStore.filterSet(range.from, '');
+
 		commonStore.menuOpen('blockAdd', { 
-			element: '#block-' + id,
+			element: el,
 			type: I.MenuType.Vertical,
-			offsetX: 50,
-			offsetY: 4,
+			offsetX: x,
+			offsetY: y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
 				const { filter } = commonStore;
-				const block = blockStore.getLeaf(rootId, id);;
+				const block = blockStore.getLeaf(rootId, id);
 
 				// Clear filter in block text on close
-				if (block && ('/' + filter == block.content.text)) {
-					DataUtil.blockSetText(rootId, block, '', []);
+				if (block) {
+					DataUtil.blockSetText(rootId, block, text, marks);
 				};
-				
+
 				focus.apply();
-				commonStore.filterSet('');
+				commonStore.filterSet(0, '');
 				$('.placeHolder.c' + id).text(Constant.placeHolder.default);
 			},
 			data: {
@@ -874,6 +887,7 @@ class EditorPage extends React.Component<Props, State> {
 										type: I.NavigationType.Create, 
 										rootId: rootId,
 										blockId: block.id,
+										position: position,
 									}, 
 								});
 							} else {
@@ -881,10 +895,10 @@ class EditorPage extends React.Component<Props, State> {
 									iconEmoji: Util.randomSmile(), 
 									name: Constant.default.name 
 								};
-								DataUtil.pageCreate(e, this.props, rootId, block.id, details, I.BlockPosition.Replace);
+								DataUtil.pageCreate(e, this.props, rootId, block.id, details, position);
 							};
 						} else {
-							this.blockCreate(block, I.BlockPosition.Replace, param);
+							this.blockCreate(block, position, param);
 						};
 					};
 				}
@@ -984,6 +998,7 @@ class EditorPage extends React.Component<Props, State> {
 				html: String(cb.getData('text/html') || ''),
 				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
 			};
+			data.anytype.range = data.anytype.range || { from: 0, to: 0 };
 		};
 		
 		const block = blockStore.getLeaf(rootId, focused);
@@ -1024,7 +1039,7 @@ class EditorPage extends React.Component<Props, State> {
 		let from = 0;
 		let to = 0;
 		
-		C.BlockPaste(rootId, focused, range, data.anytype.range, selection.get(true), { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
@@ -1211,7 +1226,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const last = node.find('.blockLast').css({ height: 0 });
-		const height = Math.max(Constant.size.lastBlock, win.height() - (node.outerHeight() + Constant.size.header));
+		const height = Math.max(Constant.size.lastBlock, win.height() - (node.outerHeight() + Constant.size.header) - 4);
 		
 		last.css({ height: height });
 	};

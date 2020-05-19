@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Select, Marker } from 'ts/component';
+import { RouteComponentProps } from 'react-router';
+import { Select, Marker, Smile } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore } from 'ts/store';
 import 'highlight.js/styles/github.css';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
 	block: I.Block;
@@ -15,17 +16,15 @@ interface Props {
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onMenuAdd? (id: string): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
 
-const com = require('proto/commands.js');
 const { ipcRenderer } = window.require('electron');
 const low = window.require('lowlight');
 const rehype = require('rehype');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
-const EmojiData = require('emoji-mart/data/apple.json');
 
 @observer
 class BlockText extends React.Component<Props, {}> {
@@ -57,13 +56,19 @@ class BlockText extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block } = this.props;
 		const { id, fields, content } = block;
-		const { text, marks, style, checked, color, bgColor } = content;
+		const { text, marks, style, checked, color } = content;
 		
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct ];
 		let additional = null;
+
+		for (let mark of marks) {
+			if (mark.type == I.MarkType.Mention) {
+				const details = blockStore.getDetails(rootId, mark.param);
+			};
+		};
 		
 		switch (style) {
 			case I.TextStyle.Quote:
@@ -145,7 +150,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { block } = this.props;
 		const { id, content } = block
 		const { focused } = focus;
-		
+
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 		
@@ -186,49 +191,35 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if (html != text) {
 			this.renderLinks();
+			this.renderMentions();
+			this.renderEmoji();
 		};
 	};
 	
 	renderLinks () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
-		const links = value.find('a');
+		const items = value.find('lnk');
 		const self = this;
 		
-		if (!links.length) {
+		if (!items.length) {
 			return;
 		};
 		
-		links.each((i: number, item: any) => {
-			item = $(item);
-			let text = item.text();
-			let html = item.html();
-			
-			text = text.replace(/\s/g, '&nbsp;');
-			text = text.replace(/\-/g, '&#8209;');
-			text = text.replace(/‐/g, '&#8209;');
-			
-			html = html.replace(/>([^<]+)</, function (s, p1) {
-				return '>' + text + '<';
-			});
-			
-			item.html(html);
+		items.each((i: number, item: any) => {
+			this.parseElement($(item));
 		});
 		
-		links.unbind('click.link mouseenter.link');
+		items.unbind('click.link mouseenter.link');
 			
-		links.on('click.link', function (e: any) {
+		items.on('click.link', function (e: any) {
 			e.preventDefault();
 			ipcRenderer.send('urlOpen', $(this).attr('href'));
 		});
 			
-		links.on('mouseenter.link', function (e: any) {
+		items.on('mouseenter.link', function (e: any) {
 			let range = $(this).data('range').split('-');
 			let url = $(this).attr('href');
-			
-			if (!url.match(/^https?:\/\//)) {
-				return;
-			};
 			
 			Util.linkPreviewShow(url, $(this), {
 				range: { 
@@ -242,6 +233,104 @@ class BlockText extends React.Component<Props, {}> {
 			});
 		});
 	};
+
+	renderMentions () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#value');
+		const items = value.find('mention');
+		const self = this;
+		
+		if (!items.length) {
+			return;
+		};
+
+		const { rootId, block } = this.props;
+		const param = this.emojiParam(block.content.style);
+		
+		items.each((i: number, item: any) => {
+			item = $(item);
+			this.parseElement(item);
+
+			const data = item.data();
+			if (!data.param) {
+				return;
+			};
+
+			const details = blockStore.getDetails(rootId, data.param);
+			const smile = item.find('smile');
+
+			item.addClass(param.class);
+			if (smile && smile.length) {
+				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
+			};
+		});
+		
+		items.unbind('click.mention').on('click.mention', function (e: any) {
+			e.preventDefault();
+			self.props.history.push($(this).attr('href'));
+		});
+	};
+
+	renderEmoji () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#value');
+		const items = value.find('emoji');
+		
+		if (!items.length) {
+			return;
+		};
+
+		const { block } = this.props;
+		const { content } = block;
+		const { style } = content;
+		const param = this.emojiParam(style);
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+
+			const data = item.data();
+			if (!data.param) {
+				return;
+			};
+
+			item.addClass(param.class);
+			ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={data.param} />, item.get(0));
+		});
+	};
+
+	emojiParam (style: I.TextStyle) {
+		let cn = 'c24';
+		let size = 20;
+		switch (style) {
+			case I.TextStyle.Header1:
+				cn = 'c32';
+				size = 28;
+				break;
+			
+			case I.TextStyle.Header2:
+				cn = 'c28';
+				size = 22;
+				break;
+
+			case I.TextStyle.Header3:
+			case I.TextStyle.Quote:
+				cn = 'c26';
+				break;
+		};
+		return { class: cn, size: size };
+	};
+
+	parseElement (item: any) {
+		let text = item.text();
+		let html = item.html();
+		
+		text = text.replace(/\s/g, '&nbsp;');
+		text = text.replace(/\-/g, '&#8209;');
+		text = text.replace(/‐/g, '&#8209;');
+		
+		html = html.replace(/>([^<]+)</, () => { return '>' + text + '<'; });
+		item.html(html);
+	};
 	
 	getValue (): string {
 		if (!this._isMounted) {
@@ -250,7 +339,9 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
-		return String(value.get(0).innerText || '');
+		const obj = Mark.cleanHtml(value.html());
+
+		return String(obj.get(0).innerText || '');
 	};
 	
 	getMarksFromHtml (): I.Mark[] {
@@ -263,8 +354,9 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
+		const { onKeyDown, onMenuAdd, block } = this.props;
 		const { id } = block;
+		const { filter } = commonStore;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -291,22 +383,40 @@ class BlockText extends React.Component<Props, {}> {
 			});
 			return;
 		};
-		
-		if ((k == Key.backspace) && range && !range.from && !range.to) {
+
+		if (k == Key.tab) {
+			e.preventDefault();
 			this.setText(this.marks, (message: any) => {
 				onKeyDown(e, value, this.marks);
 			});
 			return;
 		};
 		
-		if ((value == '/') && (k == Key.backspace)) {
-			commonStore.menuClose('blockAdd');
+		if (k == Key.backspace) {
+			if (range && !range.from && !range.to) {
+				this.setText(this.marks, (message: any) => {
+					onKeyDown(e, value, this.marks);
+				});
+				return;
+			};
+			
+			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
+				commonStore.menuClose('blockAdd');
+			};
+
+			if (commonStore.menuIsOpen('blockMention') && (range.from - 1 == filter.from)) {
+				commonStore.menuClose('blockMention');
+			};
 		};
 		
-		if (!value && (k == Key.slash)) {
-			onMenuAdd(id);
+		if ((k == Key.slash) && !(e.ctrlKey || e.metaKey)) {
+			onMenuAdd(id, value, range);
 		};
-		
+
+		if ((e.key == '@') && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
+			this.onMention();
+		};
+
 		focus.set(id, range);
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
@@ -319,8 +429,8 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		
 		const { rootId, block } = this.props;
-		const { id, content } = block;
-		const { style } = content;
+		const { filter } = commonStore;
+		const { id } = block;
 		const value = this.getValue();
 		const k = e.which;
 		
@@ -333,7 +443,23 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if (commonStore.menuIsOpen('blockAdd')) {
-			commonStore.filterSet(value);
+			if (k == Key.space) {
+				commonStore.filterSet(0, '');
+				commonStore.menuClose('blockAdd');
+			} else {
+				const part = value.substr(filter.from, value.length).match(/^\/([^\s\/]*)/);
+				commonStore.filterSetText(part ? part[1] : '');
+			};
+		};
+
+		if (commonStore.menuIsOpen('blockMention')) {
+			if (k == Key.space) {
+				commonStore.filterSet(0, '');
+				commonStore.menuClose('blockMention');
+			} else {
+				const part = value.substr(filter.from, value.length).match(/^@([^\s\/]*)/);
+				commonStore.filterSetText(part ? part[1] : '');
+			};
 		};
 		
 		// Make div
@@ -460,6 +586,47 @@ class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutKeyUp);
 		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
 	};
+
+	onMention () {
+		const { rootId, block } = this.props;
+		const range = this.getRange();
+		const el = $('#block-' + block.id);
+		const offset = el.offset();
+		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		
+		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+
+		if (!rect.x && !rect.y) {
+			x = Constant.size.blockMenu;
+			y = 4;
+		};
+
+		commonStore.filterSet(range.from, '');
+		commonStore.menuOpen('blockMention', {
+			element: el,
+			type: I.MenuType.Vertical,
+			offsetX: x,
+			offsetY: -y,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				onChange: (text: string, marks: I.Mark[], range: I.TextRange) => {
+					const to = range.from + text.length;
+
+					this.marks = Util.objectCopy(marks);
+					text = Util.stringInsert(block.content.text, text, range.from, range.to);
+
+					DataUtil.blockSetText(rootId, block, text, this.marks, () => {
+						focus.set(block.id, { from: to, to: to });
+						focus.apply();
+					});
+				},
+			},
+		});
+	};
 	
 	setText (marks: I.Mark[], callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
@@ -494,15 +661,13 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onFocus (e: any) {
+		e.persist();
+
 		const { onFocus } = this.props;
-		const value = this.getValue();
-		
-		if (value.match(/^\//)) {
-			commonStore.filterSet(value);
-		};
 		
 		this.placeHolderCheck();
 		keyboard.setFocus(true);
+
 		onFocus(e);
 	};
 	
@@ -510,7 +675,6 @@ class BlockText extends React.Component<Props, {}> {
 		const { onBlur } = this.props;
 	
 		window.clearTimeout(this.timeoutKeyUp);
-		this.setText(this.marks);
 		this.placeHolderHide();
 		keyboard.setFocus(false);
 		onBlur(e);
@@ -554,13 +718,9 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, content } = block;
 		const { from, to } = focus.range;
 		const { style } = content;
-		const { selection } = dataset || {};
-		const ids = selection.get(true);
-		
-		if (!ids.length) {
-			focus.set(id, this.getRange());
-			keyboard.setFocus(true);
-		};
+
+		focus.set(id, this.getRange());
+		keyboard.setFocus(true);
 		
 		const { range } = focus;
 		const currentFrom = range.from;
@@ -574,14 +734,12 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
 		const el = $('#block-' + id);
-		const offset = node.offset();
+		const offset = el.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
-		const pt = parseInt(el.css('paddingTop'));
-		const x = rect.x - offset.left + Constant.size.blockMenu - size / 2 + rect.width / 2;
-		const y = rect.y - (offset.top - $(window).scrollTop()) - 4 + pt;
+		const x = rect.x - offset.left - size / 2 + rect.width / 2;
+		const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {

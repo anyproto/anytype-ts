@@ -35,12 +35,12 @@ class PopupArchive extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(archive, archive);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(archive, archive);
-		const map = blockStore.getDetailMap(archive);
+		const map = blockStore.getDetailsMap(archive);
 		const size = map.size;
 		
 		const Item = (item: any) => {
 			const content = item.content || {};
-			const details = blockStore.getDetail(archive, content.targetBlockId);
+			const details = blockStore.getDetails(archive, content.targetBlockId);
 			
 			return (
 				<div id={'item-' + content.targetBlockId} className="item" onClick={(e: any) => { this.onSelect(item); }}>
