@@ -1176,8 +1176,9 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const { content } = focused;
 		const isToggle = focused.isToggle();
+		const isOpen = Storage.checkToggle(rootId, focused.id);
 
-		if (isToggle) {
+		if (isToggle && isOpen) {
 			Storage.setToggle(rootId, focused.id, false);
 		};
 		
@@ -1187,7 +1188,7 @@ class EditorPage extends React.Component<Props, State> {
 			this.focus(focused.id, 0, 0);
 			focus.scroll();
 
-			if (isToggle) {
+			if (isToggle && isOpen) {
 				Storage.setToggle(rootId, message.blockId, true);
 				$('#block-' + message.blockId).addClass('isToggled');
 			};
