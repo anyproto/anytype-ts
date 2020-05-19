@@ -259,6 +259,10 @@ class CommonStore {
 	};
 
 	smileGet (icon: string) {
+		if (!icon) {
+			return {};
+		};
+
 		if (this.smileCache[icon]) {
 			return this.smileCache[icon];
 		};
