@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Smile } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { getRange } from 'selection-ranges';
+import { setRange, getRange } from 'selection-ranges';
 import { commonStore, blockStore } from 'ts/store';
 import 'highlight.js/styles/github.css';
 
@@ -587,11 +587,11 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let value = this.getValue();
 		let x = rect.x - offset.left;
-		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+		let y = el.outerHeight() - (rect.y - (offset.top - $(window).scrollTop())) - rect.height - 8;
 
 		if (!rect.x && !rect.y) {
 			x = Constant.size.blockMenu;
-			y = -4;
+			y = 4;
 		};
 
 		commonStore.filterSet(range.from, '');
@@ -599,7 +599,7 @@ class BlockText extends React.Component<Props, {}> {
 			element: el,
 			type: I.MenuType.Vertical,
 			offsetX: x,
-			offsetY: -y,
+			offsetY: y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
@@ -629,7 +629,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		let value = this.getValue();
 		let x = rect.x - offset.left;
-		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+		let y = el.outerHeight() - (rect.y - (offset.top - $(window).scrollTop())) - rect.height - 8;
 
 		if (!rect.x && !rect.y) {
 			x = Constant.size.blockMenu;
@@ -640,7 +640,7 @@ class BlockText extends React.Component<Props, {}> {
 			element: el,
 			type: I.MenuType.Vertical,
 			offsetX: x,
-			offsetY: -y,
+			offsetY: y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {

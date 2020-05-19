@@ -29,6 +29,7 @@ class DragProvider extends React.Component<Props, {}> {
 	hoverData: any = null;
 	canDrop: boolean = false;
 	timeoutHover: number = 0;
+	init: boolean = false;
 	
 	objects: any = null;
 	objectData: any = {};
@@ -51,61 +52,28 @@ class DragProvider extends React.Component<Props, {}> {
 		const children = this.injectProps(this.props.children);
 
 		return (
-			<div className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
+			<div className="dragProvider">
 				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
 				{children}
 			</div>
 		);
 	};
 
-	onDropCommon (e: any) {
-		if (this.commonDropPrevented) {
+	componentDidMount () {
+		this.unbind();
+		this.bind();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	initData () {
+		if (this.init) {
 			return;
 		};
 
-		const { rootId } = this.props;
-
-		let data: any = {};
-		if (this.hoverData) {
-			data = this.hoverData;
-		};
-		let targetId = String(data.id || '');
-
-		if (e.dataTransfer.files && e.dataTransfer.files.length) {
-			let paths: string[] = [];
-			for (let file of e.dataTransfer.files) {
-				paths.push(file.path);
-			};
-			console.log('[dragProvider.onDrop] paths', paths);
-			C.ExternalDropFiles(rootId, targetId, this.position, paths);
-		} else
-		if (this.hoverData && this.canDrop && (this.position != I.BlockPosition.None)) {
-			this.onDrop (e, data.dropType, data.rootId, targetId, this.position);
-		};
-
-		this.clear();
-	};
-
-	onDragOver (e: any) {
-		e.preventDefault();
-	};
-
-	onDragStart (e: any, type: string, ids: string[], component: any) {
-		const { rootId, dataset } = this.props;
-		const { selection } = dataset || {};
-		const win = $(window);
-
-		e.stopPropagation();
-		focus.clear(true);
-
-		console.log('[dragProvider.onDragStart]', type, ids);
-
-		this.map = blockStore.getMap(rootId);
-		this.refLayer.show(type, ids, component);
-		this.set(type, ids);
-		this.unbind();
-		this.setDragImage(e);
-
+		this.init = true;
 		this.objects = $('.dropTarget');
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
@@ -126,6 +94,59 @@ class DragProvider extends React.Component<Props, {}> {
 				...data
 			};
 		});
+	};
+
+	onDropCommon (e: any) {
+		if (this.commonDropPrevented) {
+			return;
+		};
+
+		const { rootId } = this.props;
+
+		let data: any = {};
+		if (this.hoverData) {
+			data = this.hoverData;
+		};
+		let targetId = String(data.id || '');
+
+		if (e.originalEvent.dataTransfer.files && e.originalEvent.dataTransfer.files.length) {
+			let paths: string[] = [];
+			for (let file of e.originalEvent.dataTransfer.files) {
+				paths.push(file.path);
+			};
+			console.log('[dragProvider.onDrop] paths', paths);
+			C.ExternalDropFiles(rootId, targetId, this.position, paths);
+		} else
+		if (this.hoverData && this.canDrop && (this.position != I.BlockPosition.None)) {
+			this.onDrop (e, data.dropType, data.rootId, targetId, this.position);
+		};
+
+		this.clear();
+	};
+
+	onDragOver (e: any) {
+		e.preventDefault();
+
+		this.initData();
+		this.onDragMove(e);
+	};
+
+	onDragStart (e: any, type: string, ids: string[], component: any) {
+		const { rootId, dataset } = this.props;
+		const { selection } = dataset || {};
+		const win = $(window);
+
+		e.stopPropagation();
+		focus.clear(true);
+
+		console.log('[dragProvider.onDragStart]', type, ids);
+
+		this.map = blockStore.getMap(rootId);
+		this.refLayer.show(type, ids, component);
+		this.set(type, ids);
+		this.unbind();
+		this.setDragImage(e);
+		this.initData();
 
 		keyboard.setDrag(true);
 		Util.linkPreviewHide(false);
@@ -149,10 +170,9 @@ class DragProvider extends React.Component<Props, {}> {
 		const st = $(window).scrollTop();
 		const ex = e.pageX;
 		const ey = e.pageY;
-		const isFileDrag = e.originalEvent.dataTransfer.files && e.originalEvent.dataTransfer.files.length;
+		const isFileDrag = e.originalEvent.dataTransfer.types.indexOf('Files') >= 0;
 
 		this.refLayer.move(ex, Math.max(0, ey - st));
-
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
 
@@ -166,6 +186,7 @@ class DragProvider extends React.Component<Props, {}> {
 			const data = this.objectData[id];
 			
 			let { x, y, width, height } = data;
+			
 			if (data.dropType == I.DragItem.Block) {
 				x -= OFFSET;
 				width += OFFSET * 2;
@@ -340,8 +361,20 @@ class DragProvider extends React.Component<Props, {}> {
 		});
 	};
 
+	bind () {
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.on('dragover.drag', (e: any) => { this.onDragOver(e); });
+		node.on('drop.drag', (e: any) => { this.onDropCommon(e); });
+		//onDragOver={this.onDragOver} onDrop={this.onDropCommon}
+	};
+
 	unbind () {
-		$(window).unbind('dragend.drag drag.drag');
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+
+		win.unbind('dragend.drag drag.drag');
+		node.unbind('dragover.drag drop.drag');
 	};
 
 	set (type: string, ids: string[]) {
@@ -424,6 +457,7 @@ class DragProvider extends React.Component<Props, {}> {
 			this.hoverData = null;
 		};
 
+		this.init = false;
 		this.position = I.BlockPosition.None;
 		this.objects = null;
 		this.objectData = {};
