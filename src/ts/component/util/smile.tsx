@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
 import { commonStore } from 'ts/store';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 
 interface Props {
 	id?: string;
@@ -23,7 +23,6 @@ interface State {
 	hash: string;
 };
 
-const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
 const blank = require('img/blank/smile.svg');
 
@@ -78,7 +77,7 @@ class Smile extends React.Component<Props, State> {
 
 			if (colons) {
 				if (asImage) {
-					element = <img src={this.srcFromColons(colons, skin)} className="smileImage" />;
+					element = <img src={Util.smileSrcFromColons(colons, skin)} className="smileImage" />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};
@@ -96,18 +95,6 @@ class Smile extends React.Component<Props, State> {
 		);
 	};
 
-	srcFromColons (colons: string, skin: number) {
-		let parts = colons.split('::');
-		if (parts.length > 1) {
-			parts[1] = parts[1].replace('skin-tone-', 'type-');
-		} else
-		if (skin) {
-			parts.push('type-' + skin);
-		};
-		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
-		return `./emoji/${src}.png`;
-	};
-	
 	onClick (e: any) {
 		const { id, canEdit, offsetX, offsetY, onSelect, onUpload } = this.props;
 		

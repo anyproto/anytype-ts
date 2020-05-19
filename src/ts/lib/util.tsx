@@ -491,6 +491,19 @@ class Util {
 	isNumber (s: string) {
 		return String((Number(s) || 0) || '') === String(s || '');
 	};
+
+	smileSrcFromColons (colons: string, skin: number) {
+		let parts = colons.split('::');
+		if (parts.length > 1) {
+			parts[1] = parts[1].replace('skin-tone-', 'type-');
+		} else
+		if (skin) {
+			parts.push('type-' + skin);
+		};
+
+		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
+		return `./emoji/${src}.png`;
+	};
 	
 };
 
