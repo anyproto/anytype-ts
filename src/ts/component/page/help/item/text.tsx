@@ -1,37 +1,56 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { Icon, Marker } from 'ts/component';
 import { I } from 'ts/lib';
 
 interface Props {
 	text?: string;
 	style?: I.TextStyle;
+	checked?: boolean;
+	color?: string;
 };
 
 class ContentText extends React.Component<Props, {}> {
 
-	render () {
-		const { text, style } = this.props;
-		
-		const Marker = (item: any) => (
-			<div className={[ 'marker', item.className, (item.active ? 'active' : '') ].join(' ')} onClick={item.onClick}>
-				<span><Icon /></span>
-			</div>
-		);
+	public static defaultProps = {
+		color: 'black',
+	};
 
-		let markers: any[] = [];
+	render () {
+		const { text, style, checked, color } = this.props;
+		
+		let marker = null;
+		let additional = null;
+
 		switch (style) {
+			case I.TextStyle.Quote:
+				additional = (
+					<div className="line" />
+				);
+				break;
+				
 			case I.TextStyle.Bulleted:
-				markers.push({ type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} });
+				marker = { type: I.TextStyle.Bulleted, className: 'bullet', active: false };
+				break;
+				
+			case I.TextStyle.Numbered:
+				marker = { type: I.TextStyle.Numbered, className: 'number', active: false };
+				break;
+				
+			case I.TextStyle.Toggle:
+				marker = { type: I.TextStyle.Toggle, className: 'toggle', active: false };
+				break;
+				
+			case I.TextStyle.Checkbox:
+				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked };
 				break;
 		};
 		
 		return (
 			<div className="flex">
 				<div className="markers">
-					{markers.map((item: any, i: number) => (
-						<Marker key={i} {...item} />
-					))}
+					{marker ? <Marker {...marker} color={color} /> : ''}
 				</div>
+				{additional}
 				<div className="wrap" dangerouslySetInnerHTML={{ __html: text }} />
 			</div>
 		);

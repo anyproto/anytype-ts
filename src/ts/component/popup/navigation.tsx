@@ -93,11 +93,11 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const Item = (item: any) => {
-			let { iconEmoji, name } = item.details;
+			let { iconEmoji, iconImage, name } = item.details;
 
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
-					<Smile icon={iconEmoji} className="c48" size={24} />
+					<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 					<div className="info">
 						<div className="name">{name}</div>
 						<div className="descr">{item.snippet}</div>
@@ -125,7 +125,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				icon = <Icon className="search" />
 			} else {
 				name = item.details.name;
-				icon = <Smile icon={item.details.iconEmoji} className="c24" size={20} />;
+				icon = <Smile icon={item.details.iconEmoji} hash={item.details.iconImage} className="c24" size={20} />;
 			};
 
 			return (
@@ -138,11 +138,11 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 		
 		const Selected = (item: any) => {
-			const { iconEmoji, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
+			const { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			
 			return (
 				<div className="selected">
-					<Smile icon={iconEmoji} className="c48" size={24} />
+					<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
 					{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
@@ -356,7 +356,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	onConfirm (e: any, item: I.PageInfo) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { rootId, type, blockId, blockIds } = data;
+		const { rootId, type, blockId, blockIds, position } = data;
 
 		switch (type) {
 			case I.NavigationType.Go:
@@ -376,7 +376,7 @@ class PopupNavigation extends React.Component<Props, State> {
 						targetBlockId: item.id,
 					}
 				};
-				C.BlockCreate(param, rootId, blockId, I.BlockPosition.Replace);
+				C.BlockCreate(param, rootId, blockId, position);
 				break;
 		};
 

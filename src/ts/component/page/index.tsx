@@ -91,6 +91,10 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	init () {
+		const { match } = this.props;
+		const popupNewBlock = Storage.get('popupNewBlock');
+		const isMain = match.params.page == 'main';
+
 		this.setBodyClass();
 		this.resize();
 		this.event();
@@ -100,7 +104,11 @@ class Page extends React.Component<Props, {}> {
 		commonStore.menuCloseAll();
 		Util.linkPreviewHide(true);
 		
-		keyboard.setMatch(this.props.match);
+		keyboard.setMatch(match);
+
+		if (!popupNewBlock && isMain) {
+			commonStore.popupOpen('new', {});
+		};
 		
 		$(window).on('resize.page', () => { this.resize(); });
 	};

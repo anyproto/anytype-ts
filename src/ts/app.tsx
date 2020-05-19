@@ -79,6 +79,7 @@ import 'scss/menu/block/common.scss';
 import 'scss/menu/block/link.scss';
 import 'scss/menu/block/icon.scss';
 import 'scss/menu/block/cover.scss';
+import 'scss/menu/block/mention.scss';
 
 import 'scss/menu/dataview/sort.scss';
 import 'scss/menu/dataview/filter.scss';
@@ -113,7 +114,7 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
-const { app } = window.require('electron').remote;
+const { app, dialog } = window.require('electron').remote;
 const version = app.getVersion();
 const platforms: any = {
 	win32:	 'Windows',
@@ -162,6 +163,14 @@ class App extends React.Component<Props, State> {
 	state = {
 		loading: true
 	};
+
+	constructor (props: any) {
+		super(props);
+
+		this.onImport = this.onImport.bind(this);
+		this.onProgress = this.onProgress.bind(this);
+		this.onCommand = this.onCommand.bind(this);
+	};
 	
 	render () {
 		const { loading } = this.state;
@@ -201,26 +210,26 @@ class App extends React.Component<Props, State> {
 		analytics.setVersionName(version);
 		analytics.setUserProperties({ deviceType: 'Desktop', platform: platforms[os.platform()] });
 
-		const win = $(window);
-		const phrase = Storage.get('phrase');
-		const accountId = Storage.get('accountId');
-		const html = $('html');
-		
-		let debugUI = Boolean(Storage.get('debugUI'));
-		let debugMW = Boolean(Storage.get('debugMW'));
-		let debugAN = Boolean(Storage.get('debugAN'));
-		let coverNum = Number(Storage.get('coverNum'));
-		let coverImage = String(Storage.get('coverImage') || '');
-		let noShutdown = Number(Storage.get('noShutdown'));
-		
+		keyboard.init(history);
+
+		const coverNum = Number(Storage.get('coverNum'));
+		const coverImage = String(Storage.get('coverImage') || '');
 		if (!coverNum && !coverImage) {
 			commonStore.coverSetNum(Constant.default.cover);
 		};
 		
+		this.setIpcEvents();
+		this.setWindowEvents();
+	};
+
+	setIpcEvents () {
+		const phrase = Storage.get('phrase');
+		const accountId = Storage.get('accountId');
+		const debug = Storage.get('debug') || {};
+		const html = $('html');
+
 		ipcRenderer.send('appLoaded', true);
-		keyboard.init(history);
-		analytics.init();
-		
+
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
 			this.setState({ loading: false });
@@ -230,45 +239,33 @@ class App extends React.Component<Props, State> {
 			};
 		});
 		
-		debugUI ? html.addClass('debug') : html.removeClass('debug');
-		
-		ipcRenderer.on('toggleDebugUI', (e: any) => {
-			debugUI = !debugUI;
-			debugUI ? html.addClass('debug') : html.removeClass('debug');
-			Storage.set('debugUI', Number(debugUI));
+		debug.ui ? html.addClass('debug') : html.removeClass('debug');
+		ipcRenderer.on('toggleDebug', (e: any, key: string, value: boolean) => {
+			console.log('[toggleDebug]', key, value);
+			debug[key] = value;
+			debug.ui ? html.addClass('debug') : html.removeClass('debug');
+			Storage.set('debug', debug, true);
 		});
 		
-		ipcRenderer.on('toggleDebugMW', (e: any) => {
-			debugMW = !debugMW;
-			Storage.set('debugMW', Number(debugMW));
+		ipcRenderer.on('route', (e: any, route: string) => {
+			history.push(route);
 		});
 		
-		ipcRenderer.on('toggleDebugAN', (e: any) => {
-			debugAN = !debugAN;
-			Storage.set('debugAN', Number(debugAN));
+		ipcRenderer.on('message', (e: any, text: string) => {
+			console.log('[Message]', text);
 		});
 		
-		ipcRenderer.on('help', (e: any) => {
-			history.push('/help/index');
-		});
-		
-		ipcRenderer.on('message', (e: any, text: string, version: string) => {
-			console.log('[Message]', text, version);
-		});
-		
-		ipcRenderer.on('progress', (e: any, progress: any) => {
-			commonStore.progressSet({ 
-				status: 'Downloading update... %s/%s', 
-				current: Util.fileSize(progress.transferred), 
-				total: Util.fileSize(progress.total),
-				isUnlocked: true,
-			});
-		});
-		
-		ipcRenderer.on('update', (e: any) => {
-			Storage.delete('popupNewBlock');
-		});
-		
+		ipcRenderer.on('progress', this.onProgress);
+		ipcRenderer.on('updateReady', () => { commonStore.progressClear(); });
+		ipcRenderer.on('import', this.onImport);
+		ipcRenderer.on('command', this.onCommand);
+		ipcRenderer.on('update', (e: any) => { Storage.delete('popupNewBlock'); });
+	};
+
+	setWindowEvents () {
+		const win = $(window);
+		const noShutdown = Number(Storage.get('noShutdown'));
+
 		win.unbind('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', throttle((e: any) => {
@@ -290,6 +287,51 @@ class App extends React.Component<Props, State> {
 				return false;
 			});
 		};
+	};
+
+	onCommand (e: any, key: string) {
+		const id = Storage.get('pageId') || '';
+		if (!id) {
+			return;
+		};
+
+		switch (key) {
+			case 'undo':
+				C.BlockUndo(id);
+				break;
+
+			case 'redo':
+				C.BlockUndo(id);
+				break;
+		};
+	};
+
+	onProgress (e: any, progress: any) {
+		commonStore.progressSet({ 
+			status: 'Downloading update... %s/%s', 
+			current: Util.fileSize(progress.transferred), 
+			total: Util.fileSize(progress.total),
+			isUnlocked: true,
+		});
+	};
+
+	onImport () {
+		const { root } = blockStore;
+		const id = Storage.get('pageId') || root || '';
+		const options: any = { properties: [ 'openFile', 'openDirectory' ] };
+
+		if (!id) {
+			return;
+		};
+
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+			
+			C.BlockImportMarkdown(id, files[0]);
+		});
 	};
 	
 };

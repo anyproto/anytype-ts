@@ -1,25 +1,30 @@
 import * as React from 'react';
-import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
-import { Icon } from 'ts/component';
+import { Emoji } from 'emoji-mart';
 import { commonStore } from 'ts/store';
 import { I } from 'ts/lib';
 
 interface Props {
 	id?: string;
 	icon: string;
+	hash?: string;
 	size?: number;
+	native?: boolean;
+	asImage?: boolean;
 	className?: string;
 	canEdit?: boolean;
 	offsetX?: number;
 	offsetY?: number;
 	onSelect?(id: string): void;
+	onUpload?(hash: string): void;
 };
 
 interface State {
 	icon: string;
+	hash: string;
 };
 
 const EmojiData = require('emoji-mart/data/apple.json');
+const Constant = require('json/constant.json');
 const blank = require('img/blank/smile.svg');
 
 class Smile extends React.Component<Props, State> {
@@ -29,10 +34,12 @@ class Smile extends React.Component<Props, State> {
 		offsetY: 0,
 		size: 16,
 		className: 'c20',
+		native: true,
 	};
 	
 	state = {
-		icon: ''
+		icon: '',
+		hash: '',
 	};
 	
 	constructor (props: any) {
@@ -42,8 +49,9 @@ class Smile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, size, className, canEdit } = this.props;
+		const { id, size, native, asImage, className, canEdit } = this.props;
 		const icon = String(this.state.icon || this.props.icon || '');
+		const hash = String(this.state.hash || this.props.hash || '');
 		
 		let cn = [ 'smile' ];
 		if (className) {
@@ -53,27 +61,55 @@ class Smile extends React.Component<Props, State> {
 			cn.push('canEdit');
 		};
 		
-		let colons = '';
+		let element = <img src={blank} className="icon blank" />;
+		let skin = 0;
+
 		if (icon) {
+			let colons = '';
 			if (icon.match(':')) {
 				colons = icon;
 			} else {
-				const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+				const data = commonStore.smileGet(icon);
 				if (data) {
 					colons = data.colons;
+					skin = data.skin;
 				};
 			};
+
+			if (colons) {
+				if (asImage) {
+					element = <img src={this.srcFromColons(colons, skin)} className="smileImage" />;
+				} else {
+					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
+				};
+			};
+		} else 
+		if (hash) {
+			cn.push('withImage');
+			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className="icon image" />;
 		};
 		
 		return (
 			<div id={id} className={cn.join(' ')} onClick={this.onClick}>
-				{colons ? <Emoji native={true} emoji={colons} set="apple" size={size} /> : <img src={blank} className="icon blank" />}
+				{element}
 			</div>
 		);
 	};
+
+	srcFromColons (colons: string, skin: number) {
+		let parts = colons.split('::');
+		if (parts.length > 1) {
+			parts[1] = parts[1].replace('skin-tone-', 'type-');
+		} else
+		if (skin) {
+			parts.push('type-' + skin);
+		};
+		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
+		return `./emoji/${src}.png`;
+	};
 	
 	onClick (e: any) {
-		const { id, canEdit, offsetX, offsetY, onSelect } = this.props;
+		const { id, canEdit, offsetX, offsetY, onSelect, onUpload } = this.props;
 		
 		if (!id || !canEdit) {
 			return;
@@ -88,8 +124,13 @@ class Smile extends React.Component<Props, State> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				onSelect: (icon: string) => {
-					this.setState({ icon: icon });
+					this.setState({ icon: icon, hash: '' });
 					onSelect(icon);
+				},
+
+				onUpload: (hash: string) => {
+					this.setState({ icon: '', hash: hash });
+					onUpload(hash);
 				}
 			}
 		});

@@ -1,6 +1,8 @@
 import { observable, action, computed, set } from 'mobx';
 import { I, Storage, Util, analytics } from 'ts/lib';
+import { getEmojiDataFromNative } from 'emoji-mart';
 
+const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -14,15 +16,21 @@ interface LinkPreview {
 	onChange?(marks: I.Mark[]): void;
 };
 
+interface Filter {
+	from: number;
+	text: string;
+};
+
 class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
 	@observable public coverNum: number = 0;
 	@observable public coverImage: string = '';
 	@observable public progressObj: I.Progress = {};
-	@observable public filterString: string = '';
+	@observable public filterObj: Filter = { from: 0, text: '' };
 	@observable public gatewayUrl: string = '';
 	@observable public linkPreviewObj: LinkPreview;
+	public smileCache: any = {};
 	
 	@computed
 	get progress(): I.Progress {
@@ -35,8 +43,8 @@ class CommonStore {
 	};
 	
 	@computed
-	get filter(): string {
-		return String(this.filterString || '');
+	get filter(): Filter {
+		return this.filterObj;
 	};
 	
 	@computed
@@ -230,13 +238,37 @@ class CommonStore {
 	};
 	
 	@action
-	filterSet (v: string) {
-		this.filterString = Util.filterFix(v);
+	filterSetFrom (from: number) {
+		this.filterObj.from = from;
 	};
-	
+
+	@action
+	filterSetText (text: string) {
+		this.filterObj.text = Util.filterFix(text);
+	};
+
+	@action
+	filterSet (from: number, text: string) {
+		this.filterSetFrom(from);
+		this.filterSetText(text);
+	};
+
 	@action
 	linkPreviewSet (param: LinkPreview) {
 		this.linkPreviewObj = param;
+	};
+
+	smileGet (icon: string) {
+		if (this.smileCache[icon]) {
+			return this.smileCache[icon];
+		};
+
+		const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+		this.smileCache[icon] = { 
+			colons: data.colons, 
+			skin: data.skin 
+		};
+		return this.smileCache[icon];
 	};
 	
 };

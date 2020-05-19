@@ -38,16 +38,7 @@
 		.emptyToggle:hover { color: $colorBlack; }
 	}
 
-	.block > .wrapContent > .children > .block.first > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
-	.block > .wrapContent > .children > .block.first {
-		.inputWithFile { margin-top: 0px; }
-	}
-	
 	.block > .wrapContent > .children > .block.last { margin: 0px; }
-	.block > .wrapContent > .children > .block.last > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
-	.block > .wrapContent > .children > .block.last {
-		.inputWithFile { margin-bottom: 0px; }
-	}
 	
 	.block.align0 > .wrapContent { text-align: left; }
 	.block.align1 > .wrapContent { text-align: center; }

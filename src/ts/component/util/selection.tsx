@@ -212,7 +212,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const { rootId } = this.props;
-		const { focused, range } = focus;
 		
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
@@ -386,9 +385,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			window.focus();
 		};
 		
-		raf(() => {
-			this.set(this.get());
-		});
+		this.set(this.get());
 	};
 	
 	hide () {

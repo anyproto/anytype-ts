@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, MenuItemVertical } from 'ts/component';
+import { MenuItemVertical } from 'ts/component';
 import { I, Key, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
@@ -94,8 +94,6 @@ class MenuSelect extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
-		const { param } = this.props;
-		const { data } = param;
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
@@ -141,7 +139,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onSelect } = data;
 		
-		commonStore.menuClose('select');
+		commonStore.menuClose(this.props.id);
 		onSelect(e, item);
 	};
 	

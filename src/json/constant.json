@@ -2,6 +2,7 @@
 	"pinSize": 6,
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
 	"amplitude": "081a79db340854305408c8fa15706adc",
+	"smile": "https://unpkg.com/emoji-datasource-apple@4.0.4/img/apple/sheets-256/64.png",
 	
 	"default": {
 		"name": "Untitled",
@@ -35,6 +36,10 @@
 		"header": 38,
 		"lastBlock": 100,
 		"cover": 1920,
+
+		"iconPage": 256,
+
+		"menuBlockAdd": 360,
 		
 		"menuBlockContext": {
 			"default": 400,

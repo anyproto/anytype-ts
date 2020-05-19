@@ -11,7 +11,8 @@
 			.btn:hover { color: $colorBlack; }
 		}
 		
-		.filter { padding: 11px 16px 10px 16px; border-bottom: 1px solid #eae9e0; }
+		.filter { padding: 3px 16px 10px 16px; border-bottom: 1px solid #eae9e0; }
+		.filter.withHead { padding-top: 11px; }
 		.filter {
 			.input-text { padding: 0px; height: 22px; vertical-align: top; }
 		}

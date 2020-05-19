@@ -1,5 +1,6 @@
 import { I, C, keyboard } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore } from 'ts/store';
+import { Emoji } from 'emoji-mart';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -95,6 +96,15 @@ class Util {
 	
 	arrayValues (a: any) {
 		return a.hasOwnProperty('length') ? a : Object.values(a);
+	};
+
+	stringCut (haystack: string, start: number, end: number): string {
+		return haystack.substr(0, start) + haystack.substr(end);
+	};
+
+	stringInsert (haystack: string, needle: string, start: number, end: number): string {
+		haystack = String(haystack || '');
+		return haystack.substr(0, start) + needle + haystack.substr(end);
 	};
 	
 	shorten (s: string, l: number, noEnding?: boolean) {
@@ -207,15 +217,23 @@ class Util {
 		};
 		return 0;
 	};
+
+	getNativeSmileById (id: string, skin: number): string {
+		id = String(id || '');
+		skin = Number(skin) || 1;
+		return String($(Emoji({ html: true, emoji: id, skin: skin, size: 24, native: true })).text() || '');
+	};
 	
 	randomSmile (): string {
-		return ':' + this.icons[this.rand(0, this.icons.length - 1)] + ':';
+		const id = this.icons[this.rand(0, this.icons.length - 1)];
+		const skin = this.rand(1, 6);
+		return this.getNativeSmileById(id, skin);
 	};
 	
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
-		let a, jsdate = new Date(timestamp ? timestamp * 1000 : null);
-		let pad = (n: number, c: number) => {
+		const jsdate = new Date(timestamp ? timestamp * 1000 : null);
+		const pad = (n: number, c: number) => {
 			let s = String(n);
 			if ((s = s + '').length < c ) {
 				++c;
@@ -226,13 +244,14 @@ class Util {
 			};
 			return false;
 		};
-		let f: any = {
+		const f: any = {
 			// Day
 			d: () => {
 			   return pad(f.j(), 2);
 			},
 			D: () => {
-				let t = f.l(); return t.substr(0,3);
+				let t = f.l(); 
+				return t.substr(0,3);
 			},
 			j: () => {
 				return jsdate.getDate();
@@ -281,7 +300,7 @@ class Util {
 			},
 			w: () => {
 				return jsdate.getDay();
-			}
+			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {
 			let ret = null;
@@ -307,13 +326,13 @@ class Util {
 		let m = v / (1024 * 1024);
 		let k = v / 1024;
 		if (g > 1) {
-			v = sprintf('%f Gb', this.round(g, 2));
+			v = sprintf('%fGb', this.round(g, 2));
 		} else if (m > 1) {
-			v = sprintf('%f Mb', this.round(m, 2));
+			v = sprintf('%fMb', this.round(m, 2));
 		} else if (k > 1) {
-			v = sprintf('%f Kb', this.round(k, 2));
+			v = sprintf('%fKb', this.round(k, 2));
 		} else {
-			v = sprintf('%d b', this.round(v, 0));
+			v = sprintf('%db', this.round(v, 0));
 		};
 		return v;
 	};
@@ -467,6 +486,10 @@ class Util {
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(String(v || ''));
+	};
+
+	isNumber (s: string) {
+		return String((Number(s) || 0) || '') === String(s || '');
 	};
 	
 };

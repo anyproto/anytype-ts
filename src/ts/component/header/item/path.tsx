@@ -20,19 +20,12 @@ class HeaderItemPath extends React.Component<Props, {}> {
 		const { rootId, block, index, onPath } = this.props;
 		const { breadcrumbs } = blockStore;
 		const { id, content } = block;
-		const details = blockStore.getDetail(breadcrumbs, content.targetBlockId);
-		const { iconEmoji, name } = details;
-		
-		let icon = null;
-		if (false) {
-			
-		} else {
-			icon = <Smile icon={iconEmoji} />;
-		};
+		const details = blockStore.getDetails(breadcrumbs, content.targetBlockId);
+		const { iconEmoji, iconImage, name } = details;
 		
 		return (
-			<DropTarget {...this.props} className="item" id={id} rootId={breadcrumbs} dropType={I.DragItem.Menu} onClick={(e: any) => { onPath(e, block, index); }}>
-				{icon}
+			<DropTarget {...this.props} className="item" id={id} rootId={breadcrumbs} dropType={I.DragItem.Menu} targetContextId={content.targetBlockId} onClick={(e: any) => { onPath(e, block, index); }}>
+				<Smile icon={iconEmoji} hash={iconImage} />
 				<div className="name">{Util.shorten(name, 32)}</div>
 				<Icon className="arrow" />
 			</DropTarget>

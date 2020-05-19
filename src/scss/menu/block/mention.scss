@@ -1,0 +1,11 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuBlockMention { width: 360px; }
+	.menu.menuBlockMention {
+		.content { max-height: 200px; }
+		.item {
+			.name { @include text-overflow-nw; width: calc(100% - 26px); }
+		}
+	}
+}

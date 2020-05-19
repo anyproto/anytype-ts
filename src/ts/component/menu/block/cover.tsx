@@ -27,7 +27,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId } = data;
 		const sections = this.getSections();
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		
 		const Section = (item: any) => (
 			<div className="section">
@@ -117,7 +117,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onSelect } = data;
-		const details = blockStore.getDetail(rootId, rootId);
+		const details = blockStore.getDetails(rootId, rootId);
 		
 		if (!details.coverId) {
 			commonStore.menuClose(this.props.id);

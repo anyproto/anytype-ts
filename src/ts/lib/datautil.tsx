@@ -117,7 +117,7 @@ class DataUtil {
 			const root = message.homeBlockId;
 			
 			if (!root) {
-				console.error('No root defined');
+				console.error('[pageInit] No root defined');
 				return;
 			};
 
@@ -310,8 +310,8 @@ class DataUtil {
 				type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true,
 				description: translate('blockDescriptionPage'), 
 			},
-			/*
 			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
+			/*
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
 			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },

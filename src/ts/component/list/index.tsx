@@ -36,20 +36,21 @@ class ListIndex extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(root, root, (it: any) => {
-			const details = blockStore.getDetail(root, it.content.targetBlockId);
+			const details = blockStore.getDetails(root, it.content.targetBlockId);
 			return !details.isArchived;
 		});
-		const map = blockStore.getDetailMap(root);
+		const map = blockStore.getDetailsMap(root);
 		const size = map.size;
 		
 		const Item = SortableElement((item: any) => {
 			const content = item.content || {};
-			const details = blockStore.getDetail(root, content.targetBlockId);
+			const details = blockStore.getDetails(root, content.targetBlockId);
+			const { name, iconEmoji, iconImage } = details;
 			
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
-					<Smile className="c48" icon={details.iconEmoji} size={24} />
-					<div className="name">{details.name}</div>
+					<Smile className="c48" icon={iconEmoji} hash={iconImage} size={24} />
+					<div className="name">{name}</div>
 				</div>
 			);
 		});
