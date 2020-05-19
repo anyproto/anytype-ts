@@ -256,10 +256,12 @@ class App extends React.Component<Props, State> {
 		});
 		
 		ipcRenderer.on('progress', this.onProgress);
-		ipcRenderer.on('updateReady', () => { commonStore.progressClear(); });
+		ipcRenderer.on('updateReady', () => { 
+			Storage.delete('popupNewBlock');
+			commonStore.progressClear(); 
+		});
 		ipcRenderer.on('import', this.onImport);
 		ipcRenderer.on('command', this.onCommand);
-		ipcRenderer.on('update', (e: any) => { Storage.delete('popupNewBlock'); });
 	};
 
 	setWindowEvents () {
