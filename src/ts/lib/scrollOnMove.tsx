@@ -1,4 +1,4 @@
-const BORDER = 40;
+const BORDER = 100;
 
 class ScrollOnMove {
 	
@@ -67,7 +67,7 @@ class ScrollOnMove {
 			let canScrollRight = (currentScrollX < maxScrollX);
 			let nextScrollX = currentScrollX;
 			let nextScrollY = currentScrollY;
-			let maxStep = 20;
+			let maxStep = 10;
 	
 			if (isInLeftEdge && canScrollLeft) {
 				let intensity = (edgeLeft - viewportX) / BORDER;
