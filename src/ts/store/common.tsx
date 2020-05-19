@@ -263,7 +263,11 @@ class CommonStore {
 			return this.smileCache[icon];
 		};
 
-		this.smileCache[icon] = getEmojiDataFromNative(icon, 'apple', EmojiData);
+		const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+		this.smileCache[icon] = { 
+			colons: data.colons, 
+			skin: data.skin 
+		};
 		return this.smileCache[icon];
 	};
 	
