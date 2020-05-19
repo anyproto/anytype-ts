@@ -406,7 +406,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		const { focused } = focus;
 		const k = e.which;
-		
+
 		if (keyboard.isFocused) {
 			return;
 		};
@@ -1167,6 +1167,7 @@ class EditorPage extends React.Component<Props, State> {
 			C.BlockMerge(rootId, next.id, focused.id, cb);
 		} else 
 		if (!length) {
+			focus.clear(true);
 			C.BlockUnlink(rootId, [ focused.id ], cb);
 		};
 	};
@@ -1214,6 +1215,7 @@ class EditorPage extends React.Component<Props, State> {
 			blockIds = [ focused.id ];
 		};
 
+		focus.clear(true);
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
 			if (message.error.code) {
 				return;
