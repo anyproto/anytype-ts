@@ -135,11 +135,11 @@ function menuInit () {
 			role: 'editMenu',
 			submenu: [
 				{
-					label: 'Undo', accelerator: 'CmdOrControl+Z',
+					label: 'Undo', accelerator: 'CommandOrControl+Z',
 					click: function () { win.webContents.send('command', 'undo'); }
 				},
 				{
-					label: 'Redo', accelerator: 'CmdOrControl+Shift+Z',
+					label: 'Redo', accelerator: 'CommandOrControl+Shift+Z',
 					click: function () { win.webContents.send('command', 'redo'); }
 				},
 				{ type: 'separator' },
@@ -147,7 +147,7 @@ function menuInit () {
 				{ label: 'Cut', role: 'cut' },
 				{ label: 'Paste', role: 'paste' },
 				{ 
-					label: 'Select all', accelerator: 'CmdOrControl+Shift+A',
+					label: 'Select all', accelerator: 'CommandOrControl+A',
 					click: function () { win.webContents.send('commandEditor', 'selectAll'); }
 				},
 			]
