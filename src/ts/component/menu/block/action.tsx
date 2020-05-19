@@ -346,9 +346,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		const { content } = block;
-		const { text, color, bgColor } = content;
+		const { color, bgColor } = content;
 		
-		const length = String(text || '').length;
 		const items = this.getItems();
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#item-' + item.id);
@@ -480,9 +479,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		const { content } = block;
-		
 		commonStore.menuClose(this.props.id);
-		
+
 		switch (item.id) {
 			case 'download':
 				if (!content.hash) {
@@ -567,7 +565,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	moveToPage () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, dataset } = data;
+		const { blockId, rootId, dataset } = data;
 		const { selection } = dataset || {};
 		
 		let ids = [];

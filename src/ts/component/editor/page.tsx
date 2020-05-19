@@ -551,6 +551,7 @@ class EditorPage extends React.Component<Props, State> {
 						blockId: focused,
 						blockIds: DataUtil.selectionGet(this.props),
 						rootId: rootId,
+						dataset: dataset,
 					},
 					onClose: () => {
 						selection.preventClear(false);

@@ -293,7 +293,6 @@ class BlockVideo extends React.Component<Props, {}> {
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const { selection } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
 		
 		commonStore.menuOpen('blockAction', { 
 			element: '#block-video-menu-' + id,
@@ -306,6 +305,7 @@ class BlockVideo extends React.Component<Props, {}> {
 				blockId: id,
 				blockIds: DataUtil.selectionGet(this.props),
 				rootId: rootId,
+				dataset: dataset,
 			},
 			onClose: () => {
 				selection.preventClear(false);

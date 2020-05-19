@@ -94,21 +94,20 @@ class DataUtil {
 	};
 	
 	selectionGet (props: any): string[] {
-		const { dataset, block } = props;
+		const { dataset } = props;
 		const { selection } = dataset || {};
+		const { focused } = focus;
 		
 		if (!selection) {
 			return [];
 		};
 		
 		let ids: string[] = selection.get(true);
-		
-		if (block && ids.indexOf(block.id) < 0) {
+		if (focused && ids.indexOf(focused) < 0) {
 			selection.clear(true);
-			selection.set([ block.id ]);
+			selection.set([ focused ]);
 			ids = selection.get(true);
 		};
-		
 		return ids;
 	};
 	
