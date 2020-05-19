@@ -237,14 +237,8 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { rootId, block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		
 		this._isMounted = true;
-
-		if (block.isToggle()) {
-			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
-		};
+		this.initToggle();
 	};
 	
 	componentDidUpdate () {
@@ -260,10 +254,21 @@ class Block extends React.Component<Props, {}> {
 		if (focused == id) {
 			focus.apply();
 		};
+
+		this.initToggle();
 	};
-	
+
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	initToggle () {
+		const { rootId, block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+
+		if (block.isToggle()) {
+			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
+		};
 	};
 	
 	onToggle (e: any) {
