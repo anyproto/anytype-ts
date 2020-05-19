@@ -264,11 +264,15 @@ class CommonStore {
 		};
 
 		const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
-		this.smileCache[icon] = { 
-			colons: data.colons, 
-			skin: data.skin 
+		if (data) {
+			this.smileCache[icon] = { 
+				colons: data.colons, 
+				skin: data.skin 
+			};
+			return this.smileCache[icon];
+		} else {
+			return {};
 		};
-		return this.smileCache[icon];
 	};
 	
 };
