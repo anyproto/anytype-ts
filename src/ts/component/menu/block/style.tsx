@@ -193,7 +193,10 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		
 		commonStore.menuClose(this.props.id);
 		onSelect(item);
-		selection.clear();
+		
+		if (selection) {
+			selection.clear();
+		};
 	};
 
 };

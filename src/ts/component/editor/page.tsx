@@ -156,6 +156,9 @@ class EditorPage extends React.Component<Props, State> {
 		
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
+
+		ipcRenderer.removeAllListeners('commandEditor');
+		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
 	};
 	
 	componentDidUpdate () {
@@ -188,6 +191,8 @@ class EditorPage extends React.Component<Props, State> {
 		this.unbind();
 		this.close(rootId);
 		focus.clear(false);
+
+		ipcRenderer.removeAllListeners('commandEditor');
 	};
 	
 	open () {
@@ -228,6 +233,28 @@ class EditorPage extends React.Component<Props, State> {
 			blockStore.setNumbers(rootId);
 		});
 	};
+
+	onCommand (cmd: string) {
+		const { rootId } = this.props;
+		const { focused, range } = focus;
+
+		let length = 0;
+		if (focused) {
+			const block = blockStore.getLeaf(rootId, focused);
+			length = block.getLength();
+		};
+		
+		switch (cmd) {
+			case 'selectAll':
+				if ((range.from == 0) && (range.to == length)) {
+					this.onSelectAll();
+				} else {
+					focus.set(focused, { from: 0, to: length });
+					focus.apply();
+				};
+				break;
+		};
+	};
 	
 	focusTitle () {
 		const { rootId } = this.props;
@@ -256,7 +283,6 @@ class EditorPage extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		//$('.header').css({ opacity: 0 });
 		$('.footer').css({ opacity: 0 });
 		$('.icon.dnd').css({ opacity: 0 });
 		$('#button-add').css({ opacity: 0 });
@@ -272,7 +298,6 @@ class EditorPage extends React.Component<Props, State> {
 	uiShow () {
 		const win = $(window);
 		
-		//$('.header').css({ opacity: 1 });
 		$('.footer').css({ opacity: 1 });
 		$('.icon.dnd').css({ opacity: '' });
 		$('#button-add').css({ opacity: '' });
@@ -472,7 +497,12 @@ class EditorPage extends React.Component<Props, State> {
 		if (e.ctrlKey || e.metaKey) {
 			if ((k == Key.a) && (range.from == 0) && (range.to == length)) {
 				e.preventDefault();
-				this.onSelectAll();
+				if ((range.from == 0) && (range.to == length)) {
+					this.onSelectAll();
+				} else {
+					focus.set(focused, { from: 0, to: length });
+					focus.apply();
+				};
 			};
 			
 			if (k == Key.c) {

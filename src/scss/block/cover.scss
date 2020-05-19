@@ -5,7 +5,7 @@
 	.wrapMenu { display: none; }
 	.wrapContent { position: relative; z-index: 1; width: 100%; height: 100%; }
 	
-	.loaderWrapper { position: absolute; left: 0px; top: 40px; width: 100%; height: calc(100% - 40px); background: rgba(255,255,255,0.7); z-index: 10; }
+	.loaderWrapper { position: absolute; left: 0px; top: 38px; width: 100%; height: calc(100% - 38px); background: rgba(255,255,255,0.7); z-index: 10; }
 	.loaderWrapper {
 		.loader { 
 			left: auto; top: 16px; right: 16px; margin: 0px; border-color: #fff; border-left: 2px solid $colorBlack; 

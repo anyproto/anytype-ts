@@ -143,7 +143,6 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		focus.clear(true);
-		
 		commonStore.menuOpen('blockCover', {
 			element: '#button-cover-edit',
 			type: I.MenuType.Vertical,

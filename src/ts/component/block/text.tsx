@@ -267,7 +267,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			self.props.history.push($(this).attr('href'));
+			DataUtil.pageOpen (e, self.props, $(this).data('param'));
 		});
 	};
 
@@ -293,8 +293,12 @@ class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
+			const smile = item.find('smile');
+			
 			item.addClass(param.class);
-			ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={data.param} />, item.get(0));
+			if (smile && smile.length) {
+				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={data.param} />, smile.get(0));
+			};
 		});
 	};
 
@@ -415,6 +419,11 @@ class BlockText extends React.Component<Props, {}> {
 
 		if ((e.key == '@') && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
 			this.onMention();
+		};
+
+		if ((e.key == 'e') && (e.ctrlKey || e.metaKey) && !commonStore.menuIsOpen('smile') && !block.isCode()) {
+			e.preventDefault();
+			this.onSmile();
 		};
 
 		focus.set(id, range);
@@ -594,12 +603,13 @@ class BlockText extends React.Component<Props, {}> {
 		const offset = el.offset();
 		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
 		
-		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
+		let value = this.getValue();
+		let x = rect.x - offset.left;
 		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
 
 		if (!rect.x && !rect.y) {
 			x = Constant.size.blockMenu;
-			y = 4;
+			y = -4;
 		};
 
 		commonStore.filterSet(range.from, '');
@@ -617,10 +627,54 @@ class BlockText extends React.Component<Props, {}> {
 					const to = range.from + text.length;
 
 					this.marks = Util.objectCopy(marks);
-					text = Util.stringInsert(block.content.text, text, range.from, range.to);
+					value = Util.stringInsert(value, text, range.from, range.to);
 
-					DataUtil.blockSetText(rootId, block, text, this.marks, () => {
+					DataUtil.blockSetText(rootId, block, value, this.marks, () => {
 						focus.set(block.id, { from: to, to: to });
+						focus.apply();
+					});
+				},
+			},
+		});
+	};
+
+	onSmile () {
+		const { rootId, block } = this.props;
+		const range = this.getRange();
+		const el = $('#block-' + block.id);
+		const offset = el.offset();
+		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		
+		let value = this.getValue();
+		let x = rect.x - offset.left;
+		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+
+		if (!rect.x && !rect.y) {
+			x = Constant.size.blockMenu;
+			y = 4;
+		};
+
+		commonStore.menuOpen('smile', {
+			element: el,
+			type: I.MenuType.Vertical,
+			offsetX: x,
+			offsetY: -y,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				noHead: true,
+				rootId: rootId,
+				blockId: block.id,
+				onSelect: (icon: string) => {
+					this.marks = Mark.toggle(this.marks, { 
+						type: I.MarkType.Smile, 
+						param: icon, 
+						range: { from: range.from, to: range.from + 1 },
+					});
+					value = Util.stringInsert(value, ' ', range.from, range.from);
+
+					DataUtil.blockSetText(rootId, block, value, this.marks, () => {
+						focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 						focus.apply();
 					});
 				},

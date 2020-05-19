@@ -84,6 +84,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
 		const { pages } = this.state;
 		const { filter } = commonStore;
 
@@ -91,6 +94,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 		let pageData = [];
 
 		for (let page of pages) {
+			if (page.id == rootId) {
+				continue;
+			};
+			
 			pageData.push({
 				id: page.id, 
 				name: page.details.name, 

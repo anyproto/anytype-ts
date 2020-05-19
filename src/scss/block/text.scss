@@ -17,11 +17,14 @@
 			background: rgba(172,169,150,0.15);
 		}
 
-		emoji { white-space: nowrap; display: inline-block; }
-		emoji * { user-select: text; }
+		emoji { display: inline-block; user-select: all; }
+		emoji * { user-select: all; }
+		emoji {
+			name { display: none; }
+		}
 
-		mention { cursor: pointer; white-space: nowrap; display: inline-block; }
-		mention * { user-select: text; }
+		mention { cursor: pointer; white-space: nowrap; display: inline-block; user-select: all; }
+		mention * { user-select: all; }
 		mention {
 			smile { padding-right: 6px; display: inline; position: relative; z-index: 1; }
 			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
@@ -36,6 +39,7 @@
 		mention:hover {
 			name::after { border-color: $colorBlack; }
 		}
+
 
 		mention.c24 name bgcolor { margin-left: -30px; padding-left: 30px; }
 		mention.c26 name bgcolor { margin-left: -32px; padding-left: 32px; }

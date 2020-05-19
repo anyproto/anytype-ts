@@ -1,8 +1,9 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockCover { width: 408px; padding: 0px; }
+	.menu.menuBlockCover { width: 408px; }
 	.menu.menuBlockCover {
+		.content { padding: 0px; }
 		.head { border-bottom: 1px solid #eae9e0; padding: 11px 16px; font-weight: 500; color: $colorDarkGrey; }
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }

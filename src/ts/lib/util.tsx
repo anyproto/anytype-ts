@@ -103,6 +103,7 @@ class Util {
 	};
 
 	stringInsert (haystack: string, needle: string, start: number, end: number): string {
+		haystack = String(haystack || '');
 		return haystack.substr(0, start) + needle + haystack.substr(end);
 	};
 	
@@ -217,7 +218,7 @@ class Util {
 		return 0;
 	};
 
-	getSmileById (id: string, skin: number): string {
+	getNativeSmileById (id: string, skin: number): string {
 		id = String(id || '');
 		skin = Number(skin) || 1;
 		return String($(Emoji({ html: true, emoji: id, skin: skin, size: 24, native: true })).text() || '');
@@ -226,7 +227,7 @@ class Util {
 	randomSmile (): string {
 		const id = this.icons[this.rand(0, this.icons.length - 1)];
 		const skin = this.rand(1, 6);
-		return this.getSmileById(id, skin);
+		return this.getNativeSmileById(id, skin);
 	};
 	
 	date (format: string, timestamp: number) {
@@ -325,13 +326,13 @@ class Util {
 		let m = v / (1024 * 1024);
 		let k = v / 1024;
 		if (g > 1) {
-			v = sprintf('%f Gb', this.round(g, 2));
+			v = sprintf('%fGb', this.round(g, 2));
 		} else if (m > 1) {
-			v = sprintf('%f Mb', this.round(m, 2));
+			v = sprintf('%fMb', this.round(m, 2));
 		} else if (k > 1) {
-			v = sprintf('%f Kb', this.round(k, 2));
+			v = sprintf('%fKb', this.round(k, 2));
 		} else {
-			v = sprintf('%d b', this.round(v, 0));
+			v = sprintf('%db', this.round(v, 0));
 		};
 		return v;
 	};
@@ -485,6 +486,10 @@ class Util {
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(String(v || ''));
+	};
+
+	isNumber (s: string) {
+		return String((Number(s) || 0) || '') === String(s || '');
 	};
 	
 };

@@ -18,7 +18,7 @@ const { dialog } = window.require('electron').remote;
 
 const LIMIT = 18;
 const HEIGHT = 32;
-const PAGE = 144;
+const PAGE = 90;
 
 class MenuSmile extends React.Component<Props, State> {
 
@@ -44,6 +44,9 @@ class MenuSmile extends React.Component<Props, State> {
 	
 	render () {
 		const { filter, page } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { noHead } = data;
 		const sections = this.getSections();
 		
 		let id = 1;
@@ -77,13 +80,15 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<div className="head">
-					<div className="btn" onClick={this.onRandom}>Random emoji</div>
-					<div className="btn" onClick={this.onUpload}>Upload image</div>
-					<div className="btn" onClick={this.onRemove}>Remove</div>
-				</div>
+				{!noHead ? (
+					<div className="head">
+						<div className="btn" onClick={this.onRandom}>Random emoji</div>
+						<div className="btn" onClick={this.onUpload}>Upload image</div>
+						<div className="btn" onClick={this.onRemove}>Remove</div>
+					</div>
+				) : ''}
 				
-				<form className="filter" onSubmit={this.onSubmit}>
+				<form className={[ 'filter', (!noHead ? 'withHead' : '') ].join(' ')} onSubmit={this.onSubmit}>
 					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 				</form>
 				
@@ -251,7 +256,10 @@ class MenuSmile extends React.Component<Props, State> {
 		this.setLastIds(id, this.skin);
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(Util.getSmileById(id, this.skin));
+
+		if (onSelect) {
+			onSelect(Util.getNativeSmileById(id, this.skin));
+		};
 	};
 	
 	onMouseDown (n: number, id: string, skin: number) {

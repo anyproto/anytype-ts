@@ -1,4 +1,4 @@
-const BORDER = 24;
+const BORDER = 40;
 
 class ScrollOnMove {
 	

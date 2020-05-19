@@ -1,5 +1,5 @@
 import { I, keyboard } from 'ts/lib';
-import { getRange, setRange } from 'selection-ranges';
+import { setRange } from 'selection-ranges';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -52,9 +52,8 @@ class Focus {
 		node.addClass('isFocused');
 		
 		const el = node.get(0);
-		
 		el.focus();
-		
+
 		if (node.hasClass('input')) {
 			el.setSelectionRange(this.range.from, this.range.to);
 		} else

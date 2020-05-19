@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
-import { Icon } from 'ts/component';
+import { Emoji } from 'emoji-mart';
 import { commonStore } from 'ts/store';
 import { I } from 'ts/lib';
 
@@ -24,7 +23,6 @@ interface State {
 	hash: string;
 };
 
-const $ = require('jquery');
 const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
 const blank = require('img/blank/smile.svg');
@@ -64,27 +62,23 @@ class Smile extends React.Component<Props, State> {
 		};
 		
 		let element = <img src={blank} className="icon blank" />;
+		let skin = 0;
+
 		if (icon) {
 			let colons = '';
 			if (icon.match(':')) {
 				colons = icon;
 			} else {
-				const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+				const data = commonStore.smileGet(icon);
 				if (data) {
 					colons = data.colons;
+					skin = data.skin;
 				};
 			};
 
 			if (colons) {
 				if (asImage) {
-					let scale = size / 64;
-					let span = $(Emoji({ html: true, emoji: colons, size: size, native: false }));
-					let style = {
-						objectPosition: span.css('backgroundPosition'),
-						transform: `scale3d(${scale}, ${scale}, 1)`,
-						margin: `-${size/2}px 0px 0px -${size/2}px`,
-					};
-					element = <img src={Constant.smile} className="smileImage" style={style} />;
+					element = <img src={this.srcFromColons(colons, skin)} className="smileImage" />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};
@@ -100,6 +94,18 @@ class Smile extends React.Component<Props, State> {
 				{element}
 			</div>
 		);
+	};
+
+	srcFromColons (colons: string, skin: number) {
+		let parts = colons.split('::');
+		if (parts.length > 1) {
+			parts[1] = parts[1].replace('skin-tone-', 'type-');
+		} else
+		if (skin) {
+			parts.push('type-' + skin);
+		};
+		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
+		return `./emoji/${src}.png`;
 	};
 	
 	onClick (e: any) {
