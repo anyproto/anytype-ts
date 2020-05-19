@@ -68,7 +68,7 @@ class Smile extends React.Component<Props, State> {
 			if (icon.match(':')) {
 				colons = icon;
 			} else {
-				const data = commonStore.smileGet(icon);
+				const data = Util.smileData(icon);
 				if (data) {
 					colons = data.colons;
 					skin = data.skin;

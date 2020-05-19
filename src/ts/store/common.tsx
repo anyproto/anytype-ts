@@ -1,6 +1,5 @@
 import { observable, action, computed, set } from 'mobx';
 import { I, Storage, Util, analytics } from 'ts/lib';
-import { getEmojiDataFromNative } from 'emoji-mart';
 
 const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
@@ -30,7 +29,6 @@ class CommonStore {
 	@observable public filterObj: Filter = { from: 0, text: '' };
 	@observable public gatewayUrl: string = '';
 	@observable public linkPreviewObj: LinkPreview;
-	public smileCache: any = {};
 	
 	@computed
 	get progress(): I.Progress {
@@ -256,27 +254,6 @@ class CommonStore {
 	@action
 	linkPreviewSet (param: LinkPreview) {
 		this.linkPreviewObj = param;
-	};
-
-	smileGet (icon: string) {
-		if (!icon) {
-			return {};
-		};
-
-		if (this.smileCache[icon]) {
-			return this.smileCache[icon];
-		};
-
-		const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
-		if (data) {
-			this.smileCache[icon] = { 
-				colons: data.colons, 
-				skin: data.skin 
-			};
-			return this.smileCache[icon];
-		} else {
-			return {};
-		};
 	};
 	
 };

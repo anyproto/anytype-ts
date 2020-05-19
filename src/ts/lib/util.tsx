@@ -1,6 +1,6 @@
 import { I, C, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { Emoji } from 'emoji-mart';
+import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -25,6 +25,7 @@ class Util {
 	timeoutLinkPreviewShow: number = 0;
 	timeoutLinkPreviewHide: number = 0;
 	linkPreviewOpen: boolean = false;
+	smileCache: any = {};
 	
 	constructor () {
 		this.icons = Object.keys(EmojiData.emojis);
@@ -503,6 +504,27 @@ class Util {
 
 		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
 		return `./emoji/${src}.png`;
+	};
+
+	smileData (icon: string) {
+		if (!icon) {
+			return {};
+		};
+
+		if (this.smileCache[icon]) {
+			return this.smileCache[icon];
+		};
+
+		const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+		if (data) {
+			this.smileCache[icon] = { 
+				colons: data.colons, 
+				skin: data.skin 
+			};
+			return this.smileCache[icon];
+		} else {
+			return {};
+		};
 	};
 	
 };
