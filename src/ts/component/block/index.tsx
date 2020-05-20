@@ -407,13 +407,16 @@ class Block extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
 		const offset = node.find('#block-' + prevBlockId).offset().left + Constant.size.blockMenu;
+		const add = $('#button-add');
 		
 		if (selection) {
 			selection.preventSelect(true);
 		};
+
 		this.unbind();
 		node.addClass('isResizing');
 		keyboard.setResize(true);
+		add.css({ opacity: 0 });
 		
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');

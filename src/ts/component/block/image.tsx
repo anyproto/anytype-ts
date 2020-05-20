@@ -68,7 +68,7 @@ class BlockImage extends React.Component<Props, {}> {
 					<div className="wrap resizable" style={css}>
 						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
-						<Icon id={'block-image-menu-' + id} className="dots" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
+						<Icon id={'block-image-menu-' + id} className="dots dn" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 					</div>
 				);
 				break;

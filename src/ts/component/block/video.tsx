@@ -72,7 +72,7 @@ class BlockVideo extends React.Component<Props, {}> {
 						<video className="media" controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
 						<Icon className="play" onClick={this.onPlay} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
-						<Icon id={'block-video-menu-' + id} className="dots" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
+						<Icon id={'block-video-menu-' + id} className="dots dn" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 					</div>
 				);
 				break;
