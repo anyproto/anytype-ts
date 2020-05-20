@@ -190,6 +190,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		if (list.length + 1 > cnt) {
 			height *= 2;
 		};
+		height += 20;
 		
 		items.css({ width: width }).removeClass('last');
 		body.css({ width: maxWidth });

@@ -8,7 +8,7 @@ const { dialog } = window.require('electron').remote;
 const $ = require('jquery');
 const raf = require('raf');
 const SMALL_WIDTH = 248;
-const ICON_WIDTH = 170;
+const ICON_WIDTH = 60;
 
 enum Size { Icon = 0, Small = 1, Full = 2 };
 

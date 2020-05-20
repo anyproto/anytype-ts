@@ -330,7 +330,7 @@ class EditorPage extends React.Component<Props, State> {
 		const withIcon = details.iconEmoji;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
-		let offset = 170;
+		let offset = 220;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
 		
@@ -341,7 +341,7 @@ class EditorPage extends React.Component<Props, State> {
 			offset = 408;
 		} else 
 		if (withIcon) {
-			offset = 224;
+			offset = 274;
 		};
 		
 		// Find hovered block by mouse coords
@@ -380,7 +380,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
-			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
+			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 1;
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
@@ -583,13 +583,13 @@ class EditorPage extends React.Component<Props, State> {
 				};
 				
 				// Link
-				if (k == Key.k) {
+				if (k == Key.l) {
 					call = true;
 					type = I.MarkType.Link;
 				};
 				
 				// Code
-				if (k == Key.e) {
+				if (k == Key.k) {
 					call = true;
 					type = I.MarkType.Code;
 				};

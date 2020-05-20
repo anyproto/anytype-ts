@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.editorWrapper { padding-top: 56px; }
+.editorWrapper { padding-top: 106px; }
 .editorWrapper {
 	.editor { position: relative; }
 	.editor {
@@ -17,7 +17,7 @@
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
 	.editorControls { 
-		position: absolute; width: 704px; height: 112px; left: 50%; top: 0px; z-index: 1; line-height: 16px; margin-left: -352px;
+		position: absolute; width: 704px; height: 162px; left: 50%; top: 0px; z-index: 1; line-height: 16px; margin-left: -352px;
 	}
 	.editorControls {
 		.sides { display: flex; width: 100%; position: absolute; bottom: 16px; }
@@ -52,7 +52,7 @@
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
-.editorWrapper.withIcon { padding-top: 40px; }
+.editorWrapper.withIcon { padding-top: 90px; }
 .editorWrapper.withIcon {
 	.editorControls {
 		.btn.addIcon { display: none; }

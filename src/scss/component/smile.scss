@@ -7,7 +7,14 @@
 		span { height: 100%; display: inline-block; vertical-align: middle; }
 	}
 	
-	.icon.blank { background-image: url('~img/blank/smile.svg'); }
+	.icon.blank { 
+		background-image: url('~img/blank/smile/20.svg'); position: absolute; left: 50%; top: 50%; 
+		width: 20px; height: 20px; margin: -10px 0px 0px -10px;
+	}
+	.icon.archive { 
+		background-image: url('~img/icon/archive.svg'); position: absolute; left: 50%; top: 50%; 
+		width: 24px; height: 24px; margin: -12px 0px 0px -12px;
+	}
 	.icon.image { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; object-fit: cover; }
 
 	.smileImage { width: 100%; height: 100%; }
@@ -17,46 +24,43 @@
 
 .smile.c20 { width: 20px; height: 20px; line-height: 20px; }
 .smile.c20 {
-	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	.icon.blank { width: 16px; height: 16px; }
+	.emoji-mart-emoji { margin: -3px 0px 0px 2px; }
 }
 
 .smile.c24 { width: 24px; height: 24px; line-height: 24px; }
 .smile.c24 {
 	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	.icon.blank { width: 20px; height: 20px; }
 }
 
 .smile.c26 { width: 26px; height: 26px; line-height: 26px; }
 .smile.c26 {
 	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	.icon.blank { width: 20px; height: 20px; }
 }
 
 .smile.c28 { width: 28px; height: 28px; line-height: 28px; }
 .smile.c28 {
 	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	.icon.blank { width: 22px; height: 22px; }
+	.icon.blank { width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
 }
 
 .smile.c32 { width: 32px; height: 32px; line-height: 32px; }
 .smile.c32 {
 	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	.icon.blank { width: 28px; height: 28px; }
+	.icon.blank { width: 24px; height: 24px; background-image: url('~img/blank/smile/24.svg'); margin: -12px 0px 0px -12px; }
 }
 
 .smile.c48 { width: 48px; height: 48px; border-radius: 100%; background-color: #f7f5f0; line-height: 48px; }
 .smile.c48 {
-	.emoji-mart-emoji { margin: -1px 0px 0px 1px; font-size: 24px; height: 28px; line-height: 1em; }
+	.emoji-mart-emoji { margin: -3px 0px 0px 1px; font-size: 24px; height: 28px; line-height: 1em; }
 	.emoji-mart-emoji { span { height: 28px; line-height: 32px; } }
-	.icon.blank { width: 24px; height: 24px; }
+	.icon.blank { width: 24px; height: 24px; background-image: url('~img/blank/smile/24.svg'); margin: -12px 0px 0px -12px; }
 }
 
 .smile.c64 { width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; }
 .smile.c64 {
 	.emoji-mart-emoji { margin: -1px 0px 0px 0px; font-size: 36px; height: 1em; line-height: 1em; }
 	.emoji-mart-emoji { span { height: 36px; line-height: 36px; } }
-	.icon.blank { width: 24px; height: 24px; }
+	.icon.blank { width: 24px; height: 24px; background-image: url('~img/blank/smile/24.svg'); margin: -12px 0px 0px -12px; }
 }
 
 .smile.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }

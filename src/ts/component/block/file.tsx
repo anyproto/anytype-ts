@@ -36,6 +36,8 @@ class BlockFile extends React.Component<Props, {}> {
 		const { state, hash, size, name, mime } = content;
 		
 		let element = null;
+		let cn = [ 'focusable', 'c' + id ];
+
 		switch (state) {
 			default:
 			case I.FileState.Empty:
@@ -51,6 +53,7 @@ class BlockFile extends React.Component<Props, {}> {
 				break;
 				
 			case I.FileState.Done:
+				cn.push('withFile');
 				element = (
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>
@@ -71,7 +74,7 @@ class BlockFile extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + id ].join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
+			<div className={cn.join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{element}
 			</div>
 		);
