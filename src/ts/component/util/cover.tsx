@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 interface Props {
@@ -36,8 +36,13 @@ class Cover extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
+
 		if ((type == I.CoverType.Image) && image) {
 			style.backgroundImage = `url("${commonStore.imageUrl(image, Constant.size.cover)}")`;
+		};
+
+		if ((type == I.CoverType.BgImage) && image) {
+			style.backgroundImage = `url("${Util.coverSrc(image)}")`;
 		};
 
 		if (src) {

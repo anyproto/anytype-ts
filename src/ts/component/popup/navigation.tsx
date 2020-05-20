@@ -345,12 +345,12 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: I.PageInfo) {
-		this.loadPage(item.id);
+		e.stopPropagation();
+		this.onConfirm(e, item);
 	};
 
 	onClickArrow (e: any, item: I.PageInfo) {
-		e.stopPropagation();
-		this.onConfirm(e, item);
+		this.loadPage(item.id);
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {

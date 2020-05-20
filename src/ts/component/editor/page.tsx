@@ -581,7 +581,7 @@ class EditorPage extends React.Component<Props, State> {
 					call = true;
 					type = I.MarkType.Strike;
 				};
-				
+
 				// Link
 				if (k == Key.l) {
 					call = true;

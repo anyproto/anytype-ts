@@ -37,6 +37,7 @@ class Keyboard {
 		const { focused } = focus;
 		
 		let k = e.which;
+		let rootId = this.isEditor() ? this.match.params.id : root;
 		
 		if (!this.isFocused) {
 			if ((k == Key.backspace) && !this.isBackDisabled) {
@@ -55,10 +56,19 @@ class Keyboard {
 		if (e.ctrlKey || e.metaKey) {
 			
 			// Navigation
+			if ((k == Key.s) && !e.shiftKey) {
+				commonStore.popupOpen('navigation', { 
+					data: { 
+						type: I.NavigationType.Go, 
+					}, 
+				});
+			};
+
 			if (k == Key.o) {
 				commonStore.popupOpen('navigation', { 
 					data: { 
 						type: I.NavigationType.Go, 
+						id: rootId,
 					}, 
 				});
 			};
@@ -67,13 +77,10 @@ class Keyboard {
 			if (k == Key.n) {
 				e.preventDefault();
 				
-				let rootId = root;
 				let targetId = '';
 				let position = I.BlockPosition.Bottom;
 				
 				if (this.isEditor()) {
-					rootId = this.match.params.id;
-					
 					const fb = blockStore.getLeaf(rootId, focused);
 					if (fb) {
 						if (fb.isTitle()) {

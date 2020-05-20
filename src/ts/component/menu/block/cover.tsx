@@ -36,10 +36,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				<div className="name">{item.name}</div>
 				<div className="items">
 					{item.children.map((item: any, i: number) => {
-						if (item.type == I.CoverType.BgImage) {
-							item.src = Util.coverSrc(item.value);
-						};
-						return <Cover key={i} {...item} className={item.value} onClick={(e: any) => { this.onSelect(e, item); }} />;
+						return <Cover key={i} {...item} image={item.value} className={item.value} onClick={(e: any) => { this.onSelect(e, item); }} />;
 					})}
 				</div>
 			</div>
