@@ -67,6 +67,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType, coverId } = details;
+		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
 		
 		let elements = null;
 		if (editing) {
@@ -110,10 +111,10 @@ class BlockCover extends React.Component<Props, State> {
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
-				{coverType == I.CoverType.Image ? (
-					<img id="cover" src="" className={[ 'cover', 'type' + details.coverType, details.coverId ].join(' ')} />
+				{canEdit ? (
+					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
 				) : (
-					<Cover id="cover" type={details.coverType} className={details.coverId} />
+					<Cover id="cover" type={coverType} className={coverId} />
 				)}
 				<div id="elements" className="elements">
 					{elements}
@@ -197,6 +198,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverId, coverType } = details;
+		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!node.hasClass('wrap')) {
@@ -205,7 +207,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		this.cover = node.find('#cover');
 		
-		if (coverType == I.CoverType.Image) {
+		if (canEdit) {
 			const el = this.cover.get(0);
 			const cb = () => {
 				const details = blockStore.getDetails(rootId, rootId);
@@ -228,7 +230,13 @@ class BlockCover extends React.Component<Props, State> {
 				el.onload = cb;
 			};
 			
-			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
+			if (coverType == I.CoverType.Image) {
+				el.src = commonStore.imageUrl(coverId, Constant.size.cover);
+			};
+
+			if (coverType == I.CoverType.BgImage) {
+				el.src = Util.coverSrc(coverId);
+			};
 		};
 	};
 	

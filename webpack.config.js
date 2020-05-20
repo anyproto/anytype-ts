@@ -14,6 +14,7 @@ module.exports = (env) => {
 			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
 			modules: [
 				path.resolve('./src/'),
+				path.resolve('./dist/'),
 				path.resolve('./node_modules')
 			]
 		},

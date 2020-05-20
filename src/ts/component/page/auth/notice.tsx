@@ -17,11 +17,11 @@ class PageAuthNotice extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { coverId, coverImg } = commonStore;
+		const { cover } = commonStore;
 		
         return (
 			<div>
-				<Cover type={I.CoverType.Image} num={coverId} image={coverImg} />
+				<Cover type={cover.type} className={cover.id} image={cover.image} />
 				<Header />
 				<Footer />
 				

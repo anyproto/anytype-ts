@@ -156,6 +156,7 @@
 			"dist/main.js",
 			"dist/run.js",
 			"dist/emoji/*",
+			"dist/cover/*",
 			"!node_modules/**/*",
 			"node_modules/electron-util",
 			"node_modules/new-github-issue-url",

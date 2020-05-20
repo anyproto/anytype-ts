@@ -50,7 +50,7 @@ class PopupSettings extends React.Component<Props, State> {
 	
 	render () {
 		const { account } = authStore;
-		const { coverId, coverImg } = commonStore;
+		const { cover } = commonStore;
 		const { page, loading } = this.state;
 		const pin = Storage.get('pin');
 
@@ -103,24 +103,25 @@ class PopupSettings extends React.Component<Props, State> {
 				break;
 				
 			case 'wallpaper':
-				let covers1 = [];
+				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
+				let covers1 = [  ];
 				let covers2 = [];
 				
-				for (let i = 1; i <= 10; ++i) {
-					covers1.push({ id: i, image: '', type: I.CoverType.Color });
+				for (let c of colors) {
+					covers1.push({ id: c, image: '', type: I.CoverType.Color });
 				};
 				
-				for (let i = 11; i <= 17; ++i) {
-					covers2.push({ id: i, image: '', type: I.CoverType.Image });
+				for (let i = 1; i <= 7; ++i) {
+					covers2.push({ id: 'c' + i, image: '', type: I.CoverType.BgImage });
 				};
 				
-				if (coverImg) {
-					covers2.unshift({ id: 0, image: coverImg, type: I.CoverType.Upload });
+				if (cover.image) {
+					covers2.unshift({ id: 0, image: cover.image, type: I.CoverType.Image });
 				};
 				
 				const Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
-						<Cover type={I.CoverType.Image} num={item.id} image={item.image} />
+						<Cover type={item.type} className={item.id} image={item.image} />
 					</div>
 				);
 				
@@ -143,7 +144,7 @@ class PopupSettings extends React.Component<Props, State> {
 							<Label className="name" text="Colours" />
 							<div className="covers">
 								{covers1.map((item: any, i: number) => (
-									<Item key={i} {...item} active={item.id == coverId} />
+									<Item key={i} {...item} active={item.id == cover.id} />
 								))}
 							</div>
 						</div>
@@ -152,7 +153,7 @@ class PopupSettings extends React.Component<Props, State> {
 							<Label className="name" text="Pictures" />
 							<div className="covers">
 								{covers2.map((item: any, i: number) => (
-									<Item key={i} {...item} active={item.id == coverId} />
+									<Item key={i} {...item} active={item.id == cover.id} />
 								))}
 							</div>
 						</div>
@@ -301,7 +302,7 @@ class PopupSettings extends React.Component<Props, State> {
 				};
 				
 				this.setState({ loading: false });
-				commonStore.coverSetImage(message.hash);
+				commonStore.coverSet('', message.hash, I.CoverType.Image);
 				DataUtil.pageSetCover(root, I.CoverType.Image, message.hash);
 			});
 		});
@@ -380,7 +381,7 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	
 	onCover (item: any) {
-		commonStore.coverSetNum(item.id);
+		commonStore.coverSet(item.id, item.image, item.type);
 	};
 	
 	onLogout (e: any) {

@@ -212,11 +212,8 @@ class App extends React.Component<Props, State> {
 
 		keyboard.init(history);
 
-		const coverNum = Number(Storage.get('coverNum'));
-		const coverImage = String(Storage.get('coverImage') || '');
-		if (!coverNum && !coverImage) {
-			commonStore.coverSetNum(Constant.default.cover);
-		};
+		const cover = Storage.get('cover');
+		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
 		
 		this.setIpcEvents();
 		this.setWindowEvents();

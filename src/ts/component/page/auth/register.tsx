@@ -34,12 +34,12 @@ class PageAuthRegister extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { coverId, coverImg } = commonStore;
+		const { cover } = commonStore;
 		const { error, preview } = this.state;
 
 		return (
 			<div>
-				<Cover type={I.CoverType.Image} num={coverId} image={coverImg} />
+				<Cover type={cover.type} className={cover.id} image={cover.image} />
 				<Header />
 				<Footer />
 				

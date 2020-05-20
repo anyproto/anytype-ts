@@ -526,6 +526,10 @@ class Util {
 			return {};
 		};
 	};
+
+	coverSrc (cover: string) {
+		return `./cover/${cover}.jpg`;
+	};
 	
 };
 

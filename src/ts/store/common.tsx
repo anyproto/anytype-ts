@@ -20,11 +20,16 @@ interface Filter {
 	text: string;
 };
 
+interface Cover {
+	id: string;
+	image: string;
+	type: I.CoverType;
+};
+
 class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
-	@observable public coverNum: number = 0;
-	@observable public coverImage: string = '';
+	@observable public coverObj: Cover = { id: '', type: 0, image: '' };
 	@observable public progressObj: I.Progress = {};
 	@observable public filterObj: Filter = { from: 0, text: '' };
 	@observable public gatewayUrl: string = '';
@@ -46,13 +51,8 @@ class CommonStore {
 	};
 	
 	@computed
-	get coverId(): number {
-		return Number(this.coverNum || Storage.get('coverNum')) || 0;
-	};
-	
-	@computed
-	get coverImg(): string {
-		return String(this.coverImage || Storage.get('coverImage') || '');
+	get cover(): Cover {
+		return this.coverObj;
 	};
 	
 	@computed
@@ -71,15 +71,13 @@ class CommonStore {
 	};
 	
 	@action
-	coverSetNum (num: number) {
-		this.coverNum = num;
-		Storage.set('coverNum', this.coverNum);
+	coverSet (id: string, image: string, type: I.CoverType) {
+		this.coverObj = { id: id, image: image, type: type };
+		Storage.set('cover', this.coverObj);
 	};
-	
-	@action
-	coverSetImage (image: string) {
-		this.coverImage = image;
-		Storage.set('coverImage', this.coverImage);
+
+	coverSetDefault () {
+		this.coverSet('c' + Constant.default.cover, '', I.CoverType.BgImage);
 	};
 	
 	@action

@@ -4,8 +4,8 @@ import { commonStore } from 'ts/store';
 
 interface Props {
 	id?: string;
-	num?: number;
 	image?: string;
+	src?: string;
 	className?: string;
 	type?: number;
 	x?: number;
@@ -28,7 +28,7 @@ class Cover extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, num, image, type, x, y, scale, withScale, className, onClick, onMouseDown } = this.props;
+		const { id, image, src, type, x, y, scale, withScale, className, onClick, onMouseDown } = this.props;
 		
 		let cn = [ 'cover', 'type' + type ];
 		let style: any = {};
@@ -36,11 +36,12 @@ class Cover extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
-		if (num) {
-			cn.push('c' + num);
-		} else
 		if ((type == I.CoverType.Image) && image) {
 			style.backgroundImage = `url("${commonStore.imageUrl(image, Constant.size.cover)}")`;
+		};
+
+		if (src) {
+			style.backgroundImage = `url("${src}")`;
 		};
 		
 		if (withScale) {
