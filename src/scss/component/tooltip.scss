@@ -4,4 +4,4 @@
 	position: fixed; left: 0px; top: 0px; border-radius: 4px; background: #6c6a5f; padding: 3px 7px; text-transform: none;
 	@include text-small; color: #fff; display: none; z-index: 1000; white-space: nowrap; transition: opacity 0.05s ease-in-out;
 }
-.tooltip .txt { line-height: 1; }
+.tooltip .txt { line-height: 1; margin-top: -1px; }
