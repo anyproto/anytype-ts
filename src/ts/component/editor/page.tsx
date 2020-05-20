@@ -583,13 +583,13 @@ class EditorPage extends React.Component<Props, State> {
 				};
 				
 				// Link
-				if (k == Key.k) {
+				if (k == Key.l) {
 					call = true;
 					type = I.MarkType.Link;
 				};
 				
 				// Code
-				if (k == Key.e) {
+				if (k == Key.k) {
 					call = true;
 					type = I.MarkType.Code;
 				};
