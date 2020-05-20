@@ -399,11 +399,11 @@ class BlockText extends React.Component<Props, {}> {
 			onMenuAdd(id, value, range);
 		};
 
-		if ((e.key == '@') && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
+		if ((e.key == '@') && (!value || (value[range.from - 1] == ' ')) && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
 			this.onMention();
 		};
 
-		if ((e.key == 'e') && (e.ctrlKey || e.metaKey) && !commonStore.menuIsOpen('smile') && !block.isCode()) {
+		if ((k == Key.e) && (e.ctrlKey || e.metaKey) && !commonStore.menuIsOpen('smile') && !block.isCode()) {
 			e.preventDefault();
 			this.onSmile();
 		};

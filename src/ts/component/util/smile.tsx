@@ -24,7 +24,8 @@ interface State {
 };
 
 const Constant = require('json/constant.json');
-const blank = require('img/blank/smile.svg');
+const blank20 = require('img/blank/smile/20.svg');
+const blank24 = require('img/blank/smile/24.svg');
 
 class Smile extends React.Component<Props, State> {
 	
@@ -58,6 +59,11 @@ class Smile extends React.Component<Props, State> {
 		};
 		if (canEdit) {
 			cn.push('canEdit');
+		};
+
+		let blank = blank20;
+		if (className.match(/c48/)) {
+			blank = blank24;
 		};
 		
 		let element = <img src={blank} className="icon blank" />;

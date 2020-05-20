@@ -104,11 +104,14 @@
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
 	
 	.block.blockText.code { padding: 6px 0px; }
-	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 35px 16px 16px 16px; background: rgba(247,245,240,0.5); }
+	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.code {
 		.value { font-family: 'Mono'; @include text-common; }
-		.select { position: absolute; top: 3px; left: 16px; z-index: 1; border: 0px;  color: $colorDarkGrey; @include text-common; }
+		.select { 
+			position: absolute; top: 9px; left: 16px; z-index: 1; border: 0px;  color: $colorDarkGrey; @include text-common; 
+			border-radius: 0px;
+		}
 		.select {
 			.current { padding: 0px 16px 0px 0px; }
 		}

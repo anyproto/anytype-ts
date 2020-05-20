@@ -298,34 +298,18 @@ class DataUtil {
 		];
 	};
 	
-	menuGetBlockPage () {
-		return [
-			{ 
-				type: I.BlockType.Page, id: 'existing', icon: 'existing', name: 'Existing Page', isBlock: true,
-				description: translate('blockDescriptionExisting'), 
-			},
-			{ 
-				type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true,
-				description: translate('blockDescriptionPage'), 
-			},
-			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
-			/*
-			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
-			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
-			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
-			{ id: 'contact', icon: 'contact', name: 'Contact', color: 'blue', isBlock: true },
-			*/
-		];
-	};
-	
 	menuGetTurnObject() {
 		return [
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet', isBlock: true },
 		];
 	};
-	
+
 	menuGetBlockObject () {
 		return [
+			{ 
+				type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true,
+				description: translate('blockDescriptionPage'), 
+			},
 			{ 
 				type: I.BlockType.File, id: I.FileType.File, icon: 'file', name: 'File', isBlock: true,
 				description: translate('blockDescriptionFile'), 
@@ -343,9 +327,16 @@ class DataUtil {
 				description: translate('blockDescriptionBookmark'), 
 			},
 			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code', isBlock: true,
-				description: translate('blockDescriptionCode'), 
+				type: I.BlockType.Page, id: 'existing', icon: 'existing', name: 'Link to object', isBlock: true,
+				description: translate('blockDescriptionExisting'), 
 			},
+			/*
+			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
+			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
+			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
+			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
+			{ id: 'contact', icon: 'contact', name: 'Contact', color: 'blue', isBlock: true },
+			*/
 		];
 	};
 	
@@ -358,6 +349,10 @@ class DataUtil {
 			{ 
 				type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider', isBlock: true,
 				description: translate('blockDescriptionDot'),  
+			},
+			{ 
+				type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code', isBlock: true,
+				description: translate('blockDescriptionCode'), 
 			},
 		];
 	};

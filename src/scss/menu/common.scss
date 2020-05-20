@@ -36,7 +36,7 @@
 		
 		.filter { border-bottom: 1px solid #eae9e0; padding: 3px 16px 10px 16px; }
 		.filter {
-			.input { padding: 0px; height: 22px; vertical-align: top; }
+			.input { padding: 0px; height: 22px; line-height: 22px; vertical-align: top; }
 		}
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey; }
@@ -67,14 +67,15 @@
 			
 			.smile { margin-right: 4px; }
 			.smile {
-				.icon.blank { margin: 0px; width: 18px; height: 18px; }
+				.icon.blank { margin: 0px; }
 			}
 		}
 		
+		.item.withDescription { padding-top: 8px; padding-bottom: 8px; }
 		.item.withDescription {
-			.icon { width: 32px; height: 32px; background-size: 20px 20px; border-radius: 6px; position: absolute; left: 16px; top: 8px; }
-			.descr { @include text-small; height: 18px; color: $colorDarkGrey; }
-			.info { padding-left: 40px; }
+			.icon { width: 40px; height: 40px; background-size: 20px 20px; border-radius: 6px; position: absolute; left: 16px; top: 8px; }
+			.descr { @include text-small; height: 18px; color: #6c6a5f; }
+			.info { padding-left: 52px; }
 			.name { line-height: 22px; }
 		}
 		
@@ -118,7 +119,7 @@
 			}
 		}
 		.icon.active {
-			 .arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); transform: rotateZ(-180deg); }
+			 .arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
 		}
 	}
 }

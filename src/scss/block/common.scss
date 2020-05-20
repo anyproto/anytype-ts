@@ -9,7 +9,7 @@
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
 			width: 12px; background-size: 2px 10px; opacity: 0; cursor: grab; vertical-align: top; 
-			border: 1px solid #dfddd0; box-shadow: 0px 0px 0px 0px rgba(255,255,255, 0); border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 6px;
+			border: 1px solid #dfddd0; box-shadow: 0px 0px 0px 0px rgba(255,255,255, 0); border-radius: 12px; height: 100%; transition: $transitionFast; margin-right: 7px;
 			background-image: url('~img/icon/block/menu0.svg');
 		}
 		.icon.dnd:hover { 
@@ -20,7 +20,7 @@
 		.colResize { width: 0px; position: relative; opacity: 0; }
 		.colResize.active { opacity: 1; }
 		.colResize {
-			.inner { position: absolute; left: 20px; top: -15px; width: 12px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; }
+			.inner { position: absolute; left: 18px; top: -15px; width: 12px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; }
 			.line { height: 100%; width: 2px; background: #ebe9e0; position: absolute; left: 50%; top: 0px; margin-left: -1px; }
 		}
 		

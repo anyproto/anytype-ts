@@ -13,9 +13,6 @@
 		
 		.filter { padding: 3px 16px 10px 16px; border-bottom: 1px solid #eae9e0; }
 		.filter.withHead { padding-top: 11px; }
-		.filter {
-			.input-text { padding: 0px; height: 22px; vertical-align: top; }
-		}
 	
 		.items { overflow: auto; height: 392px; }
 		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
