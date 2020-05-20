@@ -56,7 +56,7 @@
 	"blockDescriptionNumbered": { "en": "Numbered list" },
 	"blockDescriptionToggle": { "en": "Hide and show content inside" },
 	"blockDescriptionPage": { "en": "Create new page inside this one" },
-	"blockDescriptionExisting": { "en": "Link existing page with this one" },
+	"blockDescriptionExisting": { "en": "Link to existing page" },
 	"blockDescriptionFile": { "en": "Store file in original state" },
 	"blockDescriptionImage": { "en": "Upload and enrich the page with image" },
 	"blockDescriptionVideo": { "en": "Upload playable video" },

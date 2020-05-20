@@ -330,7 +330,7 @@ class EditorPage extends React.Component<Props, State> {
 		const withIcon = details.iconEmoji;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
-		let offset = 170;
+		let offset = 220;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
 		
@@ -341,7 +341,7 @@ class EditorPage extends React.Component<Props, State> {
 			offset = 408;
 		} else 
 		if (withIcon) {
-			offset = 224;
+			offset = 274;
 		};
 		
 		// Find hovered block by mouse coords

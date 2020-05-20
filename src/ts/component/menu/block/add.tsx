@@ -192,10 +192,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		let sections: any[] = [
 			{ id: 'text', icon: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
-			{ id: 'page', icon: 'page', name: 'Page', color: 'blue', children: DataUtil.menuGetBlockPage() },
 			{ id: 'list', icon: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
-			{ id: 'file', icon: 'file', name: 'Object', color: 'purple', children: DataUtil.menuGetBlockObject() },
-			{ id: 'other', icon: 'line', name: 'Other', color: 'red', children: DataUtil.menuGetBlockOther() },
+			{ id: 'file', icon: 'file', name: 'Object', color: 'blue', children: DataUtil.menuGetBlockObject() },
+			{ id: 'other', icon: 'line', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
 		];
 		
 		if (filter && filter.text) {

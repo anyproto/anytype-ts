@@ -40,7 +40,7 @@
 		.descr { @include text-small; height: 36px; color: #6c6a5f; margin: 5px 0px 6px 0px; @include text-overflow; }
 		.link { @include text-small; height: 18px; color: $colorBlack; @include text-overflow-nw; }
 		.img { width: 100%; height: 100%; background-repeat: no-repeat; background-size: cover; background-position: center center; }
-		.icon.fav { width: 16px; height: 16px; margin: -4px 4px 0px 0px; }
+		.icon.fav { width: 16px; height: 16px; margin: -2px 4px 0px 0px; }
 	}
 	
 	.block.blockBookmark > .wrapContent > .selectable > .dropTarget { padding-top: 0px; padding-bottom: 0px; }

@@ -46,10 +46,21 @@ class ListIndex extends React.Component<Props, {}> {
 			const content = item.content || {};
 			const details = blockStore.getDetails(root, content.targetBlockId);
 			const { name, iconEmoji, iconImage } = details;
+
+			let icon = iconEmoji;
+			if (content.style == I.LinkStyle.Archive) {
+				icon = (
+					<div className="smile c48">
+						<Icon className="archive" />
+					</div>
+				);
+			} else {
+				icon = <Smile className="c48" icon={iconEmoji} hash={iconImage} size={24} />;
+			};
 			
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
-					<Smile className="c48" icon={iconEmoji} hash={iconImage} size={24} />
+					{icon}
 					<div className="name">{name}</div>
 				</div>
 			);

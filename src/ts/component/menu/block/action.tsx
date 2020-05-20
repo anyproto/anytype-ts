@@ -227,7 +227,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			sections = sections.concat([
-				{ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetBlockPage() },
+				{ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetTurnPage() },
 				{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
 				{ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() },
 				{ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() },
