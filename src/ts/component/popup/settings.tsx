@@ -50,7 +50,7 @@ class PopupSettings extends React.Component<Props, State> {
 	
 	render () {
 		const { account } = authStore;
-		const { cover } = commonStore;
+		const { cover, coverImage } = commonStore;
 		const { page, loading } = this.state;
 		const pin = Storage.get('pin');
 
@@ -115,13 +115,13 @@ class PopupSettings extends React.Component<Props, State> {
 					covers2.push({ id: 'c' + i, image: '', type: I.CoverType.BgImage });
 				};
 				
-				if (cover.image) {
-					covers2.unshift({ id: 0, image: cover.image, type: I.CoverType.Image });
+				if (coverImage) {
+					covers2.unshift({ id: 0, image: coverImage, type: I.CoverType.Image });
 				};
 				
 				const Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
-						<Cover type={item.type} className={item.id} image={item.image} />
+						<Cover {...item} className={item.id} />
 					</div>
 				);
 				
@@ -302,6 +302,7 @@ class PopupSettings extends React.Component<Props, State> {
 				};
 				
 				this.setState({ loading: false });
+				Storage.set('coverImage', message.hash);
 				commonStore.coverSet('', message.hash, I.CoverType.Image);
 				DataUtil.pageSetCover(root, I.CoverType.Image, message.hash);
 			});
@@ -321,8 +322,6 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	
 	onChangePin (e: any, id: number) {
-		const { history } = this.props;
-		
 		let k = e.which;
 		let input = this.refObj[id];
 		let prev = this.refObj[id - 1];
@@ -381,6 +380,9 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	
 	onCover (item: any) {
+		const { root } = blockStore;
+
+		DataUtil.pageSetCover(root, item.type, item.image || item.id);
 		commonStore.coverSet(item.id, item.image, item.type);
 	};
 	

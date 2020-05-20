@@ -22,7 +22,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 
 		return (
 			<div>
-				<Cover type={cover.type} className={cover.id} image={cover.image} />
+				<Cover {...cover} />
 				<Header />
 				<Footer />
 				

@@ -30,6 +30,7 @@ class CommonStore {
 	@observable public popupList: I.Popup[] = [];
 	@observable public menuList: I.Menu[] = [];
 	@observable public coverObj: Cover = { id: '', type: 0, image: '' };
+	@observable public coverImg: string = '';
 	@observable public progressObj: I.Progress = {};
 	@observable public filterObj: Filter = { from: 0, text: '' };
 	@observable public gatewayUrl: string = '';
@@ -54,6 +55,11 @@ class CommonStore {
 	get cover(): Cover {
 		return this.coverObj;
 	};
+
+	@computed
+	get coverImage(): Cover {
+		return this.coverImg || Storage.get('coverImg');
+	};
 	
 	@computed
 	get popups(): I.Popup[] {
@@ -74,6 +80,12 @@ class CommonStore {
 	coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id: id, image: image, type: type };
 		Storage.set('cover', this.coverObj);
+	};
+
+	@action
+	coverSetUploadedImage (image: string) {
+		this.coverImg = image;
+		Storage.set('coverImg', this.coverImg);
 	};
 
 	coverSetDefault () {

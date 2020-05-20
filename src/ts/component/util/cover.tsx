@@ -30,7 +30,7 @@ class Cover extends React.Component<Props, {}> {
 	render () {
 		const { id, image, src, type, x, y, scale, withScale, className, onClick, onMouseDown } = this.props;
 		
-		let cn = [ 'cover', 'type' + type ];
+		let cn = [ 'cover', 'type' + type, id ];
 		let style: any = {};
 		
 		if (className) {
@@ -41,8 +41,8 @@ class Cover extends React.Component<Props, {}> {
 			style.backgroundImage = `url("${commonStore.imageUrl(image, Constant.size.cover)}")`;
 		};
 
-		if ((type == I.CoverType.BgImage) && image) {
-			style.backgroundImage = `url("${Util.coverSrc(image)}")`;
+		if ((type == I.CoverType.BgImage) && id) {
+			style.backgroundImage = `url("${Util.coverSrc(id)}")`;
 		};
 
 		if (src) {

@@ -145,7 +145,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
-					{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+					{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="buttons">
 						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
 						<Button text="Cancel" className="grey" onClick={this.onCancel} />

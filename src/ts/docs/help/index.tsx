@@ -12,7 +12,7 @@ const Index = [
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'We asking you to provide feedback in every moment, at least 2 times a month. You can write us a feedback via email <a href="mailto:hello@anytype.io">hello@anytype.io</a> or through (?) bottom-right menu. More features will be added one by one during the coming months.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'We are working on this section and If you can’t find your answer here, please, get in touch.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '' },
-	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '<i><font style="text-align: right; color:#aca996">This is a closed alpha program.</i>' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '<i class="note">This is a closed alpha program.</i>' },
 ];
 
 import Shortcuts from './shortcuts';

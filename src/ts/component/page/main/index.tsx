@@ -47,7 +47,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<Cover type={cover.type} className={cover.id} image={cover.image} />
+				<Cover {...cover} />
 				<Header {...this.props} />
 				<Footer {...this.props} />
 				
