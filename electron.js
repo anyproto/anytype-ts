@@ -122,7 +122,6 @@ function createWindow () {
 function menuInit () {
 	let menu = [
 		appMenu(),
-		/*
 		{
 			role: 'fileMenu',
 			submenu: [
@@ -132,7 +131,6 @@ function menuInit () {
 				},
 			]
 		},
-		*/
 		{
 			role: 'editMenu',
 			submenu: [

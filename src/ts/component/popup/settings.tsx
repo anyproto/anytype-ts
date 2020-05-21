@@ -31,6 +31,7 @@ class PopupSettings extends React.Component<Props, State> {
 		loading: false,
 	};
 	onConfirmPin: any = null;
+	format: string = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -58,11 +59,11 @@ class PopupSettings extends React.Component<Props, State> {
 		let inputs = [];
 		let Item = null;
 		
-		let head = (
+		let Head = (item: any) => (
 			<div className="head">
-				<div className="element" onClick={() => { this.onPage('index'); }}>
+				<div className="element" onClick={() => { this.onPage(item.id); }}>
 					<Icon className="back" />
-					Settings
+					{item.name}
 				</div>
 			</div>
 		);
@@ -136,8 +137,7 @@ class PopupSettings extends React.Component<Props, State> {
 					<div>
 						{loading ? <Loader /> : ''}
 
-						{head}
-						
+						<Head id="index" name="Settings" />
 						<Title text="Wallpaper" />
 						
 						<div className="row first">
@@ -171,8 +171,7 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'phrase':
 				content = (
 					<div>
-						{head}
-						
+						<Head id="index" name="Settings" />
 						<Title text="Keychain phrase" />
 						<Label text="Your Keychain phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place." />
 						<div className="inputs">
@@ -185,8 +184,7 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'pinIndex':
 				content = (
 					<div>
-						{head}
-						
+						<Head id="index" name="Settings" />
 						<Title text="Pin code" />
 						<Label text="The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or keychain phrase. So, please, remember your pin code" />
 						
@@ -224,12 +222,7 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						<div className="head">
-							<div className="element" onClick={() => { this.onPage('pinIndex'); }}>
-								Cancel
-							</div>
-						</div>
-						
+						<Head id="pinIndex" name="Cancel" />
 						<Title text="Pin code" />
 						<Label text="The pin code will protect your secret phrase. As we do not store your secret phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or secret phrase. So, please, remember your pin code." />
 						<div className="inputs">
@@ -250,12 +243,7 @@ class PopupSettings extends React.Component<Props, State> {
 			
 				content = (
 					<div>
-						<div className="head">
-							<div className="element" onClick={() => { this.onPage('pinIndex'); }}>
-								Cancel
-							</div>
-						</div>
-						
+						<Head id="pinIndex" name="Cancel" />
 						<Title text="Pin code" />
 						<Label text="To continue, first verify that it’s you. Enter current pin code" />
 						<div className="inputs">
@@ -269,19 +257,28 @@ class PopupSettings extends React.Component<Props, State> {
 				break;
 
 			case 'importIndex':
-				const items = [ { id: 'notion', name: 'Notion' } ];
+				const items = [ 
+					{ id: 'notion', name: 'Notion' },
+					{ id: 'evernote', name: 'Evernote' },
+					{ id: 'roam', name: 'Roam Researh' },
+					{ id: 'word', name: 'Word' },
+					{ id: 'text', name: 'Text & Markdown' },
+					{ id: 'html', name: 'HTML' },
+					{ id: 'csv', name: 'CSV' },
+				];
 
 				Item = (item: any) => (
-					<div className={'item ' + item.id} onClick={() => {  }}>
-						<Icon />
-						<div className="name">{item.name}</div>
+					<div className={'item ' + item.id} onClick={() => { this.onPage(Util.toCamelCase('import-' + item.id)); }}>
+						<div className="txt">
+							<Icon />
+							<div className="name">{item.name}</div>
+						</div>
 					</div>
 				);
 
 				content = (
 					<div>
-						{head}
-						
+						<Head id="index" name="Settings" />
 						<Title text="Import" />
 						<Label text="Choose application or format, which data you want to import" />
 						<div className="items">
@@ -289,6 +286,31 @@ class PopupSettings extends React.Component<Props, State> {
 								<Item key={i} {...item} />
 							))}
 						</div>
+					</div>
+				);
+				break;
+			
+			case 'importNotion':
+				content = (
+					<div>
+						<Head id="importIndex" name="Import" />
+						
+						<Title text="How to import from Notion" />
+						<Label text="First you need to export data." />
+						
+						<div className="path">
+							<b>Get all data:</b><br/>
+							⚙ Settings & Members → 🏠 Settings → Export all workspace content
+						</div>
+
+						<div className="path">
+							<b>Get certain pages:</b><br/>
+							Three dots menu on the top-left corner → 📎 Export
+						</div>
+
+						<Label className="last" text="After that you need to select Zip archive and Anytype will do the rest" />
+
+						<Button text="Import data" className="orange" onClick={() => { this.onImport('notion'); }} />
 					</div>
 				);
 				break;
@@ -302,6 +324,14 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { page } = data;
+
+		if (page) {
+			this.onPage(page);
+		};
+		
 		this.init();
 	};
 	
@@ -340,7 +370,7 @@ class PopupSettings extends React.Component<Props, State> {
 			});
 		});
 	};
-	
+
 	onFocusPhrase (e: any) {
 		this.phraseRef.select();
 	};
@@ -425,6 +455,23 @@ class PopupSettings extends React.Component<Props, State> {
 		authStore.logout();
 		history.push('/');
 	};
+
+	onImport (format: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const options: any = { properties: [ 'openFile', 'openDirectory' ] };
+
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+			
+			C.BlockImportMarkdown(rootId, files[0]);
+			commonStore.popupClose(this.props.id);
+		});
+	};
 	
 	init () {
 		this.resize();
@@ -443,7 +490,7 @@ class PopupSettings extends React.Component<Props, State> {
 			obj.css({ marginTop: -obj.outerHeight() / 2 });
 		});
 	};
-	
+
 };
 
 export default PopupSettings;

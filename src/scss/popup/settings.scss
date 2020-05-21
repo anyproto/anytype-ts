@@ -117,8 +117,35 @@
 		}
 
 		.tabImportIndex {
-			.item {  }
+			.label { margin-bottom: 26px; }
+			.item { 
+				width: 132px; height: 84px; margin: 0px 16px 16px 0px; border: 1px solid $colorLightGrey; border-radius: 8px; 
+				text-align: center; transition: $transitionFast; line-height: 82px; opacity: 0.5; cursor: no-drop; 
+				display: inline-block; vertical-align: top;
+			}
+			.item:nth-child(4n + 4) { margin-right: 0px; }
 
+			.item {
+				.icon { margin-bottom: 6px; height: 32px; }
+				.name { @include text-small; }
+			}
+
+			.item.notion { opacity: 1; cursor: pointer; }
+			.item.notion:hover { border-color: $colorBlack; }
+
+			.item.notion .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/notion.svg'); }
+			.item.evernote .icon { width: 27px; background-image: url('~img/icon/popup/settings/import/evernote.svg'); }
+			.item.roam .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/roam.svg'); }
+			.item.word .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/word.svg'); }
+			.item.text .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/text.svg'); }
+			.item.html .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/html.svg'); }
+			.item.csv .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/csv.svg'); }
+		}
+
+		.tabImportNotion {
+			.label, .path { margin-bottom: 10px; }
+			.label.last { margin: 0px; }
+			.button { margin-top: 25px; }
 		}
 
 	}

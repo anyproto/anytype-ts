@@ -322,19 +322,16 @@ class App extends React.Component<Props, State> {
 	onImport () {
 		const { root } = blockStore;
 		const id = Storage.get('pageId') || root || '';
-		const options: any = { properties: [ 'openFile', 'openDirectory' ] };
 
 		if (!id) {
 			return;
 		};
 
-		dialog.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-			
-			C.BlockImportMarkdown(id, files[0]);
+		commonStore.popupOpen('settings', {
+			data: {
+				page: 'importIndex',
+				rootId: id,
+			}
 		});
 	};
 	
