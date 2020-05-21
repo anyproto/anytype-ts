@@ -583,15 +583,15 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const el = $('#block-' + block.id);
 		const offset = el.offset();
-		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
-		
+		const rect = Util.selectionRect();
+
 		let value = this.getValue();
 		let x = rect.x - offset.left;
-		let y = el.outerHeight() - (rect.y - (offset.top - $(window).scrollTop())) - rect.height - 8;
+		let y = rect.y - (offset.top - $(window).scrollTop()) - el.outerHeight() + rect.height + 8;
 
 		if (!rect.x && !rect.y) {
 			x = Constant.size.blockMenu;
-			y = 4;
+			y = -4;
 		};
 
 		commonStore.filterSet(range.from, '');
@@ -625,11 +625,11 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const el = $('#block-' + block.id);
 		const offset = el.offset();
-		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		const rect = Util.selectionRect();
 		
 		let value = this.getValue();
 		let x = rect.x - offset.left;
-		let y = el.outerHeight() - (rect.y - (offset.top - $(window).scrollTop())) - rect.height - 8;
+		let y = rect.y - (offset.top - $(window).scrollTop());
 
 		if (!rect.x && !rect.y) {
 			x = Constant.size.blockMenu;
@@ -772,7 +772,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const el = $('#block-' + id);
 		const offset = el.offset();
-		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		const rect = Util.selectionRect();
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
 		const x = rect.x - offset.left - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 8;

@@ -530,6 +530,10 @@ class Util {
 	coverSrc (cover: string) {
 		return `./cover/${cover}.jpg`;
 	};
+
+	selectionRect (): DOMRect {
+		return window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+	};
 	
 };
 

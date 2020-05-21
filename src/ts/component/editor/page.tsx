@@ -823,7 +823,7 @@ class EditorPage extends React.Component<Props, State> {
 
 		const el = $('#block-' + id);
 		const offset = el.offset();
-		const rect = window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+		const rect = Util.selectionRect();
 		
 		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
 		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;

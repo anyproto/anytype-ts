@@ -108,7 +108,7 @@ class Keyboard {
 	};
 	
 	isEditor () {
-		return this.match && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
+		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
 	};
 	
 	onKeyUp (e: any) {
