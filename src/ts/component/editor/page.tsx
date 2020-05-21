@@ -825,12 +825,12 @@ class EditorPage extends React.Component<Props, State> {
 		const offset = el.offset();
 		const rect = Util.selectionRect();
 		
-		let x = rect.x - offset.left - Constant.size.menuBlockAdd / 2 + rect.width / 2;
-		let y = -el.outerHeight() + (rect.y - (offset.top - $(window).scrollTop())) + rect.height + 8;
+		let x = rect.x - offset.left;
+		let y = rect.y - (offset.top - $(window).scrollTop()) - el.outerHeight() + rect.height + 8;
 
 		if (!rect.x && !rect.y) {
 			x = Constant.size.blockMenu;
-			y = 8;
+			y = -4;
 		};
 
 		commonStore.filterSet(range.from, '');
@@ -843,7 +843,6 @@ class EditorPage extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
-				const { filter } = commonStore;
 				const block = blockStore.getLeaf(rootId, id);
 
 				// Clear filter in block text on close

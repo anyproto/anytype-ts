@@ -423,6 +423,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const { id } = block;
 		const value = this.getValue();
+		const range = this.getRange();
 		const k = e.which;
 		
 		keyboard.unsetPressed(k);
@@ -438,8 +439,11 @@ class BlockText extends React.Component<Props, {}> {
 				commonStore.filterSet(0, '');
 				commonStore.menuClose('blockAdd');
 			} else {
-				const part = value.substr(filter.from, value.length).match(/^\/([^\s\/]*)/);
-				commonStore.filterSetText(part ? part[1] : '');
+				const d = range.from - filter.from;
+				if (d >= 0) {
+					const part = value.substr(filter.from, d).replace(/^\//, '');
+					commonStore.filterSetText(part);
+				};
 			};
 		};
 
@@ -448,8 +452,11 @@ class BlockText extends React.Component<Props, {}> {
 				commonStore.filterSet(0, '');
 				commonStore.menuClose('blockMention');
 			} else {
-				const part = value.substr(filter.from, value.length).match(/^@([^\s\/]*)/);
-				commonStore.filterSetText(part ? part[1] : '');
+				const d = range.from - filter.from;
+				if (d >= 0) {
+					const part = value.substr(filter.from, d).replace(/^@/, '');
+					commonStore.filterSetText(part);
+				};
 			};
 		};
 		
