@@ -302,7 +302,7 @@ class PopupSettings extends React.Component<Props, State> {
 				};
 				
 				this.setState({ loading: false });
-				Storage.set('coverImage', message.hash);
+				commonStore.coverSetUploadedImage(message.hash);
 				commonStore.coverSet('', message.hash, I.CoverType.Image);
 				DataUtil.pageSetCover(root, I.CoverType.Image, message.hash);
 			});
