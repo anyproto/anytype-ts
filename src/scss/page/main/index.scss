@@ -25,8 +25,8 @@
 		
 		.item {
 			.name { 
-				@include text-paragraph; font-weight: 500; height: 22px; width: 100%;
-				word-break: break-word; position: absolute; left: 0px; bottom: 16px; padding: 0px 16px; @include text-overflow-nw;  
+				@include text-paragraph; height: 22px; width: 100%; word-break: break-word; position: absolute; left: 0px; bottom: 16px; 
+				padding: 0px 16px; @include text-overflow-nw;  
 			}
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }

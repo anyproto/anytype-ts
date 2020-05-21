@@ -20,7 +20,7 @@ import BlockLink from './link';
 import BlockCover from './cover';
 
 interface Props extends RouteComponentProps<any> {
-	index?: number;
+	index?: any;
 	rootId: string;
 	dataset?: any;
 	cnt?: number;

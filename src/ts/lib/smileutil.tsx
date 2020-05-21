@@ -61,9 +61,16 @@ class SmileUtil {
 	};
 
 	nativeById (id: string, skin: number): string {
-		const item = EmojiData.emojis[id];
-		let uni = item.unified;
+		if (!id) {
+			return '';
+		};
 
+		const item = EmojiData.emojis[id];
+		if (!item) {
+			return '';
+		};
+
+		let uni = item.unified;
 		if (item.skin_variations && (skin > 1)) {
 			let skinCode = SKINS[(skin - 1)];
 			let skinItem = item.skin_variations[skinCode];

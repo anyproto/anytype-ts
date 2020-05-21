@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, IconUser, Switch, Button, Title, Label, Cover, Textarea, Input, Loader } from 'ts/component';
+import { Icon, Button, Title, Label, Cover, Textarea, Input, Loader, Smile } from 'ts/component';
 import { I, C, Storage, Key, Util, DataUtil } from 'ts/lib';
 import { authStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -300,12 +300,12 @@ class PopupSettings extends React.Component<Props, State> {
 						
 						<div className="path">
 							<b>Get all data:</b><br/>
-							⚙ Settings & Members → 🏠 Settings → Export all workspace content
+							<Smile icon=":gear:" /> Settings & Members → <Smile icon=":house:" /> Settings → Export all workspace content
 						</div>
 
 						<div className="path">
 							<b>Get certain pages:</b><br/>
-							Three dots menu on the top-left corner → 📎 Export
+							Three dots menu on the top-left corner → <Smile icon=":paperclip:" /> Export
 						</div>
 
 						<Label className="last" text="After that you need to select Zip archive and Anytype will do the rest" />

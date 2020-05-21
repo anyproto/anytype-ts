@@ -9,6 +9,7 @@ import { I, Util} from 'ts/lib';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	block: any;
+	index?: any;
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
@@ -20,7 +21,7 @@ class ListChildren extends React.Component<Props, {}> {
 	refObj: any = {};
 	
 	render () {
-		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block } = this.props;
+		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const children = blockStore.getChildren(rootId, id);
@@ -65,7 +66,7 @@ class ListChildren extends React.Component<Props, {}> {
 					return (
 						<React.Fragment key={item.id}>
 							{(i > 0) && isRow ? <ColResize index={i} /> : ''}
-							<Block {...this.props} block={item} cnt={length} css={css} className={cn.join(' ')} index={i} />
+							<Block {...this.props} block={item} cnt={length} css={css} className={cn.join(' ')} index={index + '-' + i} />
 						</React.Fragment>
 					);
 				})}

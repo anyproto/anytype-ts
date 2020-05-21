@@ -78,4 +78,8 @@
 	
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }
+
+	// Remove padding for first block after title
+	.block.index-1 { padding-top: 0px !important; }
+	#block-div-1 > .wrapContent > .children > .block.first { padding-top: 0px !important; }
 }

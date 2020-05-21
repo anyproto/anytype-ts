@@ -94,8 +94,7 @@
 	
 	.block.blockText.quote { padding: 6px 0px 6px 0px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { 
-		font-size: 18px; line-height: 26px; letter-spacing: -0.16px; font-style: italic;
-		padding: 2px 0px 3px 0px;
+		font-size: 18px; line-height: 26px; letter-spacing: -0.16px; padding: 2px 0px 3px 0px;
 	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { 
 		width: 0px; height: calc(100% + 5px); position: absolute; left: 11px; top: -2px; border-left: 2px solid $colorOrange; 
