@@ -258,17 +258,22 @@ class PopupSettings extends React.Component<Props, State> {
 
 			case 'importIndex':
 				const items = [ 
-					{ id: 'notion', name: 'Notion' },
-					{ id: 'evernote', name: 'Evernote' },
-					{ id: 'roam', name: 'Roam Researh' },
-					{ id: 'word', name: 'Word' },
-					{ id: 'text', name: 'Text & Markdown' },
-					{ id: 'html', name: 'HTML' },
-					{ id: 'csv', name: 'CSV' },
+					{ id: 'notion', name: 'Notion', disabled: false },
+					{ id: 'evernote', name: 'Evernote', disabled: true },
+					{ id: 'roam', name: 'Roam Researh', disabled: true },
+					{ id: 'word', name: 'Word', disabled: true },
+					{ id: 'text', name: 'Text & Markdown', disabled: true },
+					{ id: 'html', name: 'HTML', disabled: true },
+					{ id: 'csv', name: 'CSV', disabled: true },
 				];
 
 				Item = (item: any) => (
-					<div className={'item ' + item.id} onClick={() => { this.onPage(Util.toCamelCase('import-' + item.id)); }}>
+					<div className={[ 'item', item.id, (item.disabled ? 'disabled' : '') ].join(' ')} onClick={() => { 
+						if (!item.disabled) {
+							this.onPage(Util.toCamelCase('import-' + item.id)); 
+						};
+					}}>
+						{item.disabled ? <div className="soon">Soon</div> : ''}
 						<div className="txt">
 							<Icon />
 							<div className="name">{item.name}</div>

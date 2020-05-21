@@ -24,8 +24,11 @@ interface State {
 };
 
 const Constant = require('json/constant.json');
-const blank20 = require('img/blank/smile/20.svg');
-const blank24 = require('img/blank/smile/24.svg');
+const Blank = {
+	small: require('img/blank/smile/small.svg'),
+	medium: require('img/blank/smile/medium.svg'),
+	big: require('img/blank/smile/big.svg'),
+};
 
 class Smile extends React.Component<Props, State> {
 	
@@ -62,12 +65,15 @@ class Smile extends React.Component<Props, State> {
 			cn.push('canEdit');
 		};
 
-		let blank = blank20;
-		if (className.match(/c(32|48|64)/)) {
-			blank = blank24;
+		let blank = Blank.small;
+		if (className.match(/c(20|22|24)/)) {
+			blank = Blank.medium;
+		};
+		if (className.match(/c(28|32|48|64)/)) {
+			blank = Blank.big;
 		};
 		
-		let element = <img src={blank} className="icon blank" />;
+		let element = <img src={blank} className={[ 'iconBlank', 'c' + size ].join(' ')} />;
 		let skin = 0;
 
 		if (icon) {
@@ -92,7 +98,7 @@ class Smile extends React.Component<Props, State> {
 		} else 
 		if (hash) {
 			cn.push('withImage');
-			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className="icon image" />;
+			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} />;
 		};
 		
 		return (
