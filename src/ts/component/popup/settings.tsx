@@ -326,7 +326,7 @@ class PopupSettings extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { page } = data;
+		const { page } = data || {};
 
 		if (page) {
 			this.onPage(page);
@@ -459,7 +459,7 @@ class PopupSettings extends React.Component<Props, State> {
 	onImport (format: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId } = data || {};
 		const options: any = { properties: [ 'openFile', 'openDirectory' ] };
 
 		dialog.showOpenDialog(options).then((result: any) => {

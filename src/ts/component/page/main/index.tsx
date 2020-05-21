@@ -98,7 +98,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSettings (e: any) {
-		commonStore.popupOpen('settings', {});
+		const { root } = blockStore;
+		commonStore.popupOpen('settings', {
+			data: {
+				rootId: root,
+			}
+		});
 	};
 	
 	onAccount () {
