@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, Util, DataUtil, focus } from 'ts/lib';
+import { I, DataUtil, SmileUtil, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -46,7 +46,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 		const { focused } = focus;
 		const fb = blockStore.getLeaf(rootId, focused);
 		const details = { 
-			iconEmoji: Util.randomSmile(), 
+			iconEmoji: SmileUtil.random(), 
 			name: Constant.default.name 
 		};
 		

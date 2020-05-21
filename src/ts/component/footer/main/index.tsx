@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, Util, DataUtil } from 'ts/lib';
+import { I, Util, DataUtil, SmileUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -42,7 +42,7 @@ class FooterMainIndex extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { root } = blockStore;
 		const details = { 
-			iconEmoji: Util.randomSmile(), 
+			iconEmoji: SmileUtil.random(), 
 			name: Constant.default.name 
 		};
 		

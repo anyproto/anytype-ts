@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Emoji } from 'emoji-mart';
-import { Input } from 'ts/component';
-import { I, C, Util, DataUtil, keyboard, Storage } from 'ts/lib';
+import { Input, Smile } from 'ts/component';
+import { I, C, Util, SmileUtil, keyboard, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -55,7 +55,7 @@ class MenuSmile extends React.Component<Props, State> {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
 					<div className="smile">
-						<Emoji native={true} emoji={':' + item.smile + ':'} skin={item.skin} set="apple" size={32} />
+						<Smile icon={SmileUtil.nativeById(item.smile, item.skin)} size={32} />
 					</div>
 				</div>
 			);
@@ -223,7 +223,6 @@ class MenuSmile extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { onUpload } = data;
-
 		const options: any = { 
 			properties: [ 'openFile' ], 
 			filters: [ { name: '', extensions: Constant.extension.image } ]
@@ -258,7 +257,7 @@ class MenuSmile extends React.Component<Props, State> {
 		commonStore.menuClose(this.props.id);
 
 		if (onSelect) {
-			onSelect(Util.getNativeSmileById(id, this.skin));
+			onSelect(SmileUtil.nativeById(id, this.skin));
 		};
 	};
 	

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconUser, ListIndex, Cover, Title, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
+import { Icon, IconUser, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { commonStore, blockStore} from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, Storage, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, SmileUtil, translate, Storage, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
@@ -136,7 +136,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { root } = blockStore;
 		const details = { 
-			iconEmoji: Util.randomSmile(), 
+			iconEmoji: SmileUtil.random(), 
 			name: Constant.default.name 
 		};
 		

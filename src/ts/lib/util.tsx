@@ -1,6 +1,5 @@
-import { I, C, keyboard } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { getEmojiDataFromNative, Emoji } from 'emoji-mart';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -10,7 +9,6 @@ const loadImage = window.require('blueimp-load-image');
 const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
-const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
 const sprintf = window.require('sprintf-kit')({
 	d: require('sprintf-kit/modifiers/d'),
@@ -25,11 +23,6 @@ class Util {
 	timeoutLinkPreviewShow: number = 0;
 	timeoutLinkPreviewHide: number = 0;
 	linkPreviewOpen: boolean = false;
-	smileCache: any = {};
-	
-	constructor () {
-		this.icons = Object.keys(EmojiData.emojis);
-	};
 	
 	sprintf (...args: any[]) {
 		return sprintf.apply(this, args);
@@ -219,18 +212,6 @@ class Util {
 		return 0;
 	};
 
-	getNativeSmileById (id: string, skin: number): string {
-		id = String(id || '');
-		skin = Number(skin) || 1;
-		return String($(Emoji({ html: true, emoji: id, skin: skin, size: 24, native: true })).text() || '');
-	};
-	
-	randomSmile (): string {
-		const id = this.icons[this.rand(0, this.icons.length - 1)];
-		const skin = this.rand(1, 6);
-		return this.getNativeSmileById(id, skin);
-	};
-	
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 		const jsdate = new Date(timestamp ? timestamp * 1000 : null);
@@ -491,40 +472,6 @@ class Util {
 
 	isNumber (s: string) {
 		return String((Number(s) || 0) || '') === String(s || '');
-	};
-
-	smileSrcFromColons (colons: string, skin: number) {
-		let parts = colons.split('::');
-		if (parts.length > 1) {
-			parts[1] = parts[1].replace('skin-tone-', 'type-');
-		} else
-		if (skin) {
-			parts.push('type-' + skin);
-		};
-
-		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
-		return `./emoji/${src}.png`;
-	};
-
-	smileData (icon: string) {
-		if (!icon) {
-			return {};
-		};
-
-		if (this.smileCache[icon]) {
-			return this.smileCache[icon];
-		};
-
-		const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
-		if (data) {
-			this.smileCache[icon] = { 
-				colons: data.colons, 
-				skin: data.skin 
-			};
-			return this.smileCache[icon];
-		} else {
-			return {};
-		};
 	};
 
 	coverSrc (cover: string) {

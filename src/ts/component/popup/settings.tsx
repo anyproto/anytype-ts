@@ -56,6 +56,7 @@ class PopupSettings extends React.Component<Props, State> {
 
 		let content = null;
 		let inputs = [];
+		let Item = null;
 		
 		let head = (
 			<div className="head">
@@ -96,7 +97,7 @@ class PopupSettings extends React.Component<Props, State> {
 								<Icon className="arrow" />
 							</div>
 
-							<div className="row dn" onClick={() => { this.onPage('importIndex'); }}>
+							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
 								<Icon className="import" />
 								<Label text="Import" />
 								<Icon className="arrow" />
@@ -125,7 +126,7 @@ class PopupSettings extends React.Component<Props, State> {
 					covers2.unshift({ id: 0, image: coverImage, type: I.CoverType.Image });
 				};
 				
-				const Item = (item: any) => (
+				Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
 						<Cover {...item} className={item.id} />
 					</div>
@@ -268,6 +269,15 @@ class PopupSettings extends React.Component<Props, State> {
 				break;
 
 			case 'importIndex':
+				const items = [ { id: 'notion', name: 'Notion' } ];
+
+				Item = (item: any) => (
+					<div className={'item ' + item.id} onClick={() => {  }}>
+						<Icon />
+						<div className="name">{item.name}</div>
+					</div>
+				);
+
 				content = (
 					<div>
 						{head}
@@ -275,7 +285,9 @@ class PopupSettings extends React.Component<Props, State> {
 						<Title text="Import" />
 						<Label text="Choose application or format, which data you want to import" />
 						<div className="items">
-							
+							{items.map((item: any, i: number) => (
+								<Item key={i} {...item} />
+							))}
 						</div>
 					</div>
 				);

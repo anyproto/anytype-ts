@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage } from 'ts/lib';
+import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -923,7 +923,7 @@ class EditorPage extends React.Component<Props, State> {
 								});
 							} else {
 								const details = { 
-									iconEmoji: Util.randomSmile(), 
+									iconEmoji: SmileUtil.random(), 
 									name: Constant.default.name 
 								};
 								DataUtil.pageCreate(e, this.props, rootId, block.id, details, position);

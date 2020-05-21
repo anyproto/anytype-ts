@@ -18,6 +18,8 @@
 	.icon.image { position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; object-fit: cover; }
 
 	.smileImage { width: 100%; height: 100%; }
+	.smileImage.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
+	.smileImage.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 	.smileImage.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 	.smileImage.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
 }

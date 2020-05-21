@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, Storage, focus } from 'ts/lib';
+import { I, C, Util, DataUtil, SmileUtil, Storage, focus } from 'ts/lib';
 import { commonStore, authStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -97,7 +97,7 @@ class Keyboard {
 				};
 				
 				const details = { 
-					iconEmoji: Util.randomSmile(), 
+					iconEmoji: SmileUtil.random(), 
 					name: Constant.default.name 
 				};
 				DataUtil.pageCreate(e, { history: this.history }, rootId, targetId, details, position);

@@ -4,6 +4,7 @@ import { cache } from './cache';
 import Storage from './storage';
 import Util from './util';
 import DataUtil from './datautil';
+import SmileUtil from './smileutil';
 import Mark from './mark';
 import { focus } from './focus';
 import { StructDecode, StructEncode } from './struct';
@@ -38,6 +39,7 @@ export {
 	Storage,
 	Util,
 	DataUtil,
+	SmileUtil,
 	Mark,
 	I,
 	C,

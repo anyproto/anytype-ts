@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
 import { commonStore } from 'ts/store';
-import { I, Util } from 'ts/lib';
+import { I, SmileUtil } from 'ts/lib';
 
 interface Props {
 	id?: string;
@@ -32,7 +32,7 @@ class Smile extends React.Component<Props, State> {
 	private static defaultProps = {
 		offsetX: 0,
 		offsetY: 0,
-		size: 16,
+		size: 18,
 		className: 'c20',
 		native: true,
 		asImage: true,
@@ -75,7 +75,7 @@ class Smile extends React.Component<Props, State> {
 			if (icon.match(':')) {
 				colons = icon;
 			} else {
-				const data = Util.smileData(icon);
+				const data = SmileUtil.data(icon);
 				if (data) {
 					colons = data.colons;
 					skin = data.skin;
@@ -84,7 +84,7 @@ class Smile extends React.Component<Props, State> {
 
 			if (colons) {
 				if (asImage) {
-					element = <img src={Util.smileSrcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} />;
+					element = <img src={SmileUtil.srcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};
