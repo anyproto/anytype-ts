@@ -357,11 +357,16 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { param, history } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position } = data;
+		const { root } = blockStore;
 
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					history.push('/main/edit/' + item.id);
+					if (item.id == root) {
+						history.push('/main/index');
+					} else {
+						history.push('/main/edit/' + item.id);
+					};
 				});
 				break;
 
