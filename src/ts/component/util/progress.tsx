@@ -49,7 +49,7 @@ class Progress extends React.Component<Props, {}> {
 		
 		node.removeClass('hide');
 		
-		if (total && (current >= total) && Util.isNumber(current) && Util.isNumber(total)) {
+		if (total && (current >= total)) {
 			node.addClass('hide');
 			setTimeout(() => { commonStore.progressClear(); }, 200);
 		};

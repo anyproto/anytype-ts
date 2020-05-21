@@ -1,5 +1,7 @@
+@import "~scss/_vars";
+
 .progress { 
-	position: fixed; left: 0px; top: 0px; z-index: 110; width: 100%; height: 100%; background: rgba(0,0,0,0.1);
+	position: fixed; left: 0px; top: 0px; z-index: 110; width: 100%; height: 100%; background: rgba(0,0,0,0.4);
 	transition: background 0.05s ease-in-out; 
 }
 
@@ -11,12 +13,12 @@
 .progress {
 	.inner { 
 		position: absolute; left: 50%; top: 50%; box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); height: 40px; line-height: 40px;
-		border-radius: 4px; width: 350px; text-align: center; background: #393834; overflow: hidden; margin: -20px 0px 0px -175px;
+		border-radius: 4px; width: 350px; text-align: center; background: #fff; overflow: hidden; margin: -20px 0px 0px -175px;
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 	}
 	.inner {
-		.label { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 1; color: #fff; white-space: nowrap; }
-		.bar { background: #6a6962; height: 100%; position: absolute; left: 0px; top: 0px; }
+		.label { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 1; color: $colorBlack; white-space: nowrap; }
+		.bar { background: #fef3c5; height: 100%; position: absolute; left: 0px; top: 0px; }
 	}
 	
 	.btn { display: inline-block; vertical-align: middle; margin-left: 16px; font-weight: 500; font-size: 12px; cursor: pointer; }

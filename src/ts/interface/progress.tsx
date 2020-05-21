@@ -14,8 +14,8 @@ export interface Progress {
 	id?: string;
 	type?: ProgressType;
 	status?: string;
-	current?: any;
-	total?: any;
+	current?: number;
+	total?: number;
 	isUnlocked?: boolean;
 	canCancel?: boolean;
 };

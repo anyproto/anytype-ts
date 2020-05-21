@@ -312,9 +312,9 @@ class App extends React.Component<Props, State> {
 
 	onProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
-			status: 'Downloading update... %s/%s', 
-			current: Util.fileSize(progress.transferred), 
-			total: Util.fileSize(progress.total),
+			status: Util.sprintf('Downloading update... %s/%s', Util.fileSize(progress.transferred), Util.fileSize(progress.total)), 
+			current: progress.transferred, 
+			total: progress.total,
 			isUnlocked: true,
 		});
 	};

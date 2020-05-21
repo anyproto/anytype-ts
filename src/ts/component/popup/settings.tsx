@@ -95,6 +95,12 @@ class PopupSettings extends React.Component<Props, State> {
 								</div>
 								<Icon className="arrow" />
 							</div>
+
+							<div className="row dn" onClick={() => { this.onPage('importIndex'); }}>
+								<Icon className="import" />
+								<Label text="Import" />
+								<Icon className="arrow" />
+							</div>
 						</div>
 						
 						<div className="logout" onClick={this.onLogout}>Log out</div>
@@ -257,6 +263,20 @@ class PopupSettings extends React.Component<Props, State> {
 							))}
 						</div>
 						<Button text="Confirm" className="orange" onClick={() => { this.onPage('index'); }} />
+					</div>
+				);
+				break;
+
+			case 'importIndex':
+				content = (
+					<div>
+						{head}
+						
+						<Title text="Import" />
+						<Label text="Choose application or format, which data you want to import" />
+						<div className="items">
+							
+						</div>
 					</div>
 				);
 				break;
