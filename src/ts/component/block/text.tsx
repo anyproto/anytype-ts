@@ -255,7 +255,7 @@ class BlockText extends React.Component<Props, {}> {
 
 			item.addClass(param.class);
 			if (smile && smile.length) {
-				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
+				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 			};
 		});
 		
@@ -291,7 +291,7 @@ class BlockText extends React.Component<Props, {}> {
 			
 			item.addClass(param.class);
 			if (smile && smile.length) {
-				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} asImage={true} icon={data.param} />, smile.get(0));
+				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={data.param} />, smile.get(0));
 			};
 		});
 	};

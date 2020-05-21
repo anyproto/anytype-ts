@@ -27,7 +27,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Smile className="c64" icon=":tada:" size={36} />
+					<Smile className="c64" icon="🎉" size={32} />
 					<Title text={translate('authSuccessTitle')} />
 					<Label text={translate('authSuccessLabel')} />
 					<Button className="orange" text={translate('authSuccessSubmit')} onClick={this.onSubmit} />

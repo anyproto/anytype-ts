@@ -12,7 +12,7 @@ class PageHelpIndex extends React.Component<Props, {}> {
 
 	render () {
 		const path: any[] = [
-			{ icon: ':crystal_ball:', name: 'Help', contentId: 'index' }
+			{ icon: '🔮', name: 'Help', contentId: 'index' }
 		];
 
 		return (

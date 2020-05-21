@@ -20,3 +20,5 @@ $transitionFast: all 0.2s ease-in-out;
 @mixin text-small { font-size: 12px; line-height: 18px; letter-spacing: 0.2px; }
 @mixin text-common { font-size: 14px; line-height: 22px; letter-spacing: 0.04px; }
 @mixin text-paragraph { font-size: 16px; line-height: 24px; letter-spacing: -0.08px; }
+
+@mixin pos-abs-mid { position: absolute; left: 50%; top: 50%; }

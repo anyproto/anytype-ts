@@ -35,6 +35,7 @@ class Smile extends React.Component<Props, State> {
 		size: 16,
 		className: 'c20',
 		native: true,
+		asImage: true,
 	};
 	
 	state = {
@@ -62,7 +63,7 @@ class Smile extends React.Component<Props, State> {
 		};
 
 		let blank = blank20;
-		if (className.match(/c48/)) {
+		if (className.match(/c(32|48|64)/)) {
 			blank = blank24;
 		};
 		
@@ -83,7 +84,7 @@ class Smile extends React.Component<Props, State> {
 
 			if (colons) {
 				if (asImage) {
-					element = <img src={Util.smileSrcFromColons(colons, skin)} className="smileImage" />;
+					element = <img src={Util.smileSrcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};

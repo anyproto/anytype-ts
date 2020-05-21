@@ -12,8 +12,8 @@ class PageHelpShortcuts extends React.Component<Props, {}> {
 
 	render () {
 		const path: any[] = [
-			{ icon: ':crystal_ball:', name: 'Help', contentId: 'index' },
-			{ icon: ':keyboard:', name: 'Keyboard & Shortcuts', contentId: 'shortcuts' },
+			{ icon: '🔮', name: 'Help', contentId: 'index' },
+			{ icon: '⌨️', name: 'Keyboard & Shortcuts', contentId: 'shortcuts' },
 		];
 
 		return (

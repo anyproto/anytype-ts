@@ -12,8 +12,8 @@ class PageHelpNew extends React.Component<Props, {}> {
 
 	render () {
 		const path: any[] = [
-			{ icon: ':crystal_ball:', name: 'Help', contentId: 'index' },
-			{ icon: ':wave:', name: 'What\'s new', contentId: 'new' },
+			{ icon: '🔮', name: 'Help', contentId: 'index' },
+			{ icon: '👋', name: 'What\'s new', contentId: 'new' },
 		];
 
 		return (
