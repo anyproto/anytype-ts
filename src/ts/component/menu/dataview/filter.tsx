@@ -33,19 +33,19 @@ class MenuFilter extends React.Component<Props, State> {
 		
 		const { items } = this.state;
 		const conditionOptions = [
-			{ id: String(I.FilterTypeCondition.And), name: 'And' },
-			{ id: String(I.FilterTypeCondition.Or), name: 'Or' },
+			{ id: String(I.FilterOperator.And), name: 'And' },
+			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
 		
 		const equalityOptions = [
-			{ id: String(I.FilterTypeEquality.Equal), name: 'Is equal' },
-			{ id: String(I.FilterTypeEquality.NotEqual), name: 'Is not equal' },
-			{ id: String(I.FilterTypeEquality.In), name: 'Contains' },
-			{ id: String(I.FilterTypeEquality.NotIn), name: 'Doesn\'t contain' },
-			{ id: String(I.FilterTypeEquality.Greater), name: 'Is greater' },
-			{ id: String(I.FilterTypeEquality.Lesser), name: 'Is lesser' },
-			{ id: String(I.FilterTypeEquality.Like), name: 'Matches' },
-			{ id: String(I.FilterTypeEquality.NotLike), name: 'Doesn\'t match' },
+			{ id: String(I.FilterCondition.Equal), name: 'Is equal' },
+			{ id: String(I.FilterCondition.NotEqual), name: 'Is not equal' },
+			{ id: String(I.FilterCondition.In), name: 'Contains' },
+			{ id: String(I.FilterCondition.NotIn), name: 'Doesn\'t contain' },
+			{ id: String(I.FilterCondition.Greater), name: 'Is greater' },
+			{ id: String(I.FilterCondition.Lesser), name: 'Is lesser' },
+			{ id: String(I.FilterCondition.Like), name: 'Matches' },
+			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
 		];
 		
 		let propertyOptions: any[] = [];

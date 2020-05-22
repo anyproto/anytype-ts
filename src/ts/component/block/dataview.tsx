@@ -84,8 +84,8 @@ class BlockDataview extends React.Component<Props, State> {
 						{ propertyId: '2', type: I.SortType.Desc },
 					],
 					filters: [
-						{ propertyId: '1', condition: I.FilterTypeCondition.None, equality: I.FilterTypeEquality.Equal, value: '' },
-						{ propertyId: '1', condition: I.FilterTypeCondition.And, equality: I.FilterTypeEquality.Equal, value: '' },
+						{ propertyId: '1', condition: I.FilterOperator.And, equality: I.FilterCondition.Equal, value: '' },
+						{ propertyId: '1', condition: I.FilterOperator.And, equality: I.FilterCondition.Equal, value: '' },
 					]
 				},
 				{ id: '2', name: 'Board', type: I.ViewType.Board, sorts: [], filters: [] },

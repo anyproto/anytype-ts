@@ -440,10 +440,82 @@ class BlockStore {
 			};
 			
 			if (type == I.BlockType.File) {
-				item.content = Util.objectCopy(content);
 				item.content.type = content.type;
 				item.content.state = content.state;
 			};
+
+			if (type == I.BlockType.Dataview) {
+				item.content.views = item.content.views || [];
+				item.content.views = item.content.views.map((view: I.View) => {
+					view.type = Number(view.type);
+					view.name = String(view.name || '');
+					view.sorts = view.sorts || [];
+					view.filters = view.filters || [];
+					return view;
+				});
+			};
+/*
+			message Dataview {
+				string databaseId = 1;
+				repeated View views = 2;
+				string schemaURL = 3;
+	
+				message View {
+					ViewType type = 1;
+					string name = 2;
+					Sorts sort = 3;
+					Filters filters = 4;
+				}
+	
+				message Sort {
+					string column = 1;
+					SortType type = 2;
+				}
+	
+				message Sorts {
+					repeated Sort sorts = 1;
+				}
+	
+				message Filter {
+					string column = 1;
+					FilterOperator condition = 2;
+					google.protobuf.Value value = 3;
+				}
+	
+				message Filters {
+					repeated Filter filters = 1;
+					FilterTypeOperator operator = 2;
+				}
+	
+				enum SortType {
+					Asc = 0;
+					Desc = 1;
+				}
+	
+				enum ViewType {
+					Table = 0;
+					List = 1;
+					Gallery = 2;
+					Kanban = 3;
+				}
+	
+				enum FilterTypeOperator {
+					And = 0;
+					Or = 1;
+				}
+	
+				enum FilterOperator {
+					Equal = 0;
+					NotEqual = 1;
+					Greater = 2;
+					Less = 3;
+					Like = 4;
+					NotLike = 5;
+					In = 6;
+					NotIn = 7;
+				}
+			}
+			*/
 		};
 		
 		return item;

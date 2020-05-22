@@ -1,10 +1,10 @@
 import { I } from 'ts/lib';
 
-export enum ViewType { 
-	Grid	 = 0, 
-	Board	 = 1, 
-	Gallery	 = 2, 
-	List	 = 3 
+export enum ViewType {
+	Grid	 = 0,
+	List	 = 1,
+	Gallery	 = 2,
+	Board	 = 3,
 };
 
 export enum PropertyType { 
@@ -22,9 +22,26 @@ export enum PropertyType {
 	Phone	 = 11,
 };
 
-export enum SortType { Asc, Desc };
-export enum FilterTypeCondition { None, And, Or };
-export enum FilterTypeEquality { Equal, NotEqual, In, NotIn, Greater, Lesser, Like, NotLike };
+export enum SortType { 
+	Asc		 = 0, 
+	Desc	 = 1,
+};
+
+export enum FilterOperator { 
+	And		 = 0, 
+	Or		 = 1,
+};
+
+export enum FilterCondition { 
+	Equal		 = 0,
+	NotEqual	 = 1,
+	Greater		 = 2,
+	Lesser		 = 3,
+	Like		 = 4,
+	NotLike		 = 5,
+	In			 = 6,
+	NotIn		 = 7,
+};
 
 export interface Property {
 	id: string;
@@ -40,8 +57,8 @@ export interface Sort {
 
 export interface Filter {
 	propertyId: string;
-	condition: FilterTypeCondition;
-	equality: FilterTypeEquality;
+	operator: FilterOperator;
+	condition: FilterCondition;
 	value: any;
 };
 
@@ -60,6 +77,8 @@ export interface Cell {
 };
 
 export interface ContentDataview {
+	databaseId: string;
+	schemaURL: string;
 	view: string;
 	properties: Property[];
 	views: View[];
