@@ -330,8 +330,8 @@ class DataUtil {
 				type: I.BlockType.Page, id: 'existing', icon: 'existing', name: 'Link to object', isBlock: true,
 				description: translate('blockDescriptionExisting'), 
 			},
-			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			/*
+			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
 			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
