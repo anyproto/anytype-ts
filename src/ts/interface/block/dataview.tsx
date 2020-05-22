@@ -36,7 +36,7 @@ export enum FilterCondition {
 	Equal		 = 0,
 	NotEqual	 = 1,
 	Greater		 = 2,
-	Lesser		 = 3,
+	Less		 = 3,
 	Like		 = 4,
 	NotLike		 = 5,
 	In			 = 6,
