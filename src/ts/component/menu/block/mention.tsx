@@ -62,6 +62,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this.rebind();
 		this.loadSearch();
 	};
+
+	componentDidUpdate () {
+		this.props.position();
+	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;

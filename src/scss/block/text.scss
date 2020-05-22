@@ -23,10 +23,12 @@
 			name { display: none; }
 		}
 
-		mention { cursor: pointer; white-space: nowrap; display: inline-block; user-select: all; }
+		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: all; }
 		mention {
 			smile { padding-right: 6px; display: inline; position: relative; z-index: 1; }
+			smile:empty { display: none; }
+			
 			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
 			name::after {
 				content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast;

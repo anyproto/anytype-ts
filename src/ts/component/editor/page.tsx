@@ -834,7 +834,6 @@ class EditorPage extends React.Component<Props, State> {
 		};
 
 		commonStore.filterSet(range.from, '');
-
 		commonStore.menuOpen('blockAdd', { 
 			element: el,
 			type: I.MenuType.Vertical,

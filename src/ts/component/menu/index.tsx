@@ -107,7 +107,7 @@ class Menu extends React.Component<Props, {}> {
 		return (
 			<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
 				<div className="content">
-					<Component {...this.props} setActiveItem={this.setActiveItem} />
+					<Component {...this.props} setActiveItem={this.setActiveItem} position={this.position} />
 				</div>
 			</div>
 		);
@@ -186,13 +186,23 @@ class Menu extends React.Component<Props, {}> {
 			let y = offset.top;
 
 			if (vertical == I.MenuDirection.Top) {
-				y -= height + offsetY;
+				y = offset.top - height + offsetY;
+
+				// Switch
+				if (y <= BORDER) {
+					y = offset.top + eh + offsetY;
+				};
 			};
 			if (vertical == I.MenuDirection.Center) {
-				y =  y - height / 2 + eh / 2 + offsetY;
+				y = offset.top - height / 2 + eh / 2 + offsetY;
 			};
 			if (vertical == I.MenuDirection.Bottom) {
-				y += eh + offsetY;
+				y = offset.top + eh + offsetY;
+
+				// Switch
+				if (y >= wh - height - BORDER) {
+					y = offset.top - height + offsetY;
+				};
 			};
 			
 			if (horizontal == I.MenuDirection.Left) {
@@ -218,7 +228,7 @@ class Menu extends React.Component<Props, {}> {
 		
 			y = Math.max(BORDER, y);
 			y = Math.min(wh - height - BORDER, y);
-			
+
 			node.css({ left: x, top: y });
 			
 			if (isSub) {

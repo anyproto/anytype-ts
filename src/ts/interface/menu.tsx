@@ -21,6 +21,7 @@ export interface Menu {
 	id: string;
 	param: MenuParam;
 	setActiveItem? (item?: any, scroll?: boolean): void;
+	position? (): void;
 };
 
 export interface MenuItem {

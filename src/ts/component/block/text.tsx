@@ -254,7 +254,7 @@ class BlockText extends React.Component<Props, {}> {
 			const smile = item.find('smile');
 
 			item.addClass(param.class);
-			if (smile && smile.length) {
+			if (smile && smile.length && (details.iconEmoji || details.iconImage)) {
 				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 			};
 		});
@@ -298,7 +298,7 @@ class BlockText extends React.Component<Props, {}> {
 
 	emojiParam (style: I.TextStyle) {
 		let cn = 'c24';
-		let size = 20;
+		let size = 18;
 		switch (style) {
 			case I.TextStyle.Header1:
 				cn = 'c32';
