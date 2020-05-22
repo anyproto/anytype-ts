@@ -436,10 +436,7 @@ class BlockStore {
 			};
 			
 			if (type == I.BlockType.Link) {
-				if (item.content.style == I.LinkStyle.Page) {
-					item.content.fields = item.content.fields || {};
-					item.content.fields.name = String(item.content.fields.name || Constant.default.name);
-				};
+				item.content.targetBlockId = String(item.content.targetBlockId || '');
 			};
 			
 			if (type == I.BlockType.File) {

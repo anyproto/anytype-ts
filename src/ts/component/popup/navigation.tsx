@@ -378,7 +378,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				const param = {
 					type: I.BlockType.Link,
 					content: {
-						targetBlockId: item.id,
+						targetBlockId: String(item.id || ''),
 					}
 				};
 				C.BlockCreate(param, rootId, blockId, position);
