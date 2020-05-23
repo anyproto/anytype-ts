@@ -190,7 +190,7 @@ class Menu extends React.Component<Props, {}> {
 
 				// Switch
 				if (y <= BORDER) {
-					let p = switchParam(I.MenuDirection.Bottom, param); 
+					let p = switchParam ? switchParam(I.MenuDirection.Bottom, param) : param; 
 					y = offset.top + eh + p.offsetY;
 				};
 			};
@@ -202,8 +202,7 @@ class Menu extends React.Component<Props, {}> {
 
 				// Switch
 				if (y >= wh - height - BORDER) {
-					console.log('offset', offsetY);
-					let p = switchParam(I.MenuDirection.Top, param); 
+					let p = switchParam ? switchParam(I.MenuDirection.Top, param) : param; 
 					y = offset.top - height + p.offsetY;
 				};
 			};
