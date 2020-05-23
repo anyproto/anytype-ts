@@ -54,7 +54,7 @@ class Smile extends React.Component<Props, State> {
 	
 	render () {
 		const { id, size, native, asImage, className, canEdit } = this.props;
-		const icon = String(this.state.icon || this.props.icon || '');
+		let icon = String(this.state.icon || this.props.icon || '');
 		const hash = String(this.state.hash || this.props.hash || '');
 		
 		let cn = [ 'smile' ];

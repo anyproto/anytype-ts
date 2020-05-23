@@ -17,10 +17,14 @@ class SmileUtil {
 
 	unifiedToNative (uni: string): string {
 		uni = String(uni || '');
-		return this.stringFromCodePoint(uni.split('-').map((u) => `0x${u}`));
+		return uni ? this.stringFromCodePoint(uni.split('-').map((u) => `0x${u}`)) : '';
 	};
 
-	stringFromCodePoint (points: any[]) {
+	stringFromCodePoint (points: any[]): string {
+		if (!points.length) {
+			return '';
+		};
+
 		let codeUnits = [];
 		let highSurrogate;
 		let lowSurrogate;
