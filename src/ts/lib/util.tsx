@@ -18,7 +18,6 @@ const sprintf = window.require('sprintf-kit')({
 
 class Util {
 	
-	icons: any[] = [];
 	timeoutTooltip: number = 0;
 	timeoutLinkPreviewShow: number = 0;
 	timeoutLinkPreviewHide: number = 0;

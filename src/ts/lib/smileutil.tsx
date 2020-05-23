@@ -85,11 +85,17 @@ class SmileUtil {
 		};
 		return this.unifiedToNative(uni);
 	};
+
+	randomParam (): { id: string, skin: number } {
+		return { 
+			id: this.icons[Util.rand(0, this.icons.length - 1)], 
+			skin: Util.rand(1, 6) 
+		};
+	};
 	
 	random (): string {
-		const id = this.icons[Util.rand(0, this.icons.length - 1)];
-		const skin = Util.rand(1, 6);
-		return this.nativeById(id, skin);
+		const param = this.randomParam();
+		return this.nativeById(param.id, param.skin);
 	};
 
 	srcFromColons (colons: string, skin: number) {
