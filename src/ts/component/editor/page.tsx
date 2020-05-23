@@ -859,6 +859,11 @@ class EditorPage extends React.Component<Props, State> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
+					// Clear filter in block text
+					const block = blockStore.getLeaf(rootId, id);
+					if (block) {
+						DataUtil.blockSetText(rootId, block, text, marks);
+					};
 					
 					// Text colors
 					if (item.isTextColor) {
