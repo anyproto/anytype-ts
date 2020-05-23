@@ -68,6 +68,10 @@ class Crumbs {
 	};
 	
 	save (key: I.CrumbsType, obj: CrumbsObject, callBack?: () => void) {
+		if (!obj) {
+			return;
+		};
+
 		Storage.set(this.key(key), obj, true);
 		
 		if (blockStore.breadcrumbs) {
