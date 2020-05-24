@@ -98,7 +98,7 @@ class PopupSettings extends React.Component<Props, State> {
 								<Icon className="arrow" />
 							</div>
 
-							<div className="row dn" onClick={() => { this.onPage('importIndex'); }}>
+							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
 								<Icon className="import" />
 								<Label text="Import" />
 								<Icon className="arrow" />
