@@ -315,7 +315,7 @@ class App extends React.Component<Props, State> {
 			status: Util.sprintf('Downloading update... %s/%s', Util.fileSize(progress.transferred), Util.fileSize(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
-			isUnlocked: true,
+			isUnlocked: false,
 		});
 	};
 
