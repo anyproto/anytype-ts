@@ -96,11 +96,13 @@ class PopupNavigation extends React.Component<Props, State> {
 			let { iconEmoji, iconImage, name } = item.details;
 
 			return (
-				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
-					<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
-					<div className="info">
-						<div className="name">{name}</div>
-						<div className="descr">{item.snippet}</div>
+				<div id={'item-' + item.id} className="item">
+					<div onClick={(e: any) => { this.onClick(e, item); }}>
+						<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+						<div className="info">
+							<div className="name">{name}</div>
+							<div className="descr">{item.snippet}</div>
+						</div>
 					</div>
 					<Icon className="arrow" onClick={(e: any) => { this.onClickArrow(e, item); }} />
 				</div>
