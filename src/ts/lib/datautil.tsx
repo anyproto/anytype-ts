@@ -431,9 +431,12 @@ class DataUtil {
 			};
 			s.children = (s.children || []).filter((c: any) => { 
 				let ret = false;
-				if (c.name.match(reg)) {
+				if (c.name && c.name.match(reg)) {
 					ret = true;
 				} else 
+				if (c.description && c.description.match(reg)) {
+					ret = true;
+				} else
 				if (c.aliases && c.aliases.length) {
 					for (let alias of c.aliases) {
 						if (alias.match(reg)) {
