@@ -17,7 +17,7 @@
 			box-shadow: 0px 0px 0px 1px $colorOrange;
 		}
 		
-		.colResize { width: 0px; position: relative; opacity: 0; }
+		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
 		.colResize.active { opacity: 1; }
 		.colResize {
 			.inner { position: absolute; left: 20px; top: -15px; width: 8px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; }
