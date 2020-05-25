@@ -57,6 +57,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
+		const { root } = blockStore;
+		const isRoot = info && (info.id == root);
 
 		if (!isOpen) {
 			return null;
@@ -168,15 +170,19 @@ class PopupNavigation extends React.Component<Props, State> {
 
 						<div key="sides" className="sides">
 							<div className="items left">
-								{!pagesIn.length ? (
-									<ItemEmpty name="No links to this page" />
-								) : (
+								{!isRoot ? (
 									<React.Fragment>
-										{pagesIn.map((item: any, i: number) => {
-											return <Item key={i} {...item} />;
-										})}
+										{!pagesIn.length ? (
+											<ItemEmpty name="No links to this page" />
+										) : (
+											<React.Fragment>
+												{pagesIn.map((item: any, i: number) => {
+													return <Item key={i} {...item} />;
+												})}
+											</React.Fragment>
+										)}
 									</React.Fragment>
-								)}
+								) : ''}
 							</div>
 							<div className="items center">
 								{info ? <Selected {...info} /> : ''}
@@ -347,15 +353,17 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: I.PageInfo) {
-		const { expanded } = this.state;
-
 		e.stopPropagation();
-		expanded ? this.onConfirm(e, item) : this.loadPage(item.id);
+
+		const { expanded } = this.state;
+		expanded ? this.loadPage(item.id) : this.onConfirm(e, item);
 	};
 
 	onClickArrow (e: any, item: I.PageInfo) {
 		const { expanded } = this.state;
-		expanded ? this.loadPage(item.id) : this.onConfirm(e, item);
+		if (!expanded) {
+			this.loadPage(item.id);
+		};
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
