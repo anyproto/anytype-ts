@@ -87,7 +87,6 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	onDropCommon (e: any) {
-		console.log(1111);
 		if (this.commonDropPrevented) {
 			return;
 		};
@@ -184,6 +183,8 @@ class DragProvider extends React.Component<Props, {}> {
 			
 			if (data.dropType == I.DragItem.Block) {
 				x -= OFFSET;
+				y -= 5;
+				height += 10;
 				width += OFFSET * 2;
 			};
 
