@@ -47,7 +47,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		const cv = [ 'value', 'focusable', 'c' + id ];
 		
 		return (
-			<div>
+			<div className="rel">
 				<div
 					id="value"
 					className={cv.join(' ')}
