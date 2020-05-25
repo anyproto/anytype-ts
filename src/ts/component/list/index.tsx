@@ -92,7 +92,6 @@ class ListIndex extends React.Component<Props, {}> {
 				distance={10}
 				list={children} 
 				helperClass="dragging"
-				lockToContainerEdges={true}
 				getContainer={helperContainer}
 				helperContainer={helperContainer} 
 				onSortEnd={this.onSortEnd} 
