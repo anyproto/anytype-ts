@@ -73,26 +73,10 @@
 		
 		.item.withDescription { padding-top: 8px; padding-bottom: 8px; }
 		.item.withDescription {
-			.icon { width: 40px; height: 40px; background-size: 20px 20px; border-radius: 6px; position: absolute; left: 16px; top: 8px; }
+			.icon { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 16px; top: 8px; }
 			.descr { @include text-small; height: 18px; color: #6c6a5f; }
 			.info { padding-left: 52px; }
 			.name { line-height: 22px; }
-		}
-		
-		.item.withDescription.yellow {
-			.icon { background-color: #ffee94; }  
-		}
-		.item.withDescription.green {
-			.icon { background-color: #b8f1a4; }  
-		}
-		.item.withDescription.blue {
-			.icon { background-color: #b2e3f9; }  
-		}
-		.item.withDescription.red {
-			.icon { background-color: #ffd6c9; }  
-		}
-		.item.withDescription.purple {
-			.icon { background-color: #f1cdfb; }  
 		}
 		
 		.section { border-bottom: 1px solid $colorLightGrey; padding: 8px 0px; }
