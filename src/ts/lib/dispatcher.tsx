@@ -415,10 +415,10 @@ class Dispatcher {
 					);
 
 					if (mt > 3000) {
-						Sentry.captureMessage(`${type} middleware time too long`);
+						Sentry.captureMessage(`${type}: middleware time too long`);
 					};
-					if (rt > 3000) {
-						Sentry.captureMessage(`${type} render time too long`);
+					if (rt > 1000) {
+						Sentry.captureMessage(`${type}: render time too long`);
 					};
 				};
 			});
