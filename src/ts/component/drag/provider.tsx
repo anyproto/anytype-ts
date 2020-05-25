@@ -12,10 +12,9 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 };
 
-const raf = require('jquery');
 const $ = require('jquery');
-const THROTTLE = 20;
 const OFFSET = 100;
+const Constant = require('json/constant.json');
 
 @observer
 class DragProvider extends React.Component<Props, {}> {
@@ -197,20 +196,6 @@ class DragProvider extends React.Component<Props, {}> {
 		this.canDrop = true;
 
 		if (this.hoverData) {
-			let { x, y, width, height } = this.hoverData;
-
-			if (this.hoverData.dropType == I.DragItem.Block) {
-				x -= OFFSET;
-				width += OFFSET * 2;
-			};
-
-			const checkRect: any = {
-				x: x + width * 0.3,
-				width: x + width * 0.6,
-				y: y + height * 0.3 - 2,
-				height: y + height * 0.7 + 2,
-			};
-
 			if (!isFileDrag && (this.type == I.DragItem.Block)) {
 				let parentIds: string[] = [];
 				this.getParentIds(this.hoverData.id, parentIds);
@@ -223,20 +208,22 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
-			if ((ey >= y) && (ey <= checkRect.y)) {
-				this.position = I.BlockPosition.Top;
-			} else
-			if ((ey >= checkRect.height) && (ey <= y + height)) {
-				this.position = I.BlockPosition.Bottom;
-			} else
-			if ((ex >= x) && (ex <= checkRect.x) && (ey >= checkRect.y) && (ey <= checkRect.height)) {
+			const { x, y, width, height } = this.hoverData;
+			const col1 = x + Constant.size.blockMenu / 2;
+			const col2 = x + Constant.size.blockMenu / 2 + 28;
+			const col3 = x + width * 0.6;
+
+			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
 			} else
-			if ((ex >= checkRect.width) && (ex <= x + width) && (ey >= checkRect.y) && (ey <= checkRect.height)) {
-				this.position = I.BlockPosition.Right;
-			} else
-			if ((ex >= checkRect.x) && (ex <= checkRect.width) && (ey >= checkRect.y) && (ey <= checkRect.height)) {
+			if ((ex > col1) && (ex <= col2)) {
+				this.position = ey <= y + height * 0.5 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+			} else 
+			if ((ex > col2) && (ex <= col3)) {
 				this.position = I.BlockPosition.Inner;
+			} else 
+			if (ex > col3) {
+				this.position = I.BlockPosition.Right;
 			};
 
 			// You can't drop on Icon and Title

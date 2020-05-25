@@ -261,6 +261,10 @@ class EditorPage extends React.Component<Props, State> {
 		const details = blockStore.getDetails(rootId, rootId);
 		const length = String(details.name || '').length;
 		
+		if (length) {
+			return;
+		};
+		
 		focus.set(rootId + '-title', { from: length, to: length });
 		window.setTimeout(() => { focus.apply(); });
 	};
