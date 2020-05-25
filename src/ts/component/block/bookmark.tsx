@@ -48,8 +48,8 @@ class BlockBookmark extends React.Component<Props, {}> {
 			element = (
 				<div className={cn.join(' ')} onClick={this.onClick}>
 					<div className="side left">
-						<div className="name">{title}</div>
-						<div className="descr">{description}</div>
+						{title ? <div className="name">{title}</div> : ''}
+						{description ? <div className="descr">{description}</div> : ''}
 						<div className="link">
 							{faviconHash ? <Icon className="fav" icon={commonStore.imageUrl(faviconHash, 16)} /> : ''}
 							{url}
