@@ -355,9 +355,10 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const { selection } = dataset || {};
+		const node = $(ReactDOM.findDOMNode(this));
 
 		commonStore.menuOpen('blockAction', { 
-			element: '#button-block-menu-' + id,
+			element: node.find('#button-block-menu-' + id),
 			type: I.MenuType.Vertical,
 			offsetX: 20,
 			offsetY: 0,

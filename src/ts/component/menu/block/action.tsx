@@ -109,7 +109,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.rebind();
 		this.setActive();
-		this.refFilter.focus();
+
+		window.setTimeout(() => {
+			this.refFilter.focus();
+		}, 15);
 		
 		menu.unbind('mouseleave').on('mouseleave', () => {
 			window.clearTimeout(this.timeout);
@@ -338,7 +341,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelect, blockId, blockIds, rootId, dataset } = data;
+		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {

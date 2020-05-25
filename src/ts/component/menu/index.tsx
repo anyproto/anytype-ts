@@ -185,45 +185,48 @@ class Menu extends React.Component<Props, {}> {
 			let x = offset.left;
 			let y = offset.top;
 
-			if (vertical == I.MenuDirection.Top) {
-				y = offset.top - height + offsetY;
+			switch (vertical) {
+				case I.MenuDirection.Top:
+					y = offset.top - height + offsetY;
+					
+					// Switch
+					if (y <= BORDER) {
+						let p = switchParam ? switchParam(I.MenuDirection.Bottom, param) : param; 
+						y = offset.top + eh + p.offsetY;
+					};
+					break;
 
-				// Switch
-				if (y <= BORDER) {
-					let p = switchParam ? switchParam(I.MenuDirection.Bottom, param) : param; 
-					y = offset.top + eh + p.offsetY;
-				};
-			};
-			if (vertical == I.MenuDirection.Center) {
-				y = offset.top - height / 2 + eh / 2 + offsetY;
-			};
-			if (vertical == I.MenuDirection.Bottom) {
-				y = offset.top + eh + offsetY;
+				case I.MenuDirection.Center:
+					y = offset.top - height / 2 + eh / 2 + offsetY;
+					break;
 
-				// Switch
-				if (y >= wh - height - BORDER) {
-					let p = switchParam ? switchParam(I.MenuDirection.Top, param) : param; 
-					y = offset.top - height + p.offsetY;
-				};
-			};
-			
-			if (horizontal == I.MenuDirection.Left) {
-				x += offsetX;
-			};
-			if (horizontal == I.MenuDirection.Center) {
-				x = x + ew / 2 - width / 2 + offsetX;
-			};
-			if (horizontal == I.MenuDirection.Right) {
-				x -= width + offsetX - ew;
+				case I.MenuDirection.Bottom:
+					y = offset.top + eh + offsetY;
+
+					// Switch
+					if (y >= wh - height - BORDER) {
+						let p = switchParam ? switchParam(I.MenuDirection.Top, param) : param; 
+						y = offset.top - height + p.offsetY;
+					};
+					break;
 			};
 
-			if (undefined !== forceX) {
-				x = forceX;
+			switch (horizontal) {
+				case I.MenuDirection.Left:
+					x += offsetX;
+					break;
+
+				case I.MenuDirection.Center:
+					x = x + ew / 2 - width / 2 + offsetX;
+					break;
+
+				case I.MenuDirection.Right:
+					x -= width + offsetX - ew;
+					break;
 			};
 
-			if (undefined !== forceY) {
-				y = forceY;
-			};
+			if (undefined !== forceX) x = forceX;
+			if (undefined !== forceY) y = forceY;
 
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
