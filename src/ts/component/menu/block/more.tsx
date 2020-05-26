@@ -121,6 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
+				{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 			
@@ -157,7 +158,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const length = String(block.content.text || '').length;
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const prev = children[children.length - 2];
 		
@@ -215,6 +215,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					} else {
 						history.push('/main/index');
 					};
+				});
+				break;
+
+			case 'move':
+				commonStore.popupOpen('navigation', { 
+					data: { 
+						type: I.NavigationType.Move, 
+						rootId: rootId,
+						blockId: blockId,
+						blockIds: blockIds,
+					}, 
 				});
 				break;
 				
