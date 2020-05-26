@@ -165,6 +165,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: rootId,
+				blockIds: [ rootId ],
 				match: match
 			}
 		});

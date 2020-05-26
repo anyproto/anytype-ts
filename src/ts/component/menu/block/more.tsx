@@ -121,7 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
-				{ id: 'move', icon: 'move', name: 'Move to' },
+				//{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 			
@@ -199,6 +199,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					data: { 
 						type: I.NavigationType.Move, 
 						rootId: rootId,
+						blockId: blockId,
+						blockIds: blockIds,
 					},
 				});
 				break;
