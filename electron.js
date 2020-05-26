@@ -48,6 +48,7 @@ function createWindow () {
 		height: height,
 		minWidth: 800,
 		minHeight: 640,
+		icon: path.join(__dirname, '/electron/icon.png'),
 		webPreferences: {
 			nodeIntegration: true
 		}

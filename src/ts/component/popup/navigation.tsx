@@ -133,7 +133,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			let name = '';
 
 			if (item.isSearch) {
-				name = 'Search';
+				name = 'Search for an object';
 				icon = <Icon className="search" />
 			} else
 			if (isRoot) {
