@@ -147,7 +147,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			return (
 				<div className="item" onClick={(e: any) => { item.isSearch ? this.onSearch() : this.onClick(e, item); }}>
 					{icon}
-					<div className="name">{Util.shorten(name, 16)}</div>
+					<div className="name">{Util.shorten(name, 24)}</div>
 					<Icon className="arrow" />
 				</div>
 			);
