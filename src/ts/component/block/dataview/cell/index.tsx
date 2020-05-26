@@ -51,11 +51,11 @@ class Cell extends React.Component<Props, {}> {
 				CellComponent = CellBool;
 				break;
 				
-			case I.PropertyType.Account:
+			case I.PropertyType.Link:
 				CellComponent = CellAccount;
 				break;
 				
-			case I.PropertyType.Link:
+			case I.PropertyType.Url:
 			case I.PropertyType.Email:
 			case I.PropertyType.Phone:
 				CellComponent = CellLink;
@@ -98,7 +98,7 @@ class Cell extends React.Component<Props, {}> {
 				commonStore.menuOpen('dataviewTagList', param);
 				break;
 				
-			case I.PropertyType.Account:
+			case I.PropertyType.Link:
 				commonStore.menuOpen('dataviewAccount', param);
 				break;
 				

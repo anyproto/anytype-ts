@@ -32,14 +32,14 @@
 	"homepage": "https://github.com/anytypeio/js-anytype#readme",
 	"devDependencies": {
 		"@babel/core": "^7.9.6",
-		"@types/history": "^4.7.5",
+		"@types/history": "^4.7.6",
 		"@types/i18n": "^0.8.6",
 		"@types/is": "0.0.21",
 		"@types/jquery": "^3.3.38",
-		"@types/lodash": "^4.14.151",
+		"@types/lodash": "^4.14.152",
 		"@types/long": "^4.0.1",
 		"@types/mobx-devtools-mst": "^0.9.7",
-		"@types/node": "^12.12.39",
+		"@types/node": "^12.12.42",
 		"@types/react": "^16.9.35",
 		"@types/react-beautiful-dnd": "^11.0.5",
 		"@types/react-dnd": "^3.0.2",
@@ -68,7 +68,7 @@
 	"dependencies": {
 		"@sentry/browser": "^5.15.5",
 		"amplitude-js": "^5.11.0",
-		"array-move": "^2.2.1",
+		"array-move": "^2.2.2",
 		"bindings": "^1.5.0",
 		"blueimp-load-image": "^2.31.0",
 		"css-loader": "^3.5.3",
@@ -122,8 +122,8 @@
 		"sha1": "^1.1.1",
 		"source-map-loader": "^0.2.4",
 		"sprintf-kit": "^2.0.0",
-		"typescript": "^3.9.2",
-		"webpack-bundle-analyzer": "^3.7.0",
+		"typescript": "^3.9.3",
+		"webpack-bundle-analyzer": "^3.8.0",
 		"xtend": "^4.0.2"
 	},
 	"build": {

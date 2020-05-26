@@ -120,6 +120,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		$('#block-' + blockId).addClass('showMenu');
 	};
+
+	componentDidUpdate () {
+		this.props.position();
+	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;

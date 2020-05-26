@@ -14,10 +14,10 @@ export enum PropertyType {
 	Date	 = 3, 
 	Select	 = 4, 
 	Multiple = 5,
-	Account	 = 6,
+	Link	 = 6,
 	File	 = 7,
 	Bool	 = 8, 
-	Link	 = 9,
+	Url		 = 9,
 	Email	 = 10,
 	Phone	 = 11,
 };

@@ -99,10 +99,10 @@ class BlockDataview extends React.Component<Props, State> {
 				{ id: '5', name: 'Date', type: I.PropertyType.Date },
 				{ id: '6', name: 'Select', type: I.PropertyType.Select, values: [ 'select1', 'select2', 'select3' ] },
 				{ id: '7', name: 'Multiple', type: I.PropertyType.Multiple, values: [ 'multiple1', 'multiple2', 'multiple3', 'multiple4', 'multiple5' ] },
-				{ id: '8', name: 'Account', type: I.PropertyType.Account, values: [ { name: 'Anton Barulenkov' }, { 'name': 'Zhanna Sharipova' } ] },
+				{ id: '8', name: 'Account', type: I.PropertyType.Link, values: [ { name: 'Anton Barulenkov' }, { 'name': 'Zhanna Sharipova' } ] },
 				{ id: '9', name: 'File', type: I.PropertyType.File },
 				{ id: '10', name: 'Bool', type: I.PropertyType.Bool },
-				{ id: '11', name: 'Link', type: I.PropertyType.Link },
+				{ id: '11', name: 'Url', type: I.PropertyType.Url },
 				{ id: '12', name: 'Phone', type: I.PropertyType.Phone },
 			],
 			data: [

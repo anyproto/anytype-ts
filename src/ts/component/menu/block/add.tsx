@@ -86,6 +86,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		this.checkFilter();
+		this.props.position();
 	};
 	
 	checkFilter () {
