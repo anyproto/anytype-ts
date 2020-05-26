@@ -598,7 +598,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		if (!rect.x && !rect.y) {
 			x = Constant.size.blockMenu;
-			y = -4;
+			y = 4;
 		};
 
 		commonStore.filterSet(range.from, '');
