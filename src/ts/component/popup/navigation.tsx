@@ -96,11 +96,18 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		const Item = (item: any) => {
 			let { iconEmoji, iconImage, name } = item.details;
+			let isRoot = item.id == root;
 
 			return (
 				<div id={'item-' + item.id} className="item">
 					<div onClick={(e: any) => { this.onClick(e, item); }}>
-						<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+						{isRoot ? (
+							<div className="smile c48">
+								<Icon className="home big" />
+							</div>
+						) : (
+							<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+						)}
 						<div className="info">
 							<div className="name">{name}</div>
 							<div className="descr">{item.snippet}</div>
@@ -121,15 +128,20 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const ItemPath = (item: any) => {
+			let isRoot = item.id == root;
 			let icon = null;
 			let name = '';
 
 			if (item.isSearch) {
 				name = 'Search';
 				icon = <Icon className="search" />
+			} else
+			if (isRoot) {
+				name = item.details.name;
+				icon = <Icon className="home" />;
 			} else {
 				name = item.details.name;
-				icon = <Smile icon={item.details.iconEmoji} hash={item.details.iconImage} className="c24" size={20} />;
+				icon = <Smile icon={item.details.iconEmoji} hash={item.details.iconImage} />;
 			};
 
 			return (
@@ -143,10 +155,17 @@ class PopupNavigation extends React.Component<Props, State> {
 		
 		const Selected = (item: any) => {
 			const { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
+			const isRoot = item.id == root;
 			
 			return (
 				<div className="selected">
-					<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+					{isRoot ? (
+						<div className="smile c48">
+							<Icon className="home big" />
+						</div>
+					) : (
+						<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+					)}
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
 					{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
