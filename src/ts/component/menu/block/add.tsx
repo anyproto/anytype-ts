@@ -145,7 +145,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-
 				if (this.n == -1) {
 					commonStore.menuClose(this.props.id);
 					break;
@@ -160,7 +159,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				
 			case Key.down:
 				e.preventDefault();
-				
 				this.n++;
 				if (this.n > l - 1) {
 					this.n = 0;
