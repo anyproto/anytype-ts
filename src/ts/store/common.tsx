@@ -197,6 +197,10 @@ class CommonStore {
 		
 		this.menuClose(id, () => {
 			this.menuList.push({ id: id, param: param });
+			
+			if (param.onOpen) {
+				param.onOpen();
+			};
 		});
 		
 		analytics.event(Util.toCamelCase('Menu-' + id));

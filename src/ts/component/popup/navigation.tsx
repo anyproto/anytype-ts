@@ -19,12 +19,19 @@ interface State {
 	info: I.PageInfo;
 	pagesIn: I.PageInfo[];
 	pagesOut: I.PageInfo[];
+	pageLeft: number;
+	pageRight: number;
 };
 
 const $ = require('jquery');
 const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
+
+const HEIGHT = 80;
+const PAGE = 10;
+
+enum Panel { Left, Right };
 
 @observer
 class PopupNavigation extends React.Component<Props, State> {
@@ -39,6 +46,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		info: null,
 		pagesIn: [] as I.PageInfo[],
 		pagesOut: [] as I.PageInfo[],
+		pageLeft: 0,
+		pageRight: 0,
 	};
 	ref: any = null;
 	timeout: number = 0;
@@ -54,12 +63,13 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { expanded, filter, info, pagesIn, pagesOut, loading, isOpen } = this.state;
+		const { expanded, filter, info, pagesIn, pagesOut, loading, isOpen, pageLeft, pageRight } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
 		const { root } = blockStore;
 		const isRoot = info && (info.id == root);
+		const page = pageLeft;
 
 		if (!isOpen) {
 			return null;
@@ -67,6 +77,8 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		let placeHolder = '';
 		let confirm = '';
+		let id = 0;
+		let pages = this.state.pages;
 
 		switch (type) {
 			default:
@@ -84,7 +96,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				break;
 		};
 		
-		let pages = this.state.pages;
 		if (filter) {
 			const ids = this.index.search(filter);
 			if (ids.length) {
@@ -235,8 +246,12 @@ class PopupNavigation extends React.Component<Props, State> {
 								</div>
 							</div>
 						) : (
-							<div key="items" className="items">
+							<div key="items" className="items left">
 								{pages.map((item: any, i: number) => {
+									if (++id > (page + 1) * PAGE) {
+										return null;
+									};
+
 									return <Item key={i} {...item} />;
 								})}
 							</div>
@@ -289,6 +304,25 @@ class PopupNavigation extends React.Component<Props, State> {
 		
 		this.resize();
 		win.unbind('resize.tree').on('resize.tree', () => { this.resize(); });
+
+		obj.find('.items.left').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Left); });
+		obj.find('.items.right').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Right); });
+	};
+
+	onScroll (panel: Panel) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const content = panel == Panel.Left ? node.find('.items.left') : node.find('.items.right');
+		const stateKey = panel == Panel.Left ? 'pageLeft' : 'pageRight';
+		const top = content.scrollTop();
+
+		let page = this.state[stateKey];
+
+		if (top >= page * PAGE * HEIGHT) {
+			let newState = {};
+			newState[stateKey] = page + 1;
+
+			this.setState(newState);
+		};
 	};
 	
 	resize () {
@@ -322,7 +356,11 @@ class PopupNavigation extends React.Component<Props, State> {
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
+			this.setState({ 
+				pageLeft: 0, 
+				pageRight: 0,
+				filter: Util.filterFix(this.ref.getValue()),
+			});
 		}, force ? 0 : 50);
 	};
 
