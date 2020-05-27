@@ -138,9 +138,6 @@
 				}
 			}
 
-			.item.notion { opacity: 1; cursor: pointer; }
-			.item:hover { border-color: $colorBlack; }
-
 			.item.notion .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/notion.svg'); }
 			.item.evernote .icon { width: 27px; background-image: url('~img/icon/popup/settings/import/evernote.svg'); }
 			.item.roam .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/roam.svg'); }
