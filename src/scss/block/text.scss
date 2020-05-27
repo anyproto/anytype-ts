@@ -23,7 +23,7 @@
 			name { display: none; }
 		}
 
-		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
+		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: text; }
 		mention * { user-select: text; }
 		mention {
 			smile { display: inline; position: relative; z-index: 1; }
