@@ -558,6 +558,7 @@ class EditorPage extends React.Component<Props, State> {
 					},
 					onClose: () => {
 						selection.preventClear(false);
+						selection.clear();
 					}
 				});
 			};
