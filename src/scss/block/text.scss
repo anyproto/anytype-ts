@@ -28,7 +28,11 @@
 		mention {
 			smile { display: inline; position: relative; z-index: 1; }
 			smile:empty { display: none; }
-			img { user-select: none; }
+
+			smile {
+				.smile { display: inline; }
+				img { position: static; left: auto; top: auto; margin: 0px; vertical-align: middle; margin-top: -4px; }
+			}
 			
 			name { 
 				display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; 
