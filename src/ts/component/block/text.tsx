@@ -253,11 +253,14 @@ class BlockText extends React.Component<Props, {}> {
 			const details = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
 
-			item.addClass(param.class);
 			if (smile && smile.length && (details.iconEmoji || details.iconImage)) {
 				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 				smile.after('<img src="./img/space.png" class="space" />');
+				param.class += ' withImage';
+			} else {
 			};
+
+			item.addClass(param.class);
 		});
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {

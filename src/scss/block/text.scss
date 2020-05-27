@@ -26,29 +26,32 @@
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: text; }
 		mention {
-			smile { display: inline; position: relative; z-index: 1; }
-			smile:empty { display: none; }
-
+			smile { display: none; position: relative; z-index: 1; }
 			smile {
-				.smile { display: inline; }
+				.smile { display: inline; width: auto; }
 				img { position: static; left: auto; top: auto; margin: 0px; vertical-align: middle; margin-top: -4px; }
 			}
 			
-			.space { width: 4px; height: 1em; margin-top: -4px; vertical-align: middle; }
+			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; }
 
-			name { 
-				display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; 
-				border-bottom: 1px solid $colorDarkGrey;
+			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
+			name::before {
+				content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast;
+				position: absolute; bottom: 0px; left: 0px; z-index: 1;
 			}
 		}
-		mention:hover {
-			name { border-color: $colorBlack; }
-		}
 
-		mention.c24 name bgcolor:first-child { margin-left: -24px; padding-left: 24px; }
-		mention.c26 name bgcolor:first-child { margin-left: -26px; padding-left: 26px; }
-		mention.c28 name bgcolor:first-child { margin-left: -28px; padding-left: 28px; }
-		mention.c32 name bgcolor:first-child { margin-left: -32px; padding-left: 32px; }
+		mention.withImage {
+			smile { display: inline; }
+		}
+		mention.withImage.c24 name bgcolor:first-child { margin-left: -22px; padding-left: 22px; }
+		mention.withImage.c26 name bgcolor:first-child { margin-left: -22px; padding-left: 22px; }
+		mention.withImage.c28 name bgcolor:first-child { margin-left: -27px; padding-left: 27px; }
+		mention.withImage.c32 name bgcolor:first-child { margin-left: -34px; padding-left: 34px; }
+		
+		mention:hover {
+			name::before { border-color: $colorBlack; }
+		}
 
 		bold { font-weight: 600; }
 		italic { font-style: italic; }
@@ -85,7 +88,7 @@
 		padding: 4px 0px 2px 0px;
 	}
 	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget mention .space {
-		width: 6px;
+		width: 6px; height: 32px;
 	}
 	
 	.block.blockText.header2 { padding: 14px 0px 0px 0px; }
@@ -94,17 +97,23 @@
 		padding: 3px 0px 2px 0px;
 	}
 	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget mention .space {
-		width: 5px;
+		width: 5px; height: 28px;
 	}
 	
 	.block.blockText.header3 { padding: 14px 0px 0px 0px; }
 	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget { 
 		font-size: 18px; line-height: 26px; letter-spacing: -0.16px; font-weight: 600; padding: 2px 0px 3px 0px;
 	}
+	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget mention .space {
+		width: 5px; height: 26px;
+	}
 	
 	.block.blockText.quote { padding: 6px 0px 6px 0px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { 
 		font-size: 18px; line-height: 26px; letter-spacing: -0.16px; padding: 2px 0px 3px 0px;
+	}
+	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget mention .space {
+		width: 5px; height: 26px;
 	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { 
 		width: 0px; height: calc(100% + 5px); position: absolute; left: 11px; top: -2px; border-left: 2px solid $colorOrange; 
