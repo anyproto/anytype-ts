@@ -273,7 +273,7 @@ class Menu extends React.Component<Props, {}> {
 		
 		const el = node.find('#item-' + item.id).addClass('active');
 		
-		if (scroll) {
+		if (el.length && scroll) {
 			const content = node.find('.content');
 			const st = content.scrollTop();
 			const pt = el.position().top;

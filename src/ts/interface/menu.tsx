@@ -15,6 +15,7 @@ export interface MenuParam {
 	passThrough?: boolean;
 	className?: string;
 	onClose?(): void;
+	onOpen?(): void;
 };
 
 export interface Menu {

@@ -19,6 +19,7 @@ const { dialog } = window.require('electron').remote;
 const LIMIT = 18;
 const HEIGHT = 32;
 const PAGE = 90;
+const ROWS = 8;
 
 class MenuSmile extends React.Component<Props, State> {
 
@@ -49,7 +50,7 @@ class MenuSmile extends React.Component<Props, State> {
 		const { noHead } = data;
 		const sections = this.getSections();
 		
-		let id = 1;
+		let id = 0;
 		
 		const Item = (item: any) => {
 			return (
@@ -66,9 +67,7 @@ class MenuSmile extends React.Component<Props, State> {
 				<div className="name">{item.name}</div>
 				<div className="list">
 					{item.emojis.map((smile: any, i: number) => {
-						id++;
-						
-						if (id >= (page + 1) * PAGE * 1.1) {
+						if (++id > (page + 1) * PAGE) {
 							return null;
 						};
 						
@@ -153,7 +152,7 @@ class MenuSmile extends React.Component<Props, State> {
 		const items = node.find('.items');
 		const top = items.scrollTop();
 		
-		if (top >= page * 12 * HEIGHT + 2 * HEIGHT) {
+		if (top >= page * ROWS * HEIGHT) {
 			this.setState({ page: page + 1 });
 		};
 	};
@@ -208,7 +207,10 @@ class MenuSmile extends React.Component<Props, State> {
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
+			this.setState({ 
+				page: 0, 
+				filter: Util.filterFix(this.ref.getValue()),
+			});
 		}, force ? 0 : 50);
 	};
 	

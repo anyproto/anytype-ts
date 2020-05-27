@@ -108,7 +108,7 @@ class SmileUtil {
 		};
 
 		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
-		return `./emoji/${src}.png`;
+		return `./img/emoji/${src}.png`;
 	};
 
 	data (icon: string) {

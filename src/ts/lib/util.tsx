@@ -474,7 +474,7 @@ class Util {
 	};
 
 	coverSrc (cover: string) {
-		return `./cover/${cover}.jpg`;
+		return `./img/cover/${cover}.jpg`;
 	};
 
 	selectionRect (): DOMRect {

@@ -9,8 +9,8 @@ import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
 
-const com = require('proto/commands.js');
 const $ = require('jquery');
+const raf = require('raf');
 const Constant: any = require('json/constant.json');
 
 @observer
@@ -157,6 +157,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		const { match } = this.props;
 		const { root } = blockStore;
+		const node = $(ReactDOM.findDOMNode(this));
 
 		commonStore.menuOpen('blockMore', { 
 			element: '#button-' + id + '-more',
@@ -170,6 +171,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 				blockId: id,
 				blockIds: [ id ],
 				match: match
+			},
+			onOpen: () => {
+				raf(() => {
+					node.find('#item-' + id).addClass('active');
+				});
+			},
+			onClose: () => {
+				node.find('#item-' + id).removeClass('active');
 			}
 		});
 	};

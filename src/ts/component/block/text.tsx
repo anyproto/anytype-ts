@@ -253,10 +253,14 @@ class BlockText extends React.Component<Props, {}> {
 			const details = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
 
-			item.addClass(param.class);
 			if (smile && smile.length && (details.iconEmoji || details.iconImage)) {
 				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
+				smile.after('<img src="./img/space.png" class="space" />');
+				param.class += ' withImage';
+			} else {
 			};
+
+			item.addClass(param.class);
 		});
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
@@ -357,6 +361,7 @@ class BlockText extends React.Component<Props, {}> {
 		const k = e.which;		
 		const range = this.getRange();
 		const value = this.getValue().replace(/\n$/, '');
+		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
 		
 		if (!e.metaKey) {
 			keyboard.setPressed(k);
@@ -399,7 +404,7 @@ class BlockText extends React.Component<Props, {}> {
 			onMenuAdd(id, value, range);
 		};
 
-		if ((e.key == '@') && (!value || (value[range.from - 1] == ' ')) && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
+		if ((e.key == '@') && isSpaceBefore && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
 			this.onMention();
 		};
 
@@ -612,11 +617,11 @@ class BlockText extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: block.id,
-				onChange: (text: string, marks: I.Mark[], range: I.TextRange) => {
-					const to = range.from + text.length;
+				onChange: (text: string, marks: I.Mark[], from: number) => {
+					const to = from + text.length;
 
 					this.marks = Util.objectCopy(marks);
-					value = Util.stringInsert(value, text, range.from, range.to);
+					value = Util.stringInsert(value, text, from, from);
 
 					DataUtil.blockSetText(rootId, block, value, this.marks, () => {
 						focus.set(block.id, { from: to, to: to });
@@ -791,7 +796,7 @@ class BlockText extends React.Component<Props, {}> {
 				element: el,
 				type: I.MenuType.Horizontal,
 				offsetX: x,
-				offsetY: -y,
+				offsetY: y,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Left,
 				passThrough: true,
