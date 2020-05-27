@@ -255,7 +255,6 @@ class BlockText extends React.Component<Props, {}> {
 
 			item.addClass(param.class);
 			if (smile && smile.length && (details.iconEmoji || details.iconImage)) {
-				smile.after('&nbsp;');
 				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 			};
 		});
@@ -400,7 +399,7 @@ class BlockText extends React.Component<Props, {}> {
 			onMenuAdd(id, value, range);
 		};
 
-		if ((e.key == '@') && (!range.from || (value[range.from - 1] == ' ')) && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
+		if ((e.key == '@') && (!range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n')) && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
 			this.onMention();
 		};
 

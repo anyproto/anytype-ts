@@ -23,7 +23,7 @@
 			name { display: none; }
 		}
 
-		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: text; }
+		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: text; }
 		mention {
 			smile { display: inline; position: relative; z-index: 1; }
@@ -36,7 +36,7 @@
 			
 			name { 
 				display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; 
-				border-bottom: 1px solid $colorDarkGrey;
+				border-bottom: 1px solid $colorDarkGrey; margin-left: 4px;
 			}
 		}
 		mention:hover {
