@@ -49,12 +49,15 @@ class ListIndex extends React.Component<Props, {}> {
 			const { name, iconEmoji, iconImage } = details;
 
 			let icon = iconEmoji;
+			let showMenu = true;
+
 			if (content.style == I.LinkStyle.Archive) {
 				icon = (
 					<div className="smile c48">
 						<Icon className="archive" />
 					</div>
 				);
+				showMenu = false;
 			} else {
 				icon = <Smile className="c48" icon={iconEmoji} hash={iconImage} size={24} />;
 			};
@@ -63,7 +66,7 @@ class ListIndex extends React.Component<Props, {}> {
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
 					{icon}
 					<div className="name">{name}</div>
-					<Icon id={'button-' + item.id + '-more'} className="more" onMouseDown={(e: any) => { onMore(e, item.id); }} />
+					{showMenu ? <Icon id={'button-' + item.id + '-more'} className="more" onMouseDown={(e: any) => { onMore(e, item.id); }} /> : ''}
 				</div>
 			);
 		});
