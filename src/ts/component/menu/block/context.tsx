@@ -120,12 +120,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		const obj = $('#menuBlockContext');
-		const switchParam = (dir: I.MenuDirection, param: I.MenuParam) => {
-			if (dir == I.MenuDirection.Top) {
-				param.offsetY = -15;
-			};
-			return param;
-		};
 		
 		focus.apply();
 		
@@ -175,7 +169,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						offsetY: 15,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Center,
-						switchParam: switchParam,
 						data: {
 							rootId: rootId,
 							blockId: blockId,
@@ -217,7 +210,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						offsetY: 15,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Center,
-						switchParam: switchParam,
 						data: {
 							rootId: rootId,
 							blockId: blockId,
@@ -268,7 +260,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						offsetY: 15,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Center,
-						switchParam: switchParam,
 						data: {
 							rootId: rootId,
 							blockId: blockId,
@@ -297,7 +288,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						offsetY: 15,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Center,
-						switchParam: switchParam,
 						data: {
 							rootId: rootId,
 							blockId: blockId,

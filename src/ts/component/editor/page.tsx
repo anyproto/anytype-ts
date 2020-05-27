@@ -845,15 +845,6 @@ class EditorPage extends React.Component<Props, State> {
 			offsetY: y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			switchParam: (dir: I.MenuDirection, param: I.MenuParam) => {
-				if (dir == I.MenuDirection.Top) {
-					param.offsetY = parseInt(el.css('paddingTop')) - 8;
-					if (rect.y) {
-						param.offsetY += rect.y - (offset.top - $(window).scrollTop());
-					};
-				};
-				return param;
-			},
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');

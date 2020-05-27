@@ -15,7 +15,6 @@ export interface MenuParam {
 	passThrough?: boolean;
 	className?: string;
 	onClose?(): void;
-	switchParam?(dir: MenuDirection, param: MenuParam): MenuParam;
 };
 
 export interface Menu {
