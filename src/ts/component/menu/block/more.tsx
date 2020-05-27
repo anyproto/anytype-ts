@@ -113,10 +113,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const { content } = block;
 		const details = blockStore.getDetails(rootId, content.targetBlockId);
-		 
+
 		let items = [];
-		
-		if (block.type == I.BlockType.Page) {
+		if (block.isPage()) {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
@@ -128,8 +127,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			if (details.isArchived) {
 				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
 			} else {
-				items.push({ id: 'archive', icon: 'remove', name: 'Archive' });
+				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
 			};
+		} else 
+		if (block.isLinkPage()) {
+			items = [
+				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' }
+			];
 		} else {
 			items = [
 				{ id: 'remove', icon: 'remove', name: 'Delete' },
@@ -208,16 +212,20 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'copy':
 				break;
 				
-			case 'archive':
+			case 'archivePage':
 				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
 					
 					if (prev) {
-						history.push('/main/edit/' + prev.content.targetBlockId);
+						DataUtil.pageOpen(e, prev.content.targetBlockId);
 					} else {
 						history.push('/main/index');
 					};
 				});
+				break;
+
+			case 'archiveIndex':
+				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], true);
 				break;
 
 			case 'move':
@@ -233,7 +241,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'remove':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
-					if (block.type == I.BlockType.Page) {
+					if (block.isPage()) {
 						history.push('/main/index');
 					};
 				});
@@ -241,7 +249,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'removePage':
 				C.BlockListDeletePage([ blockId ], (message: any) => {
-					if (block.type == I.BlockType.Page) {
+					if (block.isPage()) {
 						history.push('/main/index');
 					};
 				});

@@ -9,6 +9,7 @@ import { I, Util} from 'ts/lib';
 interface Props {
 	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
+	onMore?(e: any, id: string): void;
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
 };
@@ -25,7 +26,7 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { onSelect, onAdd, helperContainer } = this.props;
+		const { onSelect, onAdd, onMore, helperContainer } = this.props;
 		const { root } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		
@@ -62,6 +63,7 @@ class ListIndex extends React.Component<Props, {}> {
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
 					{icon}
 					<div className="name">{name}</div>
+					<Icon id={'button-' + item.id + '-more'} className="more" onMouseDown={(e: any) => { onMore(e, item.id); }} />
 				</div>
 			);
 		});

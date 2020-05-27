@@ -1,4 +1,5 @@
 [
 	{ "path": "/" },
-	{ "path": "/:page/:action/:id?" }
+	{ "path": "/:page/:action/:id?" },
+	{ "path": "/:page/:action/:id?/link/:link?" }
 ]

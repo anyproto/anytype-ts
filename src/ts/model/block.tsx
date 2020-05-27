@@ -83,6 +83,10 @@ class Block implements I.Block {
 	isLink (): boolean {
 		return this.type == I.BlockType.Link;
 	};
+
+	isLinkPage (): boolean {
+		return this.isLink() && (this.content.style == I.LinkStyle.Page);
+	};
 	
 	isLinkArchive (): boolean {
 		return this.isLink() && (this.content.style == I.LinkStyle.Archive);

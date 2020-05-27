@@ -26,6 +26,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onMore = this.onMore.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
@@ -67,6 +68,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							ref={(ref) => { this.listRef = ref; }}
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
+							onMore={this.onMore}
 							onSortEnd={this.onSortEnd}
 							helperContainer={() => { return $('#documents').get(0); }} 
 						/>
@@ -133,7 +135,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			commonStore.popupOpen('archive', {});
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
-				DataUtil.pageOpen(e, this.props, block.content.targetBlockId);
+				DataUtil.pageOpen(e, block.content.targetBlockId);
 			});
 		};
 	};
@@ -147,6 +149,28 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		DataUtil.pageCreate(e, this.props, root, '', details, I.BlockPosition.Bottom, (message: any) => {
 			Util.scrollTopEnd();
+		});
+	};
+
+	onMore (e: any, id: string) {
+		e.stopPropagation();
+
+		const { match } = this.props;
+		const { root } = blockStore;
+
+		commonStore.menuOpen('blockMore', { 
+			element: '#button-' + id + '-more',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 8,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: root,
+				blockId: id,
+				blockIds: [ id ],
+				match: match
+			}
 		});
 	};
 	

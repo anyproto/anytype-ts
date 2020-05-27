@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, C, Key, Storage, Util, translate, crumbs } from 'ts/lib';
-import { commonStore, authStore, blockStore } from 'ts/store';
+import { Frame, Cover, Title, Error, Input, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Key, Storage, DataUtil, translate } from 'ts/lib';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 const sha1 = require('sha1');
@@ -93,7 +93,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 				history.push('/auth/setup/select');
 			} else {
 				if (pageId) {
-					history.push('/main/edit/' + pageId);
+					DataUtil.pageOpen(e, pageId);
 				} else {
 					history.push('/main/index');
 				};

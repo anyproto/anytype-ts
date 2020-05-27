@@ -28,9 +28,16 @@
 				@include text-paragraph; height: 22px; width: 100%; word-break: break-word; position: absolute; left: 0px; bottom: 16px; 
 				padding: 0px 16px; @include text-overflow-nw;  
 			}
+			.icon.more { 
+				background-image: url('~img/icon/index/more.svg'); width: 20px; height: 20px; cursor: pointer; position: absolute;
+				right: 16px; top: 16px; opacity: 0;
+			}
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.last { margin-right: 0px; }
+		.item:hover {
+			.icon.more { opacity: 1; }
+		}
 		
 		.item.add { background: rgba(255,255,255,0.65); transition: background 0.2s ease-in-out; margin-right: 0px; }
 		.item.add {

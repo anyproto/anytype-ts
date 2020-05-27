@@ -6,7 +6,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
 import { commonStore, authStore, blockStore } from './store';
-import { C, Util, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
+import { C, Util, DataUtil, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -211,6 +211,7 @@ class App extends React.Component<Props, State> {
 		analytics.setUserProperties({ deviceType: 'Desktop', platform: platforms[os.platform()] });
 
 		keyboard.init(history);
+		DataUtil.init(history);
 
 		const cover = Storage.get('cover');
 		const coverImg = Storage.get('coverImg');

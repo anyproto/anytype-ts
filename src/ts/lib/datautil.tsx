@@ -4,6 +4,12 @@ import { commonStore, blockStore } from 'ts/store';
 const Constant = require('json/constant.json');
 
 class DataUtil {
+
+	history: any = null;
+
+	init (history: any) {
+		this.history = history;
+	};
 	
 	map (list: any[], field: string): any {
 		list = list|| [] as any[];
@@ -139,15 +145,14 @@ class DataUtil {
 		});
 	};
 	
-	pageOpen (e: any, props: any, targetId: string) {
-		const { history } = props;
+	pageOpen (e: any, targetId: string) {
+		/*
 		const param = {
 			data: { 
 				id: targetId,
 			}
 		};
 
-		/*
 		if (commonStore.popupIsOpen('editorPage')) {
 			commonStore.popupUpdate('editorPage', param);
 		} else 
@@ -158,7 +163,7 @@ class DataUtil {
 		};
 		*/
 		
-		history.push('/main/edit/' + targetId);
+		this.history.push('/main/edit/' + targetId);
 	};
 	
 	pageCreate (e: any, props: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
@@ -175,7 +180,7 @@ class DataUtil {
 				return;
 			};
 			
-			this.pageOpen(e, props, message.targetId);
+			this.pageOpen(e, message.targetId);
 				
 			if (callBack) {
 				callBack(message);

@@ -4,6 +4,7 @@ import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
 import { I, C, Util, StructDecode, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { DataUtil } from '../../lib';
 
 interface Props extends I.Popup {
 	history: any;
@@ -397,7 +398,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					if (item.id == root) {
 						history.push('/main/index');
 					} else {
-						history.push('/main/edit/' + item.id);
+						DataUtil.pageOpen(e, item.id);
 					};
 				});
 				break;
