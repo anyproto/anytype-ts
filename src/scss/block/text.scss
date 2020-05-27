@@ -17,21 +17,22 @@
 			background: rgba(172,169,150,0.15);
 		}
 
-		emoji { display: inline-block; user-select: all; }
+		smile {
+			.smile { display: inline; }
+			img { position: static; left: auto; top: auto; margin: 0px; vertical-align: middle; margin-top: -4px; }
+		}
+
+		emoji { display: inline; user-select: all; }
 		emoji * { user-select: all; }
 		emoji {
 			name { display: none; }
+
 		}
 
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: text; }
 		mention {
 			smile { display: none; position: relative; z-index: 1; }
-			smile {
-				.smile { display: inline; width: auto; }
-				img { position: static; left: auto; top: auto; margin: 0px; vertical-align: middle; margin-top: -4px; }
-			}
-			
 			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; }
 
 			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
