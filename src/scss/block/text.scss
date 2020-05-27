@@ -24,11 +24,10 @@
 		}
 
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
-		mention * { user-select: text; }
+		mention * { user-select: all; }
 		mention {
 			smile { display: inline; position: relative; z-index: 1; }
 			smile:empty { display: none; }
-			smile * { user-select: none; }
 			
 			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
 			name::after {
@@ -42,7 +41,6 @@
 		mention:hover {
 			name::after { border-color: $colorBlack; }
 		}
-
 
 		mention.c24 name bgcolor:first-child { margin-left: -24px; padding-left: 24px; }
 		mention.c26 name bgcolor:first-child { margin-left: -26px; padding-left: 26px; }

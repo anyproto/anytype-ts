@@ -275,7 +275,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 			range: { from: filter.from, to: filter.from + item.name.length },
 		});
 
-		onChange(item.name + ' ', content.marks, { from: filter.from, to: filter.from + filter.text.length + 1 });
+		onChange(item.name + ' ', content.marks, filter.from);
 		commonStore.menuClose(this.props.id);
 	};
 	

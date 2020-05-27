@@ -399,7 +399,7 @@ class BlockText extends React.Component<Props, {}> {
 			onMenuAdd(id, value, range);
 		};
 
-		if ((e.key == '@') && (!value || (value[range.from - 1] == ' ')) && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
+		if ((e.key == '@') && (!value[range.from - 1] || (value[range.from - 1] == ' ')) && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
 			this.onMention();
 		};
 
@@ -621,11 +621,11 @@ class BlockText extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: block.id,
-				onChange: (text: string, marks: I.Mark[], range: I.TextRange) => {
-					const to = range.from + text.length;
+				onChange: (text: string, marks: I.Mark[], from: number) => {
+					const to = from + text.length;
 
 					this.marks = Util.objectCopy(marks);
-					value = Util.stringInsert(value, text, range.from, range.to);
+					value = Util.stringInsert(value, text, from, from);
 
 					DataUtil.blockSetText(rootId, block, value, this.marks, () => {
 						focus.set(block.id, { from: to, to: to });
