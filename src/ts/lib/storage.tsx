@@ -11,7 +11,9 @@ class Storage {
 		if (!o) {
 			return;
 		};
-		return JSON.parse(o);
+		let ret = ''
+		try { ret = JSON.parse(o); } catch (e) {};
+		return ret;
 	};
 	
 	set (key: string, obj: any, del?: boolean): void {

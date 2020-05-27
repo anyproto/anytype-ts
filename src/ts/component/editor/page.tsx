@@ -241,7 +241,9 @@ class EditorPage extends React.Component<Props, State> {
 		let length = 0;
 		if (focused) {
 			const block = blockStore.getLeaf(rootId, focused);
-			length = block.getLength();
+			if (block) {
+				length = block.getLength();
+			};
 		};
 		
 		switch (cmd) {
