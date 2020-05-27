@@ -237,13 +237,13 @@ class Mark {
 				};
 			};
 		};
-		
-		for (let mark of parts) {
+
+		const render = (mark: I.Mark) => {
 			const param = String(mark.param || '');
 			if (!param && (hasParam.indexOf(mark.type) >= 0)) {
-				continue;
+				return;
 			};
-			
+
 			const attr = this.paramToAttr(mark.type, param);
 			const tag = Tags[mark.type];
 			const data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${param}"`;
@@ -260,6 +260,20 @@ class Mark {
 				r[mark.range.from] = `<${tag} ${attr} ${data}>${prefix}${r[mark.range.from]}`;
 				r[mark.range.to - 1] += `${suffix}</${tag}>`;
 			};
+		};
+		
+		for (let mark of parts) {
+			if (mark.type == I.MarkType.Mention) {
+				continue;
+			};
+			render(mark);
+		};
+
+		for (let mark of marks) {
+			if (mark.type != I.MarkType.Mention) {
+				continue;
+			};
+			render(mark);
 		};
 
 		return r.join('');

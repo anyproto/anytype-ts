@@ -26,7 +26,7 @@
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: all; }
 		mention {
-			smile { padding-right: 6px; display: inline; position: relative; z-index: 1; }
+			smile { display: inline; position: relative; z-index: 1; }
 			smile:empty { display: none; }
 			
 			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
@@ -43,10 +43,10 @@
 		}
 
 
-		mention.c24 name bgcolor { margin-left: -30px; padding-left: 30px; }
-		mention.c26 name bgcolor { margin-left: -32px; padding-left: 32px; }
-		mention.c28 name bgcolor { margin-left: -34px; padding-left: 34px; }
-		mention.c32 name bgcolor { margin-left: -38px; padding-left: 38px; }
+		mention.c24 name bgcolor:first-child { margin-left: -24px; padding-left: 24px; }
+		mention.c26 name bgcolor:first-child { margin-left: -26px; padding-left: 26px; }
+		mention.c28 name bgcolor:first-child { margin-left: -28px; padding-left: 28px; }
+		mention.c32 name bgcolor:first-child { margin-left: -32px; padding-left: 32px; }
 
 		bold { font-weight: 600; }
 		italic { font-style: italic; }
