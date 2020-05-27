@@ -34,9 +34,11 @@
 				img { position: static; left: auto; top: auto; margin: 0px; vertical-align: middle; margin-top: -4px; }
 			}
 			
+			.space { width: 4px; height: 1em; margin-top: -4px; vertical-align: middle; }
+
 			name { 
 				display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; 
-				border-bottom: 1px solid $colorDarkGrey; margin-left: 4px;
+				border-bottom: 1px solid $colorDarkGrey;
 			}
 		}
 		mention:hover {
@@ -82,11 +84,17 @@
 		font-family: 'Lcg'; font-size: 28px; line-height: 32px; letter-spacing: -0.48px; font-weight: 600; 
 		padding: 4px 0px 2px 0px;
 	}
+	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget mention .space {
+		width: 6px;
+	}
 	
 	.block.blockText.header2 { padding: 14px 0px 0px 0px; }
 	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget { 
 		font-family: 'Lcg'; font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 600; 
 		padding: 3px 0px 2px 0px;
+	}
+	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget mention .space {
+		width: 5px;
 	}
 	
 	.block.blockText.header3 { padding: 14px 0px 0px 0px; }
