@@ -45,14 +45,14 @@ class BlockDataview extends React.Component<Props, State> {
 	render () {
 		const { view } = this.state;
 		const { block } = this.props;
-		const { views, data, properties } = this.getContent();
+		const { views } = this.getContent();
 
 		if (!view) {
 			return null;
 		};
 
 		const viewItem = views.find((item: any) => { return item.id == view; });
-		
+
 		let ViewComponent: React.ReactType<{ getContent(): any; }>;
 		switch (viewItem.type) {
 			default:

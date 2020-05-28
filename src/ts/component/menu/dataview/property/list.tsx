@@ -36,7 +36,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 			<div id={'property-' + item.id} className="item">
 				<Icon className="dnd" />
 				<span onClick={(e: any) => { this.onEdit(e, item.id); }}>
-					<Icon className={'property dark c' + item.type} />
+					<Icon className={'property dark ' + item.type} />
 					<div className="name">{item.name}</div>
 				</span>
 				<Switch className="green" />
@@ -87,7 +87,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 		const { data } = param;
 		const { properties } = data;
 		
-		commonStore.menuOpen('propertyEdit', { 
+		commonStore.menuOpen('dataviewPropertyEdit', { 
 			type: I.MenuType.Vertical,
 			element: '#property-add',
 			offsetX: 8,
