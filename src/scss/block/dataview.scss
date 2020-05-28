@@ -2,13 +2,13 @@
 
 .blocks {
 	.block.blockDataview {
-		.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/block/dataview/plus/light0.svg'); cursor: pointer; }
-		.icon.plus:hover { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
-		.icon.plus.dark { background-image: url('~img/icon/block/dataview/plus/dark0.svg'); }
-		.icon.plus.dark:hover { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
+		.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/dataview/plus/light0.svg'); cursor: pointer; }
+		.icon.plus:hover { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
+		.icon.plus.dark { background-image: url('~img/icon/dataview/plus/dark0.svg'); }
+		.icon.plus.dark:hover { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
 		
-		.icon.checkbox { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/bool0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/block/dataview/bool1.svg'); }
+		.icon.checkbox { width: 14px; height: 14px; background-image: url('~img/icon/dataview/bool0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/bool1.svg'); }
 		
 		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: $colorDarkGrey; font-weight: bold; margin-bottom: 16px; }
 		.views {
@@ -29,11 +29,11 @@
 			
 			.item {
 				.icon { margin: -2px 6px 0px 0px; }
-				.icon.arrow { width: 8px; height: 4px; background-image: url('~img/icon/block/dataview/button/arrow0.svg'); }
-				.icon.property { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/property0.svg'); }
-				.icon.filter { width: 14px; height: 16px; background-image: url('~img/icon/block/dataview/button/filter0.svg'); }
-				.icon.sort { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/sort0.svg'); }
-				.icon.more { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/more0.svg'); }
+				.icon.arrow { width: 8px; height: 4px; background-image: url('~img/icon/dataview/button/arrow0.svg'); }
+				.icon.property { width: 16px; height: 16px; background-image: url('~img/icon/dataview/button/property0.svg'); }
+				.icon.filter { width: 14px; height: 16px; background-image: url('~img/icon/dataview/button/filter0.svg'); }
+				.icon.sort { width: 16px; height: 16px; background-image: url('~img/icon/dataview/button/sort0.svg'); }
+				.icon.more { width: 16px; height: 16px; background-image: url('~img/icon/dataview/button/more0.svg'); }
 				
 				.icon.view { margin-right: 4px; }
 				
@@ -41,17 +41,17 @@
 			}
 			
 			.item:hover, .item.active {
-				.icon.plus { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
-				.icon.arrow { background-image: url('~img/icon/block/dataview/button/arrow1.svg'); }
-				.icon.property { background-image: url('~img/icon/block/dataview/button/property1.svg'); }
-				.icon.filter { background-image: url('~img/icon/block/dataview/button/filter1.svg'); }
-				.icon.sort { background-image: url('~img/icon/block/dataview/button/sort1.svg'); }
-				.icon.more { background-image: url('~img/icon/block/dataview/button/more1.svg'); }
+				.icon.plus { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
+				.icon.arrow { background-image: url('~img/icon/dataview/button/arrow1.svg'); }
+				.icon.property { background-image: url('~img/icon/dataview/button/property1.svg'); }
+				.icon.filter { background-image: url('~img/icon/dataview/button/filter1.svg'); }
+				.icon.sort { background-image: url('~img/icon/dataview/button/sort1.svg'); }
+				.icon.more { background-image: url('~img/icon/dataview/button/more1.svg'); }
 				
-				.icon.view.c0 { background-image: url('~img/icon/block/dataview/button/view/grid1.svg'); }
-				.icon.view.c1 { background-image: url('~img/icon/block/dataview/button/view/board1.svg'); }
-				.icon.view.c2 { background-image: url('~img/icon/block/dataview/button/view/gallery1.svg'); }
-				.icon.view.c3 { background-image: url('~img/icon/block/dataview/button/view/list1.svg'); }
+				.icon.view.grid { background-image: url('~img/icon/dataview/button/view/grid1.svg'); }
+				.icon.view.board { background-image: url('~img/icon/dataview/button/view/board1.svg'); }
+				.icon.view.gallery { background-image: url('~img/icon/dataview/button/view/gallery1.svg'); }
+				.icon.view.list { background-image: url('~img/icon/dataview/button/view/list1.svg'); }
 			}
 		}
 		
@@ -61,24 +61,19 @@
 			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }
 			.cell { @include text-small; }
 			
-			/* Title */
-			.cell.c0 { font-weight: 500; }
+			.cell.title { font-weight: 500; }
 			
-			/* Multiple */
-			.cell.c5 {
+			.cell.multiselect {
 				.tag { margin: 0px 6px 6px 0px; }
 			}
 			
-			/* Account */
-			.cell.c6 {
+			.cell.link {
 				.icon.user { margin-right: 5px; }
 			}
 			
-			/* Bool */
-			.cell.c8 { cursor: pointer; }
+			.cell.checkbox { cursor: pointer; }
 			
-			/* Link, Email, Phone */
-			.cell.c9, .cell.c10, .cell.c11 {
+			.cell.url, .cell.email, .cell.phone {
 				a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }
 				a:hover { border-color: $colorBlack; }
 			}
@@ -102,11 +97,8 @@
 			.view.viewGallery {
 				.cell:last-child { margin: 0px; }
 			
-				/* Title */
-				.cell.c0 { margin-bottom: 9px; }
-				
-				/* Date */
-				.cell.c3 { color: #6c6a5f; }
+				.cell.title { margin-bottom: 9px; }
+				.cell.date { color: #6c6a5f; }
 			
 				.card { 
 					width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
@@ -132,7 +124,7 @@
 				
 				.card.add:hover { border-color: $colorBlack; }
 				.card.add:hover {
-					.icon { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
+					.icon { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
 				}
 			}
 			

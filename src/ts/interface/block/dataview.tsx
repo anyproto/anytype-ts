@@ -1,10 +1,10 @@
 import { I } from 'ts/lib';
 
 export enum ViewType {
-	Grid	 = 0,
-	List	 = 1,
-	Gallery	 = 2,
-	Board	 = 3,
+	Grid	 = 'grid',
+	List	 = 'list',
+	Gallery	 = 'gallery',
+	Board	 = 'board',
 };
 
 export enum PropertyType { 

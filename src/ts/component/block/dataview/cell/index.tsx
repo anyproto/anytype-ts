@@ -63,7 +63,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={[ 'cell', property.id, id ].join('-')} className={'cell c' + property.type} onClick={this.onClick}>
+			<div id={[ 'cell', property.id, id ].join('-')} className={[ 'cell', property.type ].join(' ')} onClick={this.onClick}>
 				<CellComponent {...this.props} />
 			</div>
 		);

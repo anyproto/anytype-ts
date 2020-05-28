@@ -20,36 +20,36 @@
 .icon.checkbox { width: 24px; height: 24px; background-image: url('~img/icon/checkbox0.svg'); cursor: pointer; }
 .icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
 
-.icon.property.c0 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/light/title.svg'); }
-.icon.property.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/property/light/text.svg'); }
-.icon.property.c2 { width: 15px; height: 14px; background-image: url('~img/icon/block/dataview/property/light/number.svg'); }
-.icon.property.c3 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/light/date.svg'); }
-.icon.property.c4 { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/property/light/select.svg'); }
-.icon.property.c5 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/property/light/multiple.svg'); }
-.icon.property.c6 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/light/account.svg'); }
-.icon.property.c7 { width: 11px; height: 18px; background-image: url('~img/icon/block/dataview/property/light/file.svg'); }
-.icon.property.c8 { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/property/light/bool.svg'); }
-.icon.property.c9 { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/property/light/link.svg'); }
-.icon.property.c10 { width: 16px; height: 12px; background-image: url('~img/icon/block/dataview/property/light/email.svg'); }
-.icon.property.c11 { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/property/light/phone.svg'); }
+.icon.property.title { width: 14px; height: 14px; background-image: url('~img/icon/dataview/property/light/title.svg'); }
+.icon.property.description { width: 14px; height: 12px; background-image: url('~img/icon/dataview/property/light/description.svg'); }
+.icon.property.number { width: 15px; height: 14px; background-image: url('~img/icon/dataview/property/light/number.svg'); }
+.icon.property.date { width: 14px; height: 14px; background-image: url('~img/icon/dataview/property/light/date.svg'); }
+.icon.property.select { width: 16px; height: 16px; background-image: url('~img/icon/dataview/property/light/select.svg'); }
+.icon.property.multiselect { width: 14px; height: 12px; background-image: url('~img/icon/dataview/property/light/multiselect.svg'); }
+.icon.property.link { width: 14px; height: 14px; background-image: url('~img/icon/dataview/property/light/link.svg'); }
+.icon.property.file { width: 11px; height: 18px; background-image: url('~img/icon/dataview/property/light/file.svg'); }
+.icon.property.checkbox { width: 14px; height: 14px; background-image: url('~img/icon/dataview/property/light/checkbox.svg'); }
+.icon.property.url { width: 16px; height: 16px; background-image: url('~img/icon/dataview/property/light/url.svg'); }
+.icon.property.email { width: 16px; height: 12px; background-image: url('~img/icon/dataview/property/light/email.svg'); }
+.icon.property.phone { width: 16px; height: 16px; background-image: url('~img/icon/dataview/property/light/phone.svg'); }
 
-.icon.property.dark.c0 { background-image: url('~img/icon/block/dataview/property/dark/title.svg'); }
-.icon.property.dark.c1 { background-image: url('~img/icon/block/dataview/property/dark/text.svg'); }
-.icon.property.dark.c2 { background-image: url('~img/icon/block/dataview/property/dark/number.svg'); }
-.icon.property.dark.c3 { background-image: url('~img/icon/block/dataview/property/dark/date.svg'); }
-.icon.property.dark.c4 { background-image: url('~img/icon/block/dataview/property/dark/select.svg'); }
-.icon.property.dark.c5 { background-image: url('~img/icon/block/dataview/property/dark/multiple.svg'); }
-.icon.property.dark.c6 { background-image: url('~img/icon/block/dataview/property/dark/account.svg'); }
-.icon.property.dark.c7 { background-image: url('~img/icon/block/dataview/property/dark/file.svg'); }
-.icon.property.dark.c8 { background-image: url('~img/icon/block/dataview/property/dark/bool.svg'); }
-.icon.property.dark.c9 { background-image: url('~img/icon/block/dataview/property/dark/link.svg'); }
-.icon.property.dark.c10 { background-image: url('~img/icon/block/dataview/property/dark/email.svg'); }
-.icon.property.dark.c11 { background-image: url('~img/icon/block/dataview/property/dark/phone.svg'); }
-		
-.icon.view.c0 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/grid0.svg'); }
-.icon.view.c1 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/board0.svg'); }
-.icon.view.c2 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/gallery0.svg'); }
-.icon.view.c3 { width: 14px; height: 12px; background-image: url('~img/icon/block/dataview/button/view/list0.svg'); }
+.icon.property.dark.title { background-image: url('~img/icon/dataview/property/dark/title.svg'); }
+.icon.property.dark.description { background-image: url('~img/icon/dataview/property/dark/description.svg'); }
+.icon.property.dark.number { background-image: url('~img/icon/dataview/property/dark/number.svg'); }
+.icon.property.dark.date { background-image: url('~img/icon/dataview/property/dark/date.svg'); }
+.icon.property.dark.select { background-image: url('~img/icon/dataview/property/dark/select.svg'); }
+.icon.property.dark.multiselect { background-image: url('~img/icon/dataview/property/dark/multiselect.svg'); }
+.icon.property.dark.link { background-image: url('~img/icon/dataview/property/dark/link.svg'); }
+.icon.property.dark.file { background-image: url('~img/icon/dataview/property/dark/file.svg'); }
+.icon.property.dark.checkbox { background-image: url('~img/icon/dataview/property/dark/checkbox.svg'); }
+.icon.property.dark.url { background-image: url('~img/icon/dataview/property/dark/url.svg'); }
+.icon.property.dark.email { background-image: url('~img/icon/dataview/property/dark/email.svg'); }
+.icon.property.dark.phone { background-image: url('~img/icon/dataview/property/dark/phone.svg'); }
+
+.icon.view.c0 { width: 14px; height: 12px; background-image: url('~img/icon/dataview/button/view/grid0.svg'); }
+.icon.view.c1 { width: 14px; height: 12px; background-image: url('~img/icon/dataview/button/view/board0.svg'); }
+.icon.view.c2 { width: 14px; height: 12px; background-image: url('~img/icon/dataview/button/view/gallery0.svg'); }
+.icon.view.c3 { width: 14px; height: 12px; background-image: url('~img/icon/dataview/button/view/list0.svg'); }
 
 .icon.user { 
 	width: 64px; height: 64px; border-radius: 100%; font-weight: 500; position: relative; overflow: hidden;

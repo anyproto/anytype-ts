@@ -114,8 +114,6 @@ class BlockDataview extends React.Component<Props, State> {
 			return {};
 		};
 
-		console.log('SCHEMA', schema);
-
 		let ret: any = {
 			views: [
 				{ 
