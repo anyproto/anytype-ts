@@ -29,7 +29,7 @@ class DragProvider extends React.Component<Props, {}> {
 	canDrop: boolean = false;
 	timeoutHover: number = 0;
 	init: boolean = false;
-	
+
 	objects: any = null;
 	objectData: any = {};
 	emptyObj: any = null;
@@ -105,7 +105,7 @@ class DragProvider extends React.Component<Props, {}> {
 			for (let file of dt.files) {
 				paths.push(file.path);
 			};
-			
+
 			console.log('[dragProvider.onDrop] paths', paths);
 			C.ExternalDropFiles(rootId, targetId, this.position, paths);
 		} else
@@ -178,9 +178,9 @@ class DragProvider extends React.Component<Props, {}> {
 
 		for (let id in this.objectData) {
 			const data = this.objectData[id];
-			
+
 			let { x, y, width, height } = data;
-			
+
 			if (data.dropType == I.DragItem.Block) {
 				x -= OFFSET;
 				y -= 5;
@@ -210,8 +210,8 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			const { x, y, width, height } = this.hoverData;
-			const col1 = x + Constant.size.blockMenu / 2;
-			const col2 = x + Constant.size.blockMenu / 2 + 28;
+			const col1 = x - Constant.size.blockMenu / 2;
+			const col2 = x + width * 0.2;
 			const col3 = x + width * 0.6;
 
 			if (ex <= col1) {
@@ -219,10 +219,10 @@ class DragProvider extends React.Component<Props, {}> {
 			} else
 			if ((ex > col1) && (ex <= col2)) {
 				this.position = ey <= y + height * 0.5 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-			} else 
+			} else
 			if ((ex > col2) && (ex <= col3)) {
 				this.position = I.BlockPosition.Inner;
-			} else 
+			} else
 			if (ex > col3) {
 				this.position = I.BlockPosition.Right;
 			};
