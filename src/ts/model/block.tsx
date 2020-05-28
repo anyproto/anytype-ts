@@ -53,7 +53,7 @@ class Block implements I.Block {
 	};
 
 	hasTitle (): boolean {
-		return (undefined !== this.pageType) && [ I.PageType.Page, I.PageType.Profile ].indexOf(this.pageType) >= 0;
+		return (undefined !== this.pageType) && [ I.PageType.Page, I.PageType.Set, I.PageType.Profile ].indexOf(this.pageType) >= 0;
 	};
 	
 	isPage (): boolean { 

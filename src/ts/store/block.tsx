@@ -383,8 +383,6 @@ class BlockStore {
 	prepareBlockFromProto (block: any): I.Block {
 		let type = block.content;
 		let content = block[type];
-		let fields = block.fields;
-		let file = block.file;
 		
 		let item: I.Block = {
 			id: block.id,
@@ -442,14 +440,136 @@ class BlockStore {
 				item.content.state = content.state;
 			};
 
+			/*
+			[Dispatcher.callback] blockOpen {
+   "error": {
+      "description": ""
+   },
+   "event": {
+      "messages": [
+         {
+            "blockShow": {
+               "rootId": "bafkuclxctnubhwe7pqm53tgrzb53uihn47elxhumxdc2i4py7qv4pems",
+               "blocks": [
+                  {
+                     "id": "bafkuclxctnubhwe7pqm53tgrzb53uihn47elxhumxdc2i4py7qv4pems",
+                     "restrictions": {},
+                     "childrenIds": [
+                        "5672191b-2fe9-4371-95fe-fadbac429897",
+                        "0686646b-9b67-48c6-9764-916e0be04daf"
+                     ],
+                     "smartblock": {}
+                  },
+                  {
+                     "id": "5672191b-2fe9-4371-95fe-fadbac429897",
+                     "restrictions": {},
+                     "dataview": {
+                        "databaseId": "pages",
+                        "views": [
+                           {
+                              "name": "Table",
+                              "sorts": [
+                                 {
+                                    "column": "name"
+                                 }
+                              ],
+                              "relations": [
+                                 "name",
+                                 "isArchived"
+                              ]
+                           },
+                           {
+                              "type": "Gallery",
+                              "name": "Gallery",
+                              "sorts": [
+                                 {
+                                    "column": "name"
+                                 }
+                              ],
+                              "relations": [
+                                 "name",
+                                 "isArchived"
+                              ]
+                           },
+                           {
+                              "type": "Kanban",
+                              "name": "Kanban",
+                              "sorts": [
+                                 {
+                                    "column": "name"
+                                 }
+                              ],
+                              "relations": [
+                                 "name",
+                                 "isArchived"
+                              ]
+                           },
+                           {
+                              "type": "List",
+                              "name": "List",
+                              "sorts": [
+                                 {
+                                    "column": "name"
+                                 }
+                              ],
+                              "relations": [
+                                 "name",
+                                 "isArchived"
+                              ]
+                           }
+                        ]
+                     }
+                  },
+                  {
+                     "id": "0686646b-9b67-48c6-9764-916e0be04daf",
+                     "text": {
+                        "marks": {}
+                     }
+                  }
+               ],
+               "details": [
+                  {
+                     "id": "bafkuclxctnubhwe7pqm53tgrzb53uihn47elxhumxdc2i4py7qv4pems",
+                     "details": {
+                        "fields": {
+                           "name": {
+                              "stringValue": "Pages"
+                           },
+                           "iconEmoji": {
+                              "stringValue": "📒"
+                           }
+                        }
+                     }
+                  }
+               ],
+               "type": "Set"
+            }
+         }
+      ],
+      "contextId": "bafkuclxctnubhwe7pqm53tgrzb53uihn47elxhumxdc2i4py7qv4pems"
+   }
+}
+			*/
+
 			if (type == I.BlockType.Dataview) {
+				let id = 1;
 				item.content.views = item.content.views || [];
 				item.content.views = item.content.views.map((view: I.View) => {
-					view.type = Number(view.type);
+					/*
+					view.type = Number(view.type) || 0;
 					view.name = String(view.name || '');
 					view.sorts = view.sorts || [];
 					view.filters = view.filters || [];
-					return view;
+					*/
+					let type = view.type;
+					console.log('type', type, Number(type) || 0, JSON.stringify(view, null, 3));
+					return {
+						id: id++,
+						type: Number(view.type) || 0,
+						name: String(view.name || Constant.default.name),
+						sorts: view.sorts || [],
+						filters: view.filters || [],
+					};
 				});
 			};
 		};

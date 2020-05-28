@@ -87,7 +87,7 @@ class Dispatcher {
 						it = blockStore.prepareBlockFromProto(it);
 						if (it.id == rootId) {
 							it.type = I.BlockType.Page;
-							it.pageType = data.type;
+							it.pageType = Number(data.type) || 0;
 						};
 						return new M.Block(it);
 					});
