@@ -129,9 +129,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onBack (e: any) {
-		const { breadcrumbs } = blockStore;
-		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
-		
 		crumbs.restore(I.CrumbsType.Page);
 		this.props.history.goBack();
 	};

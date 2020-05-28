@@ -129,9 +129,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 							if (pin) {
 								history.push('/auth/pin-check');
 								keyboard.setPinCheck();
-							} else 
-							if (pageId) {
-								history.push('/main/edit/' + pageId);
 							} else {
 								history.push('/main/index');
 							};

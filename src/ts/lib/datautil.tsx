@@ -146,6 +146,10 @@ class DataUtil {
 	};
 	
 	pageOpen (e: any, targetId: string) {
+		if (!targetId) {
+			console.error('[DataUtil.pageOpen] id is empty');
+			return;
+		};
 		/*
 		const param = {
 			data: { 

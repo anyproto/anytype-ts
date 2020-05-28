@@ -215,6 +215,7 @@ class App extends React.Component<Props, State> {
 
 		const cover = Storage.get('cover');
 		const coverImg = Storage.get('coverImg');
+		const pageId = Storage.get('pageId');
 
 		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
 		if (coverImg) {
@@ -223,6 +224,10 @@ class App extends React.Component<Props, State> {
 		
 		this.setIpcEvents();
 		this.setWindowEvents();
+
+		if (pageId) {
+			Storage.set('redirectTo', pageId);
+		};
 	};
 
 	setIpcEvents () {
@@ -295,7 +300,7 @@ class App extends React.Component<Props, State> {
 	};
 
 	onCommand (e: any, key: string) {
-		const id = Storage.get('pageId') || '';
+		const id = String(Storage.get('pageId') || '');
 		if (!id) {
 			return;
 		};
@@ -322,8 +327,7 @@ class App extends React.Component<Props, State> {
 
 	onImport () {
 		const { root } = blockStore;
-		const id = Storage.get('pageId') || root || '';
-
+		const id = String(Storage.get('pageId') || root || '');
 		if (!id) {
 			return;
 		};

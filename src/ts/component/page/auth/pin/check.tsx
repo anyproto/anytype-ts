@@ -92,11 +92,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 			if (isSelect) {
 				history.push('/auth/setup/select');
 			} else {
-				if (pageId) {
-					DataUtil.pageOpen(e, pageId);
-				} else {
-					history.push('/main/index');
-				};
+				history.push('/main/index');
 					
 				if (!Storage.get('popupNewBlock')) {
 					commonStore.popupOpen('new', {});

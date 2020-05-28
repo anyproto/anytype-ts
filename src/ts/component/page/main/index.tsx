@@ -81,8 +81,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 	componentDidMount () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const hello = node.find('#hello');
+		const redirectTo = Storage.get('redirectTo');
 
-		Storage.set('pageId', '');
+		if (redirectTo) {
+			DataUtil.pageOpen(null, redirectTo);
+			Storage.delete('redirectTo');
+		};
+
 		crumbs.delete(I.CrumbsType.Page);
 
 		if (Storage.get('hello')) {
@@ -120,14 +125,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
-		const { history } = this.props;
-		const { profile } = blockStore;
-		
-		if (!profile) {
-			return;
-		};
-		
-		history.push('/main/edit/' + profile);
+		DataUtil.pageOpen(e, blockStore.profile);
 	};
 	
 	onSelect (e: any, block: I.Block) {
