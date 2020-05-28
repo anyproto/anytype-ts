@@ -191,6 +191,7 @@ class EditorPage extends React.Component<Props, State> {
 		this.unbind();
 		this.close(rootId);
 		focus.clear(false);
+		Storage.delete('pageId');
 
 		ipcRenderer.removeAllListeners('commandEditor');
 	};

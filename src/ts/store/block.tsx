@@ -403,16 +403,14 @@ class BlockStore {
 		};
 		
 		if (content) {
-			item.content = Util.objectCopy(content);
-			item.content.style = content.style;
-			
+			item.content = content;
+
 			if (content.fields) {
 				item.content.fields = StructDecode.decodeStruct(content.fields);
 			};
 			
 			if (type == I.BlockType.Text) {
 				let marks: any = [];
-				
 				if (content.marks && content.marks.marks && content.marks.marks.length) {
 					for (let mark of content.marks.marks) {
 						marks.push({
@@ -432,6 +430,7 @@ class BlockStore {
 			};
 			
 			if (type == I.BlockType.Link) {
+				item.content.style = content.style;
 				item.content.targetBlockId = String(item.content.targetBlockId || '');
 			};
 			
@@ -553,16 +552,9 @@ class BlockStore {
 
 			if (type == I.BlockType.Dataview) {
 				let id = 1;
+				
 				item.content.views = item.content.views || [];
 				item.content.views = item.content.views.map((view: I.View) => {
-					/*
-					view.type = Number(view.type) || 0;
-					view.name = String(view.name || '');
-					view.sorts = view.sorts || [];
-					view.filters = view.filters || [];
-					*/
-					let type = view.type;
-					console.log('type', type, Number(type) || 0, JSON.stringify(view, null, 3));
 					return {
 						id: id++,
 						type: Number(view.type) || 0,

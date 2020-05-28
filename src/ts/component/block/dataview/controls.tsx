@@ -21,8 +21,8 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { viewType, onView } = this.props;
-		const { view, views, data, properties } = this.props.getContent();
+		const { view, viewType, onView } = this.props;
+		const { views } = this.props.getContent();
 		
 		const buttons: any[] = [
 			{ 

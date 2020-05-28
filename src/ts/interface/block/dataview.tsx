@@ -8,18 +8,20 @@ export enum ViewType {
 };
 
 export enum PropertyType { 
-	Title	 = 0, 
-	Text	 = 1, 
-	Number	 = 2, 
-	Date	 = 3, 
-	Select	 = 4, 
-	Multiple = 5,
-	Link	 = 6,
-	File	 = 7,
-	Bool	 = 8, 
-	Url		 = 9,
-	Email	 = 10,
-	Phone	 = 11,
+	Title	 = 'title', 
+	Text	 = 'description', 
+	Number	 = 'number', 
+	Date	 = 'date', 
+	Select	 = 'select', 
+	Multiple = 'multiselect',
+	Link	 = 'link',
+	File	 = 'file',
+	Image	 = 'image',
+	Bool	 = 'checkbox', 
+	Icon	 = 'emoji',
+	Url		 = 'url',
+	Email	 = 'email',
+	Phone	 = 'phone',
 };
 
 export enum SortType { 

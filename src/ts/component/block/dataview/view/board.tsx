@@ -58,8 +58,7 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): Column[] {
-		const { content } = this.props;
-		const { data } = content;
+		const { data } = this.props.getContent();
 		
 		let groupBy = GROUP;
 		let r: Column[] = [];

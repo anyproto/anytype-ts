@@ -185,10 +185,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	loadSearch () {
 		this.setState({ loading: true });
-		let pages: any[] = [];
 
 		C.NavigationListPages((message: any) => {
-			pages = message.pages.map((it: any) => { return this.getPage(it); });
+			let pages = message.pages.map((it: any) => { return this.getPage(it); });
 			this.setState({ pages: pages, loading: false });
 		});
 	};
