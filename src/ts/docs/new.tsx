@@ -2,10 +2,16 @@ import { I } from 'ts/lib';
 
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
-	{ type: I.BlockType.Title, text: 'Meet the new navigation' },
+	{ type: I.BlockType.Title, text: 'Mention' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Anytype allows you to refer any object right in your content.' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Simply insert the <bgcolor class="bgColor bgColor-grey" data-param="grey"><color class="textColor textColor-red"data-param="red">@</color></bgcolor> sign and start typing.</br>' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'You can mention any page everywhere and it will build a relation between them. Tasks could be related to contact, article could be linked with category, and so on. All&nbsp;mentions will be shown in navigation. Start&nbsp;building relations between pages, begin using <b>mentions</b>.' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '<img src="./img/help/mention.gif" style="margin-left:-16px;width:inherit;">' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '<font style="text-align: right; color:#aca996">29 May 2020</font></br></br></br>' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Header1, text: 'Meet the new navigation' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Do you know that every thought, skill, and knowledge are organized associatively, not hierarchically in our mind? The brain has linked wiki that is interconnected.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Any object has several wires to other objects and characteristics at the same time. That is how humans memorize information.</br>' },
-	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'We decide to reduce the clutter in our heads and make navigation organic to your brain. You can now use «|||» sign on top to see links between pages and navigate on them. For faster usage, you can press `CMD+S` and search the right page by name or first sentence.</br>' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'We decide to reduce the clutter in our heads and make navigation organic to your brain. You can now use <div class="icon nav"></div> sign on top to see links between pages and navigate on them. For faster usage, you can press <bgcolor class="bgColor bgColor-grey" data-param="grey"><color class="textColor textColor-red"data-param="red">Cmd + S</color></bgcolor> and search the right page by name or first sentence.</br>' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '</br><b>Now you can stop segment and limiting your thoughts, just link the pages and flesh everything out how you really think. </b></br></br>' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '<font style="text-align: right; color:#aca996">6 May 2020</font></br></br></br>' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Header1, text: 'Introducing Anytype' },
@@ -18,7 +24,7 @@ export default [
 	{ type: I.BlockType.Text, style: I.TextStyle.Bulleted, text: 'Page styling. Cover the page with photo, use emoji and use all the text formatting;' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Bulleted, text: 'Dashboard. Add your favorite documents, sort, and archive.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '</br><b>Create a new home for your information — private and free</b>.</br></br>' },
-	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Thank you for building a new web together. Writing us a review, bug or feature request </br> moving all of us forward. 🙏' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Thank you for building a new web together. Writing us a review, bug or feature request moving all of us forward. 🙏' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Don’t forget to <span class="textColor textColor-red">save your seed phrase</span> in case you want to log out. All the new features will come in automatic updates, so don`t be worry about the outdated app.' },
-	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '</br><font style="text-align: right; color:#aca996">03 March 2020</font>' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '</br><font style="text-align: right; color:#aca996">03 March 2020</font>' }
 ];
