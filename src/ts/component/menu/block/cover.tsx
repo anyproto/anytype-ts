@@ -148,7 +148,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			'grass': -0.5754087049822059,
 			'butter': -0.07053696481594314,
 			'medication': -0.4984825493171472,
-			'landscape3': -0.5936945791169995,
+			'landscape3': -0.20313036324937497,
 			'third-sleep': -0.5534286421213346,
 			'banquet': -0.20557316869681294,
 			'chemist': -0.4084223252065283,
