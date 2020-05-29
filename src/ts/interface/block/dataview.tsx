@@ -53,12 +53,12 @@ export interface Relation {
 };
 
 export interface Sort {
-	propertyId: string;
+	relationId: string;
 	type: SortType;
 };
 
 export interface Filter {
-	propertyId: string;
+	relationId: string;
 	operator: FilterOperator;
 	condition: FilterCondition;
 	value: any;

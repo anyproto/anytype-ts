@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I, C, StructDecode } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { I, C, StructDecode, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import Controls from './dataview/controls';
@@ -97,18 +96,13 @@ class BlockDataview extends React.Component<Props, State> {
 		this.setState({ view: id });
 	};
 
-	schemaField (v: string) {
-		const a = v.split('/');
-		return a[a.length - 1];
-	};
-
 	getContent () {
 		const { data } = this.state;
 		const { block } = this.props;
 		const { content } = block;
 
 		let schemaId = 'https://anytype.io/schemas/page';
-		let schema = Schema[this.schemaField(schemaId)];
+		let schema = Schema[DataUtil.schemaField(schemaId)];
 
 		if (!schema) {
 			return {};
@@ -130,7 +124,7 @@ class BlockDataview extends React.Component<Props, State> {
 			ret.relations.push({
 				id: field.id,
 				name: field.name,
-				type: this.schemaField(field.type),
+				type: DataUtil.schemaField(field.type),
 			});
 		};
 

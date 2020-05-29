@@ -1,0 +1,10 @@
+@import "~scss/_vars";
+
+.menus {
+    .menu.menuDataviewRelationType, 
+    .menu.menuDataviewRelationList, 
+    .menu.menuDataviewRelationEdit, 
+    .menu.menuDataviewView {
+        .item:hover::before { opacity: 0.15; }
+    }
+}

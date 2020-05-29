@@ -1,16 +1,19 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
+const Schema = {
+	relation: require('json/schema/relation.json'),
+};
 
 @observer
-class MenuPropertyType extends React.Component<Props, {}> {
+class MenuRelationType extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -21,21 +24,30 @@ class MenuPropertyType extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relations, relation } = data;
+		const { relation } = data;
 		
-		const Item = (item: any) => (
-			<div className={'item ' + (relation && (item.type == relation.type) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
-				<Icon className={'relation dark c' + item.type} />
-				<div className="name">{Constant.propertyName[item.type]}</div>
-			</div>
-		);
-		
+		let relations = [];
+		for (let i in Schema.relation.definitions) {
+			let item = Schema.relation.definitions[i];
+			item.code = i;
+			relations.push(item);
+		};
+
+		const Item = (item: any) => {
+			return (
+				<div className={'item ' + (relation && (item.code == relation.type) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
+					<Icon className={'relation c-' + item.code} />
+					<div className="name">{Constant.relationName[item.code] || item.code}</div>
+				</div>
+			);
+		};
+
 		return (
 			<div>
 				<div className="title">Type of relation</div>
 				<div className="items">
 					{relations.map((item: any, i: number) => (
-						<Item key={item.id} {...item} index={i} />
+						<Item key={i} {...item} />
 					))}
 				</div>
 			</div>
@@ -53,4 +65,4 @@ class MenuPropertyType extends React.Component<Props, {}> {
 	
 };
 
-export default MenuPropertyType;
+export default MenuRelationType;

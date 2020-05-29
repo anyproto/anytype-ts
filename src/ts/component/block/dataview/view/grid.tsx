@@ -14,8 +14,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { data, relations } = this.props.getContent();
 		
 		const CellHead = (item: any) => (
-			<th className={'head c' + item.type}>
-				<Icon className={'relation ' + item.type} />
+			<th className={'head ' + item.type}>
+				<Icon className={'relation c-' + item.type} />
 				{item.name}
 			</th>
 		);

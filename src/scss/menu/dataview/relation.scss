@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewRelationList { width: 224px; }
+	.menu.menuDataviewRelationList { width: 240px; }
 	.menu.menuDataviewRelationList {
 		.item {
 			.icon.plus { background-image: url('~img/icon/dataview/button/plus0.svg'); }
@@ -11,7 +11,7 @@
 		.item.add { color: $colorDarkGrey; }
 	}
 	
-	.menu.menuDataviewRelationEdit { width: 208px; }
+	.menu.menuDataviewRelationEdit { width: 224px; }
 	.menu.menuDataviewRelationEdit {
 		.wrap { padding: 8px 16px; }
 		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
@@ -22,4 +22,5 @@
 			background-image: url('~img/arrow/menu.svg'); 
 		}
 	}
+
 }

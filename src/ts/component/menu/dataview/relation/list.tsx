@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
 import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
@@ -15,7 +15,7 @@ interface State {
 };
 
 @observer
-class MenuPropertyList extends React.Component<Props, State> {
+class MenuRelationList extends React.Component<Props, State> {
 	
 	state = {
 		items: [] as I.Relation[]
@@ -31,12 +31,16 @@ class MenuPropertyList extends React.Component<Props, State> {
 	
 	render () {
 		const { items } = this.state;
+
+		const Handle = SortableHandle(() => (
+			<Icon className="dnd" />
+		));
 		
 		const Item = SortableElement((item: any) => (
 			<div id={'relation-' + item.id} className="item">
-				<Icon className="dnd" />
-				<span onClick={(e: any) => { this.onEdit(e, item.id); }}>
-					<Icon className={'relation dark ' + item.type} />
+				<Handle />
+				<span className="clickable" onClick={(e: any) => { console.log(213); this.onEdit(e, item.id); }}>
+					<Icon className={'relation c-' + item.type} />
 					<div className="name">{item.name}</div>
 				</span>
 				<Switch className="green" />
@@ -65,11 +69,14 @@ class MenuPropertyList extends React.Component<Props, State> {
 		return (
 			<List 
 				axis="y" 
+				lockAxis="y"
+				lockToContainerEdges={true}
 				transitionDuration={150}
 				distance={10}
 				onSortEnd={this.onSortEnd}
 				helperClass="dragging"
-				helperContainer={() => { return  $(ReactDOM.findDOMNode(this)).get(0); }}
+				useDragHandle={true}
+				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
 			/>
 		);
 	};
@@ -87,7 +94,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 		const { data } = param;
 		const { relations } = data;
 		
-		commonStore.menuOpen('dataviewPropertyEdit', { 
+		commonStore.menuOpen('dataviewRelationEdit', { 
 			type: I.MenuType.Vertical,
 			element: '#relation-add',
 			offsetX: 8,
@@ -107,7 +114,7 @@ class MenuPropertyList extends React.Component<Props, State> {
 		const { relations } = data;
 		const relation = relations.find((item: any) => { return item.id == id; });
 		
-		commonStore.menuOpen('dataviewPropertyEdit', { 
+		commonStore.menuOpen('dataviewRelationEdit', { 
 			type: I.MenuType.Vertical,
 			element: '#relation-' + id,
 			offsetX: 0,
@@ -128,4 +135,4 @@ class MenuPropertyList extends React.Component<Props, State> {
 	
 };
 
-export default MenuPropertyList;
+export default MenuRelationList;

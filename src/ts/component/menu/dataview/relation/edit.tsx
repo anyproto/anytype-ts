@@ -9,7 +9,7 @@ interface Props extends I.Menu {};
 const Constant = require('json/constant.json');
 
 @observer
-class MenuPropertyEdit extends React.Component<Props, {}> {
+class MenuRelationEdit extends React.Component<Props, {}> {
 	
 	constructor(props: any) {
 		super(props);
@@ -26,8 +26,8 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 		if (relation) {
 			current = (
 				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
-					<Icon className={'relation dark c' + relation.type} />
-					<div className="name">{Constant.propertyName[relation.type]}</div>
+					<Icon className={'relation c-' + relation.type} />
+					<div className="name">{Constant.relationName[relation.type]}</div>
 					<Icon className="arrow" />
 				</div>
 			);
@@ -81,4 +81,4 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 	
 };
 
-export default MenuPropertyEdit;
+export default MenuRelationEdit;

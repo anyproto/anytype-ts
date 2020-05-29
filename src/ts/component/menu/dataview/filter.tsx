@@ -50,7 +50,7 @@ class MenuFilter extends React.Component<Props, State> {
 		
 		let relationOptions: any[] = [];
 		for (let relation of relations) {
-			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation dark c' + relation.type });
+			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
 		};
 		
 		const Item = SortableElement((item: any) => (
@@ -105,7 +105,7 @@ class MenuFilter extends React.Component<Props, State> {
 	onAdd (e: any) {
 		let { items } = this.state;
 		
-		items.push({ propertyId: '', sort: I.SortType.Asc });
+		items.push({ relationId: '', sort: I.SortType.Asc });
 		this.setState({ items: items });
 	};
 	

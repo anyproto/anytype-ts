@@ -66,7 +66,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		keyboard.disableMouse(true);
 		
 		const k = e.which;
-		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
