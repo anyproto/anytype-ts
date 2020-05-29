@@ -13,19 +13,24 @@ interface Column {
 	list: any[];
 };
 
-const GROUP = '4';
+const GROUP = 'isArchived';
 
 class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
-		const { data, properties } = this.props.getContent();
-		const group = properties.find((item) => { return item.id == GROUP; });
+		const { relations } = this.props.getContent();
+		const group = relations.find((item) => { return item.id == GROUP; });
+
+		if (!group) {
+			return null;
+		};
+
 		const columns = this.getColumns();
 		
 		const Card = (item: any) => (
 			<div className="card">
-				{properties.map((property: any, i: number) => (
-					<Cell key={property.id} id={item.index} property={...property} data={item.data[property.id]} />
+				{relations.map((relation: any, i: number) => (
+					<Cell key={relation.id} id={item.index} relation={...relation} data={item.data[relation.id]} />
 				))}
 			</div>
 		);
@@ -33,7 +38,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		const Column = (item: any) => (
 			<div className="column">
 				<div className="head">
-					<Cell id={0} property={group} data={item.value} />
+					<Cell id={0} relation={group} data={item.value} />
 				</div>
 				<div className="list">
 					{item.list.map((child: any, i: number) => (

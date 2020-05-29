@@ -29,7 +29,7 @@ class MenuSort extends React.Component<Props, State> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { properties } = data;
+		const { relations } = data;
 		
 		const { items } = this.state;
 		const typeOptions = [
@@ -37,15 +37,15 @@ class MenuSort extends React.Component<Props, State> {
 			{ id: String(I.SortType.Desc), name: 'From Z to A' },
 		];
 		
-		let propertyOptions: any[] = [];
-		for (let property of properties) {
-			propertyOptions.push({ id: property.id, name: property.name, icon: 'property dark c' + property.type });
+		let relationOptions: any[] = [];
+		for (let relation of relations) {
+			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation dark c' + relation.type });
 		};
 		
 		const Item = SortableElement((item: any) => (
 			<div className="item">
 				<Icon className="dnd" />
-				<Select id={[ 'filter', 'property', item.id ].join('-')} options={propertyOptions} value={item.propertyId} />
+				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationId} />
 				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={String(item.type)} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>

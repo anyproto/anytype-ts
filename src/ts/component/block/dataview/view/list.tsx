@@ -11,12 +11,12 @@ interface Props extends I.BlockDataview {
 class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { data, properties } = this.props.getContent();
+		const { data, relations } = this.props.getContent();
 		
 		const Card = (item: any) => (
 			<div className="item">
-				{properties.map((property: any, i: number) => (
-					<Cell key={property.id} id={item.index} property={...property} data={data[item.index][property.id]} />
+				{relations.map((relation: any, i: number) => (
+					<Cell key={relation.id} id={item.index} relation={...relation} data={data[item.index][relation.id]} />
 				))}
 			</div>
 		);

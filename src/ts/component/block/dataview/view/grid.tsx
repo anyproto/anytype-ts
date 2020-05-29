@@ -11,24 +11,24 @@ interface Props extends I.BlockDataview {
 class ViewGrid extends React.Component<Props, {}> {
 
 	render () {
-		const { data, properties } = this.props.getContent();
+		const { data, relations } = this.props.getContent();
 		
 		const CellHead = (item: any) => (
 			<th className={'head c' + item.type}>
-				<Icon className={'property ' + item.type} />
+				<Icon className={'relation ' + item.type} />
 				{item.name}
 			</th>
 		);
 		
 		const CellBody = (item: any) => (
-			<td className={'cell ' + item.property.type}>
+			<td className={'cell ' + item.relation.type}>
 				<Cell {...item} id={item.index} />
 			</td>
 		);
 		
 		const RowHead = (item: any) => (
 			<tr className="row">
-				{properties.map((item: any, i: number) => (
+				{relations.map((item: any, i: number) => (
 					<CellHead key={item.id} {...item} />
 				))}
 				<th className="head">
@@ -39,8 +39,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const RowBody = (item: any) => (
 			<tr className="row">
-				{properties.map((property: any, i: number) => (
-					<CellBody key={property.id} index={item.index} property={...property} data={data[item.index][property.id]} />
+				{relations.map((relation: any, i: number) => (
+					<CellBody key={relation.id} index={item.index} relation={...relation} data={data[item.index][relation.id]} />
 				))}
 				<td className="cell">&nbsp;</td>
 			</tr>
@@ -56,7 +56,7 @@ class ViewGrid extends React.Component<Props, {}> {
 						<RowBody key={i} index={i} {...item} />
 					))}
 					<tr>
-						<td className="cellBody" colSpan={properties.length + 1}>
+						<td className="cellBody" colSpan={relations.length + 1}>
 							<Icon className="plus" />
 						</td>
 					</tr>

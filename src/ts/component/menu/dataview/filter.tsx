@@ -29,7 +29,7 @@ class MenuFilter extends React.Component<Props, State> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { properties } = data;
+		const { relations } = data;
 		
 		const { items } = this.state;
 		const conditionOptions = [
@@ -48,16 +48,16 @@ class MenuFilter extends React.Component<Props, State> {
 			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
 		];
 		
-		let propertyOptions: any[] = [];
-		for (let property of properties) {
-			propertyOptions.push({ id: property.id, name: property.name, icon: 'property dark c' + property.type });
+		let relationOptions: any[] = [];
+		for (let relation of relations) {
+			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation dark c' + relation.type });
 		};
 		
 		const Item = SortableElement((item: any) => (
 			<div className="item">
 				<Icon className="dnd" />
 				{item.idx > 0 ? <Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={String(item.condition)} /> : ''}
-				<Select id={[ 'filter', 'property', item.id ].join('-')} options={propertyOptions} value={item.propertyId} />
+				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationId} />
 				<Select id={[ 'filter', 'equality', item.id ].join('-')} options={equalityOptions} value={String(item.equality)} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>

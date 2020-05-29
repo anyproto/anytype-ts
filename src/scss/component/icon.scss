@@ -20,36 +20,36 @@
 .icon.checkbox { width: 24px; height: 24px; background-image: url('~img/icon/checkbox0.svg'); cursor: pointer; }
 .icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
 
-.icon.property.title { width: 14px; height: 14px; background-image: url('~img/icon/dataview/property/light/title.svg'); }
-.icon.property.description { width: 14px; height: 12px; background-image: url('~img/icon/dataview/property/light/description.svg'); }
-.icon.property.number { width: 15px; height: 14px; background-image: url('~img/icon/dataview/property/light/number.svg'); }
-.icon.property.date { width: 14px; height: 14px; background-image: url('~img/icon/dataview/property/light/date.svg'); }
-.icon.property.select { width: 16px; height: 16px; background-image: url('~img/icon/dataview/property/light/select.svg'); }
-.icon.property.multiselect { width: 14px; height: 12px; background-image: url('~img/icon/dataview/property/light/multiselect.svg'); }
-.icon.property.link { width: 14px; height: 14px; background-image: url('~img/icon/dataview/property/light/link.svg'); }
-.icon.property.file { width: 11px; height: 18px; background-image: url('~img/icon/dataview/property/light/file.svg'); }
-.icon.property.checkbox { width: 14px; height: 14px; background-image: url('~img/icon/dataview/property/light/checkbox.svg'); }
-.icon.property.url { width: 16px; height: 16px; background-image: url('~img/icon/dataview/property/light/url.svg'); }
-.icon.property.email { width: 16px; height: 12px; background-image: url('~img/icon/dataview/property/light/email.svg'); }
-.icon.property.phone { width: 16px; height: 16px; background-image: url('~img/icon/dataview/property/light/phone.svg'); }
+.icon.relation.title { background-image: url('~img/icon/dataview/relation/light/title.svg'); }
+.icon.relation.description { background-image: url('~img/icon/dataview/relation/light/description.svg'); }
+.icon.relation.number { background-image: url('~img/icon/dataview/relation/light/number.svg'); }
+.icon.relation.date { background-image: url('~img/icon/dataview/relation/light/date.svg'); }
+.icon.relation.select { background-image: url('~img/icon/dataview/relation/light/select.svg'); }
+.icon.relation.multiselect { background-image: url('~img/icon/dataview/relation/light/multiselect.svg'); }
+.icon.relation.link { background-image: url('~img/icon/dataview/relation/light/link.svg'); }
+.icon.relation.file { background-image: url('~img/icon/dataview/relation/light/file.svg'); }
+.icon.relation.checkbox { background-image: url('~img/icon/dataview/relation/light/checkbox.svg'); }
+.icon.relation.url { background-image: url('~img/icon/dataview/relation/light/url.svg'); }
+.icon.relation.email { background-image: url('~img/icon/dataview/relation/light/email.svg'); }
+.icon.relation.phone { background-image: url('~img/icon/dataview/relation/light/phone.svg'); }
 
-.icon.property.dark.title { background-image: url('~img/icon/dataview/property/dark/title.svg'); }
-.icon.property.dark.description { background-image: url('~img/icon/dataview/property/dark/description.svg'); }
-.icon.property.dark.number { background-image: url('~img/icon/dataview/property/dark/number.svg'); }
-.icon.property.dark.date { background-image: url('~img/icon/dataview/property/dark/date.svg'); }
-.icon.property.dark.select { background-image: url('~img/icon/dataview/property/dark/select.svg'); }
-.icon.property.dark.multiselect { background-image: url('~img/icon/dataview/property/dark/multiselect.svg'); }
-.icon.property.dark.link { background-image: url('~img/icon/dataview/property/dark/link.svg'); }
-.icon.property.dark.file { background-image: url('~img/icon/dataview/property/dark/file.svg'); }
-.icon.property.dark.checkbox { background-image: url('~img/icon/dataview/property/dark/checkbox.svg'); }
-.icon.property.dark.url { background-image: url('~img/icon/dataview/property/dark/url.svg'); }
-.icon.property.dark.email { background-image: url('~img/icon/dataview/property/dark/email.svg'); }
-.icon.property.dark.phone { background-image: url('~img/icon/dataview/property/dark/phone.svg'); }
+.icon.relation.dark.title { background-image: url('~img/icon/dataview/relation/dark/title.svg'); }
+.icon.relation.dark.description { background-image: url('~img/icon/dataview/relation/dark/description.svg'); }
+.icon.relation.dark.number { background-image: url('~img/icon/dataview/relation/dark/number.svg'); }
+.icon.relation.dark.date { background-image: url('~img/icon/dataview/relation/dark/date.svg'); }
+.icon.relation.dark.select { background-image: url('~img/icon/dataview/relation/dark/select.svg'); }
+.icon.relation.dark.multiselect { background-image: url('~img/icon/dataview/relation/dark/multiselect.svg'); }
+.icon.relation.dark.link { background-image: url('~img/icon/dataview/relation/dark/link.svg'); }
+.icon.relation.dark.file { background-image: url('~img/icon/dataview/relation/dark/file.svg'); }
+.icon.relation.dark.checkbox { background-image: url('~img/icon/dataview/relation/dark/checkbox.svg'); }
+.icon.relation.dark.url { background-image: url('~img/icon/dataview/relation/dark/url.svg'); }
+.icon.relation.dark.email { background-image: url('~img/icon/dataview/relation/dark/email.svg'); }
+.icon.relation.dark.phone { background-image: url('~img/icon/dataview/relation/dark/phone.svg'); }
 
-.icon.view.c0 { width: 14px; height: 12px; background-image: url('~img/icon/dataview/button/view/grid0.svg'); }
-.icon.view.c1 { width: 14px; height: 12px; background-image: url('~img/icon/dataview/button/view/board0.svg'); }
-.icon.view.c2 { width: 14px; height: 12px; background-image: url('~img/icon/dataview/button/view/gallery0.svg'); }
-.icon.view.c3 { width: 14px; height: 12px; background-image: url('~img/icon/dataview/button/view/list0.svg'); }
+.icon.view.c0 { background-image: url('~img/icon/dataview/view/grid0.svg'); }
+.icon.view.c1 { background-image: url('~img/icon/dataview/view/list0.svg'); }
+.icon.view.c2 { background-image: url('~img/icon/dataview/view/gallery0.svg'); }
+.icon.view.c3 { background-image: url('~img/icon/dataview/view/board0.svg'); }
 
 .icon.user { 
 	width: 64px; height: 64px; border-radius: 100%; font-weight: 500; position: relative; overflow: hidden;

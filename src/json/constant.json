@@ -57,7 +57,7 @@
 		}
 	},
 
-	"propertyName": {
+	"relationName": {
 		"0": "Title",
 		"1": "Description",
 		"2": "Number",

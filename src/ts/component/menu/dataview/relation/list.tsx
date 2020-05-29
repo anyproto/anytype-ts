@@ -11,14 +11,14 @@ const $ = require('jquery');
 
 interface Props extends I.Menu {};
 interface State {
-	items: I.Property[];
+	items: I.Relation[];
 };
 
 @observer
 class MenuPropertyList extends React.Component<Props, State> {
 	
 	state = {
-		items: [] as I.Property[]
+		items: [] as I.Relation[]
 	};
 	
 	constructor (props: any) {
@@ -33,10 +33,10 @@ class MenuPropertyList extends React.Component<Props, State> {
 		const { items } = this.state;
 		
 		const Item = SortableElement((item: any) => (
-			<div id={'property-' + item.id} className="item">
+			<div id={'relation-' + item.id} className="item">
 				<Icon className="dnd" />
 				<span onClick={(e: any) => { this.onEdit(e, item.id); }}>
-					<Icon className={'property dark ' + item.type} />
+					<Icon className={'relation dark ' + item.type} />
 					<div className="name">{item.name}</div>
 				</span>
 				<Switch className="green" />
@@ -44,10 +44,10 @@ class MenuPropertyList extends React.Component<Props, State> {
 		));
 		
 		const ItemAdd = SortableElement((item: any) => (
-			<div id="property-add" className="item add" onClick={this.onAdd}>
+			<div id="relation-add" className="item add" onClick={this.onAdd}>
 				<Icon className="dnd" />
 				<Icon className="plus" />
-				<div className="name">New property</div>
+				<div className="name">New relation</div>
 			</div>
 		));
 		
@@ -77,26 +77,26 @@ class MenuPropertyList extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { properties } = data;
+		const { relations } = data;
 		
-		this.setState({ items: properties });
+		this.setState({ items: relations });
 	};
 	
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { properties } = data;
+		const { relations } = data;
 		
 		commonStore.menuOpen('dataviewPropertyEdit', { 
 			type: I.MenuType.Vertical,
-			element: '#property-add',
+			element: '#relation-add',
 			offsetX: 8,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				properties: properties,
-				property: ''
+				relations: relations,
+				relation: ''
 			}
 		});
 	};
@@ -104,19 +104,19 @@ class MenuPropertyList extends React.Component<Props, State> {
 	onEdit (e: any, id: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { properties } = data;
-		const property = properties.find((item: any) => { return item.id == id; });
+		const { relations } = data;
+		const relation = relations.find((item: any) => { return item.id == id; });
 		
 		commonStore.menuOpen('dataviewPropertyEdit', { 
 			type: I.MenuType.Vertical,
-			element: '#property-' + id,
+			element: '#relation-' + id,
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
-				properties: properties,
-				property: property
+				relations: relations,
+				relation: relation
 			}
 		});
 	};

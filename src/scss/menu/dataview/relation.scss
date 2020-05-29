@@ -1,10 +1,10 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewPropertyList { width: 224px; }
-	.menu.menuDataviewPropertyList {
+	.menu.menuDataviewRelationList { width: 224px; }
+	.menu.menuDataviewRelationList {
 		.item {
-			.icon.property { width: 16px; }
+			.icon.relation { width: 16px; }
 			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/dataview/plus/light0.svg'); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { width: calc(100% - 73px); }
@@ -12,8 +12,8 @@
 		.item.add { color: $colorDarkGrey; }
 	}
 	
-	.menu.menuDataviewPropertyEdit { width: 208px; }
-	.menu.menuDataviewPropertyEdit {
+	.menu.menuDataviewRelationEdit { width: 208px; }
+	.menu.menuDataviewRelationEdit {
 		.wrap { padding: 8px 16px; }
 		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
 		.input { border: 1px solid $colorLightGrey; font-size: 12px; padding: 0px 8px; }

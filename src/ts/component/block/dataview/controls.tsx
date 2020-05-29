@@ -26,8 +26,8 @@ class Controls extends React.Component<Props, {}> {
 		
 		const buttons: any[] = [
 			{ 
-				id: 'property', name: 'Property', menu: 'dataviewPropertyList', 
-				active: commonStore.menuIsOpen('dataviewPropertyList') 
+				id: 'relation', name: 'Relations', menu: 'dataviewRelationList', 
+				active: commonStore.menuIsOpen('dataviewRelationList') 
 			},
 			{ 
 				id: 'filter', name: 'Filter', menu: 'dataviewFilter', 
@@ -98,11 +98,11 @@ class Controls extends React.Component<Props, {}> {
 	
 	onButton (e: any, id: string, menu: string) {
 		const { view, viewType } = this.props;
-		const { properties, views } = this.props.getContent();
+		const { relations, views } = this.props.getContent();
 		const viewItem = views.find((item: any) => { return item.id == view; });
 		
 		let data: any = { 
-			properties: properties 
+			relations: relations 
 		};
 		
 		switch (menu) {
@@ -118,7 +118,7 @@ class Controls extends React.Component<Props, {}> {
 				data.filters = viewItem.filters;
 				break;
 				
-			case 'dataviewPropertyList':
+			case 'dataviewRelationList':
 				break;
 		};
 		

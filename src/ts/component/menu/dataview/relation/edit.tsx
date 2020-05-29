@@ -20,20 +20,20 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { property } = data;
+		const { relation } = data;
 		
 		let current = null;
-		if (property) {
+		if (relation) {
 			current = (
-				<div id="property-type" className={'item ' + (commonStore.menuIsOpen('propertyType') ? 'active' : '')} onClick={this.onType}>
-					<Icon className={'property dark c' + property.type} />
-					<div className="name">{Constant.propertyName[property.type]}</div>
+				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
+					<Icon className={'relation dark c' + relation.type} />
+					<div className="name">{Constant.propertyName[relation.type]}</div>
 					<Icon className="arrow" />
 				</div>
 			);
 		} else {
 			current = (
-				<div id="property-type" className={'item ' + (commonStore.menuIsOpen('propertyType') ? 'active' : '')} onClick={this.onType}>
+				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
 					<div className="name">Select type</div>
 					<Icon className="arrow" />
 				</div>
@@ -43,7 +43,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 		return (
 			<div>
 				<div className="wrap">
-					<Input value={property ? property.name : ''} placeHolder="Property name"  />
+					<Input value={relation ? relation.name : ''} placeHolder="Relation name"  />
 				</div>
 				{current}
 				<div className="line" />
@@ -53,7 +53,7 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 				</div>
 				<div className="item">
 					<Icon className="trash" />
-					<div className="name">Delete property</div>
+					<div className="name">Delete relation</div>
 				</div>
 			</div>
 		);
@@ -63,8 +63,8 @@ class MenuPropertyEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		
-		commonStore.menuOpen('dataviewPropertyType', { 
-			element: '#property-type',
+		commonStore.menuOpen('dataviewRelationType', { 
+			element: '#relation-type',
 			offsetX: 208,
 			offsetY: 4,
 			type: I.MenuType.Vertical,

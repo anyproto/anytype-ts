@@ -20,9 +20,9 @@ import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 
-import MenuDataviewPropertyList from './dataview/property/list';
-import MenuDataviewPropertyEdit from './dataview/property/edit';
-import MenuDataviewPropertyType from './dataview/property/type';
+import MenuDataviewRelationList from './dataview/relation/list';
+import MenuDataviewRelationEdit from './dataview/relation/edit';
+import MenuDataviewRelationType from './dataview/relation/type';
 import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewView from './dataview/view';
@@ -74,9 +74,9 @@ class Menu extends React.Component<Props, {}> {
 			blockCover:				 MenuBlockCover,
 			blockMention:			 MenuBlockMention,
 			
-			dataviewPropertyList:	 MenuDataviewPropertyList,
-			dataviewPropertyEdit:	 MenuDataviewPropertyEdit,
-			dataviewPropertyType:	 MenuDataviewPropertyType,
+			dataviewRelationList:	 MenuDataviewRelationList,
+			dataviewRelationEdit:	 MenuDataviewRelationEdit,
+			dataviewRelationType:	 MenuDataviewRelationType,
 			dataviewTagList:		 MenuDataviewTagList,
 			dataviewTagEdit:		 MenuDataviewTagEdit,
 			dataviewFilter:			 MenuDataviewFilter,

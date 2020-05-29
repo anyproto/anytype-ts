@@ -7,7 +7,7 @@ interface Props extends I.Cell {};
 class CellAccount extends React.Component<Props, {}> {
 
 	render () {
-		let { property, data } = this.props;
+		let { relation, data } = this.props;
 		
 		if (!data) {
 			return <React.Fragment />;

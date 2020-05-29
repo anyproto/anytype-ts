@@ -115,34 +115,19 @@ class BlockDataview extends React.Component<Props, State> {
 		};
 
 		let ret: any = {
-			views: [
-				{ 
-					id: '1', name: 'Grid', type: I.ViewType.Grid,
-					sorts: [
-						{ propertyId: '1', type: I.SortType.Asc },
-						{ propertyId: '2', type: I.SortType.Desc },
-					],
-					filters: [
-						{ propertyId: '1', condition: I.FilterOperator.And, equality: I.FilterCondition.Equal, value: '' },
-						{ propertyId: '1', condition: I.FilterOperator.And, equality: I.FilterCondition.Equal, value: '' },
-					]
-				},
-				{ id: '2', name: 'Board', type: I.ViewType.Board, sorts: [], filters: [] },
-				{ id: '3', name: 'Gallery', type: I.ViewType.Gallery, sorts: [], filters: [] },
-				{ id: '4', name: 'List', type: I.ViewType.List, sorts: [], filters: [] },
-			],
-			properties: [],
+			views: [],
+			relations: [],
 			data: data,
 		};
 
-		ret.properties.push({
+		ret.relations.push({
 			id: 'id',
 			name: 'Id',
-			type: I.PropertyType.Text,
+			type: I.RelationType.Text,
 		});
 
 		for (let field of schema.default) {
-			ret.properties.push({
+			ret.relations.push({
 				id: field.id,
 				name: field.name,
 				type: this.schemaField(field.type),

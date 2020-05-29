@@ -28,12 +28,12 @@
 			.item:hover, .item.active { color: #000; }
 			
 			.item {
-				.icon { margin: -2px 6px 0px 0px; }
+				.icon { width: 20px; height: 20px; margin: 0px 6px 0px 0px; }
 				.icon.arrow { width: 8px; height: 4px; background-image: url('~img/icon/dataview/button/arrow0.svg'); }
-				.icon.property { width: 16px; height: 16px; background-image: url('~img/icon/dataview/button/property0.svg'); }
-				.icon.filter { width: 14px; height: 16px; background-image: url('~img/icon/dataview/button/filter0.svg'); }
-				.icon.sort { width: 16px; height: 16px; background-image: url('~img/icon/dataview/button/sort0.svg'); }
-				.icon.more { width: 16px; height: 16px; background-image: url('~img/icon/dataview/button/more0.svg'); }
+				.icon.relation { background-image: url('~img/icon/dataview/button/relation0.svg'); }
+				.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+				.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
+				.icon.more { background-image: url('~img/icon/dataview/button/more0.svg'); }
 				
 				.icon.view { margin-right: 4px; }
 				
@@ -43,15 +43,15 @@
 			.item:hover, .item.active {
 				.icon.plus { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
 				.icon.arrow { background-image: url('~img/icon/dataview/button/arrow1.svg'); }
-				.icon.property { background-image: url('~img/icon/dataview/button/property1.svg'); }
+				.icon.relation { background-image: url('~img/icon/dataview/button/relation1.svg'); }
 				.icon.filter { background-image: url('~img/icon/dataview/button/filter1.svg'); }
 				.icon.sort { background-image: url('~img/icon/dataview/button/sort1.svg'); }
 				.icon.more { background-image: url('~img/icon/dataview/button/more1.svg'); }
 				
-				.icon.view.c0 { background-image: url('~img/icon/dataview/button/view/grid1.svg'); }
-				.icon.view.c1 { background-image: url('~img/icon/dataview/button/view/list1.svg'); }
-				.icon.view.c2 { background-image: url('~img/icon/dataview/button/view/gallery1.svg'); }
-				.icon.view.c3 { background-image: url('~img/icon/dataview/button/view/board1.svg'); }
+				.icon.view.c0 { background-image: url('~img/icon/dataview/view/grid1.svg'); }
+				.icon.view.c1 { background-image: url('~img/icon/dataview/view/list1.svg'); }
+				.icon.view.c2 { background-image: url('~img/icon/dataview/view/gallery1.svg'); }
+				.icon.view.c3 { background-image: url('~img/icon/dataview/view/board1.svg'); }
 			}
 		}
 		

@@ -7,7 +7,7 @@ interface Props extends I.Cell {};
 class CellBool extends React.Component<Props, {}> {
 
 	render () {
-		const { property, data } = this.props;
+		const { relation, data } = this.props;
 		
 		return (
 			<React.Fragment>

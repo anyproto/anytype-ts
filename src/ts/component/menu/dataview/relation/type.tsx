@@ -21,20 +21,20 @@ class MenuPropertyType extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { properties, property } = data;
+		const { relations, relation } = data;
 		
 		const Item = (item: any) => (
-			<div className={'item ' + (property && (item.type == property.type) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
-				<Icon className={'property dark c' + item.type} />
+			<div className={'item ' + (relation && (item.type == relation.type) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
+				<Icon className={'relation dark c' + item.type} />
 				<div className="name">{Constant.propertyName[item.type]}</div>
 			</div>
 		);
 		
 		return (
 			<div>
-				<div className="title">Type of property</div>
+				<div className="title">Type of relation</div>
 				<div className="items">
-					{properties.map((item: any, i: number) => (
+					{relations.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
 					))}
 				</div>

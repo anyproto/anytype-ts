@@ -7,8 +7,8 @@ import { PageInfo, BlockType, BlockPosition, BlockAlign, Block } from './block';
 import { 
 	ViewType,
 	View,  
-	PropertyType, 
-	Property,
+	RelationType, 
+	Relation,
 	SortType,
 	Sort, 
 	FilterOperator,
@@ -57,8 +57,8 @@ export {
 	
 	ViewType,
 	View,  
-	PropertyType, 
-	Property,
+	RelationType, 
+	Relation,
 	SortType,
 	Sort, 
 	FilterOperator,

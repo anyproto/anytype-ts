@@ -21,7 +21,7 @@ export enum BlockType {
 	Div			 = 'div',
 	Link		 = 'link',
 	Cover		 = 'cover',
-	Property	 = 'property',
+	Relation	 = 'relation',
 };
 
 export enum BlockPosition {

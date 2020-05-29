@@ -7,7 +7,7 @@ export enum ViewType {
 	Board	 = 3,
 };
 
-export enum PropertyType { 
+export enum RelationType { 
 	Title	 = 'title', 
 	Text	 = 'description', 
 	Number	 = 'number', 
@@ -45,10 +45,10 @@ export enum FilterCondition {
 	NotIn		 = 7,
 };
 
-export interface Property {
+export interface Relation {
 	id: string;
 	name: string;
-	type: PropertyType;
+	type: RelationType;
 	values?: any[];
 };
 
@@ -74,7 +74,7 @@ export interface View {
 
 export interface Cell {
 	id: number;
-	property: Property;
+	relation: Relation;
 	data: any;
 };
 
@@ -82,7 +82,7 @@ export interface ContentDataview {
 	databaseId: string;
 	schemaURL: string;
 	view: string;
-	properties: Property[];
+	relations: Relation[];
 	views: View[];
 	data: any[];
 };

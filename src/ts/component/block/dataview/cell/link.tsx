@@ -14,15 +14,15 @@ class CellLink extends React.Component<Props, {}> {
 	};
 
 	render () {
-		let { property, data } = this.props;
+		let { relation, data } = this.props;
 		let href = data;
 		
-		switch (property.type) {
-			case I.PropertyType.Email:
+		switch (relation.type) {
+			case I.RelationType.Email:
 				href = 'mailto:' + data;
 				break;
 				
-			case I.PropertyType.Phone:
+			case I.RelationType.Phone:
 				href = 'tel:' + data;
 				break;
 		};
