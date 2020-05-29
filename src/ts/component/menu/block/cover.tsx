@@ -12,10 +12,10 @@ const Constant = require('json/constant.json');
 
 @observer
 class MenuBlockCover extends React.Component<Props, {}> {
-	
+
 	constructor (props: any) {
 		super(props);
-		
+
 		this.onUpload = this.onUpload.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onRemove = this.onRemove.bind(this);
@@ -30,7 +30,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType } = details;
 		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
-		
+
 		const Section = (item: any) => (
 			<div className="section">
 				<div className="name">{item.name}</div>
@@ -42,7 +42,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
-		
+
 		return (
 			<div>
 				<div className="head">
@@ -60,24 +60,24 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			</div>
 		);
 	};
-	
+
 	onUpload (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onUpload, onUploadStart } = data;
-		const options: any = { 
-			properties: [ 'openFile' ], 
+		const options: any = {
+			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
-		
+
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};
-			
+
 			commonStore.menuClose(this.props.id);
-			
+
 			if (onUploadStart) {
 				onUploadStart();
 			};
@@ -86,42 +86,42 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				if (message.error.code) {
 					return;
 				};
-				
+
 				DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash, 0, -0.5);
-				
+
 				if (onUpload) {
 					onUpload();
 				};
 			});
 		});
 	};
-	
+
 	onEdit (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onEdit } = data;
-	
+
 		if (onEdit) {
-			onEdit();	
+			onEdit();
 		};
 		commonStore.menuClose(this.props.id);
 	};
-	
+
 	onRemove (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		
+
 		DataUtil.pageSetCover(rootId, I.CoverType.None, '');
 		commonStore.menuClose(this.props.id);
 	};
-	
+
 	onSelect (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onSelect } = data;
 		const details = blockStore.getDetails(rootId, rootId);
-		
+
 		if (!details.coverId) {
 			commonStore.menuClose(this.props.id);
 		};
@@ -130,15 +130,15 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			onSelect(item);
 		};
 	};
-	
+
 	getSections () {
 		const coverY: any = {
-			'the-crystal-pallace':  -0.392150765557761,
+			'the-crystal-pallace':  -0.4044042597182052,
 			'the-little-pond': -0.5,
 			'walk-at-pourville': -0.25770020533880905,
-			'poppy': -0.3131756603230546,
+			'poppy-field': -0.3131756603230546,
 			'ballet': -0.07978591433444132,
-			'flower': -0.02069390812732548,
+			'flower-girl': -0.04454641887930348,
 			'fruits': -0.484159123049052,
 			'autumn': -0.24504804447553558,
 			'big-electric-chair': -0.1711567107138921,
@@ -169,7 +169,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				{ type: I.CoverType.Color, id: 'darkgrey' },
 				{ type: I.CoverType.Color, id: 'black' },
 			] as any[] },
-			
+
 			{ name: 'Gradients', children: [
 				{ type: I.CoverType.Gradient, id: 'yellow' },
 				{ type: I.CoverType.Gradient, id: 'red' },
@@ -211,7 +211,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				c.coverY = Number(coverY[c.id]) || 0;
 				return c;
 			});
-			return s; 
+			return s;
 		});
 
 		return sections;
