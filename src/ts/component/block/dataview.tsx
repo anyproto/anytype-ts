@@ -77,9 +77,8 @@ class BlockDataview extends React.Component<Props, State> {
 		const { block } = this.props;
 		const { content } = block;
 
-		console.log('CONTENT', JSON.stringify(content, null, 3));
 		let ret = {
-			view: 1,
+			view: '1',
 			views: [
 				{ 
 					id: '1', name: 'Grid', type: I.ViewType.Grid,
