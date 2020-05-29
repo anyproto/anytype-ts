@@ -96,7 +96,10 @@ class Controls extends React.Component<Props, {}> {
 			data: {
 				onSelect: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');
-				}
+				},
+				onUpload (hash: string) {
+					DataUtil.pageSetIcon(rootId, '', hash);
+				},
 			}
 		});
 	};

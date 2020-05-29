@@ -258,7 +258,7 @@ class PopupSettings extends React.Component<Props, State> {
 
 			case 'importIndex':
 				const items = [
-					{ id: 'notion', name: 'Notion', disabled: false },
+					{ id: 'notion', name: 'Notion', disabled: true },
 					{ id: 'evernote', name: 'Evernote', disabled: true },
 					{ id: 'roam', name: 'Roam Researh', disabled: true },
 					{ id: 'word', name: 'Word', disabled: true },
