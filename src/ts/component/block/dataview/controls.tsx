@@ -38,7 +38,7 @@ class Controls extends React.Component<Props, {}> {
 				active: commonStore.menuIsOpen('dataviewSort') 
 			},
 			{ 
-				id: 'view', className: 'view c' + viewType, arrow: true, menu: 'dataviewView', 
+				id: 'view', className: 'c' + viewType, arrow: true, menu: 'dataviewView', 
 				active: commonStore.menuIsOpen('dataviewView') 
 			},
 			{ 
@@ -53,14 +53,14 @@ class Controls extends React.Component<Props, {}> {
 		);
 		
 		const ButtonItem = (item: any) => {
-			let cn = [ 'item', item.id, String(item.className || '') ];
+			let cn = [ item.id, String(item.className || '') ];
 			
 			if (item.active) {
 				cn.push('active');
 			};
 			
 			return (
-				<div id={'button-' + item.id} className={cn.join(' ')} onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}>
+				<div id={'button-' + item.id} className={[ 'item' ].concat(cn).join(' ')} onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}>
 					<Icon className={cn.join(' ')} />
 					{item.name ? <div className="name">{item.name}</div> : ''}
 					{item.arrow ? <Icon className="arrow" /> : ''}
@@ -75,7 +75,7 @@ class Controls extends React.Component<Props, {}> {
 						<ViewItem key={i} {...item} active={item.id == view} />
 					))}
 					<div className="item">
-						<Icon className="plus dark" />
+						<Icon className="plus" />
 					</div>
 				</div>
 				

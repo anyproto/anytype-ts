@@ -1,16 +1,15 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
-		.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/dataview/plus/light0.svg'); cursor: pointer; }
-		.icon.plus:hover { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
-		.icon.plus.dark { background-image: url('~img/icon/dataview/plus/dark0.svg'); }
-		.icon.plus.dark:hover { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
+		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/plus0.svg'); cursor: pointer; }
+		.icon.plus:hover { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 		
-		.icon.checkbox { width: 14px; height: 14px; background-image: url('~img/icon/dataview/bool0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/bool1.svg'); }
+		.icon.checkbox { width: 14px; height: 14px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 		
-		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: $colorDarkGrey; font-weight: bold; margin-bottom: 16px; }
+		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
 		.views {
 			.item { margin-right: 20px; display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; }
 			.item:last-child { margin: 0px; }
@@ -23,25 +22,32 @@
 		.buttons {
 			.side { width: 50%; }
 			.side.right { text-align: right; }
-			.item { display: inline-block; vertical-align: middle; cursor: pointer; transition: $transitionFast; margin-right: 16px; }
+			.item { 
+				display: inline-block; vertical-align: top; cursor: pointer; transition: $transitionFast; margin-right: 14px; 
+				position: relative; text-align: left; line-height: 20px;
+			}
 			.item:last-child { margin: 0px; }
-			.item:hover, .item.active { color: #000; }
+			.item:hover, .item.active { color: $colorBlack; }
 			
 			.item {
-				.icon { width: 20px; height: 20px; margin: 0px 6px 0px 0px; }
-				.icon.arrow { width: 8px; height: 4px; background-image: url('~img/icon/dataview/button/arrow0.svg'); }
+				.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
 				.icon.relation { background-image: url('~img/icon/dataview/button/relation0.svg'); }
 				.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 				.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
 				.icon.more { background-image: url('~img/icon/dataview/button/more0.svg'); }
+
+				.icon.arrow { 
+					margin: -6px 0px 0px 0px; width: 12px; height: 12px; background-image: url('~img/icon/dataview/button/arrow0.svg');
+					position: absolute; right: 0px; top: 50%;
+				}
 				
-				.icon.view { margin-right: 4px; }
-				
-				.name { display: inline-block; vertical-align: middle; }
+				.icon.view { margin: 0px; }
+				.name { display: inline-block; vertical-align: top; }
 			}
+			.item.view { width: 32px; }
 			
 			.item:hover, .item.active {
-				.icon.plus { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
+				.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 				.icon.arrow { background-image: url('~img/icon/dataview/button/arrow1.svg'); }
 				.icon.relation { background-image: url('~img/icon/dataview/button/relation1.svg'); }
 				.icon.filter { background-image: url('~img/icon/dataview/button/filter1.svg'); }
@@ -124,7 +130,7 @@
 				
 				.card.add:hover { border-color: $colorBlack; }
 				.card.add:hover {
-					.icon { background-image: url('~img/icon/dataview/plus/dark1.svg'); }
+					.icon { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 				}
 			}
 			

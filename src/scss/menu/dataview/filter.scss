@@ -5,8 +5,8 @@
 	.menu.menuDataviewFilter {
 		.item { padding: 4px 16px; }
 		.item {
-			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/dataview/plus/light0.svg'); }
-			.icon.relation { width: 16px; margin-right: 8px; }
+			.icon.plus { background-image: url('~img/icon/dataview/button/plus0.svg'); }
+			.icon.relation { margin-right: 8px; }
 			.select { margin-right: 8px; }
 			.select:last-child { margin: 0px; }
 		}

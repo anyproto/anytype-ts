@@ -4,8 +4,7 @@
 	.menu.menuDataviewRelationList { width: 224px; }
 	.menu.menuDataviewRelationList {
 		.item {
-			.icon.relation { width: 16px; }
-			.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/dataview/plus/light0.svg'); }
+			.icon.plus { background-image: url('~img/icon/dataview/button/plus0.svg'); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { width: calc(100% - 73px); }
 		}

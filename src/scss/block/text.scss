@@ -84,38 +84,20 @@
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 	
 	.block.blockText.header1 { padding: 22px 0px 0px 0px; }
-	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget { 
-		font-family: 'Lcg'; font-size: 28px; line-height: 32px; letter-spacing: -0.48px; font-weight: 600; 
-		padding: 4px 0px 2px 0px;
-	}
-	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget mention .space {
-		width: 6px; height: 32px;
-	}
+	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget { @include text-header1; padding: 4px 0px 2px 0px; }
+	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget mention .space { width: 6px; height: 32px; }
 	
 	.block.blockText.header2 { padding: 14px 0px 0px 0px; }
-	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget { 
-		font-family: 'Lcg'; font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 600; 
-		padding: 3px 0px 2px 0px;
-	}
-	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget mention .space {
-		width: 5px; height: 28px;
-	}
+	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 3px 0px 2px 0px; }
+	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 28px; }
 	
 	.block.blockText.header3 { padding: 14px 0px 0px 0px; }
-	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget { 
-		font-size: 18px; line-height: 26px; letter-spacing: -0.16px; font-weight: 600; padding: 2px 0px 3px 0px;
-	}
-	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget mention .space {
-		width: 5px; height: 26px;
-	}
+	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget { @include text-header3; padding: 2px 0px 3px 0px; }
+	.block.blockText.header3 > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 26px; }
 	
 	.block.blockText.quote { padding: 6px 0px 6px 0px; }
-	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { 
-		font-size: 18px; line-height: 26px; letter-spacing: -0.16px; padding: 2px 0px 3px 0px;
-	}
-	.block.blockText.header2 > .wrapContent > .selectable > .dropTarget mention .space {
-		width: 5px; height: 26px;
-	}
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 2px 0px 3px 0px; }
+	.block.blockText.quote > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 26px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .line { 
 		width: 0px; height: calc(100% + 5px); position: absolute; left: 11px; top: -2px; border-left: 2px solid $colorOrange; 
 	}
