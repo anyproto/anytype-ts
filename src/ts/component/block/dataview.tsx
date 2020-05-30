@@ -42,12 +42,14 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { view } = this.getContent();
+		const content = this.getContent();
+		const { view } = content;
+
 		if (!view) {
 			return null;
 		};
 
-		let ViewComponent: React.ReactType<{ getContent(): any; }>;
+		let ViewComponent: React.ReactType<{ content: any; }>;
 		switch (view.type) {
 			default:
 			case I.ViewType.Grid:
@@ -69,9 +71,9 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		return (
 			<React.Fragment>
-				<Controls {...this.props} getContent={this.getContent} onView={this.onView} />
+				<Controls {...this.props} content={content} onView={this.onView} />
 				<div className="content">
-					<ViewComponent {...this.props} getContent={this.getContent} />
+					<ViewComponent {...this.props} content={content} />
 				</div>
 			</React.Fragment>
 		);
@@ -141,7 +143,7 @@ class BlockDataview extends React.Component<Props, State> {
 	getData () {
 		C.NavigationListPages((message: any) => {
 			let pages = message.pages.map((it: any) => { return this.getPage(it); });
-			this.setState({ data: pages });
+			this.setState({ data: pages.slice(0, 10) });
 		});
 	};
 

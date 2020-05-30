@@ -5,18 +5,19 @@ import { I } from 'ts/lib';
 import Cell from '../cell';
 
 interface Props extends I.BlockDataview {
-	getContent(): any;
+	content: any;
 };
 
 class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { data, relations } = this.props.getContent();
+		const { content } = this.props;
+		const { data, relations } = content;
 		
 		const Card = (item: any) => (
 			<div className="item">
 				{relations.map((relation: any, i: number) => (
-					<Cell key={relation.id} id={item.index} relation={...relation} data={data[item.index][relation.id]} />
+					<Cell key={relation.id} id={item.index} relation={...relation} data={data[item.index]} />
 				))}
 			</div>
 		);

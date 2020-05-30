@@ -19,16 +19,16 @@ class CellLink extends React.Component<Props, {}> {
 		
 		switch (relation.type) {
 			case I.RelationType.Email:
-				href = 'mailto:' + data;
+				href = 'mailto:' + data[relation.id];
 				break;
 				
 			case I.RelationType.Phone:
-				href = 'tel:' + data;
+				href = 'tel:' + data[relation.id];
 				break;
 		};
 		
 		return (
-			<a onClick={(e: any) => { this.onClick(e, href); }}>{data}</a>
+			<a onClick={(e: any) => { this.onClick(e, href); }}>{data[relation.id]}</a>
 		);
 	};
 	

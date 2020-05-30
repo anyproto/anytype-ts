@@ -9,14 +9,14 @@ class CellAccount extends React.Component<Props, {}> {
 	render () {
 		let { relation, data } = this.props;
 		
-		if (!data) {
+		if (!data[relation.id]) {
 			return <React.Fragment />;
 		};
 		
 		return (
 			<React.Fragment>
-				<IconUser className="c18" {...data} />
-				{data.name}
+				<IconUser className="c18" {...data[relation.id]} />
+				{data[relation.id].name}
 			</React.Fragment>
 		);
 	};

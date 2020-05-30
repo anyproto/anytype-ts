@@ -46,7 +46,7 @@ class MenuSort extends React.Component<Props, State> {
 			<div className="item">
 				<Icon className="dnd" />
 				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationId} />
-				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={String(item.type)} />
+				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={item.type} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>
 		));

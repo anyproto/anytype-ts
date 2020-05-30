@@ -4,8 +4,8 @@ import { I } from 'ts/lib';
 
 import Cell from '../cell';
 
-interface Props extends I.BlockDataview {
-	getContent(): any;
+interface Props {
+	content: any;
 };
 
 interface Column {
@@ -18,8 +18,9 @@ const GROUP = 'isArchived';
 class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
-		const { relations } = this.props.getContent();
-		const group = relations.find((item) => { return item.id == GROUP; });
+		const { content } = this.props;
+		const { relations } = content;
+		const group = relations.find((item: I.Relation) => { return item.id == GROUP; });
 
 		if (!group) {
 			return null;
@@ -30,7 +31,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		const Card = (item: any) => (
 			<div className="card">
 				{relations.map((relation: any, i: number) => (
-					<Cell key={relation.id} id={item.index} relation={...relation} data={item.data[relation.id]} />
+					<Cell key={relation.id} id={item.index} relation={...relation} data={item.data} />
 				))}
 			</div>
 		);
@@ -38,7 +39,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		const Column = (item: any) => (
 			<div className="column">
 				<div className="head">
-					<Cell id={0} relation={group} data={item.value} />
+					<Cell id="" relation={group} data={item.value} />
 				</div>
 				<div className="list">
 					{item.list.map((child: any, i: number) => (
@@ -63,7 +64,8 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): Column[] {
-		const { data } = this.props.getContent();
+		const { content } = this.props;
+		const { data } = content;
 		
 		let groupBy = GROUP;
 		let r: Column[] = [];

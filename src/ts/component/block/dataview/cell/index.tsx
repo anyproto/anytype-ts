@@ -23,9 +23,9 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, relation } = this.props;
+		const { id, relation, data } = this.props;
 		
-		let CellComponent: React.ReactType<{}>;
+		let CellComponent: React.ReactType<I.Cell>;
 		
 		switch (relation.type) {
 			default:
@@ -64,7 +64,7 @@ class Cell extends React.Component<Props, {}> {
 		
 		return (
 			<div id={[ 'cell', relation.id, id ].join('-')} className={[ 'cell', relation.type ].join(' ')} onClick={this.onClick}>
-				<CellComponent {...this.props} />
+				<CellComponent {...this.props} data={data || {}} />
 			</div>
 		);
 	};

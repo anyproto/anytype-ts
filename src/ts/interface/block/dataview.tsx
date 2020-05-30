@@ -78,7 +78,7 @@ export interface View {
 };
 
 export interface Cell {
-	id: number;
+	id: string;
 	relation: Relation;
 	data: any;
 };

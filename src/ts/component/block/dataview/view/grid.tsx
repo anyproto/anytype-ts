@@ -4,14 +4,15 @@ import { I } from 'ts/lib';
 
 import Cell from '../cell';
 
-interface Props extends I.BlockDataview {
-	getContent(): any;
+interface Props {
+	content: any;
 };
 
 class ViewGrid extends React.Component<Props, {}> {
 
 	render () {
-		const { data, relations } = this.props.getContent();
+		const { content } = this.props;
+		const { data, relations } = content;
 		
 		const CellHead = (item: any) => (
 			<th className={'head ' + item.type}>
@@ -40,7 +41,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowBody = (item: any) => (
 			<tr className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellBody key={relation.id} index={item.index} relation={...relation} data={data[item.index][relation.id]} />
+					<CellBody key={relation.id} index={item.index} relation={...relation} data={data[item.index]} />
 				))}
 				<td className="cell">&nbsp;</td>
 			</tr>

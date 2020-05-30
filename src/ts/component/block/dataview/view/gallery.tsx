@@ -4,19 +4,20 @@ import { I } from 'ts/lib';
 
 import Cell from '../cell';
 
-interface Props extends I.BlockDataview {
-	getContent(): any;
+interface Props {
+	content: any;
 };
 
 class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
-		const { data, relations } = this.props.getContent();
+		const { content } = this.props;
+		const { data, relations } = content;
 		
 		const Card = (item: any) => (
 			<div className="card">
 				{relations.map((relation: any, i: number) => (
-					<Cell key={relation.id} id={item.index} relation={...relation} data={data[item.index][relation.id]} />
+					<Cell key={relation.id} id={item.index} relation={...relation} data={data[item.index]} />
 				))}
 			</div>
 		);

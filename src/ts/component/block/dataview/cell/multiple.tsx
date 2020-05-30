@@ -7,13 +7,11 @@ interface Props extends I.Cell {};
 class CellMultiple extends React.Component<Props, {}> {
 
 	render () {
-		let { data } = this.props;
-		
-		data = data || [];
+		let { data, relation } = this.props;
 		
 		return (
 			<React.Fragment>
-				{data.map((text: string, i: number) => (
+				{(data[relation.id] || []).map((text: string, i: number) => (
 					<Tag key={i} text={text} />					
 				))}
 			</React.Fragment>

@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props {
 	onView(e: any, id: string): void;
-	getContent(): any;
+	content: any;
 };
 
 @observer
@@ -19,8 +19,8 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { onView } = this.props;
-		const { views, view } = this.props.getContent();
+		const { onView, content } = this.props;
+		const { views, view } = content;
 		
 		const buttons: any[] = [
 			{ 
@@ -102,7 +102,7 @@ class Controls extends React.Component<Props, {}> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
-			data: this.props.getContent(),
+			data: this.props.content,
 		});
 	};
 

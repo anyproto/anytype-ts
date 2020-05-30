@@ -91,6 +91,7 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	setValue (v: string) {
+		console.log('setValue', v);
 		this.setState({ value: v });
 		
 		if (this.props.onChange) {
