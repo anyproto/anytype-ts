@@ -7,6 +7,7 @@ interface Props {
 	id: string;
 	initial?: string;
 	className?: string;
+	arrowClassName?: string;
 	value: string;
 	options: I.Option[];
 	horizontal?: I.MenuDirection;
@@ -39,9 +40,10 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, className } = this.props;
+		const { id, className, arrowClassName } = this.props;
 		const { value, options } = this.state;
 		const cn = [ 'select', (className ? className : '') ];
+		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
 
 		let current: I.Option = options.find((item: any) => { return item.id == value; });
 		if (!current) {
@@ -54,7 +56,7 @@ class Select extends React.Component<Props, State> {
 					<div className="current" onClick={this.show}>
 						{current.icon ? <Icon className={current.icon} /> : ''}
 						<div className="name">{current.name}</div>
-						<Icon className="arrow" />
+						<Icon className={acn.join(' ')} />
 					</div>
 				) : ''}
 			</div>
