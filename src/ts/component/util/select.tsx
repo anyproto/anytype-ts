@@ -1,41 +1,33 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { commonStore } from 'ts/store';
-
-const $ = require('jquery');
-
-interface Option {
-	id: string;
-	name: string;
-	icon?: string;
-};
 
 interface Props {
 	id: string;
 	initial?: string;
 	value: string;
-	options: Option[];
+	options: I.Option[];
 	horizontal?: I.MenuDirection;
 	onChange? (id: string): void;
 };
 
 interface State {
 	value: string;
-	options: Option[];
+	options: I.Option[];
 };
 
 class Select extends React.Component<Props, State> {
 	
-	private static defaultProps = {
+	public static defaultProps = {
 		initial: '',
 		horizontal: I.MenuDirection.Left,
 	};
 	
+	_isMounted: boolean = false;
 	state = {
 		value: '',
-		options: [] as Option[]
+		options: [] as I.Option[]
 	};
 	
 	constructor (props: any) {
@@ -48,8 +40,8 @@ class Select extends React.Component<Props, State> {
 	render () {
 		const { id } = this.props;
 		const { value, options } = this.state;
-		let current: Option = options.find((item: any) => { return item.id == value; });
-		
+
+		let current: I.Option = options.find((item: any) => { return item.id == value; });
 		if (!current) {
 			current = options[0];
 		};
@@ -68,6 +60,8 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+
 		let { value, options, initial } = this.props;
 		let opts = [];
 		
@@ -85,14 +79,27 @@ class Select extends React.Component<Props, State> {
 		
 		this.setState({ value: value, options: opts });
 	};
-	
+
+	componentDidUpdate () {
+		console.log('UPDATE', this.state);
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	getValue (): string {
 		return String(this.state.value || '');
 	};
 	
 	setValue (v: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		console.log('setValue', v);
 		this.setState({ value: v });
+		this.forceUpdate();
 		
 		if (this.props.onChange) {
 			this.props.onChange(v);
@@ -102,7 +109,6 @@ class Select extends React.Component<Props, State> {
 	show () {
 		const { id, value, horizontal } = this.props;
 		const { options } = this.state;
-		const node = $(ReactDOM.findDOMNode(this));
 		
 		this.hide();
 		

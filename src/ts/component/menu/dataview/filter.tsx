@@ -30,14 +30,14 @@ class MenuFilter extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
-		
 		const { items } = this.state;
-		const conditionOptions = [
+
+		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
 		
-		const equalityOptions = [
+		const conditionOptions: I.Option[] = [
 			{ id: String(I.FilterCondition.Equal), name: 'Is equal' },
 			{ id: String(I.FilterCondition.NotEqual), name: 'Is not equal' },
 			{ id: String(I.FilterCondition.In), name: 'Contains' },
@@ -48,7 +48,7 @@ class MenuFilter extends React.Component<Props, State> {
 			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
 		];
 		
-		let relationOptions: any[] = [];
+		let relationOptions: I.Option[] = [];
 		for (let relation of view.relations) {
 			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
 		};
@@ -56,9 +56,9 @@ class MenuFilter extends React.Component<Props, State> {
 		const Item = SortableElement((item: any) => (
 			<div className="item">
 				<Icon className="dnd" />
-				{item.idx > 0 ? <Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={String(item.condition)} /> : ''}
+				{item.idx > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} /> : ''}
 				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationId} />
-				<Select id={[ 'filter', 'equality', item.id ].join('-')} options={equalityOptions} value={String(item.equality)} />
+				<Select id={[ 'filter', 'equality', item.id ].join('-')} options={conditionOptions} value={item.condition} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>
 		));

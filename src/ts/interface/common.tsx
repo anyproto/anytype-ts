@@ -26,3 +26,9 @@ export enum NavigationType {
 	Move	 = 'move',
 	Create	 = 'create',
 };
+
+export interface Option {
+	id: string;
+	name: string;
+	icon?: string;
+};

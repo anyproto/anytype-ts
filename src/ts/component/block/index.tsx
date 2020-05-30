@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'ts/lib';
-import { Icon, DropTarget, ListChildren } from 'ts/component';
+import { DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
