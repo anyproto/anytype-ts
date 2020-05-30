@@ -96,7 +96,10 @@ class Controls extends React.Component<Props, {}> {
 			data: {
 				onSelect: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');
-				}
+				},
+				onUpload (hash: string) {
+					DataUtil.pageSetIcon(rootId, '', hash);
+				},
 			}
 		});
 	};
@@ -138,8 +141,8 @@ class Controls extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,
-				onSelect: (type: I.CoverType, id: string) => {
-					DataUtil.pageSetCover(rootId, type, id);
+				onSelect: (item: any) => {
+					DataUtil.pageSetCover(rootId, item.type, item.id, 0, item.coverY);
 				}
 			}
 		});

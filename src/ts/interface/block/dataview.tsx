@@ -64,12 +64,17 @@ export interface Filter {
 	value: any;
 };
 
+export interface ViewRelation extends Relation {
+	visible: boolean;
+};
+
 export interface View {
 	id: string;
 	name: string;
 	type: ViewType;
 	sorts: Sort[];
 	filters: Filter[];
+	relations: any[];
 };
 
 export interface Cell {
@@ -81,7 +86,7 @@ export interface Cell {
 export interface ContentDataview {
 	databaseId: string;
 	schemaURL: string;
-	view: string;
+	view: View;
 	relations: Relation[];
 	views: View[];
 	data: any[];

@@ -29,7 +29,7 @@ class MenuFilter extends React.Component<Props, State> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relations } = data;
+		const { view } = data;
 		
 		const { items } = this.state;
 		const conditionOptions = [
@@ -49,7 +49,7 @@ class MenuFilter extends React.Component<Props, State> {
 		];
 		
 		let relationOptions: any[] = [];
-		for (let relation of relations) {
+		for (let relation of view.relations) {
 			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
 		};
 		
@@ -97,9 +97,9 @@ class MenuFilter extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filters } = data;
+		const { view } = data;
 		
-		this.setState({ items: filters });
+		this.setState({ items: view.filters });
 	};
 	
 	onAdd (e: any) {

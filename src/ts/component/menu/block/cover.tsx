@@ -12,10 +12,10 @@ const Constant = require('json/constant.json');
 
 @observer
 class MenuBlockCover extends React.Component<Props, {}> {
-	
+
 	constructor (props: any) {
 		super(props);
-		
+
 		this.onUpload = this.onUpload.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onRemove = this.onRemove.bind(this);
@@ -30,7 +30,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType } = details;
 		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
-		
+
 		const Section = (item: any) => (
 			<div className="section">
 				<div className="name">{item.name}</div>
@@ -42,7 +42,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
-		
+
 		return (
 			<div>
 				<div className="head">
@@ -60,24 +60,24 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			</div>
 		);
 	};
-	
+
 	onUpload (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onUpload, onUploadStart } = data;
-		const options: any = { 
-			properties: [ 'openFile' ], 
+		const options: any = {
+			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
-		
+
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};
-			
+
 			commonStore.menuClose(this.props.id);
-			
+
 			if (onUploadStart) {
 				onUploadStart();
 			};
@@ -86,53 +86,75 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				if (message.error.code) {
 					return;
 				};
-				
+
 				DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash, 0, -0.5);
-				
+
 				if (onUpload) {
 					onUpload();
 				};
 			});
 		});
 	};
-	
+
 	onEdit (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onEdit } = data;
-	
+
 		if (onEdit) {
-			onEdit();	
+			onEdit();
 		};
 		commonStore.menuClose(this.props.id);
 	};
-	
+
 	onRemove (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		
+
 		DataUtil.pageSetCover(rootId, I.CoverType.None, '');
 		commonStore.menuClose(this.props.id);
 	};
-	
+
 	onSelect (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onSelect } = data;
 		const details = blockStore.getDetails(rootId, rootId);
-		
+
 		if (!details.coverId) {
 			commonStore.menuClose(this.props.id);
 		};
-		
+
 		if (onSelect) {
-			onSelect(item.type, item.id);
+			onSelect(item);
 		};
 	};
-	
+
 	getSections () {
-		return [
+		const coverY: any = {
+			'the-crystal-pallace':  -0.4044042597182052,
+			'the-little-pond': -0.5,
+			'walk-at-pourville': -0.25770020533880905,
+			'poppy-field': -0.3131756603230546,
+			'ballet': -0.07978591433444132,
+			'flower-girl': -0.04454641887930348,
+			'fruits': -0.484159123049052,
+			'autumn': -0.24504804447553558,
+			'big-electric-chair': -0.1711567107138921,
+			'flowers': -0.5147540983606558,
+			'sunday-morning': -0.19150779896013864,
+			'japan': -0.10272440405327754,
+			'grass': -0.5754087049822059,
+			'butter': -0.07053696481594314,
+			'medication': -0.4984825493171472,
+			'landscape3': -0.20313036324937497,
+			'third-sleep': -0.5534286421213346,
+			'banquet': -0.20557316869681294,
+			'chemist': -0.4084223252065283,
+		};
+
+		let sections: any[] = [
 			{ name: 'Solid colors', children: [
 				{ type: I.CoverType.Color, id: 'yellow' },
 				{ type: I.CoverType.Color, id: 'orange' },
@@ -147,7 +169,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				{ type: I.CoverType.Color, id: 'darkgrey' },
 				{ type: I.CoverType.Color, id: 'black' },
 			] as any[] },
-			
+
 			{ name: 'Gradients', children: [
 				{ type: I.CoverType.Gradient, id: 'yellow' },
 				{ type: I.CoverType.Gradient, id: 'red' },
@@ -183,8 +205,17 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				{ type: I.CoverType.BgImage, id: 'chemist', name: 'Salvador Dalí A Chemist Lifting with Extreme Precaution the Cuticle of a Grand Piano' },
 			] as any[] }
 		];
+
+		sections = sections.map((s: any) => {
+			s.children = s.children.map((c: any) => {
+				c.coverY = Number(coverY[c.id]) || 0;
+				return c;
+			});
+			return s;
+		});
+
+		return sections;
 	};
-	
 };
 
 export default MenuBlockCover;

@@ -16,7 +16,7 @@ class MenuView extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { viewType } = data;
+		const { view } = data;
 		
 		const items: any[] = [
 			{ id: I.ViewType.List, name: 'List' },
@@ -26,7 +26,7 @@ class MenuView extends React.Component<Props, {}> {
 		];
 		
 		const Item = (item: any) => (
-			<div className={'item ' + (viewType == item.id ? 'active' : '')} onClick={(e: any) => { this.onClick(e, item.id); }}>
+			<div className={'item ' + (view.type == item.id ? 'active' : '')} onClick={(e: any) => { this.onClick(e, item.id); }}>
 				<Icon className={'view c' + item.id} />
 				<div className="name">{item.name}</div>
 			</div>

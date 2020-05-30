@@ -39,11 +39,11 @@ class MenuRelationList extends React.Component<Props, State> {
 		const Item = SortableElement((item: any) => (
 			<div id={'relation-' + item.id} className="item">
 				<Handle />
-				<span className="clickable" onClick={(e: any) => { console.log(213); this.onEdit(e, item.id); }}>
+				<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.id); }}>
 					<Icon className={'relation c-' + item.type} />
 					<div className="name">{item.name}</div>
 				</span>
-				<Switch className="green" />
+				<Switch value={item.visible} className="green" />
 			</div>
 		));
 		
@@ -84,15 +84,14 @@ class MenuRelationList extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relations } = data;
+		const { view } = data;
 		
-		this.setState({ items: relations });
+		this.setState({ items: view.relations });
 	};
 	
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { relations } = data;
 		
 		commonStore.menuOpen('dataviewRelationEdit', { 
 			type: I.MenuType.Vertical,
@@ -101,18 +100,13 @@ class MenuRelationList extends React.Component<Props, State> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			data: {
-				relations: relations,
-				relation: ''
-			}
+			data: data
 		});
 	};
 	
 	onEdit (e: any, id: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { relations } = data;
-		const relation = relations.find((item: any) => { return item.id == id; });
 		
 		commonStore.menuOpen('dataviewRelationEdit', { 
 			type: I.MenuType.Vertical,
@@ -122,8 +116,8 @@ class MenuRelationList extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
-				relations: relations,
-				relation: relation
+				...data,
+				relationId: id,
 			}
 		});
 	};

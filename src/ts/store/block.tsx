@@ -448,6 +448,7 @@ class BlockStore {
 						name: String(view.name || Constant.default.name),
 						sorts: view.sorts || [],
 						filters: view.filters || [],
+						relations: view.relations || [],
 					};
 				});
 			};

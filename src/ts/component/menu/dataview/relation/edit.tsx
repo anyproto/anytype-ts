@@ -20,7 +20,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relation } = data;
+		const { relationId, view } = data;
+		const relation = view.relations.find((it: I.ViewRelation) => { it.id == relationId; });
 		
 		let current = null;
 		if (relation) {
@@ -71,8 +72,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onSelect: (id: string) => {
-					console.log('Type', id);
+				onSelect: (item: any) => {
+					console.log('Type', item);
 				},
 				...data
 			}

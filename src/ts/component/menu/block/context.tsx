@@ -213,6 +213,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						data: {
 							rootId: rootId,
 							blockId: blockId,
+							blockIds: [ blockId ],
 							onSelect: (item: any) => {
 								commonStore.menuClose(this.props.id);
 							},

@@ -24,7 +24,8 @@ class MenuRelationType extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relation } = data;
+		const { relationId, view } = data;
+		const relation = view.relations.find((it: I.ViewRelation) => { it.id == relationId; });
 		
 		let relations = [];
 		for (let i in Schema.relation.definitions) {
@@ -35,7 +36,7 @@ class MenuRelationType extends React.Component<Props, {}> {
 
 		const Item = (item: any) => {
 			return (
-				<div className={'item ' + (relation && (item.code == relation.type) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item.id); }}>
+				<div className={'item ' + (relation && (item.code == relation.type) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item); }}>
 					<Icon className={'relation c-' + item.code} />
 					<div className="name">{Constant.relationName[item.code] || item.code}</div>
 				</div>
@@ -54,13 +55,13 @@ class MenuRelationType extends React.Component<Props, {}> {
 		);
 	};
 	
-	onSelect (e: any, id: string) {
+	onSelect (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
 		commonStore.menuClose(this.props.id);
-		onSelect(id);
+		onSelect(item);
 	};
 	
 };

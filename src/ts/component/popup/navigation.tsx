@@ -112,7 +112,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 			return (
 				<div id={'item-' + item.id} className="item">
-					<div onClick={(e: any) => { this.onClick(e, item); }}>
+					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
 						{isRoot ? (
 							<div className="smile c48">
 								<Icon className="home big" />

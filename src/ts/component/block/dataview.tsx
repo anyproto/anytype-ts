@@ -42,18 +42,13 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { view } = this.state;
-		const { block } = this.props;
-		const { views } = this.getContent();
-
+		const { view } = this.getContent();
 		if (!view) {
 			return null;
 		};
 
-		const viewItem = views.find((item: any) => { return item.id == view; });
-
 		let ViewComponent: React.ReactType<{ getContent(): any; }>;
-		switch (viewItem.type) {
+		switch (view.type) {
 			default:
 			case I.ViewType.Grid:
 				ViewComponent = ViewGrid;
@@ -74,7 +69,7 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		return (
 			<React.Fragment>
-				<Controls {...this.props} getContent={this.getContent} {...block} view={view} viewType={viewItem.type} onView={this.onView} />
+				<Controls {...this.props} getContent={this.getContent} onView={this.onView} />
 				<div className="content">
 					<ViewComponent {...this.props} getContent={this.getContent} />
 				</div>
@@ -129,6 +124,17 @@ class BlockDataview extends React.Component<Props, State> {
 		};
 
 		ret.views = content.views;
+		ret.views = ret.views.map((view: I.View) => {
+			view.relations = view.relations.map((relation: I.ViewRelation) => {
+				const rel = ret.relations.find((it: I.Relation) => { return it.id == relation.id; });
+				return Object.assign(rel, relation);
+			});
+			return view;
+		});
+		
+		const view = this.state.view || ret.views[0].id;
+		ret.view = ret.views.find((item: any) => { return item.id == view; });
+
 		return ret;
 	};
 

@@ -29,7 +29,7 @@ class MenuSort extends React.Component<Props, State> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relations } = data;
+		const { view } = data;
 		
 		const { items } = this.state;
 		const typeOptions = [
@@ -38,7 +38,7 @@ class MenuSort extends React.Component<Props, State> {
 		];
 		
 		let relationOptions: any[] = [];
-		for (let relation of relations) {
+		for (let relation of view.relations) {
 			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
 		};
 		
@@ -85,9 +85,9 @@ class MenuSort extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { sorts } = data;
+		const { view } = data;
 		
-		this.setState({ items: sorts });
+		this.setState({ items: view.sorts });
 	};
 	
 	onAdd (e: any) {

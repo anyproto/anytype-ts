@@ -4,9 +4,7 @@ import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockDataview {
-	view: string;
-	viewType: I.ViewType;
+interface Props {
 	onView(e: any, id: string): void;
 	getContent(): any;
 };
@@ -21,8 +19,8 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { view, viewType, onView } = this.props;
-		const { views } = this.props.getContent();
+		const { onView } = this.props;
+		const { views, view } = this.props.getContent();
 		
 		const buttons: any[] = [
 			{ 
@@ -38,7 +36,7 @@ class Controls extends React.Component<Props, {}> {
 				active: commonStore.menuIsOpen('dataviewSort') 
 			},
 			{ 
-				id: 'view', className: 'c' + viewType, arrow: true, menu: 'dataviewView', 
+				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewView', 
 				active: commonStore.menuIsOpen('dataviewView') 
 			},
 			{ 
@@ -72,7 +70,7 @@ class Controls extends React.Component<Props, {}> {
 			<div className="dataviewControls">
 				<div className="views">
 					{views.map((item: I.View, i: number) => (
-						<ViewItem key={i} {...item} active={item.id == view} />
+						<ViewItem key={i} {...item} active={item.id == view.id} />
 					))}
 					<div className="item">
 						<Icon className="plus" />
@@ -97,31 +95,6 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { view, viewType } = this.props;
-		const { relations, views } = this.props.getContent();
-		const viewItem = views.find((item: any) => { return item.id == view; });
-		
-		let data: any = { 
-			relations: relations 
-		};
-		
-		switch (menu) {
-			case 'dataviewView':
-				data.viewType = viewType;
-				break;
-				
-			case 'dataviewSort':
-				data.sorts = viewItem.sorts;
-				break;
-				
-			case 'dataviewFilter':
-				data.filters = viewItem.filters;
-				break;
-				
-			case 'dataviewRelationList':
-				break;
-		};
-		
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,
 			type: I.MenuType.Vertical,
@@ -129,7 +102,7 @@ class Controls extends React.Component<Props, {}> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
-			data: data
+			data: this.props.getContent(),
 		});
 	};
 

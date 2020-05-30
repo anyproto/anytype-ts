@@ -131,13 +131,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else 
 		if (block.isLinkPage()) {
 			items = [
+				{ id: 'move', icon: 'move', name: 'Move to' },
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' }
 			];
 		} else {
 			items = [
-				{ id: 'remove', icon: 'remove', name: 'Delete' },
 				{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+				{ id: 'remove', icon: 'remove', name: 'Delete' },
 			];
 		};
 		

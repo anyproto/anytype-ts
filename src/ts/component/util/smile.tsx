@@ -90,7 +90,7 @@ class Smile extends React.Component<Props, State> {
 
 			if (colons) {
 				if (asImage) {
-					element = <img src={SmileUtil.srcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} />;
+					element = <img src={SmileUtil.srcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};
@@ -98,7 +98,7 @@ class Smile extends React.Component<Props, State> {
 		} else 
 		if (hash) {
 			cn.push('withImage');
-			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} />;
+			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')}  onDragStart={(e: any) => { e.preventDefault(); }} />;
 		};
 		
 		return (

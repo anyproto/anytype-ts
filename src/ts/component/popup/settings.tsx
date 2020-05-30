@@ -32,10 +32,10 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 	onConfirmPin: any = null;
 	format: string = '';
-	
+
 	constructor (props: any) {
 		super(props);
-		
+
 		this.onClose = this.onClose.bind(this);
 		this.onPage = this.onPage.bind(this);
 		this.onCover = this.onCover.bind(this);
@@ -48,7 +48,7 @@ class PopupSettings extends React.Component<Props, State> {
 		this.onTurnOffPin = this.onTurnOffPin.bind(this);
 		this.onFileClick = this.onFileClick.bind(this);
 	};
-	
+
 	render () {
 		const { account } = authStore;
 		const { cover, coverImage } = commonStore;
@@ -58,7 +58,7 @@ class PopupSettings extends React.Component<Props, State> {
 		let content = null;
 		let inputs = [];
 		let Item = null;
-		
+
 		let Head = (item: any) => (
 			<div className="head">
 				<div className="element" onClick={() => { this.onPage(item.id); }}>
@@ -67,28 +67,28 @@ class PopupSettings extends React.Component<Props, State> {
 				</div>
 			</div>
 		);
-		
+
 		switch (page) {
-			
+
 			default:
 			case 'index':
 				content = (
 					<div>
 						<Title text="Settings" />
-						
+
 						<div className="rows">
 							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
 								<Icon className="wallpaper" />
 								<Label text="Wallpaper" />
 								<Icon className="arrow" />
 							</div>
-							
+
 							<div className="row" onClick={() => { this.onPage('phrase'); }}>
 								<Icon className="phrase" />
 								<Label text="Keychain phrase" />
 								<Icon className="arrow" />
 							</div>
-							
+
 							<div className="row" onClick={() => { this.onPage('pinIndex'); }}>
 								<Icon className="pin" />
 								<Label text="Pin code" />
@@ -104,49 +104,49 @@ class PopupSettings extends React.Component<Props, State> {
 								<Icon className="arrow" />
 							</div>
 						</div>
-						
+
 						<div className="logout" onClick={this.onLogout}>Log out</div>
 					</div>
 				);
 				break;
-				
+
 			case 'wallpaper':
 				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
 				let covers1 = [  ];
 				let covers2 = [];
-				
+
 				for (let c of colors) {
 					covers1.push({ id: c, image: '', type: I.CoverType.Color });
 				};
-				
+
 				for (let i = 1; i <= 7; ++i) {
 					covers2.push({ id: 'c' + i, image: '', type: I.CoverType.BgImage });
 				};
-				
+
 				if (coverImage) {
 					covers2.unshift({ id: 0, image: coverImage, type: I.CoverType.Image });
 				};
-				
+
 				Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
 						<Cover {...item} className={item.id} />
 					</div>
 				);
-				
+
 				content = (
 					<div>
 						{loading ? <Loader /> : ''}
 
 						<Head id="index" name="Settings" />
 						<Title text="Wallpaper" />
-						
+
 						<div className="row first">
 							<Label text="Choose or upload the wallpaper. For best results upload high resolution images." />
 							<div className="fileWrap item" onClick={this.onFileClick}>
 								<Cover className="upload" />
 							</div>
 						</div>
-						
+
 						<div className="row">
 							<Label className="name" text="Colours" />
 							<div className="covers">
@@ -155,7 +155,7 @@ class PopupSettings extends React.Component<Props, State> {
 								))}
 							</div>
 						</div>
-						
+
 						<div className="row last">
 							<Label className="name" text="Pictures" />
 							<div className="covers">
@@ -167,7 +167,7 @@ class PopupSettings extends React.Component<Props, State> {
 					</div>
 				);
 				break;
-				
+
 			case 'phrase':
 				content = (
 					<div>
@@ -180,14 +180,14 @@ class PopupSettings extends React.Component<Props, State> {
 					</div>
 				);
 				break;
-				
+
 			case 'pinIndex':
 				content = (
 					<div>
 						<Head id="index" name="Settings" />
 						<Title text="Pin code" />
 						<Label text="The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or keychain phrase. So, please, remember your pin code" />
-						
+
 						{pin ? (
 							<div className="buttons">
 								<Button text="Turn pin code off" className="blank" onClick={this.onTurnOffPin} />
@@ -197,29 +197,29 @@ class PopupSettings extends React.Component<Props, State> {
 											this.onConfirmPin = this.onSelectPin;
 											this.onPage('pinSelect');
 										});
-									}; 
+									};
 									this.onPage('pinConfirm');
 								}} />
 							</div>
 						): (
 							<div className="buttons">
 								<Button text="Turn pin code on" className="blank" onClick={() => {
-									this.onConfirmPin = this.onSelectPin; 
+									this.onConfirmPin = this.onSelectPin;
 									this.onPage('pinSelect');
 								}} />
 							</div>
 						)}
-						
+
 					</div>
 				);
 				break;
-				
+
 			case 'pinSelect':
 				inputs = [];
 				for (let i = 1; i <= Constant.pinSize; ++i) {
 					inputs.push({ id: i });
 				};
-			
+
 				content = (
 					<div>
 						<Head id="pinIndex" name="Cancel" />
@@ -234,13 +234,13 @@ class PopupSettings extends React.Component<Props, State> {
 					</div>
 				);
 				break;
-				
+
 			case 'pinConfirm':
 				inputs = [];
 				for (let i = 1; i <= Constant.pinSize; ++i) {
 					inputs.push({ id: i });
 				};
-			
+
 				content = (
 					<div>
 						<Head id="pinIndex" name="Cancel" />
@@ -257,8 +257,8 @@ class PopupSettings extends React.Component<Props, State> {
 				break;
 
 			case 'importIndex':
-				const items = [ 
-					{ id: 'notion', name: 'Notion', disabled: false },
+				const items = [
+					{ id: 'notion', name: 'Notion', disabled: true },
 					{ id: 'evernote', name: 'Evernote', disabled: true },
 					{ id: 'roam', name: 'Roam Researh', disabled: true },
 					{ id: 'word', name: 'Word', disabled: true },
@@ -268,9 +268,9 @@ class PopupSettings extends React.Component<Props, State> {
 				];
 
 				Item = (item: any) => (
-					<div className={[ 'item', item.id, (item.disabled ? 'disabled' : '') ].join(' ')} onClick={() => { 
+					<div className={[ 'item', item.id, (item.disabled ? 'disabled' : '') ].join(' ')} onClick={() => {
 						if (!item.disabled) {
-							this.onPage(Util.toCamelCase('import-' + item.id)); 
+							this.onPage(Util.toCamelCase('import-' + item.id));
 						};
 					}}>
 						{item.disabled ? <div className="soon">Soon</div> : ''}
@@ -294,40 +294,41 @@ class PopupSettings extends React.Component<Props, State> {
 					</div>
 				);
 				break;
-			
+
 			case 'importNotion':
 				content = (
 					<div>
 						<Head id="importIndex" name="Import" />
-						
+
 						<Title text="How to import from Notion" />
 						<Label text="First you need to export data." />
-						
+
 						<div className="path">
 							<b>Get all data:</b><br/>
-							<Smile icon=":gear:" /> Settings & Members → <Smile icon=":house:" /> Settings → Export all workspace content
+							<Smile icon=":gear:" /> Settings & Members → <Smile icon=":house:" /> Settings → Export all workspace content → <br/>
+							Export format : "Markdown & CSV".
 						</div>
 
 						<div className="path">
 							<b>Get certain pages:</b><br/>
-							Three dots menu on the top-left corner → <Smile icon=":paperclip:" /> Export
+							Three dots menu on the top-left corner → <Smile icon=":paperclip:" /> Export →  <br/> Export format : "Markdown & CSV".
 						</div>
 
-						<Label className="last" text="After that you need to select Zip archive and Anytype will do the rest" />
+						<Label className="last" text="After that you need to select Zip archive and Anytype will do the rest." />
 
 						<Button text="Import data" className="orange" onClick={() => { this.onImport('notion'); }} />
 					</div>
 				);
 				break;
 		};
-		
+
 		return (
 			<div className={'tab ' + Util.toCamelCase('tab-' + page)}>
 				{content}
 			</div>
 		);
 	};
-	
+
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
@@ -336,25 +337,25 @@ class PopupSettings extends React.Component<Props, State> {
 		if (page) {
 			this.onPage(page);
 		};
-		
+
 		this.init();
 	};
-	
+
 	componentDidUpdate () {
 		this.init();
 	};
-	
+
 	componentWillUnmount () {
 		$(window).unbind('resize.settings');
 	};
-	
+
 	onFileClick (e: any) {
 		const { root } = blockStore;
-		const options: any = { 
-			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.image } ] 
+		const options: any = {
+			properties: [ 'openFile' ],
+			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
-		
+
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
@@ -367,7 +368,7 @@ class PopupSettings extends React.Component<Props, State> {
 				if (message.error.code) {
 					return;
 				};
-				
+
 				this.setState({ loading: false });
 				commonStore.coverSetUploadedImage(message.hash);
 				commonStore.coverSet('', message.hash, I.CoverType.Image);
@@ -379,33 +380,33 @@ class PopupSettings extends React.Component<Props, State> {
 	onFocusPhrase (e: any) {
 		this.phraseRef.select();
 	};
-	
+
 	onFocusPin (e: any, id: number) {
 		this.refObj[id].addClass('active');
 	};
-	
+
 	onBlurPin (e: any, id: number) {
 		this.refObj[id].removeClass('active');
 	};
-	
+
 	onChangePin (e: any, id: number) {
 		let k = e.which;
 		let input = this.refObj[id];
 		let prev = this.refObj[id - 1];
 		let next = this.refObj[id + 1];
 		let v = input.getValue();
-		
+
 		input.setType(input.getValue() ? 'password' : 'text');
-		
+
 		if ((k == Key.backspace) && prev) {
 			prev.setValue('');
 			prev.setType('text');
 			prev.focus();
-		} else 
+		} else
 		if (v && next) {
-			next.focus();	
+			next.focus();
 		};
-		
+
 		let pin = this.getPin();
 		if (pin.length == Constant.pinSize) {
 			this.pin = pin;
@@ -416,20 +417,20 @@ class PopupSettings extends React.Component<Props, State> {
 			};
 		};
 	};
-	
+
 	onSelectPin () {
 		if (this.pin.length == Constant.pinSize) {
 			Storage.set('pin', sha1(this.pin));
 		};
-		
+
 		this.onPage('index');
 	};
-	
+
 	onTurnOffPin () {
 		Storage.delete('pin');
 		this.onPage('index');
 	};
-	
+
 	getPin () {
 		let c: string[] = [];
 		for (let i in this.refObj) {
@@ -437,25 +438,25 @@ class PopupSettings extends React.Component<Props, State> {
 		};
 		return c.join('');
 	};
-	
+
 	onClose () {
 		commonStore.popupClose(this.props.id);
 	};
-	
+
 	onPage (id: string) {
 		this.setState({ page: id });
 	};
-	
+
 	onCover (item: any) {
 		const { root } = blockStore;
 
 		DataUtil.pageSetCover(root, item.type, item.image || item.id);
 		commonStore.coverSet(item.id, item.image, item.type);
 	};
-	
+
 	onLogout (e: any) {
 		const { history } = this.props;
-		
+
 		C.AccountStop(false);
 		authStore.logout();
 		history.push('/');
@@ -472,23 +473,23 @@ class PopupSettings extends React.Component<Props, State> {
 			if ((files == undefined) || !files.length) {
 				return;
 			};
-			
+
 			C.BlockImportMarkdown(rootId, files[0]);
 			commonStore.popupClose(this.props.id);
 		});
 	};
-	
+
 	init () {
 		this.resize();
 		$(window).unbind('resize.settings').on('resize.settings', () => { this.resize(); });
-		
+
 		window.setTimeout(() => {
 			if (this.refObj[1]) {
 				this.refObj[1].focus();
 			};
 		}, 15);
 	};
-	
+
 	resize () {
 		const obj = $('#popupSettings');
 		raf(() => {
