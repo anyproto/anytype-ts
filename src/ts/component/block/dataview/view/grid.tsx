@@ -15,14 +15,14 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { data, relations } = content;
 		
 		const CellHead = (item: any) => (
-			<th className={'head ' + item.type}>
+			<th className={'head c-' + item.type}>
 				<Icon className={'relation c-' + item.type} />
 				{item.name}
 			</th>
 		);
 		
 		const CellBody = (item: any) => (
-			<td className={'cell ' + item.relation.type}>
+			<td className={'cell c-' + item.relation.type}>
 				<Cell {...item} id={item.index} />
 			</td>
 		);

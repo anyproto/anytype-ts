@@ -6,7 +6,7 @@
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/plus0.svg'); cursor: pointer; }
 		.icon.plus:hover { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 		
-		.icon.checkbox { width: 14px; height: 14px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 		
 		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
@@ -65,21 +65,19 @@
 			.view { border-top: 1px solid #e0ded2; }
 			
 			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }
-			.cell { @include text-small; }
+			.cell { @include text-common; }
 			
-			.cell.title { font-weight: 500; }
-			
-			.cell.multiselect {
+			.cell.c-multiselect {
 				.tag { margin: 0px 6px 6px 0px; }
 			}
 			
-			.cell.link {
+			.cell.c-link {
 				.icon.user { margin-right: 5px; }
 			}
 			
-			.cell.checkbox { cursor: pointer; }
+			.cell.c-checkbox { cursor: pointer; }
 			
-			.cell.url, .cell.email, .cell.phone {
+			.cell.c-url, .cell.c-email, .cell.c-phone {
 				a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }
 				a:hover { border-color: $colorBlack; }
 			}
@@ -97,14 +95,16 @@
 				
 				td.cell { padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; vertical-align: top; }
 				td.cell:last-child { border-right: 0px; }
+
+				.icon.checkbox { vertical-align: top; }
 			}
 			
 			.view.viewGallery { padding: 16px 0px; }
 			.view.viewGallery {
 				.cell:last-child { margin: 0px; }
 			
-				.cell.title { margin-bottom: 9px; }
-				.cell.date { color: #6c6a5f; }
+				.cell.c-title { margin-bottom: 9px; }
+				.cell.c-date { color: #6c6a5f; }
 			
 				.card { 
 					width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
@@ -135,11 +135,15 @@
 			}
 			
 			.view.viewList {
-				.item { 
-					width: 352px; display: inline-block; vertical-align: top; border-bottom: 1px solid #e0ded2;
-					margin-right: 16px; padding: 16px 0px; 
-				}
-				
+				.item { width: 100%; display: inline-block; margin-bottom: 8px; }
+				.item:last-child { margin: 0px; }
+
+				.cellContent { display: inline; margin-right: 8px; }
+				.cellContent:last-child { margin: 0px; }
+
+				.cellContent.c-title { @include text-paragraph; }
+
+				.icon.checkbox { width: 24px; height: 24px; }
 			}
 		}
 	}	
