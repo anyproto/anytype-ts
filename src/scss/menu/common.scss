@@ -59,8 +59,8 @@
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; }
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.delete { 
-				width: 18px; height: 18px; background-size: 10px 10px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
-				position: absolute; right: 12px; top: 50%; margin: -9px 0px 0px 0px;
+				width: 20px; height: 20px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
+				position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px;
 			}
 			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
 			.icon.trash { width: 16px; height: 16px; background-image: url('~img/icon/menu/trash.svg'); }

@@ -6,6 +6,7 @@ import { commonStore } from 'ts/store';
 interface Props {
 	id: string;
 	initial?: string;
+	className?: string;
 	value: string;
 	options: I.Option[];
 	horizontal?: I.MenuDirection;
@@ -38,8 +39,9 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id } = this.props;
+		const { id, className } = this.props;
 		const { value, options } = this.state;
+		const cn = [ 'select', (className ? className : '') ];
 
 		let current: I.Option = options.find((item: any) => { return item.id == value; });
 		if (!current) {
@@ -47,7 +49,7 @@ class Select extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div id={'select-' + id} className="select">
+			<div id={'select-' + id} className={cn.join(' ')}>
 				{current ? (
 					<div className="current" onClick={this.show}>
 						{current.icon ? <Icon className={current.icon} /> : ''}
@@ -80,10 +82,6 @@ class Select extends React.Component<Props, State> {
 		this.setState({ value: value, options: opts });
 	};
 
-	componentDidUpdate () {
-		console.log('UPDATE', this.state);
-	};
-
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -93,14 +91,9 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	setValue (v: string) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			this.setState({ value: v });
 		};
-
-		console.log('setValue', v);
-		this.setState({ value: v });
-		this.forceUpdate();
-		
 		if (this.props.onChange) {
 			this.props.onChange(v);
 		};
@@ -109,8 +102,6 @@ class Select extends React.Component<Props, State> {
 	show () {
 		const { id, value, horizontal } = this.props;
 		const { options } = this.state;
-		
-		this.hide();
 		
 		commonStore.menuOpen('select', { 
 			element: '#select-' + id,
@@ -125,8 +116,8 @@ class Select extends React.Component<Props, State> {
 				onSelect: (e: any, item: any) => {
 					this.setValue(item.id);
 					this.hide();
-				}
-			}
+				},
+			},
 		});
 	};
 	

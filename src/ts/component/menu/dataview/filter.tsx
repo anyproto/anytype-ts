@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, Switch, Select } from 'ts/component';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { Icon, Select } from 'ts/component';
 import { I } from 'ts/lib';
 import arrayMove from 'array-move';
+import { set } from 'mobx';
 
 const $ = require('jquery');
 
@@ -52,13 +53,17 @@ class MenuFilter extends React.Component<Props, State> {
 		for (let relation of view.relations) {
 			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
 		};
+
+		const Handle = SortableHandle(() => (
+			<Icon className="dnd" />
+		));
 		
 		const Item = SortableElement((item: any) => (
 			<div className="item">
-				<Icon className="dnd" />
-				{item.idx > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} /> : ''}
-				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationId} />
-				<Select id={[ 'filter', 'equality', item.id ].join('-')} options={conditionOptions} value={item.condition} />
+				<Handle />
+				{item.idx > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
+				<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
+				<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition}  onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>
 		));
@@ -85,9 +90,12 @@ class MenuFilter extends React.Component<Props, State> {
 		return (
 			<List 
 				axis="y" 
+				lockAxis="y"
+				lockToContainerEdges={true}
 				transitionDuration={150}
 				distance={10}
 				onSortEnd={this.onSortEnd}
+				useDragHandle={true}
 				helperClass="dragging"
 				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
 			/>
@@ -105,7 +113,16 @@ class MenuFilter extends React.Component<Props, State> {
 	onAdd (e: any) {
 		let { items } = this.state;
 		
-		items.push({ relationId: '', sort: I.SortType.Asc });
+		items.push({ relationId: '', operator: I.FilterOperator.And, condition: I.FilterCondition.Equal });
+		this.setState({ items: items });
+	};
+
+	onChange (id: number, k: string, v: string) {
+		const { items } = this.state;
+
+		let item = items.find((item: any, i: number) => { return i == id; });
+		item[k] = v;
+
 		this.setState({ items: items });
 	};
 	
