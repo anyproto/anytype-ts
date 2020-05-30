@@ -410,6 +410,8 @@ class BlockStore {
 			};
 			
 			if (type == I.BlockType.Text) {
+				item.content = Util.objectCopy(content);
+
 				let marks: any = [];
 				if (content.marks && content.marks.marks && content.marks.marks.length) {
 					for (let mark of content.marks.marks) {
