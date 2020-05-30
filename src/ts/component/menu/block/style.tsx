@@ -108,7 +108,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		} else
 		if (block.isDiv()) {
 			sections = [
-				{ children: DataUtil.menuGetBlockOther() },
+				{ children: DataUtil.menuGetTurnDiv() },
 			];
 		} else {
 			sections = [];

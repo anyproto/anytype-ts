@@ -301,18 +301,6 @@ class DataUtil {
 		];
 	};
 
-	menuGetTurnPage () {
-		return [
-			{ type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true }
-		];
-	};
-	
-	menuGetTurnObject() {
-		return [
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet', isBlock: true },
-		];
-	};
-
 	menuGetBlockObject () {
 		return [
 			{ 
@@ -363,6 +351,25 @@ class DataUtil {
 				type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code', isBlock: true,
 				description: translate('blockDescriptionCode'), 
 			},
+		];
+	};
+
+	menuGetTurnPage () {
+		return [
+			{ type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true }
+		];
+	};
+	
+	menuGetTurnObject() {
+		return [
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet', isBlock: true },
+		];
+	};
+
+	menuGetTurnDiv () {
+		return [
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider', isBlock: true },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider', isBlock: true },
 		];
 	};
 	
