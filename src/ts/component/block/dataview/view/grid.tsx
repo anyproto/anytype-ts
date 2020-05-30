@@ -12,7 +12,7 @@ class ViewGrid extends React.Component<Props, {}> {
 
 	render () {
 		const { content } = this.props;
-		const { data, relations } = content;
+		const { data, view } = content;
 		
 		const CellHead = (item: any) => (
 			<th className={'head c-' + item.type}>
@@ -23,13 +23,13 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const CellBody = (item: any) => (
 			<td className={'cell c-' + item.relation.type}>
-				<Cell {...item} id={item.index} />
+				<Cell {...item} view={view} id={item.index} />
 			</td>
 		);
 		
 		const RowHead = (item: any) => (
 			<tr className="row">
-				{relations.map((item: any, i: number) => (
+				{view.relations.map((item: any, i: number) => (
 					<CellHead key={item.id} {...item} />
 				))}
 				<th className="head">
@@ -40,7 +40,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const RowBody = (item: any) => (
 			<tr className="row">
-				{relations.map((relation: any, i: number) => (
+				{view.relations.map((relation: any, i: number) => (
 					<CellBody key={relation.id} index={item.index} relation={...relation} data={data[item.index]} />
 				))}
 				<td className="cell">&nbsp;</td>
@@ -57,7 +57,7 @@ class ViewGrid extends React.Component<Props, {}> {
 						<RowBody key={i} index={i} {...item} />
 					))}
 					<tr>
-						<td className="cellBody" colSpan={relations.length + 1}>
+						<td className="cellBody" colSpan={view.relations.length + 1}>
 							<Icon className="plus" />
 						</td>
 					</tr>

@@ -19,8 +19,8 @@ class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
 		const { content } = this.props;
-		const { relations } = content;
-		const group = relations.find((item: I.Relation) => { return item.id == GROUP; });
+		const { view } = content;
+		const group = view.relations.find((item: I.Relation) => { return item.id == GROUP; });
 
 		if (!group) {
 			return null;
@@ -30,8 +30,8 @@ class ViewBoard extends React.Component<Props, {}> {
 		
 		const Card = (item: any) => (
 			<div className="card">
-				{relations.map((relation: any, i: number) => (
-					<Cell key={relation.id} id={item.index} relation={...relation} data={item.data} />
+				{view.relations.map((relation: any, i: number) => (
+					<Cell key={relation.id} id={item.index} view={view} relation={...relation} data={item.data} />
 				))}
 			</div>
 		);
@@ -39,7 +39,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		const Column = (item: any) => (
 			<div className="column">
 				<div className="head">
-					<Cell id="" relation={group} data={item.value} />
+					<Cell id="" view={view} relation={group} data={item.value} />
 				</div>
 				<div className="list">
 					{item.list.map((child: any, i: number) => (

@@ -12,12 +12,12 @@ class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
 		const { content } = this.props;
-		const { data, relations } = content;
+		const { data, view } = content;
 		
 		const Card = (item: any) => (
 			<div className="card">
-				{relations.map((relation: any, i: number) => (
-					<Cell key={relation.id} id={item.index} relation={...relation} data={data[item.index]} />
+				{view.relations.map((relation: any, i: number) => (
+					<Cell key={relation.id} id={item.index} view={view} relation={...relation} data={data[item.index]} />
 				))}
 			</div>
 		);

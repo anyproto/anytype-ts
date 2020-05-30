@@ -81,6 +81,7 @@ export interface Cell {
 	id: string;
 	relation: Relation;
 	data: any;
+	view: any;
 };
 
 export interface ContentDataview {

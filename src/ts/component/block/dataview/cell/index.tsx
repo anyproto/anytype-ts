@@ -25,8 +25,7 @@ class Cell extends React.Component<Props, {}> {
 	render () {
 		const { id, relation, data } = this.props;
 		
-		let CellComponent: React.ReactType<I.Cell>;
-		
+		let CellComponent: React.ReactType<Props>;
 		switch (relation.type) {
 			default:
 			case I.RelationType.Text:

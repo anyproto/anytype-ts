@@ -65,7 +65,7 @@
 			.view { border-top: 1px solid #e0ded2; }
 			
 			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }
-			.cell { @include text-common; }
+			.cell { @include text-common; line-height: 20px; }
 			
 			.cell.c-multiselect {
 				.tag { margin: 0px 6px 6px 0px; }
@@ -101,11 +101,11 @@
 			
 			.view.viewGallery { padding: 16px 0px; }
 			.view.viewGallery {
-				.cell:last-child { margin: 0px; }
-			
-				.cell.c-title { margin-bottom: 9px; }
-				.cell.c-date { color: #6c6a5f; }
-			
+				.cellContent:last-child { margin: 0px; }
+				.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
+				.cellContent.c-title .smile { margin-bottom: 10px; }
+				.cellContent.c-date { color: #6c6a5f; }
+
 				.card { 
 					width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
 					margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;
@@ -138,7 +138,7 @@
 				.item { width: 100%; display: inline-block; margin-bottom: 8px; }
 				.item:last-child { margin: 0px; }
 
-				.cellContent { display: inline; margin-right: 8px; }
+				.cellContent { display: inline-block; vertical-align: top; margin-right: 8px; line-height: 24px; }
 				.cellContent:last-child { margin: 0px; }
 
 				.cellContent.c-title { @include text-paragraph; }
