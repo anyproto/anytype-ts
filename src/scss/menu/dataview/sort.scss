@@ -2,14 +2,4 @@
 
 .menus {
 	.menu.menuDataviewSort { width: 352px; }
-	.menu.menuDataviewSort {
-		.item { padding: 4px 16px; }
-		.item {
-			.icon.plus { background-image: url('~img/icon/dataview/button/plus0.svg'); }
-			.icon.relation { margin-right: 8px; }
-			.select { margin-right: 8px; }
-			.select:last-child { margin: 0px; }
-		}
-		.item.add { color: $colorDarkGrey; }
-	}
 }

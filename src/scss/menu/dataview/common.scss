@@ -7,4 +7,37 @@
     .menu.menuDataviewView {
         .item:hover::before { opacity: 0.15; }
     }
+
+    .menu.menuDataviewRelationList, 
+    .menu.menuDataviewFilter,
+    .menu.menuDataviewSort {
+		.item { padding: 4px 10px; }
+		.item {
+			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
+			.icon.dnd { margin-right: 2px; }
+		}
+
+		.item.add { color: $colorDarkGrey; }
+		.item.add:hover { color: $colorBlack; }
+		.item.add:hover {
+			.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+		}
+    }
+
+    .menu.menuDataviewFilter,
+    .menu.menuDataviewSort {
+		.item {
+            .icon.dnd { vertical-align: middle; }
+            .icon.relation { margin-right: 4px; }
+
+			.select { @include text-common; margin-right: 8px; }
+			.select:last-child { margin: 0px; }
+			.select {
+				.name { line-height: 20px; }
+			}
+			.select.relation {
+				.current { padding-left: 6px; }
+			}
+		}
+    }
 }

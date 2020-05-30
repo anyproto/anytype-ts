@@ -3,8 +3,9 @@
 .menus {
 	.menu.menuDataviewRelationList { width: 240px; }
 	.menu.menuDataviewRelationList {
+		.item { padding: 4px 10px; }
 		.item {
-			.icon.plus { background-image: url('~img/icon/dataview/button/plus0.svg'); }
+			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { width: calc(100% - 73px); }
 		}
