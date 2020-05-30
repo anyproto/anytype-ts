@@ -30,10 +30,10 @@
             .icon.dnd { vertical-align: middle; }
             .icon.relation { margin-right: 4px; }
 
-			.select { @include text-common; margin-right: 8px; }
+			.select { @include text-common; margin-right: 8px; line-height: 20px; }
 			.select:last-child { margin: 0px; }
 			.select {
-				.name { line-height: 20px; }
+				.name { line-height: inherit; }
 			}
 			.select.relation {
 				.current { padding-left: 6px; }

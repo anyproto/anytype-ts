@@ -33,8 +33,8 @@ class MenuView extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<div>
-				<div className="title">View as</div>
+			<div className="section">
+				<div className="name">View as</div>
 				<div className="items">
 					{items.map((item: any, i: number) => {
 						return <Item key={i} {...item} />;
