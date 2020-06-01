@@ -85,16 +85,33 @@
 			.view.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
 			.view.viewGrid {
 				.head { 
-					text-align: left; @include text-small; color: $colorDarkGrey; font-weight: 500;
-					padding: 7px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; white-space: nowrap;
+					text-align: left; color: #6c6a5f; padding: 12px 0px 12px 12px; border-bottom: 1px solid #e0ded2; white-space: nowrap; 
+					font-weight: 400; line-height: 20px;
 				}
-				.head:last-child { border-right: 0px; }
 				.head {
-					.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; }
+					.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
+					.name { 
+						display: inline-block; line-height: 20px; vertical-align: top; width: calc(100% - 24px); 
+						@include text-overflow-nw; border-right: 1px solid #e0ded2;
+					}
 				}
+				.head.add { width: 44px; }
 				
-				td.cell { padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; vertical-align: top; }
+				td.cell { padding: 12px; border-bottom: 1px solid #e0ded2; vertical-align: top; }
+				td.cell {
+					.smile { margin: 0px 4px 0px 0px; }
+				}
 				td.cell:last-child { border-right: 0px; }
+
+				td.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }
+				td.cell.add {
+					 .icon { vertical-align: top; margin: 0px 4px 0px 0px; }
+					 .name { vertical-align: top; display: inline-block; line-height: 20px; vertical-align: top; }
+				}
+				td.cell.add:hover { color: $colorBlack; }
+				td.cell.add:hover {
+					.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+				}
 
 				.icon.checkbox { vertical-align: top; }
 			}
@@ -110,6 +127,7 @@
 					width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
 					margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;
 				}
+				.card:nth-child(4n + 4) { margin-right: 0px; }
 			}
 			
 			.view.viewBoard {

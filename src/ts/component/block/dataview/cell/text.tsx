@@ -26,7 +26,7 @@ class CellText extends React.Component<Props, {}> {
 
 			icon = (
 				<React.Fragment>
-					<Smile icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} />&nbsp;
+					<Smile icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} />
 				</React.Fragment>
 			);
 		};

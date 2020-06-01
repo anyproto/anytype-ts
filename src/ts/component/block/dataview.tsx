@@ -80,12 +80,6 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		const { views } = this.getContent();
-		
-		if (views.length) {
-			this.setState({ view: views[0].id });
-		};
-
 		this.getData();
 	};
 	

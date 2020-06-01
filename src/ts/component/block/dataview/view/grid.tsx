@@ -17,7 +17,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const CellHead = (item: any) => (
 			<th className={'head c-' + item.type}>
 				<Icon className={'relation c-' + item.type} />
-				{item.name}
+				<div className="name">{item.name}</div>
 			</th>
 		);
 		
@@ -32,7 +32,7 @@ class ViewGrid extends React.Component<Props, {}> {
 				{view.relations.map((item: any, i: number) => (
 					<CellHead key={item.id} {...item} />
 				))}
-				<th className="head">
+				<th className="head add">
 					<Icon className="plus" />
 				</th>
 			</tr>
@@ -57,8 +57,9 @@ class ViewGrid extends React.Component<Props, {}> {
 						<RowBody key={i} index={i} {...item} />
 					))}
 					<tr>
-						<td className="cellBody" colSpan={view.relations.length + 1}>
+						<td className="cell add" colSpan={view.relations.length + 1}>
 							<Icon className="plus" />
+							<div className="name">New</div>
 						</td>
 					</tr>
 				</tbody>

@@ -6,7 +6,7 @@ export enum PageType {
 	Profile		 = 2,
 	Archive		 = 3,
 	Breadcrumbs	 = 4,
-	Set			 = 5,
+	Dataview	 = 5,
 };
 
 export interface BlockPage extends I.Block {};

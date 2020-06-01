@@ -84,6 +84,10 @@ class EditorPage extends React.Component<Props, State> {
 		} else {
 			icon.type = I.BlockType.IconPage;
 		};
+
+		if (root.isPageDataview()) {
+			cn.push('isDataview');
+		};
 		
 		icon = new M.Block(icon);
 		
@@ -316,6 +320,10 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root || root.isPageDataview()) {
+			return;
+		};
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));

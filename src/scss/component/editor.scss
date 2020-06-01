@@ -1,7 +1,9 @@
 @import "~scss/_vars";
 
-.editorWrapper { padding-top: 106px; }
+.editorWrapper { padding-top: 106px; width: 704px; margin: 0px auto; }
 .editorWrapper {
+	.blocks { margin-left: -48px; }
+
 	.editor { position: relative; }
 	.editor {
 		.icon.buttonAdd { 
@@ -74,3 +76,14 @@
 
 .editorWrapper.isProfile.withIcon { padding-top: 56px; }
 .editorWrapper.isProfile.withIconAndCover { padding-top: 190px; }
+
+.editorWrapper.isDataview { width: 1088px; }
+.editorWrapper.isDataview {
+	.blocks { margin-left: 0px; }
+	.blocks {
+		.block {
+			.wrapMenu { display: none; }
+			.wrapContent { width: 100%; }
+		}
+	}
+}
