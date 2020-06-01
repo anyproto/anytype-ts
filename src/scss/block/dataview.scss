@@ -132,7 +132,7 @@
 				.icon.checkbox { vertical-align: top; }
 			}
 			
-			.view.viewGallery { padding: 16px 0px; }
+			.view.viewGallery { padding: 16px 0px; display: flex; flex-wrap: wrap; column-count: 4; }
 			.view.viewGallery {
 				.cellContent:last-child { margin: 0px; }
 				.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
