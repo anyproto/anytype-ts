@@ -19,7 +19,9 @@ class CellText extends React.Component<Props, {}> {
 				case I.ViewType.List:
 					cn = 'c24';
 					break;
+
 				case I.ViewType.Gallery:
+				case I.ViewType.Board:
 					cn = 'c48';
 					size = 24;
 					break;
