@@ -68,6 +68,11 @@ export interface ViewRelation extends Relation {
 	visible: boolean;
 };
 
+export interface ViewComponent {
+	content: any; 
+	onOpen(e: any, data: any): void;
+};
+
 export interface View {
 	id: string;
 	name: string;
@@ -82,6 +87,7 @@ export interface Cell {
 	relation: Relation;
 	data: any;
 	view: any;
+	onOpen?(e: any, data: any): void;
 };
 
 export interface ContentDataview {

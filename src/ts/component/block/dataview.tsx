@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { RouteComponentProps } from 'react-router';
 import { I, C, StructDecode, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
@@ -10,7 +10,7 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	block: I.Block;
 };
@@ -37,6 +37,7 @@ class BlockDataview extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onOpen = this.onOpen.bind(this);
 		this.onView = this.onView.bind(this);
 		this.getContent = this.getContent.bind(this);
 	};
@@ -49,7 +50,7 @@ class BlockDataview extends React.Component<Props, State> {
 			return null;
 		};
 
-		let ViewComponent: React.ReactType<{ content: any; }>;
+		let ViewComponent: React.ReactType<I.ViewComponent>;
 		switch (view.type) {
 			default:
 			case I.ViewType.Grid:
@@ -73,7 +74,7 @@ class BlockDataview extends React.Component<Props, State> {
 			<React.Fragment>
 				<Controls {...this.props} content={content} onView={this.onView} />
 				<div className="content">
-					<ViewComponent {...this.props} content={content} />
+					<ViewComponent {...this.props} onOpen={this.onOpen} content={content} />
 				</div>
 			</React.Fragment>
 		);
@@ -149,6 +150,10 @@ class BlockDataview extends React.Component<Props, State> {
 			id: page.id,
 			...details,
 		};
+	};
+
+	onOpen (e: any, data: any) {
+		DataUtil.pageOpen(e, data.id);
 	};
 	
 };

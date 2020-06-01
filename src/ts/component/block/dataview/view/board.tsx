@@ -4,9 +4,7 @@ import { I } from 'ts/lib';
 
 import Cell from '../cell';
 
-interface Props {
-	content: any;
-};
+interface Props extends I.ViewComponent {};
 
 interface Column {
 	value: string;

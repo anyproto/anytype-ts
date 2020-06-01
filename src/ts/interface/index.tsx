@@ -5,11 +5,12 @@ import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
 import { PageInfo, BlockType, BlockPosition, BlockAlign, Block } from './block';
 import { 
+	ViewRelation,
+	ViewComponent,
 	ViewType,
 	View,  
 	RelationType, 
 	Relation,
-	ViewRelation,
 	SortType,
 	Sort, 
 	FilterOperator,
@@ -57,11 +58,12 @@ export {
 	BlockAlign,
 	Block,
 	
+	ViewRelation,
+	ViewComponent,
 	ViewType,
 	View,  
 	RelationType, 
 	Relation,
-	ViewRelation,
 	SortType,
 	Sort, 
 	FilterOperator,

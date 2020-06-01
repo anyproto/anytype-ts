@@ -109,10 +109,13 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		keyboard.setFocus(true);
 		this.bind();
-		this.ref.focus();
 		this.skin = Number(Storage.get('skin')) || 1; 
+
+		window.setTimeout(() => {
+			this.ref.focus();
+			keyboard.setFocus(true);
+		}, 15);
 	};
 	
 	componentDidUpdate () {

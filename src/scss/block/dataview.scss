@@ -9,6 +9,9 @@
 		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 		
+		.icon.expand { display: none; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/expand0.svg'); cursor: pointer; }
+		.icon.expand:hover { background-image: url('~img/icon/dataview/button/expand1.svg'); }
+
 		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
 		.views {
 			.item { margin-right: 20px; display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; }
@@ -85,7 +88,7 @@
 			.view.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
 			.view.viewGrid {
 				.head { 
-					text-align: left; color: #6c6a5f; padding: 12px 0px 12px 12px; border-bottom: 1px solid #e0ded2; white-space: nowrap; 
+					text-align: left; color: #6c6a5f; padding: 14px 0px 14px 14px; border-bottom: 1px solid #e0ded2; white-space: nowrap; 
 					font-weight: 400; line-height: 20px;
 				}
 				.head {
@@ -97,7 +100,7 @@
 				}
 				.head.add { width: 44px; }
 				
-				td.cell { padding: 12px; border-bottom: 1px solid #e0ded2; vertical-align: top; }
+				td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; }
 				td.cell {
 					.smile { margin: 0px 4px 0px 0px; }
 				}
@@ -111,6 +114,19 @@
 				td.cell.add:hover { color: $colorBlack; }
 				td.cell.add:hover {
 					.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+				}
+				td.cell.isName {
+					.icon.expand { display: block; position: absolute; right: 14px; top: 50%; margin-top: -10px; opacity: 0; }
+					.name { 
+						display: inline-block; line-height: 20px; vertical-align: top; width: calc(100% - 48px); 
+						@include text-overflow-nw; max-width: 500px;
+					}
+				}
+
+				tr.active {
+					td.cell.isName {
+						.icon.expand { opacity: 1; }
+					}
 				}
 
 				.icon.checkbox { vertical-align: top; }

@@ -4,9 +4,7 @@ import { I } from 'ts/lib';
 
 import Cell from '../cell';
 
-interface Props extends I.BlockDataview {
-	content: any;
-};
+interface Props extends I.ViewComponent {};
 
 class ViewList extends React.Component<Props, {}> {
 

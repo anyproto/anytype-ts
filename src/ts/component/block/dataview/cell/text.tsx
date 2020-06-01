@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
-import { Smile } from 'ts/component';
+import { Icon, Smile } from 'ts/component';
 
 interface Props extends I.Cell {};
 
 class CellText extends React.Component<Props, {}> {
 
 	render () {
-		const { data, relation, view } = this.props;
+		const { data, relation, view, onOpen } = this.props;
 
-		let icon = null;
+		let content: any = data[relation.id];
+
 		if (relation.id == 'name') {
 			let cn = 'c20';
 			let size = 18;
@@ -24,16 +25,18 @@ class CellText extends React.Component<Props, {}> {
 					break;
 			};
 
-			icon = (
+			content = (
 				<React.Fragment>
-					<Smile icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} />
+					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={true} offsetY={4} />
+					<div className="name">{data[relation.id]}</div>
+					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
 				</React.Fragment>
 			);
 		};
 
 		return (
 			<React.Fragment>
-				{icon}{data[relation.id]}
+				{content}
 			</React.Fragment>
 		);
 	};
