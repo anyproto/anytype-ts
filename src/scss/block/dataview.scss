@@ -65,10 +65,16 @@
 		}
 		
 		.content {
+			.wrap { overflow: auto; }
 			.view { border-top: 1px solid #e0ded2; }
 			
 			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }
 			.cell { @include text-common; line-height: 20px; }
+
+			.cellContent.c-title {
+				.smile { margin: 0px 4px 0px 0px; }
+				.name { display: inline-block; vertical-align: top; @include text-overflow-nw; max-width: 500px; }
+			}
 			
 			.cell.c-multiselect {
 				.tag { margin: 0px 6px 6px 0px; }
@@ -101,9 +107,6 @@
 				.head.add { width: 44px; }
 				
 				td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; }
-				td.cell {
-					.smile { margin: 0px 4px 0px 0px; }
-				}
 				td.cell:last-child { border-right: 0px; }
 
 				td.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }
@@ -117,10 +120,7 @@
 				}
 				td.cell.isName {
 					.icon.expand { display: block; position: absolute; right: 14px; top: 50%; margin-top: -10px; opacity: 0; }
-					.name { 
-						display: inline-block; line-height: 20px; vertical-align: top; width: calc(100% - 48px); 
-						@include text-overflow-nw; max-width: 500px;
-					}
+					.name { line-height: 20px; width: calc(100% - 48px); }
 				}
 
 				tr.active {
@@ -135,9 +135,13 @@
 			.view.viewGallery { padding: 16px 0px; display: flex; flex-wrap: wrap; column-count: 4; }
 			.view.viewGallery {
 				.cellContent:last-child { margin: 0px; }
-				.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
-				.cellContent.c-title .smile { margin-bottom: 10px; }
 				.cellContent.c-date { color: #6c6a5f; }
+
+				.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
+				.cellContent.c-title {
+					.smile { margin-bottom: 10px; }
+					.name { max-width: 100%; }
+				}
 
 				.card { 
 					width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
@@ -177,6 +181,9 @@
 				.cellContent:last-child { margin: 0px; }
 
 				.cellContent.c-title { @include text-paragraph; }
+				.cellContent.c-title {
+					.name { line-height: 24px; }
+				}
 
 				.icon.checkbox { width: 24px; height: 24px; vertical-align: top; }
 			}

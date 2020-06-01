@@ -21,14 +21,16 @@ class ViewList extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<div className="view viewList">
-				{data.map((item: any, i: number) => (
-					<Card key={i} index={i} {...item} />
-				))}
+			<div className="wrap">
+				<div className="view viewList">
+					{data.map((item: any, i: number) => (
+						<Card key={i} index={i} {...item} />
+					))}
+				</div>
 			</div>
 		);
 	};
-	
+
 };
 
 export default ViewList;

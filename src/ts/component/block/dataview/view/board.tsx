@@ -51,11 +51,13 @@ class ViewBoard extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<div className="view viewBoard">
-				<div className="columns">
-					{columns.map((item: any, i: number) => (
-						<Column key={i} index={i} {...item} />
-					))}
+			<div className="wrap">
+				<div className="view viewBoard">
+					<div className="columns">
+						{columns.map((item: any, i: number) => (
+							<Column key={i} index={i} {...item} />
+						))}
+					</div>
 				</div>
 			</div>
 		);

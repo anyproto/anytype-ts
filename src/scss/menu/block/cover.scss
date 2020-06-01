@@ -3,7 +3,9 @@
 .menus {
 	.menu.menuBlockCover { width: 408px; }
 	.menu.menuBlockCover {
-		.content { padding: 0px; }
+		.content { padding: 0px; overflow: visible; }
+		.sections { overflow: auto; height: 370px; }
+
 		.head { border-bottom: 1px solid #eae9e0; padding: 11px 16px; font-weight: 500; color: $colorDarkGrey; }
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }

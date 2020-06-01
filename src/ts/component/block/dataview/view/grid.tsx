@@ -8,6 +8,7 @@ import Cell from '../cell';
 interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 class ViewGrid extends React.Component<Props, {}> {
 
@@ -61,23 +62,38 @@ class ViewGrid extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<table className="view viewGrid">
-				<thead>
-					<RowHead />
-				</thead>
-				<tbody>
-					{data.map((item: any, i: number) => (
-						<RowBody key={i} index={i} {...item} />
-					))}
-					<tr>
-						<td className="cell add" colSpan={view.relations.length + 1}>
-							<Icon className="plus" />
-							<div className="name">New</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<div className="wrap">
+				<table className="view viewGrid">
+					<thead>
+						<RowHead />
+					</thead>
+					<tbody>
+						{data.map((item: any, i: number) => (
+							<RowBody key={i} index={i} {...item} />
+						))}
+						<tr>
+							<td className="cell add" colSpan={view.relations.length + 1}>
+								<Icon className="plus" />
+								<div className="name">New</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.resize();
+	};
+
+	resize () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const ww = win.width() - 48;
+		const margin = (ww - Constant.size.dataview) / 2;
+
+		node.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 	};
 
 	onRowOver (id: number) {

@@ -30,7 +30,9 @@
 	},
 	
 	"size": {
-		"editorPage": 704,
+		"page": 704,
+		"dataview": 1088,
+
 		"blockMenu": 48,
 		"image": 2048,
 		"header": 38,

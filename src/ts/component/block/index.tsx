@@ -504,8 +504,8 @@ class Block extends React.Component<Props, {}> {
 		const offset = Constant.size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
-		x = Math.min(sum * Constant.size.editorPage - offset, x);
-		x = x / (sum * Constant.size.editorPage);
+		x = Math.min(sum * Constant.size.page - offset, x);
+		x = x / (sum * Constant.size.page);
 		
 		// Snap
 		if (x > 0.5 - SNAP && x < 0.5) {
@@ -535,7 +535,7 @@ class Block extends React.Component<Props, {}> {
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, id);
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const p = (e.pageX - rect.x) / (Constant.size.editorPage + 50);
+		const p = (e.pageX - rect.x) / (Constant.size.page + Constant.size.blockMenu);
 		
 		let c = 0;
 		let num = 0;
