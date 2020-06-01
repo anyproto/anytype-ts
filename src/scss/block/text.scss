@@ -82,7 +82,7 @@
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
-	
+
 	.block.blockText.header1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget { @include text-header1; padding: 4px 0px 2px 0px; }
 	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget mention .space { width: 6px; height: 32px; }
@@ -118,4 +118,9 @@
 		}
 	}
 	
+	.block.blockText.paragraph > .wrapContent.bgColor > .selectable > .dropTarget, 
+	.block.blockText.header1 > .wrapContent.bgColor > .selectable > .dropTarget,
+	.block.blockText.header2 > .wrapContent.bgColor > .selectable > .dropTarget,
+	.block.blockText.header3 > .wrapContent.bgColor > .selectable > .dropTarget
+	{ padding-left: 8px; padding-right: 8px;  }
 }

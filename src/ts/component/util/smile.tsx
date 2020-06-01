@@ -125,7 +125,9 @@ class Smile extends React.Component<Props, State> {
 			data: {
 				onSelect: (icon: string) => {
 					this.setState({ icon: icon, hash: '' });
-					onSelect(icon);
+					if (onSelect) {
+						onSelect(icon);
+					};
 				},
 
 				onUpload: (hash: string) => {
