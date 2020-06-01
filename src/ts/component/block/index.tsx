@@ -199,6 +199,7 @@ class Block extends React.Component<Props, {}> {
 				<div id={'selectable-' + id} className="selectable" data-id={id}>
 					{object}
 					<div className="selectionOver" />
+					<div className="menuOver" />
 				</div>
 			);
 		} else {
