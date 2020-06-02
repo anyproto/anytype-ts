@@ -382,9 +382,10 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (keyboard.isDragging) {
 			add.css({ opacity: 0 });
-			items.removeClass('showMenuAdd isAdding top bottom');
+			items.removeClass('showMenu isAdding top bottom');
+			
 			if (hovered) {
-				hovered.addClass('showMenuAdd');
+				hovered.addClass('showMenu');
 			};
 			return;
 		};
@@ -396,7 +397,7 @@ class EditorPage extends React.Component<Props, State> {
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
-			items.addClass('showMenuAdd').removeClass('isAdding top bottom');
+			items.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
@@ -408,7 +409,7 @@ class EditorPage extends React.Component<Props, State> {
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
 				add.css({ opacity: 0 });
-				items.removeClass('showMenuAdd isAdding top bottom');
+				items.removeClass('showMenu isAdding top bottom');
 			}, 200);
 		};
 	};

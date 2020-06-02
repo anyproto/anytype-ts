@@ -63,13 +63,12 @@
 	}
 	
 	.block:hover > .wrapMenu > .icon.dnd, 
-	.block.showMenuAdd > .wrapMenu > .icon.dnd, 
-	.block.showMenu > .wrapMenu > .icon.dnd 
+	.block.showMenu > .wrapMenu > .icon.dnd, 
 	{ opacity: 1; }
 
-	.block.showMenuAdd > .wrapContent > .selectable > .menuOver { display: block; }
-	.block.showMenuAdd > .wrapContent > .selectable > .selectionOver { border-radius: 0px 8px 8px 0px; }
-	.block.showMenuAdd > .wrapContent.bgColor { border-radius: 0px 8px 8px 0px; }
+	.block.showMenu > .wrapContent > .selectable > .menuOver { display: block; }
+	.block.showMenu > .wrapContent > .selectable > .selectionOver { border-radius: 0px 8px 8px 0px; }
+	.block.showMenu > .wrapContent.bgColor { border-radius: 0px 8px 8px 0px; }
 
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
 	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
@@ -96,5 +95,6 @@
 
 .dragProvider.isDragging {
 	.block > .wrapContent > .selectable > .menuOver { display: block; }
+	.block > .wrapContent > .selectable > .selectionOver { display: none; }
 	.block > .wrapMenu > .icon.dnd { opacity: 1; }
 }

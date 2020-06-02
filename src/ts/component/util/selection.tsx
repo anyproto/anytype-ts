@@ -431,6 +431,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	set (ids: string[]) {
+		console.trace();
 		if (!this._isMounted) {
 			return;
 		};

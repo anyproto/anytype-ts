@@ -310,7 +310,7 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, block } = this.props;
 		const { selection, onDragStart } = dataset || {};
 		
-		if (!selection) {
+		if (!selection || !onDragStart) {
 			return;
 		};
 		
@@ -320,13 +320,8 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if (!onDragStart) {
-			return;
-			
-		};
-			
 		let ids: string[] = selection.get(false);
-			
+		
 		if (ids.indexOf(block.id) < 0) {
 			selection.clear(true);
 			selection.set([ block.id ]);
