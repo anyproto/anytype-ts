@@ -428,33 +428,80 @@ class EditorPage extends React.Component<Props, State> {
 		const map = blockStore.getMap(rootId);
 		
 		if (e.ctrlKey || e.metaKey) {
+			// Select all
 			if (k == Key.a) {
 				e.preventDefault();
 				this.onSelectAll();
 			};
 			
+			// Copy
 			if (k == Key.c) {
 				this.onCopy(e, false);
 			};
 			
+			// Cut
 			if (k == Key.x) {
 				this.onCopy(e, true);
 			};
 			
+			// Undo
 			if (k == Key.z) {
 				e.preventDefault();
 				e.shiftKey ? C.BlockRedo(rootId) : C.BlockUndo(rootId);
 			};
 			
+			// Redo
 			if (k == Key.y) {
 				e.preventDefault();
 				C.BlockRedo(rootId);
 			};
 			
+			// Print
 			if (k == Key.p) {
 				this.onPrint(e);
 			};
+
+			if (ids.length) {
+				// Bold
+				if (k == Key.b) {
+					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Bold, param: '', range: { from: 0, to: 0 } });
+				};
+
+				// Italic
+				if (k == Key.i) {
+					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Italic, param: '', range: { from: 0, to: 0 } });
+				};
+
+				// Strikethrough
+				if ((k == Key.s) && e.shiftKey) {
+					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Strike, param: '', range: { from: 0, to: 0 } });
+				};
+
+				// Link
+				if (k == Key.l) {
+					commonStore.menuOpen('blockLink', {
+						type: I.MenuType.Horizontal,
+						element: $('#block-' + ids[0]),
+						offsetX: 0,
+						offsetY: -44,
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
+						data: {
+							value: '',
+							onChange: (param: string) => {
+								C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Link, param: param, range: { from: 0, to: 0 } });
+							}
+						}
+					});
+				};
+			};
 			
+			// Code
+			if (k == Key.k) {
+				C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Code, param: '', range: { from: 0, to: 0 } });
+			};
+			
+			// Duplicate
 			if (k == Key.d) {
 				e.preventDefault();
 				focus.clear(true);
@@ -507,6 +554,8 @@ class EditorPage extends React.Component<Props, State> {
 		this.uiHide();
 		
 		if (e.ctrlKey || e.metaKey) {
+
+			// Select all
 			if ((k == Key.a) && (range.from == 0) && (range.to == length)) {
 				e.preventDefault();
 				if ((range.from == 0) && (range.to == length)) {
@@ -517,29 +566,35 @@ class EditorPage extends React.Component<Props, State> {
 				};
 			};
 			
+			// Copy
 			if (k == Key.c) {
 				this.onCopy(e, false);
 			};
 			
+			// Cut
 			if (k == Key.x) {
 				this.onCopy(e, true);
 			};
 
+			// Print
 			if (k == Key.p) {
 				this.onPrint(e);
 			};
 
+			// Undo
 			if (k == Key.z) {
 				e.preventDefault();
 				const cb = (message: any) => { focus.clear(true); };
 				e.shiftKey ? C.BlockRedo(rootId, cb) : C.BlockUndo(rootId, cb);
 			};
 			
+			// Redo
 			if (k == Key.y) {
 				e.preventDefault();
 				C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 			};
 			
+			// Duplicate
 			if (k == Key.d) {
 				e.preventDefault();
 				C.BlockListDuplicate(rootId, [ focused ], focused, I.BlockPosition.Bottom, (message: any) => {
