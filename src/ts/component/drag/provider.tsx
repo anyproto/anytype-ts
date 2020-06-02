@@ -13,6 +13,8 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
+const raf = require('jquery');
+
 const Constant = require('json/constant.json');
 const OFFSET = 100;
 const THROTTLE = 20;
@@ -169,7 +171,11 @@ class DragProvider extends React.Component<Props, {}> {
 		Util.linkPreviewHide(false);
 
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
+		win.on('drag.drag', (e: any) => { 
+			raf(() => {
+				this.onDragMove(e);
+			});
+		});
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e);

@@ -92,7 +92,9 @@ class ScrollOnMove {
 			(nextScrollX !== currentScrollX) ||
 			(nextScrollY !== currentScrollY)
 		) {
-			window.scrollTo(nextScrollX, nextScrollY);
+			raf(() => {
+				window.scrollTo(nextScrollX, nextScrollY);
+			});
 			return true;
 		} else {
 			return false;
