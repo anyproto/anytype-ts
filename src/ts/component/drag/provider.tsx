@@ -90,21 +90,13 @@ class DragProvider extends React.Component<Props, {}> {
 			
 			// Add block's paddings to height
 			if ((data.dropType == I.DragItem.Block) && (data.type != I.BlockType.Layout)) {
-				const key = [ data.type, data.style ].join('-');
-				
-				if (!this.paddingData[key]) {
-					const block = $('#block-' + data.id);
-					if (block.length) {
-						this.paddingData[key] = { 
-							top: parseInt(block.css('paddingTop')),
-							bot: parseInt(block.css('paddingBottom')),
-						};
-					};
-				};
-
-				if (this.paddingData[key]) {
-					y -= this.paddingData[key].top + 2;
-					h += this.paddingData[key].top + this.paddingData[key].bot + 2;
+				const block = $('#block-' + data.id);
+				if (block.length) {
+					const top = parseInt(block.css('paddingTop'));
+					const bot = parseInt(block.css('paddingBottom'));
+					
+					y -= top + 2;
+					h += top + bot + 2;
 				};
 			};
 

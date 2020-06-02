@@ -292,7 +292,6 @@ class EditorPage extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		$('.footer').css({ opacity: 0 });
-		$('.icon.dnd').css({ opacity: 0 });
 		$('#button-add').css({ opacity: 0 });
 		
 		this.uiHidden = true;
@@ -307,7 +306,6 @@ class EditorPage extends React.Component<Props, State> {
 		const win = $(window);
 		
 		$('.footer').css({ opacity: 1 });
-		$('.icon.dnd').css({ opacity: '' });
 		$('#button-add').css({ opacity: '' });
 		
 		this.uiHidden = false;
