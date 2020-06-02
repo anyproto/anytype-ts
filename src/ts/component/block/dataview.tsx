@@ -129,8 +129,10 @@ class BlockDataview extends React.Component<Props, State> {
 			return view;
 		});
 		
-		const view = this.state.view || ret.views[0].id;
-		ret.view = ret.views.find((item: any) => { return item.id == view; });
+		if (ret.views.length) {
+			const view = this.state.view || ret.views[0].id;
+			ret.view = ret.views.find((item: any) => { return item.id == view; });
+		};
 
 		return ret;
 	};

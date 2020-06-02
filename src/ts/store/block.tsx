@@ -405,13 +405,15 @@ class BlockStore {
 		if (content) {
 			item.content = content;
 
+			if (type != I.BlockType.Dataview) {
+				item.content = Util.objectCopy(item.content);
+			};
+
 			if (content.fields) {
 				item.content.fields = StructDecode.decodeStruct(content.fields);
 			};
 			
 			if (type == I.BlockType.Text) {
-				item.content = Util.objectCopy(content);
-
 				let marks: any = [];
 				if (content.marks && content.marks.marks && content.marks.marks.length) {
 					for (let mark of content.marks.marks) {
