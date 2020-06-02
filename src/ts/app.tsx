@@ -81,9 +81,10 @@ import 'scss/menu/block/icon.scss';
 import 'scss/menu/block/cover.scss';
 import 'scss/menu/block/mention.scss';
 
+import 'scss/menu/dataview/common.scss';
 import 'scss/menu/dataview/sort.scss';
 import 'scss/menu/dataview/filter.scss';
-import 'scss/menu/dataview/property.scss';
+import 'scss/menu/dataview/relation.scss';
 import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/calendar.scss';
 import 'scss/menu/dataview/tag.scss';

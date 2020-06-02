@@ -84,7 +84,7 @@ class BlockText extends React.Component<Props, {}> {
 				};
 				
 				additional = (
-					<Select initial="Language" id={'lang-' + id} value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
+					<Select initial="Language" id={'lang-' + id} arrowClassName="light" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
 				);
 				break;
 				
@@ -730,6 +730,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onPaste (e: any) {
 		e.persist();
+		e.preventDefault();
 
 		this.setText(this.marks);
 		this.props.onPaste(e);

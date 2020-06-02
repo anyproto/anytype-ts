@@ -1,15 +1,16 @@
 @import "~scss/_vars";
 
-.editorWrapper { padding-top: 106px; }
+.editorWrapper { padding-top: 106px; width: 704px; margin: 0px auto; }
 .editorWrapper {
+	.blocks { margin-left: -48px; }
+
 	.editor { position: relative; }
 	.editor {
 		.icon.buttonAdd { 
-			width: 20px; height: 20px; border-radius: 100%; border: solid 1px #d2d0c2; position: absolute; z-index: 5; cursor: pointer; user-select: none;
-			background-size: 10px 10px; background-image: url('~img/icon/block/add0.svg'); opacity: 0;
-			transition: opacity 0.05s ease-in-out, background 0.05s ease-in-out, border-color 0.05s ease-in-out; 
+			width: 20px; height: 20px; position: absolute; z-index: 5; cursor: pointer; user-select: none;
+			background-image: url('~img/icon/block/add.svg'); opacity: 0;
+			transition: opacity 0.05s ease-in-out;
 		}
-		.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); background-color: $colorOrange; border-color: $colorOrange; }
 		
 		.blockLast { margin-left: -50px; }
 	}
@@ -74,3 +75,14 @@
 
 .editorWrapper.isProfile.withIcon { padding-top: 56px; }
 .editorWrapper.isProfile.withIconAndCover { padding-top: 190px; }
+
+.editorWrapper.isDataview { width: 1088px; }
+.editorWrapper.isDataview {
+	.blocks { margin-left: 0px; }
+	.blocks {
+		.block {
+			.wrapMenu { display: none; }
+			.wrapContent { width: 100%; }
+		}
+	}
+}

@@ -23,55 +23,54 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, property } = this.props;
+		const { id, relation, data } = this.props;
 		
-		let CellComponent: React.ReactType<{}>;
-		
-		switch (property.type) {
+		let CellComponent: React.ReactType<Props>;
+		switch (relation.type) {
 			default:
-			case I.PropertyType.Text:
-			case I.PropertyType.Title:
-			case I.PropertyType.Number:
+			case I.RelationType.Text:
+			case I.RelationType.Title:
+			case I.RelationType.Number:
 				CellComponent = CellText;
 				break;
 				
-			case I.PropertyType.Date:
+			case I.RelationType.Date:
 				CellComponent = CellDate;
 				break;
 				
-			case I.PropertyType.Select:
+			case I.RelationType.Select:
 				CellComponent = CellSelect;
 				break;
 				
-			case I.PropertyType.Multiple:
+			case I.RelationType.Multiple:
 				CellComponent = CellMultiple;
 				break;
 				
-			case I.PropertyType.Bool:
+			case I.RelationType.Bool:
 				CellComponent = CellBool;
 				break;
 				
-			case I.PropertyType.Link:
+			case I.RelationType.Link:
 				CellComponent = CellAccount;
 				break;
 				
-			case I.PropertyType.Url:
-			case I.PropertyType.Email:
-			case I.PropertyType.Phone:
+			case I.RelationType.Url:
+			case I.RelationType.Email:
+			case I.RelationType.Phone:
 				CellComponent = CellLink;
 				break;
 		};
 		
 		return (
-			<div id={[ 'cell', property.id, id ].join('-')} className={'cell c' + property.type} onClick={this.onClick}>
-				<CellComponent {...this.props} />
+			<div id={[ 'cell', relation.id, id ].join('-')} className={[ 'cellContent', 'c-' + relation.type ].join(' ')} onClick={this.onClick}>
+				<CellComponent {...this.props} data={data || {}} />
 			</div>
 		);
 	};
 	
 	onClick () {
-		const { id, property, data } = this.props;
-		const element = '#' + [ 'cell', property.id, id ].join('-');
+		const { id, relation, data } = this.props;
+		const element = '#' + [ 'cell', relation.id, id ].join('-');
 		
 		let param: any = { 
 			element: element,
@@ -80,12 +79,12 @@ class Cell extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			data: { 
 				value: data, 
-				values: property.values 
+				values: relation.values 
 			}
 		};
 		
-		switch (property.type) {
-			case I.PropertyType.Date:
+		switch (relation.type) {
+			case I.RelationType.Date:
 				param.data.onChange = (value: number) => {
 					console.log('value', value); 
 				};
@@ -93,16 +92,16 @@ class Cell extends React.Component<Props, {}> {
 				commonStore.menuOpen('dataviewCalendar', param);
 				break;
 				
-			case I.PropertyType.Select:
-			case I.PropertyType.Multiple:
+			case I.RelationType.Select:
+			case I.RelationType.Multiple:
 				commonStore.menuOpen('dataviewTagList', param);
 				break;
 				
-			case I.PropertyType.Link:
+			case I.RelationType.Link:
 				commonStore.menuOpen('dataviewAccount', param);
 				break;
 				
-			case I.PropertyType.Bool:
+			case I.RelationType.Bool:
 				break; 
 		};
 	};

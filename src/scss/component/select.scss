@@ -8,9 +8,13 @@
 .select:hover { background: #f7f5f0; }
 .select {
 	.icon { transition: none; }
-	.icon.arrow { 
+	.icon.arrow {
+		margin: -3px 0px 0px 0px !important; right: 8px; width: 10px !important; height: 6px !important; position: absolute; top: 50%;
+		background-image: url('~img/arrow/select/dark.svg'); 
+	}
+	.icon.arrow.light { 
 		margin: -4px 0px 0px 0px !important; right: 4px; width: 8px !important; height: 8px !important; position: absolute; top: 50%;
-		background-image: url('~img/arrow/select.svg'); 
+		background-image: url('~img/arrow/select/light.svg'); 
 	}
 	.current { padding: 4px 26px 4px 8px; }
 	.options { 

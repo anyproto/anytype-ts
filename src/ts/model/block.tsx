@@ -53,15 +53,23 @@ class Block implements I.Block {
 	};
 
 	hasTitle (): boolean {
-		return (undefined !== this.pageType) && [ I.PageType.Page, I.PageType.Set, I.PageType.Profile ].indexOf(this.pageType) >= 0;
+		return this.isPagePage() || this.isPageProfile() || this.isPageDataview();
 	};
 	
 	isPage (): boolean { 
-		return this.type == I.BlockType.Page;
+		return (this.type == I.BlockType.Page);
 	};
 	
+	isPagePage (): boolean { 
+		return this.isPage() && (this.pageType == I.PageType.Page);
+	};
+
 	isPageProfile (): boolean { 
 		return this.isPage() && (this.pageType == I.PageType.Profile);
+	};
+
+	isPageDataview (): boolean { 
+		return this.isPage() && (this.pageType == I.PageType.Dataview);
 	};
 	
 	isLayout (): boolean {

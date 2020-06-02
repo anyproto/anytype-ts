@@ -1,16 +1,18 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
-		.icon.plus { width: 12px; height: 12px; background-image: url('~img/icon/block/dataview/plus/light0.svg'); cursor: pointer; }
-		.icon.plus:hover { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
-		.icon.plus.dark { background-image: url('~img/icon/block/dataview/plus/dark0.svg'); }
-		.icon.plus.dark:hover { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
+		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/plus0.svg'); cursor: pointer; }
+		.icon.plus:hover { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 		
-		.icon.checkbox { width: 14px; height: 14px; background-image: url('~img/icon/block/dataview/bool0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/block/dataview/bool1.svg'); }
+		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 		
-		.views { font-size: 18px; line-height: 26px; letter-spacing: -0.08px; color: $colorDarkGrey; font-weight: bold; margin-bottom: 16px; }
+		.icon.expand { display: none; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/expand0.svg'); cursor: pointer; }
+		.icon.expand:hover { background-image: url('~img/icon/dataview/button/expand1.svg'); }
+
+		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
 		.views {
 			.item { margin-right: 20px; display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; }
 			.item:last-child { margin: 0px; }
@@ -23,62 +25,68 @@
 		.buttons {
 			.side { width: 50%; }
 			.side.right { text-align: right; }
-			.item { display: inline-block; vertical-align: middle; cursor: pointer; transition: $transitionFast; margin-right: 16px; }
+			.item { 
+				display: inline-block; vertical-align: top; cursor: pointer; transition: $transitionFast; margin-right: 14px; 
+				position: relative; text-align: left; line-height: 20px;
+			}
 			.item:last-child { margin: 0px; }
-			.item:hover, .item.active { color: #000; }
+			.item:hover, .item.active { color: $colorBlack; }
 			
 			.item {
-				.icon { margin: -2px 6px 0px 0px; }
-				.icon.arrow { width: 8px; height: 4px; background-image: url('~img/icon/block/dataview/button/arrow0.svg'); }
-				.icon.property { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/property0.svg'); }
-				.icon.filter { width: 14px; height: 16px; background-image: url('~img/icon/block/dataview/button/filter0.svg'); }
-				.icon.sort { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/sort0.svg'); }
-				.icon.more { width: 16px; height: 16px; background-image: url('~img/icon/block/dataview/button/more0.svg'); }
+				.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
+				.icon.relation { background-image: url('~img/icon/dataview/button/relation0.svg'); }
+				.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+				.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
+				.icon.more { background-image: url('~img/icon/dataview/button/more0.svg'); }
+
+				.icon.arrow { 
+					margin: -6px 0px 0px 0px; width: 12px; height: 12px; background-image: url('~img/icon/dataview/button/arrow0.svg');
+					position: absolute; right: 0px; top: 50%;
+				}
 				
-				.icon.view { margin-right: 4px; }
-				
-				.name { display: inline-block; vertical-align: middle; }
+				.icon.view { margin: 0px; }
+				.name { display: inline-block; vertical-align: top; }
 			}
+			.item.view { width: 32px; }
 			
 			.item:hover, .item.active {
-				.icon.plus { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
-				.icon.arrow { background-image: url('~img/icon/block/dataview/button/arrow1.svg'); }
-				.icon.property { background-image: url('~img/icon/block/dataview/button/property1.svg'); }
-				.icon.filter { background-image: url('~img/icon/block/dataview/button/filter1.svg'); }
-				.icon.sort { background-image: url('~img/icon/block/dataview/button/sort1.svg'); }
-				.icon.more { background-image: url('~img/icon/block/dataview/button/more1.svg'); }
+				.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+				.icon.arrow { background-image: url('~img/icon/dataview/button/arrow1.svg'); }
+				.icon.relation { background-image: url('~img/icon/dataview/button/relation1.svg'); }
+				.icon.filter { background-image: url('~img/icon/dataview/button/filter1.svg'); }
+				.icon.sort { background-image: url('~img/icon/dataview/button/sort1.svg'); }
+				.icon.more { background-image: url('~img/icon/dataview/button/more1.svg'); }
 				
-				.icon.view.c0 { background-image: url('~img/icon/block/dataview/button/view/grid1.svg'); }
-				.icon.view.c1 { background-image: url('~img/icon/block/dataview/button/view/board1.svg'); }
-				.icon.view.c2 { background-image: url('~img/icon/block/dataview/button/view/gallery1.svg'); }
-				.icon.view.c3 { background-image: url('~img/icon/block/dataview/button/view/list1.svg'); }
+				.icon.view.c0 { background-image: url('~img/icon/dataview/view/grid1.svg'); }
+				.icon.view.c1 { background-image: url('~img/icon/dataview/view/list1.svg'); }
+				.icon.view.c2 { background-image: url('~img/icon/dataview/view/gallery1.svg'); }
+				.icon.view.c3 { background-image: url('~img/icon/dataview/view/board1.svg'); }
 			}
 		}
 		
 		.content {
+			.wrap { overflow: auto; }
 			.view { border-top: 1px solid #e0ded2; }
 			
 			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }
-			.cell { @include text-small; }
+			.cell { @include text-common; line-height: 20px; }
+
+			.cellContent.c-title {
+				.smile { margin: 0px 4px 0px 0px; }
+				.name { display: inline-block; vertical-align: top; @include text-overflow-nw; max-width: 500px; }
+			}
 			
-			/* Title */
-			.cell.c0 { font-weight: 500; }
-			
-			/* Multiple */
-			.cell.c5 {
+			.cell.c-multiselect {
 				.tag { margin: 0px 6px 6px 0px; }
 			}
 			
-			/* Account */
-			.cell.c6 {
+			.cell.c-link {
 				.icon.user { margin-right: 5px; }
 			}
 			
-			/* Bool */
-			.cell.c8 { cursor: pointer; }
+			.cell.c-checkbox { cursor: pointer; }
 			
-			/* Link, Email, Phone */
-			.cell.c9, .cell.c10, .cell.c11 {
+			.cell.c-url, .cell.c-email, .cell.c-phone {
 				a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }
 				a:hover { border-color: $colorBlack; }
 			}
@@ -86,32 +94,60 @@
 			.view.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
 			.view.viewGrid {
 				.head { 
-					text-align: left; @include text-small; color: $colorDarkGrey; font-weight: 500;
-					padding: 7px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; white-space: nowrap;
+					text-align: left; color: #6c6a5f; padding: 14px 0px 14px 14px; border-bottom: 1px solid #e0ded2; white-space: nowrap; 
+					font-weight: 400; line-height: 20px;
 				}
-				.head:last-child { border-right: 0px; }
 				.head {
-					.icon { margin: -2px 5px 0px 0px; }
+					.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
+					.name { 
+						display: inline-block; line-height: 20px; vertical-align: top; width: calc(100% - 24px); 
+						@include text-overflow-nw; border-right: 1px solid #e0ded2;
+					}
 				}
+				.head.add { width: 44px; }
 				
-				td.cell { padding: 6px 8px; border-bottom: 1px solid #e0ded2; border-right: 1px solid #e0ded2; vertical-align: top; }
+				td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; }
 				td.cell:last-child { border-right: 0px; }
+
+				td.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }
+				td.cell.add {
+					 .icon { vertical-align: top; margin: 0px 4px 0px 0px; }
+					 .name { vertical-align: top; display: inline-block; line-height: 20px; vertical-align: top; }
+				}
+				td.cell.add:hover { color: $colorBlack; }
+				td.cell.add:hover {
+					.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+				}
+				td.cell.isName {
+					.icon.expand { display: block; position: absolute; right: 14px; top: 50%; margin-top: -10px; opacity: 0; }
+					.name { line-height: 20px; width: calc(100% - 48px); }
+				}
+
+				tr.active {
+					td.cell.isName {
+						.icon.expand { opacity: 1; }
+					}
+				}
+
+				.icon.checkbox { vertical-align: top; }
 			}
 			
-			.view.viewGallery { padding: 16px 0px; }
+			.view.viewGallery { padding: 16px 0px; display: flex; flex-wrap: wrap; column-count: 4; }
 			.view.viewGallery {
-				.cell:last-child { margin: 0px; }
-			
-				/* Title */
-				.cell.c0 { margin-bottom: 9px; }
-				
-				/* Date */
-				.cell.c3 { color: #6c6a5f; }
-			
+				.cellContent:last-child { margin: 0px; }
+				.cellContent.c-date { color: #6c6a5f; }
+
+				.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
+				.cellContent.c-title {
+					.smile { margin-bottom: 10px; }
+					.name { max-width: 100%; }
+				}
+
 				.card { 
 					width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
 					margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;
 				}
+				.card:nth-child(4n + 4) { margin-right: 0px; }
 			}
 			
 			.view.viewBoard {
@@ -119,6 +155,11 @@
 				.column { width: 240px; margin-right: 24px; }
 				.column {
 					.head { padding: 10px 4px; }
+				}
+
+				.cellContent.c-title {
+					.smile { margin-bottom: 10px; }
+					.name { max-width: 100%; }
 				}
 				
 				.card { width: 100%; margin-bottom: 8px; }
@@ -132,16 +173,24 @@
 				
 				.card.add:hover { border-color: $colorBlack; }
 				.card.add:hover {
-					.icon { background-image: url('~img/icon/block/dataview/plus/dark1.svg'); }
+					.icon { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 				}
 			}
 			
+			.view.viewList { padding: 20px 0px 0px 0px; }
 			.view.viewList {
-				.item { 
-					width: 352px; display: inline-block; vertical-align: top; border-bottom: 1px solid #e0ded2;
-					margin-right: 16px; padding: 16px 0px; 
+				.item { width: 100%; display: inline-block; margin-bottom: 8px; }
+				.item:last-child { margin: 0px; }
+
+				.cellContent { display: inline-block; vertical-align: top; margin-right: 8px; line-height: 24px; }
+				.cellContent:last-child { margin: 0px; }
+
+				.cellContent.c-title { @include text-paragraph; }
+				.cellContent.c-title {
+					.name { line-height: 24px; }
 				}
-				
+
+				.icon.checkbox { width: 24px; height: 24px; vertical-align: top; }
 			}
 		}
 	}	

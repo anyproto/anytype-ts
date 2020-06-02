@@ -1,31 +1,31 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 
 import Cell from '../cell';
 
-interface Props extends I.BlockDataview {
-	getContent(): any;
-};
+interface Props extends I.ViewComponent {};
 
 class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
-		const { data, properties } = this.props.getContent();
+		const { content } = this.props;
+		const { data, view } = content;
 		
 		const Card = (item: any) => (
 			<div className="card">
-				{properties.map((property: any, i: number) => (
-					<Cell key={property.id} id={item.index} property={...property} data={data[item.index][property.id]} />
+				{view.relations.map((relation: any, i: number) => (
+					<Cell key={relation.id} id={item.index} view={view} relation={...relation} data={data[item.index]} />
 				))}
 			</div>
 		);
 		
 		return (
-			<div className="view viewGallery">
-				{data.map((item: any, i: number) => (
-					<Card key={i} index={i} {...item} />
-				))}
+			<div className="wrap">
+				<div className="view viewGallery">
+					{data.map((item: any, i: number) => (
+						<Card key={i} index={i} {...item} />
+					))}
+				</div>
 			</div>
 		);
 	};

@@ -9,6 +9,7 @@ html.debug {
 		.block { border: 1px solid rgba(255,0,0,0.3); }
 		.block {
 			.wrapMenu { background-color: rgba(0,255,0,0.1); }
+			.icon.dnd { background-color: rgba(0,255,0,0.1); }
 		}
 
 		.block.blockLayout.c0 { border-color: rgba(0,255,0,0.3); }
@@ -38,11 +39,13 @@ html.debug {
 			}
 		}
 
+		/*
 		.block.blockText.code {
 			.select { background-color: rgba(0,0,255,0.1); }
 			.wrap { background-color: rgba(0,0,255,0.1); }
 		}
 		.block.blockText.code > .wrapContent > .selectable > .dropTarget { background-color: rgba(0,0,255,0.1); }
+		*/
 	}
 	
 	.blockLast { background: rgba(0,0,255,0.1); }
@@ -59,6 +62,7 @@ html.debug {
 		}
 	}
 	
+	/*
 	.menus {
 		.menu.vertical {
 			.item { background-color: rgba(0,0,255,0.1); }
@@ -74,6 +78,7 @@ html.debug {
 			.icon { background-color: rgba(0,0,255,0.1); }
 		}
 	}
+	*/
 	
 	.inputWithFile {
 		.icon { background-color: rgba(0,0,255,0.1); }

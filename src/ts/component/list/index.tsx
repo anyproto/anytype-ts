@@ -48,9 +48,12 @@ class ListIndex extends React.Component<Props, {}> {
 			const details = blockStore.getDetails(root, content.targetBlockId);
 			const { name, iconEmoji, iconImage } = details;
 
-			let icon = iconEmoji;
+			let icon = <Smile className="c48" icon={iconEmoji} hash={iconImage} size={24} />;
 			let showMenu = true;
 
+			if (content.style == I.LinkStyle.Dataview) {
+				showMenu = false;
+			} else 
 			if (content.style == I.LinkStyle.Archive) {
 				icon = (
 					<div className="smile c48">
@@ -58,8 +61,6 @@ class ListIndex extends React.Component<Props, {}> {
 					</div>
 				);
 				showMenu = false;
-			} else {
-				icon = <Smile className="c48" icon={iconEmoji} hash={iconImage} size={24} />;
 			};
 			
 			return (

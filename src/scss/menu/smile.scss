@@ -3,7 +3,8 @@
 .menus {
 	.menu.menuSmile { width: 384px; user-select: none; }
 	.menu.menuSmile {
-		.content { overflow: visible; max-height: 488px; }
+		.content { overflow: visible; }
+
 		.head { color: $colorDarkGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid #eae9e0; }
 		.head {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
@@ -14,7 +15,7 @@
 		.filter { padding: 3px 16px 10px 16px; border-bottom: 1px solid #eae9e0; }
 		.filter.withHead { padding-top: 11px; }
 	
-		.items { overflow: auto; height: 392px; }
+		.items { overflow: auto; height: 288px; }
 		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }

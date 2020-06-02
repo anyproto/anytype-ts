@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "id": "https://anytype.io/schemas/page",
+    "title": "Anytype Page",
+    "description": "This schema contains the base properties of Anytype Page and should be refereed if you want to extend it",
+    "type": "array",
+    "items": {
+      "$ref": "https://anytype.io/schemas/relation"
+    },
+    "uniqueItems": true,
+    "default": [
+      {
+        "id": "name",
+        "name": "Name",
+        "type": "https://anytype.io/schemas/types/title"
+      },
+      {
+        "id": "iconEmoji",
+        "name": "Emoji",
+        "type": "https://anytype.io/schemas/types/emoji"
+      },
+      {
+        "id": "iconImage",
+        "name": "Image",
+        "type": "https://anytype.io/schemas/types/image"
+      },
+      {
+        "id": "isArchived",
+        "name": "Archived",
+        "type": "https://anytype.io/schemas/types/checkbox"
+      }
+    ]
+  }

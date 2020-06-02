@@ -84,6 +84,10 @@ class EditorPage extends React.Component<Props, State> {
 		} else {
 			icon.type = I.BlockType.IconPage;
 		};
+
+		if (root.isPageDataview()) {
+			cn.push('isDataview');
+		};
 		
 		icon = new M.Block(icon);
 		
@@ -191,6 +195,7 @@ class EditorPage extends React.Component<Props, State> {
 		this.unbind();
 		this.close(rootId);
 		focus.clear(false);
+		Storage.delete('pageId');
 
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
@@ -315,6 +320,10 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root || root.isPageDataview()) {
+			return;
+		};
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -373,9 +382,10 @@ class EditorPage extends React.Component<Props, State> {
 		
 		if (keyboard.isDragging) {
 			add.css({ opacity: 0 });
-			items.removeClass('showMenuAdd isAdding top bottom');
+			items.removeClass('showMenu isAdding top bottom');
+			
 			if (hovered) {
-				hovered.addClass('showMenuAdd');
+				hovered.addClass('showMenu');
 			};
 			return;
 		};
@@ -387,7 +397,7 @@ class EditorPage extends React.Component<Props, State> {
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
-			items.addClass('showMenuAdd').removeClass('isAdding top bottom');
+			items.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
@@ -399,8 +409,8 @@ class EditorPage extends React.Component<Props, State> {
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
 				add.css({ opacity: 0 });
-				items.removeClass('showMenuAdd isAdding top bottom');
-			}, 50);
+				items.removeClass('showMenu isAdding top bottom');
+			}, 200);
 		};
 	};
 	
@@ -419,33 +429,80 @@ class EditorPage extends React.Component<Props, State> {
 		const map = blockStore.getMap(rootId);
 		
 		if (e.ctrlKey || e.metaKey) {
+			// Select all
 			if (k == Key.a) {
 				e.preventDefault();
 				this.onSelectAll();
 			};
 			
+			// Copy
 			if (k == Key.c) {
 				this.onCopy(e, false);
 			};
 			
+			// Cut
 			if (k == Key.x) {
 				this.onCopy(e, true);
 			};
 			
+			// Undo
 			if (k == Key.z) {
 				e.preventDefault();
 				e.shiftKey ? C.BlockRedo(rootId) : C.BlockUndo(rootId);
 			};
 			
+			// Redo
 			if (k == Key.y) {
 				e.preventDefault();
 				C.BlockRedo(rootId);
 			};
 			
+			// Print
 			if (k == Key.p) {
 				this.onPrint(e);
 			};
+
+			if (ids.length) {
+				// Bold
+				if (k == Key.b) {
+					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Bold, param: '', range: { from: 0, to: 0 } });
+				};
+
+				// Italic
+				if (k == Key.i) {
+					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Italic, param: '', range: { from: 0, to: 0 } });
+				};
+
+				// Strikethrough
+				if ((k == Key.s) && e.shiftKey) {
+					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Strike, param: '', range: { from: 0, to: 0 } });
+				};
+
+				// Link
+				if (k == Key.l) {
+					commonStore.menuOpen('blockLink', {
+						type: I.MenuType.Horizontal,
+						element: $('#block-' + ids[0]),
+						offsetX: 0,
+						offsetY: -44,
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
+						data: {
+							value: '',
+							onChange: (param: string) => {
+								C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Link, param: param, range: { from: 0, to: 0 } });
+							}
+						}
+					});
+				};
+			};
 			
+			// Code
+			if (k == Key.k) {
+				C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Code, param: '', range: { from: 0, to: 0 } });
+			};
+			
+			// Duplicate
 			if (k == Key.d) {
 				e.preventDefault();
 				focus.clear(true);
@@ -498,6 +555,8 @@ class EditorPage extends React.Component<Props, State> {
 		this.uiHide();
 		
 		if (e.ctrlKey || e.metaKey) {
+
+			// Select all
 			if ((k == Key.a) && (range.from == 0) && (range.to == length)) {
 				e.preventDefault();
 				if ((range.from == 0) && (range.to == length)) {
@@ -508,29 +567,35 @@ class EditorPage extends React.Component<Props, State> {
 				};
 			};
 			
+			// Copy
 			if (k == Key.c) {
 				this.onCopy(e, false);
 			};
 			
+			// Cut
 			if (k == Key.x) {
 				this.onCopy(e, true);
 			};
 
+			// Print
 			if (k == Key.p) {
 				this.onPrint(e);
 			};
 
+			// Undo
 			if (k == Key.z) {
 				e.preventDefault();
 				const cb = (message: any) => { focus.clear(true); };
 				e.shiftKey ? C.BlockRedo(rootId, cb) : C.BlockUndo(rootId, cb);
 			};
 			
+			// Redo
 			if (k == Key.y) {
 				e.preventDefault();
 				C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 			};
 			
+			// Duplicate
 			if (k == Key.d) {
 				e.preventDefault();
 				C.BlockListDuplicate(rootId, [ focused ], focused, I.BlockPosition.Bottom, (message: any) => {

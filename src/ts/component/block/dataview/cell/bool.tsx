@@ -7,11 +7,11 @@ interface Props extends I.Cell {};
 class CellBool extends React.Component<Props, {}> {
 
 	render () {
-		const { property, data } = this.props;
-		
+		const { relation, data } = this.props;
+
 		return (
 			<React.Fragment>
-				<Icon className={'checkbox ' + (data ? 'active' : '')} />
+				<Icon className={'checkbox ' + (data[relation.id] ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};

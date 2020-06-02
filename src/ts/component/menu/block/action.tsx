@@ -103,7 +103,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	componentDidMount () {
 		const { id, param } = this.props;
 		const { data } = param;
-		const { blockId } = data;
 		const menu = $('#' + Util.toCamelCase('menu-' + id));
 		
 		this._isMounted = true;
@@ -117,8 +116,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		menu.unbind('mouseleave').on('mouseleave', () => {
 			window.clearTimeout(this.timeout);
 		});
-
-		$('#block-' + blockId).addClass('showMenu');
 	};
 
 	componentDidUpdate () {
@@ -129,8 +126,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 		this.unbind();
-
-		$('.showMenu').removeClass('showMenu');
 	};
 	
 	onFilterFocus (e: any) {

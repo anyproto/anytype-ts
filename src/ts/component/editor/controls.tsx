@@ -142,7 +142,7 @@ class Controls extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				onSelect: (item: any) => {
-					DataUtil.pageSetCover(rootId, item.type, item.id, 0, item.coverY);
+					DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 				}
 			}
 		});

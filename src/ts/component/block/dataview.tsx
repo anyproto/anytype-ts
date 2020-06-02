@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { RouteComponentProps } from 'react-router';
+import { I, C, StructDecode, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import Controls from './dataview/controls';
@@ -11,36 +10,48 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	block: I.Block;
 };
+
 interface State {
 	view: string;
+	data: any[];
+};
+
+const Constant = require('json/constant.json');
+const Schema = {
+	page: require('json/schema/page.json'),
+	relation: require('json/schema/relation.json'),
 };
 
 @observer
 class BlockDataview extends React.Component<Props, State> {
 
 	state = {
-		view: ''
+		view: '',
+		data: [],
 	};
 	
 	constructor (props: any) {
 		super(props);
 		
+		this.onOpen = this.onOpen.bind(this);
 		this.onView = this.onView.bind(this);
 		this.getContent = this.getContent.bind(this);
 	};
 
 	render () {
-		const { rootId, block } = this.props;
-		const { id } = block;
-		const { view, views, data, properties } = this.getContent();
-		const viewItem = views.find((item: any) => { return item.id == view; });
-		
-		let ViewComponent: React.ReactType<{ getContent(): any; }>;
-		switch (viewItem.type) {
+		const content = this.getContent();
+		const { view } = content;
+
+		if (!view) {
+			return null;
+		};
+
+		let ViewComponent: React.ReactType<I.ViewComponent>;
+		switch (view.type) {
 			default:
 			case I.ViewType.Grid:
 				ViewComponent = ViewGrid;
@@ -61,12 +72,16 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		return (
 			<React.Fragment>
-				<Controls {...this.props} getContent={this.getContent} {...block} view={view} viewType={viewItem.type} onView={this.onView} />
+				<Controls {...this.props} content={content} onView={this.onView} />
 				<div className="content">
-					<ViewComponent {...this.props} getContent={this.getContent} />
+					<ViewComponent {...this.props} onOpen={this.onOpen} content={content} />
 				</div>
 			</React.Fragment>
 		);
+	};
+
+	componentDidMount () {
+		this.getData();
 	};
 	
 	onView (e: any, id: string) {
@@ -74,55 +89,73 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	getContent () {
+		const { data } = this.state;
 		const { block } = this.props;
 		const { content } = block;
 
-		let ret = {
-			view: '1',
-			views: [
-				{ 
-					id: '1', name: 'Grid', type: I.ViewType.Grid,
-					sorts: [
-						{ propertyId: '1', type: I.SortType.Asc },
-						{ propertyId: '2', type: I.SortType.Desc },
-					],
-					filters: [
-						{ propertyId: '1', condition: I.FilterOperator.And, equality: I.FilterCondition.Equal, value: '' },
-						{ propertyId: '1', condition: I.FilterOperator.And, equality: I.FilterCondition.Equal, value: '' },
-					]
-				},
-				{ id: '2', name: 'Board', type: I.ViewType.Board, sorts: [], filters: [] },
-				{ id: '3', name: 'Gallery', type: I.ViewType.Gallery, sorts: [], filters: [] },
-				{ id: '4', name: 'List', type: I.ViewType.List, sorts: [], filters: [] },
-			],
-			properties: [
-				{ id: '1', name: 'Id', type: I.PropertyType.Number },
-				{ id: '2', name: 'Name', type: I.PropertyType.Title },
-				{ id: '4', name: 'E-mail', type: I.PropertyType.Email },
-				{ id: '5', name: 'Date', type: I.PropertyType.Date },
-				{ id: '6', name: 'Select', type: I.PropertyType.Select, values: [ 'select1', 'select2', 'select3' ] },
-				{ id: '7', name: 'Multiple', type: I.PropertyType.Multiple, values: [ 'multiple1', 'multiple2', 'multiple3', 'multiple4', 'multiple5' ] },
-				{ id: '8', name: 'Account', type: I.PropertyType.Link, values: [ { name: 'Anton Barulenkov' }, { 'name': 'Zhanna Sharipova' } ] },
-				{ id: '9', name: 'File', type: I.PropertyType.File },
-				{ id: '10', name: 'Bool', type: I.PropertyType.Bool },
-				{ id: '11', name: 'Url', type: I.PropertyType.Url },
-				{ id: '12', name: 'Phone', type: I.PropertyType.Phone },
-			],
-			data: [
-				{ 
-					'1': '1', '2': 'Anton Pronkin', '4': 'pronkin@gmail.com', '5': 1420200661, '6': 'select1', '11': 'http://anytype.io', 
-					'12': '+7 (1234) 5678910', '7': [ 'value1', 'value2', 'value3' ], '10': true, '8': { name: 'Anton Barulenkov' }
-				},
-				{ '1': '2', '2': 'Roman Khafizianov', '4': 'khafizianov@gmail.com', '5': 1420200661, '6': 'select2', '11': 'ftp://anytype.io' },
-				{ '1': '3', '2': 'Zhanna Sharipova', '4': 'sharipova@gmail.com', '5': 1420200662, '6': 'select3', '11': 'telnet://anytype.io' },
-				{ '1': '4', '2': 'Anton Barulenkov', '4': 'barulenkov@gmail.com', '5': 1420200662, '6': 'select4', '11': 'https://anytype.io' },
-				{ '1': '5', '2': 'Kirill', '4': 'kirill@gmail.com', '5': 1420200663, '6': 'select5' },
-			]
+		let schemaId = 'https://anytype.io/schemas/page';
+		let schema = Schema[DataUtil.schemaField(schemaId)];
+
+		if (!schema) {
+			return {};
+		};
+
+		let ret: any = {
+			views: [],
+			relations: [],
+			data: data,
+		};
+
+		ret.relations.push({
+			id: 'id',
+			name: 'Id',
+			type: I.RelationType.Text,
+		});
+
+		for (let field of schema.default) {
+			ret.relations.push({
+				id: field.id,
+				name: field.name,
+				type: DataUtil.schemaField(field.type),
+			});
 		};
 
 		ret.views = content.views;
+		ret.views = ret.views.map((view: I.View) => {
+			view.relations = view.relations.map((relation: I.ViewRelation) => {
+				const rel = ret.relations.find((it: I.Relation) => { return it.id == relation.id; });
+				return Object.assign(rel, relation);
+			});
+			return view;
+		});
+		
+		if (ret.views.length) {
+			const view = this.state.view || ret.views[0].id;
+			ret.view = ret.views.find((item: any) => { return item.id == view; });
+		};
 
 		return ret;
+	};
+
+	getData () {
+		C.NavigationListPages((message: any) => {
+			let pages = message.pages.map((it: any) => { return this.getPage(it); });
+			this.setState({ data: pages.slice(0, 10) });
+		});
+	};
+
+	getPage (page: any): I.PageInfo {
+		let details = StructDecode.decodeStruct(page.details || {});
+		details.name = String(details.name || Constant.default.name || '');
+
+		return {
+			id: page.id,
+			...details,
+		};
+	};
+
+	onOpen (e: any, data: any) {
+		DataUtil.pageOpen(e, data.id);
 	};
 	
 };

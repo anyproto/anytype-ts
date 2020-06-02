@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, Switch, Select } from 'ts/component';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { Icon, Select } from 'ts/component';
 import { I } from 'ts/lib';
 import arrayMove from 'array-move';
 
@@ -29,7 +29,7 @@ class MenuSort extends React.Component<Props, State> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { properties } = data;
+		const { view } = data;
 		
 		const { items } = this.state;
 		const typeOptions = [
@@ -37,16 +37,20 @@ class MenuSort extends React.Component<Props, State> {
 			{ id: String(I.SortType.Desc), name: 'From Z to A' },
 		];
 		
-		let propertyOptions: any[] = [];
-		for (let property of properties) {
-			propertyOptions.push({ id: property.id, name: property.name, icon: 'property dark c' + property.type });
+		let relationOptions: any[] = [];
+		for (let relation of view.relations) {
+			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
 		};
+
+		const Handle = SortableHandle(() => (
+			<Icon className="dnd" />
+		));
 		
 		const Item = SortableElement((item: any) => (
 			<div className="item">
-				<Icon className="dnd" />
-				<Select id={[ 'filter', 'property', item.id ].join('-')} options={propertyOptions} value={item.propertyId} />
-				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={String(item.type)} />
+				<Handle />
+				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
+				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>
 		));
@@ -72,10 +76,13 @@ class MenuSort extends React.Component<Props, State> {
 		
 		return (
 			<List 
-				axis="y" 
+				axis="y"
+				lockAxis="y"
+				lockToContainerEdges={true}
 				transitionDuration={150}
 				distance={10}
 				onSortEnd={this.onSortEnd}
+				useDragHandle={true}
 				helperClass="dragging"
 				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
 			/>
@@ -85,15 +92,24 @@ class MenuSort extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { sorts } = data;
+		const { view } = data;
 		
-		this.setState({ items: sorts });
+		this.setState({ items: view.sorts });
 	};
 	
 	onAdd (e: any) {
 		let { items } = this.state;
 		
-		items.push({ propertyId: '', sort: I.SortType.Asc });
+		items.push({ relationId: '', sort: I.SortType.Asc });
+		this.setState({ items: items });
+	};
+
+	onChange (id: number, k: string, v: string) {
+		const { items } = this.state;
+
+		let item = items.find((item: any, i: number) => { return i == id; });
+		item[k] = v;
+
 		this.setState({ items: items });
 	};
 	

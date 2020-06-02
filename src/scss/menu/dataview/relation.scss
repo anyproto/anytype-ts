@@ -1,0 +1,27 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuDataviewRelationList { width: 240px; }
+	.menu.menuDataviewRelationList {
+		.item { padding: 4px 10px; }
+		.item {
+			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
+			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+			.name { width: calc(100% - 73px); }
+		}
+		.item.add { color: $colorDarkGrey; }
+	}
+	
+	.menu.menuDataviewRelationEdit { width: 224px; }
+	.menu.menuDataviewRelationEdit {
+		.wrap { padding: 8px 16px; }
+		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
+		.input { border: 1px solid $colorLightGrey; font-size: 12px; padding: 0px 8px; }
+		
+		.icon.arrow { 
+			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
+			background-image: url('~img/arrow/menu.svg'); 
+		}
+	}
+
+}

@@ -13,8 +13,10 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
-const OFFSET = 100;
 const Constant = require('json/constant.json');
+
+const OFFSET = 100;
+const THROTTLE = 20;
 
 @observer
 class DragProvider extends React.Component<Props, {}> {
@@ -73,14 +75,40 @@ class DragProvider extends React.Component<Props, {}> {
 
 			const data = item.data();
 			const offset = item.offset();
+			
+			let x = offset.left;
+			let y = offset.top;
+			let w = item.width();
+			let h = item.height();
+			let isTargetTop = item.hasClass('targetTop');
+			let isTargetBot = item.hasClass('targetBot');
+			let key = data.id;
 
-			this.objectData[data.id] = {
+			if (isTargetTop) key += '-top';
+			if (isTargetBot) key += '-bot';
+			
+			// Add block's paddings to height
+			if ((data.dropType == I.DragItem.Block) && (data.type != I.BlockType.Layout)) {
+				const block = $('#block-' + data.id);
+				
+				if (block.length) {
+					let paddingTop = parseInt(block.css('paddingTop'));
+					let paddingBot = parseInt(block.css('paddingBottom'));
+
+					y -= paddingTop + 2;
+					h += paddingTop + paddingBot + 2;
+				};
+			};
+
+			this.objectData[key] = {
 				obj: item,
 				index: i,
-				width: item.width(),
-				height: item.height(),
-				x: offset.left,
-				y: offset.top,
+				width: w,
+				height: h,
+				x: x,
+				y: y,
+				isTargetTop: isTargetTop,
+				isTargetBot: isTargetBot,
 				...data
 			};
 		});
@@ -128,6 +156,8 @@ class DragProvider extends React.Component<Props, {}> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const layer = $('#dragLayer');
 
 		e.stopPropagation();
 		focus.clear(true);
@@ -138,14 +168,15 @@ class DragProvider extends React.Component<Props, {}> {
 		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
 		this.unbind();
-		this.setDragImage(e);
 		this.initData();
 
+		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
+		node.addClass('isDragging');
 		keyboard.setDrag(true);
 		Util.linkPreviewHide(false);
 
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
+		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e);
@@ -166,7 +197,6 @@ class DragProvider extends React.Component<Props, {}> {
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
 
-		this.refLayer.move(ex, Math.max(0, ey - st));
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
 
@@ -180,11 +210,8 @@ class DragProvider extends React.Component<Props, {}> {
 			const data = this.objectData[id];
 
 			let { x, y, width, height } = data;
-
 			if (data.dropType == I.DragItem.Block) {
 				x -= OFFSET;
-				y -= 5;
-				height += 10;
 				width += OFFSET * 2;
 			};
 
@@ -212,7 +239,7 @@ class DragProvider extends React.Component<Props, {}> {
 			const { x, y, width, height } = this.hoverData;
 			const col1 = x - Constant.size.blockMenu / 2;
 			const col2 = x + width * 0.2;
-			const col3 = x + width * 0.6;
+			const col3 = x + width * 0.8;
 
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
@@ -242,11 +269,11 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			// You can drop vertically on Layout.Row
-			if ((this.hoverData.type == I.BlockType.Layout) && (this.hoverData.style == I.LayoutStyle.Row) && (this.position != I.BlockPosition.None)) {
-				if (this.hoverData.obj.hasClass('targetTop')) {
+			if ((this.hoverData.type == I.BlockType.Layout) && (this.hoverData.style == I.LayoutStyle.Row)) {
+				if (this.hoverData.isTargetTop) {
 					this.position = I.BlockPosition.Top;
 				};
-				if (this.hoverData.obj.hasClass('targetBot')) {
+				if (this.hoverData.isTargetBot) {
 					this.position = I.BlockPosition.Bottom;
 				};
 			};
@@ -261,8 +288,6 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 		};
 
-		window.clearTimeout(this.timeoutHover);
-
 		/*
 		if (this.canDrop) {
 			if ((this.position == I.BlockPosition.Top) && prev) {
@@ -274,6 +299,7 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 		*/
 
+		window.clearTimeout(this.timeoutHover);
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
 			this.hoverData.obj.addClass('isOver ' + this.getDirectionClass(this.position));
@@ -289,12 +315,14 @@ class DragProvider extends React.Component<Props, {}> {
 	onDragEnd (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
+		const node = $(ReactDOM.findDOMNode(this));
 
 		this.refLayer.hide();
 		this.unbind();
 		this.clear();
 
 		keyboard.setDrag(false);
+		node.removeClass('isDragging');
 
 		if (selection) {
 			selection.preventSelect(false);
@@ -385,18 +413,6 @@ class DragProvider extends React.Component<Props, {}> {
 			case I.BlockPosition.Inner:	 c = 'middle'; break;
 		};
 		return c;
-	};
-
-	setDragImage (e: any) {
-		let el = $('#emptyDragImage');
-
-		if (!el.length) {
-			el = $('<div id="emptyDragImage">');
-			$('body').append(el);
-		};
-
-		el.css({ width: 1, height: 1, opacity: 0 });
-		e.dataTransfer.setDragImage(el.get(0), 0, 0);
 	};
 
 	injectProps (children: any) {

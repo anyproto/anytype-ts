@@ -21,7 +21,7 @@ export enum BlockType {
 	Div			 = 'div',
 	Link		 = 'link',
 	Cover		 = 'cover',
-	Property	 = 'property',
+	Relation	 = 'relation',
 };
 
 export enum BlockPosition {
@@ -56,7 +56,9 @@ export interface Block {
 	isDraggable?(): boolean;
 	hasTitle?(): boolean;
 	isPage?(): boolean;
+	isPagePage?(): boolean;
 	isPageProfile?(): boolean;
+	isPageDataview?(): boolean;
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;
 	isLayoutColumn?(): boolean;

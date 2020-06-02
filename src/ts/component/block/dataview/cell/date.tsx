@@ -6,12 +6,12 @@ interface Props extends I.Cell {};
 class CellDate extends React.Component<Props, {}> {
 
 	render () {
-		const { property, data } = this.props;
+		const { relation, data } = this.props;
 		const format = 'M d, Y';
 		
 		return (
 			<React.Fragment>
-				{Util.date(format, data)}
+				{Util.date(format, data[relation.id])}
 			</React.Fragment>
 		);
 	};

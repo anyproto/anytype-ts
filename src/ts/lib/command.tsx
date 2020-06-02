@@ -424,6 +424,15 @@ const BlockListSetTextColor = (contextId: string, blockIds: string[], color: str
 	dispatcher.request('blockListSetTextColor', request, callBack);
 };
 
+const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mark, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockIds: blockIds,
+		mark: mark,
+	};
+	dispatcher.request('blockListSetTextMark', request, callBack);
+};
+
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map((it: any) => {
 		it.fields = Struct.encodeStruct(it.fields || {});
@@ -529,6 +538,7 @@ export {
 	BlockListSetBackgroundColor,
 	BlockListSetTextColor,
 	BlockListSetTextStyle,
+	BlockListSetTextMark,
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,

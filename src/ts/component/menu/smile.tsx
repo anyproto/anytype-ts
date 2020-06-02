@@ -18,8 +18,8 @@ const { dialog } = window.require('electron').remote;
 
 const LIMIT = 18;
 const HEIGHT = 32;
-const PAGE = 90;
-const ROWS = 8;
+const PAGE = 63;
+const ROWS = 7;
 
 class MenuSmile extends React.Component<Props, State> {
 
@@ -109,10 +109,13 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		keyboard.setFocus(true);
 		this.bind();
-		this.ref.focus();
 		this.skin = Number(Storage.get('skin')) || 1; 
+
+		window.setTimeout(() => {
+			this.ref.focus();
+			keyboard.setFocus(true);
+		}, 15);
 	};
 	
 	componentDidUpdate () {

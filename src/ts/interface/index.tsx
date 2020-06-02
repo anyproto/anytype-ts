@@ -1,14 +1,16 @@
-import { Account, DragItem, CoverType, CrumbsType, NavigationType } from './common';
+import { Account, DragItem, CoverType, CrumbsType, NavigationType, Option } from './common';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
 import { PageInfo, BlockType, BlockPosition, BlockAlign, Block } from './block';
 import { 
+	ViewRelation,
+	ViewComponent,
 	ViewType,
 	View,  
-	PropertyType, 
-	Property,
+	RelationType, 
+	Relation,
 	SortType,
 	Sort, 
 	FilterOperator,
@@ -34,6 +36,7 @@ export {
 	CoverType,
 	CrumbsType,
 	NavigationType,
+	Option,
 	
 	Progress,
 	ProgressType,
@@ -55,10 +58,12 @@ export {
 	BlockAlign,
 	Block,
 	
+	ViewRelation,
+	ViewComponent,
 	ViewType,
 	View,  
-	PropertyType, 
-	Property,
+	RelationType, 
+	Relation,
 	SortType,
 	Sort, 
 	FilterOperator,

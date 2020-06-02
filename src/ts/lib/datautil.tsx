@@ -484,6 +484,11 @@ class DataUtil {
 		return sections;
 	};
 	
+	schemaField (v: string) {
+		const a = v.toString().split('/');
+		return a.length > 1 ? a[a.length - 1] : '';
+	};
+
 };
 
 export default new DataUtil();

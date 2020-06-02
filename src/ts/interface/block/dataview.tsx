@@ -7,19 +7,21 @@ export enum ViewType {
 	Board	 = 3,
 };
 
-export enum PropertyType { 
-	Title	 = 0, 
-	Text	 = 1, 
-	Number	 = 2, 
-	Date	 = 3, 
-	Select	 = 4, 
-	Multiple = 5,
-	Link	 = 6,
-	File	 = 7,
-	Bool	 = 8, 
-	Url		 = 9,
-	Email	 = 10,
-	Phone	 = 11,
+export enum RelationType { 
+	Title	 = 'title', 
+	Text	 = 'description', 
+	Number	 = 'number', 
+	Date	 = 'date', 
+	Select	 = 'select', 
+	Multiple = 'multiselect',
+	Link	 = 'link',
+	File	 = 'file',
+	Image	 = 'image',
+	Bool	 = 'checkbox', 
+	Icon	 = 'emoji',
+	Url		 = 'url',
+	Email	 = 'email',
+	Phone	 = 'phone',
 };
 
 export enum SortType { 
@@ -43,23 +45,32 @@ export enum FilterCondition {
 	NotIn		 = 7,
 };
 
-export interface Property {
+export interface Relation {
 	id: string;
 	name: string;
-	type: PropertyType;
+	type: RelationType;
 	values?: any[];
 };
 
 export interface Sort {
-	propertyId: string;
+	relationId: string;
 	type: SortType;
 };
 
 export interface Filter {
-	propertyId: string;
+	relationId: string;
 	operator: FilterOperator;
 	condition: FilterCondition;
 	value: any;
+};
+
+export interface ViewRelation extends Relation {
+	visible: boolean;
+};
+
+export interface ViewComponent {
+	content: any; 
+	onOpen(e: any, data: any): void;
 };
 
 export interface View {
@@ -68,19 +79,22 @@ export interface View {
 	type: ViewType;
 	sorts: Sort[];
 	filters: Filter[];
+	relations: any[];
 };
 
 export interface Cell {
-	id: number;
-	property: Property;
+	id: string;
+	relation: Relation;
 	data: any;
+	view: any;
+	onOpen?(e: any, data: any): void;
 };
 
 export interface ContentDataview {
 	databaseId: string;
 	schemaURL: string;
-	view: string;
-	properties: Property[];
+	view: View;
+	relations: Relation[];
 	views: View[];
 	data: any[];
 };

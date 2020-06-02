@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'ts/lib';
-import { Icon, DropTarget, ListChildren } from 'ts/component';
+import { DropTarget, ListChildren } from 'ts/component';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
@@ -199,6 +199,7 @@ class Block extends React.Component<Props, {}> {
 				<div id={'selectable-' + id} className="selectable" data-id={id}>
 					{object}
 					<div className="selectionOver" />
+					<div className="menuOver" />
 				</div>
 			);
 		} else {
@@ -309,7 +310,7 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, block } = this.props;
 		const { selection, onDragStart } = dataset || {};
 		
-		if (!selection) {
+		if (!selection || !onDragStart) {
 			return;
 		};
 		
@@ -319,13 +320,8 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if (!onDragStart) {
-			return;
-			
-		};
-			
 		let ids: string[] = selection.get(false);
-			
+		
 		if (ids.indexOf(block.id) < 0) {
 			selection.clear(true);
 			selection.set([ block.id ]);
@@ -504,8 +500,8 @@ class Block extends React.Component<Props, {}> {
 		const offset = Constant.size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
-		x = Math.min(sum * Constant.size.editorPage - offset, x);
-		x = x / (sum * Constant.size.editorPage);
+		x = Math.min(sum * Constant.size.page - offset, x);
+		x = x / (sum * Constant.size.page);
 		
 		// Snap
 		if (x > 0.5 - SNAP && x < 0.5) {
@@ -535,7 +531,7 @@ class Block extends React.Component<Props, {}> {
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, id);
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const p = (e.pageX - rect.x) / (Constant.size.editorPage + 50);
+		const p = (e.pageX - rect.x) / (Constant.size.page + Constant.size.blockMenu);
 		
 		let c = 0;
 		let num = 0;

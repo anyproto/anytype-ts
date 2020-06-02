@@ -447,21 +447,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		ids = [ ...new Set(ids) ];
 		this.lastIds = ids;
-		
+
 		for (let id of ids) {
-			let block = $('#block-' + id);
-			if (block.hasClass('noSelect')) {
-				continue;
-			};
-			
-			block.addClass('isSelected');
+			$('#block-' + id).addClass('isSelected');
 			$('#selectable-' + id).addClass('isSelected');
-			
-			const childrenIds = blockStore.getChildrenIds(rootId, id);
-			for (let childId of childrenIds) {
-				$('#block-' + childId).addClass('isSelected noSelect');
-			};
+			$('#block-children-' + id + ' .block').addClass('isSelected');
 		};
+
+		$('.block.isSelected .children .selectable.isSelected').removeClass('isSelected');
 		
 		// Hide placeholder and remove focus
 		if (ids.length) {
@@ -469,8 +462,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			$('.block.isFocused').removeClass('isFocused');
 			$('.placeHolder').hide();
 		};
-		
-		$('.noSelect').removeClass('noSelect');
 	};
 	
 	get (withChildren?: boolean): string[] {

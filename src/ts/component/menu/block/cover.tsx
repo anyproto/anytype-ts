@@ -132,26 +132,26 @@ class MenuBlockCover extends React.Component<Props, {}> {
 	};
 
 	getSections () {
-		const coverY: any = {
-			'the-crystal-pallace':  -0.4044042597182052,
-			'the-little-pond': -0.5,
-			'walk-at-pourville': -0.25770020533880905,
-			'poppy-field': -0.3131756603230546,
-			'ballet': -0.07978591433444132,
-			'flower-girl': -0.04454641887930348,
-			'fruits': -0.484159123049052,
-			'autumn': -0.24504804447553558,
-			'big-electric-chair': -0.1711567107138921,
-			'flowers': -0.5147540983606558,
-			'sunday-morning': -0.19150779896013864,
-			'japan': -0.10272440405327754,
-			'grass': -0.5754087049822059,
-			'butter': -0.07053696481594314,
-			'medication': -0.4984825493171472,
-			'landscape3': -0.20313036324937497,
-			'third-sleep': -0.5534286421213346,
-			'banquet': -0.20557316869681294,
-			'chemist': -0.4084223252065283,
+		const param: any = {
+			'the-crystal-pallace':	 { coverY: -0.4044042597182052 },
+			'the-little-pond':		 { coverY: -0.454407830247917 },
+			'walk-at-pourville':	 { coverY: -0.25770020533880905 },
+			'poppy-field':			 { coverY: -0.4174493937695995 },
+			'ballet':				 { coverY: -0.07978591433444132 },
+			'flower-girl':			 { coverY: -0.04454641887930348 },
+			'fruits-midi':			 { coverY: -0.3303986352673582 },
+			'autumn':				 { coverY: -0.3643453090265399 },
+			'big-electric-chair':	 { coverY: -0.1711567107138921 },
+			'flowers':				 { coverY: -0.5147540983606558 },
+			'sunday-morning':		 { coverY: -0.19150779896013864, coverX: -0.09126984126984126, coverScale: 0.125 },
+			'japan':				 { coverY: -0.15899595968950916 },
+			'grass':				 { coverY: -0.5754087049822059 },
+			'butter':				 { coverY: -0.07053696481594314 },
+			'medication':			 { coverY: -0.4984825493171472 },
+			'landscape3':			 { coverY: -0.20313036324937497 },
+			'third-sleep':			 { coverY: -0.5534286421213346 },
+			'banquet':				 { coverY: -0.3338497329693846 },
+			'chemist':				 { coverY: -0.4084223252065283 },
 		};
 
 		let sections: any[] = [
@@ -208,8 +208,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((c: any) => {
-				c.coverY = Number(coverY[c.id]) || 0;
-				return c;
+				return param[c.id] ? Object.assign(c, param[c.id]) : c;
 			});
 			return s;
 		});

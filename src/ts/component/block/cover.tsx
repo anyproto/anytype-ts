@@ -157,7 +157,7 @@ class BlockCover extends React.Component<Props, State> {
 				onUploadStart: this.onUploadStart,
 				onUpload: this.onUpload,
 				onSelect: (item: any) => {
-					DataUtil.pageSetCover(rootId, item.type, item.id, 0, item.coverY);
+					DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 				}
 			},
 		});

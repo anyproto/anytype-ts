@@ -4,11 +4,9 @@ import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockDataview {
-	view: string;
-	viewType: I.ViewType;
+interface Props {
 	onView(e: any, id: string): void;
-	getContent(): any;
+	content: any;
 };
 
 @observer
@@ -21,13 +19,13 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { viewType, onView } = this.props;
-		const { view, views, data, properties } = this.props.getContent();
+		const { onView, content } = this.props;
+		const { views, view } = content;
 		
 		const buttons: any[] = [
 			{ 
-				id: 'property', name: 'Property', menu: 'dataviewPropertyList', 
-				active: commonStore.menuIsOpen('dataviewPropertyList') 
+				id: 'relation', name: 'Relations', menu: 'dataviewRelationList', 
+				active: commonStore.menuIsOpen('dataviewRelationList') 
 			},
 			{ 
 				id: 'filter', name: 'Filter', menu: 'dataviewFilter', 
@@ -38,7 +36,7 @@ class Controls extends React.Component<Props, {}> {
 				active: commonStore.menuIsOpen('dataviewSort') 
 			},
 			{ 
-				id: 'view', className: 'view c' + viewType, arrow: true, menu: 'dataviewView', 
+				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewView', 
 				active: commonStore.menuIsOpen('dataviewView') 
 			},
 			{ 
@@ -53,14 +51,14 @@ class Controls extends React.Component<Props, {}> {
 		);
 		
 		const ButtonItem = (item: any) => {
-			let cn = [ 'item', item.id, String(item.className || '') ];
+			let cn = [ item.id, String(item.className || '') ];
 			
 			if (item.active) {
 				cn.push('active');
 			};
 			
 			return (
-				<div id={'button-' + item.id} className={cn.join(' ')} onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}>
+				<div id={'button-' + item.id} className={[ 'item' ].concat(cn).join(' ')} onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}>
 					<Icon className={cn.join(' ')} />
 					{item.name ? <div className="name">{item.name}</div> : ''}
 					{item.arrow ? <Icon className="arrow" /> : ''}
@@ -72,10 +70,10 @@ class Controls extends React.Component<Props, {}> {
 			<div className="dataviewControls">
 				<div className="views">
 					{views.map((item: I.View, i: number) => (
-						<ViewItem key={i} {...item} active={item.id == view} />
+						<ViewItem key={i} {...item} active={item.id == view.id} />
 					))}
 					<div className="item">
-						<Icon className="plus dark" />
+						<Icon className="plus" />
 					</div>
 				</div>
 				
@@ -97,31 +95,6 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { view, viewType } = this.props;
-		const { properties, views } = this.props.getContent();
-		const viewItem = views.find((item: any) => { return item.id == view; });
-		
-		let data: any = { 
-			properties: properties 
-		};
-		
-		switch (menu) {
-			case 'dataviewView':
-				data.viewType = viewType;
-				break;
-				
-			case 'dataviewSort':
-				data.sorts = viewItem.sorts;
-				break;
-				
-			case 'dataviewFilter':
-				data.filters = viewItem.filters;
-				break;
-				
-			case 'dataviewPropertyList':
-				break;
-		};
-		
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,
 			type: I.MenuType.Vertical,
@@ -129,7 +102,7 @@ class Controls extends React.Component<Props, {}> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
-			data: data
+			data: this.props.content,
 		});
 	};
 

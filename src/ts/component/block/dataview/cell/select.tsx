@@ -7,10 +7,10 @@ interface Props extends I.Cell {};
 class CellSelect extends React.Component<Props, {}> {
 
 	render () {
-		const { data } = this.props;
+		const { data, relation } = this.props;
 		
 		return (
-			<Tag text={data} />
+			<Tag text={data[relation.id]} />
 		);
 	};
 	
