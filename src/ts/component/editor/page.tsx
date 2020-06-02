@@ -410,7 +410,7 @@ class EditorPage extends React.Component<Props, State> {
 			this.timeoutHover = window.setTimeout(() => {
 				add.css({ opacity: 0 });
 				items.removeClass('showMenu isAdding top bottom');
-			}, 200);
+			}, 10);
 		};
 	};
 	
