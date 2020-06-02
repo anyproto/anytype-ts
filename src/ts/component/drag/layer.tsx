@@ -115,7 +115,6 @@ class DragLayer extends React.Component<Props, State> {
 	};
 	
 	move (x: number, y: number) {
-		
 		raf(() => {
 			if (!this._isMounted) {
 				return;
