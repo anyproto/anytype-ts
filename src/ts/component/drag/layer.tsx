@@ -4,7 +4,6 @@ import { RouteComponentProps } from 'react-router';
 import { Block } from 'ts/component';
 import { I, M, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -21,7 +20,6 @@ interface State {
 	y: number;
 };
 
-@observer
 class DragLayer extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
@@ -117,13 +115,19 @@ class DragLayer extends React.Component<Props, State> {
 	};
 	
 	move (x: number, y: number) {
+		
 		raf(() => {
 			if (!this._isMounted) {
 				return;
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
-			node.css({ transform: `translate3d(${x + 10}px, ${y + 10}px, 0px)` });
+			
+			let css: any = { left: 0, top: 0, transform: `translate3d(${x + 10}px, ${y + 10}px, 0px)` };
+			if (!x && !y) {
+				css.left = css.top = '';
+			};
+			node.css(css);
 		});
 	};
 	

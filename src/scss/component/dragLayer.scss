@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.dragLayer { position: fixed; z-index: 1000; left: -10000px; top: -10000px; }
+.dragLayer { position: fixed; z-index: 1000; left: -10000px; top: -10000px; will-change: transform; }
 .dragLayer {
 	.blocks { margin: 0px !important; }
 	.blocks {

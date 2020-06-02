@@ -1,7 +1,10 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block { font-size: 16px; line-height: 24px; word-break: break-word; display: flex; flex: auto; position: relative; margin: 0px 0px 2px 0px; }
+	.block { 
+		font-size: 16px; line-height: 24px; word-break: break-word; display: flex; flex: auto; position: relative; margin: 0px 0px 2px 0px; 
+		transform: translateZ(0px);
+	}
 	.block {
 		.wrapMenu { width: 48px; text-align: right; position: relative; }
 		.wrapContent { width: calc(100% - 48px); position: relative; }
