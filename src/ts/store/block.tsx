@@ -403,12 +403,13 @@ class BlockStore {
 		};
 		
 		if (content) {
-			item.content = content;
-
 			if (type != I.BlockType.Dataview) {
-				item.content = Util.objectCopy(item.content);
+				item.content = Util.objectCopy(content);
+			} else {
+				item.content = content;
 			};
 
+			item.content.style = content.style;
 			if (content.fields) {
 				item.content.fields = StructDecode.decodeStruct(content.fields);
 			};
@@ -428,13 +429,11 @@ class BlockStore {
 					};
 				};
 				
-				item.content.style = content.style;
 				item.content.marker = content.marker;
 				item.content.marks = marks;
 			};
-			
+
 			if (type == I.BlockType.Link) {
-				item.content.style = content.style;
 				item.content.targetBlockId = String(item.content.targetBlockId || '');
 			};
 			

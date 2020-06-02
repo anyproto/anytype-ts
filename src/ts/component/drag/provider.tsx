@@ -13,8 +13,9 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
-const OFFSET = 100;
 const Constant = require('json/constant.json');
+const OFFSET = 100;
+const THROTTLE = 20;
 
 @observer
 class DragProvider extends React.Component<Props, {}> {
@@ -152,8 +153,12 @@ class DragProvider extends React.Component<Props, {}> {
 
 		console.log('[dragProvider.onDragStart]', type, ids);
 
+		const st = $(window).scrollTop();
+		const ex = e.pageX;
+		const ey = e.pageY;
+
 		this.map = blockStore.getMap(rootId);
-		this.refLayer.show(type, ids, component);
+		this.refLayer.show(type, ids, component, ex, Math.max(0, ey - st));
 		this.set(type, ids);
 		this.unbind();
 		this.setDragImage(e);
@@ -164,7 +169,7 @@ class DragProvider extends React.Component<Props, {}> {
 		Util.linkPreviewHide(false);
 
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
-		win.on('drag.drag', (e: any) => { this.onDragMove(e); });
+		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e);

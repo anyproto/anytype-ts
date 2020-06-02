@@ -17,6 +17,8 @@ interface State {
 	type: string;
 	width: number;
 	ids: string[];
+	x: number;
+	y: number;
 };
 
 @observer
@@ -26,7 +28,9 @@ class DragLayer extends React.Component<Props, State> {
 	state = {
 		type: '',
 		width: 0,
-		ids: [] as string[]
+		ids: [] as string[],
+		x: 0,
+		y: 0,
 	};
 	
 	constructor (props: any) {
@@ -39,12 +43,11 @@ class DragLayer extends React.Component<Props, State> {
 	
 	render () {
 		const { ids, type, width } = this.state;
+		const { rootId } = this.props;
 		
 		if (!type) {
 			return null;
 		};
-		
-		const { rootId } = this.props;
 		
 		let content = null;
 		
@@ -78,17 +81,23 @@ class DragLayer extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
+		const { type, x, y } = this.state;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		node.find('.block').attr({ id: '' });
 		node.find('.selectable').attr({ id: '' });
+		
+		if (type) {
+			node.css({ left: 0, top: 0 });
+			this.move(x, y);
+		};
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
 	
-	show (type: string, ids: string[], component: any) {
+	show (type: string, ids: string[], component: any, x: number, y: number) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -96,7 +105,7 @@ class DragLayer extends React.Component<Props, State> {
 		const comp = $(ReactDOM.findDOMNode(component));
 		const rect = comp.get(0).getBoundingClientRect() as DOMRect;
 		
-		this.setState({ type: type, width: rect.width, ids: ids });
+		this.setState({ type: type, width: rect.width, ids: ids, x: x, y: y });
 	};
 
 	hide () {
@@ -104,9 +113,6 @@ class DragLayer extends React.Component<Props, State> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		node.css({ left: '', top: '' });
 		this.setState({ type: '', ids: [] });
 	};
 	
@@ -117,9 +123,7 @@ class DragLayer extends React.Component<Props, State> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
-			const css = x && y ? { left: 0, top: 0, transform: `translate3d(${x + 10}px, ${y + 10}px, 0px)` } : { left: '', top: '' };
-			
-			node.css(css);
+			node.css({ transform: `translate3d(${x + 10}px, ${y + 10}px, 0px)` });
 		});
 	};
 	
