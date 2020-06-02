@@ -35,13 +35,13 @@ class DragLayer extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { ids, type, width } = this.state;
-		const { rootId } = this.props;
-		
+		let { ids, type, width } = this.state;
+		let { rootId } = this.props;
 		let content = null;
+		
 		switch (type) {
 			case I.DragItem.Block:
-				const blocks = ids.map((id: string) => {
+				const blocks = ids.slice(0, 10).map((id: string) => {
 					let block = blockStore.getLeaf(rootId, id);
 					block = new M.Block(Util.objectCopy(block));
 					return block;
