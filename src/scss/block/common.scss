@@ -9,7 +9,7 @@
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
 			width: 20px; height: 100%; background-size: 20px 20px; opacity: 0; cursor: grab; position: absolute; right: 2px; top: 0px;
-			transition: $transitionFast; background-image: url('~img/icon/block/menu.svg');
+			transition: none; background-image: url('~img/icon/block/menu.svg');
 		}
 		
 		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
@@ -31,7 +31,7 @@
 
 		.menuOver { 
 			position: absolute; left: -24px; top: 0px; width: calc(100% + 24px); height: 100%; background: $colorDarkGrey; opacity: 0.15;
-			display: none; pointer-events: none; z-index: 10; border-radius: 8px;
+			display: none; pointer-events: none; z-index: -1; border-radius: 8px;
 		}
 		
 		.focusable { border-radius: inherit; }
@@ -62,15 +62,14 @@
 		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; bottom: -2px;
 	}
 	
-	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block:hover > .wrapMenu > .icon.dnd, 
 	.block.showMenuAdd > .wrapMenu > .icon.dnd, 
 	.block.showMenu > .wrapMenu > .icon.dnd 
 	{ opacity: 1; }
 
-	.block.showMenuAdd > .wrapContent > .selectable > .menuOver { 
-		left: -24px; width: calc(100% + 24px); background: $colorDarkGrey; border-radius: 8px; opacity: 0.15;
-		display: block;
-	}
+	.block.showMenuAdd > .wrapContent > .selectable > .menuOver { display: block; }
+	.block.showMenuAdd > .wrapContent > .selectable > .selectionOver { border-radius: 0px 8px 8px 0px; }
+	.block.showMenuAdd > .wrapContent.bgColor { border-radius: 0px 8px 8px 0px; }
 
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
 	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
@@ -97,4 +96,9 @@
 	// Remove padding for first block after title
 	.block.index-1 { padding-top: 0px !important; }
 	#block-div-1 > .wrapContent > .children > .block.first { padding-top: 0px !important; }
+}
+
+.dragProvider.isDragging {
+	.block > .wrapContent > .selectable > .menuOver { display: block; }
+	.block > .wrapMenu > .icon.dnd { opacity: 1; }
 }

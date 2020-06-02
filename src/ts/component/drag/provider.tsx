@@ -73,14 +73,31 @@ class DragProvider extends React.Component<Props, {}> {
 
 			const data = item.data();
 			const offset = item.offset();
+			
+			let x = offset.left;
+			let y = offset.top;
+			let w = item.width();
+			let h = item.height();
+			
+			// Add block's paddings to height
+			if (data.dropType == I.DragItem.Block) {
+				const block = $('#block-' + data.id);
+				if (block.length) {
+					let paddingTop = parseInt(block.css('paddingTop'));
+					let paddingBot = parseInt(block.css('paddingBottom'));
+
+					y -= paddingTop;
+					h += paddingTop + paddingBot;
+				};
+			};
 
 			this.objectData[data.id] = {
 				obj: item,
 				index: i,
-				width: item.width(),
-				height: item.height(),
-				x: offset.left,
-				y: offset.top,
+				width: w,
+				height: h,
+				x: x,
+				y: y,
 				...data
 			};
 		});
@@ -128,6 +145,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
 
 		e.stopPropagation();
 		focus.clear(true);
@@ -141,6 +159,7 @@ class DragProvider extends React.Component<Props, {}> {
 		this.setDragImage(e);
 		this.initData();
 
+		node.addClass('isDragging');
 		keyboard.setDrag(true);
 		Util.linkPreviewHide(false);
 
@@ -289,12 +308,14 @@ class DragProvider extends React.Component<Props, {}> {
 	onDragEnd (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
+		const node = $(ReactDOM.findDOMNode(this));
 
 		this.refLayer.hide();
 		this.unbind();
 		this.clear();
 
 		keyboard.setDrag(false);
+		node.removeClass('isDragging');
 
 		if (selection) {
 			selection.preventSelect(false);
