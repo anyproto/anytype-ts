@@ -157,6 +157,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const layer = $('#dragLayer');
 
 		e.stopPropagation();
 		focus.clear(true);
@@ -167,9 +168,9 @@ class DragProvider extends React.Component<Props, {}> {
 		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
 		this.unbind();
-		this.setDragImage(e);
 		this.initData();
 
+		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 		node.addClass('isDragging');
 		keyboard.setDrag(true);
 		Util.linkPreviewHide(false);
@@ -412,10 +413,6 @@ class DragProvider extends React.Component<Props, {}> {
 			case I.BlockPosition.Inner:	 c = 'middle'; break;
 		};
 		return c;
-	};
-
-	setDragImage (e: any) {
-		e.dataTransfer.setDragImage($('#dragLayer').get(0), 0, 0);
 	};
 
 	injectProps (children: any) {
