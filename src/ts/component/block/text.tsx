@@ -255,7 +255,7 @@ class BlockText extends React.Component<Props, {}> {
 
 			if (smile && smile.length && (details.iconEmoji || details.iconImage)) {
 				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
-				smile.after('<img src="./img/space.png" class="space" />');
+				smile.after('<img src="./img/space.svg" class="space" />');
 				param.class += ' withImage';
 			} else {
 			};
