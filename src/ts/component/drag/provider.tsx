@@ -35,6 +35,7 @@ class DragProvider extends React.Component<Props, {}> {
 	objects: any = null;
 	objectData: any = {};
 	emptyObj: any = null;
+	paddingData: any = {};
 
 	constructor (props: any) {
 		super(props);
@@ -70,16 +71,16 @@ class DragProvider extends React.Component<Props, {}> {
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
 
-		this.objects.each((i: number, item: any) => {
-			item = $(item);
-
+		this.objects.each((i: number, el: any) => {
+			const item = $(el);
 			const data = item.data();
 			const offset = item.offset();
+			const rect = el.getBoundingClientRect() as DOMRect;
 			
 			let x = offset.left;
 			let y = offset.top;
-			let w = item.width();
-			let h = item.height();
+			let w = rect.width;
+			let h = rect.height;
 			let isTargetTop = item.hasClass('targetTop');
 			let isTargetBot = item.hasClass('targetBot');
 			let key = data.id;
@@ -89,14 +90,21 @@ class DragProvider extends React.Component<Props, {}> {
 			
 			// Add block's paddings to height
 			if ((data.dropType == I.DragItem.Block) && (data.type != I.BlockType.Layout)) {
-				const block = $('#block-' + data.id);
+				const key = [ data.type, data.style ].join('-');
 				
-				if (block.length) {
-					let paddingTop = parseInt(block.css('paddingTop'));
-					let paddingBot = parseInt(block.css('paddingBottom'));
+				if (!this.paddingData[key]) {
+					const block = $('#block-' + data.id);
+					if (block.length) {
+						this.paddingData[key] = { 
+							top: parseInt(block.css('paddingTop')),
+							bot: parseInt(block.css('paddingBottom')),
+						};
+					};
+				};
 
-					y -= paddingTop + 2;
-					h += paddingTop + paddingBot + 2;
+				if (this.paddingData[key]) {
+					y -= this.paddingData[key].top + 2;
+					h += this.paddingData[key].top + this.paddingData[key].bot + 2;
 				};
 			};
 
@@ -191,7 +199,6 @@ class DragProvider extends React.Component<Props, {}> {
 	onDragMove (e: any) {
 		const { rootId } = this.props;
 
-		const st = $(window).scrollTop();
 		const ex = e.pageX;
 		const ey = e.pageY;
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
