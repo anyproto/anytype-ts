@@ -1,10 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block { 
-		font-size: 16px; line-height: 24px; word-break: break-word; display: flex; flex: auto; position: relative; margin: 0px 0px 2px 0px; 
-		transform: translateZ(0px);
-	}
+	.block { @include text-paragraph; word-break: break-word; display: flex; flex: auto; position: relative; margin: 0px 0px 2px 0px; }
 	.block {
 		.wrapMenu { width: 48px; text-align: right; position: relative; }
 		.wrapContent { width: calc(100% - 48px); position: relative; }
@@ -33,7 +30,7 @@
 		}
 
 		.menuOver { 
-			position: absolute; left: -24px; top: 0px; width: calc(100% + 24px); height: 100%; background: $colorDarkGrey; opacity: 0.15;
+			position: absolute; left: -24px; top: 0px; width: calc(100% + 24px); height: 100%; background: rgba(172,169,150,0.15);
 			display: none; pointer-events: none; z-index: -1; border-radius: 8px;
 		}
 		

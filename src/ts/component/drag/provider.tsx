@@ -15,7 +15,7 @@ interface Props extends RouteComponentProps<any> {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const OFFSET = 100;
-const THROTTLE = 40;
+const THROTTLE = 20;
 
 @observer
 class DragProvider extends React.Component<Props, {}> {
