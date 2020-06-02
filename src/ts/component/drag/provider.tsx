@@ -239,7 +239,7 @@ class DragProvider extends React.Component<Props, {}> {
 			const { x, y, width, height } = this.hoverData;
 			const col1 = x - Constant.size.blockMenu / 2;
 			const col2 = x + width * 0.2;
-			const col3 = x + width * 0.6;
+			const col3 = x + width * 0.8;
 
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
