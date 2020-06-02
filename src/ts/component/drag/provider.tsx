@@ -95,8 +95,8 @@ class DragProvider extends React.Component<Props, {}> {
 					let paddingTop = parseInt(block.css('paddingTop'));
 					let paddingBot = parseInt(block.css('paddingBottom'));
 
-					y -= paddingTop;
-					h += paddingTop + paddingBot;
+					y -= paddingTop + 2;
+					h += paddingTop + paddingBot + 2;
 				};
 			};
 
@@ -163,12 +163,8 @@ class DragProvider extends React.Component<Props, {}> {
 
 		console.log('[dragProvider.onDragStart]', type, ids);
 
-		const st = $(window).scrollTop();
-		const ex = e.pageX;
-		const ey = e.pageY;
-
 		this.map = blockStore.getMap(rootId);
-		this.refLayer.show(type, ids, component, ex, Math.max(0, ey - st));
+		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
 		this.unbind();
 		this.setDragImage(e);
@@ -200,7 +196,6 @@ class DragProvider extends React.Component<Props, {}> {
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
 
-		this.refLayer.move(ex, Math.max(0, ey - st));
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
 
@@ -292,8 +287,6 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 		};
 
-		window.clearTimeout(this.timeoutHover);
-
 		/*
 		if (this.canDrop) {
 			if ((this.position == I.BlockPosition.Top) && prev) {
@@ -305,6 +298,7 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 		*/
 
+		window.clearTimeout(this.timeoutHover);
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
 			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
 			this.hoverData.obj.addClass('isOver ' + this.getDirectionClass(this.position));
@@ -421,15 +415,7 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	setDragImage (e: any) {
-		let el = $('#emptyDragImage');
-
-		if (!el.length) {
-			el = $('<div id="emptyDragImage">');
-			$('body').append(el);
-		};
-
-		el.css({ width: 1, height: 1, opacity: 0 });
-		e.dataTransfer.setDragImage(el.get(0), 0, 0);
+		e.dataTransfer.setDragImage($('#dragLayer').get(0), 0, 0);
 	};
 
 	injectProps (children: any) {

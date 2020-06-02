@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.dragLayer { position: fixed; z-index: 1000; left: -10000px; top: -10000px; will-change: transform; }
+.dragLayer { position: fixed; z-index: 1000; left: -100000px; top: -100000px; }
 .dragLayer {
 	.blocks { margin: 0px !important; }
 	.blocks {
@@ -8,10 +8,9 @@
 		.block {
 			.wrapMenu { display: none; }
 			.dropTarget { padding-left: 4px; opacity: 0.35; }
-			.menuOver { display: block; }
 			
 			.children {
-				.block { box-shadow: 0px 0px; padding: 0px; }
+				.block { padding: 0px; }
 				.wrapMenu { display: block; }
 				.wrapContent { width: calc(100% - 46px); padding: 0px; }
 			}
