@@ -122,6 +122,9 @@ class BlockDataview extends React.Component<Props, State> {
 
 		ret.views = content.views;
 		ret.views = ret.views.map((view: I.View) => {
+			if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'id'; })) {
+				view.relations.push({ id: 'id', visible: true });
+			};
 			view.relations = view.relations.map((relation: I.ViewRelation) => {
 				const rel = ret.relations.find((it: I.Relation) => { return it.id == relation.id; });
 				return Object.assign(rel, relation);

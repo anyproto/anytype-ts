@@ -10,6 +10,11 @@
     "uniqueItems": true,
     "default": [
       {
+        "id": "id",
+        "name": "Id",
+        "type": "https://anytype.io/schemas/types/description"
+      },
+      {
         "id": "name",
         "name": "Name",
         "type": "https://anytype.io/schemas/types/title"

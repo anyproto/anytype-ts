@@ -30,12 +30,15 @@ class ViewGrid extends React.Component<Props, {}> {
 		);
 		
 		const CellBody = (item: any) => {
+			let id = [ item.relation.id, item.index ];
 			let cn = [ 'cell', 'c-' + item.relation.type ];
+
 			if (item.relation.id == 'name') {
 				cn.push('isName');
 			};
+
 			return (
-				<td className={cn.join(' ')}>
+				<td id={id.join('-')} className={cn.join(' ')}>
 					<Cell onOpen={onOpen} {...item} view={view} id={item.index} />
 				</td>
 			);

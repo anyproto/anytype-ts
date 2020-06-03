@@ -6,7 +6,7 @@
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/plus0.svg'); cursor: pointer; }
 		.icon.plus:hover { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 		
-		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox { background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 		
 		.icon.expand { display: none; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/expand0.svg'); cursor: pointer; }
@@ -70,6 +70,11 @@
 			
 			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }
 			.cell { @include text-common; line-height: 20px; }
+			.cell.isEditing { border: 2px solid $colorOrange !important; border-radius: 2px; }
+			
+			.cell {
+				.input-text { padding: 0px; height: 20px; }
+			}
 
 			.cellContent.c-title {
 				.smile { margin: 0px 4px 0px 0px; }
