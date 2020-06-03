@@ -13,7 +13,7 @@ interface Props {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
+
 const THROTTLE = 20;
 const THRESHOLD = 10;
 
@@ -32,7 +32,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	nodes: any = null;
 	isSelectionPrevented: boolean = false;
 	isClearPrevented: boolean = false;
-	rects: any = {};
+	rects: Map<string, any> = new Map();
 	
 	constructor (props: any) {
 		super(props);
@@ -256,7 +256,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		scrollOnMove.onMouseUp(e);
 		this.hide();
 		
-		this.rects = {};
+		this.rects.clear();
 		this.lastIds = [];
 		this.focused = '';
 		this.range = null;
@@ -278,19 +278,27 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	cacheRect (obj: any) {
 		const id = String(obj.data('id') || '');
+		if (!id) {
+			return null;
+		};
 		
-		if (!id || this.rects[id]) {
-			return;
+		let cached = this.rects.get(id);
+		if (cached) {
+			return cached;
 		};
 		
 		const offset = obj.offset();
+		const rect = obj.get(0).getBoundingClientRect() as DOMRect;
 		
-		this.rects[id] = {
+		cached = {
 			x: offset.left,
 			y: offset.top,
-			width: obj.width(),
-			height: obj.height(),
+			width: rect.width,
+			height: rect.height,
 		};
+
+		this.rects.set(id, cached);
+		return cached;
 	};
 	
 	checkEachNode (e: any, rect: any, item: any) {
@@ -300,14 +308,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 			
-		this.cacheRect(item);
-			
-		if (!this.rects[id] || !Util.rectsCollide(rect, this.rects[id])) {
+		const cached = this.cacheRect(item);
+		if (!cached || !Util.rectsCollide(rect, cached)) {
 			return;
 		};
 
 		const block = $('#block-' + id);
-			
+		
 		if ((e.ctrlKey || e.metaKey)) {
 			if (this.lastIds.indexOf(id) < 0) {
 				if (item.hasClass('isSelected')) {
