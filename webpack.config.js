@@ -23,7 +23,13 @@ module.exports = (env) => {
 			hot: true,
 			inline: true,
 			contentBase: path.join(__dirname, 'dist'),
-			historyApiFallback: true
+			historyApiFallback: true,
+			watchOptions: {
+				ignored: [
+					path.resolve(__dirname, 'dist'),
+					path.resolve(__dirname, 'node_modules')
+				]
+			}
 		},
 	
 		module: {
