@@ -135,8 +135,6 @@ class PopupSettings extends React.Component<Props, State> {
 
 				content = (
 					<div>
-						{loading ? <Loader /> : ''}
-
 						<Head id="index" name="Settings" />
 						<Title text="Wallpaper" />
 
@@ -324,6 +322,7 @@ class PopupSettings extends React.Component<Props, State> {
 
 		return (
 			<div className={'tab ' + Util.toCamelCase('tab-' + page)}>
+				{loading ? <Loader /> : ''}
 				{content}
 			</div>
 		);
@@ -474,8 +473,11 @@ class PopupSettings extends React.Component<Props, State> {
 				return;
 			};
 
-			C.BlockImportMarkdown(rootId, files[0]);
-			commonStore.popupClose(this.props.id);
+			this.setState({ loading: true });
+			C.BlockImportMarkdown(rootId, files[0], () => {
+				commonStore.popupClose(this.props.id);
+				this.setState({ loading: false });
+			});
 		});
 	};
 

@@ -127,6 +127,10 @@ function menuInit () {
 			role: 'fileMenu',
 			submenu: [
 				{
+					label: 'Show work directory',
+					click: function () { shell.openItem(app.getPath('userData')); }
+				},
+				{
 					label: 'Import',
 					click: function () { win.webContents.send('import'); }
 				},

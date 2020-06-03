@@ -33,9 +33,8 @@ class DragProvider extends React.Component<Props, {}> {
 	init: boolean = false;
 
 	objects: any = null;
-	objectData: any = {};
+	objectData: Map<string, any> = new Map();
 	emptyObj: any = null;
-	paddingData: any = {};
 
 	constructor (props: any) {
 		super(props);
@@ -100,7 +99,7 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
-			this.objectData[key] = {
+			this.objectData.set(key, {
 				obj: item,
 				index: i,
 				width: w,
@@ -110,7 +109,7 @@ class DragProvider extends React.Component<Props, {}> {
 				isTargetTop: isTargetTop,
 				isTargetBot: isTargetBot,
 				...data
-			};
+			});
 		});
 	};
 
@@ -205,20 +204,19 @@ class DragProvider extends React.Component<Props, {}> {
 			this.emptyObj.remove();
 		};
 
-		for (let id in this.objectData) {
-			const data = this.objectData[id];
+		this.objectData.forEach((value: any) => {
+			let { x, y, width, height, dropType, index } = value;
 
-			let { x, y, width, height } = data;
-			if (data.dropType == I.DragItem.Block) {
+			if (dropType == I.DragItem.Block) {
 				x -= OFFSET;
 				width += OFFSET * 2;
 			};
 
 			if ((ex >= x) && (ex <= x + width) && (ey >= y) && (ey <= y + height)) {
-				prev = this.objects.get(data.index - 1);
-				this.hoverData = data;
+				prev = this.objects.get(index - 1);
+				this.hoverData = value;
 			};
-		};
+		});
 
 		this.canDrop = true;
 
@@ -450,7 +448,7 @@ class DragProvider extends React.Component<Props, {}> {
 		this.init = false;
 		this.position = I.BlockPosition.None;
 		this.objects = null;
-		this.objectData = {};
+		this.objectData.clear();
 	};
 
 };
