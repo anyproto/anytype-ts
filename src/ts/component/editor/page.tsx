@@ -1231,7 +1231,7 @@ class EditorPage extends React.Component<Props, State> {
 			focus.clear(true);
 			C.BlockUnlink(rootId, [ focused.id ], cb);
 		} else {
-			C.BlockUnlink(rootId, [ next.id ], () => {
+			C.BlockUnlink(rootId, [ next.id ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
