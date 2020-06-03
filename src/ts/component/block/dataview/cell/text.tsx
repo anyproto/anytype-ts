@@ -23,6 +23,7 @@ class CellText extends React.Component<Props, State> {
 
 		this.onClick = this.onClick.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 	};
 
 	render () {
@@ -33,7 +34,13 @@ class CellText extends React.Component<Props, State> {
 
 		if (editing) {
 			Name = (item: any) => (
-				<Input ref={(ref: any) => { this.ref = ref; }} value={item.name} className="name" onChange={this.onChange} />
+				<Input 
+					ref={(ref: any) => { this.ref = ref; }} 
+					value={item.name} 
+					className="name" 
+					onChange={this.onChange} 
+					onBlur={this.onBlur} 
+				/>
 			);
 		} else {
 			Name = (item: any) => (
@@ -41,11 +48,7 @@ class CellText extends React.Component<Props, State> {
 			);
 		};
 
-		let content: any = (
-			<div className="name" onClick={this.onClick}>
-				<Name name={data[relation.id]} />
-			</div>
-		);
+		let content: any = <Name name={data[relation.id]} />;
 
 		if (relation.id == 'name') {
 			let cn = 'c20';
@@ -101,6 +104,10 @@ class CellText extends React.Component<Props, State> {
 		this.timeout = window.setTimeout(() => {
 			this.setState({ editing: false });
 		}, 500);
+	};
+
+	onBlur (e: any) {
+		this.setState({ editing: false });
 	};
 	
 };

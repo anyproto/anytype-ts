@@ -12,7 +12,7 @@
       {
         "id": "id",
         "name": "Id",
-        "type": "https://anytype.io/schemas/types/description"
+        "type": "https://anytype.io/schemas/types/number"
       },
       {
         "id": "name",

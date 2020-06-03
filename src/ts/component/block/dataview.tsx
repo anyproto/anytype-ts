@@ -106,11 +106,7 @@ class BlockDataview extends React.Component<Props, State> {
 			data: data,
 		};
 
-		ret.relations.push({
-			id: 'id',
-			name: 'Id',
-			type: I.RelationType.Text,
-		});
+		console.log(JSON.stringify(schema, null, 3));
 
 		for (let field of schema.default) {
 			ret.relations.push({

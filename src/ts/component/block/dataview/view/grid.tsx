@@ -21,9 +21,10 @@ class ViewGrid extends React.Component<Props, {}> {
 	render () {
 		const { content, onOpen } = this.props;
 		const { data, view } = content;
+		const width = 100 / view.relations.length;
 		
 		const CellHead = (item: any) => (
-			<th className={'head c-' + item.type}>
+			<th className={'head c-' + item.type} style={{ width: width + '%' }}>
 				<Icon className={'relation c-' + item.type} />
 				<div className="name">{item.name}</div>
 			</th>
@@ -38,7 +39,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			};
 
 			return (
-				<td id={id.join('-')} className={cn.join(' ')}>
+				<td id={id.join('-')} className={cn.join(' ')} style={{ width: width + '%' }}>
 					<Cell onOpen={onOpen} {...item} view={view} id={item.index} />
 				</td>
 			);

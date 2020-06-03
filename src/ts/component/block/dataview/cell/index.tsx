@@ -28,9 +28,9 @@ class Cell extends React.Component<Props, {}> {
 		let CellComponent: React.ReactType<Props>;
 		switch (relation.type) {
 			default:
-			case I.RelationType.Text:
 			case I.RelationType.Title:
 			case I.RelationType.Number:
+			case I.RelationType.Description:
 				CellComponent = CellText;
 				break;
 				
