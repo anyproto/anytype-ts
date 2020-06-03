@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, Tag, Input } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -19,7 +19,8 @@ const $ = require('jquery');
 @observer
 class MenuTagList extends React.Component<Props, State> {
 	
-	filterRef: any = null;
+	_isMounted: boolean = false;
+	ref: any = null;
 	state = {
 		items: [] as any[],
 		filter: ''
@@ -60,7 +61,7 @@ class MenuTagList extends React.Component<Props, State> {
 		return (
 			<div>
 				<form className="form" onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.filterRef = ref; }} onKeyUp={this.onKeyUp} placeHolder="Create or select an option" />
+					<Input ref={(ref: any) => { this.ref = ref; }} onKeyUp={this.onKeyUp} placeHolder="Create or select an option" />
 				</form>
 				<div className="line" />
 				<List 
@@ -76,12 +77,24 @@ class MenuTagList extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+
 		const { param } = this.props;
 		const { data } = param;
 		const { values } = data;
 		
 		this.setState({ items: values });
-		this.filterRef.focus();
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+				keyboard.setFocus(true);
+			};
+		}, 15);
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+		keyboard.setFocus(false);
 	};
 	
 	onSelect (e: any, id: number) {
@@ -108,7 +121,7 @@ class MenuTagList extends React.Component<Props, State> {
 		e.preventDefault();
 		
 		let { items } = this.state; 
-		let filter = this.filterRef.getValue();
+		let filter = this.ref.getValue();
 		
 		if (items.indexOf(filter) < 0) {
 			items.push(filter);
@@ -117,7 +130,7 @@ class MenuTagList extends React.Component<Props, State> {
 	};
 	
 	onKeyUp (e: any) {
-		const filter = this.filterRef.getValue().toLowerCase();
+		const filter = this.ref.getValue().toLowerCase();
 		this.setState({ filter: filter });
 	};
 	

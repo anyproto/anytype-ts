@@ -21,7 +21,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	focus: boolean = false;
 	timeout: number = 0;
 	n: number = 0;
-	refFilter: any = null;
+	ref: any = null;
 	state = {
 		filter: '',
 	};
@@ -89,7 +89,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return (
 			<div>
 				<div className="filter">
-					<Input ref={(ref: any) => { this.refFilter = ref; }} placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				</div>
 				
 				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
@@ -101,8 +101,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { id, param } = this.props;
-		const { data } = param;
+		const { id } = this.props;
 		const menu = $('#' + Util.toCamelCase('menu-' + id));
 		
 		this._isMounted = true;
@@ -110,7 +109,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.setActive();
 
 		window.setTimeout(() => {
-			this.refFilter.focus();
+			if (this.ref) {
+				this.ref.focus();
+				keyboard.setFocus(true);
+			};
 		}, 15);
 		
 		menu.unbind('mouseleave').on('mouseleave', () => {
@@ -126,6 +128,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 		this.unbind();
+		keyboard.setFocus(false);
 	};
 	
 	onFilterFocus (e: any) {
@@ -276,7 +279,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (k != Key.down) {
 				return;
 			};
-			this.refFilter.blur();
+			this.ref.blur();
 			this.n = -1;
 		};
 		
@@ -381,7 +384,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		this.refFilter.blur();
+		this.ref.blur();
 		let menuParam: I.MenuParam = {
 			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,
