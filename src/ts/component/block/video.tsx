@@ -325,10 +325,10 @@ class BlockVideo extends React.Component<Props, {}> {
 			return width;
 		};
 		
-		const ew = el.width();
-		const w = Math.min(ew, Math.max(160, checkMax ? width * ew : v));
+		const rect = el.get(0).getBoundingClientRect() as DOMRect;
+		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
-		return Math.min(1, Math.max(0, w / ew));
+		return Math.min(1, Math.max(0, w / rect.width));
 	};
 	
 	getHeight (p: number) {
@@ -340,7 +340,8 @@ class BlockVideo extends React.Component<Props, {}> {
 			return 0;
 		};
 		
-		return Math.floor(p * el.width() / (this.div || 1));
+		const rect = el.get(0).getBoundingClientRect() as DOMRect;
+		return Math.floor(p * rect.width / (this.div || 1));
 	};
 	
 };

@@ -321,13 +321,14 @@ class BlockCover extends React.Component<Props, State> {
 		const { coverX, coverY } = details;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#drag-value');
+		const rect = this.cover.get(0).getBoundingClientRect() as DOMRect;
 		
 		v = (v + 1) * 100;
 		value.text(Math.ceil(v) + '%');
 		this.cover.css({ height: 'auto', width: v + '%' });
 
-		this.rect.cw = this.cover.width();
-		this.rect.ch = this.cover.height();
+		this.rect.cw = rect.width;
+		this.rect.ch = rect.height;
 		
 		this.x = coverX * this.rect.cw;
 		this.y = coverY * this.rect.ch;

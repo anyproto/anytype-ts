@@ -141,7 +141,8 @@ class BlockBookmark extends React.Component<Props, {}> {
 			
 		const node = $(ReactDOM.findDOMNode(this));
 		const inner = node.find('.inner');
-		const width = node.width();
+		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+		const width = rect.width;
 		
 		width <= Constant.size.page / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
 	};

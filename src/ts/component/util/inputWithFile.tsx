@@ -171,13 +171,13 @@ class InputWithFile extends React.Component<Props, State> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this));
-			const width = node.width();
+			const rect = node.get(0).getBoundingClientRect() as DOMRect;
 			
 			let size = Size.Full;
-			if (width <= SMALL_WIDTH) {
+			if (rect.width <= SMALL_WIDTH) {
 				size = Size.Small;
 			};
-			if (width <= ICON_WIDTH) {
+			if (rect.width <= ICON_WIDTH) {
 				size = Size.Icon;
 			};
 			
