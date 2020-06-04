@@ -95,18 +95,15 @@ class BlockDataview extends React.Component<Props, State> {
 
 		let schemaId = 'https://anytype.io/schemas/page';
 		let schema = Schema[DataUtil.schemaField(schemaId)];
-
-		if (!schema) {
-			return {};
-		};
-
 		let ret: any = {
 			views: [],
 			relations: [],
 			data: data,
 		};
 
-		console.log(JSON.stringify(schema, null, 3));
+		if (!schema) {
+			return ret;
+		};
 
 		for (let field of schema.default) {
 			ret.relations.push({
@@ -118,9 +115,15 @@ class BlockDataview extends React.Component<Props, State> {
 
 		ret.views = content.views;
 		ret.views = ret.views.map((view: I.View) => {
+			
+			// TMP
 			if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'id'; })) {
 				view.relations.push({ id: 'id', visible: true });
 			};
+			if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'description'; })) {
+				view.relations.push({ id: 'description', visible: true });
+			};
+
 			view.relations = view.relations.map((relation: I.ViewRelation) => {
 				const rel = ret.relations.find((it: I.Relation) => { return it.id == relation.id; });
 				return Object.assign(rel, relation);
@@ -147,8 +150,10 @@ class BlockDataview extends React.Component<Props, State> {
 		let details = StructDecode.decodeStruct(page.details || {});
 		details.name = String(details.name || Constant.default.name || '');
 
+		console.log(page);
 		return {
 			id: page.id,
+			description: page.snippet,
 			...details,
 		};
 	};

@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { Icon, Smile, Input } from 'ts/component';
+import * as ReactDOM from 'react-dom';
+import { I, keyboard } from 'ts/lib';
+import { Icon, Smile, Input, Textarea } from 'ts/component';
+import { allowStateReadsEnd } from 'mobx/lib/internal';
 
 interface Props extends I.Cell {};
 
@@ -16,13 +18,14 @@ class CellText extends React.Component<Props, State> {
 		editing: false,
 	};
 	ref: any = null;
-	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
-		this.onChange = this.onChange.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 	};
 
@@ -31,15 +34,25 @@ class CellText extends React.Component<Props, State> {
 		const { data, relation, view, onOpen } = this.props;
 
 		let Name = null;
-
+		let EditorComponent = null;
 		if (editing) {
+			if (relation.type == I.RelationType.Description) {
+				EditorComponent = (item: any) => (
+					<Textarea ref={(ref: any) => { this.ref = ref; }} id="textarea" {...item} />
+				);
+			} else {
+				EditorComponent = (item: any) => (
+					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} />
+				);
+			};
 			Name = (item: any) => (
-				<Input 
-					ref={(ref: any) => { this.ref = ref; }} 
+				<EditorComponent 
 					value={item.name} 
 					className="name" 
-					onChange={this.onChange} 
-					onBlur={this.onBlur} 
+					onKeyDown={this.onKeyDown} 
+					onKeyUp={this.onKeyUp} 
+					onFocus={this.onFocus} 
+					onBlur={this.onBlur}
 				/>
 			);
 		} else {
@@ -76,9 +89,9 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		return (
-			<React.Fragment>
+			<div>
 				{content}
-			</React.Fragment>
+			</div>
 		);
 	};
 
@@ -93,21 +106,44 @@ class CellText extends React.Component<Props, State> {
 		} else {
 			cell.removeClass('isEditing');
 		};
+
+		this.resize();
 	};
 
 	onClick (e: any) {
-		this.setState({ editing: true });
+		const { view } = this.props;
+		const canEdit = view.type == I.ViewType.Grid;
+
+		if (canEdit) {
+			this.setState({ editing: true });
+		};
 	};
 
-	onChange (e: any, value: string) {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			this.setState({ editing: false });
-		}, 500);
+	onKeyDown (e: any, value: string) {
+		this.resize();
+	};
+
+	onKeyUp (e: any, value: string) {
+		this.resize();
+	};
+
+	onFocus (e: any) {
+		keyboard.setFocus(true);
 	};
 
 	onBlur (e: any) {
-		this.setState({ editing: false });
+		keyboard.setFocus(false);
+		//this.setState({ editing: false });
+	};
+
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const area = node.find('#textarea');
+
+		if (area.length) {
+			area.css({ height: 'auto' });
+			area.css({ height: area.get(0).scrollHeight + 14 });
+		};
 	};
 	
 };

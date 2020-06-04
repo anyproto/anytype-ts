@@ -20,6 +20,11 @@
         "type": "https://anytype.io/schemas/types/title"
       },
       {
+        "id": "description",
+        "name": "Description",
+        "type": "https://anytype.io/schemas/types/description"
+      },
+      {
         "id": "iconEmoji",
         "name": "Emoji",
         "type": "https://anytype.io/schemas/types/emoji"
