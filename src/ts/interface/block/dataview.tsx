@@ -69,7 +69,8 @@ export interface ViewRelation extends Relation {
 };
 
 export interface ViewComponent {
-	content: any; 
+	view: I.View;
+	data: any[];
 	onOpen(e: any, data: any): void;
 };
 

@@ -480,6 +480,36 @@ const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => vo
 	dispatcher.request('blockListDeletePage', request, callBack);
 };
 
+const BlockCreateDataviewView = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockId: blockId,
+		view: view,
+	};
+	dispatcher.request('blockCreateDataviewView', request, callBack);
+};
+
+const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockId: blockId,
+		viewId: viewId,
+		view: view,
+	};
+	dispatcher.request('blockSetDataviewView', request, callBack);
+};
+
+const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = {
+		contextId: contextId,
+		blockId: blockId,
+		viewId: viewId,
+		offset: offset,
+		limit: limit,
+	};
+	dispatcher.request('blockSetDataviewActiveView', request, callBack);
+};
+
 export {
 	VersionGet,
 	
@@ -511,8 +541,6 @@ export {
 	BlockClose,
 	BlockUndo,
 	BlockRedo,
-	BlockCreate,
-	BlockCreatePage,
 	BlockUnlink,
 	BlockMerge,
 	BlockSplit,
@@ -525,11 +553,17 @@ export {
 	BlockExportPrint,
 	BlockPaste,
 	BlockImportMarkdown,
+
+	BlockCreate,
+	BlockCreatePage,
+	BlockCreateDataviewView,
 	
 	BlockSetTextText,
 	BlockSetTextChecked,
 	BlockSetFields,
 	BlockSetDetails,
+	BlockSetDataviewView,
+	BlockSetDataviewActiveView,
 	
 	BlockListMove,
 	BlockListMoveToNewPage,

@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Smile, Input, Textarea } from 'ts/component';
-import { allowStateReadsEnd } from 'mobx/lib/internal';
 
 interface Props extends I.Cell {};
 
@@ -134,7 +133,7 @@ class CellText extends React.Component<Props, State> {
 
 	onBlur (e: any) {
 		keyboard.setFocus(false);
-		//this.setState({ editing: false });
+		this.setState({ editing: false });
 	};
 
 	resize () {
@@ -143,7 +142,7 @@ class CellText extends React.Component<Props, State> {
 
 		if (area.length) {
 			area.css({ height: 'auto' });
-			area.css({ height: area.get(0).scrollHeight + 14 });
+			area.css({ height: area.get(0).scrollHeight });
 		};
 	};
 	

@@ -1,12 +1,16 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { C } from '../../../lib';
 
 interface Props {
+	data: any[];
+	view: I.View;
+	block: I.Block;
+	rootId: string;
 	onView(e: any, id: string): void;
-	content: any;
 };
 
 @observer
@@ -16,12 +20,14 @@ class Controls extends React.Component<Props, {}> {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
+		this.onViewAdd = this.onViewAdd.bind(this);
 	};
 
 	render () {
-		const { onView, content } = this.props;
-		const { views, view } = content;
-		
+		const { onView, block, view } = this.props;
+		const { content } = block;
+		const { views } = content;
+
 		const buttons: any[] = [
 			{ 
 				id: 'relation', name: 'Relations', menu: 'dataviewRelationList', 
@@ -73,7 +79,7 @@ class Controls extends React.Component<Props, {}> {
 						<ViewItem key={i} {...item} active={item.id == view.id} />
 					))}
 					<div className="item">
-						<Icon className="plus" />
+						<Icon className="plus" onClick={this.onViewAdd} />
 					</div>
 				</div>
 				
@@ -84,6 +90,7 @@ class Controls extends React.Component<Props, {}> {
 							<div className="name">New</div>
 						</div>
 					</div>
+
 					<div className="side right">
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
@@ -95,6 +102,8 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
+		const { rootId, block, data, view } = this.props;
+
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,
 			type: I.MenuType.Vertical,
@@ -102,8 +111,18 @@ class Controls extends React.Component<Props, {}> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
-			data: this.props.content,
+			data: {
+				rootId: rootId,
+				blockId: block.id, 
+				view: view,
+				data: data,
+			},
 		});
+	};
+
+	onViewAdd (e: any) {
+		const { rootId, block } = this.props;
+		C.BlockCreateDataviewView(rootId, block.id, {});
 	};
 
 };

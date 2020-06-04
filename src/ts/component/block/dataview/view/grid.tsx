@@ -22,8 +22,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { content, onOpen } = this.props;
-		const { data, view } = content;
+		const { data, view, onOpen } = this.props;
 		const width = 100 / view.relations.length;
 		
 		const CellHead = (item: any) => (

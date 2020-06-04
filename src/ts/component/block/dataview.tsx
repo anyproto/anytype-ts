@@ -21,10 +21,6 @@ interface State {
 };
 
 const Constant = require('json/constant.json');
-const Schema = {
-	page: require('json/schema/page.json'),
-	relation: require('json/schema/relation.json'),
-};
 
 @observer
 class BlockDataview extends React.Component<Props, State> {
@@ -44,7 +40,7 @@ class BlockDataview extends React.Component<Props, State> {
 
 	render () {
 		const content = this.getContent();
-		const { view } = content;
+		const { view, data } = content;
 
 		if (!view) {
 			return null;
@@ -72,9 +68,9 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		return (
 			<React.Fragment>
-				<Controls {...this.props} content={content} onView={this.onView} />
+				<Controls {...this.props} view={view} data={data} onView={this.onView} />
 				<div className="content">
-					<ViewComponent {...this.props} onOpen={this.onOpen} content={content} />
+					<ViewComponent {...this.props} onOpen={this.onOpen} view={view} data={data} />
 				</div>
 			</React.Fragment>
 		);
@@ -93,44 +89,11 @@ class BlockDataview extends React.Component<Props, State> {
 		const { block } = this.props;
 		const { content } = block;
 
-		let schemaId = 'https://anytype.io/schemas/page';
-		let schema = Schema[DataUtil.schemaField(schemaId)];
 		let ret: any = {
-			views: [],
-			relations: [],
+			views: content.views,
 			data: data,
 		};
 
-		if (!schema) {
-			return ret;
-		};
-
-		for (let field of schema.default) {
-			ret.relations.push({
-				id: field.id,
-				name: field.name,
-				type: DataUtil.schemaField(field.type),
-			});
-		};
-
-		ret.views = content.views;
-		ret.views = ret.views.map((view: I.View) => {
-			
-			// TMP
-			if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'id'; })) {
-				view.relations.push({ id: 'id', visible: true });
-			};
-			if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'description'; })) {
-				view.relations.push({ id: 'description', visible: true });
-			};
-
-			view.relations = view.relations.map((relation: I.ViewRelation) => {
-				const rel = ret.relations.find((it: I.Relation) => { return it.id == relation.id; });
-				return Object.assign(rel, relation);
-			});
-			return view;
-		});
-		
 		if (ret.views.length) {
 			const view = this.state.view || ret.views[0].id;
 			ret.view = ret.views.find((item: any) => { return item.id == view; });

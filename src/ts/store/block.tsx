@@ -1,8 +1,12 @@
-import { observable, action, computed, set, intercept } from 'mobx';
-import { I, M, Util, StructDecode, StructEncode } from 'ts/lib';
+import { observable, action, computed, set, intercept, decorate } from 'mobx';
+import { I, M, Util, DataUtil, StructDecode, StructEncode } from 'ts/lib';
 
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
+const Schema = {
+	page: require('json/schema/page.json'),
+	relation: require('json/schema/relation.json'),
+};
 const $ = require('jquery');
 
 class BlockStore {
@@ -405,11 +409,11 @@ class BlockStore {
 		if (content) {
 			if (type != I.BlockType.Dataview) {
 				item.content = Util.objectCopy(content);
+				item.content.style = content.style;
 			} else {
 				item.content = content;
 			};
 
-			item.content.style = content.style;
 			if (content.fields) {
 				item.content.fields = StructDecode.decodeStruct(content.fields);
 			};
@@ -443,16 +447,47 @@ class BlockStore {
 			};
 
 			if (type == I.BlockType.Dataview) {
+				// TMP
+				item.content.schemaId = 'https://anytype.io/schemas/page';
+				
+				let schema = Schema[DataUtil.schemaField(item.content.schemaId)];
+				let relations = [];
+
+				for (let field of schema.default) {
+					relations.push({
+						id: field.id,
+						name: field.name,
+						type: DataUtil.schemaField(field.type),
+					});
+				};
+
 				item.content.views = item.content.views || [];
 				item.content.views = item.content.views.map((view: I.View) => {
-					return {
-						id: String(view.id || ''),
-						type: Number(view.type) || 0,
-						name: String(view.name || Constant.default.name),
-						sorts: view.sorts || [],
-						filters: view.filters || [],
-						relations: view.relations || [],
+					view.sorts = view.sorts.map((sort: I.Sort) => {
+						return {
+							relationId: String(sort.relationId || ''),
+							type: Number(sort.type) || 0,
+						};
+					});
+
+					// TMP
+					if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'id'; })) {
+						view.relations.push({ id: 'id', visible: true });
 					};
+					if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'description'; })) {
+						view.relations.push({ id: 'description', visible: true });
+					};
+
+					view.relations = view.relations.map((relation: I.ViewRelation) => {
+						const rel = relations.find((it: I.Relation) => { return it.id == relation.id; });
+						return Object.assign(rel, relation);
+					});
+					
+					return new M.View(view);
+				});
+
+				decorate(item.content, {
+					views: observable,
 				});
 			};
 		};
