@@ -447,10 +447,7 @@ class BlockStore {
 			};
 
 			if (type == I.BlockType.Dataview) {
-				// TMP
-				item.content.schemaId = 'https://anytype.io/schemas/page';
-				
-				let schema = Schema[DataUtil.schemaField(item.content.schemaId)];
+				let schema = Schema[DataUtil.schemaField(item.content.schemaURL)];
 				let relations = [];
 
 				for (let field of schema.default) {

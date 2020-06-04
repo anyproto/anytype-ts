@@ -51,7 +51,7 @@ class Controls extends React.Component<Props, {}> {
 		];
 		
 		const ViewItem = (item: any) => (
-			<div className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { onView(e, item.id); }}>
+			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { onView(e, item.id); }}>
 				{item.name}
 			</div>
 		);
