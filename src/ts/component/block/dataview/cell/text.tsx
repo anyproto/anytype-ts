@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard } from 'ts/lib';
+import { I, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Smile, Input, Textarea } from 'ts/component';
 import { allowStateReadsEnd } from 'mobx/lib/internal';
 
@@ -57,7 +57,7 @@ class CellText extends React.Component<Props, State> {
 			);
 		} else {
 			Name = (item: any) => (
-				<div className="name" onClick={this.onClick}>{item.name}</div>
+				<div className="name">{item.name}</div>
 			);
 		};
 
@@ -98,7 +98,8 @@ class CellText extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { editing } = this.state;
 		const { id, relation } = this.props;
-		const cell = $(`#${relation.id}-${id}`);
+		const cellId = DataUtil.cellId(relation.id, id);
+		const cell = $('#' + cellId);
 
 		if (editing) {
 			cell.addClass('isEditing');

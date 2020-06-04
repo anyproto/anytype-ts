@@ -150,7 +150,6 @@ class BlockDataview extends React.Component<Props, State> {
 		let details = StructDecode.decodeStruct(page.details || {});
 		details.name = String(details.name || Constant.default.name || '');
 
-		console.log(page);
 		return {
 			id: page.id,
 			description: page.snippet,

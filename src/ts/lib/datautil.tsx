@@ -489,6 +489,10 @@ class DataUtil {
 		return a.length > 1 ? a[a.length - 1] : '';
 	};
 
+	cellId (relationId: string, id: any) {
+		return [ 'cell', relationId, String(id || '') ].join('-');
+	};
+
 };
 
 export default new DataUtil();

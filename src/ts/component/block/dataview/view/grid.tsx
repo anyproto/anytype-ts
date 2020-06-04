@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 
 import Cell from '../cell';
 
@@ -12,10 +12,13 @@ const Constant = require('json/constant.json');
 
 class ViewGrid extends React.Component<Props, {}> {
 
+	cellRefs: Map<string, any> = new Map();
+
 	constructor (props: any) {
 		super (props);
 
 		this.onRowOver = this.onRowOver.bind(this);
+		this.onCellClick = this.onCellClick.bind(this);
 	};
 
 	render () {
@@ -31,16 +34,17 @@ class ViewGrid extends React.Component<Props, {}> {
 		);
 		
 		const CellBody = (item: any) => {
-			let id = [ item.relation.id, item.index ];
-			let cn = [ 'cell', 'c-' + item.relation.type ];
+			let { relation, index } = item;
+			let id = DataUtil.cellId(relation.id, index);
+			let cn = [ 'cell', 'c-' + relation.type ];
 
 			if (item.relation.id == 'name') {
 				cn.push('isName');
 			};
 
 			return (
-				<td id={id.join('-')} className={cn.join(' ')} style={{ width: width + '%' }}>
-					<Cell onOpen={onOpen} {...item} view={view} id={item.index} />
+				<td id={id} className={cn.join(' ')} style={{ width: width + '%' }} onClick={(e: any) => { this.onCellClick(e, item); }}>
+					<Cell ref={(ref: any) => { this.cellRefs.set(id, ref); }} onOpen={onOpen} {...item} view={view} id={item.index} />
 				</td>
 			);
 		};
@@ -105,6 +109,19 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		node.find('.row.active').removeClass('active');
 		node.find('#row-' + id).addClass('active');
+	};
+
+	onCellClick (e: any, item: any) {
+		const { index, relation } = item;
+		const id = DataUtil.cellId(relation.id, index);
+		const node = $(ReactDOM.findDOMNode(this));
+		const cell = node.find('#' + id);
+		const ref = this.cellRefs.get(id);
+
+		cell.addClass('isEditing');
+		if (ref) {
+			ref.onClick(e);
+		};
 	};
 	
 };

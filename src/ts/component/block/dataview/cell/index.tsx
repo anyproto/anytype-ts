@@ -15,6 +15,8 @@ interface Props extends I.Cell {};
 
 @observer
 class Cell extends React.Component<Props, {}> {
+
+	ref: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -62,15 +64,19 @@ class Cell extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={[ 'cell', relation.id, id ].join('-')} className={[ 'cellContent', 'c-' + relation.type ].join(' ')} onClick={this.onClick}>
-				<CellComponent {...this.props} data={data || {}} />
+			<div className={[ 'cellContent', 'c-' + relation.type ].join(' ')} onClick={this.onClick}>
+				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data || {}} />
 			</div>
 		);
 	};
 	
-	onClick () {
+	onClick (e: any) {
 		const { id, relation, data } = this.props;
 		const element = '#' + [ 'cell', relation.id, id ].join('-');
+
+		if (this.ref.onClick) {
+			this.ref.onClick(e);
+		};
 		
 		let param: any = { 
 			element: element,
@@ -80,7 +86,7 @@ class Cell extends React.Component<Props, {}> {
 			data: { 
 				value: data, 
 				values: relation.values 
-			}
+			},
 		};
 		
 		switch (relation.type) {
