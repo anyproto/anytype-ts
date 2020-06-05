@@ -8,7 +8,7 @@
 		
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
-			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 2px; top: 0px;
+			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
 			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorLightGrey; border-radius: 12px; 
 			transition: opacity 0.2s ease-in-out;
 		}
@@ -20,7 +20,7 @@
 		.colResize.active { opacity: 1; }
 		.colResize {
 			.inner { 
-				position: absolute; left: 19px; top: -15px; width: 8px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; 
+				position: absolute; left: 22px; top: -15px; width: 8px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; 
 			}
 			.line { 
 				height: 100%; width: 2px; background: $colorDarkGrey; position: absolute; left: 50%; top: 0px; margin-left: -1px; 
