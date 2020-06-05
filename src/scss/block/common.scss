@@ -11,7 +11,7 @@
 			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
 			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorLightGrey; border-radius: 12px; 
 		}
-		.icon.dnd:hover { background-image: url('~img/icon/block/menu2.svg'); border-color: $colorOrange; }
+		.icon.dnd:hover { background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; }
 		
 		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
 		.colResize.active { opacity: 1; }
@@ -65,7 +65,7 @@
 		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; bottom: -2px;
 	}
 	
-	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu2.svg'); }
+	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 
 	.block.showMenu > .wrapContent > .selectable > .menuOver { opacity: 1; }
