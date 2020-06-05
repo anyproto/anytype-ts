@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -45,7 +45,12 @@ class MenuView extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, id: number) {
+		const { param } = this.props;
+		const { data } = param;
+		const { view, rootId, blockId } = data;
+
 		commonStore.menuClose(this.props.id);
+		C.BlockSetDataviewView(rootId, blockId, view.id, { type: id });
 	};
 	
 };

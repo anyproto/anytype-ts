@@ -8,8 +8,11 @@
 		
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
-			width: 20px; height: 100%; background-size: 20px 20px; opacity: 0; cursor: grab; position: absolute; right: 2px; top: 0px;
-			background-image: url('~img/icon/block/menu.svg');
+			width: 12px; height: 100%; background-size: 20px 20px; opacity: 0; cursor: grab; position: absolute; right: 2px; top: 0px;
+			background-image: none; border: 1px solid $colorLightGrey; border-radius: 12px; box-shadow: 0px 0px;
+		}
+		.icon.dnd:hover { 
+			background-image: url('~img/icon/block/menu.svg'); border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
 		}
 		
 		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
@@ -29,10 +32,12 @@
 			display: none; pointer-events: none; z-index: 10;
 		}
 
+		/*
 		.menuOver { 
 			position: absolute; left: -24px; top: 0px; width: calc(100% + 24px); height: 100%; background: rgba(172,169,150,0.15);
 			pointer-events: none; z-index: -1; border-radius: 8px; opacity: 0; transition: opacity 0.2s ease-in-out;
 		}
+		*/
 		
 		.focusable { border-radius: inherit; }
 		
