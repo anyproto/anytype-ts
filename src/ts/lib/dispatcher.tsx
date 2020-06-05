@@ -301,7 +301,22 @@ class Dispatcher {
 					block.align = Number(data.align) || 0;
 					blockStore.blockUpdate(rootId, block);
 					break;
+
+				case 'blockSetDataviewView':
+					block = blockStore.getLeaf(rootId, data.id);
+					if (!block) {
+						break;
+					};
 					
+					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
+					
+					if (!view) {
+						block.content.views.push(new M.View(data.view));
+					};
+
+					blockStore.blockUpdate(rootId, block);
+					break;
+
 				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':

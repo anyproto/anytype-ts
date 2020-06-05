@@ -263,17 +263,12 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	getRect (e: any) {
-		const { container } = this.props;
-		
-		let cx = e.pageX;
-		let cy = e.pageY;
-		let rect = {
-			x: Math.min(this.x, cx),
-			y: Math.min(this.y, cy),
-			width: Math.abs(cx - this.x) - 10,
-			height: Math.abs(cy - this.y) - 10
+		return {
+			x: Math.min(this.x, e.pageX),
+			y: Math.min(this.y, e.pageY),
+			width: Math.abs(e.pageX - this.x) - 10,
+			height: Math.abs(e.pageY - this.y) - 10
 		};
-		return rect;
 	};
 	
 	cacheRect (obj: any) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 
 import Cell from '../cell';
 
@@ -12,31 +12,38 @@ const Constant = require('json/constant.json');
 
 class ViewGrid extends React.Component<Props, {}> {
 
+	cellRefs: Map<string, any> = new Map();
+
 	constructor (props: any) {
 		super (props);
 
 		this.onRowOver = this.onRowOver.bind(this);
+		this.onCellClick = this.onCellClick.bind(this);
 	};
 
 	render () {
-		const { content, onOpen } = this.props;
-		const { data, view } = content;
+		const { data, view, onOpen } = this.props;
+		const width = 100 / view.relations.length;
 		
 		const CellHead = (item: any) => (
-			<th className={'head c-' + item.type}>
+			<th className={'head c-' + item.type} style={{ width: width + '%' }}>
 				<Icon className={'relation c-' + item.type} />
 				<div className="name">{item.name}</div>
 			</th>
 		);
 		
 		const CellBody = (item: any) => {
-			let cn = [ 'cell', 'c-' + item.relation.type ];
+			let { relation, index } = item;
+			let id = DataUtil.cellId(relation.id, index);
+			let cn = [ 'cell', 'c-' + relation.type ];
+
 			if (item.relation.id == 'name') {
 				cn.push('isName');
 			};
+
 			return (
-				<td className={cn.join(' ')}>
-					<Cell onOpen={onOpen} {...item} view={view} id={item.index} />
+				<td id={id} className={cn.join(' ')} style={{ width: width + '%' }} onClick={(e: any) => { this.onCellClick(e, item); }}>
+					<Cell ref={(ref: any) => { this.cellRefs.set(id, ref); }} onOpen={onOpen} {...item} view={view} id={item.index} />
 				</td>
 			);
 		};
@@ -101,6 +108,19 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		node.find('.row.active').removeClass('active');
 		node.find('#row-' + id).addClass('active');
+	};
+
+	onCellClick (e: any, item: any) {
+		const { index, relation } = item;
+		const id = DataUtil.cellId(relation.id, index);
+		const node = $(ReactDOM.findDOMNode(this));
+		const cell = node.find('#' + id);
+		const ref = this.cellRefs.get(id);
+
+		cell.addClass('isEditing');
+		if (ref) {
+			ref.onClick(e);
+		};
 	};
 	
 };

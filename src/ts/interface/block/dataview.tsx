@@ -8,20 +8,20 @@ export enum ViewType {
 };
 
 export enum RelationType { 
-	Title	 = 'title', 
-	Text	 = 'description', 
-	Number	 = 'number', 
-	Date	 = 'date', 
-	Select	 = 'select', 
-	Multiple = 'multiselect',
-	Link	 = 'link',
-	File	 = 'file',
-	Image	 = 'image',
-	Bool	 = 'checkbox', 
-	Icon	 = 'emoji',
-	Url		 = 'url',
-	Email	 = 'email',
-	Phone	 = 'phone',
+	Title		 = 'title', 
+	Description	 = 'description', 
+	Number		 = 'number', 
+	Date		 = 'date', 
+	Select		 = 'select', 
+	Multiple	 = 'multiselect',
+	Link		 = 'link',
+	File		 = 'file',
+	Image		 = 'image',
+	Bool		 = 'checkbox', 
+	Icon		 = 'emoji',
+	Url			 = 'url',
+	Email		 = 'email',
+	Phone		 = 'phone',
 };
 
 export enum SortType { 
@@ -69,7 +69,8 @@ export interface ViewRelation extends Relation {
 };
 
 export interface ViewComponent {
-	content: any; 
+	view: I.View;
+	data: any[];
 	onOpen(e: any, data: any): void;
 };
 

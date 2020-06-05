@@ -1,0 +1,21 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockDataview {
+        .view.viewList { padding: 20px 0px 0px 0px; }
+		.view.viewList {
+		    .item { width: 100%; display: inline-block; margin-bottom: 8px; }
+			.item:last-child { margin: 0px; }
+
+			.cellContent { display: inline-block; vertical-align: top; margin-right: 8px; line-height: 24px; }
+			.cellContent:last-child { margin: 0px; }
+
+            .cellContent.c-title { @include text-paragraph; }
+			.cellContent.c-title {
+				.name { line-height: 24px; }
+			}
+
+			.icon.checkbox { width: 24px; height: 24px; vertical-align: top; }
+        }
+    }
+}

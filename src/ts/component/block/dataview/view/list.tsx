@@ -9,8 +9,7 @@ interface Props extends I.ViewComponent {};
 class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { content } = this.props;
-		const { data, view } = content;
+		const { data, view } = this.props;
 		
 		const Card = (item: any) => (
 			<div className="item">
