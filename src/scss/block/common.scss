@@ -10,11 +10,8 @@
 		.icon.dnd { 
 			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
 			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorLightGrey; border-radius: 12px; 
-			transition: opacity 0.2s ease-in-out;
 		}
-		.icon.dnd:hover { 
-			background-image: url('~img/icon/block/menu1.svg'); border-color: $colorOrange; 
-		}
+		.icon.dnd:hover { background-image: url('~img/icon/block/menu2.svg'); border-color: $colorOrange; }
 		
 		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
 		.colResize.active { opacity: 1; }
@@ -57,7 +54,7 @@
 	
 	.block.isResizing { cursor: col-resize; user-select: none; }
 	.block.isResizing {
-		.icon.dnd { display: none; }
+		.icon.dnd { opacity: 1; }
 	}
 	
 	.block.isAdding.top::before {
@@ -68,9 +65,8 @@
 		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; bottom: -2px;
 	}
 	
-	.block:hover > .wrapMenu > .icon.dnd, 
-	.block.showMenu > .wrapMenu > .icon.dnd, 
-	{ opacity: 1; }
+	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu2.svg'); }
+	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 
 	.block.showMenu > .wrapContent > .selectable > .menuOver { opacity: 1; }
 	.block.showMenu > .wrapContent > .selectable > .selectionOver { border-radius: 0px 8px 8px 0px; }
