@@ -59,7 +59,9 @@ class DragLayer extends React.Component<Props, State> {
 		
 		return (
 			<div id="dragLayer" className="dragLayer" style={{ width: width }}>
-				{content}
+				<div className="inner">
+					{content}
+				</div>
 			</div>
 		);
 	};

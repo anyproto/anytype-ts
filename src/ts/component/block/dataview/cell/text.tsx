@@ -1,15 +1,66 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-import { Icon, Smile } from 'ts/component';
+import * as ReactDOM from 'react-dom';
+import { I, DataUtil, keyboard } from 'ts/lib';
+import { Icon, Smile, Input, Textarea } from 'ts/component';
 
 interface Props extends I.Cell {};
 
-class CellText extends React.Component<Props, {}> {
+interface State { 
+	editing: boolean; 
+};
+
+const $ = require('jquery');
+
+class CellText extends React.Component<Props, State> {
+
+	state = {
+		editing: false,
+	};
+	ref: any = null;
+
+	constructor (props: any) {
+		super(props);
+
+		this.onClick = this.onClick.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
+	};
 
 	render () {
+		const { editing } = this.state;
 		const { data, relation, view, onOpen } = this.props;
 
-		let content: any = data[relation.id];
+		let Name = null;
+		let EditorComponent = null;
+		if (editing) {
+			if (relation.type == I.RelationType.Description) {
+				EditorComponent = (item: any) => (
+					<Textarea ref={(ref: any) => { this.ref = ref; }} id="textarea" {...item} />
+				);
+			} else {
+				EditorComponent = (item: any) => (
+					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} />
+				);
+			};
+			Name = (item: any) => (
+				<EditorComponent 
+					value={item.name} 
+					className="name" 
+					onKeyDown={this.onKeyDown} 
+					onKeyUp={this.onKeyUp} 
+					onFocus={this.onFocus} 
+					onBlur={this.onBlur}
+				/>
+			);
+		} else {
+			Name = (item: any) => (
+				<div className="name">{item.name}</div>
+			);
+		};
+
+		let content: any = <Name name={data[relation.id]} />;
 
 		if (relation.id == 'name') {
 			let cn = 'c20';
@@ -30,17 +81,69 @@ class CellText extends React.Component<Props, {}> {
 			content = (
 				<React.Fragment>
 					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={true} offsetY={4} />
-					<div className="name">{data[relation.id]}</div>
+					<Name name={data[relation.id]} />
 					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
 				</React.Fragment>
 			);
 		};
 
 		return (
-			<React.Fragment>
+			<div>
 				{content}
-			</React.Fragment>
+			</div>
 		);
+	};
+
+	componentDidUpdate () {
+		const { editing } = this.state;
+		const { id, relation } = this.props;
+		const cellId = DataUtil.cellId(relation.id, id);
+		const cell = $('#' + cellId);
+
+		if (editing) {
+			cell.addClass('isEditing');
+			this.ref.focus();
+		} else {
+			cell.removeClass('isEditing');
+		};
+
+		this.resize();
+	};
+
+	onClick (e: any) {
+		const { view } = this.props;
+		const canEdit = view.type == I.ViewType.Grid;
+
+		if (canEdit) {
+			this.setState({ editing: true });
+		};
+	};
+
+	onKeyDown (e: any, value: string) {
+		this.resize();
+	};
+
+	onKeyUp (e: any, value: string) {
+		this.resize();
+	};
+
+	onFocus (e: any) {
+		keyboard.setFocus(true);
+	};
+
+	onBlur (e: any) {
+		keyboard.setFocus(false);
+		this.setState({ editing: false });
+	};
+
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const area = node.find('#textarea');
+
+		if (area.length) {
+			area.css({ height: 'auto' });
+			area.css({ height: area.get(0).scrollHeight });
+		};
 	};
 	
 };

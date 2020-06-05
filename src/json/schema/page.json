@@ -10,9 +10,19 @@
     "uniqueItems": true,
     "default": [
       {
+        "id": "id",
+        "name": "Id",
+        "type": "https://anytype.io/schemas/types/number"
+      },
+      {
         "id": "name",
         "name": "Name",
         "type": "https://anytype.io/schemas/types/title"
+      },
+      {
+        "id": "description",
+        "name": "Description",
+        "type": "https://anytype.io/schemas/types/description"
       },
       {
         "id": "iconEmoji",

@@ -391,7 +391,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
-			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 1;
+			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
 			let ay = pageY - rectContainer.y - 10 - st;
 			
 			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
@@ -1211,10 +1211,6 @@ class EditorPage extends React.Component<Props, State> {
 		const next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => {
 			return it.isFocusable();
 		});
-		
-		if (!next) {
-			return;
-		};
 
 		const nl = next.getLength();
 		const length = focused.getLength();
@@ -1223,7 +1219,9 @@ class EditorPage extends React.Component<Props, State> {
 				return;
 			};
 			
-			this.focus(next.id, nl, nl);
+			if (next) {
+				this.focus(next.id, nl, nl);
+			};
 		};
 		
 		if (next.isText()) {
@@ -1232,6 +1230,19 @@ class EditorPage extends React.Component<Props, State> {
 		if (!length) {
 			focus.clear(true);
 			C.BlockUnlink(rootId, [ focused.id ], cb);
+		} else {
+			C.BlockUnlink(rootId, [ next.id ], (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				const next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => {
+					return it.isFocusable();
+				});
+				if (next) {
+					this.focus(next.id, nl, nl);
+				};
+			});
 		};
 	};
 	

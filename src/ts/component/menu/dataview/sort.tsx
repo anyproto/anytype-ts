@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
 
 const $ = require('jquery');
@@ -95,6 +95,15 @@ class MenuSort extends React.Component<Props, State> {
 		const { view } = data;
 		
 		this.setState({ items: view.sorts });
+	};
+
+	componentWillUnmount () {
+		const { items } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { view, rootId, blockId } = data;
+
+		C.BlockSetDataviewView(rootId, blockId, view.id, { sorts: items });
 	};
 	
 	onAdd (e: any) {

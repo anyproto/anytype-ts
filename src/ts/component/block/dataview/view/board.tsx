@@ -16,8 +16,7 @@ const GROUP = 'isArchived';
 class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
-		const { content } = this.props;
-		const { view } = content;
+		const { view } = this.props;
 		const group = view.relations.find((item: I.Relation) => { return item.id == GROUP; });
 
 		if (!group) {
@@ -64,8 +63,7 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): Column[] {
-		const { content } = this.props;
-		const { data } = content;
+		const { data } = this.props;
 		
 		let groupBy = GROUP;
 		let r: Column[] = [];

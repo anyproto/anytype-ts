@@ -45,6 +45,10 @@ import 'scss/page/help.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
+import 'scss/block/dataview/view/grid.scss';
+import 'scss/block/dataview/view/board.scss';
+import 'scss/block/dataview/view/list.scss';
+import 'scss/block/dataview/view/gallery.scss';
 import 'scss/block/text.scss';
 import 'scss/block/media.scss';
 import 'scss/block/file.scss';
