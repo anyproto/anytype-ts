@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select } from 'ts/component';
-import { I } from 'ts/lib';
+import { Icon, Select, Input } from 'ts/component';
+import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
-import { set } from 'mobx';
 
 const $ = require('jquery');
 
@@ -18,6 +17,7 @@ class MenuFilter extends React.Component<Props, State> {
 	state = {
 		items: [] as any[]
 	};
+	refObj: any = {};
 	
 	constructor (props: any) {
 		super(props);
@@ -25,6 +25,7 @@ class MenuFilter extends React.Component<Props, State> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 	};
 	
 	render () {
@@ -59,13 +60,14 @@ class MenuFilter extends React.Component<Props, State> {
 		));
 		
 		const Item = SortableElement((item: any) => (
-			<div className="item">
+			<form className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
 				<Handle />
 				{item.idx > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
 				<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
 				<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition}  onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
+				<Input ref={(ref: any) => { this.refObj[item.idx] = ref; }} placeHolder="Value" />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
-			</div>
+			</form>
 		));
 		
 		const ItemAdd = SortableElement((item: any) => (
@@ -109,6 +111,19 @@ class MenuFilter extends React.Component<Props, State> {
 		
 		this.setState({ items: view.filters });
 	};
+
+	componentDidUpdate () {
+		this.props.position();
+	};
+
+	componentWillUnmount () {
+		const { items } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { view, rootId, blockId } = data;
+
+		C.BlockSetDataviewView(rootId, blockId, view.id, { sorts: items });
+	};
 	
 	onAdd (e: any) {
 		let { items } = this.state;
@@ -136,6 +151,13 @@ class MenuFilter extends React.Component<Props, State> {
 		const { oldIndex, newIndex } = result;
 		
 		this.setState({ items: arrayMove(this.state.items, oldIndex, newIndex) });
+	};
+
+	onSubmit (e: any, item: any) {
+		e.preventDefault();
+
+		console.log(item);
+		console.log(this.refObj[item.idx].getValue());
 	};
 	
 };

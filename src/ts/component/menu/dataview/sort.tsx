@@ -97,6 +97,10 @@ class MenuSort extends React.Component<Props, State> {
 		this.setState({ items: view.sorts });
 	};
 
+	componentDidUpdate () {
+		this.props.position();
+	};
+
 	componentWillUnmount () {
 		const { items } = this.state;
 		const { param } = this.props;

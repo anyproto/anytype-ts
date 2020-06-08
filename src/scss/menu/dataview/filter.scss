@@ -2,4 +2,16 @@
 
 .menus {
 	.menu.menuDataviewFilter { width: 446px; }
+	.menu.menuDataviewFilter {
+		.item { padding: 4px 40px 4px 10px; display: flex; }
+		.item {
+			.icon.dnd { flex-shrink: 0; margin-top: 5px; }
+			.input { flex-shrink: 2; border-radius: 4px; border: solid 1px #d2d0c2; padding: 0px 6px; }
+		}
+
+		.item.add { display: block; }
+		.item.add {
+			.icon.dnd { margin-top: 0px; }
+		}
+	}
 }

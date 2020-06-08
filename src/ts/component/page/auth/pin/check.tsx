@@ -17,10 +17,10 @@ interface State {
 @observer
 class PageAuthPinCheck extends React.Component<Props, State> {
 	
-	refObj: any = {};
 	state = {
 		error: ''
 	};
+	refObj: any = {};
 
 	constructor (props: any) {
 		super(props);

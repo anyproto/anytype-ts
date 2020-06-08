@@ -77,7 +77,18 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		this.getData();
+		const { block } = this.props;
+		const { content } = block;
+
+		if (content.views.length) {
+			this.setState({ view: content.views[0].id });
+		};
+	};
+
+	componentDidUpdate (nextProps: Props, nextState: State) {
+		if (this.state.view != nextState.view) {
+			this.getData();
+		};
 	};
 	
 	onView (e: any, id: string) {
@@ -103,10 +114,21 @@ class BlockDataview extends React.Component<Props, State> {
 	};
 
 	getData () {
+		const { rootId, block } = this.props;
+		const { view } = this.getContent();
+
+		if (view) {
+			C.BlockSetDataviewActiveView(rootId, block.id, view.id, 0, 10, (message: any) => {
+
+			});
+		};
+
+		/*
 		C.NavigationListPages((message: any) => {
 			let pages = message.pages.map((it: any) => { return this.getPage(it); });
 			this.setState({ data: pages.slice(0, 10) });
 		});
+		*/
 	};
 
 	getPage (page: any): I.PageInfo {
