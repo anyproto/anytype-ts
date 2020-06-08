@@ -26,14 +26,14 @@
 
 .inputWithFile.isSmall {
 	.fileWrap { display: block; }
-	.txt { height: 48px; }
+	.txt { height: 38px; }
 }
 
 .inputWithFile.noFile {
 	.urlToggle { width: 100%; }
 	#form { width: 100%; }
 }
-.inputWithFile.noFile.isSmall .txt { height: 24px; }
+.inputWithFile.noFile.isSmall .txt { height: 20px; }
 
 .inputWithFile.isFocused {
 	.fileWrap { display: none; }

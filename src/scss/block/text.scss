@@ -13,8 +13,8 @@
 		lnk { cursor: pointer; color: inherit; border-bottom: 1px solid $colorDarkGrey; text-decoration: none; }
 		
 		kbd { 
-			display: inline; font-family: 'Mono'; border-radius: 2px; background: $colorDarkGrey; 
-			background: rgba(172,169,150,0.15);
+			display: inline; font-family: 'Plex'; border-radius: 2px; background: $colorDarkGrey; 
+			background: rgba(172,169,150,0.15); font-size: 15px; 
 		}
 
 		smile {
@@ -108,7 +108,7 @@
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.code {
-		.value { font-family: 'Mono'; @include text-common; }
+		.value { font-family: 'Inter'; @include text-common; }
 		.select { 
 			position: absolute; top: 9px; left: 16px; z-index: 1; border: 0px;  color: $colorDarkGrey; @include text-common; 
 			border-radius: 0px;

@@ -122,7 +122,7 @@ class MenuFilter extends React.Component<Props, State> {
 		const { data } = param;
 		const { view, rootId, blockId } = data;
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { sorts: items });
+		C.BlockSetDataviewView(rootId, blockId, view.id, { filters: items });
 	};
 	
 	onAdd (e: any) {

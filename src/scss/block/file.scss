@@ -2,6 +2,7 @@
 
 .blocks {
 	.block.blockFile { padding: 6px 0px; }
+	.block.blockFile.withFile { padding: 3px 0px; }
 	.block.blockFile {
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
@@ -15,7 +16,7 @@
 			display: inline-block; vertical-align: top;
 		}
 		.download {
-			@include text-common; width: 80px; height: 24px; line-height: 24px; color: #2dbcfe; transition: $transitionFast; 
+			@include text-common; width: 80px; height: 24px; line-height: 24px; color: #2aa7ee; transition: $transitionFast; 
 			opacity: 0; display: inline-block; cursor: pointer; vertical-align: top;
 		}
 		.download:hover { color: #1092d9; }

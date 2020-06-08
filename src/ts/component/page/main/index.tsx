@@ -164,6 +164,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			offsetY: 8,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
+			className: 'fromIndex',
 			data: {
 				rootId: root,
 				blockId: id,

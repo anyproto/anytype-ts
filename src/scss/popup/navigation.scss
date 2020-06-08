@@ -11,14 +11,14 @@
 			.input { padding: 0px; height: 24px; vertical-align: top; width: calc(100% - 32px); font-size: 18px; }
 		}
 
-		.path { padding:  8px 12px 0px 12px; white-space: nowrap; }
+		.path { padding:  12px 14px 0px 14px; white-space: nowrap; }
 		.path {
-			.item { display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 4px; cursor: pointer; transition: color 0.2s ease-in-out; }
+			.item { display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 6px; cursor: pointer; transition: color 0.2s ease-in-out; }
 			.item {
 				.icon { margin-right: 4px; }
-				.icon.arrow { margin: 0px; width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); vertical-align: middle; }
+				.icon.arrow { margin: -4px 0px 0px 0px; width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); vertical-align: middle; }
 				.smile { margin-right: 4px; }
-				.name { display: inline-block; vertical-align: top; margin-right: 8px; line-height: 20px; }
+				.name { display: inline-block; vertical-align: top; margin-right: 6px; line-height: 20px; }
 				.icon.search { width: 20px; height: 20px; vertical-align: top; }
 				.icon.home { width: 20px; height: 20px; vertical-align: top; }
 				
@@ -40,27 +40,28 @@
 		.items { padding: 16px; overflow-x: hidden; overflow-y: auto; }
 		.items {
 			.item { 
-				border-radius: 8px; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; margin-bottom: 8px;
-				cursor: pointer; transition: $transitionFast; position: relative; height: 72px; line-height: 48px;
+				border-radius: 8px; border: 1px solid $colorLightGrey; margin-bottom: 8px;
+				cursor: pointer; transition: $transitionFast; position: relative; height: 80px; line-height: 48px;
 			}
-			.item:hover, .item.active { box-shadow: 0px 0px 0px 2px $colorOrange inset; }
+			.item:hover, .item.active { border-color: #ffda90; box-shadow: 0px 0px 0px 1px #ffda90; }
 			
 			.item:hover, .item.active {
 				.icon.arrow { opacity: 1; }
-				.info { border-color: $colorLightGrey; }
+				.line { opacity: 1; }
 			}
 			
 			.item:last-child { margin: 0px; }
 
 			.item {
-				.inner { padding: 12px 30px 12px 16px;  }
-				.smile { position: absolute; left: 16px; top: 12px; }
-				.info { 
-					padding: 0px 8px 0px 56px; display: inline-block; vertical-align: middle; width: 100%; 
-					border-right: 1px solid rgba(255,255,255,0); transition: $transitionFast;
+				.line { 
+					width: 1px; height: 40px; background: $colorLightGrey; position: absolute; right: 30px; top: 20px; 
+					opacity: 0; transition: $transitionFast;
 				}
-				.name { width: 100%; line-height: 24px; height: 24px; @include text-overflow-nw;  }
-				.descr { width: 100%; @include text-small; height: 18px; @include text-overflow-nw; color: #6c6a5f; }
+				.inner { padding: 16px 30px 16px 16px;  }
+				.smile { position: absolute; left: 16px; top: 16px; }
+				.info { padding: 0px 8px 0px 56px; display: inline-block; vertical-align: middle; width: 100%; }
+				.name { width: 100%; line-height: 22px; height: 22px; margin-bottom: 1px; @include text-overflow-nw;  }
+				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
 				.icon.arrow { 
 					width: 30px; height: 100%; position: absolute; right: 0px; top: 0px; margin-top: 0px;
 					background-image: url('~img/arrow/tree.svg'); background-size: 6px 10px; opacity: 0; 
@@ -85,17 +86,19 @@
 			.item {
 				.info { border: 0px; }
 				.icon.arrow { opacity: 1; right: -28px; }
+				.line { opacity: 0 !important; }
 			}
 		}
 		
-		.selected { padding: 16px 16px 12px 16px; border: 2px solid $colorOrange; border-radius: 8px; }
+		.selected { padding: 16px 16px 12px 16px; border: 1px solid #ffda90; box-shadow: 0px 0px 0px 1px #ffda90; border-radius: 8px; }
 		.selected {
 			.smile { margin-bottom: 8px; }
+			.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
 			.descr { @include text-small; color: #6c6a5f; @include text-overflow; max-height: 54px; }
-			.cover { position: static; height: 156px; margin-top: 12px; background-color: #C4C4C4; }
+			.cover { position: static; height: 156px; margin-top: 8px; background-color: #C4C4C4; }
 			.buttons { margin-top: 16px; display: flex; }
 			.buttons {
-				.button { margin-right: 12px; width: 50%; }
+				.button { margin-right: 12px; width: 50%; height: 32px; line-height: 30px; font-weight: 400; }
 				.button:last-child { margin: 0px; }
 			}
 		}

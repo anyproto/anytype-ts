@@ -125,6 +125,7 @@ class PopupNavigation extends React.Component<Props, State> {
 							<div className="descr">{item.snippet}</div>
 						</div>
 					</div>
+					<div className="line" />
 					<Icon className="arrow" onClick={(e: any) => { this.onClickArrow(e, item); }} />
 				</div>
 			);

@@ -128,6 +128,10 @@ class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.File:
+				if (content.state == I.FileState.Done) {
+					cn.push('withFile');
+				};
+				
 				switch (content.type) {
 					default: 
 					case I.FileType.File: 
