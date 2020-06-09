@@ -1,5 +1,6 @@
 import { authStore, commonStore, blockStore } from 'ts/store';
-import { Util, I, M, StructDecode, Storage, translate, analytics } from 'ts/lib';
+import { set } from 'mobx';
+import { Util, DataUtil, I, M, Decode, Storage, translate, analytics } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const com = require('proto/commands.js');
@@ -145,7 +146,7 @@ class Dispatcher {
 					};
 					
 					if (null !== data.fields) {
-						block.fields = StructDecode.decodeStruct(data.fields);
+						block.fields = Decode.decodeStruct(data.fields);
 					};
 					
 					blockStore.blockUpdate(rootId, block);
@@ -158,7 +159,7 @@ class Dispatcher {
 					};
 					
 					if (null !== data.fields) {
-						block.content.fields = StructDecode.decodeStruct(data.fields.value);
+						block.content.fields = Decode.decodeStruct(data.fields.value);
 						block.content.fields.name = String(block.content.fields.name || Constant.default.name);
 					};
 					
@@ -307,11 +308,15 @@ class Dispatcher {
 					if (!block) {
 						break;
 					};
+
+					const schemaId = DataUtil.schemaField(block.content.schemaURL);
+					data.view = blockStore.prepareViewFromProto(schemaId, data.view);
 					
 					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
-					
-					if (!view) {
-						block.content.views.push(new M.View(data.view));
+					if (view) {
+						set(view, data.view);
+					} else {
+						block.content.views.push(data.view);
 					};
 
 					blockStore.blockUpdate(rootId, block);

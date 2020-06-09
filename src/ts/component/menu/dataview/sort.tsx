@@ -107,14 +107,23 @@ class MenuSort extends React.Component<Props, State> {
 		const { data } = param;
 		const { view, rootId, blockId } = data;
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { sorts: items });
+		C.BlockSetDataviewView(rootId, blockId, view.id, { type: view.type, sorts: items });
 	};
 	
 	onAdd (e: any) {
-		let { items } = this.state;
-		
-		items.push({ relationId: '', sort: I.SortType.Asc });
-		this.setState({ items: items });
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+
+		if (!view.relations.length) {
+			return;
+		};
+
+		this.state.items.push({ 
+			relationId: view.relations[0].id, 
+			sort: I.SortType.Asc 
+		});
+		this.setState({ items: this.state.items });
 	};
 
 	onChange (id: number, k: string, v: string) {

@@ -7,7 +7,7 @@ import DataUtil from './datautil';
 import SmileUtil from './smileutil';
 import Mark from './mark';
 import { focus } from './focus';
-import { StructDecode, StructEncode } from './struct';
+import { Encode, Decode } from './struct';
 import { scrollOnMove } from './scrollOnMove';
 import { analytics } from './analytics';
 import { crumbs } from './crumbs';
@@ -49,6 +49,6 @@ export {
 	analytics,
 	crumbs,
 	scrollOnMove,
-	StructDecode, 
-	StructEncode,
+	Encode,
+	Decode,
 };

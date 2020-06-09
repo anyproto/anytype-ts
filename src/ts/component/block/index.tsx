@@ -89,7 +89,7 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
 				
-				if (checked) {
+				if (block.isCheckbox() && checked) {
 					cn.push('isChecked');
 				};
 				

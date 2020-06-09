@@ -1,6 +1,6 @@
 import * as is from 'is';
 
-export class StructEncode {
+class StructEncode {
 
 	seenObjects: Set<{}>;
 	removeCircular: boolean;
@@ -99,7 +99,7 @@ export class StructEncode {
 	};
 };
 
-export class StructDecode {
+class StructDecode {
 
 	static decodeValue (value: any) {
 		switch (value.kind) {
@@ -135,3 +135,6 @@ export class StructDecode {
 	};
 
 };
+
+export let Encode = new StructEncode();
+export let Decode = StructDecode;

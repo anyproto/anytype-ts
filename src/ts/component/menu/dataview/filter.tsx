@@ -8,16 +8,11 @@ import arrayMove from 'array-move';
 const $ = require('jquery');
 
 interface Props extends I.Menu {};
-interface State {
-	items: any[];
-};
 
-class MenuFilter extends React.Component<Props, State> {
+class MenuFilter extends React.Component<Props, {}> {
 	
-	state = {
-		items: [] as any[]
-	};
 	refObj: any = {};
+	items: I.Filter[] = [] as I.Filter[];
 	
 	constructor (props: any) {
 		super(props);
@@ -32,7 +27,6 @@ class MenuFilter extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
-		const { items } = this.state;
 
 		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },
@@ -65,7 +59,7 @@ class MenuFilter extends React.Component<Props, State> {
 				{item.idx > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
 				<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
 				<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition}  onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
-				<Input ref={(ref: any) => { this.refObj[item.idx] = ref; }} placeHolder="Value" />
+				<Input ref={(ref: any) => { this.refObj[item.idx] = ref; }} value={item.value} placeHolder="Value" onKeyUp={(e: any) => { this.onSubmit(e, item); }} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</form>
 		));
@@ -81,10 +75,10 @@ class MenuFilter extends React.Component<Props, State> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{items.map((item: any, i: number) => (
+					{this.items.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} idx={i} index={i} />
 					))}
-					<ItemAdd index={items.length + 1} disabled={true} />
+					<ItemAdd index={this.items.length + 1} disabled={true} />
 				</div>
 			);
 		});
@@ -109,7 +103,8 @@ class MenuFilter extends React.Component<Props, State> {
 		const { data } = param;
 		const { view } = data;
 		
-		this.setState({ items: view.filters });
+		this.items = view.filters;
+		this.forceUpdate();
 	};
 
 	componentDidUpdate () {
@@ -117,47 +112,52 @@ class MenuFilter extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		const { items } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { view, rootId, blockId } = data;
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { filters: items });
+		C.BlockSetDataviewView(rootId, blockId, view.id, { type: view.type, filters: this.items });
 	};
 	
 	onAdd (e: any) {
-		let { items } = this.state;
-		
-		items.push({ relationId: '', operator: I.FilterOperator.And, condition: I.FilterCondition.Equal });
-		this.setState({ items: items });
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+
+		if (!view.relations.length) {
+			return;
+		};
+
+		this.items.push({ 
+			relationId: view.relations[0].id, 
+			operator: I.FilterOperator.And, 
+			condition: I.FilterCondition.Equal,
+			value: '',
+		});
+		this.forceUpdate();
 	};
 
 	onChange (id: number, k: string, v: string) {
-		const { items } = this.state;
-
-		let item = items.find((item: any, i: number) => { return i == id; });
+		let item = this.items.find((item: any, i: number) => { return i == id; });
 		item[k] = v;
-
-		this.setState({ items: items });
 	};
 	
 	onDelete (e: any, id: number) {
-		const { items } = this.state;
-
-		this.setState({ items: items.filter((item: any, i: number) => { return i != id; }) });
+		this.items = this.items.filter((item: any, i: number) => { return i != id; });
+		this.forceUpdate();
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 		
-		this.setState({ items: arrayMove(this.state.items, oldIndex, newIndex) });
+		this.items = arrayMove(this.items, oldIndex, newIndex);
+		this.forceUpdate();
 	};
 
 	onSubmit (e: any, item: any) {
 		e.preventDefault();
 
-		console.log(item);
-		console.log(this.refObj[item.idx].getValue());
+		this.items[item.idx].value = this.refObj[item.idx].getValue();
 	};
 	
 };
