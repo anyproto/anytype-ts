@@ -157,6 +157,7 @@ class Block extends React.Component<Props, {}> {
 				break;
 			
 			case I.BlockType.Dataview:
+				canSelect = false;
 				cn.push('blockDataview');
 				blockComponent = <BlockDataview {...this.props} />;
 				break;

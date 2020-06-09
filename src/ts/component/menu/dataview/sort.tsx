@@ -8,15 +8,10 @@ import arrayMove from 'array-move';
 const $ = require('jquery');
 
 interface Props extends I.Menu {};
-interface State {
-	items: any[];
-};
 
-class MenuSort extends React.Component<Props, State> {
+class MenuSort extends React.Component<Props, {}> {
 	
-	state = {
-		items: [] as any[]
-	};
+	items: I.Sort[] = [];
 	
 	constructor (props: any) {
 		super(props);
@@ -31,7 +26,6 @@ class MenuSort extends React.Component<Props, State> {
 		const { data } = param;
 		const { view } = data;
 		
-		const { items } = this.state;
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: 'From A to Z' },
 			{ id: String(I.SortType.Desc), name: 'From Z to A' },
@@ -66,10 +60,10 @@ class MenuSort extends React.Component<Props, State> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{items.map((item: any, i: number) => (
+					{this.items.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
-					<ItemAdd index={items.length + 1} disabled={true} />
+					<ItemAdd index={this.items.length + 1} disabled={true} />
 				</div>
 			);
 		});
@@ -94,7 +88,8 @@ class MenuSort extends React.Component<Props, State> {
 		const { data } = param;
 		const { view } = data;
 		
-		this.setState({ items: view.sorts });
+		this.items = view.sorts;
+		this.forceUpdate();
 	};
 
 	componentDidUpdate () {
@@ -102,12 +97,7 @@ class MenuSort extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		const { items } = this.state;
-		const { param } = this.props;
-		const { data } = param;
-		const { view, rootId, blockId } = data;
-
-		C.BlockSetDataviewView(rootId, blockId, view.id, { type: view.type, sorts: items });
+		this.save();
 	};
 	
 	onAdd (e: any) {
@@ -119,32 +109,40 @@ class MenuSort extends React.Component<Props, State> {
 			return;
 		};
 
-		this.state.items.push({ 
+		this.items.push({ 
 			relationId: view.relations[0].id, 
-			sort: I.SortType.Asc 
+			type: I.SortType.Asc 
 		});
-		this.setState({ items: this.state.items });
+		this.forceUpdate();
+		this.save();
 	};
 
 	onChange (id: number, k: string, v: string) {
-		const { items } = this.state;
-
-		let item = items.find((item: any, i: number) => { return i == id; });
+		let item = this.items.find((item: any, i: number) => { return i == id; });
 		item[k] = v;
-
-		this.setState({ items: items });
+		this.save();
 	};
 	
 	onDelete (e: any, id: number) {
-		const { items } = this.state;
-
-		this.setState({ items: items.filter((item: any, i: number) => { return i != id; }) });
+		this.items = this.items.filter((item: any, i: number) => { return i != id; });
+		this.forceUpdate();
+		this.save();
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 		
-		this.setState({ items: arrayMove(this.state.items, oldIndex, newIndex) });
+		this.items = arrayMove(this.items, oldIndex, newIndex);
+		this.forceUpdate();
+		this.save();
+	};
+
+	save () {
+		const { param } = this.props;
+		const { data } = param;
+		const { view, rootId, blockId } = data;
+
+		C.BlockSetDataviewView(rootId, blockId, view.id, { type: view.type, sorts: this.items });
 	};
 	
 };

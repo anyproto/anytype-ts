@@ -493,7 +493,7 @@ const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string
 		contextId: contextId,
 		blockId: blockId,
 		viewId: viewId,
-		view: blockStore.prepareViewToProto(view),
+		view: blockStore.prepareViewToProto(Util.objectCopy(view)),
 	};
 	dispatcher.request('blockSetDataviewView', request, callBack);
 };

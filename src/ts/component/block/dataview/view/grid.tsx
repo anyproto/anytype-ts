@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, DataUtil } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 import Cell from '../cell';
 
@@ -10,6 +11,7 @@ interface Props extends I.ViewComponent {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
+@observer
 class ViewGrid extends React.Component<Props, {}> {
 
 	cellRefs: Map<string, any> = new Map();
@@ -23,7 +25,8 @@ class ViewGrid extends React.Component<Props, {}> {
 
 	render () {
 		const { data, view, onOpen } = this.props;
-		const width = 100 / view.relations.length;
+		const relations = view.relations.filter((it: any) => { return it.visible; });
+		const width = 100 / relations.length;
 		
 		const CellHead = (item: any) => (
 			<th className={'head c-' + item.type} style={{ width: width + '%' }}>
@@ -50,7 +53,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const RowHead = (item: any) => (
 			<tr className="row">
-				{view.relations.map((item: any, i: number) => (
+				{relations.map((item: any, i: number) => (
 					<CellHead key={item.id} {...item} />
 				))}
 				<th className="head add">
@@ -61,7 +64,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const RowBody = (item: any) => (
 			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
-				{view.relations.map((relation: any, i: number) => (
+				{relations.map((relation: any, i: number) => (
 					<CellBody key={relation.id} index={item.index} relation={...relation} data={data[item.index]} />
 				))}
 				<td className="cell">&nbsp;</td>

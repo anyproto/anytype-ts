@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 import Cell from '../cell';
 
 interface Props extends I.ViewComponent {};
 
+@observer
 class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
 		const { data, view } = this.props;
+		const relations = view.relations.filter((it: any) => { return it.visible; });
 		
 		const Card = (item: any) => (
 			<div className="card">
-				{view.relations.map((relation: any, i: number) => (
+				{relations.map((relation: any, i: number) => (
 					<Cell key={relation.id} id={item.index} view={view} relation={...relation} data={data[item.index]} />
 				))}
 			</div>

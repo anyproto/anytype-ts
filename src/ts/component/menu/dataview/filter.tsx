@@ -2,12 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select, Input } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, Util } from 'ts/lib';
 import arrayMove from 'array-move';
 
-const $ = require('jquery');
-
 interface Props extends I.Menu {};
+
+const $ = require('jquery');
 
 class MenuFilter extends React.Component<Props, {}> {
 	
@@ -27,7 +27,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
-
+		
 		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
@@ -112,11 +112,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { view, rootId, blockId } = data;
-
-		C.BlockSetDataviewView(rootId, blockId, view.id, { type: view.type, filters: this.items });
+		this.save();
 	};
 	
 	onAdd (e: any) {
@@ -135,16 +131,19 @@ class MenuFilter extends React.Component<Props, {}> {
 			value: '',
 		});
 		this.forceUpdate();
+		this.save();
 	};
 
 	onChange (id: number, k: string, v: string) {
 		let item = this.items.find((item: any, i: number) => { return i == id; });
 		item[k] = v;
+		this.save();
 	};
 	
 	onDelete (e: any, id: number) {
 		this.items = this.items.filter((item: any, i: number) => { return i != id; });
 		this.forceUpdate();
+		this.save();
 	};
 	
 	onSortEnd (result: any) {
@@ -152,12 +151,24 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		this.items = arrayMove(this.items, oldIndex, newIndex);
 		this.forceUpdate();
+		this.save();
 	};
 
 	onSubmit (e: any, item: any) {
 		e.preventDefault();
 
 		this.items[item.idx].value = this.refObj[item.idx].getValue();
+	};
+
+	save () {
+		const { param } = this.props;
+		const { data } = param;
+		const { view, rootId, blockId } = data;
+
+		C.BlockSetDataviewView(rootId, blockId, view.id, { 
+			type: view.type, 
+			filters: this.items, 
+		});
 	};
 	
 };

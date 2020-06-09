@@ -491,14 +491,6 @@ class BlockStore {
 			};
 		});
 
-		// TMP
-		if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'id'; })) {
-			view.relations.push({ id: 'id', visible: true });
-		};
-		if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'description'; })) {
-			view.relations.push({ id: 'description', visible: true });
-		};
-
 		view.relations = view.relations.map((relation: I.ViewRelation) => {
 			const rel = relations.find((it: I.Relation) => { return it.id == relation.id; });
 			return Object.assign(rel, relation);
@@ -553,7 +545,7 @@ class BlockStore {
 	};
 	
 	prepareViewToProto (view: I.View) {
-		if (view.filters.length) {
+		if (view.filters && view.filters.length) {
 			view.filters = view.filters.map((filter: I.Filter) => {
 				filter.value = Encode.encodeValue(filter.value || '');
 				return filter;

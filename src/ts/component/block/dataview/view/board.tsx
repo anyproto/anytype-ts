@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 import Cell from '../cell';
 
@@ -13,11 +14,13 @@ interface Column {
 
 const GROUP = 'isArchived';
 
+@observer
 class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
 		const { view } = this.props;
 		const group = view.relations.find((item: I.Relation) => { return item.id == GROUP; });
+		const relations = view.relations.filter((it: any) => { return it.visible; });
 
 		if (!group) {
 			return null;
@@ -27,7 +30,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		
 		const Card = (item: any) => (
 			<div className="card">
-				{view.relations.map((relation: any, i: number) => (
+				{relations.map((relation: any, i: number) => (
 					<Cell key={relation.id} id={item.index} view={view} relation={...relation} data={item.data} />
 				))}
 			</div>

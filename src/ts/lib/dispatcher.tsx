@@ -311,7 +311,7 @@ class Dispatcher {
 
 					const schemaId = DataUtil.schemaField(block.content.schemaURL);
 					data.view = blockStore.prepareViewFromProto(schemaId, data.view);
-					
+
 					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
 						set(view, data.view);
