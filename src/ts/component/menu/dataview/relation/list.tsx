@@ -2,24 +2,19 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
+interface Props extends I.Menu {};
+
 const $ = require('jquery');
 
-interface Props extends I.Menu {};
-interface State {
-	items: I.Relation[];
-};
-
 @observer
-class MenuRelationList extends React.Component<Props, State> {
+class MenuRelationList extends React.Component<Props, {}> {
 	
-	state = {
-		items: [] as I.Relation[]
-	};
+	items: I.ViewRelation[] = [];
 	
 	constructor (props: any) {
 		super(props);
@@ -27,10 +22,13 @@ class MenuRelationList extends React.Component<Props, State> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onSwitch = this.onSwitch.bind(this);
 	};
 	
 	render () {
-		const { items } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { readOnly } = data;
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -43,7 +41,7 @@ class MenuRelationList extends React.Component<Props, State> {
 					<Icon className={'relation c-' + item.type} />
 					<div className="name">{item.name}</div>
 				</span>
-				<Switch value={item.visible} className="green" />
+				<Switch value={item.visible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.id, v); }} />
 			</div>
 		));
 		
@@ -58,10 +56,10 @@ class MenuRelationList extends React.Component<Props, State> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{items.map((item: any, i: number) => (
+					{this.items.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
 					))}
-					<ItemAdd index={items.length + 1} disabled={true} />
+					{!readOnly ? <ItemAdd index={this.items.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});
@@ -86,7 +84,16 @@ class MenuRelationList extends React.Component<Props, State> {
 		const { data } = param;
 		const { view } = data;
 		
-		this.setState({ items: view.relations });
+		this.items = view.relations;
+		this.forceUpdate();
+	};
+
+	componentDidUpdate () {
+		this.props.position();
+	};
+
+	componentWillUnmount () {
+		this.save();
 	};
 	
 	onAdd (e: any) {
@@ -107,6 +114,11 @@ class MenuRelationList extends React.Component<Props, State> {
 	onEdit (e: any, id: string) {
 		const { param } = this.props;
 		const { data } = param;
+		const { readOnly } = data;
+
+		if (readOnly) {
+			return;
+		};
 		
 		commonStore.menuOpen('dataviewRelationEdit', { 
 			type: I.MenuType.Vertical,
@@ -124,7 +136,29 @@ class MenuRelationList extends React.Component<Props, State> {
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		this.setState({ items: arrayMove(this.state.items, oldIndex, newIndex) });
+		
+		this.items = arrayMove(this.items, oldIndex, newIndex);
+		this.forceUpdate();
+		this.save();
+	};
+
+	onSwitch (e: any, id: string, v: boolean) {
+		const item = this.items.find((it: any) => { return it.id == id; });
+		if (item) {
+			item.visible = v;
+			this.save();
+		};
+	};
+
+	save () {
+		const { param } = this.props;
+		const { data } = param;
+		const { view, rootId, blockId } = data;
+
+		C.BlockSetDataviewView(rootId, blockId, view.id, { 
+			type: view.type, 
+			relations: this.items, 
+		});
 	};
 	
 };

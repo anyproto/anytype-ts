@@ -1,13 +1,13 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
-import { I, M, Util, DataUtil, StructDecode, StructEncode } from 'ts/lib';
+import { I, M, Util, DataUtil, Decode, Encode } from 'ts/lib';
 
+const $ = require('jquery');
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const Schema = {
 	page: require('json/schema/page.json'),
 	relation: require('json/schema/relation.json'),
 };
-const $ = require('jquery');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -68,7 +68,7 @@ class BlockStore {
 				continue;
 			};
 			
-			map.set(item.id, StructDecode.decodeStruct(item.details));
+			map.set(item.id, Decode.decodeStruct(item.details));
 		};
 		
 		intercept(map as any, (change: any) => {
@@ -96,7 +96,7 @@ class BlockStore {
 			create = true;
 		};
 		
-		map.set(item.id, decode ? StructDecode.decodeStruct(item.details) : item.details);
+		map.set(item.id, decode ? Decode.decodeStruct(item.details) : item.details);
 		
 		if (create) {
 			intercept(map as any, (change: any) => {
@@ -399,7 +399,7 @@ class BlockStore {
 		};
 		
 		if (block.fields) {
-			item.fields = StructDecode.decodeStruct(block.fields);
+			item.fields = Decode.decodeStruct(block.fields);
 			
 			if (type == I.BlockType.Page) {
 				item.fields.name = String(item.fields.name || Constant.default.name);
@@ -415,7 +415,7 @@ class BlockStore {
 			};
 
 			if (content.fields) {
-				item.content.fields = StructDecode.decodeStruct(content.fields);
+				item.content.fields = Decode.decodeStruct(content.fields);
 			};
 			
 			if (type == I.BlockType.Text) {
@@ -447,40 +447,11 @@ class BlockStore {
 			};
 
 			if (type == I.BlockType.Dataview) {
-				let schema = Schema[DataUtil.schemaField(item.content.schemaURL)];
-				let relations = [];
-
-				for (let field of schema.default) {
-					relations.push({
-						id: field.id,
-						name: field.name,
-						type: DataUtil.schemaField(field.type),
-					});
-				};
+				const schemaId = DataUtil.schemaField(item.content.schemaURL);
 
 				item.content.views = item.content.views || [];
 				item.content.views = item.content.views.map((view: I.View) => {
-					view.sorts = view.sorts.map((sort: I.Sort) => {
-						return {
-							relationId: String(sort.relationId || ''),
-							type: Number(sort.type) || 0,
-						};
-					});
-
-					// TMP
-					if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'id'; })) {
-						view.relations.push({ id: 'id', visible: true });
-					};
-					if (!view.relations.find((it: I.ViewRelation) => { return it.id == 'description'; })) {
-						view.relations.push({ id: 'description', visible: true });
-					};
-
-					view.relations = view.relations.map((relation: I.ViewRelation) => {
-						const rel = relations.find((it: I.Relation) => { return it.id == relation.id; });
-						return Object.assign(rel, relation);
-					});
-					
-					return new M.View(view);
+					return this.prepareViewFromProto(schemaId, view);
 				});
 
 				decorate(item.content, {
@@ -491,7 +462,43 @@ class BlockStore {
 		
 		return item;
 	};
-	
+
+	prepareViewFromProto (schemaId: string, view: I.View) {
+		let schema = Schema[schemaId];
+		let relations = [];
+
+		for (let field of schema.default) {
+			relations.push({
+				id: field.id,
+				name: field.name,
+				type: DataUtil.schemaField(field.type),
+			});
+		};
+
+		view.filters = view.filters.map((filter: I.Filter) => {
+			return {
+				relationId: String(filter.relationId || ''),
+				operator: Number(filter.operator) || 0,
+				condition: Number(filter.condition) || 0,
+				value: filter.value ? Decode.decodeValue(filter.value) : '',
+			};
+		});
+
+		view.sorts = view.sorts.map((sort: I.Sort) => {
+			return {
+				relationId: String(sort.relationId || ''),
+				type: Number(sort.type) || 0,
+			};
+		});
+
+		view.relations = view.relations.map((relation: I.ViewRelation) => {
+			const rel = relations.find((it: I.Relation) => { return it.id == relation.id; });
+			return Object.assign(rel, relation);
+		});
+		
+		return observable(new M.View(view));
+	};
+
 	prepareBlockToProto (data: any) {
 		data.content = Util.objectCopy(data.content || {});
 		
@@ -517,7 +524,7 @@ class BlockStore {
 				data.content.addedAt = parseFloat(data.content.addedAt);
 			};
 		};
-		
+
 		if (data.type == I.BlockType.Page) {
 			data.fields = data.fields || {};
 			data.fields.name = String(data.fields.name || Constant.default.name);
@@ -525,7 +532,7 @@ class BlockStore {
 		};
 		
 		if (data.fields) {
-			block.fields = (new StructEncode()).encodeStruct(data.fields || {});
+			block.fields = Encode.encodeStruct(data.fields || {});
 		};
 
 		const model = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)];
@@ -537,6 +544,15 @@ class BlockStore {
 		return block;
 	};
 	
+	prepareViewToProto (view: I.View) {
+		if (view.filters && view.filters.length) {
+			view.filters = view.filters.map((filter: I.Filter) => {
+				filter.value = Encode.encodeValue(filter.value || '');
+				return filter;
+			});
+		};
+		return view;
+	};
 };
 
 export let blockStore: BlockStore = new BlockStore();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, StructDecode, crumbs } from 'ts/lib';
+import { I, C, Util, Decode, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { DataUtil } from '../../lib';
@@ -469,7 +469,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	getPage (page: any): I.PageInfo {
-		let details = StructDecode.decodeStruct(page.details || {});
+		let details = Decode.decodeStruct(page.details || {});
 		details.name = String(details.name || Constant.default.name || '');
 
 		return {

@@ -12,7 +12,8 @@
       {
         "id": "id",
         "name": "Id",
-        "type": "https://anytype.io/schemas/types/number"
+        "type": "https://anytype.io/schemas/types/number",
+        "isHidden": true
       },
       {
         "id": "name",

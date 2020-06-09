@@ -1,7 +1,6 @@
-import { I, Util, Mark, dispatcher, StructEncode } from 'ts/lib';
+import { I, Util, Mark, dispatcher, Encode } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
-const Struct = new StructEncode();
 const Constant = require('json/constant.json');
 
 const VersionGet = (callBack?: (message: any) => void) => {
@@ -180,7 +179,7 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 		contextId: contextId,
 		targetId: targetId,
 		position: position,
-		details: Struct.encodeStruct(details),
+		details: Encode.encodeStruct(details),
 	};
 	dispatcher.request('blockCreatePage', request, callBack);
 };
@@ -216,14 +215,14 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 	const request = {
 		contextId: contextId,
 		blockId: blockId,
-		fields: Struct.encodeStruct(fields || {}),
+		fields: Encode.encodeStruct(fields || {}),
 	};
 	dispatcher.request('blockSetFields', request, callBack);
 };
 
 const BlockSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
 	details = details.map((it: any) => { 
-		it.value = Struct.encodeValue(it.value);
+		it.value = Encode.encodeValue(it.value);
 		return it; 
 	});
 	
@@ -372,7 +371,7 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 	const request = {
 		contextId: contextId,
 		blockIds: blockIds,
-		details: Struct.encodeStruct(details || {}),
+		details: Encode.encodeStruct(details || {}),
 		dropTargetId: targetId,
 		position: position,
 	};
@@ -435,7 +434,7 @@ const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mar
 
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map((it: any) => {
-		it.fields = Struct.encodeStruct(it.fields || {});
+		it.fields = Encode.encodeStruct(it.fields || {});
 		return it;
 	});
 	
@@ -494,7 +493,7 @@ const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string
 		contextId: contextId,
 		blockId: blockId,
 		viewId: viewId,
-		view: view,
+		view: blockStore.prepareViewToProto(Util.objectCopy(view)),
 	};
 	dispatcher.request('blockSetDataviewView', request, callBack);
 };

@@ -141,7 +141,7 @@ class PopupSettings extends React.Component<Props, State> {
 						<div className="row first">
 							<Label text="Choose or upload the wallpaper. For best results upload high resolution images." />
 							<div className="fileWrap item" onClick={this.onFileClick}>
-								<Cover className="upload" />
+								<Cover className="upload" type={I.CoverType.Color} id="white" />
 							</div>
 						</div>
 

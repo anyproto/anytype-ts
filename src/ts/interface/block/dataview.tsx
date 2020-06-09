@@ -71,6 +71,7 @@ export interface ViewRelation extends Relation {
 export interface ViewComponent {
 	view: I.View;
 	data: any[];
+	readOnly: boolean;
 	onOpen(e: any, data: any): void;
 };
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, StructDecode, DataUtil } from 'ts/lib';
+import { I, C, Decode, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import Controls from './dataview/controls';
@@ -16,17 +16,22 @@ interface Props extends RouteComponentProps<any> {
 };
 
 interface State {
-	view: string;
+	viewId: string;
 	data: any[];
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Schema = {
+	page: require('json/schema/page.json'),
+	relation: require('json/schema/relation.json'),
+};
 
 @observer
 class BlockDataview extends React.Component<Props, State> {
 
 	state = {
-		view: '',
+		viewId: '',
 		data: [],
 	};
 	
@@ -35,19 +40,29 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		this.onOpen = this.onOpen.bind(this);
 		this.onView = this.onView.bind(this);
-		this.getContent = this.getContent.bind(this);
 	};
 
 	render () {
-		const content = this.getContent();
-		const { view, data } = content;
+		const { block } = this.props;
+		const { content } = block;
+		const { schemaURL, views } = content;
+		const { viewId, data } = this.state;
+
+		if (!views.length) {
+			return null;
+		};
+		
+		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
+		const { type } = view;
+		const schema = Schema[DataUtil.schemaField(schemaURL)];
+		const readOnly = true; // TMP
 
 		if (!view) {
 			return null;
 		};
 
 		let ViewComponent: React.ReactType<I.ViewComponent>;
-		switch (view.type) {
+		switch (type) {
 			default:
 			case I.ViewType.Grid:
 				ViewComponent = ViewGrid;
@@ -68,9 +83,9 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		return (
 			<React.Fragment>
-				<Controls {...this.props} view={view} data={data} onView={this.onView} />
+				<Controls {...this.props} view={view} data={data} readOnly={readOnly} onView={this.onView} />
 				<div className="content">
-					<ViewComponent {...this.props} onOpen={this.onOpen} view={view} data={data} />
+					<ViewComponent {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} />
 				</div>
 			</React.Fragment>
 		);
@@ -81,58 +96,34 @@ class BlockDataview extends React.Component<Props, State> {
 		const { content } = block;
 
 		if (content.views.length) {
-			this.setState({ view: content.views[0].id });
+			this.setState({ viewId: content.views[0].id });
 		};
 	};
 
 	componentDidUpdate (nextProps: Props, nextState: State) {
-		if (this.state.view != nextState.view) {
+		if (this.state.viewId != nextState.viewId) {
 			this.getData();
 		};
+		$(window).trigger('resize.editor');
 	};
 	
 	onView (e: any, id: string) {
-		this.setState({ view: id });
-	};
-
-	getContent () {
-		const { data } = this.state;
-		const { block } = this.props;
-		const { content } = block;
-
-		let ret: any = {
-			views: content.views,
-			data: data,
-		};
-
-		if (ret.views.length) {
-			const view = this.state.view || ret.views[0].id;
-			ret.view = ret.views.find((item: any) => { return item.id == view; });
-		};
-
-		return ret;
+		this.setState({ viewId: id });
 	};
 
 	getData () {
 		const { rootId, block } = this.props;
-		const { view } = this.getContent();
+		const { viewId } = this.state;
 
-		if (view) {
-			C.BlockSetDataviewActiveView(rootId, block.id, view.id, 0, 10, (message: any) => {
+		if (viewId) {
+			C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, 10, (message: any) => {
 
 			});
 		};
-
-		/*
-		C.NavigationListPages((message: any) => {
-			let pages = message.pages.map((it: any) => { return this.getPage(it); });
-			this.setState({ data: pages.slice(0, 10) });
-		});
-		*/
 	};
 
 	getPage (page: any): I.PageInfo {
-		let details = StructDecode.decodeStruct(page.details || {});
+		let details = Decode.decodeStruct(page.details || {});
 		details.name = String(details.name || Constant.default.name || '');
 
 		return {

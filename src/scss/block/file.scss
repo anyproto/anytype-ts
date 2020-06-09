@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockFile { padding: 6px 0px; }
-	.block.blockFile.withFile { padding: 3px 0px; }
+	.block.blockFile.withFile { padding: 0px; }
 	.block.blockFile {
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
@@ -38,5 +38,5 @@
 	
 	.block.blockFile > .wrapContent > .selectable > .dropTarget { @include text-overflow-nw;  }
 	.block.blockFile > .wrapContent > .selectable.isSelected .download { display: none; }
-	.block.blockFile > .wrapContent > .selectable > .dropTarget > .focusable.withFile { margin: 3px 0px; }
+	.block.blockFile.withFile > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 }

@@ -89,7 +89,7 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
 				
-				if (checked) {
+				if (block.isCheckbox() && checked) {
 					cn.push('isChecked');
 				};
 				
@@ -157,6 +157,7 @@ class Block extends React.Component<Props, {}> {
 				break;
 			
 			case I.BlockType.Dataview:
+				canSelect = false;
 				cn.push('blockDataview');
 				blockComponent = <BlockDataview {...this.props} />;
 				break;

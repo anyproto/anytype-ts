@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, Key, keyboard, StructDecode, Util, DataUtil, Mark } from 'ts/lib';
+import { I, C, Key, keyboard, Decode, Util, DataUtil, Mark } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -193,7 +193,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	getPage (page: any): I.PageInfo {
-		let details = StructDecode.decodeStruct(page.details || {});
+		let details = Decode.decodeStruct(page.details || {});
 		details.name = String(details.name || Constant.default.name || '');
 
 		return {

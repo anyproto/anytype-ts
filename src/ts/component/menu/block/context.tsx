@@ -55,9 +55,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			markActions = markActions.filter((it: any) => { return [ I.MarkType.Bold, I.MarkType.Code ].indexOf(it.type) < 0; });
 		};
 		
-		// You can't make quote italic, since it's already italic
+		// You can't make quote as code
 		if ([ I.TextStyle.Quote ].indexOf(style) >= 0) {
-			markActions = markActions.filter((it: any) => { return [ I.MarkType.Italic, I.MarkType.Code ].indexOf(it.type) < 0; });
+			markActions = markActions.filter((it: any) => { return [ I.MarkType.Code ].indexOf(it.type) < 0; });
 		};
 		
 		let icon = DataUtil.styleIcon(type, style);
