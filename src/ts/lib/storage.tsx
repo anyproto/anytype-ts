@@ -61,8 +61,6 @@ class Storage {
 		this.delete('toggle');
 		this.delete('pageId');
 		this.delete('hello');
-		this.delete('cover');
-		this.delete('coverImg');
 	};
 	
 };
