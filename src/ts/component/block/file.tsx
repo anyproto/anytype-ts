@@ -53,7 +53,6 @@ class BlockFile extends React.Component<Props, {}> {
 				break;
 				
 			case I.FileState.Done:
-				cn.push('withFile');
 				element = (
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>

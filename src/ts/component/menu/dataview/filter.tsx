@@ -33,36 +33,27 @@ class MenuFilter extends React.Component<Props, {}> {
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
 		
-		const conditionOptions: I.Option[] = [
-			{ id: String(I.FilterCondition.Equal), name: 'Is equal' },
-			{ id: String(I.FilterCondition.NotEqual), name: 'Is not equal' },
-			{ id: String(I.FilterCondition.In), name: 'Contains' },
-			{ id: String(I.FilterCondition.NotIn), name: 'Doesn\'t contain' },
-			{ id: String(I.FilterCondition.Greater), name: 'Is greater' },
-			{ id: String(I.FilterCondition.Less), name: 'Is less' },
-			{ id: String(I.FilterCondition.Like), name: 'Matches' },
-			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
-		];
-		
-		let relationOptions: I.Option[] = [];
-		for (let relation of view.relations) {
-			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
-		};
+		const relationOptions: I.Option[] = view.relations.map((it: I.ViewRelation) => {
+			return { id: it.id, name: it.name, icon: 'relation c-' + it.type };
+		});
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 		
-		const Item = SortableElement((item: any) => (
-			<form className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
-				<Handle />
-				{item.idx > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
-				<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
-				<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition}  onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
-				<Input ref={(ref: any) => { this.refObj[item.idx] = ref; }} value={item.value} placeHolder="Value" onKeyUp={(e: any) => { this.onSubmit(e, item); }} />
-				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
-			</form>
-		));
+		const Item = SortableElement((item: any) => {
+			const conditionOptions = this.conditionsByType(item.type);
+			return (
+				<form className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
+					<Handle />
+					{item.idx > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
+					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
+					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
+					<Input ref={(ref: any) => { this.refObj[item.idx] = ref; }} value={item.value} placeHolder="Value" onKeyUp={(e: any) => { this.onSubmit(e, item); }} />
+					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
+				</form>
+			);
+		});
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div className="item add" onClick={this.onAdd}>
@@ -169,6 +160,20 @@ class MenuFilter extends React.Component<Props, {}> {
 			type: view.type, 
 			filters: this.items, 
 		});
+	};
+
+	conditionsByType (type: I.RelationType): I.Option[] {
+		let ret: I.Option[] = [
+			{ id: String(I.FilterCondition.Equal), name: 'Is equal' },
+			{ id: String(I.FilterCondition.NotEqual), name: 'Is not equal' },
+			{ id: String(I.FilterCondition.In), name: 'Contains' },
+			{ id: String(I.FilterCondition.NotIn), name: 'Doesn\'t contain' },
+			{ id: String(I.FilterCondition.Greater), name: 'Is greater' },
+			{ id: String(I.FilterCondition.Less), name: 'Is less' },
+			{ id: String(I.FilterCondition.Like), name: 'Matches' },
+			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
+		];
+		return ret;
 	};
 	
 };
