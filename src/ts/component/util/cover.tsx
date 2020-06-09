@@ -55,7 +55,7 @@ class Cover extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')} onClick={onClick} onMouseDown={onMouseDown} style={style} />
+			<div className={cn.join(' ')} onClick={onClick} onMouseDown={onMouseDown} style={style} />
 		);
 	};
 	
