@@ -53,7 +53,7 @@ class Block implements I.Block {
 	};
 
 	hasTitle (): boolean {
-		return this.isPagePage() || this.isPageProfile() || this.isPageDataview();
+		return this.isPagePage() || this.isPageProfile() || this.isPageSet();
 	};
 	
 	isPage (): boolean { 
@@ -68,8 +68,8 @@ class Block implements I.Block {
 		return this.isPage() && (this.pageType == I.PageType.Profile);
 	};
 
-	isPageDataview (): boolean { 
-		return this.isPage() && (this.pageType == I.PageType.Dataview);
+	isPageSet (): boolean { 
+		return this.isPage() && (this.pageType == I.PageType.Set);
 	};
 	
 	isLayout (): boolean {

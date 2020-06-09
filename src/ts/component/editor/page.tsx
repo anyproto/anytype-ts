@@ -85,7 +85,7 @@ class EditorPage extends React.Component<Props, State> {
 			icon.type = I.BlockType.IconPage;
 		};
 
-		if (root.isPageDataview()) {
+		if (root.isPageSet()) {
 			cn.push('isDataview');
 		};
 		
@@ -319,7 +319,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root || root.isPageDataview()) {
+		if (!root || root.isPageSet()) {
 			return;
 		};
 		

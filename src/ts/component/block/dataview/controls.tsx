@@ -10,6 +10,7 @@ interface Props {
 	view: I.View;
 	block: I.Block;
 	rootId: string;
+	readOnly: boolean;
 	onView(e: any, id: string): void;
 };
 
@@ -102,7 +103,7 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { rootId, block, data, view } = this.props;
+		const { rootId, block, data, view, readOnly } = this.props;
 
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,
@@ -112,6 +113,7 @@ class Controls extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
+				readOnly: readOnly,
 				rootId: rootId,
 				blockId: block.id, 
 				view: view,

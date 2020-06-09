@@ -114,6 +114,11 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	onCellClick (e: any, item: any) {
+		const { readOnly } = this.props;
+		if (readOnly) {
+			return;
+		};
+
 		const { index, relation } = item;
 		const id = DataUtil.cellId(relation.id, index);
 		const node = $(ReactDOM.findDOMNode(this));

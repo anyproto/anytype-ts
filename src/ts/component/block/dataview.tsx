@@ -22,6 +22,10 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Schema = {
+	page: require('json/schema/page.json'),
+	relation: require('json/schema/relation.json'),
+};
 
 @observer
 class BlockDataview extends React.Component<Props, State> {
@@ -41,7 +45,7 @@ class BlockDataview extends React.Component<Props, State> {
 	render () {
 		const { block } = this.props;
 		const { content } = block;
-		const { views } = content;
+		const { schemaURL, views } = content;
 		const { viewId, data } = this.state;
 
 		if (!views.length) {
@@ -50,6 +54,8 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
 		const { type } = view;
+		const schema = Schema[DataUtil.schemaField(schemaURL)];
+		const readOnly = true; // TMP
 
 		if (!view) {
 			return null;
@@ -77,9 +83,9 @@ class BlockDataview extends React.Component<Props, State> {
 		
 		return (
 			<React.Fragment>
-				<Controls {...this.props} view={view} data={data} onView={this.onView} />
+				<Controls {...this.props} view={view} data={data} readOnly={readOnly} onView={this.onView} />
 				<div className="content">
-					<ViewComponent {...this.props} onOpen={this.onOpen} view={view} data={data} />
+					<ViewComponent {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} />
 				</div>
 			</React.Fragment>
 		);

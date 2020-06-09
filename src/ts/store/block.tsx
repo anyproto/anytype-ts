@@ -1,13 +1,13 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
 import { I, M, Util, DataUtil, Decode, Encode } from 'ts/lib';
 
+const $ = require('jquery');
 const com = require('proto/commands.js');
 const Constant = require('json/constant.json');
 const Schema = {
 	page: require('json/schema/page.json'),
 	relation: require('json/schema/relation.json'),
 };
-const $ = require('jquery');
 
 class BlockStore {
 	@observable public rootId: string = '';

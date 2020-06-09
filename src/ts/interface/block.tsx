@@ -58,7 +58,7 @@ export interface Block {
 	isPage?(): boolean;
 	isPagePage?(): boolean;
 	isPageProfile?(): boolean;
-	isPageDataview?(): boolean;
+	isPageSet?(): boolean;
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;
 	isLayoutColumn?(): boolean;

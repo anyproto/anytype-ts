@@ -26,6 +26,10 @@ class MenuRelationList extends React.Component<Props, {}> {
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { readOnly } = data;
+
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
@@ -55,7 +59,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 					{this.items.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
 					))}
-					<ItemAdd index={this.items.length + 1} disabled={true} />
+					{!readOnly ? <ItemAdd index={this.items.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});
@@ -110,6 +114,11 @@ class MenuRelationList extends React.Component<Props, {}> {
 	onEdit (e: any, id: string) {
 		const { param } = this.props;
 		const { data } = param;
+		const { readOnly } = data;
+
+		if (readOnly) {
+			return;
+		};
 		
 		commonStore.menuOpen('dataviewRelationEdit', { 
 			type: I.MenuType.Vertical,
