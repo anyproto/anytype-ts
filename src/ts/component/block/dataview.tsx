@@ -20,6 +20,7 @@ interface State {
 	data: any[];
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 @observer
@@ -97,6 +98,7 @@ class BlockDataview extends React.Component<Props, State> {
 		if (this.state.viewId != nextState.viewId) {
 			this.getData();
 		};
+		$(window).trigger('resize.editor');
 	};
 	
 	onView (e: any, id: string) {
