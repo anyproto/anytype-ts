@@ -339,9 +339,7 @@ class Dispatcher {
 						list.push(details);
 					};
 
-					block.content.viewId = data.viewId;
 					block.content.data = list;
-					
 					blockStore.blockUpdate(rootId, block);
 					break;
 
