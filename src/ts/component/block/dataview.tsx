@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Decode, DataUtil } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { blockStore } from 'ts/store';
 
 import Controls from './dataview/controls';
 
@@ -15,24 +16,15 @@ interface Props extends RouteComponentProps<any> {
 	block: I.Block;
 };
 
-interface State {
-	viewId: string;
-};
-
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const Schema = {
 	page: require('json/schema/page.json'),
 	relation: require('json/schema/relation.json'),
 };
 
 @observer
-class BlockDataview extends React.Component<Props, State> {
+class BlockDataview extends React.Component<Props, {}> {
 
-	state = {
-		viewId: ''
-	};
-	
 	constructor (props: any) {
 		super(props);
 		
@@ -43,8 +35,9 @@ class BlockDataview extends React.Component<Props, State> {
 	render () {
 		const { block } = this.props;
 		const { content } = block;
-		const { schemaURL, views, data } = content;
-		const { viewId } = this.state;
+		const { schemaURL, views, data, viewId } = content;
+
+		console.log('View', viewId, data);
 
 		if (!views.length) {
 			return null;
@@ -94,29 +87,27 @@ class BlockDataview extends React.Component<Props, State> {
 		const { content } = block;
 
 		if (content.views.length) {
-			this.setState({ viewId: content.views[0].id });
+			this.getData(content.views[0].id);
 		};
 	};
 
-	componentDidUpdate (nextProps: Props, nextState: State) {
-		if (this.state.viewId != nextState.viewId) {
-			this.getData();
-		};
-
+	componentDidUpdate () {
+		console.log('UPDATE');
+		console.log(JSON.stringify(this.props.block, null, 3));
 		$(window).trigger('resize.editor');
 	};
 
-	onView (e: any, id: string) {
-		this.setState({ viewId: id });
+	onView (id: string) {
+		this.getData(id);
 	};
 
-	getData () {
+	getData (viewId: string) {
 		const { rootId, block } = this.props;
-		const { viewId } = this.state;
 
-		if (viewId) {
-			C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, 10);
-		};
+		block.content.viewId = viewId;
+		blockStore.blockUpdate(rootId, block);
+
+		C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, 10);
 	};
 
 	onOpen (e: any, data: any) {

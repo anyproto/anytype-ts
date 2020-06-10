@@ -333,13 +333,15 @@ class Dispatcher {
 
 					let list = [];
 					for (let item of data.inserted) {
-						let details = Decode.decodeStruct(item);
-						if (details) {
-							list.push(details);
-						};
+						let details = Decode.decodeStruct(item) || {};
+						details.name = String(details.name || Constant.default.name);
+
+						list.push(details);
 					};
 
+					block.content.viewId = data.viewId;
 					block.content.data = list;
+					
 					blockStore.blockUpdate(rootId, block);
 					break;
 

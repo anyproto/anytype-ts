@@ -99,8 +99,7 @@ export interface Cell {
 export interface ContentDataview {
 	databaseId: string;
 	schemaURL: string;
-	view: View;
-	relations: Relation[];
+	viewId: string;
 	views: View[];
 	data: any[];
 };
