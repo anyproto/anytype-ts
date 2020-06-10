@@ -48,7 +48,7 @@ class Cell extends React.Component<Props, {}> {
 				CellComponent = CellMultiple;
 				break;
 				
-			case I.RelationType.Bool:
+			case I.RelationType.Checkbox:
 				CellComponent = CellBool;
 				break;
 				
@@ -107,7 +107,7 @@ class Cell extends React.Component<Props, {}> {
 				commonStore.menuOpen('dataviewAccount', param);
 				break;
 				
-			case I.RelationType.Bool:
+			case I.RelationType.Checkbox:
 				break; 
 		};
 	};

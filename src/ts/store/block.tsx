@@ -449,6 +449,7 @@ class BlockStore {
 			if (type == I.BlockType.Dataview) {
 				const schemaId = DataUtil.schemaField(item.content.schemaURL);
 
+				item.content.data = item.content.data || [];
 				item.content.views = item.content.views || [];
 				item.content.views = item.content.views.map((view: I.View) => {
 					return this.prepareViewFromProto(schemaId, view);
@@ -469,9 +470,11 @@ class BlockStore {
 
 		for (let field of schema.default) {
 			relations.push({
-				id: field.id,
-				name: field.name,
+				id: String(field.id || ''),
+				name: String(field.name || ''),
 				type: DataUtil.schemaField(field.type),
+				isHidden: Boolean(field.isHidden),
+				isReadOnly: Boolean(field.isReadonly),
 			});
 		};
 

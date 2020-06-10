@@ -170,6 +170,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			{ id: String(I.FilterCondition.NotIn), name: 'Doesn\'t contain' },
 			{ id: String(I.FilterCondition.Greater), name: 'Is greater' },
 			{ id: String(I.FilterCondition.Less), name: 'Is less' },
+			{ id: String(I.FilterCondition.GreaterOrEqual), name: 'Is greater or equal' },
+			{ id: String(I.FilterCondition.LessOrEqual), name: 'Is less or equal' },
 			{ id: String(I.FilterCondition.Like), name: 'Matches' },
 			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
 		];

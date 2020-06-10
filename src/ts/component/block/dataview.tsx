@@ -17,7 +17,6 @@ interface Props extends RouteComponentProps<any> {
 
 interface State {
 	viewId: string;
-	data: any[];
 };
 
 const $ = require('jquery');
@@ -31,8 +30,7 @@ const Schema = {
 class BlockDataview extends React.Component<Props, State> {
 
 	state = {
-		viewId: '',
-		data: [],
+		viewId: ''
 	};
 	
 	constructor (props: any) {
@@ -45,13 +43,13 @@ class BlockDataview extends React.Component<Props, State> {
 	render () {
 		const { block } = this.props;
 		const { content } = block;
-		const { schemaURL, views } = content;
-		const { viewId, data } = this.state;
+		const { schemaURL, views, data } = content;
+		const { viewId } = this.state;
 
 		if (!views.length) {
 			return null;
 		};
-		
+
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
 		const { type } = view;
 		const schema = Schema[DataUtil.schemaField(schemaURL)];
@@ -104,9 +102,10 @@ class BlockDataview extends React.Component<Props, State> {
 		if (this.state.viewId != nextState.viewId) {
 			this.getData();
 		};
+
 		$(window).trigger('resize.editor');
 	};
-	
+
 	onView (e: any, id: string) {
 		this.setState({ viewId: id });
 	};
@@ -116,20 +115,7 @@ class BlockDataview extends React.Component<Props, State> {
 		const { viewId } = this.state;
 
 		if (viewId) {
-			C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, 10, (message: any) => {
-
-			});
-		};
-	};
-
-	getPage (page: any): I.PageInfo {
-		let details = Decode.decodeStruct(page.details || {});
-		details.name = String(details.name || Constant.default.name || '');
-
-		return {
-			id: page.id,
-			description: page.snippet,
-			...details,
+			C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, 10);
 		};
 	};
 
