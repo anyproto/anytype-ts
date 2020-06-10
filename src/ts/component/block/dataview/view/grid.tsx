@@ -24,7 +24,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { data, view, onOpen } = this.props;
+		const { data, view, onOpen, readOnly } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.visible; });
 		const width = 100 / relations.length;
 		
@@ -46,7 +46,14 @@ class ViewGrid extends React.Component<Props, {}> {
 
 			return (
 				<td id={id} className={cn.join(' ')} style={{ width: width + '%' }} onClick={(e: any) => { this.onCellClick(e, item); }}>
-					<Cell ref={(ref: any) => { this.cellRefs.set(id, ref); }} onOpen={onOpen} {...item} view={view} id={item.index} />
+					<Cell 
+						ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
+						onOpen={onOpen} 
+						{...item} 
+						view={view} 
+						id={item.index} 
+						readOnly={readOnly}
+					/>
 				</td>
 			);
 		};

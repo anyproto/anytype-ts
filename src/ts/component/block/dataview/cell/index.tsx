@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -25,7 +25,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, relation, data } = this.props;
+		const { id, relation, data, readOnly } = this.props;
 		
 		let CellComponent: React.ReactType<Props>;
 		switch (relation.type) {
@@ -71,20 +71,24 @@ class Cell extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { id, relation, data } = this.props;
-		const element = '#' + [ 'cell', relation.id, id ].join('-');
+		const { id, relation, data, readOnly } = this.props;
+		
+		if (readOnly) {
+			return;
+		};
 
 		if (this.ref.onClick) {
 			this.ref.onClick(e);
 		};
 		
+		let element = '#' + DataUtil.cellId(relation.id, id);
 		let param: any = { 
 			element: element,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: { 
-				value: data, 
+				value: data[relation.id], 
 				values: relation.values 
 			},
 		};

@@ -37,8 +37,6 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { content } = block;
 		const { schemaURL, views, data, viewId } = content;
 
-		console.log('View', viewId, data);
-
 		if (!views.length) {
 			return null;
 		};

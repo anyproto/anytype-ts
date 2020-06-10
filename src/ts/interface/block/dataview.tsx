@@ -93,6 +93,7 @@ export interface Cell {
 	relation: Relation;
 	data: any;
 	view: any;
+	readOnly?: boolean;
 	onOpen?(e: any, data: any): void;
 };
 

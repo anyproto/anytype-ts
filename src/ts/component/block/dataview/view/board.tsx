@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import Cell from '../cell';
@@ -66,7 +66,7 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): Column[] {
-		const { data } = this.props;
+		let data = Util.objectCopy(this.props.data);
 		
 		let groupBy = GROUP;
 		let r: Column[] = [];
