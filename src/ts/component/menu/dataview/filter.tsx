@@ -105,6 +105,22 @@ class MenuFilter extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this.save();
 	};
+
+	conditionsByType (type: I.RelationType): I.Option[] {
+		let ret: I.Option[] = [
+			{ id: String(I.FilterCondition.Equal), name: 'Is equal' },
+			{ id: String(I.FilterCondition.NotEqual), name: 'Is not equal' },
+			{ id: String(I.FilterCondition.In), name: 'Contains' },
+			{ id: String(I.FilterCondition.NotIn), name: 'Doesn\'t contain' },
+			{ id: String(I.FilterCondition.Greater), name: 'Is greater' },
+			{ id: String(I.FilterCondition.Less), name: 'Is less' },
+			{ id: String(I.FilterCondition.GreaterOrEqual), name: 'Is greater or equal' },
+			{ id: String(I.FilterCondition.LessOrEqual), name: 'Is less or equal' },
+			{ id: String(I.FilterCondition.Like), name: 'Matches' },
+			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
+		];
+		return ret;
+	};
 	
 	onAdd (e: any) {
 		const { param } = this.props;
@@ -154,30 +170,14 @@ class MenuFilter extends React.Component<Props, {}> {
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, rootId, blockId } = data;
+		const { view, rootId, blockId, onSave } = data;
 
 		C.BlockSetDataviewView(rootId, blockId, view.id, { 
 			type: view.type, 
 			filters: this.items, 
-		});
+		}, onSave);
 	};
 
-	conditionsByType (type: I.RelationType): I.Option[] {
-		let ret: I.Option[] = [
-			{ id: String(I.FilterCondition.Equal), name: 'Is equal' },
-			{ id: String(I.FilterCondition.NotEqual), name: 'Is not equal' },
-			{ id: String(I.FilterCondition.In), name: 'Contains' },
-			{ id: String(I.FilterCondition.NotIn), name: 'Doesn\'t contain' },
-			{ id: String(I.FilterCondition.Greater), name: 'Is greater' },
-			{ id: String(I.FilterCondition.Less), name: 'Is less' },
-			{ id: String(I.FilterCondition.GreaterOrEqual), name: 'Is greater or equal' },
-			{ id: String(I.FilterCondition.LessOrEqual), name: 'Is less or equal' },
-			{ id: String(I.FilterCondition.Like), name: 'Matches' },
-			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
-		];
-		return ret;
-	};
-	
 };
 
 export default MenuFilter;

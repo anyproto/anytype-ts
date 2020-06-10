@@ -22,6 +22,8 @@ const Schema = {
 	relation: require('json/schema/relation.json'),
 };
 
+const LIMIT = 1000;
+
 @observer
 class BlockDataview extends React.Component<Props, {}> {
 
@@ -29,7 +31,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);
-		this.onView = this.onView.bind(this);
+		this.getData = this.getData.bind(this);
 	};
 
 	render () {
@@ -72,7 +74,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<Controls {...this.props} view={view} data={data} readOnly={readOnly} onView={this.onView} />
+				<Controls {...this.props} view={view} data={data} readOnly={readOnly} getData={this.getData} />
 				<div className="content">
 					<ViewComponent {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} />
 				</div>
@@ -95,17 +97,13 @@ class BlockDataview extends React.Component<Props, {}> {
 		$(window).trigger('resize.editor');
 	};
 
-	onView (id: string) {
-		this.getData(id);
-	};
-
 	getData (viewId: string) {
 		const { rootId, block } = this.props;
 
 		block.content.viewId = viewId;
 		blockStore.blockUpdate(rootId, block);
 
-		C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, 10);
+		C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, LIMIT);
 	};
 
 	onOpen (e: any, data: any) {
