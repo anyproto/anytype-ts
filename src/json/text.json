@@ -63,5 +63,17 @@
 	"blockDescriptionBookmark": { "en": "Save your favorite link with summary" },
 	"blockDescriptionCode": { "en": "Capture code snippet " },
 	"blockDescriptionLine": { "en": "Separate information with line" },
-	"blockDescriptionDot": { "en": "Separate information with three dots" }
+	"blockDescriptionDot": { "en": "Separate information with three dots" },
+
+	"filterCondition0": { "en": "Is equal" },
+	"filterCondition1": { "en": "Is not equal" },
+	"filterCondition2": { "en": "Is greater" },
+	"filterCondition3": { "en": "Is less" },
+	"filterCondition4": { "en": "Is greater or equal" },
+	"filterCondition5": { "en": "Is less or equal" },
+	"filterCondition6": { "en": "Matches" },
+	"filterCondition7": { "en": "Doesn't match" },
+	"filterCondition8": { "en": "Contains" },
+	"filterCondition9": { "en": "Doesn't contain" }
+
 }

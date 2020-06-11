@@ -39,6 +39,7 @@ import Dimmer from './util/dimmer';
 import Switch from './util/switch';
 import Input from './util/input';
 import InputWithFile from './util/inputWithFile';
+import Checkbox from './util/checkbox';
 import Textarea from './util/textarea';
 import Button from './util/button';
 import Error from './util/error';
@@ -75,6 +76,7 @@ export {
 	Switch,
 	Input,
 	InputWithFile,
+	Checkbox,
 	Textarea,
 	Button,
 	Select,

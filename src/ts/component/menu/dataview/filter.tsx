@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, Input } from 'ts/component';
-import { I, C, Util } from 'ts/lib';
+import { Icon, Select, Input, Checkbox } from 'ts/component';
+import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
+import { translate } from '../../../lib';
 
 interface Props extends I.Menu {};
 
@@ -42,14 +43,44 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const conditionOptions = this.conditionsByType(item.type);
+			const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationId; });
+			if (!relation) {
+				return null;
+			};
+
+			const conditionOptions = this.conditionsByType(relation.type);
+			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
+
+			let value = null;
+			switch (relation.type) {
+				case I.RelationType.Checkbox:
+					value = (
+						<Checkbox 
+						ref={refGet} 
+						value={item.value} 
+						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v); }} 
+						/>
+					);
+					break;
+				default:
+					value = (
+						<Input 
+							ref={refGet} 
+							value={item.value} 
+							placeHolder="Value" 
+							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v); }} 
+						/>
+					);
+					break;
+			};
+
 			return (
 				<form className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
 					<Handle />
-					{item.idx > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
+					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
 					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
 					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
-					<Input ref={(ref: any) => { this.refObj[item.idx] = ref; }} value={item.value} placeHolder="Value" onKeyUp={(e: any) => { this.onSubmit(e, item); }} />
+					{value}
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
 			);
@@ -67,7 +98,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			return (
 				<div className="items">
 					{this.items.map((item: any, i: number) => (
-						<Item key={i} {...item} id={i} idx={i} index={i} />
+						<Item key={i} {...item} id={i} index={i} />
 					))}
 					<ItemAdd index={this.items.length + 1} disabled={true} />
 				</div>
@@ -107,18 +138,45 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	conditionsByType (type: I.RelationType): I.Option[] {
-		let ret: I.Option[] = [
-			{ id: String(I.FilterCondition.Equal), name: 'Is equal' },
-			{ id: String(I.FilterCondition.NotEqual), name: 'Is not equal' },
-			{ id: String(I.FilterCondition.In), name: 'Contains' },
-			{ id: String(I.FilterCondition.NotIn), name: 'Doesn\'t contain' },
-			{ id: String(I.FilterCondition.Greater), name: 'Is greater' },
-			{ id: String(I.FilterCondition.Less), name: 'Is less' },
-			{ id: String(I.FilterCondition.GreaterOrEqual), name: 'Is greater or equal' },
-			{ id: String(I.FilterCondition.LessOrEqual), name: 'Is less or equal' },
-			{ id: String(I.FilterCondition.Like), name: 'Matches' },
-			{ id: String(I.FilterCondition.NotLike), name: 'Doesn\'t match' },
-		];
+		let ret = [];
+
+		switch (type) {
+			case I.RelationType.Title: 
+			case I.RelationType.Description: 
+			case I.RelationType.Url: 
+			case I.RelationType.Email: 
+			case I.RelationType.Phone: 
+				ret = [ 
+					I.FilterCondition.Equal, 
+					I.FilterCondition.NotEqual, 
+					I.FilterCondition.Like, 
+					I.FilterCondition.NotLike,
+				];
+				break;
+			
+			case I.RelationType.Number:
+			case I.RelationType.Date:
+				ret = [ 
+					I.FilterCondition.Equal, 
+					I.FilterCondition.NotEqual, 
+					I.FilterCondition.Greater, 
+					I.FilterCondition.Less, 
+					I.FilterCondition.GreaterOrEqual, 
+					I.FilterCondition.LessOrEqual,
+				];
+				break;
+			
+			case I.RelationType.Checkbox:
+				ret = [ 
+					I.FilterCondition.Equal, 
+					I.FilterCondition.NotEqual,
+				];
+				break;
+		};
+
+		ret = ret.map((it: I.FilterCondition) => {
+			return { id: it, name: translate('filterCondition' + it) };
+		});
 		return ret;
 	};
 	
@@ -141,9 +199,15 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.save();
 	};
 
-	onChange (id: number, k: string, v: string) {
+	onChange (id: number, k: string, v: any) {
 		let item = this.items.find((item: any, i: number) => { return i == id; });
 		item[k] = v;
+
+		// Remove value when we change relation
+		if (k == 'relationId') {
+			item.value = '';
+		};
+
 		this.save();
 	};
 	
@@ -164,7 +228,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	onSubmit (e: any, item: any) {
 		e.preventDefault();
 
-		this.items[item.idx].value = this.refObj[item.idx].getValue();
+		this.items[item.id].value = this.refObj[item.id].getValue();
 	};
 
 	save () {
