@@ -26,7 +26,7 @@ const Index = [
 	},
 	{ 
 		type: I.BlockType.Text, style: I.TextStyle.Paragraph, 
-		text: 'We ask you to provide feedback in every moment, at least two times per month.<br/>Please, write us via email <a href="mailto:hello@anytype.io">hello@anytype.io</a> or through the bottom-right <span id="button-menu-help" class="link"><img src="./img/help/help.svg" class="icon help"> question mark</span>.<br/>More features will be added one by one during the upcoming months.' 
+		text: 'We ask you to provide feedback in every moment, at least two times per month.<br/>Please, write us via email <a href="mailto:hello@anytype.io">hello@anytype.io</a> or through the bottom-right <span id="button-menu-help" class="link"><span class="icon help"></span> question mark</span>.<br/>More features will be added one by one during the upcoming months.' 
 	},
 	{ 
 		type: I.BlockType.Text, style: I.TextStyle.Header3, 

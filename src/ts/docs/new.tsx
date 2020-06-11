@@ -15,9 +15,9 @@ export default [
 	{ type: I.BlockType.Text, style: I.TextStyle.Header1, text: 'Meet the new navigation' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Do you know that every thought, skill, and knowledge are organized associatively, not hierarchically in our mind? The brain has linked wiki that is interconnected.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'Any object has several wires to other objects and characteristics at the same time. That is how humans memorize information.</br>' },
-	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'We decide to reduce the clutter in our heads and make navigation organic to your brain. You can now use <img src="./img/help/nav1.svg" style="height:20px;margin-bottom:-4px;"> sign on top to see links between pages and navigate on them. For faster usage, you can press <span class="bgColor bgColor-grey textColor textColor-red">Cmd + S</span> and search the right page by name or first sentence.' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: 'We decide to reduce the clutter in our heads and make navigation organic to your brain. You can now use <span class="icon nav"></span> sign on top to see links between pages and navigate on them. For faster usage, you can press <span class="bgColor bgColor-grey textColor textColor-red">Cmd + S</span> and search the right page by name or first sentence.' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '' },
-	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '<b>Now you can stop segment and limiting your thoughts, just link the pages and flesh everything out how you really think. </b></br>' },
+	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '<b>Now you can stop segment and limiting your thoughts, just link the pages and flesh everything out how you really think.</b>' },
 	{ type: I.BlockType.Text, style: I.TextStyle.Paragraph, text: '<i class="note">6 May 2020</i>' },
 	
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
