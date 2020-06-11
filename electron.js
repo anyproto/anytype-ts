@@ -96,6 +96,12 @@ function createWindow () {
 			console.log(error);
 		});
 	});
+
+	ipcMain.on('pathOpen', async (e, path) => {
+		shell.openItem(path).catch((error) => {
+			console.log(error);
+		});
+	});
 	
 	ipcMain.on('download', async (e, url) => {
 	 	const win = BrowserWindow.getFocusedWindow();

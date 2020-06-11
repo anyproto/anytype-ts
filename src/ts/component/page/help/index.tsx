@@ -10,6 +10,9 @@ import Block from './item/block';
 interface Props extends RouteComponentProps<any> {};
 
 const $ = require('jquery');
+const { app } = window.require('electron').remote;
+const { ipcRenderer } = window.require('electron');
+const path = app.getPath('userData');
 
 class PageHelpIndex extends React.Component<Props, {}> {
 
@@ -35,9 +38,11 @@ class PageHelpIndex extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const btn = node.find('#button-menu-help');
+		const help = node.find('#button-menu-help');
+		const path = node.find('#button-path');
 		
-		btn.unbind('click').on('click', (e: any) => { this.onHelp(); });
+		help.unbind('click').on('click', (e: any) => { this.onHelp(); });
+		path.unbind('click').on('click', (e: any) => { this.onPath(); });
 	};
 
 	onHelp () {
@@ -52,6 +57,10 @@ class PageHelpIndex extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 		});
+	};
+
+	onPath () {
+		ipcRenderer.send('pathOpen', path);
 	};
 
 };
