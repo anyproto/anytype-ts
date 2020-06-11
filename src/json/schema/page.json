@@ -16,6 +16,13 @@
         "isHidden": true
       },
       {
+        "id": "lastOpened",
+        "name": "Last opened date",
+        "isHidden": false,
+        "isReadonly": true,
+        "type": "https://anytype.io/schemas/types/date"
+      },
+      {
         "id": "name",
         "name": "Name",
         "type": "https://anytype.io/schemas/types/title"

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -8,7 +8,7 @@ import CellDate from './date';
 import CellLink from './link';
 import CellSelect from './select';
 import CellMultiple from './multiple';
-import CellBool from './bool';
+import CellBool from './checkbox';
 import CellAccount from './account';
 
 interface Props extends I.Cell {};
@@ -25,9 +25,11 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, relation, data } = this.props;
+		const { id, relation, data, readOnly } = this.props;
 		
+		let cn = [ 'cellContent', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
 		let CellComponent: React.ReactType<Props>;
+		
 		switch (relation.type) {
 			default:
 			case I.RelationType.Title:
@@ -48,7 +50,7 @@ class Cell extends React.Component<Props, {}> {
 				CellComponent = CellMultiple;
 				break;
 				
-			case I.RelationType.Bool:
+			case I.RelationType.Checkbox:
 				CellComponent = CellBool;
 				break;
 				
@@ -64,27 +66,31 @@ class Cell extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={[ 'cellContent', 'c-' + relation.type ].join(' ')} onClick={this.onClick}>
+			<div className={cn.join(' ')} onClick={this.onClick}>
 				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data || {}} />
 			</div>
 		);
 	};
 	
 	onClick (e: any) {
-		const { id, relation, data } = this.props;
-		const element = '#' + [ 'cell', relation.id, id ].join('-');
+		const { id, relation, data, readOnly } = this.props;
+		
+		if (readOnly) {
+			return;
+		};
 
 		if (this.ref.onClick) {
 			this.ref.onClick(e);
 		};
 		
+		let element = '#' + DataUtil.cellId(relation.id, id);
 		let param: any = { 
 			element: element,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: { 
-				value: data, 
+				value: data[relation.id], 
 				values: relation.values 
 			},
 		};
@@ -107,7 +113,7 @@ class Cell extends React.Component<Props, {}> {
 				commonStore.menuOpen('dataviewAccount', param);
 				break;
 				
-			case I.RelationType.Bool:
+			case I.RelationType.Checkbox:
 				break; 
 		};
 	};

@@ -11,7 +11,7 @@ interface Props {
 	block: I.Block;
 	rootId: string;
 	readOnly: boolean;
-	onView(e: any, id: string): void;
+	getData(id: string): void;
 };
 
 @observer
@@ -25,9 +25,9 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { onView, block, view } = this.props;
+		const { getData, block, view } = this.props;
 		const { content } = block;
-		const { views } = content;
+		const { views, viewId } = content;
 
 		const buttons: any[] = [
 			{ 
@@ -52,7 +52,7 @@ class Controls extends React.Component<Props, {}> {
 		];
 		
 		const ViewItem = (item: any) => (
-			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { onView(e, item.id); }}>
+			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id); }}>
 				{item.name}
 			</div>
 		);
@@ -103,7 +103,7 @@ class Controls extends React.Component<Props, {}> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { rootId, block, data, view, readOnly } = this.props;
+		const { rootId, block, data, view, readOnly, getData } = this.props;
 
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,

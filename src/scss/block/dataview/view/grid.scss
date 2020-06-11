@@ -2,8 +2,8 @@
 
 .blocks {
 	.block.blockDataview {
-        .view.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
-		.view.viewGrid {
+        .viewItem.viewGrid { border-collapse: collapse; min-width: 100%; border-bottom: 1px solid #e0ded2; }
+		.viewItem.viewGrid {
 			.head { 
 				text-align: left; color: #6c6a5f; padding: 14px 0px 14px 14px; border-bottom: 1px solid #e0ded2; white-space: nowrap; 
 				font-weight: 400; line-height: 20px;

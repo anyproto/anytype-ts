@@ -449,13 +449,16 @@ class BlockStore {
 			if (type == I.BlockType.Dataview) {
 				const schemaId = DataUtil.schemaField(item.content.schemaURL);
 
+				item.content.data = item.content.data || [];
 				item.content.views = item.content.views || [];
 				item.content.views = item.content.views.map((view: I.View) => {
 					return this.prepareViewFromProto(schemaId, view);
 				});
 
 				decorate(item.content, {
+					viewId: observable,
 					views: observable,
+					data: observable,
 				});
 			};
 		};
@@ -469,9 +472,11 @@ class BlockStore {
 
 		for (let field of schema.default) {
 			relations.push({
-				id: field.id,
-				name: field.name,
+				id: String(field.id || ''),
+				name: String(field.name || ''),
 				type: DataUtil.schemaField(field.type),
+				isHidden: Boolean(field.isHidden),
+				isReadOnly: Boolean(field.isReadonly),
 			});
 		};
 
@@ -492,7 +497,10 @@ class BlockStore {
 		});
 
 		view.relations = view.relations.map((relation: I.ViewRelation) => {
-			const rel = relations.find((it: I.Relation) => { return it.id == relation.id; });
+			let rel = relations.find((it: I.Relation) => { return it.id == relation.id; });
+			if (!rel) {
+				rel = {};
+			};
 			return Object.assign(rel, relation);
 		});
 		

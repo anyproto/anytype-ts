@@ -322,6 +322,27 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 
+				case 'blockSetDataviewRecords':
+					block = blockStore.getLeaf(rootId, data.id);
+					if (!block) {
+						break;
+					};
+
+					data.inserted = data.inserted || [];
+					data.updated = data.updated || [];
+
+					let list = [];
+					for (let item of data.inserted) {
+						let details = Decode.decodeStruct(item) || {};
+						details.name = String(details.name || Constant.default.name);
+
+						list.push(details);
+					};
+
+					block.content.data = list;
+					blockStore.blockUpdate(rootId, block);
+					break;
+
 				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':

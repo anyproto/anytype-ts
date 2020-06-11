@@ -10,20 +10,27 @@ interface Props extends I.ViewComponent {};
 class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
-		const { data, view } = this.props;
+		const { data, view, readOnly } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.visible; });
 		
 		const Card = (item: any) => (
 			<div className="card">
 				{relations.map((relation: any, i: number) => (
-					<Cell key={relation.id} id={item.index} view={view} relation={...relation} data={data[item.index]} />
+					<Cell 
+						key={relation.id} 
+						id={item.index} 
+						view={view} 
+						relation={...relation} 
+						data={data[item.index]} 
+						readOnly={readOnly} 
+					/>
 				))}
 			</div>
 		);
 		
 		return (
 			<div className="wrap">
-				<div className="view viewGallery">
+				<div className="viewItem viewGallery">
 					{data.map((item: any, i: number) => (
 						<Card key={i} index={i} {...item} />
 					))}

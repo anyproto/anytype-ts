@@ -5,6 +5,7 @@ import { Icon, IconUser, Smile } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, Util} from 'ts/lib';
+import { commonStore } from '../../store';
 
 interface Props {
 	onSelect?(e: any, item: any): void;
@@ -13,8 +14,6 @@ interface Props {
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
 };
-
-const Constant = require('json/constant.json');
 
 @observer
 class ListIndex extends React.Component<Props, {}> {

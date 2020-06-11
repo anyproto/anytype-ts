@@ -41,7 +41,7 @@
 			.icon.more { opacity: 1; }
 		}
 		.item.active {
-			.icon.more { opacity: 1; transition: none; }
+			.icon.more { opacity: 1; transition: none; background-image: url('~img/icon/index/more1.svg'); }
 		}
 		
 		.item.add { background: rgba(255,255,255,0.65); transition: background 0.2s ease-in-out; margin-right: 0px; }

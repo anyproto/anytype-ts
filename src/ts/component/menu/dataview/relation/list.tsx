@@ -153,12 +153,12 @@ class MenuRelationList extends React.Component<Props, {}> {
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, rootId, blockId } = data;
+		const { view, rootId, blockId, onSave } = data;
 
 		C.BlockSetDataviewView(rootId, blockId, view.id, { 
 			type: view.type, 
 			relations: this.items, 
-		});
+		}, onSave);
 	};
 	
 };

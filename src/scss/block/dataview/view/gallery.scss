@@ -2,15 +2,15 @@
 
 .blocks {
 	.block.blockDataview {
-		.view.viewGallery { padding: 16px 0px; display: flex; flex-wrap: wrap; column-count: 4; }
-		.view.viewGallery {
+		.viewItem.viewGallery { padding: 16px 0px; display: flex; flex-wrap: wrap; column-count: 4; }
+		.viewItem.viewGallery {
 			.cellContent:last-child { margin: 0px; }
 			.cellContent.c-date { color: #6c6a5f; }
 
 			.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
 			.cellContent.c-title {
 				.smile { margin-bottom: 10px; }
-				.name { max-width: 100%; }
+				.name { max-width: 100%; @include text-overflow-nw; }
 			}
 
 			.card { 

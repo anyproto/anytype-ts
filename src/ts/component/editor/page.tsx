@@ -1305,6 +1305,12 @@ class EditorPage extends React.Component<Props, State> {
 	
 	onLastClick (e: any) {
 		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		
+		if (root.isPageSet()) {
+			return;
+		};
+
 		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isTitle(); });
 		const last = children[children.length - 1];
 		

@@ -17,7 +17,7 @@ export enum RelationType {
 	Link		 = 'link',
 	File		 = 'file',
 	Image		 = 'image',
-	Bool		 = 'checkbox', 
+	Checkbox	 = 'checkbox', 
 	Icon		 = 'emoji',
 	Url			 = 'url',
 	Email		 = 'email',
@@ -35,20 +35,24 @@ export enum FilterOperator {
 };
 
 export enum FilterCondition { 
-	Equal		 = 0,
-	NotEqual	 = 1,
-	Greater		 = 2,
-	Less		 = 3,
-	Like		 = 4,
-	NotLike		 = 5,
-	In			 = 6,
-	NotIn		 = 7,
+	Equal			 = 0,
+	NotEqual		 = 1,
+	Greater			 = 2,
+	Less			 = 3,
+	GreaterOrEqual	 = 4,
+	LessOrEqual		 = 5,
+	Like			 = 6,
+	NotLike			 = 7,
+	In				 = 8,
+	NotIn			 = 9,
 };
 
 export interface Relation {
 	id: string;
 	name: string;
 	type: RelationType;
+	isHidden: boolean;
+	isReadOnly: boolean;
 	values?: any[];
 };
 
@@ -89,14 +93,14 @@ export interface Cell {
 	relation: Relation;
 	data: any;
 	view: any;
+	readOnly?: boolean;
 	onOpen?(e: any, data: any): void;
 };
 
 export interface ContentDataview {
 	databaseId: string;
 	schemaURL: string;
-	view: View;
-	relations: Relation[];
+	viewId: string;
 	views: View[];
 	data: any[];
 };

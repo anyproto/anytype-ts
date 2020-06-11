@@ -24,7 +24,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { data, view, onOpen } = this.props;
+		const { data, view, onOpen, readOnly } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.visible; });
 		const width = 100 / relations.length;
 		
@@ -38,7 +38,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const CellBody = (item: any) => {
 			let { relation, index } = item;
 			let id = DataUtil.cellId(relation.id, index);
-			let cn = [ 'cell', 'c-' + relation.type ];
+			let cn = [ 'cell', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
 
 			if (item.relation.id == 'name') {
 				cn.push('isName');
@@ -46,7 +46,14 @@ class ViewGrid extends React.Component<Props, {}> {
 
 			return (
 				<td id={id} className={cn.join(' ')} style={{ width: width + '%' }} onClick={(e: any) => { this.onCellClick(e, item); }}>
-					<Cell ref={(ref: any) => { this.cellRefs.set(id, ref); }} onOpen={onOpen} {...item} view={view} id={item.index} />
+					<Cell 
+						ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
+						onOpen={onOpen} 
+						{...item} 
+						view={view} 
+						id={item.index} 
+						readOnly={readOnly}
+					/>
 				</td>
 			);
 		};
@@ -73,7 +80,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		return (
 			<div className="wrap">
-				<table className="view viewGrid">
+				<table className="viewItem viewGrid">
 					<thead>
 						<RowHead />
 					</thead>
@@ -100,8 +107,9 @@ class ViewGrid extends React.Component<Props, {}> {
 	resize () {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const ww = win.width() - 48;
-		const margin = (ww - Constant.size.dataview) / 2;
+		
+		let ww = Math.max(Constant.size.dataview, win.width() - 48);
+		let margin = (ww - Constant.size.dataview) / 2;
 
 		node.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 	};

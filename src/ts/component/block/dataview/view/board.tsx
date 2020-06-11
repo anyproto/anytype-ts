@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import Cell from '../cell';
@@ -18,7 +18,7 @@ const GROUP = 'isArchived';
 class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
-		const { view } = this.props;
+		const { view, readOnly } = this.props;
 		const group = view.relations.find((item: I.Relation) => { return item.id == GROUP; });
 		const relations = view.relations.filter((it: any) => { return it.visible; });
 
@@ -31,7 +31,14 @@ class ViewBoard extends React.Component<Props, {}> {
 		const Card = (item: any) => (
 			<div className="card">
 				{relations.map((relation: any, i: number) => (
-					<Cell key={relation.id} id={item.index} view={view} relation={...relation} data={item.data} />
+					<Cell 
+						key={relation.id} 
+						id={item.index} 
+						view={view} 
+						relation={...relation} 
+						data={item.data} 
+						readOnly={readOnly} 
+					/>
 				))}
 			</div>
 		);
@@ -54,7 +61,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		
 		return (
 			<div className="wrap">
-				<div className="view viewBoard">
+				<div className="viewItem viewBoard">
 					<div className="columns">
 						{columns.map((item: any, i: number) => (
 							<Column key={i} index={i} {...item} />
@@ -66,7 +73,7 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): Column[] {
-		const { data } = this.props;
+		let data = Util.objectCopy(this.props.data);
 		
 		let groupBy = GROUP;
 		let r: Column[] = [];
