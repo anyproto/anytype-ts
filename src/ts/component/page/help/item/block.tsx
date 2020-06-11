@@ -16,6 +16,11 @@ import ContentLink from './link';
 
 class Block extends React.Component<Props, {}> {
 
+	public static defaultProps = {
+		type: I.BlockType.Text,
+		style: I.TextStyle.Paragraph,
+	};
+
 	render () {
 		const { type, style } = this.props;
 		
