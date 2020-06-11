@@ -5,7 +5,7 @@ import { I, Util, DataUtil } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	type: I.BlockType;
-	style?: I.TextStyle;
+	style?: any;
 	icon?: string;
 };
 
@@ -41,6 +41,25 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Link:
 				cn.push('blockLink');
 				content = <ContentLink {...this.props} />;
+				break;
+
+			case I.BlockType.Div:
+				cn.push('blockDiv c' + style);
+				
+				let inner: any = null;
+				switch (style) {
+					case I.DivStyle.Dot:
+						inner = (
+							<React.Fragment>
+								<div className="dot" />
+								<div className="dot" />
+								<div className="dot" />
+							</React.Fragment>
+						);
+						break;
+				};
+				
+				content = <div className="div">{inner}</div>;
 				break;
 		};
 		

@@ -51,7 +51,7 @@ class ContentText extends React.Component<Props, {}> {
 					{marker ? <Marker {...marker} color={color} /> : ''}
 				</div>
 				{additional}
-				<div className="wrap" dangerouslySetInnerHTML={{ __html: text }} />
+				<div className="wrap" dangerouslySetInnerHTML={{ __html: text || '&nbsp;' }} />
 			</div>
 		);
 	};
