@@ -95,7 +95,7 @@
 			.smile { margin-bottom: 8px; }
 			.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
 			.descr { @include text-small; color: #6c6a5f; @include text-overflow; max-height: 54px; }
-			.cover { position: static; height: 156px; margin-top: 11px; background-color: #C4C4C4; }
+			.cover { position: static; height: 156px; margin-top: 11px; }
 			.buttons { margin-top: 16px; display: flex; }
 			.buttons {
 				.button { margin-right: 12px; width: 50%; height: 32px; line-height: 30px; font-weight: 400; }
