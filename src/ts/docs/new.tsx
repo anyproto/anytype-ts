@@ -16,7 +16,7 @@ export default [
 	{ text: 'Now Anytype allows you to refer to any page right in your content.' },
 	{ text: 'Simply insert the <span class="bgColor bgColor-grey textColor textColor-red">@</span> sign and start typing the name of a page you want to refer to.' },
 	{ text: 'You can mention any page anywhere and it will build a relationship between pages. All&nbsp;mentions will be shown in the navigation panel. It’s just a more convenient way to connect any pages inside Anytype. Hope you enjoy it and we look forward to your suggestions on how we could make it better.' },
-	{ text: '<img src="./img/help/mention.gif" class="mention">' },
+	{ text: '<img src="./img/help/mention.gif" class="full mention">' },
 	{ text: '<i class="note">29 May 2020</i>' },
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
