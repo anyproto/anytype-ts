@@ -499,7 +499,6 @@ class BlockStore {
 		view.relations = view.relations.map((relation: I.ViewRelation) => {
 			let rel = relations.find((it: I.Relation) => { return it.id == relation.id; });
 			if (!rel) {
-				console.log('Not found', relation);
 				rel = {};
 			};
 			return Object.assign(rel, relation);
