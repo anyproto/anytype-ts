@@ -30,7 +30,7 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { data, relation, view, onOpen } = this.props;
+		const { data, relation, view, onOpen, readOnly } = this.props;
 
 		let Name = null;
 		let EditorComponent = null;
@@ -80,7 +80,7 @@ class CellText extends React.Component<Props, State> {
 
 			content = (
 				<React.Fragment>
-					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={true} offsetY={4} />
+					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} />
 					<Name name={data[relation.id]} />
 					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
 				</React.Fragment>
@@ -111,8 +111,8 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onClick (e: any) {
-		const { view } = this.props;
-		const canEdit = view.type == I.ViewType.Grid;
+		const { view, readOnly } = this.props;
+		const canEdit = !readOnly && (view.type == I.ViewType.Grid);
 
 		if (canEdit) {
 			this.setState({ editing: true });

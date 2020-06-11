@@ -23,7 +23,7 @@ const Schema = {
 	relation: require('json/schema/relation.json'),
 };
 
-const LIMIT = 1000;
+const LIMIT = 10;
 
 @observer
 class BlockDataview extends React.Component<Props, {}> {
