@@ -28,7 +28,8 @@ class PopupNew extends React.Component<Props, {}> {
 						<Icon onClick={(e) => { this.onUrl(Url.twitter); }} className="twitter" />
 					</div>
 				</div>
-				<div className="editor">
+				
+				<div className="editor help">
 					<div className="blocks">
 						{Docs.New.map((item: any, i: number) => (
 							<Block key={i} {...this.props} {...item} />

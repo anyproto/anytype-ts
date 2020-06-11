@@ -25,7 +25,7 @@ class PageHelpIndex extends React.Component<Props, {}> {
 			<div className="wrapper">
 				<Header {...this.props} path={path} />
 
-				<div className="editor">
+				<div className="editor help">
 					<div className="blocks">
 						{Docs.Help.Index.map((item: any, i: number) => (
 							<Block key={i} {...this.props} {...item} />
