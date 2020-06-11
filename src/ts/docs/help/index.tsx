@@ -19,11 +19,11 @@ const Index = [
 	{ text: 'More features will be added one by one during the upcoming months.' },
 
 	{ style: I.TextStyle.Header3, text:  'Backups' },
-	{ text: `In this version, all the data becomes encrypted and syncs with our servers. 
-			You can restore the latest snapshot at any moment even if your device is offline, but it is an experimental feature.<br>
+	{ text: `In this version, all the data becomes encrypted and syncs with our servers.
+			You can restore the latest snapshot at any moment even if your device is offline, but it is an experimental feature.
 			The 100% working way for data backup is to manually copy and save Anytype's data folder, you can find it here <span id="button-path" class="cp bgColor bgColor-grey textColor textColor-red">${path}</span>.` 
 	},
-	
+
 	{ style: I.TextStyle.Header3, text:  'Help is under construction' },
 	{ text: 'We are working on this section and If you can’t find your answer here, please, get in touch.' },
 	{},
