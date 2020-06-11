@@ -8,7 +8,7 @@ import CellDate from './date';
 import CellLink from './link';
 import CellSelect from './select';
 import CellMultiple from './multiple';
-import CellBool from './bool';
+import CellBool from './checkbox';
 import CellAccount from './account';
 
 interface Props extends I.Cell {};
@@ -27,7 +27,9 @@ class Cell extends React.Component<Props, {}> {
 	render () {
 		const { id, relation, data, readOnly } = this.props;
 		
+		let cn = [ 'cellContent', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
 		let CellComponent: React.ReactType<Props>;
+		
 		switch (relation.type) {
 			default:
 			case I.RelationType.Title:
@@ -64,7 +66,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={[ 'cellContent', 'c-' + relation.type ].join(' ')} onClick={this.onClick}>
+			<div className={cn.join(' ')} onClick={this.onClick}>
 				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data || {}} />
 			</div>
 		);

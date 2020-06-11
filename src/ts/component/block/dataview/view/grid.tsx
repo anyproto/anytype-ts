@@ -38,7 +38,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const CellBody = (item: any) => {
 			let { relation, index } = item;
 			let id = DataUtil.cellId(relation.id, index);
-			let cn = [ 'cell', 'c-' + relation.type ];
+			let cn = [ 'cell', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
 
 			if (item.relation.id == 'name') {
 				cn.push('isName');
@@ -80,7 +80,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		return (
 			<div className="wrap">
-				<table className="view viewGrid">
+				<table className="viewItem viewGrid">
 					<thead>
 						<RowHead />
 					</thead>
@@ -107,8 +107,9 @@ class ViewGrid extends React.Component<Props, {}> {
 	resize () {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const ww = win.width() - 48;
-		const margin = (ww - Constant.size.dataview) / 2;
+		
+		let ww = Math.max(Constant.size.dataview, win.width() - 48);
+		let margin = (ww - Constant.size.dataview) / 2;
 
 		node.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 	};

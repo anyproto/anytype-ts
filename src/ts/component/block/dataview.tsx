@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -26,6 +27,8 @@ const LIMIT = 1000;
 
 @observer
 class BlockDataview extends React.Component<Props, {}> {
+
+	viewRef: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -73,12 +76,12 @@ class BlockDataview extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<React.Fragment>
+			<div>
 				<Controls {...this.props} view={view} data={data} readOnly={readOnly} getData={this.getData} />
 				<div className="content">
-					<ViewComponent {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} />
+					<ViewComponent ref={(ref: any) => { this.viewRef = ref; }} {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} />
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 
@@ -89,25 +92,38 @@ class BlockDataview extends React.Component<Props, {}> {
 		if (content.views.length) {
 			this.getData(content.views[0].id);
 		};
+
+		this.resize();
+		$(window).unbind('resize.dataview').on('resize.dataview', () => { this.resize(); });
 	};
 
 	componentDidUpdate () {
-		console.log('UPDATE');
-		console.log(JSON.stringify(this.props.block, null, 3));
+		this.resize();
+
 		$(window).trigger('resize.editor');
+	};
+
+	componentWillUnmount () {
+		$(window).unbind('resize.dataview');
 	};
 
 	getData (viewId: string) {
 		const { rootId, block } = this.props;
 
-		block.content.viewId = viewId;
-		blockStore.blockUpdate(rootId, block);
-
-		C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, LIMIT);
+		C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, LIMIT, (message: any) => {
+			block.content.viewId = viewId;
+			blockStore.blockUpdate(rootId, block);
+		});
 	};
 
 	onOpen (e: any, data: any) {
 		DataUtil.pageOpen(e, data.id);
+	};
+
+	resize () {
+		if (this.viewRef && this.viewRef.resize) {
+			this.viewRef.resize();
+		};
 	};
 	
 };

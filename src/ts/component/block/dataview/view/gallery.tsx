@@ -23,7 +23,7 @@ class ViewGallery extends React.Component<Props, {}> {
 		
 		return (
 			<div className="wrap">
-				<div className="view viewGallery">
+				<div className="viewItem viewGallery">
 					{data.map((item: any, i: number) => (
 						<Card key={i} index={i} {...item} />
 					))}

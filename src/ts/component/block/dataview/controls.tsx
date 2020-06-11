@@ -118,9 +118,6 @@ class Controls extends React.Component<Props, {}> {
 				blockId: block.id, 
 				view: view,
 				data: data,
-				onSave: (message: any) => {
-					getData(view.id);
-				},
 			},
 		});
 	};

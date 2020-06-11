@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I } from 'ts/lib';
 
 interface Props extends I.Cell {};
 
-class CellBool extends React.Component<Props, {}> {
+class CellCheckbox extends React.Component<Props, {}> {
 
 	render () {
 		const { relation, data } = this.props;
@@ -18,4 +18,4 @@ class CellBool extends React.Component<Props, {}> {
 	
 };
 
-export default CellBool;
+export default CellCheckbox;

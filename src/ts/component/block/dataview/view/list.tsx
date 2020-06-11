@@ -23,7 +23,7 @@ class ViewList extends React.Component<Props, {}> {
 		
 		return (
 			<div className="wrap">
-				<div className="view viewList">
+				<div className="viewItem viewList">
 					{data.map((item: any, i: number) => (
 						<Card key={i} index={i} {...item} />
 					))}
