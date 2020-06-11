@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupNew { width: 864px; padding: 80px 80px 0px 80px; }
+	.popup.popupNew { width: 864px; padding: 80px 0px 0px 0px; }
 	.popup.popupNew {
 		.head { display: flex; position: absolute; top: 0px; left: 0px; width: 100%; padding: 10px 20px; color: $colorDarkGrey; }
 		.head {
@@ -17,6 +17,6 @@
 			.icon.twitter:hover { background-image: url('~img/icon/twitter1.svg'); }
 		}
 
-		.content { max-height: 528px; overflow-y: auto; padding-bottom: 20px; }
+		.content { max-height: 528px; overflow-y: auto; padding: 0px 80px 20px 80px; }
 	}
 }
