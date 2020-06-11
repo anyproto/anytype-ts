@@ -77,12 +77,14 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { filter } = commonStore;
+		const items = this.getItems();
 
 		if (this.filter != filter.text) {
 			this.filter = filter.text;
 			this.setState({ page: 0 });
 		};
 
+		this.setActive(items[this.n]);
 		this.props.position();
 	};
 	

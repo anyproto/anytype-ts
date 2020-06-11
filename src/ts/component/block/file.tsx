@@ -11,7 +11,6 @@ interface Props {
 	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
 };
 
-const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
 @observer
