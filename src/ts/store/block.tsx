@@ -471,11 +471,14 @@ class BlockStore {
 		let relations = [];
 
 		for (let field of schema.default) {
+			if (field.isHidden) {
+				continue;
+			};
+
 			relations.push({
 				id: String(field.id || ''),
 				name: String(field.name || ''),
 				type: DataUtil.schemaField(field.type),
-				isHidden: Boolean(field.isHidden),
 				isReadOnly: Boolean(field.isReadonly),
 			});
 		};
@@ -496,12 +499,12 @@ class BlockStore {
 			};
 		});
 
-		view.relations = view.relations.map((relation: I.ViewRelation) => {
-			let rel = relations.find((it: I.Relation) => { return it.id == relation.id; });
-			if (!rel) {
-				rel = {};
+		view.relations = relations.map((relation: I.Relation) => {
+			let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
+			return {
+				...relation,
+				visible: Boolean(rel.visible),
 			};
-			return Object.assign(rel, relation);
 		});
 		
 		return observable(new M.View(view));

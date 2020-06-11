@@ -8,7 +8,7 @@ export default [
 	{ text: 'Open settings in the dashboard or use <span class="bgColor bgColor-grey textColor textColor-red">File → Import</span> in the System menu and try. You can import all your data from Notion with the same structure for now, later we will develop more sources.' },
 	{ text: '<img src="./img/help/import.png">' },
 	{ text: 'A friendly reminder. Without any imports, you can save note from another app or an article from Wikipedia, and store it forever on your computer. Just copy it there and paste into Anytype. <i>Voila!<i>' },
-	{ text: 'Please, write to us about what you think and what source you want to import in&nbsp;Anytype!' },
+	{ text: 'Please, write us what you think and what source you want to import in&nbsp;Anytype!' },
 	{ text: '<i class="note">10 June 2020</i>' },
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 

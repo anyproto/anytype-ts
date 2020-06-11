@@ -35,12 +35,14 @@
       {
         "id": "iconEmoji",
         "name": "Emoji",
-        "type": "https://anytype.io/schemas/types/emoji"
+        "type": "https://anytype.io/schemas/types/emoji",
+        "isHidden": true
       },
       {
         "id": "iconImage",
         "name": "Image",
-        "type": "https://anytype.io/schemas/types/image"
+        "type": "https://anytype.io/schemas/types/image",
+        "isHidden": true
       },
       {
         "id": "isArchived",
