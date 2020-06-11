@@ -26,7 +26,7 @@ const Index = [
 	},
 	{ 
 		type: I.BlockType.Text, style: I.TextStyle.Paragraph, 
-		text: 'We asking you to provide feedback in every moment, at least 2 times a month. <br>Please, write us via email <a href="mailto:hello@anytype.io">hello@anytype.io</a> or through the bottom-right question <img src="./img/help/help.svg" class="icon help"> menu. More features will be added one by one during the upcoming months.' 
+		text: 'We ask you to provide feedback in every moment, at least two times per month.<br/> Please, write us via email <a href="mailto:hello@anytype.io">hello@anytype.io</a> or through the bottom-right <span id="button-menu-help" class="link"><img src="./img/help/help.svg" class="icon help"> question mark</span>.<br/>More features will be added one by one during the upcoming months.' 
 	},
 	{ 
 		type: I.BlockType.Text, style: I.TextStyle.Header3, 
@@ -34,7 +34,7 @@ const Index = [
 	},
 	{ 
 		type: I.BlockType.Text, style: I.TextStyle.Paragraph, 
-		text: `In this version, all the data become encrypted and syncing with our servers. You can restore the latest snapshot at any moment even if your device is offline, but it is an experimental feature. The 100% working way for data backup is to manually copy and save Anytype's data folder. You can find it here <span class="bgColor bgColor-grey"><span class="textColor textColor-red">${path}</span></span>.` 
+		text: `In this version, all the data become encrypted and syncing with our servers. You can restore the latest snapshot at any moment even if your device is offline, but it is an experimental feature. The 100% working way for data backup is to manually copy and save Anytype's data folder, you can find it here <span class="bgColor bgColor-grey"><span class="textColor textColor-red">${path}</span></span>.` 
 	},
 	{ 
 		type: I.BlockType.Text, style: I.TextStyle.Header3, text:  'Help is under construction' 

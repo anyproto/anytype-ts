@@ -2,11 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { HeaderHelpIndex as Header } from 'ts/component';
-import { I, Docs, Util } from 'ts/lib';
+import { I, Docs } from 'ts/lib';
+import { commonStore } from 'ts/store';
+
+import Block from './item/block';
 
 interface Props extends RouteComponentProps<any> {};
 
-import Block from './item/block';
+const $ = require('jquery');
 
 class PageHelpIndex extends React.Component<Props, {}> {
 
@@ -28,6 +31,27 @@ class PageHelpIndex extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const btn = node.find('#button-menu-help');
+		
+		btn.unbind('click').on('click', (e: any) => { this.onHelp(); });
+	};
+
+	onHelp () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const btn = node.find('#button-menu-help');
+
+		commonStore.menuOpen('help', {
+			type: I.MenuType.Vertical, 
+			element: btn,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+		});
 	};
 
 };
