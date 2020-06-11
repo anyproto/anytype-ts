@@ -5,4 +5,7 @@
 	.note { text-align: right; color: #aca996; display: block; }
 
 	.wrapContent { width: 100% !important; }
+	.wrapContent {
+		.icon.help { width: 20px; height: 20px; margin-top: -4px; }
+	}
 }
