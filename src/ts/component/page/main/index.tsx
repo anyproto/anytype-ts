@@ -57,7 +57,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
 						
 						<div className="rightMenu">
-							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={this.onSettings} />
+							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={(e: any) => { this.onSettings(''); }} />
 							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} tooltip="Accounts" onClick={this.onAccount} />
 							<IconUser avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
@@ -96,6 +96,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				Storage.set('hello', 1);
 				hello.addClass('hide');
+
+				this.onSettings('phrase');
 			}, 2000);
 		};
 	};
@@ -104,10 +106,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.resize();
 	};
 	
-	onSettings (e: any) {
+	onSettings (page: string) {
 		const { root } = blockStore;
+
 		commonStore.popupOpen('settings', {
 			data: {
+				page: page,
 				rootId: root,
 			}
 		});
