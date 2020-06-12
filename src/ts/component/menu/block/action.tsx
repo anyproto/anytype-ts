@@ -214,7 +214,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		if (filter) {
-			const reg = new RegExp(filter, 'gi');
 			sections = [];
 			
 			if (block.isText()) {

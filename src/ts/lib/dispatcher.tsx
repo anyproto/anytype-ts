@@ -330,8 +330,14 @@ class Dispatcher {
 
 					data.inserted = data.inserted || [];
 					data.updated = data.updated || [];
+					data.removed = data.removed || [];
 
-					let list = [];
+					let list = Util.objectCopy(block.content.data || []);
+
+					for (let id of data.removed) {
+						list = list.filter((it: any) => { return it.id != id; });
+					};
+
 					for (let item of data.inserted) {
 						let details = Decode.decodeStruct(item) || {};
 						details.name = String(details.name || Constant.default.name);

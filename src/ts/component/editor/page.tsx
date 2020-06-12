@@ -1212,7 +1212,6 @@ class EditorPage extends React.Component<Props, State> {
 			return it.isFocusable();
 		});
 
-		const nl = next.getLength();
 		const length = focused.getLength();
 		const cb = (message: any) => {
 			if (message.error.code) {
@@ -1220,10 +1219,11 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			if (next) {
+				let nl = next.getLength();
 				this.focus(next.id, nl, nl);
 			};
 		};
-		
+
 		if (next.isText()) {
 			C.BlockMerge(rootId, next.id, focused.id, cb);
 		} else 
@@ -1240,6 +1240,7 @@ class EditorPage extends React.Component<Props, State> {
 					return it.isFocusable();
 				});
 				if (next) {
+					let nl = next.getLength();
 					this.focus(next.id, nl, nl);
 				};
 			});

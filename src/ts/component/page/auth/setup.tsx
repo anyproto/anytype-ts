@@ -105,7 +105,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
 		const pin = Storage.get('pin');
-		const pageId = Storage.get('pageId');
 
 		if (!phrase) {
 			return;
@@ -125,14 +124,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 					if (message.account) {
 						authStore.accountSet(message.account);
 						
-						DataUtil.pageInit(() => {
-							if (pin) {
-								history.push('/auth/pin-check');
-								keyboard.setPinCheck();
-							} else {
-								history.push('/main/index');
-							};
-						});
+						DataUtil.onAuth();
 					};
 				});
 			} else {

@@ -110,10 +110,11 @@ class BlockDataview extends React.Component<Props, {}> {
 	getData (viewId: string) {
 		const { rootId, block } = this.props;
 
-		C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, LIMIT, (message: any) => {
-			block.content.viewId = viewId;
-			blockStore.blockUpdate(rootId, block);
-		});
+		block.content.viewId = viewId;
+		block.content.data = [];
+		blockStore.blockUpdate(rootId, block);
+
+		C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, LIMIT);
 	};
 
 	onOpen (e: any, data: any) {

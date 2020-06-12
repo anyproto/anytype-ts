@@ -50,7 +50,7 @@ class MenuView extends React.Component<Props, {}> {
 		const { view, rootId, blockId } = data;
 
 		commonStore.menuClose(this.props.id);
-		C.BlockSetDataviewView(rootId, blockId, view.id, { type: id });
+		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, type: id });
 	};
 	
 };

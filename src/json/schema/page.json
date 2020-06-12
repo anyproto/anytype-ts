@@ -13,7 +13,7 @@
         "id": "id",
         "name": "Id",
         "type": "https://anytype.io/schemas/types/number",
-        "isHidden": true
+        "isHidden": false
       },
       {
         "id": "lastOpened",

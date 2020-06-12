@@ -8,6 +8,7 @@ export enum ViewType {
 };
 
 export enum RelationType { 
+	None		 = '',
 	Title		 = 'title', 
 	Description	 = 'description', 
 	Number		 = 'number', 
@@ -69,7 +70,8 @@ export interface Filter {
 };
 
 export interface ViewRelation extends Relation {
-	visible: boolean;
+	isVisible: boolean;
+	order: number;
 };
 
 export interface ViewComponent {

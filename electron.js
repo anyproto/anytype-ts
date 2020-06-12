@@ -7,8 +7,13 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const storage = require('electron-json-storage');
+const com = require('./src/proto/commands.js');
+const bindings = require('bindings')('addon');
 
-let dataPath = app.getPath('userData');
+com.anytype.ClientCommands.prototype.rpcCall = napiCall;
+const service = com.anytype.ClientCommands.create(function () {}, false, false);
+
+let userPath = app.getPath('userData');
 let config = {};
 let win = null;
 let csp = [
@@ -22,12 +27,13 @@ let csp = [
 	"frame-src chrome-extension://react-developer-tools"
 ];
 
-storage.setDataPath(dataPath);
+storage.setDataPath(userPath);
 
+let dataPath = [ userPath ];
 if (!app.isPackaged) {
-	dataPath += '/dev';
+	dataPath.push('dev');
 };
-dataPath += '/data';
+dataPath.push('data');
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -83,12 +89,7 @@ function createWindow () {
 	};
 	
 	ipcMain.on('appLoaded', () => {
-		win.webContents.send('dataPath', dataPath);
-	});
-	
-	ipcMain.on('appClose', () => {
-		console.log('appClose');
-		app.exit();
+		win.webContents.send('dataPath', dataPath.join('/'));
 	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
@@ -319,3 +320,34 @@ function setStatus (text) {
 };
 
 app.on('ready', createWindow);
+
+app.on('window-all-closed', () => {
+	console.log('window-all-closed');
+	app.quit();
+});
+
+app.on('before-quit', (e) => {
+	e.preventDefault();
+	console.log('before-quit');
+
+	service.shutdown({}, function (message) { 
+		app.exit();
+	});
+});
+
+function napiCall (method, inputObj, outputObj, request, callBack) {
+    const buffer = inputObj.encode(request).finish();
+    const handler = function (item) {
+        let message = null;
+        try {
+            message = outputObj.decode(item.data);
+            if (message) {
+                callBack(message);
+            };
+        } catch (err) {
+            console.error(err);
+        };
+    };
+    
+    bindings.sendCommand(method.name, buffer, handler);
+};

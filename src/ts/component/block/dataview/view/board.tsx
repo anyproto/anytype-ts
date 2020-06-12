@@ -20,7 +20,7 @@ class ViewBoard extends React.Component<Props, {}> {
 	render () {
 		const { view, readOnly } = this.props;
 		const group = view.relations.find((item: I.Relation) => { return item.id == GROUP; });
-		const relations = view.relations.filter((it: any) => { return it.visible; });
+		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
 		if (!group) {
 			return null;

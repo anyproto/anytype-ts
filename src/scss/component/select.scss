@@ -18,6 +18,9 @@
 		background-image: url('~img/arrow/select/light.svg'); 
 	}
 	.current { padding: 4px 26px 4px 8px; }
+	.current {
+		.name { @include text-overflow-nw; width: calc(100% - 14px); }
+	}
 	.options { 
 		min-width: 176px; border-radius: 8px; box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.3); background: #fff; position: absolute;
 		left: 0px; top: 28px; z-index: 1; display: none; padding: 8px 0px;

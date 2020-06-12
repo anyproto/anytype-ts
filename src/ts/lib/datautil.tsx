@@ -1,4 +1,4 @@
-import { I, C, Util, focus, Storage, crumbs, translate } from 'ts/lib';
+import { I, C, keyboard, Storage, crumbs, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -142,6 +142,19 @@ class DataUtil {
 					callBack();
 				};
 			});
+		});
+	};
+
+	onAuth () {
+		const pin = Storage.get('pin');
+
+		this.pageInit(() => {
+			if (pin) {
+				this.history.push('/auth/pin-check');
+				keyboard.setPinCheck();
+			} else {
+				this.history.push('/main/index');
+			};
 		});
 	};
 	

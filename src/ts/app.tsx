@@ -119,7 +119,7 @@ const rootStore = {
 	blockStore: blockStore,
 };
 
-const { app, dialog } = window.require('electron').remote;
+const { app } = window.require('electron').remote;
 const version = app.getVersion();
 const platforms: any = {
 	win32:	 'Windows',
@@ -279,7 +279,6 @@ class App extends React.Component<Props, State> {
 
 	setWindowEvents () {
 		const win = $(window);
-		const noShutdown = Number(Storage.get('noShutdown'));
 
 		win.unbind('mousemove.common beforeunload.common blur.common');
 		
@@ -293,15 +292,6 @@ class App extends React.Component<Props, State> {
 			Util.tooltipHide();
 			Util.linkPreviewHide(true);
 		});
-		
-		if (!noShutdown) {
-			win.on('beforeunload', (e: any) => {
-				C.Shutdown((message: any) => {
-					ipcRenderer.send('appClose');
-				});
-				return false;
-			});
-		};
 	};
 
 	onCommand (e: any, key: string) {

@@ -41,7 +41,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 					<Icon className={'relation c-' + item.type} />
 					<div className="name">{item.name}</div>
 				</span>
-				<Switch value={item.visible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.id, v); }} />
+				<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.id, v); }} />
 			</div>
 		));
 		
@@ -145,7 +145,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 	onSwitch (e: any, id: string, v: boolean) {
 		const item = this.items.find((it: any) => { return it.id == id; });
 		if (item) {
-			item.visible = v;
+			item.isVisible = v;
 			this.save();
 		};
 	};
