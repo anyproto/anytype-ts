@@ -746,7 +746,9 @@ class BlockText extends React.Component<Props, {}> {
 		const { checked } = content;
 		
 		focus.clear(true);
-		C.BlockSetTextChecked(rootId, id, !checked);
+		DataUtil.blockSetText(rootId, block, this.getValue(), this.marks, () => {
+			C.BlockSetTextChecked(rootId, id, !checked);
+		});
 	};
 	
 	onLang (v: string) {
