@@ -14,7 +14,7 @@ const Constant = require('json/constant.json');
 class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	_isMounted = false;
-	n: number = -1;
+	n: number = 0;
 	timeout: number = 0;
 	
 	constructor (props: any) {
@@ -73,10 +73,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		const { id } = this.props;
+		const items = this.getItems();
 		
 		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
+		this.setActive(items[this.n]);
 		
 		const menu = $('#' + Util.toCamelCase('menu-' + id));
 		menu.unbind('mouseleave').on('mouseleave', () => {

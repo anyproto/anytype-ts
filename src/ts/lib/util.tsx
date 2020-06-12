@@ -1,5 +1,6 @@
 import { I, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import { v4 as uuidv4 } from 'uuid';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -479,6 +480,10 @@ class Util {
 
 	selectionRect (): DOMRect {
 		return window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+	};
+
+	uuid () {
+		return uuidv4(); 
 	};
 	
 };

@@ -126,7 +126,7 @@ class PopupFeedback extends React.Component<Props, State> {
 		request.email = request.email || 'example@example.com';
 		
 		//if (checked) {
-			Sentry.captureMessage('Feedback');
+			Sentry.captureMessage('Feedback ' + Util.uuid());
 			request.event_id = Sentry.lastEventId();
 		//};
 		
