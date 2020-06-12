@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile } from 'ts/component';
 import { authStore } from 'ts/store';
+import { DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -59,7 +60,11 @@ class HeaderHelpIndex extends React.Component<Props, {}> {
 	};
 	
 	onHome (e: any) {
-		this.props.history.push(authStore.account ? '/main/index' : '/');
+		if (authStore.account) {
+			DataUtil.onAuth();
+		} else {
+			this.props.history.push('/');
+		};
 	};
 	
 	onBack (e: any) {

@@ -37,16 +37,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 	};
 
 	onSubmit (e: any) {
-		const { history } = this.props;
-		const pin = Storage.get('pin');
-		
-		DataUtil.pageInit(() => {
-			if (pin) {
-				history.push('/auth/pin-check/add');
-			} else {
-				history.push('/main/index');
-			};
-		});
+		DataUtil.onAuth();
 	};
 
 };

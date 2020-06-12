@@ -70,7 +70,7 @@ class MenuAccount extends React.Component<Props, {}> {
 				Storage.set('accountId', id);
 				authStore.accountSet(message.account);
 				
-				DataUtil.pageInit();
+				DataUtil.onAuth();
 			};
 		});
 	};
