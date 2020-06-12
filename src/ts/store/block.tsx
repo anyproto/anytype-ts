@@ -499,12 +499,24 @@ class BlockStore {
 			};
 		});
 
+		let order = {};
+		for (let i = 0; i < view.relations.length; ++i) {
+			order[view.relations[i].id] = i;
+		};
+
 		view.relations = relations.map((relation: I.Relation) => {
 			let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
 			return {
 				...relation,
 				visible: Boolean(rel.visible),
+				order: order[relation.id],
 			};
+		});
+
+		view.relations.sort((c1: any, c2: any) => {
+			if (c1.order > c2.order) return 1;
+			if (c1.order < c2.order) return -1;
+			return 0;
 		});
 		
 		return observable(new M.View(view));
