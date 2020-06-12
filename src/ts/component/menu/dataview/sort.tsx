@@ -4,6 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, Select } from 'ts/component';
 import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
+import { M } from '../../../lib';
 
 const $ = require('jquery');
 
@@ -119,6 +120,11 @@ class MenuSort extends React.Component<Props, {}> {
 
 	onChange (id: number, k: string, v: string) {
 		let item = this.items.find((item: any, i: number) => { return i == id; });
+		
+		if (k == 'type') {
+			//v = Number(v) || 0;
+		};
+
 		item[k] = v;
 		this.save();
 	};

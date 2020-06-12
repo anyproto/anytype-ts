@@ -8,6 +8,7 @@ export enum ViewType {
 };
 
 export enum RelationType { 
+	None		 = '',
 	Title		 = 'title', 
 	Description	 = 'description', 
 	Number		 = 'number', 

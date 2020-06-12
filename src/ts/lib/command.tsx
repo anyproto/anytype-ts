@@ -1,4 +1,4 @@
-import { I, Util, Mark, dispatcher, Encode } from 'ts/lib';
+import { I, M, Util, Mark, dispatcher, Encode } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -493,7 +493,7 @@ const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string
 		contextId: contextId,
 		blockId: blockId,
 		viewId: viewId,
-		view: blockStore.prepareViewToProto(Util.objectCopy(view)),
+		view: blockStore.prepareViewToProto(Util.objectCopy(new M.View(view))),
 	};
 	dispatcher.request('blockSetDataviewView', request, callBack);
 };

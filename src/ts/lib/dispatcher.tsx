@@ -330,6 +330,7 @@ class Dispatcher {
 
 					data.inserted = data.inserted || [];
 					data.updated = data.updated || [];
+					data.removed = data.removed || [];
 
 					let list = [];
 					for (let item of data.inserted) {
@@ -337,6 +338,10 @@ class Dispatcher {
 						details.name = String(details.name || Constant.default.name);
 
 						list.push(details);
+					};
+
+					for (let id of data.removed) {
+						list = list.filter((it: any) => { return it.id != id; });
 					};
 
 					block.content.data = list;
