@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -59,7 +59,7 @@ class HeaderHelpIndex extends React.Component<Props, {}> {
 	};
 	
 	onHome (e: any) {
-		this.props.history.push('/main/index');
+		this.props.history.push(authStore.account ? '/main/index' : '/');
 	};
 	
 	onBack (e: any) {
