@@ -236,10 +236,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { data } = param;
 		const { view, rootId, blockId, onSave } = data;
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { 
-			type: view.type, 
-			filters: this.items, 
-		}, onSave);
+		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, filters: this.items }, onSave);
 	};
 
 };

@@ -86,3 +86,26 @@
 		}
 	}
 }
+
+.editor.help {
+	.blocks {
+		.block {
+			.wrapContent { width: 100% !important; }
+			.wrapContent {
+				.link { white-space: nowrap; cursor: pointer; }
+				.note { text-align: right; color: #aca996; display: block; }
+		
+				.icon { width: 20px; height: 20px; margin-top: -4px; }
+				.icon.help { background-image: url('~img/icon/help/dark0.svg'); }
+				.icon.help:hover { background-image: url('~img/icon/help/dark0.svg'); }
+
+				.icon.nav { background-image: url('~img/icon/nav1.svg'); }
+		
+				img.full { width: 100%; }
+				img.mention { margin-left: -18px; }
+			}
+		}
+
+		.block.blockDiv { margin: 30px 0px; }
+	}
+}
