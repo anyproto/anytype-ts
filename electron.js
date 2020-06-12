@@ -330,7 +330,7 @@ app.on('before-quit', (e) => {
 	e.preventDefault();
 	console.log('before-quit');
 
-	service.shutdown({}, function (message) {
+	service.shutdown({}, function (message) { 
 		app.exit();
 	});
 });
