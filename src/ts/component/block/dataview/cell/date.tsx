@@ -11,7 +11,7 @@ class CellDate extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				{Util.date(format, data[relation.id])}
+				{undefined !== data[relation.id] ? Util.date(format, data[relation.id]) : ''}
 			</React.Fragment>
 		);
 	};
