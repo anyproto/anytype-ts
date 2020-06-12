@@ -3,7 +3,7 @@ import { set } from 'mobx';
 import { Util, DataUtil, I, M, Decode, Storage, translate, analytics } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
-const com = require('proto/commands.js');
+const com = require('commands.js');
 const bindings = require('bindings')('addon');
 const Constant = require('json/constant.json');
 

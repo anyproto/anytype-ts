@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.12.3-alpha",
+	"version": "0.12.2",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -146,6 +146,7 @@
 			"dist/main.js",
 			"dist/index.html",
 			"dist/run.js",
+			"dist/commands.js",
 			"build"
 		],
 		"extraResources": [],
@@ -155,6 +156,7 @@
 			"!dist/*",
 			"dist/index.html",
 			"dist/main.js",
+			"dist/commands.js",
 			"dist/run.js",
 			"dist/img/**/*",
 			"!node_modules/**/*",
@@ -209,7 +211,9 @@
 			"node_modules/imurmurhash",
 			"node_modules/signal-exit",
 			"node_modules/lockfile",
-			"node_modules/at-least-node"
+			"node_modules/at-least-node",
+			"node_modules/protobufjs",
+			"node_modules/@protobufjs"
 		],
 		"dmg": {
 			"sign": false

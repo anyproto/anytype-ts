@@ -53,7 +53,7 @@ mkdir -p build
 mv -fv addon/* build/
 rm -rf addon
 
-mv -fv protobuf/commands.js src/proto/commands.js
+mv -fv protobuf/commands.js dist/commands.js
 rm -rf protobuf
 rm -rf $FILE
 printf "Done\n"

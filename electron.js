@@ -7,7 +7,7 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const storage = require('electron-json-storage');
-const com = require('./src/proto/commands.js');
+const com = require('./dist/commands.js');
 const bindings = require('bindings')('addon');
 
 com.anytype.ClientCommands.prototype.rpcCall = napiCall;
@@ -85,7 +85,7 @@ function createWindow () {
 		win.loadURL('http://localhost:8080');
 		win.toggleDevTools();
 	} else {
-		win.loadFile('dist/index.html');
+		win.loadFile('./dist/index.html');
 	};
 	
 	ipcMain.on('appLoaded', () => {
@@ -331,6 +331,7 @@ app.on('before-quit', (e) => {
 	console.log('before-quit');
 
 	service.shutdown({}, function (message) { 
+		console.log('Shutdown complete, exiting');
 		app.exit();
 	});
 });
