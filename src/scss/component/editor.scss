@@ -17,9 +17,7 @@
 
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
-	.editorControls { 
-		position: absolute; width: 704px; height: 162px; left: 50%; top: 0px; z-index: 1; line-height: 16px; margin-left: -352px;
-	}
+	.editorControls { position: absolute; width: inherit; height: 162px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
 		.sides { display: flex; width: 100%; position: absolute; bottom: 16px; }
 		.side { width: 50%; }

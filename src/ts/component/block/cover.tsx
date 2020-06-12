@@ -66,7 +66,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { editing, loading } = this.state;
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
-		const { coverType, coverId } = details;
+		const { coverType, coverId,  } = details;
 		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
 		
 		let elements = null;
@@ -157,6 +157,7 @@ class BlockCover extends React.Component<Props, State> {
 				onUploadStart: this.onUploadStart,
 				onUpload: this.onUpload,
 				onSelect: (item: any) => {
+					this.loaded = false;
 					DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 				}
 			},
@@ -388,6 +389,7 @@ class BlockCover extends React.Component<Props, State> {
 				return;
 			};
 			
+			this.loaded = false;
 			DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash);
 		});
 	};
@@ -395,7 +397,7 @@ class BlockCover extends React.Component<Props, State> {
 	setTransform (x: number, y: number) {
 		let mx = this.rect.cw - this.rect.width;
 		let my = this.rect.ch - this.rect.height;
-		
+
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
 		
