@@ -11,7 +11,7 @@
 			.head {
 				.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
 				.name { 
-					display: inline-block; line-height: 20px; vertical-align: top; width: calc(100% - 24px); 
+					display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px); 
 					@include text-overflow-nw; border-right: 1px solid #e0ded2;
 				}
 			}

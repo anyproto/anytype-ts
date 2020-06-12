@@ -88,9 +88,9 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		return (
-			<div>
+			<span>
 				{content}
-			</div>
+			</span>
 		);
 	};
 

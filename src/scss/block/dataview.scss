@@ -73,9 +73,15 @@
 			
 			.cellContent {
 				.smile { margin: 0px 4px 0px 0px; }
-				.name { display: inline-block; vertical-align: top; height: 20px; }
+				.name { display: inline-block; vertical-align: top; }
+				.name:empty { display: none; }
+				span:empty { display: none; }
 			}
-			
+
+			.cellContent.c-number {
+				.name { white-space: nowrap; }
+			}
+
 			.cell.c-multiselect {
 				.tag { margin: 0px 6px 6px 0px; }
 			}
