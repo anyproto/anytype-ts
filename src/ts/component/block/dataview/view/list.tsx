@@ -11,7 +11,7 @@ class ViewList extends React.Component<Props, {}> {
 
 	render () {
 		const { data, view, readOnly} = this.props;
-		const relations = view.relations.filter((it: any) => { return it.visible; });
+		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		
 		const Card = (item: any) => (
 			<div className="item">

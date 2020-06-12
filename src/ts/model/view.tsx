@@ -33,7 +33,7 @@ class ViewRelation implements I.ViewRelation {
 	type: I.RelationType = I.RelationType.None;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
-	visible: boolean = false;
+	isVisible: boolean = false;
 	order: number = 0;
 
 	constructor (props: I.ViewRelation) {
@@ -44,7 +44,7 @@ class ViewRelation implements I.ViewRelation {
 		self.type = props.type || I.RelationType.None;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
-		self.visible = Boolean(props.visible);
+		self.isVisible = Boolean(props.isVisible);
 		self.order = Number(props.order) || 0;
 	};
 

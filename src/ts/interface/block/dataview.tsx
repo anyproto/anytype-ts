@@ -70,7 +70,7 @@ export interface Filter {
 };
 
 export interface ViewRelation extends Relation {
-	visible: boolean;
+	isVisible: boolean;
 	order: number;
 };
 

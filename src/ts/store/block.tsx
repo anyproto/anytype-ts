@@ -508,7 +508,7 @@ class BlockStore {
 			let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
 			return {
 				...relation,
-				visible: Boolean(rel.visible),
+				isVisible: Boolean(rel.isVisible),
 				order: order[relation.id],
 			};
 		});

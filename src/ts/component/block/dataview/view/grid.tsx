@@ -25,7 +25,7 @@ class ViewGrid extends React.Component<Props, {}> {
 
 	render () {
 		const { data, view, onOpen, readOnly } = this.props;
-		const relations = view.relations.filter((it: any) => { return it.visible; });
+		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const width = 100 / relations.length;
 		
 		const CellHead = (item: any) => (
