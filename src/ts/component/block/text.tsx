@@ -377,10 +377,14 @@ class BlockText extends React.Component<Props, {}> {
 
 		if (k == Key.tab) {
 			e.preventDefault();
-			this.setText(this.marks, (message: any) => {
-				onKeyDown(e, value, this.marks);
-			});
-			return;
+			if (block.isCode()) {
+				
+			} else {
+				this.setText(this.marks, (message: any) => {
+					onKeyDown(e, value, this.marks);
+				});
+				return;
+			};
 		};
 		
 		if (k == Key.backspace) {
