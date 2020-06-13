@@ -308,13 +308,13 @@ class Util {
 		let m = v / (1024 * 1024);
 		let k = v / 1024;
 		if (g > 1) {
-			v = sprintf('%fGb', this.round(g, 2));
+			v = sprintf('%fGB', this.round(g, 2));
 		} else if (m > 1) {
-			v = sprintf('%fMb', this.round(m, 2));
+			v = sprintf('%fMB', this.round(m, 2));
 		} else if (k > 1) {
-			v = sprintf('%fKb', this.round(k, 2));
+			v = sprintf('%fKB', this.round(k, 2));
 		} else {
-			v = sprintf('%db', this.round(v, 0));
+			v = sprintf('%dB', this.round(v, 0));
 		};
 		return v;
 	};
