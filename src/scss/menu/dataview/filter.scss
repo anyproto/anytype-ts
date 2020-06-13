@@ -10,6 +10,10 @@
 
 			.icon.checkbox { width: 24px; height: 24px; margin-top: 3px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 			.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+
+			.select { flex-shrink: 0; width: 100px; }
+			.select.operator { width: auto; }
+			.select.operator .name { overflow: visible; }
 		}
 
 		.item.add { display: block; }

@@ -7,7 +7,6 @@ import CellText from './text';
 import CellDate from './date';
 import CellLink from './link';
 import CellSelect from './select';
-import CellMultiple from './multiple';
 import CellBool from './checkbox';
 import CellAccount from './account';
 
@@ -46,10 +45,6 @@ class Cell extends React.Component<Props, {}> {
 				CellComponent = CellSelect;
 				break;
 				
-			case I.RelationType.Multiple:
-				CellComponent = CellMultiple;
-				break;
-				
 			case I.RelationType.Checkbox:
 				CellComponent = CellBool;
 				break;
@@ -84,9 +79,11 @@ class Cell extends React.Component<Props, {}> {
 		};
 		
 		let element = '#' + DataUtil.cellId(relation.id, id);
-		let param: any = { 
+		let param: I.MenuParam = { 
 			element: element,
+			offsetX: 0,
 			offsetY: 4,
+			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: { 
@@ -105,7 +102,6 @@ class Cell extends React.Component<Props, {}> {
 				break;
 				
 			case I.RelationType.Select:
-			case I.RelationType.Multiple:
 				commonStore.menuOpen('dataviewTagList', param);
 				break;
 				

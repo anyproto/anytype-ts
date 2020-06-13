@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select, Input, Checkbox } from 'ts/component';
+import { commonStore } from 'ts/store';
 import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
-import { translate } from '../../../lib';
+import { translate, Util } from '../../../lib';
 
 interface Props extends I.Menu {};
 
@@ -22,6 +23,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.onDelete = this.onDelete.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onFocusDate = this.onFocusDate.bind(this);
 	};
 	
 	render () {
@@ -56,15 +58,31 @@ class MenuFilter extends React.Component<Props, {}> {
 				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
+						id={'item-' + item.id + '-value'}
 						ref={refGet} 
 						value={item.value} 
 						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v); }} 
 						/>
 					);
 					break;
+
+				case I.RelationType.Date:
+					value = (
+						<Input 
+							id={'item-' + item.id + '-value'}
+							ref={refGet} 
+							value={item.value !== '' ? Util.date('M d, Y', item.value) : ''} 
+							placeHolder="Value" 
+							//onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v); }} 
+							onFocus={(e: any) => { this.onFocusDate(e, item); }}
+						/>
+					);
+					break;
+					
 				default:
 					value = (
 						<Input 
+							id={'item-' + item.id + '-value'}
 							ref={refGet} 
 							value={item.value} 
 							placeHolder="Value" 
@@ -75,9 +93,9 @@ class MenuFilter extends React.Component<Props, {}> {
 			};
 
 			return (
-				<form className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
+				<form id={'item-' + item.id} className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
 					<Handle />
-					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
+					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} className="operator" options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
 					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
 					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
 					{value}
@@ -167,6 +185,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				break;
 			
 			case I.RelationType.Checkbox:
+			default:
 				ret = [ 
 					I.FilterCondition.Equal, 
 					I.FilterCondition.NotEqual,
@@ -229,6 +248,32 @@ class MenuFilter extends React.Component<Props, {}> {
 		e.preventDefault();
 
 		this.items[item.id].value = this.refObj[item.id].getValue();
+	};
+
+	onFocusDate (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationId; });
+		
+		if (!relation) {
+			return;
+		};
+
+		commonStore.menuOpen('dataviewCalendar', {
+			element: `#menuDataviewFilter #item-${item.id}-value`,
+			offsetX: 0,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: { 
+				value: item.value || Util.timestamp(), 
+				onChange: (value: number) => {
+					this.onChange (item.id, 'value', value);
+				},
+			},
+		});
 	};
 
 	save () {

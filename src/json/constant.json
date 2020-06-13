@@ -64,7 +64,6 @@
 		"description": "Description",
 		"number": "Number",
 		"select": "Select",
-		"multiselect": "Multiple select",
 		"date": "Date",
 		"file": "File & Media",
 		"checkbox": "Checkbox",
