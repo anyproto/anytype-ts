@@ -61,7 +61,7 @@ class MenuFilter extends React.Component<Props, {}> {
 						id={'item-' + item.id + '-value'}
 						ref={refGet} 
 						value={item.value} 
-						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v); }} 
+						onChange={(e: any, v: boolean) => { this.onChange(item, 'value', v); }} 
 						/>
 					);
 					break;
@@ -71,9 +71,10 @@ class MenuFilter extends React.Component<Props, {}> {
 						<Input 
 							id={'item-' + item.id + '-value'}
 							ref={refGet} 
-							value={item.value !== '' ? Util.date('M d, Y', item.value) : ''} 
-							placeHolder="Value" 
-							//onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v); }} 
+							value={item.value !== '' ? Util.date('d.m.Y', item.value) : ''} 
+							placeHolder="Date"
+							mask="99/99/9999"
+							onKeyUp={(e: any, v: string) => { this.onChangeDate(item, v); }} 
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 						/>
 					);
@@ -86,7 +87,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							ref={refGet} 
 							value={item.value} 
 							placeHolder="Value" 
-							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v); }} 
+							onKeyUp={(e: any, v: string) => { this.onChange(item, 'value', v); }} 
 						/>
 					);
 					break;
@@ -95,9 +96,9 @@ class MenuFilter extends React.Component<Props, {}> {
 			return (
 				<form id={'item-' + item.id} className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
 					<Handle />
-					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} className="operator" options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
-					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
-					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
+					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} className="operator" options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item, 'operator', v); }} /> : ''}
+					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item, 'relationId', v); }} />
+					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item, 'condition', v); }} />
 					{value}
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
@@ -218,8 +219,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.save();
 	};
 
-	onChange (id: number, k: string, v: any) {
-		let item = this.items.find((item: any, i: number) => { return i == id; });
+	onChange (item: any, k: string, v: any) {
 		item[k] = v;
 
 		// Remove value when we change relation
@@ -250,13 +250,17 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.items[item.id].value = this.refObj[item.id].getValue();
 	};
 
+	onChangeDate (item: any, v: any) {
+		console.log(v);
+	};
+
 	onFocusDate (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationId; });
 		
-		if (!relation) {
+		if (!relation || commonStore.menuIsOpen('dataviewCalendar')) {
 			return;
 		};
 
@@ -267,6 +271,11 @@ class MenuFilter extends React.Component<Props, {}> {
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
+			onOpen: () => {
+				window.setTimeout(() => {
+					this.refObj[item.id].focus();
+				}, 200);
+			},
 			data: { 
 				value: item.value || Util.timestamp(), 
 				onChange: (value: number) => {
