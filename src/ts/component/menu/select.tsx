@@ -87,13 +87,12 @@ class MenuSelect extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const k = e.which;
-		
 		e.preventDefault();
 		e.stopPropagation();
 		
 		keyboard.disableMouse(true);
 		
+		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];

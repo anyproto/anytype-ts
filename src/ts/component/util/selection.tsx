@@ -84,7 +84,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const { rootId } = this.props;
-		const k = e.which;
+		const k = e.key.toLowerCase();
 		
 		let ids: any = this.get();
 		let idsWithChildren: any = this.get(true);

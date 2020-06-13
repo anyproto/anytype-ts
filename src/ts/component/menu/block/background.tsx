@@ -76,7 +76,7 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
-		const k = e.which;
+		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];

@@ -112,7 +112,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const k = e.which;
+		const k = e.key.toLowerCase();
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const value = this.getValue();
