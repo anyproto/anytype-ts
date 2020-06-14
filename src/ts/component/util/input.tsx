@@ -118,15 +118,14 @@ class Input extends React.Component<Props, State> {
 	};
 
 	checkMask () {
-		const { mask } = this.props;
+		const { mask, placeHolder } = this.props;
 		if (!mask) {
 			return;
 		};
 
-		const im = new Inputmask(mask);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		im.mask(node.get(0));
+		new Inputmask(mask, { placeholder: placeHolder }).mask(node.get(0));
 	};
 	
 	onChange (e: any) {

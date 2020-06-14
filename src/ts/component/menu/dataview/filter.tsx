@@ -54,6 +54,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 
 			let value = null;
+			let onSubmit = (e: any) => { this.onSubmit(e, item); };
+
 			switch (relation.type) {
 				case I.RelationType.Checkbox:
 					value = (
@@ -61,7 +63,7 @@ class MenuFilter extends React.Component<Props, {}> {
 						id={'item-' + item.id + '-value'}
 						ref={refGet} 
 						value={item.value} 
-						onChange={(e: any, v: boolean) => { this.onChange(item, 'value', v); }} 
+						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v); }} 
 						/>
 					);
 					break;
@@ -72,12 +74,13 @@ class MenuFilter extends React.Component<Props, {}> {
 							id={'item-' + item.id + '-value'}
 							ref={refGet} 
 							value={item.value !== '' ? Util.date('d.m.Y', item.value) : ''} 
-							placeHolder="Date"
-							mask="99/99/9999"
+							placeHolder="dd.mm.yyyy"
+							mask="99.99.9999"
 							onKeyUp={(e: any, v: string) => { this.onChangeDate(item, v); }} 
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 						/>
 					);
+					onSubmit = (e: any) => { this.onSubmitDate(e, item); };
 					break;
 					
 				default:
@@ -94,11 +97,11 @@ class MenuFilter extends React.Component<Props, {}> {
 			};
 
 			return (
-				<form id={'item-' + item.id} className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
+				<form id={'item-' + item.id} className="item" onSubmit={onSubmit}>
 					<Handle />
-					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} className="operator" options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item, 'operator', v); }} /> : ''}
-					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item, 'relationId', v); }} />
-					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item, 'condition', v); }} />
+					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} className="operator" options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
+					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
+					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
 					{value}
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
@@ -219,19 +222,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.save();
 	};
 
-	onChange (item: any, k: string, v: any) {
-		item[k] = v;
-
-		// Remove value when we change relation
-		if (k == 'relationId') {
-			item.value = '';
-		};
-
-		this.save();
-	};
-	
 	onDelete (e: any, id: number) {
-		this.items = this.items.filter((item: any, i: number) => { return i != id; });
+		this.items = this.items.filter((it: any) => { return it.id != id; });
 		this.forceUpdate();
 		this.save();
 	};
@@ -250,8 +242,32 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.items[item.id].value = this.refObj[item.id].getValue();
 	};
 
+	onChange (id: number, k: string, v: any) {
+		const item = this.items.find((it: any) => { return it.id != id; });
+		if (!item) {
+			return;
+		};
+
+		item[k] = v;
+
+		// Remove value when we change relation
+		if (k == 'relationId') {
+			item.value = '';
+		};
+
+		this.save();
+	};
+
+	onSubmitDate (e: any, item: any) {
+		e.preventDefault();
+
+		const value = Util.timestamp(this.refObj[item.id].getValue().split('.').reverse().join('/'));
+		
+		this.onChange(item.id, 'value', value);
+		this.calendarOpen(item.id, value);
+	};
+
 	onChangeDate (item: any, v: any) {
-		console.log(v);
 	};
 
 	onFocusDate (e: any, item: any) {
@@ -264,8 +280,12 @@ class MenuFilter extends React.Component<Props, {}> {
 			return;
 		};
 
+		this.calendarOpen(item.id, item.value || Util.timestamp());
+	};
+
+	calendarOpen (id: number, value: number) {
 		commonStore.menuOpen('dataviewCalendar', {
-			element: `#menuDataviewFilter #item-${item.id}-value`,
+			element: `#menuDataviewFilter #item-${id}-value`,
 			offsetX: 0,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
@@ -273,13 +293,13 @@ class MenuFilter extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				window.setTimeout(() => {
-					this.refObj[item.id].focus();
+					this.refObj[id].focus();
 				}, 200);
 			},
 			data: { 
-				value: item.value || Util.timestamp(), 
+				value: value, 
 				onChange: (value: number) => {
-					this.onChange (item.id, 'value', value);
+					this.onChange(id, 'value', value);
 				},
 			},
 		});
