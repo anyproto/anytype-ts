@@ -7,7 +7,7 @@
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
-			.name { width: calc(100% - 73px); }
+			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 		}
 		.item.add { color: $colorDarkGrey; }
 	}

@@ -109,7 +109,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			<div className="item add" onClick={this.onAdd}>
 				<Icon className="dnd" />
 				<Icon className="plus" />
-				<div className="name">Add a filter</div>
+				<div className="name">New filter</div>
 			</div>
 		));
 		
