@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { IconUser } from 'ts/component';
-import { I, Util } from 'ts/lib';
-import { null } from 'is';
+import { I } from 'ts/lib';
 
 interface Props extends I.Cell {};
 
-class CellAccount extends React.Component<Props, {}> {
+class CellLink extends React.Component<Props, {}> {
 
 	render () {
 		let { relation, data } = this.props;
@@ -24,4 +23,4 @@ class CellAccount extends React.Component<Props, {}> {
 	
 };
 
-export default CellAccount;
+export default CellLink;
