@@ -272,7 +272,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const k = e.which;
+		const k = e.key.toLowerCase();
 		
 		if (this.focus) {
 			if (k != Key.down) {

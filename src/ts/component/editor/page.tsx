@@ -420,7 +420,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused } = focus;
-		const k = e.which;
+		const k = e.key.toLowerCase();
 
 		if (keyboard.isFocused) {
 			return;
@@ -550,9 +550,9 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
+		const k = e.key.toLowerCase();
 
 		let length = String(text || '').length;
-		let k = e.which;
 		
 		this.uiHide();
 		
