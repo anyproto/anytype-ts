@@ -296,7 +296,7 @@ class App extends React.Component<Props, State> {
 
 	onCommand (e: any, key: string) {
 		const id = String(Storage.get('pageId') || '');
-		if (!id) {
+		if (!id || keyboard.isFocused) {
 			return;
 		};
 

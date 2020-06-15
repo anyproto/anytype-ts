@@ -43,28 +43,30 @@ class MenuCalendar extends React.Component<Props, {}> {
 		return (
 			<React.Fragment>
 				<Input ref={(ref: any) => { this.valueRef = ref; }} readOnly={true} />
-				<div className="month">
-					<div className="name">
-						{Constant.month[m]}, {y}
+				<div className="inner">
+					<div className="month">
+						<div className="name">
+							{Constant.month[m]}, {y}
+						</div>
+						<div className="icons">
+							<Icon className="arrow left" onClick={() => { this.switchMonth(-1); }} />
+							<Icon className="arrow right" onClick={() => { this.switchMonth(1); }} />
+						</div>
 					</div>
-					<div className="icons">
-						<Icon className="arrow left" onClick={() => { this.switchMonth(-1); }} />
-						<Icon className="arrow right" onClick={() => { this.switchMonth(1); }} />
-					</div>
+					{Constant.week.map((day: string, i: number) => {
+						return <div key={i} className="day th">{day.substr(0, 2)}</div>;
+					})}
+					{items.map((item, i) => {
+						let cn = [ 'day' ];
+						if (m != item.m) {
+							cn.push('dis');
+						};
+						if ((dv == item.d) && (mv == item.m) && (yv == item.y)) {
+							cn.push('active');
+						};
+						return <div key={i} className={cn.join(' ')} onClick={() => { this.set(item.d, item.m, y); }}>{item.d}</div>;
+					})}
 				</div>
-				{Constant.week.map((day: string, i: number) => {
-					return <div key={i} className="day th">{day.substr(0, 2)}</div>;
-				})}
-				{items.map((item, i) => {
-					let cn = [ 'day' ];
-					if (m != item.m) {
-						cn.push('dis');
-					};
-					if ((dv == item.d) && (mv == item.m) && (yv == item.y)) {
-						cn.push('active');
-					};
-					return <div key={i} className={cn.join(' ')} onClick={() => { this.set(item.d, item.m, y); }}>{item.d}</div>;
-				})}
 			</React.Fragment>
 		);
 	};
@@ -96,11 +98,7 @@ class MenuCalendar extends React.Component<Props, {}> {
 			y++;
 		};
 		
-		this.setState({ value: this.ts([ y, m, 1 ].join('/')) });
-	};
-	
-	ts (d: string): number {
-		return Math.floor(new Date(d).getTime() / 1000);
+		this.setState({ value: Util.timestamp([ y, m, 1 ].join('/')) });
 	};
 	
 	set (d: number, m: number, y: number) {
@@ -109,7 +107,7 @@ class MenuCalendar extends React.Component<Props, {}> {
 		const { onChange } = data;
 		
 		commonStore.menuClose(id);
-		onChange(this.ts([ y, m, d ].join('/')));
+		onChange(Util.timestamp([ y, m, d ].join('/')));
 	};
 	
 	getData () {
@@ -124,8 +122,8 @@ class MenuCalendar extends React.Component<Props, {}> {
 			Constant.monthDays[2] = 29;
 		};
 		
-		let wdf = Number(Util.date('w', this.ts([ y, m, 1 ].join('/'))));
-		let wdl = Number(Util.date('w', this.ts([ y, m, Constant.monthDays[m] ].join('/'))));
+		let wdf = Number(Util.date('w', Util.timestamp([ y, m, 1 ].join('/'))));
+		let wdl = Number(Util.date('w', Util.timestamp([ y, m, Constant.monthDays[m] ].join('/'))));
 		
 		let pm = m - 1;
 		let py = y;

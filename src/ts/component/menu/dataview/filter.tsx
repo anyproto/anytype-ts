@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select, Input, Checkbox } from 'ts/component';
+import { commonStore } from 'ts/store';
 import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
-import { translate } from '../../../lib';
+import { translate, Util } from '../../../lib';
 
 interface Props extends I.Menu {};
 
@@ -22,6 +23,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.onDelete = this.onDelete.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onFocusDate = this.onFocusDate.bind(this);
 	};
 	
 	render () {
@@ -52,32 +54,52 @@ class MenuFilter extends React.Component<Props, {}> {
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 
 			let value = null;
+			let onSubmit = (e: any) => { this.onSubmit(e, item); };
+
 			switch (relation.type) {
 				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
+						id={'item-' + item.id + '-value'}
 						ref={refGet} 
 						value={item.value} 
 						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v); }} 
 						/>
 					);
 					break;
+
+				case I.RelationType.Date:
+					value = (
+						<Input 
+							id={'item-' + item.id + '-value'}
+							ref={refGet} 
+							value={item.value !== '' ? Util.date('d.m.Y', item.value) : ''} 
+							placeHolder="dd.mm.yyyy"
+							mask="99.99.9999"
+							onKeyUp={(e: any, v: string) => { this.onChangeDate(item, v); }} 
+							onFocus={(e: any) => { this.onFocusDate(e, item); }}
+						/>
+					);
+					onSubmit = (e: any) => { this.onSubmitDate(e, item); };
+					break;
+					
 				default:
 					value = (
 						<Input 
+							id={'item-' + item.id + '-value'}
 							ref={refGet} 
 							value={item.value} 
 							placeHolder="Value" 
-							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v); }} 
+							onKeyUp={(e: any, v: string) => { this.onChange(item, 'value', v); }} 
 						/>
 					);
 					break;
 			};
 
 			return (
-				<form className="item" onSubmit={(e: any) => { this.onSubmit(e, item); }}>
+				<form id={'item-' + item.id} className="item" onSubmit={onSubmit}>
 					<Handle />
-					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
+					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} className="operator" options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
 					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
 					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
 					{value}
@@ -90,7 +112,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			<div className="item add" onClick={this.onAdd}>
 				<Icon className="dnd" />
 				<Icon className="plus" />
-				<div className="name">Add a filter</div>
+				<div className="name">New filter</div>
 			</div>
 		));
 		
@@ -167,6 +189,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				break;
 			
 			case I.RelationType.Checkbox:
+			default:
 				ret = [ 
 					I.FilterCondition.Equal, 
 					I.FilterCondition.NotEqual,
@@ -199,20 +222,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.save();
 	};
 
-	onChange (id: number, k: string, v: any) {
-		let item = this.items.find((item: any, i: number) => { return i == id; });
-		item[k] = v;
-
-		// Remove value when we change relation
-		if (k == 'relationId') {
-			item.value = '';
-		};
-
-		this.save();
-	};
-	
 	onDelete (e: any, id: number) {
-		this.items = this.items.filter((item: any, i: number) => { return i != id; });
+		this.items = this.items.filter((it: any, i: number) => { return i != id; });
 		this.forceUpdate();
 		this.save();
 	};
@@ -229,6 +240,69 @@ class MenuFilter extends React.Component<Props, {}> {
 		e.preventDefault();
 
 		this.items[item.id].value = this.refObj[item.id].getValue();
+	};
+
+	onChange (id: number, k: string, v: any) {
+		const item = this.items.find((it: any, i: number) => { return i == id; });
+		if (!item) {
+			return;
+		};
+
+		item[k] = v;
+
+		// Remove value when we change relation
+		if (k == 'relationId') {
+			item.value = '';
+		};
+
+		this.save();
+	};
+
+	onSubmitDate (e: any, item: any) {
+		e.preventDefault();
+
+		const value = Util.timestamp(this.refObj[item.id].getValue().split('.').reverse().join('/'));
+		
+		this.onChange(item.id, 'value', value);
+		this.calendarOpen(item.id, value);
+	};
+
+	onChangeDate (item: any, v: any) {
+	};
+
+	onFocusDate (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationId; });
+		
+		if (!relation || commonStore.menuIsOpen('dataviewCalendar')) {
+			return;
+		};
+
+		this.calendarOpen(item.id, item.value || Util.timestamp());
+	};
+
+	calendarOpen (id: number, value: number) {
+		commonStore.menuOpen('dataviewCalendar', {
+			element: `#menuDataviewFilter #item-${id}-value`,
+			offsetX: 0,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			onOpen: () => {
+				window.setTimeout(() => {
+					this.refObj[id].focus();
+				}, 200);
+			},
+			data: { 
+				value: value, 
+				onChange: (value: number) => {
+					this.onChange(id, 'value', value);
+				},
+			},
+		});
 	};
 
 	save () {

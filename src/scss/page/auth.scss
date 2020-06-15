@@ -7,7 +7,7 @@
 	.input { height: 40px; border: solid 1px #d2d0c2; }
 	
 	.textarea { 
-		font-family: 'Inter'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px #d2d0c2; 
+		font-family: 'Plex'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px #d2d0c2; 
 		background-color: #fff; 
 	}
 	
@@ -28,7 +28,6 @@
 
 .pageAuthPinSelect, .pageAuthPinConfirm, .pageAuthPinCheck {
 	.input { width: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
-	.input-password { font-size: 36px; }
 	.input:last-child { margin: 0px; }
 }
 

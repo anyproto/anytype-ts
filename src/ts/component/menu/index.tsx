@@ -162,7 +162,7 @@ class Menu extends React.Component<Props, {}> {
 			
 			let el = null;
 			if ('object' == typeof(element)) {
-				el = element;
+				el = $(element);
 			} else {
 				el = $(element.replace(/\//g, '\\/'));
 			};

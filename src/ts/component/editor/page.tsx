@@ -240,6 +240,10 @@ class EditorPage extends React.Component<Props, State> {
 	};
 
 	onCommand (cmd: string) {
+		if (keyboard.isFocused) {
+			return;
+		};
+
 		const { rootId } = this.props;
 		const { focused, range } = focus;
 

@@ -212,6 +212,11 @@ class Util {
 		return 0;
 	};
 
+	timestamp (d?: string): number {
+		const ts = d ? new Date(d) : new Date();
+		return Math.floor(ts.getTime() / 1000);
+	};
+
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 		const jsdate = new Date(timestamp ? timestamp * 1000 : null);

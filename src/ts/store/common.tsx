@@ -128,7 +128,7 @@ class CommonStore {
 	
 	@action
 	popupUpdate (id: string, param: any) {
-		let item = this.popupList.find((item: I.Popup) => { return item.id == id; });
+		const item = this.popupList.find((item: I.Popup) => { return item.id == id; });
 		if (!item) {
 			return;
 		};
@@ -204,6 +204,16 @@ class CommonStore {
 		});
 		
 		analytics.event(Util.toCamelCase('Menu-' + id));
+	};
+
+	@action
+	menuUpdate (id: string, param: any) {
+		const item = this.menuList.find((item: I.Menu) => { return item.id == id; });
+		if (!item) {
+			return;
+		};
+		
+		set(item, { param: param });
 	};
 	
 	menuIsOpen (id?: string): boolean {

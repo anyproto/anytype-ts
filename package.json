@@ -87,6 +87,7 @@
 		"get-input-selection": "^1.1.4",
 		"highlight.js": "^9.18.1",
 		"history": "^4.10.1",
+		"inputmask": "^5.0.3",
 		"install": "^0.13.0",
 		"is": "^3.3.0",
 		"jquery": "^3.5.1",

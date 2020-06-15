@@ -14,7 +14,6 @@ export enum RelationType {
 	Number		 = 'number', 
 	Date		 = 'date', 
 	Select		 = 'select', 
-	Multiple	 = 'multiselect',
 	Link		 = 'link',
 	File		 = 'file',
 	Image		 = 'image',

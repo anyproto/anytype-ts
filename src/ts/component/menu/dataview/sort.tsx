@@ -54,7 +54,7 @@ class MenuSort extends React.Component<Props, {}> {
 			<div className="item add" onClick={this.onAdd}>
 				<Icon className="dnd" />
 				<Icon className="plus" />
-				<div className="name">Add a sort</div>
+				<div className="name">New sort</div>
 			</div>
 		));
 		

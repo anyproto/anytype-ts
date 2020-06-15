@@ -102,8 +102,6 @@ class MenuTagList extends React.Component<Props, State> {
 		const { data } = param;
 		const { values } = data;
 		
-		//commonStore.menuClose(this.props.id);
-		
 		commonStore.menuOpen('dataviewTagEdit', { 
 			type: I.MenuType.Vertical,
 			element: '#tag-' + id,

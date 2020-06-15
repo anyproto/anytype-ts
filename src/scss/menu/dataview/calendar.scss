@@ -3,6 +3,8 @@
 .menus {
 	.menu.menuDataviewCalendar { padding: 16px; width: 228px; }
 	.menu.menuDataviewCalendar {
+		.inner { user-select: none; }
+
 		.day { 
 			display: inline-block; vertical-align: top; width: 28px; height: 28px; text-align: center; font-size: 12px; line-height: 30px;
 			cursor: pointer; border-radius: 4px; letter-spacing: 0.1px;

@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, globalShortcut } = require('electron');
 const { is, appMenu } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -147,21 +147,31 @@ function menuInit () {
 			role: 'editMenu',
 			submenu: [
 				{
-					label: 'Undo', accelerator: 'CommandOrControl+Z',
-					click: function () { win.webContents.send('command', 'undo'); }
+					label: 'Undo', accelerator: 'CmdOrCtrl+Z',
+					click: function () {
+						win.webContents.undo();
+						win.webContents.send('command', 'undo');
+					}
 				},
 				{
-					label: 'Redo', accelerator: 'CommandOrControl+Shift+Z',
-					click: function () { win.webContents.send('command', 'redo'); }
+					label: 'Redo', accelerator: 'CmdOrCtrl+Shift+Z',
+					click: function () {
+						win.webContents.redo();
+						win.webContents.send('command', 'redo');
+					}
 				},
 				{ type: 'separator' },
 				{ label: 'Copy', role: 'copy' },
 				{ label: 'Cut', role: 'cut' },
 				{ label: 'Paste', role: 'paste' },
-				{ 
-					label: 'Select all', accelerator: 'CommandOrControl+A',
-					click: function () { win.webContents.send('commandEditor', 'selectAll'); }
+				{
+					label: 'Select all', accelerator: 'CmdOrCtrl+A',
+					click: function () {
+						win.webContents.selectAll();
+						win.webContents.send('commandEditor', 'selectAll');
+					}
 				},
+				{ label: 'Select all', role: 'selectAll' }
 			]
 		},
 		{
