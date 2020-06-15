@@ -223,7 +223,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	onDelete (e: any, id: number) {
-		this.items = this.items.filter((it: any) => { return it.id != id; });
+		this.items = this.items.filter((it: any, i: number) => { return i != id; });
 		this.forceUpdate();
 		this.save();
 	};
@@ -243,7 +243,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	onChange (id: number, k: string, v: any) {
-		const item = this.items.find((it: any) => { return it.id != id; });
+		const item = this.items.find((it: any, i: number) => { return i == id; });
 		if (!item) {
 			return;
 		};
