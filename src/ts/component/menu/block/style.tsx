@@ -142,7 +142,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
-		const k = e.which;
+		const k = e.key.toLowerCase();
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
 		const l = items.length;

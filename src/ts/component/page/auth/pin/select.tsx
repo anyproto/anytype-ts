@@ -61,12 +61,12 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	
 	onChange (e: any, id: number) {
 		const { match, history } = this.props;
-		
-		let k = e.which;
-		let input = this.refObj[id];
-		let prev = this.refObj[id - 1];
-		let next = this.refObj[id + 1];
-		let v = input.getValue();
+		const k = e.key.toLowerCase();
+		const input = this.refObj[id];
+		const prev = this.refObj[id - 1];
+		const next = this.refObj[id + 1];
+		const v = input.getValue();
+		const pin = this.getPin();
 		
 		input.setType(input.getValue() ? 'password' : 'text');
 		
@@ -79,7 +79,6 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 			next.focus();	
 		};
 		
-		let pin = this.getPin();
 		if (pin.length != Constant.pinSize) {
 			return;
 		};

@@ -64,8 +64,8 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		const { match, history } = this.props;
 		const isAdd = match.params.id == 'add';
 		const isSelect = match.params.id == 'select';
-		
-		let k = e.which;
+		const k = e.key.toLowerCase();
+
 		let input = this.refObj[id];
 		let prev = this.refObj[id - 1];
 		let next = this.refObj[id + 1];

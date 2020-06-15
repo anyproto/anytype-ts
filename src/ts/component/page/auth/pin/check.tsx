@@ -61,12 +61,9 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 
 	onChange (e: any, id: number) {
 		const { match, history } = this.props;
-		const { breadcrumbs } = blockStore;
-		const isAdd = match.params.id == 'add';
 		const isSelect = match.params.id == 'select';
-		const pageId = Storage.get('pageId');
-		
-		let k = e.which;
+		const k = e.key.toLowerCase();
+
 		let input = this.refObj[id];
 		let prev = this.refObj[id - 1];
 		let next = this.refObj[id + 1];

@@ -358,15 +358,11 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		const k = e.which;		
+		const k = e.key.toLowerCase();		
 		const range = this.getRange();
 		const value = this.getValue().replace(/\n$/, '');
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
-		
-		if (!e.metaKey) {
-			keyboard.setPressed(k);
-		};
-		
+
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
 			this.setText(this.marks, (message: any) => {
@@ -429,9 +425,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { id } = block;
 		const value = this.getValue();
 		const range = this.getRange();
-		const k = e.which;
-		
-		keyboard.unsetPressed(k);
+		const k = e.key.toLowerCase();
 		
 		let cmdParsed = false;
 		let cb = (message: any) => {

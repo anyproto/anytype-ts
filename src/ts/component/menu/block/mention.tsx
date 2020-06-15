@@ -213,7 +213,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		
 		e.stopPropagation();
 
-		const k = e.which;
+		const k = e.key.toLowerCase();
 		keyboard.disableMouse(true);
 		
 		const items = this.getItems();

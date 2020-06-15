@@ -35,9 +35,8 @@ class Keyboard {
 	onKeyDown (e: any) {
 		const { root } = blockStore;
 		const { focused } = focus;
-		
-		let k = e.which;
-		let rootId = this.isEditor() ? this.match.params.id : root;
+		const k = e.key.toLowerCase();
+		const rootId = this.isEditor() ? this.match.params.id : root;
 		
 		if (!this.isFocused) {
 			if ((k == Key.backspace) && !this.isBackDisabled) {
@@ -112,19 +111,7 @@ class Keyboard {
 	};
 	
 	onKeyUp (e: any) {
-		let k = e.which;
-	};
-	
-	setPressed (k: number) {
-		this.pressed[k] = true;
-	};
-	
-	unsetPressed (k: number) {
-		delete(this.pressed[k]);
-	};
-	
-	countPressed () {
-		return Util.objectLength(this.pressed);
+		const k = e.key.toLowerCase();
 	};
 	
 	setFocus (v: boolean) {
@@ -176,43 +163,45 @@ class Keyboard {
 		this.coords = { x: x, y: y };
 	};
 	
-	isArrow (k: number): boolean {
-		return [ Key.up, Key.down, Key.left, Key.right ].indexOf(k) >= 0;
+	isArrow (k: string): boolean {
+		const keys: string[] = [ Key.up, Key.down, Key.left, Key.right ];
+		return keys.indexOf(k) >= 0;
 	};
 	
-	isSpecial (k: number): boolean {
-		return this.isArrow(k) || [ Key.backspace, Key.tab, Key.enter ].indexOf(k) >= 0;
+	isSpecial (k: string): boolean {
+		const keys: string[] = [ Key.backspace, Key.tab, Key.enter ];
+		return this.isArrow(k) || keys.indexOf(k) >= 0;
 	};
 	
 };
 
 export enum Key {
-	backspace	 = 8,
-	tab			 = 9,
-	enter		 = 13,
-	escape		 = 27,
-	space		 = 32,
-	left		 = 37,
-	up			 = 38,
-	right		 = 39,
-	down		 = 40,
-	a			 = 65,
-	b			 = 66,
-	c			 = 67,
-	d			 = 68,
-	e			 = 69,
-	i			 = 73,
-	k			 = 75,
-	l			 = 76,
-	n			 = 78,
-	o			 = 79,
-	p			 = 80,
-	s			 = 83,
-	v			 = 86,
-	x			 = 88,
-	y			 = 89,
-	z			 = 90,
-	slash		 = 191,
+	backspace	 = 'backspace',
+	tab			 = 'tab',
+	enter		 = 'enter',
+	escape		 = 'escape',
+	space		 = 'space',
+	left		 = 'arrowleft',
+	up			 = 'arrowup',
+	right		 = 'arrowright',
+	down		 = 'arrowdown',
+	a			 = 'a',
+	b			 = 'b',
+	c			 = 'c',
+	d			 = 'd',
+	e			 = 'e',
+	i			 = 'i',
+	k			 = 'k',
+	l			 = 'l',
+	n			 = 'n',
+	o			 = 'o',
+	p			 = 'p',
+	s			 = 's',
+	v			 = 'v',
+	x			 = 'x',
+	y			 = 'y',
+	z			 = 'z',
+	slash		 = '/',
 };
 
 export let keyboard: Keyboard = new Keyboard();
