@@ -1,42 +1,27 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
-
-const { ipcRenderer } = window.require('electron');
+import { IconUser } from 'ts/component';
+import { I, Util } from 'ts/lib';
+import { null } from 'is';
 
 interface Props extends I.Cell {};
 
-class CellLink extends React.Component<Props, {}> {
-
-	constructor (props: any) {
-		super(props);
-		
-		this.onClick = this.onClick.bind(this);
-	};
+class CellAccount extends React.Component<Props, {}> {
 
 	render () {
 		let { relation, data } = this.props;
-		let href = data;
 		
-		switch (relation.type) {
-			case I.RelationType.Email:
-				href = 'mailto:' + data[relation.id];
-				break;
-				
-			case I.RelationType.Phone:
-				href = 'tel:' + data[relation.id];
-				break;
+		if (!data[relation.id]) {
+			return null;
 		};
 		
 		return (
-			<a onClick={(e: any) => { this.onClick(e, href); }}>{data[relation.id]}</a>
+			<React.Fragment>
+				<IconUser className="c18" {...data[relation.id]} />
+				{data[relation.id].name}
+			</React.Fragment>
 		);
-	};
-	
-	onClick (e: any, url: string) {
-		e.preventDefault();
-		ipcRenderer.send('urlOpen', url);
 	};
 	
 };
 
-export default CellLink;
+export default CellAccount;

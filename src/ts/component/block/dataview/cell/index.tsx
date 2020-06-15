@@ -5,10 +5,10 @@ import { observer } from 'mobx-react';
 
 import CellText from './text';
 import CellDate from './date';
-import CellLink from './link';
+import CellUrl from './url';
 import CellSelect from './select';
 import CellBool from './checkbox';
-import CellAccount from './account';
+import CellLink from './link';
 
 interface Props extends I.Cell {};
 
@@ -50,13 +50,13 @@ class Cell extends React.Component<Props, {}> {
 				break;
 				
 			case I.RelationType.Link:
-				CellComponent = CellAccount;
+				CellComponent = CellLink;
 				break;
 				
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
-				CellComponent = CellLink;
+				CellComponent = CellUrl;
 				break;
 		};
 		
