@@ -10,8 +10,8 @@ interface Props {
 
 class Pager extends React.Component<Props, {}> {
 
-	defaultProps = {
-		pageLimit: 10,
+	public static defaultProps = {
+		pageLimit: 5,
 	};
 
 	constructor (props: any) {
@@ -40,14 +40,21 @@ class Pager extends React.Component<Props, {}> {
 		if (items.length > 1) {
 			return (
 				<div className="pager">
+					{page > limit * 2 ? (
+						<React.Fragment>
+							<Item id={1} />
+							...
+						</React.Fragment>
+					) : ''}
+
 					{items.map((item, i) => {
 						return <Item key={i} {...item} />;
 					})}
 					{end < pages ? (
-						<span>
+						<React.Fragment>
 							...
 							<Item id={pages} />
-						</span>
+						</React.Fragment>
 					) : ''}
 				</div>
 			);
