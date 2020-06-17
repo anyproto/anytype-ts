@@ -8,7 +8,8 @@
 		"name": "Untitled",
 		"icon": ":page_facing_up:",
 		"lang": "en",
-		"cover": 3
+		"cover": 3,
+		"codeLang": "javascript"
 	},
 	
 	"langs": [
@@ -130,16 +131,15 @@
 	},
 	
 	"codeLang": {
-		"js":	 "JavaScript",
-		"java":	 "Java",
-		"cpp":	 "C++",
-		"cs":	 "C#", 
-		"php":	 "PHP",
-		"sql":	 "SQL", 
-		"css":	 "CSS", 
-		"html":	 "HTML", 
-		"go":	 "Go",
-		"swift": "Swift",
-		"kotlin": "Kotlin"
+		"javascript":	 "JavaScript",
+		"java":			 "Java",
+		"cpp":			 "C++",
+		"csharp":		 "C#", 
+		"php":			 "PHP",
+		"sql":			 "SQL", 
+		"css":			 "CSS", 
+		"go":			 "Go",
+		"swift":		 "Swift",
+		"kotlin":		 "Kotlin"
 	}
 }
