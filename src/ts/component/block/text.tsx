@@ -201,8 +201,6 @@ class BlockText extends React.Component<Props, {}> {
 			};
 
 			html = Prism.highlight(html, grammar, lang);
-
-			console.log(Prism, html);
 		} else {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
