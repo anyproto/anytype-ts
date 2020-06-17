@@ -681,13 +681,13 @@ class EditorPage extends React.Component<Props, State> {
 								value: (mark ? mark.param : ''),
 								onChange: (param: string) => {
 									marks = Mark.toggle(marks, { type: type, param: param, range: range });
-									DataUtil.blockSetText(rootId, block, text, marks);
+									DataUtil.blockSetText(rootId, block, text, marks, true);
 								}
 							}
 						});
 					} else {
 						marks = Mark.toggle(marks, { type: type, range: range });
-						DataUtil.blockSetText(rootId, block, text, marks);
+						DataUtil.blockSetText(rootId, block, text, marks, true);
 					};
 				};
 			};
@@ -924,7 +924,7 @@ class EditorPage extends React.Component<Props, State> {
 					// Clear filter in block text
 					const block = blockStore.getLeaf(rootId, id);
 					if (block) {
-						DataUtil.blockSetText(rootId, block, text, marks);
+						DataUtil.blockSetText(rootId, block, text, marks, true);
 					};
 					
 					// Text colors

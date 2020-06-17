@@ -365,7 +365,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
 			e.preventDefault();
-			this.setText(this.marks, (message: any) => {
+			this.setText(this.marks, true, (message: any) => {
 				onKeyDown(e, value, this.marks);
 			});
 			return;
@@ -373,7 +373,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		if (k == Key.tab) {
 			e.preventDefault();
-			this.setText(this.marks, (message: any) => {
+			this.setText(this.marks, true, (message: any) => {
 				onKeyDown(e, value, this.marks);
 			});
 			return;
@@ -381,7 +381,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		if (k == Key.backspace) {
 			if (range && !range.from && !range.to) {
-				this.setText(this.marks, (message: any) => {
+				this.setText(this.marks, true, (message: any) => {
 					onKeyDown(e, value, this.marks);
 				});
 				return;
@@ -581,7 +581,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.placeHolderCheck();
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks, false); }, 500);
 	};
 
 	onMention () {
@@ -617,7 +617,7 @@ class BlockText extends React.Component<Props, {}> {
 					this.marks = Util.objectCopy(marks);
 					value = Util.stringInsert(value, text, from, from);
 
-					DataUtil.blockSetText(rootId, block, value, this.marks, () => {
+					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 						focus.set(block.id, { from: to, to: to });
 						focus.apply();
 					});
@@ -661,7 +661,7 @@ class BlockText extends React.Component<Props, {}> {
 					});
 					value = Util.stringInsert(value, ' ', range.from, range.from);
 
-					DataUtil.blockSetText(rootId, block, value, this.marks, () => {
+					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 						focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 						focus.apply();
 					});
@@ -670,7 +670,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 	};
 	
-	setText (marks: I.Mark[], callBack?: (message: any) => void) {
+	setText (marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const { id, content } = block;
 		const value = this.getValue();
@@ -686,8 +686,8 @@ class BlockText extends React.Component<Props, {}> {
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
 		};
-		
-		DataUtil.blockSetText(rootId, block, value, marks, callBack);
+
+		DataUtil.blockSetText(rootId, block, value, marks, update, callBack);
 	};
 	
 	setMarks (marks: I.Mark[]) {
@@ -699,7 +699,7 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		DataUtil.blockSetText(rootId, block, text, marks);
+		DataUtil.blockSetText(rootId, block, text, marks, true);
 	};
 	
 	onFocus (e: any) {
@@ -726,7 +726,7 @@ class BlockText extends React.Component<Props, {}> {
 		e.persist();
 		e.preventDefault();
 
-		this.setText(this.marks);
+		this.setText(this.marks, true);
 		this.props.onPaste(e);
 	};
 	
@@ -740,7 +740,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { checked } = content;
 		
 		focus.clear(true);
-		DataUtil.blockSetText(rootId, block, this.getValue(), this.marks, () => {
+		DataUtil.blockSetText(rootId, block, this.getValue(), this.marks, true, () => {
 			C.BlockSetTextChecked(rootId, id, !checked);
 		});
 	};

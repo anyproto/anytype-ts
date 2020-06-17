@@ -187,7 +187,7 @@ class BlockTitle extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		this.onChange(e);
+		//this.onChange(e);
 		this.placeHolderCheck();
 	};
 	
@@ -201,10 +201,8 @@ class BlockTitle extends React.Component<Props, {}> {
 		
 		const param = { 
 			id: rootId,
-			details: details
+			details: details,
 		};
-		
-		blockStore.detailsUpdate(rootId, param, false);
 		blockStore.detailsUpdate(breadcrumbs, param, false);
 		
 		window.clearTimeout(this.timeout);

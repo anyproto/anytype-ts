@@ -283,7 +283,7 @@ class Menu extends React.Component<Props, {}> {
 			const ch = content.height();
 			const top = Math.max(0, st + pt + eh - BORDER - ch);
 			
-			content.animate({ scrollTop: top }, 200);
+			content.animate({ scrollTop: top }, 100);
 		};
 	};
 	
