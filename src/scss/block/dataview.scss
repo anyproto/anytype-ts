@@ -12,6 +12,8 @@
 		.icon.expand { display: none; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/expand0.svg'); cursor: pointer; }
 		.icon.expand:hover { background-image: url('~img/icon/dataview/button/expand1.svg'); }
 
+		.icon.back, .icon.forward { width: 20px; height: 20px; }
+
 		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
 		.views {
 			.item { margin-right: 20px; display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; }

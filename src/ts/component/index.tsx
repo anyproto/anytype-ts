@@ -35,6 +35,7 @@ import Loader from './util/loader';
 import Progress from './util/progress';
 import SelectionProvider from './util/selection';
 
+import Pager from './util/pager';
 import Dimmer from './util/dimmer';
 import Switch from './util/switch';
 import Input from './util/input';
@@ -72,6 +73,7 @@ export {
 	FooterAuth,
 	FooterMainIndex,
 	FooterMainEdit,
+	Pager,
 	Dimmer,
 	Switch,
 	Input,

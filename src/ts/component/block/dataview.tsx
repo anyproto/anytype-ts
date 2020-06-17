@@ -22,8 +22,7 @@ const Schema = {
 	page: require('json/schema/page.json'),
 	relation: require('json/schema/relation.json'),
 };
-
-const LIMIT = 10;
+const Constant = require('json/constant.json');
 
 @observer
 class BlockDataview extends React.Component<Props, {}> {
@@ -79,7 +78,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			<div>
 				<Controls {...this.props} view={view} data={data} readOnly={readOnly} getData={this.getData} />
 				<div className="content">
-					<ViewComponent ref={(ref: any) => { this.viewRef = ref; }} {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} />
+					<ViewComponent ref={(ref: any) => { this.viewRef = ref; }} {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} getData={this.getData} />
 				</div>
 			</div>
 		);
@@ -90,7 +89,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { content } = block;
 
 		if (content.views.length) {
-			this.getData(content.views[0].id);
+			this.getData(content.views[0].id, 0);
 		};
 
 		this.resize();
@@ -107,14 +106,15 @@ class BlockDataview extends React.Component<Props, {}> {
 		$(window).unbind('resize.dataview');
 	};
 
-	getData (viewId: string) {
+	getData (viewId: string, offset: number) {
 		const { rootId, block } = this.props;
 
 		block.content.viewId = viewId;
-		block.content.data = [];
+		block.content.offset = offset;
+
 		blockStore.blockUpdate(rootId, block);
 
-		C.BlockSetDataviewActiveView(rootId, block.id, viewId, 0, LIMIT);
+		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview);
 	};
 
 	onOpen (e: any, data: any) {

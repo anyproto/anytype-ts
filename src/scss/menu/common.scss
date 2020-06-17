@@ -32,7 +32,7 @@
 	
 	.menu.vertical { width: 208px; }
 	.menu.vertical {
-		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; }
+		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; }
 		
 		.filter { border-bottom: 1px solid #eae9e0; padding: 3px 16px 10px 16px; }
 		.filter {

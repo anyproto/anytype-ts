@@ -30,6 +30,7 @@ import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewTagList from './dataview/tag/list';
 import MenuDataviewTagEdit from './dataview/tag/edit';
 import MenuDataviewAccount from './dataview/account';
+import MenuDataviewMore from './dataview/more';
 
 interface Props extends I.Menu {
 	history: any;
@@ -84,6 +85,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewView:			 MenuDataviewView,
 			dataviewCalendar:		 MenuDataviewCalendar,
 			dataviewAccount:		 MenuDataviewAccount,
+			dataviewMore:			 MenuDataviewMore,
 		};
 		
 		const menuId = Util.toCamelCase('menu-' + id);
@@ -277,13 +279,11 @@ class Menu extends React.Component<Props, {}> {
 			const content = node.find('.content');
 			const st = content.scrollTop();
 			const pt = el.position().top;
-			const top = Math.max(0, st + pt - BORDER);
+			const eh = el.outerHeight();
 			const ch = content.height();
-			const eh = el.height();
+			const top = Math.max(0, st + pt + eh - BORDER - ch);
 			
-			if ((pt + eh > ch) || (pt < st)) {
-				content.scrollTop(top);
-			};
+			content.stop(true, true).animate({ scrollTop: top }, 200);
 		};
 	};
 	
