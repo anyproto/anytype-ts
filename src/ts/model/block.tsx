@@ -35,9 +35,13 @@ class Block implements I.Block {
 			return change;
 		});
 	};
+
+	canHaveChildren (): boolean {
+		return !this.isTitle() && !this.isLayout() && !this.isPage() && !this.isDiv() && !this.isHeader() && !this.isCode();
+	};
 	
 	isIndentable (): boolean {
-		return !this.isTitle() && !this.isLayout() && !this.isPage() && !this.isDiv() && !this.isHeader();
+		return !this.isTitle() && !this.isLayout() && !this.isPage() && !this.isDiv() && !this.isHeader() && !this.isCode();
 	};
 	
 	isFocusable (): boolean {
