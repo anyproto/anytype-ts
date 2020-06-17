@@ -59,7 +59,7 @@ class Controls extends React.Component<Props, State> {
 				active: commonStore.menuIsOpen('dataviewView') 
 			},
 			{ 
-				id: 'more', menu: 'more', active: commonStore.menuIsOpen('dataviewMore') 
+				id: 'more', menu: 'dataviewMore', active: commonStore.menuIsOpen('dataviewMore') 
 			}
 		];
 		
