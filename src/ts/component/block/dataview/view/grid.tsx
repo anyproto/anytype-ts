@@ -26,7 +26,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	render () {
 		const { block, data, view, onOpen, readOnly, getData } = this.props;
 		const { content } = block;
-		const { offset } = content;
+		const { offset, total } = content;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const width = 100 / relations.length;
 		
@@ -84,7 +84,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			<Pager 
 				offset={offset} 
 				limit={Constant.limit.dataview} 
-				total={1000} 
+				total={total} 
 				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview); }} 
 			/>
 		);
