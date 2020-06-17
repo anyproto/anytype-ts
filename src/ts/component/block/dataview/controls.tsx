@@ -4,6 +4,7 @@ import { I } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from '../../../lib';
+import { CLIENT_RENEG_LIMIT } from 'tls';
 
 interface Props {
 	data: any[];
@@ -11,11 +12,21 @@ interface Props {
 	block: I.Block;
 	rootId: string;
 	readOnly: boolean;
-	getData(id: string): void;
+	getData(viewId: string, offset: number): void;
 };
 
+interface State {
+	page: number;
+};
+
+const LIMIT = 5;
+
 @observer
-class Controls extends React.Component<Props, {}> {
+class Controls extends React.Component<Props, State> {
+
+	state = {
+		page: 0,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -28,6 +39,7 @@ class Controls extends React.Component<Props, {}> {
 		const { getData, block, view } = this.props;
 		const { content } = block;
 		const { views, viewId } = content;
+		const { page } = this.state;
 
 		const buttons: any[] = [
 			{ 
@@ -47,12 +59,12 @@ class Controls extends React.Component<Props, {}> {
 				active: commonStore.menuIsOpen('dataviewView') 
 			},
 			{ 
-				id: 'more', menu: 'more', active: commonStore.menuIsOpen('dataviewMore') 
+				id: 'more', menu: 'dataviewMore', active: commonStore.menuIsOpen('dataviewMore') 
 			}
 		];
 		
 		const ViewItem = (item: any) => (
-			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id); }}>
+			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id, 0); }}>
 				{item.name}
 			</div>
 		);
@@ -76,11 +88,15 @@ class Controls extends React.Component<Props, {}> {
 		return (
 			<div className="dataviewControls">
 				<div className="views">
-					{views.map((item: I.View, i: number) => (
-						<ViewItem key={i} {...item} active={item.id == view.id} />
+					{views.slice(page * LIMIT, (page + 1) * LIMIT).map((item: I.View, i: number) => (
+						<ViewItem key={i} {...item} active={item.id == viewId} />
 					))}
 					<div className="item">
 						<Icon className="plus" onClick={this.onViewAdd} />
+					</div>
+					<div className="item">
+						<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
+						<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
 					</div>
 				</div>
 				
@@ -125,6 +141,24 @@ class Controls extends React.Component<Props, {}> {
 	onViewAdd (e: any) {
 		const { rootId, block } = this.props;
 		C.BlockCreateDataviewView(rootId, block.id, {});
+	};
+
+	onArrow (dir: number) {
+		let { page } = this.state;
+
+		page += dir;
+		page = Math.max(0, page);
+		page = Math.min(this.getMaxPage(), page);
+
+		this.setState({ page: page });
+	};
+
+	getMaxPage () {
+		const { block } = this.props;
+		const { content } = block;
+		const { views } = content;
+
+		return Math.ceil(views.length / LIMIT) - 1;
 	};
 
 };

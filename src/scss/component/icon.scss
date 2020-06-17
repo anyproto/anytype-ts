@@ -11,6 +11,10 @@
 .icon.home.big { background-image: url('~img/icon/home-big.svg'); }
 .icon.search { width: 24px; height: 24px; background-image: url('~img/icon/search.svg'); }
 
+.icon.back, .icon.forward { background-image: url('~img/icon/back0.svg'); }
+.icon.forward { transform: rotateZ(180deg); }
+.icon.back:hover, .icon.forward:hover { background-image: url('~img/icon/back1.svg'); }
+
 .icon.help { width: 22px; height: 22px; background-image: url('~img/icon/help/dark0.svg'); }
 .icon.help:hover { background-image: url('~img/icon/help/dark1.svg'); }
 

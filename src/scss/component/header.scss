@@ -32,10 +32,6 @@
 	
 	.icon.nav { background-image: url('~img/icon/nav0.svg'); }
 	.icon.nav:hover { background-image: url('~img/icon/nav1.svg'); }
-
-	.icon.back, .icon.forward { background-image: url('~img/icon/back0.svg'); }
-	.icon.forward { transform: rotateZ(180deg); }
-	.icon.back:hover, .icon.forward:hover { background-image: url('~img/icon/back1.svg'); }
 }
 
 .headerMainEdit { background: #fff; padding: 9px 10px 9px 82px; line-height: 20px; }

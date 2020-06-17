@@ -74,10 +74,13 @@ export interface ViewRelation extends Relation {
 };
 
 export interface ViewComponent {
+	rootId: string;
+	block: I.Block;
 	view: I.View;
 	data: any[];
 	readOnly: boolean;
 	onOpen(e: any, data: any): void;
+	getData(viewId: string, offset: number): void;
 };
 
 export interface View {
@@ -104,6 +107,7 @@ export interface ContentDataview {
 	viewId: string;
 	views: View[];
 	data: any[];
+	offset: number;
 };
 
 export interface BlockDataview extends I.Block {

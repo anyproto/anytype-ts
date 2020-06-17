@@ -36,6 +36,7 @@ input, textarea, select { font-family: 'Inter'; }
 .cp { cursor: pointer; }
 .through { pointer-events: none; }
 .rel { position: relative; }
+.disabled { opacity: 0.5 !important; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

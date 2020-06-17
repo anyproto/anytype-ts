@@ -10,12 +10,11 @@ arch="";
 
 if [ "$platform" = "ubuntu-latest" ]; then
 	arch="linux";
-fi;
-if [ "$platform" = "macos-latest" ]; then
+elif [ "$platform" = "macos-latest" ]; then
 	arch="darwin";
-fi;
-if [ "$platform" = "windows-latest" ]; then
+elif [ "$platform" = "windows-latest" ]; then
 	arch="windows";
+  FILE="addon.zip"
 fi;
 
 if [ "$token" = "" ]; then
@@ -44,7 +43,13 @@ curl -sL -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/rele
 printf "Done\n"
 
 echo -n "Uncompressing... "
-tar -zxf $FILE
+
+if [ "$platform" = "windows-latest" ]; then
+	unzip $FILE
+else 
+  tar -zxf $FILE
+fi;
+
 printf "Done\n"
 
 echo "Moving... "

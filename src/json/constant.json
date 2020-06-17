@@ -28,6 +28,10 @@
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v" ]
 	},
+
+	"limit": {
+		"dataview": 10
+	},
 	
 	"size": {
 		"page": 704,

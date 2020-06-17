@@ -1,0 +1,15 @@
+@import "~scss/_vars";
+
+.pager { 
+    text-align: right; margin: 10px 0px 0px 0px; color: $colorDarkGrey; cursor: pointer; white-space: nowrap; @include text-small;
+}
+
+.pager {
+    .page { 
+        min-width: 20px; height: 20px; border-radius: 4px; display: inline-block; padding: 0px 2px; transition: $transitionFast;
+        text-align: center; line-height: 20px; margin-right: 2px;
+    }
+    .page:last-child { margin: 0px; }
+    .page:hover { color: #000; background: #ebe9e0; }
+    .page.active { color: #000; background: $colorOrange; }
+}
