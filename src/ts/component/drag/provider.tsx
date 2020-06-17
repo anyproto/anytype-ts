@@ -198,8 +198,6 @@ class DragProvider extends React.Component<Props, {}> {
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
 
-		let prev: any = null;
-
 		if (this.emptyObj) {
 			this.emptyObj.remove();
 		};
@@ -213,7 +211,6 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			if ((ex >= x) && (ex <= x + width) && (ey >= y) && (ey <= y + height)) {
-				prev = this.objects.get(index - 1);
 				this.hoverData = value;
 			};
 		});
@@ -284,17 +281,6 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 		};
-
-		/*
-		if (this.canDrop) {
-			if ((this.position == I.BlockPosition.Top) && prev) {
-				$(prev).after(this.emptyObj);
-			};
-			if ((this.position == I.BlockPosition.Bottom)) {
-				this.hovered.after(this.emptyObj);
-			};
-		};
-		*/
 
 		window.clearTimeout(this.timeoutHover);
 		if ((this.position != I.BlockPosition.None) && this.canDrop) {
