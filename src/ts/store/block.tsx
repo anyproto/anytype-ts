@@ -449,6 +449,7 @@ class BlockStore {
 			if (type == I.BlockType.Dataview) {
 				const schemaId = DataUtil.schemaField(item.content.schemaURL);
 
+				item.content.offset = 0;
 				item.content.data = item.content.data || [];
 				item.content.views = item.content.views || [];
 				item.content.views = item.content.views.map((view: I.View) => {

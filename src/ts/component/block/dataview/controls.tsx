@@ -12,7 +12,7 @@ interface Props {
 	block: I.Block;
 	rootId: string;
 	readOnly: boolean;
-	getData(id: string): void;
+	getData(viewId: string, offset: number): void;
 };
 
 interface State {
@@ -64,7 +64,7 @@ class Controls extends React.Component<Props, State> {
 		];
 		
 		const ViewItem = (item: any) => (
-			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id); }}>
+			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id, 0); }}>
 				{item.name}
 			</div>
 		);

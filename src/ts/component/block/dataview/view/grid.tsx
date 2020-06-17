@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon } from 'ts/component';
+import { Icon, Pager } from 'ts/component';
 import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
@@ -24,7 +24,9 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { data, view, onOpen, readOnly } = this.props;
+		const { block, data, view, onOpen, readOnly, getData } = this.props;
+		const { content } = block;
+		const { offset } = content;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const width = 100 / relations.length;
 		
@@ -77,9 +79,20 @@ class ViewGrid extends React.Component<Props, {}> {
 				<td className="cell">&nbsp;</td>
 			</tr>
 		);
+
+		const pager = (
+			<Pager 
+				offset={offset} 
+				limit={Constant.limit.dataview} 
+				total={100} 
+				onChange={(page: number) => { getData(view.id, page * Constant.limit.dataview); }} 
+			/>
+		);
 		
 		return (
 			<div className="wrap">
+				{pager}
+				
 				<table className="viewItem viewGrid">
 					<thead>
 						<RowHead />
@@ -96,6 +109,8 @@ class ViewGrid extends React.Component<Props, {}> {
 						</tr>
 					</tbody>
 				</table>
+
+				{pager}
 			</div>
 		);
 	};
