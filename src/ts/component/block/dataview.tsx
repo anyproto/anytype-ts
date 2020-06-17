@@ -110,7 +110,6 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 
 		block.content.viewId = viewId;
-		block.content.data = [];
 		block.content.offset = offset;
 
 		blockStore.blockUpdate(rootId, block);

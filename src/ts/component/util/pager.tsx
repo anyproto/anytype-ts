@@ -11,7 +11,7 @@ interface Props {
 class Pager extends React.Component<Props, {}> {
 
 	public static defaultProps = {
-		pageLimit: 5,
+		pageLimit: 10,
 	};
 
 	constructor (props: any) {
@@ -22,9 +22,15 @@ class Pager extends React.Component<Props, {}> {
 		const { pageLimit, offset, limit, total } = this.props;
 		const pages = Math.ceil(total / limit);
 		
+		let pageCnt = Math.ceil(pageLimit / 2);
 		let page = Math.ceil(offset / limit) + 1;
-		let start = Math.max(1, page - pageLimit);
-		let end = Math.min(pages, page + pageLimit - 1);
+
+		if (page < pageCnt) {
+			pageCnt = pageLimit - page;
+		};
+
+		let start = Math.max(1, page - pageCnt);
+		let end = Math.min(pages, page + pageCnt);
 		let items = [];
 
 		for (let i = start; i <= end ; ++i) {
