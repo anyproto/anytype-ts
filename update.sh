@@ -14,7 +14,7 @@ elif [ "$platform" = "macos-latest" ]; then
 	arch="darwin";
 elif [ "$platform" = "windows-latest" ]; then
 	arch="windows";
-  FILE="addon.zip"
+  #FILE="addon.zip"
 fi;
 
 if [ "$token" = "" ]; then
@@ -44,11 +44,11 @@ printf "Done\n"
 
 echo -n "Uncompressing... "
 
-if [ "$platform" = "windows-latest" ]; then
-	unzip $FILE
-else 
+#if [ "$platform" = "windows-latest" ]; then
+#	unzip $FILE
+#else 
   tar -zxf $FILE
-fi;
+#fi;
 
 printf "Done\n"
 
