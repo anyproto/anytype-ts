@@ -83,9 +83,9 @@ class ViewGrid extends React.Component<Props, {}> {
 		const pager = (
 			<Pager 
 				offset={offset} 
-				limit={Constant.limit.dataview} 
+				limit={Constant.limit.dataview.records} 
 				total={total} 
-				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview); }} 
+				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
 			/>
 		);
 		

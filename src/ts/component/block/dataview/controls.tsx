@@ -19,7 +19,7 @@ interface State {
 	page: number;
 };
 
-const LIMIT = 10;
+const Constant = require('json/constant.json');
 
 @observer
 class Controls extends React.Component<Props, State> {
@@ -40,6 +40,7 @@ class Controls extends React.Component<Props, State> {
 		const { content } = block;
 		const { views, viewId } = content;
 		const { page } = this.state;
+		const limit = Constant.limit.dataview.views;
 
 		const buttons: any[] = [
 			{ 
@@ -88,7 +89,7 @@ class Controls extends React.Component<Props, State> {
 		return (
 			<div className="dataviewControls">
 				<div className="views">
-					{views.slice(page * LIMIT, (page + 1) * LIMIT).map((item: I.View, i: number) => (
+					{views.slice(page * limit, (page + 1) * limit).map((item: I.View, i: number) => (
 						<ViewItem key={i} {...item} active={item.id == viewId} />
 					))}
 					<div className="item">
@@ -145,6 +146,7 @@ class Controls extends React.Component<Props, State> {
 			data: {
 				value: '',
 				placeHolder: 'View name',
+				maxLength: Constant.limit.dataview.viewName,
 				onChange: (value: string) => {
 					C.BlockCreateDataviewView(rootId, block.id, { name: value }, (message: any) => {
 						this.setState({ page: this.getMaxPage() });
@@ -168,8 +170,9 @@ class Controls extends React.Component<Props, State> {
 		const { block } = this.props;
 		const { content } = block;
 		const { views } = content;
+		const limit = Constant.limit.dataview.views;
 
-		return Math.ceil(views.length / LIMIT) - 1;
+		return Math.ceil(views.length / limit) - 1;
 	};
 
 };

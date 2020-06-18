@@ -31,7 +31,11 @@
 	},
 
 	"limit": {
-		"dataview": 20
+		"dataview": {
+			"records": 20,
+			"views": 10,
+			"viewName": 24
+		}
 	},
 	
 	"size": {

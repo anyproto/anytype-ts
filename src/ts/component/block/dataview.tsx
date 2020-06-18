@@ -106,7 +106,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		block.content.offset = offset;
 		blockStore.blockUpdate(rootId, block);
 
-		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview);
+		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records);
 	};
 
 	onOpen (e: any, data: any) {

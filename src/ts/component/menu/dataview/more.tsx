@@ -10,6 +10,7 @@ interface Props extends I.Menu {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuDataviewMore extends React.Component<Props, {}> {
@@ -125,6 +126,7 @@ class MenuDataviewMore extends React.Component<Props, {}> {
 					data: {
 						value: view.name,
 						placeHolder: 'View name',
+						maxLength: Constant.limit.dataview.viewName,
 						onChange: (value: string) => {
 							C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: value });
 						},
