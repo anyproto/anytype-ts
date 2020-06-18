@@ -19,7 +19,7 @@ interface State {
 	page: number;
 };
 
-const LIMIT = 5;
+const LIMIT = 10;
 
 @observer
 class Controls extends React.Component<Props, State> {
@@ -140,7 +140,18 @@ class Controls extends React.Component<Props, State> {
 
 	onViewAdd (e: any) {
 		const { rootId, block } = this.props;
-		C.BlockCreateDataviewView(rootId, block.id, {});
+
+		commonStore.popupOpen('prompt', {
+			data: {
+				value: '',
+				placeHolder: 'View name',
+				onChange: (value: string) => {
+					C.BlockCreateDataviewView(rootId, block.id, { name: value }, (message: any) => {
+						this.setState({ page: this.getMaxPage() });
+					});
+				},
+			},
+		});
 	};
 
 	onArrow (dir: number) {

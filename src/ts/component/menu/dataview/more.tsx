@@ -124,6 +124,7 @@ class MenuDataviewMore extends React.Component<Props, {}> {
 				commonStore.popupOpen('prompt', {
 					data: {
 						value: view.name,
+						placeHolder: 'View name',
 						onChange: (value: string) => {
 							C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: value });
 						},
