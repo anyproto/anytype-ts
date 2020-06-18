@@ -140,6 +140,8 @@
 		"css":			 "CSS", 
 		"go":			 "Go",
 		"swift":		 "Swift",
-		"kotlin":		 "Kotlin"
+		"kotlin":		 "Kotlin",
+		"markup":		 "Markup",
+		"markdown":		 "Markdown"
 	}
 }
