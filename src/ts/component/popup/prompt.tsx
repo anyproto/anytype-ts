@@ -23,11 +23,11 @@ class PopupPrompt extends React.Component<Props, {}> {
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { placeHolder, value } = data;
+		const { placeHolder, value, maxLength } = data;
 		
 		return (
 			<form onSubmit={this.onSubmit}>
-				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} placeHolder={placeHolder} />
+				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} placeHolder={placeHolder} maxLength={maxLength} />
 				<Button type="input" text="Ok" className="orange" />
 				<Button text="Cancel" className="grey" onClick={this.onCancel} />
 			</form>

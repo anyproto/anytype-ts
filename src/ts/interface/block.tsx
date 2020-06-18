@@ -50,25 +50,39 @@ export interface Block {
 	bgColor?: string;
 	content: any;
 	childrenIds: string[];
+	
+	getLength?(): number;
+	hasTitle?(): boolean;
+	canHaveChildren?(): boolean;
+
 	isIndentable?(): boolean;
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
 	isDraggable?(): boolean;
-	hasTitle?(): boolean;
+
 	isPage?(): boolean;
 	isPagePage?(): boolean;
 	isPageProfile?(): boolean;
 	isPageSet?(): boolean;
+
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;
 	isLayoutColumn?(): boolean;
 	isLayoutDiv?(): boolean;
+
 	isLink?(): boolean;
 	isLinkPage?(): boolean;
 	isLinkArchive?(): boolean;
+
 	isIcon?(): boolean;
 	isIconPage?(): boolean;
 	isIconUser?(): boolean;
+
+	isHeader?(): boolean;
+	isHeader1?(): boolean;
+	isHeader2?(): boolean;
+	isHeader3?(): boolean;
+
 	isFile?(): boolean;
 	isImage?(): boolean;
 	isVideo?(): boolean;
@@ -80,10 +94,5 @@ export interface Block {
 	isBulleted?(): boolean;
 	isCheckbox?(): boolean;
 	isCode?(): boolean;
-	isHeader?(): boolean;
-	isHeader1?(): boolean;
-	isHeader2?(): boolean;
-	isHeader3?(): boolean;
 	isQuote?(): boolean;
-	getLength?(): number;
 };

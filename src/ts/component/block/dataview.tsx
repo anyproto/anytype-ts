@@ -85,13 +85,6 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		const { block } = this.props;
-		const { content } = block;
-
-		if (content.views.length) {
-			this.getData(content.views[0].id, 0);
-		};
-
 		this.resize();
 		$(window).unbind('resize.dataview').on('resize.dataview', () => { this.resize(); });
 	};
@@ -111,10 +104,9 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		block.content.viewId = viewId;
 		block.content.offset = offset;
-
 		blockStore.blockUpdate(rootId, block);
 
-		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview);
+		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records);
 	};
 
 	onOpen (e: any, data: any) {

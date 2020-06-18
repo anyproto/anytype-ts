@@ -4,9 +4,28 @@ import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Smile } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { setRange, getRange } from 'selection-ranges';
+import { getRange } from 'selection-ranges';
 import { commonStore, blockStore } from 'ts/store';
-import 'highlight.js/styles/github.css';
+import * as Prism from 'prismjs';
+import 'prismjs/themes/prism.css';
+
+// Prism languages
+require('prismjs/components/prism-javascript.js');
+require('prismjs/components/prism-css.js');
+require('prismjs/components/prism-markup.js');
+require('prismjs/components/prism-markdown.js');
+require('prismjs/components/prism-markup-templating.js');
+require('prismjs/components/prism-java.js');
+require('prismjs/components/prism-c.js');
+require('prismjs/components/prism-clike.js');
+require('prismjs/components/prism-cpp.js');
+require('prismjs/components/prism-csharp.js');
+require('prismjs/components/prism-php-extras.js');
+require('prismjs/components/prism-php.js');
+require('prismjs/components/prism-sql.js');
+require('prismjs/components/prism-go.js');
+require('prismjs/components/prism-swift.js');
+require('prismjs/components/prism-kotlin.js');
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -21,8 +40,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { ipcRenderer } = window.require('electron');
-const low = window.require('lowlight');
-const rehype = require('rehype');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -176,12 +193,15 @@ class BlockText extends React.Component<Props, {}> {
 		let html = text;
 		
 		if (style == I.TextStyle.Code) {
-			let { lang } = fields || {};
-			let res = low.highlight(String(lang || 'js'), html);
-			
-			if (res.value) {
-				html = rehype().stringify({ type: 'root', children: res.value }).toString();
+			let lang = (fields || {}).lang;
+			let grammar = Prism.languages[lang];
+
+			if (!grammar) {
+				lang = Constant.default.codeLang;
+				grammar = Prism.languages[lang];
 			};
+
+			html = Prism.highlight(html, grammar, lang);
 		} else {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
@@ -373,10 +393,14 @@ class BlockText extends React.Component<Props, {}> {
 
 		if (k == Key.tab) {
 			e.preventDefault();
-			this.setText(this.marks, (message: any) => {
-				onKeyDown(e, value, this.marks);
-			});
-			return;
+			if (block.isCode()) {
+				
+			} else {
+				this.setText(this.marks, (message: any) => {
+					onKeyDown(e, value, this.marks);
+				});
+				return;
+			};
 		};
 		
 		if (k == Key.backspace) {
