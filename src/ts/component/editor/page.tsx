@@ -166,23 +166,24 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));		
 		const resizable = node.find('.resizable');
 		
 		this.open();
 		
-		if (this.uiHidden) {
-			this.uiHide();
-		};
+		window.setTimeout(() => {
+			if (this.uiHidden) {
+				this.uiHide();
+			};
+			
+			focus.apply();
 
-		focus.apply();
-		
-		if (resizable.length) {
-			resizable.trigger('resizeInit');
-		};
-		
-		this.resize();
+			if (resizable.length) {
+				resizable.trigger('resizeInit');
+			};
+			
+			this.resize();
+		}, 15);
 	};
 	
 	componentWillUnmount () {
@@ -1349,14 +1350,15 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const last = node.find('.blockLast');
 		
-		if (!node.hasClass('editorWrapper')) {
+		if (!last.length) {
 			return;
 		};
 		
-		const last = node.find('.blockLast').css({ height: 0 });
 		const height = Math.max(Constant.size.lastBlock, win.height() - (node.outerHeight() + Constant.size.header) - 4);
-		
+
+		last.css({ height: 0 });
 		last.css({ height: height });
 	};
 	
