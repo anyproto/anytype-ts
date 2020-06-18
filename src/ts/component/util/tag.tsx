@@ -13,7 +13,7 @@ class Tag extends React.Component<Props, {}> {
 
 	render () {
 		let { text, className, color } = this.props;
-		let cn = [ 'tag' ];
+		let cn = [ 'tagItem' ];
 		
 		if (className) {
 			cn.push(className);

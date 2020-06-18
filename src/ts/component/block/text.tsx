@@ -10,22 +10,12 @@ import * as Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
 // Prism languages
-require('prismjs/components/prism-javascript.js');
-require('prismjs/components/prism-css.js');
-require('prismjs/components/prism-markup.js');
-require('prismjs/components/prism-markdown.js');
-require('prismjs/components/prism-markup-templating.js');
-require('prismjs/components/prism-java.js');
-require('prismjs/components/prism-c.js');
-require('prismjs/components/prism-clike.js');
-require('prismjs/components/prism-cpp.js');
-require('prismjs/components/prism-csharp.js');
-require('prismjs/components/prism-php-extras.js');
-require('prismjs/components/prism-php.js');
-require('prismjs/components/prism-sql.js');
-require('prismjs/components/prism-go.js');
-require('prismjs/components/prism-swift.js');
-require('prismjs/components/prism-kotlin.js');
+const langs = [ 
+	'javascript', 'css', 'markup', 'markup-templating', 'java', 'c', 'clike', 'cpp', 'csharp', 'php', 'go', 'swift', 'kotlin',
+];
+for (let lang of langs) {
+	require(`prismjs/components/prism-${lang}.js`);
+};
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;

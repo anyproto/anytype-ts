@@ -1,19 +1,19 @@
 @import "~scss/_vars";
 
-.tag {
+.tagItem {
 	padding: 0px 4px; @include text-small; border-radius: 3px; white-space: nowrap;
 	display: inline-block; vertical-align: middle; cursor: pointer; max-width: 100%;
 }
-.tag {
+.tagItem {
 	.inner { display: inline-block; width: 100%; @include text-overflow-nw;  vertical-align: top; }
 }
-.tag.grey { color: #8c9ea5; background: #ebeff1; }
-.tag.yellow { color: #b2a616; background: #fbf5b8; }
-.tag.orange { color: #d3720d; background: #ffEcc8; }
-.tag.red { color: #e2400c; background: #ffe5de; }
-.tag.pink { color: #ca1b8e; background: #fddcf2; }
-.tag.purple { color: #9e30c4; background: #f1dbf8; }
-.tag.blue { color: $colorBlue; background: #dce1fb; }
-.tag.ice { color: #1c8bca; background: #cfedfe; }
-.tag.teal { color: #0caaa3; background: #d4f5f3; }
-.tag.lime { color: #64b90f; background: #e3f7d0; }
+.tagItem.grey { color: #8c9ea5; background: #ebeff1; }
+.tagItem.yellow { color: #b2a616; background: #fbf5b8; }
+.tagItem.orange { color: #d3720d; background: #ffEcc8; }
+.tagItem.red { color: #e2400c; background: #ffe5de; }
+.tagItem.pink { color: #ca1b8e; background: #fddcf2; }
+.tagItem.purple { color: #9e30c4; background: #f1dbf8; }
+.tagItem.blue { color: $colorBlue; background: #dce1fb; }
+.tagItem.ice { color: #1c8bca; background: #cfedfe; }
+.tagItem.teal { color: #0caaa3; background: #d4f5f3; }
+.tagItem.lime { color: #64b90f; background: #e3f7d0; }

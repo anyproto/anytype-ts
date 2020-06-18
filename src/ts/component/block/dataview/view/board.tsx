@@ -32,7 +32,7 @@ class ViewBoard extends React.Component<Props, {}> {
 			<div className="card">
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={relation.id} 
+						key={'board-cell-' + relation.id} 
 						id={item.index} 
 						view={view} 
 						relation={...relation} 
@@ -50,7 +50,7 @@ class ViewBoard extends React.Component<Props, {}> {
 				</div>
 				<div className="list">
 					{item.list.map((child: any, i: number) => (
-						<Card key={i} data={...child} />
+						<Card key={'board-card-' + i} data={...child} />
 					))}
 					<div className="card add">
 						<Icon className="plus" />

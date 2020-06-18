@@ -17,7 +17,7 @@ class ViewGallery extends React.Component<Props, {}> {
 			<div className="card">
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={relation.id} 
+						key={'gallery-cell-' + relation.id} 
 						id={item.index} 
 						view={view} 
 						relation={...relation} 
@@ -32,7 +32,7 @@ class ViewGallery extends React.Component<Props, {}> {
 			<div className="wrap">
 				<div className="viewItem viewGallery">
 					{data.map((item: any, i: number) => (
-						<Card key={i} index={i} {...item} />
+						<Card key={'gallery-card-' + i} index={i} {...item} />
 					))}
 				</div>
 			</div>

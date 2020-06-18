@@ -13,11 +13,11 @@ class ViewList extends React.Component<Props, {}> {
 		const { data, view, readOnly} = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		
-		const Card = (item: any) => (
+		const Row = (item: any) => (
 			<div className="item">
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={relation.id} 
+						key={'list-cell-' + relation.id} 
 						id={item.index} 
 						view={view} 
 						relation={...relation} 
@@ -32,7 +32,7 @@ class ViewList extends React.Component<Props, {}> {
 			<div className="wrap">
 				<div className="viewItem viewList">
 					{data.map((item: any, i: number) => (
-						<Card key={i} index={i} {...item} />
+						<Row key={'list-row-' + i} index={i} {...item} />
 					))}
 				</div>
 			</div>

@@ -63,7 +63,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowHead = (item: any) => (
 			<tr className="row">
 				{relations.map((item: any, i: number) => (
-					<CellHead key={item.id} {...item} />
+					<CellHead key={'grid-head-' + item.id} {...item} />
 				))}
 				<th className="head add">
 					<Icon className="plus" />
@@ -74,7 +74,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowBody = (item: any) => (
 			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellBody key={relation.id} index={item.index} relation={...relation} data={data[item.index]} />
+					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={...relation} data={data[item.index]} />
 				))}
 				<td className="cell">&nbsp;</td>
 			</tr>
@@ -99,7 +99,7 @@ class ViewGrid extends React.Component<Props, {}> {
 					</thead>
 					<tbody>
 						{data.map((item: any, i: number) => (
-							<RowBody key={i} index={i} {...item} />
+							<RowBody key={'grid-row-' + i} index={i} {...item} />
 						))}
 						<tr>
 							<td className="cell add" colSpan={view.relations.length + 1}>
