@@ -556,7 +556,7 @@ class EditorPage extends React.Component<Props, State> {
 		let length = String(text || '').length;
 		
 		this.uiHide();
-		
+
 		if (e.ctrlKey || e.metaKey) {
 
 			// Select all
@@ -611,6 +611,7 @@ class EditorPage extends React.Component<Props, State> {
 			
 			// Open action menu
 			if (k == Key.slash) {
+				console.log(213);
 				commonStore.menuOpen('blockAction', { 
 					element: '#block-' + focused,
 					type: I.MenuType.Vertical,

@@ -391,6 +391,7 @@ class BlockText extends React.Component<Props, {}> {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 					focus.apply();
 				});
+				return;
 			} else {
 				this.setText(this.marks, (message: any) => {
 					onKeyDown(e, value, this.marks);
