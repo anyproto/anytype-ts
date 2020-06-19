@@ -199,7 +199,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 		
-		if (html != text) {
+		if (!block.isCode() && (html != text)) {
 			this.renderLinks();
 			this.renderMentions();
 			this.renderEmoji();
@@ -354,7 +354,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { onKeyDown, onMenuAdd, block } = this.props;
+		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
 		const { id } = block;
 		const { filter } = commonStore;
 		
@@ -368,9 +368,10 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
+		let value = this.getValue().replace(/\n$/, '');
+
 		const k = e.key.toLowerCase();		
 		const range = this.getRange();
-		const value = this.getValue().replace(/\n$/, '');
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
 
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
@@ -384,7 +385,12 @@ class BlockText extends React.Component<Props, {}> {
 		if (k == Key.tab) {
 			e.preventDefault();
 			if (block.isCode()) {
-				
+				value = Util.stringInsert(value, '\t', range.from, range.from);
+
+				DataUtil.blockSetText(rootId, block, value, this.marks, () => {
+					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
+					focus.apply();
+				});
 			} else {
 				this.setText(this.marks, (message: any) => {
 					onKeyDown(e, value, this.marks);

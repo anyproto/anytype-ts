@@ -15,6 +15,9 @@
 					@include text-overflow-nw; border-right: 1px solid #e0ded2;
 				}
 			}
+			.head:last-child {
+				.name { border: 0px; }
+			}
 			.head.add { width: 44px; }
 				
 			td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }

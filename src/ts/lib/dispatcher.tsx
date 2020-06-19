@@ -343,6 +343,7 @@ class Dispatcher {
 						list.push(details);
 					};
 
+					block.content.viewId = data.viewId;
 					block.content.total = Number(data.total) || 0;
 					block.content.data = list;
 					blockStore.blockUpdate(rootId, block);
