@@ -31,7 +31,7 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 		return (
 			<div>
 				{items.map((action: any, i: number) => {
-					let inner = <div className={'inner bgColor bgColor-' + action.value} />;
+					let inner = <div className={'inner bgColor bgColor-' + action.className} />;
 					return <MenuItemVertical id={id++} key={i} {...action} icon="color" inner={inner} className={action.value == value ? 'active' : ''} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
 				})}
 			</div>
