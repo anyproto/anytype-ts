@@ -74,6 +74,14 @@ function createWindow () {
 	win.on('closed', () => {
 		win = null;
 	});
+
+	win.on('close', (e) => {
+		if (!app.isQuiting) {
+			e.preventDefault();
+			win.minimize();
+		};
+		return false;
+	});
 	
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
 		BrowserWindow.addDevToolsExtension(
@@ -333,7 +341,7 @@ app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
 	console.log('window-all-closed');
-	app.quit();
+	//app.quit();
 });
 
 app.on('before-quit', (e) => {
