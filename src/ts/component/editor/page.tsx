@@ -1357,10 +1357,8 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		const height = Math.max(Constant.size.lastBlock, win.height() - (node.outerHeight() + Constant.size.header) - 4);
-
 		last.css({ height: 0 });
-		last.css({ height: height });
+		last.css({ height: Math.max(Constant.size.lastBlock, win.height() - (node.outerHeight() + Constant.size.header) - 4) });
 	};
 	
 	focus (id: string, from: number, to: number) {
