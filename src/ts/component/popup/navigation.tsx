@@ -167,21 +167,30 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 		
 		const Selected = (item: any) => {
-			const { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
-			const isRoot = item.id == root;
+			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
+			let isRoot = item.id == root;
+			let icon = null;
+
+			if (isRoot) {
+				icon = (
+					<div className="smile c48">
+						<Icon className="home big" />
+					</div>
+				);
+				if (!coverId && !coverType) {
+					coverId = 'c' + Constant.default.cover;
+					coverType = I.CoverType.BgImage;
+				};
+			} else {
+				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+			};
 			
 			return (
 				<div className="selected">
-					{isRoot ? (
-						<div className="smile c48">
-							<Icon className="home big" />
-						</div>
-					) : (
-						<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
-					)}
+					{icon}
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
-					{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="buttons">
 						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
 						<Button text="Cancel" className="grey" onClick={this.onCancel} />
