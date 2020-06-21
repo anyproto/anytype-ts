@@ -332,12 +332,10 @@ class Dispatcher {
 					data.updated = data.updated || [];
 					data.removed = data.removed || [];
 
-					let list = Util.objectCopy(block.content.data || []);
-
+					let list = [];
 					for (let id of data.removed) {
 						list = list.filter((it: any) => { return it.id != id; });
 					};
-
 					for (let item of data.inserted) {
 						let details = Decode.decodeStruct(item) || {};
 						details.name = String(details.name || Constant.default.name);
@@ -345,6 +343,8 @@ class Dispatcher {
 						list.push(details);
 					};
 
+					block.content.viewId = data.viewId;
+					block.content.total = Number(data.total) || 0;
 					block.content.data = list;
 					blockStore.blockUpdate(rootId, block);
 					break;

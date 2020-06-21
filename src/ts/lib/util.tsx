@@ -87,7 +87,7 @@ class Util {
 		};
 		return res;
 	};
-	
+
 	arrayValues (a: any) {
 		return a.hasOwnProperty('length') ? a : Object.values(a);
 	};

@@ -15,6 +15,9 @@
 					@include text-overflow-nw; border-right: 1px solid #e0ded2;
 				}
 			}
+			.head:last-child {
+				.name { border: 0px; }
+			}
 			.head.add { width: 44px; }
 				
 			td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
@@ -31,7 +34,7 @@
 			}
 			td.cell.isName {
 				.icon.expand { display: block; position: absolute; right: 14px; top: 14px; opacity: 0; }
-				.name { line-height: 20px; width: calc(100% - 48px); }
+				.name { line-height: 20px; width: calc(100% - 48px); white-space: nowrap; }
 			}
 
             td.cell.isEditing { box-shadow: 0px 0px 0px 2px $colorOrange inset; border-radius: 2px; }

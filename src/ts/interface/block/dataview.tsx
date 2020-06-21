@@ -108,6 +108,7 @@ export interface ContentDataview {
 	views: View[];
 	data: any[];
 	offset: number;
+	total: number;
 };
 
 export interface BlockDataview extends I.Block {

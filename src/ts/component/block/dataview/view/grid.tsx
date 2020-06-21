@@ -26,7 +26,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	render () {
 		const { block, data, view, onOpen, readOnly, getData } = this.props;
 		const { content } = block;
-		const { offset } = content;
+		const { offset, total } = content;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const width = 100 / relations.length;
 		
@@ -63,29 +63,33 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowHead = (item: any) => (
 			<tr className="row">
 				{relations.map((item: any, i: number) => (
-					<CellHead key={item.id} {...item} />
+					<CellHead key={'grid-head-' + item.id} {...item} />
 				))}
-				<th className="head add">
-					<Icon className="plus" />
-				</th>
+				{!readOnly ? (
+					<th className="head add">
+						<Icon className="plus" />
+					</th>
+				) : null}
 			</tr>
 		);
 		
 		const RowBody = (item: any) => (
 			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellBody key={relation.id} index={item.index} relation={...relation} data={data[item.index]} />
+					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={...relation} data={data[item.index]} />
 				))}
-				<td className="cell">&nbsp;</td>
+				{!readOnly ? (
+					<td className="cell">&nbsp;</td>
+				) : null}
 			</tr>
 		);
 
 		const pager = (
 			<Pager 
 				offset={offset} 
-				limit={Constant.limit.dataview} 
-				total={1000} 
-				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview); }} 
+				limit={Constant.limit.dataview.records} 
+				total={total} 
+				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
 			/>
 		);
 		
@@ -99,14 +103,16 @@ class ViewGrid extends React.Component<Props, {}> {
 					</thead>
 					<tbody>
 						{data.map((item: any, i: number) => (
-							<RowBody key={i} index={i} {...item} />
+							<RowBody key={'grid-row-' + i} index={i} {...item} />
 						))}
-						<tr>
-							<td className="cell add" colSpan={view.relations.length + 1}>
-								<Icon className="plus" />
-								<div className="name">New</div>
-							</td>
-						</tr>
+						{!readOnly ? (
+							<tr>
+								<td className="cell add" colSpan={view.relations.length + 1}>
+									<Icon className="plus" />
+									<div className="name">New</div>
+								</td>
+							</tr>
+						) : null}
 					</tbody>
 				</table>
 

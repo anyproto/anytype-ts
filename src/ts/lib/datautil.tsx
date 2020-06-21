@@ -427,20 +427,20 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: '', isTextColor: true }
+			{ id: 'color-black', name: 'Black', value: '', className: '', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
-			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, isTextColor: true });
+			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, className: i, isTextColor: true });
 		};
 		return items;
 	};
 	
 	menuGetBgColors () {
 		let items: any[] = [
-			{ id: 'color-default', name: 'Default', value: 'default', isBgColor: true }
+			{ id: 'color-default', name: 'Default', value: '', className: 'default', isBgColor: true }
 		];
 		for (let i in Constant.textColor) {
-			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i], value: i, isBgColor: true });
+			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i], value: i, className: i, isBgColor: true });
 		};
 		return items;
 	};

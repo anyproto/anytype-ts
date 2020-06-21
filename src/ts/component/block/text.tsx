@@ -4,9 +4,18 @@ import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Smile } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { setRange, getRange } from 'selection-ranges';
+import { getRange } from 'selection-ranges';
 import { commonStore, blockStore } from 'ts/store';
-import 'highlight.js/styles/github.css';
+import * as Prism from 'prismjs';
+import 'prismjs/themes/prism.css';
+
+// Prism languages
+const langs = [ 
+	'javascript', 'css', 'markup', 'markup-templating', 'java', 'c', 'clike', 'cpp', 'csharp', 'php', 'go', 'swift', 'kotlin',
+];
+for (let lang of langs) {
+	require(`prismjs/components/prism-${lang}.js`);
+};
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -21,8 +30,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { ipcRenderer } = window.require('electron');
-const low = window.require('lowlight');
-const rehype = require('rehype');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -176,12 +183,15 @@ class BlockText extends React.Component<Props, {}> {
 		let html = text;
 		
 		if (style == I.TextStyle.Code) {
-			let { lang } = fields || {};
-			let res = low.highlight(String(lang || 'js'), html);
-			
-			if (res.value) {
-				html = rehype().stringify({ type: 'root', children: res.value }).toString();
+			let lang = (fields || {}).lang;
+			let grammar = Prism.languages[lang];
+
+			if (!grammar) {
+				lang = Constant.default.codeLang;
+				grammar = Prism.languages[lang];
 			};
+
+			html = Prism.highlight(html, grammar, lang);
 		} else {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
@@ -189,7 +199,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 		
-		if (html != text) {
+		if (!block.isCode() && (html != text)) {
 			this.renderLinks();
 			this.renderMentions();
 			this.renderEmoji();
@@ -344,7 +354,7 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		e.persist();
 		
-		const { onKeyDown, onMenuAdd, block } = this.props;
+		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
 		const { id } = block;
 		const { filter } = commonStore;
 		
@@ -358,9 +368,10 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
+		let value = this.getValue().replace(/\n$/, '');
+
 		const k = e.key.toLowerCase();		
 		const range = this.getRange();
-		const value = this.getValue().replace(/\n$/, '');
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
 
 		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
@@ -374,7 +385,13 @@ class BlockText extends React.Component<Props, {}> {
 		if (k == Key.tab) {
 			e.preventDefault();
 			if (block.isCode()) {
-				
+				value = Util.stringInsert(value, '\t', range.from, range.from);
+
+				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
+					focus.apply();
+				});
+				return;
 			} else {
 				this.setText(this.marks, true, (message: any) => {
 					onKeyDown(e, value, this.marks);
