@@ -250,15 +250,17 @@ class DataUtil {
 		], callBack);
 	};
 	
-	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], callBack?: (message: any) => void) {
+	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		if (!block) {
 			return;
 		};
 		
-		block.content.text = String(text || '');
-		block.content.marks = marks || [];
-			
-		blockStore.blockUpdate(rootId, block);
+		if (update) {
+			block.content.text = String(text || '');
+			block.content.marks = marks || [];
+			blockStore.blockUpdate(rootId, block);
+		};
+
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
 			blockStore.setNumbers(rootId);
 			
