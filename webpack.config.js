@@ -3,7 +3,7 @@ const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const ifdef_opts = {
-	DEBUG: true,
+	USE_NATIVE_ADDON: true,
 	version: 3,
 	"ifdef-verbose": true,       // add this for verbose output
 };
