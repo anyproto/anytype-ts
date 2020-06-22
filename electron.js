@@ -12,7 +12,7 @@ const com = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 /// #if USE_NATIVE_ADDON
 	const bindings = require('bindings')('addon');
 
-	com.anytype.ClientCommandsClient.prototype.rpcCall = napiCall;
+	com.ClientCommandsClient.prototype.rpcCall = napiCall;
 	function napiCall (method, inputObj, outputObj, request, callBack) {
 		const buffer = inputObj.encode(request).finish();
 		const handler = function (item) {
@@ -31,7 +31,7 @@ const com = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 	};
 /// #endif
 
-const service = com.anytype.ClientCommandsClient.create(function () {}, false, false);
+const service = new com.ClientCommandsClient('http://localhost:8080', null, null);
 
 let userPath = app.getPath('userData');
 let config = {};

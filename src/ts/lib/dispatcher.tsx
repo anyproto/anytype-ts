@@ -6,8 +6,9 @@ import * as Sentry from '@sentry/browser';
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Constant = require('json/constant.json')
+
 /// #if USE_NATIVE_ADDON
-const bindings = require('bindings')('addon');
+	const bindings = require('bindings')('addon');
 /// #endif
 
 class Dispatcher {
@@ -44,7 +45,6 @@ class Dispatcher {
 				console.log('[Stream] end', end);
 			});
 		/// #endif
-
 	};
 
 	event (event: any, skipDebug?: boolean) {
