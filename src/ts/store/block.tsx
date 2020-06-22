@@ -2,7 +2,7 @@ import { observable, action, computed, set, intercept, decorate } from 'mobx';
 import { I, M, Util, DataUtil, Decode, Encode } from 'ts/lib';
 
 const $ = require('jquery');
-const com = require('commands.js');
+const com = require('commands.js')('proto');
 const Constant = require('json/constant.json');
 const Schema = {
 	page: require('json/schema/page.json'),

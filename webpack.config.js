@@ -2,6 +2,12 @@ const webpack = require('webpack');
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const ifdef_opts = {
+	DEBUG: true,
+	version: 3,
+	"ifdef-verbose": true,       // add this for verbose output
+};
+
 module.exports = (env) => {
 	return {
 		mode: env.NODE_ENV,
@@ -40,7 +46,8 @@ module.exports = (env) => {
 					use: [
 						{
 							loader: 'ts-loader'
-						}
+						},
+						{ loader: "ifdef-loader", options: ifdef_opts }
 					]
 				},
 				{
