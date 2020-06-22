@@ -2,12 +2,17 @@ import { observable, action, computed, set, intercept, decorate } from 'mobx';
 import { I, M, Util, DataUtil, Decode, Encode } from 'ts/lib';
 
 const $ = require('jquery');
-const com = require('commands.js')('proto');
 const Constant = require('json/constant.json');
 const Schema = {
 	page: require('json/schema/page.json'),
 	relation: require('json/schema/relation.json'),
 };
+
+/// #if USE_NATIVE_ADDON
+	const com = require('commands-native.js');
+/// #else
+	const com = require('commands-web.js');
+/// #endif
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -560,12 +565,12 @@ class BlockStore {
 			block.fields = Encode.encodeStruct(data.fields || {});
 		};
 
-		const model = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)];
+		const model = com.model.Block.Content[Util.toUpperCamelCase(data.type)];
 		if (model) {
 			block[data.type] = model.create(data.content);
 		};
 		
-		block = com.anytype.model.Block.create(block);
+		block = com.model.Block.create(block);
 		return block;
 	};
 	

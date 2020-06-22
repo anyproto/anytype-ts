@@ -6,8 +6,8 @@
 	"scripts": {
 		"lint": "tslint -c tslint.json -p tsconfig.json",
 		"update:addon": "./update.sh",
-		"start:watch": "webpack-dev-server --mode=development --env.NODE_ENV=development --history-api-fallback --cache",
-		"start:watch-prod": "webpack-dev-server --mode=production --env.NODE_ENV=production --history-api-fallback --cache",
+		"start:watch": "webpack-dev-server --verbose --progress --debug --display-error-details --display verbose --profile --mode=development --env.NODE_ENV=development --history-api-fallback --cache",
+		"start:watch-prod": "webpack-dev-server --verbose --progress --debug --display-error-details --display verbose --profile --mode=production --env.NODE_ENV=production --history-api-fallback --cache",
 		"start:electron": "./node_modules/.bin/electron .",
 		"start:electron-wait-webpack": "wait-for-localhost 8080 && ./node_modules/.bin/electron .",
 		"start:dev": "UV_THREADPOOL_SIZE=1024 npm-run-all --parallel start:watch start:electron-wait-webpack",

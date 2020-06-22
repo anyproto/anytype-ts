@@ -3,11 +3,13 @@ import { set } from 'mobx';
 import { Util, DataUtil, I, M, Decode, Storage, translate, analytics } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
-const com = require('commands.js');
 const Constant = require('json/constant.json');
 
 /// #if USE_NATIVE_ADDON
+	const com = require('commands-native.js');
 	const bindings = require('bindings')('addon');
+/// #else
+	const com = require('commands-web.js');
 /// #endif
 
 class Dispatcher {
@@ -15,8 +17,6 @@ class Dispatcher {
 	service: any = null;
 
 	constructor () {
-		this.service = com.anytype.ClientCommands.create(() => {}, false, false);
-
 		const handler = (item: any) => {
 			try {
 				this.event(com.anytype.Event.decode(item.data));
@@ -26,10 +26,12 @@ class Dispatcher {
 		};
 
 		/// #if USE_NATIVE_ADDON
+			this.service = com.anytype.ClientCommands.create(() => {}, false, false);
 			com.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			this.service.ListenEvents({}, handler);
+			this.service = new com.ClientCommandsClient('http://localhost:8080', null, null);
+			this.service.listenEvents({}, handler);
 		/// #endif
 
 	};

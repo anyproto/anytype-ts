@@ -7,12 +7,13 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const storage = require('electron-json-storage');
-const com = require('./dist/commands.js');
 
+/*
 /// #if USE_NATIVE_ADDON
+	const com = require('./dist/commands-native.js');
 	const bindings = require('bindings')('addon');
 
-	com.anytype.ClientCommands.prototype.rpcCall = napiCall;
+	com.ClientCommandsClient.prototype.rpcCall = napiCall;
 	function napiCall (method, inputObj, outputObj, request, callBack) {
 		const buffer = inputObj.encode(request).finish();
 		const handler = function (item) {
@@ -31,7 +32,9 @@ const com = require('./dist/commands.js');
 	};
 /// #endif
 
-const service = com.anytype.ClientCommands.create(function () {}, false, false);
+const service = com.ClientCommandsClient.create(function () {}, false, false);
+*/
+const service = {};
 
 let userPath = app.getPath('userData');
 let config = {};
