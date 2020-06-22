@@ -2,7 +2,7 @@ import { observable, action, computed, set, intercept, decorate } from 'mobx';
 import { I, M, Util, DataUtil, Decode, Encode } from 'ts/lib';
 
 const $ = require('jquery');
-const com = require('lib/pb/protos/service/service_grpc_web_pb.js');
+const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
 const Constant = require('json/constant.json');
 const Schema = {
 	page: require('json/schema/page.json'),
@@ -560,12 +560,12 @@ class BlockStore {
 			block.fields = Encode.encodeStruct(data.fields || {});
 		};
 
-		const model = com.anytype.model.Block.Content[Util.toUpperCamelCase(data.type)];
+		const model = Model.Block.Content[Util.toUpperCamelCase(data.type)];
 		if (model) {
 			block[data.type] = model.create(data.content);
 		};
 
-		block = com.anytype.model.Block.create(block);
+		block = Model.Block.create(block);
 		return block;
 	};
 
