@@ -3,7 +3,8 @@ import { set } from 'mobx';
 import { Util, DataUtil, I, M, Decode, Storage, translate, analytics } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
-const com = require('lib/pb/protos/service/service_grpc_web_pb');
+const Service = require('lib/pb/protos/service/service_grpc_web_pb');
+const Commands = require('lib/pb/protos/commands_pb');
 const Constant = require('json/constant.json')
 /// #if USE_NATIVE_ADDON
 const bindings = require('bindings')('addon');
@@ -12,23 +13,36 @@ const bindings = require('bindings')('addon');
 class Dispatcher {
 
 	service: any = null;
+	stream: any = null;
 
 	constructor () {
 		const handler = (item: any) => {
 			try {
-				this.event(com.Event.decode(item.data));
+				this.event(Service.Event.decode(item.data));
 			} catch (e) {
 				console.error(e);
 			};
 		};
 
 		/// #if USE_NATIVE_ADDON
-			this.service = com.anytype.ClientCommands.create(() => {}, false, false);
-			com.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
+			this.service = Service.anytype.ClientCommands.create(() => {}, false, false);
+			Service.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			this.service = new com.ClientCommandsClient('http://localhost:8080', null, null);
-			this.service.listenEvents({}, handler);
+			this.service = new Service.ClientCommandsClient('http://localhost:8080', null, null);
+			this.stream = this.service.listenEvents(new Commands.Empty(), null);
+
+			this.stream.on('data', (response: any) => {
+				console.log('[Stream] response', response.getMessage());
+			});
+
+			this.stream.on('status', (status: any) => {
+				console.log('[Stream] status', status);
+			});
+			
+			this.stream.on('end', (end: any) => {
+				console.log('[Stream] end', end);
+			});
 		/// #endif
 
 	};
@@ -428,14 +442,17 @@ class Dispatcher {
 		analytics.event(Util.toUpperCamelCase(type), data);
 
 		try {
-			this.service[type](data, (message: any) => {
+			this.service[type](data, null, (error: any, message: any) => {
 				if (debug) {
 					t1 = performance.now();
 				};
 
+				error = error || {};
+				message = message || {};
+
 				message.error = {
-					code: String(message.error.code || ''),
-					description: String(message.error.description || ''),
+					code: String(error.code || ''),
+					description: String(error.description || ''),
 				};
 
 				if (message.error.code) {
