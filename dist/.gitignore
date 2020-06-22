@@ -6,5 +6,5 @@ main.js
 main.js.map
 alpha-mac.yml
 beta-mac.yml
-commands-native.js
-commands-web.js
+commands.js
+lib/*

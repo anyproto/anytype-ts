@@ -3,13 +3,10 @@ import { set } from 'mobx';
 import { Util, DataUtil, I, M, Decode, Storage, translate, analytics } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
-const Constant = require('json/constant.json');
-
+const com = require('lib/pb/protos/service/service_grpc_web_pb');
+const Constant = require('json/constant.json')
 /// #if USE_NATIVE_ADDON
-	const com = require('commands-native.js');
-	const bindings = require('bindings')('addon');
-/// #else
-	const com = require('commands-web.js');
+const bindings = require('bindings')('addon');
 /// #endif
 
 class Dispatcher {
@@ -19,7 +16,7 @@ class Dispatcher {
 	constructor () {
 		const handler = (item: any) => {
 			try {
-				this.event(com.anytype.Event.decode(item.data));
+				this.event(com.Event.decode(item.data));
 			} catch (e) {
 				console.error(e);
 			};
@@ -483,7 +480,7 @@ class Dispatcher {
 			console.error(err);
 		};
 	};
-	
+
 	/// #if USE_NATIVE_ADDON
 		napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) {
 			const buffer = inputObj.encode(request).finish();

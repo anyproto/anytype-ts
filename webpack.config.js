@@ -50,18 +50,6 @@ module.exports = (env) => {
 						{ loader: "ifdef-loader", options: ifdef_opts }
 					]
 				},
-				/*
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					use: [
-						{
-							loader: 'babel-loader',
-							query: { presets:[ 'env' ] }
-						}
-					]
-				},
-				*/
 				{
 					enforce: 'pre',
 					test: /\.js$/,
