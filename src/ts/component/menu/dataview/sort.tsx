@@ -2,13 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, M } from 'ts/lib';
 import arrayMove from 'array-move';
-import { M } from '../../../lib';
-
-const $ = require('jquery');
 
 interface Props extends I.Menu {};
+
+const $ = require('jquery');
 
 class MenuSort extends React.Component<Props, {}> {
 	

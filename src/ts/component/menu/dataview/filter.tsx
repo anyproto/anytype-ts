@@ -5,7 +5,7 @@ import { Icon, Select, Input, Checkbox } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
-import { translate, Util } from '../../../lib';
+import { translate, Util } from 'ts/lib';
 
 interface Props extends I.Menu {};
 

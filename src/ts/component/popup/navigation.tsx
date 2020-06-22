@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, Decode, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, Decode, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { DataUtil } from '../../lib';
 
 interface Props extends I.Popup {
 	history: any;

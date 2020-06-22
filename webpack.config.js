@@ -5,7 +5,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const ifdef_opts = {
 	USE_NATIVE_ADDON: true,
 	version: 3,
-	"ifdef-verbose": true,       // add this for verbose output
+	'ifdef-verbose': true,       // add this for verbose output
 };
 
 module.exports = (env) => {
@@ -50,6 +50,7 @@ module.exports = (env) => {
 						{ loader: "ifdef-loader", options: ifdef_opts }
 					]
 				},
+				/*
 				{
 					test: /\.js$/,
 					exclude: /node_modules/,
@@ -60,6 +61,7 @@ module.exports = (env) => {
 						}
 					]
 				},
+				*/
 				{
 					enforce: 'pre',
 					test: /\.js$/,
@@ -74,7 +76,7 @@ module.exports = (env) => {
 					loader: 'url-loader?name=[path][name].[ext]'
 				},
 				{
-					test: /\.(s?)css$/,
+					test: /\.s?css/,
 					use: [
 						{ loader: 'style-loader' },
 						{ loader: 'css-loader' },

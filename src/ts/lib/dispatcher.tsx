@@ -3,11 +3,12 @@ import { set } from 'mobx';
 import { Util, DataUtil, I, M, Decode, Storage, translate, analytics } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
-const com = require('commands.js')('proto');
-/// #if USE_NATIVE_ADDON
-const bindings = require('bindings')('addon');
-/// #endif
+const com = require('commands.js');
 const Constant = require('json/constant.json');
+
+/// #if USE_NATIVE_ADDON
+	const bindings = require('bindings')('addon');
+/// #endif
 
 class Dispatcher {
 
@@ -25,10 +26,10 @@ class Dispatcher {
 		};
 
 		/// #if USE_NATIVE_ADDON
-		com.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
-		bindings.setEventHandler(handler);
+			com.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
+			bindings.setEventHandler(handler);
 		/// #else
-		this.service.ListenEvents({}, handler);
+			this.service.ListenEvents({}, handler);
 		/// #endif
 
 	};
@@ -480,23 +481,24 @@ class Dispatcher {
 			console.error(err);
 		};
 	};
+	
 	/// #if USE_NATIVE_ADDON
-	napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) {
-		const buffer = inputObj.encode(request).finish();
-		const handler = (item: any) => {
-			let message = null;
-			try {
-				message = outputObj.decode(item.data);
-				if (message) {
-					callBack(message);
+		napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) {
+			const buffer = inputObj.encode(request).finish();
+			const handler = (item: any) => {
+				let message = null;
+				try {
+					message = outputObj.decode(item.data);
+					if (message) {
+						callBack(message);
+					};
+				} catch (err) {
+					console.error(err);
 				};
-			} catch (err) {
-				console.error(err);
 			};
-		};
 
-		bindings.sendCommand(method.name, buffer, handler);
-	};
+			bindings.sendCommand(method.name, buffer, handler);
+		};
 	/// #endif
 
 };

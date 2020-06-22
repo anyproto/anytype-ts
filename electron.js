@@ -7,27 +7,28 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const storage = require('electron-json-storage');
-const com = require('./dist/commands.js')('proto');
+const com = require('./dist/commands.js');
 
 /// #if USE_NATIVE_ADDON
-const bindings = require('bindings')('addon');
-com.anytype.ClientCommands.prototype.rpcCall = napiCall;
-function napiCall (method, inputObj, outputObj, request, callBack) {
-	const buffer = inputObj.encode(request).finish();
-	const handler = function (item) {
-		let message = null;
-		try {
-			message = outputObj.decode(item.data);
-			if (message) {
-				callBack(message);
+	const bindings = require('bindings')('addon');
+
+	com.anytype.ClientCommands.prototype.rpcCall = napiCall;
+	function napiCall (method, inputObj, outputObj, request, callBack) {
+		const buffer = inputObj.encode(request).finish();
+		const handler = function (item) {
+			let message = null;
+			try {
+				message = outputObj.decode(item.data);
+				if (message) {
+					callBack(message);
+				};
+			} catch (err) {
+				console.error(err);
 			};
-		} catch (err) {
-			console.error(err);
 		};
-	};
 	
-	bindings.sendCommand(method.name, buffer, handler);
-};
+		bindings.sendCommand(method.name, buffer, handler);
+	};
 /// #endif
 
 const service = com.anytype.ClientCommands.create(function () {}, false, false);
@@ -364,4 +365,3 @@ app.on('before-quit', (e) => {
 		app.exit();
 	});
 });
-

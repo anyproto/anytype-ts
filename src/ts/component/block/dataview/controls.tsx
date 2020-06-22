@@ -3,8 +3,7 @@ import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { C } from '../../../lib';
-import { CLIENT_RENEG_LIMIT } from 'tls';
+import { C } from 'ts/lib';
 
 interface Props {
 	data: any[];
