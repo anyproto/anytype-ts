@@ -36,7 +36,7 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { getData, block, view } = this.props;
+		const { getData, block, view, readOnly } = this.props;
 		const { content } = block;
 		const { views, viewId } = content;
 		const { page } = this.state;
@@ -103,10 +103,12 @@ class Controls extends React.Component<Props, State> {
 				
 				<div className="buttons">
 					<div className="side left">
-						<div className="item">
-							<Icon className="plus" />
-							<div className="name">New</div>
-						</div>
+						{!readOnly ? (
+							<div className="item">
+								<Icon className="plus" />
+								<div className="name">New</div>
+							</div>
+						) : ''}
 					</div>
 
 					<div className="side right">
