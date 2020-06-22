@@ -9,7 +9,6 @@ const log = require('electron-log');
 const storage = require('electron-json-storage');
 const com = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 
-/*
 /// #if USE_NATIVE_ADDON
 	const bindings = require('bindings')('addon');
 
@@ -33,8 +32,6 @@ const com = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 /// #endif
 
 const service = com.anytype.ClientCommandsClient.create(function () {}, false, false);
-*/
-const service = {};
 
 let userPath = app.getPath('userData');
 let config = {};
