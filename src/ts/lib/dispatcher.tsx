@@ -4,6 +4,8 @@ import { Util, DataUtil, I, M, Decode, Storage, translate, analytics } from 'ts/
 import * as Sentry from '@sentry/browser';
 
 const com = require('lib/pb/protos/service/service_grpc_web_pb');
+const commands = require('lib/pb/protos/commands_pb.js');
+
 const Constant = require('json/constant.json')
 /// #if USE_NATIVE_ADDON
 const bindings = require('bindings')('addon');
@@ -28,9 +30,9 @@ class Dispatcher {
 			bindings.setEventHandler(handler);
 		/// #else
 			this.service = new com.ClientCommandsClient('http://localhost:8080', null, null);
-			this.service.listenEvents({}, handler);
+			var stream = this.service.listenEvents(new commands.Empty, {});
+			stream.on('data', handler);
 		/// #endif
-
 	};
 
 	event (event: any, skipDebug?: boolean) {
