@@ -79,7 +79,7 @@ class PopupArchive extends React.Component<Props, State> {
 		const { archive } = blockStore;
 		
 		this.setState({ loading: true });
-		C.BlockOpen(archive, [], (message: any) => {
+		C.BlockOpen(archive, (message: any) => {
 			this.setState({ loading: false });
 		});
 		

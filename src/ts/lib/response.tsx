@@ -5,6 +5,7 @@ const Constant = require('json/constant.json');
 const Commands = require('lib/pb/protos/commands_pb');
 const Rpc = Commands.Rpc;
 
+/*
 const VersionGet = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request('versionGet', request, callBack);
@@ -18,12 +19,17 @@ const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => v
 
 	dispatcher.request('imageGetBlob', request, callBack);
 };
+*/
 
-const ConfigGet = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request('configGet', request, callBack);
+const ConfigGet = (response: any) => {
+	return {
+		homeBlockId: response.getHomeblockid(),
+		archiveBlockId: response.getArchiveblockid(),
+		profileBlockId: response.getProfileblockid(),
+		gatewayUrl: response.getGatewayurl(),
+	};
 };
-
+/*
 const Shutdown = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request('shutdown', request, callBack);
@@ -88,16 +94,15 @@ const AccountRecover = (callBack?: (message: any) => void) => {
 
 	dispatcher.request('accountRecover', request, callBack);
 };
+*/
 
-const AccountSelect = (id: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Account.Select.Request();
-	
-	request.setId(id);
-	request.setRootpath(path);
-
-	dispatcher.request('accountSelect', request, callBack);
+const AccountSelect = (response: any) => {
+	return {
+		account: response.getAccount(),
+	};
 };
 
+/*
 const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Stop.Request();
 	
@@ -138,10 +143,11 @@ const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => vo
 	dispatcher.request('blockGetPublicWebURL', request, callBack);
 };
 
-const BlockOpen = (blockId: string, callBack?: (message: any) => void) => {
+const BlockOpen = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Open.Request();
 	
 	request.setBlockid(blockId);
+	request.setBreadcrumbsids(breadcrumbsIds);
 
 	dispatcher.request('blockOpen', request, callBack);
 };
@@ -527,9 +533,10 @@ const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => vo
 
 const BlockCreateDataviewView = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
 	const request = {};
-	/*request.setContextid(contextId).
-		setBlockid(blockId).
-		setView(view);*/
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setView(view);
 
 	dispatcher.request('blockCreateDataviewView', request, callBack);
 };
@@ -537,30 +544,35 @@ const BlockCreateDataviewView = (contextId: string, blockId: string, view: any, 
 const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
 	const request = {};
 
-	/*request.setContextid(contextId).
-		setBlockid(blockId).
-		setViewid(viewId).
-		setView(blockStore.prepareViewToProto(Util.objectCopy(new M.View(view))));*/
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setView(blockStore.prepareViewToProto(Util.objectCopy(new M.View(view))));
 
 	dispatcher.request('blockSetDataviewView', request, callBack);
 };
 
 const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = {};
-	/*request.setContextid(contextId).
-		setBlockid(blockId).
-		setViewid(viewId).
-		setOffset(offset).
-		setLimit(limit);*/
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setOffset(offset);
+	request.setLimit(limit);
 
 	dispatcher.request('blockSetDataviewActiveView', request, callBack);
 };
+*/
 
 export {
+	/*
 	VersionGet,
 
 	ImageGetBlob,
+	*/
 	ConfigGet,
+	/*
 	Shutdown,
 	LinkPreview,
 	UploadFile,
@@ -572,7 +584,9 @@ export {
 
 	AccountCreate,
 	AccountRecover,
+	*/
 	AccountSelect,
+	/*
 	AccountStop,
 
 	ExternalDropFiles,
@@ -624,4 +638,5 @@ export {
 	BlockListSetAlign,
 	BlockListSetPageIsArchived,
 	BlockListDeletePage,
+	*/
 };

@@ -132,12 +132,12 @@ class DataUtil {
 			
 			if (message.profileBlockId) {
 				blockStore.profileSet(message.profileBlockId);
-				C.BlockOpen(message.profileBlockId, []);
+				C.BlockOpen(message.profileBlockId);
 			};
 			
 			crumbs.init();
 			
-			C.BlockOpen(root, [], (message: any) => {
+			C.BlockOpen(root, (message: any) => {
 				if (callBack) {
 					callBack();
 				};

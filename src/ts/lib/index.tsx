@@ -14,6 +14,7 @@ import { crumbs } from './crumbs';
 import * as I from 'ts/interface';
 import * as M from 'ts/model';
 import * as C from './command';
+import * as Response from './response';
 import * as Docs from 'ts/docs';
 
 const Constant = require('json/constant.json');
@@ -43,6 +44,7 @@ export {
 	Mark,
 	I,
 	C,
+	Response,
 	M,
 	Docs,
 	translate,

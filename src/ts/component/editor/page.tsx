@@ -226,7 +226,7 @@ class EditorPage extends React.Component<Props, State> {
 		this.close(this.id);
 		this.id = rootId;
 		
-		C.BlockOpen(this.id, [ breadcrumbs ], (message: any) => {
+		C.BlockOpen(this.id, (message: any) => {
 			const { focused, range } = focus;
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
 			

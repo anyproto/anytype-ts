@@ -42,8 +42,8 @@ let csp = [
 	"media-src 'self' http://*:* https://*:* data: blob:",
 	"style-src 'unsafe-inline'",
 	"font-src data:",
-	"connect-src http://localhost:31008 ws://localhost:31008 http://localhost:8080 ws://localhost:8080 https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem http://localhost:8080 https://sentry.io devtools://devtools 'unsafe-inline'",
+	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
+	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
 

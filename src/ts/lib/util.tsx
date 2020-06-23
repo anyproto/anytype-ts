@@ -37,11 +37,18 @@ class Util {
 			return p1.toUpperCase();
 		});
 	};
-	
+
 	fromCamelCase (str: string, symbol: string) {
 		return str.replace(/([A-Z]{1})/g, (str: string, p1: string, p2: string, offset: number, s: string) => {
 			return symbol + p1.toLowerCase();
 		});
+	};
+
+	ucFirst (s: string): string {
+		if (!s) {
+			return '';
+		};
+		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length).toLowerCase();
 	};
 	
 	objectCopy (o: any): any {

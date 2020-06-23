@@ -1,4 +1,5 @@
 {
+	"server": "http://127.0.0.1:31008",
 	"pinSize": 6,
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
 	"amplitude": "081a79db340854305408c8fa15706adc",

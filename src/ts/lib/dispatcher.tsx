@@ -1,10 +1,11 @@
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { set } from 'mobx';
-import { Util, DataUtil, I, M, Decode, Storage, translate, analytics } from 'ts/lib';
+import { Util, DataUtil, I, M, Decode, Storage, translate, analytics, Response } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
+const Events = require('lib/pb/protos/events_pb');
 const Constant = require('json/constant.json')
 
 /// #if USE_NATIVE_ADDON
@@ -17,23 +18,25 @@ class Dispatcher {
 	stream: any = null;
 
 	constructor () {
-		const handler = (item: any) => {
-			try {
-				this.event(Service.Event.decode(item.data));
-			} catch (e) {
-				console.error(e);
-			};
-		};
+		this.service = new Service.ClientCommandsClient('http://localhost:31008', null, null);
 
-			this.service = new Service.ClientCommandsClient('http://localhost:31008', null, null);
 		/// #if USE_NATIVE_ADDON
+			const handler = (item: any) => {
+				try {
+					this.event(Service.Event.decode(item.data));
+				} catch (e) {
+					console.error(e);
+				};
+			};
+
 			Service.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
+			this.service = new Service.ClientCommandsClient(Constant.server, null, null);
 			this.stream = this.service.listenEvents(new Commands.Empty(), null);
 
-			this.stream.on('data', (response: any) => {
-				console.log('[Stream] response', response.getMessage());
+			this.stream.on('data', (event: any) => {
+				this.event(event, false);
 			});
 
 			this.stream.on('status', (status: any) => {
@@ -46,8 +49,37 @@ class Dispatcher {
 		/// #endif
 	};
 
+	eventType (v: number): string {
+		let t = '';
+		let V = Events.Event.Message.ValueCase;
+
+		if (v == V.ACCOUNTSHOW)				 t = 'accountShow';
+		if (v == V.BLOCKADD)				 t = 'blockAdd';
+		if (v == V.BLOCKDELETE)				 t = 'blockDelete';
+		if (v == V.BLOCKSETFIELDS)			 t = 'blockSetFields';
+		if (v == V.BLOCKSETCHILDRENIDS)		 t = 'blockSetChildrenIds';
+		if (v == V.BLOCKSETBACKGROUNDCOLOR)	 t = 'blockSetBackgroundColor';
+		if (v == V.BLOCKSETTEXT)			 t = 'blockSetText';
+		if (v == V.BLOCKSETFILE)			 t = 'blockSetFile';
+		if (v == V.BLOCKSETLINK)			 t = 'blockSetLink';
+		if (v == V.BLOCKSETBOOKMARK)		 t = 'blockSetBookmark';
+		if (v == V.BLOCKSETALIGN)			 t = 'blockSetAlign';
+		if (v == V.BLOCKSETDETAILS)			 t = 'blockSetDetails';
+		if (v == V.BLOCKSETDIV)				 t = 'blockSetDiv';
+		if (v == V.BLOCKSETDATAVIEWRECORDS)	 t = 'blockSetDataviewRecords';
+		if (v == V.BLOCKSETDATAVIEWVIEW)	 t = 'blockSetDataviewView';
+		if (v == V.BLOCKDELETEDATAVIEWVIEW)	 t = 'blockDeleteDataviewView';
+		if (v == V.BLOCKSHOW)				 t = 'blockShow';
+		if (v == V.PROCESSNEW)				 t = 'processNew';
+		if (v == V.PROCESSUPDATE)			 t = 'processUpdate';
+		if (v == V.PROCESSDONE)				 t = 'processDone';
+
+		return t;
+	};
+
 	event (event: any, skipDebug?: boolean) {
-		const rootId = event.contextId;
+		const rootId = event.getContextid();
+		const messages = event.getMessagesList() || [];
 		const debug = (Storage.get('debug') || {}).mw && !skipDebug;
 
 		if (debug) {
@@ -57,15 +89,16 @@ class Dispatcher {
 		let parentIds: any = {};
 		let childrenIds: any = {};
 
-		event.messages.sort(this.sort);
+		messages.sort(this.sort);
 
-		for (let message of event.messages) {
-			let type = message.value;
-			let data = message[type] || {};
+		for (let message of messages) {
+			let type = this.eventType(message.getValueCase());
+			let fn = 'get' + Util.ucFirst(type);
+			let data = message[fn] ? message[fn]() : {};
 
 			switch (type) {
 				case 'blockSetChildrenIds':
-					const ids = data.childrenIds || [];
+					const ids = data.getChildrenidsList() || [];
 					for (let id of ids) {
 						parentIds[id] = data.id;
 					};
@@ -75,8 +108,9 @@ class Dispatcher {
 					break;
 
 				case 'blockAdd':
-					for (let block of data.blocks) {
-						const ids = block.childrenIds || [];
+					let blocks = data.getBlocksList() || [];
+					for (let block of blocks) {
+						const ids = block.getChildrenidsList() || [];
 						for (let id of ids) {
 							parentIds[id] = block.id;
 						};
@@ -88,23 +122,23 @@ class Dispatcher {
 			};
 		};
 
-		for (let message of event.messages) {
+		for (let message of messages) {
 			let block: any = null;
-			let type = message.value;
-			let data = message[type] || {};
-
-			if (data.error && data.error.code) {
-				continue;
-			};
+			let type = this.eventType(message.getValueCase());
+			let fn = 'get' + Util.ucFirst(type);
+			let data = message[fn] ? message[fn]() : {};
 
 			switch (type) {
 
-				case 'accountShow':
+				case Events.Event.Message.ValueCase.ACCOUNTSHOW:
 					authStore.accountAdd(data.account);
 					break;
 
 				case 'blockShow':
-					let blocks = data.blocks.map((it: any) => {
+					let blocks = data.getBlocksList() || [];
+					let details = data.getDetailsList() || [];
+
+					blocks = blocks.map((it: any) => {
 						it = blockStore.prepareBlockFromProto(it);
 						if (it.id == rootId) {
 							it.type = I.BlockType.Page;
@@ -124,7 +158,7 @@ class Dispatcher {
 					};
 
 					blockStore.blocksSet(rootId, blocks);
-					blockStore.detailsSet(rootId, data.details);
+					blockStore.detailsSet(rootId, details);
 					break;
 
 				case 'blockAdd':
@@ -422,12 +456,13 @@ class Dispatcher {
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
+		const upper = Util.toUpperCamelCase(type);
+		const debug = (Storage.get('debug') || {}).mw;
+
 		if (!this.service[type]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
-
-		const debug = (Storage.get('debug') || {}).mw;
 
 		let t0 = 0;
 		let t1 = 0;
@@ -438,31 +473,36 @@ class Dispatcher {
 			console.log('[Dispatcher.request]', type, JSON.stringify(data.toObject(), null, 3));
 		};
 
-		analytics.event(Util.toUpperCamelCase(type), data);
+		analytics.event(upper, data);
 
 		try {
-			this.service[type](data, {}, (err, response) => {
+			this.service[type](data, null, (error: any, response: any) => {
 				if (debug) {
 					t1 = performance.now();
 				};
 
-				var message;
-				if (err) {
+				if (error) {
+					console.error('[Dispatcher.error]', error.code, error.description);
+					return;
+				};
+
+				let message = Response[upper] ? Response[upper](response) : {};
+				let err = response.getError();
+
+				message.event = response.getEvent ? response.getEvent() : null;
+				message.error = {
+					code: String(err.getCode() || ''),
+					description: String(err.getDescription() || ''),
+				};
+
+				if (message.error.code) {
 					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
 					Sentry.captureMessage(type + ': ' + message.error.description);
 					analytics.event('Error', { cmd: type, code: message.error.code });
-				} else {
-					message = response.toObject()
-					console.log(message);
-				}
-
-				/*message.error = {
-					code: String(message.error || ''),
-					description: String(message.error.description || ''),
-				};*/
+				};
 
 				if (debug) {
-					console.log('[Dispatcher.callback]', type, JSON.stringify(message, null, 3));
+					console.log('[Dispatcher.callback]', type, JSON.stringify(response.toObject(), null, 3));
 				};
 
 				if (message.event) {
