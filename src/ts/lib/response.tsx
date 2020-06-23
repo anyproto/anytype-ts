@@ -1,25 +1,12 @@
-import { I, Util, Mark, dispatcher, Encode } from 'ts/lib';
-import { blockStore } from 'ts/store';
-
-const Constant = require('json/constant.json');
-const Commands = require('lib/pb/protos/commands_pb');
-const Rpc = Commands.Rpc;
-
-/*
-const VersionGet = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request('versionGet', request, callBack);
+const VersionGet = (response: any) => {
+	return {};
 };
 
-const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Ipfs.Image.Get.Blob.Request();
-	
-	request.setHash(hash);
-    request.setSize(size);
-
-	dispatcher.request('imageGetBlob', request, callBack);
+const ImageGetBlob = (response: any) => {
+	return {
+		blob: response.getBlob(),
+	};
 };
-*/
 
 const ConfigGet = (response: any) => {
 	return {
@@ -29,72 +16,46 @@ const ConfigGet = (response: any) => {
 		gatewayUrl: response.getGatewayurl(),
 	};
 };
-/*
-const Shutdown = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request('shutdown', request, callBack);
+
+const Shutdown = () => {
+	return {};
 };
 
-const LinkPreview = (url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.LinkPreview.Request();
-
-	request.setUrl(url);
-
-	dispatcher.request('linkPreview', request, callBack);
+const LinkPreview = (response: any) => {
+	return {
+		linkPreview: response.getLinkpreview(),
+	};
 };
 
-const UploadFile = (url: string, localPath: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.UploadFile.Request();
-	
-	request.setUrl(url);
-	request.setLocalpath(localPath);
-	request.setType(type);
-	request.setDisableencryption(enc);
-
-	dispatcher.request('uploadFile', request, callBack);
+const UploadFile = (response: any) => {
+	return {
+		hash: response.getHash(),
+	};
 };
 
-const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Process.Cancel.Request();
-	
-	request.setId(id);
-
-	dispatcher.request('processCancel', request, callBack);
+const ProcessCancel = (response: any) => {
+	return {};
 };
 
-const WalletCreate = (path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Wallet.Create.Request();
-	
-	request.setRootpath(path);
-
-	dispatcher.request('walletCreate', request, callBack);
+const WalletCreate = (response: any) => {
+	return {
+		mnemonic: response.getMnemonic(),
+	};
 };
 
-const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Wallet.Recover.Request();
-	
-	request.setRootpath(path);
-	request.setMnemonic(mnemonic);
-
-	dispatcher.request('walletRecover', request, callBack);
+const WalletRecover = (response: any) => {
+	return {};
 };
 
-const AccountCreate = (name: string, path: string, code: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Account.Create.Request();
-	
-	request.setName(name);
-	request.setAvatarlocalpath(path);
-	request.setAlphainvitecode(code);
-
-	dispatcher.request('accountCreate', request, callBack);
+const AccountCreate = (response: any) => {
+	return {
+		account: response.getAccount(),
+	};
 };
 
-const AccountRecover = (callBack?: (message: any) => void) => {
-	const request = new Rpc.Account.Recover.Request();
-
-	dispatcher.request('accountRecover', request, callBack);
+const AccountRecover = (response: any) => {
+	return {};
 };
-*/
 
 const AccountSelect = (response: any) => {
 	return {
@@ -102,501 +63,181 @@ const AccountSelect = (response: any) => {
 	};
 };
 
+const AccountStop = (response: any) => {
+	return {};
+};
+
+const ExternalDropFiles = (response: any) => {
+	return {};
+};
+
 /*
-const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Account.Stop.Request();
-	
-	request.setRemovedata(removeData);
 
-	dispatcher.request('accountStop', request, callBack);
+const NavigationListPages = (response: any) => {
 };
 
-const ExternalDropFiles = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.ExternalDrop.Files.Request();
-	
-	request.setContextid(contextId);
-	request.setDroptargetid(targetId);
-	request.setPosition(position);
-	request.setLocalfilepaths(paths);
-
-	dispatcher.request('externalDropFiles', request, callBack);
+const NavigationGetPageInfoWithLinks = (response: any) => {
 };
 
-const NavigationListPages = (callBack?: (message: any) => void) => {
-	const request = new Rpc.Navigation.ListPages.Request();
-	dispatcher.request('navigationListPages', request, callBack);
+const BlockGetPublicWebURL = (response: any) => {
 };
 
-const NavigationGetPageInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Navigation.GetPageInfoWithLinks.Request();
-	
-	request.setPageid(pageId);
+const BlockOpen = (response: any) => {
+};
+*/
 
-	dispatcher.request('navigationGetPageInfoWithLinks', request, callBack);
+const BlockOpenBreadcrumbs = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+	};
 };
 
-const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.GetPublicWebURL.Request();
-	
-	request.setBlockid(contextId);
-
-	dispatcher.request('blockGetPublicWebURL', request, callBack);
+/*
+const BlockSetBreadcrumbs = (response: any) => {
 };
 
-const BlockOpen = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Open.Request();
-	
-	request.setBlockid(blockId);
-	request.setBreadcrumbsids(breadcrumbsIds);
-
-	dispatcher.request('blockOpen', request, callBack);
+const BlockClose = (response: any) => {
 };
 
-const BlockOpenBreadcrumbs = (callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.OpenBreadcrumbs.Request();
-	dispatcher.request('blockOpenBreadcrumbs', request, callBack);
+const BlockUndo = (response: any) => {
 };
 
-const BlockSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.setBreadcrumbs.Request();
-	
-	request.setBreadcrumbsid(contextId);
-	request.setIds(pageIds);
-
-	dispatcher.request('blockSetBreadcrumbs', request, callBack);
+const BlockRedo = (response: any) => {
 };
 
-const BlockClose = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Close.Request();
-	
-	request.setBlockid(blockId);
-	request.setBreadcrumbsids(breadcrumbsIds);
-
-	dispatcher.request('blockClose', request, callBack);
+const BlockCreate = (response: any) => {
 };
 
-const BlockUndo = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Undo.Request();
-	
-	request.setContextid(contextId);
-
-	dispatcher.request('blockUndo', request, callBack);
+const BlockCreatePage = (response: any) => {
 };
 
-const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Redo.Request();
-	
-	request.setContextiid(contextId);
-
-	dispatcher.request('blockRedo', request, callBack);
+const BlockUnlink = (response: any) => {
 };
 
-const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Create.Request();
-	
-	request.setBlock(blockStore.prepareBlockToProto(block)).
-	request.setContextid(contextId).
-	request.setTargetid(targetId).
-	request.setPosition(position);
-
-	dispatcher.request('blockCreate', request, callBack);
+const BlockSetTextText = (response: any) => {
 };
 
-const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	details = details || {};
-	details.name = String(details.name || Constant.default.name);
-
-	const request = new Rpc.Block.CreatePage.Request();
-
-	request.setContextid(contextId);
-	request.setTargetid(targetId);
-	request.setPosition(position);
-	request.setDetails(Encode.encodeStruct(details));
-
-	dispatcher.request('blockCreatePage', request, callBack);
+const BlockSetTextChecked = (response: any) => {
 };
 
-const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Unlink.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockids(blockIds);
-
-	dispatcher.request('blockUnlink', request, callBack);
+const BlockSetFields = (response: any) => {
 };
 
-const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.set.Text.Text.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setText(text);
-	request.setMarks({ marks: Mark.checkRanges(text, marks) });
-
-	dispatcher.request('blockSetTextText', request, callBack);
+const BlockSetDetails = (response: any) => {
 };
 
-const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.set.Text.Checked.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setChecked(checked);
-
-	dispatcher.request('blockSetTextChecked', request, callBack);
+const BlockMerge = (response: any) => {
 };
 
-const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.set.Fields.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setFields(Encode.encodeStruct(fields || {}));
-
-	dispatcher.request('blockSetFields', request, callBack);
+const BlockSplit = (response: any) => {
 };
 
-const BlockSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
-	details = details.map((it: any) => {
-		it.value = Encode.encodeValue(it.value);
-		return it;
-	});
-
-	const request = new Rpc.Block.set.Details.Request();
-	
-	request.setContextid(contextId);
-	request.setDetails(details);
-
-	dispatcher.request('blockSetDetails', request, callBack);
+const BlockBookmarkFetch = (response: any) => {
 };
 
-const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Merge.Request();
-	
-	request.setContextid(contextId);
-	request.setFirstblockid(blockId1);
-	request.setSecondblockid(blockId2);
-
-	dispatcher.request('blockMerge', request, callBack);
+const BlockBookmarkCreateAndFetch = (response: any) => {
 };
 
-const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Split.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRange(range);
-	request.setStyle(style);
-
-	dispatcher.request('blockSplit', request, callBack);
+const BlockUpload = (response: any) => {
 };
 
-const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Bookmark.Fetch.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setUrl(url);
-
-	dispatcher.request('blockBookmarkFetch', request, callBack);
+const BlockFileCreateAndUpload = (response: any) => {
 };
 
-const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Bookmark.CreateAndFetch.Request();
-	
-	request.setContextid(contextId);
-	request.setTargetid(targetId);
-	request.setPosition(position);
-	request.setUrl(url);
-
-	dispatcher.request('blockBookmarkCreateAndFetch', request, callBack);
+const BlockCopy = (response: any) => {
 };
 
-const BlockUpload = (contextId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Upload.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setUrl(url);
-	request.setFilepath(path);
-
-	dispatcher.request('blockUpload', request, callBack);
+const BlockCut = (response: any) => {
 };
 
-const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.File.CreateAndUpload.Request();
-	
-	request.setContextid(contextId);
-	request.setTargetid(targetId);
-	request.setPosition(position);
-	request.setUrl(url);
-	request.setFilepath(path);
-
-	dispatcher.request('blockFileCreateAndUpload', request, callBack);
+const BlockExportPrint = (response: any) => {
 };
 
-const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
-	blocks = Util.objectCopy(blocks);
-
-	const request = new Rpc.Block.Copy.Request();
-	
-	request.setContextid(contextId);
-    request.setBlocks(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-    request.setSelectedtextrange(range);
-
-	dispatcher.request('blockCopy', request, callBack);
+const BlockPaste = (response: any) => {
 };
 
-const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
-	blocks = Util.objectCopy(blocks);
-
-	const request = new Rpc.Block.Cut.Request();
-	
-	request.setContextid(contextId);
-    request.setBlocks(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-    request.setSelectedtextrange(range);
-
-	dispatcher.request('blockCut', request, callBack);
+const BlockImportMarkdown = (response: any) => {
 };
 
-const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
-	blocks = Util.objectCopy(blocks);
-
-	const request = new Rpc.Block.Export.Print.Request();
-	
-	request.setContextid(contextId);
-    request.setBlocks(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-
-	dispatcher.request('blockExport', request, callBack);
+const BlockListMove = (response: any) => {
 };
 
-const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
-	data = Util.objectCopy(data);
-
-	const request = new Rpc.Block.Paste.Request();
-	
-	request.setContextid(contextId);
-    request.setFocusedblockid(focusedId);
-    request.setSelectedtextrange(range);
-    request.setIspartofblock(isPartOfBlock);
-    request.setSelectedblockids(blockIds);
-    request.setTextslot(data.text);
-    request.setHtmlslot(data.html);
-    request.setAnyslot((data.anytype || []).map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-
-	dispatcher.request('blockPaste', request, callBack);
+const BlockListMoveToNewPage = (response: any) => {
 };
 
-const BlockImportMarkdown = (contextId: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.ImportMarkdown.Request();
-	
-	request.setContextid(contextId);
-    request.setImportpath(path);
-
-	dispatcher.request('blockImportMarkdown', request, callBack);
+const BlockListConvertChildrenToPages = (response: any) => {
 };
 
-const BlockListMove = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Move.Request();
-	
-	request.setContextid(contextId);
-    request.setTargetcontextid(targetContextId);
-    request.setBlockids(blockIds);
-    request.setDroptargetid(targetId);
-    request.setPosition(position);
-
-	dispatcher.request('blockListMove', request, callBack);
+const BlockListDuplicate = (response: any) => {
 };
 
-const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: any, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.MoveToNewPage.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-    request.setDetails(Encode.encodeStruct(details || {}));
-    request.setDroptargetid(targetId);
-    request.setPosition(position);
-
-	dispatcher.request('blockListMoveToNewPage', request, callBack);
+const BlockListSetTextStyle = (response: any) => {
 };
 
-const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.ConvertChildrenToPages.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-
-	dispatcher.request('blockListConvertChildrenToPages', request, callBack);
+const BlockListSetDivStyle = (response: any) => {
 };
 
-const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Duplicate.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-    request.setTargetid(targetId);
-    request.setPosition(position);
-
-	dispatcher.request('blockListDuplicate', request, callBack);
+const BlockListSetTextColor = (response: any) => {
 };
 
-const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Text.Style.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-    request.setStyle(style);
-
-	dispatcher.request('blockListSetTextStyle', request, callBack);
+const BlockListSetTextMark = (response: any) => {
 };
 
-const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Div.Style.Request();
-	request.setContextid(contextId).
-    setBlockids(blockIds).
-    setStyle(style);
-
-	dispatcher.request('blockListSetDivStyle', request, callBack);
+const BlockListSetFields = (response: any) => {
 };
 
-const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Text.Color.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-    request.setColor(color);
-
-	dispatcher.request('blockListSetTextColor', request, callBack);
+const BlockListSetBackgroundColor = (response: any) => {
 };
 
-const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mark, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Text.Mark.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-    request.setMark(mark);
-
-	dispatcher.request('blockListSetTextMark', request, callBack);
+const BlockListSetAlign = (response: any) => {
 };
 
-const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
-	fields = fields.map((it: any) => {
-		it.fields = Encode.encodeStruct(it.fields || {});
-		return it;
-	});
-
-	const request = new Rpc.BlockList.set.Fields.Request();
-
-	request.setContextid(contextId);
-    request.setBlockfields(fields);
-
-	dispatcher.request('blockListSetFields', request, callBack);
+const BlockListSetPageIsArchived = (response: any) => {
 };
 
-const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.BackgroundColor.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-    request.setColor(color);
-
-	dispatcher.request('blockListSetBackgroundColor', request, callBack);
+const BlockListDeletePage = (response: any) => {
 };
 
-const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockAlign, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Align.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-    request.setAlign(align);
-
-	dispatcher.request('blockListSetAlign', request, callBack);
+const BlockCreateDataviewView = (response: any) => {
 };
 
-const BlockListSetPageIsArchived = (contextId: string, blockIds: string[], isArchived: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.PageIsArchived.Request();
-	
-	request.setContextid(contextId);
-    request.setBlockids(blockIds);
-    request.setIsarchived(isArchived);
-
-	dispatcher.request('blockListSetPageIsArchived', request, callBack);
+const BlockSetDataviewView = (response: any) => {
 };
 
-const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Delete.Page.Request();
-	
-	request.setBlockids(blockIds);
-
-	dispatcher.request('blockListDeletePage', request, callBack);
-};
-
-const BlockCreateDataviewView = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
-	const request = {};
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setView(view);
-
-	dispatcher.request('blockCreateDataviewView', request, callBack);
-};
-
-const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
-	const request = {};
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setViewid(viewId);
-	request.setView(blockStore.prepareViewToProto(Util.objectCopy(new M.View(view))));
-
-	dispatcher.request('blockSetDataviewView', request, callBack);
-};
-
-const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
-	const request = {};
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setViewid(viewId);
-	request.setOffset(offset);
-	request.setLimit(limit);
-
-	dispatcher.request('blockSetDataviewActiveView', request, callBack);
+const BlockSetDataviewActiveView = (response: any) => {
 };
 */
 
 export {
-	/*
 	VersionGet,
 
 	ImageGetBlob,
-	*/
 	ConfigGet,
-	/*
 	Shutdown,
-	LinkPreview,
 	UploadFile,
 	ProcessCancel,
-
+	LinkPreview,
 
 	WalletCreate,
 	WalletRecover,
 
 	AccountCreate,
 	AccountRecover,
-	*/
 	AccountSelect,
-	/*
 	AccountStop,
 
 	ExternalDropFiles,
+
+	/*
 
 	NavigationListPages,
 	NavigationGetPageInfoWithLinks,
 
 	BlockGetPublicWebURL,
 	BlockOpen,
+	*/
 	BlockOpenBreadcrumbs,
+	/*
 	BlockSetBreadcrumbs,
 	BlockClose,
 	BlockUndo,

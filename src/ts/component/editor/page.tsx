@@ -283,7 +283,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		C.BlockClose(id, [], (message: any) => {
+		C.BlockClose(id, (message: any) => {
 			blockStore.blocksClear(id);
 		});
 	};

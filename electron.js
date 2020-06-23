@@ -40,7 +40,7 @@ let csp = [
 	"default-src 'self' 'unsafe-eval'",
 	"img-src 'self' http://*:* https://*:* data: blob:",
 	"media-src 'self' http://*:* https://*:* data: blob:",
-	"style-src 'unsafe-inline'",
+	"style-src 'unsafe-inline' http://localhost:*",
 	"font-src data:",
 	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
 	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",

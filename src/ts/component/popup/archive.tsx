@@ -93,7 +93,7 @@ class PopupArchive extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		const { archive } = blockStore;
-		C.BlockClose(archive, [], (message: any) => {});
+		C.BlockClose(archive, (message: any) => {});
 	};
 	
 	onSelect (item: any) {

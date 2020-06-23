@@ -1,5 +1,15 @@
 import * as is from 'is';
 
+enum KindCase {
+	KIND_NOT_SET	 = 0,
+	NULL_VALUE		 = 1,
+	NUMBER_VALUE	 = 2,
+	STRING_VALUE	 = 3,
+	BOOL_VALUE		 = 4,
+	STRUCT_VALUE	 = 5,
+	LIST_VALUE		 = 6,
+};
+
 class StructEncode {
 
 	seenObjects: Set<{}>;
@@ -122,16 +132,26 @@ class StructDecode {
 	};
 
 	static decodeStruct (struct: any) {
-		const convertedObject: any = {};
+		const ret: any = {};
+		const entries = struct.entries();
 
-		for (const prop in struct.fields) {
-			if (struct.fields.hasOwnProperty(prop)) {
-				const value = struct.fields[prop];
-				convertedObject[prop] = StructDecode.decodeValue(value);
-			};
+		for (let entry of entries) {
+			let k = entry[0];
+			let value = entry[1];
+			let c = value.getKindCase();
+			let v: any;
+
+			if (c == KindCase.NULL_VALUE)	 v = value.getNullValue(); 
+			if (c == KindCase.NUMBER_VALUE)	 v = value.getNumberValue();
+			if (c == KindCase.STRING_VALUE)	 v = value.getStringValue();
+			if (c == KindCase.BOOL_VALUE)	 v = value.getBoolValue();
+			if (c == KindCase.STRUCT_VALUE)	 v = value.getStructValue();
+			if (c == KindCase.LIST_VALUE)	 v = value.getListValue();
+
+			ret[k] = v;
 		};
 
-		return convertedObject;
+		return ret;
 	};
 
 };

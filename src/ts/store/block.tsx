@@ -64,11 +64,7 @@ class BlockStore {
 		let map = observable(new Map());
 
 		for (let item of details) {
-			if (!item.id || !item.details) {
-				continue;
-			};
-
-			map.set(item.id, Decode.decodeStruct(item.details));
+			map.set(item.getId(), Decode.decodeStruct(item.getDetails().getFieldsMap()));
 		};
 
 		intercept(map as any, (change: any) => {
@@ -384,68 +380,103 @@ class BlockStore {
 		return item;
 	};
 
+	blockType (v: number): I.BlockType {
+		let t = I.BlockType.Empty;
+		let V = Model.Block.ContentCase;
+
+		if (v == V.SMARTBLOCK)	 t = I.BlockType.Page;
+		if (v == V.TEXT)		 t = I.BlockType.Text;
+		if (v == V.FILE)		 t = I.BlockType.File;
+		if (v == V.LAYOUT)		 t = I.BlockType.Layout;
+		if (v == V.DIV)			 t = I.BlockType.Div;
+		if (v == V.BOOKMARK)	 t = I.BlockType.Bookmark;
+		if (v == V.LINK)		 t = I.BlockType.Link;
+		if (v == V.DATAVIEW)	 t = I.BlockType.Dataview;
+
+		return t;
+	};
+
 	prepareBlockFromProto (block: any): I.Block {
-		let type = block.content;
-		let content = block[type];
+		let type = this.blockType(block.getContentCase());
+		let fields = block.getFields();
+		let fn = 'get' + Util.ucFirst(type);
+		let content = block[fn] ? block[fn]() : {};
 
 		let item: I.Block = {
-			id: block.id,
+			id: block.getId(),
 			type: type,
-			childrenIds: block.childrenIds || [],
-			fields: {} as any,
+			childrenIds: block.getChildrenidsList() || [],
+			fields: fields ? Decode.decodeStruct(fields.getFieldsMap()) : {},
 			content: {} as any,
-			align: Number(block.align) || 0,
-			bgColor: String(block.backgroundColor || ''),
+			align: block.getAlign(),
+			bgColor: block.getBackgroundcolor(),
 		};
 
-		if (block.fields) {
-			item.fields = Decode.decodeStruct(block.fields);
-
-			if (type == I.BlockType.Page) {
-				item.fields.name = String(item.fields.name || Constant.default.name);
+		if (type == I.BlockType.Layout) {
+			item.content = {
+				style: content.getStyle(),
 			};
 		};
 
-		if (content) {
-			if (type != I.BlockType.Dataview) {
-				item.content = Util.objectCopy(content);
-				item.content.style = content.style;
-			} else {
-				item.content = content;
+		if (type == I.BlockType.Link) {
+			const fields = content.getFields();
+			item.content = {
+				style: content.getStyle(),
+				targetBlockId: content.getTargetblockid(),
+				fields: fields ? Decode.decodeStruct(fields.getFieldsMap()) : {},
 			};
+		};
 
-			if (content.fields) {
-				item.content.fields = Decode.decodeStruct(content.fields);
+		if (type == I.BlockType.Div) {
+			item.content = {
+				style: content.getStyle(),
 			};
+		};
 
-			if (type == I.BlockType.Text) {
-				let marks: any = [];
-				if (content.marks && content.marks.marks && content.marks.marks.length) {
-					for (let mark of content.marks.marks) {
-						marks.push({
-							type: Number(mark.type) || 0,
-							param: String(mark.param || ''),
-							range: {
-								from: Number(mark.range.from) || 0,
-								to: Number(mark.range.to) || 0,
-							}
-						});
+		if (type == I.BlockType.Bookmark) {
+			item.content = {
+				url: content.getUrl(),
+				title: content.getTitle(),
+				description: content.getDescription(),
+				imageHash: content.getImagehash(),
+				faviconHash: content.getFaviconhash(),
+				type: content.getType(),
+			};
+		};
+
+		if (type == I.BlockType.Text) {
+			item.content = {
+				text: content.getText(),
+				style: content.getStyle(),
+				checked: content.getChecked(),
+				color: content.getColor(),
+				marks: (content.getMarks().getMarksList() || []).map((mark: any) => {
+					const range = mark.getRange();
+					return {
+						type: mark.getType(),
+						param: mark.getParam(),
+						range: {
+							from: range.getFrom(),
+							to: range.getTo(),
+						},
 					};
-				};
-
-				item.content.marker = content.marker;
-				item.content.marks = marks;
+				}),
 			};
+		};
 
-			if (type == I.BlockType.Link) {
-				item.content.targetBlockId = String(item.content.targetBlockId || '');
+		if (type == I.BlockType.File) {
+			item.content = {
+				hash: content.getHash(),
+				name: content.getName(),
+				type: content.getType(),
+				mime: content.getMime(),
+				size: content.getSize(),
+				addedAt: content.getAddedat(),
+				state: content.getState(),
 			};
+		};
 
-			if (type == I.BlockType.File) {
-				item.content.type = content.type;
-				item.content.state = content.state;
-			};
-
+		/*
 			if (type == I.BlockType.Dataview) {
 				const schemaId = DataUtil.schemaField(item.content.schemaURL);
 
@@ -463,7 +494,7 @@ class BlockStore {
 					data: observable,
 				});
 			};
-		};
+		*/
 
 		return item;
 	};

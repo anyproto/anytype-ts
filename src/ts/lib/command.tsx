@@ -152,19 +152,18 @@ const BlockOpenBreadcrumbs = (callBack?: (message: any) => void) => {
 };
 
 const BlockSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.setBreadcrumbs.Request();
+	const request = new Rpc.Block.SetBreadcrumbs.Request();
 	
 	request.setBreadcrumbsid(contextId);
-	request.setIds(pageIds);
+	request.setIdsList(pageIds);
 
 	dispatcher.request('blockSetBreadcrumbs', request, callBack);
 };
 
-const BlockClose = (blockId: string, breadcrumbsIds: string[], callBack?: (message: any) => void) => {
+const BlockClose = (blockId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Close.Request();
 	
 	request.setBlockid(blockId);
-	request.setBreadcrumbsids(breadcrumbsIds);
 
 	dispatcher.request('blockClose', request, callBack);
 };
@@ -205,7 +204,7 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setPosition(position);
-	request.setDetails(Encode.encodeStruct(details));
+	//request.setDetails(Encode.encodeStruct(details));
 
 	dispatcher.request('blockCreatePage', request, callBack);
 };
@@ -220,7 +219,7 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.set.Text.Text.Request();
+	const request = new Rpc.Block.Set.Text.Text.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -231,7 +230,7 @@ const BlockSetTextText = (contextId: string, blockId: string, text: string, mark
 };
 
 const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.set.Text.Checked.Request();
+	const request = new Rpc.Block.Set.Text.Checked.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -241,7 +240,7 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 };
 
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.set.Fields.Request();
+	const request = new Rpc.Block.Set.Fields.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -256,10 +255,10 @@ const BlockSetDetails = (contextId: string, details: any[], callBack?: (message:
 		return it;
 	});
 
-	const request = new Rpc.Block.set.Details.Request();
+	const request = new Rpc.Block.Set.Details.Request();
 	
 	request.setContextid(contextId);
-	request.setDetails(details);
+	//request.setDetailsList(details);
 
 	dispatcher.request('blockSetDetails', request, callBack);
 };
@@ -407,7 +406,7 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 	
 	request.setContextid(contextId);
     request.setBlockids(blockIds);
-    request.setDetails(Encode.encodeStruct(details || {}));
+    //request.setDetails(Encode.encodeStruct(details || {}));
     request.setDroptargetid(targetId);
     request.setPosition(position);
 
@@ -435,7 +434,7 @@ const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: str
 };
 
 const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Text.Style.Request();
+	const request = new Rpc.BlockList.Set.Text.Style.Request();
 	
 	request.setContextid(contextId);
     request.setBlockids(blockIds);
@@ -445,7 +444,7 @@ const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.T
 };
 
 const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Div.Style.Request();
+	const request = new Rpc.BlockList.Set.Div.Style.Request();
 	request.setContextid(contextId).
     setBlockids(blockIds).
     setStyle(style);
@@ -454,7 +453,7 @@ const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.Te
 };
 
 const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Text.Color.Request();
+	const request = new Rpc.BlockList.Set.Text.Color.Request();
 	
 	request.setContextid(contextId);
     request.setBlockids(blockIds);
@@ -464,7 +463,7 @@ const BlockListSetTextColor = (contextId: string, blockIds: string[], color: str
 };
 
 const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mark, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Text.Mark.Request();
+	const request = new Rpc.BlockList.Set.Text.Mark.Request();
 	
 	request.setContextid(contextId);
     request.setBlockids(blockIds);
@@ -479,7 +478,7 @@ const BlockListSetFields = (contextId: string, fields: any, callBack?: (message:
 		return it;
 	});
 
-	const request = new Rpc.BlockList.set.Fields.Request();
+	const request = new Rpc.BlockList.Set.Fields.Request();
 
 	request.setContextid(contextId);
     request.setBlockfields(fields);
@@ -488,7 +487,7 @@ const BlockListSetFields = (contextId: string, fields: any, callBack?: (message:
 };
 
 const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.BackgroundColor.Request();
+	const request = new Rpc.BlockList.Set.BackgroundColor.Request();
 	
 	request.setContextid(contextId);
     request.setBlockids(blockIds);
@@ -498,7 +497,7 @@ const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], colo
 };
 
 const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockAlign, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.Align.Request();
+	const request = new Rpc.BlockList.Set.Align.Request();
 	
 	request.setContextid(contextId);
     request.setBlockids(blockIds);
@@ -508,7 +507,7 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 };
 
 const BlockListSetPageIsArchived = (contextId: string, blockIds: string[], isArchived: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.set.PageIsArchived.Request();
+	const request = new Rpc.BlockList.Set.PageIsArchived.Request();
 	
 	request.setContextid(contextId);
     request.setBlockids(blockIds);

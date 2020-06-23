@@ -83,11 +83,12 @@ class Dispatcher {
 		const debug = (Storage.get('debug') || {}).mw && !skipDebug;
 
 		if (debug) {
-			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event, null, 3));
+			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event.toObject(), null, 3));
 		};
 
 		let parentIds: any = {};
 		let childrenIds: any = {};
+		let blocks: any[] = [];
 
 		messages.sort(this.sort);
 
@@ -108,7 +109,7 @@ class Dispatcher {
 					break;
 
 				case 'blockAdd':
-					let blocks = data.getBlocksList() || [];
+					blocks = data.getBlocksList() || [];
 					for (let block of blocks) {
 						const ids = block.getChildrenidsList() || [];
 						for (let id of ids) {
@@ -130,12 +131,12 @@ class Dispatcher {
 
 			switch (type) {
 
-				case Events.Event.Message.ValueCase.ACCOUNTSHOW:
+				case 'accountShow':
 					authStore.accountAdd(data.account);
 					break;
 
 				case 'blockShow':
-					let blocks = data.getBlocksList() || [];
+					blocks = data.getBlocksList() || [];
 					let details = data.getDetailsList() || [];
 
 					blocks = blocks.map((it: any) => {
@@ -162,7 +163,8 @@ class Dispatcher {
 					break;
 
 				case 'blockAdd':
-					for (let block of data.blocks) {
+					blocks = data.getBlocksList() || [];
+					for (let block of blocks) {
 						block = blockStore.prepareBlockFromProto(block);
 						block.parentId = String(parentIds[block.id] || '');
 
