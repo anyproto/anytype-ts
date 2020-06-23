@@ -8,7 +8,7 @@ const Commands = require('lib/pb/protos/commands_pb');
 const Constant = require('json/constant.json')
 
 /// #if USE_NATIVE_ADDON
-	const bindings = require('bindings')('addon');
+const bindings = require('bindings')('addon');
 /// #endif
 
 class Dispatcher {
@@ -25,12 +25,11 @@ class Dispatcher {
 			};
 		};
 
+			this.service = new Service.ClientCommandsClient('http://localhost:31008', null, null);
 		/// #if USE_NATIVE_ADDON
-			this.service = Service.anytype.ClientCommands.create(() => {}, false, false);
 			Service.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			this.service = new Service.ClientCommandsClient('http://localhost:8080', null, null);
 			this.stream = this.service.listenEvents(new Commands.Empty(), null);
 
 			this.stream.on('data', (response: any) => {
@@ -40,7 +39,7 @@ class Dispatcher {
 			this.stream.on('status', (status: any) => {
 				console.log('[Stream] status', status);
 			});
-			
+
 			this.stream.on('end', (end: any) => {
 				console.log('[Stream] end', end);
 			});
@@ -436,30 +435,31 @@ class Dispatcher {
 
 		if (debug) {
 			t0 = performance.now();
-			console.log('[Dispatcher.request]', type, JSON.stringify(data, null, 3));
+			console.log('[Dispatcher.request]', type, JSON.stringify(data.toObject(), null, 3));
 		};
 
 		analytics.event(Util.toUpperCamelCase(type), data);
 
 		try {
-			this.service[type](data, null, (error: any, message: any) => {
+			this.service[type](data, {}, (err, response) => {
 				if (debug) {
 					t1 = performance.now();
 				};
 
-				error = error || {};
-				message = message || {};
-
-				message.error = {
-					code: String(error.code || ''),
-					description: String(error.description || ''),
-				};
-
-				if (message.error.code) {
+				var message;
+				if (err) {
 					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
 					Sentry.captureMessage(type + ': ' + message.error.description);
 					analytics.event('Error', { cmd: type, code: message.error.code });
-				};
+				} else {
+					message = response.toObject()
+					console.log(message);
+				}
+
+				/*message.error = {
+					code: String(message.error || ''),
+					description: String(message.error.description || ''),
+				};*/
 
 				if (debug) {
 					console.log('[Dispatcher.callback]', type, JSON.stringify(message, null, 3));
