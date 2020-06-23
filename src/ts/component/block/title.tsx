@@ -203,7 +203,7 @@ class BlockTitle extends React.Component<Props, {}> {
 			id: rootId,
 			details: details,
 		};
-		blockStore.detailsUpdate(breadcrumbs, param, false);
+		blockStore.detailsUpdate(breadcrumbs, param);
 		
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 1000);

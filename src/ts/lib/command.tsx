@@ -1,4 +1,4 @@
-import { I, Util, Mark, dispatcher, Encode } from 'ts/lib';
+import { I, M, Util, Mark, dispatcher, Encode } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -213,7 +213,7 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 	const request = new Rpc.Block.Unlink.Request();
 	
 	request.setContextid(contextId);
-	request.setBlockids(blockIds);
+	request.setBlockidsList(blockIds);
 
 	dispatcher.request('blockUnlink', request, callBack);
 };
@@ -394,7 +394,7 @@ const BlockListMove = (contextId: string, targetContextId: string, blockIds: str
 	
 	request.setContextid(contextId);
     request.setTargetcontextid(targetContextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     request.setDroptargetid(targetId);
     request.setPosition(position);
 
@@ -405,7 +405,7 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 	const request = new Rpc.BlockList.MoveToNewPage.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     //request.setDetails(Encode.encodeStruct(details || {}));
     request.setDroptargetid(targetId);
     request.setPosition(position);
@@ -417,7 +417,7 @@ const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], 
 	const request = new Rpc.BlockList.ConvertChildrenToPages.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
 
 	dispatcher.request('blockListConvertChildrenToPages', request, callBack);
 };
@@ -426,7 +426,7 @@ const BlockListDuplicate = (contextId: string, blockIds: string[], targetId: str
 	const request = new Rpc.BlockList.Duplicate.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     request.setTargetid(targetId);
     request.setPosition(position);
 
@@ -437,7 +437,7 @@ const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.T
 	const request = new Rpc.BlockList.Set.Text.Style.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     request.setStyle(style);
 
 	dispatcher.request('blockListSetTextStyle', request, callBack);
@@ -445,9 +445,10 @@ const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.T
 
 const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Set.Div.Style.Request();
-	request.setContextid(contextId).
-    setBlockids(blockIds).
-    setStyle(style);
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+    request.setStyle(style);
 
 	dispatcher.request('blockListSetDivStyle', request, callBack);
 };
@@ -456,7 +457,7 @@ const BlockListSetTextColor = (contextId: string, blockIds: string[], color: str
 	const request = new Rpc.BlockList.Set.Text.Color.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     request.setColor(color);
 
 	dispatcher.request('blockListSetTextColor', request, callBack);
@@ -466,7 +467,7 @@ const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mar
 	const request = new Rpc.BlockList.Set.Text.Mark.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     request.setMark(mark);
 
 	dispatcher.request('blockListSetTextMark', request, callBack);
@@ -490,7 +491,7 @@ const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], colo
 	const request = new Rpc.BlockList.Set.BackgroundColor.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     request.setColor(color);
 
 	dispatcher.request('blockListSetBackgroundColor', request, callBack);
@@ -500,7 +501,7 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	const request = new Rpc.BlockList.Set.Align.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     request.setAlign(align);
 
 	dispatcher.request('blockListSetAlign', request, callBack);
@@ -510,7 +511,7 @@ const BlockListSetPageIsArchived = (contextId: string, blockIds: string[], isArc
 	const request = new Rpc.BlockList.Set.PageIsArchived.Request();
 	
 	request.setContextid(contextId);
-    request.setBlockids(blockIds);
+    request.setBlockidsList(blockIds);
     request.setIsarchived(isArchived);
 
 	dispatcher.request('blockListSetPageIsArchived', request, callBack);
@@ -519,38 +520,40 @@ const BlockListSetPageIsArchived = (contextId: string, blockIds: string[], isArc
 const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Delete.Page.Request();
 	
-	request.setBlockids(blockIds);
+	request.setBlockidsList(blockIds);
 
 	dispatcher.request('blockListDeletePage', request, callBack);
 };
 
 const BlockCreateDataviewView = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
-	const request = {};
-	/*request.setContextid(contextId).
-		setBlockid(blockId).
-		setView(view);*/
+	const request = new Rpc.Block.Create.Dataview.View.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setView(view);
 
 	dispatcher.request('blockCreateDataviewView', request, callBack);
 };
 
 const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
-	const request = {};
+	const request = new Rpc.Block.Set.Dataview.View.Request();
 
-	/*request.setContextid(contextId).
-		setBlockid(blockId).
-		setViewid(viewId).
-		setView(blockStore.prepareViewToProto(Util.objectCopy(new M.View(view))));*/
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setView(blockStore.prepareViewToProto(Util.objectCopy(new M.View(view))));
 
 	dispatcher.request('blockSetDataviewView', request, callBack);
 };
 
 const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
-	const request = {};
-	/*request.setContextid(contextId).
-		setBlockid(blockId).
-		setViewid(viewId).
-		setOffset(offset).
-		setLimit(limit);*/
+	const request = new Rpc.Block.Set.Dataview.ActiveView.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setOffset(offset);
+	request.setLimit(limit);
 
 	dispatcher.request('blockSetDataviewActiveView', request, callBack);
 };

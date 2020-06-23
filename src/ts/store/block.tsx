@@ -79,7 +79,9 @@ class BlockStore {
 	};
 
 	@action
-	detailsUpdate (rootId: string, item: any, decode: boolean) {
+	detailsUpdate (rootId: string, item: any) {
+		console.log(rootId, item.id, item.details);
+
 		if (!item.id || !item.details) {
 			return;
 		};
@@ -92,7 +94,7 @@ class BlockStore {
 			create = true;
 		};
 
-		map.set(item.id, decode ? Decode.decodeStruct(item.details) : item.details);
+		map.set(item.id, item.details);
 
 		if (create) {
 			intercept(map as any, (change: any) => {
@@ -127,7 +129,7 @@ class BlockStore {
 	};
 
 	@action
-	blockAdd (rootId: string, block: I.Block, index: number) {
+	blockAdd (rootId: string, block: I.Block) {
 		block = new M.Block(block);
 
 		let blocks = this.getBlocks(rootId);
@@ -216,10 +218,9 @@ class BlockStore {
 
 	getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {
 		let blocks = this.getBlocks(rootId);
-		let map = this.getMap(rootId);
-		let element = map[id] || {};
-
-		let childBlocks = (element.childrenIds || []).map((it: string) => {
+		let childrenIds = this.getChildrenIds(rootId, id);
+		
+		let childBlocks = childrenIds.map((it: string) => {
 			return blocks.find((item: any) => { return item.id == it; });
 		}).filter((it: any) => {
 			if (!it) {

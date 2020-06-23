@@ -92,9 +92,11 @@ const BlockOpenBreadcrumbs = (response: any) => {
 	};
 };
 
-/*
 const BlockSetBreadcrumbs = (response: any) => {
+	return {};
 };
+
+/*
 
 const BlockClose = (response: any) => {
 };
@@ -237,8 +239,8 @@ export {
 	BlockOpen,
 	*/
 	BlockOpenBreadcrumbs,
-	/*
 	BlockSetBreadcrumbs,
+	/*
 	BlockClose,
 	BlockUndo,
 	BlockRedo,
