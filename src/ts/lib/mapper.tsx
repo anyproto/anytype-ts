@@ -316,7 +316,24 @@ const Mapper = {
     
                 block.setBookmark(content);
             };
+
+            if (obj.type == I.BlockType.Link) {
+                content = new Model.Block.Content.Link();
     
+                content.setStyle(obj.content.style);
+                content.setTargetblockid(obj.content.targetBlockId);
+    
+                block.setLink(content);
+            };
+
+            if (obj.type == I.BlockType.Div) {
+                content = new Model.Block.Content.Div();
+    
+                content.setStyle(obj.content.style);
+    
+                block.setDiv(content);
+            };
+
             return block;
         },
 
@@ -351,8 +368,6 @@ const Mapper = {
 
         View: (view: I.View) => {
             view = Util.objectCopy(new M.View(view));
-
-            console.log(view);
 
             const item = new Model.Block.Content.Dataview.View();
 
