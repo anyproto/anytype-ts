@@ -3,6 +3,7 @@ import { blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Commands = require('lib/pb/protos/commands_pb');
+const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 
 const VersionGet = (callBack?: (message: any) => void) => {
@@ -187,9 +188,9 @@ const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
 const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 	
-	request.setBlock(blockStore.prepareBlockToProto(block)).
-	request.setContextid(contextId).
-	request.setTargetid(targetId).
+	request.setBlock(blockStore.prepareBlockToProto(block));
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
 	request.setPosition(position);
 
 	dispatcher.request('blockCreate', request, callBack);
@@ -204,7 +205,7 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setPosition(position);
-	//request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.encodeStruct(details));
 
 	dispatcher.request('blockCreatePage', request, callBack);
 };
@@ -251,14 +252,16 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 
 const BlockSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
 	details = details.map((it: any) => {
-		it.value = Encode.encodeValue(it.value);
-		return it;
+		const item = new Rpc.Block.Set.Details.Detail();
+		item.setKey(it.key);
+		item.setValue(Encode.encodeValue(it.value));
+		return item;
 	});
 
 	const request = new Rpc.Block.Set.Details.Request();
-	
+
 	request.setContextid(contextId);
-	//request.setDetailsList(details);
+	request.setDetailsList(details);
 
 	dispatcher.request('blockSetDetails', request, callBack);
 };
@@ -278,7 +281,7 @@ const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, styl
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRange(range);
+	request.setRange(new Model.Range().setFrom(range.from).setTo(range.to));
 	request.setStyle(style);
 
 	dispatcher.request('blockSplit', request, callBack);
@@ -335,7 +338,7 @@ const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, cal
 	
 	request.setContextid(contextId);
     request.setBlocks(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-    request.setSelectedtextrange(range);
+    request.setSelectedtextrange(new Model.Range().setFrom(range.from).setTo(range.to));
 
 	dispatcher.request('blockCopy', request, callBack);
 };
@@ -406,7 +409,7 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-    //request.setDetails(Encode.encodeStruct(details || {}));
+    request.setDetails(Encode.encodeStruct(details || {}));
     request.setDroptargetid(targetId);
     request.setPosition(position);
 

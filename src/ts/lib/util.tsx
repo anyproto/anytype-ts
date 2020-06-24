@@ -490,8 +490,12 @@ class Util {
 		return `./img/cover/${cover}.jpg`;
 	};
 
-	selectionRect (): DOMRect {
-		return window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+	selectionRect () {
+		const sel = window.getSelection();
+		if (sel && (sel.rangeCount > 0)) {
+			return sel.getRangeAt(0).getBoundingClientRect() as DOMRect;
+		};
+		return { x: 0, y: 0, width: 0, height: 0 };
 	};
 
 	uuid () {

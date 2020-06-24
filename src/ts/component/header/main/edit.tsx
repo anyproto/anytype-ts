@@ -37,9 +37,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const slice = children.length > LIMIT ? children.slice(children.length - LIMIT, children.length) : children;
 		const n = children.length - LIMIT;
 
-		console.log(childrenIds);
-		console.log(children);
-		
 		const PathItemHome = (item: any) => (
 			<div className="item"onClick={this.onHome}>
 				<Icon className="home" />

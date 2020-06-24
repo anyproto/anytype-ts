@@ -64,7 +64,7 @@ class BlockStore {
 		let map = observable(new Map());
 
 		for (let item of details) {
-			map.set(item.getId(), Decode.decodeStruct(item.getDetails().getFieldsMap()));
+			map.set(item.getId(), Decode.decodeStruct(item.getDetails()));
 		};
 
 		intercept(map as any, (change: any) => {
@@ -80,8 +80,6 @@ class BlockStore {
 
 	@action
 	detailsUpdate (rootId: string, item: any) {
-		console.log(rootId, item.id, item.details);
-
 		if (!item.id || !item.details) {
 			return;
 		};
@@ -399,7 +397,6 @@ class BlockStore {
 
 	prepareBlockFromProto (block: any): I.Block {
 		let type = this.blockType(block.getContentCase());
-		let fields = block.getFields();
 		let fn = 'get' + Util.ucFirst(type);
 		let content = block[fn] ? block[fn]() : {};
 
@@ -407,7 +404,7 @@ class BlockStore {
 			id: block.getId(),
 			type: type,
 			childrenIds: block.getChildrenidsList() || [],
-			fields: fields ? Decode.decodeStruct(fields.getFieldsMap()) : {},
+			fields: Decode.decodeStruct(block.getFields()),
 			content: {} as any,
 			align: block.getAlign(),
 			bgColor: block.getBackgroundcolor(),
@@ -420,11 +417,10 @@ class BlockStore {
 		};
 
 		if (type == I.BlockType.Link) {
-			const fields = content.getFields();
 			item.content = {
 				style: content.getStyle(),
 				targetBlockId: content.getTargetblockid(),
-				fields: fields ? Decode.decodeStruct(fields.getFieldsMap()) : {},
+				fields: Decode.decodeStruct(content.getFields()),
 			};
 		};
 
@@ -559,15 +555,33 @@ class BlockStore {
 	prepareBlockToProto (data: any) {
 		data.content = Util.objectCopy(data.content || {});
 
-		let block: any = {
-			id: String(data.id || ''),
-			align: Number(data.align) || 0,
-			backgroundColor: String(data.bgColor || ''),
-		};
+		let block = new Model.Block();
+		let content: any = null;
+
+		block.setId(data.id);
+		block.setAlign(data.align);
+		block.setBackgroundcolor(data.bgColor);
 
 		if (data.childrenIds) {
-			block.childrenIds = data.childrenIds || [];
+			block.setChildrenidsList(data.childrenIds);
 		};
+
+		if (data.fields) {
+			block.setFields(Encode.encodeStruct(data.fields || {}));
+		};
+
+		if (data.type == I.BlockType.Text) {
+			content = new Model.Block.Content.Text();
+
+			content.setText(data.content.text);
+			content.setStyle(data.content.style);
+
+			block.setText(content);
+		};
+
+		console.log(block, block.toObject(), content, content.toObject ? content.toObject() : null);
+
+		/*
 
 		if (data.type == I.BlockType.Text) {
 			data.content.marks = { marks: data.content.marks };
@@ -588,16 +602,13 @@ class BlockStore {
 			data.fields.icon = String(data.fields.icon || '');
 		};
 
-		if (data.fields) {
-			block.fields = Encode.encodeStruct(data.fields || {});
-		};
-
 		const model = Model.Block.Content[Util.toUpperCamelCase(data.type)];
 		if (model) {
 			block[data.type] = model.create(data.content);
 		};
 
 		block = Model.Block.create(block);
+		*/
 		return block;
 	};
 

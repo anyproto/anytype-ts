@@ -67,9 +67,10 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const list = blockStore.getChildren(rootId, rootId);
+		const children = blockStore.getChildren(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
-		
+		const length = childrenIds.length;
+
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
@@ -117,7 +118,7 @@ class EditorPage extends React.Component<Props, State> {
 							/>	
 						) : ''}
 						
-						{list.map((block: I.Block, i: number) => {
+						{children.map((block: I.Block, i: number) => {
 							return (
 								<Block 
 									key={block.id} 
@@ -611,7 +612,6 @@ class EditorPage extends React.Component<Props, State> {
 			
 			// Open action menu
 			if (k == Key.slash) {
-				console.log(213);
 				commonStore.menuOpen('blockAction', { 
 					element: '#block-' + focused,
 					type: I.MenuType.Vertical,
@@ -879,7 +879,7 @@ class EditorPage extends React.Component<Props, State> {
 	onMenuAdd (id: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
-		
+
 		if (!block) {
 			return;
 		};
@@ -895,7 +895,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 
 		const el = $('#block-' + id);
-		const offset = el.offset();
+		const offset = el.offset() || {};
 		const rect = Util.selectionRect();
 		
 		let x = rect.x - offset.left;

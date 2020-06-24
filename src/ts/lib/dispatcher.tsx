@@ -90,8 +90,9 @@ class Dispatcher {
 		let globalChildrenIds: any = {};
 		let blocks: any[] = [];
 		let id: string = '';
+		let self = this;
 
-		messages.sort(this.sort);
+		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
 
 		for (let message of messages) {
 			let type = this.eventType(message.getValueCase());
@@ -129,9 +130,6 @@ class Dispatcher {
 			};
 		};
 
-		console.log('globalParentIds', globalParentIds);
-		console.log('globalChildrenIds', globalChildrenIds);
-
 		for (let message of messages) {
 			let block: any = null;
 			let childrenIds: string[] = [];
@@ -142,7 +140,7 @@ class Dispatcher {
 			switch (type) {
 
 				case 'accountShow':
-					authStore.accountAdd(data.account);
+					authStore.accountAdd(data.getAccount());
 					break;
 
 				case 'blockShow':
@@ -189,7 +187,7 @@ class Dispatcher {
 					break;
 
 				case 'blockDelete':
-					let blockIds = data.getBlocksidsList() || [];
+					let blockIds = data.getBlockidsList() || [];
 					for (let blockId of blockIds) {
 						blockStore.blockDelete(rootId, blockId);
 					};
@@ -214,7 +212,7 @@ class Dispatcher {
 				case 'blockSetDetails':
 					let item = {
 						id: data.getId(),
-						details: Decode.decodeStruct(data.getDetails().getFieldsMap())
+						details: Decode.decodeStruct(data.getDetails()),
 					};
 
 					blockStore.detailsUpdate(rootId, item);
@@ -227,8 +225,8 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.fields) {
-						block.fields = Decode.decodeStruct(data.fields.getFieldsMap());
+					if (null !== data.getFields()) {
+						block.fields = Decode.decodeStruct(data.getFields());
 					};
 
 					blockStore.blockUpdate(rootId, block);
@@ -241,8 +239,8 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.fields) {
-						block.content.fields = Decode.decodeStruct(data.fields.getFieldsMap());
+					if (null !== data.getFields()) {
+						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
 					blockStore.blockUpdate(rootId, block);
@@ -255,35 +253,34 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.text) {
-						block.content.text = String(data.text.value || '');
+					if (null !== data.getText()) {
+						block.content.text = data.getText().getValue();
 					};
 
-					if (null !== data.marks) {
-						let marks: any = [];
-						for (let mark of data.marks.value.marks) {
-							marks.push({
-								type: Number(mark.type) || 0,
-								param: String(mark.param || ''),
+					if (null !== data.getMarks()) {
+						block.content.marks = (data.getMarks().getValue().getMarksList() || []).map((mark: any) => {
+							const range = mark.getRange();
+							return {
+								type: mark.getType(),
+								param: mark.getParam(),
 								range: {
-									from: Number(mark.range.from) || 0,
-									to: Number(mark.range.to) || 0,
-								}
-							});
-						};
-						block.content.marks = marks;
+									from: range.getFrom(),
+									to: range.getTo(),
+								},
+							};
+						});
 					};
 
-					if (null !== data.style) {
-						block.content.style = Number(data.style.value) || 0;
+					if (null !== data.getStyle()) {
+						block.content.style = data.getStyle().getValue();
 					};
 
-					if (null !== data.checked) {
-						block.content.checked = Boolean(data.checked.value);
+					if (null !== data.getChecked()) {
+						block.content.checked = data.getChecked().getValue();
 					};
 
-					if (null !== data.color) {
-						block.content.color = String(data.color.value || '');
+					if (null !== data.getColor()) {
+						block.content.color = data.getColor().getValue();
 					};
 
 					blockStore.blockUpdate(rootId, block);
@@ -471,15 +468,8 @@ class Dispatcher {
 	};
 
 	sort (c1: any, c2: any) {
-		let type1 = c1.value;
-		let type2 = c2.value;
-
-		if ((type1 == 'blockSetChildrenIds') && (type2 != 'blockSetChildrenIds')) {
-			return -1;
-		};
-		if ((type2 == 'blockSetChildrenIds') && (type1 != 'blockSetChildrenIds')) {
-			return 1;
-		};
+		let type1 = this.eventType(c1.getValueCase());
+		let type2 = this.eventType(c2.getValueCase());
 
 		if ((type1 == 'blockAdd') && (type2 != 'blockAdd')) {
 			return -1;
@@ -492,6 +482,13 @@ class Dispatcher {
 			return -1;
 		};
 		if ((type2 == 'blockDelete') && (type1 != 'blockDelete')) {
+			return 1;
+		};
+
+		if ((type1 == 'blockSetChildrenIds') && (type2 != 'blockSetChildrenIds')) {
+			return -1;
+		};
+		if ((type2 == 'blockSetChildrenIds') && (type1 != 'blockSetChildrenIds')) {
 			return 1;
 		};
 

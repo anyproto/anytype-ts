@@ -133,7 +133,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, block: I.Block) {
-		console.log(block);
 		if (block.content.style == I.LinkStyle.Archive) {
 			commonStore.popupOpen('archive', {});
 		} else {

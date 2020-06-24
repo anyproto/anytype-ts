@@ -106,10 +106,15 @@ const BlockUndo = (response: any) => {
 
 const BlockRedo = (response: any) => {
 };
+*/
 
 const BlockCreate = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+	};
 };
 
+/*
 const BlockCreatePage = (response: any) => {
 };
 
@@ -256,8 +261,9 @@ export {
 	BlockExportPrint,
 	BlockPaste,
 	BlockImportMarkdown,
-
+*/
 	BlockCreate,
+/*
 	BlockCreatePage,
 	BlockCreateDataviewView,
 
