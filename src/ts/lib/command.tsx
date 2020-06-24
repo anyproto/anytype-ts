@@ -220,12 +220,20 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
+	marks = Mark.checkRanges(text, marks).map((it: any) => {
+		const item = new Model.Block.Content.Text.Mark();
+		item.setType(it.type);
+		item.setParam(it.param);
+		item.setRange(new Model.Range().setFrom(it.range.from).setTo(it.range.to));
+		return item;
+	});
+
 	const request = new Rpc.Block.Set.Text.Text.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setText(text);
-	request.setMarks({ marks: Mark.checkRanges(text, marks) });
+	request.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
 
 	dispatcher.request('blockSetTextText', request, callBack);
 };
@@ -337,7 +345,7 @@ const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, cal
 	const request = new Rpc.Block.Copy.Request();
 	
 	request.setContextid(contextId);
-    request.setBlocks(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
+    request.setBlocksList(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
     request.setSelectedtextrange(new Model.Range().setFrom(range.from).setTo(range.to));
 
 	dispatcher.request('blockCopy', request, callBack);
@@ -349,21 +357,10 @@ const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, call
 	const request = new Rpc.Block.Cut.Request();
 	
 	request.setContextid(contextId);
-    request.setBlocks(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-    request.setSelectedtextrange(range);
+    request.setBlocksList(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
+    request.setSelectedtextrange(new Model.Range().setFrom(range.from).setTo(range.to));
 
 	dispatcher.request('blockCut', request, callBack);
-};
-
-const BlockExportPrint = (contextId: string, blocks: I.Block[], callBack?: (message: any) => void) => {
-	blocks = Util.objectCopy(blocks);
-
-	const request = new Rpc.Block.Export.Print.Request();
-	
-	request.setContextid(contextId);
-    request.setBlocks(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-
-	dispatcher.request('blockExport', request, callBack);
 };
 
 const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
@@ -373,12 +370,12 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	
 	request.setContextid(contextId);
     request.setFocusedblockid(focusedId);
-    request.setSelectedtextrange(range);
+    request.setSelectedtextrange(new Model.Range().setFrom(range.from).setTo(range.to));
     request.setIspartofblock(isPartOfBlock);
-    request.setSelectedblockids(blockIds);
+    request.setSelectedblockidsList(blockIds);
     request.setTextslot(data.text);
     request.setHtmlslot(data.html);
-    request.setAnyslot((data.anytype || []).map((it: any) => { return blockStore.prepareBlockToProto(it); }));
+    request.setAnyslotList((data.anytype || []).map((it: any) => { return blockStore.prepareBlockToProto(it); }));
 
 	dispatcher.request('blockPaste', request, callBack);
 };
@@ -478,14 +475,16 @@ const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mar
 
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map((it: any) => {
-		it.fields = Encode.encodeStruct(it.fields || {});
-		return it;
+		const item = new Rpc.BlockList.Set.Fields.Request.BlockField();
+		item.setBlockid(it.blockId);
+		item.setFields(Encode.encodeStruct(it.fields || {}));
+		return item;
 	});
 
 	const request = new Rpc.BlockList.Set.Fields.Request();
 
 	request.setContextid(contextId);
-    request.setBlockfields(fields);
+    request.setBlockfieldsList(fields);
 
 	dispatcher.request('blockListSetFields', request, callBack);
 };
@@ -601,7 +600,6 @@ export {
 	BlockFileCreateAndUpload,
 	BlockCopy,
 	BlockCut,
-	BlockExportPrint,
 	BlockPaste,
 	BlockImportMarkdown,
 

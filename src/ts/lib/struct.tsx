@@ -3,7 +3,7 @@ const Struct = require('google-protobuf/google/protobuf/struct_pb.js');
 class StructEncode {
 
 	static encodeStruct (obj: any) {
-		return new Struct().fromJavaScript(obj);
+		return Struct.Struct.fromJavaScript(obj);
 	};
 
 	static encodeValue (value: any) {

@@ -71,20 +71,27 @@ const ExternalDropFiles = (response: any) => {
 	return {};
 };
 
-/*
-
 const NavigationListPages = (response: any) => {
+	return {
+		pages: response.getPagesList(),
+	};
 };
 
 const NavigationGetPageInfoWithLinks = (response: any) => {
+	return {
+		page: response.getPage(),
+	};
 };
 
 const BlockGetPublicWebURL = (response: any) => {
+	return {
+		url: response.getUrl(),
+	};
 };
 
 const BlockOpen = (response: any) => {
+	return {};
 };
-*/
 
 const BlockOpenBreadcrumbs = (response: any) => {
 	return {
@@ -96,17 +103,17 @@ const BlockSetBreadcrumbs = (response: any) => {
 	return {};
 };
 
-/*
-
 const BlockClose = (response: any) => {
+	return {};
 };
 
 const BlockUndo = (response: any) => {
+	return {};
 };
 
 const BlockRedo = (response: any) => {
+	return {};
 };
-*/
 
 const BlockCreate = (response: any) => {
 	return {
@@ -114,97 +121,152 @@ const BlockCreate = (response: any) => {
 	};
 };
 
-/*
 const BlockCreatePage = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+		targetId: response.getTargetid(),
+	};
 };
 
 const BlockUnlink = (response: any) => {
+	return {};
 };
 
 const BlockSetTextText = (response: any) => {
+	return {};
 };
 
 const BlockSetTextChecked = (response: any) => {
+	return {};
 };
 
 const BlockSetFields = (response: any) => {
+	return {};
 };
 
 const BlockSetDetails = (response: any) => {
+	return {};
 };
 
 const BlockMerge = (response: any) => {
+	return {};
 };
 
 const BlockSplit = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+	};
 };
 
 const BlockBookmarkFetch = (response: any) => {
+	return {};
 };
 
 const BlockBookmarkCreateAndFetch = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+	};
 };
 
 const BlockUpload = (response: any) => {
+	return {};
 };
 
 const BlockFileCreateAndUpload = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+	};
 };
 
 const BlockCopy = (response: any) => {
+	return {
+		textSlot: response.getTextslot(),
+		htmlSlot: response.getHtmlslot(),
+		anySlot: response.getAnyslotList(),
+	};
 };
 
 const BlockCut = (response: any) => {
-};
-
-const BlockExportPrint = (response: any) => {
+	return {
+		textSlot: response.getTextslot(),
+		htmlSlot: response.getHtmlslot(),
+		anySlot: response.getAnyslotList(),
+	};
 };
 
 const BlockPaste = (response: any) => {
+	return {
+		blockIds: response.getBlockidsList(),
+		caretPosition: response.getCaretposition(),
+		isSameBlockCaret: response.getIssameblockcaret(),
+	};
 };
 
 const BlockImportMarkdown = (response: any) => {
+	return {
+		rootLinkIds: response.getRootlinkidsList(),
+	};
 };
 
 const BlockListMove = (response: any) => {
+	return {};
 };
 
 const BlockListMoveToNewPage = (response: any) => {
-};
-
-const BlockListConvertChildrenToPages = (response: any) => {
+	return {
+		linkId: response.getLinkid(),
+	};
 };
 
 const BlockListDuplicate = (response: any) => {
+	return {
+		blockIds: response.getBlockidsList(),
+	};
+};
+
+const BlockListConvertChildrenToPages = (response: any) => {
+	return {
+		linkIds: response.getLinkidsList(),
+	};
 };
 
 const BlockListSetTextStyle = (response: any) => {
+	return {};
 };
 
 const BlockListSetDivStyle = (response: any) => {
+	return {};
 };
 
 const BlockListSetTextColor = (response: any) => {
+	return {};
 };
 
 const BlockListSetTextMark = (response: any) => {
+	return {};
 };
 
 const BlockListSetFields = (response: any) => {
+	return {};
 };
 
 const BlockListSetBackgroundColor = (response: any) => {
+	return {};
 };
 
 const BlockListSetAlign = (response: any) => {
+	return {};
 };
 
 const BlockListSetPageIsArchived = (response: any) => {
+	return {};
 };
 
 const BlockListDeletePage = (response: any) => {
+	return {};
 };
 
+/*
 const BlockCreateDataviewView = (response: any) => {
 };
 
@@ -235,49 +297,55 @@ export {
 
 	ExternalDropFiles,
 
-	/*
-
 	NavigationListPages,
 	NavigationGetPageInfoWithLinks,
 
 	BlockGetPublicWebURL,
+
 	BlockOpen,
-	*/
 	BlockOpenBreadcrumbs,
 	BlockSetBreadcrumbs,
-	/*
+	
+	BlockUnlink,
 	BlockClose,
 	BlockUndo,
 	BlockRedo,
-	BlockUnlink,
+
 	BlockMerge,
 	BlockSplit,
-	BlockBookmarkFetch,
-	BlockBookmarkCreateAndFetch,
-	BlockUpload,
-	BlockFileCreateAndUpload,
 	BlockCopy,
 	BlockCut,
-	BlockExportPrint,
 	BlockPaste,
+
+	BlockFileCreateAndUpload,
+	BlockUpload,
+	BlockBookmarkFetch,
+	BlockBookmarkCreateAndFetch,
+	
 	BlockImportMarkdown,
-*/
+
 	BlockCreate,
-/*
 	BlockCreatePage,
+	/*
 	BlockCreateDataviewView,
+	*/
 
 	BlockSetTextText,
 	BlockSetTextChecked,
 	BlockSetFields,
 	BlockSetDetails,
+	
+	/*
 	BlockSetDataviewView,
 	BlockSetDataviewActiveView,
+	*/
 
 	BlockListMove,
 	BlockListMoveToNewPage,
-	BlockListConvertChildrenToPages,
 	BlockListDuplicate,
+	BlockListConvertChildrenToPages,
+	BlockListSetPageIsArchived,
+
 	BlockListSetBackgroundColor,
 	BlockListSetTextColor,
 	BlockListSetTextStyle,
@@ -285,7 +353,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	BlockListSetPageIsArchived,
 	BlockListDeletePage,
-	*/
+
 };

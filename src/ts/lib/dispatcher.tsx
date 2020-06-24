@@ -253,11 +253,11 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.getText()) {
+					if (undefined !== data.getText()) {
 						block.content.text = data.getText().getValue();
 					};
 
-					if (null !== data.getMarks()) {
+					if (undefined !== data.getMarks()) {
 						block.content.marks = (data.getMarks().getValue().getMarksList() || []).map((mark: any) => {
 							const range = mark.getRange();
 							return {
@@ -271,15 +271,15 @@ class Dispatcher {
 						});
 					};
 
-					if (null !== data.getStyle()) {
+					if (undefined !== data.getStyle()) {
 						block.content.style = data.getStyle().getValue();
 					};
 
-					if (null !== data.getChecked()) {
+					if (undefined !== data.getChecked()) {
 						block.content.checked = data.getChecked().getValue();
 					};
 
-					if (null !== data.getColor()) {
+					if (undefined !== data.getColor()) {
 						block.content.color = data.getColor().getValue();
 					};
 

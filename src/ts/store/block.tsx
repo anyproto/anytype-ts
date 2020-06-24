@@ -571,44 +571,25 @@ class BlockStore {
 		};
 
 		if (data.type == I.BlockType.Text) {
+			const marks = (data.content.marks || []).map((it: any) => {
+				const item = new Model.Block.Content.Text.Mark();
+				item.setType(it.type);
+				item.setParam(it.param);
+				item.setRange(new Model.Range().setFrom(it.range.from).setTo(it.range.to));
+				return item;
+			});
+
 			content = new Model.Block.Content.Text();
 
 			content.setText(data.content.text);
 			content.setStyle(data.content.style);
+			content.setChecked(data.content.checked);
+			content.setColor(data.content.color);
+			content.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
 
 			block.setText(content);
 		};
 
-		console.log(block, block.toObject(), content, content.toObject ? content.toObject() : null);
-
-		/*
-
-		if (data.type == I.BlockType.Text) {
-			data.content.marks = { marks: data.content.marks };
-		};
-
-		if (data.type == I.BlockType.File) {
-			if (data.content.size) {
-				data.content.size = parseFloat(data.content.size);
-			};
-			if (data.content.addedAt) {
-				data.content.addedAt = parseFloat(data.content.addedAt);
-			};
-		};
-
-		if (data.type == I.BlockType.Page) {
-			data.fields = data.fields || {};
-			data.fields.name = String(data.fields.name || Constant.default.name);
-			data.fields.icon = String(data.fields.icon || '');
-		};
-
-		const model = Model.Block.Content[Util.toUpperCamelCase(data.type)];
-		if (model) {
-			block[data.type] = model.create(data.content);
-		};
-
-		block = Model.Block.create(block);
-		*/
 		return block;
 	};
 
