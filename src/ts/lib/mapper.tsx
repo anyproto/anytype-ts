@@ -1,6 +1,8 @@
-import { I, Decode, Util } from 'ts/lib';
+import { I, Decode, Util, Encode } from 'ts/lib';
 
+const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
+const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
 
 const Mapper = {
@@ -142,6 +144,98 @@ const Mapper = {
     
             return item;
         },
+
+    },
+
+    To: {
+
+        Range: (obj: any) => {
+            return new Model.Range().setFrom(obj.from).setTo(obj.to);
+        },
+
+        Mark: (obj: any) => {
+            const item = new Model.Block.Content.Text.Mark();
+            item.setType(obj.type);
+            item.setParam(obj.param);
+            item.setRange(Mapper.To.Range(obj.range));
+            return item;
+        },
+
+        Details: (obj: any) => {
+            const item = new Rpc.Block.Set.Details.Detail();
+            item.setKey(obj.key);
+            item.setValue(Encode.encodeValue(obj.value));
+            return item;
+        },
+
+        Fields: (obj: any) => {
+            const item = new Rpc.BlockList.Set.Fields.Request.BlockField();
+            item.setBlockid(obj.blockId);
+            item.setFields(Encode.encodeStruct(obj.fields || {}));
+            return item;
+        },
+
+        Block: (obj: any) => {
+            obj.content = Util.objectCopy(obj.content || {});
+    
+            let block = new Model.Block();
+            let content: any = null;
+    
+            block.setId(obj.id);
+            block.setAlign(obj.align);
+            block.setBackgroundcolor(obj.bgColor);
+    
+            if (obj.childrenIds) {
+                block.setChildrenidsList(obj.childrenIds);
+            };
+    
+            if (obj.fields) {
+                block.setFields(Encode.encodeStruct(obj.fields || {}));
+            };
+    
+            if (obj.type == I.BlockType.Text) {
+                const marks = (obj.content.marks || []).map(Mapper.To.Mark);
+    
+                content = new Model.Block.Content.Text();
+    
+                content.setText(obj.content.text);
+                content.setStyle(obj.content.style);
+                content.setChecked(obj.content.checked);
+                content.setColor(obj.content.color);
+                content.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
+    
+                block.setText(content);
+            };
+    
+            if (obj.type == I.BlockType.File) {
+                content = new Model.Block.Content.File();
+    
+                content.setHash(obj.content.hash);
+                content.setName(obj.content.name);
+                content.setType(obj.content.type);
+                content.setMime(obj.content.mime);
+                content.setSize(obj.content.size);
+                content.setAddedat(obj.content.addedAt);
+                content.setState(obj.content.state);
+    
+                block.setFile(content);
+            };
+    
+            if (obj.type == I.BlockType.Bookmark) {
+                content = new Model.Block.Content.Bookmark();
+    
+                content.setUrl(obj.content.url);
+                content.setTitle(obj.content.title);
+                content.setDescription(obj.content.description);
+                content.setImagehash(obj.content.imageHash);
+                content.setFaviconhash(obj.content.faviconHash);
+                content.setType(obj.content.type);
+    
+                block.setBookmark(content);
+            };
+    
+            return block;
+        }
 
     }
 

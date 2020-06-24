@@ -1,4 +1,4 @@
-import { I, M, Util, Mark, dispatcher, Encode } from 'ts/lib';
+import { I, M, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -188,7 +188,7 @@ const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
 const BlockCreate = (block: any, contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 	
-	request.setBlock(blockStore.prepareBlockToProto(block));
+	request.setBlock(Mapper.To.Block(block));
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setPosition(position);
@@ -220,13 +220,7 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
-	marks = Mark.checkRanges(text, marks).map((it: any) => {
-		const item = new Model.Block.Content.Text.Mark();
-		item.setType(it.type);
-		item.setParam(it.param);
-		item.setRange(new Model.Range().setFrom(it.range.from).setTo(it.range.to));
-		return item;
-	});
+	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark);
 
 	const request = new Rpc.Block.Set.Text.Text.Request();
 	
@@ -259,12 +253,7 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 };
 
 const BlockSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
-	details = details.map((it: any) => {
-		const item = new Rpc.Block.Set.Details.Detail();
-		item.setKey(it.key);
-		item.setValue(Encode.encodeValue(it.value));
-		return item;
-	});
+	details = details.map(Mapper.To.Details);
 
 	const request = new Rpc.Block.Set.Details.Request();
 
@@ -289,7 +278,7 @@ const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, styl
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRange(new Model.Range().setFrom(range.from).setTo(range.to));
+	request.setRange(Mapper.To.Range(range));
 	request.setStyle(style);
 
 	dispatcher.request('blockSplit', request, callBack);
@@ -345,8 +334,8 @@ const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, cal
 	const request = new Rpc.Block.Copy.Request();
 	
 	request.setContextid(contextId);
-    request.setBlocksList(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-    request.setSelectedtextrange(new Model.Range().setFrom(range.from).setTo(range.to));
+    request.setBlocksList(blocks.map(Mapper.To.Block));
+    request.setSelectedtextrange(Mapper.To.Range(range));
 
 	dispatcher.request('blockCopy', request, callBack);
 };
@@ -357,8 +346,8 @@ const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, call
 	const request = new Rpc.Block.Cut.Request();
 	
 	request.setContextid(contextId);
-    request.setBlocksList(blocks.map((it: any) => { return blockStore.prepareBlockToProto(it); }));
-    request.setSelectedtextrange(new Model.Range().setFrom(range.from).setTo(range.to));
+    request.setBlocksList(blocks.map(Mapper.To.Block));
+    request.setSelectedtextrange(Mapper.To.Range(range));
 
 	dispatcher.request('blockCut', request, callBack);
 };
@@ -370,12 +359,12 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	
 	request.setContextid(contextId);
     request.setFocusedblockid(focusedId);
-    request.setSelectedtextrange(new Model.Range().setFrom(range.from).setTo(range.to));
+    request.setSelectedtextrange(Mapper.To.Range(range));
     request.setIspartofblock(isPartOfBlock);
     request.setSelectedblockidsList(blockIds);
     request.setTextslot(data.text);
     request.setHtmlslot(data.html);
-    request.setAnyslotList((data.anytype || []).map((it: any) => { return blockStore.prepareBlockToProto(it); }));
+    request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
 
 	dispatcher.request('blockPaste', request, callBack);
 };
@@ -474,12 +463,7 @@ const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mar
 };
 
 const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
-	fields = fields.map((it: any) => {
-		const item = new Rpc.BlockList.Set.Fields.Request.BlockField();
-		item.setBlockid(it.blockId);
-		item.setFields(Encode.encodeStruct(it.fields || {}));
-		return item;
-	});
+	fields = fields.map(Mapper.To.Fields);
 
 	const request = new Rpc.BlockList.Set.Fields.Request();
 
