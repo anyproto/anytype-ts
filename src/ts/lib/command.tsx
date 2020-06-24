@@ -113,7 +113,7 @@ const ExternalDropFiles = (contextId: string, targetId: string, position: I.Bloc
 	request.setContextid(contextId);
 	request.setDroptargetid(targetId);
 	request.setPosition(position);
-	request.setLocalfilepaths(paths);
+	request.setLocalfilepathsList(paths);
 
 	dispatcher.request('externalDropFiles', request, callBack);
 };

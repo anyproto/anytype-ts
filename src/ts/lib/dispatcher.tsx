@@ -209,12 +209,10 @@ class Dispatcher {
 					break;
 
 				case 'blockSetDetails':
-					let item = {
+					blockStore.detailsUpdate(rootId, {
 						id: data.getId(),
 						details: Decode.decodeStruct(data.getDetails()),
-					};
-
-					blockStore.detailsUpdate(rootId, item);
+					});
 					break;
 
 				case 'blockSetFields':
@@ -428,18 +426,18 @@ class Dispatcher {
 				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':
-					const type = Number(data.process.type) || 0;
-					const state = Number(data.process.state) || 0;
-					const status = translate('progress' + type);
+					const process = data.getProcess();
+					const state = process.getState();
+					const progress = process.getProgress();
 
 					switch (state) {
 						case I.ProgressState.Running:
 						case I.ProgressState.Done:
 							commonStore.progressSet({
-								id: String(data.process.id || ''),
-								status: status,
-								current: Number(data.process.progress.done),
-								total: Number(data.process.progress.total),
+								id: process.getId(),
+								status: translate('progress' + process.getType()),
+								current: progress.getDone(),
+								total: progress.getTotal(),
 								isUnlocked: true,
 								canCancel: true,
 							});
