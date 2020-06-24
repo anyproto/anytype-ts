@@ -500,7 +500,7 @@ class DataUtil {
 	};
 	
 	schemaField (v: string) {
-		const a = v.toString().split('/');
+		const a = String(v || '').split('/');
 		return a.length > 1 ? a[a.length - 1] : '';
 	};
 

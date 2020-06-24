@@ -1,13 +1,9 @@
-import { observable, action, computed, set, intercept, decorate } from 'mobx';
-import { I, M, Util, DataUtil, Decode, Encode, Mapper } from 'ts/lib';
+import { observable, action, computed, set, intercept } from 'mobx';
+import { I, M, Util, Decode } from 'ts/lib';
 
 const $ = require('jquery');
 const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
 const Constant = require('json/constant.json');
-const Schema = {
-	page: require('json/schema/page.json'),
-	relation: require('json/schema/relation.json'),
-};
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -395,71 +391,6 @@ class BlockStore {
 		return t;
 	};
 
-	prepareViewFromProto (schemaId: string, view: I.View) {
-		let schema = Schema[schemaId];
-		let relations = [];
-
-		for (let field of schema.default) {
-			if (field.isHidden) {
-				continue;
-			};
-
-			relations.push({
-				id: String(field.id || ''),
-				name: String(field.name || ''),
-				type: DataUtil.schemaField(field.type),
-				isReadOnly: Boolean(field.isReadonly),
-			});
-		};
-
-		view.filters = view.filters.map((filter: I.Filter) => {
-			return {
-				relationId: String(filter.relationId || ''),
-				operator: Number(filter.operator) || 0,
-				condition: Number(filter.condition) || 0,
-				value: filter.value ? Decode.decodeValue(filter.value) : '',
-			};
-		});
-
-		view.sorts = view.sorts.map((sort: I.Sort) => {
-			return {
-				relationId: String(sort.relationId || ''),
-				type: Number(sort.type) || 0,
-			};
-		});
-
-		let order = {};
-		for (let i = 0; i < view.relations.length; ++i) {
-			order[view.relations[i].id] = i;
-		};
-
-		view.relations = relations.map((relation: I.Relation) => {
-			let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
-			return {
-				...relation,
-				isVisible: Boolean(rel.isVisible),
-				order: order[relation.id],
-			};
-		});
-
-		view.relations.sort((c1: any, c2: any) => {
-			if (c1.order > c2.order) return 1;
-			if (c1.order < c2.order) return -1;
-			return 0;
-		});
-
-		return observable(new M.View(view));
-	};
-
-	prepareViewToProto (view: I.View) {
-		if (view.filters && view.filters.length) {
-			view.filters = view.filters.map((filter: I.Filter) => {
-				filter.value = Encode.encodeValue(filter.value || '');
-				return filter;
-			});
-		};
-		return view;
-	};
 };
 
 export let blockStore: BlockStore = new BlockStore();

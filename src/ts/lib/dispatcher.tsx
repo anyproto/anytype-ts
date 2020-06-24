@@ -382,8 +382,7 @@ class Dispatcher {
 						break;
 					};
 
-					const schemaId = DataUtil.schemaField(block.content.schemaURL);
-					data.view = blockStore.prepareViewFromProto(schemaId, data.view);
+					data.view = Mapper.From.View(DataUtil.schemaField(block.content.schemaURL), data.getView());
 
 					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
@@ -402,9 +401,9 @@ class Dispatcher {
 						break;
 					};
 
-					data.inserted = data.inserted || [];
-					data.updated = data.updated || [];
-					data.removed = data.removed || [];
+					data.inserted = data.getInsertedList() || [];
+					data.updated = data.getUpdatedList() || [];
+					data.removed = data.getRemovedList() || [];
 
 					let list = [];
 					for (let id of data.removed) {
@@ -417,9 +416,10 @@ class Dispatcher {
 						list.push(details);
 					};
 
-					block.content.viewId = data.viewId;
-					block.content.total = Number(data.total) || 0;
+					block.content.viewId = data.getViewid();
+					block.content.total = data.getTotal();
 					block.content.data = list;
+
 					blockStore.blockUpdate(rootId, block);
 					break;
 

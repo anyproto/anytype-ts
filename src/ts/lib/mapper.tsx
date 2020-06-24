@@ -1,9 +1,14 @@
-import { I, Decode, Util, Encode } from 'ts/lib';
+import { I, M, Decode, Util, Encode, DataUtil } from 'ts/lib';
+import { decorate, observable } from 'mobx';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
+const Schema = {
+	page: require('json/schema/page.json'),
+	relation: require('json/schema/relation.json'),
+};
 
 const Mapper = {
 
@@ -122,30 +127,108 @@ const Mapper = {
                 };
             };
     
-            /*
-                if (type == I.BlockType.Dataview) {
-                    const schemaId = DataUtil.schemaField(item.content.schemaURL);
+            if (type == I.BlockType.Dataview) {
+                const schemaURL = content.getSchemaurl();
+                const schemaId = DataUtil.schemaField(schemaURL);
     
-                    item.content.offset = 0;
-                    item.content.total = 0;
-                    item.content.data = item.content.data || [];
-                    item.content.views = item.content.views || [];
-                    item.content.views = item.content.views.map((view: I.View) => {
-                        return this.prepareViewFromProto(schemaId, view);
-                    });
-    
-                    decorate(item.content, {
-                        viewId: observable,
-                        views: observable,
-                        data: observable,
-                    });
+                item.content = {
+                    schemaURL: schemaURL,
+                    offset: 0,
+                    total: 0,
+                    data: [],
+                    views: (content.getViewsList() || []).map((view: I.View) => {
+                        return Mapper.From.View(schemaId, view);
+                    }),
                 };
-            */
+
+                decorate(item.content, {
+                    viewId: observable,
+                    views: observable,
+                    data: observable,
+                });
+            };
     
             return item;
         },
 
+        ViewRelation: (obj: any) => {
+            return {
+                id: obj.getId(),
+                isVisible: obj.getIsvisible(),
+            };
+        },
+
+        Filter: (obj: any) => {
+            return {
+                relationId: obj.getRelationid(),
+                operator: obj.getOperator(),
+                condition: obj.getCondition(),
+                value: Decode.decodeValue(obj.getValue()),
+            };
+        },
+
+        Sort: (obj: any) => {
+            return {
+                relationId: obj.getRelationid(),
+                type: obj.getType(),
+            };
+        },
+
+        View: (schemaId: string, obj: any) => {
+            console.log(schemaId);
+
+            let schema = Schema[schemaId];
+            let relations = [];
+    
+            for (let field of schema.default) {
+                if (field.isHidden) {
+                    continue;
+                };
+    
+                relations.push({
+                    id: String(field.id || ''),
+                    name: String(field.name || ''),
+                    type: DataUtil.schemaField(field.type),
+                    isReadOnly: Boolean(field.isReadonly),
+                });
+            };
+
+            let view: any = {
+                id: obj.getId(),
+                type: obj.getType(),
+                name: obj.getName(),
+            };
+    
+            view.relations = obj.getRelationsList().map(Mapper.From.ViewRelation);
+            view.filters = obj.getFiltersList().map(Mapper.From.Filter);
+            view.sorts = obj.getSortsList().map(Mapper.From.Sort);
+    
+            let order = {};
+            for (let i = 0; i < view.relations.length; ++i) {
+                order[view.relations[i].id] = i;
+            };
+    
+            view.relations = relations.map((relation: I.Relation) => {
+                let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
+                return {
+                    ...relation,
+                    isVisible: Boolean(rel.isVisible),
+                    order: order[relation.id],
+                };
+            });
+    
+            view.relations.sort((c1: any, c2: any) => {
+                if (c1.order > c2.order) return 1;
+                if (c1.order < c2.order) return -1;
+                return 0;
+            });
+    
+            return observable(new M.View(view));
+        },
+
     },
+
+    //------------------------------------------------------------
 
     To: {
 
@@ -235,7 +318,53 @@ const Mapper = {
             };
     
             return block;
-        }
+        },
+
+        ViewRelation: (obj: any) => {
+            const item = new Model.Block.Content.Dataview.Relation();
+            
+            item.setId(obj.id);
+            item.setIsvisible(obj.isVisible);
+
+            return item;
+        },
+
+        Filter: (obj: any) => {
+            const item = new Model.Block.Content.Dataview.Filter();
+            
+            item.setRelationid(obj.relationId);
+            item.setOperator(obj.operator);
+            item.setCondition(obj.condition);
+            item.setValue(Encode.encodeValue(obj.value || ''));
+
+            return item;
+        },
+
+        Sort: (obj: any) => {
+            const item = new Model.Block.Content.Dataview.Sort();
+            
+            item.setRelationid(obj.relationId);
+            item.setType(obj.type);
+
+            return item;
+        },
+
+        View: (view: I.View) => {
+            view = Util.objectCopy(new M.View(view));
+
+            console.log(view);
+
+            const item = new Model.Block.Content.Dataview.View();
+
+            item.setId(view.id);
+            item.setName(view.name);
+            item.setType(view.type);
+            item.setRelationsList(view.relations.map(Mapper.To.ViewRelation));
+            item.setFiltersList(view.filters.map(Mapper.To.Filter));
+            item.setSortsList(view.sorts.map(Mapper.To.Sort));
+
+            return item;
+        },
 
     }
 

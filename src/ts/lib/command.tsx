@@ -527,7 +527,7 @@ const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
-	request.setView(blockStore.prepareViewToProto(Util.objectCopy(new M.View(view))));
+	request.setView(Mapper.To.View(view));
 
 	dispatcher.request('blockSetDataviewView', request, callBack);
 };

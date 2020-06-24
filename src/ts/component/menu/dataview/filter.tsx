@@ -230,7 +230,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		
+
 		this.items = arrayMove(this.items, oldIndex, newIndex);
 		this.forceUpdate();
 		this.save();
