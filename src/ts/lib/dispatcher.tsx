@@ -225,7 +225,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.getFields()) {
+					if (undefined !== data.getFields()) {
 						block.fields = Decode.decodeStruct(data.getFields());
 					};
 
@@ -239,7 +239,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.getFields()) {
+					if (undefined !== data.getFields()) {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
@@ -293,8 +293,8 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.style) {
-						block.content.style = Number(data.style.value) || 0;
+					if (undefined !== data.getStyle()) {
+						block.content.style = data.getStyle().getValue();
 					};
 
 					blockStore.blockUpdate(rootId, block);
@@ -307,28 +307,28 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.name) {
-						block.content.name = String(data.name.value || '');
+					if (undefined !== data.getName()) {
+						block.content.name = data.getName().getValue();
 					};
 
-					if (null !== data.hash) {
-						block.content.hash = String(data.hash.value || '');
+					if (undefined !== data.getHash()) {
+						block.content.hash = data.getHash().getValue();
 					};
 
-					if (null !== data.mime) {
-						block.content.mime = String(data.mime.value || '');
+					if (undefined !== data.getMime()) {
+						block.content.mime = data.getMime().getValue();
 					};
 
-					if (null !== data.size) {
-						block.content.size = Number(data.size.value) || 0;
+					if (undefined !== data.getSize()) {
+						block.content.size = data.getSize().getValue();
 					};
 
-					if (null !== data.type) {
-						block.content.type = Number(data.type.value) || 0;
+					if (undefined !== data.getType()) {
+						block.content.type = data.getType().getValue();
 					};
 
-					if (null !== data.state) {
-						block.content.state = Number(data.state.value) || 0;
+					if (undefined !== data.getState()) {
+						block.content.state = data.getState().getValue();
 					};
 
 					blockStore.blockUpdate(rootId, block);
@@ -341,28 +341,28 @@ class Dispatcher {
 						break;
 					};
 
-					if (null !== data.url) {
-						block.content.url = String(data.url.value || '');
+					if (undefined !== data.getUrl()) {
+						block.content.url = data.getUrl().getValue();
 					};
 
-					if (null !== data.title) {
-						block.content.title = String(data.title.value || '');
+					if (undefined !== data.getTitle()) {
+						block.content.title = data.getTitle().getValue();
 					};
 
-					if (null !== data.description) {
-						block.content.description = String(data.description.value || '');
+					if (undefined !== data.getDescription()) {
+						block.content.description = data.getDescription().getValue();
 					};
 
-					if (null !== data.imageHash) {
-						block.content.imageHash = String(data.imageHash.value || '');
+					if (undefined !== data.getImagehash()) {
+						block.content.imageHash = data.getImagehash().getValue();
 					};
 
-					if (null !== data.faviconHash) {
-						block.content.faviconHash = String(data.faviconHash.value || '');
+					if (undefined !== data.getFaviconhash()) {
+						block.content.faviconHash = data.getFaviconhash().getValue();
 					};
 
-					if (null !== data.type) {
-						block.content.type = Number(data.type.value) || 0;
+					if (undefined !== data.getType()) {
+						block.content.type = data.getType().getValue();
 					};
 					break;
 
@@ -373,7 +373,7 @@ class Dispatcher {
 						break;
 					};
 
-					block.bgColor = String(data.backgroundColor || '');
+					block.bgColor = data.getBackgroundcolor();
 					blockStore.blockUpdate(rootId, block);
 					break;
 
@@ -384,7 +384,7 @@ class Dispatcher {
 						break;
 					};
 
-					block.align = Number(data.align) || 0;
+					block.align = data.getAlign();
 					blockStore.blockUpdate(rootId, block);
 					break;
 

@@ -396,6 +396,8 @@ class BlockStore {
 	};
 
 	prepareBlockFromProto (block: any): I.Block {
+		console.log(block, block.getContentCase(), this.blockType(block.getContentCase()));
+
 		let type = this.blockType(block.getContentCase());
 		let fn = 'get' + Util.ucFirst(type);
 		let content = block[fn] ? block[fn]() : {};
@@ -493,6 +495,8 @@ class BlockStore {
 			};
 		*/
 
+		console.log(item);
+
 		return item;
 	};
 
@@ -588,6 +592,33 @@ class BlockStore {
 			content.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
 
 			block.setText(content);
+		};
+
+		if (data.type == I.BlockType.File) {
+			content = new Model.Block.Content.File();
+
+			content.setHash(data.content.hash);
+			content.setName(data.content.name);
+			content.setType(data.content.type);
+			content.setMime(data.content.mime);
+			content.setSize(data.content.size);
+			content.setAddedat(data.content.addedAt);
+			content.setState(data.content.state);
+
+			block.setFile(content);
+		};
+
+		if (data.type == I.BlockType.Bookmark) {
+			content = new Model.Block.Content.Bookmark();
+
+			content.setUrl(data.content.url);
+			content.setTitle(data.content.title);
+			content.setDescription(data.content.description);
+			content.setImagehash(data.content.imageHash);
+			content.setFaviconhash(data.content.faviconHash);
+			content.setType(data.content.type);
+
+			block.setBookmark(content);
 		};
 
 		return block;
