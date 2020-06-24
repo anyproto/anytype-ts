@@ -15,7 +15,10 @@ module.exports = (env) => {
 		//devtool: 'source-map',
 
 		optimization: {
-			minimize: false
+			minimize: false,
+			removeAvailableModules: false,
+    		removeEmptyChunks: false,
+    		splitChunks: false,
 		},
 		
 		entry: './src/ts/entry.tsx',

@@ -216,7 +216,7 @@ const Mapper = {
                     order: order[relation.id],
                 };
             });
-    
+
             view.relations.sort((c1: any, c2: any) => {
                 if (c1.order > c2.order) return 1;
                 if (c1.order < c2.order) return -1;
