@@ -477,14 +477,11 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	getPage (page: any): I.PageInfo {
-		let details = Decode.decodeStruct(page.details || {});
-		details.name = String(details.name || Constant.default.name || '');
+		page.details.name = String(page.details.name || Constant.default.name || '');
 
 		return {
-			id: page.id,
-			snippet: page.snippet,
-			details: details,
-			text: [ details.name, page.snippet ].join(' '),
+			...page,
+			text: [ page.details.name, page.snippet ].join(' '),
 		};
 	};
 	

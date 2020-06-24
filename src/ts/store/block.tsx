@@ -1,5 +1,5 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
-import { I, M, Util, DataUtil, Decode, Encode } from 'ts/lib';
+import { I, M, Util, DataUtil, Decode, Encode, Mapper } from 'ts/lib';
 
 const $ = require('jquery');
 const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
@@ -393,111 +393,6 @@ class BlockStore {
 		if (v == V.DATAVIEW)	 t = I.BlockType.Dataview;
 
 		return t;
-	};
-
-	prepareBlockFromProto (block: any): I.Block {
-		console.log(block, block.getContentCase(), this.blockType(block.getContentCase()));
-
-		let type = this.blockType(block.getContentCase());
-		let fn = 'get' + Util.ucFirst(type);
-		let content = block[fn] ? block[fn]() : {};
-
-		let item: I.Block = {
-			id: block.getId(),
-			type: type,
-			childrenIds: block.getChildrenidsList() || [],
-			fields: Decode.decodeStruct(block.getFields()),
-			content: {} as any,
-			align: block.getAlign(),
-			bgColor: block.getBackgroundcolor(),
-		};
-
-		if (type == I.BlockType.Layout) {
-			item.content = {
-				style: content.getStyle(),
-			};
-		};
-
-		if (type == I.BlockType.Link) {
-			item.content = {
-				style: content.getStyle(),
-				targetBlockId: content.getTargetblockid(),
-				fields: Decode.decodeStruct(content.getFields()),
-			};
-		};
-
-		if (type == I.BlockType.Div) {
-			item.content = {
-				style: content.getStyle(),
-			};
-		};
-
-		if (type == I.BlockType.Bookmark) {
-			item.content = {
-				url: content.getUrl(),
-				title: content.getTitle(),
-				description: content.getDescription(),
-				imageHash: content.getImagehash(),
-				faviconHash: content.getFaviconhash(),
-				type: content.getType(),
-			};
-		};
-
-		if (type == I.BlockType.Text) {
-			item.content = {
-				text: content.getText(),
-				style: content.getStyle(),
-				checked: content.getChecked(),
-				color: content.getColor(),
-				marks: (content.getMarks().getMarksList() || []).map((mark: any) => {
-					const range = mark.getRange();
-					return {
-						type: mark.getType(),
-						param: mark.getParam(),
-						range: {
-							from: range.getFrom(),
-							to: range.getTo(),
-						},
-					};
-				}),
-			};
-		};
-
-		if (type == I.BlockType.File) {
-			item.content = {
-				hash: content.getHash(),
-				name: content.getName(),
-				type: content.getType(),
-				mime: content.getMime(),
-				size: content.getSize(),
-				addedAt: content.getAddedat(),
-				state: content.getState(),
-			};
-		};
-
-		/*
-			if (type == I.BlockType.Dataview) {
-				const schemaId = DataUtil.schemaField(item.content.schemaURL);
-
-				item.content.offset = 0;
-				item.content.total = 0;
-				item.content.data = item.content.data || [];
-				item.content.views = item.content.views || [];
-				item.content.views = item.content.views.map((view: I.View) => {
-					return this.prepareViewFromProto(schemaId, view);
-				});
-
-				decorate(item.content, {
-					viewId: observable,
-					views: observable,
-					data: observable,
-				});
-			};
-		*/
-
-		console.log(item);
-
-		return item;
 	};
 
 	prepareViewFromProto (schemaId: string, view: I.View) {

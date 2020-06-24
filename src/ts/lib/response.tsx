@@ -1,3 +1,5 @@
+import { Decode, Mapper } from 'ts/lib';
+
 const VersionGet = (response: any) => {
 	return {};
 };
@@ -49,7 +51,7 @@ const WalletRecover = (response: any) => {
 
 const AccountCreate = (response: any) => {
 	return {
-		account: response.getAccount(),
+		account: Mapper.From.Account(response.getAccount()),
 	};
 };
 
@@ -59,7 +61,7 @@ const AccountRecover = (response: any) => {
 
 const AccountSelect = (response: any) => {
 	return {
-		account: response.getAccount(),
+		account: Mapper.From.Account(response.getAccount()),
 	};
 };
 
@@ -73,13 +75,22 @@ const ExternalDropFiles = (response: any) => {
 
 const NavigationListPages = (response: any) => {
 	return {
-		pages: response.getPagesList(),
+		pages: (response.getPagesList() || []).map(Mapper.From.PageInfo),
 	};
 };
 
 const NavigationGetPageInfoWithLinks = (response: any) => {
+	const page = response.getPage();
+	const links = page.getLinks();
 	return {
-		page: response.getPage(),
+		page: {
+			id: page.getId(),
+			info: Mapper.From.PageInfo(page.getInfo()),
+			links: {
+				inbound: (links.getInboundList() || []).map(Mapper.From.PageInfo),
+				outbound: (links.getOutboundList() || []).map(Mapper.From.PageInfo),
+			},
+		},
 	};
 };
 

@@ -1,6 +1,6 @@
 import { authStore, commonStore, blockStore } from 'ts/store';
 import { set } from 'mobx';
-import { Util, DataUtil, I, M, Decode, Storage, translate, analytics, Response } from 'ts/lib';
+import { Util, DataUtil, I, M, Decode, Storage, translate, analytics, Response, Mapper } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
@@ -140,7 +140,7 @@ class Dispatcher {
 			switch (type) {
 
 				case 'accountShow':
-					authStore.accountAdd(data.getAccount());
+					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
 					break;
 
 				case 'blockShow':
@@ -148,7 +148,7 @@ class Dispatcher {
 					let details = data.getDetailsList() || [];
 
 					blocks = blocks.map((it: any) => {
-						it = blockStore.prepareBlockFromProto(it);
+						it = Mapper.From.Block(it);
 						if (it.id == rootId) {
 							it.type = I.BlockType.Page;
 							it.pageType = data.getType();
@@ -179,9 +179,8 @@ class Dispatcher {
 				case 'blockAdd':
 					blocks = data.getBlocksList() || [];
 					for (let block of blocks) {
-						block = blockStore.prepareBlockFromProto(block);
+						block = Mapper.From.Block(block);
 						block.parentId = String(globalParentIds[block.id] || '');
-
 						blockStore.blockAdd(rootId, block);
 					};
 					break;
@@ -258,17 +257,7 @@ class Dispatcher {
 					};
 
 					if (undefined !== data.getMarks()) {
-						block.content.marks = (data.getMarks().getValue().getMarksList() || []).map((mark: any) => {
-							const range = mark.getRange();
-							return {
-								type: mark.getType(),
-								param: mark.getParam(),
-								range: {
-									from: range.getFrom(),
-									to: range.getTo(),
-								},
-							};
-						});
+						block.content.marks = (data.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark);
 					};
 
 					if (undefined !== data.getStyle()) {

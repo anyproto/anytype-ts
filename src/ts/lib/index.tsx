@@ -16,6 +16,7 @@ import * as M from 'ts/model';
 import * as C from './command';
 import * as Response from './response';
 import * as Docs from 'ts/docs';
+import Mapper from './mapper';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
@@ -53,4 +54,5 @@ export {
 	scrollOnMove,
 	Encode,
 	Decode,
+	Mapper,
 };

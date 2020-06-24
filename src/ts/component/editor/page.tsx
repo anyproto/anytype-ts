@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage } from 'ts/lib';
+import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -1061,7 +1061,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const cb = (message: any) => {
-			const blocks = (message.anySlot || []).map((it: any) => { return blockStore.prepareBlockFromProto(it); });
+			const blocks = (message.anySlot || []).map(Mapper.From.Block);
 
 			Util.clipboardCopy({
 				text: message.textSlot,
