@@ -713,7 +713,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setMarks (marks: I.Mark[]) {
 		const { rootId, block } = this.props;
-		const { id, content } = block;
+		const { content } = block;
 		const text = String(content.text || '');
 		
 		if (content.style == I.TextStyle.Code) {
@@ -739,8 +739,11 @@ class BlockText extends React.Component<Props, {}> {
 	
 		this.placeHolderHide();
 		keyboard.setFocus(false);
-		
 		onBlur(e);
+
+		window.setTimeout(() => {
+			this.setText(this.marks, true);
+		}, 15);
 	};
 	
 	onPaste (e: any) {
