@@ -155,6 +155,8 @@
 			"dist/index.html",
 			"dist/run.js",
 			"dist/lib",
+			"dist/server",
+			"dist/server.exe",
 			"build"
 		],
 		"extraResources": [],

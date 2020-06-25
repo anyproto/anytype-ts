@@ -33,10 +33,10 @@ let waitLibraryPromise;
 		bindings.sendCommand(method.name, buffer, handler);
 	};
 /// #else
-	const server = require('./server/server');
-	const {fixPathForAsarUnpack} = require('electron-util');
+	const server = require('./electron/server');
+	const { fixPathForAsarUnpack } = require('electron-util');
 
-	let binPath = path.join(__dirname, 'dist', `lib-server${is.windows ? '.exe' : ''}`);
+	let binPath = path.join(__dirname, 'dist', `server${is.windows ? '.exe' : ''}`);
 	binPath = fixPathForAsarUnpack(binPath);
 	waitLibraryPromise = server.start(binPath, userPath);
 /// #endif
