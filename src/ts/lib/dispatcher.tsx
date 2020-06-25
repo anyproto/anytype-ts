@@ -9,9 +9,6 @@ const Events = require('lib/pb/protos/events_pb');
 const Constant = require('json/constant.json');
 const path = require('path');
 
-console.log(process.resourcesPath);
-console.log(__dirname);
-
 /// #if USE_ADDON
 const { app } = window.require('electron').remote;
 const bindings = require('bindings')({
@@ -31,13 +28,11 @@ class Dispatcher {
 		/// #if USE_ADDON
 			const handler = (item: any) => {
 				try {
-					this.event(Service.Event.decode(item.data));
+					this.event(Events.Event.deserializeBinary(item.data.buffer), false);
 				} catch (e) {
 					console.error(e);
 				};
 			};
-
-			console.log(this.service.client_.rpcCall);
 
 			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
@@ -576,30 +571,23 @@ class Dispatcher {
 	};
 
 	/// #if USE_ADDON
-		napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) {
+		napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (err: any, res: any) => void) {
 			const a = method.split('/');
 			method = a[a.length - 1];
 
-			console.log(method);
-			console.log(inputObj);
-			console.log(outputObj);
-			console.log(request);
-			console.log(inputObj.serializeBinary());
-
 			const buffer = inputObj.serializeBinary();
 			const handler = (item: any) => {
-				let message = null;
 				try {
-					message = outputObj.decode(item.data);
+					let message = request.b(item.data.buffer);
 					if (message) {
-						callBack(message);
+						callBack(null, message);
 					};
 				} catch (err) {
 					console.error(err);
 				};
 			};
 
-			bindings.sendCommand(method.name, buffer, handler);
+			bindings.sendCommand(method, buffer, handler);
 		};
 	/// #endif
 
