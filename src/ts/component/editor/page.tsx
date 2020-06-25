@@ -1219,13 +1219,13 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		const length = focused.getLength();
+		const nl = next.getLength();
 		const cb = (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 			
 			if (next) {
-				let nl = next.getLength();
 				this.focus(next.id, nl, nl);
 			};
 		};
@@ -1246,7 +1246,7 @@ class EditorPage extends React.Component<Props, State> {
 					return it.isFocusable();
 				});
 				if (next) {
-					let nl = next.getLength();
+					const nl = next.getLength();
 					this.focus(next.id, nl, nl);
 				};
 			});
