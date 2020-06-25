@@ -6,4 +6,5 @@ export interface PopupParam {
 export interface Popup {
 	id: string;
 	param: PopupParam;
+	position? (): void;
 };

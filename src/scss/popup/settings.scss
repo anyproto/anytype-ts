@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .popups {
-	.popupSettings { width: 672px; }
 	.popupSettings {
+		.inner { width: 672px; }
 		.content { height: 100%; }
 	
 		.icon { transition: none; }

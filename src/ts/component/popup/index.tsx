@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
-
-const $ = require('jquery');
-const raf = require('raf');
+import { Dimmer } from 'ts/component';
+import { commonStore } from 'ts/store';
 
 import PopupSettings from './settings';
 import PopupArchive from './archive';
@@ -18,12 +17,18 @@ interface Props extends I.Popup {
 	history: any;
 };
 
+const $ = require('jquery');
+const raf = require('raf');
+
 class Popup extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
 	constructor (props: any) {
 		super(props);
+
+		this.onClose = this.onClose.bind(this);
+		this.position = this.position.bind(this);
 	};
 
 	render () {
@@ -47,23 +52,26 @@ class Popup extends React.Component<Props, {}> {
 		if (!Component) {
 			return <div>Component {id} not found</div>
 		};
-		
+
 		return (
 			<div id={popupId} className={cn.join(' ')}>
-				<div className="content">
-					<Component {...this.props} />
+				<div id="inner" className="inner">
+					<div className="content">
+						<Component {...this.props} position={this.position} />
+					</div>
 				</div>
+				<Dimmer onClick={this.onClose} />
 			</div>
 		);
 	};
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.resize();
+		this.position();
 		this.unbind();
 		this.animate();
 		
-		$(window).on('resize.popup', () => { this.resize(); });
+		$(window).on('resize.popup', () => { this.position(); });
 	};
 	
 	componentWillUnmount () {
@@ -87,18 +95,24 @@ class Popup extends React.Component<Props, {}> {
 		});
 	};
 	
-	resize () {
+	position () {
 		raf(() => {
 			if (!this._isMounted) {
 				return;
 			};
 					
 			const node = $(ReactDOM.findDOMNode(this));
-			node.css({ 
-				marginTop: -node.outerHeight() / 2,
-				marginLeft: -node.outerWidth() / 2
+			const inner = node.find('.inner');
+
+			inner.css({ 
+				marginTop: -inner.outerHeight() / 2,
+				marginLeft: -inner.outerWidth() / 2
 			});			
 		});
+	};
+
+	onClose () {
+		commonStore.popupClose(this.props.id);
 	};
 	
 };

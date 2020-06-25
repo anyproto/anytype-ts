@@ -1,8 +1,9 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupFeedback { width: 672px; }
 	.popup.popupFeedback {
+		.inner { width: 672px; }
+
 		.wrapper { padding: 48px; }
 	
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; margin-bottom: 16px; }

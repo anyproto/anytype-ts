@@ -29,7 +29,7 @@ class PopupPreview extends React.Component<Props, {}> {
 		return (
 			<div>
 				<Loader />
-				<div id="inner" className="inner">
+				<div id="wrap" className="wrap">
 					{content}
 				</div>
 			</div>
@@ -37,11 +37,11 @@ class PopupPreview extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.resize();
+		this.props.position();
 	};
 	
 	componentDidUpdate () {
-		this.resize();
+		this.props.position();
 	};
 	
 	resize () {
@@ -51,7 +51,7 @@ class PopupPreview extends React.Component<Props, {}> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const inner = node.find('#inner');
+		const inner = node.find('#wrap');
 		const content = node.find('#content');
 		const loader = node.find('.loaderWrapper');
 		
@@ -77,17 +77,12 @@ class PopupPreview extends React.Component<Props, {}> {
 					content.css({ width: width });
 					inner.css({ height: height });
 					
-					this.position();
+					this.props.position();
 				});
 				break;
 		};
 		
-		this.position();
-	};
-	
-	position () {
-		const node = $('#popupPreview');
-		node.css({ marginLeft: -node.outerWidth() / 2, marginTop: -node.outerHeight() / 2 });
+		this.props.position();
 	};
 	
 };

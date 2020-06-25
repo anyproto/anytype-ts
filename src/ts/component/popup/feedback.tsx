@@ -5,9 +5,8 @@ import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
-};
+interface Props extends I.Popup, RouteComponentProps<any> {};
+
 interface State {
 	error: string;
 	checked: boolean;
@@ -82,7 +81,7 @@ class PopupFeedback extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		this.resize();
+		this.props.position();
 	};
 	
 	onCheck (e: any) {
@@ -145,15 +144,9 @@ class PopupFeedback extends React.Component<Props, State> {
 					err = JSON.parse(xhr.responseText || '{}s');
 				} catch (e) {};
 				
-				console.log(err);
 				this.setState({ loading: false, error: 'Feedback upload failed' });
 			}
 		});
-	};
-	
-	resize () {
-		const obj = $('#popupFeedback');
-		obj.css({ marginTop: -obj.height() / 2 });
 	};
 	
 };
