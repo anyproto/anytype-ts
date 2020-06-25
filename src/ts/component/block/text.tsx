@@ -742,7 +742,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		window.setTimeout(() => {
 			this.setText(this.marks, true);
-		}, 15);
+		}, 500);
 	};
 	
 	onPaste (e: any) {
