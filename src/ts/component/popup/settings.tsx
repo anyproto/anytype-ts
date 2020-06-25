@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Title, Label, Cover, Textarea, Input, Loader, Smile } from 'ts/component';
 import { I, C, Storage, Key, Util, DataUtil } from 'ts/lib';
 import { authStore, blockStore, commonStore } from 'ts/store';
@@ -11,9 +12,7 @@ const raf = require('raf');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
 
-interface Props extends I.Popup {
-	history: any;
-};
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	page: string;
@@ -482,21 +481,14 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 
 	init () {
-		this.resize();
-		$(window).unbind('resize.settings').on('resize.settings', () => { this.resize(); });
+		this.props.position();
+		$(window).unbind('resize.settings').on('resize.settings', () => { this.props.position(); });
 
 		window.setTimeout(() => {
 			if (this.refObj[1]) {
 				this.refObj[1].focus();
 			};
 		}, 15);
-	};
-
-	resize () {
-		const obj = $('#popupSettings');
-		raf(() => {
-			obj.css({ marginTop: -obj.outerHeight() / 2 });
-		});
 	};
 
 };

@@ -159,14 +159,9 @@ class CommonStore {
 		};
 		
 		const el = $('#' + Util.toCamelCase('popup-' + id));
-		const dimmer = $('#dimmer');
 		
 		if (el.length) {
 			el.css({ transform: '' }).removeClass('show');
-		};
-		
-		if (dimmer.length && (this.popupList.length == 1)) {
-			dimmer.removeClass('show');
 		};
 		
 		window.setTimeout(() => {
