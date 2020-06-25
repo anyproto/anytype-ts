@@ -1330,13 +1330,13 @@ class EditorPage extends React.Component<Props, State> {
 			if (!last.isText()) {
 				create = true;
 			} else {
-				length = String(last.content.text || '').length;
+				length = last.getLength();
 				if (length) {
 					create = true;
 				};
 			};
 		};
-		
+
 		if (create) {
 			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
