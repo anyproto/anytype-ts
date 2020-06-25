@@ -11,15 +11,16 @@ const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 const Commands = require('./dist/lib/pb/protos/commands_pb');
 
 const SERVER = 'http://localhost:31008';
+const service = new Service.ClientCommandsClient(SERVER, null, null);
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
+let useGRPC = true;
 
-const service = new Service.ClientCommandsClient(SERVER, null, null);
-let useGRPC;
 if (process.env.ANYTYPE_USE_ADDON === "1") {
 	useGRPC = false;
-} else if (process.env.ANYTYPE_USE_GRPC === "1") {
+} else 
+if (process.env.ANYTYPE_USE_GRPC === "1") {
 	useGRPC = true;
 } else if (process.platform === "win32" || is.development) {
 	// use grpc on windows by default, because addon is not supported
@@ -27,20 +28,27 @@ if (process.env.ANYTYPE_USE_ADDON === "1") {
 	useGRPC = true;
 } else {
 	useGRPC = false;
-}
+};
 
 if (useGRPC) {
-	console.log("connect via gRPC");
+	console.log('Connect via gRPC');
+
 	const server = require( './electron/server' );
-	const {fixPathForAsarUnpack} = require( 'electron-util' );
+	const { fixPathForAsarUnpack } = require('electron-util');
 	
 	let binPath = path.join( __dirname, 'dist', `server${is.windows ? '.exe' : ''}` );
-	binPath = fixPathForAsarUnpack( binPath );
-	waitLibraryPromise = server.start( binPath, userPath );
+	binPath = fixPathForAsarUnpack(binPath);
+	waitLibraryPromise = server.start(binPath, userPath);
 } else {
-	console.log("connect via native addon");
+	console.log('Connect via native addon');
+
 	waitLibraryPromise = Promise.resolve();
-	const bindings = require( 'bindings' )( 'addon' );
+	
+	const bindings = require('bindings')({
+		bindings: 'addon.node', 
+		module_root: path.join(__dirname, 'build'),
+	});
+	
 	let napiCall = function (method, inputObj, outputObj, request, callBack){
 		const buffer = inputObj.encode( request ).finish();
 		const handler = function (item){
@@ -49,19 +57,16 @@ if (useGRPC) {
 				message = outputObj.decode( item.data );
 				if (message) {
 					callBack( message );
-				}
-				;
+				};
 			} catch (err) {
 				console.error( err );
-			}
-			;
+			};
 		};
-		bindings.sendCommand( method.name, buffer, handler );
+		bindings.sendCommand(method.name, buffer, handler);
 	};
 	
 	service.client_.rpcCall = napiCall;
-	
-}
+};
 
 let config = {};
 let win = null;

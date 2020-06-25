@@ -6,10 +6,18 @@ import * as Sentry from '@sentry/browser';
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
-const Constant = require('json/constant.json')
+const Constant = require('json/constant.json');
+const path = require('path');
+
+console.log(process.resourcesPath);
+console.log(__dirname);
 
 /// #if USE_ADDON
-const bindings = require('bindings')('addon');
+const { app } = window.require('electron').remote;
+const bindings = require('bindings')({
+	bindings: 'addon.node', 
+	module_root: path.join(app.getAppPath(), 'build'),
+});
 /// #endif
 
 class Dispatcher {
@@ -28,6 +36,9 @@ class Dispatcher {
 					console.error(e);
 				};
 			};
+
+			console.log(this.service.client_.rpcCall);
+
 			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
@@ -566,7 +577,16 @@ class Dispatcher {
 
 	/// #if USE_ADDON
 		napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) {
-			const buffer = inputObj.encode(request).finish();
+			const a = method.split('/');
+			method = a[a.length - 1];
+
+			console.log(method);
+			console.log(inputObj);
+			console.log(outputObj);
+			console.log(request);
+			console.log(inputObj.serializeBinary());
+
+			const buffer = inputObj.serializeBinary();
 			const handler = (item: any) => {
 				let message = null;
 				try {

@@ -8,15 +8,17 @@ module.exports = (env) => {
 	let useGRPC;
 	if (process.env.ANYTYPE_USE_ADDON === "1") {
 		useGRPC = false;
-	} else if (process.env.ANYTYPE_USE_GRPC === "1") {
+	} else 
+	if (process.env.ANYTYPE_USE_GRPC === "1") {
 		useGRPC = true;
-	} else if (process.platform === "win32" || env.NODE_ENV === "development") {
+	} else 
+	if (process.platform === "win32" || env.NODE_ENV === "development") {
 		// use grpc on windows by default, because addon is not supported
 		// also use grpc on development environment by default
 		useGRPC = true;
 	} else {
 		useGRPC = false;
-	}
+	};
 	
 	const ifdef_opts = {
 		USE_GRPC: useGRPC,
