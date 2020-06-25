@@ -712,14 +712,13 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setMarks (marks: I.Mark[]) {
 		const { rootId, block } = this.props;
-		const { content } = block;
-		const text = String(content.text || '');
+		const value = this.getValue();
 		
-		if (content.style == I.TextStyle.Code) {
+		if (block.isCode()) {
 			marks = [];
 		};
 		
-		DataUtil.blockSetText(rootId, block, text, marks, true);
+		DataUtil.blockSetText(rootId, block, value, marks, true);
 	};
 	
 	onFocus (e: any) {
