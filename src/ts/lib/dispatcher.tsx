@@ -8,7 +8,7 @@ const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const Constant = require('json/constant.json')
 
-/// #if USE_NATIVE_ADDON
+/// #if USE_ADDON
 const bindings = require('bindings')('addon');
 /// #endif
 
@@ -18,9 +18,9 @@ class Dispatcher {
 	stream: any = null;
 
 	constructor () {
-		this.service = new Service.ClientCommandsClient('http://localhost:31008', null, null);
+		this.service = new Service.ClientCommandsClient(Constant.server, null, null);
 
-		/// #if USE_NATIVE_ADDON
+		/// #if USE_ADDON
 			const handler = (item: any) => {
 				try {
 					this.event(Service.Event.decode(item.data));
@@ -28,11 +28,9 @@ class Dispatcher {
 					console.error(e);
 				};
 			};
-
-			Service.anytype.ClientCommands.prototype.rpcCall = this.napiCall;
+			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			this.service = new Service.ClientCommandsClient(Constant.server, null, null);
 			this.stream = this.service.listenEvents(new Commands.Empty(), null);
 
 			this.stream.on('data', (event: any) => {
@@ -46,6 +44,7 @@ class Dispatcher {
 			this.stream.on('end', (end: any) => {
 				console.log('[Stream] end', end);
 			});
+
 		/// #endif
 	};
 
@@ -99,7 +98,7 @@ class Dispatcher {
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
 			let childrenIds: string[] = [];
-			
+
 			switch (type) {
 				case 'blockSetChildrenIds':
 					id = data.getId();
@@ -163,11 +162,11 @@ class Dispatcher {
 
 					if (block.hasTitle()) {
 						block.childrenIds.unshift(rootId + '-title');
-						blocks.unshift(new M.Block({ 
-							id: rootId + '-title', 
-							type: I.BlockType.Title, 
-							childrenIds: [], 
-							fields: {}, 
+						blocks.unshift(new M.Block({
+							id: rootId + '-title',
+							type: I.BlockType.Title,
+							childrenIds: [],
+							fields: {},
 							content: {},
 						}));
 					};
@@ -198,7 +197,7 @@ class Dispatcher {
 					if (!block) {
 						break;
 					};
-					
+
 					childrenIds = data.getChildrenidsList() || [];
 
 					if (block.hasTitle() && (childrenIds.indexOf(rootId + '-title') < 0)) {
@@ -565,7 +564,7 @@ class Dispatcher {
 		};
 	};
 
-	/// #if USE_NATIVE_ADDON
+	/// #if USE_ADDON
 		napiCall (method: any, inputObj: any, outputObj: any, request: any, callBack?: (message: any) => void) {
 			const buffer = inputObj.encode(request).finish();
 			const handler = (item: any) => {

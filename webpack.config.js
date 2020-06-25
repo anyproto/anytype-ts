@@ -1,14 +1,30 @@
 const webpack = require('webpack');
 const path = require('path');
+const proccess = require('process');
+
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-const ifdef_opts = {
-	USE_NATIVE_ADDON: false,
-	version: 3,
-	'ifdef-verbose': true,
-};
-
 module.exports = (env) => {
+	let useGRPC;
+	if (process.env.ANYTYPE_USE_ADDON === "1") {
+		useGRPC = false;
+	} else if (process.env.ANYTYPE_USE_GRPC === "1") {
+		useGRPC = true;
+	} else if (process.platform === "win32" || env.NODE_ENV === "development") {
+		// use grpc on windows by default, because addon is not supported
+		// also use grpc on development environment by default
+		useGRPC = true;
+	} else {
+		useGRPC = false;
+	}
+	
+	const ifdef_opts = {
+		USE_GRPC: useGRPC,
+		USE_ADDON: !useGRPC,
+		version: 3,
+		'ifdef-verbose': true,
+	};
+	
 	return {
 		mode: env.NODE_ENV,
 	

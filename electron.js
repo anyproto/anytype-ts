@@ -14,36 +14,55 @@ const SERVER = 'http://localhost:31008';
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
-/// #if USE_NATIVE_ADDON
-	const bindings = require('bindings')('addon');
-
-	Service.ClientCommandsClient.prototype.rpcCall = napiCall;
-	function napiCall (method, inputObj, outputObj, request, callBack) {
-		const buffer = inputObj.encode(request).finish();
-		const handler = function (item) {
-			let message = null;
-			try {
-				message = outputObj.decode(item.data);
-				if (message) {
-					callBack(message);
-				};
-			} catch (err) {
-				console.error(err);
-			};
-		};
-		waitLibraryPromise = Promise.resolve();
-		bindings.sendCommand(method.name, buffer, handler);
-	};
-/// #else
-	const server = require('./electron/server');
-	const { fixPathForAsarUnpack } = require('electron-util');
-
-	let binPath = path.join(__dirname, 'dist', `server${is.windows ? '.exe' : ''}`);
-	binPath = fixPathForAsarUnpack(binPath);
-	waitLibraryPromise = server.start(binPath, userPath);
-/// #endif
 
 const service = new Service.ClientCommandsClient(SERVER, null, null);
+let useGRPC;
+if (process.env.ANYTYPE_USE_ADDON === "1") {
+	useGRPC = false;
+} else if (process.env.ANYTYPE_USE_GRPC === "1") {
+	useGRPC = true;
+} else if (process.platform === "win32" || is.development) {
+	// use grpc on windows by default, because addon is not supported
+	// also use grpc on development environment by default
+	useGRPC = true;
+} else {
+	useGRPC = false;
+}
+
+if (useGRPC) {
+	console.log("connect via gRPC");
+	const server = require( './electron/server' );
+	const {fixPathForAsarUnpack} = require( 'electron-util' );
+	
+	let binPath = path.join( __dirname, 'dist', `server${is.windows ? '.exe' : ''}` );
+	binPath = fixPathForAsarUnpack( binPath );
+	waitLibraryPromise = server.start( binPath, userPath );
+} else {
+	console.log("connect via native addon");
+	waitLibraryPromise = Promise.resolve();
+	const bindings = require( 'bindings' )( 'addon' );
+	let napiCall = function (method, inputObj, outputObj, request, callBack){
+		const buffer = inputObj.encode( request ).finish();
+		const handler = function (item){
+			let message = null;
+			try {
+				message = outputObj.decode( item.data );
+				if (message) {
+					callBack( message );
+				}
+				;
+			} catch (err) {
+				console.error( err );
+			}
+			;
+		};
+		bindings.sendCommand( method.name, buffer, handler );
+	};
+	
+	service.client_.rpcCall = napiCall;
+	
+}
+
 let config = {};
 let win = null;
 let csp = [
