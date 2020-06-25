@@ -10,6 +10,8 @@ const storage = require('electron-json-storage');
 const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 const Commands = require('./dist/lib/pb/protos/commands_pb');
 
+const SERVER = 'http://localhost:31008';
+
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
 /// #if USE_NATIVE_ADDON
@@ -41,7 +43,7 @@ let waitLibraryPromise;
 	waitLibraryPromise = server.start(binPath, userPath);
 /// #endif
 
-const service = new Service.ClientCommandsClient('http://localhost:31008', null, null);
+const service = new Service.ClientCommandsClient(SERVER, null, null);
 let config = {};
 let win = null;
 let csp = [
