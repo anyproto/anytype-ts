@@ -195,6 +195,19 @@ class Mark {
 		};
 		return null;
 	};
+
+	adjust (marks: I.Mark[], from: number, length: number) {
+		for (let mark of marks) {
+			if ((mark.range.from <= from) && (mark.range.to > from)) {
+				mark.range.to += length;
+			} else
+			if (mark.range.from >= from) {
+				mark.range.from += length;
+				mark.range.to += length;
+			};
+		};
+		return marks;
+	};
 	
 	toHtml (text: string, marks: I.Mark[]) {
 		const hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Smile ];
