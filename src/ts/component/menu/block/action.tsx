@@ -483,7 +483,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		const { content } = block;
-		commonStore.menuClose(this.props.id);
 
 		switch (item.id) {
 			case 'download':
@@ -566,6 +565,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			
 				break;
 		};
+
+		commonStore.menuClose(this.props.id);
 	};
 
 	moveToPage () {
