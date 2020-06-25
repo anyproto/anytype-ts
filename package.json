@@ -161,6 +161,7 @@
 		"files": [
 			"electron.js",
 			"build",
+			"server/server.js",
 			"!dist/*",
 			"dist/index.html",
 			"dist/main.js",
@@ -171,6 +172,7 @@
 			"!node_modules/**/*",
 			"node_modules/electron-util",
 			"node_modules/new-github-issue-url",
+			"node_modules/child_process",
 			"node_modules/electron-is-dev",
 			"node_modules/electron-dl",
 			"node_modules/electron-updater",

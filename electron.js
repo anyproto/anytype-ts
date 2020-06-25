@@ -7,12 +7,15 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const storage = require('electron-json-storage');
-const com = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
+const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
+const Commands = require('./dist/lib/pb/protos/commands_pb');
 
+let userPath = app.getPath('userData');
+let waitLibraryPromise;
 /// #if USE_NATIVE_ADDON
 	const bindings = require('bindings')('addon');
 
-	com.ClientCommandsClient.prototype.rpcCall = napiCall;
+	Service.ClientCommandsClient.prototype.rpcCall = napiCall;
 	function napiCall (method, inputObj, outputObj, request, callBack) {
 		const buffer = inputObj.encode(request).finish();
 		const handler = function (item) {
@@ -26,14 +29,19 @@ const com = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 				console.error(err);
 			};
 		};
-	
+		waitLibraryPromise = Promise.resolve();
 		bindings.sendCommand(method.name, buffer, handler);
 	};
+/// #else
+	const server = require('./server/server');
+	const {fixPathForAsarUnpack} = require('electron-util');
+
+	let binPath = path.join(__dirname, 'dist', `lib-server${is.windows ? '.exe' : ''}`);
+	binPath = fixPathForAsarUnpack(binPath);
+	waitLibraryPromise = server.start(binPath, userPath);
 /// #endif
 
-const service = new com.ClientCommandsClient('http://localhost:31008', null, null);
-
-let userPath = app.getPath('userData');
+const service = new Service.ClientCommandsClient('http://localhost:31008', null, null);
 let config = {};
 let win = null;
 let csp = [
@@ -54,6 +62,15 @@ if (!app.isPackaged) {
 	dataPath.push('dev');
 };
 dataPath.push('data');
+
+function waitForLibraryAndCreateWindows () {
+	waitLibraryPromise.then(function(result) {
+		createWindow();
+	}, function(err) {
+		console.log(err);
+		electron.dialog.showErrorBox( 'Error: failed to run server', err.toString() );
+	});
+};
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -349,7 +366,7 @@ function setStatus (text) {
 	win.webContents.send('message', text);
 };
 
-app.on('ready', createWindow);
+app.on('ready', waitForLibraryAndCreateWindows);
 
 app.on('window-all-closed', () => {
 	console.log('window-all-closed');
@@ -360,8 +377,9 @@ app.on('before-quit', (e) => {
 	e.preventDefault();
 	console.log('before-quit');
 	
-	service.shutdown({}, function (message) {
+	service.shutdown(new Commands.Empty(), function (message) {
 		console.log('Shutdown complete, exiting');
 		app.exit();
 	});
 });
+
