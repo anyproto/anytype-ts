@@ -1,9 +1,8 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupPreview {  }
 	.popup.popupPreview {
-		.inner { padding: 10px; min-width: 50px; min-height: 50px; margin: -25px 0px 0px -25px; }
+		.innerWrap { padding: 10px; min-width: 50px; min-height: 50px; margin: -25px 0px 0px -25px; }
 		.wrap { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; }
 		.content { border-radius: 4px; display: block; }
 	}

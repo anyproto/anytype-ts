@@ -55,7 +55,7 @@ class Popup extends React.Component<Props, {}> {
 
 		return (
 			<div id={popupId} className={cn.join(' ')}>
-				<div id="inner" className="inner">
+				<div id="innerWrap" className="innerWrap">
 					<div className="content">
 						<Component {...this.props} position={this.position} />
 					</div>
@@ -102,7 +102,7 @@ class Popup extends React.Component<Props, {}> {
 			};
 					
 			const node = $(ReactDOM.findDOMNode(this));
-			const inner = node.find('.inner');
+			const inner = node.find('#innerWrap');
 
 			inner.css({ 
 				marginTop: -inner.outerHeight() / 2,

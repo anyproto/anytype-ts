@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupNew {
-		.inner { width: 864px; padding: 80px 0px 0px 0px; }
+		.innerWrap { width: 864px; padding: 80px 0px 0px 0px; }
 
 		.head { display: flex; position: absolute; top: 0px; left: 0px; width: 100%; padding: 10px 20px; color: $colorDarkGrey; }
 		.head {
