@@ -494,8 +494,8 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 };
 
 const BlockListSetPageIsArchived = (contextId: string, blockIds: string[], isArchived: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.PageIsArchived.Request();
-	
+	const request = new Rpc.BlockList.Set.Page.IsArchived.Request();
+
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
     request.setIsarchived(isArchived);

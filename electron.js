@@ -35,7 +35,7 @@ if (useGRPC) {
 
 	const server = require('./electron/server.js');
 	
-	let binPath = path.join( __dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}` );
+	let binPath = path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`);
 	binPath = fixPathForAsarUnpack(binPath);
 	waitLibraryPromise = server.start(binPath, userPath);
 } else {
@@ -89,11 +89,10 @@ if (!app.isPackaged) {
 dataPath.push('data');
 
 function waitForLibraryAndCreateWindows () {
-	waitLibraryPromise.then(function(result) {
+	waitLibraryPromise.then((res) => {
 		createWindow();
-	}, function(err) {
-		console.log(err);
-		electron.dialog.showErrorBox( 'Error: failed to run server', err.toString() );
+	}, (err) => {
+		electron.dialog.showErrorBox('Error: failed to run server', err.toString());
 	});
 };
 
@@ -402,7 +401,7 @@ app.on('before-quit', (e) => {
 	e.preventDefault();
 	console.log('before-quit');
 	
-	service.shutdown(new Commands.Empty(), function (message) {
+	service.shutdown(new Commands.Empty(), () => {
 		console.log('Shutdown complete, exiting');
 		app.exit();
 	});
