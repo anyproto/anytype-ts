@@ -1,8 +1,9 @@
 @import "~scss/_vars";
 
 .popups {
-	.popup.popupEditorPage { width: 800px; height: calc(100% - 20px); padding: 40px 0px; }
 	.popup.popupEditorPage {
+		.inner { width: 800px; height: calc(100% - 20px); padding: 40px 0px; }
+		
 		.header { position: relative; padding: 0px; }
 		.header {
 			.menu { right: 0px; top: 0px; }

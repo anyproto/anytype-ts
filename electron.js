@@ -1,6 +1,6 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain, shell, Menu, session, globalShortcut } = require('electron');
-const { is, appMenu } = require('electron-util');
+const { is, appMenu, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
 const path = require('path');
@@ -33,10 +33,9 @@ if (process.env.ANYTYPE_USE_GRPC === "1") {
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
-	const server = require( './electron/server' );
-	const { fixPathForAsarUnpack } = require('electron-util');
+	const server = require('./electron/server.js');
 	
-	let binPath = path.join( __dirname, 'dist', `server${is.windows ? '.exe' : ''}` );
+	let binPath = path.join( __dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}` );
 	binPath = fixPathForAsarUnpack(binPath);
 	waitLibraryPromise = server.start(binPath, userPath);
 } else {

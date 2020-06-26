@@ -12,6 +12,7 @@
 		"start:electron-wait-webpack": "wait-for-localhost 8080 && ./node_modules/.bin/electron .",
 		"start:dev": "UV_THREADPOOL_SIZE=1024 npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:prod": "UV_THREADPOOL_SIZE=1024 npm-run-all --parallel start:watch-prod start:electron-wait-webpack",
+		"start:dev-addon": "ANYTYPE_USE_ADDON=1 npm-run-all start:dev",
 		"build": "UV_THREADPOOL_SIZE=1024 webpack --verbose --progress --debug --display-error-details --display verbose --profile --mode=development --env.NODE_ENV=development --config webpack.config.js",
 		"build:prod": "UV_THREADPOOL_SIZE=1024 webpack --verbose --progress --debug --display-error-details --display verbose --profile --mode=production --env.NODE_ENV=production -p --config webpack.config.js",
 		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos",

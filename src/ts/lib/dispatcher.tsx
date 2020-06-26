@@ -27,7 +27,6 @@ class Dispatcher {
 
 		/// #if USE_ADDON
 			const handler = (item: any) => {
-				console.log(item.data, item.data.byteLength, item.data.buffer);
 				try {
 					this.event(Events.Event.deserializeBinary(item.data.buffer), false);
 				} catch (e) {

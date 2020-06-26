@@ -148,6 +148,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		keyboard.disableBack(true);
 		this.unbind();
+		
 		this.open();
 		
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
@@ -202,9 +203,16 @@ class EditorPage extends React.Component<Props, State> {
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 	
-	open () {
+	open (skipInit?: boolean) {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
+
+		if (!breadcrumbs && !skipInit) {
+			DataUtil.pageInit(() => {
+				this.open(true);
+			});
+			return;
+		};
 		
 		if (this.id == rootId) {
 			return;
@@ -1219,13 +1227,13 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		const length = focused.getLength();
+		const nl = next.getLength();
 		const cb = (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 			
 			if (next) {
-				let nl = next.getLength();
 				this.focus(next.id, nl, nl);
 			};
 		};
@@ -1246,7 +1254,7 @@ class EditorPage extends React.Component<Props, State> {
 					return it.isFocusable();
 				});
 				if (next) {
-					let nl = next.getLength();
+					const nl = next.getLength();
 					this.focus(next.id, nl, nl);
 				};
 			});
@@ -1330,13 +1338,13 @@ class EditorPage extends React.Component<Props, State> {
 			if (!last.isText()) {
 				create = true;
 			} else {
-				length = String(last.content.text || '').length;
+				length = last.getLength();
 				if (length) {
 					create = true;
 				};
 			};
 		};
-		
+
 		if (create) {
 			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {

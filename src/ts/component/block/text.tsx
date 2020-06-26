@@ -632,10 +632,8 @@ class BlockText extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: block.id,
-				onChange: (text: string, marks: I.Mark[], from: number) => {
-					const to = from + text.length;
-
-					this.marks = Util.objectCopy(marks);
+				onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
+					this.marks = marks;
 					value = Util.stringInsert(value, text, from, from);
 
 					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
@@ -675,6 +673,7 @@ class BlockText extends React.Component<Props, {}> {
 				rootId: rootId,
 				blockId: block.id,
 				onSelect: (icon: string) => {
+					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
 						type: I.MarkType.Smile, 
 						param: icon, 
@@ -713,14 +712,13 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setMarks (marks: I.Mark[]) {
 		const { rootId, block } = this.props;
-		const { id, content } = block;
-		const text = String(content.text || '');
+		const value = this.getValue();
 		
-		if (content.style == I.TextStyle.Code) {
+		if (block.isCode()) {
 			marks = [];
 		};
 		
-		DataUtil.blockSetText(rootId, block, text, marks, true);
+		DataUtil.blockSetText(rootId, block, value, marks, true);
 	};
 	
 	onFocus (e: any) {
@@ -739,8 +737,11 @@ class BlockText extends React.Component<Props, {}> {
 	
 		this.placeHolderHide();
 		keyboard.setFocus(false);
-		
 		onBlur(e);
+
+		window.setTimeout(() => {
+			this.setText(this.marks, true);
+		}, 500);
 	};
 	
 	onPaste (e: any) {

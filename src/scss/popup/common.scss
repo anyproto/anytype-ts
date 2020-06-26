@@ -1,20 +1,23 @@
 @import "~scss/_vars";
 
 .popups {
-	.dimmer { 
-		position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 100; background: rgba(0,0,0,0.4);
-		transition: opacity 0.05s ease-in-out; opacity: 0; 
+	.popup { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 100; }
+	.popup.show {
+		.inner { opacity: 1; transform: scale3d(1,1,1); }
+		.dimmer { opacity: 1; }
 	}
-	.dimmer.show { opacity: 1; }
-	
-	.popup { 
-		position: fixed; left: 50%; top: 50%; z-index: 101; background: #fff; border-radius: 12px; box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.35);
-		opacity: 0; transform: scale3d(0.8,0.8,1); transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out; 
-	}
-	.popup.show { opacity: 1; transform: scale3d(1,1,1); }
 	
 	.popup {
+		.inner { 
+			position: absolute; left: 50%; top: 50%; z-index: 1; background: #fff; border-radius: 12px; box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.35);
+			opacity: 0; transform: scale3d(0.8,0.8,1); transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out; 
+		}
 		.content { opacity: 0; transition: opacity 0.05s ease-in-out; transition-delay: 0.05s; }
+
+		.dimmer { 
+			position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 0; background: rgba(0,0,0,0.4);
+			transition: opacity 0.05s ease-in-out; opacity: 0; 
+		}
 
 		.loaderWrapper { 
 			position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px;

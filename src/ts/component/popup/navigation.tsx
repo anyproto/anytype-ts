@@ -307,7 +307,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const win = $(window);
-		const obj = $('#popupNavigation');
+		const obj = $('#popupNavigation #inner');
 		
 		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
 		
@@ -342,7 +342,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		raf(() => {
 			const { expanded } = this.state;
 			const win = $(window);
-			const obj = $('#popupNavigation');
+			const obj = $('#popupNavigation #inner');
 			const head = obj.find('#head');
 			const items = obj.find('.items');
 			const sides = obj.find('.sides');

@@ -14,12 +14,6 @@ const $ = require('jquery');
 @observer
 class ListPopup extends React.Component<Props, {}> {
 
-	constructor (props: any) {
-		super(props);
-		
-		this.onClose = this.onClose.bind(this);
-	};
-	
 	render () {
 		const { history } = this.props;
 		const { popups } = commonStore;
@@ -29,7 +23,6 @@ class ListPopup extends React.Component<Props, {}> {
 				{popups.map((item: I.Popup, i: number) => (
 					<Popup history={history} key={i} {...item} />
 				))}
-				{popups.length ? <Dimmer onClick={this.onClose} /> : ''}
 			</div>
 		);
 	};
@@ -39,10 +32,6 @@ class ListPopup extends React.Component<Props, {}> {
 		const body = $('body');
 		
 		popups.length > 0 ? body.addClass('over') : body.removeClass('over');
-	};
-	
-	onClose () {
-		commonStore.popupCloseAll();
 	};
 	
 };
