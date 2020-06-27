@@ -8,13 +8,16 @@ token=$1;
 platform=$2;
 arch="";
 
+echo $token;
+echo $platform;
+
 if [ "$platform" = "ubuntu-latest" ]; then
 	arch="linux";
 elif [ "$platform" = "macos-latest" ]; then
 	arch="darwin";
 elif [ "$platform" = "windows-latest" ]; then
 	arch="windows";
-  #FILE="addon.zip"
+  FILE="addon.zip"
 fi;
 
 if [ "$token" = "" ]; then
@@ -42,23 +45,27 @@ echo -n "Downloading file..."
 curl -sL -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id?access_token=$token" > $FILE
 printf "Done\n"
 
-echo -n "Uncompressing... "
-
-#if [ "$platform" = "windows-latest" ]; then
-#	unzip $FILE
-#else 
+if [ "$platform" = "windows-latest" ]; then
+  echo -n "Uncompressing... "
+	unzip $FILE
+  printf "Done\n"
+  
+  echo "Moving... "
+  mv -fv windows-amd64.exe dist/anytypeHelper.exe
+else 
+  echo -n "Uncompressing... "
   tar -zxf $FILE
-#fi;
+  printf "Done\n"
 
-printf "Done\n"
+  echo "Moving... "
+  rm -rf build
+  mkdir -p build
+  mv -fv addon/* build/
+  rm -rf addon
+fi;
 
-echo "Moving... "
-rm -rf build
-mkdir -p build
-mv -fv addon/* build/
-rm -rf addon
-
-mv -fv protobuf/commands.js dist/commands.js
+rm -rf dist/lib/*
+mv -fv protobuf/pb/* dist/lib/
 rm -rf protobuf
 rm -rf $FILE
 printf "Done\n"
