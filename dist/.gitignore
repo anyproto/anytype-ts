@@ -1,4 +1,9 @@
 Anytype-*
+Anytype Setup*
+alpha.yml
+beta.yml
+latest.yml
+win-unpacked
 latest-mac.yml
 builder-effective-config.yaml
 mac/*
