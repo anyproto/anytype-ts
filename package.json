@@ -158,7 +158,7 @@
 			"dist/run.js",
 			"dist/lib",
 			"dist/server",
-			"dist/server.exe",
+			"dist/anytypeHelper.exe",
 			"build"
 		],
 		"extraResources": [],
@@ -173,6 +173,8 @@
 			"dist/run.js",
 			"dist/lib/**/*",
 			"dist/img/**/*",
+			"dist/anytypeHelper.exe",
+			"dist/anytypeHelper",
 			"!node_modules/**/*",
 			"node_modules/electron-util",
 			"node_modules/new-github-issue-url",
