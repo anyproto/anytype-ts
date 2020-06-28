@@ -9,11 +9,6 @@ class Analytics {
 	
 	isInit: boolean =  false;
 	instance: any = null;
-	debug: boolean = false;
-	
-	constructor () {
-		this.debug = (Storage.get('debug') || {}).an;
-	};
 	
 	init () {
 		const debug = (Storage.get('debug') || {}).an;
@@ -85,7 +80,7 @@ class Analytics {
 
 			case 'BlockCreate':
 			case 'BlockReplace':
-				let block = new M.Block(Mapper.From.Block(data.block));
+				let block = new M.Block(Mapper.From.Block(data.getBlock()));
 				
 				param.type = block.type;
 				if (block.isText() || block.isDiv()) {
