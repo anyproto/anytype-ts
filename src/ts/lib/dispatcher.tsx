@@ -518,13 +518,18 @@ class Dispatcher {
 					return;
 				};
 
-				let message = Response[upper] ? Response[upper](response) : {};
+				let message: any = {};
 				let err = response.getError();
+				let code = err.getCode();
+
+				if (!code && Response[upper]) {
+					message = Response[upper](response);
+				};
 
 				message.event = response.getEvent ? response.getEvent() : null;
 				message.error = {
-					code: String(err.getCode() || ''),
-					description: String(err.getDescription() || ''),
+					code: code,
+					description: err.getDescription(),
 				};
 
 				if (message.error.code) {
