@@ -10,8 +10,9 @@ const storage = require('electron-json-storage');
 const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 const Commands = require('./dist/lib/pb/protos/commands_pb');
 
-const SERVER = 'http://localhost:31008';
-const service = new Service.ClientCommandsClient(SERVER, null, null);
+global.XMLHttpRequest = require('xhr2');
+
+const service = new Service.ClientCommandsClient('http://localhost:31008', null, null);
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
@@ -49,21 +50,24 @@ if (useGRPC) {
 	});
 	
 	let napiCall = function (method, inputObj, outputObj, request, callBack){
-		const buffer = inputObj.encode( request ).finish();
-		const handler = function (item){
-			let message = null;
+		const a = method.split('/');
+		method = a[a.length - 1];
+
+		const buffer = inputObj.serializeBinary();
+		const handler = (item) => {
 			try {
-				message = outputObj.decode( item.data );
+				let message = request.b(item.data.buffer);
 				if (message) {
-					callBack( message );
+					callBack(null, message);
 				};
 			} catch (err) {
-				console.error( err );
+				console.error(err);
 			};
 		};
-		bindings.sendCommand(method.name, buffer, handler);
+
+		bindings.sendCommand(method, buffer, handler);
 	};
-	
+
 	service.client_.rpcCall = napiCall;
 };
 

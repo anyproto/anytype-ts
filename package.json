@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.12.7",
+	"version": "0.12.9",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -135,6 +135,8 @@
 		"typescript": "^3.9.5",
 		"uuid": "^8.2.0",
 		"webpack-bundle-analyzer": "^3.8.0",
+		"xhr2": "^0.2.0",
+		"xmlhttprequest": "^1.8.0",
 		"xtend": "^4.0.2"
 	},
 	"build": {
@@ -231,7 +233,9 @@
 			"node_modules/at-least-node",
 			"node_modules/protobufjs",
 			"node_modules/@protobufjs",
-			"node_modules/prismjs"
+			"node_modules/prismjs",
+			"node_modules/grpc-web",
+			"node_modules/google-protobuf"
 		],
 		"dmg": {
 			"sign": false
