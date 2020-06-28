@@ -51,7 +51,7 @@ class Server {
 			
 			this.cp.stdout.on( 'data', data => {
 				let str = data.toString();
-				if (!this.isRunning && str && (str.indexOf('gRPC Web proxy started at: ') == 0)) {
+				if (!this.isRunning && str && (str.indexOf('gRPC Web proxy started at:') >= 0)) {
 					this.isRunning = true;
 					resolve(true);
 				};
