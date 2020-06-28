@@ -159,7 +159,7 @@
 			"dist/index.html",
 			"dist/run.js",
 			"dist/lib",
-			"dist/server",
+			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
 			"build"
 		],
