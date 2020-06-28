@@ -3,7 +3,6 @@ const path = require('path');
 const childProcess = require('child_process');
 const electron = require('electron');
 const fs = require('fs');
-const { shell } = electron;
 
 function dateForFile() {
 	return new Date().toISOString().
@@ -50,23 +49,25 @@ class Server {
 				reject(err);
 			});
 			
-			this.cp.stdout.on('data', data => {
+			this.cp.stdout.on( 'data', data => {
 				let str = data.toString();
 				if (!this.isRunning && str && (str.indexOf('gRPC Web proxy started at: ') == 0)) {
 					this.isRunning = true;
 					resolve(true);
 				};
+				console.log(str);
 			});
 			
 			this.cp.stderr.on('data', data => {
 				if (!this.lastErrors) {
 					this.lastErrors = [];
-				} else 
+				} else
 				if (this.lastErrors.length >= 10) {
 					this.lastErrors.shift();
 				};
 
 				this.lastErrors.push(data);
+				console.error(data.toString());
 			});
 			
 			this.cp.on('exit', () => {
@@ -75,23 +76,24 @@ class Server {
 				};
 				
 				this.isRunning = false;
+				
 				let crashReport = path.join(logsDir, 'crash_'+dateForFile()+'.log');
 				
-				try { 
-					fs.writeFileSync(crashReport, this.lastErrors.join('\n'), 'utf-8'); 
-				} catch(e) { 
-					console.log('failed to save a file'); 
+				try {
+					fs.writeFileSync(crashReport, this.lastErrors.join('\n'), 'utf-8');
+				} catch(e) {
+					console.log('failed to save a file');
 				};
 				
 				electron.dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers: dev@anytype.io');
-				shell.showItemInFolder(crashReport);
+				electron.shell.showItemInFolder(crashReport);
 				
 				electron.app.quit();
 			});
 		});
 	};
 	
-	stop () {
+	stop(){
 		this.isRunning = false;
 		
 		// It's sometimes undefined when we do Cmd+R during development.

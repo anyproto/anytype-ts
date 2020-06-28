@@ -7,20 +7,16 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const storage = require('electron-json-storage');
-const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
-const Commands = require('./dist/lib/pb/protos/commands_pb');
-
-global.XMLHttpRequest = require('xhr2');
-
-const service = new Service.ClientCommandsClient('http://localhost:31008', null, null);
+const SERVER = 'http://localhost:31008';
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
 let useGRPC = true;
+let service;
 
 if (process.env.ANYTYPE_USE_ADDON === "1") {
 	useGRPC = false;
-} else 
+} else
 if (process.env.ANYTYPE_USE_GRPC === "1") {
 	useGRPC = true;
 } else if (process.platform === "win32" || is.development) {
@@ -40,34 +36,39 @@ if (useGRPC) {
 	binPath = fixPathForAsarUnpack(binPath);
 	waitLibraryPromise = server.start(binPath, userPath);
 } else {
+	const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
+	
+	service = new Service.ClientCommandsClient(SERVER, null, null);
+	
 	console.log('Connect via native addon');
 
 	waitLibraryPromise = Promise.resolve();
 	
 	const bindings = require('bindings')({
-		bindings: 'addon.node', 
+		bindings: 'addon.node',
 		module_root: path.join(__dirname, 'build'),
 	});
+	
 	
 	let napiCall = function (method, inputObj, outputObj, request, callBack){
 		const a = method.split('/');
 		method = a[a.length - 1];
-
+		
 		const buffer = inputObj.serializeBinary();
 		const handler = (item) => {
 			try {
 				let message = request.b(item.data.buffer);
-				if (message) {
+				if (message && callBack) {
 					callBack(null, message);
 				};
 			} catch (err) {
 				console.error(err);
 			};
 		};
-
+		
 		bindings.sendCommand(method, buffer, handler);
 	};
-
+	
 	service.client_.rpcCall = napiCall;
 };
 
@@ -404,10 +405,16 @@ app.on('window-all-closed', () => {
 app.on('before-quit', (e) => {
 	e.preventDefault();
 	console.log('before-quit');
+	if (useGRPC) {
+		server.stop();
+	} else {
+		const Commands = require('./dist/lib/pb/protos/commands_pb');
+		
+		service.shutdown(new Commands.Empty(), {}, () => {
+			console.log('Shutdown complete, exiting');
+			app.exit();
+		});
+	}
 	
-	service.shutdown(new Commands.Empty(), () => {
-		console.log('Shutdown complete, exiting');
-		app.exit();
-	});
 });
 
