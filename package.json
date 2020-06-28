@@ -166,8 +166,8 @@
 		"extraResources": [],
 		"files": [
 			"electron.js",
+			"electron/server.js",
 			"build",
-			"server/server.js",
 			"!dist/*",
 			"dist/index.html",
 			"dist/main.js",
