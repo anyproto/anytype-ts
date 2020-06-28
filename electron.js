@@ -13,6 +13,7 @@ let userPath = app.getPath('userData');
 let waitLibraryPromise;
 let useGRPC = true;
 let service;
+let server;
 
 if (process.env.ANYTYPE_USE_ADDON === "1") {
 	useGRPC = false;
@@ -30,7 +31,7 @@ if (process.env.ANYTYPE_USE_GRPC === "1") {
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
-	const server = require('./electron/server.js');
+	server = require('./electron/server.js');
 	
 	let binPath = path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`);
 	binPath = fixPathForAsarUnpack(binPath);
@@ -405,8 +406,10 @@ app.on('window-all-closed', () => {
 app.on('before-quit', (e) => {
 	e.preventDefault();
 	console.log('before-quit');
+
 	if (useGRPC) {
 		server.stop();
+		app.exit();
 	} else {
 		const Commands = require('./dist/lib/pb/protos/commands_pb');
 		
@@ -414,7 +417,6 @@ app.on('before-quit', (e) => {
 			console.log('Shutdown complete, exiting');
 			app.exit();
 		});
-	}
-	
+	};
 });
 
