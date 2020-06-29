@@ -45,6 +45,8 @@ export enum FilterCondition {
 	NotLike			 = 7,
 	In				 = 8,
 	NotIn			 = 9,
+	Empty			 = 10,
+	NotEmpty		 = 11,
 };
 
 export interface Relation {

@@ -169,37 +169,46 @@ class MenuFilter extends React.Component<Props, {}> {
 			case I.RelationType.Email: 
 			case I.RelationType.Phone: 
 				ret = [ 
-					I.FilterCondition.Equal, 
-					I.FilterCondition.NotEqual, 
-					I.FilterCondition.Like, 
-					I.FilterCondition.NotLike,
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
+					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				];
+				break;
+
+			case I.RelationType.Select: 
+				ret = [ 
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.In,			 name: translate('filterConditionIn') }, 
+					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotIn') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				];
 				break;
 			
 			case I.RelationType.Number:
 			case I.RelationType.Date:
 				ret = [ 
-					I.FilterCondition.Equal, 
-					I.FilterCondition.NotEqual, 
-					I.FilterCondition.Greater, 
-					I.FilterCondition.Less, 
-					I.FilterCondition.GreaterOrEqual, 
-					I.FilterCondition.LessOrEqual,
+					{ id: I.FilterCondition.Equal,			 name: '=' }, 
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
+					{ id: I.FilterCondition.Greater,		 name: '>' }, 
+					{ id: I.FilterCondition.Less,			 name: '<' }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≤' }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: '≥' },
 				];
 				break;
 			
 			case I.RelationType.Checkbox:
 			default:
 				ret = [ 
-					I.FilterCondition.Equal, 
-					I.FilterCondition.NotEqual,
+					{ id: I.FilterCondition.Equal,			 name: '=' }, 
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' },
 				];
 				break;
 		};
-
-		ret = ret.map((it: I.FilterCondition) => {
-			return { id: it, name: translate('filterCondition' + it) };
-		});
 		return ret;
 	};
 	
