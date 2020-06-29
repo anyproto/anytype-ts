@@ -81,12 +81,12 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const List = SortableContainer((item: any) => {
 			return (
-				<div>
+				<React.Fragment>
 					{item.list.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
 					))}
 					<ItemAdd index={length + 1} disabled={true} />
-				</div>
+				</React.Fragment>
 			);
 		});
 		
