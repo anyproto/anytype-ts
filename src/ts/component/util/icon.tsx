@@ -10,10 +10,12 @@ interface Props {
 	tooltip?: string;
 	tooltipY?: I.MenuDirection;
 	inner?: any;
+	draggable?: boolean;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
+	onDragStart?(e: any): void;
 };
 
 const $ = require('jquery');
@@ -33,7 +35,7 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { id, icon, arrow, className, inner, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
+		const { id, icon, arrow, draggable, className, inner, onClick, onMouseDown, onMouseEnter, onMouseLeave, onDragStart } = this.props;
 		
 		let cn = [ 'icon' ];
 		let style: any = {};
@@ -47,7 +49,7 @@ class Icon extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={id} onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} className={cn.join(' ')} style={style}>
+			<div id={id} draggable={draggable} onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} onDragStart={onDragStart} className={cn.join(' ')} style={style}>
 				{arrow ? <div className="arrow" /> : ''}
 				{inner ? inner : null}
 			</div>
