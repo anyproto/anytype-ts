@@ -1,4 +1,4 @@
-import { Account, DragItem, CoverType, CrumbsType, NavigationType, Option } from './common';
+import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option } from './common';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
@@ -32,6 +32,7 @@ import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 
 export {
 	Account,
+	Platform,
 	DragItem,
 	CoverType,
 	CrumbsType,

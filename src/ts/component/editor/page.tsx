@@ -430,6 +430,11 @@ class EditorPage extends React.Component<Props, State> {
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
 		const map = blockStore.getMap(rootId);
+
+		// Print
+		if ((k == Key.p) && keyboard.ctrlByPlatform(e)) {
+			this.onPrint(e);
+		};
 		
 		if (e.ctrlKey || e.metaKey) {
 			// Select all
@@ -460,11 +465,6 @@ class EditorPage extends React.Component<Props, State> {
 				C.BlockRedo(rootId);
 			};
 			
-			// Print
-			if (k == Key.p) {
-				this.onPrint(e);
-			};
-
 			if (ids.length) {
 				// Bold
 				if (k == Key.b) {
@@ -552,10 +552,14 @@ class EditorPage extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
 		const k = e.key.toLowerCase();
-
-		let length = String(text || '').length;
+		const length = String(text || '').length;
 		
 		this.uiHide();
+
+		// Print
+		if ((k == Key.p) && keyboard.ctrlByPlatform(e)) {
+			this.onPrint(e);
+		};
 
 		if (e.ctrlKey || e.metaKey) {
 
@@ -578,11 +582,6 @@ class EditorPage extends React.Component<Props, State> {
 			// Cut
 			if (k == Key.x) {
 				this.onCopy(e, true);
-			};
-
-			// Print
-			if (k == Key.p) {
-				this.onPrint(e);
 			};
 
 			// Undo

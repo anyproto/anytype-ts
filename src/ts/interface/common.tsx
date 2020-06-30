@@ -2,6 +2,12 @@ export interface Account {
 	id: string;
 };
 
+export enum Platform {
+	Windows = 'Windows',
+	Mac = 'Mac',
+	Linux = 'Linux',
+};
+
 export enum DragItem {
 	Block = 'block',
 	Menu = 'menu',
