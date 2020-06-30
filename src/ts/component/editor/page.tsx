@@ -152,7 +152,7 @@ class EditorPage extends React.Component<Props, State> {
 		this.open();
 		
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
+		win.on('scroll.editor', (e: any) => { this.onScroll(e); });
 		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
 		win.on('paste.editor', (e: any) => {
 			if (!keyboard.isFocused) {
@@ -1360,14 +1360,22 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
+
+		if (!blocks.length || !last.length) {
+			return;
+		};
 		
-		if (!last.length) {
+		const wh = win.height();
+		const height = blocks.outerHeight() + blocks.offset().top;
+
+		if (height > wh) {
 			return;
 		};
 		
 		last.css({ height: 0 });
-		last.css({ height: Math.max(Constant.size.lastBlock, win.height() - (node.outerHeight() + Constant.size.header) - 4) });
+		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
 	};
 	
 	focus (id: string, from: number, to: number) {

@@ -74,12 +74,11 @@ class Focus {
 		};
 		
 		const win = $(window);
-		const top = win.scrollTop();
 		const wh = win.height();
 		const y = node.offset().top;
 		const offset = Constant.size.lastBlock + Constant.size.header;
 		
-		if (y >= top + wh - offset) {
+		if (y >= wh - offset) {
 			win.scrollTop(y - wh + offset);
 		};
 	};
