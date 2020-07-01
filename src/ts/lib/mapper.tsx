@@ -46,6 +46,16 @@ const Mapper = {
             };
         },
 
+        LinkPreview: (obj: any) => {
+            return {
+                type: obj.getType(),
+                title: obj.getTitle(),
+                description: obj.getDescription(),
+                faviconUrl: obj.getFaviconurl(),
+                imageUrl: obj.getImageurl(),
+            };
+        },
+
         BlockType: (v: number): I.BlockType => {
             let t = I.BlockType.Empty;
             if (v == ContentCase.SMARTBLOCK) t = I.BlockType.Page;
