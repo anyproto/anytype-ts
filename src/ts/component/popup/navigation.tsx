@@ -374,6 +374,10 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	loadSearch () {
+		const { param } = this.props;
+		const { data } = param;
+		const { skipId } = data;
+
 		this.setState({ loading: true });
 
 		this.index = new FlexSearch('balance', {
@@ -384,9 +388,12 @@ class PopupNavigation extends React.Component<Props, State> {
 		});
 
 		let pages: any[] = [];
-
 		C.NavigationListPages((message: any) => {
 			for (let page of message.pages) {
+				if (skipId && (page.id == skipId)) {
+					continue;
+				};
+
 				page = this.getPage(page);
 				pages.push(page);
 

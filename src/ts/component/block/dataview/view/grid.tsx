@@ -94,7 +94,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		return (
 			<div className="wrap">
-				{pager}
+				{total ? pager : ''}
 				
 				<table className="viewItem viewGrid">
 					<thead>
@@ -115,7 +115,7 @@ class ViewGrid extends React.Component<Props, {}> {
 					</tbody>
 				</table>
 
-				{pager}
+				{total ? pager : ''}
 			</div>
 		);
 	};

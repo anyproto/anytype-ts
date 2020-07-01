@@ -154,7 +154,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		});
 	};
 
-	onMore (e: any, id: string) {
+	onMore (e: any, item: any) {
 		e.stopPropagation();
 
 		const { match } = this.props;
@@ -162,7 +162,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		commonStore.menuOpen('blockMore', { 
-			element: '#button-' + id + '-more',
+			element: '#button-' + item.id + '-more',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 8,
@@ -171,17 +171,18 @@ class PageMainIndex extends React.Component<Props, {}> {
 			className: 'fromIndex',
 			data: {
 				rootId: root,
-				blockId: id,
-				blockIds: [ id ],
+				skipId: item.content.targetBlockId,
+				blockId: item.id,
+				blockIds: [ item.id ],
 				match: match
 			},
 			onOpen: () => {
 				raf(() => {
-					node.find('#item-' + id).addClass('active');
+					node.find('#item-' + item.id).addClass('active');
 				});
 			},
 			onClose: () => {
-				node.find('#item-' + id).removeClass('active');
+				node.find('#item-' + item.id).removeClass('active');
 			}
 		});
 	};
