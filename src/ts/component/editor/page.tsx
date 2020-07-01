@@ -1370,11 +1370,6 @@ class EditorPage extends React.Component<Props, State> {
 		const wh = win.height();
 		const height = blocks.outerHeight() + blocks.offset().top;
 
-		if (height > wh) {
-			return;
-		};
-		
-		last.css({ height: 0 });
 		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
 	};
 	
