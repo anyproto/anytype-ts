@@ -17,6 +17,8 @@
 			.icon.dnd { margin-right: 2px; }
 		}
 
+		.item.empty { color: #6c6a5f; padding: 8px 16px 4px 16px; line-height: 22px; }
+
 		.item.add { color: $colorDarkGrey; }
 		.item.add:hover { color: $colorBlack; }
 		.item.add:hover {

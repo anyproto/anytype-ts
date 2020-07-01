@@ -99,7 +99,17 @@ class MenuFilter extends React.Component<Props, {}> {
 			return (
 				<form id={'item-' + item.id} className="item" onSubmit={onSubmit}>
 					<Handle />
-					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} className="operator" options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
+					{item.id > 0 ? (
+						<Select 
+							id={[ 'filter', 'operator', item.id ].join('-')} 
+							className="operator" 
+							options={operatorOptions} 
+							value={item.operator} 
+							onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} 
+						/>
+					) : (
+						<div className="where">Where</div>
+					)}
 					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
 					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
 					{value}
@@ -122,6 +132,9 @@ class MenuFilter extends React.Component<Props, {}> {
 					{this.items.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
+					{!this.items.length ? (
+						<div className="item empty">No filters applied to this view</div>
+					) : ''}
 					<ItemAdd index={this.items.length + 1} disabled={true} />
 				</div>
 			);

@@ -64,6 +64,9 @@ class MenuSort extends React.Component<Props, {}> {
 					{this.items.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
+					{!this.items.length ? (
+						<div className="item empty">No sorts applied to this view</div>
+					) : ''}
 					<ItemAdd index={this.items.length + 1} disabled={true} />
 				</div>
 			);
