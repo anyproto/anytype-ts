@@ -180,7 +180,7 @@ const BlockUndo = (contextId: string, callBack?: (message: any) => void) => {
 const BlockRedo = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Redo.Request();
 	
-	request.setContextiid(contextId);
+	request.setContextid(contextId);
 
 	dispatcher.request('blockRedo', request, callBack);
 };
