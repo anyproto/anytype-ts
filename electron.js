@@ -175,6 +175,10 @@ function createWindow () {
 		const win = BrowserWindow.getFocusedWindow();
 		await download(win, url, { saveAs: true });
 	});
+
+	ipcMain.on('update', () => {
+		autoUpdater.checkForUpdatesAndNotify();
+	});
 	
 	storage.get('config', function (error, data) {
 		config = data || {};
@@ -353,6 +357,10 @@ function autoUpdaterInit () {
 	autoUpdater.logger.transports.file.level = 'info';
 	autoUpdater.channel = config.channel;
 	autoUpdater.checkForUpdatesAndNotify();
+
+	setInterval(() => {
+		autoUpdater.checkForUpdatesAndNotify();
+	}, 600 * 1000);
 	
 	autoUpdater.on('checking-for-update', () => {
 		setStatus('Checking for update');

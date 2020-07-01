@@ -243,6 +243,7 @@ class App extends React.Component<Props, State> {
 		const html = $('html');
 
 		ipcRenderer.send('appLoaded', true);
+		ipcRenderer.send('update');
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
