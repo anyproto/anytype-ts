@@ -486,8 +486,8 @@ class Util {
 		return String((Number(s) || 0) || '') === String(s || '');
 	};
 
-	coverSrc (cover: string) {
-		return `./img/cover/${cover}.jpg`;
+	coverSrc (cover: string, preview?: boolean) {
+		return `./img/cover/${preview ? 'preview/' : ''}${cover}.jpg`;
 	};
 
 	selectionRect () {
