@@ -185,8 +185,6 @@ const Mapper = {
         },
 
         View: (schemaId: string, obj: any) => {
-            console.log(schemaId);
-
             let schema = Schema[schemaId];
             let relations = [];
     

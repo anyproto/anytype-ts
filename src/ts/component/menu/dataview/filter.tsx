@@ -235,6 +235,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.items = this.items.filter((it: any, i: number) => { return i != id; });
 		this.forceUpdate();
 		this.save();
+
+		commonStore.menuClose('select');
 	};
 	
 	onSortEnd (result: any) {
@@ -251,8 +253,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.items[item.id].value = this.refObj[item.id].getValue();
 	};
 
-	onChange (id: number, k: string, v: any) {
-		const item = this.items.find((it: any, i: number) => { return i == id; });
+	onChange (item: any, k: string, v: any) {
+		item = this.items.find((it: any, i: number) => { return i == item.id; });
 		if (!item) {
 			return;
 		};

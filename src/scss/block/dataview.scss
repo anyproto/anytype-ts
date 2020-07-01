@@ -64,6 +64,12 @@
 				.icon.view.c2 { background-image: url('~img/icon/dataview/view/gallery1.svg'); }
 				.icon.view.c3 { background-image: url('~img/icon/dataview/view/board1.svg'); }
 			}
+
+			.item.on { color: #e89d00; }
+			.item.on {
+				.icon.filter { background-image: url('~img/icon/dataview/button/filter2.svg'); }
+				.icon.sort { background-image: url('~img/icon/dataview/button/sort2.svg'); }
+			}
 		}
 		
 		.content {

@@ -2,8 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select } from 'ts/component';
-import { I, C, M } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
+import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
@@ -132,6 +133,8 @@ class MenuSort extends React.Component<Props, {}> {
 		this.items = this.items.filter((item: any, i: number) => { return i != id; });
 		this.forceUpdate();
 		this.save();
+
+		commonStore.menuClose('select');
 	};
 	
 	onSortEnd (result: any) {

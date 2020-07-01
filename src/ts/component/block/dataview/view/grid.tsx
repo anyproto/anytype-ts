@@ -28,10 +28,9 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { content } = block;
 		const { offset, total } = content;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const width = 100 / relations.length;
 		
 		const CellHead = (item: any) => (
-			<th className={'head c-' + item.type} style={{ width: width + '%' }}>
+			<th className={'head c-' + item.type}>
 				<Icon className={'relation c-' + item.type} />
 				<div className="name">{item.name}</div>
 			</th>
@@ -47,7 +46,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			};
 
 			return (
-				<td id={id} className={cn.join(' ')} style={{ width: width + '%' }} onClick={(e: any) => { this.onCellClick(e, item); }}>
+				<td id={id} className={cn.join(' ')} onClick={(e: any) => { this.onCellClick(e, item); }}>
 					<Cell 
 						ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
 						onOpen={onOpen} 

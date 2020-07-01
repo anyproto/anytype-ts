@@ -498,6 +498,10 @@ class Util {
 		return { x: 0, y: 0, width: 0, height: 0 };
 	};
 
+	cntWord (cnt: any, w1: string, w2?: string) {
+		return String(cnt || '').substr(-1) == '1' ? w1 : (w2 ? w2 : w1 + 's');
+	};
+
 	uuid () {
 		return uuidv4(); 
 	};

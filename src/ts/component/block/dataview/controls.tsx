@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
@@ -40,6 +40,8 @@ class Controls extends React.Component<Props, State> {
 		const { views, viewId } = content;
 		const { page } = this.state;
 		const limit = Constant.limit.dataview.views;
+		const filterCnt = view.filters.length;
+		const sortCnt = view.sorts.length;
 
 		const buttons: any[] = [
 			{ 
@@ -47,11 +49,11 @@ class Controls extends React.Component<Props, State> {
 				active: commonStore.menuIsOpen('dataviewRelationList') 
 			},
 			{ 
-				id: 'filter', name: 'Filter', menu: 'dataviewFilter', 
+				id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0,
 				active: commonStore.menuIsOpen('dataviewFilter') 
 			},
 			{ 
-				id: 'sort', name: 'Sort', menu: 'dataviewSort', 
+				id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0,
 				active: commonStore.menuIsOpen('dataviewSort') 
 			},
 			{ 
@@ -60,9 +62,9 @@ class Controls extends React.Component<Props, State> {
 			},
 			{ 
 				id: 'more', menu: 'dataviewMore', active: commonStore.menuIsOpen('dataviewMore') 
-			}
+			},
 		];
-		
+
 		const ViewItem = (item: any) => (
 			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id, 0); }}>
 				{item.name}
@@ -74,6 +76,10 @@ class Controls extends React.Component<Props, State> {
 			
 			if (item.active) {
 				cn.push('active');
+			};
+
+			if (item.on) {
+				cn.push('on');
 			};
 			
 			return (
