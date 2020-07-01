@@ -277,16 +277,17 @@ const BlockListDeletePage = (response: any) => {
 	return {};
 };
 
-/*
 const BlockCreateDataviewView = (response: any) => {
+	return {};
 };
 
 const BlockSetDataviewView = (response: any) => {
+	return {};
 };
 
 const BlockSetDataviewActiveView = (response: any) => {
+	return {};
 };
-*/
 
 export {
 	VersionGet,
@@ -337,19 +338,15 @@ export {
 
 	BlockCreate,
 	BlockCreatePage,
-	/*
 	BlockCreateDataviewView,
-	*/
 
 	BlockSetTextText,
 	BlockSetTextChecked,
 	BlockSetFields,
 	BlockSetDetails,
 	
-	/*
 	BlockSetDataviewView,
 	BlockSetDataviewActiveView,
-	*/
 
 	BlockListMove,
 	BlockListMoveToNewPage,
