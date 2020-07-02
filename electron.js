@@ -11,22 +11,9 @@ const SERVER = 'http://localhost:31008';
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
-let useGRPC = true;
+let useGRPC = process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development;
 let service;
 let server;
-
-if (process.env.ANYTYPE_USE_ADDON === "1") {
-	useGRPC = false;
-} else
-if (process.env.ANYTYPE_USE_GRPC === "1") {
-	useGRPC = true;
-} else if (process.platform === "win32" || is.development) {
-	// use grpc on windows by default, because addon is not supported
-	// also use grpc on development environment by default
-	useGRPC = true;
-} else {
-	useGRPC = false;
-};
 
 if (useGRPC) {
 	console.log('Connect via gRPC');
@@ -35,11 +22,8 @@ if (useGRPC) {
 
 	let binPath = path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`);
 	binPath = fixPathForAsarUnpack(binPath);
-	if (process.env.ANYTYPE_USE_SIDE_SERVER === "1") {
-		waitLibraryPromise = Promise.resolve();
-	} else {
-		waitLibraryPromise = server.start(binPath, userPath);
-	}
+
+	waitLibraryPromise = process.env.ANYTYPE_USE_SIDE_SERVER ? Promise.resolve() : server.start(binPath, userPath);
 } else {
 	const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 	
@@ -53,7 +37,6 @@ if (useGRPC) {
 		bindings: 'addon.node',
 		module_root: path.join(__dirname, 'build'),
 	});
-	
 	
 	let napiCall = function (method, inputObj, outputObj, request, callBack){
 		const a = method.split('/');
@@ -160,9 +143,9 @@ function createWindow () {
 			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
 		);
 	};
-	
+
 	if (is.development) {
-		win.loadURL('http://localhost:8080');
+		win.loadURL('http://localhost:' + process.env.SERVER_PORT);
 		win.toggleDevTools();
 	} else {
 		win.loadFile('./dist/index.html');
@@ -409,7 +392,6 @@ function autoUpdaterInit () {
 			autoUpdater.quitAndInstall();
 		}, 2000);
 	});
-	
 };
 
 function setStatus (text) {
@@ -440,4 +422,3 @@ app.on('before-quit', (e) => {
 		});
 	};
 });
-
