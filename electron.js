@@ -133,7 +133,7 @@ function createWindow () {
 	win = new BrowserWindow(param);
 	
 	win.once('ready-to-show', () => {
-		win.show()
+		win.show();
 	});
 	
 	win.on('closed', () => {
@@ -163,6 +163,9 @@ function createWindow () {
 	
 	ipcMain.on('appLoaded', () => {
 		win.webContents.send('dataPath', dataPath.join('/'));
+		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
+		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW));
+		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
 	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
@@ -194,11 +197,8 @@ function createWindow () {
 			console.error(error);
 		};
 		
-		console.log('Config: ', config);
-		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
-		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW));
-		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
-		
+		console.log('Config:', config);
+
 		autoUpdaterInit();
 		menuInit();
 	});
