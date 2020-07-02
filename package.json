@@ -6,7 +6,7 @@
 	"scripts": {
 		"lint": "tslint -c tslint.json -p tsconfig.json",
 		"update:addon": "./update.sh",
-		"start:watch": "cross-env webpack-dev-server --progress --mode=development --env.NODE_ENV=development --env.SERVER_PORT=$SERVER_PORT --history-api-fallback --cache",
+		"start:watch": "cross-env webpack-dev-server --progress --mode=development --env.NODE_ENV=development  --env.SERVER_PORT=$SERVER_PORT --env.DATA_PATH=$DATA_PATH --history-api-fallback --cache",
 		"start:electron-wait-webpack": "cross-env wait-for-localhost $SERVER_PORT && ./node_modules/.bin/electron .",
 		"start:dev": "UV_THREADPOOL_SIZE=1024 npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:dev-addon": "ANYTYPE_USE_ADDON=1 npm-run-all start:dev",

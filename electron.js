@@ -15,6 +15,8 @@ let useGRPC = process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || i
 let service;
 let server;
 
+console.log('data', process.env.DATA_DIR);
+
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
@@ -75,11 +77,20 @@ let csp = [
 
 storage.setDataPath(userPath);
 
-let dataPath = [ userPath ];
-if (!app.isPackaged) {
-	dataPath.push('dev');
+let dataPath = [];
+if (process.env.DATA_PATH) {
+	try {
+		fs.mkdirSync(process.env.DATA_PATH);
+	} catch (err) {};
+
+	dataPath.push(process.env.DATA_PATH);
+} else {
+	dataPath.push(userPath);
+	if (!app.isPackaged) {
+		dataPath.push('dev');
+	};
+	dataPath.push('data');
 };
-dataPath.push('data');
 
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {

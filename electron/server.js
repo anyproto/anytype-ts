@@ -23,9 +23,7 @@ class Server {
 			
 			try {
 				fs.mkdirSync(logsDir);
-			} catch (err) {
-				// its ok
-			};
+			} catch (err) {};
 
 			try {
 				let env = process.env;
@@ -34,8 +32,7 @@ class Server {
 					env['GOLOG_FILE'] = path.join(logsDir, 'anytype_' + dateForFile() + '.log');
 				};
 				
-				let args = [];
-				//let args = [ '127.0.0.1:0', '127.0.0.1:0' ];
+				let args = [ '127.0.0.1:0', '127.0.0.1:0' ];
 				this.cp = childProcess.spawn(binPath, args, { env: env });
 			} catch (err) {
 				console.error('[Server] Process start error: ', err.toString());
