@@ -516,7 +516,7 @@ const BlockCreateDataviewView = (contextId: string, blockId: string, view: any, 
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setView(view);
+	request.setView(Mapper.To.View(view));
 
 	dispatcher.request('blockCreateDataviewView', request, callBack);
 };

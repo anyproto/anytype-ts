@@ -83,6 +83,8 @@ class ViewGrid extends React.Component<Props, {}> {
 			</tr>
 		);
 
+		const pager = null;
+		/*
 		const pager = (
 			<Pager 
 				offset={offset} 
@@ -91,6 +93,7 @@ class ViewGrid extends React.Component<Props, {}> {
 				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
 			/>
 		);
+		*/
 		
 		return (
 			<div className="wrap">

@@ -56,10 +56,12 @@ class Controls extends React.Component<Props, State> {
 				id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0,
 				active: commonStore.menuIsOpen('dataviewSort') 
 			},
+			/*
 			{ 
 				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewView', 
 				active: commonStore.menuIsOpen('dataviewView') 
 			},
+			*/
 			{ 
 				id: 'more', menu: 'dataviewMore', active: commonStore.menuIsOpen('dataviewMore') 
 			},
@@ -100,7 +102,7 @@ class Controls extends React.Component<Props, State> {
 					<div className="item">
 						<Icon className="plus" onClick={this.onViewAdd} />
 					</div>
-					<div className="item">
+					<div className="item dn">
 						<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
 						<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
 					</div>
@@ -155,7 +157,7 @@ class Controls extends React.Component<Props, State> {
 				placeHolder: 'View name',
 				maxLength: Constant.limit.dataview.viewName,
 				onChange: (value: string) => {
-					C.BlockCreateDataviewView(rootId, block.id, { name: value }, (message: any) => {
+					C.BlockCreateDataviewView(rootId, block.id, { name: (value || 'New view') }, (message: any) => {
 						this.setState({ page: this.getMaxPage() });
 					});
 				},
