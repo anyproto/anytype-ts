@@ -740,12 +740,11 @@ class BlockText extends React.Component<Props, {}> {
 		const { onBlur } = this.props;
 	
 		this.placeHolderHide();
+		focus.clear(true);
 		keyboard.setFocus(false);
-		onBlur(e);
+		this.setText(this.marks, true);
 
-		window.setTimeout(() => {
-			this.setText(this.marks, true);
-		}, 500);
+		onBlur(e);
 	};
 	
 	onPaste (e: any) {
