@@ -12,7 +12,7 @@ const path = require('path');
 /// #if USE_ADDON
 const { app } = window.require('electron').remote;
 const bindings = require('bindings')({
-	bindings: 'addon.node', 
+	bindings: 'addon.node',
 	module_root: path.join(app.getAppPath(), 'build'),
 });
 /// #endif
@@ -23,10 +23,11 @@ class Dispatcher {
 	stream: any = null;
 
 	constructor () {
-		this.service = new Service.ClientCommandsClient(Constant.server, null, null);
 
 		/// #if USE_ADDON
-			const handler = (item: any) => {
+		this.service = new Service.ClientCommandsClient("http://127.0.0.1:80", null, null);
+
+		const handler = (item: any) => {
 				try {
 					this.event(Events.Event.deserializeBinary(item.data.buffer), false);
 				} catch (e) {
@@ -37,6 +38,10 @@ class Dispatcher {
 			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
+			let serverAddr = window.require('electron').remote.getGlobal('serverAddr');
+			console.log("serverAddr "+serverAddr);
+			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
+
 			this.stream = this.service.listenEvents(new Commands.Empty(), null);
 
 			this.stream.on('data', (event: any) => {
