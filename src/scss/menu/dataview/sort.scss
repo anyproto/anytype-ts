@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewSort { width: 352px; }
+	.menu.menuDataviewSort { width: 354px; }
 	.menu.menuDataviewSort {
-		.select { width: 134px; }
-	}
+		.item { padding: 4px 40px 4px 10px; white-space: nowrap; }
+	}	
 }

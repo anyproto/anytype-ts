@@ -11,7 +11,8 @@
     .menu.menuDataviewRelationList, 
     .menu.menuDataviewFilter,
     .menu.menuDataviewSort {
-		.item { padding: 4px 10px; }
+		.select > .current > .name { max-width: 102px; }
+
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
 			.icon.dnd { margin-right: 2px; }
@@ -19,7 +20,10 @@
 
 		.item.empty { color: #6c6a5f; padding: 8px 16px 4px 16px; line-height: 22px; }
 
-		.item.add { color: $colorDarkGrey; }
+		.item.add { color: $colorDarkGrey; line-height: 20px; }
+		.item.add {
+			.icon.dnd { vertical-align: top; }
+		}
 		.item.add:hover { color: $colorBlack; }
 		.item.add:hover {
 			.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
@@ -36,9 +40,6 @@
 			.select:last-child { margin: 0px; }
 			.select {
 				.name { line-height: inherit; }
-			}
-			.select.relation {
-				.current { padding-left: 6px; }
 			}
 		}
     }

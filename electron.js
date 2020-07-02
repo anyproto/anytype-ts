@@ -7,7 +7,6 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const storage = require('electron-json-storage');
-const SERVER = 'http://localhost:31008';
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
@@ -29,7 +28,7 @@ if (useGRPC) {
 } else {
 	const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 	
-	service = new Service.ClientCommandsClient(SERVER, null, null);
+	service = new Service.ClientCommandsClient('', null, null);
 	
 	console.log('Connect via native addon');
 

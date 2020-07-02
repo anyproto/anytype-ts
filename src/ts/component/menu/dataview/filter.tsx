@@ -9,12 +9,16 @@ import { translate, Util } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
+const Constant = require('json/constant.json');
 const $ = require('jquery');
+const raf = require('raf');
+const TIMEOUT = 500;
 
 class MenuFilter extends React.Component<Props, {}> {
 	
 	refObj: any = {};
 	items: I.Filter[] = [] as I.Filter[];
+	timeoutChange: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -63,7 +67,7 @@ class MenuFilter extends React.Component<Props, {}> {
 						id={'item-' + item.id + '-value'}
 						ref={refGet} 
 						value={item.value} 
-						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v); }} 
+						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v, true); }} 
 						/>
 					);
 					break;
@@ -76,7 +80,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							value={item.value !== '' ? Util.date('d.m.Y', item.value) : ''} 
 							placeHolder="dd.mm.yyyy"
 							mask="99.99.9999"
-							onKeyUp={(e: any, v: string) => { this.onChangeDate(item, v); }} 
+							onKeyUp={(e: any, v: string) => { this.onChangeDate(item.id, v, true); }} 
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 						/>
 					);
@@ -90,7 +94,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							ref={refGet} 
 							value={item.value} 
 							placeHolder="Value" 
-							onKeyUp={(e: any, v: string) => { this.onChange(item, 'value', v); }} 
+							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v, true); }} 
 						/>
 					);
 					break;
@@ -133,7 +137,11 @@ class MenuFilter extends React.Component<Props, {}> {
 						<Item key={i} {...item} id={i} index={i} />
 					))}
 					{!this.items.length ? (
-						<div className="item empty">No filters applied to this view</div>
+						<div className="item empty">
+							<div className="inner">
+								No filters applied to this view
+							</div>
+						</div>
 					) : ''}
 					<ItemAdd index={this.items.length + 1} disabled={true} />
 				</div>
@@ -159,13 +167,15 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
-		
+
 		this.items = view.filters;
 		this.forceUpdate();
+
+		this.resize();
 	};
 
 	componentDidUpdate () {
-		this.props.position();
+		this.resize();
 	};
 
 	componentWillUnmount () {
@@ -266,20 +276,23 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.items[item.id].value = this.refObj[item.id].getValue();
 	};
 
-	onChange (item: any, k: string, v: any) {
-		item = this.items.find((it: any, i: number) => { return i == item.id; });
-		if (!item) {
-			return;
-		};
-
-		item[k] = v;
-
-		// Remove value when we change relation
-		if (k == 'relationId') {
-			item.value = '';
-		};
-
-		this.save();
+	onChange (id: number, k: string, v: any, timeout?: boolean) {
+		window.clearTimeout(this.timeoutChange);
+		this.timeoutChange = window.setTimeout(() => {
+			const item = this.items.find((it: any, i: number) => { return i == id; });
+			if (!item) {
+				return;
+			};
+	
+			item[k] = v;
+	
+			// Remove value when we change relation
+			if (k == 'relationId') {
+				item.value = '';
+			};
+	
+			this.save();
+		}, timeout ? TIMEOUT : 0);
 	};
 
 	onSubmitDate (e: any, item: any) {
@@ -291,7 +304,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.calendarOpen(item.id, value);
 	};
 
-	onChangeDate (item: any, v: any) {
+	onChangeDate (item: any, v: any, timeout?: boolean) {
 	};
 
 	onFocusDate (e: any, item: any) {
@@ -335,6 +348,33 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { view, rootId, blockId, onSave } = data;
 
 		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, filters: this.items }, onSave);
+	};
+
+	resize () {
+		raf(() => {
+			const obj = $('#menuDataviewFilter');
+			const items = obj.find('.item');
+
+			let width = Constant.size.menuDataviewFilter;
+			items.each((i: number, item: any) => {
+				item = $(item);
+				width = Math.max(width, this.getWidth(item));
+			});
+
+			obj.css({ width: width });
+			this.props.position();
+		});
+	};
+
+	getWidth (obj: any) {
+		let w = 0;
+		obj.children().each((i: number, item: any) => {
+			item = $(item);
+			if (!item.hasClass('icon delete')) {
+				w += item.outerWidth(true);
+			};
+		});
+		return w + 50;
 	};
 
 };
