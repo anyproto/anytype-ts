@@ -110,7 +110,6 @@ const THROTTLE = 20;
 const Constant =  require('json/constant.json');
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
-const os = window.require('os');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
 const Routes: RouteElement[] = require('json/route.json');
@@ -122,11 +121,6 @@ const rootStore = {
 
 const { app } = window.require('electron').remote;
 const version = app.getVersion();
-const platforms: any = {
-	win32:	 'Windows',
-	darwin:	 'Mac',
-	linux:	 'Linux',
-};
 
 /*
 enableLogging({
@@ -214,7 +208,7 @@ class App extends React.Component<Props, State> {
 	init () {
 		analytics.init();
 		analytics.setVersionName(version);
-		analytics.setUserProperties({ deviceType: 'Desktop', platform: platforms[os.platform()] });
+		analytics.setUserProperties({ deviceType: 'Desktop', platform: Util.getPlatform() });
 
 		keyboard.init(history);
 		DataUtil.init(history);
