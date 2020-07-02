@@ -47,13 +47,22 @@
 	
 	"size": {
 		"page": 704,
-		"dataview": 1088,
 
 		"blockMenu": 48,
 		"image": 2048,
 		"header": 38,
 		"lastBlock": 100,
 		"cover": 1920,
+
+		"dataview": {
+			"view": {
+				"grid": 1088
+			},
+			"cell": {
+				"default": 500,
+				"title": 288
+			}
+		},
 
 		"iconPage": 256,
 
