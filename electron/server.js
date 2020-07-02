@@ -4,12 +4,15 @@ const childProcess = require('child_process');
 const electron = require('electron');
 const fs = require('fs');
 
+const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
+
 function dateForFile() {
 	return new Date().toISOString().
 		replace(/:/, '_').
 		replace(/:/, '_').
 		replace(/\..+/, '');
 }
+
 
 class Server {
 
@@ -36,7 +39,7 @@ class Server {
 					env['GOLOG_FILE'] = path.join(logsDir, 'anytype_' + dateForFile() + '.log');
 				};
 				
-				let args = [];
+				let args = ["127.0.0.1:0", "127.0.0.1:0"];
 				this.cp = childProcess.spawn(binPath, args, { env: env });
 			} catch (err) {
 				console.error('[Server] Process start error: ', err.toString());
@@ -51,7 +54,9 @@ class Server {
 			
 			this.cp.stdout.on( 'data', data => {
 				let str = data.toString();
-				if (!this.isRunning && str && (str.indexOf('gRPC Web proxy started at:') >= 0)) {
+				if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
+					var regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
+					this.address = 'http://' + regex.exec(str)[1];
 					this.isRunning = true;
 					resolve(true);
 				};
@@ -103,6 +108,10 @@ class Server {
 		};
 		
 		this.cp = null;
+	};
+	
+	getAddress(){
+		return this.address;
 	};
 	
 };

@@ -32,10 +32,14 @@ if (useGRPC) {
 	console.log('Connect via gRPC');
 
 	server = require('./electron/server.js');
-	
+
 	let binPath = path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`);
 	binPath = fixPathForAsarUnpack(binPath);
-	waitLibraryPromise = server.start(binPath, userPath);
+	if (process.env.ANYTYPE_USE_SIDE_SERVER === "1") {
+		waitLibraryPromise = Promise.resolve();
+	} else {
+		waitLibraryPromise = server.start(binPath, userPath);
+	}
 } else {
 	const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 	
@@ -96,6 +100,7 @@ dataPath.push('data');
 
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {
+		global.serverAddr = server.getAddress();
 		createWindow();
 	}, (err) => {
 		electron.dialog.showErrorBox('Error: failed to run server', err.toString());
