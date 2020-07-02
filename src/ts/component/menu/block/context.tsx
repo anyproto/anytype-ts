@@ -108,8 +108,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	onMark (e: any, type: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { range } = focus;
-		const { blockId, blockIds, rootId, onChange, dataset } = data;
+		const { blockId, blockIds, rootId, onChange, dataset, range } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -121,6 +120,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const obj = $('#menuBlockContext');
 		
+		focus.set(blockId, range);
 		focus.apply();
 		
 		let { marks } = content;
@@ -267,7 +267,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							blockIds: blockIds,
 							value: String(mark.param || ''),
 							onChange: (param: string) => {
+								console.log(marks, from, to);
 								marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
+								console.log(marks);
 								onChange(marks);
 								commonStore.menuClose(this.props.id);
 							}

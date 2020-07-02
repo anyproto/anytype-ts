@@ -827,6 +827,7 @@ class BlockText extends React.Component<Props, {}> {
 					blockIds: [ id ],
 					rootId: rootId,
 					dataset: dataset,
+					range: { from: currentFrom, to: currentTo },
 					onChange: (marks: I.Mark[]) => {
 						this.marks = Util.objectCopy(marks);
 						focus.set(id, { from: currentFrom, to: currentTo });

@@ -220,6 +220,8 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
+	marks = Util.objectCopy(marks);
+	console.log(marks);
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark);
 
 	const request = new Rpc.Block.Set.Text.Text.Request();
