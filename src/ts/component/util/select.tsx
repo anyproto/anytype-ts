@@ -19,6 +19,8 @@ interface State {
 	options: I.Option[];
 };
 
+const $ = require('jquery');
+
 class Select extends React.Component<Props, State> {
 	
 	public static defaultProps = {
@@ -112,6 +114,14 @@ class Select extends React.Component<Props, State> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: horizontal,
+			onOpen: () => {
+				window.setTimeout(() => {
+					$('#select-' + id).addClass('active');
+				});
+			},
+			onClose: () => {
+				$('#select-' + id).removeClass('active');
+			},
 			data: {
 				value: value,
 				options: options,

@@ -28,8 +28,8 @@ class MenuSort extends React.Component<Props, {}> {
 		const { view } = data;
 		
 		const typeOptions = [
-			{ id: String(I.SortType.Asc), name: 'From A to Z' },
-			{ id: String(I.SortType.Desc), name: 'From Z to A' },
+			{ id: String(I.SortType.Asc), name: 'Ascending' },
+			{ id: String(I.SortType.Desc), name: 'Descending' },
 		];
 		
 		let relationOptions: any[] = [];
