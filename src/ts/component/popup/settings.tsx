@@ -118,7 +118,7 @@ class PopupSettings extends React.Component<Props, State> {
 					covers1.push({ id: c, image: '', type: I.CoverType.Color });
 				};
 
-				for (let i = 1; i <= 7; ++i) {
+				for (let i = 1; i <= 8; ++i) {
 					covers2.push({ id: 'c' + i, image: '', type: I.CoverType.BgImage });
 				};
 
@@ -157,7 +157,7 @@ class PopupSettings extends React.Component<Props, State> {
 							<Label className="name" text="Pictures" />
 							<div className="covers">
 								{covers2.map((item: any, i: number) => (
-									<Item key={i} {...item} active={item.id == cover.id} />
+									<Item key={i} {...item} preview={true} active={item.id == cover.id} />
 								))}
 							</div>
 						</div>

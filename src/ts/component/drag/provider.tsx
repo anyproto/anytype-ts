@@ -323,8 +323,6 @@ class DragProvider extends React.Component<Props, {}> {
 		const map = blockStore.getMap(rootId);
 		const element = map[targetId];
 
-		console.log(targetId, position);
-
 		if (!target || !element) {
 			return;
 		};

@@ -12,8 +12,12 @@
 
             .cellContent.c-title {
                 .smile { margin-bottom: 10px; }
-                .name { max-width: 100%; @include text-overflow-nw; height: 24px; }
+                .name { max-width: 100%; height: 24px; }
             }
+
+            .cellContent {
+				.name { max-width: 100%; @include text-overflow-nw; }
+			}
             
             .card { width: 100%; margin-bottom: 8px; }
             

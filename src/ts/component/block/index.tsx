@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'ts/lib';
-import { DropTarget, ListChildren } from 'ts/component';
+import { I, C, DataUtil, keyboard, focus, Storage } from 'ts/lib';
+import { DropTarget, ListChildren, Icon } from 'ts/component';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
@@ -218,7 +218,7 @@ class Block extends React.Component<Props, {}> {
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
-					<div id={'button-block-menu-' + id} className="icon dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
+					<Icon id={'button-block-menu-' + id} tooltip="<b>Click</b> to open menu<br/><b>Drag</b> to move block" className="dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 				</div>
 				
 				<div className={cd.join(' ')}>

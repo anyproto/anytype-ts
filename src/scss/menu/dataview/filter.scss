@@ -3,17 +3,19 @@
 .menus {
 	.menu.menuDataviewFilter { width: 446px; }
 	.menu.menuDataviewFilter {
-		.item { padding: 4px 40px 4px 10px; display: flex; position: relative; }
+		.item { padding: 4px 40px 4px 10px; line-height: 28px; position: relative; white-space: nowrap; }
 		.item {
-			.icon.dnd { flex-shrink: 0; margin-top: 5px; }
-			.input { flex-shrink: 2; border-radius: 4px; border: solid 1px #d2d0c2; padding: 0px 6px; }
+			.icon.dnd { vertical-align: top; margin-top: 4px; }
+			.input { flex-shrink: 2; border-radius: 4px; border: solid 1px #d2d0c2; padding: 0px 6px; height: 28px; width: 160px; }
 
 			.icon.checkbox { width: 24px; height: 24px; margin-top: 3px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 			.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-			.select { flex-shrink: 0; width: 100px; }
+			.select { flex-shrink: 0; vertical-align: top; }
 			.select.operator { width: auto; }
 			.select.operator .name { overflow: visible; }
+
+			.where { height: 28px; line-height: 28px; margin-right: 8px; display: inline-block; vertical-align: top; }
 		}
 
 		.item.add { display: block; }

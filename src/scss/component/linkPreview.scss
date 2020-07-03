@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .linkPreview {
-	position: absolute; left: 0px; top: 0px; width: 320px; height: 158px; z-index: 100; display: none; opacity: 0; 
+	position: absolute; left: 0px; top: 0px; width: 320px; z-index: 100; display: none; opacity: 0; 
 	transition: opacity 0.2s ease-in-out;
 }
 .linkPreview.withImage { height: 268px; }

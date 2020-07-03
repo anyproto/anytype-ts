@@ -1,6 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { blockStore } from 'ts/store';
-import { I, M, Util, Storage } from 'ts/lib';
+import { I, M, Storage, Mapper } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('electron').remote;
@@ -10,11 +9,6 @@ class Analytics {
 	
 	isInit: boolean =  false;
 	instance: any = null;
-	debug: boolean = false;
-	
-	constructor () {
-		this.debug = (Storage.get('debug') || {}).an;
-	};
 	
 	init () {
 		const debug = (Storage.get('debug') || {}).an;
@@ -86,7 +80,7 @@ class Analytics {
 
 			case 'BlockCreate':
 			case 'BlockReplace':
-				let block = new M.Block(blockStore.prepareBlockFromProto(data.block));
+				let block = new M.Block(Mapper.From.Block(data.getBlock()));
 				
 				param.type = block.type;
 				if (block.isText() || block.isDiv()) {

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage } from 'ts/lib';
+import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -67,9 +67,10 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const list = blockStore.getChildren(rootId, rootId);
+		const children = blockStore.getChildren(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
-		
+		const length = childrenIds.length;
+
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
@@ -117,7 +118,7 @@ class EditorPage extends React.Component<Props, State> {
 							/>	
 						) : ''}
 						
-						{list.map((block: I.Block, i: number) => {
+						{children.map((block: I.Block, i: number) => {
 							return (
 								<Block 
 									key={block.id} 
@@ -147,10 +148,11 @@ class EditorPage extends React.Component<Props, State> {
 		
 		keyboard.disableBack(true);
 		this.unbind();
+		
 		this.open();
 		
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('scroll.editor', throttle((e: any) => { this.onScroll(e); }, THROTTLE));
+		win.on('scroll.editor', (e: any) => { this.onScroll(e); });
 		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
 		win.on('paste.editor', (e: any) => {
 			if (!keyboard.isFocused) {
@@ -201,9 +203,17 @@ class EditorPage extends React.Component<Props, State> {
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 	
-	open () {
+	open (skipInit?: boolean) {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
+
+		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
+		if (!breadcrumbs && !skipInit) {
+			DataUtil.pageInit(() => {
+				this.open(true);
+			});
+			return;
+		};
 		
 		if (this.id == rootId) {
 			return;
@@ -226,7 +236,7 @@ class EditorPage extends React.Component<Props, State> {
 		this.close(this.id);
 		this.id = rootId;
 		
-		C.BlockOpen(this.id, [ breadcrumbs ], (message: any) => {
+		C.BlockOpen(this.id, (message: any) => {
 			const { focused, range } = focus;
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
 			
@@ -283,7 +293,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		C.BlockClose(id, [], (message: any) => {
+		C.BlockClose(id, (message: any) => {
 			blockStore.blocksClear(id);
 		});
 	};
@@ -610,7 +620,6 @@ class EditorPage extends React.Component<Props, State> {
 			
 			// Open action menu
 			if (k == Key.slash) {
-				console.log(213);
 				commonStore.menuOpen('blockAction', { 
 					element: '#block-' + focused,
 					type: I.MenuType.Vertical,
@@ -878,7 +887,7 @@ class EditorPage extends React.Component<Props, State> {
 	onMenuAdd (id: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
-		
+
 		if (!block) {
 			return;
 		};
@@ -894,7 +903,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 
 		const el = $('#block-' + id);
-		const offset = el.offset();
+		const offset = el.offset() || {};
 		const rect = Util.selectionRect();
 		
 		let x = rect.x - offset.left;
@@ -985,6 +994,7 @@ class EditorPage extends React.Component<Props, State> {
 									data: { 
 										type: I.NavigationType.Create, 
 										rootId: rootId,
+										skipId: rootId,
 										blockId: block.id,
 										position: position,
 									}, 
@@ -1060,7 +1070,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const cb = (message: any) => {
-			const blocks = (message.anySlot || []).map((it: any) => { return blockStore.prepareBlockFromProto(it); });
+			const blocks = (message.anySlot || []).map(Mapper.From.Block);
 
 			Util.clipboardCopy({
 				text: message.textSlot,
@@ -1350,14 +1360,17 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
-		
-		if (!last.length) {
+
+		if (!blocks.length || !last.length) {
 			return;
 		};
 		
-		last.css({ height: 0 });
-		last.css({ height: Math.max(Constant.size.lastBlock, win.height() - (node.outerHeight() + Constant.size.header) - 4) });
+		const wh = win.height();
+		const height = blocks.outerHeight() + blocks.offset().top;
+
+		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
 	};
 	
 	focus (id: string, from: number, to: number) {

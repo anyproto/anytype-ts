@@ -1,12 +1,22 @@
 const webpack = require('webpack');
 const path = require('path');
+const proccess = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env) => {
+	const useGRPC = process.env.ANYTYPE_USE_GRPC || (process.platform == 'win32') || (env.NODE_ENV == 'development');
+	
 	return {
 		mode: env.NODE_ENV,
 	
-		devtool: 'source-map',
+		//devtool: 'source-map',
+
+		optimization: {
+			minimize: false,
+			removeAvailableModules: false,
+    		removeEmptyChunks: false,
+    		splitChunks: false,
+		},
 		
 		entry: './src/ts/entry.tsx',
 	
@@ -24,6 +34,8 @@ module.exports = (env) => {
 			inline: true,
 			contentBase: path.join(__dirname, 'dist'),
 			historyApiFallback: true,
+			host: 'localhost',
+			port: env.SERVER_PORT,
 			watchOptions: {
 				ignored: [
 					path.resolve(__dirname, 'dist'),
@@ -40,17 +52,16 @@ module.exports = (env) => {
 					use: [
 						{
 							loader: 'ts-loader'
-						}
-					]
-				},
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					use: [
-						{
-							loader: 'babel-loader',
-							query: { presets:[ 'env' ] }
-						}
+						},
+						{ 
+							loader: 'ifdef-loader', 
+							options: {
+								USE_GRPC: useGRPC,
+								USE_ADDON: !useGRPC,
+								version: 3,
+								'ifdef-verbose': true,
+							},
+						},
 					]
 				},
 				{
@@ -67,7 +78,7 @@ module.exports = (env) => {
 					loader: 'url-loader?name=[path][name].[ext]'
 				},
 				{
-					test: /\.(s?)css$/,
+					test: /\.s?css/,
 					use: [
 						{ loader: 'style-loader' },
 						{ loader: 'css-loader' },
@@ -79,7 +90,7 @@ module.exports = (env) => {
 		plugins: [
 			//new BundleAnalyzerPlugin(),
 			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV)
+				'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV),
 			})
 		],
 		externals: {

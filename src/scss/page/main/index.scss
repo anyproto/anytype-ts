@@ -17,6 +17,7 @@
 	#hello { transition: opacity 0.5s ease-in-out; }
 	#hello.hide { opacity: 0; }
 	
+	#documents { display: flex; flex-wrap: wrap; overflow: auto; }
 	#documents {
 		.item { 
 			width: 208px; height: 112px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;

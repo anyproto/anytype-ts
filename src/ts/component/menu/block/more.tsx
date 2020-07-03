@@ -202,9 +202,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				commonStore.popupOpen('navigation', { 
 					data: { 
 						type: I.NavigationType.Move, 
-						rootId: rootId,
-						blockId: blockId,
-						blockIds: blockIds,
+						...data,
 					},
 				});
 				break;
@@ -232,9 +230,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				commonStore.popupOpen('navigation', { 
 					data: { 
 						type: I.NavigationType.Move, 
-						rootId: rootId,
-						blockId: blockId,
-						blockIds: blockIds,
+						...data,
 					}, 
 				});
 				break;

@@ -64,10 +64,16 @@
 				.icon.view.c2 { background-image: url('~img/icon/dataview/view/gallery1.svg'); }
 				.icon.view.c3 { background-image: url('~img/icon/dataview/view/board1.svg'); }
 			}
+
+			.item.on { color: #e89d00; }
+			.item.on {
+				.icon.filter { background-image: url('~img/icon/dataview/button/filter2.svg'); }
+				.icon.sort { background-image: url('~img/icon/dataview/button/sort2.svg'); }
+			}
 		}
 		
 		.content {
-			.wrap { overflow-x: auto; overflow-y: visible; }
+			.scroll { overflow-x: auto; overflow-y: visible; }
 			.view { border-top: 1px solid #e0ded2; }
 			
 			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }

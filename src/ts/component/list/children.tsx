@@ -23,10 +23,11 @@ class ListChildren extends React.Component<Props, {}> {
 	render () {
 		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index } = this.props;
 		const { id } = block;
+
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const children = blockStore.getChildren(rootId, id);
 		const length = childrenIds.length;
-		
+
 		if (!length) {
 			return null;
 		};

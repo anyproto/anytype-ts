@@ -42,22 +42,29 @@ class ViewBoard extends React.Component<Props, {}> {
 				))}
 			</div>
 		);
+
+		console.log(columns);
 		
-		const Column = (item: any) => (
-			<div className="column">
-				<div className="head">
-					<Cell id="" view={view} relation={group} data={item.value} />
-				</div>
-				<div className="list">
-					{item.list.map((child: any, i: number) => (
-						<Card key={'board-card-' + i} data={...child} />
-					))}
-					<div className="card add">
-						<Icon className="plus" />
+		const Column = (item: any) => {
+			const head = {};
+			head[GROUP] = item.value;
+
+			return (
+				<div className="column">
+					<div className="head">
+						<Cell id="" view={view} relation={group} data={head} readOnly={true} />
+					</div>
+					<div className="list">
+						{item.list.map((child: any, i: number) => (
+							<Card key={'board-card-' + i} data={...child} />
+						))}
+						<div className="card add">
+							<Icon className="plus" />
+						</div>
 					</div>
 				</div>
-			</div>
-		);
+			);
+		};
 		
 		return (
 			<div className="wrap">
@@ -74,18 +81,16 @@ class ViewBoard extends React.Component<Props, {}> {
 	
 	getColumns (): Column[] {
 		let data = Util.objectCopy(this.props.data);
-		
-		let groupBy = GROUP;
 		let r: Column[] = [];
 		
 		for (let i in data) {
 			let item = data[i];
-			let col = r.find((col) => { return col.value == item[groupBy]; });
+			let col = r.find((col) => { return col.value == item[GROUP]; });
 			
 			item.index = i;
 			
 			if (!col) {
-				col = { value: item[groupBy], list: [] }
+				col = { value: item[GROUP], list: [] }
 				r.push(col);
 			};
 			col.list.push(item);

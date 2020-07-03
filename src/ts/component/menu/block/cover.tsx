@@ -37,7 +37,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				<div className="items">
 					{item.children.map((item: any, i: number) => {
 						item.image = item.id;
-						return <Cover key={i} {...item} onClick={(e: any) => { this.onSelect(e, item); }} />;
+						return <Cover key={i} preview={true} {...item} onClick={(e: any) => { this.onSelect(e, item); }} />;
 					})}
 				</div>
 			</div>

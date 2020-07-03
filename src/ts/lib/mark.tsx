@@ -19,12 +19,11 @@ class Mark {
 	
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
 		if (mark.range.from == mark.range.to) {
-			return;	
+			return marks;	
 		};
 		
 		let map = Util.map(marks, 'type');
 		let type = mark.type;
-		let ret: I.Mark[] = [] as I.Mark[];
 		let add = true;
 		
 		map[type] = map[type] || [];

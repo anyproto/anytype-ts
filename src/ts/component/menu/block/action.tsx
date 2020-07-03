@@ -513,7 +513,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!ids.length) {
 					ids = [ blockId ];
 				};
-				
+
 				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {
 					if (message.blockIds && message.blockIds.length) {
 						this.setFocus(message.blockIds[message.blockIds.length - 1]);

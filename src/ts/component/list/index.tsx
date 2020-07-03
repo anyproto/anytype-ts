@@ -5,12 +5,12 @@ import { Icon, IconUser, Smile } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, Util} from 'ts/lib';
-import { commonStore } from '../../store';
+import { commonStore } from 'ts/store';
 
 interface Props {
 	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
-	onMore?(e: any, id: string): void;
+	onMore?(e: any, item: any): void;
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
 };
@@ -66,7 +66,7 @@ class ListIndex extends React.Component<Props, {}> {
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
 					{icon}
 					<div className="name">{name}</div>
-					{showMenu ? <Icon id={'button-' + item.id + '-more'} className="more" onMouseDown={(e: any) => { onMore(e, item.id); }} /> : ''}
+					{showMenu ? <Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onMouseDown={(e: any) => { onMore(e, item); }} /> : ''}
 				</div>
 			);
 		});
@@ -81,12 +81,12 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const List = SortableContainer((item: any) => {
 			return (
-				<div>
+				<React.Fragment>
 					{item.list.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
 					))}
 					<ItemAdd index={length + 1} disabled={true} />
-				</div>
+				</React.Fragment>
 			);
 		});
 		

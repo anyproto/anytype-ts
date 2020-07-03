@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Icon } from 'ts/component';
 
 interface Props {
 	offset: number;
@@ -38,7 +39,7 @@ class Pager extends React.Component<Props, {}> {
 		};
 		
 		const Item = (item) => (
-			<div className={'page ' + (item.id == page ? 'active' : '')} onMouseDown={() => { this.onChange(item.id); }}>
+			<div className={'page ' + (item.id == page ? 'active' : '')} onClick={() => { this.onChange(item.id); }}>
 				{item.id}
 			</div>
 		);
@@ -46,22 +47,11 @@ class Pager extends React.Component<Props, {}> {
 		if (items.length > 1) {
 			return (
 				<div className="pager">
-					{page > limit * 2 ? (
-						<React.Fragment>
-							<Item id={1} />
-							...
-						</React.Fragment>
-					) : ''}
-
+					<Icon className="arrow left" onClick={() => { this.onChange(page - 1); }} />
 					{items.map((item, i) => {
 						return <Item key={i} {...item} />;
 					})}
-					{end < pages ? (
-						<React.Fragment>
-							...
-							<Item id={pages} />
-						</React.Fragment>
-					) : ''}
+					<Icon className="arrow right" onClick={() => { this.onChange(page + 1); }} />
 				</div>
 			);
 		} else {

@@ -4,11 +4,11 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, Select } from 'ts/component';
 import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
-import { M } from '../../../lib';
-
-const $ = require('jquery');
+import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {};
+
+const $ = require('jquery');
 
 class MenuSort extends React.Component<Props, {}> {
 	
@@ -28,8 +28,8 @@ class MenuSort extends React.Component<Props, {}> {
 		const { view } = data;
 		
 		const typeOptions = [
-			{ id: String(I.SortType.Asc), name: 'From A to Z' },
-			{ id: String(I.SortType.Desc), name: 'From Z to A' },
+			{ id: String(I.SortType.Asc), name: 'Ascending' },
+			{ id: String(I.SortType.Desc), name: 'Descending' },
 		];
 		
 		let relationOptions: any[] = [];
@@ -64,6 +64,9 @@ class MenuSort extends React.Component<Props, {}> {
 					{this.items.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
+					{!this.items.length ? (
+						<div className="item empty">No sorts applied to this view</div>
+					) : ''}
 					<ItemAdd index={this.items.length + 1} disabled={true} />
 				</div>
 			);
@@ -133,6 +136,8 @@ class MenuSort extends React.Component<Props, {}> {
 		this.items = this.items.filter((item: any, i: number) => { return i != id; });
 		this.forceUpdate();
 		this.save();
+
+		commonStore.menuClose('select');
 	};
 	
 	onSortEnd (result: any) {

@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, Decode, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, Decode, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { DataUtil } from '../../lib';
 
 interface Props extends I.Popup {
 	history: any;
@@ -375,6 +374,10 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	loadSearch () {
+		const { param } = this.props;
+		const { data } = param;
+		const { skipId } = data;
+
 		this.setState({ loading: true });
 
 		this.index = new FlexSearch('balance', {
@@ -385,9 +388,12 @@ class PopupNavigation extends React.Component<Props, State> {
 		});
 
 		let pages: any[] = [];
-
 		C.NavigationListPages((message: any) => {
 			for (let page of message.pages) {
+				if (skipId && (page.id == skipId)) {
+					continue;
+				};
+
 				page = this.getPage(page);
 				pages.push(page);
 
@@ -478,14 +484,11 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	getPage (page: any): I.PageInfo {
-		let details = Decode.decodeStruct(page.details || {});
-		details.name = String(details.name || Constant.default.name || '');
+		page.details.name = String(page.details.name || Constant.default.name || '');
 
 		return {
-			id: page.id,
-			snippet: page.snippet,
-			details: details,
-			text: [ details.name, page.snippet ].join(' '),
+			...page,
+			text: [ page.details.name, page.snippet ].join(' '),
 		};
 	};
 	

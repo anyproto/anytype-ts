@@ -10,8 +10,12 @@ import * as Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
 // Prism languages
-const langs = [ 
-	'javascript', 'css', 'markup', 'markup-templating', 'java', 'c', 'clike', 'cpp', 'csharp', 'php', 'go', 'swift', 'kotlin',
+const langs = [
+	'clike', 'c', 'cpp', 'csharp', 'abap', 'arduino', 'bash', 'basic', 'clojure', 'coffeescript', 'dart', 'diff', 'docker', 'elixir',
+	'elm', 'erlang', 'flow', 'fortran', 'fsharp', 'gherkin', 'graphql', 'groovy', 'go', 'haskell', 'json', 'latex', 'less', 'lisp',
+	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
+	'python', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
+	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
 ];
 for (let lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
@@ -823,6 +827,7 @@ class BlockText extends React.Component<Props, {}> {
 					blockIds: [ id ],
 					rootId: rootId,
 					dataset: dataset,
+					range: { from: currentFrom, to: currentTo },
 					onChange: (marks: I.Mark[]) => {
 						this.marks = Util.objectCopy(marks);
 						focus.set(id, { from: currentFrom, to: currentTo });

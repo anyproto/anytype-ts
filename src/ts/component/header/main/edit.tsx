@@ -32,11 +32,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
 		
-		const childrenIds = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const childrenIds = blockStore.getChildrenIds(breadcrumbs, breadcrumbs);
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const slice = children.length > LIMIT ? children.slice(children.length - LIMIT, children.length) : children;
 		const n = children.length - LIMIT;
-		
+
 		const PathItemHome = (item: any) => (
 			<div className="item"onClick={this.onHome}>
 				<Icon className="home" />
