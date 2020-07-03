@@ -95,13 +95,22 @@ class LinkPreview extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!loading && linkPreview.url && (linkPreview.url != url)) {
-			this.setState({ loading: true });
+			this.setState({ 
+				loading: true,
+				url: linkPreview.url,
+				type: 0,
+				title: '',
+				description: '',
+				faviconUrl: '',
+				imageUrl: '',
+			});
 			
 			C.LinkPreview(linkPreview.url, (message: any) => {
 				if (message.error.code) {
+					this.setState({ loading: false });
 					return;
 				};
-				
+
 				this.setState({
 					type: Number(message.linkPreview.type) || 0,
 					title: String(message.linkPreview.title || ''),

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Marker } from 'ts/component';
+import { Marker } from 'ts/component';
 import { I } from 'ts/lib';
 
 interface Props {

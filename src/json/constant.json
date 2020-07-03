@@ -1,4 +1,5 @@
 {
+	"server": "http://127.0.0.1:31008",
 	"pinSize": 6,
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
 	"amplitude": "081a79db340854305408c8fa15706adc",
@@ -39,14 +40,13 @@
 	"limit": {
 		"dataview": {
 			"records": 20,
-			"views": 10,
+			"views": 100000,
 			"viewName": 24
 		}
 	},
 	
 	"size": {
 		"page": 704,
-		"dataview": 1088,
 
 		"blockMenu": 48,
 		"image": 2048,
@@ -54,9 +54,20 @@
 		"lastBlock": 100,
 		"cover": 1920,
 
+		"dataview": {
+			"view": {
+				"grid": 1088
+			},
+			"cell": {
+				"default": 500,
+				"title": 288
+			}
+		},
+
 		"iconPage": 256,
 
 		"menuBlockAdd": 360,
+		"menuDataviewFilter": 446,
 		
 		"menuBlockContext": {
 			"default": 400,
@@ -139,19 +150,72 @@
 		"11": 30,
 		"12": 31
 	},
-	
+
 	"codeLang": {
+		"abap":			 "ABAP",
+		"arduino":		 "Arduino",
+		"bash":			 "Bash",
+		"basic":		 "BASIC", 
+		"c":			 "C",
+		"csharp":		 "C#", 
+		"cpp":			 "C++",
+		"clojure":		 "Clojure", 
+		"coffeescript":	 "CoffeeScript", 
+		"css":			 "CSS", 
+		"dart":			 "Dart",
+		"diff":			 "Diff",
+		"docker":		 "Docker",
+		"elixir":		 "Elixir",
+		"elm":			 "Elm",
+		"erlang":		 "Erlang",
+		"flow":			 "Flow",
+		"fortran":		 "Fortran",
+		"fsharp":		 "F#",
+		"gherkin":		 "Gherkin",
+		"graphql":		 "GraphQL",
+		"groovy":		 "Groovy",
+		"go":			 "Go",
+		"haskell":		 "Haskell",
+		"html":			 "HTML",
+		"json":			 "JSON",
 		"javascript":	 "JavaScript",
 		"java":			 "Java",
-		"cpp":			 "C++",
-		"csharp":		 "C#", 
-		"php":			 "PHP",
-		"sql":			 "SQL", 
-		"css":			 "CSS", 
-		"go":			 "Go",
-		"swift":		 "Swift",
 		"kotlin":		 "Kotlin",
+		"latex":		 "LaTeX",
+		"less":			 "Less",
+		"lisp":			 "Lisp",
+		"livescript":	 "LiveScript",
+		"lua":			 "Lua",
 		"markup":		 "Markup",
-		"markdown":		 "Markdown"
+		"markdown":		 "Markdown",
+		"makefile":		 "Makefile",
+		"matlab":		 "MATLAB",
+		"nginx":		 "Nginx",
+		"objc":			 "Objective-C",
+		"ocaml":		 "OCaml",
+		"pascal":		 "Pascal",
+		"perl":			 "Perl",
+		"php":			 "PHP",
+		"powershell":	 "Power Shell",
+		"prolog":		 "Prolog",
+		"python":		 "Python",
+		"reason":		 "Reason",
+		"ruby":			 "Ruby",
+		"rust":			 "Rust",
+		"sass":			 "Sass",
+		"scala":		 "Scala",
+		"scheme":		 "Scheme",
+		"scss":			 "SСSS",
+		"shell":		 "Shell",
+		"sql":			 "SQL", 
+		"swift":		 "Swift",
+		"typescript":	 "TypeScript",
+		"vbnet":		 "Vb.Net",
+		"verilog":		 "Verilog",
+		"vhdl":			 "VHDL",
+		"vb":			 "Visual Basic",
+		"wasm":			 "WebAssembly",
+		"xml":			 "XML",
+		"yaml":			 "YAML"
 	}
 }

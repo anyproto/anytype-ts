@@ -65,15 +65,17 @@
 	"blockDescriptionLine": { "en": "Separate information with line" },
 	"blockDescriptionDot": { "en": "Separate information with three dots" },
 
-	"filterCondition0": { "en": "Is equal" },
-	"filterCondition1": { "en": "Is not equal" },
-	"filterCondition2": { "en": "Is greater" },
-	"filterCondition3": { "en": "Is less" },
-	"filterCondition4": { "en": "Is greater or equal" },
-	"filterCondition5": { "en": "Is less or equal" },
-	"filterCondition6": { "en": "Matches" },
-	"filterCondition7": { "en": "Doesn't match" },
-	"filterCondition8": { "en": "Contains" },
-	"filterCondition9": { "en": "Doesn't contain" }
+	"filterConditionEqual": { "en": "is" },
+	"filterConditionNotEqual": { "en": "is not" },
+	"filterConditionGreater": { "en": "is greater" },
+	"filterConditionLess": { "en": "is less" },
+	"filterConditionGreaterOrEqual": { "en": "is greater or equal" },
+	"filterConditionLessOrEqual": { "en": "is less or equal" },
+	"filterConditionLike": { "en": "contains" },
+	"filterConditionNotLike": { "en": "doesn't contain" },
+	"filterConditionIn": { "en": "is any of" },
+	"filterConditionNotIn": { "en": "is none of" },
+	"filterConditionEmpty": { "en": "is empty" },
+	"filterConditionNotEmpty": { "en": "is not empty" }
 
 }

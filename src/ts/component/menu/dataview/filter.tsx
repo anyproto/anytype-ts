@@ -5,16 +5,20 @@ import { Icon, Select, Input, Checkbox } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
-import { translate, Util } from '../../../lib';
+import { translate, Util } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
+const Constant = require('json/constant.json');
 const $ = require('jquery');
+const raf = require('raf');
+const TIMEOUT = 500;
 
 class MenuFilter extends React.Component<Props, {}> {
 	
 	refObj: any = {};
 	items: I.Filter[] = [] as I.Filter[];
+	timeoutChange: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -63,7 +67,7 @@ class MenuFilter extends React.Component<Props, {}> {
 						id={'item-' + item.id + '-value'}
 						ref={refGet} 
 						value={item.value} 
-						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v); }} 
+						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v, true); }} 
 						/>
 					);
 					break;
@@ -76,7 +80,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							value={item.value !== '' ? Util.date('d.m.Y', item.value) : ''} 
 							placeHolder="dd.mm.yyyy"
 							mask="99.99.9999"
-							onKeyUp={(e: any, v: string) => { this.onChangeDate(item, v); }} 
+							onKeyUp={(e: any, v: string) => { this.onChangeDate(item.id, v, true); }} 
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 						/>
 					);
@@ -90,7 +94,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							ref={refGet} 
 							value={item.value} 
 							placeHolder="Value" 
-							onKeyUp={(e: any, v: string) => { this.onChange(item, 'value', v); }} 
+							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v, true); }} 
 						/>
 					);
 					break;
@@ -99,7 +103,17 @@ class MenuFilter extends React.Component<Props, {}> {
 			return (
 				<form id={'item-' + item.id} className="item" onSubmit={onSubmit}>
 					<Handle />
-					{item.id > 0 ? <Select id={[ 'filter', 'operator', item.id ].join('-')} className="operator" options={operatorOptions} value={item.operator} onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} /> : ''}
+					{item.id > 0 ? (
+						<Select 
+							id={[ 'filter', 'operator', item.id ].join('-')} 
+							className="operator" 
+							options={operatorOptions} 
+							value={item.operator} 
+							onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} 
+						/>
+					) : (
+						<div className="where">Where</div>
+					)}
 					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
 					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
 					{value}
@@ -122,6 +136,13 @@ class MenuFilter extends React.Component<Props, {}> {
 					{this.items.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
+					{!this.items.length ? (
+						<div className="item empty">
+							<div className="inner">
+								No filters applied to this view
+							</div>
+						</div>
+					) : ''}
 					<ItemAdd index={this.items.length + 1} disabled={true} />
 				</div>
 			);
@@ -146,13 +167,15 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
-		
+
 		this.items = view.filters;
 		this.forceUpdate();
+
+		this.resize();
 	};
 
 	componentDidUpdate () {
-		this.props.position();
+		this.resize();
 	};
 
 	componentWillUnmount () {
@@ -169,37 +192,46 @@ class MenuFilter extends React.Component<Props, {}> {
 			case I.RelationType.Email: 
 			case I.RelationType.Phone: 
 				ret = [ 
-					I.FilterCondition.Equal, 
-					I.FilterCondition.NotEqual, 
-					I.FilterCondition.Like, 
-					I.FilterCondition.NotLike,
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
+					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				];
+				break;
+
+			case I.RelationType.Select: 
+				ret = [ 
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.In,			 name: translate('filterConditionIn') }, 
+					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotIn') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				];
 				break;
 			
 			case I.RelationType.Number:
 			case I.RelationType.Date:
 				ret = [ 
-					I.FilterCondition.Equal, 
-					I.FilterCondition.NotEqual, 
-					I.FilterCondition.Greater, 
-					I.FilterCondition.Less, 
-					I.FilterCondition.GreaterOrEqual, 
-					I.FilterCondition.LessOrEqual,
+					{ id: I.FilterCondition.Equal,			 name: '=' }, 
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
+					{ id: I.FilterCondition.Greater,		 name: '>' }, 
+					{ id: I.FilterCondition.Less,			 name: '<' }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≤' }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: '≥' },
 				];
 				break;
 			
 			case I.RelationType.Checkbox:
 			default:
 				ret = [ 
-					I.FilterCondition.Equal, 
-					I.FilterCondition.NotEqual,
+					{ id: I.FilterCondition.Equal,			 name: '=' }, 
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' },
 				];
 				break;
 		};
-
-		ret = ret.map((it: I.FilterCondition) => {
-			return { id: it, name: translate('filterCondition' + it) };
-		});
 		return ret;
 	};
 	
@@ -226,11 +258,13 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.items = this.items.filter((it: any, i: number) => { return i != id; });
 		this.forceUpdate();
 		this.save();
+
+		commonStore.menuClose('select');
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		
+
 		this.items = arrayMove(this.items, oldIndex, newIndex);
 		this.forceUpdate();
 		this.save();
@@ -242,20 +276,23 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.items[item.id].value = this.refObj[item.id].getValue();
 	};
 
-	onChange (id: number, k: string, v: any) {
-		const item = this.items.find((it: any, i: number) => { return i == id; });
-		if (!item) {
-			return;
-		};
-
-		item[k] = v;
-
-		// Remove value when we change relation
-		if (k == 'relationId') {
-			item.value = '';
-		};
-
-		this.save();
+	onChange (id: number, k: string, v: any, timeout?: boolean) {
+		window.clearTimeout(this.timeoutChange);
+		this.timeoutChange = window.setTimeout(() => {
+			const item = this.items.find((it: any, i: number) => { return i == id; });
+			if (!item) {
+				return;
+			};
+	
+			item[k] = v;
+	
+			// Remove value when we change relation
+			if (k == 'relationId') {
+				item.value = '';
+			};
+	
+			this.save();
+		}, timeout ? TIMEOUT : 0);
 	};
 
 	onSubmitDate (e: any, item: any) {
@@ -267,7 +304,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.calendarOpen(item.id, value);
 	};
 
-	onChangeDate (item: any, v: any) {
+	onChangeDate (item: any, v: any, timeout?: boolean) {
 	};
 
 	onFocusDate (e: any, item: any) {
@@ -311,6 +348,33 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { view, rootId, blockId, onSave } = data;
 
 		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, filters: this.items }, onSave);
+	};
+
+	resize () {
+		raf(() => {
+			const obj = $('#menuDataviewFilter');
+			const items = obj.find('.item');
+
+			let width = Constant.size.menuDataviewFilter;
+			items.each((i: number, item: any) => {
+				item = $(item);
+				width = Math.max(width, this.getWidth(item));
+			});
+
+			obj.css({ width: width });
+			this.props.position();
+		});
+	};
+
+	getWidth (obj: any) {
+		let w = 0;
+		obj.children().each((i: number, item: any) => {
+			item = $(item);
+			if (!item.hasClass('icon delete')) {
+				w += item.outerWidth(true);
+			};
+		});
+		return w + 50;
 	};
 
 };

@@ -6,20 +6,17 @@
 	white-space: nowrap;
 }
 
-.select:hover { background: #f7f5f0; }
+.select:hover, .select.active { background: #f3f2ef; }
 .select {
 	.icon { transition: none; }
 	.icon.arrow {
-		margin: -3px 0px 0px 0px !important; right: 8px; width: 10px !important; height: 6px !important; position: absolute; top: 50%;
+		margin: -10px 0px 0px 0px !important; right: 2px; width: 20px; height: 20px; position: absolute; top: 50%;
 		background-image: url('~img/arrow/select/dark.svg'); 
 	}
-	.icon.arrow.light { 
-		margin: -4px 0px 0px 0px !important; right: 4px; width: 8px !important; height: 8px !important; position: absolute; top: 50%;
-		background-image: url('~img/arrow/select/light.svg'); 
-	}
-	.current { padding: 4px 26px 4px 8px; }
+	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg'); }
+	.current { padding: 3px 26px 3px 6px; width: 100%; line-height: 20px; }
 	.current {
-		.name { @include text-overflow-nw; width: calc(100% - 14px); }
+		.name { @include text-overflow-nw; }
 	}
 	.options { 
 		min-width: 176px; border-radius: 8px; box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.3); background: #fff; position: absolute;
@@ -31,6 +28,6 @@
 			.name { width: auto; }
 			.icon { margin: 0px 4px 0px 0px; transition: none; }
 		}
-		.option:hover, .option.active { background: #f7f5f0 !important; }
+		.option:hover, .option.active { background: #f3f2ef !important; }
 	}
 }

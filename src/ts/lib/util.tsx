@@ -38,11 +38,18 @@ class Util {
 			return p1.toUpperCase();
 		});
 	};
-	
+
 	fromCamelCase (str: string, symbol: string) {
 		return str.replace(/([A-Z]{1})/g, (str: string, p1: string, p2: string, offset: number, s: string) => {
 			return symbol + p1.toLowerCase();
 		});
+	};
+
+	ucFirst (s: string): string {
+		if (!s) {
+			return '';
+		};
+		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length).toLowerCase();
 	};
 	
 	objectCopy (o: any): any {
@@ -480,12 +487,20 @@ class Util {
 		return String((Number(s) || 0) || '') === String(s || '');
 	};
 
-	coverSrc (cover: string) {
-		return `./img/cover/${cover}.jpg`;
+	coverSrc (cover: string, preview?: boolean) {
+		return `./img/cover/${preview ? 'preview/' : ''}${cover}.jpg`;
 	};
 
-	selectionRect (): DOMRect {
-		return window.getSelection().getRangeAt(0).getBoundingClientRect() as DOMRect;
+	selectionRect () {
+		const sel = window.getSelection();
+		if (sel && (sel.rangeCount > 0)) {
+			return sel.getRangeAt(0).getBoundingClientRect() as DOMRect;
+		};
+		return { x: 0, y: 0, width: 0, height: 0 };
+	};
+
+	cntWord (cnt: any, w1: string, w2?: string) {
+		return String(cnt || '').substr(-1) == '1' ? w1 : (w2 ? w2 : w1 + 's');
 	};
 
 	uuid () {

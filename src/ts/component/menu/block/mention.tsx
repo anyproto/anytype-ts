@@ -134,9 +134,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { pages } = this.state;
 		const { filter } = commonStore;
 
-		let id = 1;
 		let pageData = [];
-
 		for (let page of pages) {
 			if (page.id == rootId) {
 				continue;
@@ -189,23 +187,14 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this.setState({ loading: true });
 
 		C.NavigationListPages((message: any) => {
-			let pages = message.pages.map((it: any) => { return this.getPage(it); });
+			let pages = message.pages.map((it: any) => { 
+				it.details.name = String(it.details.name || Constant.default.name || '');
+				return it; 
+			});
 			this.setState({ pages: pages, loading: false });
 		});
 	};
 
-	getPage (page: any): I.PageInfo {
-		let details = Decode.decodeStruct(page.details || {});
-		details.name = String(details.name || Constant.default.name || '');
-
-		return {
-			id: page.id,
-			snippet: page.snippet,
-			details: details,
-			text: [ details.name, page.snippet ].join(' '),
-		};
-	};
-	
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
