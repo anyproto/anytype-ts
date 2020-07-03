@@ -4,6 +4,12 @@
 	"amplitude": "081a79db340854305408c8fa15706adc",
 	"smile": "https://unpkg.com/emoji-datasource-apple@4.0.4/img/apple/sheets-256/64.png",
 	
+	"platforms": {
+		"win32": 	"Windows",
+		"darwin":	"Mac",
+		"linux":	"Linux"
+	},
+
 	"default": {
 		"name": "Untitled",
 		"icon": ":page_facing_up:",

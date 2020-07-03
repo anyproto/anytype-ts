@@ -11,6 +11,7 @@ const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
 const Constant = require('json/constant.json');
+const os = window.require('os');
 const sprintf = window.require('sprintf-kit')({
 	d: require('sprintf-kit/modifiers/d'),
 	s: require('sprintf-kit/modifiers/s'),
@@ -491,6 +492,10 @@ class Util {
 		return uuidv4(); 
 	};
 	
+	getPlatform () {
+		return Constant.platforms[os.platform()];
+	};
+
 };
 
 export default new Util();

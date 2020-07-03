@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, SmileUtil, Storage, focus } from 'ts/lib';
+import { I, Util, DataUtil, SmileUtil, Storage, focus } from 'ts/lib';
 import { commonStore, authStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -71,39 +71,48 @@ class Keyboard {
 					}, 
 				});
 			};
+		};
 
-			// Create new page
-			if (k == Key.n) {
-				e.preventDefault();
-				
-				let targetId = '';
-				let position = I.BlockPosition.Bottom;
-				
-				if (this.isEditor()) {
-					const fb = blockStore.getLeaf(rootId, focused);
-					if (fb) {
-						if (fb.isTitle()) {
-							const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTitle(); });
-							if (first) {
-								targetId = first.id;
-								position = I.BlockPosition.Top;
-							};
-						} else 
-						if (fb.isFocusable()) {
-							targetId = fb.id;
+		// Create new page
+		if ((k == Key.n) && this.ctrlByPlatform(e)) {
+			e.preventDefault();
+			
+			let targetId = '';
+			let position = I.BlockPosition.Bottom;
+			
+			if (this.isEditor()) {
+				const fb = blockStore.getLeaf(rootId, focused);
+				if (fb) {
+					if (fb.isTitle()) {
+						const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTitle(); });
+						if (first) {
+							targetId = first.id;
+							position = I.BlockPosition.Top;
 						};
+					} else 
+					if (fb.isFocusable()) {
+						targetId = fb.id;
 					};
 				};
-				
-				const details = { 
-					iconEmoji: SmileUtil.random(), 
-					name: Constant.default.name 
-				};
-				DataUtil.pageCreate(e, { history: this.history }, rootId, targetId, details, position);
 			};
+			
+			const details = { 
+				iconEmoji: SmileUtil.random(), 
+				name: Constant.default.name 
+			};
+			DataUtil.pageCreate(e, { history: this.history }, rootId, targetId, details, position);
 		};
 		
 		this.setPinCheck();
+	};
+
+	ctrlByPlatform (e: any) {
+		const platform = Util.getPlatform();
+		if (platform == I.Platform.Mac) {
+			return e.metaKey;
+		} else {
+			return e.ctrlKey;
+		};
 	};
 	
 	isEditor () {
