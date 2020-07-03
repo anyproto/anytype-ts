@@ -94,26 +94,26 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		return (
 			<div className="wrap">
-				{total ? pager : ''}
-				
-				<table className="viewItem viewGrid">
-					<thead>
-						<RowHead />
-					</thead>
-					<tbody>
-						{data.map((item: any, i: number) => (
-							<RowBody key={'grid-row-' + i} index={i} {...item} />
-						))}
-						{!readOnly ? (
-							<tr>
-								<td className="cell add" colSpan={view.relations.length + 1}>
-									<Icon className="plus" />
-									<div className="name">New</div>
-								</td>
-							</tr>
-						) : null}
-					</tbody>
-				</table>
+				<div className="scroll">
+					<table className="viewItem viewGrid">
+						<thead>
+							<RowHead />
+						</thead>
+						<tbody>
+							{data.map((item: any, i: number) => (
+								<RowBody key={'grid-row-' + i} index={i} {...item} />
+							))}
+							{!readOnly ? (
+								<tr>
+									<td className="cell add" colSpan={view.relations.length + 1}>
+										<Icon className="plus" />
+										<div className="name">New</div>
+									</td>
+								</tr>
+							) : null}
+						</tbody>
+					</table>
+				</div>
 
 				{total ? pager : ''}
 			</div>
@@ -128,6 +128,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { view } = this.props;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
 		const ww = Math.max(Constant.size.dataview.view.grid, win.width() - 48);
 		const margin = (ww - Constant.size.dataview.view.grid) / 2;
@@ -137,7 +138,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			width += Number(Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0;
 		};
 
-		node.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
+		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: width });
 	};
 
