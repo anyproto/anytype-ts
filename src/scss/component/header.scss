@@ -60,7 +60,7 @@
 	.mid {
 		.btn { 
 			border: 1px solid $colorLightGrey; border-radius: 6px; vertical-align: top; height: 28px; 
-			width: 32px; background-size: 20px 20px; margin-right: 8px;
+			width: 32px; background-size: 20px 20px; margin-right: 8px; opacity: 0;
 		}
 	
 		.btn.home { width: 48px; margin-right: 8px; }
@@ -69,18 +69,23 @@
 	}
 
 	.path { 
-		border: 1px solid $colorLightGrey; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
-		line-height: 24px; width: 444px; margin-right: 8px; text-align: center;
+		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
+		line-height: 24px; width: 444px; margin-right: 8px; text-align: center; transition: $transitionFast;
 	}
 	.path {
 		.item { line-height: 20px; vertical-align: middle; }
 	}
 
-	.right { position: absolute; top: 5px; right: 10px; }
+	.right { position: absolute; top: 9px; right: 10px; }
 	.right {
 		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer; }
 		.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
 		.icon:last-child { margin: 0px; }
 	}
+}
+
+.headerMainEditNew:hover, .headerMainEditNew.isEditing {
+	.mid .btn { opacity: 1; }
+	.path { border-color: $colorLightGrey; }
 }

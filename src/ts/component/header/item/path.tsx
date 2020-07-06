@@ -32,8 +32,6 @@ class HeaderItemPath extends React.Component<Props, {}> {
 		);
 	};
 
-
- 	
 };
 
 export default HeaderItemPath;
