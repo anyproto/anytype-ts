@@ -555,14 +555,26 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
 
+		console.log(focused, block);
+
 		if (!block) {
 			return;
 		};
 		
+		const platform = Util.getPlatform();
 		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
-		const k = e.key.toLowerCase();
 		const length = String(text || '').length;
+
+		let k = e.key.toLowerCase();
+
+		console.log(e, k);
+		
+		// Ctrl + N on MacOs is new line
+		if ((k == Key.n) && e.ctrlKey && (platform == I.Platform.Mac)) {
+			k = Key.down;
+			e.ctrlKey = false;
+		};
 		
 		this.uiHide();
 
@@ -739,7 +751,7 @@ class EditorPage extends React.Component<Props, State> {
 				};
 				return;
 			};
-			
+
 			if (canFocus) {
 				e.preventDefault();
 				

@@ -20,10 +20,13 @@ class Focus {
 	};
 	
 	clear (withRange: boolean) {
+		this.clearRange(withRange);
 		this.focused = '';
 		this.range.from = 0;
 		this.range.to = 0;
-		
+	};
+
+	clearRange (withRange: boolean) {
 		$('.focusable.isFocused').removeClass('isFocused');
 		
 		const el = $('.focusable.c' + this.focused);
@@ -47,6 +50,8 @@ class Focus {
 		if (!node.length) {
 			return;
 		};
+
+		this.clearRange(true);
 		
 		$('.focusable.isFocused').removeClass('isFocused');
 		node.addClass('isFocused');

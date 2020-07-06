@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, keyboard, Util } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { I, C, Util, focus } from 'ts/lib';
+import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -23,6 +23,7 @@ class BlockFile extends React.Component<Props, {}> {
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
@@ -72,7 +73,7 @@ class BlockFile extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
+			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}
 			</div>
 		);
@@ -92,6 +93,11 @@ class BlockFile extends React.Component<Props, {}> {
 	
 	onKeyUp (e: any) {
 		this.props.onKeyUp(e, '', []);
+	};
+
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
 	onChangeUrl (e: any, url: string) {

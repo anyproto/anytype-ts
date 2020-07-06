@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input } from 'ts/component';
-import { I, C, keyboard, Key, focus, DataUtil } from 'ts/lib';
+import { I, C, keyboard, Key, focus, DataUtil, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { isDeepStrictEqual } from 'util';
 
 interface Props {
 	rootId: string;
@@ -112,12 +110,20 @@ class BlockTitle extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const k = e.key.toLowerCase();
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const value = this.getValue();
 		const length = value.length;
 		const range = this.getRange();
+		const platform = Util.getPlatform();
+
+		let k = e.key.toLowerCase();
+
+		// Ctrl + N on MacOs is new line
+		if ((k == Key.n) && e.ctrlKey && (platform == I.Platform.Mac)) {
+			k = Key.down;
+			e.ctrlKey = false;
+		};
 		
 		// Enter
 		if (k == Key.enter) {
