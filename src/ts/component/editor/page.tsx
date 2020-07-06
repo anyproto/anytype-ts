@@ -555,8 +555,6 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
 
-		console.log(focused, block);
-
 		if (!block) {
 			return;
 		};
