@@ -47,6 +47,7 @@ class BlockText extends React.Component<Props, {}> {
 	timeoutClick: number = 0;
 	marks: I.Mark[] = [];
 	clicks: number = 0;
+	composition: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -62,6 +63,10 @@ class BlockText extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onLang = this.onLang.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+
+		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
@@ -130,6 +135,9 @@ class BlockText extends React.Component<Props, {}> {
 				onPaste={this.onPaste}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
+				onCompositionStart={this.onCompositionStart}
+				onCompositionUpdate={this.onCompositionUpdate}
+				onCompositionEnd={this.onCompositionEnd}
 				onDragStart={(e: any) => { e.preventDefault(); }}
 			/>
 		);
@@ -174,10 +182,21 @@ class BlockText extends React.Component<Props, {}> {
 		this._isMounted = false;
 		window.clearTimeout(this.timeoutKeyUp);
 	};
+
+	onCompositionStart (e: any) {
+		this.composition = true;
+	};
+
+	onCompositionUpdate (e: any) {
+	};
+
+	onCompositionEnd (e: any) {
+		this.composition = false;
+	};
 	
 	setValue (v: string) {
-		const { rootId, block } = this.props;
-		const { id, fields, content } = block
+		const { block } = this.props;
+		const { fields, content } = block
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
@@ -357,7 +376,12 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onKeyDown (e: any) {
 		e.persist();
-		
+
+		// Chinese IME is open
+		if (this.composition) {
+			return;
+		};
+
 		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
 		const { id } = block;
 		const { filter } = commonStore;

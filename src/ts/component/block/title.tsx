@@ -21,6 +21,7 @@ class BlockTitle extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	timeout: number = 0;
+	composition: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -32,6 +33,10 @@ class BlockTitle extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+
+		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render (): any {
@@ -60,6 +65,9 @@ class BlockTitle extends React.Component<Props, {}> {
 					onBlur={this.onBlur}
 					onPaste={this.onPaste}
 					onSelect={this.onSelect}
+					onCompositionStart={this.onCompositionStart}
+					onCompositionUpdate={this.onCompositionUpdate}
+					onCompositionEnd={this.onCompositionEnd}
 				>{name}</div>
 				<span className={[ 'placeHolder', 'c' + id ].join(' ')}>{Constant.default.name}</span>
 			</div>
@@ -85,6 +93,17 @@ class BlockTitle extends React.Component<Props, {}> {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 	};
+
+	onCompositionStart (e: any) {
+		this.composition = true;
+	};
+
+	onCompositionUpdate (e: any) {
+	};
+
+	onCompositionEnd (e: any) {
+		this.composition = false;
+	};
 	
 	onFocus (e: any) {
 		keyboard.setFocus(true);
@@ -107,7 +126,7 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.composition) {
 			return;
 		};
 		
