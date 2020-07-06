@@ -18,6 +18,7 @@ import BlockFile from './file';
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
+import BlockDiv from './div';
 
 interface Props extends RouteComponentProps<any> {
 	index?: any;
@@ -164,21 +165,7 @@ class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.Div:
 				cn.push('blockDiv c' + content.style);
-				
-				let inner: any = null;
-				switch (content.style) {
-					case I.DivStyle.Dot:
-						inner = (
-							<React.Fragment>
-								<div className="dot" />
-								<div className="dot" />
-								<div className="dot" />
-							</React.Fragment>
-						);
-						break;
-				};
-				
-				blockComponent = <div className="div">{inner}</div>;
+				blockComponent = <BlockDiv {...this.props} />;
 				break;
 				
 			case I.BlockType.Link:

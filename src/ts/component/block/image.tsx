@@ -26,6 +26,7 @@ class BlockImage extends React.Component<Props, {}> {
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
@@ -81,7 +82,7 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + id ].join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
+			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}
 			</div>
 		);
@@ -125,6 +126,11 @@ class BlockImage extends React.Component<Props, {}> {
 	
 	onKeyUp (e: any) {
 		this.props.onKeyUp(e, '', []);
+	};
+
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
 	onChangeUrl (e: any, url: string) {
