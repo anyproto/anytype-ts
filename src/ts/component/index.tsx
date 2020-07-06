@@ -16,6 +16,7 @@ import HeaderItemPath from './header/item/path';
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
 import HeaderMainEdit from './header/main/edit';
+import HeaderMainEditNew from './header/main/edit-new';
 import HeaderHelpIndex from './header/help/index';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
@@ -69,6 +70,7 @@ export {
 	HeaderAuth,
 	HeaderMainIndex,
 	HeaderMainEdit,
+	HeaderMainEditNew,
 	HeaderHelpIndex,
 	FooterAuth,
 	FooterMainIndex,
