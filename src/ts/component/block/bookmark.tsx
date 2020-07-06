@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, InputWithFile } from 'ts/component';
-import { I, C, keyboard } from 'ts/lib';
+import { I, C, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -26,6 +26,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
@@ -67,7 +68,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + id ].join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
+			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}
 			</div>
 		);
@@ -95,6 +96,11 @@ class BlockBookmark extends React.Component<Props, {}> {
 	
 	onKeyUp (e: any) {
 		this.props.onKeyUp(e, '', []);
+	};
+
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
 	onClick (e: any) {

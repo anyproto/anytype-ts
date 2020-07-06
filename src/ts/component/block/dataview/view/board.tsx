@@ -43,8 +43,6 @@ class ViewBoard extends React.Component<Props, {}> {
 			</div>
 		);
 
-		console.log(columns);
-		
 		const Column = (item: any) => {
 			const head = {};
 			head[GROUP] = item.value;
