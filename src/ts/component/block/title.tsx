@@ -119,10 +119,16 @@ class BlockTitle extends React.Component<Props, {}> {
 
 		let k = e.key.toLowerCase();
 
-		// Ctrl + N on MacOs is new line
-		if ((k == Key.n) && e.ctrlKey && (platform == I.Platform.Mac)) {
-			k = Key.down;
-			e.ctrlKey = false;
+		// Ctrl + P and Ctrl + N on MacOs work like up/down arrows
+		if ((platform == I.Platform.Mac) && e.ctrlKey) {
+			if (k == Key.p) {
+				k = Key.up;
+				e.ctrlKey = false;
+			};
+			if (k == Key.n) {
+				k = Key.down;
+				e.ctrlKey = false;
+			};
 		};
 		
 		// Enter
