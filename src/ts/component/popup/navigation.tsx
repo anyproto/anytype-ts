@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, Decode, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -59,7 +59,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onConfirm = this.onConfirm.bind(this);
-		this.onCancel = this.onCancel.bind(this);
 	};
 	
 	render () {
@@ -93,7 +92,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			default:
 			case I.NavigationType.Go:
 				placeHolder = 'Search for a page...';
-				confirm = 'Open';
+				confirm = 'Open as page';
 				break;
 
 			case I.NavigationType.Move:
@@ -156,32 +155,6 @@ class PopupNavigation extends React.Component<Props, State> {
 			);
 		};
 
-		const ItemPath = (item: any) => {
-			let isRoot = item.id == root;
-			let icon = null;
-			let name = '';
-
-			if (item.isSearch) {
-				name = 'Search for an object';
-				icon = <Icon className="search" />
-			} else
-			if (isRoot) {
-				name = item.details.name;
-				icon = <Icon className="home" />;
-			} else {
-				name = item.details.name;
-				icon = <Smile icon={item.details.iconEmoji} hash={item.details.iconImage} />;
-			};
-
-			return (
-				<div className="item" onClick={(e: any) => { item.isSearch ? this.onSearch() : this.onClick(e, item); }}>
-					{icon}
-					<div className="name">{Util.shorten(name, 24)}</div>
-					<Icon className="arrow" />
-				</div>
-			);
-		};
-		
 		const Selected = (item: any) => {
 			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
@@ -209,8 +182,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					<div className="descr">{item.snippet}</div>
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="buttons">
-						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
-						<Button text="Cancel" className="grey" onClick={this.onCancel} />
+						<Button text={confirm} icon="expand" className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
 					</div>
 				</div>
 			);
@@ -225,6 +197,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 						<div key="sides" className="sides">
 							<div className="items left">
+								<div className="sideName">Link from page</div>
 								{!isRoot ? (
 									<React.Fragment>
 										{!pagesIn.length ? (
@@ -243,6 +216,7 @@ class PopupNavigation extends React.Component<Props, State> {
 								{info ? <Selected {...info} /> : ''}
 							</div>
 							<div className="items right">
+							<div className="sideName">Link to page</div>
 								{!pagesOut.length ? (
 									<ItemEmpty name="No links to other pages" />
 								) : (
@@ -533,10 +507,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.setState({ expanded: false });
 	};
 	
-	onCancel (e: any) {
-		commonStore.popupClose(this.props.id);
-	};
-
 	getPage (page: any): I.PageInfo {
 		page.details.name = String(page.details.name || Constant.default.name || '');
 
