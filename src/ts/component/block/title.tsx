@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input } from 'ts/component';
-import { I, C, keyboard, Key, focus, DataUtil } from 'ts/lib';
+import { I, C, keyboard, Key, focus, DataUtil, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { isDeepStrictEqual } from 'util';
 
 interface Props {
 	rootId: string;
@@ -21,6 +19,7 @@ class BlockTitle extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	timeout: number = 0;
+	composition: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -32,6 +31,10 @@ class BlockTitle extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+
+		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render (): any {
@@ -60,6 +63,9 @@ class BlockTitle extends React.Component<Props, {}> {
 					onBlur={this.onBlur}
 					onPaste={this.onPaste}
 					onSelect={this.onSelect}
+					onCompositionStart={this.onCompositionStart}
+					onCompositionUpdate={this.onCompositionUpdate}
+					onCompositionEnd={this.onCompositionEnd}
 				>{name}</div>
 				<span className={[ 'placeHolder', 'c' + id ].join(' ')}>{Constant.default.name}</span>
 			</div>
@@ -85,6 +91,17 @@ class BlockTitle extends React.Component<Props, {}> {
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 	};
+
+	onCompositionStart (e: any) {
+		this.composition = true;
+	};
+
+	onCompositionUpdate (e: any) {
+	};
+
+	onCompositionEnd (e: any) {
+		this.composition = false;
+	};
 	
 	onFocus (e: any) {
 		keyboard.setFocus(true);
@@ -107,17 +124,31 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.composition) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const k = e.key.toLowerCase();
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const value = this.getValue();
 		const length = value.length;
 		const range = this.getRange();
+		const platform = Util.getPlatform();
+
+		let k = e.key.toLowerCase();
+
+		// Ctrl + P and Ctrl + N on MacOs work like up/down arrows
+		if ((platform == I.Platform.Mac) && e.ctrlKey) {
+			if (k == Key.p) {
+				k = Key.up;
+				e.ctrlKey = false;
+			};
+			if (k == Key.n) {
+				k = Key.down;
+				e.ctrlKey = false;
+			};
+		};
 		
 		// Enter
 		if (k == Key.enter) {

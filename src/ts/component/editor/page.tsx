@@ -559,11 +559,25 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
+		const platform = Util.getPlatform();
 		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
-		const k = e.key.toLowerCase();
 		const length = String(text || '').length;
-		
+
+		let k = e.key.toLowerCase();
+
+		// Ctrl + P and Ctrl + N on MacOs work like up/down arrows
+		if ((platform == I.Platform.Mac) && e.ctrlKey) {
+			if (k == Key.p) {
+				k = Key.up;
+				e.ctrlKey = false;
+			};
+			if (k == Key.n) {
+				k = Key.down;
+				e.ctrlKey = false;
+			};
+		};
+
 		this.uiHide();
 
 		// Print
@@ -739,7 +753,7 @@ class EditorPage extends React.Component<Props, State> {
 				};
 				return;
 			};
-			
+
 			if (canFocus) {
 				e.preventDefault();
 				

@@ -5,6 +5,7 @@ import { Smile } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { focus } from '../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -25,6 +26,7 @@ class BlockLink extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 	};
 
 	render() {
@@ -35,7 +37,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 		
 		return (
-			<div className={cn.join(' ')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
+			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={true} onSelect={this.onSelect} />
 				<div className="name" onClick={this.onClick}>
 					<div className="txt">{name}</div>
@@ -51,6 +53,11 @@ class BlockLink extends React.Component<Props, {}> {
 	
 	onKeyUp (e: any) {
 		this.props.onKeyUp(e, '', []);
+	};
+
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
 	onClick (e: any) {
