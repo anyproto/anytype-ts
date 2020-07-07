@@ -503,7 +503,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					data: { 
 						type: I.NavigationType.Move, 
 						rootId: rootId,
-						id: rootId,
+						pageId: rootId,
 						blockId: blockId,
 						blockIds: blockIds,
 					}, 

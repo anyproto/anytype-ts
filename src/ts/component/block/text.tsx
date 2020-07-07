@@ -599,7 +599,7 @@ class BlockText extends React.Component<Props, {}> {
 				data: { 
 					type: I.NavigationType.Move, 
 					rootId: rootId,
-					id: rootId,
+					pageId: rootId,
 				}, 
 			});
 			cmdParsed = true;

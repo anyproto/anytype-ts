@@ -60,8 +60,8 @@ class Keyboard {
 					preventResize: true,
 					data: { 
 						type: I.NavigationType.Go, 
-						rootId: rootId,
 						disableFirstKey: true,
+						rootId: rootId,
 					}, 
 				});
 			};
@@ -72,7 +72,7 @@ class Keyboard {
 					data: { 
 						type: I.NavigationType.Go, 
 						rootId: rootId,
-						id: rootId,
+						pageId: rootId,
 					}, 
 				});
 			};

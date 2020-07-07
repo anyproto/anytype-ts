@@ -84,7 +84,7 @@
 	}
 }
 
-.headerMainEditSearch:hover, .headerMainEditSearch.isEditing {
+.headerMainEditSearch:hover, .headerMainEditSearch.active {
 	.mid .btn { opacity: 1; }
 	.path { border-color: $colorLightGrey; }
 }

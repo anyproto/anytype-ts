@@ -11,20 +11,12 @@ interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 };
 
-interface State {
-	editing: boolean;
-};
-
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 @observer
-class HeaderMainEdit extends React.Component<Props, State> {
+class HeaderMainEdit extends React.Component<Props, {}> {
 
-	state = {
-		editing: false,
-	};
-	
 	constructor (props: any) {
 		super(props);
 		
@@ -40,14 +32,17 @@ class HeaderMainEdit extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { editing } = this.state;
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
 
 		const childrenIds = blockStore.getChildrenIds(breadcrumbs, breadcrumbs);
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const { iconEmoji, iconImage, name } = details;
-		const cn = [ 'header', 'headerMainEditSearch', (editing ? 'isEditing' : '') ];
+		const cn = [ 'header', 'headerMainEditSearch' ];
+
+		if (commonStore.popupIsOpen('navigation')) {
+			cn.push('active');
+		};
 		
 		return (
 			<React.Fragment>
@@ -142,15 +137,11 @@ class HeaderMainEdit extends React.Component<Props, State> {
 
 		const { rootId } = this.props;
 
-		this.setState({ editing: true });
 		commonStore.popupOpen('navigation', {
 			preventResize: true, 
-			onClose: () => {
-				this.setState({ editing: false });
-			},
 			data: {
 				rootId: rootId,
-				id: rootId,
+				pageId: rootId,
 				type: I.NavigationType.Go, 
 			},
 		});

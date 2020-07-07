@@ -10,6 +10,7 @@ interface Props extends I.Popup {
 };
 
 interface State {
+	pageId: string;
 	showIcon: boolean;
 	expanded: boolean;
 	loading: boolean;
@@ -36,6 +37,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
+		pageId: '',
 		showIcon: false,
 		expanded: false,
 		loading: false,
@@ -62,24 +64,24 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
+		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, type } = data;
+		const { type } = data;
 		const { root, breadcrumbs } = blockStore;
-		const details = blockStore.getDetails(breadcrumbs, rootId);
-		const isRoot = info && (info.id == root);
+		const details = blockStore.getDetails(breadcrumbs, pageId);
+		const isRoot = pageId == root;
 		const page = pageLeft;
-		const expanded = this.state.expanded || data.id || false;
 
+		let n = 0;
 		let placeHolder = '';
 		let confirm = '';
-		let id = 0;
 		let pages = this.state.pages;
 		let iconSearch = null;
+		let iconButton = '';
 
 		if (showIcon) {
-			if (rootId == root) {
+			if (isRoot) {
 				iconSearch = <Icon key="icon-home" className="home" />;
 			} else {
 				iconSearch = <Smile icon={details.iconEmoji} hash={details.iconImage} />;
@@ -93,6 +95,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			case I.NavigationType.Go:
 				placeHolder = 'Search for a page...';
 				confirm = 'Open as page';
+				iconButton = 'expand';
 				break;
 
 			case I.NavigationType.Move:
@@ -108,7 +111,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const head = (
 			<form id="head" className="head" onSubmit={this.onSubmit}>
 				{iconSearch}
-				<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+				<Input ref={(ref: any) => { this.ref = ref; }} value={details.name} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 			</form>
 		);
 
@@ -182,7 +185,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					<div className="descr">{item.snippet}</div>
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="buttons">
-						<Button text={confirm} icon="expand" className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
+						<Button text={confirm} icon={iconButton} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
 					</div>
 				</div>
 			);
@@ -243,7 +246,7 @@ class PopupNavigation extends React.Component<Props, State> {
 						) : (
 							<div key="items" className="items left">
 								{pages.map((item: any, i: number) => {
-									if (++id > (page + 1) * PAGE) {
+									if (++n > (page + 1) * PAGE) {
 										return null;
 									};
 
@@ -260,22 +263,22 @@ class PopupNavigation extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { id, disableFirstKey } = data;
-		const expanded = id ? true : false;
+		const { pageId, rootId, disableFirstKey } = data;
+		const expanded = pageId ? true : false;
 
 		this.disableFirstKey = Boolean(disableFirstKey);
 		this._isMounted = true;
+
+		this.setCrumbs(rootId);
 		this.initSize(expanded);
-		this.initSearch();
+		this.initSearch(rootId);
 
-		window.setTimeout(() => {
-			this.setState({ expanded: expanded, showIcon: true });
-			this.loadSearch();
-
-			if (expanded) {
-				this.loadPage(data.id);
-			};
-		}, 10);
+		this.setState({ pageId: rootId, expanded: expanded, showIcon: true });
+		this.loadSearch();
+		
+		if (expanded) {
+			this.loadPage(pageId);
+		};
 	};
 	
 	componentDidUpdate () {
@@ -307,13 +310,14 @@ class PopupNavigation extends React.Component<Props, State> {
 		obj.find('.items.right').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Right); });
 	};
 
-	initSearch () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
+	initSearch (id: string) {
+		if (!id) {
+			return;
+		};
+
 		const { root, breadcrumbs } = blockStore;
-		const details = blockStore.getDetails(breadcrumbs, rootId);
-		const isRoot = rootId == root;
+		const details = blockStore.getDetails(breadcrumbs, id);
+		const isRoot = id == root;
 
 		if (this.ref) {
 			this.ref.setValue(isRoot ? 'Home' : details.name);
@@ -437,6 +441,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 	loadPage (id: string) {
 		this.setState({ loading: true });
+		this.setCrumbs(id);
 
 		C.NavigationGetPageInfoWithLinks(id, (message: any) => {
 			if (message.error.code) {
@@ -444,7 +449,9 @@ class PopupNavigation extends React.Component<Props, State> {
 				return;
 			};
 
+			this.initSearch(id);
 			this.setState({ 
+				pageId: id,
 				loading: false,
 				expanded: true, 
 				info: this.getPage(message.page.info),
@@ -452,6 +459,12 @@ class PopupNavigation extends React.Component<Props, State> {
 				pagesOut: message.page.links.outbound.map((it: any) => { return this.getPage(it); }),
 			});
 		});
+	};
+
+	setCrumbs (id: string) {
+		let cr = crumbs.get(I.CrumbsType.Page);
+		cr = crumbs.add(I.CrumbsType.Page, id);
+		crumbs.save(I.CrumbsType.Page, cr);
 	};
 	
 	onClick (e: any, item: I.PageInfo) {
