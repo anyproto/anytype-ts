@@ -20,7 +20,6 @@ class Analytics {
 		};
 		
 		this.instance = amplitude.getInstance();
-		
 		this.instance.init(Constant.amplitude, null, {
 			batchEvents: true,
 			saveEvents: true,
@@ -31,6 +30,10 @@ class Analytics {
 	};
 	
 	profile (profile: any) {
+		if (!this.instance) {
+			return;
+		};
+
 		const debug = (Storage.get('debug') || {}).an;
 		if (!isProduction && !debug) {
 			return;
@@ -43,6 +46,10 @@ class Analytics {
 	};
 	
 	setUserProperties (obj: any) {
+		if (!this.instance) {
+			return;
+		};
+
 		const debug = (Storage.get('debug') || {}).an;
 		if (!isProduction && !debug) {
 			return;
@@ -55,6 +62,10 @@ class Analytics {
 	};
 	
 	setVersionName (name: string) {
+		if (!this.instance) {
+			return;
+		};
+
 		const debug = (Storage.get('debug') || {}).an;
 		if (!isProduction && !debug) {
 			return;
@@ -67,8 +78,12 @@ class Analytics {
 	};
 	
 	event (code: string, data?: any) {
+		if (!this.instance) {
+			return;
+		};
+
 		const debug = (Storage.get('debug') || {}).an;
-		if ((!isProduction && !debug) || !code || !this.isInit) {
+		if ((!isProduction && !debug) || !code) {
 			return;
 		};
 		
