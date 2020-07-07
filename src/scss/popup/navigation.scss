@@ -53,12 +53,6 @@
 				margin-bottom: 16px; cursor: pointer; transition: $transitionFast; position: relative; height: 48px; 
 				line-height: 48px;
 			}
-			.item:hover, .item.active { border-color: #ffda90; box-shadow: 0px 0px 0px 1px #ffda90; }
-			
-			.item:hover, .item.active {
-				.icon.arrow { opacity: 1; }
-				.line { opacity: 1; }
-			}
 			
 			.item:last-child { margin: 0px; }
 
@@ -67,10 +61,6 @@
 				.info { padding: 0px 8px 0px 56px; display: inline-block; vertical-align: middle; width: 100%; }
 				.name { width: 100%; line-height: 22px; height: 22px; margin-bottom: 1px; @include text-overflow-nw;  }
 				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
-				.icon.arrow { 
-					width: 30px; height: 100%; position: absolute; right: 0px; top: 0px; margin-top: 0px;
-					background-image: url('~img/arrow/tree.svg'); background-size: 6px 10px; opacity: 0; display: none;
-				}
 			}
 
 			.item.empty { padding-right: 16px; cursor: default; }
@@ -92,6 +82,15 @@
 					.info { border: 0px; }
 					.icon.arrow { opacity: 1; right: -28px; display: block; }
 					.smile { left: 16px; top: 16px; }
+					.icon.arrow { 
+						width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
+						background-image: url('~img/arrow/nav0.svg');
+					}
+				}
+
+				.item:hover, .item.active { border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
+				.item:hover, .item.active {
+					.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
 				}
 			}
 			
@@ -110,7 +109,7 @@
 			
 			.items.right {
 				.item {
-					.icon.arrow { opacity: 1; right: auto; left: -28px; }
+					.icon.arrow { right: auto; left: -24px; }
 				}
 			}
 		}

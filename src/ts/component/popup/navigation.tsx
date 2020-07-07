@@ -219,11 +219,11 @@ class PopupNavigation extends React.Component<Props, State> {
 							<div className="items left">
 								{!isRoot ? (
 									<React.Fragment>
-										{!pages.length ? (
+										{!pagesIn.length ? (
 											<ItemEmpty name="No links to this page" />
 										) : (
 											<React.Fragment>
-												{pages.map((item: any, i: number) => {
+												{pagesIn.map((item: any, i: number) => {
 													return <Item key={i} {...item} />;
 												})}
 											</React.Fragment>
@@ -235,11 +235,11 @@ class PopupNavigation extends React.Component<Props, State> {
 								{info ? <Selected {...info} /> : ''}
 							</div>
 							<div className="items right">
-								{!pages.length ? (
+								{!pagesOut.length ? (
 									<ItemEmpty name="No links to other pages" />
 								) : (
 									<React.Fragment>
-										{pages.map((item: any, i: number) => {
+										{pagesOut.map((item: any, i: number) => {
 											return <Item key={i} {...item} />;
 										})}
 									</React.Fragment>
