@@ -80,12 +80,12 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		if (showIcon) {
 			if (rootId == root) {
-				iconSearch = <Icon className="home" />;
+				iconSearch = <Icon key="icon-home" className="home" />;
 			} else {
 				iconSearch = <Smile icon={details.iconEmoji} hash={details.iconImage} />;
 			};
 		} else {
-			iconSearch = <Icon className="search" />;
+			iconSearch = <Icon key="icon-search" className="search" />;
 		};
 
 		switch (type) {
@@ -260,7 +260,7 @@ class PopupNavigation extends React.Component<Props, State> {
 						{!pages.length && !loading ? (
 							<div id="empty" key="empty" className="empty">
 								<div className="txt">
-									<b>There is no pages named "{filter}"</b>
+									<b>There are no pages named "{filter}"</b>
 									Try creating a new one or search for something else.
 								</div>
 							</div>

@@ -183,7 +183,7 @@ class PopupSettings extends React.Component<Props, State> {
 					<div>
 						<Head id="index" name="Settings" />
 						<Title text="Pin code" />
-						<Label text="The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or keychain phrase. So, please, remember your pin code" />
+						<Label text="The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number,  id recovery without your pin code or keychain phrase. So, please, remember your pin code" />
 
 						{pin ? (
 							<div className="buttons">

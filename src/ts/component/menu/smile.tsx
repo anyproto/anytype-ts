@@ -98,7 +98,7 @@ class MenuSmile extends React.Component<Props, State> {
 					{!sections.length ? (
 						<div className="empty">
 							<div className="txt">
-								<b>There is no emoji named "{filter}"</b>
+								<b>There are no emojis named "{filter}"</b>
 								Try to find a new one or upload your image
 							</div>
 						</div>
