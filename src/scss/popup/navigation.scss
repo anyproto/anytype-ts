@@ -56,7 +56,7 @@
 
 			.item {
 				.smile { position: absolute; left: 0px; top: 0px; }
-				.info { padding: 0px 8px 0px 56px; display: inline-block; vertical-align: middle; width: 100%; }
+				.info { padding: 0px 0px 0px 60px; display: inline-block; vertical-align: middle; width: 100%; }
 				.name { width: 100%; line-height: 22px; height: 22px; margin-bottom: 1px; @include text-overflow-nw;  }
 				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
 			}
