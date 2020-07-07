@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile } from 'ts/component';
 import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
@@ -14,6 +15,7 @@ interface State {
 	editing: boolean;
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 @observer
@@ -33,6 +35,9 @@ class HeaderMainEdit extends React.Component<Props, State> {
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onEdit = this.onEdit.bind(this);
+
+		this.onPathOver = this.onPathOver.bind(this);
+		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
@@ -53,7 +58,7 @@ class HeaderMainEdit extends React.Component<Props, State> {
 						<Icon className="btn back" tooltip="Back" onClick={this.onBack} />
 						<Icon className="btn forward" tooltip="Forward" onClick={this.onForward} />
 
-						<div className="path" onClick={this.onEdit}>
+						<div className="path" onClick={this.onEdit} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 							<div className="item">
 								<Smile icon={iconEmoji} hash={iconImage} />
 								<div className="name">{Util.shorten(name, 32)}</div>
@@ -70,7 +75,7 @@ class HeaderMainEdit extends React.Component<Props, State> {
 			</React.Fragment>
 		);
 	};
-	
+
 	onHome (e: any) {
 		this.props.history.push('/main/index');
 	};
@@ -160,6 +165,17 @@ class HeaderMainEdit extends React.Component<Props, State> {
 				type: I.NavigationType.Go, 
 			},
 		});
+	};
+
+	onPathOver () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const path = node.find('.path');
+
+		Util.tooltipShow('Click to open navigation<br/>Type to search', path, I.MenuDirection.Bottom);
+	};
+
+	onPathOut () {
+		Util.tooltipHide();
 	};
 	
 };
