@@ -54,9 +54,9 @@
 	}
 }
 
-.headerMainEditNew { background: #fff; padding: 5px 10px; height: 38px; }
-.headerMainEditNew {
-	.mid { width: 704px; height: 28px; position: absolute; left: 50%; transform: translateX(-50%); top: 5px; }
+.headerMainEditSearch { background: #fff; padding: 5px 10px; height: 38px; }
+.headerMainEditSearch {
+	.mid { height: 28px; position: absolute; left: 50%; transform: translateX(-50%); top: 5px; white-space: nowrap; }
 	.mid {
 		.btn { 
 			border: 1px solid $colorLightGrey; border-radius: 6px; vertical-align: top; height: 28px; 
@@ -70,7 +70,7 @@
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
-		line-height: 24px; width: 444px; margin-right: 8px; text-align: center; transition: $transitionFast;
+		line-height: 24px; width: 400px; margin-right: 8px; text-align: center; transition: $transitionFast;
 	}
 	.path {
 		.item { line-height: 20px; vertical-align: middle; }
@@ -85,7 +85,7 @@
 	}
 }
 
-.headerMainEditNew:hover, .headerMainEditNew.isEditing {
+.headerMainEditSearch:hover, .headerMainEditSearch.isEditing {
 	.mid .btn { opacity: 1; }
 	.path { border-color: $colorLightGrey; }
 }

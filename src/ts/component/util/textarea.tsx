@@ -22,7 +22,6 @@ interface Props {
 
 interface State {
 	value: string;
-	selected: boolean;
 };
 
 class Textarea extends React.Component<Props, State> {
@@ -33,7 +32,6 @@ class Textarea extends React.Component<Props, State> {
 
 	state = {
 		value: '',
-		selected: false
 	};
 
 	constructor (props: any) {
@@ -80,14 +78,6 @@ class Textarea extends React.Component<Props, State> {
 		this.setValue(value);
 	};
 	
-	componentDidUpdate () {
-		let node = $(ReactDOM.findDOMNode(this));
-		
-		if (this.state.selected) {
-			node.select();
-		};
-	};
-	
 	onChange (e: any) {
 		this.setValue(e.target.value);
 		if (this.props.onChange) {
@@ -127,12 +117,12 @@ class Textarea extends React.Component<Props, State> {
 	
 	focus () {
 		let node = $(ReactDOM.findDOMNode(this));
-		
 		node.focus();
 	};
 	
 	select () {
-		this.setState({ selected: true });
+		const node = $(ReactDOM.findDOMNode(this));
+		window.setTimeout(() => { node.get(0).select();	});
 	};
 	
 	setValue (v: string) {

@@ -2,12 +2,23 @@
 
 .popups {
 	.popup.popupNavigation {
-		.innerWrap { width: 368px; margin: 0px 0px 0px -184px; }
+		.content { overflow: visible; }
+		.innerWrap { width: 400px; margin: 0px 0px 0px -200px; top: 38px; }
 
-		.head { padding: 16px; border-bottom: 1px solid #ebe9e0; }
+		.head { 
+			height: 28px; position: fixed; top: -33px; left: 50%; background: #fff; width: 400px; border-radius: 6px;
+			transform: translateX(-50%); padding: 4px 8px;
+		}
 		.head {
-			.icon.search { margin-right: 8px; vertical-align: top; }
-			.input { padding: 0px; height: 24px; vertical-align: top; width: calc(100% - 32px); font-size: 18px; }
+			.smile { margin-right: 6px; }
+			.icon.search { 
+				width: 20px; height: 20px; background-size: 18px 18px; background-image: url('~img/icon/search.svg'); 
+				margin-right: 6px; vertical-align: top; 
+			}
+			.input { 
+				padding: 0px; height: 20px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
+				vertical-align: top;
+			}
 		}
 
 		.path { padding:  12px 14px 0px 14px; white-space: nowrap; }
@@ -39,8 +50,8 @@
 		.items { padding: 16px; overflow-x: hidden; overflow-y: auto; }
 		.items {
 			.item { 
-				border-radius: 8px; border: 1px solid $colorLightGrey; margin-bottom: 8px;
-				cursor: pointer; transition: $transitionFast; position: relative; height: 80px; line-height: 48px;
+				margin-bottom: 16px; cursor: pointer; transition: $transitionFast; position: relative; height: 48px; 
+				line-height: 48px;
 			}
 			.item:hover, .item.active { border-color: #ffda90; box-shadow: 0px 0px 0px 1px #ffda90; }
 			
@@ -52,18 +63,13 @@
 			.item:last-child { margin: 0px; }
 
 			.item {
-				.line { 
-					width: 1px; height: 40px; background: $colorLightGrey; position: absolute; right: 30px; top: 20px; 
-					opacity: 0; transition: $transitionFast;
-				}
-				.inner { padding: 16px 30px 16px 16px;  }
-				.smile { position: absolute; left: 16px; top: 16px; }
+				.smile { position: absolute; left: 0px; top: 0px; }
 				.info { padding: 0px 8px 0px 56px; display: inline-block; vertical-align: middle; width: 100%; }
 				.name { width: 100%; line-height: 22px; height: 22px; margin-bottom: 1px; @include text-overflow-nw;  }
 				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
 				.icon.arrow { 
 					width: 30px; height: 100%; position: absolute; right: 0px; top: 0px; margin-top: 0px;
-					background-image: url('~img/arrow/tree.svg'); background-size: 6px 10px; opacity: 0; 
+					background-image: url('~img/arrow/tree.svg'); background-size: 6px 10px; opacity: 0; display: none;
 				}
 			}
 
@@ -76,16 +82,16 @@
 
 		.innerWrap.expanded { width: 1136px; margin: 0px 0px 0px -578px; }
 		.innerWrap.expanded {
-			.head { padding: 10px 12px 16px 12px; border: 0px; }
 			.sides { display: flex; padding: 16px; }
 			
 			.items { width: 33.33%; }
 			.items {
-				.item { padding-right: 16px; }
+				.item { padding-right: 16px; height: 80px; border: 1px solid $colorLightGrey; border-radius: 8px; }
 				.item {
+					.inner { padding: 16px; }
 					.info { border: 0px; }
-					.icon.arrow { opacity: 1; right: -28px; }
-					.line { opacity: 0 !important; }
+					.icon.arrow { opacity: 1; right: -28px; display: block; }
+					.smile { left: 16px; top: 16px; }
 				}
 			}
 			

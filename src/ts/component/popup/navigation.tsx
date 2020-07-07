@@ -27,8 +27,7 @@ const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 
-const HEIGHT = 80;
-const PAGE = 10;
+const PAGE = 14;
 
 enum Panel { Left, Right };
 
@@ -62,25 +61,30 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { expanded, filter, info, pagesIn, pagesOut, loading, isOpen, pageLeft, pageRight } = this.state;
+		const { expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, isOpen } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { type } = data;
-		const { root } = blockStore;
+		const { rootId, type } = data;
+		const { root, breadcrumbs } = blockStore;
+		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const isRoot = info && (info.id == root);
 		const page = pageLeft;
-
-		if (!isOpen) {
-			return null;
-		};
 
 		let placeHolder = '';
 		let confirm = '';
 		let id = 0;
 		let pages = this.state.pages;
+		let iconSearch = null;
+
+		if (isOpen) {
+			iconSearch = <Smile icon={details.iconEmoji} hash={details.iconImage} />;
+		} else {
+			iconSearch = <Icon className="search" />;
+		};
 
 		switch (type) {
 			default:
+			case I.NavigationType.Go:
 				placeHolder = 'Search for a page...';
 				confirm = 'Open';
 				break;
@@ -94,7 +98,14 @@ class PopupNavigation extends React.Component<Props, State> {
 				confirm = 'Link';
 				break;
 		};
-		
+
+		const head = (
+			<form id="head" className="head" onSubmit={this.onSubmit}>
+				{iconSearch}
+				<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+			</form>
+		);
+
 		if (filter) {
 			const ids = this.index.search(filter);
 			if (ids.length) {
@@ -124,7 +135,6 @@ class PopupNavigation extends React.Component<Props, State> {
 							<div className="descr">{item.snippet}</div>
 						</div>
 					</div>
-					<div className="line" />
 					<Icon className="arrow" onClick={(e: any) => { this.onClickArrow(e, item); }} />
 				</div>
 			);
@@ -203,20 +213,17 @@ class PopupNavigation extends React.Component<Props, State> {
 				{loading ? <Loader /> : ''}
 				{expanded ? (
 					<React.Fragment>
-						<div id="head" className="path">
-							<ItemPath isSearch={true} />
-							{info ? <ItemPath {...info} /> : ''}
-						</div>
+						{head}
 
 						<div key="sides" className="sides">
 							<div className="items left">
 								{!isRoot ? (
 									<React.Fragment>
-										{!pagesIn.length ? (
+										{!pages.length ? (
 											<ItemEmpty name="No links to this page" />
 										) : (
 											<React.Fragment>
-												{pagesIn.map((item: any, i: number) => {
+												{pages.map((item: any, i: number) => {
 													return <Item key={i} {...item} />;
 												})}
 											</React.Fragment>
@@ -228,11 +235,11 @@ class PopupNavigation extends React.Component<Props, State> {
 								{info ? <Selected {...info} /> : ''}
 							</div>
 							<div className="items right">
-								{!pagesOut.length ? (
+								{!pages.length ? (
 									<ItemEmpty name="No links to other pages" />
 								) : (
 									<React.Fragment>
-										{pagesOut.map((item: any, i: number) => {
+										{pages.map((item: any, i: number) => {
 											return <Item key={i} {...item} />;
 										})}
 									</React.Fragment>
@@ -242,13 +249,10 @@ class PopupNavigation extends React.Component<Props, State> {
 					</React.Fragment>
 				) : (
 					<React.Fragment>
-						<form id="head" className="head" onSubmit={this.onSubmit}>
-							<Icon className="search" />
-							<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
-						</form>
+						{head}
 
 						{!pages.length && !loading ? (
-							<div id="empty "key="empty" className="empty">
+							<div id="empty" key="empty" className="empty">
 								<div className="txt">
 									<b>There is no pages named "{filter}"</b>
 									Try creating a new one or search for something else.
@@ -272,26 +276,28 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { param, history } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const expanded = (data.id ? true : false);
 
 		this._isMounted = true;
-		this.init(expanded);
+		this.initSize(expanded);
+		this.initSearch();
 
 		window.setTimeout(() => {
 			this.setState({ expanded: expanded, isOpen: true });
-			this.loadSearch();
 
 			if (expanded) {
 				this.loadPage(data.id);
+			} else {
+				this.loadSearch();
 			};
 		}, 10);
 	};
 	
 	componentDidUpdate () {
 		const { expanded } = this.state;
-		this.init(expanded);
+		this.initSize(expanded);
 	};
 	
 	componentWillUnmount () {
@@ -301,7 +307,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		window.clearTimeout(this.timeout);
 	};
 	
-	init (expanded: boolean) {
+	initSize (expanded: boolean) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -318,15 +324,36 @@ class PopupNavigation extends React.Component<Props, State> {
 		obj.find('.items.right').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Right); });
 	};
 
+	initSearch () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const { breadcrumbs } = blockStore;
+		const details = blockStore.getDetails(breadcrumbs, rootId);
+
+		if (this.ref) {
+			this.ref.setValue(details.name);
+			this.ref.select();
+		};
+	};
+
+	isExpanded () {
+		const { param } = this.props;
+		const { data } = param;
+		return data.id ? true : false;
+	};
+
 	onScroll (panel: Panel) {
+		const { expanded } = this.state;
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const content = panel == Panel.Left ? node.find('.items.left') : node.find('.items.right');
 		const stateKey = panel == Panel.Left ? 'pageLeft' : 'pageRight';
 		const top = content.scrollTop();
+		const page = this.state[stateKey];
+		const height = expanded ? 80 : 48;
 
-		let page = this.state[stateKey];
-
-		if (top >= page * PAGE * HEIGHT) {
+		if (top >= page * PAGE * height) {
 			let newState = {};
 			newState[stateKey] = page + 1;
 
@@ -348,12 +375,15 @@ class PopupNavigation extends React.Component<Props, State> {
 			const sides = obj.find('.sides');
 			const empty = obj.find('#empty');
 			const offset = expanded ? 32 : 0;
-			const height = win.height() - head.outerHeight() - 128;
+			const wh = win.height();
+			const oh = wh - 70;
+			const sh = oh - offset;
 
-			sides.css({ height: height });
-			items.css({ height: height - offset });
-			empty.css({ height: height, lineHeight: height + 'px' });
-			obj.css({ marginLeft: -obj.width() / 2, marginTop: -obj.height() / 2 });
+			sides.css({ height: sh });
+			items.css({ height: sh });
+			empty.css({ height: sh, lineHeight: sh + 'px' });
+
+			obj.css({ marginLeft: -obj.width() / 2, marginTop: 0, top: 38, height: oh });
 		});
 	};
 	
@@ -369,6 +399,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				pageLeft: 0, 
 				pageRight: 0,
 				filter: Util.filterFix(this.ref.getValue()),
+				isOpen: false,
 			});
 		}, force ? 0 : 50);
 	};
@@ -428,9 +459,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	
 	onClick (e: any, item: I.PageInfo) {
 		e.stopPropagation();
-
-		const { expanded } = this.state;
-		expanded ? this.loadPage(item.id) : this.onConfirm(e, item);
+		this.loadPage(item.id);
 	};
 
 	onClickArrow (e: any, item: I.PageInfo) {
