@@ -1005,9 +1005,11 @@ class EditorPage extends React.Component<Props, State> {
 						if (item.type == I.BlockType.Page) {
 							if (item.key == 'existing') {
 								commonStore.popupOpen('navigation', { 
+									preventResize: true,
 									data: { 
 										type: I.NavigationType.Create, 
 										rootId: rootId,
+										id: rootId,
 										skipId: rootId,
 										blockId: block.id,
 										position: position,

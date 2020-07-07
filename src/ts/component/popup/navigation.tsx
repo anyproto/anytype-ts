@@ -63,7 +63,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
+		const { filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
@@ -71,6 +71,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const isRoot = info && (info.id == root);
 		const page = pageLeft;
+		const expanded = this.state.expanded || data.id || false;
 
 		let placeHolder = '';
 		let confirm = '';
@@ -192,6 +193,7 @@ class PopupNavigation extends React.Component<Props, State> {
 						<Icon className="home big" />
 					</div>
 				);
+				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
 					coverType = I.CoverType.BgImage;
@@ -215,7 +217,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		return (
-			<div className={expanded ? 'expanded' : ''}>
+			<div>
 				{loading ? <Loader /> : ''}
 				{expanded ? (
 					<React.Fragment>
@@ -310,7 +312,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		$(window).unbind('resize.tree');
+		$(window).unbind('resize.navigation');
 		window.clearTimeout(this.timeout);
 	};
 	
@@ -325,7 +327,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
 		
 		this.resize();
-		win.unbind('resize.tree').on('resize.tree', () => { this.resize(); });
+		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
 
 		obj.find('.items.left').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Left); });
 		obj.find('.items.right').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Right); });
@@ -372,7 +374,6 @@ class PopupNavigation extends React.Component<Props, State> {
 			const { expanded } = this.state;
 			const win = $(window);
 			const obj = $('#popupNavigation #innerWrap');
-			const head = obj.find('#head');
 			const items = obj.find('.items');
 			const sides = obj.find('.sides');
 			const empty = obj.find('#empty');

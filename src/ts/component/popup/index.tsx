@@ -96,6 +96,12 @@ class Popup extends React.Component<Props, {}> {
 	};
 	
 	position () {
+		const { param } = this.props;
+
+		if (param.preventResize) {
+			return;
+		};
+		
 		raf(() => {
 			if (!this._isMounted) {
 				return;

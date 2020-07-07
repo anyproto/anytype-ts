@@ -1,5 +1,6 @@
 export interface PopupParam {
 	data?: any;
+	preventResize?: boolean;
 	onClose?(): void;
 };
 

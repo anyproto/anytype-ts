@@ -595,9 +595,11 @@ class BlockText extends React.Component<Props, {}> {
 		// Move to
 		if (value == '/move') {
 			commonStore.popupOpen('navigation', { 
+				preventResize: true,
 				data: { 
 					type: I.NavigationType.Move, 
 					rootId: rootId,
+					id: rootId,
 				}, 
 			});
 			cmdParsed = true;

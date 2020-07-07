@@ -2,8 +2,9 @@
 
 .popups {
 	.popup.popupNavigation {
-		.content { overflow: visible; }
-		.innerWrap { width: 400px; margin: 0px 0px 0px -200px; top: 38px; transform: scale3d(1,1,1); }
+		.content { overflow: visible; transition: none; }
+		.innerWrap { width: 400px; margin: 0px 0px 0px -200px; top: 38px; transform: scale3d(1,1,1); transition: none; }
+		.dimmer { transition: none; }
 
 		.head { 
 			height: 28px; position: fixed; top: -33px; left: 50%; background: #fff; width: 400px; border-radius: 6px;

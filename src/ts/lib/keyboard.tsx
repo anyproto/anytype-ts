@@ -57,6 +57,7 @@ class Keyboard {
 			// Navigation
 			if ((k == Key.s) && !e.shiftKey) {
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Go, 
 						rootId: rootId,
@@ -67,6 +68,7 @@ class Keyboard {
 
 			if (k == Key.o) {
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Go, 
 						rootId: rootId,

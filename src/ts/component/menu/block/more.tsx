@@ -200,6 +200,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			
 			case 'move':
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
 						...data,
@@ -228,6 +229,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'move':
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
 						...data,

@@ -499,9 +499,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 			case 'move':
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
 						rootId: rootId,
+						id: rootId,
 						blockId: blockId,
 						blockIds: blockIds,
 					}, 

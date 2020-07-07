@@ -89,8 +89,10 @@ class HeaderMainEdit extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		commonStore.popupOpen('navigation', { 
+			preventResize: true,
 			data: { 
 				type: I.NavigationType.Go, 
+				rootId: rootId,
 				id: rootId,
 			}, 
 		});
@@ -147,7 +149,8 @@ class HeaderMainEdit extends React.Component<Props, State> {
 		const { rootId } = this.props;
 
 		this.setState({ editing: true });
-		commonStore.popupOpen('navigation', { 
+		commonStore.popupOpen('navigation', {
+			preventResize: true, 
 			onClose: () => {
 				this.setState({ editing: false });
 			},
