@@ -10,7 +10,7 @@ interface Props extends I.Popup {
 };
 
 interface State {
-	isOpen: boolean;
+	showIcon: boolean;
 	expanded: boolean;
 	loading: boolean;
 	filter: string;
@@ -36,7 +36,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
-		isOpen: false,
+		showIcon: false,
 		expanded: false,
 		loading: false,
 		filter: '',
@@ -50,10 +50,12 @@ class PopupNavigation extends React.Component<Props, State> {
 	ref: any = null;
 	timeout: number = 0;
 	index: any = null;
+	disableFirstKey: boolean = false;
 	
 	constructor (props: any) {
 		super (props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onConfirm = this.onConfirm.bind(this);
@@ -61,7 +63,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, isOpen } = this.state;
+		const { expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, type } = data;
@@ -76,8 +78,12 @@ class PopupNavigation extends React.Component<Props, State> {
 		let pages = this.state.pages;
 		let iconSearch = null;
 
-		if (isOpen) {
-			iconSearch = <Smile icon={details.iconEmoji} hash={details.iconImage} />;
+		if (showIcon) {
+			if (rootId == root) {
+				iconSearch = <Icon className="home" />;
+			} else {
+				iconSearch = <Smile icon={details.iconEmoji} hash={details.iconImage} />;
+			};
 		} else {
 			iconSearch = <Icon className="search" />;
 		};
@@ -102,12 +108,12 @@ class PopupNavigation extends React.Component<Props, State> {
 		const head = (
 			<form id="head" className="head" onSubmit={this.onSubmit}>
 				{iconSearch}
-				<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+				<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 			</form>
 		);
 
 		if (filter) {
-			const ids = this.index.search(filter);
+			const ids = this.index ? this.index.search(filter) : [];
 			if (ids.length) {
 				pages = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
 			} else {
@@ -278,19 +284,20 @@ class PopupNavigation extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const expanded = (data.id ? true : false);
+		const { id, disableFirstKey } = data;
+		const expanded = id ? true : false;
 
+		this.disableFirstKey = Boolean(disableFirstKey);
 		this._isMounted = true;
 		this.initSize(expanded);
 		this.initSearch();
 
 		window.setTimeout(() => {
-			this.setState({ expanded: expanded, isOpen: true });
+			this.setState({ expanded: expanded, showIcon: true });
+			this.loadSearch();
 
 			if (expanded) {
 				this.loadPage(data.id);
-			} else {
-				this.loadSearch();
 			};
 		}, 10);
 	};
@@ -328,19 +335,14 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { breadcrumbs } = blockStore;
+		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, rootId);
+		const isRoot = rootId == root;
 
 		if (this.ref) {
-			this.ref.setValue(details.name);
+			this.ref.setValue(isRoot ? 'Home' : details.name);
 			this.ref.select();
 		};
-	};
-
-	isExpanded () {
-		const { param } = this.props;
-		const { data } = param;
-		return data.id ? true : false;
 	};
 
 	onScroll (panel: Panel) {
@@ -391,15 +393,35 @@ class PopupNavigation extends React.Component<Props, State> {
 		e.preventDefault();
 		this.onKeyUp(e, true);
 	};
+
+	onKeyDown (e: any) {
+		const { expanded, showIcon } = this.state;
+		const newState: any = {};
+
+		if (expanded) {
+			newState.expanded = false;
+		};
+		if (showIcon) {
+			newState.showIcon = false;
+		};
+
+		if (Util.objectLength(newState)) {
+			this.setState(newState);
+		};
+	};
 	
 	onKeyUp (e: any, force: boolean) {
+		if (this.disableFirstKey) {
+			this.disableFirstKey = false;
+			return;
+		};
+
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			this.setState({ 
 				pageLeft: 0, 
 				pageRight: 0,
 				filter: Util.filterFix(this.ref.getValue()),
-				isOpen: false,
 			});
 		}, force ? 0 : 50);
 	};

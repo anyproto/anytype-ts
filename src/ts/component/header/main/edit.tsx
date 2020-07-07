@@ -60,7 +60,7 @@ class HeaderMainEdit extends React.Component<Props, State> {
 							</div>
 						</div>
 
-						<Icon className="btn plus" tooltip="Create neww page" onClick={this.onAdd} />
+						<Icon className="btn plus" tooltip="Create new page" onClick={this.onAdd} />
 					</div>
 
 					<div className="right">
@@ -152,8 +152,8 @@ class HeaderMainEdit extends React.Component<Props, State> {
 				this.setState({ editing: false });
 			},
 			data: {
-				fromHeader: true,
 				rootId: rootId,
+				id: rootId,
 				type: I.NavigationType.Go, 
 			},
 		});

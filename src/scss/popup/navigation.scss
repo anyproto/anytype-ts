@@ -11,10 +11,8 @@
 		}
 		.head {
 			.smile { margin-right: 6px; }
-			.icon.search { 
-				width: 20px; height: 20px; background-size: 18px 18px; background-image: url('~img/icon/search.svg'); 
-				margin-right: 6px; vertical-align: top; 
-			}
+			.icon {  width: 20px; height: 20px; vertical-align: top; margin-right: 6px; }
+			.icon.search { background-size: 18px 18px; background-image: url('~img/icon/search.svg'); }
 			.input { 
 				padding: 0px; height: 20px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
 				vertical-align: top;

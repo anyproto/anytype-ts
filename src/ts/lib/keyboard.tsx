@@ -59,6 +59,8 @@ class Keyboard {
 				commonStore.popupOpen('navigation', { 
 					data: { 
 						type: I.NavigationType.Go, 
+						rootId: rootId,
+						disableFirstKey: true,
 					}, 
 				});
 			};
@@ -67,6 +69,7 @@ class Keyboard {
 				commonStore.popupOpen('navigation', { 
 					data: { 
 						type: I.NavigationType.Go, 
+						rootId: rootId,
 						id: rootId,
 					}, 
 				});
