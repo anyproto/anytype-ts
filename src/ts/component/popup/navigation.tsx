@@ -197,9 +197,9 @@ class PopupNavigation extends React.Component<Props, State> {
 
 						<div key="sides" className="sides">
 							<div className="items left">
-								<div className="sideName">Link from page</div>
 								{!isRoot ? (
 									<React.Fragment>
+										<div className="sideName">Link from page</div>
 										{!pagesIn.length ? (
 											<ItemEmpty name="No links to this page" />
 										) : (
@@ -216,7 +216,7 @@ class PopupNavigation extends React.Component<Props, State> {
 								{info ? <Selected {...info} /> : ''}
 							</div>
 							<div className="items right">
-							<div className="sideName">Link to page</div>
+								<div className="sideName">Link to page</div>
 								{!pagesOut.length ? (
 									<ItemEmpty name="No links to other pages" />
 								) : (
