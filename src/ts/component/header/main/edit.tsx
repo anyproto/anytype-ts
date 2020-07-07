@@ -34,7 +34,6 @@ class HeaderMainEdit extends React.Component<Props, State> {
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onAdd = this.onAdd.bind(this);
-		this.onEdit = this.onEdit.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -58,7 +57,7 @@ class HeaderMainEdit extends React.Component<Props, State> {
 						<Icon className="btn back" tooltip="Back" onClick={this.onBack} />
 						<Icon className="btn forward" tooltip="Forward" onClick={this.onForward} />
 
-						<div className="path" onClick={this.onEdit} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
+						<div className="path" onClick={this.onNavigation} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 							<div className="item">
 								<Smile icon={iconEmoji} hash={iconImage} />
 								<div className="name">{Util.shorten(name, 32)}</div>
@@ -88,19 +87,6 @@ class HeaderMainEdit extends React.Component<Props, State> {
 	onForward (e: any) {
 		crumbs.restore(I.CrumbsType.Page);
 		this.props.history.goForward();
-	};
-	
-	onNavigation (e: any) {
-		const { rootId } = this.props;
-		
-		commonStore.popupOpen('navigation', { 
-			preventResize: true,
-			data: { 
-				type: I.NavigationType.Go, 
-				rootId: rootId,
-				id: rootId,
-			}, 
-		});
 	};
 	
 	onMore (e: any) {
@@ -150,7 +136,10 @@ class HeaderMainEdit extends React.Component<Props, State> {
 		DataUtil.pageCreate(e, this.props, rootId, targetId, details, position);
 	};
 
-	onEdit (e: any) {
+	onNavigation (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { rootId } = this.props;
 
 		this.setState({ editing: true });
