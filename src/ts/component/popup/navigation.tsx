@@ -480,8 +480,10 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: I.PageInfo) {
+		const { expanded } = this.state;
+
 		e.stopPropagation();
-		this.loadPage(item.id);
+		expanded ? this.loadPage(item.id) : this.onConfirm(e, item);
 	};
 
 	onClickArrow (e: any, item: I.PageInfo) {
