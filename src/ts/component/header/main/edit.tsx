@@ -127,7 +127,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			};
 		};
 		
-		DataUtil.pageCreate(e, this.props, rootId, targetId, details, position);
+		DataUtil.pageCreate(e, rootId, targetId, details, position);
 	};
 
 	onNavigation (e: any) {

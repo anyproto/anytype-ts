@@ -1020,7 +1020,7 @@ class EditorPage extends React.Component<Props, State> {
 									iconEmoji: SmileUtil.random(), 
 									name: Constant.default.name 
 								};
-								DataUtil.pageCreate(e, this.props, rootId, block.id, details, position);
+								DataUtil.pageCreate(e, rootId, block.id, details, position);
 							};
 						} else {
 							this.blockCreate(block, position, param);
