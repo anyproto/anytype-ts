@@ -131,16 +131,14 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onNavigation (e: any) {
-		console.log(e);
-
 		const { rootId } = this.props;
 
 		commonStore.popupOpen('navigation', {
 			preventResize: true, 
 			data: {
 				rootId: rootId,
-				pageId: rootId,
 				type: I.NavigationType.Go, 
+				expanded: true,
 			},
 		});
 	};

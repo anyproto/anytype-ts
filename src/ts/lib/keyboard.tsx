@@ -62,7 +62,6 @@ class Keyboard {
 						type: I.NavigationType.Go, 
 						disableFirstKey: true,
 						rootId: rootId,
-						expanded: false,
 					}, 
 				});
 			};
