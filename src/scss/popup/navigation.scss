@@ -58,7 +58,7 @@
 			.item {
 				.smile { position: absolute; left: 16px; top: 8px; transition: $transitionFast; }
 				.info { padding: 0px 0px 0px 60px; display: inline-block; vertical-align: middle; width: 100%; }
-				.name { width: 100%; line-height: 22px; height: 22px; margin-bottom: 1px; @include text-overflow-nw;  }
+				.name { width: 100%; line-height: 22px; height: 22px; @include text-overflow-nw;  }
 				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
 			}
 
@@ -78,7 +78,7 @@
 				.item { margin-bottom: 16px; padding: 0px; height: 80px; border: 1px solid $colorLightGrey; border-radius: 8px; }
 				.item {
 					.inner { padding: 16px; }
-					.info { border: 0px; }
+					.info { border: 0px; margin-top: -2px; }
 					.icon.arrow { opacity: 1; right: -28px; display: block; }
 					.smile { left: 16px; top: 16px; }
 					.icon.arrow { 
