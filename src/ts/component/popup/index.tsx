@@ -27,8 +27,8 @@ class Popup extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
-		this.onClose = this.onClose.bind(this);
 		this.position = this.position.bind(this);
+		this.close = this.close.bind(this);
 	};
 
 	render () {
@@ -57,10 +57,10 @@ class Popup extends React.Component<Props, {}> {
 			<div id={popupId} className={cn.join(' ')}>
 				<div id="innerWrap" className="innerWrap">
 					<div className="content">
-						<Component {...this.props} position={this.position} />
+						<Component {...this.props} position={this.position} close={this.close} />
 					</div>
 				</div>
-				<Dimmer onClick={this.onClose} />
+				<Dimmer onClick={this.close} />
 			</div>
 		);
 	};
@@ -117,10 +117,10 @@ class Popup extends React.Component<Props, {}> {
 		});
 	};
 
-	onClose () {
+	close () {
 		commonStore.popupClose(this.props.id);
 	};
-	
+
 };
 
 export default Popup;

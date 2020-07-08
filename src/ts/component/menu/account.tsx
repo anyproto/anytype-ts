@@ -61,7 +61,7 @@ class MenuAccount extends React.Component<Props, {}> {
 	onSelect (e: any, id: string) {
 		const { path } = authStore;
 		
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 		
 		C.AccountSelect(id, path, (message: any) => {
 			if (message.error.code) {

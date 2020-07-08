@@ -512,7 +512,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				break;
 		};
 
-		commonStore.popupClose(this.props.id);
+		this.props.close();
 	};
 
 	onSearch () {

@@ -95,7 +95,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 			
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -257,7 +257,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		if (close) {
-			commonStore.menuClose(this.props.id);
+			this.props.close();
 		};
 	};
 

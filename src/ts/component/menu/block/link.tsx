@@ -49,7 +49,7 @@ class MenuBlockLink extends React.Component<Props, {}> {
 		const { onChange } = data;
 		
 		onChange(this.ref.getValue());
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 	};
 	
 	onUnlink (e: any) {
@@ -58,7 +58,7 @@ class MenuBlockLink extends React.Component<Props, {}> {
 		const { onChange } = data;
 		
 		onChange('');
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 	};
 	
 };

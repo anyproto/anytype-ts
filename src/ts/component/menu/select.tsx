@@ -122,7 +122,7 @@ class MenuSelect extends React.Component<Props, {}> {
 				break;
 				
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -138,7 +138,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onSelect } = data;
 		
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 		onSelect(e, item);
 	};
 	

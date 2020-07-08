@@ -245,7 +245,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				break;
 				
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -292,7 +292,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 			onChange(text, marks, from, to);
 		};
 
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 	};
 	
 };

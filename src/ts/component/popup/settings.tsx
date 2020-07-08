@@ -438,7 +438,7 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 
 	onClose () {
-		commonStore.popupClose(this.props.id);
+		this.props.close();
 	};
 
 	onPage (id: string) {
@@ -474,7 +474,7 @@ class PopupSettings extends React.Component<Props, State> {
 
 			this.setState({ loading: true });
 			C.BlockImportMarkdown(rootId, files[0], () => {
-				commonStore.popupClose(this.props.id);
+				this.props.close();
 				this.setState({ loading: false });
 			});
 		});

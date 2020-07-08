@@ -8,4 +8,5 @@ export interface Popup {
 	id: string;
 	param: PopupParam;
 	position? (): void;
+	close? (): void;
 };
