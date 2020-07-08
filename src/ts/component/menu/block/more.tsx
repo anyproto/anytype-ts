@@ -114,6 +114,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, content.targetBlockId);
 
 		let items = [];
+		if (block.isPageSet()) {
+			items = [
+				{ id: 'undo', icon: 'undo', name: 'Undo' },
+				{ id: 'redo', icon: 'redo', name: 'Redo' },
+				{ id: 'print', icon: 'print', name: 'Print' },
+			];
+		} else
 		if (block.isPage()) {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },

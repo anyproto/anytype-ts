@@ -74,7 +74,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		const page = pageLeft;
 
 		let n = 0;
-		let placeHolder = '';
 		let confirm = '';
 		let pages = this.state.pages;
 		let iconSearch = null;
@@ -93,25 +92,23 @@ class PopupNavigation extends React.Component<Props, State> {
 		switch (type) {
 			default:
 			case I.NavigationType.Go:
-				placeHolder = 'Search for a page...';
 				confirm = 'Open as page';
 				iconButton = 'expand';
 				break;
 
 			case I.NavigationType.Move:
-				placeHolder = 'Move to...';
-				confirm = 'Move';
+				confirm = 'Move to page';
 				break;
 
 			case I.NavigationType.Create:
-				confirm = 'Link';
+				confirm = 'Link to page';
 				break;
 		};
 
 		const head = (
 			<form id="head" className="head" onSubmit={this.onSubmit}>
 				{iconSearch}
-				<Input ref={(ref: any) => { this.ref = ref; }} value={details.name} placeHolder={placeHolder} onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+				<Input ref={(ref: any) => { this.ref = ref; }} value={details.name} placeHolder="Search for a page..." onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 			</form>
 		);
 
