@@ -301,7 +301,8 @@ class MenuFilter extends React.Component<Props, {}> {
 	onSubmitDate (e: any, item: any) {
 		e.preventDefault();
 
-		const value = Util.timestamp(this.refObj[item.id].getValue().split('.').reverse().join('/'));
+		const a = this.refObj[item.id].getValue().split('.').reverse().join('/');
+		const value = Util.timestamp(a[0], a[1], a[2]);
 		
 		this.onChange(item.id, 'value', value);
 		this.calendarOpen(item.id, value);
@@ -320,7 +321,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.calendarOpen(item.id, item.value || Util.timestamp());
+		this.calendarOpen(item.id, item.value || Util.time());
 	};
 
 	calendarOpen (id: number, value: number) {

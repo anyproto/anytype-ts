@@ -46,27 +46,31 @@
 			.txt { line-height: 24px; color: $colorDarkGrey; }
 		}
 		
-		.items { padding: 16px; overflow-x: hidden; overflow-y: auto; }
+		.items { padding: 12px 0px; overflow-x: hidden; overflow-y: auto; }
 		.items {
 			.item { 
-				margin-bottom: 16px; cursor: pointer; transition: $transitionFast; position: relative; height: 48px; 
-				line-height: 48px;
+				margin-bottom: 16px; cursor: pointer; transition: $transitionFast; position: relative; height: 64px; 
+				line-height: 48px; padding: 8px 16px; 
 			}
 			
 			.item:last-child { margin: 0px; }
 
 			.item {
-				.smile { position: absolute; left: 0px; top: 0px; }
+				.smile { position: absolute; left: 16px; top: 8px; transition: $transitionFast; }
 				.info { padding: 0px 0px 0px 60px; display: inline-block; vertical-align: middle; width: 100%; }
 				.name { width: 100%; line-height: 22px; height: 22px; margin-bottom: 1px; @include text-overflow-nw;  }
 				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
+			}
+
+			.item:hover { background-color: rgba(172, 169, 150, 0.15); }
+			.item:hover {
+				.smile { background-color: $colorLightGrey; }
 			}
 
 			.item.empty { padding-right: 16px; cursor: default; }
 			.item.empty {
 				.name { display: inline-block; vertical-align: middle; color: $colorDarkGrey; }
 			}
-			.item.empty:hover { box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
 		}
 
 		.innerWrap.expanded { width: 1136px; margin: 0px 0px 0px -578px; }
@@ -91,6 +95,11 @@
 				.item:hover, .item.active { border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
 				.item:hover, .item.active {
 					.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
+				}
+
+				.item.empty:hover { border-color: $colorLightGrey !important; box-shadow: 0px 0px; }
+				.item.empty:hover {
+					.icon.arrow { background-image: url('~img/arrow/nav0.svg'); }
 				}
 			}
 

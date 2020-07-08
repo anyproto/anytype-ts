@@ -131,8 +131,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onNavigation (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
+		console.log(e);
 
 		const { rootId } = this.props;
 
