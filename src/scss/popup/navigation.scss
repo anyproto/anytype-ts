@@ -80,7 +80,7 @@
 			.items { width: 33.33%; padding: 4px 16px; }
 			.items.center { padding-top: 39px; }
 			.items {
-				.item { padding-right: 16px; height: 80px; border: 1px solid $colorLightGrey; border-radius: 8px; }
+				.item { margin-bottom: 16px; padding: 0px; height: 80px; border: 1px solid $colorLightGrey; border-radius: 8px; }
 				.item {
 					.inner { padding: 16px; }
 					.info { border: 0px; }
@@ -92,9 +92,12 @@
 					}
 				}
 
-				.item:hover, .item.active { border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
+				.item:hover, .item.active { 
+					background: none; border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; 
+				}
 				.item:hover, .item.active {
 					.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
+					.smile { background: #f7f5f0; }
 				}
 
 				.item.empty:hover { border-color: $colorLightGrey !important; box-shadow: 0px 0px; }
