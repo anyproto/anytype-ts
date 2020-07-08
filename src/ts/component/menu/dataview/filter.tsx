@@ -104,6 +104,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				<form id={'item-' + item.id} className="item" onSubmit={onSubmit}>
 					<Handle />
 					{item.id > 0 ? (
+						/*
 						<Select 
 							id={[ 'filter', 'operator', item.id ].join('-')} 
 							className="operator" 
@@ -111,8 +112,10 @@ class MenuFilter extends React.Component<Props, {}> {
 							value={item.operator} 
 							onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} 
 						/>
+						*/
+						<div className="txt">And</div>
 					) : (
-						<div className="where">Where</div>
+						<div className="txt">Where</div>
 					)}
 					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
 					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
