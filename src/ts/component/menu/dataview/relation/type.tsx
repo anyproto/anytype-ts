@@ -60,7 +60,7 @@ class MenuRelationType extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onSelect } = data;
 		
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 		onSelect(item);
 	};
 	

@@ -57,7 +57,7 @@ class PopupPrompt extends React.Component<Props, {}> {
 	};
 	
 	onCancel (e: any) {
-		commonStore.popupClose(this.props.id);
+		this.props.close();
 	};
 	
 };

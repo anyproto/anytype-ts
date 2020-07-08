@@ -98,7 +98,7 @@ class MenuCalendar extends React.Component<Props, {}> {
 			y++;
 		};
 		
-		this.setState({ value: Util.timestamp([ y, m, 1 ].join('/')) });
+		this.setState({ value: Util.timestamp(y, m, 1) });
 	};
 	
 	set (d: number, m: number, y: number) {
@@ -107,7 +107,7 @@ class MenuCalendar extends React.Component<Props, {}> {
 		const { onChange } = data;
 		
 		commonStore.menuClose(id);
-		onChange(Util.timestamp([ y, m, d ].join('/')));
+		onChange(Util.timestamp(y, m, d));
 	};
 	
 	getData () {
@@ -122,8 +122,8 @@ class MenuCalendar extends React.Component<Props, {}> {
 			Constant.monthDays[2] = 29;
 		};
 		
-		let wdf = Number(Util.date('w', Util.timestamp([ y, m, 1 ].join('/'))));
-		let wdl = Number(Util.date('w', Util.timestamp([ y, m, Constant.monthDays[m] ].join('/'))));
+		let wdf = Number(Util.date('w', Util.timestamp(y, m, 1)));
+		let wdl = Number(Util.date('w', Util.timestamp(y, m, Constant.monthDays[m])));
 		
 		let pm = m - 1;
 		let py = y;

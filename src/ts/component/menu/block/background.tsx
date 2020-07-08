@@ -108,7 +108,7 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 			
 			case Key.left:	
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -128,7 +128,7 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onChange } = data;
 		
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 		onChange(item.value);
 	};
 	

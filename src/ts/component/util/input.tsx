@@ -26,7 +26,6 @@ interface Props {
 
 interface State {
 	value: string;
-	selected: boolean;
 	type: string;
 };
 
@@ -43,7 +42,6 @@ class Input extends React.Component<Props, State> {
 
 	state = {
 		value: '',
-		selected: false,
 		type: ''
 	};
 	
@@ -104,12 +102,6 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const node = $(ReactDOM.findDOMNode(this));
-		
-		if (this.state.selected) {
-			node.select();
-		};
-
 		this.checkMask();
 	};
 	
@@ -202,7 +194,8 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	select () {
-		this.setState({ selected: true });
+		const node = $(ReactDOM.findDOMNode(this));
+		window.setTimeout(() => { node.get(0).select();	});
 	};
 	
 	setValue (v: string) {

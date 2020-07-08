@@ -595,9 +595,11 @@ class BlockText extends React.Component<Props, {}> {
 		// Move to
 		if (value == '/move') {
 			commonStore.popupOpen('navigation', { 
+				preventResize: true,
 				data: { 
 					type: I.NavigationType.Move, 
 					rootId: rootId,
+					expanded: true,
 				}, 
 			});
 			cmdParsed = true;
@@ -835,9 +837,11 @@ class BlockText extends React.Component<Props, {}> {
 		const x = rect.x - offset.left - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
 
+		commonStore.menuClose('blockAdd');
+		commonStore.menuClose('blockMention');
+
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
-			commonStore.menuClose('blockAdd');
 			commonStore.menuOpen('blockContext', {
 				element: el,
 				type: I.MenuType.Horizontal,

@@ -98,7 +98,7 @@ class MenuSmile extends React.Component<Props, State> {
 					{!sections.length ? (
 						<div className="empty">
 							<div className="txt">
-								<b>There is no emoji named "{filter}"</b>
+								<b>There are no emojis named "{filter}"</b>
 								Try to find a new one or upload your image
 							</div>
 						</div>
@@ -247,7 +247,8 @@ class MenuSmile extends React.Component<Props, State> {
 				if (onUpload) {
 					onUpload(message.hash);
 				};
-				commonStore.menuClose(this.props.id);
+				
+				this.props.close();
 			});
 		});
 	};
@@ -261,7 +262,7 @@ class MenuSmile extends React.Component<Props, State> {
 		Storage.set('skin', this.skin);
 		this.setLastIds(id, this.skin);
 		
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 
 		if (onSelect) {
 			onSelect(SmileUtil.nativeById(id, this.skin));

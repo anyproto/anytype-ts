@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Input, Icon, Textarea, Button, Error, Smile, Loader } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -47,7 +46,7 @@ class PopupFeedback extends React.Component<Props, State> {
 						<Smile className="c64" size={32} icon=":relieved:" />
 						<Title text="Your feedback was sent" />
 						<Label text="Thank you for making the new web together!<br />If you left email we will get in touch soon." />
-						<Button className="orange" text="Back to dashboard" onClick={() => { commonStore.popupClose(this.props.id); }} />
+						<Button className="orange" text="Back to dashboard" onClick={() => { this.props.close(); }} />
 					</React.Fragment>
 				) : (
 					<React.Fragment>

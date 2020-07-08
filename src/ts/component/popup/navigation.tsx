@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, Decode, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -10,7 +10,8 @@ interface Props extends I.Popup {
 };
 
 interface State {
-	isOpen: boolean;
+	pageId: string;
+	showIcon: boolean;
 	expanded: boolean;
 	loading: boolean;
 	filter: string;
@@ -27,8 +28,7 @@ const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 
-const HEIGHT = 80;
-const PAGE = 10;
+const PAGE = 14;
 
 enum Panel { Left, Right };
 
@@ -37,7 +37,8 @@ class PopupNavigation extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
-		isOpen: false,
+		pageId: '',
+		showIcon: false,
 		expanded: false,
 		loading: false,
 		filter: '',
@@ -51,52 +52,68 @@ class PopupNavigation extends React.Component<Props, State> {
 	ref: any = null;
 	timeout: number = 0;
 	index: any = null;
+	disableFirstKey: boolean = false;
 	
 	constructor (props: any) {
 		super (props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onConfirm = this.onConfirm.bind(this);
-		this.onCancel = this.onCancel.bind(this);
 	};
 	
 	render () {
-		const { expanded, filter, info, pagesIn, pagesOut, loading, isOpen, pageLeft, pageRight } = this.state;
+		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
-		const { root } = blockStore;
-		const isRoot = info && (info.id == root);
+		const { root, breadcrumbs } = blockStore;
+		const details = blockStore.getDetails(breadcrumbs, pageId);
+		const isRoot = pageId == root;
 		const page = pageLeft;
 
-		if (!isOpen) {
-			return null;
-		};
-
-		let placeHolder = '';
+		let n = 0;
 		let confirm = '';
-		let id = 0;
 		let pages = this.state.pages;
+		let iconSearch = null;
+		let iconButton = '';
+
+		if (showIcon) {
+			if (isRoot) {
+				iconSearch = <Icon key="icon-home" className="home" />;
+			} else {
+				iconSearch = <Smile icon={details.iconEmoji} hash={details.iconImage} />;
+			};
+		} else {
+			iconSearch = <Icon key="icon-search" className="search" />;
+		};
 
 		switch (type) {
 			default:
-				placeHolder = 'Search for a page...';
-				confirm = 'Open';
+			case I.NavigationType.Go:
+				confirm = 'Open as page';
+				iconButton = 'expand';
 				break;
 
 			case I.NavigationType.Move:
-				placeHolder = 'Move to...';
-				confirm = 'Move';
+				confirm = 'Move to page';
 				break;
 
 			case I.NavigationType.Create:
-				confirm = 'Link';
+				confirm = 'Link to page';
 				break;
 		};
-		
+
+		const head = (
+			<form id="head" className="head" onSubmit={this.onSubmit}>
+				{iconSearch}
+				<Input ref={(ref: any) => { this.ref = ref; }} value={details.name} placeHolder="Search for a page..." onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+			</form>
+		);
+
 		if (filter) {
-			const ids = this.index.search(filter);
+			const ids = this.index ? this.index.search(filter) : [];
 			if (ids.length) {
 				pages = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
 			} else {
@@ -124,7 +141,6 @@ class PopupNavigation extends React.Component<Props, State> {
 							<div className="descr">{item.snippet}</div>
 						</div>
 					</div>
-					<div className="line" />
 					<Icon className="arrow" onClick={(e: any) => { this.onClickArrow(e, item); }} />
 				</div>
 			);
@@ -139,32 +155,6 @@ class PopupNavigation extends React.Component<Props, State> {
 			);
 		};
 
-		const ItemPath = (item: any) => {
-			let isRoot = item.id == root;
-			let icon = null;
-			let name = '';
-
-			if (item.isSearch) {
-				name = 'Search for an object';
-				icon = <Icon className="search" />
-			} else
-			if (isRoot) {
-				name = item.details.name;
-				icon = <Icon className="home" />;
-			} else {
-				name = item.details.name;
-				icon = <Smile icon={item.details.iconEmoji} hash={item.details.iconImage} />;
-			};
-
-			return (
-				<div className="item" onClick={(e: any) => { item.isSearch ? this.onSearch() : this.onClick(e, item); }}>
-					{icon}
-					<div className="name">{Util.shorten(name, 24)}</div>
-					<Icon className="arrow" />
-				</div>
-			);
-		};
-		
 		const Selected = (item: any) => {
 			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
@@ -176,6 +166,7 @@ class PopupNavigation extends React.Component<Props, State> {
 						<Icon className="home big" />
 					</div>
 				);
+				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
 					coverType = I.CoverType.BgImage;
@@ -191,27 +182,24 @@ class PopupNavigation extends React.Component<Props, State> {
 					<div className="descr">{item.snippet}</div>
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="buttons">
-						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
-						<Button text="Cancel" className="grey" onClick={this.onCancel} />
+						<Button text={confirm} icon={iconButton} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
 					</div>
 				</div>
 			);
 		};
 
 		return (
-			<div className={expanded ? 'expanded' : ''}>
+			<div>
 				{loading ? <Loader /> : ''}
 				{expanded ? (
 					<React.Fragment>
-						<div id="head" className="path">
-							<ItemPath isSearch={true} />
-							{info ? <ItemPath {...info} /> : ''}
-						</div>
+						{head}
 
 						<div key="sides" className="sides">
 							<div className="items left">
 								{!isRoot ? (
 									<React.Fragment>
+										<div className="sideName">Link from page</div>
 										{!pagesIn.length ? (
 											<ItemEmpty name="No links to this page" />
 										) : (
@@ -228,6 +216,7 @@ class PopupNavigation extends React.Component<Props, State> {
 								{info ? <Selected {...info} /> : ''}
 							</div>
 							<div className="items right">
+								<div className="sideName">Link to page</div>
 								{!pagesOut.length ? (
 									<ItemEmpty name="No links to other pages" />
 								) : (
@@ -242,22 +231,19 @@ class PopupNavigation extends React.Component<Props, State> {
 					</React.Fragment>
 				) : (
 					<React.Fragment>
-						<form id="head" className="head" onSubmit={this.onSubmit}>
-							<Icon className="search" />
-							<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
-						</form>
+						{head}
 
 						{!pages.length && !loading ? (
-							<div id="empty "key="empty" className="empty">
+							<div id="empty" key="empty" className="empty">
 								<div className="txt">
-									<b>There is no pages named "{filter}"</b>
+									<b>There are no pages named "{filter}"</b>
 									Try creating a new one or search for something else.
 								</div>
 							</div>
 						) : (
 							<div key="items" className="items left">
 								{pages.map((item: any, i: number) => {
-									if (++id > (page + 1) * PAGE) {
+									if (++n > (page + 1) * PAGE) {
 										return null;
 									};
 
@@ -272,36 +258,38 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { param, history } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const expanded = (data.id ? true : false);
+		const { expanded, rootId, disableFirstKey } = data;
 
+		this.disableFirstKey = Boolean(disableFirstKey);
 		this._isMounted = true;
-		this.init(expanded);
 
-		window.setTimeout(() => {
-			this.setState({ expanded: expanded, isOpen: true });
-			this.loadSearch();
+		this.setCrumbs(rootId);
+		this.initSize(expanded);
+		this.initSearch(rootId);
 
-			if (expanded) {
-				this.loadPage(data.id);
-			};
-		}, 10);
+		this.setState({ pageId: rootId, expanded: expanded, showIcon: true });
+		this.loadSearch();
+		
+		if (expanded) {
+			this.loadPage(rootId);
+		};
 	};
 	
 	componentDidUpdate () {
 		const { expanded } = this.state;
-		this.init(expanded);
+		this.initSize(expanded);
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		$(window).unbind('resize.tree');
+		$(window).unbind('resize.navigation');
 		window.clearTimeout(this.timeout);
 	};
 	
-	init (expanded: boolean) {
+	initSize (expanded: boolean) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -312,21 +300,38 @@ class PopupNavigation extends React.Component<Props, State> {
 		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
 		
 		this.resize();
-		win.unbind('resize.tree').on('resize.tree', () => { this.resize(); });
+		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
 
 		obj.find('.items.left').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Left); });
 		obj.find('.items.right').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Right); });
 	};
 
+	initSearch (id: string) {
+		if (!id) {
+			return;
+		};
+
+		const { root, breadcrumbs } = blockStore;
+		const details = blockStore.getDetails(breadcrumbs, id);
+		const isRoot = id == root;
+
+		if (this.ref) {
+			this.ref.setValue(isRoot ? 'Home' : details.name);
+			this.ref.select();
+		};
+	};
+
 	onScroll (panel: Panel) {
+		const { expanded } = this.state;
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const content = panel == Panel.Left ? node.find('.items.left') : node.find('.items.right');
 		const stateKey = panel == Panel.Left ? 'pageLeft' : 'pageRight';
 		const top = content.scrollTop();
+		const page = this.state[stateKey];
+		const height = expanded ? 80 : 48;
 
-		let page = this.state[stateKey];
-
-		if (top >= page * PAGE * HEIGHT) {
+		if (top >= page * PAGE * height) {
 			let newState = {};
 			newState[stateKey] = page + 1;
 
@@ -343,17 +348,19 @@ class PopupNavigation extends React.Component<Props, State> {
 			const { expanded } = this.state;
 			const win = $(window);
 			const obj = $('#popupNavigation #innerWrap');
-			const head = obj.find('#head');
 			const items = obj.find('.items');
 			const sides = obj.find('.sides');
 			const empty = obj.find('#empty');
 			const offset = expanded ? 32 : 0;
-			const height = win.height() - head.outerHeight() - 128;
+			const wh = win.height();
+			const oh = wh - 70;
+			const sh = oh - offset;
 
-			sides.css({ height: height });
-			items.css({ height: height - offset });
-			empty.css({ height: height, lineHeight: height + 'px' });
-			obj.css({ marginLeft: -obj.width() / 2, marginTop: -obj.height() / 2 });
+			sides.css({ height: sh });
+			items.css({ height: sh });
+			empty.css({ height: sh, lineHeight: sh + 'px' });
+
+			obj.css({ marginLeft: -obj.width() / 2, marginTop: 0, top: 38, height: oh });
 		});
 	};
 	
@@ -361,8 +368,29 @@ class PopupNavigation extends React.Component<Props, State> {
 		e.preventDefault();
 		this.onKeyUp(e, true);
 	};
+
+	onKeyDown (e: any) {
+		const { expanded, showIcon } = this.state;
+		const newState: any = {};
+
+		if (expanded) {
+			newState.expanded = false;
+		};
+		if (showIcon) {
+			newState.showIcon = false;
+		};
+
+		if (Util.objectLength(newState)) {
+			this.setState(newState);
+		};
+	};
 	
 	onKeyUp (e: any, force: boolean) {
+		if (this.disableFirstKey) {
+			this.disableFirstKey = false;
+			return;
+		};
+
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			this.setState({ 
@@ -409,6 +437,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 	loadPage (id: string) {
 		this.setState({ loading: true });
+		this.setCrumbs(id);
 
 		C.NavigationGetPageInfoWithLinks(id, (message: any) => {
 			if (message.error.code) {
@@ -416,7 +445,9 @@ class PopupNavigation extends React.Component<Props, State> {
 				return;
 			};
 
+			this.initSearch(id);
 			this.setState({ 
+				pageId: id,
 				loading: false,
 				expanded: true, 
 				info: this.getPage(message.page.info),
@@ -425,11 +456,17 @@ class PopupNavigation extends React.Component<Props, State> {
 			});
 		});
 	};
+
+	setCrumbs (id: string) {
+		let cr = crumbs.get(I.CrumbsType.Page);
+		cr = crumbs.add(I.CrumbsType.Page, id);
+		crumbs.save(I.CrumbsType.Page, cr);
+	};
 	
 	onClick (e: any, item: I.PageInfo) {
-		e.stopPropagation();
-
 		const { expanded } = this.state;
+
+		e.stopPropagation();
 		expanded ? this.loadPage(item.id) : this.onConfirm(e, item);
 	};
 
@@ -472,17 +509,13 @@ class PopupNavigation extends React.Component<Props, State> {
 				break;
 		};
 
-		commonStore.popupClose(this.props.id);
+		this.props.close();
 	};
 
 	onSearch () {
 		this.setState({ expanded: false });
 	};
 	
-	onCancel (e: any) {
-		commonStore.popupClose(this.props.id);
-	};
-
 	getPage (page: any): I.PageInfo {
 		page.details.name = String(page.details.name || Constant.default.name || '');
 

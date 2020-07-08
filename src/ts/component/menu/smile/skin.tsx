@@ -47,7 +47,7 @@ class MenuSmileSkin extends React.Component<Props, {}> {
 		const { onSelect } = data;
 		
 		onSelect(id);
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 	};
 	
 };

@@ -71,7 +71,7 @@ class MenuAccount extends React.Component<Props, State> {
 	};
 	
 	onSelect (e: any, id: number) {
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 	};
 	
 	onSubmit (e: any) {

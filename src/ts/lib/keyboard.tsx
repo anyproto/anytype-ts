@@ -57,17 +57,22 @@ class Keyboard {
 			// Navigation
 			if ((k == Key.s) && !e.shiftKey) {
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Go, 
+						disableFirstKey: true,
+						rootId: rootId,
 					}, 
 				});
 			};
 
 			if (k == Key.o) {
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Go, 
-						id: rootId,
+						rootId: rootId,
+						expanded: true,
 					}, 
 				});
 			};
@@ -100,7 +105,7 @@ class Keyboard {
 				iconEmoji: SmileUtil.random(), 
 				name: Constant.default.name 
 			};
-			DataUtil.pageCreate(e, { history: this.history }, rootId, targetId, details, position);
+			DataUtil.pageCreate(e, rootId, targetId, details, position);
 		};
 		
 		this.setPinCheck();

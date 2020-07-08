@@ -220,9 +220,18 @@ class Util {
 		return 0;
 	};
 
-	timestamp (d?: string): number {
-		const ts = d ? new Date(d) : new Date();
-		return Math.floor(ts.getTime() / 1000);
+	time () {
+		return Math.floor((new Date()).getTime() / 1000);
+	};
+
+	timestamp (y: number, m: number, d: number, h?: number, i?: number, s?: number): number {
+		y = Number(y) || 0;
+		m = Number(m) || 0;
+		d = Number(d) || 0;
+		h = Number(h) || 0;
+		i = Number(i) || 0;
+		s = Number(s) || 0;
+		return Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
 	};
 
 	date (format: string, timestamp: number) {

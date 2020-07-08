@@ -31,6 +31,7 @@ import MenuDataviewTagList from './dataview/tag/list';
 import MenuDataviewTagEdit from './dataview/tag/edit';
 import MenuDataviewAccount from './dataview/account';
 import MenuDataviewMore from './dataview/more';
+import { commonStore } from '../../store';
 
 interface Props extends I.Menu {
 	history: any;
@@ -48,6 +49,7 @@ class Menu extends React.Component<Props, {}> {
 		super(props);
 		
 		this.position = this.position.bind(this);
+		this.close = this.close.bind(this);
 		this.setActiveItem = this.setActiveItem.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
@@ -109,7 +111,7 @@ class Menu extends React.Component<Props, {}> {
 		return (
 			<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
 				<div className="content">
-					<Component {...this.props} setActiveItem={this.setActiveItem} position={this.position} />
+					<Component {...this.props} setActiveItem={this.setActiveItem} position={this.position} close={this.close} />
 				</div>
 			</div>
 		);
@@ -254,6 +256,10 @@ class Menu extends React.Component<Props, {}> {
 				};
 			};
 		});
+	};
+
+	close () {
+		commonStore.menuClose(this.props.id);
 	};
 	
 	onMouseLeave (e: any) {

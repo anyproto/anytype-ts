@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, Key, keyboard, Decode, Util, DataUtil, Mark } from 'ts/lib';
+import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -135,6 +135,15 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { filter } = commonStore;
 
 		let pageData = [];
+
+		pageData.push({
+			id: 'create', 
+			name: 'Create new page', 
+			icon: '',
+			hash: '',
+			withSmile: true,
+		});
+
 		for (let page of pages) {
 			if (page.id == rootId) {
 				continue;
@@ -236,7 +245,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				break;
 				
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -258,23 +267,32 @@ class MenuBlockMention extends React.Component<Props, State> {
 			return;
 		};
 
-		const { content } = block;
+		if (item.key == 'create') {
+			const details = { 
+				iconEmoji: SmileUtil.random(), 
+				name: Constant.default.name 
+			};
+			DataUtil.pageCreate(e, rootId, blockId, details, I.BlockPosition.Bottom);
+		} else {
+			const { content } = block;
 		
-		let { marks } = content;
-		let text = item.name + ' ';
-		let from = filter.from;
-		let to = from + text.length;
+			let { marks } = content;
+			let text = item.name + ' ';
+			let from = filter.from;
+			let to = from + text.length;
+	
+			marks = Util.objectCopy(marks);
+			marks = Mark.adjust(marks, from, item.name.length);
+			marks = Mark.toggle(marks, { 
+				type: I.MarkType.Mention, 
+				param: item.key, 
+				range: { from: from, to: from + item.name.length },
+			});
+	
+			onChange(text, marks, from, to);
+		};
 
-		marks = Util.objectCopy(marks);
-		marks = Mark.adjust(marks, from, item.name.length);
-		marks = Mark.toggle(marks, { 
-			type: I.MarkType.Mention, 
-			param: item.key, 
-			range: { from: from, to: from + item.name.length },
-		});
-
-		onChange(text, marks, from, to);
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 	};
 	
 };

@@ -174,7 +174,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 			
 			case Key.left:	
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -191,7 +191,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		const { onSelect, dataset } = data;
 		const { selection } = dataset || {};
 		
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 		onSelect(item);
 		
 		if (selection) {
