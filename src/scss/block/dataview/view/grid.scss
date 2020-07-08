@@ -39,7 +39,7 @@
 			td.cell.add:hover {
 				.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 			}
-			td.cell.isName { width: 288px; }
+			td.cell.isName { width: auto; }
 			td.cell.isName {
 				.icon.expand { 
 					display: block; position: absolute; right: 0px; top: 0px; opacity: 0; width: 38px; height: 100%;
