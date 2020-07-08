@@ -289,9 +289,22 @@ class MenuFilter extends React.Component<Props, {}> {
 	
 			item[k] = v;
 	
-			// Remove value when we change relation
+			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationId') {
 				item.value = '';
+				this.items = this.items.filter((it: I.Filter, i: number) => { 
+					return (i == id) || 
+					(it.relationId != v) || 
+					((it.relationId == v) && (it.condition != item.condition)); 
+				});
+			};
+
+			if (k == 'condition') {
+				this.items = this.items.filter((it: I.Filter, i: number) => { 
+					return (i == id) || 
+					(it.relationId != item.relationId) || 
+					((it.relationId == item.relationId) && (it.condition != v)); 
+				});
 			};
 	
 			this.save();
@@ -350,6 +363,12 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view, rootId, blockId, onSave } = data;
+
+		this.items = this.items.map((it: any) => {
+			it.uniqueKey = [ it.relationId, it.condition ].join('-');
+			return it;
+		});
+		this.items = Util.arrayUniqueObjects(this.items, 'uniqueKey');
 
 		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, filters: this.items }, onSave);
 	};
