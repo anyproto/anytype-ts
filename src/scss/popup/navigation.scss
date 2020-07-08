@@ -66,11 +66,6 @@
 			.item:hover {
 				.smile { background-color: $colorLightGrey; }
 			}
-
-			.item.empty { padding-right: 16px; cursor: default; }
-			.item.empty {
-				.name { display: inline-block; vertical-align: middle; color: $colorDarkGrey; }
-			}
 		}
 
 		.innerWrap.expanded { width: 1136px; margin: 0px 0px 0px -578px; }
@@ -100,6 +95,10 @@
 					.smile { background: #f7f5f0; }
 				}
 
+				.item.empty { line-height: 80px; cursor: default; }
+				.item.empty {
+					.name { display: inline-block; vertical-align: middle; color: $colorDarkGrey; }
+				}
 				.item.empty:hover { border-color: $colorLightGrey !important; box-shadow: 0px 0px; }
 				.item.empty:hover {
 					.icon.arrow { background-image: url('~img/arrow/nav0.svg'); }
