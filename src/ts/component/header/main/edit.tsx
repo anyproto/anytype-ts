@@ -35,7 +35,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
 
-		const childrenIds = blockStore.getChildrenIds(breadcrumbs, breadcrumbs);
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const { iconEmoji, iconImage, name } = details;
 		const cn = [ 'header', 'headerMainEditSearch' ];

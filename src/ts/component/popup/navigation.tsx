@@ -263,8 +263,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { pageId, rootId, disableFirstKey } = data;
-		const expanded = pageId ? true : false;
+		const { expanded, rootId, disableFirstKey } = data;
 
 		this.disableFirstKey = Boolean(disableFirstKey);
 		this._isMounted = true;
@@ -277,7 +276,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.loadSearch();
 		
 		if (expanded) {
-			this.loadPage(pageId);
+			this.loadPage(rootId);
 		};
 	};
 	

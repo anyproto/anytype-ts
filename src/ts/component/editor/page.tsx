@@ -1009,7 +1009,7 @@ class EditorPage extends React.Component<Props, State> {
 									data: { 
 										type: I.NavigationType.Create, 
 										rootId: rootId,
-										pageId: rootId,
+										expanded: true,
 										skipId: rootId,
 										blockId: block.id,
 										position: position,

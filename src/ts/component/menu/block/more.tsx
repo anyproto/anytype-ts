@@ -203,6 +203,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
+						expanded: true,
 						...data,
 					},
 				});
@@ -232,6 +233,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
+						expanded: true,
 						...data,
 					}, 
 				});
