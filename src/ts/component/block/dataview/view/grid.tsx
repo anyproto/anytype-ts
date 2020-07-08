@@ -128,7 +128,6 @@ class ViewGrid extends React.Component<Props, {}> {
 		const viewItem = node.find('.viewItem');
 		
 		let ww = Math.max(Constant.size.dataview.view.grid, win.width() - 48);
-		let margin = (ww - Constant.size.dataview.view.grid) / 2;
 		let width = 0;
 
 		for (let relation of view.relations) {
@@ -137,8 +136,9 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		if (width < Constant.size.dataview.view.grid) {
 			ww = Constant.size.dataview.view.grid;
-			margin = 0;
 		};
+
+		let margin = (ww - Constant.size.dataview.view.grid) / 2;
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: width });
