@@ -64,11 +64,9 @@ class ViewGrid extends React.Component<Props, {}> {
 				{relations.map((item: any, i: number) => (
 					<CellHead key={'grid-head-' + item.id} {...item} />
 				))}
-				{!readOnly ? (
-					<th className="head add">
-						<Icon className="plus" />
-					</th>
-				) : null}
+				<th className="head last">
+					{!readOnly ? <Icon className="plus" /> : ''}
+				</th>
 			</tr>
 		);
 		
@@ -77,9 +75,7 @@ class ViewGrid extends React.Component<Props, {}> {
 				{relations.map((relation: any, i: number) => (
 					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={...relation} data={data[item.index]} />
 				))}
-				{!readOnly ? (
-					<td className="cell">&nbsp;</td>
-				) : null}
+				<td className="cell last">&nbsp;</td>
 			</tr>
 		);
 

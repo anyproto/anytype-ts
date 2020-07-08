@@ -18,13 +18,14 @@
 			.head:last-child {
 				.name { border: 0px; }
 			}
-			.head.add { width: 44px; }
+			.head.last { width: auto; }
 				
 			td.cell { 
 				padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; 
 				width: 192px;
 			}
 			td.cell:last-child { border-right: 0px; }
+			td.cell.last { width: auto; }
 
 			td.cell.c-number {
 				.name { @include text-overflow-nw; max-width: 192px; }
@@ -39,7 +40,7 @@
 			td.cell.add:hover {
 				.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 			}
-			td.cell.isName { width: auto; }
+			td.cell.isName { width: 288px; }
 			td.cell.isName {
 				.icon.expand { 
 					display: block; position: absolute; right: 0px; top: 0px; opacity: 0; width: 38px; height: 100%;
