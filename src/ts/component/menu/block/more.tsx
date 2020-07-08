@@ -95,7 +95,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 			
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -114,6 +114,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, content.targetBlockId);
 
 		let items = [];
+		if (block.isPageSet()) {
+			items = [
+				{ id: 'undo', icon: 'undo', name: 'Undo' },
+				{ id: 'redo', icon: 'redo', name: 'Redo' },
+				{ id: 'print', icon: 'print', name: 'Print' },
+			];
+		} else
 		if (block.isPage()) {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
@@ -200,8 +207,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			
 			case 'move':
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
+						expanded: true,
 						...data,
 					},
 				});
@@ -228,8 +237,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'move':
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
+						expanded: true,
 						...data,
 					}, 
 				});
@@ -253,7 +264,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		if (close) {
-			commonStore.menuClose(this.props.id);
+			this.props.close();
 		};
 	};
 

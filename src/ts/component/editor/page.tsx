@@ -1005,9 +1005,11 @@ class EditorPage extends React.Component<Props, State> {
 						if (item.type == I.BlockType.Page) {
 							if (item.key == 'existing') {
 								commonStore.popupOpen('navigation', { 
+									preventResize: true,
 									data: { 
 										type: I.NavigationType.Create, 
 										rootId: rootId,
+										expanded: true,
 										skipId: rootId,
 										blockId: block.id,
 										position: position,
@@ -1018,7 +1020,7 @@ class EditorPage extends React.Component<Props, State> {
 									iconEmoji: SmileUtil.random(), 
 									name: Constant.default.name 
 								};
-								DataUtil.pageCreate(e, this.props, rootId, block.id, details, position);
+								DataUtil.pageCreate(e, rootId, block.id, details, position);
 							};
 						} else {
 							this.blockCreate(block, position, param);

@@ -76,7 +76,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				return;
 			};
 
-			commonStore.menuClose(this.props.id);
+			this.props.close();
 
 			if (onUploadStart) {
 				onUploadStart();
@@ -104,7 +104,8 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		if (onEdit) {
 			onEdit();
 		};
-		commonStore.menuClose(this.props.id);
+
+		this.props.close();
 	};
 
 	onRemove (e: any) {
@@ -113,7 +114,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { rootId } = data;
 
 		DataUtil.pageSetCover(rootId, I.CoverType.None, '');
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 	};
 
 	onSelect (e: any, item: any) {
@@ -123,7 +124,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 
 		if (!details.coverId) {
-			commonStore.menuClose(this.props.id);
+			this.props.close();
 		};
 
 		if (onSelect) {

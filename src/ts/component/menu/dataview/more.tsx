@@ -95,7 +95,7 @@ class MenuDataviewMore extends React.Component<Props, {}> {
 				break;
 			
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -118,7 +118,7 @@ class MenuDataviewMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, view } = data;
 
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 
 		switch (item.id) {
 			case 'edit':

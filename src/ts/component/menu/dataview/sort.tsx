@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, Util } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore } from 'ts/store';
 
@@ -32,7 +32,7 @@ class MenuSort extends React.Component<Props, {}> {
 			{ id: String(I.SortType.Desc), name: 'Descending' },
 		];
 		
-		let relationOptions: any[] = [];
+		const relationOptions: any[] = [];
 		for (let relation of view.relations) {
 			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
 		};
@@ -123,11 +123,11 @@ class MenuSort extends React.Component<Props, {}> {
 
 	onChange (id: number, k: string, v: string) {
 		let item = this.items.find((item: any, i: number) => { return i == id; });
-		
-		if (k == 'type') {
-			//v = Number(v) || 0;
-		};
 
+		if (k == 'relationId') {
+			this.items = this.items.filter((it: I.Sort, i: number) => { return (i == id) || (it.relationId != v); });
+		};
+		
 		item[k] = v;
 		this.save();
 	};
@@ -152,6 +152,8 @@ class MenuSort extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view, rootId, blockId, onSave } = data;
+
+		this.items = Util.arrayUniqueObjects(this.items, 'relationId');
 
 		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, sorts: this.items }, onSave);
 	};

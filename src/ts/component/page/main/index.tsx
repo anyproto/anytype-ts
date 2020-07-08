@@ -149,7 +149,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			name: Constant.default.name 
 		};
 		
-		DataUtil.pageCreate(e, this.props, root, '', details, I.BlockPosition.Bottom, (message: any) => {
+		DataUtil.pageCreate(e, root, '', details, I.BlockPosition.Bottom, (message: any) => {
 			Util.scrollTopEnd();
 		});
 	};

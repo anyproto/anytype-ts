@@ -42,9 +42,8 @@ class MenuHelp extends React.Component<Props, {}> {
 	
 	onClick (e: any, item: any) {
 		const { history } = this.props;
-		const { account } = authStore;
 		
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 		
 		switch (item.id) {
 			case 'help':

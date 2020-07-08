@@ -324,7 +324,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 				
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};
@@ -421,7 +421,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 							this.moveToPage();
 						};
 						
-						commonStore.menuClose(this.props.id);
+						this.props.close();
 					};
 					
 					commonStore.menuOpen('blockStyle', menuParam);
@@ -434,7 +434,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 						C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
-						commonStore.menuClose(this.props.id);
+
+						this.props.close();
 					};
 					
 					commonStore.menuOpen('blockColor', menuParam);
@@ -447,7 +448,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
-						commonStore.menuClose(this.props.id);
+
+						this.props.close();
 					};
 					
 					commonStore.menuOpen('blockBackground', menuParam);
@@ -458,7 +460,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
-						commonStore.menuClose(this.props.id);
+
+						this.props.close();
 					};
 					
 					commonStore.menuOpen('blockAlign', menuParam);
@@ -499,9 +502,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 			case 'move':
 				commonStore.popupOpen('navigation', { 
+					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
 						rootId: rootId,
+						expanded: true,
 						blockId: blockId,
 						blockIds: blockIds,
 					}, 
@@ -566,7 +571,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		commonStore.menuClose(this.props.id);
+		this.props.close();
 	};
 
 	moveToPage () {

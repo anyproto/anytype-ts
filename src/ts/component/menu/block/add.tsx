@@ -172,7 +172,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				break;
 			
 			case Key.escape:
-				commonStore.menuClose(this.props.id);
+				this.props.close();
 				break;
 		};
 	};

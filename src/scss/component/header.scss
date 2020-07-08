@@ -29,18 +29,62 @@
 		}
 		.item:hover { color: $colorBlack; }
 	}
+
+	.menu { position: absolute; top: 9px; right: 10px; }
+	.menu {
+		.icon:last-child { margin: 0px; }
+	}
 	
-	.icon.nav { background-image: url('~img/icon/nav0.svg'); }
-	.icon.nav:hover { background-image: url('~img/icon/nav1.svg'); }
+	.icon.home { background-image: url('~img/icon/header/home0.svg'); }
+	.icon.home:hover { background-image: url('~img/icon/header/home1.svg'); }
+
+	.icon.back { background-image: url('~img/icon/header/back0.svg'); }
+	.icon.back:hover { background-image: url('~img/icon/header/back1.svg'); }
+
+	.icon.forward { background-image: url('~img/icon/header/back0.svg'); }
+	.icon.forward:hover { background-image: url('~img/icon/header/back1.svg'); }
+
+	.icon.plus { background-size: 16px 16px !important; background-image: url('~img/icon/header/plus0.svg'); }
+	.icon.plus:hover { background-image: url('~img/icon/header/plus1.svg'); }
+
+	.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+	.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 }
 
 .headerMainEdit { background: #fff; padding: 9px 10px 9px 82px; line-height: 20px; }
-.headerMainEdit {
-	.menu { position: absolute; top: 9px; right: 10px; }
-	.menu {
+
+.headerMainEditSearch { background: #fff; padding: 5px 10px; height: 38px; }
+.headerMainEditSearch {
+	.mid { height: 28px; position: absolute; left: 50%; transform: translateX(-50%); top: 5px; white-space: nowrap; }
+	.mid {
+		.btn { 
+			border: 1px solid $colorLightGrey; border-radius: 6px; vertical-align: top; height: 28px; 
+			width: 32px; background-size: 20px 20px; margin-right: 8px; opacity: 0;
+		}
+	
+		.btn.home { width: 48px; margin-right: 8px; }
+		.btn.back { margin-right: 2px; }
+		.btn.plus { width: 122px; margin: 0px; }
+	}
+
+	.path { 
+		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
+		line-height: 24px; width: 400px; margin-right: 8px; text-align: center; transition: $transitionFast;
+	}
+	.path {
+		.item { line-height: 20px; vertical-align: middle; }
+	}
+
+	.right { position: absolute; top: 9px; right: 10px; }
+	.right {
 		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer; }
 		.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
 		.icon:last-child { margin: 0px; }
 	}
+}
+
+.headerMainEditSearch:hover, .headerMainEditSearch.active {
+	.mid .btn { opacity: 1; }
+	.path { border-color: $colorLightGrey; }
 }

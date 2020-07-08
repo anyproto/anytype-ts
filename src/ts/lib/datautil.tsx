@@ -183,7 +183,7 @@ class DataUtil {
 		this.history.push('/main/edit/' + targetId);
 	};
 	
-	pageCreate (e: any, props: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
+	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
 		if (e && e.persist) {
 			e.persist();
 		};

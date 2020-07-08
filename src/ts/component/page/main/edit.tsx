@@ -2,12 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Storage } from 'ts/lib';
-import { blockStore } from 'ts/store';
 import { HeaderMainEdit as Header, FooterMainEdit as Footer, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
-
-const Constant = require('json/constant.json');
 
 class PageMainEdit extends React.Component<Props, {}> {
 	
