@@ -169,7 +169,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view } = data;
+		const { rootId, blockId, view, getData } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { content } = block;
 		const { views } = content;
@@ -187,7 +187,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				const next = filtered[filtered.length - 1];
 
 				if (next) {
-					C.BlockSetDataviewActiveView(rootId, blockId, next.id, 0, Constant.limit.dataview.records, () => {
+					getData(next.id, 0, () => {
 						C.BlockDeleteDataviewView(rootId, blockId, viewId);
 					});
 				};

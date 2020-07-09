@@ -144,6 +144,7 @@ class Controls extends React.Component<Props, State> {
 				blockId: block.id, 
 				view: view,
 				data: data,
+				getData: getData
 			},
 		});
 	};
@@ -172,6 +173,7 @@ class Controls extends React.Component<Props, State> {
 					rootId: rootId,
 					blockId: block.id,
 					view: view,
+					getData: getData
 				},
 			});
 		});
