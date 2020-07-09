@@ -67,7 +67,7 @@
 		"iconPage": 256,
 
 		"menuBlockAdd": 360,
-		"menuDataviewFilter": 446,
+		"menuDataviewFilter": 400,
 		
 		"menuBlockContext": {
 			"default": 400,

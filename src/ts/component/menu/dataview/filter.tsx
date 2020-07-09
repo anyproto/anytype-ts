@@ -390,6 +390,10 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	getWidth (obj: any) {
+		if (obj.hasClass('empty')) {
+			return 0;
+		};
+		
 		let w = 0;
 		obj.children().each((i: number, item: any) => {
 			item = $(item);
