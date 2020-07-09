@@ -477,9 +477,8 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 
 	onImport (format: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data || {};
+		const { history } = this.props;
+		const { root } = blockStore;
 		const options: any = { properties: [ 'openFile', 'openDirectory' ] };
 
 		dialog.showOpenDialog(options).then((result: any) => {
@@ -489,9 +488,11 @@ class PopupSettings extends React.Component<Props, State> {
 			};
 
 			this.setState({ loading: true });
-			C.BlockImportMarkdown(rootId, files[0], () => {
+			C.BlockImportMarkdown(root, files[0], () => {
 				this.props.close();
 				this.setState({ loading: false });
+				
+				history.push('/main/index/');
 			});
 		});
 	};
