@@ -492,7 +492,7 @@ class PopupSettings extends React.Component<Props, State> {
 				this.props.close();
 				this.setState({ loading: false });
 				
-				history.push('/main/index/');
+				history.push('/main/index');
 			});
 		});
 	};

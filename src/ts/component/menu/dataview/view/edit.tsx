@@ -22,6 +22,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 	};
 
 	render () {
@@ -32,7 +33,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<div className="filter">
+				<form className="filter" onSubmit={this.onSubmit}>
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
 						value={view.name} 
@@ -42,7 +43,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 						onFocus={this.onNameFocus}
 						onBlur={this.onNameBlur}
 					/>
-				</div>
+				</form>
 				<div className="section">
 					{items.map((action: any, i: number) => (
 						<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
@@ -150,7 +151,12 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, view } = data;
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: (v || Constant.default.viewName) });
+		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: v });
+	};
+
+	onSubmit (e: any) {
+		e.preventDefault();
+		this.props.close();
 	};
 
 	getItems () {
