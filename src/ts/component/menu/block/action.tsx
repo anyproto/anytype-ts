@@ -111,7 +111,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		window.setTimeout(() => {
 			if (this.ref) {
 				this.ref.focus();
-				keyboard.setFocus(true);
 			};
 		}, 15);
 		

@@ -58,12 +58,12 @@ class Controls extends React.Component<Props, State> {
 			},
 			/*
 			{ 
-				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewView', 
-				active: commonStore.menuIsOpen('dataviewView') 
+				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList', 
+				active: commonStore.menuIsOpen(List') 
 			},
 			*/
 			{ 
-				id: 'more', menu: 'dataviewMore', active: commonStore.menuIsOpen('dataviewMore') 
+				id: 'more', menu: 'dataviewViewEdit', active: commonStore.menuIsOpen('dataviewViewEdit') 
 			},
 		];
 
@@ -100,7 +100,7 @@ class Controls extends React.Component<Props, State> {
 						<ViewItem key={i} {...item} active={item.id == viewId} />
 					))}
 					<div className="item">
-						<Icon className="plus" onClick={this.onViewAdd} />
+						<Icon id="button-view-add" className="plus" onClick={this.onViewAdd} />
 					</div>
 					<div className="item dn">
 						<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
@@ -149,19 +149,25 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	onViewAdd (e: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, getData } = this.props;
 
-		commonStore.popupOpen('prompt', {
-			data: {
-				value: '',
-				placeHolder: 'View name',
-				maxLength: Constant.limit.dataview.viewName,
-				onChange: (value: string) => {
-					C.BlockCreateDataviewView(rootId, block.id, { name: (value || 'New view') }, (message: any) => {
-						this.setState({ page: this.getMaxPage() });
-					});
+		C.BlockCreateDataviewView(rootId, block.id, { name: Constant.default.viewName }, (message: any) => {
+			getData(message.viewId, 0);
+			/*
+			commonStore.menuOpen('dataviewViewEdit', {
+				type: I.MenuType.Vertical,
+				element: '#button-view-add',
+				offsetX: 0,
+				offsetY: 4,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Center,
+				data: {
+					rootId: rootId,
+					blockId: block.id,
+					view: view,
 				},
-			},
+			});
+			*/
 		});
 	};
 

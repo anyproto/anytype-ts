@@ -44,8 +44,6 @@ class Pager extends React.Component<Props, {}> {
 			</div>
 		);
 
-		console.log(page, pages);
-		
 		if (items.length > 1) {
 			return (
 				<div className="pager">

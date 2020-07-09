@@ -25,12 +25,12 @@ import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
 import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
-import MenuDataviewView from './dataview/view';
+import MenuDataviewViewList from './dataview/view/list';
+import MenuDataviewViewEdit from './dataview/view/edit';
 import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewTagList from './dataview/tag/list';
 import MenuDataviewTagEdit from './dataview/tag/edit';
 import MenuDataviewAccount from './dataview/account';
-import MenuDataviewMore from './dataview/more';
 import { commonStore } from '../../store';
 
 interface Props extends I.Menu {
@@ -84,10 +84,10 @@ class Menu extends React.Component<Props, {}> {
 			dataviewTagEdit:		 MenuDataviewTagEdit,
 			dataviewFilter:			 MenuDataviewFilter,
 			dataviewSort:			 MenuDataviewSort,
-			dataviewView:			 MenuDataviewView,
+			dataviewViewList:		 MenuDataviewViewList,
+			dataviewViewEdit:		 MenuDataviewViewEdit,
 			dataviewCalendar:		 MenuDataviewCalendar,
 			dataviewAccount:		 MenuDataviewAccount,
-			dataviewMore:			 MenuDataviewMore,
 		};
 		
 		const menuId = Util.toCamelCase('menu-' + id);

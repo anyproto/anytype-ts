@@ -16,7 +16,8 @@
 		"icon": ":page_facing_up:",
 		"lang": "en",
 		"cover": 3,
-		"codeLang": "javascript"
+		"codeLang": "javascript",
+		"viewName": "New view"
 	},
 	
 	"langs": [

@@ -420,10 +420,7 @@ class Dispatcher {
 						list = list.filter((it: any) => { return it.id != id; });
 					};
 					for (let item of data.inserted) {
-						let details = Decode.decodeStruct(item) || {};
-						details.name = String(details.name || Constant.default.name);
-
-						list.push(details);
+						list.push(Decode.decodeStruct(item) || {});
 					};
 
 					block.content.viewId = data.getViewid();
