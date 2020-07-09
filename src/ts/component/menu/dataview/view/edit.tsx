@@ -2,6 +2,7 @@ import * as React from 'react';
 import { I, C, keyboard, Key } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
+import { blockStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
@@ -149,8 +150,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, view } = data;
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: (v || Constant.default.viewName) }, (message: any) => {
-		});
+		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: (v || Constant.default.viewName) });
 	};
 
 	getItems () {
@@ -170,17 +170,27 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, view } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+		const { content } = block;
+		const { views } = content;
+		const viewId = view.id;
 
 		this.props.close();
 
 		switch (item.id) {
 			case 'copy':
-				C.BlockCreateDataviewView(rootId, blockId, view, (message: any) => {
-				});
+				C.BlockCreateDataviewView(rootId, blockId, view);
 				break;
 
 			case 'remove':
-				C.BlockDeleteDataviewView(rootId, blockId, view.id);
+				const filtered = views.filter((it: I.View) => { return it.id != view.id; });
+				const next = filtered[filtered.length - 1];
+
+				if (next) {
+					C.BlockSetDataviewActiveView(rootId, blockId, next.id, 0, Constant.limit.dataview.records, () => {
+						C.BlockDeleteDataviewView(rootId, blockId, viewId);
+					});
+				};
 				break;
 		};
 	};

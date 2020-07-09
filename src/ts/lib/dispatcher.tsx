@@ -404,6 +404,17 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 
+				case 'blockDeleteDataviewView':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					block.content.views = block.content.views.filter((it: I.View) => { return it.id != data.getViewid(); });
+					blockStore.blockUpdate(rootId, block);
+					break;
+
 				case 'blockSetDataviewRecords':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);

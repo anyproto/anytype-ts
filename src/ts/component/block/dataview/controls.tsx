@@ -150,10 +150,17 @@ class Controls extends React.Component<Props, State> {
 
 	onViewAdd (e: any) {
 		const { rootId, block, getData } = this.props;
+		const { content } = block;
+		const { views } = content;
 
 		C.BlockCreateDataviewView(rootId, block.id, { name: Constant.default.viewName }, (message: any) => {
 			getData(message.viewId, 0);
-			/*
+
+			const view = views.find((item: any) => { return item.id == message.viewId; });
+			if (!view) {
+				return;
+			};
+
 			commonStore.menuOpen('dataviewViewEdit', {
 				type: I.MenuType.Vertical,
 				element: '#button-view-add',
@@ -167,7 +174,6 @@ class Controls extends React.Component<Props, State> {
 					view: view,
 				},
 			});
-			*/
 		});
 	};
 
