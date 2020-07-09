@@ -46,6 +46,7 @@
 
 	.icon.plus { background-size: 16px 16px !important; background-image: url('~img/icon/header/plus0.svg'); }
 	.icon.plus:hover { background-image: url('~img/icon/header/plus1.svg'); }
+	.icon.plus.dis:hover { background-image: url('~img/icon/header/plus0.svg'); }
 
 	.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 	.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
@@ -85,6 +86,9 @@
 }
 
 .headerMainEditSearch:hover, .headerMainEditSearch.active {
-	.mid .btn { opacity: 1; }
+	.mid {
+		.btn { opacity: 1; }
+		.btn.dis { opacity: 0.5; }
+	}
 	.path { border-color: $colorLightGrey; }
 }

@@ -15,7 +15,6 @@
     .icon.arrow { width: 24px; height: 24px; vertical-align: top; background-image: url('~img/arrow/pager0.svg'); }
     .icon.arrow:hover { background-image: url('~img/arrow/pager1.svg'); }
 
-    .icon.arrow.disabled { cursor: default; }
     .icon.arrow.disabled:hover { background-image: url('~img/arrow/pager0.svg'); }
 
     .icon.arrow.right { transform: rotateZ(180deg); }
