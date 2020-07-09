@@ -105,6 +105,10 @@ class Server {
 		return this.address;
 	};
 	
+	setAddress(address){
+		this.address = address;
+	};
+	
 };
 
 module.exports = new Server();
