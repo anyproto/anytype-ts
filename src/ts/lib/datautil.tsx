@@ -184,6 +184,8 @@ class DataUtil {
 	};
 	
 	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
+		details = details || {};
+		
 		if (e && e.persist) {
 			e.persist();
 		};

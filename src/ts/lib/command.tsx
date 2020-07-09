@@ -198,7 +198,6 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	details = details || {};
-	details.name = String(details.name || Constant.default.name);
 
 	const request = new Rpc.Block.CreatePage.Request();
 

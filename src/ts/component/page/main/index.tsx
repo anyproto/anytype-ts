@@ -144,7 +144,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		const details = { 
 			iconEmoji: SmileUtil.random(), 
-			name: Constant.default.name 
+			name: '',
 		};
 		
 		DataUtil.pageCreate(e, root, '', details, I.BlockPosition.Bottom, (message: any) => {

@@ -101,11 +101,7 @@ class Keyboard {
 				};
 			};
 			
-			const details = { 
-				iconEmoji: SmileUtil.random(), 
-				name: Constant.default.name 
-			};
-			DataUtil.pageCreate(e, rootId, targetId, details, position);
+			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
 		};
 		
 		this.setPinCheck();

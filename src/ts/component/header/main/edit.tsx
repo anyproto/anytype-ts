@@ -108,10 +108,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { focused } = focus;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
-		const details = { 
-			iconEmoji: SmileUtil.random(), 
-			name: Constant.default.name 
-		};
 
 		if (root.isPageSet()) {
 			return;
@@ -133,7 +129,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			};
 		};
 		
-		DataUtil.pageCreate(e, rootId, targetId, details, position);
+		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
 	};
 
 	onNavigation (e: any) {

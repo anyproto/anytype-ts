@@ -1016,11 +1016,7 @@ class EditorPage extends React.Component<Props, State> {
 									}, 
 								});
 							} else {
-								const details = { 
-									iconEmoji: SmileUtil.random(), 
-									name: Constant.default.name 
-								};
-								DataUtil.pageCreate(e, rootId, block.id, details, position);
+								DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position);
 							};
 						} else {
 							this.blockCreate(block, position, param);
