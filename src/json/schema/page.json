@@ -36,6 +36,7 @@
     {
       "id": "isArchived",
       "name": "Archived",
+      "isHidden": true,
       "type": "https://anytype.io/schemas/types/checkbox"
     },
     {
