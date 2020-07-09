@@ -105,7 +105,7 @@ class Server {
 		return this.address;
 	};
 	
-	setAddress(address){
+	setAddress (address) {
 		this.address = address;
 	};
 	

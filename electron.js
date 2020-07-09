@@ -14,8 +14,6 @@ let useGRPC = process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || i
 let service;
 let server;
 
-console.log('data', process.env.DATA_DIR);
-
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
@@ -30,7 +28,7 @@ if (useGRPC) {
 		waitLibraryPromise = Promise.resolve();
 	} else {
 		waitLibraryPromise = server.start(binPath, userPath);
-	}
+	};
 } else {
 	const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 	
