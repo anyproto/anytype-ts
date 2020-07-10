@@ -7,12 +7,12 @@ import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs,
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-import BlockCover from 'ts/component/block/cover';
 import Controls from './controls';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
+	onOpen?(): void;
 };
 
 interface State {
@@ -22,7 +22,6 @@ interface State {
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
-const raf = require('raf');
 const THROTTLE = 20;
 
 @observer
@@ -204,7 +203,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	open (skipInit?: boolean) {
-		const { rootId } = this.props;
+		const { rootId, onOpen } = this.props;
 		const { breadcrumbs } = blockStore;
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
@@ -237,7 +236,7 @@ class EditorPage extends React.Component<Props, State> {
 		this.id = rootId;
 		
 		C.BlockOpen(this.id, (message: any) => {
-			const { focused, range } = focus;
+			const { focused } = focus;
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
 			
 			if (!focusedBlock) {
@@ -246,7 +245,12 @@ class EditorPage extends React.Component<Props, State> {
 
 			this.setState({ loading: false });
 			this.resize();
+
 			blockStore.setNumbers(rootId);
+
+			if (onOpen) {
+				onOpen();
+			};
 		});
 	};
 

@@ -12,7 +12,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
@@ -34,8 +33,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	render () {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
-		const root = blockStore.getLeaf(rootId, rootId);
 
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root) {
+			return null;
+		};
+		
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const { iconEmoji, iconImage, name } = details;
 		const cn = [ 'header', 'headerMainEditSearch' ];
@@ -43,7 +46,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		if (commonStore.popupIsOpen('navigation')) {
 			cn.push('active');
 		};
-		
+
 		return (
 			<React.Fragment>
 				<div className={cn.join(' ')}>
@@ -59,7 +62,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 							</div>
 						</div>
 
-						<Icon className={[ 'btn', 'plus', (root && root.isPageSet() ? 'dis' : '') ].join(' ')} tooltip="Create new page" onClick={this.onAdd} />
+						<Icon className={[ 'btn', 'plus', (root.isPageSet() ? 'dis' : '') ].join(' ')} tooltip="Create new page" onClick={this.onAdd} />
 					</div>
 
 					<div className="right">
@@ -109,7 +112,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 
-		if (root.isPageSet()) {
+		if (root && root.isPageSet()) {
 			return;
 		};
 		

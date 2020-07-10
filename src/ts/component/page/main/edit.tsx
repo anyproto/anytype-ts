@@ -8,6 +8,14 @@ interface Props extends RouteComponentProps<any> {};
 
 class PageMainEdit extends React.Component<Props, {}> {
 	
+	refHeader: any = null;
+
+	constructor (props: any) {
+		super(props);
+		
+		this.onOpen = this.onOpen.bind(this);
+	};
+
 	render () {
 		const { history, location, match } = this.props;
 		const rootId = match.params.id;
@@ -16,10 +24,10 @@ class PageMainEdit extends React.Component<Props, {}> {
 			<div>
 				<SelectionProvider container=".pageMainEdit" rootId={match.params.id}>
 					<DragProvider {...this.props} rootId={rootId}>
-						<Header {...this.props} rootId={rootId} />
+						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 	
 						<div className="wrapper">
-							<EditorPage history={history} location={location} match={match} rootId={rootId} />
+							<EditorPage history={history} location={location} match={match} rootId={rootId} onOpen={this.onOpen} />
 						</div>
 					</DragProvider>
 				</SelectionProvider>
@@ -40,6 +48,12 @@ class PageMainEdit extends React.Component<Props, {}> {
 	setId () {
 		const { match } = this.props;
 		Storage.set('pageId', match.params.id);
+	};
+
+	onOpen () {
+		if (this.refHeader) {
+			this.refHeader.forceUpdate();
+		};
 	};
 	
 };

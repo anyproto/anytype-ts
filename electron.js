@@ -254,7 +254,6 @@ function menuInit () {
 						win.webContents.send('commandEditor', 'selectAll');
 					}
 				},
-				{ label: 'Select all', role: 'selectAll' }
 			]
 		},
 		{
