@@ -10,18 +10,17 @@ stdin.on('data', function(chunk) {
 });
 
 stdin.on('end', function() {
-	let lines = data.split('\n');
+	let lines = data.split('\n').sort();
 	let baseDepsFile = fs.readFileSync('package.deps.json');
 	let baseDepsJSON = JSON.parse(baseDepsFile);
 	let packageFile = fs.readFileSync('package.json');
 	let packageJSON = JSON.parse(packageFile);
-	
+
+	lines = [ ...new Set(lines) ];
+
 	packageJSON.build.files = baseDepsJSON.concat(lines).filter(function (el) {
 		return el != "";
 	});
 	let jsonS = JSON.stringify(packageJSON, null, '\t');
 	fs.writeFileSync('package.json', jsonS);
 });
-
-
-

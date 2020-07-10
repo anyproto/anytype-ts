@@ -7,6 +7,9 @@ const path = require('path');
 const os = require('os');
 const log = require('electron-log');
 const storage = require('electron-json-storage');
+const fs = require('fs');
+const readChunk = require('read-chunk');
+const fileType = require('file-type');
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
