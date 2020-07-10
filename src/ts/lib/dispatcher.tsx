@@ -44,12 +44,12 @@ class Dispatcher {
 			
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
-			this.listenEvents()
+			this.listenEvents();
 
 		/// #endif
 	};
 
-	listenEvents() {
+	listenEvents () {
 		this.stream = this.service.listenEvents(new Commands.Empty(), null);
 
 		this.stream.on('data', (event: any) => {
@@ -64,7 +64,7 @@ class Dispatcher {
 			console.error('[Stream] end.. restarting', end);
 			this.listenEvents();
 		});
-	}
+	};
 
 	eventType (v: number): string {
 		let t = '';
