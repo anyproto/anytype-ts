@@ -52,7 +52,6 @@ if [ "$platform" = "windows-latest" ]; then
   
   echo "Moving... "
   mv -fv grpc-server.exe dist/anytypeHelper.exe
-  mv -fv protobuf/pb/* dist/lib/
 else 
   echo -n "Uncompressing... "
   tar -zxf $FILE
@@ -67,6 +66,7 @@ fi;
 
 rm -rf dist/lib/pb
 rm -rf dist/lib/vendor
+rm -rf dist/lib/protos
 mv -fv protobuf/* dist/lib/
 rm -rf protobuf
 mv -fv schemas/* src/json/schema
