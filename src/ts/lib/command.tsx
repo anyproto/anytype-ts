@@ -457,7 +457,7 @@ const BlockListSetTextMark = (contextId: string, blockIds: string[], mark: I.Mar
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-    request.setMark(mark);
+    request.setMark(Mapper.To.Mark(mark));
 
 	dispatcher.request('blockListSetTextMark', request, callBack);
 };
