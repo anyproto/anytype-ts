@@ -222,8 +222,8 @@ class MenuFilter extends React.Component<Props, {}> {
 					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
 					{ id: I.FilterCondition.Greater,		 name: '>' }, 
 					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≤' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≥' },
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
 				];
 				break;
 			
@@ -390,6 +390,10 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	getWidth (obj: any) {
+		if (obj.hasClass('empty')) {
+			return 0;
+		};
+		
 		let w = 0;
 		obj.children().each((i: number, item: any) => {
 			item = $(item);

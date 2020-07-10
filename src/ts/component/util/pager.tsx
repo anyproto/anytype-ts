@@ -43,15 +43,15 @@ class Pager extends React.Component<Props, {}> {
 				{item.id}
 			</div>
 		);
-		
+
 		if (items.length > 1) {
 			return (
 				<div className="pager">
-					<Icon className="arrow left" onClick={() => { this.onChange(page - 1); }} />
+					<Icon className={[ 'arrow', 'left', (page == 1 ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(page - 1); }} />
 					{items.map((item, i) => {
 						return <Item key={i} {...item} />;
 					})}
-					<Icon className="arrow right" onClick={() => { this.onChange(page + 1); }} />
+					<Icon className={[ 'arrow', 'right', (page == pages ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(page + 1); }} />
 				</div>
 			);
 		} else {

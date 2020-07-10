@@ -34,6 +34,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	render () {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
+		const root = blockStore.getLeaf(rootId, rootId);
 
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const { iconEmoji, iconImage, name } = details;
@@ -58,7 +59,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 							</div>
 						</div>
 
-						<Icon className="btn plus" tooltip="Create new page" onClick={this.onAdd} />
+						<Icon className={[ 'btn', 'plus', (root && root.isPageSet() ? 'dis' : '') ].join(' ')} tooltip="Create new page" onClick={this.onAdd} />
 					</div>
 
 					<div className="right">
@@ -105,10 +106,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { rootId } = this.props;
 		const { focused } = focus;
+		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
-		const details = { 
-			iconEmoji: SmileUtil.random(), 
-			name: Constant.default.name 
+
+		if (root.isPageSet()) {
+			return;
 		};
 		
 		let targetId = '';
@@ -127,7 +129,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			};
 		};
 		
-		DataUtil.pageCreate(e, rootId, targetId, details, position);
+		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
 	};
 
 	onNavigation (e: any) {

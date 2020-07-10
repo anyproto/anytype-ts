@@ -198,7 +198,6 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	details = details || {};
-	details.name = String(details.name || Constant.default.name);
 
 	const request = new Rpc.Block.CreatePage.Request();
 
@@ -533,6 +532,16 @@ const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string
 	dispatcher.request('blockSetDataviewView', request, callBack);
 };
 
+const BlockDeleteDataviewView = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Delete.Dataview.View.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+
+	dispatcher.request('blockDeleteDataviewView', request, callBack);
+};
+
 const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Set.Dataview.ActiveView.Request();
 	
@@ -598,6 +607,8 @@ export {
 	BlockSetDetails,
 	BlockSetDataviewView,
 	BlockSetDataviewActiveView,
+
+	BlockDeleteDataviewView,
 
 	BlockListMove,
 	BlockListMoveToNewPage,

@@ -1016,11 +1016,7 @@ class EditorPage extends React.Component<Props, State> {
 									}, 
 								});
 							} else {
-								const details = { 
-									iconEmoji: SmileUtil.random(), 
-									name: Constant.default.name 
-								};
-								DataUtil.pageCreate(e, rootId, block.id, details, position);
+								DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position);
 							};
 						} else {
 							this.blockCreate(block, position, param);
@@ -1224,13 +1220,27 @@ class EditorPage extends React.Component<Props, State> {
 		
 		return ret;
 	};
+
+	phraseCheck () {
+		let blockCnt = Number(Storage.get('blockCnt')) || 0;
+		blockCnt++;
+		if (blockCnt == 10) {
+			commonStore.popupOpen('settings', { 
+				data: { page: 'phrase' } 
+			});
+		};
+		if (blockCnt <= 11) {
+			Storage.set('blockCnt', blockCnt);
+		};
+	};
 	
 	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
 			this.focus(message.blockId, 0, 0);
-			
+			this.phraseCheck();
+
 			if (callBack) {
 				callBack(message.blockId);
 			};
@@ -1293,6 +1303,7 @@ class EditorPage extends React.Component<Props, State> {
 		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
 			this.focus(focused.id, 0, 0);
 			focus.scroll();
+			this.phraseCheck();
 
 			if (isToggle && isOpen) {
 				Storage.setToggle(rootId, message.blockId, true);

@@ -6,7 +6,7 @@ const fs = require('fs');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 
 function dateForFile() {
-	return new Date().toISOString().rplace(/:/g, '_').	replace(/\..+/, '');
+	return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 };
 
 class Server {
@@ -103,6 +103,10 @@ class Server {
 	
 	getAddress(){
 		return this.address;
+	};
+	
+	setAddress (address) {
+		this.address = address;
 	};
 	
 };

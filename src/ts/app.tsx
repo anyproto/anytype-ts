@@ -317,17 +317,8 @@ class App extends React.Component<Props, State> {
 	};
 
 	onImport () {
-		const { root } = blockStore;
-		const id = String(Storage.get('pageId') || root || '');
-		if (!id) {
-			return;
-		};
-
 		commonStore.popupOpen('settings', {
-			data: {
-				page: 'importIndex',
-				rootId: id,
-			}
+			data: { page: 'importIndex' }
 		});
 	};
 	

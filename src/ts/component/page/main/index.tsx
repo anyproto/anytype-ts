@@ -96,8 +96,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				Storage.set('hello', 1);
 				hello.addClass('hide');
-
-				this.onSettings('phrase');
 			}, 2000);
 		};
 	};
@@ -107,13 +105,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSettings (page: string) {
-		const { root } = blockStore;
-
 		commonStore.popupOpen('settings', {
-			data: {
-				page: page,
-				rootId: root,
-			}
+			data: { page: page }
 		});
 	};
 	
@@ -146,7 +139,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		const details = { 
 			iconEmoji: SmileUtil.random(), 
-			name: Constant.default.name 
+			name: '',
 		};
 		
 		DataUtil.pageCreate(e, root, '', details, I.BlockPosition.Bottom, (message: any) => {

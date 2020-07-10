@@ -30,6 +30,7 @@ class PopupSettings extends React.Component<Props, State> {
 		loading: false,
 	};
 	onConfirmPin: any = null;
+	onConfirmPhrase: any = null;
 	format: string = '';
 
 	constructor (props: any) {
@@ -174,6 +175,11 @@ class PopupSettings extends React.Component<Props, State> {
 						<div className="inputs">
 							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" readOnly={true} />
 						</div>
+						{this.onConfirmPhrase ? (
+							<div className="buttons">
+								<Button text="I've written it down" className="orange" onClick={() => {	this.onConfirmPhrase();	}} />
+							</div>
+						) : ''}
 					</div>
 				);
 				break;
@@ -442,6 +448,10 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 
 	onPage (id: string) {
+		if (id != 'phrase') {
+			this.onConfirmPhrase = null;
+		};
+
 		this.setState({ page: id });
 	};
 
@@ -455,15 +465,20 @@ class PopupSettings extends React.Component<Props, State> {
 	onLogout (e: any) {
 		const { history } = this.props;
 
-		C.AccountStop(false);
-		authStore.logout();
-		history.push('/');
+		this.onConfirmPhrase = () => {
+			C.AccountStop(false);
+			authStore.logout();
+			history.push('/');
+
+			this.onConfirmPhrase = null;
+		};
+		
+		this.onPage('phrase');
 	};
 
 	onImport (format: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data || {};
+		const { history } = this.props;
+		const { root } = blockStore;
 		const options: any = { properties: [ 'openFile', 'openDirectory' ] };
 
 		dialog.showOpenDialog(options).then((result: any) => {
@@ -473,9 +488,11 @@ class PopupSettings extends React.Component<Props, State> {
 			};
 
 			this.setState({ loading: true });
-			C.BlockImportMarkdown(rootId, files[0], () => {
+			C.BlockImportMarkdown(root, files[0], () => {
 				this.props.close();
 				this.setState({ loading: false });
+				
+				history.push('/main/index');
 			});
 		});
 	};

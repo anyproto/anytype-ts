@@ -64,11 +64,9 @@ class ViewGrid extends React.Component<Props, {}> {
 				{relations.map((item: any, i: number) => (
 					<CellHead key={'grid-head-' + item.id} {...item} />
 				))}
-				{!readOnly ? (
-					<th className="head add">
-						<Icon className="plus" />
-					</th>
-				) : null}
+				<th className="head last">
+					{!readOnly ? <Icon className="plus" /> : ''}
+				</th>
 			</tr>
 		);
 		
@@ -77,9 +75,7 @@ class ViewGrid extends React.Component<Props, {}> {
 				{relations.map((relation: any, i: number) => (
 					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={...relation} data={data[item.index]} />
 				))}
-				{!readOnly ? (
-					<td className="cell">&nbsp;</td>
-				) : null}
+				<td className="cell last">&nbsp;</td>
 			</tr>
 		);
 
@@ -130,13 +126,19 @@ class ViewGrid extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
-		const ww = Math.max(Constant.size.dataview.view.grid, win.width() - 48);
-		const margin = (ww - Constant.size.dataview.view.grid) / 2;
-
+		
+		let ww = Math.max(Constant.size.dataview.view.grid, win.width() - 48);
 		let width = 0;
+
 		for (let relation of view.relations) {
 			width += Number(Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0;
 		};
+
+		if (width < Constant.size.dataview.view.grid) {
+			ww = Constant.size.dataview.view.grid;
+		};
+
+		let margin = (ww - Constant.size.dataview.view.grid) / 2;
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: width });

@@ -99,14 +99,14 @@ class BlockDataview extends React.Component<Props, {}> {
 		$(window).unbind('resize.dataview');
 	};
 
-	getData (viewId: string, offset: number) {
+	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 
 		block.content.viewId = viewId;
 		block.content.offset = offset;
 		blockStore.blockUpdate(rootId, block);
 
-		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records);
+		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
 	};
 
 	onOpen (e: any, data: any) {

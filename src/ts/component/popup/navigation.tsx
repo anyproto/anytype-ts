@@ -28,7 +28,7 @@ const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 
-const PAGE = 14;
+const PAGE = 30;
 
 enum Panel { Left, Right };
 

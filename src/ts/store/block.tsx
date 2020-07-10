@@ -371,7 +371,7 @@ class BlockStore {
 		const map = this.getDetailsMap(rootId);
 		const item = Util.objectCopy(map.get(id) || {});
 
-		item.name = String(item.name || Constant.default.name);
+		item.name = String(item.name || Constant.default.name || '');
 		return item;
 	};
 

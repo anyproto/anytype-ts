@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { I, C } from 'ts/lib';
 import { Icon } from 'ts/component';
-import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 @observer
-class MenuView extends React.Component<Props, {}> {
+class MenuViewList extends React.Component<Props, {}> {
 	
 	constructor(props: any) {
 		super(props);
@@ -55,4 +54,4 @@ class MenuView extends React.Component<Props, {}> {
 	
 };
 
-export default MenuView;
+export default MenuViewList;

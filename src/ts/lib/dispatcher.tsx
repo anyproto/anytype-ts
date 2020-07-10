@@ -404,6 +404,17 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 
+				case 'blockDeleteDataviewView':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					block.content.views = block.content.views.filter((it: I.View) => { return it.id != data.getViewid(); });
+					blockStore.blockUpdate(rootId, block);
+					break;
+
 				case 'blockSetDataviewRecords':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
@@ -420,10 +431,7 @@ class Dispatcher {
 						list = list.filter((it: any) => { return it.id != id; });
 					};
 					for (let item of data.inserted) {
-						let details = Decode.decodeStruct(item) || {};
-						details.name = String(details.name || Constant.default.name);
-
-						list.push(details);
+						list.push(Decode.decodeStruct(item) || {});
 					};
 
 					block.content.viewId = data.getViewid();

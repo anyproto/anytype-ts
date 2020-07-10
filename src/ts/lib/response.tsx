@@ -278,7 +278,9 @@ const BlockListDeletePage = (response: any) => {
 };
 
 const BlockCreateDataviewView = (response: any) => {
-	return {};
+	return {
+		viewId: response.getViewid(),
+	};
 };
 
 const BlockSetDataviewView = (response: any) => {

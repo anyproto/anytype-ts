@@ -18,13 +18,14 @@
 			.head:last-child {
 				.name { border: 0px; }
 			}
-			.head.add { width: 44px; }
+			.head.last { width: auto; }
 				
 			td.cell { 
 				padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; 
 				width: 192px;
 			}
 			td.cell:last-child { border-right: 0px; }
+			td.cell.last { width: auto; }
 
 			td.cell.c-number {
 				.name { @include text-overflow-nw; max-width: 192px; }
@@ -43,9 +44,9 @@
 			td.cell.isName {
 				.icon.expand { 
 					display: block; position: absolute; right: 0px; top: 0px; opacity: 0; width: 38px; height: 100%;
-					background-size: 20px 20px; background-position: 9px center;
+					background-size: 20px 20px; background-position: 9px center; background-color: #fff;
 				}
-				.name { line-height: 20px; width: calc(100% - 48px); white-space: nowrap; }
+				.name { line-height: 20px; width: calc(100% - 48px); @include text-overflow-nw; }
 			}
 
             td.cell.isEditing { box-shadow: 0px 0px 0px 2px $colorOrange inset; border-radius: 2px; }

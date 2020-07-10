@@ -14,8 +14,6 @@ let useGRPC = process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || i
 let service;
 let server;
 
-console.log('data', process.env.DATA_DIR);
-
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
@@ -24,7 +22,13 @@ if (useGRPC) {
 	let binPath = path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`);
 	binPath = fixPathForAsarUnpack(binPath);
 
-	waitLibraryPromise = process.env.ANYTYPE_USE_SIDE_SERVER ? Promise.resolve() : server.start(binPath, userPath);
+	if (process.env.ANYTYPE_USE_SIDE_SERVER) {
+		// use the grpc server started from the outside
+		server.setAddress(process.env.ANYTYPE_USE_SIDE_SERVER);
+		waitLibraryPromise = Promise.resolve();
+	} else {
+		waitLibraryPromise = server.start(binPath, userPath);
+	};
 } else {
 	const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
 	

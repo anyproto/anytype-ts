@@ -268,11 +268,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		if (item.key == 'create') {
-			const details = { 
-				iconEmoji: SmileUtil.random(), 
-				name: Constant.default.name 
-			};
-			DataUtil.pageCreate(e, rootId, blockId, details, I.BlockPosition.Bottom);
+			DataUtil.pageCreate(e, rootId, blockId, { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom);
 		} else {
 			const { content } = block;
 		
