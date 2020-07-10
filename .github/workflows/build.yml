@@ -31,6 +31,9 @@ jobs:
       - name: Update Addon
         run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}
 
+      - name: Install Webpack
+        run: npm install --save-dev webpack-cli
+
       - name: Update Deps
         run: npm run build:deps
 
