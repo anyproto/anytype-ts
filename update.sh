@@ -45,13 +45,21 @@ echo -n "Downloading file..."
 curl -sL -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id?access_token=$token" > $FILE
 printf "Done\n"
 
+echo -n "Cleaning... "
+rm -rf dist/lib/pb
+rm -rf dist/lib/vendor
+printf "Done\n"
+
 if [ "$platform" = "windows-latest" ]; then
   echo -n "Uncompressing... "
 	unzip $FILE
   printf "Done\n"
   
   echo "Moving... "
-  mv -fv windows-amd64.exe dist/anytypeHelper.exe
+  rm -rf dist/lib/pb
+  rm -rf dist/lib/vendor
+  mv -fv grpc-server.exe dist/anytypeHelper.exe
+  mv -fv protobuf/pb/* dist/lib/
 else 
   echo -n "Uncompressing... "
   tar -zxf $FILE
@@ -62,12 +70,9 @@ else
   mkdir -p build
   mv -fv addon/* build/
   rm -rf addon
+  mv -fv protobuf/* dist/lib/
 fi;
 
-rm -rf dist/lib/pb
-rm -rf dist/lib/vendor
-rm -rf dist/lib/protos
-mv -fv protobuf/* dist/lib/
 rm -rf protobuf
 mv -fv schemas/* src/json/schema
 rm -rf schemas
