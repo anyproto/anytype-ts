@@ -89,7 +89,7 @@ class Server {
 		});
 	};
 	
-	stop(){
+	stop () {
 		this.isRunning = false;
 		
 		// It's sometimes undefined when we do Cmd+R during development.
@@ -101,7 +101,7 @@ class Server {
 		this.cp = null;
 	};
 	
-	getAddress(){
+	getAddress () {
 		return this.address;
 	};
 	
