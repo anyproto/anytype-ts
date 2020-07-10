@@ -402,10 +402,13 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
+		setStatus('Update downloaded... Restarting App in 2 seconds');
+		win.webContents.send('updateReady');
+		autoUpdater.quitAndInstall();
+
 		setTimeout(function () {
-			setStatus('Update downloaded... Restarting App in 5 seconds');
-			win.webContents.send('updateReady');
-			autoUpdater.quitAndInstall();
+			app.relaunch();
+			app.exit(0);
 		}, 2000);
 	});
 };
