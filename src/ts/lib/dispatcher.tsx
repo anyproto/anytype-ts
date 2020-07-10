@@ -44,21 +44,26 @@ class Dispatcher {
 			
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
-			this.stream = this.service.listenEvents(new Commands.Empty(), null);
-
-			this.stream.on('data', (event: any) => {
-				this.event(event, false);
-			});
-
-			this.stream.on('status', (status: any) => {
-				console.log('[Stream] status', status);
-			});
-
-			this.stream.on('end', (end: any) => {
-				console.log('[Stream] end', end);
-			});
+			this.listenEvents();
 
 		/// #endif
+	};
+
+	listenEvents () {
+		this.stream = this.service.listenEvents(new Commands.Empty(), null);
+
+		this.stream.on('data', (event: any) => {
+			this.event(event, false);
+		});
+
+		this.stream.on('status', (status: any) => {
+			console.log('[Stream] status', status);
+		});
+
+		this.stream.on('end', (end: any) => {
+			console.error('[Stream] end.. restarting', end);
+			this.listenEvents();
+		});
 	};
 
 	eventType (v: number): string {
