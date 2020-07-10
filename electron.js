@@ -10,7 +10,7 @@ const storage = require('electron-json-storage');
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
-let useGRPC = process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development;
+let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let service;
 let server;
 
@@ -97,7 +97,9 @@ if (process.env.DATA_PATH) {
 
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {
-		global.serverAddr = server.getAddress();
+		if (server) {
+			global.serverAddr = server.getAddress();
+		};
 		createWindow();
 	}, (err) => {
 		electron.dialog.showErrorBox('Error: failed to run server', err.toString());

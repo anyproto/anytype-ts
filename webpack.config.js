@@ -4,7 +4,7 @@ const proccess = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env) => {
-	const useGRPC = process.env.ANYTYPE_USE_GRPC || (process.platform == 'win32') || (env.NODE_ENV == 'development');
+	const useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == 'win32') || (env.NODE_ENV == 'development'));
 	
 	return {
 		mode: env.NODE_ENV,
