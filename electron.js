@@ -368,7 +368,6 @@ function autoUpdaterInit () {
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'info';
 	autoUpdater.channel = config.channel;
-	autoUpdater.checkForUpdatesAndNotify();
 
 	setInterval(() => {
 		autoUpdater.checkForUpdatesAndNotify();
