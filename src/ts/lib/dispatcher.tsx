@@ -39,7 +39,9 @@ class Dispatcher {
 			bindings.setEventHandler(handler);
 		/// #else
 			let serverAddr = window.require('electron').remote.getGlobal('serverAddr');
-			console.log("serverAddr "+serverAddr);
+			
+			console.log('Server address: ', serverAddr);
+			
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
 			this.stream = this.service.listenEvents(new Commands.Empty(), null);

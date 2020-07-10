@@ -1,0 +1,15 @@
+[
+  "electron.js",
+  "electron/server.js",
+  "build",
+  "!dist/*",
+  "dist/index.html",
+  "dist/main.js",
+  "dist/models.pb.js",
+  "dist/run.js",
+  "dist/lib/**/*",
+  "dist/img/**/*",
+  "dist/anytypeHelper.exe",
+  "dist/anytypeHelper",
+  "!node_modules/**/*"
+]

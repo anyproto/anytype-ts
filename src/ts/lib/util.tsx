@@ -6,13 +6,13 @@ const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
 const raf = require('raf');
 const $ = require('jquery');
-const loadImage = window.require('blueimp-load-image');
+const loadImage = require('blueimp-load-image');
 const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
 const Constant = require('json/constant.json');
 const os = window.require('os');
-const sprintf = window.require('sprintf-kit')({
+const sprintf = require('sprintf-kit')({
 	d: require('sprintf-kit/modifiers/d'),
 	s: require('sprintf-kit/modifiers/s'),
 	f: require('sprintf-kit/modifiers/f'),
@@ -157,7 +157,6 @@ class Util {
 		let buffer = readChunk.sync(path, 0, stat.size);
 		let type = fileType(buffer);
 		let file = new File([ new Blob([ buffer ]) ], fn[fn.length - 1], { type: type.mime });
-		
 		return file;
 	};
 	
