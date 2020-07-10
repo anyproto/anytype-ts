@@ -222,8 +222,8 @@ class MenuFilter extends React.Component<Props, {}> {
 					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
 					{ id: I.FilterCondition.Greater,		 name: '>' }, 
 					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≤' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≥' },
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
 				];
 				break;
 			
