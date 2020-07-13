@@ -403,14 +403,11 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
-		setStatus('Update downloaded... Restarting App in 2 seconds');
+		setStatus('Update downloaded');
 		win.webContents.send('updateReady');
-		autoUpdater.quitAndInstall();
 
-		setTimeout(function () {
-			app.relaunch();
-			app.exit(0);
-		}, 2000);
+		app.relaunch();
+		exit();
 	});
 };
 
@@ -423,22 +420,25 @@ app.on('ready', waitForLibraryAndCreateWindows);
 
 app.on('window-all-closed', () => {
 	console.log('window-all-closed');
-	//app.quit();
 });
 
 app.on('before-quit', (e) => {
 	e.preventDefault();
 	console.log('before-quit');
 
+	exit();
+});
+
+function exit () {
 	if (useGRPC) {
 		server.stop();
-		app.exit();
+		app.exit(0);
 	} else {
 		const Commands = require('./dist/lib/pb/protos/commands_pb');
 		
 		service.shutdown(new Commands.Empty(), {}, () => {
 			console.log('Shutdown complete, exiting');
-			app.exit();
+			app.exit(0);
 		});
 	};
-});
+};
