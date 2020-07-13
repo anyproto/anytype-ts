@@ -46,7 +46,7 @@
 					display: block; position: absolute; right: 0px; top: 0px; opacity: 0; width: 38px; height: 100%;
 					background-size: 20px 20px; background-position: 9px center; background-color: #fff;
 				}
-				.name { line-height: 20px; width: calc(100% - 48px); @include text-overflow-nw; }
+				.name { line-height: 20px; width: calc(100% - 48px); @include text-overflow-nw; max-width: 240px; }
 			}
 
             td.cell.isEditing { box-shadow: 0px 0px 0px 2px $colorOrange inset; border-radius: 2px; }
