@@ -403,14 +403,12 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
-		setStatus('Update downloaded... Restarting App in 2 seconds');
+		setStatus('Update downloaded');
 		win.webContents.send('updateReady');
 		autoUpdater.quitAndInstall();
 
-		setTimeout(function () {
-			app.relaunch();
-			app.exit(0);
-		}, 2000);
+		app.relaunch();
+		app.exit(0);
 	});
 };
 
