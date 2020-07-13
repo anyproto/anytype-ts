@@ -247,10 +247,19 @@ class MenuFilter extends React.Component<Props, {}> {
 			return;
 		};
 
+		const first = view.relations[0];
+		const id = first.id;
+		const conditions = this.conditionsByType(first.type);
+		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
+
+		if (this.items.find((it: I.Filter) => { return (it.relationId == id) && (it.condition == condition); })) {
+			return;
+		};
+
 		this.items.push({ 
-			relationId: view.relations[0].id, 
+			relationId: id, 
 			operator: I.FilterOperator.And, 
-			condition: I.FilterCondition.Equal,
+			condition: condition as I.FilterCondition,
 			value: '',
 		});
 		this.forceUpdate();
