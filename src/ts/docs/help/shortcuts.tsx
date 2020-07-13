@@ -31,7 +31,7 @@ export default [
 
 	{ style: I.TextStyle.Header3, text: 'Actions' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + C</b> to copy selected block/blocks or text part.' },
-	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + P</b> to paste data outside Anytype, block/blocks or text part.' },
+	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + V</b> to paste data outside Anytype, block/blocks or text part.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + X</b> to cut selected block/blocks or text part.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + ↑</b> to move to the start of the page, Press <b>Cmd</b> or <b>Ctrl + ↓</b> to move to the end of the page.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + A</b> to select all text in the block, twice all the blocks in page' },
