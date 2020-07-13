@@ -10,12 +10,16 @@ const storage = require('electron-json-storage');
 const fs = require('fs');
 const readChunk = require('read-chunk');
 const fileType = require('file-type');
+const version = app.getVersion();
 
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let service;
 let server;
+let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
+
+console.log(version, defaultChannel);
 
 if (useGRPC) {
 	console.log('Connect via gRPC');
@@ -200,7 +204,7 @@ function createWindow () {
 	
 	storage.get('config', function (error, data) {
 		config = data || {};
-		config.channel = String(config.channel || 'latest');
+		config.channel = String(config.channel || defaultChannel);
 		
 		if (error) {
 			console.error(error);
@@ -280,28 +284,11 @@ function menuInit () {
 			]
 		},
 	];
-	
+
 	//if (!app.isPackaged) {
-	menu.push({
+	let menuDebug = {
 		label: 'Debug',
 		submenu: [
-			{
-				label: 'Version',
-				submenu: [
-					{
-						label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
-						click: function () {
-							setChannel('alpha');
-						}
-					},
-					{
-						label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
-						click: function () {
-							setChannel('latest');
-						}
-					},
-				]
-			},
 			{
 				label: 'Flags',
 				submenu: [
@@ -342,7 +329,29 @@ function menuInit () {
 				}
 			}
 		]
-	});
+	};
+
+	if (config.allowChannels) {
+		menuDebug.submenu.unshift({
+			label: 'Version',
+			submenu: [
+				{
+					label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
+					click: function () {
+						setChannel('alpha');
+					}
+				},
+				{
+					label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
+					click: function () {
+						setChannel('latest');
+					}
+				},
+			]
+		});
+	};
+
+	menu.push(menuDebug);
 	//};
 	
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
