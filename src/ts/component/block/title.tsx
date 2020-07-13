@@ -128,30 +128,35 @@ class BlockTitle extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
-		const { rootId, block } = this.props;
-		const { id } = block;
-		const value = this.getValue();
-		const length = value.length;
-		const range = this.getRange();
+		const { rootId } = this.props;
 		const platform = Util.getPlatform();
+		const k = e.key.toLowerCase();	
 
-		let k = e.key.toLowerCase();
+		// Print or prev string
+		keyboard.shortcut('ctrl+p, cmd+p', e, (pressed: string) => {
+			if (platform == I.Platform.Mac) {
+				if (pressed == 'cmd+p') {
+					e.preventDefault();
+					this.onPrint();
+				};
+				if (pressed == 'ctrl+p') {
+					this.onArrow(Key.up);
+				};
+			} else {
+				e.preventDefault();
+				this.onArrow(Key.up);
+			};
+		});
 
-		// Ctrl + P and Ctrl + N on MacOs work like up/down arrows
-		if ((platform == I.Platform.Mac) && e.ctrlKey) {
-			if (k == Key.p) {
-				k = Key.up;
-				e.ctrlKey = false;
-			};
-			if (k == Key.n) {
-				k = Key.down;
-				e.ctrlKey = false;
-			};
+		// Next string
+		if (platform == I.Platform.Mac) {
+			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
+				this.onArrow(Key.down);
+			});
 		};
 		
 		// Enter
-		if (k == Key.enter) {
+		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 			
 			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage() && !it.isTitle(); });
@@ -168,51 +173,61 @@ class BlockTitle extends React.Component<Props, {}> {
 					focus.apply();
 				});
 			});
-		};
+		});
 
 		// Cursor keys
-		if (k == Key.down) {
-			if (commonStore.menuIsOpen()) {
+		keyboard.shortcut('ctrl+arrowdown, cmd+arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+
+			const next = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.isFocusable(); });
+			if (!next) {
 				return;
 			};
 
-			let canFocus = range.to >= length;
-			let next: any = null;
+			const l = next.getLength();
+			focus.set(next.id, { from: l, to: l });
+			focus.apply();
+		});
 
-			if (canFocus) {
-				e.preventDefault();
-
-				if (e.ctrlKey || e.metaKey) {
-					next = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.isFocusable(); });
-					
-					if (next) {
-						const l = next.getLength();
-						focus.set(next.id, { from: l, to: l });
-						focus.apply();
-					};
-				} else {
-					next = blockStore.getNextBlock(rootId, id, 1, (it: I.Block) => { return it.isFocusable(); });
-					
-					if (next) {
-						const parent = blockStore.getLeaf(rootId, next.parentId);
-						const l = next.getLength();
-						
-						// Auto-open toggle blocks 
-						if (parent && parent.isToggle()) {
-							node.find('#block-' + parent.id).addClass('isToggled');
-						};
-						
-						focus.set(next.id, { from: l, to: l });
-						focus.apply();
-					};
-				};
-			};
-			
-		};
+		keyboard.shortcut('arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+			this.onArrow(Key.down);
+		});
 		
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
 		};
+	};
+
+	onPrint () {
+		window.print();
+	};
+
+	onArrow (pressed: string) {
+		if (commonStore.menuIsOpen()) {
+			return;
+		};
+
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const next = blockStore.getNextBlock(rootId, id, dir, (it: I.Block) => { return it.isFocusable(); });
+
+		if (!next) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const parent = blockStore.getLeaf(rootId, next.parentId);
+		const l = next.getLength();
+
+		// Auto-open toggle blocks 
+		if (parent && parent.isToggle()) {
+			node.find('#block-' + parent.id).addClass('isToggled');
+		};
+
+		focus.set(next.id, { from: l, to: l });
+		focus.apply();
 	};
 	
 	onKeyUp (e: any) {

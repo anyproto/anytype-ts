@@ -435,7 +435,6 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused } = focus;
-		const k = e.key.toLowerCase();
 
 		if (keyboard.isFocused) {
 			return;
@@ -446,94 +445,105 @@ class EditorPage extends React.Component<Props, State> {
 		const map = blockStore.getMap(rootId);
 
 		// Print
-		if ((k == Key.p) && keyboard.ctrlByPlatform(e)) {
-			this.onPrint(e);
-		};
-		
-		if (e.ctrlKey || e.metaKey) {
-			// Select all
-			if (k == Key.a) {
-				e.preventDefault();
-				this.onSelectAll();
-			};
-			
-			// Copy
-			if (k == Key.c) {
-				this.onCopy(e, false);
-			};
-			
-			// Cut
-			if (k == Key.x) {
-				this.onCopy(e, true);
-			};
-			
-			// Undo
-			if (k == Key.z) {
-				e.preventDefault();
-				e.shiftKey ? C.BlockRedo(rootId) : C.BlockUndo(rootId);
-			};
-			
-			// Redo
-			if (k == Key.y) {
-				e.preventDefault();
-				C.BlockRedo(rootId);
-			};
-			
-			if (ids.length) {
-				// Bold
-				if (k == Key.b) {
-					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Bold, param: '', range: { from: 0, to: 0 } });
-				};
+		keyboard.shortcut('ctrl+p,cmd+p', e, (pressed: string) => {
+			e.preventDefault();
+			this.onPrint();
+		});
 
-				// Italic
-				if (k == Key.i) {
-					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Italic, param: '', range: { from: 0, to: 0 } });
-				};
+		// Select all
+		keyboard.shortcut('ctrl+a,cmd+a', e, (pressed: string) => {
+			e.preventDefault();
+			this.onSelectAll();
+		});
 
-				// Strikethrough
-				if ((k == Key.s) && e.shiftKey) {
-					C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Strike, param: '', range: { from: 0, to: 0 } });
-				};
+		// Copy
+		keyboard.shortcut('ctrl+c, cmd+c', e, (pressed: string) => {
+			this.onCopy(e, false);
+		});
 
-				// Link
-				if (k == Key.l) {
+		// Cut
+		keyboard.shortcut('ctrl+x, cmd+x', e, (pressed: string) => {
+			this.onCopy(e, true);
+		});
+
+		// Undo
+		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+		});
+
+		// Redo
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+		});
+
+		// Mark-up
+		if (ids.length) {
+			let type = null;
+
+			// Bold
+			keyboard.shortcut('ctrl+b, cmd+b', e, (pressed: string) => {
+				type = I.MarkType.Bold;
+			});
+
+			// Italic
+			keyboard.shortcut('ctrl+i, cmd+i', e, (pressed: string) => {
+				type = I.MarkType.Italic;
+			});
+
+			// Strike
+			keyboard.shortcut('ctrl+shift+s, cmd+shift+s', e, (pressed: string) => {
+				type = I.MarkType.Strike;
+			});
+
+			// Link
+			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
+				type = I.MarkType.Link;
+			});
+
+			// Code
+			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
+				type = I.MarkType.Code;
+			});
+
+			if (type !== null) {
+				e.preventDefault();
+					
+				if (type == I.MarkType.Link) {
 					commonStore.menuOpen('blockLink', {
 						type: I.MenuType.Horizontal,
-						element: $('#block-' + ids[0]),
+						element: '#menuBlockContext',
 						offsetX: 0,
-						offsetY: -44,
+						offsetY: 44,
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
 						data: {
 							value: '',
 							onChange: (param: string) => {
-								C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Link, param: param, range: { from: 0, to: 0 } });
+								C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } });
 							}
 						}
 					});
+				} else {
+					C.BlockListSetTextMark(rootId, ids, { type: type, param: '', range: { from: 0, to: 0 } });
 				};
 			};
-			
-			// Code
-			if (k == Key.k) {
-				C.BlockListSetTextMark(rootId, ids, { type: I.MarkType.Code, param: '', range: { from: 0, to: 0 } });
-			};
-			
+
 			// Duplicate
-			if (k == Key.d) {
+			keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
 				e.preventDefault();
 				focus.clear(true);
 				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
-			};
+			});
 		};
-		
-		if (k == Key.backspace) {
+
+		// Remove blocks
+		keyboard.shortcut('backspace', e, (pressed: string) => {
 			e.preventDefault();
 			this.blockRemove(block);
-		};
-		
+		});
+
 		// Indent block
-		if (k == Key.tab) {
+		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
 			
 			if (!ids.length) {
@@ -550,7 +560,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (canTab) {
 				C.BlockListMove(rootId, rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
-		};
+		});
 	};
 	
 	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
@@ -564,240 +574,209 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const platform = Util.getPlatform();
-		const node = $(ReactDOM.findDOMNode(this));
 		const map = blockStore.getMap(rootId);
 		const length = String(text || '').length;
 
-		let k = e.key.toLowerCase();
-
-		// Ctrl + P and Ctrl + N on MacOs work like up/down arrows
-		if ((platform == I.Platform.Mac) && e.ctrlKey) {
-			if (k == Key.p) {
-				k = Key.up;
-				e.ctrlKey = false;
-			};
-			if (k == Key.n) {
-				k = Key.down;
-				e.ctrlKey = false;
-			};
-		};
-
 		this.uiHide();
+		
+		// Print or prev string
+		keyboard.shortcut('ctrl+p, cmd+p', e, (pressed: string) => {
+			if (platform == I.Platform.Mac) {
+				if (pressed == 'cmd+p') {
+					e.preventDefault();
+					this.onPrint();
+				};
+				if (pressed == 'ctrl+p') {
+					this.onArrow(Key.up);
+				};
+			} else {
+				e.preventDefault();
+				this.onPrint();
+			};
+		});
 
-		// Print
-		if ((k == Key.p) && keyboard.ctrlByPlatform(e)) {
-			this.onPrint(e);
+		// Next string
+		if (platform == I.Platform.Mac) {
+			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
+				this.onArrow(Key.down);
+			});
 		};
 
-		if (e.ctrlKey || e.metaKey) {
-
-			// Select all
-			if ((k == Key.a) && (range.from == 0) && (range.to == length)) {
+		// Select all
+		if ((range.from == 0) && (range.to == length)) {
+			keyboard.shortcut('ctrl+a, cmd+a', e, (pressed: string) => {
 				e.preventDefault();
-				if ((range.from == 0) && (range.to == length)) {
-					this.onSelectAll();
-				} else {
-					focus.set(focused, { from: 0, to: length });
+				this.onSelectAll();
+			});
+		};
+
+		// Copy
+		keyboard.shortcut('ctrl+c, cmd+c', e, (pressed: string) => {
+			this.onCopy(e, false);
+		});
+
+		// Cut
+		keyboard.shortcut('ctrl+x, cmd+x', e, (pressed: string) => {
+			this.onCopy(e, true);
+		});
+
+		// Undo
+		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+		});
+
+		// Redo
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+		});
+
+		// Duplicate
+		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
+			e.preventDefault();
+			C.BlockListDuplicate(rootId, [ focused ], focused, I.BlockPosition.Bottom, (message: any) => {
+				if (message.blockIds.length) {
+					focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
 					focus.apply();
 				};
-			};
-			
-			// Copy
-			if (k == Key.c) {
-				this.onCopy(e, false);
-			};
-			
-			// Cut
-			if (k == Key.x) {
-				this.onCopy(e, true);
-			};
+			});
+		});
 
-			// Undo
-			if (k == Key.z) {
-				e.preventDefault();
-				const cb = (message: any) => { focus.clear(true); };
-				e.shiftKey ? C.BlockRedo(rootId, cb) : C.BlockUndo(rootId, cb);
-			};
-			
-			// Redo
-			if (k == Key.y) {
-				e.preventDefault();
-				C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
-			};
-			
-			// Duplicate
-			if (k == Key.d) {
-				e.preventDefault();
-				C.BlockListDuplicate(rootId, [ focused ], focused, I.BlockPosition.Bottom, (message: any) => {
-					if (message.blockIds.length) {
-						focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
-						focus.apply();
-					};
-				});
-			};
-			
-			// Open action menu
-			if (k == Key.slash) {
-				commonStore.menuOpen('blockAction', { 
-					element: '#block-' + focused,
-					type: I.MenuType.Vertical,
-					offsetX: Constant.size.blockMenu,
-					offsetY: 0,
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Left,
-					data: {
-						blockId: focused,
-						blockIds: DataUtil.selectionGet(focused, this.props),
-						rootId: rootId,
-						dataset: dataset,
-					},
-					onClose: () => {
-						selection.preventClear(false);
-						selection.clear();
-					}
-				});
-			};
-			
-			// Mark-up
-			if (!block.isTitle() && range.to && (range.from != range.to)) {
-				let call = false;
-				let type = 0;
-				
-				// Bold
-				if (k == Key.b) {
-					call = true;
-					type = I.MarkType.Bold;
-				};
-				
-				// Italic
-				if (k == Key.i) {
-					call = true;
-					type = I.MarkType.Italic;
-				};
-				
-				// Strikethrough
-				if ((k == Key.s) && e.shiftKey) {
-					call = true;
-					type = I.MarkType.Strike;
-				};
+		// Open action menu
+		keyboard.shortcut('ctrl+/, cmd+/', e, (pressed: string) => {
+			commonStore.menuOpen('blockAction', { 
+				element: '#block-' + focused,
+				type: I.MenuType.Vertical,
+				offsetX: Constant.size.blockMenu,
+				offsetY: 0,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				data: {
+					blockId: focused,
+					blockIds: DataUtil.selectionGet(focused, this.props),
+					rootId: rootId,
+					dataset: dataset,
+				},
+				onClose: () => {
+					selection.preventClear(false);
+					selection.clear();
+				}
+			});
+		});
 
-				// Link
-				if (k == Key.l) {
-					call = true;
-					type = I.MarkType.Link;
-				};
+		// Mark-up
+		if (!block.isTitle() && range.to && (range.from != range.to)) {
+			let type = null;
+
+			// Bold
+			keyboard.shortcut('ctrl+b, cmd+b', e, (pressed: string) => {
+				type = I.MarkType.Bold;
+			});
+
+			// Italic
+			keyboard.shortcut('ctrl+i, cmd+i', e, (pressed: string) => {
+				type = I.MarkType.Italic;
+			});
+
+			// Strike
+			keyboard.shortcut('ctrl+shift+s, cmd+shift+s', e, (pressed: string) => {
+				type = I.MarkType.Strike;
+			});
+
+			// Link
+			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
+				type = I.MarkType.Link;
+			});
+
+			// Code
+			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
+				type = I.MarkType.Code;
+			});
+
+			if (type !== null) {
+				e.preventDefault();
 				
-				// Code
-				if (k == Key.k) {
-					call = true;
-					type = I.MarkType.Code;
-				};
-				
-				if (call) {
-					e.preventDefault();
-					
-					if (type == I.MarkType.Link) {
-						let mark = Mark.getInRange(marks, type, range);
-						commonStore.menuOpen('blockLink', {
-							type: I.MenuType.Horizontal,
-							element: $('#menuBlockContext'),
-							offsetX: 0,
-							offsetY: -44,
-							vertical: I.MenuDirection.Top,
-							horizontal: I.MenuDirection.Center,
-							data: {
-								value: (mark ? mark.param : ''),
-								onChange: (param: string) => {
-									marks = Mark.toggle(marks, { type: type, param: param, range: range });
-									DataUtil.blockSetText(rootId, block, text, marks, true);
-								}
+				if (type == I.MarkType.Link) {
+					let mark = Mark.getInRange(marks, type, range);
+					commonStore.menuOpen('blockLink', {
+						type: I.MenuType.Horizontal,
+						element: '#menuBlockContext',
+						offsetX: 0,
+						offsetY: 44,
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
+						data: {
+							value: (mark ? mark.param : ''),
+							onChange: (param: string) => {
+								marks = Mark.toggle(marks, { type: type, param: param, range: range });
+								DataUtil.blockSetText(rootId, block, text, marks, true);
 							}
-						});
-					} else {
-						marks = Mark.toggle(marks, { type: type, range: range });
-						DataUtil.blockSetText(rootId, block, text, marks, true);
-					};
+						}
+					});
+				} else {
+					marks = Mark.toggle(marks, { type: type, range: range });
+					DataUtil.blockSetText(rootId, block, text, marks, true);
 				};
 			};
 		};
-		
-		// Cursor keys
-		if ((k == Key.up) || (k == Key.down)) {
+
+		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+			this.onArrow(pressed);
+		});
+
+		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
 			if (commonStore.menuIsOpen()) {
 				return;
 			};
 			
-			const dir = (k == Key.up) ? -1 : 1;
-			
-			let canFocus = false;
-			let next;
-			
-			if (
-				block.isText() && 
-				(
-					((range.from == 0) && (k == Key.up)) || 
-					((range.to >= length) && (k == Key.down))
-				)
-			) {
-				canFocus = true;
-			} else 
-			if (!block.isText()) {
-				canFocus = block.isFocusable();
+			e.preventDefault();
+
+			const dir = pressed.match(Key.up) ? -1 : 1;
+			const next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
+				return !item.isIcon() && !item.isTitle();
+			});
+			if (next) {
+				C.BlockListMove(rootId, rootId, [ focused ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
+			};
+		});
+
+		// Last/first block
+		keyboard.shortcut('ctrl+arrowup, cmd+arrowup, ctrl+arrowdown, cmd+arrowdown', e, (pressed: string) => {
+			if (commonStore.menuIsOpen()) {
+				return;
 			};
 			
-			// Move block
-			if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
-				e.preventDefault();
-				
-				next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
-					return !item.isIcon() && !item.isTitle();
-				});
-				if (next) {
-					C.BlockListMove(rootId, rootId, [ focused ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
-				};
+			e.preventDefault();
+
+			const dir = pressed.match(Key.up) ? -1 : 1;
+			const next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
+			if (!next) {
 				return;
 			};
 
-			if (canFocus) {
-				e.preventDefault();
-				
-				if (e.ctrlKey || e.metaKey) {
-					next = blockStore.getFirstBlock(rootId, -dir, (item: any) => { return item.isFocusable(); });
-					if (next) {
-						const l = next.getLength();
-						focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-						focus.apply();
-					};
-				} else
-				if (e.shiftKey) {
-					if (selection.get(true).length < 1) {
-						selection.set([ focused ]);
-						focus.clear(true);
-						
-						commonStore.menuClose('blockContext');
-						commonStore.menuClose('blockAction');
-					};
-				} else {
-					next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
-					
-					if (next) {
-						const parent = blockStore.getLeaf(rootId, next.parentId);
-						const l = String(next.content.text || '').length;
-						
-						// Auto-open toggle blocks 
-						if (parent && parent.isToggle()) {
-							node.find('#block-' + parent.id).addClass('isToggled');
-						};
-						
-						focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
-						focus.apply();
-					};
-				};
+			const l = next.getLength();
+			focus.set(next.id, (dir < 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+			focus.apply();
+		});
+
+		// Expand selection
+		keyboard.shortcut('shift+arrowup, shift+arrowup, shift+arrowdown, shift+arrowdown', e, (pressed: string) => {
+			if (commonStore.menuIsOpen()) {
+				return;
 			};
-		};
-		
+			
+			e.preventDefault();
+
+			if (selection.get(true).length < 1) {
+				selection.set([ focused ]);
+				focus.clear(true);
+				
+				commonStore.menuClose('blockContext');
+				commonStore.menuClose('blockAction');
+			};
+		});
+
 		// Backspace
-		if (k == Key.backspace) {
+		keyboard.shortcut('backspace', e, (pressed: string) => {
 			if (block.isText() && !range.to) {
 				const ids = selection.get(true);
 				ids.length ? this.blockRemove(block) : this.blockMerge(block);
@@ -805,10 +784,10 @@ class EditorPage extends React.Component<Props, State> {
 			if (!block.isText() && !keyboard.isFocused) {
 				this.blockRemove(block);
 			};
-		};
-		
+		});
+
 		// Tab, indent block
-		if (k == Key.tab) {
+		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
 			
 			const element = map[block.id];
@@ -822,14 +801,14 @@ class EditorPage extends React.Component<Props, State> {
 					focus.apply();
 				});
 			};
-		};
-		
+		});
+
 		// Enter
-		if (k == Key.enter) {
-			if (e.shiftKey || block.isCode() || (!block.isText() && keyboard.isFocused)) {
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			if (block.isCode() || (!block.isText() && keyboard.isFocused)) {
 				return;
 			};
-			
+
 			const menus = commonStore.menus;
 			const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
 			
@@ -862,10 +841,47 @@ class EditorPage extends React.Component<Props, State> {
 			if (!block.isTitle()) {
 				this.blockSplit(block, range, block.content.style);
 			};
-		};
+		});
 	};
 	
 	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
+	};
+
+	onArrow (pressed: string) {
+		if (commonStore.menuIsOpen()) {
+			return;
+		};
+
+		const { rootId } = this.props;
+		const { focused, range } = focus;
+		const node = $(ReactDOM.findDOMNode(this));
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
+		
+		if (!next) {
+			return;
+		};
+
+		if ((dir < 0) && range.to && (range.to == length)) {
+			return;
+		};
+
+		if ((dir > 0) && !range.to) {
+			return;
+		};
+
+		const parent = blockStore.getLeaf(rootId, next.parentId);
+		const l = next.getLength();
+		
+		// Auto-open toggle blocks 
+		if (parent && parent.isToggle()) {
+			node.find('#block-' + parent.id).addClass('isToggled');
+		};
+
+		window.setTimeout(() => {
+			focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
+			focus.apply();
+		});
 	};
 	
 	onSelectAll () {
@@ -1191,7 +1207,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 
-	onPrint (e: any) {
+	onPrint () {
 		window.print();
 	};
 

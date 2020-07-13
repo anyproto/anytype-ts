@@ -3,6 +3,7 @@ import { commonStore, authStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const KeyCode = require('json/key.json');
 
 class Keyboard {
 	
@@ -35,51 +36,56 @@ class Keyboard {
 	onKeyDown (e: any) {
 		const { root } = blockStore;
 		const { focused } = focus;
-		const k = e.key.toLowerCase();
 		const rootId = this.isEditor() ? this.match.params.id : root;
+		const platform = Util.getPlatform();
 		
-		if (!this.isFocused) {
-			if ((k == Key.backspace) && !this.isBackDisabled) {
-				e.preventDefault();
-				this.history.goBack();
+		// Go back
+		this.shortcut('backspace', e, (pressed: string) => {
+			if (this.isBackDisabled || this.isFocused) {
+				return;
 			};
-		};
-		
-		if (k == Key.escape) {
+			this.history.goBack();
+		});
+
+		// Close popups
+		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
 			commonStore.popupCloseAll();
 			commonStore.menuCloseAll();
 			Util.linkPreviewHide(false);
-		};
-		
-		if (e.ctrlKey || e.metaKey) {
-			
-			// Navigation
-			if ((k == Key.s) && !e.shiftKey) {
-				commonStore.popupOpen('navigation', { 
-					preventResize: true,
-					data: { 
-						type: I.NavigationType.Go, 
-						disableFirstKey: true,
-						rootId: rootId,
-					}, 
-				});
-			};
+		});
 
-			if (k == Key.o) {
-				commonStore.popupOpen('navigation', { 
-					preventResize: true,
-					data: { 
-						type: I.NavigationType.Go, 
-						rootId: rootId,
-						expanded: true,
-					}, 
-				});
-			};
-		};
+		// Navigation search
+		this.shortcut('ctrl+s, cmd+s', e, (pressed: string) => {
+			commonStore.popupOpen('navigation', { 
+				preventResize: true,
+				data: { 
+					type: I.NavigationType.Go, 
+					disableFirstKey: true,
+					rootId: rootId,
+				}, 
+			});
+		});
+
+		// Navigation links
+		this.shortcut('ctrl+o, cmd+o', e, (pressed: string) => {
+			commonStore.popupOpen('navigation', { 
+				preventResize: true,
+				data: { 
+					type: I.NavigationType.Go, 
+					rootId: rootId,
+					expanded: true,
+				}, 
+			});
+		});
 
 		// Create new page
-		if ((k == Key.n) && this.ctrlByPlatform(e)) {
+		this.shortcut('ctrl+n, cmd+n', e, (pressed: string) => {
+			let check = platform == I.Platform.Mac ? pressed == 'cmd+n' : true;
+			if (!check) {
+				return;
+			};
+
 			e.preventDefault();
 			
 			let targetId = '';
@@ -102,7 +108,7 @@ class Keyboard {
 			};
 			
 			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
-		};
+		});
 		
 		this.setPinCheck();
 	};
@@ -181,6 +187,51 @@ class Keyboard {
 	isSpecial (k: string): boolean {
 		const keys: string[] = [ Key.backspace, Key.tab, Key.enter ];
 		return this.isArrow(k) || keys.indexOf(k) >= 0;
+	};
+
+	shortcut (s: string, e: any, callBack: (pressed: string) => void) {
+		const a = s.split(',').map((it: string) => { return it.trim(); });
+		const key = e.key.toLowerCase();
+		const which = e.which;
+
+		let pressed = [];
+		let res = '';
+
+		if (e.shiftKey) {
+			pressed.push('shift');
+		};
+		if (e.altKey) {
+			pressed.push('alt');
+		};
+		if (e.ctrlKey) {
+			pressed.push('ctrl');
+		};
+		if (e.metaKey) {
+			pressed.push('cmd');
+		};
+
+		for (let item of a) {
+			const keys = item.split('+').sort();
+			for (let k of keys) {
+				if (which == KeyCode[k]) {
+					pressed.push(k);
+				} else
+				if (k == key) {
+					pressed.push(key);
+				};
+			};
+
+			pressed = [ ...new Set(pressed) ];
+
+			const check = pressed.sort().join('+');
+			if (check == keys.join('+')) {
+				res = check;
+			};
+		};
+
+		if (res) {
+			callBack(res);
+		};
 	};
 	
 };
