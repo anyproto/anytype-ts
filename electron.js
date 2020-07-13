@@ -227,6 +227,7 @@ function menuInit () {
 					label: 'Import',
 					click: function () { win.webContents.send('import'); }
 				},
+				{ role: 'close' },
 			]
 		},
 		{

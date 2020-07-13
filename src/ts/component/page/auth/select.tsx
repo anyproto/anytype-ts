@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, Storage, translate, C } from 'ts/lib';
+import { Frame, Cover, Title, Label, Error, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Storage, translate, C } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -46,8 +46,8 @@ class PageAuthSelect extends React.Component<Props, State> {
 				</Frame>
 			</div>
 		);
-    };
-
+	};
+	
 	onLogin (e: any) {
 		this.props.history.push('/auth/login');
 	};
@@ -55,6 +55,9 @@ class PageAuthSelect extends React.Component<Props, State> {
 	onRegister (e: any) {
 		const { history } = this.props;
 		const { path } = authStore;
+
+		Storage.delete('pageId');
+		Storage.delete('redirectTo');
 		
 		C.WalletCreate(path, (message: any) => {
 			if (message.error.code) {

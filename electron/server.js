@@ -84,7 +84,9 @@ class Server {
 				
 				electron.dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers: dev@anytype.io');
 				electron.shell.showItemInFolder(crashReport);
-				electron.app.quit();
+
+				electron.app.relaunch();
+				electron.app.exit(0);
 			});
 		});
 	};
