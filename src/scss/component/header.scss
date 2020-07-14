@@ -2,7 +2,7 @@
 
 .header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 20; transition: $transitionFast; }
 .header {
-	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; margin-right: 12px; }
+	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; margin-right: 12px; -webkit-app-region: no-drag; }
 	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
