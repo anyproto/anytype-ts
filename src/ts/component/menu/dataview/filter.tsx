@@ -248,16 +248,11 @@ class MenuFilter extends React.Component<Props, {}> {
 		};
 
 		const first = view.relations[0];
-		const id = first.id;
 		const conditions = this.conditionsByType(first.type);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
-		if (this.items.find((it: I.Filter) => { return (it.relationId == id) && (it.condition == condition); })) {
-			return;
-		};
-
 		this.items.push({ 
-			relationId: id, 
+			relationId: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: '',
@@ -372,12 +367,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view, rootId, blockId, onSave } = data;
-
-		this.items = this.items.map((it: any) => {
-			it.uniqueKey = [ it.relationId, it.condition ].join('-');
-			return it;
-		});
-		this.items = Util.arrayUniqueObjects(this.items, 'uniqueKey');
 
 		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, filters: this.items }, onSave);
 	};
