@@ -193,8 +193,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				{loading ? <Loader /> : ''}
 				{expanded ? (
 					<React.Fragment>
-						{head}
-
 						<div key="sides" className="sides">
 							<div className="items left">
 								{!isRoot ? (
