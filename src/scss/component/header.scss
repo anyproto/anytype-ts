@@ -59,7 +59,7 @@
 
 .headerMainEditSearch { background: #fff; padding: 5px 10px; height: 38px; }
 .headerMainEditSearch {
-	.mid { height: 28px; position: absolute; left: 50%; transform: translateX(-50%); top: 5px; white-space: nowrap; }
+	.mid { width: 472px; height: 28px; position: absolute; left: 50%; margin-left: -236px; top: 5px; white-space: nowrap; }
 	.mid {
 		.icon { margin: 4px 0px 0px 0px; opacity: 0; }
 		.icon.nav { margin-right: 16px; }
@@ -82,6 +82,7 @@
 	.path {
 		.item { line-height: 20px; vertical-align: middle; }
 	}
+	.path * { pointer-events: all; }
 
 	.side { position: absolute; top: 9px; }
 	.side.left { left: 9px; opacity: 0; transition: $transitionFast; }

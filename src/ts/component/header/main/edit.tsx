@@ -25,9 +25,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onAdd = this.onAdd.bind(this);
-
-		this.onPathOver = this.onPathOver.bind(this);
-		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
@@ -56,9 +53,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 
 				<div className="mid">
-					<Icon className="nav" tooltip="Forward" onClick={(e: any) => { this.onNavigation(e, true); }} />
+					<Icon className="nav" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
 
-					<div className="path" onClick={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
+					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }}>
 						<div className="item">
 							<Smile icon={iconEmoji} hash={iconImage} />
 							<div className="name">{Util.shorten(name, 32)}</div>
@@ -138,6 +135,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onNavigation (e: any, expanded: boolean) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { rootId } = this.props;
 
 		commonStore.popupOpen('navigation', {
@@ -148,17 +148,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				expanded: expanded,
 			},
 		});
-	};
-
-	onPathOver () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const path = node.find('.path');
-
-		Util.tooltipShow('Click to open navigation<br/>Type to search', path, I.MenuDirection.Bottom);
-	};
-
-	onPathOut () {
-		Util.tooltipHide();
 	};
 	
 };
