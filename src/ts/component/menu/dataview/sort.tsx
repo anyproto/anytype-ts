@@ -113,13 +113,8 @@ class MenuSort extends React.Component<Props, {}> {
 			return;
 		};
 
-		const id = view.relations[0].id;
-		if (this.items.find((it: I.Sort) => { return it.relationId == id; })) {
-			return;
-		};
-
 		this.items.push({ 
-			relationId: id, 
+			relationId: view.relations[0].id, 
 			type: I.SortType.Asc 
 		});
 		this.forceUpdate();
@@ -158,7 +153,6 @@ class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { view, rootId, blockId, onSave } = data;
 
-		this.items = Util.arrayUniqueObjects(this.items, 'relationId');
 		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, sorts: this.items }, onSave);
 	};
 	
