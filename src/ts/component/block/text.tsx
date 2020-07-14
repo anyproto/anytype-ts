@@ -465,7 +465,7 @@ class BlockText extends React.Component<Props, {}> {
 			this.onSmile();
 		});
 
-		keyboard.shortcut('@', e, (pressed: string) => {
+		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
 			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isCode()) {
 				return;
 			};
