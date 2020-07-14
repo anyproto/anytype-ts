@@ -77,7 +77,7 @@
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
-		line-height: 24px; width: 400px; text-align: center; transition: $transitionFast;
+		line-height: 24px; width: 400px; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
 		.item { line-height: 20px; vertical-align: middle; }
