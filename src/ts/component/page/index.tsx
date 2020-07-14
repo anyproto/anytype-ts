@@ -128,13 +128,14 @@ class Page extends React.Component<Props, {}> {
 	
 	getClass (prefix: string) {
 		const { match } = this.props;
-		
-		let page = match.params.page || 'index';
-		let action = match.params.action || 'index';
+		const page = match.params.page || 'index';
+		const action = match.params.action || 'index';
+		const platform = Util.getPlatform();
 		
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
-			Util.toCamelCase([ prefix, page, action ].join('-')) 
+			Util.toCamelCase([ prefix, page, action ].join('-')),
+			Util.toCamelCase([ 'platform', platform ].join('-')),
 		].join(' ');
 	};
 	

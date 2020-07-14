@@ -50,7 +50,7 @@ class Icon extends React.Component<Props, {}> {
 		
 		return (
 			<div id={id} draggable={draggable} onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} onDragStart={onDragStart} className={cn.join(' ')} style={style}>
-				{arrow ? <div className="arrow" /> : ''}
+				{arrow ? <div className="icon arrow" /> : ''}
 				{inner ? inner : null}
 			</div>
 		);

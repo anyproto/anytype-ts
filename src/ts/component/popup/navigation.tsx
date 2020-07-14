@@ -65,7 +65,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	
 	render () {
 		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { type } = data;
 		const { root, breadcrumbs } = blockStore;
@@ -77,7 +77,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		let confirm = '';
 		let pages = this.state.pages;
 		let iconSearch = null;
-		let iconButton = '';
 
 		if (showIcon) {
 			if (isRoot) {
@@ -93,7 +92,6 @@ class PopupNavigation extends React.Component<Props, State> {
 			default:
 			case I.NavigationType.Go:
 				confirm = 'Open as page';
-				iconButton = 'expand';
 				break;
 
 			case I.NavigationType.Move:
@@ -182,7 +180,8 @@ class PopupNavigation extends React.Component<Props, State> {
 					<div className="descr">{item.snippet}</div>
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="buttons">
-						<Button text={confirm} icon={iconButton} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
+						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
+						<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
 					</div>
 				</div>
 			);
@@ -193,8 +192,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				{loading ? <Loader /> : ''}
 				{expanded ? (
 					<React.Fragment>
-						{head}
-
 						<div key="sides" className="sides">
 							<div className="items left">
 								{!isRoot ? (

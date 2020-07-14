@@ -44,6 +44,9 @@
 	.icon.forward { background-image: url('~img/icon/header/back0.svg'); }
 	.icon.forward:hover { background-image: url('~img/icon/header/back1.svg'); }
 
+	.icon.nav { background-image: url('~img/icon/header/nav0.svg'); }
+	.icon.nav:hover { background-image: url('~img/icon/header/nav1.svg'); }
+
 	.icon.plus { background-size: 16px 16px !important; background-image: url('~img/icon/header/plus0.svg'); }
 	.icon.plus:hover { background-image: url('~img/icon/header/plus1.svg'); }
 	.icon.plus.dis:hover { background-image: url('~img/icon/header/plus0.svg'); }
@@ -56,28 +59,40 @@
 
 .headerMainEditSearch { background: #fff; padding: 5px 10px; height: 38px; }
 .headerMainEditSearch {
-	.mid { height: 28px; position: absolute; left: 50%; transform: translateX(-50%); top: 5px; white-space: nowrap; }
+	.mid { width: 472px; height: 28px; position: absolute; left: 50%; margin-left: -236px; top: 5px; white-space: nowrap; }
 	.mid {
-		.btn { 
-			border: 1px solid $colorLightGrey; border-radius: 6px; vertical-align: top; height: 28px; 
-			width: 32px; background-size: 20px 20px; margin-right: 8px; opacity: 0;
+		.icon { margin: 4px 0px 0px 0px; opacity: 0; }
+		.icon.nav { margin-right: 16px; }
+		.icon.plus { margin-left: 16px; }
+		.icon.plus {
+			.arrow { 
+				width: 8px; height: 8px; background-image: url('~img/icon/header/arrow0.svg'); position: absolute; right: -12px;
+				top: 6px; margin: 0px;
+			}
 		}
-	
-		.btn.home { width: 48px; margin-right: 8px; }
-		.btn.back { margin-right: 2px; }
-		.btn.plus { width: 122px; margin: 0px; }
+		.icon.plus:hover {
+			.arrow { background-image: url('~img/icon/header/arrow1.svg'); }
+		}
 	}
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
-		line-height: 24px; width: 400px; margin-right: 8px; text-align: center; transition: $transitionFast;
+		line-height: 24px; width: 400px; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
 		.item { line-height: 20px; vertical-align: middle; }
 	}
+	.path * { pointer-events: all; }
 
-	.right { position: absolute; top: 9px; right: 10px; }
-	.right {
+	.side { position: absolute; top: 9px; }
+	.side.left { left: 9px; opacity: 0; transition: $transitionFast; }
+	.side.left {
+		.icon.home { margin-right: 16px; }
+		.icon.back { margin-right: 12px; }
+	}
+
+	.side.right { position: absolute; top: 9px; right: 9px; }
+	.side.right {
 		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer; }
 		.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
@@ -85,10 +100,17 @@
 	}
 }
 
+body.platformMac {
+	.headerMainEditSearch {
+		.side.left { left: 90px; }
+	}
+}
+
 .headerMainEditSearch:hover, .headerMainEditSearch.active {
+	.side.left { opacity: 1; }
 	.mid {
-		.btn { opacity: 1; }
-		.btn.dis { opacity: 0.5; }
+		.icon { opacity: 1; }
+		.icon.dis { opacity: 0.5; }
 	}
 	.path { border-color: $colorLightGrey; }
 }

@@ -203,7 +203,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	open (skipInit?: boolean) {
-		const { rootId, onOpen } = this.props;
+		const { rootId, onOpen, history } = this.props;
 		const { breadcrumbs } = blockStore;
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
@@ -236,6 +236,11 @@ class EditorPage extends React.Component<Props, State> {
 		this.id = rootId;
 		
 		C.BlockOpen(this.id, (message: any) => {
+			if (message.error.code) {
+				history.push('/main/index');
+				return;
+			};
+
 			const { focused } = focus;
 			const focusedBlock = blockStore.getLeaf(rootId, focused);
 			

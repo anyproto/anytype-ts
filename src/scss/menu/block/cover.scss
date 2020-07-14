@@ -26,3 +26,9 @@
 		.cover:nth-child(4n+4) { margin-right: 0px; }
 	}
 }
+
+body.platformWindows {
+	.menus {
+		.menu.menuBlockCover { width: 425px; }
+	}
+}

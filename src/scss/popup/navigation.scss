@@ -115,7 +115,8 @@
 				.cover { position: static; height: 156px; margin-top: 11px; }
 				.buttons { margin-top: 16px; display: flex; }
 				.buttons {
-					.button { width: 100%; height: 32px; line-height: 30px; }
+					.button { width: 100%; height: 32px; line-height: 28px; }
+					.button:first-child { margin-right: 8px; }
 					.button {
 						.icon.expand { background-image: url('~img/icon/expand.svg'); width: 20px; height: 20px; position: absolute; left: 8px; top: 6px; }
 					}

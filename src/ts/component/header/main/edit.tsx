@@ -25,9 +25,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onAdd = this.onAdd.bind(this);
-
-		this.onPathOver = this.onPathOver.bind(this);
-		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
@@ -48,28 +45,30 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		return (
-			<React.Fragment>
-				<div className={cn.join(' ')}>
-					<div className="mid">
-						<Icon className="btn home" tooltip="Home" onClick={this.onHome} />
-						<Icon className="btn back" tooltip="Back" onClick={this.onBack} />
-						<Icon className="btn forward" tooltip="Forward" onClick={this.onForward} />
-
-						<div className="path" onClick={this.onNavigation} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
-							<div className="item">
-								<Smile icon={iconEmoji} hash={iconImage} />
-								<div className="name">{Util.shorten(name, 32)}</div>
-							</div>
-						</div>
-
-						<Icon className={[ 'btn', 'plus', (root.isPageSet() ? 'dis' : '') ].join(' ')} tooltip="Create new page" onClick={this.onAdd} />
-					</div>
-
-					<div className="right">
-						<Icon id={'button-' + rootId + '-more'} tooltip="Menu" className="more" onClick={this.onMore} />
-					</div>
+			<div className={cn.join(' ')}>
+				<div className="side left">
+					<Icon className="home" tooltip="Home" onClick={this.onHome} />
+					<Icon className="back" tooltip="Back" onClick={this.onBack} />
+					<Icon className="forward" tooltip="Forward" onClick={this.onForward} />
 				</div>
-			</React.Fragment>
+
+				<div className="mid">
+					<Icon className="nav" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
+
+					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }}>
+						<div className="item">
+							<Smile icon={iconEmoji} hash={iconImage} />
+							<div className="name">{Util.shorten(name, 32)}</div>
+						</div>
+					</div>
+
+					<Icon className={[ 'plus', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={true} tooltip="Create new page" onClick={this.onAdd} />
+				</div>
+
+				<div className="side right">
+					<Icon id={'button-' + rootId + '-more'} tooltip="Menu" className="more" onClick={this.onMore} />
+				</div>
+			</div>
 		);
 	};
 
@@ -135,7 +134,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
 	};
 
-	onNavigation (e: any) {
+	onNavigation (e: any, expanded: boolean) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { rootId } = this.props;
 
 		commonStore.popupOpen('navigation', {
@@ -143,20 +145,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				type: I.NavigationType.Go, 
-				expanded: true,
+				expanded: expanded,
 			},
 		});
-	};
-
-	onPathOver () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const path = node.find('.path');
-
-		Util.tooltipShow('Click to open navigation<br/>Type to search', path, I.MenuDirection.Bottom);
-	};
-
-	onPathOut () {
-		Util.tooltipHide();
 	};
 	
 };

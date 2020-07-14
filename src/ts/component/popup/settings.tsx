@@ -477,9 +477,19 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 
 	onImport (format: string) {
+		const platform = Util.getPlatform();
 		const { history } = this.props;
 		const { root } = blockStore;
-		const options: any = { properties: [ 'openFile', 'openDirectory' ] };
+		const options: any = { 
+			properties: [ 'openFile' ],
+			filters: [
+				{ name: '', extensions: [ 'zip' ] }
+			]
+		};
+
+		if (platform == I.Platform.Mac) {
+			options.properties.push('openDirectory');
+		};
 
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
