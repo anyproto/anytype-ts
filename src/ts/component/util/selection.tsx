@@ -91,8 +91,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		if ((k == Key.up || k == Key.down) && ids.length) {
 			let dir = (k == Key.up) ? -1 : 1;
-			let idx = (dir < 0) ? 0 : ids.length - 1;
-			let method = '';
 			
 			// Move selection with arrows
 			if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
@@ -473,19 +471,21 @@ class SelectionProvider extends React.Component<Props, {}> {
 		let ids = [] as string[];
 
 		node.find('.selectable.isSelected').each((i: number, item: any) => {
-			item = $(item);
-
-			let id = String(item.data('id') || '');
-			if (id) {
-				ids.push(id);
+			let id = String($(item).data('id') || '');
+			if (!id) {
+				return;
 			};
+
+			ids.push(id);
 			
 			if (withChildren) {
-				const childrenIds = blockStore.getChildrenIds(rootId, id);
-				ids = ids.concat(childrenIds);
+				$(`#block-children-${id} .selectable`).each((i: number, child: any) => {
+					ids.push(String($(child).data('id') || ''));
+				});
 			};
 		});
-		
+
+		ids = ids.filter((it: string) => { return it; });
 		return [ ...new Set(ids) ];
 	};
 	
