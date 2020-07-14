@@ -547,27 +547,32 @@ class EditorPage extends React.Component<Props, State> {
 			this.blockRemove(block);
 		});
 
+		const onTab = (shift: boolean) => {
+			
+		};
+
 		// Indent block
-		keyboard.shortcut('tab', e, (pressed: string) => {
+		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 			e.preventDefault();
 			
 			if (!ids.length) {
 				return;
 			};
-			
+
+			const shift = pressed.match('shift');
 			const first = blockStore.getLeaf(rootId, ids[0]);
 			const element = map[first.id];
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, first.id, -1);
-			const obj = e.shiftKey ? parent : next;
+			const obj = shift ? parent : next;
 			const canTab = obj && !first.isTitle() && obj.canHaveChildren() && first.isIndentable();
 				
 			if (canTab) {
-				C.BlockListMove(rootId, rootId, ids, obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
+				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
 		});
 	};
-	
+
 	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
 		const { dataset, rootId } = this.props;
 		const { focused, range } = focus;
@@ -792,17 +797,18 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Tab, indent block
-		keyboard.shortcut('tab', e, (pressed: string) => {
+		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 			e.preventDefault();
 			
+			const shift = pressed.match('shift');
 			const element = map[block.id];
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, block.id, -1);
-			const obj = e.shiftKey ? parent : next;
+			const obj = shift ? parent : next;
 			const canTab = obj && !block.isTitle() && obj.canHaveChildren() && block.isIndentable();
 
 			if (canTab) {
-				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (e.shiftKey ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
 					focus.apply();
 				});
 			};
@@ -905,7 +911,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, this.hoverId);
-		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!block || (block.isTitle() && (this.hoverPosition != I.BlockPosition.Bottom)) || block.isLayoutColumn() || block.isIcon()) {
 			return;
@@ -924,7 +929,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onMenuAdd (id: string, text: string, range: I.TextRange) {
-		const { rootId } = this.props;
+		const { rootId, dataset } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
 
 		if (!block) {
@@ -933,6 +938,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { content } = block;
 		const { marks, hash } = content;
+		const { selection } = dataset || {};
 		
 		const length = String(text || '').length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
@@ -989,6 +995,28 @@ class EditorPage extends React.Component<Props, State> {
 					// Actions
 					if (item.isAction) {
 						switch (item.key) {
+
+							case 'move':
+								commonStore.popupOpen('navigation', { 
+									preventResize: true,
+									data: { 
+										type: I.NavigationType.Move, 
+										rootId: rootId,
+										expanded: true,
+										blockId: id,
+										blockIds: [ id ],
+									}, 
+								});
+								break;
+
+							case 'copy':
+								C.BlockListDuplicate(rootId, [ id ], id, I.BlockPosition.Bottom, (message: any) => {
+									if (message.blockIds && message.blockIds.length) {
+										focus.set(message.blockIds[message.blockIds.length - 1], { from: 0, to: 0 });
+										focus.apply();
+									};
+								});
+								break;
 							
 							case 'download':
 								if (hash) {

@@ -635,7 +635,7 @@ class BlockText extends React.Component<Props, {}> {
 			C.BlockUnlink(rootId, [ id ]);
 			cmdParsed = true;
 		};
-		
+
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
 			window.clearTimeout(this.timeoutKeyUp);
@@ -740,7 +740,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setText (marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
-		const { id, content } = block;
+		const { content } = block;
 		const value = this.getValue();
 		const text = String(content.text || '');
 		

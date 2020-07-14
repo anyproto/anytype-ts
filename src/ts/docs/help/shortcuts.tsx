@@ -62,7 +62,6 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/video</b> lets you upload a video file.' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/file</b> lets you upload any file from your computer.' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/code</b> creates a code block where you can write a snippet of code.' },
-	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/duplicate</b> creates a copy of the current block.' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/moveto</b> lets you move that block to a different page.' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/delete</b> deletes the current block.' }
 ];
