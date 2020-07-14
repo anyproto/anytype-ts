@@ -398,42 +398,49 @@ class BlockText extends React.Component<Props, {}> {
 
 		let value = this.getValue().replace(/\n$/, '');
 
-		const k = e.key.toLowerCase();		
+		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
+		
+		let ret = false;
 
-		if ((k == Key.enter) && !e.shiftKey && !block.isCode()) {
-			e.preventDefault();
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			if (block.isCode()) {
+				return;
+			};
+
 			this.setText(this.marks, true, (message: any) => {
 				onKeyDown(e, value, this.marks);
 			});
-			return;
-		};
 
-		if (k == Key.tab) {
+			ret = true;
+		});
+
+		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
+			
 			if (block.isCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
-
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 					focus.apply();
 				});
-				return;
 			} else {
 				this.setText(this.marks, true, (message: any) => {
 					onKeyDown(e, value, this.marks);
 				});
-				return;
 			};
-		};
-		
-		if (k == Key.backspace) {
+
+			ret = true;
+		});
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
 			if (range && !range.from && !range.to) {
 				this.setText(this.marks, true, (message: any) => {
 					onKeyDown(e, value, this.marks);
 				});
-				return;
+
+				ret = true;
 			};
 			
 			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
@@ -443,21 +450,32 @@ class BlockText extends React.Component<Props, {}> {
 			if (commonStore.menuIsOpen('blockMention') && (range.from - 1 == filter.from)) {
 				commonStore.menuClose('blockMention');
 			};
-		};
-		
-		if ((k == Key.slash) && !(e.ctrlKey || e.metaKey)) {
+		});
+
+		keyboard.shortcut('/, shift+/', e, (pressed: string) => {
 			onMenuAdd(id, value, range);
-		};
+		});
 
-		if ((e.key == '@') && isSpaceBefore && !commonStore.menuIsOpen('blockMention') && !block.isCode()) {
-			this.onMention();
-		};
+		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
+			if (commonStore.menuIsOpen('smile') || block.isCode()) {
+				return;
+			};
 
-		if ((k == Key.e) && (e.ctrlKey || e.metaKey) && !commonStore.menuIsOpen('smile') && !block.isCode()) {
 			e.preventDefault();
 			this.onSmile();
-		};
+		});
 
+		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
+			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isCode()) {
+				return;
+			};
+			this.onMention();
+		});
+
+		if (ret) {
+			return;
+		};
+		
 		focus.set(id, range);
 		if (!keyboard.isSpecial(k)) {
 			this.placeHolderHide();
@@ -617,7 +635,7 @@ class BlockText extends React.Component<Props, {}> {
 			C.BlockUnlink(rootId, [ id ]);
 			cmdParsed = true;
 		};
-		
+
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
 			window.clearTimeout(this.timeoutKeyUp);
@@ -722,7 +740,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setText (marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
-		const { id, content } = block;
+		const { content } = block;
 		const value = this.getValue();
 		const text = String(content.text || '');
 		

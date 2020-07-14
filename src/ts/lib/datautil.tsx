@@ -397,8 +397,8 @@ class DataUtil {
 		};
 		
 		let items: any[] = [
-			//{ id: 'move', icon: 'move', name: 'Move to' },
-			//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+			{ id: 'move', icon: 'move', name: 'Move to' },
+			{ id: 'copy', icon: 'copy', name: 'Duplicate' },
 			{ id: 'remove', icon: 'remove', name: 'Delete' },
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
