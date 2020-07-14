@@ -587,7 +587,7 @@ class EditorPage extends React.Component<Props, State> {
 					this.onPrint();
 				};
 				if (pressed == 'ctrl+p') {
-					this.onArrow(Key.up);
+					this.onArrow(Key.up, length);
 				};
 			} else {
 				e.preventDefault();
@@ -598,7 +598,7 @@ class EditorPage extends React.Component<Props, State> {
 		// Next string
 		if (platform == I.Platform.Mac) {
 			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
-				this.onArrow(Key.down);
+				this.onArrow(Key.down, length);
 			});
 		};
 
@@ -642,7 +642,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Open action menu
-		keyboard.shortcut('ctrl+/, cmd+/', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
 			commonStore.menuOpen('blockAction', { 
 				element: '#block-' + focused,
 				type: I.MenuType.Vertical,
@@ -720,7 +720,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed);
+			this.onArrow(pressed, length);
 		});
 
 		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
@@ -847,7 +847,7 @@ class EditorPage extends React.Component<Props, State> {
 	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
 	};
 
-	onArrow (pressed: string) {
+	onArrow (pressed: string, length: number) {
 		if (commonStore.menuIsOpen()) {
 			return;
 		};
@@ -866,7 +866,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 
-		if ((dir > 0) && !range.to) {
+		if ((dir > 0) && length && !range.to) {
 			return;
 		};
 

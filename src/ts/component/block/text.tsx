@@ -452,7 +452,7 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		});
 
-		keyboard.shortcut('slash', e, (pressed: string) => {
+		keyboard.shortcut('/, shift+/', e, (pressed: string) => {
 			onMenuAdd(id, value, range);
 		});
 
