@@ -8,9 +8,6 @@ token=$1;
 platform=$2;
 arch="";
 
-echo $token;
-echo $platform;
-
 if [ "$platform" = "ubuntu-latest" ]; then
 	arch="linux";
 elif [ "$platform" = "macos-latest" ]; then
@@ -42,7 +39,7 @@ fi;
 printf "Version: $tag\n"
 printf "Found asset: $asset_id\n"
 echo -n "Downloading file..."
-curl -sL -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id?access_token=$token" > $FILE
+curl -sL -H "Authorization: token $token" -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id" > $FILE
 printf "Done\n"
 
 if [ "$platform" = "windows-latest" ]; then

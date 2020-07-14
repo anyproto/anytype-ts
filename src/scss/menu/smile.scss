@@ -48,3 +48,9 @@
 		.item:last-child { margin: 0px; }
 	}
 }
+
+body.platformWindows {
+	.menus {
+		.menu.menuSmile { width: 401px; }
+	}
+}
