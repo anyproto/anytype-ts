@@ -5,7 +5,6 @@
   "!dist/*",
   "dist/index.html",
   "dist/main.js",
-  "dist/models.pb.js",
   "dist/run.js",
   "dist/lib/**/*",
   "dist/img/**/*",
