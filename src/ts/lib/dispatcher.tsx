@@ -178,6 +178,17 @@ class Dispatcher {
 						break;
 					};
 
+					if (block.isPagePage() || block.isPageProfile()) {
+						block.childrenIds.unshift(rootId + '-relation');
+						blocks.unshift(new M.Block({
+							id: rootId + '-relation',
+							type: I.BlockType.Relation,
+							childrenIds: [],
+							fields: {},
+							content: {},
+						}));
+					};
+
 					if (block.hasTitle()) {
 						block.childrenIds.unshift(rootId + '-title');
 						blocks.unshift(new M.Block({

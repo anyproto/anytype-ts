@@ -938,8 +938,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { content } = block;
 		const { marks, hash } = content;
-		const { selection } = dataset || {};
-		
 		const length = String(text || '').length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const cb = (message: any) => {
