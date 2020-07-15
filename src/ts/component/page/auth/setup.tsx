@@ -4,6 +4,7 @@ import { Frame, Cover, Title, Error, Input, Button, Smile, HeaderAuth as Header,
 import { I, Storage, translate, keyboard, C, DataUtil } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { Util } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -119,12 +120,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 				
 				C.AccountSelect(accountId, path, (message: any) => {
 					if (message.error.code) {
-						let descr = message.error.description;
-						if (message.error.code == 108) {
-							alert('App is already working, exiting...');
-							window.setTimeout(() => { ipcRenderer.send('exit', false); }, 3000);
-						};
-						this.setError(descr);
+						Util.checkError(message.error.code);
+						this.setError(message.error.description);
 					} else
 					if (message.account) {
 						authStore.accountSet(message.account);
@@ -168,6 +165,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		
 		C.AccountSelect(account.id, path, (message: any) => {
 			if (message.error.code) {
+				Util.checkError(message.error.code);
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
