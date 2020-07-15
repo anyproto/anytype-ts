@@ -19,8 +19,6 @@ let service;
 let server;
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 
-console.log(version, defaultChannel);
-
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
@@ -85,21 +83,12 @@ let csp = [
 	"frame-src chrome-extension://react-developer-tools"
 ];
 
-//if (app.isPackaged) {
-if (!app.requestSingleInstanceLock()) {
-	exit(false);
-	return;
-};
-
-app.on('second-instance', (event, argv, cwd) => {
-	if (win) {
-		if (win.isMinimized()) {
-			win.restore();
-		};
-		win.focus();
+if (app.isPackaged) {
+	if (!app.requestSingleInstanceLock()) {
+		exit(false);
+		return;
 	};
-});
-//};
+};
 
 storage.setDataPath(userPath);
 
@@ -443,6 +432,17 @@ function setStatus (text) {
 
 app.on('ready', waitForLibraryAndCreateWindows);
 
+app.on('second-instance', (event, argv, cwd) => {
+	setStatus('second-instance');
+
+	if (win) {
+		if (win.isMinimized()) {
+			win.restore();
+		};
+		win.focus();
+	};
+});
+
 app.on('window-all-closed', () => {
 	console.log('window-all-closed');
 });
@@ -455,6 +455,8 @@ app.on('before-quit', (e) => {
 });
 
 function exit (relaunch) {
+	console.log('Exit, bye!');
+
 	let cb = () => {
 		if (relaunch) {
 			setTimeout(() => {
