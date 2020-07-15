@@ -8,7 +8,7 @@ const Index = [
 	{ type: I.BlockType.Title, text: 'Help' },
 
 	{ type: I.BlockType.Link, icon: '⌨️', name: 'Keyboard & Shortcuts', contentId: 'shortcuts' },
-	{ type: I.BlockType.Link, icon: '🚨', name: 'What\'s new', contentId: 'new' },
+	{ type: I.BlockType.Link, icon: '👋', name: 'What\'s new', contentId: 'new' },
 
 	{ style: I.TextStyle.Header2, text:  'About' },
 	{ text: 'You can use Anytype to create documents, tools, and organize it in a way you want.<br>Anytype is <b>free</b> for you without any storage or upload limits.' },

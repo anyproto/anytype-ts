@@ -13,7 +13,7 @@ class PageHelpNew extends React.Component<Props, {}> {
 	render () {
 		const path: any[] = [
 			{ icon: '🔮', name: 'Help', contentId: 'index' },
-			{ icon: '🚨', name: 'What\'s new', contentId: 'new' },
+			{ icon: '👋', name: 'What\'s new', contentId: 'new' },
 		];
 
 		return (
