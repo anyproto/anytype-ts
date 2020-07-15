@@ -522,8 +522,8 @@ class Util {
 	checkError (code: number) {
 		// App is already working
 		if (code == 108) {
-			alert('App is already working, exiting...');
-			window.setTimeout(() => { ipcRenderer.send('exit', false); }, 3000);
+			alert('You have another instance of anytype running on this machine. Closing...');
+			ipcRenderer.send('exit', false);
 		};
 	};
 
