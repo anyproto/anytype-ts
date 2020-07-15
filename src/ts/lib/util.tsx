@@ -519,6 +519,14 @@ class Util {
 		return Constant.platforms[os.platform()];
 	};
 
+	checkError (code: number) {
+		// App is already working
+		if (code == 108) {
+			alert('You have another instance of anytype running on this machine. Closing...');
+			ipcRenderer.send('exit', false);
+		};
+	};
+
 };
 
 export default new Util();

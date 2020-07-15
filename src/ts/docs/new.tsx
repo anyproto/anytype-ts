@@ -1,9 +1,29 @@
 import { I } from 'ts/lib';
 
 export default [
-	{ type: I.BlockType.IconPage, icon: '👋' },
-	{ type: I.BlockType.Title, text: 'Import' },
+	{ type: I.BlockType.IconPage, icon: '🚨' },
+	
+	{ type: I.BlockType.Title, text: 'Windows support is now (finally) available!' },
+	{ text: 'Bug fixes, features, and improvements:' },
+	{ style: I.TextStyle.Bulleted, text: 'Chinese symbols input issues. Tested on Pinyin and Cangjie. For now, we using space and enter as symbol insertion, later we implement numbers' },
+	{ style: I.TextStyle.Bulleted, text: 'German keyboard shortcuts issue is now working correctly. Try <b class="nw">CMD + /</b> (<b class="nw">CMD + Shift + 7</b>) one more time' },
+	{ style: I.TextStyle.Bulleted, text: 'Phantom lists fixed: "Working with a list could lead to some elements disappearing when working with indentation."' },
+	{ style: I.TextStyle.Bulleted, text: 'You can finally use tab in the code block.' },
+	{ style: I.TextStyle.Bulleted, text: 'Code blocks now support even more languages!' },
+	{ style: I.TextStyle.Bulleted, text: '"Can\'t close a modal window on outside-click when 2 modals are open." Fixed.' },
+	{ style: I.TextStyle.Bulleted, text: 'We\'ve tuned the behaviour of update requests.' },
+	{ style: I.TextStyle.Bulleted, text: 'Split-merge text blocks in the editor. The carriage now set between the merged blocks.' },
+	{ style: I.TextStyle.Bulleted, text: 'Updates to the What\'s New page.' },
+	{ style: I.TextStyle.Bulleted, text: 'Copying and pasting text from external sources has been fixed. ' },
+	{ style: I.TextStyle.Bulleted, text: '"Setting some kind of markup leads to whole block deletion." Not anymore!' },
+	{ style: I.TextStyle.Bulleted, text: 'Fixed first-element highlighting in the menus. ' },
+	{ style: I.TextStyle.Bulleted, text: '<b class="nw">Ctrl + N</b> and <b class="nw">Ctrl + P</b> shortcuts now available to work with lines in macOS' },
+	{ style: I.TextStyle.Bulleted, text: 'Import from Notion now supports larger amounts of data.' },
+	{ style: I.TextStyle.Bulleted, text: 'Turn Into, Align, and Color now works on multiple levels of indentation.' },
+	{ style: I.TextStyle.Bulleted, text: 'macOS app closing into the Dock by default.' },
+	{ text: '... and many other small improvements! ' },
 
+	{ style: I.TextStyle.Header1, text: 'Import' },
 	{ text: 'We value your time and develop a great timesaver for you — now you can transfer data from other sources into Anytype!' },
 	{ text: 'Open settings in the dashboard or use <span class="bgColor bgColor-grey textColor textColor-red">File → Import</span> in the System menu and try. You can import all your data from Notion with the same structure for now, later we will develop more sources.' },
 	{ text: '<img src="./img/help/import.png" class="full">' },

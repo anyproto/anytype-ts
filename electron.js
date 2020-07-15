@@ -19,8 +19,6 @@ let service;
 let server;
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 
-console.log(version, defaultChannel);
-
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
@@ -84,6 +82,13 @@ let csp = [
 	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
+
+if (app.isPackaged) {
+	if (!app.requestSingleInstanceLock()) {
+		exit(false);
+		return;
+	};
+};
 
 storage.setDataPath(userPath);
 
@@ -179,6 +184,10 @@ function createWindow () {
 		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
 		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW));
 		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
+	});
+
+	ipcMain.on('exit', (e, relaunch) => {
+		exit(relaunch);
 	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
@@ -423,6 +432,17 @@ function setStatus (text) {
 
 app.on('ready', waitForLibraryAndCreateWindows);
 
+app.on('second-instance', (event, argv, cwd) => {
+	setStatus('second-instance');
+
+	if (win) {
+		if (win.isMinimized()) {
+			win.restore();
+		};
+		win.focus();
+	};
+});
+
 app.on('window-all-closed', () => {
 	console.log('window-all-closed');
 });
@@ -435,6 +455,8 @@ app.on('before-quit', (e) => {
 });
 
 function exit (relaunch) {
+	console.log('Exit, bye!');
+
 	let cb = () => {
 		if (relaunch) {
 			setTimeout(() => {
