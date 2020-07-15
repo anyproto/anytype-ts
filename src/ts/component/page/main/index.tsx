@@ -70,6 +70,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							onAdd={this.onAdd}
 							onMore={this.onMore}
 							onSortEnd={this.onSortEnd}
+							getList={this.getList}
 							helperContainer={() => { return $('#documents').get(0); }} 
 						/>
 					</div>
@@ -245,7 +246,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		return blockStore.getChildren(root, root, (it: any) => {
 			const details = blockStore.getDetails(root, it.content.targetBlockId);
-			return !details.isArchived;
+			return !details.isArchived && (it.content.style != I.LinkStyle.Dataview);
 		});
 	};
 
