@@ -438,9 +438,13 @@ app.on('before-quit', (e) => {
 function exit (relaunch) {
 	let cb = () => {
 		if (relaunch) {
-			app.relaunch();
+			setTimeout(() => {
+				app.relaunch();
+				app.exit(0);
+			}, 2000);
+		} else {
+			app.exit(0);
 		};
-		app.exit(0);
 	};
 
 	if (useGRPC) {
