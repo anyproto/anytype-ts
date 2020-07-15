@@ -105,7 +105,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 		const { path } = authStore;
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
-		const pin = Storage.get('pin');
 
 		if (!phrase) {
 			return;

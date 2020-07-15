@@ -85,6 +85,22 @@ let csp = [
 	"frame-src chrome-extension://react-developer-tools"
 ];
 
+//if (!app.isPackaged) {
+if (!app.requestSingleInstanceLock()) {
+	exit(false);
+	return;
+};
+
+app.on('second-instance', (event, argv, cwd) => {
+	if (win) {
+		if (win.isMinimized()) {
+			win.restore();
+		};
+		win.focus();
+	};
+});
+//};
+
 storage.setDataPath(userPath);
 
 let dataPath = [];
