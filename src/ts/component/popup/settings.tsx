@@ -119,7 +119,7 @@ class PopupSettings extends React.Component<Props, State> {
 					covers1.push({ id: c, image: '', type: I.CoverType.Color });
 				};
 
-				for (let i = 1; i <= 8; ++i) {
+				for (let i = 1; i <= 11; ++i) {
 					covers2.push({ id: 'c' + i, image: '', type: I.CoverType.BgImage });
 				};
 
@@ -129,7 +129,7 @@ class PopupSettings extends React.Component<Props, State> {
 
 				Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
-						<Cover {...item} className={item.id} />
+						<Cover {...item} preview={true} className={item.id} />
 					</div>
 				);
 
