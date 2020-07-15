@@ -62,7 +62,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					<Icon className={[ 'plus', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={true} tooltip="Create new page" onClick={this.onAdd} />
+					<Icon className={[ 'plus', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 				</div>
 
 				<div className="side right">
