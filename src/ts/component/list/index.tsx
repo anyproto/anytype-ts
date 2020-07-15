@@ -8,6 +8,7 @@ import { I, Util} from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 interface Props {
+	getList?(): void;
 	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
 	onMore?(e: any, item: any): void;
@@ -25,7 +26,7 @@ class ListIndex extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { onSelect, onAdd, onMore, helperContainer } = this.props;
+		const { onSelect, onAdd, onMore, helperContainer, getList } = this.props;
 		const { root } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		
@@ -35,10 +36,7 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
-		const children = blockStore.getChildren(root, root, (it: any) => {
-			const details = blockStore.getDetails(root, it.content.targetBlockId);
-			return !details.isArchived;
-		});
+		const children = getList();
 		const map = blockStore.getDetailsMap(root);
 		const size = map.size;
 		
