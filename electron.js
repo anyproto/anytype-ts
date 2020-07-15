@@ -389,6 +389,7 @@ function configSet (obj, callBack) {
 
 function checkUpdate () {
 	if (!isUpdating) {
+		setStatus('checkForUpdatesAndNotify');
 		autoUpdater.checkForUpdatesAndNotify();
 	};
 };
@@ -401,7 +402,6 @@ function autoUpdaterInit () {
 	autoUpdater.channel = config.channel;
 	
 	checkUpdate();
-
 	setInterval(checkUpdate, 600 * 1000);
 	
 	autoUpdater.on('checking-for-update', () => {
@@ -415,6 +415,7 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-not-available', (info) => {
+		isUpdating = false;
 		setStatus('Update not available');
 	});
 	
@@ -435,8 +436,6 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
-		isUpdating = false;
-
 		setStatus('Update downloaded');
 		win.webContents.send('updateReady');
 
@@ -463,12 +462,12 @@ app.on('second-instance', (event, argv, cwd) => {
 });
 
 app.on('window-all-closed', () => {
-	console.log('window-all-closed');
+	setStatus('window-all-closed');
 });
 
 app.on('before-quit', (e) => {
 	e.preventDefault();
-	console.log('before-quit');
+	setStatus('before-quit');
 
 	exit(false);
 });
@@ -479,6 +478,7 @@ function exit (relaunch) {
 	let cb = () => {
 		if (relaunch) {
 			setTimeout(() => {
+				setStatus('Relaunch');
 				app.relaunch();
 				app.exit(0);
 			}, 2000);
