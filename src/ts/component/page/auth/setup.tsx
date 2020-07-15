@@ -12,6 +12,7 @@ interface State {
 	error: string;
 };
 
+const { ipcRenderer } = window.require('electron');
 const Errors = require('json/error.json');
 const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
@@ -108,7 +109,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		if (!phrase) {
 			return;
 		};
-		
+
 		C.WalletRecover(path, phrase, (message: any) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
@@ -118,7 +119,12 @@ class PageAuthSetup extends React.Component<Props, State> {
 				
 				C.AccountSelect(accountId, path, (message: any) => {
 					if (message.error.code) {
-						this.setError(message.error.description);
+						let descr = message.error.description;
+						if (message.error.code == 108) {
+							alert('App is already working, exiting...');
+							window.setTimeout(() => { ipcRenderer.send('exit', false); }, 3000);
+						};
+						this.setError(descr);
 					} else
 					if (message.account) {
 						authStore.accountSet(message.account);

@@ -180,6 +180,10 @@ function createWindow () {
 		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW));
 		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
 	});
+
+	ipcMain.on('exit', (e, relaunch) => {
+		exit(relaunch);
+	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
 		shell.openExternal(url).catch((error) => {
