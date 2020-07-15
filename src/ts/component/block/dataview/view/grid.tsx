@@ -126,22 +126,28 @@ class ViewGrid extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
+		const ww = win.width();
+		const mw = ww - 192;
 		
-		let ww = Math.max(Constant.size.dataview.view.grid, win.width() - 48);
+		let vw = 0;
+		let sw = 0;
+		let margin = 0;
 		let width = 0;
 
 		for (let relation of view.relations) {
 			width += Number(Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0;
 		};
 
-		if (width < Constant.size.dataview.view.grid) {
-			ww = Constant.size.dataview.view.grid;
+		if (width < mw) {
+			vw = sw = mw;
+		} else {
+			vw = width;
+			sw = ww;
+			margin = (ww - mw) / 2; 
 		};
 
-		let margin = (ww - Constant.size.dataview.view.grid) / 2;
-
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
-		viewItem.css({ width: width });
+		viewItem.css({ width: vw });
 	};
 
 	onRowOver (id: number) {

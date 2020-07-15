@@ -49,12 +49,8 @@
 		.items { padding: 12px 0px; overflow-x: hidden; overflow-y: auto; }
 		.items {
 			.item { 
-				cursor: pointer; transition: $transitionFast; position: relative; height: 64px; 
-				line-height: 48px; padding: 8px 16px; 
+				cursor: pointer; transition: $transitionFast; position: relative; height: 64px; line-height: 48px; padding: 8px 16px; 
 			}
-			
-			.item:last-child { margin: 0px; }
-
 			.item {
 				.smile { position: absolute; left: 16px; top: 8px; transition: $transitionFast; }
 				.info { padding: 0px 0px 0px 60px; display: inline-block; vertical-align: middle; width: 100%; }
