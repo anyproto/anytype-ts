@@ -61,6 +61,7 @@ import 'scss/block/iconPage.scss';
 import 'scss/block/iconUser.scss';
 import 'scss/block/title.scss';
 import 'scss/block/cover.scss';
+import 'scss/block/relation.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
