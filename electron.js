@@ -12,6 +12,7 @@ const readChunk = require('read-chunk');
 const fileType = require('file-type');
 const version = app.getVersion();
 
+let isUpdating = false;
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
@@ -287,6 +288,10 @@ function menuInit () {
 					label: 'What\'s new',
 					click: function () { win.webContents.send('route', '/help/new'); }
 				},
+				{
+					label: 'Check for updates',
+					click: function () { checkUpdate(); }
+				},
 			]
 		},
 	];
@@ -364,9 +369,12 @@ function menuInit () {
 };
 
 function setChannel (channel) {
+	if (isUpdating) {
+		return;
+	};
 	configSet({ channel: channel }, function (error) {
 		autoUpdater.channel = channel;
-		autoUpdater.checkForUpdatesAndNotify();
+		checkUpdate();
 	});
 };
 
@@ -379,16 +387,22 @@ function configSet (obj, callBack) {
 	});
 };
 
+function checkUpdate () {
+	if (!isUpdating) {
+		autoUpdater.checkForUpdatesAndNotify();
+	};
+};
+
 function autoUpdaterInit () {
 	console.log('Channel: ', config.channel);
 	
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'info';
 	autoUpdater.channel = config.channel;
+	
+	checkUpdate();
 
-	setInterval(() => {
-		autoUpdater.checkForUpdatesAndNotify();
-	}, 600 * 1000);
+	setInterval(checkUpdate, 600 * 1000);
 	
 	autoUpdater.on('checking-for-update', () => {
 		setStatus('Checking for update');
@@ -396,6 +410,7 @@ function autoUpdaterInit () {
 	
 	autoUpdater.on('update-available', (info) => {
 		setStatus('Update available');
+		isUpdating = true;
 		win.webContents.send('update');
 	});
 	
@@ -406,6 +421,8 @@ function autoUpdaterInit () {
 	autoUpdater.on('error', (err) => { setStatus('Error: ' + err); });
 	
 	autoUpdater.on('download-progress', (progress) => {
+		isUpdating = true;
+
 		let msg = [
 			'Download speed: ' + progress.bytesPerSecond,
 			'-',
@@ -418,6 +435,8 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
+		isUpdating = false;
+
 		setStatus('Update downloaded');
 		win.webContents.send('updateReady');
 
