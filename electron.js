@@ -198,10 +198,6 @@ function createWindow () {
 		await download(win, url, { saveAs: true });
 	});
 
-	ipcMain.on('update', () => {
-		autoUpdater.checkForUpdatesAndNotify();
-	});
-	
 	storage.get('config', function (error, data) {
 		config = data || {};
 		config.channel = String(config.channel || defaultChannel);
@@ -380,6 +376,7 @@ function autoUpdaterInit () {
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'info';
 	autoUpdater.channel = config.channel;
+	autoUpdater.checkForUpdatesAndNotify();
 
 	setInterval(() => {
 		autoUpdater.checkForUpdatesAndNotify();
@@ -416,8 +413,7 @@ function autoUpdaterInit () {
 		setStatus('Update downloaded');
 		win.webContents.send('updateReady');
 
-		app.relaunch();
-		exit();
+		exit(true);
 	});
 };
 
@@ -436,19 +432,26 @@ app.on('before-quit', (e) => {
 	e.preventDefault();
 	console.log('before-quit');
 
-	exit();
+	exit(false);
 });
 
-function exit () {
+function exit (relaunch) {
+	let cb = () => {
+		if (relaunch) {
+			app.relaunch();
+		};
+		app.exit(0);
+	};
+
 	if (useGRPC) {
 		server.stop();
-		app.exit(0);
+		cb();
 	} else {
 		const Commands = require('./dist/lib/pb/protos/commands_pb');
 		
 		service.shutdown(new Commands.Empty(), {}, () => {
 			console.log('Shutdown complete, exiting');
-			app.exit(0);
+			cb();
 		});
 	};
 };
