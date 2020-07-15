@@ -85,7 +85,7 @@ let csp = [
 	"frame-src chrome-extension://react-developer-tools"
 ];
 
-//if (!app.isPackaged) {
+//if (app.isPackaged) {
 if (!app.requestSingleInstanceLock()) {
 	exit(false);
 	return;
