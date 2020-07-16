@@ -1,14 +1,12 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Input, Loader, Smile } from 'ts/component';
+import { Icon, Button, Title, Label, Cover, Textarea, Input, Loader, Smile, Error } from 'ts/component';
 import { I, C, Storage, Key, Util, DataUtil } from 'ts/lib';
 import { authStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 const { dialog } = window.require('electron').remote;
 const $ = require('jquery');
-const raf = require('raf');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
 
@@ -17,6 +15,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 interface State {
 	page: string;
 	loading: boolean;
+	error: string;
 };
 
 @observer
@@ -24,12 +23,11 @@ class PopupSettings extends React.Component<Props, State> {
 
 	phraseRef: any = null;
 	refObj: any = {};
-	pin: string = '';
 	state = {
 		page: 'index',
 		loading: false,
+		error: '',
 	};
-	onConfirmPin: any = null;
 	onConfirmPhrase: any = null;
 	format: string = '';
 
@@ -44,6 +42,7 @@ class PopupSettings extends React.Component<Props, State> {
 		this.onFocusPin = this.onFocusPin.bind(this);
 		this.onBlurPin = this.onBlurPin.bind(this);
 		this.onChangePin = this.onChangePin.bind(this);
+		this.onCheckPin = this.onCheckPin.bind(this);
 		this.onSelectPin = this.onSelectPin.bind(this);
 		this.onTurnOffPin = this.onTurnOffPin.bind(this);
 		this.onFileClick = this.onFileClick.bind(this);
@@ -52,7 +51,7 @@ class PopupSettings extends React.Component<Props, State> {
 	render () {
 		const { account } = authStore;
 		const { cover, coverImage } = commonStore;
-		const { page, loading } = this.state;
+		const { page, loading, error } = this.state;
 		const pin = Storage.get('pin');
 
 		let content = null;
@@ -195,19 +194,12 @@ class PopupSettings extends React.Component<Props, State> {
 							<div className="buttons">
 								<Button text="Turn pin code off" className="blank" onClick={this.onTurnOffPin} />
 								<Button text="Change pin code" className="blank" onClick={() => {
-									this.onConfirmPin = () => {
-										window.setTimeout(() => {
-											this.onConfirmPin = this.onSelectPin;
-											this.onPage('pinSelect');
-										});
-									};
 									this.onPage('pinConfirm');
 								}} />
 							</div>
 						): (
 							<div className="buttons">
 								<Button text="Turn pin code on" className="blank" onClick={() => {
-									this.onConfirmPin = this.onSelectPin;
 									this.onPage('pinSelect');
 								}} />
 							</div>
@@ -230,7 +222,14 @@ class PopupSettings extends React.Component<Props, State> {
 						<Label text="The pin code will protect your secret phrase. As we do not store your secret phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or secret phrase. So, please, remember your pin code." />
 						<div className="inputs">
 							{inputs.map((item: any, i: number) => (
-								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={page + i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />
+								<Input 
+									ref={(ref: any) => this.refObj[item.id] = ref} 
+									maxLength={1} 
+									key={page + i} 
+									onFocus={(e) => { this.onFocusPin(e, item.id); }} 
+									onBlur={(e) => { this.onBlurPin(e, item.id); }} 
+									onKeyUp={(e: any) => { this.onChangePin(e, item.id, this.onSelectPin); }} 
+								/>
 							))}
 						</div>
 						<Button text="Confirm" className="orange" onClick={this.onSelectPin} />
@@ -249,9 +248,18 @@ class PopupSettings extends React.Component<Props, State> {
 						<Head id="pinIndex" name="Cancel" />
 						<Title text="Pin code" />
 						<Label text="To continue, first verify that it’s you. Enter current pin code" />
+						<Error text={error} />
+
 						<div className="inputs">
 							{inputs.map((item: any, i: number) => (
-								<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={page + i} onFocus={(e) => { this.onFocusPin(e, item.id); }} onBlur={(e) => { this.onBlurPin(e, item.id); }} onKeyUp={(e: any) => { this.onChangePin(e, item.id); }} />
+								<Input 
+								ref={(ref: any) => this.refObj[item.id] = ref} 
+								maxLength={1} 
+								key={page + i} 
+								onFocus={(e) => { this.onFocusPin(e, item.id); }} 
+								onBlur={(e) => { this.onBlurPin(e, item.id); }} 
+								onKeyUp={(e: any) => { this.onChangePin(e, item.id, this.onCheckPin); }} 
+							/>
 							))}
 						</div>
 						<Button text="Confirm" className="orange" onClick={() => { this.onPage('index'); }} />
@@ -393,7 +401,7 @@ class PopupSettings extends React.Component<Props, State> {
 		this.refObj[id].removeClass('active');
 	};
 
-	onChangePin (e: any, id: number) {
+	onChangePin (e: any, id: number, callBack: (pin: string) => void) {
 		const k = e.key.toLowerCase();
 		const input = this.refObj[id];
 		const prev = this.refObj[id - 1];
@@ -412,21 +420,23 @@ class PopupSettings extends React.Component<Props, State> {
 			next.focus();
 		};
 
-		if (pin.length == Constant.pinSize) {
-			this.pin = pin;
-
-			if (this.onConfirmPin) {
-				this.onConfirmPin();
-				this.onConfirmPin = null;
-			};
+		if ((pin.length == Constant.pinSize) && callBack) {
+			callBack(pin);
 		};
 	};
 
-	onSelectPin () {
-		if (this.pin.length == Constant.pinSize) {
-			Storage.set('pin', sha1(this.pin));
+	onCheckPin (pin: string) {
+		if (sha1(pin) == Storage.get('pin')) {
+			this.onPage('pinSelect');
+			this.setState({ error: '' });
+		} else {
+			this.clearPin();
+			this.setState({ error: 'Invalid pin-code' });
 		};
+	};
 
+	onSelectPin (pin: string) {
+		Storage.set('pin', sha1(pin));
 		this.onPage('index');
 	};
 
@@ -441,6 +451,12 @@ class PopupSettings extends React.Component<Props, State> {
 			c.push(this.refObj[i].getValue());
 		};
 		return c.join('');
+	};
+
+	clearPin () {
+		for (let i in this.refObj) {
+			this.refObj[i].setValue('');
+		};
 	};
 
 	onClose () {
