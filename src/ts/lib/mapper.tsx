@@ -240,7 +240,10 @@ const Mapper = {
     To: {
 
         Range: (obj: any) => {
-            return new Model.Range().setFrom(obj.from).setTo(obj.to);
+            let ret = new Model.Range();
+            ret.setFrom(obj.from);
+            ret.setTo(obj.to);
+            return ret;
         },
 
         Mark: (obj: any) => {
