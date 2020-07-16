@@ -51,7 +51,7 @@ class PopupFeedback extends React.Component<Props, State> {
 				) : (
 					<React.Fragment>
 						<Title text="Feedback" />
-						<Label text="Issues, bugs, feedback or help? Write us what’s on your mind." />
+						<Label text="Issues, bugs, feedback or help? Tell us what’s on your mind." />
 						
 						<form onSubmit={this.onSubmit}>
 							<div className="row flex">
