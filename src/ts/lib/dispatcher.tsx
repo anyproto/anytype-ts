@@ -58,10 +58,14 @@ class Dispatcher {
 
 		this.stream.on('status', (status: any) => {
 			console.log('[Stream] status', status);
+			if (status.code) {
+				console.error('[Stream] Restarting');
+				this.listenEvents();
+			};
 		});
 
 		this.stream.on('end', (end: any) => {
-			console.error('[Stream] end.. restarting', end);
+			console.error('[Stream] end, restarting', end);
 			this.listenEvents();
 		});
 	};
