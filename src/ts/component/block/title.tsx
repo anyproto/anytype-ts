@@ -5,9 +5,7 @@ import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 
-interface Props {
-	rootId: string;
-	block: I.Block;
+interface Props extends I.BlockComponent {
 	onPaste? (e: any): void;
 };
 

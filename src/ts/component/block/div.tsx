@@ -1,13 +1,8 @@
 import * as React from 'react';
-import { I, Util, focus } from 'ts/lib';
+import { I, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props {
-	rootId: string;
-	block: I.Block;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
-};
+interface Props extends I.BlockComponent {};
 
 @observer
 class BlockDiv extends React.Component<Props, {}> {
@@ -58,11 +53,11 @@ class BlockDiv extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', []);
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', []);
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {

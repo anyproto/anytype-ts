@@ -28,7 +28,7 @@ interface Props extends RouteComponentProps<any> {
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
@@ -409,8 +409,8 @@ class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			this.setText(this.marks, true, (message: any) => {
-				onKeyDown(e, value, this.marks);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				onKeyDown(e, value, this.marks, range);
 			});
 
 			ret = true;
@@ -427,7 +427,7 @@ class BlockText extends React.Component<Props, {}> {
 				});
 			} else {
 				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks);
+					onKeyDown(e, value, this.marks, range);
 				});
 			};
 
@@ -437,7 +437,7 @@ class BlockText extends React.Component<Props, {}> {
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			if (range && !range.from && !range.to) {
 				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks);
+					onKeyDown(e, value, this.marks, range);
 				});
 
 				ret = true;
@@ -481,7 +481,7 @@ class BlockText extends React.Component<Props, {}> {
 			this.placeHolderHide();
 		};
 		
-		onKeyDown(e, value, this.marks);
+		onKeyDown(e, value, this.marks, range);
 	};
 	
 	onKeyUp (e: any) {
