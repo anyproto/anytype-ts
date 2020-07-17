@@ -12,10 +12,7 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	block: I.Block;
-};
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const Schema = {
