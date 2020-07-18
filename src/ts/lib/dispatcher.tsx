@@ -519,22 +519,17 @@ class Dispatcher {
 			return;
 		};
 
-		let t0 = 0;
+		let t0 = performance.now();
 		let t1 = 0;
 		let t2 = 0;
 
 		if (debug) {
-			t0 = performance.now();
 			console.log('[Dispatcher.request]', type, JSON.stringify(data.toObject(), null, 3));
 		};
 
-		analytics.event(upper, data);
-
 		try {
 			this.service[type](data, null, (error: any, response: any) => {
-				if (debug) {
-					t1 = performance.now();
-				};
+				t1 = performance.now();
 
 				if (error) {
 					console.error('[Dispatcher.error]', error.code, error.description);
@@ -573,12 +568,14 @@ class Dispatcher {
 					callBack(message);
 				};
 
-				if (debug) {
-					t2 = performance.now();
-					const mt = Math.ceil(t1 - t0);
-					const rt = Math.ceil(t2 - t1);
-					const tt = Math.ceil(t2 - t0);
+				t2 = performance.now();
+				const mt = Math.ceil(t1 - t0);
+				const rt = Math.ceil(t2 - t1);
+				const tt = Math.ceil(t2 - t0);
 
+				analytics.event(upper, { ...data, mt: mt, rt: rt });
+
+				if (debug) {
 					console.log(
 						'Middle time:', mt + 'ms',
 						'Render time:', rt + 'ms',

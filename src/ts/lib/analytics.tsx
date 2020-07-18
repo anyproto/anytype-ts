@@ -87,7 +87,13 @@ class Analytics {
 			return;
 		};
 		
-		let param: any = {};
+		data = data || {};
+
+		let param: any = { 
+			mt: Number(data.mt) || 0, 
+			rt: Number(data.rt ) || 0,
+		};
+
 		switch (code) {
 			case 'Error':
 				param = data;
@@ -110,7 +116,7 @@ class Analytics {
 				param.style = this.getDictionary(I.BlockType.Text, data.style);
 				break;
 		};
-		
+
 		if (debug) {
 			console.log('[Analytics.event]', code, param);
 		};
