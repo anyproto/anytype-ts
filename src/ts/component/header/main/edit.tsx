@@ -111,7 +111,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 
-		if (root && root.isPageSet()) {
+		if (!root || root.isPageSet()) {
 			return;
 		};
 		

@@ -1403,7 +1403,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
-		if (root.isPageSet()) {
+		if (!root || root.isPageSet()) {
 			return;
 		};
 
