@@ -569,23 +569,23 @@ class Dispatcher {
 				};
 
 				t2 = performance.now();
-				const mt = Math.ceil(t1 - t0);
-				const rt = Math.ceil(t2 - t1);
-				const tt = Math.ceil(t2 - t0);
+				const middleTime = Math.ceil(t1 - t0);
+				const renderTime = Math.ceil(t2 - t1);
+				const totalTime = middleTime + renderTime;
 
-				analytics.event(upper, { ...data, mt: mt, rt: rt });
+				analytics.event(upper, { ...data, middleTime: middleTime, renderTime: renderTime });
 
 				if (debug) {
 					console.log(
-						'Middle time:', mt + 'ms',
-						'Render time:', rt + 'ms',
-						'Total time:', tt + 'ms'
+						'Middle time:', middleTime + 'ms',
+						'Render time:', renderTime + 'ms',
+						'Total time:', totalTime + 'ms'
 					);
 
-					if (mt > 3000) {
+					if (middleTime > 3000) {
 						Sentry.captureMessage(`${type}: middleware time too long`);
 					};
-					if (rt > 1000) {
+					if (renderTime > 1000) {
 						Sentry.captureMessage(`${type}: render time too long`);
 					};
 				};

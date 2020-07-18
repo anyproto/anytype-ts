@@ -90,8 +90,8 @@ class Analytics {
 		data = data || {};
 
 		let param: any = { 
-			mt: Number(data.mt) || 0, 
-			rt: Number(data.rt ) || 0,
+			middleTime: Number(data.middleTime) || 0, 
+			renderTime: Number(data.renderTime) || 0,
 		};
 
 		switch (code) {
