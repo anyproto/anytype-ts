@@ -26,6 +26,7 @@ class BlockLink extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 	};
 
@@ -38,7 +39,7 @@ class BlockLink extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={true} onSelect={this.onSelect} />
+				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
 				<div className="name" onClick={this.onClick}>
 					<div className="txt">{name}</div>
 				</div>
@@ -76,6 +77,14 @@ class BlockLink extends React.Component<Props, {}> {
 		const { targetBlockId } = content;
 		
 		DataUtil.pageSetIcon(targetBlockId, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const { block } = this.props;
+		const { content } = block;
+		const { targetBlockId } = content;
+		
+		DataUtil.pageSetIcon(targetBlockId, '', hash);
 	};
 	
 };

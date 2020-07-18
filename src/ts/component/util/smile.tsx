@@ -125,6 +125,7 @@ class Smile extends React.Component<Props, State> {
 			data: {
 				onSelect: (icon: string) => {
 					this.setState({ icon: icon, hash: '' });
+					
 					if (onSelect) {
 						onSelect(icon);
 					};
@@ -132,7 +133,10 @@ class Smile extends React.Component<Props, State> {
 
 				onUpload: (hash: string) => {
 					this.setState({ icon: '', hash: hash });
-					onUpload(hash);
+					
+					if (onUpload) {
+						onUpload(hash);
+					};
 				}
 			}
 		});
