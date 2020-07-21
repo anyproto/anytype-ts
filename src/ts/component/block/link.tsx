@@ -1,20 +1,12 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Smile } from 'ts/component';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { focus } from '../../lib';
+import { focus } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	block: I.Block;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
-};
-
-const Constant = require('json/constant.json');
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 @observer
 class BlockLink extends React.Component<Props, {}> {
@@ -49,11 +41,11 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', []);
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', []);
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {

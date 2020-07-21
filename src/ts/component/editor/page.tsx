@@ -569,9 +569,9 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 
-	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
+	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 		const { dataset, rootId } = this.props;
-		const { focused, range } = focus;
+		const { focused } = focus;
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
 
@@ -814,6 +814,7 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
+			console.log('R', range.from, range.to);
 			if (block.isCode() || (!block.isText() && keyboard.isFocused)) {
 				return;
 			};
@@ -853,7 +854,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 	
-	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
+	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 	};
 
 	onArrow (pressed: string, length: number) {

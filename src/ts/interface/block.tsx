@@ -40,6 +40,14 @@ export enum BlockAlign {
 	Right	 = 2,
 };
 
+export interface BlockComponent {
+	dataset?: any;
+	rootId: string;
+	block: I.Block;
+	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
+	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
+};
+
 export interface Block {
 	id: string;
 	type: BlockType;
