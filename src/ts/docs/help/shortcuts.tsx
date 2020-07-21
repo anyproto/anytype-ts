@@ -5,12 +5,17 @@ export default [
 	{ type: I.BlockType.Title, text: 'Keyboard & Shortcuts' },
 	
 	{ style: I.TextStyle.Header1, text: 'Application' },
+
 	{ style: I.TextStyle.Header3, text: 'Basic keys' },
 	{ style: I.TextStyle.Bulleted, text: 'Use <b>Cmd</b> & <b>Option</b> in MacOS and <b>Ctrl</b> & <b>Alt</b> in Windows or Linux.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + N</b> to create new page on a dashboard.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + O</b> to open navigation pane.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + S</b> to open search pane.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + P</b> to print the page.' },
+
+	{ style: I.TextStyle.Header3, text: 'Navigation' },
+	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd + [</b> or <b>Alt + ←</b> to go back in history.' },
+	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd + ]</b> or <b>Alt + →</b> to go forward in history.' },
 
 	{ style: I.TextStyle.Header1, text: 'Editor' },
 	{ style: I.TextStyle.Header2, text: 'Page' },

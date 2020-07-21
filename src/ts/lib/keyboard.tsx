@@ -47,6 +47,16 @@ class Keyboard {
 			this.history.goBack();
 		});
 
+		// Go back
+		this.shortcut('cmd+[, alt+arrowleft', e, (pressed: string) => {
+			this.history.goBack();
+		});
+
+		// Go forward
+		this.shortcut('cmd+], alt+arrowright', e, (pressed: string) => {
+			this.history.goForward();
+		});
+
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
