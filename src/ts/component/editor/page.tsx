@@ -473,11 +473,13 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
@@ -632,11 +634,13 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 

@@ -650,7 +650,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.placeHolderCheck();
 		
 		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks, false); }, 500);
+		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks, false); }, 50);
 	};
 
 	onMention () {
