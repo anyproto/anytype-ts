@@ -435,13 +435,10 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range && !range.from && !range.to) {
-				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks, range);
-				});
-
-				ret = true;
-			};
+			this.setText(this.marks, true, (message: any) => {
+				onKeyDown(e, value, this.marks, range);
+			});
+			ret = true;
 			
 			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
 				commonStore.menuClose('blockAdd');
@@ -648,9 +645,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		this.marks = this.getMarksFromHtml();
 		this.placeHolderCheck();
-		
-		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks, false); }, 500);
+		this.setText(this.marks, false);
 	};
 
 	onMention () {
