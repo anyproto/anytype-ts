@@ -605,11 +605,11 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		// Make code
-		if ((value == '/code') && !block.isCode()) {
+		if ((value == '/code' || value == '```') && !block.isCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
-		
+
 		// Move to
 		if (value == '/move') {
 			commonStore.popupOpen('navigation', { 
