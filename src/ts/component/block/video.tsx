@@ -193,6 +193,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrap = node.find('.wrap');
 		
@@ -204,6 +205,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		const h = this.getHeight(w);
 		
 		wrap.css({ width: (w * 100) + '%', height: h });
+		win.trigger('resize.editor');
 	};
 	
 	onResizeStart (e: any, checkMax: boolean) {

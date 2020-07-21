@@ -2,8 +2,6 @@ const log = require('electron-log');
 
 log.transports.rendererConsole.level = 'error';
 
-console.log(log);
-
 class Util {
 
     log (method, text) {

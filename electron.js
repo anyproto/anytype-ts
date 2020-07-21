@@ -21,6 +21,30 @@ let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 
 let service, server;
 
+if (app.isPackaged) {
+	if (!app.requestSingleInstanceLock()) {
+		exit(false);
+		return;
+	};
+};
+
+storage.setDataPath(userPath);
+
+let dataPath = [];
+if (process.env.DATA_PATH) {
+	try {
+		fs.mkdirSync(process.env.DATA_PATH);
+	} catch (err) {};
+
+	dataPath.push(process.env.DATA_PATH);
+} else {
+	dataPath.push(userPath);
+	if (!app.isPackaged) {
+		dataPath.push('dev');
+	};
+	dataPath.push('data');
+};
+
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
@@ -67,7 +91,7 @@ if (useGRPC) {
 		
 		bindings.sendCommand(method, buffer, handler);
 	};
-	
+
 	service.client_.rpcCall = napiCall;
 };
 
@@ -83,30 +107,6 @@ let csp = [
 	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
-
-if (app.isPackaged) {
-	if (!app.requestSingleInstanceLock()) {
-		exit(false);
-		return;
-	};
-};
-
-storage.setDataPath(userPath);
-
-let dataPath = [];
-if (process.env.DATA_PATH) {
-	try {
-		fs.mkdirSync(process.env.DATA_PATH);
-	} catch (err) {};
-
-	dataPath.push(process.env.DATA_PATH);
-} else {
-	dataPath.push(userPath);
-	if (!app.isPackaged) {
-		dataPath.push('dev');
-	};
-	dataPath.push('data');
-};
 
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {
