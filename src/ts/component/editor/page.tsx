@@ -814,7 +814,6 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			console.log('R', range.from, range.to);
 			if (block.isCode() || (!block.isText() && keyboard.isFocused)) {
 				return;
 			};
