@@ -547,10 +547,6 @@ class EditorPage extends React.Component<Props, State> {
 			this.blockRemove(block);
 		});
 
-		const onTab = (shift: boolean) => {
-			
-		};
-
 		// Indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 			e.preventDefault();
@@ -669,6 +665,8 @@ class EditorPage extends React.Component<Props, State> {
 				onClose: () => {
 					selection.preventClear(false);
 					selection.clear();
+					
+					focus.apply();
 				}
 			});
 		});

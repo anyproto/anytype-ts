@@ -1,7 +1,6 @@
 import { observable, action, computed, set } from 'mobx';
 import { I, Storage, Util, analytics } from 'ts/lib';
 
-const EmojiData = require('emoji-mart/data/apple.json');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -229,10 +228,6 @@ class CommonStore {
 			return;
 		};
 		
-		if (item.param.onClose) {
-			item.param.onClose();
-		};
-		
 		const el = $('#' + Util.toCamelCase('menu-' + id));
 		if (el.length) {
 			el.css({ transform: '' }).removeClass('show');
@@ -240,6 +235,10 @@ class CommonStore {
 		
 		window.setTimeout(() => {
 			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
+			
+			if (item.param.onClose) {
+				item.param.onClose();
+			};
 			
 			if (callBack) {
 				callBack();

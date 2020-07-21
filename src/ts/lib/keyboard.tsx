@@ -26,7 +26,6 @@ class Keyboard {
 		
 		let win = $(window); 
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); })
-		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 	};
 	
 	unbind () {
@@ -124,10 +123,6 @@ class Keyboard {
 	
 	isEditor () {
 		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
-	};
-	
-	onKeyUp (e: any) {
-		const k = e.key.toLowerCase();
 	};
 	
 	setFocus (v: boolean) {
