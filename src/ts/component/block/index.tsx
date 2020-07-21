@@ -361,6 +361,8 @@ class Block extends React.Component<Props, {}> {
 			onClose: () => {
 				selection.preventClear(false);
 				selection.clear();
+
+				focus.apply();
 			}
 		});
 	};
