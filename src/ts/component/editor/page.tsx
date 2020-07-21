@@ -539,6 +539,28 @@ class EditorPage extends React.Component<Props, State> {
 				focus.clear(true);
 				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
 			});
+
+			// Open action menu
+			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
+				commonStore.menuOpen('blockAction', { 
+					element: '#block-' + ids[0],
+					type: I.MenuType.Vertical,
+					offsetX: Constant.size.blockMenu,
+					offsetY: 0,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					data: {
+						blockId: ids[0],
+						blockIds: ids,
+						rootId: rootId,
+						dataset: dataset,
+					},
+					onClose: () => {
+						selection.preventClear(false);
+						selection.clear();
+					}
+				});
+			});
 		};
 
 		// Remove blocks
@@ -546,10 +568,6 @@ class EditorPage extends React.Component<Props, State> {
 			e.preventDefault();
 			this.blockRemove(block);
 		});
-
-		const onTab = (shift: boolean) => {
-			
-		};
 
 		// Indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
