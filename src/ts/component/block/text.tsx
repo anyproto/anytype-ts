@@ -29,7 +29,7 @@ interface Props extends RouteComponentProps<any> {
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange, onClose?: () => void): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
 
@@ -535,10 +535,8 @@ class BlockText extends React.Component<Props, {}> {
 
 		// Open add menu
 		if ((symbolBefore == '/') && (k != Key.escape) && !commonStore.menuIsOpen('blockAdd')) {
-			onMenuAdd(id, value, range, () => {
-				value = Util.stringCut(value, range.from - 1, range.from);
-				DataUtil.blockSetText(rootId, block, value, this.marks, true);
-			});
+			value = Util.stringCut(value, range.from - 1, range.from);
+			onMenuAdd(id, value, range);
 		};
 		
 		// Make div
