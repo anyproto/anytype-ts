@@ -852,6 +852,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			e.preventDefault();
+			e.stopPropagation();
 			
 			if ((range.from == length) && (range.to == length)) {
 				let style = I.TextStyle.Paragraph;
