@@ -5,12 +5,17 @@ export default [
 	{ type: I.BlockType.Title, text: 'Keyboard & Shortcuts' },
 	
 	{ style: I.TextStyle.Header1, text: 'Application' },
+
 	{ style: I.TextStyle.Header3, text: 'Basic keys' },
 	{ style: I.TextStyle.Bulleted, text: 'Use <b>Cmd</b> & <b>Option</b> in MacOS and <b>Ctrl</b> & <b>Alt</b> in Windows or Linux.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + N</b> to create new page on a dashboard.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + O</b> to open navigation pane.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + S</b> to open search pane.' },
 	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd</b> or <b>Ctrl + P</b> to print the page.' },
+
+	{ style: I.TextStyle.Header3, text: 'Navigation' },
+	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd + [</b> or <b>Alt + ←</b> to go back in history.' },
+	{ style: I.TextStyle.Bulleted, text: 'Press <b>Cmd + ]</b> or <b>Alt + →</b> to go forward in history.' },
 
 	{ style: I.TextStyle.Header1, text: 'Editor' },
 	{ style: I.TextStyle.Header2, text: 'Page' },
@@ -56,12 +61,11 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: 'Type <b>###</b> followed by <b>space</b> to create an H3 sub-heading.' },
 	{ style: I.TextStyle.Bulleted, text: 'Type <b>">"</b> followed by <b>space</b> to create a toggle list.' },
 	{ style: I.TextStyle.Bulleted, text: 'Type <b>"</b> followed by <b>space</b> to create a quote block.' },
+	{ style: I.TextStyle.Bulleted, text: 'Type <b>```</b> followed by <b>space</b> to create a code block.' },
 
 	{ style: I.TextStyle.Header2, text: 'Commands' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/image</b> will bring up the <b>Option</b> or <b>Alt</b> to upload an image.' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/video</b> lets you upload a video file.' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/file</b> lets you upload any file from your computer.' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/code</b> creates a code block where you can write a snippet of code.' },
-	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/moveto</b> lets you move that block to a different page.' },
-	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/delete</b> deletes the current block.' }
 ];

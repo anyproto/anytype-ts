@@ -26,7 +26,6 @@ class Keyboard {
 		
 		let win = $(window); 
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); })
-		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 	};
 	
 	unbind () {
@@ -46,6 +45,14 @@ class Keyboard {
 			};
 			this.history.goBack();
 		});
+
+		if (platform == I.Platform.Mac) {
+			this.shortcut('cmd+[', e, (pressed: string) => { this.history.goBack(); });
+			this.shortcut('cmd+]', e, (pressed: string) => { this.history.goForward(); });
+		} else {
+			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.history.goBack(); });
+			this.shortcut('alt+arrowright', e, (pressed: string) => { this.history.goForward(); });
+		};
 
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
@@ -124,10 +131,6 @@ class Keyboard {
 	
 	isEditor () {
 		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
-	};
-	
-	onKeyUp (e: any) {
-		const k = e.key.toLowerCase();
 	};
 	
 	setFocus (v: boolean) {

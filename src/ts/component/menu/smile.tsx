@@ -232,13 +232,15 @@ class MenuSmile extends React.Component<Props, State> {
 			properties: [ 'openFile' ], 
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
+
+		this.props.close();
 		
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};
-			
+
 			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
 				if (message.error.code) {
 					return;
@@ -247,8 +249,6 @@ class MenuSmile extends React.Component<Props, State> {
 				if (onUpload) {
 					onUpload(message.hash);
 				};
-				
-				this.props.close();
 			});
 		});
 	};

@@ -4,6 +4,7 @@ const childProcess = require('child_process');
 const electron = require('electron');
 const fs = require('fs');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
+const Util = require('./util.js');
 
 function dateForFile() {
 	return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
@@ -65,7 +66,7 @@ class Server {
 				};
 
 				this.lastErrors.push(data);
-				console.error(data.toString());
+				Util.log('warn', data.toString());
 			});
 			
 			this.cp.on('exit', () => {

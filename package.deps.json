@@ -1,6 +1,7 @@
 [
   "electron.js",
   "electron/server.js",
+  "electron/util.js",
   "build",
   "!dist/*",
   "dist/index.html",

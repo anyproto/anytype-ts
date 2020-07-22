@@ -201,7 +201,7 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		
-		let { style, color, bgColor, number } = content;
+		let { style } = content;
 		let text = String(v || '');
 		let html = text;
 		
@@ -397,22 +397,36 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		let value = this.getValue().replace(/\n$/, '');
+		let ret = false;
 
 		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
+		const symbolBefore = value[range.from - 1];
 		
-		let ret = false;
-
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isCode()) {
+			if (block.isCode() || commonStore.menuIsOpen()) {
 				return;
 			};
 
+			e.preventDefault();
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				onKeyDown(e, value, this.marks, range);
 			});
 
+			ret = true;
+		});
+
+		keyboard.shortcut('shift+enter', e, (pressed: string) => {
+			e.preventDefault();
+			
+			value = Util.stringInsert(value, '\r\n', range.from, range.from);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
+				focus.apply();
+
+				onKeyDown(e, value, this.marks, range);
+			});
 			ret = true;
 		});
 
@@ -435,25 +449,19 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range && !range.from && !range.to) {
-				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks, range);
-				});
+			this.setText(this.marks, true, (message: any) => {
+				onKeyDown(e, value, this.marks, range);
+			});
+			ret = true;
 
-				ret = true;
-			};
-			
-			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
+			if (commonStore.menuIsOpen('blockAdd') && (symbolBefore == '/')) {
+				e.stopPropagation();
 				commonStore.menuClose('blockAdd');
 			};
 
 			if (commonStore.menuIsOpen('blockMention') && (range.from - 1 == filter.from)) {
 				commonStore.menuClose('blockMention');
 			};
-		});
-
-		keyboard.shortcut('/, shift+/', e, (pressed: string) => {
-			onMenuAdd(id, value, range);
 		});
 
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
@@ -487,18 +495,19 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { rootId, block } = this.props;
+		const { rootId, block, onMenuAdd } = this.props;
 		const { filter } = commonStore;
 		const { id } = block;
-		const value = this.getValue();
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
 		
+		let value = this.getValue();
 		let cmdParsed = false;
 		let cb = (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		};
+		let symbolBefore = value[range.from - 1];
 		
 		if (commonStore.menuIsOpen('blockAdd')) {
 			if (k == Key.space) {
@@ -525,6 +534,12 @@ class BlockText extends React.Component<Props, {}> {
 				};
 			};
 		};
+
+		// Open add menu
+		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !commonStore.menuIsOpen('blockAdd')) {
+			value = Util.stringCut(value, range.from - 1, range.from);
+			onMenuAdd(id, value, range);
+		};
 		
 		// Make div
 		if (value == '---') {
@@ -541,12 +556,6 @@ class BlockText extends React.Component<Props, {}> {
 		// Make image
 		if (value == '/image') {
 			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Image } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make video
-		if (value == '/video') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
@@ -605,34 +614,8 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		// Make code
-		if ((value == '/code') && !block.isCode()) {
+		if ((value == '/code' || value == '```') && !block.isCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Move to
-		if (value == '/move') {
-			commonStore.popupOpen('navigation', { 
-				preventResize: true,
-				data: { 
-					type: I.NavigationType.Move, 
-					rootId: rootId,
-					expanded: true,
-				}, 
-			});
-			cmdParsed = true;
-		};
-		
-		// Delete
-		if (value == '/delete') {
-			const next = blockStore.getNextBlock(rootId, id, -1);
-			if (next) {
-				const length = String(next.content.text || '').length;
-				focus.set(next.id, { from: length, to: length });
-				focus.apply();
-			};
-			
-			C.BlockUnlink(rootId, [ id ]);
 			cmdParsed = true;
 		};
 
@@ -641,16 +624,14 @@ class BlockText extends React.Component<Props, {}> {
 			window.clearTimeout(this.timeoutKeyUp);
 			return;
 		};
-		
-		if (k == Key.backspace) {
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
 			commonStore.menuClose('blockContext');
-		};
+		});
 		
 		this.marks = this.getMarksFromHtml();
 		this.placeHolderCheck();
-		
-		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks, false); }, 500);
+		this.setText(this.marks, false);
 	};
 
 	onMention () {

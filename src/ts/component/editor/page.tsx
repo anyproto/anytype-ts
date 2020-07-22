@@ -158,6 +158,7 @@ class EditorPage extends React.Component<Props, State> {
 				this.onPaste(e); 
 			};
 		});
+		win.on('focus.editor', (e: any) => { focus.apply(); });
 		
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
@@ -308,7 +309,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor');
+		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor');
 	};
 	
 	uiHide () {
@@ -473,11 +474,13 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
@@ -539,6 +542,28 @@ class EditorPage extends React.Component<Props, State> {
 				focus.clear(true);
 				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
 			});
+
+			// Open action menu
+			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
+				commonStore.menuOpen('blockAction', { 
+					element: '#block-' + ids[0],
+					type: I.MenuType.Vertical,
+					offsetX: Constant.size.blockMenu,
+					offsetY: 0,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					data: {
+						blockId: ids[0],
+						blockIds: ids,
+						rootId: rootId,
+						dataset: dataset,
+					},
+					onClose: () => {
+						selection.preventClear(false);
+						selection.clear();
+					}
+				});
+			});
 		};
 
 		// Remove blocks
@@ -546,10 +571,6 @@ class EditorPage extends React.Component<Props, State> {
 			e.preventDefault();
 			this.blockRemove(block);
 		});
-
-		const onTab = (shift: boolean) => {
-			
-		};
 
 		// Indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
@@ -632,11 +653,13 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
@@ -669,6 +692,8 @@ class EditorPage extends React.Component<Props, State> {
 				onClose: () => {
 					selection.preventClear(false);
 					selection.clear();
+					
+					focus.apply();
 				}
 			});
 		});
@@ -816,7 +841,6 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			console.log('R', range.from, range.to);
 			if (block.isCode() || (!block.isText() && keyboard.isFocused)) {
 				return;
 			};
@@ -829,6 +853,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			e.preventDefault();
+			e.stopPropagation();
 			
 			if ((range.from == length) && (range.to == length)) {
 				let style = I.TextStyle.Paragraph;
@@ -977,105 +1002,110 @@ class EditorPage extends React.Component<Props, State> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
+					let cb = () => {
+						// Text colors
+						if (item.isTextColor) {
+							C.BlockListSetTextColor(rootId, [ id ], item.value, cb);
+						} else 
+
+						// Background colors
+						if (item.isBgColor) {
+							C.BlockListSetBackgroundColor(rootId, [ id ], item.value, cb);
+						} else 
+
+						// Actions
+						if (item.isAction) {
+							switch (item.key) {
+
+								case 'move':
+									commonStore.popupOpen('navigation', { 
+										preventResize: true,
+										data: { 
+											type: I.NavigationType.Move, 
+											rootId: rootId,
+											expanded: true,
+											blockId: id,
+											blockIds: [ id ],
+										}, 
+									});
+									break;
+
+								case 'copy':
+									C.BlockListDuplicate(rootId, [ id ], id, I.BlockPosition.Bottom, (message: any) => {
+										if (message.blockIds && message.blockIds.length) {
+											focus.set(message.blockIds[message.blockIds.length - 1], { from: 0, to: 0 });
+											focus.apply();
+										};
+									});
+									break;
+								
+								case 'download':
+									if (hash) {
+										ipcRenderer.send('download', commonStore.fileUrl(hash));
+									};
+									break;
+									
+								case 'remove':
+									this.blockRemove(block);
+									break;
+									
+							};
+						} else
+
+						// Align
+						if (item.isAlign) {
+							C.BlockListSetAlign(rootId, [ id ], item.value, cb);
+						} else 
+
+						// Blocks
+						if (item.isBlock) {
+							let param: any = {
+								type: item.type,
+								content: {},
+							};
+								
+							if (item.type == I.BlockType.Text) {
+								param.content.style = item.key;
+							};
+							
+							if (item.type == I.BlockType.File) {
+								param.content.type = item.key;
+							};
+							
+							if (item.type == I.BlockType.Div) {
+								param.content.style = item.key;
+							};
+							
+							if (item.type == I.BlockType.Page) {
+								if (item.key == 'existing') {
+									commonStore.popupOpen('navigation', { 
+										preventResize: true,
+										data: { 
+											type: I.NavigationType.Create, 
+											rootId: rootId,
+											expanded: true,
+											skipId: rootId,
+											blockId: block.id,
+											position: position,
+										}, 
+									});
+								} else {
+									DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position);
+								};
+							} else {
+								this.blockCreate(block, position, param);
+							};
+						};
+					};
+
 					// Clear filter in block text
 					const block = blockStore.getLeaf(rootId, id);
 					if (block) {
-						DataUtil.blockSetText(rootId, block, text, marks, true);
+						DataUtil.blockSetText(rootId, block, text, marks, true, cb);
+					} else {
+						cb();
 					};
-					
-					// Text colors
-					if (item.isTextColor) {
-						C.BlockListSetTextColor(rootId, [ id ], item.value, cb);
-					} else 
-					
-					// Background colors
-					if (item.isBgColor) {
-						C.BlockListSetBackgroundColor(rootId, [ id ], item.value, cb);
-					} else 
-					
-					// Actions
-					if (item.isAction) {
-						switch (item.key) {
 
-							case 'move':
-								commonStore.popupOpen('navigation', { 
-									preventResize: true,
-									data: { 
-										type: I.NavigationType.Move, 
-										rootId: rootId,
-										expanded: true,
-										blockId: id,
-										blockIds: [ id ],
-									}, 
-								});
-								break;
-
-							case 'copy':
-								C.BlockListDuplicate(rootId, [ id ], id, I.BlockPosition.Bottom, (message: any) => {
-									if (message.blockIds && message.blockIds.length) {
-										focus.set(message.blockIds[message.blockIds.length - 1], { from: 0, to: 0 });
-										focus.apply();
-									};
-								});
-								break;
-							
-							case 'download':
-								if (hash) {
-									ipcRenderer.send('download', commonStore.fileUrl(hash));
-								};
-								break;
-								
-							case 'remove':
-								this.blockRemove(block);
-								break;
-								
-						};
-					} else
-					
-					// Align
-					if (item.isAlign) {
-						C.BlockListSetAlign(rootId, [ id ], item.value, cb);
-					} else 
-					
-					// Blocks
-					if (item.isBlock) {
-						let param: any = {
-							type: item.type,
-							content: {},
-						};
-							
-						if (item.type == I.BlockType.Text) {
-							param.content.style = item.key;
-						};
-						
-						if (item.type == I.BlockType.File) {
-							param.content.type = item.key;
-						};
-						
-						if (item.type == I.BlockType.Div) {
-							param.content.style = item.key;
-						};
-						
-						if (item.type == I.BlockType.Page) {
-							if (item.key == 'existing') {
-								commonStore.popupOpen('navigation', { 
-									preventResize: true,
-									data: { 
-										type: I.NavigationType.Create, 
-										rootId: rootId,
-										expanded: true,
-										skipId: rootId,
-										blockId: block.id,
-										position: position,
-									}, 
-								});
-							} else {
-								DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position);
-							};
-						} else {
-							this.blockCreate(block, position, param);
-						};
-					};
 				}
 			}
 		});
@@ -1404,7 +1434,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
-		if (root.isPageSet()) {
+		if (!root || root.isPageSet()) {
 			return;
 		};
 

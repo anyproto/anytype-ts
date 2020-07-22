@@ -435,10 +435,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const { focused } = focus;
-		
 		this.clear();
 		
 		if (!ids.length) {
@@ -465,12 +461,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	get (withChildren?: boolean): string[] {
-		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		
 		let ids = [] as string[];
-
-		node.find('.selectable.isSelected').each((i: number, item: any) => {
+		$('.selectable.isSelected').each((i: number, item: any) => {
 			let id = String($(item).data('id') || '');
 			if (!id) {
 				return;
