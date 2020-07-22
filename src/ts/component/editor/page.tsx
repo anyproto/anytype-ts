@@ -158,6 +158,7 @@ class EditorPage extends React.Component<Props, State> {
 				this.onPaste(e); 
 			};
 		});
+		win.on('focus.editor', (e: any) => { focus.apply(); });
 		
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
@@ -308,7 +309,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor');
+		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor');
 	};
 	
 	uiHide () {
