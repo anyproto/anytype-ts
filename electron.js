@@ -397,7 +397,7 @@ function configSet (obj, callBack) {
 
 function checkUpdate () {
 	if (!isUpdating) {
-		Util.log('info', 'checkForUpdatesAndNotify');
+		Util.log('info', 'checkUpdate');
 		autoUpdater.checkForUpdatesAndNotify();
 		clearTimeout(timeoutUpdate);
 		timeoutUpdate = setTimeout(checkUpdate, 600 * 1000);
