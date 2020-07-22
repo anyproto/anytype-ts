@@ -5,13 +5,7 @@ import { I, C, keyboard, DataUtil, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props {
-	dataset?: any;
-	rootId: string;
-	block: I.Block;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
-};
+interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -121,11 +115,11 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', []);
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', []);
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {

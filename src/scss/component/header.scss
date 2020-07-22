@@ -6,7 +6,7 @@
 	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
-		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 14px; background: url('~img/logo.svg') no-repeat;
+		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
 		background-position: center center;
 	}
 
@@ -41,6 +41,20 @@
 	.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
 	.icon.plus { background-image: url('~img/icon/header/plus.svg'); }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
+	.icon.search { background-image: url('~img/icon/header/search.svg'); }
+	.icon.add { background-image: url('~img/icon/header/add.svg'); }
+	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
+
+	.side.right { position: absolute; top: 5px; right: 6px; }
+	.side.right {
+		.icon { margin: 0px; }
+	}
+}
+
+.headerMainIndex { height: 38px; background: rgba(44,43,39,0.1); }
+.headerMainIndex {
+	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon:hover { background-color: rgba(0,0,0,0.15); }
 }
 
 .headerMainEdit { background: #fff; padding: 9px 10px 9px 82px; line-height: 20px; }
@@ -75,11 +89,6 @@
 	.side.left {
 		.icon { margin: 0px; }
 		.icon.back, .icon.forward { width: 32px; }
-	}
-
-	.side.right { position: absolute; top: 5px; right: 6px; }
-	.side.right {
-		.icon { margin: 0px; }
 	}
 }
 

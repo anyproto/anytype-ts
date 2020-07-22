@@ -5,11 +5,6 @@ import { I, C, Storage, Key, Util, DataUtil } from 'ts/lib';
 import { authStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-const { dialog } = window.require('electron').remote;
-const $ = require('jquery');
-const Constant: any = require('json/constant.json');
-const sha1 = require('sha1');
-
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
@@ -17,6 +12,11 @@ interface State {
 	loading: boolean;
 	error: string;
 };
+
+const { dialog } = window.require('electron').remote;
+const $ = require('jquery');
+const Constant: any = require('json/constant.json');
+const sha1 = require('sha1');
 
 @observer
 class PopupSettings extends React.Component<Props, State> {
@@ -28,6 +28,7 @@ class PopupSettings extends React.Component<Props, State> {
 		loading: false,
 		error: '',
 	};
+	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
 	format: string = '';
 
@@ -192,8 +193,12 @@ class PopupSettings extends React.Component<Props, State> {
 
 						{pin ? (
 							<div className="buttons">
-								<Button text="Turn pin code off" className="blank" onClick={this.onTurnOffPin} />
+								<Button text="Turn pin code off" className="blank" onClick={() => {
+									this.onConfirmPin = this.onTurnOffPin;
+									this.onPage('pinConfirm');
+								}} />
 								<Button text="Change pin code" className="blank" onClick={() => {
+									this.onConfirmPin = () => { this.onPage('pinSelect'); };
 									this.onPage('pinConfirm');
 								}} />
 							</div>
@@ -428,6 +433,10 @@ class PopupSettings extends React.Component<Props, State> {
 	onCheckPin (pin: string) {
 		if (sha1(pin) == Storage.get('pin')) {
 			this.onPage('pinSelect');
+			if (this.onConfirmPin) {
+				this.onConfirmPin();
+				this.onConfirmPin = null;
+			};
 			this.setState({ error: '' });
 		} else {
 			this.clearPin();

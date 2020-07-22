@@ -20,16 +20,11 @@ import BlockLink from './link';
 import BlockCover from './cover';
 import BlockDiv from './div';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
-	rootId: string;
-	dataset?: any;
 	cnt?: number;
 	css?: any;
 	className?: string;
-	block: I.Block;
-	onKeyDown? (e: any, text?: string): void;
-	onKeyUp? (e: any, text?: string): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
@@ -361,6 +356,8 @@ class Block extends React.Component<Props, {}> {
 			onClose: () => {
 				selection.preventClear(false);
 				selection.clear();
+
+				focus.apply();
 			}
 		});
 	};

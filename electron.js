@@ -11,20 +11,44 @@ const fs = require('fs');
 const readChunk = require('read-chunk');
 const fileType = require('file-type');
 const version = app.getVersion();
+const Util = require('./electron/util.js');
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
-let service;
-let server;
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
+
+let service, server;
+
+if (app.isPackaged) {
+	if (!app.requestSingleInstanceLock()) {
+		exit(false);
+		return;
+	};
+};
+
+storage.setDataPath(userPath);
+
+let dataPath = [];
+if (process.env.DATA_PATH) {
+	try {
+		fs.mkdirSync(process.env.DATA_PATH);
+	} catch (err) {};
+
+	dataPath.push(process.env.DATA_PATH);
+} else {
+	dataPath.push(userPath);
+	if (!app.isPackaged) {
+		dataPath.push('dev');
+	};
+	dataPath.push('data');
+};
 
 if (useGRPC) {
 	console.log('Connect via gRPC');
 
 	server = require('./electron/server.js');
-
 	let binPath = path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`);
 	binPath = fixPathForAsarUnpack(binPath);
 
@@ -67,7 +91,7 @@ if (useGRPC) {
 		
 		bindings.sendCommand(method, buffer, handler);
 	};
-	
+
 	service.client_.rpcCall = napiCall;
 };
 
@@ -83,30 +107,6 @@ let csp = [
 	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
-
-if (app.isPackaged) {
-	if (!app.requestSingleInstanceLock()) {
-		exit(false);
-		return;
-	};
-};
-
-storage.setDataPath(userPath);
-
-let dataPath = [];
-if (process.env.DATA_PATH) {
-	try {
-		fs.mkdirSync(process.env.DATA_PATH);
-	} catch (err) {};
-
-	dataPath.push(process.env.DATA_PATH);
-} else {
-	dataPath.push(userPath);
-	if (!app.isPackaged) {
-		dataPath.push('dev');
-	};
-	dataPath.push('data');
-};
 
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {
@@ -139,16 +139,12 @@ function createWindow () {
 		minWidth: 800,
 		minHeight: 640,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
+		titleBarStyle: 'hiddenInset',
+		frame: false,
 		webPreferences: {
 			nodeIntegration: true
 		}
 	};
-	
-	if (process.platform === 'darwin') {
-		param.titleBarStyle = 'hiddenInset';
-		param.frame = false;
-	};
-	
 	win = new BrowserWindow(param);
 	
 	win.once('ready-to-show', () => {
@@ -389,7 +385,7 @@ function configSet (obj, callBack) {
 
 function checkUpdate () {
 	if (!isUpdating) {
-		setStatus('checkForUpdatesAndNotify');
+		Util.log('info', 'checkForUpdatesAndNotify');
 		autoUpdater.checkForUpdatesAndNotify();
 	};
 };
@@ -405,21 +401,21 @@ function autoUpdaterInit () {
 	setInterval(checkUpdate, 600 * 1000);
 	
 	autoUpdater.on('checking-for-update', () => {
-		setStatus('Checking for update');
+		Util.log('info', 'Checking for update');
 	});
 	
 	autoUpdater.on('update-available', (info) => {
-		setStatus('Update available');
+		Util.log('info', 'Update available');
 		isUpdating = true;
 		win.webContents.send('update');
 	});
 	
 	autoUpdater.on('update-not-available', (info) => {
 		isUpdating = false;
-		setStatus('Update not available');
+		Util.log('info', 'Update not available');
 	});
 	
-	autoUpdater.on('error', (err) => { setStatus('Error: ' + err); });
+	autoUpdater.on('error', (err) => { Util.log('Error: ' + err); });
 	
 	autoUpdater.on('download-progress', (progress) => {
 		isUpdating = true;
@@ -430,28 +426,23 @@ function autoUpdaterInit () {
 			'Downloaded: ' + progress.percent + '%',
 			'(' + progress.transferred + '/' + progress.total + ')'
 		];
-		setStatus(msg.join(' '));
+		Util.log('info', msg.join(' '));
 		
 		win.webContents.send('progress', progress);
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
-		setStatus('Update downloaded');
+		Util.log('info', 'Update downloaded');
 		win.webContents.send('updateReady');
 
 		exit(true);
 	});
 };
 
-function setStatus (text) {
-	log.info(text);
-	win.webContents.send('message', text);
-};
-
 app.on('ready', waitForLibraryAndCreateWindows);
 
 app.on('second-instance', (event, argv, cwd) => {
-	setStatus('second-instance');
+	Util.log('info', 'second-instance');
 
 	if (win) {
 		if (win.isMinimized()) {
@@ -462,12 +453,12 @@ app.on('second-instance', (event, argv, cwd) => {
 });
 
 app.on('window-all-closed', () => {
-	setStatus('window-all-closed');
+	Util.log('info', 'window-all-closed');
 });
 
 app.on('before-quit', (e) => {
 	e.preventDefault();
-	setStatus('before-quit');
+	Util.log('info', 'before-quit');
 
 	exit(false);
 });
@@ -478,7 +469,7 @@ function exit (relaunch) {
 	let cb = () => {
 		if (relaunch) {
 			setTimeout(() => {
-				setStatus('Relaunch');
+				Util.log('info', 'Relaunch');
 				app.relaunch();
 				app.exit(0);
 			}, 2000);

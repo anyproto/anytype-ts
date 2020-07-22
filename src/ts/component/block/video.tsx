@@ -5,13 +5,7 @@ import { I, C, DataUtil, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props {
-	dataset?: any;
-	rootId: string;
-	block: I.Block;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
-};
+interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -143,11 +137,11 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', []);
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', []);
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {
@@ -193,6 +187,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrap = node.find('.wrap');
 		
@@ -204,6 +199,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		const h = this.getHeight(w);
 		
 		wrap.css({ width: (w * 100) + '%', height: h });
+		win.trigger('resize.editor');
 	};
 	
 	onResizeStart (e: any, checkMax: boolean) {

@@ -28,7 +28,7 @@ interface Props extends RouteComponentProps<any> {
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
@@ -401,6 +401,7 @@ class BlockText extends React.Component<Props, {}> {
 		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
+		const symbolBefore = value[range.from - 1];
 		
 		let ret = false;
 
@@ -409,10 +410,23 @@ class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			this.setText(this.marks, true, (message: any) => {
-				onKeyDown(e, value, this.marks);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				onKeyDown(e, value, this.marks, range);
 			});
 
+			ret = true;
+		});
+
+		keyboard.shortcut('shift+enter', e, (pressed: string) => {
+			e.preventDefault();
+			
+			value = Util.stringInsert(value, '\n', range.from, range.from);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
+				focus.apply();
+
+				onKeyDown(e, value, this.marks, range);
+			});
 			ret = true;
 		});
 
@@ -427,7 +441,7 @@ class BlockText extends React.Component<Props, {}> {
 				});
 			} else {
 				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks);
+					onKeyDown(e, value, this.marks, range);
 				});
 			};
 
@@ -435,13 +449,10 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range && !range.from && !range.to) {
-				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks);
-				});
-
-				ret = true;
-			};
+			this.setText(this.marks, true, (message: any) => {
+				onKeyDown(e, value, this.marks, range);
+			});
+			ret = true;
 			
 			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
 				commonStore.menuClose('blockAdd');
@@ -450,10 +461,6 @@ class BlockText extends React.Component<Props, {}> {
 			if (commonStore.menuIsOpen('blockMention') && (range.from - 1 == filter.from)) {
 				commonStore.menuClose('blockMention');
 			};
-		});
-
-		keyboard.shortcut('/, shift+/', e, (pressed: string) => {
-			onMenuAdd(id, value, range);
 		});
 
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
@@ -481,18 +488,19 @@ class BlockText extends React.Component<Props, {}> {
 			this.placeHolderHide();
 		};
 		
-		onKeyDown(e, value, this.marks);
+		onKeyDown(e, value, this.marks, range);
 	};
 	
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { rootId, block } = this.props;
+		const { rootId, block, onMenuAdd } = this.props;
 		const { filter } = commonStore;
 		const { id } = block;
 		const value = this.getValue();
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
+		const symbolBefore = value[range.from - 1];
 		
 		let cmdParsed = false;
 		let cb = (message: any) => {
@@ -524,6 +532,11 @@ class BlockText extends React.Component<Props, {}> {
 					commonStore.filterSetText(part);
 				};
 			};
+		};
+
+		// Open add menu
+		if ((symbolBefore == '/') && (k != Key.escape)) {
+			onMenuAdd(id, value, range);
 		};
 		
 		// Make div
@@ -605,11 +618,11 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		// Make code
-		if ((value == '/code') && !block.isCode()) {
+		if ((value == '/code' || value == '```') && !block.isCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
-		
+
 		// Move to
 		if (value == '/move') {
 			commonStore.popupOpen('navigation', { 
@@ -641,16 +654,17 @@ class BlockText extends React.Component<Props, {}> {
 			window.clearTimeout(this.timeoutKeyUp);
 			return;
 		};
-		
-		if (k == Key.backspace) {
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
 			commonStore.menuClose('blockContext');
-		};
+			if (symbolBefore != '/') {
+				commonStore.menuClose('blockAdd');
+			};
+		});
 		
 		this.marks = this.getMarksFromHtml();
 		this.placeHolderCheck();
-		
-		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks, false); }, 500);
+		this.setText(this.marks, false);
 	};
 
 	onMention () {

@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { Smile, Icon } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
+import { Smile } from 'ts/component';
+import { I, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props {
-	rootId: string;
-	block: I.Block;
-};
+interface Props extends I.BlockComponent {};
 
 @observer
 class BlockIconPage extends React.Component<Props, {}> {

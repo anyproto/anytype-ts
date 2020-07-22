@@ -39,10 +39,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
+		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -50,7 +49,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		const { content, bgColor } = block;
-		const { style, color } = content;
+		const { color } = content;
 		const sections = this.getSections();
 		
 		const Section = (item: any) => (
@@ -120,6 +119,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const items = this.getItems();
+
+		this.rebind();
+		this.props.setActiveItem(items[this.n]);
 		this.props.position();
 	};
 	
@@ -145,6 +148,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	onFilterChange (e: any, v: string) {
+		this.n = 0;
 		this.setState({ filter: String(v || '').replace(/[\/\\\*]/g, '') });
 	};
 	
@@ -174,8 +178,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return [];
 		};
 		
-		const { type, align, content } = block;
-		const { style } = content;
+		const { align } = block;
 
 		let sections: any[] = [
 			{ 
@@ -272,13 +275,17 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		const k = e.key.toLowerCase();
-		
+
 		if (this.focus) {
-			if (k != Key.down) {
+			if (k == Key.down) {
+				this.ref.blur();
+				this.n = -1;
+			} else 
+			if ([ Key.enter, Key.space ].indexOf(k) >= 0) {
+				this.ref.blur();
+			} else {
 				return;
 			};
-			this.ref.blur();
-			this.n = -1;
 		};
 		
 		e.preventDefault();
@@ -286,8 +293,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		keyboard.disableMouse(true);
 		
-		const { param } = this.props;
-		const { data } = param;
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];

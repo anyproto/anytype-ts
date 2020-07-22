@@ -4,10 +4,7 @@ import { I, C, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props {
-	rootId: string;
-	block: I.Block;
-};
+interface Props extends I.BlockComponent {};
 
 const Constant = require('json/constant.json');
 const { dialog } = window.require('electron').remote;

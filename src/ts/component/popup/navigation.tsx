@@ -75,7 +75,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		let n = 0;
 		let confirm = '';
-		let pages = this.state.pages;
+		let pages = this.state.pages || [];
 		let iconSearch = null;
 
 		if (showIcon) {

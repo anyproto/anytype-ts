@@ -21,7 +21,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onSettings = this.onSettings.bind(this);
 		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
@@ -57,7 +56,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
 						
 						<div className="rightMenu">
-							<Icon className={'settings ' + (commonStore.popupIsOpen('settings') ? 'active' : '')} tooltip="Settings" onClick={(e: any) => { this.onSettings(''); }} />
 							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} tooltip="Accounts" onClick={this.onAccount} />
 							<IconUser avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
@@ -103,12 +101,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		this.resize();
-	};
-	
-	onSettings (page: string) {
-		commonStore.popupOpen('settings', {
-			data: { page: page }
-		});
 	};
 	
 	onAccount () {

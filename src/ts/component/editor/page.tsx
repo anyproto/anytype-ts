@@ -473,11 +473,13 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
@@ -539,6 +541,28 @@ class EditorPage extends React.Component<Props, State> {
 				focus.clear(true);
 				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
 			});
+
+			// Open action menu
+			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
+				commonStore.menuOpen('blockAction', { 
+					element: '#block-' + ids[0],
+					type: I.MenuType.Vertical,
+					offsetX: Constant.size.blockMenu,
+					offsetY: 0,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					data: {
+						blockId: ids[0],
+						blockIds: ids,
+						rootId: rootId,
+						dataset: dataset,
+					},
+					onClose: () => {
+						selection.preventClear(false);
+						selection.clear();
+					}
+				});
+			});
 		};
 
 		// Remove blocks
@@ -546,10 +570,6 @@ class EditorPage extends React.Component<Props, State> {
 			e.preventDefault();
 			this.blockRemove(block);
 		});
-
-		const onTab = (shift: boolean) => {
-			
-		};
 
 		// Indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
@@ -573,9 +593,9 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 
-	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
+	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 		const { dataset, rootId } = this.props;
-		const { focused, range } = focus;
+		const { focused } = focus;
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
 
@@ -632,11 +652,13 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
@@ -669,6 +691,8 @@ class EditorPage extends React.Component<Props, State> {
 				onClose: () => {
 					selection.preventClear(false);
 					selection.clear();
+					
+					focus.apply();
 				}
 			});
 		});
@@ -855,7 +879,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 	
-	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
+	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 	};
 
 	onArrow (pressed: string, length: number) {
