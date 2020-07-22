@@ -227,7 +227,6 @@ class BlockTitle extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		//this.onChange(e);
 		this.placeHolderCheck();
 	};
 	

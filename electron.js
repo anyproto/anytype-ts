@@ -19,6 +19,7 @@ let userPath = app.getPath('userData');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
+let timeoutUpdate = 0;
 
 let service, server;
 
@@ -398,6 +399,8 @@ function checkUpdate () {
 	if (!isUpdating) {
 		Util.log('info', 'checkForUpdatesAndNotify');
 		autoUpdater.checkForUpdatesAndNotify();
+		clearTimeout(timeoutUpdate);
+		timeoutUpdate = setTimeout(checkUpdate, 600 * 1000);
 	};
 };
 
@@ -409,7 +412,6 @@ function autoUpdaterInit () {
 	autoUpdater.channel = config.channel;
 	
 	checkUpdate();
-	setInterval(checkUpdate, 600 * 1000);
 	
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
@@ -418,6 +420,7 @@ function autoUpdaterInit () {
 	autoUpdater.on('update-available', (info) => {
 		Util.log('info', 'Update available');
 		isUpdating = true;
+		clearTimeout(timeoutUpdate);
 		win.webContents.send('update');
 	});
 	
