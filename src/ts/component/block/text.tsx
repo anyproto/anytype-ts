@@ -201,7 +201,7 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		
-		let { style, color, bgColor, number } = content;
+		let { style } = content;
 		let text = String(v || '');
 		let html = text;
 		
@@ -402,6 +402,7 @@ class BlockText extends React.Component<Props, {}> {
 		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
+		const symbolBefore = value[range.from - 1];
 		
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			if (block.isCode() || commonStore.menuIsOpen()) {
@@ -452,8 +453,9 @@ class BlockText extends React.Component<Props, {}> {
 				onKeyDown(e, value, this.marks, range);
 			});
 			ret = true;
-			
-			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
+
+			if (commonStore.menuIsOpen('blockAdd') && (symbolBefore == '/')) {
+				e.stopPropagation();
 				commonStore.menuClose('blockAdd');
 			};
 
@@ -534,7 +536,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if ((symbolBefore == '/') && (k != Key.escape) && !commonStore.menuIsOpen('blockAdd')) {
+		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !commonStore.menuIsOpen('blockAdd')) {
 			value = Util.stringCut(value, range.from - 1, range.from);
 			onMenuAdd(id, value, range);
 		};
@@ -625,9 +627,6 @@ class BlockText extends React.Component<Props, {}> {
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			commonStore.menuClose('blockContext');
-			if (symbolBefore != '/') {
-				commonStore.menuClose('blockAdd');
-			};
 		});
 		
 		this.marks = this.getMarksFromHtml();
