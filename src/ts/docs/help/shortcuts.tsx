@@ -61,6 +61,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: 'Type <b>###</b> followed by <b>space</b> to create an H3 sub-heading.' },
 	{ style: I.TextStyle.Bulleted, text: 'Type <b>">"</b> followed by <b>space</b> to create a toggle list.' },
 	{ style: I.TextStyle.Bulleted, text: 'Type <b>"</b> followed by <b>space</b> to create a quote block.' },
+	{ style: I.TextStyle.Bulleted, text: 'Type <b>```</b> followed by <b>space</b> to create a code block.' },
 
 	{ style: I.TextStyle.Header2, text: 'Commands' },
 	{ style: I.TextStyle.Bulleted, text: 'Write command <b>/image</b> will bring up the <b>Option</b> or <b>Alt</b> to upload an image.' },
