@@ -952,7 +952,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 	
-	onMenuAdd (id: string, text: string, range: I.TextRange) {
+	onMenuAdd (id: string, text: string, range: I.TextRange, onClose?: () => void) {
 		const { rootId, dataset } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
 
@@ -995,6 +995,10 @@ class EditorPage extends React.Component<Props, State> {
 				focus.apply();
 				commonStore.filterSet(0, '');
 				$('.placeHolder.c' + id).text(Constant.placeHolder.default);
+				
+				if (onClose) {
+					onClose();
+				};
 			},
 			data: {
 				blockId: id,

@@ -29,7 +29,7 @@ interface Props extends RouteComponentProps<any> {
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange, onClose?: () => void): void;
 	onPaste? (e: any): void;
 };
 
@@ -397,16 +397,14 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		let value = this.getValue().replace(/\n$/, '');
+		let ret = false;
 
 		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
-		const symbolBefore = value[range.from - 1];
 		
-		let ret = false;
-
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isCode()) {
+			if (block.isCode() || commonStore.menuIsOpen()) {
 				return;
 			};
 
@@ -497,16 +495,16 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, block, onMenuAdd } = this.props;
 		const { filter } = commonStore;
 		const { id } = block;
-		const value = this.getValue();
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
-		const symbolBefore = value[range.from - 1];
 		
+		let value = this.getValue();
 		let cmdParsed = false;
 		let cb = (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		};
+		let symbolBefore = value[range.from - 1];
 		
 		if (commonStore.menuIsOpen('blockAdd')) {
 			if (k == Key.space) {
@@ -535,8 +533,11 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if ((symbolBefore == '/') && (k != Key.escape)) {
-			onMenuAdd(id, value, range);
+		if ((symbolBefore == '/') && (k != Key.escape) && !commonStore.menuIsOpen('blockAdd')) {
+			onMenuAdd(id, value, range, () => {
+				value = Util.stringCut(value, range.from - 1, range.from);
+				DataUtil.blockSetText(rootId, block, value, this.marks, true);
+			});
 		};
 		
 		// Make div
@@ -554,12 +555,6 @@ class BlockText extends React.Component<Props, {}> {
 		// Make image
 		if (value == '/image') {
 			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Image } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make video
-		if (value == '/video') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
@@ -620,32 +615,6 @@ class BlockText extends React.Component<Props, {}> {
 		// Make code
 		if ((value == '/code' || value == '```') && !block.isCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-
-		// Move to
-		if (value == '/move') {
-			commonStore.popupOpen('navigation', { 
-				preventResize: true,
-				data: { 
-					type: I.NavigationType.Move, 
-					rootId: rootId,
-					expanded: true,
-				}, 
-			});
-			cmdParsed = true;
-		};
-		
-		// Delete
-		if (value == '/delete') {
-			const next = blockStore.getNextBlock(rootId, id, -1);
-			if (next) {
-				const length = String(next.content.text || '').length;
-				focus.set(next.id, { from: length, to: length });
-				focus.apply();
-			};
-			
-			C.BlockUnlink(rootId, [ id ]);
 			cmdParsed = true;
 		};
 
