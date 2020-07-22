@@ -193,6 +193,7 @@
 			"node_modules/electron-log",
 			"node_modules/electron-updater",
 			"node_modules/electron-util",
+			"node_modules/electron-window-state",
 			"node_modules/esprima",
 			"node_modules/ext-list",
 			"node_modules/ext-name",

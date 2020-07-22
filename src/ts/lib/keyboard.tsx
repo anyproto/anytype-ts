@@ -46,15 +46,13 @@ class Keyboard {
 			this.history.goBack();
 		});
 
-		// Go back
-		this.shortcut('cmd+[, alt+arrowleft', e, (pressed: string) => {
-			this.history.goBack();
-		});
-
-		// Go forward
-		this.shortcut('cmd+], alt+arrowright', e, (pressed: string) => {
-			this.history.goForward();
-		});
+		if (platform == I.Platform.Mac) {
+			this.shortcut('cmd+[', e, (pressed: string) => { this.history.goBack(); });
+			this.shortcut('cmd+]', e, (pressed: string) => { this.history.goForward(); });
+		} else {
+			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.history.goBack(); });
+			this.shortcut('alt+arrowright', e, (pressed: string) => { this.history.goForward(); });
+		};
 
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
