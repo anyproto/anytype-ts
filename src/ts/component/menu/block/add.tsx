@@ -87,8 +87,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
+		const { filter } = commonStore;
 		const items = this.getItems();
-		if (!items.length) {
+
+		if ((filter.text.length > 3) && !items.length) {
 			this.props.close();
 			return;
 		};
