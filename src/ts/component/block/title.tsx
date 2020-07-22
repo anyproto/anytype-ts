@@ -40,11 +40,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 		const { id } = block;
 		
-		let { name } = details;
-		if (name == Constant.default.name) {
-			name = '';
-		};
-		
+		const name = this.checkName();
 		const cv = [ 'value', 'focusable', 'c' + id ];
 		
 		return (
@@ -303,10 +299,23 @@ class BlockTitle extends React.Component<Props, {}> {
 	save () {
 		const { rootId } = this.props;
 		const value = this.getValue();
+		const name = this.checkName();
 
-		DataUtil.pageSetName(rootId, value);
+		if (value != name) {
+			DataUtil.pageSetName(rootId, value);
+		};
 	};
-	
+
+	checkName () {
+		const { rootId } = this.props;
+		const details = blockStore.getDetails(rootId, rootId);
+		let { name } = details;
+		if (name == Constant.default.name) {
+			name = '';
+		};
+		return name;
+	};
+
 };
 
 export default BlockTitle;
