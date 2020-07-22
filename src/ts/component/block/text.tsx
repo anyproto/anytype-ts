@@ -401,6 +401,7 @@ class BlockText extends React.Component<Props, {}> {
 		const k = e.key.toLowerCase();	
 		const range = this.getRange();
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
+		const symbolBefore = value[range.from - 1];
 		
 		let ret = false;
 
@@ -462,10 +463,6 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		});
 
-		keyboard.shortcut('/, shift+/', e, (pressed: string) => {
-			onMenuAdd(id, value, range);
-		});
-
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
 			if (commonStore.menuIsOpen('smile') || block.isCode()) {
 				return;
@@ -497,12 +494,13 @@ class BlockText extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { rootId, block } = this.props;
+		const { rootId, block, onMenuAdd } = this.props;
 		const { filter } = commonStore;
 		const { id } = block;
 		const value = this.getValue();
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
+		const symbolBefore = value[range.from - 1];
 		
 		let cmdParsed = false;
 		let cb = (message: any) => {
@@ -534,6 +532,11 @@ class BlockText extends React.Component<Props, {}> {
 					commonStore.filterSetText(part);
 				};
 			};
+		};
+
+		// Open add menu
+		if ((symbolBefore == '/') && (k != Key.escape)) {
+			onMenuAdd(id, value, range);
 		};
 		
 		// Make div
@@ -651,10 +654,13 @@ class BlockText extends React.Component<Props, {}> {
 			window.clearTimeout(this.timeoutKeyUp);
 			return;
 		};
-		
-		if (k == Key.backspace) {
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
 			commonStore.menuClose('blockContext');
-		};
+			if (symbolBefore != '/') {
+				commonStore.menuClose('blockAdd');
+			};
+		});
 		
 		this.marks = this.getMarksFromHtml();
 		this.placeHolderCheck();
