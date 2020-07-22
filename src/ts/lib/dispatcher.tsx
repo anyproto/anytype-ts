@@ -573,7 +573,9 @@ class Dispatcher {
 				const renderTime = Math.ceil(t2 - t1);
 				const totalTime = middleTime + renderTime;
 
-				analytics.event(upper, { ...data, middleTime: middleTime, renderTime: renderTime });
+				data.middleTime = middleTime;
+				data.renderTime = renderTime;
+				analytics.event(upper, data);
 
 				if (debug) {
 					console.log(
