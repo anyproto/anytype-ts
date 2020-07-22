@@ -139,16 +139,12 @@ function createWindow () {
 		minWidth: 800,
 		minHeight: 640,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
+		titleBarStyle: 'hiddenInset',
+		frame: false,
 		webPreferences: {
 			nodeIntegration: true
 		}
 	};
-	
-	if (process.platform === 'darwin') {
-		param.titleBarStyle = 'hiddenInset';
-		param.frame = false;
-	};
-	
 	win = new BrowserWindow(param);
 	
 	win.once('ready-to-show', () => {
