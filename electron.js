@@ -12,6 +12,7 @@ const readChunk = require('read-chunk');
 const fileType = require('file-type');
 const version = app.getVersion();
 const Util = require('./electron/util.js');
+const windowStateKeeper = require('electron-window-state');
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
@@ -121,7 +122,7 @@ function waitForLibraryAndCreateWindows () {
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
-	
+
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
 			responseHeaders: {
@@ -130,12 +131,20 @@ function createWindow () {
 			}
 		})
 	});
+
+	let mainWindowState = windowStateKeeper({
+		defaultWidth: width,
+		defaultHeight: height
+	});
 	
 	let param = {
 		backgroundColor: '#fff',
 		show: false,
-		width: width,
-		height: height,
+		x: mainWindowState.x,
+		x: mainWindowState.x,
+		y: mainWindowState.y,
+		width: mainWindowState.width,
+		height: mainWindowState.height,
 		minWidth: 800,
 		minHeight: 640,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
@@ -146,6 +155,8 @@ function createWindow () {
 		}
 	};
 	win = new BrowserWindow(param);
+
+	mainWindowState.manage(win);
 	
 	win.once('ready-to-show', () => {
 		win.show();
