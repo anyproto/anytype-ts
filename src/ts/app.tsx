@@ -150,13 +150,15 @@ declare global {
 	interface Window { 
 		Store: any; 
 		Cmd: any; 
-		Dispatcher: any; 
+		Dispatcher: any;
+		Amplitude: any;
 	}
 };
 
 window.Store = () => { return rootStore; };
 window.Cmd = () => { return C; };
 window.Dispatcher = () => { return dispatcher; };
+window.Amplitude = () => { return analytics.instance; };
 
 class App extends React.Component<Props, State> {
 	
@@ -208,7 +210,7 @@ class App extends React.Component<Props, State> {
 	init () {
 		analytics.init();
 		analytics.setVersionName(version);
-		analytics.setUserProperties({ deviceType: 'Desktop', platform: Util.getPlatform() });
+		analytics.setUserProperties();
 
 		keyboard.init(history);
 		DataUtil.init(history);

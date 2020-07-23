@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Storage, Mapper } from 'ts/lib';
+import { I, M, Storage, Mapper, Util } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('electron').remote;
@@ -15,18 +15,21 @@ class Analytics {
 		if (!isProduction && !debug) {
 			return;
 		};
-		if (debug) {
-			console.log('[Analytics.init]', Constant.amplitude);	
-		};
-		
+
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
 			batchEvents: true,
 			saveEvents: true,
 			includeUtm: true,
 			includeReferrer: true,
+			logLevel: 'INFO',
+			platform: Util.getPlatform(),
 		});
 		this.isInit = true;
+
+		if (debug) {
+			console.log('[Analytics.init]', this.instance);
+		};
 	};
 	
 	profile (profile: any) {
@@ -45,7 +48,7 @@ class Analytics {
 		this.instance.setUserId(profile.id);
 	};
 	
-	setUserProperties (obj: any) {
+	setUserProperties () {
 		if (!this.instance) {
 			return;
 		};
@@ -54,11 +57,16 @@ class Analytics {
 		if (!isProduction && !debug) {
 			return;
 		};
+
+		const obj = { 
+			deviceType: 'Desktop', 
+			platform: Util.getPlatform(),
+		};
+
 		if (debug) {
 			console.log('[Analytics.setUserProperties]', obj);
 		};
-		
-		this.instance.setUserProperties(obj);
+		this.instance.setGlobalUserProperties(obj);
 	};
 	
 	setVersionName (name: string) {
