@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus } from 'ts/lib';
+import { Input, MenuItemVertical } from 'ts/component';
+import { I, C, keyboard, Key, Util, DataUtil, focus, Action } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -489,32 +489,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { content } = block;
-
 		switch (item.id) {
 			case 'download':
-				if (!content.hash) {
-					break;
-				};
-				
-				if (block.isImage()) {
-					ipcRenderer.send('download', commonStore.imageUrl(content.hash, Constant.size.image));
-				} else {
-					ipcRenderer.send('download', commonStore.fileUrl(content.hash));
-				};
+				Action.download(block);
 				break;
 					
 			case 'move':
-				commonStore.popupOpen('navigation', { 
-					preventResize: true,
-					data: { 
-						type: I.NavigationType.Move, 
-						rootId: rootId,
-						expanded: true,
-						blockId: blockId,
-						blockIds: blockIds,
-					}, 
-				});
+				Action.move(rootId, blockId, blockIds);
 				break;
 				
 			case 'copy':
@@ -523,23 +504,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 					ids = [ blockId ];
 				};
 
-				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {
-					if (message.blockIds && message.blockIds.length) {
-						this.setFocus(message.blockIds[message.blockIds.length - 1]);
-					};
-				});
+				Action.duplicate(rootId, ids[ids.length - 1], ids);
 				break;
 				
 			case 'remove':
-				let next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
-					return it.type == I.BlockType.Text;
-				});
-				
-				C.BlockUnlink(rootId, blockIds, (message: any) => {
-					if (next) {
-						this.setFocus(next.id);
-					};
-				});
+				Action.remove(rootId, blockId, blockIds);
 				break;
 				
 			default:
