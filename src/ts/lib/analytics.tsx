@@ -4,6 +4,8 @@ import { I, M, Storage, Mapper, Util } from 'ts/lib';
 const Constant = require('json/constant.json');
 const { app } = window.require('electron').remote;
 const isProduction = app.isPackaged;
+const version = app.getVersion();
+const os = window.require('os');
 
 class Analytics {
 	
@@ -24,6 +26,14 @@ class Analytics {
 			includeReferrer: true,
 			platform: Util.getPlatform(),
 		});
+
+		this.instance.setVersionName(version);
+		this.instance.setGlobalUserProperties({ 
+			deviceType: 'Desktop', 
+			platform: Util.getPlatform(),
+			osVersion: os.release(),
+		});
+
 		this.isInit = true;
 
 		if (debug) {
@@ -45,43 +55,6 @@ class Analytics {
 		};
 		
 		this.instance.setUserId(profile.id);
-	};
-	
-	setUserProperties () {
-		if (!this.instance) {
-			return;
-		};
-
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
-			return;
-		};
-
-		const obj = { 
-			deviceType: 'Desktop', 
-			platform: Util.getPlatform(),
-		};
-
-		if (debug) {
-			console.log('[Analytics.setUserProperties]', obj);
-		};
-		this.instance.setGlobalUserProperties(obj);
-	};
-	
-	setVersionName (name: string) {
-		if (!this.instance) {
-			return;
-		};
-
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
-			return;
-		};
-		if (debug) {
-			console.log('[Analytics.setVersionName]', name);
-		};
-		
-		this.instance.setVersionName(name);
 	};
 	
 	event (code: string, data?: any) {
