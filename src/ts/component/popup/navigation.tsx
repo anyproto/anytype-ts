@@ -350,14 +350,15 @@ class PopupNavigation extends React.Component<Props, State> {
 			const empty = obj.find('#empty');
 			const offset = expanded ? 32 : 0;
 			const wh = win.height();
+			const ww = win.width();
 			const oh = wh - 70;
 			const sh = oh - offset;
+			const width = Math.min(1136, Math.max(896, ww - 128));
 
 			sides.css({ height: sh });
 			items.css({ height: sh });
 			empty.css({ height: sh, lineHeight: sh + 'px' });
-
-			obj.css({ marginLeft: -obj.width() / 2, marginTop: 0, top: 38, height: oh });
+			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0, top: 38, height: oh });
 		});
 	};
 	

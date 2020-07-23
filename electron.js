@@ -145,7 +145,7 @@ function createWindow () {
 		y: mainWindowState.y,
 		width: mainWindowState.width,
 		height: mainWindowState.height,
-		minWidth: 800,
+		minWidth: 900,
 		minHeight: 640,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
 		titleBarStyle: 'hiddenInset',
