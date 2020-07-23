@@ -559,8 +559,8 @@ class EditorPage extends React.Component<Props, State> {
 						dataset: dataset,
 					},
 					onClose: () => {
-						selection.preventClear(false);
-						selection.clear();
+						selection.clear(true);
+						focus.apply();
 					}
 				});
 			});
@@ -690,9 +690,7 @@ class EditorPage extends React.Component<Props, State> {
 					dataset: dataset,
 				},
 				onClose: () => {
-					selection.preventClear(false);
-					selection.clear();
-					
+					selection.clear(true);
 					focus.apply();
 				}
 			});

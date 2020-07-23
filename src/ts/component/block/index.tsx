@@ -354,9 +354,7 @@ class Block extends React.Component<Props, {}> {
 				dataset: dataset,
 			},
 			onClose: () => {
-				selection.preventClear(false);
-				selection.clear();
-
+				selection.clear(true);
 				focus.apply();
 			}
 		});

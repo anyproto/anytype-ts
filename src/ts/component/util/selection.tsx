@@ -404,6 +404,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
+		if (force) {
+			this.preventClear(false);
+		};
 		$('.isSelected').removeClass('isSelected');
 	};
 	
