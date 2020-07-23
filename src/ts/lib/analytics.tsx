@@ -22,7 +22,6 @@ class Analytics {
 			saveEvents: true,
 			includeUtm: true,
 			includeReferrer: true,
-			logLevel: 'INFO',
 			platform: Util.getPlatform(),
 		});
 		this.isInit = true;
