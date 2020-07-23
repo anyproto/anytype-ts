@@ -91,15 +91,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		switch (type) {
 			default:
 			case I.NavigationType.Go:
-				confirm = 'Open as page';
+				confirm = 'Open';
 				break;
 
 			case I.NavigationType.Move:
-				confirm = 'Move to page';
+				confirm = 'Move to';
 				break;
 
 			case I.NavigationType.Create:
-				confirm = 'Link to page';
+				confirm = 'Link';
 				break;
 		};
 
