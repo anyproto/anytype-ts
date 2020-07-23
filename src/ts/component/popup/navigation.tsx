@@ -157,6 +157,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
 			let icon = null;
+			let withScale = true;
 
 			if (isRoot) {
 				icon = (
@@ -169,6 +170,8 @@ class PopupNavigation extends React.Component<Props, State> {
 					coverId = 'c' + Constant.default.cover;
 					coverType = I.CoverType.BgImage;
 				};
+
+				withScale = false;
 			} else {
 				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 			};
@@ -178,7 +181,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					{icon}
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
-					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
 					<div className="buttons">
 						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
 						<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
