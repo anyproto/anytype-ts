@@ -955,7 +955,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onMenuAdd (id: string, text: string, range: I.TextRange) {
-		const { rootId, dataset } = this.props;
+		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
 
 		if (!block) {
@@ -996,6 +996,11 @@ class EditorPage extends React.Component<Props, State> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
+					const block = blockStore.getLeaf(rootId, id);
+					const { filter } = commonStore;
+
+					text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
+
 					let cb = () => {
 						// Text colors
 						if (item.isTextColor) {
@@ -1010,7 +1015,6 @@ class EditorPage extends React.Component<Props, State> {
 						// Actions
 						if (item.isAction) {
 							switch (item.key) {
-
 								case 'download':
 									Action.download(block);
 									break;
@@ -1026,7 +1030,6 @@ class EditorPage extends React.Component<Props, State> {
 								case 'remove':
 									Action.remove(rootId, id, [ id ]);
 									break;
-									
 							};
 						} else
 
@@ -1077,8 +1080,9 @@ class EditorPage extends React.Component<Props, State> {
 					};
 
 					// Clear filter in block text
-					const block = blockStore.getLeaf(rootId, id);
 					if (block) {
+						// Hack to prevent onBlur save
+						$('#block-' + id + ' .value').text(text);
 						DataUtil.blockSetText(rootId, block, text, marks, true, cb);
 					} else {
 						cb();

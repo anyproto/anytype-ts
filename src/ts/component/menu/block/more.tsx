@@ -192,7 +192,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'print':
-				window.setTimeout(() => {
+				window.setTimeout(() => { 
 					window.print();
 				}, 300);
 				break;
