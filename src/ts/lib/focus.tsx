@@ -82,7 +82,12 @@ class Focus {
 		const wh = win.height();
 		const y = node.offset().top;
 		const offset = Constant.size.lastBlock + Constant.size.header;
-		
+		const st = win.scrollTop();
+
+		if ((y >= st) && (y <= st + wh - offset)) {
+			return;
+		};
+
 		if (y >= wh - offset) {
 			win.scrollTop(y - wh + offset);
 		};
