@@ -469,16 +469,26 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 
 			ids.push(id);
-			
 			if (withChildren) {
-				$(`#block-children-${id} .selectable`).each((i: number, child: any) => {
-					ids.push(String($(child).data('id') || ''));
-				});
+				this.getChildrenIds(id, ids);
 			};
 		});
 
 		ids = ids.filter((it: string) => { return it; });
 		return [ ...new Set(ids) ];
+	};
+
+	getChildrenIds (id: string, ids: string[]) {
+		const { rootId } = this.props;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		if (!childrenIds.length) {
+			return;
+		};
+
+		for (let childId of childrenIds) {
+			ids.push(childId);
+			this.getChildrenIds(childId, ids);
+		};
 	};
 	
 	injectProps (children: any) {
