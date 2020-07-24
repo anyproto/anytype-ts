@@ -47,6 +47,7 @@ import Select from './util/select';
 import Tooltip from './util/tooltip';
 import Drag from './util/drag';
 import Marker from './util/marker';
+import Pin from './util/pin';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
@@ -76,6 +77,7 @@ export {
 	Switch,
 	Input,
 	InputWithFile,
+	Pin,
 	Checkbox,
 	Textarea,
 	Button,

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Emoji } from 'emoji-mart';
 import { Input, Smile } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
@@ -12,7 +11,7 @@ interface State {
 };
 
 const $ = require('jquery');
-const EmojiData = require('emoji-mart/data/apple.json');
+const EmojiData = require('json/emoji.json');
 const Constant = require('json/constant.json');
 const { dialog } = window.require('electron').remote;
 
