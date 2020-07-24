@@ -24,7 +24,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `The carriage could be moved to the new block after it was positioned it the title without a glitch.` },
 	{ style: I.TextStyle.Bulleted, text: `Pincode input saving all the symbols when typing fast.` },
 	{ style: I.TextStyle.Bulleted, text: `Image. The bigger picture view was fixed.` },
-	{ style: I.TextStyle.Bulleted, text: `Creating a new block (pressing <span class="${sc}">Enter</span>) doesn't lead to page jump when the page has been scrolled down.` },
+	{ style: I.TextStyle.Bulleted, text: `Creating a new block (pressing <span class="${sc}">Enter</span>) lead to page jump when the page has been scrolled down. Now it's ok!` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
