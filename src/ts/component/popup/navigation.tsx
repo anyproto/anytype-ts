@@ -356,7 +356,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			const ww = win.width();
 			const oh = wh - 70;
 			const sh = oh - offset;
-			const width = Math.min(1136, Math.max(896, ww - 128));
+			const width = expanded ? Math.min(1136, Math.max(896, ww - 128)) : 400;
 
 			sides.css({ height: sh });
 			items.css({ height: sh });
