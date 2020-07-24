@@ -1,9 +1,11 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Storage, Mapper } from 'ts/lib';
+import { I, M, Storage, Mapper, Util } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('electron').remote;
 const isProduction = app.isPackaged;
+const version = app.getVersion();
+const os = window.require('os');
 
 class Analytics {
 	
@@ -15,18 +17,28 @@ class Analytics {
 		if (!isProduction && !debug) {
 			return;
 		};
-		if (debug) {
-			console.log('[Analytics.init]', Constant.amplitude);	
-		};
-		
+
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
 			batchEvents: true,
 			saveEvents: true,
 			includeUtm: true,
 			includeReferrer: true,
+			platform: Util.getPlatform(),
 		});
+
+		this.instance.setVersionName(version);
+		this.instance.setGlobalUserProperties({ 
+			deviceType: 'Desktop', 
+			platform: Util.getPlatform(),
+			osVersion: os.release(),
+		});
+
 		this.isInit = true;
+
+		if (debug) {
+			console.log('[Analytics.init]', this.instance);
+		};
 	};
 	
 	profile (profile: any) {
@@ -43,38 +55,6 @@ class Analytics {
 		};
 		
 		this.instance.setUserId(profile.id);
-	};
-	
-	setUserProperties (obj: any) {
-		if (!this.instance) {
-			return;
-		};
-
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
-			return;
-		};
-		if (debug) {
-			console.log('[Analytics.setUserProperties]', obj);
-		};
-		
-		this.instance.setUserProperties(obj);
-	};
-	
-	setVersionName (name: string) {
-		if (!this.instance) {
-			return;
-		};
-
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
-			return;
-		};
-		if (debug) {
-			console.log('[Analytics.setVersionName]', name);
-		};
-		
-		this.instance.setVersionName(name);
 	};
 	
 	event (code: string, data?: any) {

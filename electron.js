@@ -148,12 +148,16 @@ function createWindow () {
 		minWidth: 800,
 		minHeight: 640,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
-		titleBarStyle: 'hiddenInset',
-		frame: false,
 		webPreferences: {
 			nodeIntegration: true
-		}
+		},
 	};
+
+	if (process.platform == 'darwin') {
+		param.titleBarStyle = 'hiddenInset';
+		param.frame = false;
+	};
+
 	win = new BrowserWindow(param);
 
 	mainWindowState.manage(win);
@@ -490,7 +494,9 @@ function exit (relaunch) {
 	};
 
 	if (useGRPC) {
-		server.stop();
+		if (server) {
+			server.stop();
+		};
 		cb();
 	} else {
 		const Commands = require('./dist/lib/pb/protos/commands_pb');
