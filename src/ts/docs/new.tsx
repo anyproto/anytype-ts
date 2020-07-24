@@ -19,10 +19,10 @@ export default [
 	{ style: I.TextStyle.Header3, text: `Sneaky bugs were fixed:` },
 	{ style: I.TextStyle.Bulleted, text: `Redo <span class="${sc}">CMD + Shift + Z</span> is working properly now.`  },
 	{ style: I.TextStyle.Bulleted, text: `Fixed shortcut for turn-into menu. It was launching with <span class="${sc}">?</span>, <span class="${sc}">,</span> in some keyboards.` },
-  { style: I.TextStyle.Bulleted, text: 'Disappearing symbols problem was solved. Splitting and merging blocks could lead to an unwanted state when typing fast.' },
+  { style: I.TextStyle.Bulleted, text: 'Splitting and merging blocks could lead to an unwanted state with disappearing symbols when typing fast. This problem was solved. ' },
 	{ style: I.TextStyle.Bulleted, text: `Menu. Filtering. When using search the first element gets selected by default now.` },
 	{ style: I.TextStyle.Bulleted, text: `The carriage could be moved to the new block after it was positioned it the title without a glitch.` },
-	{ style: I.TextStyle.Bulleted, text: `Pincode input saving all the symbols when fast typing.` },
+	{ style: I.TextStyle.Bulleted, text: `Pincode input saving all the symbols when typing fast.` },
 	{ style: I.TextStyle.Bulleted, text: `Image. The bigger picture view was fixed.` },
 	{ style: I.TextStyle.Bulleted, text: `Creating a new block (pressing <span class="${sc}">Enter</span>) doesn't lead to page jump when the page has been scrolled down.` },
 
