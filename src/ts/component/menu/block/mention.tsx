@@ -84,6 +84,11 @@ class MenuBlockMention extends React.Component<Props, State> {
 			this.setState({ page: 0 });
 		};
 
+		if ((filter.text.length > 3) && !items.length) {
+			this.props.close();
+			return;
+		};
+
 		this.setActive(items[this.n]);
 		this.props.position();
 	};
