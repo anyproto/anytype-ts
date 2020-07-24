@@ -238,7 +238,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		return blockStore.getChildren(root, root, (it: any) => {
 			const details = blockStore.getDetails(root, it.content.targetBlockId);
-			return !details.isArchived/* && (it.content.style != I.LinkStyle.Dataview)*/;
+			return !details.isArchived && (it.content.style != I.LinkStyle.Dataview);
 		});
 	};
 
