@@ -382,7 +382,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
+		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
 		const { filter } = commonStore;
 		
@@ -400,7 +400,7 @@ class BlockText extends React.Component<Props, {}> {
 		let ret = false;
 
 		const k = e.key.toLowerCase();	
-		const range = this.getRange();
+		const range = this.getRange() || { from: 0, to: 0 };
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
 		const symbolBefore = value[range.from - 1];
 		
@@ -928,7 +928,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('.value').get(0) as Element);
-		
 		return range ? { from: range.start, to: range.end } : null;
 	};
 	
