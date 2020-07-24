@@ -17,6 +17,7 @@ import * as C from './command';
 import * as Response from './response';
 import * as Docs from 'ts/docs';
 import Mapper from './mapper';
+import Action from './action';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
@@ -55,4 +56,5 @@ export {
 	Encode,
 	Decode,
 	Mapper,
+	Action,
 };

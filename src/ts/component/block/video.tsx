@@ -28,8 +28,6 @@ class BlockVideo extends React.Component<Props, {}> {
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onResizeInit = this.onResizeInit.bind(this);
-		this.onMenuDown = this.onMenuDown.bind(this);
-		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onPlay = this.onPlay.bind(this);
 	};
 
@@ -67,7 +65,6 @@ class BlockVideo extends React.Component<Props, {}> {
 						<video className="media" controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
 						<Icon className="play" onClick={this.onPlay} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
-						<Icon id={'block-video-menu-' + id} className="dots dn" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 					</div>
 				);
 				break;
@@ -279,40 +276,6 @@ class BlockVideo extends React.Component<Props, {}> {
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },
 		]);
-	};
-	
-	onMenuDown (e: any) {
-		const { dataset, rootId, block } = this.props;
-		const { id } = block;
-		const { selection } = dataset || {};
-		
-		if (selection) {
-			selection.preventClear(true);
-		};
-	};
-	
-	onMenuClick (e: any) {
-		const { dataset, rootId, block } = this.props;
-		const { id } = block;
-		const { selection } = dataset || {};
-		
-		commonStore.menuOpen('blockAction', { 
-			element: '#block-video-menu-' + id,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				blockId: id,
-				blockIds: DataUtil.selectionGet(id, this.props),
-				rootId: rootId,
-				dataset: dataset,
-			},
-			onClose: () => {
-				selection.preventClear(false);
-			}
-		});
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {

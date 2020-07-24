@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper } from 'ts/lib';
+import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -559,8 +559,8 @@ class EditorPage extends React.Component<Props, State> {
 						dataset: dataset,
 					},
 					onClose: () => {
-						selection.preventClear(false);
-						selection.clear();
+						selection.clear(true);
+						focus.apply();
 					}
 				});
 			});
@@ -690,9 +690,7 @@ class EditorPage extends React.Component<Props, State> {
 					dataset: dataset,
 				},
 				onClose: () => {
-					selection.preventClear(false);
-					selection.clear();
-					
+					selection.clear(true);
 					focus.apply();
 				}
 			});
@@ -955,7 +953,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onMenuAdd (id: string, text: string, range: I.TextRange) {
-		const { rootId, dataset } = this.props;
+		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
 
 		if (!block) {
@@ -963,16 +961,10 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const { content } = block;
-		const { marks, hash } = content;
-		const { selection } = dataset || {};
+		const { marks } = content;
 		
 		const length = String(text || '').length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
-		const cb = (message: any) => {
-			focus.set(message.blockId, { from: length, to: length });
-			focus.apply();
-		};
-
 		const el = $('#block-' + id);
 		const offset = el.offset() || {};
 		const rect = Util.selectionRect();
@@ -1002,6 +994,11 @@ class EditorPage extends React.Component<Props, State> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
+					const block = blockStore.getLeaf(rootId, id);
+					const { filter } = commonStore;
+
+					text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
+
 					let cb = () => {
 						// Text colors
 						if (item.isTextColor) {
@@ -1016,39 +1013,21 @@ class EditorPage extends React.Component<Props, State> {
 						// Actions
 						if (item.isAction) {
 							switch (item.key) {
+								case 'download':
+									Action.download(block);
+									break;
 
 								case 'move':
-									commonStore.popupOpen('navigation', { 
-										preventResize: true,
-										data: { 
-											type: I.NavigationType.Move, 
-											rootId: rootId,
-											expanded: true,
-											blockId: id,
-											blockIds: [ id ],
-										}, 
-									});
+									Action.move(rootId, id, [ id ]);
 									break;
 
 								case 'copy':
-									C.BlockListDuplicate(rootId, [ id ], id, I.BlockPosition.Bottom, (message: any) => {
-										if (message.blockIds && message.blockIds.length) {
-											focus.set(message.blockIds[message.blockIds.length - 1], { from: 0, to: 0 });
-											focus.apply();
-										};
-									});
+									Action.duplicate(rootId, id, [ id ]);
 									break;
 								
-								case 'download':
-									if (hash) {
-										ipcRenderer.send('download', commonStore.fileUrl(hash));
-									};
-									break;
-									
 								case 'remove':
-									this.blockRemove(block);
+									Action.remove(rootId, id, [ id ]);
 									break;
-									
 							};
 						} else
 
@@ -1099,8 +1078,9 @@ class EditorPage extends React.Component<Props, State> {
 					};
 
 					// Clear filter in block text
-					const block = blockStore.getLeaf(rootId, id);
 					if (block) {
+						// Hack to prevent onBlur save
+						$('#block-' + id + ' .value').text(text);
 						DataUtil.blockSetText(rootId, block, text, marks, true, cb);
 					} else {
 						cb();
