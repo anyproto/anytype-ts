@@ -10,7 +10,7 @@ export default [
 	{ style: I.TextStyle.Header3, text: `Small features were implemented:` },
 	{ style: I.TextStyle.Bulleted, text: `You can use shortcuts to go back and forward. To open the previous page from your history use <span class="${sc}">CMD + [</span> for macOS or <span class="${sc}">Alt + ←</span> for Windows. <span class="${sc}">CMD + ]</span> for macOS or <span class="${sc}">Alt + →</span> for Windows for another direction.` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="${sc}">CMD + /</span> now works with multiple blocks.` },
-	{ style: I.TextStyle.Bulleted, text: `Powertool <span class="${sc}">/</span> and mention <span class="${sc}">@</span> menu auto-close you when continue typing with no results.` },
+	{ style: I.TextStyle.Bulleted, text: `Powertool <span class="${sc}">/</span> and mention <span class="${sc}">@</span> menu auto-close when you continue typing with no results.` },
 	{ style: I.TextStyle.Bulleted, text: 'Type <span class="bgColor bgColor-grey textColor textColor-red nw">```</span> to add a new code block.' },
 	{ style: I.TextStyle.Bulleted, text: `We made dashboard style update and new geometric wallpapers.` },
 	{ style: I.TextStyle.Bulleted, text: `Pin code verification was added in case you want to change or turn it off.` },
