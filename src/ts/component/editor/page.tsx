@@ -968,6 +968,10 @@ class EditorPage extends React.Component<Props, State> {
 		const el = $('#block-' + id);
 		const offset = el.offset() || {};
 		const rect = Util.selectionRect();
+		const onCommand = (message: any) => {
+			focus.set(message.blockId, { from: length, to: length });
+			focus.apply();
+		};
 		
 		let x = rect.x - offset.left;
 		let y = rect.y - (offset.top - $(window).scrollTop()) - el.outerHeight() + rect.height + 8;
@@ -999,15 +1003,15 @@ class EditorPage extends React.Component<Props, State> {
 
 					text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
 
-					let cb = () => {
+					const onSave = () => {
 						// Text colors
 						if (item.isTextColor) {
-							C.BlockListSetTextColor(rootId, [ id ], item.value, cb);
+							C.BlockListSetTextColor(rootId, [ id ], item.value, onCommand);
 						} else 
 
 						// Background colors
 						if (item.isBgColor) {
-							C.BlockListSetBackgroundColor(rootId, [ id ], item.value, cb);
+							C.BlockListSetBackgroundColor(rootId, [ id ], item.value, onCommand);
 						} else 
 
 						// Actions
@@ -1033,7 +1037,7 @@ class EditorPage extends React.Component<Props, State> {
 
 						// Align
 						if (item.isAlign) {
-							C.BlockListSetAlign(rootId, [ id ], item.value, cb);
+							C.BlockListSetAlign(rootId, [ id ], item.value, onCommand);
 						} else 
 
 						// Blocks
@@ -1081,9 +1085,9 @@ class EditorPage extends React.Component<Props, State> {
 					if (block) {
 						// Hack to prevent onBlur save
 						$('#block-' + id + ' .value').text(text);
-						DataUtil.blockSetText(rootId, block, text, marks, true, cb);
+						DataUtil.blockSetText(rootId, block, text, marks, true, onSave);
 					} else {
-						cb();
+						onSave();
 					};
 
 				}
