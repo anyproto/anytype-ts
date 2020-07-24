@@ -111,12 +111,12 @@ class PopupSettings extends React.Component<Props, State> {
 				let covers1 = [  ];
 				let covers2 = [];
 
-				for (let c of colors) {
-					covers1.push({ id: c, image: '', type: I.CoverType.Color });
+				for (let i = 1; i <= 11; ++i) {
+					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.BgImage });
 				};
 
-				for (let i = 1; i <= 11; ++i) {
-					covers2.push({ id: 'c' + i, image: '', type: I.CoverType.BgImage });
+				for (let c of colors) {
+					covers2.push({ id: c, image: '', type: I.CoverType.Color });
 				};
 
 				if (coverImage) {
@@ -142,7 +142,7 @@ class PopupSettings extends React.Component<Props, State> {
 						</div>
 
 						<div className="row">
-							<Label className="name" text="Colours" />
+						<Label className="name" text="Pictures" />
 							<div className="covers">
 								{covers1.map((item: any, i: number) => (
 									<Item key={i} {...item} active={item.id == cover.id} />
@@ -151,7 +151,7 @@ class PopupSettings extends React.Component<Props, State> {
 						</div>
 
 						<div className="row last">
-							<Label className="name" text="Pictures" />
+							<Label className="name" text="Colours" />
 							<div className="covers">
 								{covers2.map((item: any, i: number) => (
 									<Item key={i} {...item} preview={true} active={item.id == cover.id} />
