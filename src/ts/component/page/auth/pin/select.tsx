@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, Key, translate } from 'ts/lib';
+import { Frame, Cover, Title, Label, Error, Pin, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { translate, Storage } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-
-const Constant: any = require('json/constant.json');
 
 interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	error: string;
 };
+
+const Constant: any = require('json/constant.json');
 
 @observer
 class PageAuthPinSelect extends React.Component<Props, State> {
@@ -24,7 +24,7 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 	constructor (props: any) {
         super(props);
 
-		this.onChange = this.onChange.bind(this);
+		this.onSuccess = this.onSuccess.bind(this);
 	};
 	
 	render () {
@@ -47,52 +47,17 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 					<Label text={translate('authPinSelectLabel')} />
 					<Error text={error} />
 					
-					{inputs.map((item: any, i: number) => (
-						<Input ref={(ref: any) => this.refObj[item.id] = ref} maxLength={1} key={i} onKeyUp={(e: any) => { this.onChange(e, item.id); }} />
-					))}
+					<Pin onSuccess={this.onSuccess} />
 				</Frame>
 			</div>
 		);
     };
 
-	componentDidMount () {
-		window.setTimeout(() => { this.refObj[1].focus(); }, 15);
-	};
-	
-	onChange (e: any, id: number) {
+	onSuccess (pin: string) {
 		const { match, history } = this.props;
-		const k = e.key.toLowerCase();
-		const input = this.refObj[id];
-		const prev = this.refObj[id - 1];
-		const next = this.refObj[id + 1];
-		const v = input.getValue();
-		const pin = this.getPin();
-		
-		input.setType(input.getValue() ? 'password' : 'text');
-		
-		if ((k == Key.backspace) && prev) {
-			prev.setValue('');
-			prev.setType('text');
-			prev.focus();
-		} else 
-		if (v && next) {
-			next.focus();	
-		};
-		
-		if (pin.length != Constant.pinSize) {
-			return;
-		};
-		
+
 		authStore.pinSet(pin);
 		history.push('/auth/pin-confirm/' + match.params.id);
-	};
-	
-	getPin () {
-		let c: string[] = [];
-		for (let i in this.refObj) {
-			c.push(this.refObj[i].getValue());
-		};
-		return c.join('');
 	};
 	
 };
