@@ -91,15 +91,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		switch (type) {
 			default:
 			case I.NavigationType.Go:
-				confirm = 'Open as page';
+				confirm = 'Open';
 				break;
 
 			case I.NavigationType.Move:
-				confirm = 'Move to page';
+				confirm = 'Move to';
 				break;
 
 			case I.NavigationType.Create:
-				confirm = 'Link to page';
+				confirm = 'Link';
 				break;
 		};
 
@@ -157,6 +157,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
 			let icon = null;
+			let withScale = true;
 
 			if (isRoot) {
 				icon = (
@@ -169,6 +170,8 @@ class PopupNavigation extends React.Component<Props, State> {
 					coverId = 'c' + Constant.default.cover;
 					coverType = I.CoverType.BgImage;
 				};
+
+				withScale = false;
 			} else {
 				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 			};
@@ -178,7 +181,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					{icon}
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
-					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
 					<div className="buttons">
 						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
 						<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
@@ -350,14 +353,15 @@ class PopupNavigation extends React.Component<Props, State> {
 			const empty = obj.find('#empty');
 			const offset = expanded ? 32 : 0;
 			const wh = win.height();
+			const ww = win.width();
 			const oh = wh - 70;
 			const sh = oh - offset;
+			const width = Math.min(1136, Math.max(896, ww - 128));
 
 			sides.css({ height: sh });
 			items.css({ height: sh });
 			empty.css({ height: sh, lineHeight: sh + 'px' });
-
-			obj.css({ marginLeft: -obj.width() / 2, marginTop: 0, top: 38, height: oh });
+			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0, top: 38, height: oh });
 		});
 	};
 	

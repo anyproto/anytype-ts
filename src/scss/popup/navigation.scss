@@ -64,7 +64,6 @@
 			}
 		}
 
-		.innerWrap.expanded { width: 1136px; margin: 0px 0px 0px -578px; }
 		.innerWrap.expanded {
 			.sides { display: flex; padding: 16px; }
 			
@@ -91,7 +90,7 @@
 					.smile { background: #f7f5f0; }
 				}
 
-				.item.empty { line-height: 80px; cursor: default; }
+				.item.empty { line-height: 78px; cursor: default; }
 				.item.empty {
 					.name { display: inline-block; vertical-align: middle; color: $colorDarkGrey; }
 				}
