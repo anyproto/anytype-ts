@@ -7,6 +7,7 @@ export default [
 	{ type: I.BlockType.Title, text: `Updates for 24 July, 2020` },
 
 	{ text: `Fixed syncing between devices. You finally can transfer data to another computer with the same mnemonic phrase. It's a simple implementation, so it can still lead to modification loss in case of concurrent changes in the same document.` },
+	{ text: `To maximize the probability of successful synchronization we recommend updating both devices to this version.` },
 	{ style: I.TextStyle.Header3, text: `Small features were implemented:` },
 	{ style: I.TextStyle.Bulleted, text: `You can use shortcuts to go back and forward. To open the previous page from your history use <span class="${sc}">CMD + [</span> for macOS or <span class="${sc}">Alt + ←</span> for Windows. <span class="${sc}">CMD + ]</span> for macOS or <span class="${sc}">Alt + →</span> for Windows for another direction.` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="${sc}">CMD + /</span> now works with multiple blocks.` },
