@@ -28,7 +28,7 @@
 	.wrap.isDraggingOver { opacity: 0.5; }
 	
 	.cover { position: absolute; left: 0px; top: 0px; transform-origin: 0px 0px; }
-	img.cover { height: auto; }
+	img.cover { background-color: transparent; height: auto; }
 	.elements { width: 704px; height: calc(100% - 40px); position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; }
 	.elements:hover { 
 		.btn { opacity: 1 !important; }
