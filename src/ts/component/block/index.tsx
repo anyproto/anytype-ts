@@ -314,7 +314,7 @@ class Block extends React.Component<Props, {}> {
 			selection.set([ block.id ]);
 			ids = [ block.id ];
 		};
-				
+		
 		selection.preventSelect(true);
 		selection.preventClear(true);
 		
@@ -328,6 +328,8 @@ class Block extends React.Component<Props, {}> {
 		if (selection) {
 			selection.preventClear(true);
 		};
+
+		focus.clear(true);
 	};
 	
 	onMenuClick (e: any) {
