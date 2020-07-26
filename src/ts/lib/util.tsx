@@ -349,7 +349,7 @@ class Util {
 	};
 	
 	tooltipShow (text: string, node: any, typeY: I.MenuDirection) {
-		if (!node.length) {
+		if (!node.length || keyboard.isResizing) {
 			return;
 		};
 

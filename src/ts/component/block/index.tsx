@@ -290,6 +290,8 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onDragStart (e: any) {
+		e.stopPropagation();
+
 		if (!this._isMounted) {
 			return;
 		};
@@ -303,7 +305,6 @@ class Block extends React.Component<Props, {}> {
 		
 		if (!block.isDraggable()) {
 			e.preventDefault();
-			e.stopPropagation();
 			return;
 		};
 		
@@ -381,10 +382,12 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onResizeStart (e: any, index: number) {
+		e.stopPropagation();
+
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
@@ -397,6 +400,7 @@ class Block extends React.Component<Props, {}> {
 		
 		if (selection) {
 			selection.preventSelect(true);
+			selection.clear(true);
 		};
 
 		this.unbind();
@@ -407,8 +411,8 @@ class Block extends React.Component<Props, {}> {
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
 		
-		win.on('mousemove.block', throttle((e: any) => { this.onResize(e, index, offset); }, THROTTLE));
-		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e, index, offset); }));
+		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
+		win.on('mouseup.block', (e: any) => { this.onResizeEnd(e, index, offset); });
 		
 		node.find('.resizable').trigger('resizeStart', [ e ]);
 	};
