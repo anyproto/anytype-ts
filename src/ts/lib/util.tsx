@@ -11,6 +11,7 @@ const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 const os = window.require('os');
 const sprintf = require('sprintf-kit')({
 	d: require('sprintf-kit/modifiers/d'),
@@ -521,7 +522,7 @@ class Util {
 
 	checkError (code: number) {
 		// App is already working
-		if (code == 108) {
+		if (code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 			alert('You have another instance of anytype running on this machine. Closing...');
 			ipcRenderer.send('exit', false);
 		};

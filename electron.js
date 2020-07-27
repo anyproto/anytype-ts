@@ -202,6 +202,10 @@ function createWindow () {
 	ipcMain.on('exit', (e, relaunch) => {
 		exit(relaunch);
 	});
+
+	ipcMain.on('update', (e) => {
+		checkUpdate();
+	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
 		shell.openExternal(url).catch((error) => {

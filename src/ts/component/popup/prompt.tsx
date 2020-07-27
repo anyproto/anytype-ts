@@ -49,7 +49,7 @@ class PopupPrompt extends React.Component<Props, {}> {
 		const { onChange } = data;
 		
 		e.preventDefault();
-		commonStore.popupClose(id);
+		this.props.close();
 		
 		if (onChange) {
 			onChange(this.refValue.getValue());
