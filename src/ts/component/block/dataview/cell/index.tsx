@@ -69,8 +69,8 @@ class Cell extends React.Component<Props, {}> {
 	
 	onClick (e: any) {
 		const { id, relation, data, readOnly } = this.props;
-		
-		if (readOnly) {
+
+		if (readOnly || relation.isReadOnly) {
 			return;
 		};
 

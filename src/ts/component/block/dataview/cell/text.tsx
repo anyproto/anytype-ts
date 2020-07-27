@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, keyboard } from 'ts/lib';
+import { I, C, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Smile, Input, Textarea } from 'ts/component';
 
 interface Props extends I.Cell {};
@@ -24,6 +24,7 @@ class CellText extends React.Component<Props, State> {
 		this.onClick = this.onClick.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onChange = this.onChange.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 	};
@@ -50,6 +51,7 @@ class CellText extends React.Component<Props, State> {
 					className="name" 
 					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
+					onChange={this.onChange}
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
 				/>
@@ -88,9 +90,9 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		return (
-			<span>
+			<div className="cellWrap">
 				{content}
-			</span>
+			</div>
 		);
 	};
 
@@ -125,6 +127,15 @@ class CellText extends React.Component<Props, State> {
 
 	onKeyUp (e: any, value: string) {
 		this.resize();
+	};
+
+	onChange (e: any, value: string) {
+		let { rootId, block, data, relation } = this.props;
+		
+		data = Util.objectCopy(data);
+		data[relation.id] = value;
+
+		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);
 	};
 
 	onFocus (e: any) {

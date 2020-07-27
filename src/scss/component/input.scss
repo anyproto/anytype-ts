@@ -2,7 +2,7 @@
 
 .input {
 	background: none; height: 30px; border-radius: 0px; color: $colorBlack; padding: 0px 12px; font-size: 14px; width: 100%;
-	letter-spacing: 0.2px;
+	letter-spacing: 0.04px;
 }
 .input.readOnly { background: #f7f5f0; cursor: default; }
 .input::placeholder { color: #d2d0c2; }

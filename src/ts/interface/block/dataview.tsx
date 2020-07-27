@@ -95,6 +95,8 @@ export interface View {
 };
 
 export interface Cell {
+	rootId: string;
+	block: I.Block;
 	id: string;
 	relation: Relation;
 	data: any;

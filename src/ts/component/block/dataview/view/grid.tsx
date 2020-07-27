@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
-import { I, DataUtil } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import Cell from '../cell';
@@ -20,15 +20,16 @@ class ViewGrid extends React.Component<Props, {}> {
 		super (props);
 
 		this.onRowOver = this.onRowOver.bind(this);
+		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 	};
 
 	render () {
-		const { block, data, view, onOpen, readOnly, getData } = this.props;
+		const { rootId, block, data, view, onOpen, getData, readOnly } = this.props;
 		const { content } = block;
 		const { offset, total } = content;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		
+
 		const CellHead = (item: any) => (
 			<th className={'head c-' + item.type}>
 				<Icon className={'relation c-' + item.type} />
@@ -52,6 +53,8 @@ class ViewGrid extends React.Component<Props, {}> {
 						onOpen={onOpen} 
 						{...item} 
 						view={view} 
+						rootId={rootId}
+						block={block}
 						id={item.index} 
 						readOnly={readOnly}
 					/>
@@ -101,7 +104,7 @@ class ViewGrid extends React.Component<Props, {}> {
 							))}
 							{!readOnly ? (
 								<tr>
-									<td className="cell add" colSpan={view.relations.length + 1}>
+									<td className="cell add" colSpan={view.relations.length + 1} onClick={this.onRowAdd}>
 										<Icon className="plus" />
 										<div className="name">New</div>
 									</td>
@@ -157,13 +160,20 @@ class ViewGrid extends React.Component<Props, {}> {
 		node.find('#row-' + id).addClass('active');
 	};
 
+	onRowAdd (e: any) {
+		const { rootId, block } = this.props;
+
+		C.BlockCreateDataviewRecord(rootId, block.id, {});
+	};
+
 	onCellClick (e: any, item: any) {
 		const { readOnly } = this.props;
-		if (readOnly) {
+		const { index, relation } = item;
+		
+		if (readOnly || relation.isReadOnly) {
 			return;
 		};
 
-		const { index, relation } = item;
 		const id = DataUtil.cellId(relation.id, index);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cell = node.find('#' + id);
