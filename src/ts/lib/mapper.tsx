@@ -30,6 +30,10 @@ const Mapper = {
             };
         },
 
+        Record: (obj: any) => {
+            return Decode.decodeStruct(obj);
+        },
+
         Range: (obj: any) => {
             return {
                 from: obj.getFrom(),

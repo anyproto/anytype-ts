@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Cell from '../cell';
@@ -46,17 +47,19 @@ class ViewGrid extends React.Component<Props, {}> {
 				cn.push('isName');
 			};
 
+			console.log(item);
+
 			return (
 				<td id={id} className={cn.join(' ')} onClick={(e: any) => { this.onCellClick(e, item); }}>
 					<Cell 
 						ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
-						onOpen={onOpen} 
 						{...item} 
-						view={view} 
 						rootId={rootId}
 						block={block}
+						view={view} 
 						id={item.index} 
 						readOnly={readOnly}
+						onOpen={onOpen} 
 					/>
 				</td>
 			);
@@ -163,7 +166,14 @@ class ViewGrid extends React.Component<Props, {}> {
 	onRowAdd (e: any) {
 		const { rootId, block } = this.props;
 
-		C.BlockCreateDataviewRecord(rootId, block.id, {});
+		C.BlockCreateDataviewRecord(rootId, block.id, {}, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			block.content.data.push(message.record);
+			blockStore.blockUpdate(rootId, block);
+		});
 	};
 
 	onCellClick (e: any, item: any) {
