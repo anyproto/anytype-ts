@@ -148,6 +148,18 @@ class BlockTitle extends React.Component<Props, {}> {
 				this.onArrow(Key.down);
 			});
 		};
+
+		// Undo
+		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
+			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+		});
+
+		// Redo
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+		});
 		
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {

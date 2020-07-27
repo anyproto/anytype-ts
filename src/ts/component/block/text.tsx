@@ -290,7 +290,6 @@ class BlockText extends React.Component<Props, {}> {
 				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 				smile.after('<img src="./img/space.svg" class="space" />');
 				param.class += ' withImage';
-			} else {
 			};
 
 			item.addClass(param.class);
@@ -298,7 +297,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			DataUtil.pageOpen (e, $(this).data('param'));
+			DataUtil.pageOpen(e, $(this).data('param'));
 		});
 	};
 
@@ -520,6 +519,7 @@ class BlockText extends React.Component<Props, {}> {
 					commonStore.filterSetText(part);
 				};
 			};
+			return;
 		};
 
 		if (commonStore.menuIsOpen('blockMention')) {
@@ -533,6 +533,7 @@ class BlockText extends React.Component<Props, {}> {
 					commonStore.filterSetText(part);
 				};
 			};
+			return;
 		};
 
 		// Open add menu
@@ -724,7 +725,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { content } = block;
 		const value = this.getValue();
 		const text = String(content.text || '');
-		
+
 		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
 			if (callBack) {
 				callBack(null);
