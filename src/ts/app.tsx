@@ -142,7 +142,6 @@ Sentry.init({
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
 		e.request.url = '';
-		console.log(e);
 		return e;
 	},
 	integrations: [
