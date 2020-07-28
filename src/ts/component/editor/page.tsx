@@ -21,6 +21,7 @@ interface State {
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 const $ = require('jquery');
 const THROTTLE = 20;
 
@@ -141,13 +142,10 @@ class EditorPage extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		
-		const { rootId } = this.props;
 		const win = $(window);
 		
 		keyboard.disableBack(true);
 		this.unbind();
-		
 		this.open();
 		
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
@@ -238,7 +236,13 @@ class EditorPage extends React.Component<Props, State> {
 		
 		C.BlockOpen(this.id, (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+					Util.onErrorUpdate(() => {
+						history.push('/main/index');
+					});
+				} else {
+					history.push('/main/index');
+				};
 				return;
 			};
 

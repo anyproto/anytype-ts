@@ -1,5 +1,10 @@
 {
 	"AccountCreate": {
 		"900": "Invite code is invalid"
+	},
+
+	"Code": {
+		"ANYTYPE_NEEDS_UPGRADE": 10,
+		"ANOTHER_ANYTYPE_PROCESS_IS_RUNNING": 108
 	}
 }

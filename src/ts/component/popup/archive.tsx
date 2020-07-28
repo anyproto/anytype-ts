@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Title, Smile, Loader } from 'ts/component';
-import { I, C } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { I, C, Util } from 'ts/lib';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {
@@ -14,6 +14,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const Errors = require('json/error.json');
 
 @observer
 class PopupArchive extends React.Component<Props, State> {
@@ -80,6 +81,9 @@ class PopupArchive extends React.Component<Props, State> {
 		
 		this.setState({ loading: true });
 		C.BlockOpen(archive, (message: any) => {
+			if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+				Util.onErrorUpdate();
+			};
 			this.setState({ loading: false });
 		});
 		

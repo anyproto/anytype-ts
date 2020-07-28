@@ -1,0 +1,10 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupConfirm {
+		.innerWrap { width: 448px; padding: 16px; }
+		.label { margin-bottom: 16px; }
+		.button { height: 32px; line-height: 32px; margin-right: 10px; }
+		.button.last-child { margin: 0px; }
+	}	
+}
