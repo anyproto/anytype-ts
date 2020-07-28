@@ -194,9 +194,9 @@ function createWindow () {
 	
 	ipcMain.on('appLoaded', () => {
 		win.webContents.send('dataPath', dataPath.join('/'));
-		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
-		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW));
-		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
+		win.webContents.send('toggleDebug', 'ui', Boolean(config.allowDebug && config.debugUI));
+		win.webContents.send('toggleDebug', 'mw', Boolean(config.allowDebug && config.debugMW));
+		win.webContents.send('toggleDebug', 'an', Boolean(config.allowDebug && config.debugAN));
 	});
 
 	ipcMain.on('exit', (e, relaunch) => {
@@ -308,74 +308,71 @@ function menuInit () {
 		},
 	];
 
-	//if (!app.isPackaged) {
-	let menuDebug = {
-		label: 'Debug',
-		submenu: [
-			{
-				label: 'Flags',
-				submenu: [
-					{
-						label: 'Interface', type: 'checkbox', checked: config.debugUI,
-						click: function () {
-							configSet({ debugUI: !config.debugUI }, function () {
-								win.webContents.send('toggleDebug', 'ui', config.debugUI);
-							});
-						}
-					},
-					{
-						label: 'Middleware', type: 'checkbox', checked: config.debugMW,
-						click: function () {
-							configSet({ debugMW: !config.debugMW }, function () {
-								win.webContents.send('toggleDebug', 'mw', config.debugMW);
-							});
-						}
-					},
-					{
-						label: 'Analytics', type: 'checkbox', checked: config.debugAN,
-						click: function () {
-							configSet({ debugAN: !config.debugAN }, function () {
-								win.webContents.send('toggleDebug', 'an', config.debugAN);
-							});
-						}
-					},
-				]
-			},
-			{
-				label: 'Refresh', accelerator: 'CmdOrCtrl+R',
-				click: function () { win.reload(); }
-			},
-			{
-				label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
-				click: function () {
-					win.webContents.openDevTools();
-				}
-			}
-		]
-	};
-
-	if (config.allowChannels) {
-		menuDebug.submenu.unshift({
-			label: 'Version',
+	if (config.allowDebug) {
+		let menuDebug = {
+			label: 'Debug',
 			submenu: [
 				{
-					label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
-					click: function () {
-						setChannel('alpha');
-					}
+					label: 'Version',
+					submenu: [
+						{
+							label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
+							click: function () {
+								setChannel('alpha');
+							}
+						},
+						{
+							label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
+							click: function () {
+								setChannel('latest');
+							}
+						},
+					]
 				},
 				{
-					label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
-					click: function () {
-						setChannel('latest');
-					}
+					label: 'Flags',
+					submenu: [
+						{
+							label: 'Interface', type: 'checkbox', checked: config.debugUI,
+							click: function () {
+								configSet({ debugUI: !config.debugUI }, function () {
+									win.webContents.send('toggleDebug', 'ui', config.debugUI);
+								});
+							}
+						},
+						{
+							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
+							click: function () {
+								configSet({ debugMW: !config.debugMW }, function () {
+									win.webContents.send('toggleDebug', 'mw', config.debugMW);
+								});
+							}
+						},
+						{
+							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
+							click: function () {
+								configSet({ debugAN: !config.debugAN }, function () {
+									win.webContents.send('toggleDebug', 'an', config.debugAN);
+								});
+							}
+						},
+					]
 				},
+				{
+					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
+					click: function () { win.reload(); }
+				},
+				{
+					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
+					click: function () {
+						win.webContents.openDevTools();
+					}
+				}
 			]
-		});
-	};
+		};
 
-	menu.push(menuDebug);
-	//};
+		menu.push(menuDebug);
+	};
 	
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 };

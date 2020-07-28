@@ -139,6 +139,12 @@ Sentry.init({
 	release: version,
 	environment: (app.isPackaged ? 'production' : 'development'),
 	dsn: Constant.sentry,
+	maxBreadcrumbs: 0,
+	beforeSend: (e: any) => {
+		e.request.url = '';
+		console.log(e);
+		return e;
+	},
 	integrations: [
 		new Sentry.Integrations.GlobalHandlers({
 			onerror: true,
