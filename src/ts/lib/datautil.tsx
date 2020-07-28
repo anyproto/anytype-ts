@@ -145,6 +145,7 @@ class DataUtil {
 			C.BlockOpen(root, (message: any) => {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 					Util.onErrorUpdate();
+					return;
 				};
 				if (callBack) {
 					callBack();
