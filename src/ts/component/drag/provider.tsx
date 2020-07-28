@@ -347,6 +347,10 @@ class DragProvider extends React.Component<Props, {}> {
 			targetId = parent.id;
 		};
 
+		if (selection) {
+			selection.preventClear(false);
+		};
+
 		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
 
 		C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {

@@ -3,7 +3,10 @@
 .blocks {
 	.block.blockLink { white-space: nowrap; }
 	.block.blockLink {
-		.name { display: inline-block; vertical-align: top; max-width: calc(100% - 30px); cursor: pointer; position: relative; }
+		.name { 
+			display: inline-block; vertical-align: top; max-width: calc(100% - 30px); cursor: pointer; position: relative; 
+			@include text-overflow-nw;
+		}
 		.name {
 			.txt { 
 				transition: $transitionFast; line-height: inherit; vertical-align: top; @include text-overflow-nw; width: 100%; 
