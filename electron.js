@@ -20,7 +20,6 @@ let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 let timeoutUpdate = 0;
-
 let service, server;
 
 if (app.isPackaged) {
@@ -409,7 +408,7 @@ function autoUpdaterInit () {
 	console.log('Channel: ', config.channel);
 	
 	autoUpdater.logger = log;
-	autoUpdater.logger.transports.file.level = 'info';
+	autoUpdater.logger.transports.file.level = 'debug';
 	autoUpdater.channel = config.channel;
 	
 	checkUpdate();
@@ -419,7 +418,7 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-available', (info) => {
-		Util.log('info', 'Update available');
+		Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
 		win.webContents.send('update');
@@ -427,7 +426,7 @@ function autoUpdaterInit () {
 	
 	autoUpdater.on('update-not-available', (info) => {
 		isUpdating = false;
-		Util.log('info', 'Update not available');
+		Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
 	});
 	
 	autoUpdater.on('error', (err) => { Util.log('Error: ' + err); });
@@ -447,7 +446,7 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
-		Util.log('info', 'Update downloaded');
+		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		win.webContents.send('updateReady');
 
 		exit(true);
