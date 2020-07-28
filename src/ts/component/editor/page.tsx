@@ -237,14 +237,8 @@ class EditorPage extends React.Component<Props, State> {
 		C.BlockOpen(this.id, (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					commonStore.popupOpen('confirm', {
-						data: {
-							text: 'Anytype need update...',
-							onConfirm: () => {
-								ipcRenderer.send('update');
-								history.push('/main/index');
-							},
-						},
+					Util.onErrorUpdate(() => {
+						history.push('/main/index');
 					});
 				} else {
 					history.push('/main/index');

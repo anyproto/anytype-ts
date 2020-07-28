@@ -1,6 +1,7 @@
 import { I, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
+import { translate } from '.';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -521,11 +522,34 @@ class Util {
 	};
 
 	checkError (code: number) {
+		if (!code) {
+			return;
+		};
+
 		// App is already working
 		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
 			ipcRenderer.send('exit', false);
 		};
+
+		// App needs update
+		if (code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+			this.onErrorUpdate();
+		};
+	};
+
+	onErrorUpdate (onConfirm?: () => void) {
+		commonStore.popupOpen('confirm', {
+			data: {
+				text: translate('confirmUpdateText'),
+				onConfirm: () => {
+					ipcRenderer.send('update');
+					if (onConfirm) {
+						onConfirm();
+					};
+				},
+			},
+		});
 	};
 
 };
