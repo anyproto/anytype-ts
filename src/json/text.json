@@ -1,7 +1,7 @@
 {
 	"progress0": { "en": "Copying files %s/%s" },
 
-	"confirmUpdateText": { "en": "Anytype needs update..." },
+	"confirmUpdateText": { "en": "<b>Anytype needs upgrade</b><br/><br/>Your account contains the data created with a newer version of anytype.<br/>Please upgrade to the latest version via the built-in update mechanism" },
 
 	"authInviteTitle": { "en": "Welcome to Anytype" },
 	"authInviteLabel": { "en": "Enter your invitation code. If you don't have one just go to <a href=\"https://anytype.io\">anytype.io</a> and sign up to the waiting list. We are inviting people on the rolling bases." },
