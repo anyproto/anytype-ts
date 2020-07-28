@@ -522,7 +522,7 @@ class Util {
 
 	checkError (code: number) {
 		// App is already working
-		if (code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
 			ipcRenderer.send('exit', false);
 		};
