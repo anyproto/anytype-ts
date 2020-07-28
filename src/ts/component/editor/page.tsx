@@ -242,12 +242,13 @@ class EditorPage extends React.Component<Props, State> {
 							text: 'Anytype need update...',
 							onConfirm: () => {
 								ipcRenderer.send('update');
+								history.push('/main/index');
 							},
 						},
 					});
+				} else {
+					history.push('/main/index');
 				};
-
-				history.push('/main/index');
 				return;
 			};
 
