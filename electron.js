@@ -23,11 +23,9 @@ let timeoutUpdate = 0;
 
 let service, server;
 
-if (app.isPackaged) {
-	if (!app.requestSingleInstanceLock()) {
-		exit(false);
-		return;
-	};
+if (app.isPackaged && !app.requestSingleInstanceLock()) {
+	exit(false);
+	return;
 };
 
 storage.setDataPath(userPath);
@@ -228,7 +226,7 @@ function createWindow () {
 			console.error(error);
 		};
 		
-		console.log('Config:', config);
+		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
 
 		autoUpdaterInit();
 		menuInit();
@@ -400,12 +398,13 @@ function configSet (obj, callBack) {
 };
 
 function checkUpdate () {
-	if (!isUpdating) {
-		Util.log('info', 'checkUpdate');
-		autoUpdater.checkForUpdatesAndNotify();
-		clearTimeout(timeoutUpdate);
-		timeoutUpdate = setTimeout(checkUpdate, 600 * 1000);
+	if (isUpdating) {
+		return;
 	};
+
+	autoUpdater.checkForUpdatesAndNotify();
+	clearTimeout(timeoutUpdate);
+	timeoutUpdate = setTimeout(checkUpdate, 600 * 1000);
 };
 
 function autoUpdaterInit () {
@@ -415,7 +414,7 @@ function autoUpdaterInit () {
 	autoUpdater.logger.transports.file.level = 'info';
 	autoUpdater.channel = config.channel;
 	
-	checkUpdate();
+	setTimeout(checkUpdate, 5000);
 	
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
@@ -503,10 +502,11 @@ function exit (relaunch) {
 		cb();
 	} else {
 		const Commands = require('./dist/lib/pb/protos/commands_pb');
-		
-		service.shutdown(new Commands.Empty(), {}, () => {
-			console.log('Shutdown complete, exiting');
-			cb();
-		});
+		if (service) {
+			service.shutdown(new Commands.Empty(), {}, () => {
+				console.log('Shutdown complete, exiting');
+				cb();
+			});
+		};
 	};
 };
