@@ -1,9 +1,10 @@
-import { I, M, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { I, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
-const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
+const { ipcRenderer } = window.require('electron');
 const Rpc = Commands.Rpc;
 
 const VersionGet = (callBack?: (message: any) => void) => {

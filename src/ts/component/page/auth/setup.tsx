@@ -140,7 +140,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 		C.AccountCreate(authStore.name, authStore.icon, authStore.code, (message: any) => {
 			if (message.error.code) {
 				const error = Errors.AccountCreate[message.error.code] || message.error.description;
-				
 				this.setError(error);
 			} else
 			if (message.account) {

@@ -1,7 +1,8 @@
-import { I, C, keyboard, Storage, crumbs, translate } from 'ts/lib';
+import { I, C, keyboard, Storage, crumbs, translate, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 class DataUtil {
 
@@ -132,12 +133,20 @@ class DataUtil {
 			
 			if (message.profileBlockId) {
 				blockStore.profileSet(message.profileBlockId);
-				C.BlockOpen(message.profileBlockId);
+				C.BlockOpen(message.profileBlockId, (message: any) => {
+					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+						Util.onErrorUpdate();
+					};
+				});
 			};
 			
 			crumbs.init();
 			
 			C.BlockOpen(root, (message: any) => {
+				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+					Util.onErrorUpdate();
+					return;
+				};
 				if (callBack) {
 					callBack();
 				};
