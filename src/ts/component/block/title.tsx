@@ -228,7 +228,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		const l = next.getLength();
 
 		// Auto-open toggle blocks 
-		if (parent && parent.isToggle()) {
+		if (parent && parent.isTextToggle()) {
 			node.find('#block-' + parent.id).addClass('isToggled');
 		};
 
