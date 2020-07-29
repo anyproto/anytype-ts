@@ -239,7 +239,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				{ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() },
 			]);
 			
-			if (!block.isCode()) {
+			if (block.isText() && !block.isCode()) {
 				sections.push({ id: 'color', icon: 'color', name: 'Color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			
