@@ -416,20 +416,11 @@ class DataUtil {
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
 		
-		// Restrictions
 		if (block.isFile()) {
 			let idx = items.findIndex((it: any) => { return it.id == 'remove'; });
 			items.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
 			//items.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
 			//items.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
-		};
-		
-		if (!block.isText() && !block.isDiv()) {
-			items = items.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
-		};
-		
-		if (!block.isText() || block.isCode()) {
-			items = items.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
 		};
 		
 		items = items.map((it: any) => {

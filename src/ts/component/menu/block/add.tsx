@@ -197,8 +197,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			return [];
 		};
 		
-		const { type, content } = block;
-		
 		let sections: any[] = [
 			{ id: 'text', icon: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
 			{ id: 'list', icon: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
@@ -209,12 +207,16 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (filter && filter.text) {
 			sections = sections.concat([
 				{ id: 'action', icon: 'action', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
-				{ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign() },
-				{ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() },
 			]);
-			
-			if ((type == I.BlockType.Text) && (content.style != I.TextStyle.Code)) {
+
+			if (block.canHaveAlign()) {
+				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign() });
+			};
+			if (block.canHaveColor()) {
 				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: DataUtil.menuGetTextColors() });
+			};
+			if (block.canHaveBackground()) {
+				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: DataUtil.menuGetBgColors() });
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter.text);

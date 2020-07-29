@@ -61,12 +61,14 @@ export interface Block {
 	
 	getLength?(): number;
 	isSystem?(): boolean;
+
 	canHaveTitle?(): boolean;
 	canHaveChildren?(): boolean;
 	canHaveAlign?(): boolean;
 	canHaveColor?(): boolean;
 	canHaveBackground?(): boolean;
 	canTurn?(): boolean;
+
 	isIndentable?(): boolean;
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
@@ -90,21 +92,25 @@ export interface Block {
 	isIconPage?(): boolean;
 	isIconUser?(): boolean;
 
-	isHeader?(): boolean;
-	isHeader1?(): boolean;
-	isHeader2?(): boolean;
-	isHeader3?(): boolean;
+	isDiv?(): boolean;
+	isDivLine?(): boolean;
+	isDivDot?(): boolean;
 
 	isFile?(): boolean;
 	isImage?(): boolean;
 	isVideo?(): boolean;
-	isDiv?(): boolean;
-	isText?(): boolean;
 	isTitle?(): boolean;
-	isToggle?(): boolean;
-	isNumbered?(): boolean;
-	isBulleted?(): boolean;
-	isCheckbox?(): boolean;
-	isCode?(): boolean;
-	isQuote?(): boolean;
+
+	isText?(): boolean;
+	isTextParagraph?(): boolean;
+	isTextHeader?(): boolean;
+	isTextHeader1?(): boolean;
+	isTextHeader2?(): boolean;
+	isTextHeader3?(): boolean;
+	isTextToggle?(): boolean;
+	isTextNumbered?(): boolean;
+	isTextBulleted?(): boolean;
+	isTextCheckbox?(): boolean;
+	isTextCode?(): boolean;
+	isTextQuote?(): boolean;
 };
