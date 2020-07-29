@@ -207,17 +207,23 @@ class MenuBlockAction extends React.Component<Props, State> {
 			//sections[0].children.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
 		};
 
-		if (!block.isText()) {
+		if (!block.canHaveAlign()) {
+			sections[1].children = sections[1].children.filter((it: any) => { return [ 'align' ].indexOf(it.id) < 0; });
+		};
+
+		if (!block.canHaveColor()) {
 			sections[1].children = sections[1].children.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
 		};
+
+		if (!block.canHaveBackground()) {
+			sections[1].children = sections[1].children.filter((it: any) => { return [ 'background' ].indexOf(it.id) < 0; });
+		};
 		
-		if (!block.isText() && !block.isDiv()) {
+		if (!block.canTurn()) {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
 		};
-		
-		if (block.isIcon()) {
-			sections = sections.filter((it: any, i: number) => { return i > 0; });
-		};
+
+		sections = sections.filter((it: any) => { return it.children.length > 0; });
 		
 		if (filter) {
 			sections = [];

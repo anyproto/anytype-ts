@@ -36,30 +36,50 @@ class Block implements I.Block {
 		});
 	};
 
+	isSystem () {
+		return this.isPage() || this.isLayout();
+	};
+
+	canHaveTitle (): boolean {
+		return this.isPagePage() || this.isPageProfile() || this.isPageSet();
+	};
+
 	canHaveChildren (): boolean {
 		return !this.isTitle() && !this.isLayout() && !this.isPage() && !this.isDiv() && !this.isHeader() && !this.isCode();
 	};
+
+	canHaveAlign (): boolean {
+		return !this.isSystem() && !this.isBookmark() && !this.isLink() && !this.isDiv();
+	};
+
+	canHaveColor (): boolean {
+		return !this.isSystem() && this.isText() && !this.isCode();
+	};
+
+	canHaveBackground (): boolean {
+		return !this.isSystem() && !this.isBookmark();
+	};
+
+	canTurn (): boolean {
+		return !this.isSystem() && (this.isText() || this.isDiv());
+	};
 	
 	isIndentable (): boolean {
-		return !this.isTitle() && !this.isLayout() && !this.isPage() && !this.isDiv() && !this.isHeader() && !this.isCode();
+		return !this.isSystem() && !this.isTitle() && !this.isDiv() && !this.isHeader() && !this.isCode();
 	};
 	
 	isFocusable (): boolean {
-		return !this.isPage() && !this.isLayout();
+		return !this.isSystem();
 	};
 	
 	isSelectable (): boolean {
-		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTitle();
 	};
 	
 	isDraggable (): boolean {
-		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTitle();
 	};
 
-	hasTitle (): boolean {
-		return this.isPagePage() || this.isPageProfile() || this.isPageSet();
-	};
-	
 	isPage (): boolean { 
 		return (this.type == I.BlockType.Page);
 	};
@@ -122,6 +142,10 @@ class Block implements I.Block {
 	
 	isFile (): boolean {
 		return this.type == I.BlockType.File;
+	};
+
+	isBookmark (): boolean {
+		return this.type == I.BlockType.Bookmark;
 	};
 	
 	isImage (): boolean {

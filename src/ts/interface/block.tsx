@@ -60,9 +60,13 @@ export interface Block {
 	childrenIds: string[];
 	
 	getLength?(): number;
-	hasTitle?(): boolean;
+	isSystem?(): boolean;
+	canHaveTitle?(): boolean;
 	canHaveChildren?(): boolean;
-
+	canHaveAlign?(): boolean;
+	canHaveColor?(): boolean;
+	canHaveBackground?(): boolean;
+	canTurn?(): boolean;
 	isIndentable?(): boolean;
 	isFocusable?(): boolean;
 	isSelectable?(): boolean;
