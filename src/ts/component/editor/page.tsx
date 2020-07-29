@@ -863,7 +863,7 @@ class EditorPage extends React.Component<Props, State> {
 				
 				// If block is non-empty list - create new list block of the same style, 
 				// otherwise - replace empty list block with paragraph
-				if (block.isNumbered() || block.isBulleted() || block.isCheckbox()) {
+				if (block.isTextNumbered() || block.isTextBulleted() || block.isTextCheckbox()) {
 					if (length) {
 						style = block.content.style;
 					} else {
