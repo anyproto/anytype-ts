@@ -192,9 +192,7 @@ function createWindow () {
 	
 	ipcMain.on('appLoaded', () => {
 		win.webContents.send('dataPath', dataPath.join('/'));
-		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
-		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW));
-		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
+		win.webContents.send('config', config);
 	});
 
 	ipcMain.on('exit', (e, relaunch) => {
@@ -321,7 +319,7 @@ function menuInit () {
 						label: 'Interface', type: 'checkbox', checked: config.debugUI,
 						click: function () {
 							configSet({ debugUI: !config.debugUI }, function () {
-								win.webContents.send('toggleDebug', 'ui', config.debugUI);
+								win.webContents.send('config', config);
 							});
 						}
 					},
@@ -329,7 +327,7 @@ function menuInit () {
 						label: 'Middleware', type: 'checkbox', checked: config.debugMW,
 						click: function () {
 							configSet({ debugMW: !config.debugMW }, function () {
-								win.webContents.send('toggleDebug', 'mw', config.debugMW);
+								win.webContents.send('config', config);
 							});
 						}
 					},
@@ -337,7 +335,7 @@ function menuInit () {
 						label: 'Analytics', type: 'checkbox', checked: config.debugAN,
 						click: function () {
 							configSet({ debugAN: !config.debugAN }, function () {
-								win.webContents.send('toggleDebug', 'an', config.debugAN);
+								win.webContents.send('config', config);
 							});
 						}
 					},

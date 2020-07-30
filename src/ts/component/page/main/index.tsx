@@ -236,9 +236,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 	getList () {
 		const { root } = blockStore;
+		const { config } = commonStore;
+
 		return blockStore.getChildren(root, root, (it: any) => {
 			const details = blockStore.getDetails(root, it.content.targetBlockId);
-			return !details.isArchived && (it.content.style != I.LinkStyle.Dataview);
+			if (!config.allowDataview && (it.content.style == I.LinkStyle.Dataview)) {
+				return false;
+			};
+			return !details.isArchived;
 		});
 	};
 

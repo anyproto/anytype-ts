@@ -1,5 +1,6 @@
 import { observable, action, computed, set } from 'mobx';
 import { I, Storage, Util, analytics } from 'ts/lib';
+import { any } from 'is';
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -34,6 +35,7 @@ class CommonStore {
 	@observable public filterObj: Filter = { from: 0, text: '' };
 	@observable public gatewayUrl: string = '';
 	@observable public linkPreviewObj: LinkPreview;
+	public config:any = {};
 	
 	@computed
 	get progress(): I.Progress {
@@ -272,6 +274,10 @@ class CommonStore {
 	@action
 	linkPreviewSet (param: LinkPreview) {
 		this.linkPreviewObj = param;
+	};
+
+	configSet (config: any) {
+		this.config = config;
 	};
 	
 };
