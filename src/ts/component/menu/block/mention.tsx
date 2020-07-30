@@ -133,6 +133,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	getSections () {
+		const { root } = blockStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
@@ -150,7 +151,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		});
 
 		for (let page of pages) {
-			if (page.id == rootId) {
+			if ([ root, rootId ].indexOf(page.id) >= 0) {
 				continue;
 			};
 			
@@ -201,6 +202,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this.setState({ loading: true });
 
 		C.NavigationListPages((message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			let pages = message.pages.map((it: any) => { 
 				it.details.name = String(it.details.name || Constant.default.name || '');
 				return it; 

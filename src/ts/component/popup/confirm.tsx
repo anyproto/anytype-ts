@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Label, Button } from 'ts/component';
+import { Title, Icon, Label, Button } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 
@@ -18,13 +18,19 @@ class PopupConfirm extends React.Component<Props, {}> {
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { text } = data;
+		const { title, text, textConfirm, textCancel, icon } = data;
 		
 		return (
 			<React.Fragment>
+				{icon ? (
+					<div className="smile c64">
+						<Icon className={icon} />
+					</div>
+				) : ''}
+				<Title text={title} />
 				<Label text={text} />
-				<Button text="Ok" className="orange" onClick={this.onConfirm} />
-				<Button text="Cancel" className="grey" onClick={this.onCancel} />
+				<Button text={textConfirm} className="orange" onClick={this.onConfirm} />
+				<Button text={textCancel} className="grey" onClick={this.onCancel} />
 			</React.Fragment>
 		);
 	};
