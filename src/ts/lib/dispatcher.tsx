@@ -98,9 +98,10 @@ class Dispatcher {
 	};
 
 	event (event: any, skipDebug?: boolean) {
+		const { config } = commonStore;
 		const rootId = event.getContextid();
 		const messages = event.getMessagesList() || [];
-		const debug = (Storage.get('debug') || {}).mw && !skipDebug;
+		const debug = config.debugMW && !skipDebug;
 
 		if (debug) {
 			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event.toObject(), null, 3));
@@ -511,8 +512,9 @@ class Dispatcher {
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
+		const { config } = commonStore;
 		const upper = Util.toUpperCamelCase(type);
-		const debug = (Storage.get('debug') || {}).mw;
+		const debug = config.debugMW;
 
 		if (!this.service[type]) {
 			console.error('[Dispatcher.request] Service not found: ', type);

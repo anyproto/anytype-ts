@@ -1,5 +1,6 @@
 import * as amplitude from 'amplitude-js';
 import { I, M, Storage, Mapper, Util } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('electron').remote;
@@ -11,10 +12,14 @@ class Analytics {
 	
 	isInit: boolean =  false;
 	instance: any = null;
+
+	debug() {
+		const { config } = commonStore;
+		return config.debugAN;
+	};
 	
 	init () {
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
+		if (!isProduction && !this.debug()) {
 			return;
 		};
 
@@ -36,7 +41,7 @@ class Analytics {
 
 		this.isInit = true;
 
-		if (debug) {
+		if (this.debug()) {
 			console.log('[Analytics.init]', this.instance);
 		};
 	};
@@ -46,14 +51,12 @@ class Analytics {
 			return;
 		};
 
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
+		if (!isProduction && !this.debug()) {
 			return;
 		};
-		if (debug) {
+		if (this.debug()) {
 			console.log('[Analytics.profile]', profile.id);
 		};
-		
 		this.instance.setUserId(profile.id);
 	};
 	
@@ -62,8 +65,7 @@ class Analytics {
 			return;
 		};
 
-		const debug = (Storage.get('debug') || {}).an;
-		if ((!isProduction && !debug) || !code) {
+		if ((!isProduction && !this.debug()) || !code) {
 			return;
 		};
 		
@@ -97,7 +99,7 @@ class Analytics {
 				break;
 		};
 
-		if (debug) {
+		if (this.debug()) {
 			console.log('[Analytics.event]', code, param);
 		};
 		

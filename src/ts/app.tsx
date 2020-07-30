@@ -235,7 +235,6 @@ class App extends React.Component<Props, State> {
 	setIpcEvents () {
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
-		const debug = Storage.get('debug') || {};
 		const html = $('html');
 
 		ipcRenderer.send('appLoaded', true);
@@ -247,14 +246,6 @@ class App extends React.Component<Props, State> {
 			if (phrase && accountId) {
 				history.push('/auth/setup/init');
 			};
-		});
-		
-		debug.ui ? html.addClass('debug') : html.removeClass('debug');
-		ipcRenderer.on('toggleDebug', (e: any, key: string, value: boolean) => {
-			console.log('[toggleDebug]', key, value);
-			debug[key] = value;
-			debug.ui ? html.addClass('debug') : html.removeClass('debug');
-			Storage.set('debug', debug, true);
 		});
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
@@ -272,6 +263,10 @@ class App extends React.Component<Props, State> {
 		});
 		ipcRenderer.on('import', this.onImport);
 		ipcRenderer.on('command', this.onCommand);
+		ipcRenderer.on('config', (e: any, config: any) => { 
+			commonStore.configSet(config); 
+			config.debugUI ? html.addClass('debug') : html.removeClass('debug');
+		});
 	};
 
 	setWindowEvents () {
