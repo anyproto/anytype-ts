@@ -27,6 +27,8 @@ class CellText extends React.Component<Props, State> {
 		this.onChange = this.onChange.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render () {
@@ -82,7 +84,7 @@ class CellText extends React.Component<Props, State> {
 
 			content = (
 				<React.Fragment>
-					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} />
+					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />
 					<Name name={data[relation.id]} />
 					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
 				</React.Fragment>
@@ -130,12 +132,6 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onChange (e: any, value: string) {
-		let { rootId, block, data, relation } = this.props;
-		
-		data = Util.objectCopy(data);
-		data[relation.id] = value;
-
-		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);
 	};
 
 	onFocus (e: any) {
@@ -143,8 +139,24 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onBlur (e: any) {
+		let { onChange } = this.props;
+
 		keyboard.setFocus(false);
 		this.setState({ editing: false });
+
+		if (onChange) {
+			onChange(this.ref.getValue());
+		};
+	};
+
+	onSelect (icon: string) {
+		const { data } = this.props;
+		DataUtil.pageSetIcon(data.id, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const { data } = this.props;
+		DataUtil.pageSetIcon(data.id, '', hash);
 	};
 
 	resize () {

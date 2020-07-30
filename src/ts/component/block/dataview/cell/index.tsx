@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 import CellText from './text';
 import CellDate from './date';
@@ -21,6 +22,7 @@ class Cell extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onChange = this.onChange.bind(this);
 	};
 
 	render () {
@@ -62,7 +64,7 @@ class Cell extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} onClick={this.onClick}>
-				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data || {}} />
+				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data || {}} onChange={this.onChange} />
 			</div>
 		);
 	};
@@ -112,6 +114,16 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Checkbox:
 				break; 
 		};
+	};
+
+	onChange (value: any) {
+		let { id, rootId, block, data, relation } = this.props;
+		
+		data = Util.objectCopy(data);
+		data[relation.id] = value;
+
+		block.content.data[id] = observable(data);
+		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);
 	};
 	
 };

@@ -12,6 +12,7 @@ import PopupPrompt from './prompt';
 import PopupPreview from './preview';
 import PopupEditorPage from './editor/page';
 import PopupFeedback from './feedback';
+import PopupConfirm from './confirm';
 
 interface Props extends I.Popup {
 	history: any;
@@ -38,6 +39,7 @@ class Popup extends React.Component<Props, {}> {
 			settings: PopupSettings,
 			archive: PopupArchive,
 			navigation: PopupNavigation,
+			confirm: PopupConfirm,
 			prompt: PopupPrompt,
 			new: PopupNew,
 			preview: PopupPreview,

@@ -206,6 +206,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 			//sections[0].children.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
 			//sections[0].children.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
 		};
+
+		if (!block.isText()) {
+			sections[1].children = sections[1].children.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
+		};
 		
 		if (!block.isText() && !block.isDiv()) {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
@@ -239,7 +243,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				{ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() },
 			]);
 			
-			if (!block.isCode()) {
+			if (block.isText() && !block.isCode()) {
 				sections.push({ id: 'color', icon: 'color', name: 'Color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			

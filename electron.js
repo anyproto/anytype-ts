@@ -23,11 +23,9 @@ let timeoutUpdate = 0;
 
 let service, server;
 
-if (app.isPackaged) {
-	if (!app.requestSingleInstanceLock()) {
-		exit(false);
-		return;
-	};
+if (app.isPackaged && !app.requestSingleInstanceLock()) {
+	exit(false);
+	return;
 };
 
 storage.setDataPath(userPath);
@@ -194,13 +192,15 @@ function createWindow () {
 	
 	ipcMain.on('appLoaded', () => {
 		win.webContents.send('dataPath', dataPath.join('/'));
-		win.webContents.send('toggleDebug', 'ui', Boolean(config.debugUI));
-		win.webContents.send('toggleDebug', 'mw', Boolean(config.debugMW));
-		win.webContents.send('toggleDebug', 'an', Boolean(config.debugAN));
+		win.webContents.send('config', config);
 	});
 
 	ipcMain.on('exit', (e, relaunch) => {
 		exit(relaunch);
+	});
+
+	ipcMain.on('update', (e) => {
+		checkUpdate();
 	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
@@ -228,7 +228,7 @@ function createWindow () {
 			console.error(error);
 		};
 		
-		console.log('Config:', config);
+		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
 
 		autoUpdaterInit();
 		menuInit();
@@ -319,7 +319,7 @@ function menuInit () {
 						label: 'Interface', type: 'checkbox', checked: config.debugUI,
 						click: function () {
 							configSet({ debugUI: !config.debugUI }, function () {
-								win.webContents.send('toggleDebug', 'ui', config.debugUI);
+								win.webContents.send('config', config);
 							});
 						}
 					},
@@ -327,7 +327,7 @@ function menuInit () {
 						label: 'Middleware', type: 'checkbox', checked: config.debugMW,
 						click: function () {
 							configSet({ debugMW: !config.debugMW }, function () {
-								win.webContents.send('toggleDebug', 'mw', config.debugMW);
+								win.webContents.send('config', config);
 							});
 						}
 					},
@@ -335,7 +335,7 @@ function menuInit () {
 						label: 'Analytics', type: 'checkbox', checked: config.debugAN,
 						click: function () {
 							configSet({ debugAN: !config.debugAN }, function () {
-								win.webContents.send('toggleDebug', 'an', config.debugAN);
+								win.webContents.send('config', config);
 							});
 						}
 					},
@@ -400,12 +400,13 @@ function configSet (obj, callBack) {
 };
 
 function checkUpdate () {
-	if (!isUpdating) {
-		Util.log('info', 'checkUpdate');
-		autoUpdater.checkForUpdatesAndNotify();
-		clearTimeout(timeoutUpdate);
-		timeoutUpdate = setTimeout(checkUpdate, 600 * 1000);
+	if (isUpdating) {
+		return;
 	};
+
+	autoUpdater.checkForUpdatesAndNotify();
+	clearTimeout(timeoutUpdate);
+	timeoutUpdate = setTimeout(checkUpdate, 600 * 1000);
 };
 
 function autoUpdaterInit () {
@@ -415,7 +416,7 @@ function autoUpdaterInit () {
 	autoUpdater.logger.transports.file.level = 'info';
 	autoUpdater.channel = config.channel;
 	
-	checkUpdate();
+	setTimeout(checkUpdate, 5000);
 	
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
@@ -503,10 +504,11 @@ function exit (relaunch) {
 		cb();
 	} else {
 		const Commands = require('./dist/lib/pb/protos/commands_pb');
-		
-		service.shutdown(new Commands.Empty(), {}, () => {
-			console.log('Shutdown complete, exiting');
-			cb();
-		});
+		if (service) {
+			service.shutdown(new Commands.Empty(), {}, () => {
+				console.log('Shutdown complete, exiting');
+				cb();
+			});
+		};
 	};
 };

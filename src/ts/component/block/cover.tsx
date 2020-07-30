@@ -314,11 +314,15 @@ class BlockCover extends React.Component<Props, State> {
 		if (!this._isMounted) {
 			return false;
 		};
+
+		if (!this.cover || !this.cover.length) {
+			return;
+		};
 		
+		const node = $(ReactDOM.findDOMNode(this));
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverX, coverY } = details;
-		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#drag-value');
 		const rect = this.cover.get(0).getBoundingClientRect() as DOMRect;
 		

@@ -47,8 +47,6 @@ class ViewGrid extends React.Component<Props, {}> {
 				cn.push('isName');
 			};
 
-			console.log(item);
-
 			return (
 				<td id={id} className={cn.join(' ')} onClick={(e: any) => { this.onCellClick(e, item); }}>
 					<Cell 

@@ -103,6 +103,7 @@ export interface Cell {
 	view: any;
 	readOnly?: boolean;
 	onOpen?(e: any, data: any): void;
+	onChange?(data: any): void;
 };
 
 export interface ContentDataview {
