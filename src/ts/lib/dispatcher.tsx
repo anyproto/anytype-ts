@@ -243,7 +243,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getFields()) {
+					if (data.hasFields()) {
 						block.fields = Decode.decodeStruct(data.getFields());
 					};
 
@@ -257,7 +257,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getFields()) {
+					if (data.hasFields()) {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
@@ -271,23 +271,23 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getText()) {
+					if (data.hasText()) {
 						block.content.text = data.getText().getValue();
 					};
 
-					if (undefined !== data.getMarks()) {
+					if (data.hasMarks()) {
 						block.content.marks = (data.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark);
 					};
 
-					if (undefined !== data.getStyle()) {
+					if (data.hasStyle()) {
 						block.content.style = data.getStyle().getValue();
 					};
 
-					if (undefined !== data.getChecked()) {
+					if (data.hasChecked()) {
 						block.content.checked = data.getChecked().getValue();
 					};
 
-					if (undefined !== data.getColor()) {
+					if (data.hasColor()) {
 						block.content.color = data.getColor().getValue();
 					};
 
@@ -301,7 +301,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getStyle()) {
+					if (data.hasStyle()) {
 						block.content.style = data.getStyle().getValue();
 					};
 
@@ -315,27 +315,27 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getName()) {
+					if (data.hasName()) {
 						block.content.name = data.getName().getValue();
 					};
 
-					if (undefined !== data.getHash()) {
+					if (data.hasHash()) {
 						block.content.hash = data.getHash().getValue();
 					};
 
-					if (undefined !== data.getMime()) {
+					if (data.hasMime()) {
 						block.content.mime = data.getMime().getValue();
 					};
 
-					if (undefined !== data.getSize()) {
+					if (data.hasSize()) {
 						block.content.size = data.getSize().getValue();
 					};
 
-					if (undefined !== data.getType()) {
+					if (data.hasType()) {
 						block.content.type = data.getType().getValue();
 					};
 
-					if (undefined !== data.getState()) {
+					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
 					};
 
@@ -349,27 +349,27 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getUrl()) {
+					if (data.hasUrl()) {
 						block.content.url = data.getUrl().getValue();
 					};
 
-					if (undefined !== data.getTitle()) {
+					if (data.hasTitle()) {
 						block.content.title = data.getTitle().getValue();
 					};
 
-					if (undefined !== data.getDescription()) {
+					if (data.hasDescription()) {
 						block.content.description = data.getDescription().getValue();
 					};
 
-					if (undefined !== data.getImagehash()) {
+					if (data.hasImagehash()) {
 						block.content.imageHash = data.getImagehash().getValue();
 					};
 
-					if (undefined !== data.getFaviconhash()) {
+					if (data.hasFaviconhash()) {
 						block.content.faviconHash = data.getFaviconhash().getValue();
 					};
 
-					if (undefined !== data.getType()) {
+					if (data.hasType()) {
 						block.content.type = data.getType().getValue();
 					};
 					break;
