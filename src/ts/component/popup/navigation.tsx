@@ -67,7 +67,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { type } = data;
+		const { type, rootId, blockIds } = data;
 		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
@@ -98,7 +98,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				confirm = 'Move to';
 				break;
 
-			case I.NavigationType.Create:
+			case I.NavigationType.Link:
 				confirm = 'Link';
 				break;
 		};
@@ -158,6 +158,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			let isRoot = item.id == root;
 			let icon = null;
 			let withScale = true;
+			let withButtons = true;
 
 			if (isRoot) {
 				icon = (
@@ -171,6 +172,17 @@ class PopupNavigation extends React.Component<Props, State> {
 					coverType = I.CoverType.BgImage;
 				};
 
+				if ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0) {
+					for (let id of blockIds) {
+						let block = blockStore.getLeaf(rootId, id);
+						if (block.type != I.BlockType.Link) {
+							withButtons = false;
+							break;
+						};
+					};
+				} else {
+					withButtons = false;
+				};
 				withScale = false;
 			} else {
 				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
@@ -182,10 +194,12 @@ class PopupNavigation extends React.Component<Props, State> {
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
-					<div className="buttons">
-						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
-						<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
-					</div>
+					{withButtons ? (
+						<div className="buttons">
+							<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
+							<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
+						</div>
+					) : ''}
 				</div>
 			);
 		};
@@ -416,7 +430,7 @@ class PopupNavigation extends React.Component<Props, State> {
     		resolution: 3,
 		});
 
-		let pages: any[] = [];
+		let pages: I.PageInfo[] = [];
 		C.NavigationListPages((message: any) => {
 			for (let page of message.pages) {
 				if (skipId && (page.id == skipId)) {
@@ -424,8 +438,11 @@ class PopupNavigation extends React.Component<Props, State> {
 				};
 
 				page = this.getPage(page);
-				pages.push(page);
+				if (page.details.isArchived) {
+					continue;
+				};
 
+				pages.push(page);
 				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
 			};
 
@@ -446,14 +463,20 @@ class PopupNavigation extends React.Component<Props, State> {
 				return;
 			};
 
+			let pagesIn = message.page.links.inbound.map((it: any) => { return this.getPage(it); });
+			let pagesOut = message.page.links.outbound.map((it: any) => { return this.getPage(it); });
+
+			pagesIn = pagesIn.filter((it: I.PageInfo) => { return !it.details.isArchived; });
+			pagesOut = pagesOut.filter((it: I.PageInfo) => { return !it.details.isArchived; });
+
 			this.initSearch(id);
 			this.setState({ 
 				pageId: id,
 				loading: false,
 				expanded: true, 
 				info: this.getPage(message.page.info),
-				pagesIn: message.page.links.inbound.map((it: any) => { return this.getPage(it); }),
-				pagesOut: message.page.links.outbound.map((it: any) => { return this.getPage(it); }),
+				pagesIn: pagesIn,
+				pagesOut: pagesOut,
 			});
 		});
 	};
@@ -499,7 +522,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
 				break;
 
-			case I.NavigationType.Create:
+			case I.NavigationType.Link:
 				const param = {
 					type: I.BlockType.Link,
 					content: {

@@ -1068,7 +1068,7 @@ class EditorPage extends React.Component<Props, State> {
 									commonStore.popupOpen('navigation', { 
 										preventResize: true,
 										data: { 
-											type: I.NavigationType.Create, 
+											type: I.NavigationType.Link, 
 											rootId: rootId,
 											expanded: true,
 											skipId: rootId,
