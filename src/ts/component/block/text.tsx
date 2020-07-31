@@ -448,17 +448,18 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			this.setText(this.marks, true, (message: any) => {
-				onKeyDown(e, value, this.marks, range);
-			});
-			ret = true;
+			if (!commonStore.menuIsOpen()) {
+				this.setText(this.marks, true, (message: any) => {
+					onKeyDown(e, value, this.marks, range);
+				});
+				ret = true;
+			};
 
 			if (commonStore.menuIsOpen('blockAdd') && (symbolBefore == '/')) {
-				e.stopPropagation();
 				commonStore.menuClose('blockAdd');
 			};
 
-			if (commonStore.menuIsOpen('blockMention') && (range.from - 1 == filter.from)) {
+			if (commonStore.menuIsOpen('blockMention') && (symbolBefore == '@')) {
 				commonStore.menuClose('blockMention');
 			};
 		});

@@ -278,19 +278,18 @@ class MenuBlockMention extends React.Component<Props, State> {
 			const { content } = block;
 		
 			let { marks } = content;
-			let text = item.name + ' ';
 			let from = filter.from;
-			let to = from + text.length;
+			let to = from + item.name.length + 1;
 	
 			marks = Util.objectCopy(marks);
-			marks = Mark.adjust(marks, from, item.name.length);
+			marks = Mark.adjust(marks, from, item.name.length + 1);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
 				param: item.key, 
 				range: { from: from, to: from + item.name.length },
 			});
 	
-			onChange(text, marks, from, to);
+			onChange(item.name + ' ', marks, from, to);
 		};
 
 		this.props.close();
