@@ -843,7 +843,7 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isCode() || (!block.isText() && keyboard.isFocused)) {
+			if (block.isTextCode() || (!block.isText() && keyboard.isFocused)) {
 				return;
 			};
 
@@ -863,7 +863,7 @@ class EditorPage extends React.Component<Props, State> {
 				
 				// If block is non-empty list - create new list block of the same style, 
 				// otherwise - replace empty list block with paragraph
-				if (block.isNumbered() || block.isBulleted() || block.isCheckbox()) {
+				if (block.isTextNumbered() || block.isTextBulleted() || block.isTextCheckbox()) {
 					if (length) {
 						style = block.content.style;
 					} else {
@@ -913,7 +913,7 @@ class EditorPage extends React.Component<Props, State> {
 		const l = next.getLength();
 		
 		// Auto-open toggle blocks 
-		if (parent && parent.isToggle()) {
+		if (parent && parent.isTextToggle()) {
 			node.find('#block-' + parent.id).addClass('isToggled');
 		};
 
@@ -1363,7 +1363,7 @@ class EditorPage extends React.Component<Props, State> {
 	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
 		const { rootId } = this.props;
 		const { content } = focused;
-		const isToggle = focused.isToggle();
+		const isToggle = focused.isTextToggle();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
 
 		if (isToggle && isOpen) {

@@ -264,7 +264,7 @@ class BlockStore {
 			let n = 0;
 			for (let item of list) {
 				if (!item.isLayout()) {
-					if (item.isNumbered()) {
+					if (item.isTextNumbered()) {
 						n++;
 						$('#marker-' + item.id).text(`${n}.`);
 					} else {

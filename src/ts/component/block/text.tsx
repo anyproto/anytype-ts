@@ -222,7 +222,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 		
-		if (!block.isCode() && (html != text)) {
+		if (!block.isTextCode() && (html != text)) {
 			this.renderLinks();
 			this.renderMentions();
 			this.renderEmoji();
@@ -404,7 +404,7 @@ class BlockText extends React.Component<Props, {}> {
 		const symbolBefore = value[range.from - 1];
 		
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isCode() || commonStore.menuIsOpen()) {
+			if (block.isTextCode() || commonStore.menuIsOpen()) {
 				return;
 			};
 
@@ -432,7 +432,7 @@ class BlockText extends React.Component<Props, {}> {
 		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
 			
-			if (block.isCode()) {
+			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
@@ -465,7 +465,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
-			if (commonStore.menuIsOpen('smile') || block.isCode()) {
+			if (commonStore.menuIsOpen('smile') || block.isTextCode()) {
 				return;
 			};
 
@@ -474,7 +474,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
-			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isCode()) {
+			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isTextCode()) {
 				return;
 			};
 			this.onMention();
@@ -568,55 +568,55 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		// Make list
-		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && !block.isBulleted()) {
+		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && !block.isTextBulleted()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Bulleted } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make checkbox
-		if ((value == '[]') && !block.isCheckbox()) {
+		if ((value == '[]') && !block.isTextCheckbox()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Checkbox } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make numbered
-		if ((value == '1. ') && !block.isNumbered()) {
+		if ((value == '1. ') && !block.isTextNumbered()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Numbered } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h1
-		if ((value == '# ') && !block.isHeader1()) {
+		if ((value == '# ') && !block.isTextHeader1()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header1 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h2
-		if ((value == '## ') && !block.isHeader2()) {
+		if ((value == '## ') && !block.isTextHeader2()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header2 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h3
-		if ((value == '### ') && !block.isHeader3()) {
+		if ((value == '### ') && !block.isTextHeader3()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header3 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make toggle
-		if ((value == '> ') && !block.isToggle()) {
+		if ((value == '> ') && !block.isTextToggle()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Toggle } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make quote
-		if ((value == '" ') && !block.isQuote()) {
+		if ((value == '" ') && !block.isTextQuote()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Quote } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make code
-		if ((value == '/code' || value == '```') && !block.isCode()) {
+		if ((value == '/code' || value == '```') && !block.isTextCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
@@ -745,7 +745,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const value = this.getValue();
 		
-		if (block.isCode()) {
+		if (block.isTextCode()) {
 			marks = [];
 		};
 		
