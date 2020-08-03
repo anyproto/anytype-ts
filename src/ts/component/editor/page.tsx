@@ -1209,7 +1209,10 @@ class EditorPage extends React.Component<Props, State> {
 						let reader = new FileReader();
 						reader.readAsBinaryString(file); 
 						reader.onloadend = () => {
-							data.files.push(reader.result);
+							data.files.push({
+								name: file.name,
+								data: btoa(reader.result as string),
+							});
 							if (data.files.length == files.length) {
 								this.onPaste(e, true, data);
 							};
