@@ -1178,22 +1178,50 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onPaste (e: any, force?: boolean, data?: any) {
-		e.preventDefault();
-
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
-		
+
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
+			const items = cb.items;
+
 			data = {
 				text: String(cb.getData('text/plain') || ''),
 				html: String(cb.getData('text/html') || ''),
 				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
+				files: [],
 			};
 			data.anytype.range = data.anytype.range || { from: 0, to: 0 };
+
+			// Read files
+			if (items && items.length) {
+				let files = [];
+				for (let item of items) {
+					if (item.kind != 'file') {
+						continue;
+					};
+					files.push(item.getAsFile());
+				};
+
+				if (files.length) {
+					for (let file of files) {
+						let reader = new FileReader();
+						reader.readAsBinaryString(file); 
+						reader.onloadend = () => {
+							data.files.push(reader.result);
+							if (data.files.length == files.length) {
+								this.onPaste(e, true, data);
+							};
+						 };
+					};
+					return;
+				};
+			};
 		};
-		
+
+		e.preventDefault();
+
 		const block = blockStore.getLeaf(rootId, focused);
 		const length = block ? block.getLength() : 0;
 		const reg = new RegExp(/^((?:https?:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
