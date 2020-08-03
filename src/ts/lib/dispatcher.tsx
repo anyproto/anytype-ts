@@ -182,7 +182,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (block.hasTitle()) {
+					if (block.canHaveTitle()) {
 						block.childrenIds.unshift(rootId + '-title');
 						blocks.unshift(new M.Block({
 							id: rootId + '-title',
@@ -222,7 +222,7 @@ class Dispatcher {
 
 					childrenIds = data.getChildrenidsList() || [];
 
-					if (block.hasTitle() && (childrenIds.indexOf(rootId + '-title') < 0)) {
+					if (block.canHaveTitle() && (childrenIds.indexOf(rootId + '-title') < 0)) {
 						childrenIds.unshift(rootId + '-title');
 					};
 
