@@ -198,6 +198,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	loadSearch () {
+		const { root } = blockStore;
+
 		this.setState({ loading: true });
 
 		C.NavigationListPages((message: any) => {
@@ -205,6 +207,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				it.details.name = String(it.details.name || Constant.default.name || '');
 				return it; 
 			});
+			pages = pages.filter((it: any) => { return it.id != root; });
 			this.setState({ pages: pages, loading: false });
 		});
 	};
@@ -262,6 +265,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { filter } = commonStore;
 		const { data } = param;
@@ -278,19 +284,18 @@ class MenuBlockMention extends React.Component<Props, State> {
 			const { content } = block;
 		
 			let { marks } = content;
-			let text = item.name + ' ';
 			let from = filter.from;
-			let to = from + text.length;
+			let to = from + item.name.length + 1;
 	
 			marks = Util.objectCopy(marks);
-			marks = Mark.adjust(marks, from, item.name.length);
+			marks = Mark.adjust(marks, from, item.name.length + 1);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
 				param: item.key, 
 				range: { from: from, to: from + item.name.length },
 			});
 	
-			onChange(text, marks, from, to);
+			onChange(item.name + ' ', marks, from, to);
 		};
 
 		this.props.close();
