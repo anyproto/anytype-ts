@@ -198,6 +198,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	loadSearch () {
+		const { root } = blockStore;
+
 		this.setState({ loading: true });
 
 		C.NavigationListPages((message: any) => {
@@ -205,6 +207,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				it.details.name = String(it.details.name || Constant.default.name || '');
 				return it; 
 			});
+			pages = pages.filter((it: any) => { return it.id != root; });
 			this.setState({ pages: pages, loading: false });
 		});
 	};
