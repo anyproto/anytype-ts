@@ -364,8 +364,9 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
     request.setIspartofblock(isPartOfBlock);
     request.setSelectedblockidsList(blockIds);
     request.setTextslot(data.text);
-    request.setHtmlslot(data.html);
-    request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
+	request.setHtmlslot(data.html);
+	request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
+	//request.setFileslot(data.files);
 
 	dispatcher.request('blockPaste', request, callBack);
 };

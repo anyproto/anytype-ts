@@ -1239,8 +1239,8 @@ class EditorPage extends React.Component<Props, State> {
 				data: {
 					value: '',
 					options: [
-						{ id: 'cancel', name: 'Dismiss' },
 						{ id: 'bookmark', name: 'Create bookmark' },
+						{ id: 'cancel', name: 'Dismiss' },
 						//{ id: 'embed', name: 'Create embed' },
 					],
 					onSelect: (event: any, item: any) => {
@@ -1260,7 +1260,7 @@ class EditorPage extends React.Component<Props, State> {
 		let from = 0;
 		let to = 0;
 		
-		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
