@@ -25,7 +25,7 @@ const Shutdown = () => {
 
 const LinkPreview = (response: any) => {
 	return {
-		linkPreview: Mapper.From.LinkPreview(response.getLinkpreview()),
+		linkPreview: response.hasLinkpreview() ? Mapper.From.LinkPreview(response.getLinkpreview()) : {},
 	};
 };
 
