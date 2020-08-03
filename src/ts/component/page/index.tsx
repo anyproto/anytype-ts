@@ -57,14 +57,14 @@ class Page extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
+		const pin = Storage.get('pin');
 		
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
 			Storage.set('firstRun', 1);
 		};
-		
+
 		const Component = Components[path];
-		
 		if (!Component) {
 			return <div>Page component "{path}" not found</div>;
 		};
@@ -94,6 +94,13 @@ class Page extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isMain = match.params.page == 'main';
+		const isCheck = match.params.action == 'pin-check';
+		const pin = Storage.get('pin');
+
+		if (pin && !keyboard.isPinChecked && !isCheck) {
+			this.props.history.push('/auth/pin-check');
+			return;
+		};
 
 		this.setBodyClass();
 		this.resize();
@@ -131,7 +138,7 @@ class Page extends React.Component<Props, {}> {
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 		const platform = Util.getPlatform();
-		
+
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
 			Util.toCamelCase([ prefix, page, action ].join('-')),
