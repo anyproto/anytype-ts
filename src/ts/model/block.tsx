@@ -45,7 +45,7 @@ class Block implements I.Block {
 	};
 
 	canHaveChildren (): boolean {
-		return !this.isSystem() && !this.isTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextToggle() || this.isTextCheckbox() || this.isTextNumbered() || this.isTextBulleted());
 	};
 
 	canHaveAlign (): boolean {
