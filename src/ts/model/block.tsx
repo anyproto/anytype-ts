@@ -45,7 +45,7 @@ class Block implements I.Block {
 	};
 
 	canHaveChildren (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextToggle() || this.isTextCheckbox() || this.isTextNumbered() || this.isTextBulleted());
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
 	};
 
 	canHaveAlign (): boolean {
@@ -190,6 +190,10 @@ class Block implements I.Block {
 	
 	isTextHeader3 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header3);
+	};
+
+	isTextList (): boolean {
+		return this.isTextToggle() || this.isTextNumbered() || this.isTextBulleted() || this.isTextCheckbox();
 	};
 	
 	isTextToggle (): boolean {
