@@ -291,7 +291,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				this.ref.blur();
 				this.n = -1;
 			} else 
-			if ([ Key.enter, Key.space ].indexOf(k) >= 0) {
+			if ([ Key.enter, Key.space, Key.tab ].indexOf(k) >= 0) {
 				this.ref.blur();
 			} else {
 				return;
@@ -329,7 +329,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					this.onOver(e, item);
 				};
 				break;
-				
+			
+			case Key.tab:
 			case Key.enter:
 			case Key.space:
 				if (item) {

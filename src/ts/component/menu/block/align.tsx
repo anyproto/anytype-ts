@@ -99,7 +99,8 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 				};
 				this.setActive(null, true);
 				break;
-				
+			
+			case Key.tab:
 			case Key.enter:
 			case Key.space:
 				if (item) {
