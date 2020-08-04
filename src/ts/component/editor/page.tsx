@@ -231,7 +231,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		crumbs.save(I.CrumbsType.Page, cr);
 		
-		this.close(this.id);
+		//this.close(this.id);
 		this.id = rootId;
 		
 		C.BlockOpen(this.id, (message: any) => {
