@@ -482,15 +482,13 @@ function exit (relaunch) {
 	console.log('Exit, bye!');
 
 	let cb = () => {
-		if (relaunch) {
-			setTimeout(() => {
+		setTimeout(() => {
+			if (relaunch) {
 				Util.log('info', 'Relaunch');
 				app.relaunch();
-				app.exit(0);
-			}, 2000);
-		} else {
+			};
 			app.exit(0);
-		};
+		}, 2000);
 	};
 
 	if (useGRPC) {
