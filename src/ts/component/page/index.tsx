@@ -19,10 +19,6 @@ import PageAuthSuccess from './auth/success';
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 
-import PageHelpIndex from './help/index';
-import PageHelpShortcuts from './help/shortcuts';
-import PageHelpNew from './help/new';
-
 const $ = require('jquery');
 const raf = require('raf');
 const Components: any = {
@@ -40,10 +36,6 @@ const Components: any = {
 			
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
-			
-	'help/index':			 PageHelpIndex,
-	'help/shortcuts':		 PageHelpShortcuts,
-	'help/new':				 PageHelpNew,
 };
 
 interface Props extends RouteComponentProps<any> {};
@@ -107,7 +99,9 @@ class Page extends React.Component<Props, {}> {
 		keyboard.setMatch(match);
 
 		if (!popupNewBlock && isMain) {
-			commonStore.popupOpen('new', {});
+			commonStore.popupOpen('help', { 
+				data: { document: 'whatsNew' },
+			});
 		};
 		
 		$(window).on('resize.page', () => { this.resize(); });

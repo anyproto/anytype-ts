@@ -288,16 +288,16 @@ function menuInit () {
 			label: 'Help',
 			submenu: [
 				{
-					label: 'Table of contents',
-					click: function () { win.webContents.send('route', '/help/index'); }
+					label: 'Status',
+					click: function () { win.webContents.send('popupHelp', 'status'); }
 				},
 				{
-					label: 'Keyboard & Shortcuts',
-					click: function () { win.webContents.send('route', '/help/shortcuts'); }
+					label: 'Keyboard Shortcuts',
+					click: function () { win.webContents.send('popupHelp', 'shortcuts'); }
 				},
 				{
 					label: 'What\'s new',
-					click: function () { win.webContents.send('route', '/help/new'); }
+					click: function () { win.webContents.send('popupHelp', 'whatsNew'); }
 				},
 				{
 					label: 'Check for updates',

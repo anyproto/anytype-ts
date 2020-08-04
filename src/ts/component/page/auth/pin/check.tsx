@@ -60,7 +60,9 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 			history.push('/main/index');
 				
 			if (!Storage.get('popupNewBlock')) {
-				commonStore.popupOpen('new', {});
+				commonStore.popupOpen('help', { 
+					data: { document: 'whatsNew' },
+				});
 			};
 		};
 	};
