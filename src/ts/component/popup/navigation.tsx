@@ -58,6 +58,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	disableFirstKey: boolean = false;
 	n: number = 0;
 	panel: Panel = Panel.Left;
+	focused: boolean = false;
 	
 	constructor (props: any) {
 		super (props);
@@ -66,6 +67,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onConfirm = this.onConfirm.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 	};
 	
 	render () {
@@ -77,10 +80,10 @@ class PopupNavigation extends React.Component<Props, State> {
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
 		const page = pageLeft;
+		const pages = this.filterPages();
 
 		let n = 0;
 		let confirm = '';
-		let pages = this.state.pages || [];
 		let iconSearch = null;
 
 		if (showIcon) {
@@ -111,19 +114,17 @@ class PopupNavigation extends React.Component<Props, State> {
 		const head = (
 			<form id="head" className="head" onSubmit={this.onSubmit}>
 				{iconSearch}
-				<Input ref={(ref: any) => { this.ref = ref; }} value={details.name} placeHolder="Search for a page..." onKeyDown={this.onKeyDownSearch} onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} />
+				<Input 
+					ref={(ref: any) => { this.ref = ref; }} 
+					value={details.name} 
+					placeHolder="Search for a page..." 
+					onKeyDown={this.onKeyDownSearch} 
+					onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
+				/>
 			</form>
 		);
-
-		if (filter) {
-			const ids = this.index ? this.index.search(filter) : [];
-			if (ids.length) {
-				pages = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
-			} else {
-				const reg = new RegExp(filter.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
-				pages = pages.filter((it: I.PageInfo) => { return it.text.match(reg); });
-			};
-		};
 
 		const Item = (item: any) => {
 			let { iconEmoji, iconImage, name } = item.details;
@@ -246,7 +247,7 @@ class PopupNavigation extends React.Component<Props, State> {
 								</div>
 							</div>
 						) : (
-							<div key="items" className="items left">
+							<div id={'panel-' + Panel.Left} key="items" className="items left">
 								{pages.map((item: any, i: number) => {
 									if (++n > (page + 1) * PAGE) {
 										return null;
@@ -279,19 +280,16 @@ class PopupNavigation extends React.Component<Props, State> {
 		
 		if (expanded) {
 			this.loadPage(rootId);
-			this.rebind();
 		};
 
+		this.rebind();
 		focus.clear(true);
 	};
 	
 	componentDidUpdate () {
 		const { expanded } = this.state;
 		this.initSize(expanded);
-
-		if (expanded) {
-			this.setActive();
-		};
+		this.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -394,19 +392,51 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.onKeyUpSearch(e, true);
 	};
 
+	onFocus () {
+		this.focused = true;
+	};
+
+	onBlur () {
+		this.focused = false;
+	};
+
 	onKeyDown (e: any) {
 		const { expanded } = this.state;
 
+		const items = this.getItems();
+		const l = items.length;
+
+		let k = e.key.toLowerCase();
+		if (k == Key.tab) {
+			k = e.shiftKey ? Key.left : Key.right;
+		};
+
 		if (!expanded) {
-			return;
+			if ([ Key.left, Key.right ].indexOf(k) >= 0) {
+				return;
+			};
+
+			if ((k == Key.down) && (this.n == -1)) {
+				this.ref.blur();
+				this.disableFirstKey = true;
+			};
+
+			if ((k == Key.up) && (this.n == 0)) {
+				this.ref.focus();
+				this.ref.select();
+				this.disableFirstKey = true;
+				this.unsetActive();
+				this.n = -1;
+				return;
+			};
+
+			if ((k != Key.down) && this.focused) {
+				return;
+			};
 		};
 
 		e.preventDefault();
 		e.stopPropagation();
-		
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
 
 		switch (k) {
 			case Key.up:
@@ -470,23 +500,46 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { info, pagesIn, pagesOut } = this.state;
+		const { info, pages, pagesIn, pagesOut, expanded, filter } = this.state;
 
 		let items = [];
-		switch (this.panel) {
-			case Panel.Left:
-				items = pagesIn;
-				break;
-			
-			case Panel.Center:
-				items = [ info ];
-				break;
-
-			case Panel.Right:
-				items = pagesOut;
-				break;
+		if (expanded) {
+			switch (this.panel) {
+				case Panel.Left:
+					items = pagesIn;
+					break;
+				
+				case Panel.Center:
+					items = [ info ];
+					break;
+	
+				case Panel.Right:
+					items = pagesOut;
+					break;
+			};
+		} else {
+			items = this.filterPages();
 		};
 		return items;
+	};
+
+	filterPages (): I.PageInfo[] {
+		const { pages, filter } = this.state;
+		
+		if (!filter) {
+			return pages;
+		};
+
+		const ids = this.index ? this.index.search(filter) : [];
+		
+		let ret = [];
+		if (ids.length) {
+			ret = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
+		} else {
+			const reg = new RegExp(filter.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
+			ret = pages.filter((it: I.PageInfo) => { return it.text.match(reg); });
+		};
+		return ret;
 	};
 
 	setActive () {
@@ -497,9 +550,13 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		
 		node.find('.active').removeClass('active');
 		node.find(`#panel-${this.panel} #item-${item.id}`).addClass('active');
+	};
+
+	unsetActive () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.active').removeClass('active');
 	};
 
 	onKeyDownSearch (e: any) {
@@ -512,7 +569,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		if (showIcon) {
 			newState.showIcon = false;
 		};
-
 		if (Util.objectLength(newState)) {
 			this.setState(newState);
 		};
@@ -540,6 +596,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { skipId } = data;
 
 		this.setState({ loading: true });
+		this.n = -1;
+		this.panel = Panel.Left;
 
 		this.index = new FlexSearch('balance', {
 			encode: 'extra',
@@ -579,7 +637,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			};
 
 			this.n = 0;
-			this.panel = 2;
+			this.panel = Panel.Center;
 
 			this.initSearch(id);
 			this.setState({ 

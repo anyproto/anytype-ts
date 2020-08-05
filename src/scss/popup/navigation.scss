@@ -37,7 +37,7 @@
 				.icon.arrow { display: none; }
 				.name { margin: 0px; }
 			}
-			.item:hover { color: $colorBlack; }
+			.item:hover, { color: $colorBlack; }
 		}
 		
 		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
@@ -58,8 +58,8 @@
 				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
 			}
 
-			.item:hover { background-color: rgba(172, 169, 150, 0.15); }
-			.item:hover {
+			.item:hover, .item.active { background-color: rgba(172, 169, 150, 0.15); }
+			.item:hover, .item.active {
 				.smile { background-color: $colorLightGrey; }
 			}
 		}
