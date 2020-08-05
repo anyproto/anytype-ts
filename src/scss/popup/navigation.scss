@@ -102,7 +102,7 @@
 
 			.sideName { margin-bottom: 13px; @include text-common; font-weight: 500; }
 			
-			.selected { padding: 16px 16px 12px 16px; border: 1px solid #ffda90; box-shadow: 0px 0px 0px 1px #ffda90; border-radius: 8px; }
+			.selected { padding: 16px 16px 12px 16px; border-radius: 8px; border: 1px solid $colorLightGrey; transition: $transitionFast; }
 			.selected {
 				.smile { margin-bottom: 8px; }
 				.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
@@ -117,6 +117,7 @@
 					}
 				}
 			}
+			.selected.active { border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
 			
 			.items.right {
 				.item {

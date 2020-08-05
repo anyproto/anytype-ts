@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { I, C, Util, DataUtil, crumbs, Key, focus } from 'ts/lib';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {
@@ -27,10 +27,13 @@ const $ = require('jquery');
 const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
-
 const PAGE = 30;
 
-enum Panel { Left, Right };
+enum Panel { 
+	Left = 1, 
+	Center = 2, 
+	Right = 3,
+};
 
 @observer
 class PopupNavigation extends React.Component<Props, State> {
@@ -53,12 +56,14 @@ class PopupNavigation extends React.Component<Props, State> {
 	timeout: number = 0;
 	index: any = null;
 	disableFirstKey: boolean = false;
+	n: number = 0;
+	panel: Panel = Panel.Left;
 	
 	constructor (props: any) {
 		super (props);
 		
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onKeyDownSearch = this.onKeyDownSearch.bind(this);
+		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onConfirm = this.onConfirm.bind(this);
 	};
@@ -106,7 +111,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const head = (
 			<form id="head" className="head" onSubmit={this.onSubmit}>
 				{iconSearch}
-				<Input ref={(ref: any) => { this.ref = ref; }} value={details.name} placeHolder="Search for a page..." onKeyDown={this.onKeyDown} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+				<Input ref={(ref: any) => { this.ref = ref; }} value={details.name} placeHolder="Search for a page..." onKeyDown={this.onKeyDownSearch} onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} />
 			</form>
 		);
 
@@ -177,7 +182,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			};
 			
 			return (
-				<div className="selected">
+				<div id={'item-' + item.id} className="selected">
 					{icon}
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
@@ -196,7 +201,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				{expanded ? (
 					<React.Fragment>
 						<div key="sides" className="sides">
-							<div className="items left">
+							<div id={'panel-' + Panel.Left} className="items left">
 								{!isRoot ? (
 									<React.Fragment>
 										<div className="sideName">Link from page</div>
@@ -212,10 +217,10 @@ class PopupNavigation extends React.Component<Props, State> {
 									</React.Fragment>
 								) : ''}
 							</div>
-							<div className="items center">
+							<div id={'panel-' + Panel.Center} className="items center">
 								{info ? <Selected {...info} /> : ''}
 							</div>
-							<div className="items right">
+							<div id={'panel-' + Panel.Right} className="items right">
 								<div className="sideName">Link to page</div>
 								{!pagesOut.length ? (
 									<ItemEmpty name="No links to other pages" />
@@ -274,19 +279,41 @@ class PopupNavigation extends React.Component<Props, State> {
 		
 		if (expanded) {
 			this.loadPage(rootId);
+			this.rebind();
 		};
+
+		focus.clear(true);
 	};
 	
 	componentDidUpdate () {
 		const { expanded } = this.state;
 		this.initSize(expanded);
+
+		if (expanded) {
+			this.setActive();
+		};
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-
-		$(window).unbind('resize.navigation');
 		window.clearTimeout(this.timeout);
+		this.unbind();
+	};
+
+	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		this.unbind();
+		
+		const win = $(window);
+		win.on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
+		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
+	};
+
+	unbind () {
+		$(window).unbind('keydown.navigation resize.navigation');
 	};
 	
 	initSize (expanded: boolean) {
@@ -294,14 +321,11 @@ class PopupNavigation extends React.Component<Props, State> {
 			return;
 		};
 
-		const win = $(window);
 		const obj = $('#popupNavigation #innerWrap');
 		
 		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
 		
 		this.resize();
-		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
-
 		obj.find('.items.left').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Left); });
 		obj.find('.items.right').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Right); });
 	};
@@ -367,10 +391,118 @@ class PopupNavigation extends React.Component<Props, State> {
 	
 	onSubmit (e: any) {
 		e.preventDefault();
-		this.onKeyUp(e, true);
+		this.onKeyUpSearch(e, true);
 	};
 
 	onKeyDown (e: any) {
+		const { expanded } = this.state;
+
+		if (!expanded) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+		
+		const k = e.key.toLowerCase();
+		const items = this.getItems();
+		const l = items.length;
+
+		switch (k) {
+			case Key.up:
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
+				};
+				this.setActive();
+				break;
+				
+			case Key.down:
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
+				};
+				this.setActive();
+				break;
+
+			case Key.left:
+				this.n = 0;
+				this.panel--;
+				if (this.panel < Panel.Left) {
+					this.panel = Panel.Right;
+				};
+				if (!this.getItems().length) {
+					this.panel = Panel.Right;
+				};
+				this.setActive();
+				break;
+				
+			case Key.right:
+				this.n = 0;
+				this.panel++;
+				if (this.panel > Panel.Right) {
+					this.panel = Panel.Left;
+				};
+				if (!this.getItems().length) {
+					this.panel = Panel.Left;
+				};
+				this.setActive();
+				break;
+				
+			case Key.enter:
+			case Key.space:
+				const item = items[this.n];
+				if (!item) {
+					break;
+				};
+
+				if (this.panel == Panel.Center) {
+					this.onConfirm(e, item);
+				} else {
+					this.loadPage(item.id);
+				};
+				break;
+				
+			case Key.escape:
+				this.props.close();
+				break;
+		};
+	};
+
+	getItems () {
+		const { info, pagesIn, pagesOut } = this.state;
+
+		let items = [];
+		switch (this.panel) {
+			case Panel.Left:
+				items = pagesIn;
+				break;
+			
+			case Panel.Center:
+				items = [ info ];
+				break;
+
+			case Panel.Right:
+				items = pagesOut;
+				break;
+		};
+		return items;
+	};
+
+	setActive () {
+		const items = this.getItems();
+		const item = items[this.n];
+		if (!item) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		node.find('.active').removeClass('active');
+		node.find(`#panel-${this.panel} #item-${item.id}`).addClass('active');
+	};
+
+	onKeyDownSearch (e: any) {
 		const { expanded, showIcon } = this.state;
 		const newState: any = {};
 
@@ -386,7 +518,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 	};
 	
-	onKeyUp (e: any, force: boolean) {
+	onKeyUpSearch (e: any, force: boolean) {
 		if (this.disableFirstKey) {
 			this.disableFirstKey = false;
 			return;
@@ -445,6 +577,9 @@ class PopupNavigation extends React.Component<Props, State> {
 				this.setState({ loading: false });
 				return;
 			};
+
+			this.n = 0;
+			this.panel = 2;
 
 			this.initSearch(id);
 			this.setState({ 
