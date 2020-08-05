@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs, Key, focus } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -69,6 +69,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.onConfirm = this.onConfirm.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onOver = this.onOver.bind(this);
 	};
 	
 	render () {
@@ -131,7 +132,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			let isRoot = item.id == root;
 
 			return (
-				<div id={'item-' + item.id} className="item">
+				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
 						{isRoot ? (
 							<div className="smile c48">
@@ -211,7 +212,7 @@ class PopupNavigation extends React.Component<Props, State> {
 										) : (
 											<React.Fragment>
 												{pagesIn.map((item: any, i: number) => {
-													return <Item key={i} {...item} />;
+													return <Item key={i} {...item} panel={Panel.Left} />;
 												})}
 											</React.Fragment>
 										)}
@@ -228,7 +229,7 @@ class PopupNavigation extends React.Component<Props, State> {
 								) : (
 									<React.Fragment>
 										{pagesOut.map((item: any, i: number) => {
-											return <Item key={i} {...item} />;
+											return <Item key={i} {...item} panel={Panel.Right} />;
 										})}
 									</React.Fragment>
 								)}
@@ -253,7 +254,7 @@ class PopupNavigation extends React.Component<Props, State> {
 										return null;
 									};
 
-									return <Item key={i} {...item} />;
+									return <Item key={i} {...item} panel={Panel.Left} />;
 								})}
 							</div>
 						)}
@@ -402,16 +403,18 @@ class PopupNavigation extends React.Component<Props, State> {
 
 	onKeyDown (e: any) {
 		const { expanded } = this.state;
-
 		const items = this.getItems();
 		const l = items.length;
 
 		let k = e.key.toLowerCase();
-		if (k == Key.tab) {
-			k = e.shiftKey ? Key.left : Key.right;
-		};
+
+		keyboard.disableMouse(true);
 
 		if (!expanded) {
+			if (k == Key.tab) {
+				k = e.shiftKey ? Key.up : Key.down;
+			};
+
 			if ([ Key.left, Key.right ].indexOf(k) >= 0) {
 				return;
 			};
@@ -432,6 +435,10 @@ class PopupNavigation extends React.Component<Props, State> {
 
 			if ((k != Key.down) && this.focused) {
 				return;
+			};
+		} else {
+			if (k == Key.tab) {
+				k = e.shiftKey ? Key.left : Key.right;
 			};
 		};
 
@@ -461,9 +468,14 @@ class PopupNavigation extends React.Component<Props, State> {
 				if (this.panel < Panel.Left) {
 					this.panel = Panel.Right;
 				};
-				if (!this.getItems().length) {
+
+				if ((this.panel == Panel.Left) && !this.getItems().length) {
 					this.panel = Panel.Right;
 				};
+				if ((this.panel == Panel.Right) && !this.getItems().length) {
+					this.panel = Panel.Center;
+				};
+
 				this.setActive();
 				break;
 				
@@ -473,9 +485,14 @@ class PopupNavigation extends React.Component<Props, State> {
 				if (this.panel > Panel.Right) {
 					this.panel = Panel.Left;
 				};
-				if (!this.getItems().length) {
+				
+				if ((this.panel == Panel.Left) && !this.getItems().length) {
+					this.panel = Panel.Center;
+				};
+				if ((this.panel == Panel.Right) && !this.getItems().length) {
 					this.panel = Panel.Left;
 				};
+
 				this.setActive();
 				break;
 				
@@ -542,11 +559,17 @@ class PopupNavigation extends React.Component<Props, State> {
 		return ret;
 	};
 
-	setActive () {
+	setActive (item?: any) {
 		const items = this.getItems();
-		const item = items[this.n];
+		if (!item) {
+			item = items[this.n];
+		};
 		if (!item) {
 			return;
+		};
+
+		if (item.panel) {
+			this.panel = item.panel;
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
@@ -557,6 +580,12 @@ class PopupNavigation extends React.Component<Props, State> {
 	unsetActive () {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.active').removeClass('active');
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item);
+		};
 	};
 
 	onKeyDownSearch (e: any) {
