@@ -38,10 +38,12 @@ class ViewGrid extends React.Component<Props, {}> {
 
 			return (
 				<th id={id} className={'head c-' + relation.type} style={{ width: relation.width }}>
-					<Icon className={'relation c-' + relation.type} />
-					<div className="name">{relation.name}</div>
-					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.id); }}>
-						<div className="line" />
+					<div className="cellContent">
+						<Icon className={'relation c-' + relation.type} />
+						<div className="name">{relation.name}</div>
+						<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.id); }}>
+							<div className="line" />
+						</div>
 					</div>
 				</th>
 			);
@@ -179,8 +181,11 @@ class ViewGrid extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#' + DataUtil.cellId('head', id, ''));
 		const offset = el.offset();
-		const width = Math.min(500, Math.max(48, e.pageX - offset.left));
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.id == id; });
+
+		let width = e.pageX - offset.left;
+		width = Math.max(Constant.size.dataview.cell.min, width); 
+		width = Math.min(Constant.size.dataview.cell.max, width);
 		
 		view.relations[idx].width = width;
 		el.css({ width: width });
