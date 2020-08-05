@@ -23,6 +23,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		this.onRowOver = this.onRowOver.bind(this);
 		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
+		this.onResizeStart = this.onResizeStart.bind(this);
 	};
 
 	render () {
@@ -31,16 +32,24 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { offset, total } = content;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
-		const CellHead = (item: any) => (
-			<th className={'head c-' + item.type}>
-				<Icon className={'relation c-' + item.type} />
-				<div className="name">{item.name}</div>
-			</th>
-		);
+		const CellHead = (item: any) => {
+			const { relation } = item;
+			const id = DataUtil.cellId('head', relation.id, '');
+
+			return (
+				<th id={id} className={'head c-' + relation.type} style={{ width: relation.width }}>
+					<Icon className={'relation c-' + relation.type} />
+					<div className="name">{relation.name}</div>
+					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.id); }}>
+						<div className="line" />
+					</div>
+				</th>
+			);
+		};
 		
 		const CellBody = (item: any) => {
 			let { relation, index } = item;
-			let id = DataUtil.cellId(relation.id, index);
+			let id = DataUtil.cellId('cell', relation.id, index);
 			let cn = [ 'cell', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
 
 			if (item.relation.id == 'name') {
@@ -55,9 +64,9 @@ class ViewGrid extends React.Component<Props, {}> {
 						rootId={rootId}
 						block={block}
 						view={view} 
-						id={item.index} 
+						id={index} 
 						readOnly={readOnly}
-						onOpen={onOpen} 
+						onOpen={onOpen}
 					/>
 				</td>
 			);
@@ -65,8 +74,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const RowHead = (item: any) => (
 			<tr className="row">
-				{relations.map((item: any, i: number) => (
-					<CellHead key={'grid-head-' + item.id} {...item} />
+				{relations.map((relation: any, i: number) => (
+					<CellHead key={'grid-head-' + relation.id} relation={relation} />
 				))}
 				<th className="head last">
 					{!readOnly ? <Icon className="plus" /> : ''}
@@ -77,7 +86,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowBody = (item: any) => (
 			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={...relation} data={data[item.index]} />
+					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={relation} data={data[item.index]} />
 				))}
 				<td className="cell last">&nbsp;</td>
 			</tr>
@@ -134,24 +143,48 @@ class ViewGrid extends React.Component<Props, {}> {
 		const mw = ww - 192;
 		
 		let vw = 0;
-		let sw = 0;
 		let margin = 0;
 		let width = 0;
 
 		for (let relation of view.relations) {
-			width += Number(Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0;
+			width += relation.width;
 		};
 
 		if (width < mw) {
-			vw = sw = mw;
+			vw = mw;
 		} else {
 			vw = width;
-			sw = ww;
 			margin = (ww - mw) / 2; 
 		};
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
+	};
+
+	onResizeStart (e: any, id: string) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const win = $(window);
+		win.unbind('mousemove.cell mouseup.cell');
+		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, id); });
+		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e); });
+	};
+
+	onResizeMove (e: any, id: string) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#' + DataUtil.cellId('head', id, ''));
+		const offset = el.offset();
+		const width = Math.min(500, Math.max(48, e.pageX - offset.left));
+
+		el.css({ width: width });
+	};
+
+	onResizeEnd (e: any) {
+		$(window).unbind('mousemove.cell mouseup.cell');
 	};
 
 	onRowOver (id: number) {
@@ -182,7 +215,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			return;
 		};
 
-		const id = DataUtil.cellId(relation.id, index);
+		const id = DataUtil.cellId('cell', relation.id, index);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cell = node.find('#' + id);
 		const ref = this.cellRefs.get(id);

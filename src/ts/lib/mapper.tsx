@@ -2,6 +2,7 @@ import { I, M, Decode, Util, Encode, DataUtil } from 'ts/lib';
 import { decorate, observable } from 'mobx';
 
 const Commands = require('lib/pb/protos/commands_pb');
+const Constant = require('json/constant.json');
 const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
@@ -221,11 +222,21 @@ const Mapper = {
     
             view.relations = relations.map((relation: I.Relation) => {
                 let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
-                return {
+                return decorate({
                     ...relation,
                     isVisible: Boolean(rel.isVisible),
                     order: order[relation.id],
-                };
+                    width: Number(Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0,
+                }, {
+                    id: observable,
+                    name: observable,
+                    type: observable,
+                    isHidden: observable,
+                    isReadOnly: observable,
+                    isVisible: observable,
+                    order: observable,
+                    width: observable,
+                });
             });
 
             view.relations.sort((c1: any, c2: any) => {

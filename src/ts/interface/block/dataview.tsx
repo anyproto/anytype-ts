@@ -73,6 +73,7 @@ export interface Filter {
 export interface ViewRelation extends Relation {
 	isVisible: boolean;
 	order: number;
+	width: number;
 };
 
 export interface ViewComponent {

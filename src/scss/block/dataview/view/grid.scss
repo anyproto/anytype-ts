@@ -2,33 +2,38 @@
 
 .blocks {
 	.block.blockDataview {
-        .viewItem.viewGrid { border-collapse: collapse; border-bottom: 1px solid #e0ded2; }
+        .viewItem.viewGrid { border-collapse: collapse; border-bottom: 1px solid #e0ded2; table-layout: fixed; }
 		.viewItem.viewGrid {
 			.head { 
 				text-align: left; color: #6c6a5f; padding: 14px 0px 14px 14px; border-bottom: 1px solid #e0ded2; white-space: nowrap; 
-				font-weight: 400; line-height: 20px;
+				font-weight: 400; line-height: 20px; position: relative;
 			}
 			.head {
 				.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
 				.name { 
 					display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px); 
-					@include text-overflow-nw; border-right: 1px solid #e0ded2;
+					@include text-overflow-nw;
+				}
+				.resize { width: 20px; height: 20px; position: absolute; right: -10px; top: 14px; cursor: col-resize; z-index: 1; }
+				.resize {
+					.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 9px; }
 				}
 			}
 			.head:last-child {
 				.name { border: 0px; }
 			}
 			.head.last { width: auto; }
+
+			.cellContent { @include text-overflow-nw; width: 100%; }
 				
 			td.cell { 
 				padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; 
-				width: 192px;
 			}
 			td.cell:last-child { border-right: 0px; }
 			td.cell.last { width: auto; }
 
 			td.cell.c-number {
-				.name { @include text-overflow-nw; max-width: 192px; }
+				.name { @include text-overflow-nw; max-width: 100%; }
 			}
 
 			td.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }
@@ -40,13 +45,12 @@
 			td.cell.add:hover {
 				.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 			}
-			td.cell.isName { width: 288px; }
 			td.cell.isName {
 				.icon.expand { 
 					display: block; position: absolute; right: 2px; top: 2px; opacity: 0; width: 38px; height: calc(100% - 4px);
 					background-size: 20px 20px; background-position: 9px center; background-color: #fff;
 				}
-				.name { line-height: 20px; width: calc(100% - 48px); @include text-overflow-nw; max-width: 240px; }
+				.name { line-height: 20px; @include text-overflow-nw; width: calc(100% - 48px); }
 			}
 
             td.cell.isEditing { box-shadow: 0px 0px 0px 2px $colorOrange inset; border-radius: 2px; }
@@ -72,7 +76,6 @@
 			td.cell.c-checkbox { padding: 12px 14px; }
 
 			.icon.checkbox { vertical-align: top; }
-			.cellContent.c-title, .cellContent.c-number, .cellContent.c-description { overflow: hidden; height: 20px; }
 		}
     }
 }

@@ -509,8 +509,9 @@ class DataUtil {
 		return a.length > 1 ? a[a.length - 1] : '';
 	};
 
-	cellId (relationId: string, id: any) {
-		return [ 'cell', relationId, String(id || '') ].join('-');
+
+	cellId (prefix: string, relationId: string, id: any) {
+		return [ prefix, relationId, String(id || '') ].join('-');
 	};
 
 };

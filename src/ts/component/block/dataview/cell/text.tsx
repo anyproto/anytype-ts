@@ -101,7 +101,7 @@ class CellText extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { editing } = this.state;
 		const { id, relation } = this.props;
-		const cellId = DataUtil.cellId(relation.id, id);
+		const cellId = DataUtil.cellId('cell', relation.id, id);
 		const cell = $('#' + cellId);
 
 		if (editing) {

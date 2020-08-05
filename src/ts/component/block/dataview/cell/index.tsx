@@ -80,7 +80,7 @@ class Cell extends React.Component<Props, {}> {
 			this.ref.onClick(e);
 		};
 		
-		let element = '#' + DataUtil.cellId(relation.id, id);
+		let element = '#' + DataUtil.cellId('cell', relation.id, id);
 		let param: I.MenuParam = { 
 			element: element,
 			offsetX: 0,
