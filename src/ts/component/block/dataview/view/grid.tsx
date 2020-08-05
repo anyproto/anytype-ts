@@ -168,23 +168,29 @@ class ViewGrid extends React.Component<Props, {}> {
 		const win = $(window);
 		win.unbind('mousemove.cell mouseup.cell');
 		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, id); });
-		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e); });
+		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, id); });
 	};
 
 	onResizeMove (e: any, id: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
+		const { view } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#' + DataUtil.cellId('head', id, ''));
 		const offset = el.offset();
 		const width = Math.min(500, Math.max(48, e.pageX - offset.left));
-
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.id == id; });
+		
+		view.relations[idx].width = width;
 		el.css({ width: width });
 	};
 
-	onResizeEnd (e: any) {
+	onResizeEnd (e: any, id: string) {
+		const { rootId, block, view } = this.props;
+
 		$(window).unbind('mousemove.cell mouseup.cell');
+		C.BlockSetDataviewView(rootId, block.id, view.id, view);
 	};
 
 	onRowOver (id: number) {

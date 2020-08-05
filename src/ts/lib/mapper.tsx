@@ -169,6 +169,7 @@ const Mapper = {
             return {
                 id: obj.getId(),
                 isVisible: obj.getIsvisible(),
+                width: obj.getWidth(),
             };
         },
 
@@ -222,20 +223,11 @@ const Mapper = {
     
             view.relations = relations.map((relation: I.Relation) => {
                 let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
-                return decorate({
+                return observable({
                     ...relation,
                     isVisible: Boolean(rel.isVisible),
                     order: order[relation.id],
-                    width: Number(Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0,
-                }, {
-                    id: observable,
-                    name: observable,
-                    type: observable,
-                    isHidden: observable,
-                    isReadOnly: observable,
-                    isVisible: observable,
-                    order: observable,
-                    width: observable,
+                    width: Number(rel.width || Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0,
                 });
             });
 
@@ -353,7 +345,7 @@ const Mapper = {
 
             if (obj.type == I.BlockType.Div) {
                 content = new Model.Block.Content.Div();
-    
+
                 content.setStyle(obj.content.style);
     
                 block.setDiv(content);
@@ -367,6 +359,7 @@ const Mapper = {
             
             item.setId(obj.id);
             item.setIsvisible(obj.isVisible);
+            item.setWidth(obj.width);
 
             return item;
         },
