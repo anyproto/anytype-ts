@@ -156,11 +156,10 @@ class DataUtil {
 
 	onAuth () {
 		const pin = Storage.get('pin');
-
 		this.pageInit(() => {
 			if (pin) {
 				this.history.push('/auth/pin-check');
-				keyboard.setPinCheck();
+				keyboard.initPinCheck();
 			} else {
 				this.history.push('/main/index');
 			};

@@ -280,7 +280,7 @@ class App extends React.Component<Props, State> {
 		win.unbind('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', throttle((e: any) => {
-			keyboard.setPinCheck();
+			keyboard.initPinCheck();
 			keyboard.disableMouse(false);
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));
