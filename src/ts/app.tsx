@@ -140,6 +140,11 @@ Sentry.init({
 	release: version,
 	environment: (app.isPackaged ? 'production' : 'development'),
 	dsn: Constant.sentry,
+	maxBreadcrumbs: 0,
+	beforeSend: (e: any) => {
+		e.request.url = '';
+		return e;
+	},
 	integrations: [
 		new Sentry.Integrations.GlobalHandlers({
 			onerror: true,
@@ -275,7 +280,7 @@ class App extends React.Component<Props, State> {
 		win.unbind('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', throttle((e: any) => {
-			keyboard.setPinCheck();
+			keyboard.initPinCheck();
 			keyboard.disableMouse(false);
 			keyboard.setCoords(e.pageX, e.pageY);
 		}, THROTTLE));

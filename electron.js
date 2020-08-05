@@ -20,7 +20,6 @@ let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 let timeoutUpdate = 0;
-
 let service, server;
 
 if (app.isPackaged && !app.requestSingleInstanceLock()) {
@@ -308,74 +307,71 @@ function menuInit () {
 		},
 	];
 
-	//if (!app.isPackaged) {
-	let menuDebug = {
-		label: 'Debug',
-		submenu: [
-			{
-				label: 'Flags',
-				submenu: [
-					{
-						label: 'Interface', type: 'checkbox', checked: config.debugUI,
-						click: function () {
-							configSet({ debugUI: !config.debugUI }, function () {
-								win.webContents.send('config', config);
-							});
-						}
-					},
-					{
-						label: 'Middleware', type: 'checkbox', checked: config.debugMW,
-						click: function () {
-							configSet({ debugMW: !config.debugMW }, function () {
-								win.webContents.send('config', config);
-							});
-						}
-					},
-					{
-						label: 'Analytics', type: 'checkbox', checked: config.debugAN,
-						click: function () {
-							configSet({ debugAN: !config.debugAN }, function () {
-								win.webContents.send('config', config);
-							});
-						}
-					},
-				]
-			},
-			{
-				label: 'Refresh', accelerator: 'CmdOrCtrl+R',
-				click: function () { win.reload(); }
-			},
-			{
-				label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
-				click: function () {
-					win.webContents.openDevTools();
-				}
-			}
-		]
-	};
-
-	if (config.allowChannels) {
-		menuDebug.submenu.unshift({
-			label: 'Version',
+	if (config.allowDebug) {
+		let menuDebug = {
+			label: 'Debug',
 			submenu: [
 				{
-					label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
-					click: function () {
-						setChannel('alpha');
-					}
+					label: 'Version',
+					submenu: [
+						{
+							label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
+							click: function () {
+								setChannel('alpha');
+							}
+						},
+						{
+							label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
+							click: function () {
+								setChannel('latest');
+							}
+						},
+					]
 				},
 				{
-					label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
-					click: function () {
-						setChannel('latest');
-					}
+					label: 'Flags',
+					submenu: [
+						{
+							label: 'Interface', type: 'checkbox', checked: config.debugUI,
+							click: function () {
+								configSet({ debugUI: !config.debugUI }, function () {
+									win.webContents.send('toggleDebug', 'ui', config.debugUI);
+								});
+							}
+						},
+						{
+							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
+							click: function () {
+								configSet({ debugMW: !config.debugMW }, function () {
+									win.webContents.send('toggleDebug', 'mw', config.debugMW);
+								});
+							}
+						},
+						{
+							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
+							click: function () {
+								configSet({ debugAN: !config.debugAN }, function () {
+									win.webContents.send('toggleDebug', 'an', config.debugAN);
+								});
+							}
+						},
+					]
 				},
+				{
+					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
+					click: function () { win.reload(); }
+				},
+				{
+					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
+					click: function () {
+						win.webContents.openDevTools();
+					}
+				}
 			]
-		});
-	};
+		};
 
-	menu.push(menuDebug);
-	//};
+		menu.push(menuDebug);
+	};
 	
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 };
@@ -413,7 +409,7 @@ function autoUpdaterInit () {
 	console.log('Channel: ', config.channel);
 	
 	autoUpdater.logger = log;
-	autoUpdater.logger.transports.file.level = 'info';
+	autoUpdater.logger.transports.file.level = 'debug';
 	autoUpdater.channel = config.channel;
 	
 	setTimeout(checkUpdate, 5000);
@@ -423,7 +419,7 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-available', (info) => {
-		Util.log('info', 'Update available');
+		Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
 		win.webContents.send('update');
@@ -431,7 +427,7 @@ function autoUpdaterInit () {
 	
 	autoUpdater.on('update-not-available', (info) => {
 		isUpdating = false;
-		Util.log('info', 'Update not available');
+		Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
 	});
 	
 	autoUpdater.on('error', (err) => { Util.log('Error: ' + err); });
@@ -451,7 +447,7 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
-		Util.log('info', 'Update downloaded');
+		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		win.webContents.send('updateReady');
 
 		exit(true);
@@ -486,15 +482,13 @@ function exit (relaunch) {
 	console.log('Exit, bye!');
 
 	let cb = () => {
-		if (relaunch) {
-			setTimeout(() => {
+		setTimeout(() => {
+			if (relaunch) {
 				Util.log('info', 'Relaunch');
 				app.relaunch();
-				app.exit(0);
-			}, 2000);
-		} else {
+			};
 			app.exit(0);
-		};
+		}, 2000);
 	};
 
 	if (useGRPC) {

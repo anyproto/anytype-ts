@@ -541,7 +541,11 @@ class Util {
 	onErrorUpdate (onConfirm?: () => void) {
 		commonStore.popupOpen('confirm', {
 			data: {
+				icon: 'update',
+				title: translate('confirmUpdateTitle'),
 				text: translate('confirmUpdateText'),
+				textConfirm: translate('confirmUpdateConfirm'),
+				textCancel: translate('confirmUpdateCancel'),
 				onConfirm: () => {
 					ipcRenderer.send('update');
 					if (onConfirm) {
