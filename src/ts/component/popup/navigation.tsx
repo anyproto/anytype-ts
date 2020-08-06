@@ -173,8 +173,9 @@ class PopupNavigation extends React.Component<Props, State> {
 					coverId = 'c' + Constant.default.cover;
 					coverType = I.CoverType.BgImage;
 				};
+				withScale = false;
 
-				if ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0) {
+				if (type == I.NavigationType.Move) {
 					for (let id of blockIds) {
 						let block = blockStore.getLeaf(rootId, id);
 						if (block.type != I.BlockType.Link) {
@@ -185,7 +186,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				} else {
 					withButtons = false;
 				};
-				withScale = false;
 			} else {
 				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 			};
