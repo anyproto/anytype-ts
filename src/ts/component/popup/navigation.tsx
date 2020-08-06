@@ -67,7 +67,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { type, rootId } = data;
+		const { type, rootId, blockId } = data;
 		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
@@ -157,7 +157,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const Selected = (item: any) => {
 			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
-			let isSelf = item.id == rootId;
+			let isSelf = (item.id == rootId) || (item.id == blockId);
 			let icon = null;
 			let withScale = true;
 			let withButtons = true;
@@ -174,24 +174,30 @@ class PopupNavigation extends React.Component<Props, State> {
 					coverType = I.CoverType.BgImage;
 				};
 				withScale = false;
-
-				if (type == I.NavigationType.Move) {
-					for (let id of blockIds) {
-						let block = blockStore.getLeaf(rootId, id);
-						if (block.type != I.BlockType.Link) {
-							withButtons = false;
-							break;
-						};
-					};
-				} else {
-					withButtons = false;
-				};
 			} else {
 				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 			};
 
 			if (isSelf && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
 				withButtons = false;
+			};
+
+			if (isRoot && (type != I.NavigationType.Move)) {
+				withButtons = false;
+			};
+
+			if (type == I.NavigationType.Move) {
+				for (let id of blockIds) {
+					let block = blockStore.getLeaf(rootId, id);
+					if (isRoot && (block.type != I.BlockType.Link)) {
+						withButtons = false;
+						break;
+					};
+					if ((block.type == I.BlockType.Link) && (item.id == block.content.targetBlockId)) {
+						withButtons = false;
+						break;
+					};
+				};
 			};
 
 			return (
