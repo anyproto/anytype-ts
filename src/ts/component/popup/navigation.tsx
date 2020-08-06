@@ -67,7 +67,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { type, rootId, blockIds } = data;
+		const { type, rootId } = data;
 		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
@@ -77,6 +77,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		let confirm = '';
 		let pages = this.state.pages || [];
 		let iconSearch = null;
+		let blockIds = data.blockIds || [];
 
 		if (showIcon) {
 			if (isRoot) {
