@@ -267,15 +267,26 @@ function menuInit () {
 						win.webContents.send('command', 'redo');
 					}
 				},
+
 				{ type: 'separator' },
+
 				{ label: 'Copy', role: 'copy' },
 				{ label: 'Cut', role: 'cut' },
 				{ label: 'Paste', role: 'paste' },
+				
+				{ type: 'separator' },
+
 				{
 					label: 'Select all', accelerator: 'CmdOrCtrl+A',
 					click: function () {
 						win.webContents.selectAll();
 						win.webContents.send('commandEditor', 'selectAll');
+					}
+				},
+				{ 
+					label: 'Search', accelerator: 'CmdOrCtrl+F',
+					click: function () {
+						win.webContents.send('commandEditor', 'search');
 					}
 				},
 			]

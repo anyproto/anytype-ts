@@ -190,7 +190,7 @@ class CommonStore {
 			console.error('[menuOpen] Element is not defined');
 			return;
 		};
-		
+
 		this.menuClose(id, () => {
 			this.menuList.push({ id: id, param: param });
 			

@@ -279,6 +279,8 @@ class EditorPage extends React.Component<Props, State> {
 				length = block.getLength();
 			};
 		};
+
+		console.log(cmd);
 		
 		switch (cmd) {
 			case 'selectAll':
@@ -288,6 +290,10 @@ class EditorPage extends React.Component<Props, State> {
 					focus.set(focused, { from: 0, to: length });
 					focus.apply();
 				};
+				break;
+
+			case 'search':
+				this.onSearch();
 				break;
 		};
 	};
@@ -490,6 +496,7 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Search
 		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			e.preventDefault();
 			this.onSearch();
 		});
 
@@ -674,6 +681,7 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Search
 		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			e.preventDefault();
 			this.onSearch();
 		});
 

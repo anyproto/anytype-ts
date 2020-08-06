@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
@@ -35,6 +35,10 @@ class MenuSearch extends React.Component<Props, {}> {
 				this.ref.focus(); 
 			};
 		}, 100);
+	};
+
+	componentWillUnmount () {
+		keyboard.setFocus(false);
 	};
 	
 	onChange (e: any) {
