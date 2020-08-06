@@ -531,6 +531,10 @@ class Dispatcher {
 
 		try {
 			this.service[type](data, null, (error: any, response: any) => {
+				if (!response) {
+					return;
+				};
+
 				t1 = performance.now();
 
 				if (error) {
