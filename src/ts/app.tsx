@@ -43,7 +43,6 @@ import 'scss/component/pin.scss';
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
-import 'scss/page/help.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -69,7 +68,7 @@ import 'scss/popup/archive.scss';
 import 'scss/popup/navigation.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
-import 'scss/popup/new.scss';
+import 'scss/popup/help.scss';
 import 'scss/popup/feedback.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/editor/page.scss';
@@ -255,6 +254,12 @@ class App extends React.Component<Props, State> {
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
 			history.push(route);
+		});
+
+		ipcRenderer.on('popupHelp', (e: any, document: string) => {
+			commonStore.popupOpen('help', {
+				data: { document: document },
+			});
 		});
 		
 		ipcRenderer.on('message', (e: any, text: string) => {

@@ -63,7 +63,7 @@ class HeaderHelpIndex extends React.Component<Props, {}> {
 		if (authStore.account) {
 			this.props.history.push('/main/index');
 		} else {
-			DataUtil.onAuth();	
+			DataUtil.onAuth();
 		};
 	};
 	
