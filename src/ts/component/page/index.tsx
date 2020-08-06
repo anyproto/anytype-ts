@@ -19,10 +19,6 @@ import PageAuthSuccess from './auth/success';
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 
-import PageHelpIndex from './help/index';
-import PageHelpShortcuts from './help/shortcuts';
-import PageHelpNew from './help/new';
-
 const $ = require('jquery');
 const raf = require('raf');
 const Components: any = {
@@ -40,10 +36,6 @@ const Components: any = {
 			
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
-			
-	'help/index':			 PageHelpIndex,
-	'help/shortcuts':		 PageHelpShortcuts,
-	'help/new':				 PageHelpNew,
 };
 
 interface Props extends RouteComponentProps<any> {};
@@ -57,14 +49,14 @@ class Page extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
+		const pin = Storage.get('pin');
 		
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
 			Storage.set('firstRun', 1);
 		};
-		
+
 		const Component = Components[path];
-		
 		if (!Component) {
 			return <div>Page component "{path}" not found</div>;
 		};
@@ -94,6 +86,13 @@ class Page extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isMain = match.params.page == 'main';
+		const isCheck = match.params.action == 'pin-check';
+		const pin = Storage.get('pin');
+
+		if (pin && !keyboard.isPinChecked && !isCheck) {
+			this.props.history.push('/auth/pin-check');
+			return;
+		};
 
 		this.setBodyClass();
 		this.resize();
@@ -107,7 +106,9 @@ class Page extends React.Component<Props, {}> {
 		keyboard.setMatch(match);
 
 		if (!popupNewBlock && isMain) {
-			commonStore.popupOpen('new', {});
+			commonStore.popupOpen('help', { 
+				data: { document: 'whatsNew' },
+			});
 		};
 		
 		$(window).on('resize.page', () => { this.resize(); });
@@ -131,7 +132,7 @@ class Page extends React.Component<Props, {}> {
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 		const platform = Util.getPlatform();
-		
+
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
 			Util.toCamelCase([ prefix, page, action ].join('-')),

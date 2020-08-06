@@ -85,11 +85,11 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
 				
-				if (block.isCheckbox() && checked) {
+				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
 				
-				if (block.isToggle()) {
+				if (block.isTextToggle()) {
 					if (!childrenIds.length) {
 						empty = (
 							<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
@@ -254,7 +254,7 @@ class Block extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 
-		if (block.isToggle()) {
+		if (block.isTextToggle()) {
 			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
 		};
 	};

@@ -36,30 +36,50 @@ class Block implements I.Block {
 		});
 	};
 
+	isSystem () {
+		return this.isPage() || this.isLayout();
+	};
+
+	canHaveTitle (): boolean {
+		return this.isPagePage() || this.isPageProfile() || this.isPageSet();
+	};
+
 	canHaveChildren (): boolean {
-		return !this.isTitle() && !this.isLayout() && !this.isPage() && !this.isDiv() && !this.isHeader() && !this.isCode();
+		return !this.isSystem() && !this.isTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
+	};
+
+	canHaveAlign (): boolean {
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextHeader() || this.isImage() || this.isVideo());
+	};
+
+	canHaveColor (): boolean {
+		return !this.isSystem() && this.isText() && !this.isTextCode();
+	};
+
+	canHaveBackground (): boolean {
+		return !this.isSystem() && !this.isBookmark();
+	};
+
+	canTurn (): boolean {
+		return !this.isSystem() && (this.isText() || this.isDiv());
 	};
 	
 	isIndentable (): boolean {
-		return !this.isTitle() && !this.isLayout() && !this.isPage() && !this.isDiv() && !this.isHeader() && !this.isCode();
+		return !this.isSystem() && !this.isTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
 	};
 	
 	isFocusable (): boolean {
-		return !this.isPage() && !this.isLayout();
+		return !this.isSystem();
 	};
 	
 	isSelectable (): boolean {
-		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTitle();
 	};
 	
 	isDraggable (): boolean {
-		return !this.isPage() && !this.isLayout() && !this.isIcon() && !this.isTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTitle();
 	};
 
-	hasTitle (): boolean {
-		return this.isPagePage() || this.isPageProfile() || this.isPageSet();
-	};
-	
 	isPage (): boolean { 
 		return (this.type == I.BlockType.Page);
 	};
@@ -116,12 +136,12 @@ class Block implements I.Block {
 		return this.type == I.BlockType.IconUser;
 	};
 	
-	isText (): boolean {
-		return this.type == I.BlockType.Text;
-	};
-	
 	isFile (): boolean {
 		return this.type == I.BlockType.File;
+	};
+
+	isBookmark (): boolean {
+		return this.type == I.BlockType.Bookmark;
 	};
 	
 	isImage (): boolean {
@@ -135,48 +155,64 @@ class Block implements I.Block {
 	isDiv (): boolean {
 		return this.type == I.BlockType.Div;
 	};
+
+	isDivLine (): boolean {
+		return this.isDiv() && (this.content.type == I.DivStyle.Line);
+	};
+
+	isDivDot (): boolean {
+		return this.isDiv() && (this.content.type == I.DivStyle.Dot);
+	};
 	
 	isTitle (): boolean {
 		return this.type == I.BlockType.Title;
 	};
+
+	isText (): boolean {
+		return this.type == I.BlockType.Text;
+	};
+
+	isTextParagraph (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.Paragraph);
+	}; 
 	
-	isHeader (): boolean {
-		return this.isText() && (this.isHeader1() || this.isHeader2() || this.isHeader3());
+	isTextHeader (): boolean {
+		return this.isText() && (this.isTextHeader1() || this.isTextHeader2() || this.isTextHeader3());
 	};
 	
-	isHeader1 (): boolean {
+	isTextHeader1 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header1);
 	};
 	
-	isHeader2 (): boolean {
+	isTextHeader2 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header2);
 	};
 	
-	isHeader3 (): boolean {
+	isTextHeader3 (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Header3);
 	};
 	
-	isToggle (): boolean {
+	isTextToggle (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Toggle);
 	};
 	
-	isNumbered (): boolean {
+	isTextNumbered (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Numbered);
 	};
 	
-	isBulleted (): boolean {
+	isTextBulleted (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Bulleted);
 	};
 	
-	isCheckbox (): boolean {
+	isTextCheckbox (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Checkbox);
 	};
 	
-	isCode (): boolean {
+	isTextCode (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Code);
 	};
 	
-	isQuote (): boolean {
+	isTextQuote (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Quote);
 	};
 	

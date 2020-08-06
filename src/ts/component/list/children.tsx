@@ -32,7 +32,7 @@ class ListChildren extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const cn = [ 'children', (block.isToggle() ? 'canToggle' : '') ];
+		const cn = [ 'children', (block.isTextToggle() ? 'canToggle' : '') ];
 		
 		let ColResize: any = (): any => null;
 		let isRow = block.isLayoutRow();

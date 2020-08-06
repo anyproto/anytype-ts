@@ -19,6 +19,7 @@ class Keyboard {
 	isPreviewDisabled: boolean = false;
 	isMouseDisabled: boolean = false;
 	isBackDisabled: boolean = false;
+	isPinChecked: boolean = false;
 	
 	init (history: any) {
 		this.history = history;
@@ -117,7 +118,7 @@ class Keyboard {
 			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
 		});
 		
-		this.setPinCheck();
+		this.initPinCheck();
 	};
 
 	ctrlByPlatform (e: any) {
@@ -144,8 +145,12 @@ class Keyboard {
 	setDrag (v: boolean) {
 		this.isDragging = v;
 	};
+
+	setPinChecked (v: boolean) {
+		this.isPinChecked = v;
+	};
 	
-	setPinCheck () {
+	initPinCheck () {
 		const { account } = authStore;
 		const pin = Storage.get('pin');
 		
@@ -157,11 +162,12 @@ class Keyboard {
 		this.timeoutPin = window.setTimeout(() => {
 			const pin = Storage.get('pin');
 			if (pin) {
+				this.setPinChecked(false);
 				this.history.push('/auth/pin-check');				
 			};
 		}, 5 * 60 * 1000);
 	};
-	
+
 	setMatch (match: any) {
 		this.match = match;
 	};

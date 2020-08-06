@@ -46,12 +46,12 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		];
 		
 		// You can't mark code, as it's highlighted automatically
-		if (block.isCode()) {
+		if (block.isTextCode()) {
 			canMark = false;
 		};
 		
 		// You can't make headers bold, since they are already bold
-		if (block.isHeader()) {
+		if (block.isTextHeader()) {
 			markActions = markActions.filter((it: any) => { return [ I.MarkType.Bold, I.MarkType.Code ].indexOf(it.type) < 0; });
 		};
 		
