@@ -156,6 +156,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const Selected = (item: any) => {
 			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
+			let isSelf = item.id == rootId;
 			let icon = null;
 			let withScale = true;
 			let withButtons = true;
@@ -187,7 +188,11 @@ class PopupNavigation extends React.Component<Props, State> {
 			} else {
 				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 			};
-			
+
+			if (isSelf && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
+				withButtons = false;
+			};
+
 			return (
 				<div className="selected">
 					{icon}
