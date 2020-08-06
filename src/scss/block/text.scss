@@ -14,6 +14,8 @@
 		
 		kbd { display: inline; font-family: 'Plex'; border-radius: 2px; background: rgba(172,169,150,0.15); font-size: 15px; }
 
+		search { background: yellow; color: $colorBlack; }
+
 		smile {
 			.smile { display: inline; }
 			img { position: static; left: auto; top: auto; margin: 0px; vertical-align: middle; margin-top: -4px; }

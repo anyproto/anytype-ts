@@ -39,6 +39,8 @@ class EditorPage extends React.Component<Props, State> {
 	state = {
 		loading: false,
 	};
+	searchIndex: number = 0;
+	searchPos: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -486,6 +488,11 @@ class EditorPage extends React.Component<Props, State> {
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			this.onSearch();
+		});
+
 		// Mark-up
 		if (ids.length) {
 			let type = null;
@@ -663,6 +670,11 @@ class EditorPage extends React.Component<Props, State> {
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+		});
+
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			this.onSearch();
 		});
 
 		// Duplicate
@@ -1259,6 +1271,91 @@ class EditorPage extends React.Component<Props, State> {
 
 	onPrint () {
 		window.print();
+	};
+
+	onSearch () {
+		const { rootId } = this.props;
+		const { focused } = focus;
+		const list = blockStore.unwrapTree([ blockStore.wrapTree(rootId) ]);
+
+		this.searchIndex = 0;
+		this.searchPos = 0;
+		
+		if (focused) {
+			this.searchIndex = list.findIndex((it: I.Block) => { return it.id == focused; });
+		};
+
+		this.clearSearch();
+
+		commonStore.menuOpen('search', {
+			element: '#button-header-more',
+			type: I.MenuType.Horizontal,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetX: 0,
+			offsetY: 0,
+			onClose: () => {
+				this.searchIndex = 0;
+				this.searchPos = 0;
+				this.clearSearch();
+			},
+			data: {
+				onChange: (v: string) => {
+					this.clearSearch();
+
+					for (let i = 0; i < list.length; ++i) {
+						if (i < this.searchIndex) {
+							continue;
+						};
+
+						let block = list[i];
+						if (!block.isText()) {
+							continue;
+						};
+
+						let text = block.content.text.substr(this.searchPos);
+						let pos = text.indexOf(v);
+
+						if (pos < 0) {
+							this.searchIndex = i + 1;
+							this.searchPos = 0;
+							continue;
+						};
+
+						const range = { 
+							from: this.searchPos + pos,  
+							to: this.searchPos + pos + v.length,
+						};
+
+						block.content.marks.push({
+							type: I.MarkType.Search,
+							param: '',
+							range: range,
+						});
+
+						focus.scroll(block.id);
+						this.searchPos += pos + v.length;
+						break;
+					};
+				},
+			},
+		});
+	};
+
+	clearSearch () {
+		const { rootId } = this.props;
+		const list = blockStore.unwrapTree([ blockStore.wrapTree(rootId) ]);
+
+		for (let block of list) {
+			if (!block.isText() || !block.content.marks.length) {
+				continue;
+			};
+
+			let check = block.content.marks.find((it: any) => { return it.type == I.MarkType.Search; });
+			if (check) {
+				block.content.marks = block.content.marks.filter((it: any) => { return it.type != I.MarkType.Search; });
+			};
+		};
 	};
 
 	getLayoutIds (ids: string[]) {

@@ -26,6 +26,7 @@ export enum MarkType {
 	BgColor		 = 7,
 	Mention		 = 8,
 	Smile		 = 9,
+	Search		 = 10,
 };
 
 export interface TextRange {

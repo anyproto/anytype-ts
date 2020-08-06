@@ -1,7 +1,7 @@
 import { I, Util } from 'ts/lib';
 
 const $ = require('jquery');
-const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji' ];
+const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji', 'search' ];
 
 enum Overlap {
 	Equal		 = 0,		 // a == b

@@ -21,6 +21,19 @@ let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC ||
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 let timeoutUpdate = 0;
 let service, server;
+let dataPath = [];
+let config = {};
+let win = null;
+let csp = [
+	"default-src 'self' 'unsafe-eval'",
+	"img-src 'self' http://*:* https://*:* data: blob:",
+	"media-src 'self' http://*:* https://*:* data: blob:",
+	"style-src 'unsafe-inline' http://localhost:*",
+	"font-src data:",
+	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
+	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
+	"frame-src chrome-extension://react-developer-tools"
+];
 
 if (app.isPackaged && !app.requestSingleInstanceLock()) {
 	exit(false);
@@ -29,7 +42,6 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 
 storage.setDataPath(userPath);
 
-let dataPath = [];
 if (process.env.DATA_PATH) {
 	try {
 		fs.mkdirSync(process.env.DATA_PATH);
@@ -93,19 +105,6 @@ if (useGRPC) {
 
 	service.client_.rpcCall = napiCall;
 };
-
-let config = {};
-let win = null;
-let csp = [
-	"default-src 'self' 'unsafe-eval'",
-	"img-src 'self' http://*:* https://*:* data: blob:",
-	"media-src 'self' http://*:* https://*:* data: blob:",
-	"style-src 'unsafe-inline' http://localhost:*",
-	"font-src data:",
-	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
-	"frame-src chrome-extension://react-developer-tools"
-];
 
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {
@@ -334,25 +333,19 @@ function menuInit () {
 						{
 							label: 'Interface', type: 'checkbox', checked: config.debugUI,
 							click: function () {
-								configSet({ debugUI: !config.debugUI }, function () {
-									win.webContents.send('toggleDebug', 'ui', config.debugUI);
-								});
+								configSet({ debugUI: !config.debugUI });
 							}
 						},
 						{
 							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
 							click: function () {
-								configSet({ debugMW: !config.debugMW }, function () {
-									win.webContents.send('toggleDebug', 'mw', config.debugMW);
-								});
+								configSet({ debugMW: !config.debugMW });
 							}
 						},
 						{
 							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
 							click: function () {
-								configSet({ debugAN: !config.debugAN }, function () {
-									win.webContents.send('toggleDebug', 'an', config.debugAN);
-								});
+								configSet({ debugAN: !config.debugAN });
 							}
 						},
 					]
@@ -388,7 +381,10 @@ function setChannel (channel) {
 
 function configSet (obj, callBack) {
 	config = Object.assign(config, obj);
-	storage.set('config', config, function (error) {
+	storage.set('config', config, (error) => {
+		if (win) {
+			win.webContents.send('config', config);
+		};
 		if (callBack) {
 			callBack(error);
 		};
