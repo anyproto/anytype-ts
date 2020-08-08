@@ -155,14 +155,9 @@ class DataUtil {
 	};
 
 	onAuth () {
-		const pin = Storage.get('pin');
 		this.pageInit(() => {
-			if (pin) {
-				this.history.push('/auth/pin-check');
-				keyboard.initPinCheck();
-			} else {
-				this.history.push('/main/index');
-			};
+			keyboard.initPinCheck();
+			this.history.push('/main/index');
 		});
 	};
 	

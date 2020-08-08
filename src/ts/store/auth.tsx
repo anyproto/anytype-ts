@@ -2,6 +2,7 @@ import { observable, action, computed, set } from 'mobx';
 import { I, Storage, analytics, crumbs } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { commonStore } from './common';
+import { keyboard } from '../lib';
 
 class AuthStore {
 	@observable public dataPath: string = '';
@@ -79,6 +80,7 @@ class AuthStore {
 	logout () {
 		Storage.logout();
 
+		keyboard.setPinChecked(false);
 		crumbs.delete(I.CrumbsType.Page);
 
 		commonStore.coverSetDefault();
