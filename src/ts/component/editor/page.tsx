@@ -41,7 +41,6 @@ class EditorPage extends React.Component<Props, State> {
 		loading: false,
 	};
 	searchIndex: number = 0;
-	searchPos: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -1285,6 +1284,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		let lastSearch = '';
 		this.clearSearch();
+
 		commonStore.menuOpen('search', {
 			element: '#button-header-more',
 			type: I.MenuType.Horizontal,
@@ -1297,15 +1297,20 @@ class EditorPage extends React.Component<Props, State> {
 			},
 			data: {
 				onChange: (value: string) => {
+					this.clearSearch();
 					if (lastSearch != value) {
-						this.clearSearch();
+						this.searchIndex = 0;
 					};
 					lastSearch = value;
+
 					findAndReplaceDOMText(node.get(0), {
 						preset: 'prose',
-						find: value,
+						find: new RegExp(value, 'gi'),
 						wrap: 'search',
 					});
+
+					this.focusSearch();
+					this.searchIndex++;
 				},
 			},
 		});
@@ -1317,6 +1322,27 @@ class EditorPage extends React.Component<Props, State> {
 			item = $(item);
 			item.replaceWith(item.html());
 		});
+	};
+
+	focusSearch () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = node.find('search');
+		const wh = win.height();
+		
+		const offset = Constant.size.lastBlock + Constant.size.header;
+		const st = win.scrollTop();
+
+		if (this.searchIndex >= items.length - 1) {
+			this.searchIndex = 0;
+		};
+
+		const next = $(items.get(this.searchIndex));
+		node.find('search.active').removeClass('active');
+		next.addClass('active');
+		
+		const y = next.offset().top;
+		$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 100);
 	};
 
 	getLayoutIds (ids: string[]) {
