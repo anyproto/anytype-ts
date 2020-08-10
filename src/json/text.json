@@ -1,5 +1,6 @@
 {
 	"progress0": { "en": "Copying files %s/%s" },
+	"progress1": { "en": "Import in progress" },
 
 	"confirmUpdateTitle": { "en": "It's time to update" },
 	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features." },
