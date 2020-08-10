@@ -19,6 +19,7 @@ interface State {
 	loading: boolean;
 };
 
+const findAndReplaceDOMText = require('findandreplacedomtext');
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -280,8 +281,6 @@ class EditorPage extends React.Component<Props, State> {
 			};
 		};
 
-		console.log(cmd);
-		
 		switch (cmd) {
 			case 'selectAll':
 				if ((range.from == 0) && (range.to == length)) {
@@ -1282,19 +1281,10 @@ class EditorPage extends React.Component<Props, State> {
 	};
 
 	onSearch () {
-		const { rootId } = this.props;
-		const { focused } = focus;
-		const list = blockStore.unwrapTree([ blockStore.wrapTree(rootId) ]);
-
-		this.searchIndex = 0;
-		this.searchPos = 0;
+		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (focused) {
-			this.searchIndex = list.findIndex((it: I.Block) => { return it.id == focused; });
-		};
-
+		let lastSearch = '';
 		this.clearSearch();
-
 		commonStore.menuOpen('search', {
 			element: '#button-header-more',
 			type: I.MenuType.Horizontal,
@@ -1303,67 +1293,30 @@ class EditorPage extends React.Component<Props, State> {
 			offsetX: 0,
 			offsetY: 0,
 			onClose: () => {
-				this.searchIndex = 0;
-				this.searchPos = 0;
 				this.clearSearch();
 			},
 			data: {
-				onChange: (v: string) => {
-					this.clearSearch();
-
-					for (let i = 0; i < list.length; ++i) {
-						if (i < this.searchIndex) {
-							continue;
-						};
-
-						let block = list[i];
-						if (!block.isText()) {
-							continue;
-						};
-
-						let text = block.content.text.substr(this.searchPos);
-						let pos = text.indexOf(v);
-
-						if (pos < 0) {
-							this.searchIndex = i + 1;
-							this.searchPos = 0;
-							continue;
-						};
-
-						const range = { 
-							from: this.searchPos + pos,  
-							to: this.searchPos + pos + v.length,
-						};
-
-						block.content.marks.push({
-							type: I.MarkType.Search,
-							param: '',
-							range: range,
-						});
-
-						focus.scroll(block.id);
-						this.searchPos += pos + v.length;
-						break;
+				onChange: (value: string) => {
+					if (lastSearch != value) {
+						this.clearSearch();
 					};
+					lastSearch = value;
+					findAndReplaceDOMText(node.get(0), {
+						preset: 'prose',
+						find: value,
+						wrap: 'search',
+					});
 				},
 			},
 		});
 	};
 
 	clearSearch () {
-		const { rootId } = this.props;
-		const list = blockStore.unwrapTree([ blockStore.wrapTree(rootId) ]);
-
-		for (let block of list) {
-			if (!block.isText() || !block.content.marks.length) {
-				continue;
-			};
-
-			let check = block.content.marks.find((it: any) => { return it.type == I.MarkType.Search; });
-			if (check) {
-				block.content.marks = block.content.marks.filter((it: any) => { return it.type != I.MarkType.Search; });
-			};
-		};
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('search').each((i: number, item: any) => {
+			item = $(item);
+			item.replaceWith(item.html());
+		});
 	};
 
 	getLayoutIds (ids: string[]) {
