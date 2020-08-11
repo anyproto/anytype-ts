@@ -167,7 +167,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			let isSelf = (item.id == rootId) || (item.id == blockId);
 			let icon = null;
 			let withScale = true;
-			let withButtons = true;
+			let withButtons = this.withButtons(item);
 
 			if (isRoot) {
 				icon = (
@@ -183,28 +183,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				withScale = false;
 			} else {
 				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
-			};
-
-			if (isSelf && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
-				withButtons = false;
-			};
-
-			if (isRoot && (type != I.NavigationType.Move)) {
-				withButtons = false;
-			};
-
-			if (type == I.NavigationType.Move) {
-				for (let id of blockIds) {
-					let block = blockStore.getLeaf(rootId, id);
-					if (isRoot && (block.type != I.BlockType.Link)) {
-						withButtons = false;
-						break;
-					};
-					if ((block.type == I.BlockType.Link) && (item.id == block.content.targetBlockId)) {
-						withButtons = false;
-						break;
-					};
-				};
 			};
 
 			return (
@@ -740,6 +718,10 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { rootId, type, blockId, blockIds, position } = data;
 		const { root } = blockStore;
 
+		if (!this.withButtons(item)) {
+			return;
+		};
+
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
@@ -767,6 +749,41 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		this.props.close();
+	};
+
+	withButtons (item: I.PageInfo) {
+		const { param } = this.props;
+		const { data } = param;
+		const { type, rootId, blockId, blockIds } = data;
+		const { root } = blockStore;
+
+		let isRoot = item.id == root;
+		let isSelf = (item.id == rootId) || (item.id == blockId);
+		let ret = true;
+
+		if (isSelf && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
+			ret = false;
+		};
+
+		if (isRoot && (type != I.NavigationType.Move)) {
+			ret = false;
+		};
+
+		if (type == I.NavigationType.Move) {
+			for (let id of blockIds) {
+				let block = blockStore.getLeaf(rootId, id);
+				if (isRoot && (block.type != I.BlockType.Link)) {
+					ret = false;
+					break;
+				};
+				if ((block.type == I.BlockType.Link) && (item.id == block.content.targetBlockId)) {
+					ret = false;
+					break;
+				};
+			};
+		};
+
+		return ret;
 	};
 
 	onSearch () {
