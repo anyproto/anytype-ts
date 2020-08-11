@@ -76,7 +76,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { type } = data;
+		const { type, rootId, blockId } = data;
 		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
@@ -86,6 +86,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		let n = 0;
 		let confirm = '';
 		let iconSearch = null;
+		let blockIds = data.blockIds || [];
 
 		if (showIcon) {
 			if (isRoot) {
@@ -107,7 +108,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				confirm = 'Move to';
 				break;
 
-			case I.NavigationType.Create:
+			case I.NavigationType.Link:
 				confirm = 'Link';
 				break;
 		};
@@ -163,8 +164,10 @@ class PopupNavigation extends React.Component<Props, State> {
 		const Selected = (item: any) => {
 			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
+			let isSelf = (item.id == rootId) || (item.id == blockId);
 			let icon = null;
 			let withScale = true;
+			let withButtons = this.withButtons(item);
 
 			if (isRoot) {
 				icon = (
@@ -177,22 +180,23 @@ class PopupNavigation extends React.Component<Props, State> {
 					coverId = 'c' + Constant.default.cover;
 					coverType = I.CoverType.BgImage;
 				};
-
 				withScale = false;
 			} else {
 				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
 			};
-			
+
 			return (
 				<div id={'item-' + item.id} className="selected">
 					{icon}
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
-					<div className="buttons">
-						<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
-						<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
-					</div>
+					{withButtons ? (
+						<div className="buttons">
+							<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
+							<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
+						</div>
+					) : ''}
 				</div>
 			);
 		};
@@ -635,7 +639,7 @@ class PopupNavigation extends React.Component<Props, State> {
     		resolution: 3,
 		});
 
-		let pages: any[] = [];
+		let pages: I.PageInfo[] = [];
 		C.NavigationListPages((message: any) => {
 			for (let page of message.pages) {
 				if (skipId && (page.id == skipId)) {
@@ -643,8 +647,11 @@ class PopupNavigation extends React.Component<Props, State> {
 				};
 
 				page = this.getPage(page);
-				pages.push(page);
+				if (page.details.isArchived) {
+					continue;
+				};
 
+				pages.push(page);
 				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
 			};
 
@@ -665,6 +672,11 @@ class PopupNavigation extends React.Component<Props, State> {
 				return;
 			};
 
+			let pagesIn = message.page.links.inbound.map((it: any) => { return this.getPage(it); });
+			let pagesOut = message.page.links.outbound.map((it: any) => { return this.getPage(it); });
+
+			pagesIn = pagesIn.filter((it: I.PageInfo) => { return !it.details.isArchived; });
+			pagesOut = pagesOut.filter((it: I.PageInfo) => { return !it.details.isArchived; });
 			this.n = 0;
 			this.panel = Panel.Center;
 
@@ -674,8 +686,8 @@ class PopupNavigation extends React.Component<Props, State> {
 				loading: false,
 				expanded: true, 
 				info: this.getPage(message.page.info),
-				pagesIn: message.page.links.inbound.map((it: any) => { return this.getPage(it); }),
-				pagesOut: message.page.links.outbound.map((it: any) => { return this.getPage(it); }),
+				pagesIn: pagesIn,
+				pagesOut: pagesOut,
 			});
 		});
 	};
@@ -706,6 +718,10 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { rootId, type, blockId, blockIds, position } = data;
 		const { root } = blockStore;
 
+		if (!this.withButtons(item)) {
+			return;
+		};
+
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
@@ -721,7 +737,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
 				break;
 
-			case I.NavigationType.Create:
+			case I.NavigationType.Link:
 				const param = {
 					type: I.BlockType.Link,
 					content: {
@@ -733,6 +749,41 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		this.props.close();
+	};
+
+	withButtons (item: I.PageInfo) {
+		const { param } = this.props;
+		const { data } = param;
+		const { type, rootId, blockId, blockIds } = data;
+		const { root } = blockStore;
+
+		let isRoot = item.id == root;
+		let isSelf = (item.id == rootId) || (item.id == blockId);
+		let ret = true;
+
+		if (isSelf && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
+			ret = false;
+		};
+
+		if (isRoot && (type != I.NavigationType.Move)) {
+			ret = false;
+		};
+
+		if (type == I.NavigationType.Move) {
+			for (let id of blockIds) {
+				let block = blockStore.getLeaf(rootId, id);
+				if (isRoot && (block.type != I.BlockType.Link)) {
+					ret = false;
+					break;
+				};
+				if ((block.type == I.BlockType.Link) && (item.id == block.content.targetBlockId)) {
+					ret = false;
+					break;
+				};
+			};
+		};
+
+		return ret;
 	};
 
 	onSearch () {
