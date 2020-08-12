@@ -36,19 +36,19 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { id } = block;
 		
 		const name = this.checkName();
-		const cv = [ 'value', 'focusable', 'c' + id ];
+		const cv = [ 'value', 'focusable', 'c' + id, (readOnly ? 'readOnly' : '') ];
 		
 		return (
 			<div className="rel">
 				<div
 					id="value"
 					className={cv.join(' ')}
-					contentEditable={true}
+					contentEditable={!readOnly}
 					suppressContentEditableWarning={true}
 					onChange={this.onChange}
 					onKeyDown={this.onKeyDown}

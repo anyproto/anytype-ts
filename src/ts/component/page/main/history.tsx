@@ -63,6 +63,7 @@ class PageMainHistory extends React.Component<Props, {}> {
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 				<div className="wrapper">
 					<div className={cn.join(' ')}>
+						{withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
 						<div className="editor">
 							<div className="blocks">
 								{withIcon ? (
