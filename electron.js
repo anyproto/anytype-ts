@@ -72,7 +72,7 @@ if (useGRPC) {
 		module_root: path.join(__dirname, 'build'),
 	});
 	
-	let napiCall = function (method, inputObj, outputObj, request, callBack){
+	let napiCall = (method, inputObj, outputObj, request, callBack) => {
 		const a = method.split('/');
 		method = a[a.length - 1];
 		
@@ -190,8 +190,8 @@ function createWindow () {
 	};
 	
 	ipcMain.on('appLoaded', () => {
-		win.webContents.send('dataPath', dataPath.join('/'));
-		win.webContents.send('config', config);
+		send('dataPath', dataPath.join('/'));
+		send('config', config);
 	});
 
 	ipcMain.on('exit', (e, relaunch) => {
@@ -219,7 +219,7 @@ function createWindow () {
 		await download(win, url, { saveAs: true });
 	});
 
-	storage.get('config', function (error, data) {
+	storage.get('config', (error, data) => {
 		config = data || {};
 		config.channel = String(config.channel || defaultChannel);
 		
@@ -242,11 +242,11 @@ function menuInit () {
 			submenu: [
 				{
 					label: 'Show work directory',
-					click: function () { shell.openItem(app.getPath('userData')); }
+					click: () => { shell.openItem(app.getPath('userData')); }
 				},
 				{
 					label: 'Import',
-					click: function () { win.webContents.send('import'); }
+					click: () => { send('import'); }
 				},
 				{ role: 'close' },
 			]
@@ -256,16 +256,16 @@ function menuInit () {
 			submenu: [
 				{
 					label: 'Undo', accelerator: 'CmdOrCtrl+Z',
-					click: function () {
+					click: () => {
 						win.webContents.undo();
-						win.webContents.send('command', 'undo');
+						send('command', 'undo');
 					}
 				},
 				{
 					label: 'Redo', accelerator: 'CmdOrCtrl+Shift+Z',
-					click: function () {
+					click: () => {
 						win.webContents.redo();
-						win.webContents.send('command', 'redo');
+						send('command', 'redo');
 					}
 				},
 				{ type: 'separator' },
@@ -274,9 +274,9 @@ function menuInit () {
 				{ label: 'Paste', role: 'paste' },
 				{
 					label: 'Select all', accelerator: 'CmdOrCtrl+A',
-					click: function () {
+					click: () => {
 						win.webContents.selectAll();
-						win.webContents.send('commandEditor', 'selectAll');
+						send('commandEditor', 'selectAll');
 					}
 				},
 			]
@@ -289,19 +289,19 @@ function menuInit () {
 			submenu: [
 				{
 					label: 'Status',
-					click: function () { win.webContents.send('popupHelp', 'status'); }
+					click: () => { send('popupHelp', 'status'); }
 				},
 				{
 					label: 'Keyboard Shortcuts',
-					click: function () { win.webContents.send('popupHelp', 'shortcuts'); }
+					click: () => { send('popupHelp', 'shortcuts'); }
 				},
 				{
 					label: 'What\'s new',
-					click: function () { win.webContents.send('popupHelp', 'whatsNew'); }
+					click: () => { send('popupHelp', 'whatsNew'); }
 				},
 				{
 					label: 'Check for updates',
-					click: function () { checkUpdate(); }
+					click: () => { checkUpdate(); }
 				},
 			]
 		},
@@ -316,15 +316,11 @@ function menuInit () {
 					submenu: [
 						{
 							label: 'Alpha', type: 'radio', checked: (config.channel == 'alpha'),
-							click: function () {
-								setChannel('alpha');
-							}
+							click: () => { setChannel('alpha'); }
 						},
 						{
 							label: 'Public', type: 'radio', checked: (config.channel == 'latest'),
-							click: function () {
-								setChannel('latest');
-							}
+							click: () => { setChannel('latest'); }
 						},
 					]
 				},
@@ -333,25 +329,25 @@ function menuInit () {
 					submenu: [
 						{
 							label: 'Interface', type: 'checkbox', checked: config.debugUI,
-							click: function () {
-								configSet({ debugUI: !config.debugUI }, function () {
-									win.webContents.send('toggleDebug', 'ui', config.debugUI);
+							click: () => {
+								setConfig({ debugUI: !config.debugUI }, () => {
+									send('toggleDebug', 'ui', config.debugUI);
 								});
 							}
 						},
 						{
 							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
-							click: function () {
-								configSet({ debugMW: !config.debugMW }, function () {
-									win.webContents.send('toggleDebug', 'mw', config.debugMW);
+							click: () => {
+								setConfig({ debugMW: !config.debugMW }, () => {
+									send('toggleDebug', 'mw', config.debugMW);
 								});
 							}
 						},
 						{
 							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
-							click: function () {
-								configSet({ debugAN: !config.debugAN }, function () {
-									win.webContents.send('toggleDebug', 'an', config.debugAN);
+							click: () => {
+								setConfig({ debugAN: !config.debugAN }, () => {
+									send('toggleDebug', 'an', config.debugAN);
 								});
 							}
 						},
@@ -359,11 +355,11 @@ function menuInit () {
 				},
 				{
 					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
-					click: function () { win.reload(); }
+					click: () => { win.reload(); }
 				},
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
-					click: function () {
+					click: () => {
 						win.webContents.openDevTools();
 					}
 				}
@@ -380,15 +376,15 @@ function setChannel (channel) {
 	if (isUpdating) {
 		return;
 	};
-	configSet({ channel: channel }, function (error) {
+	setConfig({ channel: channel }, (error) => {
 		autoUpdater.channel = channel;
 		checkUpdate();
 	});
 };
 
-function configSet (obj, callBack) {
+function setConfig (obj, callBack) {
 	config = Object.assign(config, obj);
-	storage.set('config', config, function (error) {
+	storage.set('config', config, (error) => {
 		if (callBack) {
 			callBack(error);
 		};
@@ -422,7 +418,7 @@ function autoUpdaterInit () {
 		Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
-		win.webContents.send('update');
+		send('update');
 	});
 	
 	autoUpdater.on('update-not-available', (info) => {
@@ -443,13 +439,12 @@ function autoUpdaterInit () {
 		];
 		Util.log('info', msg.join(' '));
 		
-		win.webContents.send('progress', progress);
+		send('progress', progress);
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
-		win.webContents.send('updateReady');
-
+		send('updateReady');
 		exit(true);
 	});
 };
@@ -477,6 +472,12 @@ app.on('before-quit', (e) => {
 
 	exit(false);
 });
+
+function send () {
+	if (win) {
+		win.webContents.send.apply(win.webContents, arguments);
+	};
+};
 
 function exit (relaunch) {
 	console.log('Exit, bye!');
