@@ -17,13 +17,24 @@ class BlockIconPage extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId } = this.props;
+		const { rootId, readOnly } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { iconEmoji, iconImage } = details;
 		
 		return (
 			<React.Fragment>
-				<Smile id={'block-icon-' + rootId} canEdit={true} size={32} icon={iconEmoji} hash={iconImage} offsetX={0} offsetY={16} onSelect={this.onSelect} onUpload={this.onUpload} className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} />
+				<Smile 
+					id={'block-icon-' + rootId} 
+					canEdit={!readOnly} 
+					size={32} 
+					icon={iconEmoji} 
+					hash={iconImage} 
+					offsetX={0} 
+					offsetY={16} 
+					onSelect={this.onSelect} 
+					onUpload={this.onUpload} 
+					className={'c64 ' + (commonStore.menuIsOpen('smile') ? 'active' : '')} 
+				/>
 			</React.Fragment>
 		);
 	};

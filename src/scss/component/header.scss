@@ -57,10 +57,8 @@
 	.icon:hover { background-color: rgba(0,0,0,0.15); }
 }
 
-.headerMainEdit { background: #fff; padding: 9px 10px 9px 82px; line-height: 20px; }
-
-.headerMainEditSearch { background: #fff; padding: 5px 10px; height: 38px; }
-.headerMainEditSearch {
+.headerMainEdit { background: #fff; padding: 5px 10px; height: 38px; line-height: 20px; }
+.headerMainEdit {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover { background-color: #f3f2ec; }
 
@@ -93,12 +91,12 @@
 }
 
 body.platformMac {
-	.headerMainEditSearch {
+	.headerMainEdit {
 		.side.left { left: 90px; }
 	}
 }
 
-.headerMainEditSearch:hover, .headerMainEditSearch.active {
+.headerMainEdit:hover, .headerMainEdit.active {
 	.side.left { opacity: 1; }
 	.mid {
 		.icon { opacity: 1; }

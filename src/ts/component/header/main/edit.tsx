@@ -41,7 +41,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const { iconEmoji, iconImage, name } = details;
-		const cn = [ 'header', 'headerMainEditSearch' ];
+		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (commonStore.popupIsOpen('navigation')) {
 			cn.push('active');

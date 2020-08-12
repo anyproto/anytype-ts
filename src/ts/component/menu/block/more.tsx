@@ -126,6 +126,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
+				{ id: 'history', icon: 'history', name: 'History' },
 				//{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
@@ -161,7 +162,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, onSelect } = data;
+		const { blockId, rootId, onSelect } = data;
 		const { breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
@@ -192,9 +193,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'print':
-				window.setTimeout(() => { 
-					window.print();
-				}, 300);
+				window.setTimeout(() => { window.print(); }, 300);
 				break;
 				
 			case 'export':
@@ -203,6 +202,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						ipcRenderer.send('urlOpen', message.url);
 					};
 				});
+				break;
+
+			case 'history':
+				history.push('/main/history/' + blockId);
 				break;
 			
 			case 'move':

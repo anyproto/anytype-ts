@@ -18,6 +18,7 @@ import PageAuthSuccess from './auth/success';
 
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
+import PageMainHistory from './main/history';
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -36,6 +37,7 @@ const Components: any = {
 			
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
+	'main/history':			 PageMainHistory,
 };
 
 interface Props extends RouteComponentProps<any> {};
