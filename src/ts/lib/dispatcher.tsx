@@ -456,18 +456,24 @@ class Dispatcher {
 				case 'processUpdate':
 				case 'processDone':
 					const process = data.getProcess();
-					const state = process.getState();
 					const progress = process.getProgress();
+					const state = process.getState();
+					const type = process.getType();
+
+					let isUnlocked = true;
+					if (type == I.ProgressType.Import) {
+						isUnlocked = false;
+					};
 
 					switch (state) {
 						case I.ProgressState.Running:
 						case I.ProgressState.Done:
 							commonStore.progressSet({
 								id: process.getId(),
-								status: translate('progress' + process.getType()),
+								status: translate('progress' + type),
 								current: progress.getDone(),
 								total: progress.getTotal(),
-								isUnlocked: true,
+								isUnlocked: isUnlocked,
 								canCancel: true,
 							});
 							break;
