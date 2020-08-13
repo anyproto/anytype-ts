@@ -243,11 +243,20 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			sections = sections.concat([
-				{ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetTurnPage() },
 				{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
-				{ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() },
-				{ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() },
 			]);
+
+			if (block.canTurn()) {
+				sections.push({ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetTurnPage() });
+			};
+
+			if (block.canHaveAlign()) {
+				sections.push({ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() });
+			};
+	
+			if (block.canHaveBackground()) {
+				sections.push({ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() });
+			};
 			
 			if (block.isText() && !block.isTextCode()) {
 				sections.push({ id: 'color', icon: 'color', name: 'Color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });

@@ -589,7 +589,7 @@ class EditorPage extends React.Component<Props, State> {
 			const next = blockStore.getNextBlock(rootId, first.id, -1);
 			const obj = shift ? parent : next;
 			const canTab = obj && !first.isTitle() && obj.canHaveChildren() && first.isIndentable();
-				
+			
 			if (canTab) {
 				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};

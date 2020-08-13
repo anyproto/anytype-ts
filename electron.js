@@ -130,7 +130,7 @@ function createWindow () {
 		})
 	});
 
-	let mainWindowState = windowStateKeeper({
+	let state = windowStateKeeper({
 		defaultWidth: width,
 		defaultHeight: height
 	});
@@ -138,11 +138,10 @@ function createWindow () {
 	let param = {
 		backgroundColor: '#fff',
 		show: false,
-		x: mainWindowState.x,
-		x: mainWindowState.x,
-		y: mainWindowState.y,
-		width: mainWindowState.width,
-		height: mainWindowState.height,
+		x: state.x,
+		y: state.y,
+		width: state.width,
+		height: state.height,
 		minWidth: 900,
 		minHeight: 640,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
@@ -158,7 +157,7 @@ function createWindow () {
 
 	win = new BrowserWindow(param);
 
-	mainWindowState.manage(win);
+	state.manage(win);
 	
 	win.once('ready-to-show', () => {
 		win.show();
