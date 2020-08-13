@@ -74,6 +74,7 @@
 		"babel-plugin-prismjs": "^2.0.1",
 		"bindings": "^1.5.0",
 		"blueimp-load-image": "^2.31.0",
+		"bytebuffer": "^5.0.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
 		"electron-devtools-installer": "^3.1.1",

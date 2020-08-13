@@ -391,6 +391,15 @@ const Mapper = {
             return item;
         },
 
+        PasteFile: (file: any) => {
+            const item = new Rpc.Block.Paste.Request.File();
+
+            item.setName(file.name);
+            item.setData(file.data);
+
+            return item;
+        },
+
     }
 
 };
