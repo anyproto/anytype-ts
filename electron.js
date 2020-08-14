@@ -443,7 +443,8 @@ function autoUpdaterInit () {
 	autoUpdater.on('update-downloaded', (info) => {
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('updateReady');
-		autoUpdater.quitAndInstall()
+		app.isQuiting = true;
+		autoUpdater.quitAndInstall();
 	});
 };
 
