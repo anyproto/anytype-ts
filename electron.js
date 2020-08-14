@@ -87,7 +87,6 @@ if (useGRPC) {
 				console.error(err);
 			};
 		};
-		
 		bindings.sendCommand(method, buffer, handler);
 	};
 
@@ -479,8 +478,6 @@ function send () {
 };
 
 function exit (relaunch) {
-	console.log('Exit, bye!');
-
 	let cb = () => {
 		setTimeout(() => {
 			if (relaunch) {
@@ -490,19 +487,30 @@ function exit (relaunch) {
 			app.exit(0);
 		}, 2000);
 	};
-
+	
+	Util.log('info', 'MW shutdown is starting');
+	
 	if (useGRPC) {
 		if (server) {
-			server.stop();
-		};
-		cb();
-	} else {
-		const Commands = require('./dist/lib/pb/protos/commands_pb');
-		if (service) {
-			service.shutdown(new Commands.Empty(), {}, () => {
-				console.log('Shutdown complete, exiting');
+			server.stop().then(()=>{
+				Util.log('info', 'MW shutdown complete');
 				cb();
 			});
+		} else {
+			Util.log('warn', 'MW server not set');
+			cb();
+		}
+	} else {
+		const Commands = require('./dist/lib/pb/protos/commands_pb');
+		
+		if (service) {
+			service.shutdown(new Commands.Empty(), {}, () => {
+				Util.log('info', 'MW shutdown complete');
+				cb();
+			});
+		} else {
+			Util.log('warn', 'MW service not set');
+			cb();
 		};
 	};
 };
