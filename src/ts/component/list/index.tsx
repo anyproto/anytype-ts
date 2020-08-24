@@ -61,7 +61,16 @@ class ListIndex extends React.Component<Props, {}> {
 			};
 			
 			return (
-				<div id={'item-' + item.id} className="item" onClick={(e: any) => { onSelect(e, item); }}>
+				<div 
+					id={'item-' + item.id} 
+					className="item" 
+					onClick={(e: any) => { onSelect(e, item); }} 
+					onContextMenu={(e: any) => { 
+						if (showMenu) {
+							onMore(e, item); 
+						};
+					}}
+				>
 					{icon}
 					<div className="name">{name}</div>
 					{showMenu ? <Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onMouseDown={(e: any) => { onMore(e, item); }} /> : ''}

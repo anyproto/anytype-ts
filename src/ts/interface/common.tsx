@@ -29,7 +29,7 @@ export enum CrumbsType {
 export enum NavigationType {
 	Go		 = 'go',
 	Move	 = 'move',
-	Create	 = 'create',
+	Link	 = 'link',
 };
 
 export interface Option {

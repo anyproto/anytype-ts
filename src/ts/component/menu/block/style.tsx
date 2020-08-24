@@ -111,7 +111,9 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 				{ children: DataUtil.menuGetTurnDiv() },
 			];
 		} else {
-			sections = [];
+			sections = [
+				{ children: DataUtil.menuGetTurnPage() }
+			];
 		};
 		
 		sections = sections.map((s: any, i: number) => {

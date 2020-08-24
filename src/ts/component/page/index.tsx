@@ -85,11 +85,13 @@ class Page extends React.Component<Props, {}> {
 	init () {
 		const { match } = this.props;
 		const popupNewBlock = Storage.get('popupNewBlock');
+		const isIndex = !match.params.page;
+		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
-		const isCheck = match.params.action == 'pin-check';
+		const isCheck = isAuth && (match.params.action == 'pin-check');
 		const pin = Storage.get('pin');
 
-		if (pin && !keyboard.isPinChecked && !isCheck) {
+		if (pin && !keyboard.isPinChecked && !isCheck && !isAuth && !isIndex) {
 			this.props.history.push('/auth/pin-check');
 			return;
 		};

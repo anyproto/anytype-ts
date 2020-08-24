@@ -1,5 +1,6 @@
 export enum ProgressType {
 	File = 0,
+	Import = 1,
 };
 
 export enum ProgressState {
