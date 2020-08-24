@@ -170,6 +170,7 @@
 			"electron.js",
 			"electron/server.js",
 			"electron/util.js",
+			"electron/icon*",
 			"build",
 			"!dist/*",
 			"dist/index.html",
