@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, authStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -24,6 +24,7 @@ const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const THROTTLE = 20;
+const fs = window.require('fs');
 
 @observer
 class EditorPage extends React.Component<Props, State> {
@@ -1179,6 +1180,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
+		const { path } = authStore;
 
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
@@ -1203,19 +1205,39 @@ class EditorPage extends React.Component<Props, State> {
 				};
 
 				if (files.length) {
+					commonStore.progressSet({ status: 'Pasting media...', current: 0, total: files.length });
+
 					for (let file of files) {
-						let reader = new FileReader();
+						const dir = path + '/tmp';
+						const fn = dir + '/' + file.name;
+						const reader = new FileReader();
+
 						reader.readAsBinaryString(file); 
 						reader.onloadend = () => {
-							data.files.push({
-								name: file.name,
-								data: btoa(reader.result as string),
+							try {
+								fs.mkdirSync(dir);
+							} catch (e) {};
+
+							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
+								if (err) {
+									console.error(err);
+									return;
+								};
+
+								data.files.push({
+									name: file.name,
+									path: fn,
+								});
+
+								commonStore.progressSet({ status: 'Pasting media...', current: data.files.length, total: files.length });
+
+								if (data.files.length == files.length) {
+									this.onPaste(e, true, data);
+								};
 							});
-							if (data.files.length == files.length) {
-								this.onPaste(e, true, data);
-							};
-						 };
+						};
 					};
+
 					return;
 				};
 			};
