@@ -60,7 +60,7 @@ class PopupFeedback extends React.Component<Props, State> {
 						</div>
 						<div className="row">
 							<Label text="Steps to reproduce the behavior:" />
-							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeHolder="1. Go to '...'&#10;2. Click on '....'&#10;3. Scroll down to '....'&#10;4. See error" />
+							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeHolder="1. Go to '...'&#10;2. Click on '....'&#10;3. See error" />
 						</div>
 					</React.Fragment>
 				);
