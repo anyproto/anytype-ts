@@ -1339,12 +1339,13 @@ class EditorPage extends React.Component<Props, State> {
 					};
 					lastSearch = value;
 
-					console.log(value);
-
 					findAndReplaceDOMText(node.get(0), {
 						preset: 'prose',
 						find: new RegExp(value, 'gi'),
 						wrap: 'search',
+						forceContext: (el: any) => {
+							return true;
+						},
 					});
 
 					this.focusSearch();
@@ -1365,7 +1366,7 @@ class EditorPage extends React.Component<Props, State> {
 	focusSearch () {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('search');
+		const items = node.find('.editor search');
 		const wh = win.height();
 		const offset = Constant.size.lastBlock + Constant.size.header;
 
