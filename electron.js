@@ -13,6 +13,7 @@ const fileType = require('file-type');
 const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
+const port = process.env.SERVER_PORT;
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
@@ -34,6 +35,12 @@ let csp = [
 	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
+
+if (is.development && !port) {
+	console.error('ERROR: Please define SERVER_PORT env var');
+	exit(false);
+	return;
+};
 
 if (app.isPackaged && !app.requestSingleInstanceLock()) {
 	exit(false);
@@ -180,7 +187,7 @@ function createWindow () {
 	};
 
 	if (is.development) {
-		win.loadURL('http://localhost:' + process.env.SERVER_PORT);
+		win.loadURL('http://localhost:' + port);
 		win.toggleDevTools();
 	} else {
 		win.loadFile('./dist/index.html');

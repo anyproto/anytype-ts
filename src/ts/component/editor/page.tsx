@@ -1329,10 +1329,17 @@ class EditorPage extends React.Component<Props, State> {
 			data: {
 				onChange: (value: string) => {
 					this.clearSearch();
+
+					if (!value) {
+						return;
+					};
+
 					if (lastSearch != value) {
 						this.searchIndex = 0;
 					};
 					lastSearch = value;
+
+					console.log(value);
 
 					findAndReplaceDOMText(node.get(0), {
 						preset: 'prose',
@@ -1369,7 +1376,7 @@ class EditorPage extends React.Component<Props, State> {
 		node.find('search.active').removeClass('active');
 
 		const next = $(items.get(this.searchIndex));
-		if (next) {
+		if (next && next.length) {
 			next.addClass('active');
 		
 			const y = next.offset().top;
