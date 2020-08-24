@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
 
 interface Props {
 	text?: string;

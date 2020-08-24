@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Smile } from 'ts/component';
-import { I, Util, DataUtil } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	type: I.BlockType;
