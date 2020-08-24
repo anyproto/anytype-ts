@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from 'ts/component';
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard, Util } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
@@ -48,7 +48,7 @@ class MenuSearch extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onChange } = data;
 		
-		onChange(this.ref.getValue());
+		onChange(Util.filterFix(this.ref.getValue()));
 	};
 	
 };
