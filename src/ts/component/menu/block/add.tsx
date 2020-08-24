@@ -172,6 +172,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				this.setActive(null, true);
 				break;
 				
+			case Key.tab:
 			case Key.enter:
 				e.preventDefault();
 				

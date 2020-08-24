@@ -167,6 +167,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 				this.setActive(null, item);
 				break;
 				
+			case Key.tab:
 			case Key.enter:
 			case Key.space:
 				if (item) {
