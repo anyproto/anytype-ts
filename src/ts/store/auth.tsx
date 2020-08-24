@@ -2,7 +2,8 @@ import { observable, action, computed, set } from 'mobx';
 import { I, Storage, analytics, crumbs } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { commonStore } from './common';
-import { keyboard } from '../lib';
+import * as Sentry from '@sentry/browser';
+import { keyboard } from 'ts/lib';
 
 class AuthStore {
 	@observable public dataPath: string = '';
@@ -73,7 +74,9 @@ class AuthStore {
 	@action
 	accountSet (account: I.Account) {
 		this.accountItem = account as I.Account;
+
 		analytics.profile(account);
+		Sentry.setUser({ id: account.id });
 	};
 	
 	@action
