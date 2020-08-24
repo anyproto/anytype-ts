@@ -45,6 +45,7 @@ class AuthStore {
 	phraseSet (v: string) {
 		this.phrase = v;
 		Storage.set('phrase', v);
+		Storage.set('phraseBackup', v);
 	};
 	
 	@action

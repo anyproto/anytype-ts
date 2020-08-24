@@ -13,7 +13,10 @@
 	"authInviteLogin": { "en": "Enter" },
 	"authInviteEmpty": { "en": "Invite code is empty" },
 
-	"authSelectTitle": { "en": "Organize everything" },
+	"authSelectTitle": { 
+		"en": "Organize everything", 
+		"ru": "Организуй все"
+	},
 	"authSelectLabel": { "en": "With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." },
 	"authSelectLogin": { "en": "Login" },
 	"authSelectSignup": { "en": "Sign up" },
@@ -52,23 +55,58 @@
 
 	"indexHi": { "en": "Hi, %s" },
 	
+	"blockNameParagraph": { "en": "Text" },
 	"blockDescriptionParagraph": { "en": "Write a plain text" },
+
+	"blockNameHeader1": { "en": "Header 1" },
 	"blockDescriptionHeader1": { "en": "Big headline of a chapter, paragraph or section" },
+
+	"blockNameHeader2": { "en": "Header 2" },
 	"blockDescriptionHeader2": { "en": "Medium headline" },
+
+	"blockNameHeader3": { "en": "Header 3" },
 	"blockDescriptionHeader3": { "en": "Small headline" },
+
+	"blockNameQuote": { "en": "Highlighted" },
 	"blockDescriptionQuote": { "en": "Spotlight, that needs special attention" },
+
+	"blockNameCheckbox": { "en": "Checkbox" },
 	"blockDescriptionCheckbox": { "en": "Create and track task with to-do list" },
+
+	"blockNameBulleted": { "en": "Bulleted list" },
 	"blockDescriptionBulleted": { "en": "Simple list" },
+
+	"blockNameNumbered": { "en": "Numbered list" },
 	"blockDescriptionNumbered": { "en": "Numbered list" },
+
+	"blockNameToggle": { "en": "Toggle" },
 	"blockDescriptionToggle": { "en": "Hide and show content inside" },
+
+	"blockNamePage": { "en": "Page" },
 	"blockDescriptionPage": { "en": "Create new page inside this one" },
+
+	"blockNameExisting": { "en": "Link to object" },
 	"blockDescriptionExisting": { "en": "Link to existing page" },
+
+	"blockNameFile": { "en": "File" },
 	"blockDescriptionFile": { "en": "Store file in original state" },
+
+	"blockNameImage": { "en": "Picture" },
 	"blockDescriptionImage": { "en": "Upload and enrich the page with image" },
+
+	"blockNameVideo": { "en": "Video" },
 	"blockDescriptionVideo": { "en": "Upload playable video" },
+
+	"blockNameBookmark": { "en": "Bookmark" },
 	"blockDescriptionBookmark": { "en": "Save your favorite link with summary" },
+
+	"blockNameCode": { "en": "Code snippet" },
 	"blockDescriptionCode": { "en": "Capture code snippet " },
+
+	"blockNameLine": { "en": "Line divider" },
 	"blockDescriptionLine": { "en": "Separate information with line" },
+
+	"blockNameDot": { "en": "Dots divider" },
 	"blockDescriptionDot": { "en": "Separate information with three dots" },
 
 	"filterConditionEqual": { "en": "is" },
@@ -82,6 +120,8 @@
 	"filterConditionIn": { "en": "is any of" },
 	"filterConditionNotIn": { "en": "is none of" },
 	"filterConditionEmpty": { "en": "is empty" },
-	"filterConditionNotEmpty": { "en": "is not empty" }
+	"filterConditionNotEmpty": { "en": "is not empty" },
+
+	"inputWithFileTextUrl": { "en": "Paste a link" }
 
 }
