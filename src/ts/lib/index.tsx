@@ -25,10 +25,10 @@ const lang = Storage.get('lang') || Constant.default.lang;
 
 const translate = (key: string): string => {
 	if (!Text[key]) {
-		return '*No key - ' + key + '*';
+		return `*No key: ${key}*`;
 	};
 	if (!Text[key][lang]) {
-		return '*No lang for key - ' + key + '*';
+		return `*No ${lang}: ${key}*`;
 	};
 	return Text[key][lang];
 };

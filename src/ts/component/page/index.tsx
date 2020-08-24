@@ -19,10 +19,6 @@ import PageAuthSuccess from './auth/success';
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 
-import PageHelpIndex from './help/index';
-import PageHelpShortcuts from './help/shortcuts';
-import PageHelpNew from './help/new';
-
 const $ = require('jquery');
 const raf = require('raf');
 const Components: any = {
@@ -40,10 +36,6 @@ const Components: any = {
 			
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
-			
-	'help/index':			 PageHelpIndex,
-	'help/shortcuts':		 PageHelpShortcuts,
-	'help/new':				 PageHelpNew,
 };
 
 interface Props extends RouteComponentProps<any> {};
@@ -93,11 +85,13 @@ class Page extends React.Component<Props, {}> {
 	init () {
 		const { match } = this.props;
 		const popupNewBlock = Storage.get('popupNewBlock');
+		const isIndex = !match.params.page;
+		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
-		const isCheck = match.params.action == 'pin-check';
+		const isCheck = isAuth && (match.params.action == 'pin-check');
 		const pin = Storage.get('pin');
 
-		if (pin && !keyboard.isPinChecked && !isCheck) {
+		if (pin && !keyboard.isPinChecked && !isCheck && !isAuth && !isIndex) {
 			this.props.history.push('/auth/pin-check');
 			return;
 		};
@@ -114,7 +108,9 @@ class Page extends React.Component<Props, {}> {
 		keyboard.setMatch(match);
 
 		if (!popupNewBlock && isMain) {
-			commonStore.popupOpen('new', {});
+			commonStore.popupOpen('help', { 
+				data: { document: 'whatsNew' },
+			});
 		};
 		
 		$(window).on('resize.page', () => { this.resize(); });

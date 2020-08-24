@@ -253,11 +253,18 @@ class DragProvider extends React.Component<Props, {}> {
 				this.position = I.BlockPosition.None;
 			};
 
-			// You cant drop in Headers
+			// You cant only drop into Paragraphs and list
 			if (
-				(this.position == I.BlockPosition.Inner) &&
+				(this.position == I.BlockPosition.Inner) && 
 				(this.hoverData.type == I.BlockType.Text) &&
-				[ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3, I.TextStyle.Header4 ].indexOf(this.hoverData.style) >= 0
+				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(this.hoverData.style) < 0
+			) {
+				this.position = I.BlockPosition.None;
+			};
+
+			if (
+				(this.position == I.BlockPosition.Inner) && 
+				([ I.BlockType.Text, I.BlockType.Link ].indexOf(this.hoverData.type) < 0)
 			) {
 				this.position = I.BlockPosition.None;
 			};
