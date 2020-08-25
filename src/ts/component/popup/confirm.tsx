@@ -7,7 +7,7 @@ interface Props extends I.Popup {};
 
 @observer
 class PopupConfirm extends React.Component<Props, {}> {
-	
+
 	constructor(props: any) {
 		super(props);
 		
@@ -19,6 +19,9 @@ class PopupConfirm extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { title, text, textConfirm, textCancel, icon } = data;
+
+		let canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
+		let canCancel = undefined === data.canCancel ? true : data.canCancel;
 		
 		return (
 			<React.Fragment>
@@ -29,8 +32,8 @@ class PopupConfirm extends React.Component<Props, {}> {
 				) : ''}
 				<Title text={title} />
 				<Label text={text} />
-				<Button text={textConfirm} className="orange" onClick={this.onConfirm} />
-				<Button text={textCancel} className="grey" onClick={this.onCancel} />
+				{canConfirm ? <Button text={textConfirm} className="orange" onClick={this.onConfirm} /> : ''}
+				{canCancel ? <Button text={textCancel} className="grey" onClick={this.onCancel} /> : ''}
 			</React.Fragment>
 		);
 	};
