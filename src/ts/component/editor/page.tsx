@@ -1205,7 +1205,7 @@ class EditorPage extends React.Component<Props, State> {
 				};
 
 				if (files.length) {
-					commonStore.progressSet({ status: 'Pasting media...', current: 0, total: files.length });
+					commonStore.progressSet({ status: 'Processing...', current: 0, total: files.length });
 
 					for (let file of files) {
 						const dir = path + '/tmp';
@@ -1229,7 +1229,7 @@ class EditorPage extends React.Component<Props, State> {
 									path: fn,
 								});
 
-								commonStore.progressSet({ status: 'Pasting media...', current: data.files.length, total: files.length });
+								commonStore.progressSet({ status: 'Processing...', current: data.files.length, total: files.length });
 
 								if (data.files.length == files.length) {
 									this.onPaste(e, true, data);
@@ -1282,8 +1282,16 @@ class EditorPage extends React.Component<Props, State> {
 		let id = '';
 		let from = 0;
 		let to = 0;
+
+		commonStore.progressSet({ status: 'Processing...', current: 0, total: 1 });
 		
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
+
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
