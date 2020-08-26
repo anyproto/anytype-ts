@@ -503,10 +503,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const { selection } = dataset || {};
-		
+	
 		let block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
+		};
+
+		let ids = selection.get();
+		if (!ids.length) {
+			ids = [ blockId ];
 		};
 		
 		switch (item.id) {
@@ -519,16 +524,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 				
 			case 'copy':
-				let ids = selection.get();
-				if (!ids.length) {
-					ids = [ blockId ];
-				};
-
 				Action.duplicate(rootId, ids[ids.length - 1], ids);
 				break;
 				
 			case 'remove':
-				Action.remove(rootId, blockId, blockIds);
+				Action.remove(rootId, blockId, ids);
 				break;
 				
 			default:
