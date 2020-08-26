@@ -87,7 +87,6 @@ if (useGRPC) {
 				console.error(err);
 			};
 		};
-		
 		bindings.sendCommand(method, buffer, handler);
 	};
 
@@ -130,7 +129,7 @@ function createWindow () {
 		})
 	});
 
-	let mainWindowState = windowStateKeeper({
+	let state = windowStateKeeper({
 		defaultWidth: width,
 		defaultHeight: height
 	});
@@ -138,11 +137,10 @@ function createWindow () {
 	let param = {
 		backgroundColor: '#fff',
 		show: false,
-		x: mainWindowState.x,
-		x: mainWindowState.x,
-		y: mainWindowState.y,
-		width: mainWindowState.width,
-		height: mainWindowState.height,
+		x: state.x,
+		y: state.y,
+		width: state.width,
+		height: state.height,
 		minWidth: 900,
 		minHeight: 640,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
@@ -158,7 +156,7 @@ function createWindow () {
 
 	win = new BrowserWindow(param);
 
-	mainWindowState.manage(win);
+	state.manage(win);
 	
 	win.once('ready-to-show', () => {
 		win.show();
@@ -445,7 +443,8 @@ function autoUpdaterInit () {
 	autoUpdater.on('update-downloaded', (info) => {
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('updateReady');
-		exit(true);
+		app.isQuiting = true;
+		autoUpdater.quitAndInstall();
 	});
 };
 
@@ -480,8 +479,6 @@ function send () {
 };
 
 function exit (relaunch) {
-	console.log('Exit, bye!');
-
 	let cb = () => {
 		setTimeout(() => {
 			if (relaunch) {
@@ -491,19 +488,30 @@ function exit (relaunch) {
 			app.exit(0);
 		}, 2000);
 	};
-
+	
+	Util.log('info', 'MW shutdown is starting');
+	
 	if (useGRPC) {
 		if (server) {
-			server.stop();
-		};
-		cb();
-	} else {
-		const Commands = require('./dist/lib/pb/protos/commands_pb');
-		if (service) {
-			service.shutdown(new Commands.Empty(), {}, () => {
-				console.log('Shutdown complete, exiting');
+			server.stop().then(()=>{
+				Util.log('info', 'MW shutdown complete');
 				cb();
 			});
+		} else {
+			Util.log('warn', 'MW server not set');
+			cb();
+		}
+	} else {
+		const Commands = require('./dist/lib/pb/protos/commands_pb');
+		
+		if (service) {
+			service.shutdown(new Commands.Empty(), {}, () => {
+				Util.log('info', 'MW shutdown complete');
+				cb();
+			});
+		} else {
+			Util.log('warn', 'MW service not set');
+			cb();
 		};
 	};
 };

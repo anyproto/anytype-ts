@@ -3,9 +3,41 @@ import { I } from 'ts/lib';
 const sc = 'bgColor bgColor-grey textColor textColor-red nw'
 
 export default [
-	{ type: I.BlockType.IconPage, icon: '👋' },
-	{ type: I.BlockType.Title, text: `Updates for 24 July, 2020` },
 
+	{ type: I.BlockType.IconPage, icon: '👋' },
+	{ type: I.BlockType.Title, text: `Updates for 14 August, 2020` },
+
+	{ text: `This release brings several improvements to cross-device syncing and reduces the amount of disk space needed. This version comes with a new data format for your pages, and is a huge step towards further collaboration features in the future.<br>` },
+	{ text: `Right now, however, it means your page history will use <b>much</b> less space, changes that you made in one device will come to another <b>online without having to refresh</b>.` },
+
+	{ style: I.TextStyle.Header3, text: `🔔What’s changed?` },
+	{ style: I.TextStyle.Bulleted, text: `You can now paste images from the clipboard into Anytype blocks.` },
+	{ style: I.TextStyle.Bulleted, text: `We’ve added a progress bar for users who import from Notion. <br>So now you can track the progress` },
+	{ style: I.TextStyle.Bulleted, text: `Copying lists with nested items now pastes in the correct structure. ` },
+	{ style: I.TextStyle.Bulleted, text: `Fixed ability to copy and paste the whole block. ` },
+	{ style: I.TextStyle.Bulleted, text: `A bug that allowed users to bypass the PIN screen through the Help button <br> has been fixed.` },
+	{ style: I.TextStyle.Bulleted, text: `When using markup — bold, italics, etc — made with multiple blocks selected, it now can be reversed by using the same shortcut.` },
+	{ style: I.TextStyle.Bulleted, text: `We’ve fixed a bug that changed the markup of text after a mention is inserted.` },
+	{ style: I.TextStyle.Bulleted, text: `One user noticed an issue with the feedback submission process, <br>which we have now fixed. ` },
+	{ style: I.TextStyle.Bulleted, text: `Drag-and-drop with nested blocks has been improved. Users should no longer encounter disappearing blocks.` },
+	{ style: I.TextStyle.Bulleted, text: `Finally, for any users wondering why the carriage was disappearing in an empty block, it has been found and safely returned!` },
+	{ style: I.TextStyle.Bulleted, text: `Updating to the latest version of the Anytype alpha should go smoothly, without several restarts as we have fixed an issue causing the old app not to close during the update process.` },
+	{ style: I.TextStyle.Bulleted, text: `Links restrictions. Ability to set a link or move on the page itself removed.  <br>Home option removed from linking on pages. Archived pages removed from navigation, search, and mentions. ` },
+
+	{ style: I.TextStyle.Header3, text: `🐁 ≠ ⌨️ Less mouse, less distractions.` },
+	{ text: `You can use the navigation pane with keyboard keys:` },
+	{ style: I.TextStyle.Bulleted, text: `Easily switch pages with the arrow keys.` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="${sc}">←</span> and <span class="${sc}">→</span> arrow transfers the selection to links, <span class="${sc}">↑</span> and <span class="${sc}">↓</span> arrows transitions between the same level, and <span class="${sc}">Enter</span> is confirmation.` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="${sc}">Tab</span> & <span class="${sc}">Shift</span> + <span class="${sc}">Tab</span> can also be used to select objects. This is similar to the browser’s selection of elements.` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="${sc}">↑</span> and <span class="${sc}">↓</span> arrows, <span class="${sc}">Tab</span> & <span class="${sc}">Shift</span> + <span class="${sc}">Tab</span> nnow transition your selection between options in the search menu without needing any additional filtration.` },
+
+	{ style: I.TextStyle.Header3, text: `🙏🏻Acknowledgements` },
+
+	{ text: `Anytype releases wouldn’t be possible without a multitude of people, and our thanks go out to all of our brilliant alpha users and bug reporters.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 24 July, 2020` },
 	{ text: `Fixed syncing between devices. You finally can transfer data to another computer with the same mnemonic phrase. It's a simple implementation, so it can still lead to modification loss in case of concurrent changes in the same document.` },
 	{ text: `To maximize the probability of successful synchronization we recommend updating both devices to this version.` },
 	{ style: I.TextStyle.Header3, text: `Small features were implemented:` },

@@ -250,6 +250,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				this.setActive(null, true);
 				break;
 				
+			case Key.tab:
 			case Key.enter:
 				e.preventDefault();
 				if (item) {
