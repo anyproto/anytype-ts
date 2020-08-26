@@ -556,6 +556,22 @@ const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: 
 	dispatcher.request('blockSetDataviewActiveView', request, callBack);
 };
 
+const HistoryVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Versions.Request();
+	
+	request.setPageid(pageId);
+	request.setLastversionid(lastVersionId);
+	request.setLimit(limit);
+
+	dispatcher.request('historyVersions', request, callBack);
+};
+
+/*
+HistoryVersions(pageId, lastVersionId, limit) 
+HistoryShow(pageId, versionId)
+HistorySetVersion(pageId, versionId);
+*/
+
 export {
 	VersionGet,
 
@@ -625,4 +641,6 @@ export {
 	BlockListSetAlign,
 	BlockListSetPageIsArchived,
 	BlockListDeletePage,
+
+	HistoryVersions,
 };

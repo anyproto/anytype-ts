@@ -2,13 +2,14 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainHistory as Header, Block } from 'ts/component';
 import { blockStore } from 'ts/store';
-import { I, M } from 'ts/lib';
+import { I, M, C } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {};
 
 class PageMainHistory extends React.Component<Props, {}> {
 	
 	refHeader: any = null;
+	versionId: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -109,10 +110,20 @@ class PageMainHistory extends React.Component<Props, {}> {
 		);
 	};
 	
-	componentDidMount () {
+	componentDidMount() {
+		this.loadList();
 	};
 	
 	componentDidUpdate () {
+	};
+
+	loadList () { 
+		const { match } = this.props;
+		const rootId = match.params.id;
+
+		C.HistoryVersions(rootId, '', 100, (message: any) => {
+
+		});
 	};
 	
 };

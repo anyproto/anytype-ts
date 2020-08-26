@@ -127,7 +127,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
-				{ id: 'history', icon: 'history', name: 'History' },
+				{ id: 'history', icon: 'history', name: 'Version history' },
 				//{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
