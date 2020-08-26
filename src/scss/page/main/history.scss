@@ -4,7 +4,22 @@
 	.wrapper { padding: 38px 0px 0px 0px; width: calc(100% - 254px); }
 	.wrapper > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
 
-	.panel { width: 254px; border-left: 1px solid #dfddd0; }
+	.block.blockCover { width: calc(100% - 254px - 48px); }
+
+	.list { width: 254px; border-left: 1px solid #dfddd0; position: relative; z-index: 10; background: #fff; }
+	.list {
+		.section { padding: 11px 16px; }
+		.section {
+			.date { text-transform: uppercase; @include text-very-small; }
+		}
+
+		.item { padding: 5px 16px; cursor: pointer; transition: $transitionFast; }
+		.item {
+			.name { @include text-small; color: #6c6a5f; }
+		}
+
+		.item:hover { background: #f3f2ec; }
+	}
 
 	.blockLast { height: 100px; }
 }

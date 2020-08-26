@@ -67,6 +67,13 @@ const Mapper = {
             if (v == ContentCase.DATAVIEW)	 t = I.BlockType.Dataview;
             return t;
         },
+
+		Details: (obj: any) => {
+            return {
+                id: obj.getId(),
+                details: Decode.decodeStruct(obj.getDetails()),
+            };
+        },
     
         Block: (obj: any): I.Block => {
             let type = Mapper.From.BlockType(obj.getContentCase());
@@ -233,6 +240,16 @@ const Mapper = {
             return observable(new M.View(view));
         },
 
+        HistoryVersionItem: (obj: any) => {
+            return {
+                id: obj.getId(),
+                previousIds: obj.getPreviousidsList() || [],
+                authorId: obj.getAuthorid(),
+                authorName: obj.getAuthorname(),
+                time: obj.getTime(),
+            };
+        },
+
     },
 
     //------------------------------------------------------------
@@ -376,26 +393,26 @@ const Mapper = {
             return item;
         },
 
-        View: (view: I.View) => {
-            view = Util.objectCopy(new M.View(view));
+        View: (obj: I.View) => {
+            obj = Util.objectCopy(new M.View(obj));
 
             const item = new Model.Block.Content.Dataview.View();
 
-            item.setId(view.id);
-            item.setName(view.name);
-            item.setType(view.type);
-            item.setRelationsList(view.relations.map(Mapper.To.ViewRelation));
-            item.setFiltersList(view.filters.map(Mapper.To.Filter));
-            item.setSortsList(view.sorts.map(Mapper.To.Sort));
+            item.setId(obj.id);
+            item.setName(obj.name);
+            item.setType(obj.type);
+            item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
+            item.setFiltersList(obj.filters.map(Mapper.To.Filter));
+            item.setSortsList(obj.sorts.map(Mapper.To.Sort));
 
             return item;
         },
 
-        PasteFile: (file: any) => {
+        PasteFile: (obj: any) => {
             const item = new Rpc.Block.Paste.Request.File();
 
-            item.setName(file.name);
-            item.setData(file.data);
+            item.setName(obj.name);
+            item.setData(obj.data);
 
             return item;
         },

@@ -566,9 +566,16 @@ const HistoryVersions = (pageId: string, lastVersionId: string, limit: number, c
 	dispatcher.request('historyVersions', request, callBack);
 };
 
+const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Show.Request();
+	
+	request.setPageid(pageId);
+	request.setVersionid(versionId);
+
+	dispatcher.request('historyShow', request, callBack);
+};
+
 /*
-HistoryVersions(pageId, lastVersionId, limit) 
-HistoryShow(pageId, versionId)
 HistorySetVersion(pageId, versionId);
 */
 
@@ -642,5 +649,6 @@ export {
 	BlockListSetPageIsArchived,
 	BlockListDeletePage,
 
-	HistoryVersions,
+  HistoryVersions,
+  HistoryShow,
 };

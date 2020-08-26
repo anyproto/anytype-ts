@@ -47,11 +47,11 @@
 
 	.side { position: absolute; top: 5px; height: 28px; line-height: 28px; }
 
-	.side.left { left: 6px; }
+	.side.left { left: 6px; z-index: 1; }
 
 	.side.center { width: 492px; height: 28px; left: 50%; margin-left: -246px; white-space: nowrap; }
 
-	.side.right { right: 6px; }
+	.side.right { right: 6px; z-index: 1; }
 	.side.right {
 		.icon { margin: 0px; }
 	}

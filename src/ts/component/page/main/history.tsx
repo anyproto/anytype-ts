@@ -2,32 +2,51 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainHistory as Header, Block } from 'ts/component';
 import { blockStore } from 'ts/store';
-import { I, M, C } from 'ts/lib';
+import { I, M, C, Util, dispatcher } from 'ts/lib';
+import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> { };
+interface VersionItem {
+	id: string;
+	previousIds: string[];
+	authorId: string;
+	authorName: string;
+	time: number;
+};
 
-class PageMainHistory extends React.Component<Props, {}> {
+interface State {
+	versions: VersionItem[];
+};
+
+@observer
+class PageMainHistory extends React.Component<Props, State> {
+
+	state = {
+		versions: [] as VersionItem[],
+	};
 	
-	refHeader: any = null;
 	versionId: string = '';
+	refHeader: any = null;
 
 	constructor (props: any) {
 		super(props);
 	};
 
 	render () {
-		const { history, location, match } = this.props;
+		const { match } = this.props;
+		const { versions } = this.state;
+
 		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
-		
-		if (!root) {
-			return null;
-		};
+
+		console.log('RENDER', rootId, root, blockStore.blockObject);
 
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const length = childrenIds.length;
+
+		console.log(childrenIds, length);
 
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
@@ -36,14 +55,14 @@ class PageMainHistory extends React.Component<Props, {}> {
 		let cn = [ 'editorWrapper' ];
 		let icon: any = { id: rootId + '-icon', childrenIds: [], fields: {}, content: {} };
 		
-		if (root.isPageProfile()) {
+		if (root && root.isPageProfile()) {
 			cn.push('isProfile');
 			icon.type = I.BlockType.IconUser;
 		} else {
 			icon.type = I.BlockType.IconPage;
 		};
 
-		if (root.isPageSet()) {
+		if (root && root.isPageSet()) {
 			cn.push('isDataview');
 		};
 		
@@ -58,6 +77,27 @@ class PageMainHistory extends React.Component<Props, {}> {
 		if (withCover) {
 			cn.push('withCover');
 		};
+		
+		const Section = (item: any) => (
+			<React.Fragment>
+				<div className="section">
+					<div className="date">{item.id}</div>
+				</div>
+				
+				<div className="items">
+					{item.list.map((item: any, i: number) => {
+						return <Version key={i} {...item} />
+					})}
+				</div>
+			</React.Fragment>
+		);
+
+		const Version = (item: any) => (
+			<div className="item" onClick={(e: any) => { this.loadVersion(item.id); }}>
+				<div className="date">{Util.date('d F Y, H:i', item.time)}</div>
+				<div className="name">Emmy Noether</div>
+			</div>
+		);
 		
 		return (
 			<div>
@@ -102,30 +142,74 @@ class PageMainHistory extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					<div className="panel">
-							
+					<div className="list">
+						{versions.map((item: any, i: number) => {
+							return <Section key={i} {...item} />
+						})}
 					</div>
 				</div>
 			</div>
 		);
 	};
 	
-	componentDidMount() {
+	componentDidMount () {
 		this.loadList();
 	};
 	
-	componentDidUpdate () {
-	};
-
 	loadList () { 
 		const { match } = this.props;
 		const rootId = match.params.id;
 
 		C.HistoryVersions(rootId, '', 100, (message: any) => {
+			if (message.error.code || !message.versions.length) {
+				return;
+			};
 
+			this.setState({ versions: this.groupData(message.versions) });
+
+			if (!this.versionId) {
+				this.loadVersion(message.versions[0].id);
+			};
+		});
+  	};
+  
+	loadVersion (id: string) {
+		const { match } = this.props;
+		const rootId = match.params.id;
+
+		this.versionId = id;
+
+		C.HistoryShow(rootId, id, (message: any) => {
+			let bs = message.blockShow;
+			dispatcher.onBlockShow(rootId, bs.type, bs.blocks, bs.details);
+			
+			this.forceUpdate();
 		});
 	};
 	
+	groupData (versions: any[]) { 
+    	let groups: any[] = [];
+
+		versions.reverse();
+    
+		for (let item of versions) {
+			let groupId = Util.date('F Y', item.time);
+			let group = groups.find((it: any) => { return it.id == groupId; });
+      
+			if (!group) {
+				group = {
+					id: Util.date('F Y', item.time),
+					list: [],
+				};
+				groups.push(group);
+      		};
+      
+      		group.list.push(item);
+		};
+
+		return groups;
+	};
+
 };
 
 export default PageMainHistory;
