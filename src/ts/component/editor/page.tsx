@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, authStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -25,6 +25,7 @@ const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const THROTTLE = 20;
+const fs = window.require('fs');
 
 @observer
 class EditorPage extends React.Component<Props, State> {
@@ -1197,6 +1198,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
+		const { path } = authStore;
 
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
@@ -1221,19 +1223,39 @@ class EditorPage extends React.Component<Props, State> {
 				};
 
 				if (files.length) {
+					commonStore.progressSet({ status: 'Processing...', current: 0, total: files.length });
+
 					for (let file of files) {
-						let reader = new FileReader();
+						const dir = path + '/tmp';
+						const fn = dir + '/' + file.name;
+						const reader = new FileReader();
+
 						reader.readAsBinaryString(file); 
 						reader.onloadend = () => {
-							data.files.push({
-								name: file.name,
-								data: btoa(reader.result as string),
+							try {
+								fs.mkdirSync(dir);
+							} catch (e) {};
+
+							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
+								if (err) {
+									console.error(err);
+									return;
+								};
+
+								data.files.push({
+									name: file.name,
+									path: fn,
+								});
+
+								commonStore.progressSet({ status: 'Processing...', current: data.files.length, total: files.length });
+
+								if (data.files.length == files.length) {
+									this.onPaste(e, true, data);
+								};
 							});
-							if (data.files.length == files.length) {
-								this.onPaste(e, true, data);
-							};
-						 };
+						};
 					};
+
 					return;
 				};
 			};
@@ -1278,8 +1300,16 @@ class EditorPage extends React.Component<Props, State> {
 		let id = '';
 		let from = 0;
 		let to = 0;
+
+		commonStore.progressSet({ status: 'Processing...', current: 0, total: 1 });
 		
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
+
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 

@@ -1,16 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Input, Button } from 'ts/component';
-import { I, keyboard, focus, Util } from 'ts/lib';
-
-const { dialog } = window.require('electron').remote;
-
-const $ = require('jquery');
-const raf = require('raf');
-const SMALL_WIDTH = 248;
-const ICON_WIDTH = 60;
-
-enum Size { Icon = 0, Small = 1, Full = 2 };
+import { I, keyboard, focus, translate } from 'ts/lib';
 
 interface Props {
 	icon?: string;
@@ -28,10 +19,18 @@ interface State {
 	size: Size;
 };
 
+const { dialog } = window.require('electron').remote;
+const $ = require('jquery');
+const raf = require('raf');
+const SMALL_WIDTH = 248;
+const ICON_WIDTH = 60;
+
+enum Size { Icon = 0, Small = 1, Full = 2 };
+
 class InputWithFile extends React.Component<Props, State> {
 
 	private static defaultProps = {
-		textUrl: 'Paste a link',
+		textUrl: translate('inputWithFileTextUrl'),
 		withFile: true,
 	};
 	
