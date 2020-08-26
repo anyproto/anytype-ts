@@ -15,6 +15,10 @@ const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
 const openAboutWindow = require('about-window').default;
 
+const TIMEOUT_UPDATE = 600 * 1000;
+const MIN_WIDTH = 900;
+const MIN_HEIGHT = 640;
+
 let isUpdating = false;
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
@@ -142,8 +146,8 @@ function createWindow () {
 		y: state.y,
 		width: state.width,
 		height: state.height,
-		minWidth: 900,
-		minHeight: 640,
+		minWidth: MIN_WIDTH,
+		minHeight: MIN_HEIGHT,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
 		webPreferences: {
 			nodeIntegration: true
@@ -430,7 +434,7 @@ function checkUpdate () {
 
 	autoUpdater.checkForUpdatesAndNotify();
 	clearTimeout(timeoutUpdate);
-	timeoutUpdate = setTimeout(checkUpdate, 600 * 1000);
+	timeoutUpdate = setTimeout(checkUpdate, TIMEOUT_UPDATE);
 };
 
 function autoUpdaterInit () {
@@ -440,7 +444,7 @@ function autoUpdaterInit () {
 	autoUpdater.logger.transports.file.level = 'debug';
 	autoUpdater.channel = config.channel;
 	
-	setTimeout(checkUpdate, 5000);
+	setTimeout(checkUpdate, TIMEOUT_UPDATE);
 	
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
