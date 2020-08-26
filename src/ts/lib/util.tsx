@@ -545,7 +545,7 @@ class Util {
 				title: translate('confirmUpdateTitle'),
 				text: translate('confirmUpdateText'),
 				textConfirm: translate('confirmUpdateConfirm'),
-				textCancel: translate('confirmUpdateCancel'),
+				canCancel: false,
 				onConfirm: () => {
 					ipcRenderer.send('update');
 					if (onConfirm) {

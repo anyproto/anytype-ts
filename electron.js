@@ -1,6 +1,6 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session, globalShortcut } = require('electron');
-const { is, appMenu, fixPathForAsarUnpack } = require('electron-util');
+const { app, BrowserWindow, ipcMain, shell, Menu, session } = require('electron');
+const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
 const path = require('path');
@@ -233,36 +233,46 @@ function createWindow () {
 	});
 };
 
-const aboutMenu = appMenu();
-
-aboutMenu.submenu.splice(0, 1);
-aboutMenu.submenu.splice(0, 0, {
-	label: 'About Anytype',
-	click: () => { 
-		openAboutWindow({
-			icon_path: __dirname + '/electron/icon.png',
-			css_path: __dirname + '/electron/about.css',
-			product_name: 'Anytype',
-			description: 'Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.',
-			copyright: 'Copyright (c) 2020 Anytype',
-			homepage: 'https://anytype.io',
-			package_json_dir: __dirname,
-			use_version_info: false,
-			show_close_button: 'Close',
-			adjust_window_size: true,
-		});
-	}
-});
-
-aboutMenu.submenu.splice(aboutMenu.submenu.length - 2, 0, { type: 'separator' });
-aboutMenu.submenu.splice(aboutMenu.submenu.length - 2, 0, {
-	label: 'Check for updates',
-	click: () => { checkUpdate(); }
-});
-
 function menuInit () {
 	let menu = [
-		aboutMenu,
+		{
+			label: 'Anytype',
+			submenu: [
+				{
+					label: 'About Anytype',
+					click: () => { 
+						openAboutWindow({
+							icon_path: __dirname + '/electron/icon.png',
+							css_path: __dirname + '/electron/about.css',
+							product_name: 'Anytype',
+							description: 'Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.',
+							copyright: 'Copyright (c) 2020 Anytype',
+							homepage: 'https://anytype.io',
+							package_json_dir: __dirname,
+							use_version_info: false,
+							show_close_button: 'Close',
+							adjust_window_size: true,
+						});
+					}
+				},
+				{ type: 'separator' },
+				{ role: 'services' },
+				{ type: 'separator' },
+				{ role: 'hide' },
+				{ role: 'hideothers' },
+				{ role: 'unhide' },
+				{ type: 'separator' },
+				{
+					label: 'Check for updates',
+					click: () => { checkUpdate(); }
+				},
+				{ type: 'separator' },
+				{
+					label: 'Quit',
+					click: () => { exit(false); }
+				},
+			]
+		},
 		{
 			role: 'fileMenu',
 			submenu: [

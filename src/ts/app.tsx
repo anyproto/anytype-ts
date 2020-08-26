@@ -156,6 +156,7 @@ declare global {
 	interface Window { 
 		Store: any; 
 		Cmd: any; 
+		Util: any;
 		Dispatcher: any;
 		Amplitude: any;
 	}
@@ -163,6 +164,7 @@ declare global {
 
 window.Store = () => { return rootStore; };
 window.Cmd = () => { return C; };
+window.Util = () => { return Util; };
 window.Dispatcher = () => { return dispatcher; };
 window.Amplitude = () => { return analytics.instance; };
 
