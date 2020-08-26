@@ -79,6 +79,7 @@ import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/select.scss';
+import 'scss/menu/search.scss';
 
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';
@@ -296,6 +297,7 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('command', this.onCommand);
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
+			console.log('Config: ', config);
 			commonStore.configSet(config); 
 			config.debugUI ? html.addClass('debug') : html.removeClass('debug');
 		});

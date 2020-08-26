@@ -19,6 +19,7 @@ interface State {
 	loading: boolean;
 };
 
+const findAndReplaceDOMText = require('findandreplacedomtext');
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -40,6 +41,7 @@ class EditorPage extends React.Component<Props, State> {
 	state = {
 		loading: false,
 	};
+	searchIndex: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -278,7 +280,7 @@ class EditorPage extends React.Component<Props, State> {
 				length = block.getLength();
 			};
 		};
-		
+
 		switch (cmd) {
 			case 'selectAll':
 				if ((range.from == 0) && (range.to == length)) {
@@ -287,6 +289,10 @@ class EditorPage extends React.Component<Props, State> {
 					focus.set(focused, { from: 0, to: length });
 					focus.apply();
 				};
+				break;
+
+			case 'search':
+				this.onSearch();
 				break;
 		};
 	};
@@ -487,6 +493,12 @@ class EditorPage extends React.Component<Props, State> {
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			e.preventDefault();
+			this.onSearch();
+		});
+
 		// Mark-up
 		if (ids.length) {
 			let type = null;
@@ -664,6 +676,12 @@ class EditorPage extends React.Component<Props, State> {
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+		});
+
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			e.preventDefault();
+			this.onSearch();
 		});
 
 		// Duplicate
@@ -1320,6 +1338,81 @@ class EditorPage extends React.Component<Props, State> {
 
 	onPrint () {
 		window.print();
+	};
+
+	onSearch () {
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		let lastSearch = '';
+		this.clearSearch();
+
+		commonStore.menuOpen('search', {
+			element: '#button-header-more',
+			type: I.MenuType.Horizontal,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetX: 0,
+			offsetY: 0,
+			onClose: () => {
+				this.clearSearch();
+			},
+			data: {
+				onChange: (value: string) => {
+					this.clearSearch();
+
+					if (!value) {
+						return;
+					};
+
+					if (lastSearch != value) {
+						this.searchIndex = 0;
+					};
+					lastSearch = value;
+
+					findAndReplaceDOMText(node.get(0), {
+						preset: 'prose',
+						find: new RegExp(value, 'gi'),
+						wrap: 'search',
+						forceContext: (el: any) => {
+							return true;
+						},
+					});
+
+					this.focusSearch();
+					this.searchIndex++;
+				},
+			},
+		});
+	};
+
+	clearSearch () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('search').each((i: number, item: any) => {
+			item = $(item);
+			item.replaceWith(item.html());
+		});
+	};
+
+	focusSearch () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = node.find('.editor search');
+		const wh = win.height();
+		const offset = Constant.size.lastBlock + Constant.size.header;
+
+		if (this.searchIndex >= items.length - 1) {
+			this.searchIndex = 0;
+		};
+
+		node.find('search.active').removeClass('active');
+
+		const next = $(items.get(this.searchIndex));
+		if (next && next.length) {
+			next.addClass('active');
+		
+			const y = next.offset().top;
+			$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 100);
+		};
 	};
 
 	getLayoutIds (ids: string[]) {

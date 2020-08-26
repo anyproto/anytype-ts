@@ -13,6 +13,7 @@ const fileType = require('file-type');
 const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
+const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 
 const TIMEOUT_UPDATE = 600 * 1000;
@@ -26,6 +27,25 @@ let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC ||
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 let timeoutUpdate = 0;
 let service, server;
+let dataPath = [];
+let config = {};
+let win = null;
+let csp = [
+	"default-src 'self' 'unsafe-eval'",
+	"img-src 'self' http://*:* https://*:* data: blob:",
+	"media-src 'self' http://*:* https://*:* data: blob:",
+	"style-src 'unsafe-inline' http://localhost:*",
+	"font-src data:",
+	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
+	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
+	"frame-src chrome-extension://react-developer-tools"
+];
+
+if (is.development && !port) {
+	console.error('ERROR: Please define SERVER_PORT env var');
+	exit(false);
+	return;
+};
 
 if (app.isPackaged && !app.requestSingleInstanceLock()) {
 	exit(false);
@@ -34,7 +54,6 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 
 storage.setDataPath(userPath);
 
-let dataPath = [];
 if (process.env.DATA_PATH) {
 	try {
 		fs.mkdirSync(process.env.DATA_PATH);
@@ -97,19 +116,6 @@ if (useGRPC) {
 
 	service.client_.rpcCall = napiCall;
 };
-
-let config = {};
-let win = null;
-let csp = [
-	"default-src 'self' 'unsafe-eval'",
-	"img-src 'self' http://*:* https://*:* data: blob:",
-	"media-src 'self' http://*:* https://*:* data: blob:",
-	"style-src 'unsafe-inline' http://localhost:*",
-	"font-src data:",
-	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
-	"frame-src chrome-extension://react-developer-tools"
-];
 
 function waitForLibraryAndCreateWindows () {
 	waitLibraryPromise.then((res) => {
@@ -186,7 +192,7 @@ function createWindow () {
 	};
 
 	if (is.development) {
-		win.loadURL('http://localhost:' + process.env.SERVER_PORT);
+		win.loadURL('http://localhost:' + port);
 		win.toggleDevTools();
 	} else {
 		win.loadFile('./dist/index.html');
@@ -308,15 +314,26 @@ function menuInit () {
 						send('command', 'redo');
 					}
 				},
+
 				{ type: 'separator' },
+
 				{ label: 'Copy', role: 'copy' },
 				{ label: 'Cut', role: 'cut' },
 				{ label: 'Paste', role: 'paste' },
+				
+				{ type: 'separator' },
+
 				{
 					label: 'Select all', accelerator: 'CmdOrCtrl+A',
 					click: () => {
 						win.webContents.selectAll();
 						send('commandEditor', 'selectAll');
+					}
+				},
+				{ 
+					label: 'Search', accelerator: 'CmdOrCtrl+F',
+					click: function () {
+						win.webContents.send('commandEditor', 'search');
 					}
 				},
 			]
