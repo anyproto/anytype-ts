@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainHistory as Header, FooterMainEdit as Footer, Block } from 'ts/component';
+import { HeaderMainHistory as Header, Block } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { I, M } from 'ts/lib';
 
@@ -61,43 +61,50 @@ class PageMainHistory extends React.Component<Props, {}> {
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
-				<div className="wrapper">
-					<div className={cn.join(' ')}>
-						{withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
-						<div className="editor">
-							<div className="blocks">
-								{withIcon ? (
-									<Block 
-										key={icon.id} 
-										{...this.props} 
-										rootId={rootId}
-										block={icon} 
-										className="root" 
-										readOnly={true}
-									/>	
-								) : ''}
-								
-								{children.map((block: I.Block, i: number) => {
-									return (
+				<div className="flex">
+					<div className="wrapper">
+						<div className={cn.join(' ')}>
+							{withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
+							<div className="editor">
+								<div className="blocks">
+									{withIcon ? (
 										<Block 
-											key={block.id} 
-											{...this.props}
+											key={icon.id} 
+											{...this.props} 
 											rootId={rootId}
-											index={i}
-											block={block}
-											onKeyDown={() => {}}
-											onKeyUp={() => {}} 
-											onMenuAdd={() => {}}
-											onPaste={() => {}}
+											block={icon} 
+											className="root" 
 											readOnly={true}
-										/>
-									)
-								})}
+										/>	
+									) : ''}
+									
+									{children.map((block: I.Block, i: number) => {
+										return (
+											<Block 
+												key={block.id} 
+												{...this.props}
+												rootId={rootId}
+												index={i}
+												block={block}
+												onKeyDown={() => {}}
+												onKeyUp={() => {}} 
+												onMenuAdd={() => {}}
+												onPaste={() => {}}
+												readOnly={true}
+											/>
+										)
+									})}
+								</div>
+
+								<div className="blockLast" />
 							</div>
 						</div>
 					</div>
+
+					<div className="panel">
+							
+					</div>
 				</div>
-				<Footer {...this.props} rootId={rootId} />
 			</div>
 		);
 	};

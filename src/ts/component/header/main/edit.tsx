@@ -55,7 +55,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="forward" tooltip="Forward" onClick={this.onForward} />
 				</div>
 
-				<div className="mid">
+				<div className="side center">
 					<Icon className="nav" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
 
 					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>

@@ -5,6 +5,7 @@
 	.block.blockText {
 		.wrap { flex: auto; position: relative; padding: 0px; width: 100%; }
 		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
+		.value:empty { height: 24px; }
 		.placeHolder { 
 			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
 			width: 100%; height: 100%; cursor: text; pointer-events: none;

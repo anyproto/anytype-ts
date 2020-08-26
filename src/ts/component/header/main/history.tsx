@@ -20,7 +20,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 					left
 				</div>
 
-				<div className="mid">
+				<div className="side center">
 					mid
 				</div>
 
