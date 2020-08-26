@@ -1512,7 +1512,7 @@ class EditorPage extends React.Component<Props, State> {
 			style = content.style;
 		};
 
-		if ((childrenIds.length > 0) && ((isList && !isToggle) || (isToggle && isOpen))) {
+		if ((childrenIds.length > 0) && (isList && !isToggle) || (isToggle && isOpen)) {
 			mode = I.BlockSplitMode.Inner;
 		};
 
