@@ -1,6 +1,6 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session, globalShortcut } = require('electron');
-const { is, appMenu, fixPathForAsarUnpack } = require('electron-util');
+const { app, BrowserWindow, ipcMain, shell, Menu, session } = require('electron');
+const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
 const path = require('path');
@@ -13,6 +13,11 @@ const fileType = require('file-type');
 const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
+const openAboutWindow = require('about-window').default;
+
+const TIMEOUT_UPDATE = 600 * 1000;
+const MIN_WIDTH = 900;
+const MIN_HEIGHT = 640;
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
@@ -141,8 +146,8 @@ function createWindow () {
 		y: state.y,
 		width: state.width,
 		height: state.height,
-		minWidth: 900,
-		minHeight: 640,
+		minWidth: MIN_WIDTH,
+		minHeight: MIN_HEIGHT,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
 		webPreferences: {
 			nodeIntegration: true
@@ -234,7 +239,44 @@ function createWindow () {
 
 function menuInit () {
 	let menu = [
-		appMenu(),
+		{
+			label: 'Anytype',
+			submenu: [
+				{
+					label: 'About Anytype',
+					click: () => { 
+						openAboutWindow({
+							icon_path: __dirname + '/electron/icon.png',
+							css_path: __dirname + '/electron/about.css',
+							product_name: 'Anytype',
+							description: 'Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.',
+							copyright: 'Copyright (c) 2020 Anytype',
+							homepage: 'https://anytype.io',
+							package_json_dir: __dirname,
+							use_version_info: false,
+							show_close_button: 'Close',
+							adjust_window_size: true,
+						});
+					}
+				},
+				{ type: 'separator' },
+				{ role: 'services' },
+				{ type: 'separator' },
+				{ role: 'hide' },
+				{ role: 'hideothers' },
+				{ role: 'unhide' },
+				{ type: 'separator' },
+				{
+					label: 'Check for updates',
+					click: () => { checkUpdate(); }
+				},
+				{ type: 'separator' },
+				{
+					label: 'Quit',
+					click: () => { exit(false); }
+				},
+			]
+		},
 		{
 			role: 'fileMenu',
 			submenu: [
@@ -296,10 +338,6 @@ function menuInit () {
 				{
 					label: 'What\'s new',
 					click: () => { send('popupHelp', 'whatsNew'); }
-				},
-				{
-					label: 'Check for updates',
-					click: () => { checkUpdate(); }
 				},
 			]
 		},
@@ -396,7 +434,7 @@ function checkUpdate () {
 
 	autoUpdater.checkForUpdatesAndNotify();
 	clearTimeout(timeoutUpdate);
-	timeoutUpdate = setTimeout(checkUpdate, 600 * 1000);
+	timeoutUpdate = setTimeout(checkUpdate, TIMEOUT_UPDATE);
 };
 
 function autoUpdaterInit () {
@@ -406,22 +444,24 @@ function autoUpdaterInit () {
 	autoUpdater.logger.transports.file.level = 'debug';
 	autoUpdater.channel = config.channel;
 	
-	setTimeout(checkUpdate, 5000);
+	setTimeout(checkUpdate, TIMEOUT_UPDATE);
 	
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
+		send('checking-for-update');
 	});
 	
 	autoUpdater.on('update-available', (info) => {
 		Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
-		send('update');
+		send('update-available');
 	});
 	
 	autoUpdater.on('update-not-available', (info) => {
 		isUpdating = false;
 		Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
+		send('update-not-available');
 	});
 	
 	autoUpdater.on('error', (err) => { Util.log('Error: ' + err); });
@@ -437,12 +477,12 @@ function autoUpdaterInit () {
 		];
 		Util.log('info', msg.join(' '));
 		
-		send('progress', progress);
+		send('download-progress', progress);
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
-		send('updateReady');
+		send('update-downloaded');
 		app.isQuiting = true;
 		autoUpdater.quitAndInstall();
 	});

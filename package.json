@@ -69,6 +69,7 @@
 	"dependencies": {
 		"@sentry/browser": "^5.20.1",
 		"@types/bindings": "^1.3.0",
+		"about-window": "^1.13.4",
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
 		"babel-plugin-prismjs": "^2.0.1",
@@ -163,6 +164,7 @@
 			"dist/lib",
 			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
+			"electron/icon*",
 			"build"
 		],
 		"extraResources": [],
@@ -170,6 +172,8 @@
 			"electron.js",
 			"electron/server.js",
 			"electron/util.js",
+			"electron/icon*",
+			"electron/about.css",
 			"build",
 			"!dist/*",
 			"dist/index.html",
@@ -180,6 +184,7 @@
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",
 			"!node_modules/**/*",
+			"node_modules/about-window",
 			"node_modules/async",
 			"node_modules/at-least-node",
 			"node_modules/balanced-match",
