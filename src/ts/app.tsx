@@ -262,17 +262,37 @@ class App extends React.Component<Props, State> {
 			});
 		});
 		
-		ipcRenderer.on('message', (e: any, text: string) => {
-			console.log('[Message]', text);
+		ipcRenderer.on('checking-for-update', (e: any, text: string) => {
+			commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
 		});
-		
-		ipcRenderer.on('progress', this.onProgress);
-		ipcRenderer.on('updateReady', () => { 
+
+		ipcRenderer.on('update-available', (e: any, text: string) => {
+			commonStore.progressSet({ status: 'Checking for update...', current: 1, total: 1 });
+		});
+
+		ipcRenderer.on('update-not-available', (e: any, text: string) => {
+			commonStore.popupOpen('confirm', {
+				data: {
+					title: 'You are up-to-date',
+					text: Util.sprintf('You are on the latest version: %s', version),
+					textConfirm: 'Great!',
+					canCancel: false,
+				},
+			});
+			commonStore.progressClear(); 
+		});
+
+		ipcRenderer.on('download-progress', this.onProgress);
+
+		ipcRenderer.on('update-downloaded', (e: any, text: string) => {
 			Storage.delete('popupNewBlock');
 			commonStore.progressClear(); 
 		});
+
 		ipcRenderer.on('import', this.onImport);
+
 		ipcRenderer.on('command', this.onCommand);
+
 		ipcRenderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config); 
 			config.debugUI ? html.addClass('debug') : html.removeClass('debug');

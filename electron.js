@@ -232,9 +232,17 @@ function createWindow () {
 	});
 };
 
+const aboutMenu = appMenu();
+
+aboutMenu.submenu.splice(aboutMenu.submenu.length - 2, 0, { type: 'separator' });
+aboutMenu.submenu.splice(aboutMenu.submenu.length - 2, 0, {
+	label: 'Check for updates',
+	click: () => { checkUpdate(); }
+});
+
 function menuInit () {
 	let menu = [
-		appMenu(),
+		aboutMenu,
 		{
 			role: 'fileMenu',
 			submenu: [
@@ -296,10 +304,6 @@ function menuInit () {
 				{
 					label: 'What\'s new',
 					click: () => { send('popupHelp', 'whatsNew'); }
-				},
-				{
-					label: 'Check for updates',
-					click: () => { checkUpdate(); }
 				},
 			]
 		},
@@ -410,18 +414,20 @@ function autoUpdaterInit () {
 	
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
+		send('checking-for-update');
 	});
 	
 	autoUpdater.on('update-available', (info) => {
 		Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
-		send('update');
+		send('update-available');
 	});
 	
 	autoUpdater.on('update-not-available', (info) => {
 		isUpdating = false;
 		Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
+		send('update-not-available');
 	});
 	
 	autoUpdater.on('error', (err) => { Util.log('Error: ' + err); });
@@ -437,12 +443,12 @@ function autoUpdaterInit () {
 		];
 		Util.log('info', msg.join(' '));
 		
-		send('progress', progress);
+		send('download-progress', progress);
 	});
 	
 	autoUpdater.on('update-downloaded', (info) => {
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
-		send('updateReady');
+		send('update-downloaded');
 		app.isQuiting = true;
 		autoUpdater.quitAndInstall();
 	});
