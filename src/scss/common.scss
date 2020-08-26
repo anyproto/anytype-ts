@@ -45,6 +45,8 @@ input, textarea, select { font-family: 'Inter'; }
 }
 
 a { color: $colorBlack; }
+search { background: yellow !important; color: $colorBlack !important; }
+search.active { background: orange !important; }
 
 .dropTarget.isOver.middle { background: rgba(255,187,44,0.3) !important; }
 .dropTarget.isOver.top { box-shadow: 0px -2px 0px $colorOrange; }
