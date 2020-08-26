@@ -13,6 +13,7 @@ const fileType = require('file-type');
 const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
+const openAboutWindow = require('about-window').default;
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
@@ -233,6 +234,25 @@ function createWindow () {
 };
 
 const aboutMenu = appMenu();
+
+aboutMenu.submenu.splice(0, 1);
+aboutMenu.submenu.splice(0, 0, {
+	label: 'About Anytype',
+	click: () => { 
+		openAboutWindow({
+			icon_path: __dirname + '/electron/icon.png',
+			css_path: __dirname + '/electron/about.css',
+			product_name: 'Anytype',
+			description: 'Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.',
+			copyright: 'Copyright (c) 2020 Anytype',
+			homepage: 'https://anytype.io',
+			package_json_dir: __dirname,
+			use_version_info: false,
+			show_close_button: 'Close',
+			adjust_window_size: true,
+		});
+	}
+});
 
 aboutMenu.submenu.splice(aboutMenu.submenu.length - 2, 0, { type: 'separator' });
 aboutMenu.submenu.splice(aboutMenu.submenu.length - 2, 0, {
