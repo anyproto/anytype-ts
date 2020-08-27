@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainHistory as Header, Block, Loader } from 'ts/component';
 import { blockStore } from 'ts/store';
-import { I, M, C, Util, dispatcher } from 'ts/lib';
+import { I, M, C, Util, dispatcher, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> { };
@@ -89,7 +89,7 @@ class PageMainHistory extends React.Component<Props, State> {
 
 		const Version = (item: any) => (
 			<div className="item" onClick={(e: any) => { this.loadVersion(item.id); }}>
-				<div className="date">{Util.date('d F Y, H:i', item.time)}</div>
+				<div className="date">{Util.date('d F Y, H:i:s', item.time)}</div>
 				<div className="name">Emmy Noether</div>
 			</div>
 		);
@@ -150,6 +150,17 @@ class PageMainHistory extends React.Component<Props, State> {
 	componentDidMount () {
 		this.loadList();
 		this.resize();
+		this.setId();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+		this.setId();
+	};
+
+	setId () {
+		const { match } = this.props;
+		Storage.set('pageId', match.params.id);
 	};
 	
 	loadList () { 
