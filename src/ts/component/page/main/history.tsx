@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainHistory as Header, Block, Loader } from 'ts/component';
+import { HeaderMainHistory as Header, Block, Loader, Icon } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { I, M, C, Util, dispatcher, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -76,7 +76,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		const Section = (item: any) => (
 			<React.Fragment>
 				<div className="section">
-					<div className="date">{item.id}</div>
+					<div className="date">{item.groupId}</div>
 				</div>
 				
 				<div className="items">
@@ -87,12 +87,26 @@ class PageMainHistory extends React.Component<Props, State> {
 			</React.Fragment>
 		);
 
-		const Version = (item: any) => (
-			<div className="item" onClick={(e: any) => { this.loadVersion(item.id); }}>
-				<div className="date">{Util.date('d F Y, H:i:s', item.time)}</div>
-				<div className="name">Emmy Noether</div>
-			</div>
-		);
+		const Version = (item: any) => {
+			const withChildren = item.list && item.list.length;
+			return (
+				<React.Fragment>
+					<div id={'item-' + item.id} className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} onClick={(e: any) => { this.loadVersion(item.id); }}>
+						{withChildren ? <Icon className="arrow" onClick={(e: any) => { this.toggleChildren(e, item.id); }} /> : ''}
+						<div className="date">{Util.date('d F Y, H:i:s', item.time)}</div>
+						<div className="name">Emmy Noether</div>
+					</div>
+
+					{withChildren ? (
+						<div id={'children-' + item.id} className="children">
+							{item.list.map((child: any, i: number) => {
+								return <Version key={i} {...child} />
+							})}
+						</div>
+					) : ''}
+				</React.Fragment>
+			);
+		};
 		
 		return (
 			<div>
@@ -162,6 +176,37 @@ class PageMainHistory extends React.Component<Props, State> {
 		const { match } = this.props;
 		Storage.set('pageId', match.params.id);
 	};
+
+	toggleChildren (e: any, id: string) {
+		e.stopPropagation();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const sideRight = node.find('#sideRight');
+		const item = sideRight.find('#item-' + id);
+		const children = sideRight.find('#children-' + id);
+		const isActive = item.hasClass('active');
+
+		let height = 0;
+		if (isActive) {
+			item.removeClass('active');
+			children.css({ overflow: 'visible', height: 'auto' });
+			height = children.height();
+			children.css({ overflow: 'hidden', height: height });
+
+			setTimeout(() => { children.css({ height: 0 }); }, 15);
+			setTimeout(() => { children.hide(); }, 215);
+		} else {
+			item.addClass('active');
+			children.show();
+			children.css({ overflow: 'visible', height: 'auto' });
+			height = children.height();
+
+			children.css({ overflow: 'hidden', height: 0 });
+			setTimeout(() => { children.css({ height: height }); }, 15);
+			setTimeout(() => { children.css({ overflow: 'visible', height: 'auto' }); }, 215);
+		};
+
+	};
 	
 	loadList () { 
 		const { match } = this.props;
@@ -187,6 +232,10 @@ class PageMainHistory extends React.Component<Props, State> {
 		this.versionId = id;
 
 		C.HistoryShow(rootId, id, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			let bs = message.blockShow;
 			dispatcher.onBlockShow(rootId, bs.type, bs.blocks, bs.details);
 			
@@ -194,27 +243,37 @@ class PageMainHistory extends React.Component<Props, State> {
 		});
 	};
 	
-	groupData (versions: any[]) { 
+	groupData (versions: any[]) {
+		let months: any[] = [];
     	let groups: any[] = [];
 
 		versions.reverse();
-    
+
 		for (let item of versions) {
-			let groupId = Util.date('F Y', item.time);
-			let group = groups.find((it: any) => { return it.id == groupId; });
-      
+			let groupId = Util.date('d F Y H:i:s', Math.floor(item.time / 600) * 600);
+			let group = groups.find((it: any) => { return it.groupId == groupId; });
+
 			if (!group) {
-				group = {
-					id: Util.date('F Y', item.time),
-					list: [],
-				};
+				group = { ...item, groupId: groupId, list: [] };
 				groups.push(group);
       		};
+
+			group.list.push(item);
+		};
+
+		for (let item of groups) {
+			let groupId = Util.date('F Y', item.time);
+			let group = months.find((it: any) => { return it.groupId == groupId; });
       
+			if (!group) {
+				group = { groupId: groupId, list: [] };
+				months.push(group);
+      		};
+
       		group.list.push(item);
 		};
 
-		return groups;
+		return months;
 	};
 
 	resize () {

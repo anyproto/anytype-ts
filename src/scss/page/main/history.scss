@@ -14,10 +14,20 @@
 			.date { text-transform: uppercase; @include text-very-small; }
 		}
 
-		.item { padding: 5px 16px; cursor: pointer; transition: $transitionFast; }
+		.item { padding: 5px 16px; cursor: pointer; transition: $transitionFast; position: relative; }
 		.item {
 			.name { @include text-small; color: #6c6a5f; }
+			.icon.arrow { 
+				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px; 
+			}
 		}
+		.item.active {
+			.icon.arrow { transform: rotateZ(90deg); }
+		}
+
+		.children { padding-left: 14px; display: none; transition: $transitionFast; }
+
+		.item.withChildren { padding-left: 30px; }
 
 		.item:hover { background: #f3f2ec; }
 	}
