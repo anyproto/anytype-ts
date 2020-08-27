@@ -84,11 +84,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 			this.setState({ page: 0 });
 		};
 
-		if ((filter.text.length > 3) && !items.length) {
-			this.props.close();
-			return;
-		};
-
 		this.setActive(items[this.n]);
 		this.props.position();
 	};
@@ -142,12 +137,13 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 		let pageData = [];
 
-		pageData.push({
+		pageData.unshift({
 			id: 'create', 
 			name: 'Create new page', 
 			icon: '',
 			hash: '',
 			withSmile: true,
+			skipFilter: true,
 		});
 
 		for (let page of pages) {
@@ -285,7 +281,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		if (item.key == 'create') {
-			DataUtil.pageCreate(e, rootId, blockId, { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom);
+			DataUtil.pageCreate(e, rootId, blockId, { iconEmoji: SmileUtil.random(), name: filter.text }, I.BlockPosition.Bottom);
 		} else {
 			const { content } = block;
 		
