@@ -1499,6 +1499,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const { content } = focused;
 		const isTitle = focused.isTitle();
+		const isParagraph = focused.isTextParagraph();
 		const isToggle = focused.isTextToggle();
 		const isList = focused.isTextList();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
@@ -1512,7 +1513,7 @@ class EditorPage extends React.Component<Props, State> {
 			style = content.style;
 		};
 
-		if ((childrenIds.length > 0) && (isList && !isToggle) || (isToggle && isOpen)) {
+		if ((childrenIds.length > 0) || (isToggle && isOpen)) {
 			mode = I.BlockSplitMode.Inner;
 		};
 
