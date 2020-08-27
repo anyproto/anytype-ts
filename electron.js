@@ -16,7 +16,6 @@ const windowStateKeeper = require('electron-window-state');
 const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 
-const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 900;
 const MIN_HEIGHT = 640;
 
@@ -25,7 +24,6 @@ let userPath = app.getPath('userData');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
-let timeoutUpdate = 0;
 let service, server;
 let dataPath = [];
 let config = {};
@@ -450,8 +448,6 @@ function checkUpdate () {
 	};
 
 	autoUpdater.checkForUpdatesAndNotify();
-	clearTimeout(timeoutUpdate);
-	timeoutUpdate = setTimeout(checkUpdate, TIMEOUT_UPDATE);
 };
 
 function autoUpdaterInit () {
@@ -461,8 +457,6 @@ function autoUpdaterInit () {
 	autoUpdater.logger.transports.file.level = 'debug';
 	autoUpdater.channel = config.channel;
 	
-	setTimeout(checkUpdate, TIMEOUT_UPDATE);
-	
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
 		send('checking-for-update');
@@ -471,7 +465,6 @@ function autoUpdaterInit () {
 	autoUpdater.on('update-available', (info) => {
 		Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
 		isUpdating = true;
-		clearTimeout(timeoutUpdate);
 		send('update-available');
 	});
 	
