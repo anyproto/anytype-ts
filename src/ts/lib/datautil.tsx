@@ -421,6 +421,9 @@ class DataUtil {
 			};
 			s.children = (s.children || []).filter((c: any) => { 
 				let ret = false;
+				if (c.skipFilter) {
+					ret = true;
+				} else 
 				if (c.name && c.name.match(reg)) {
 					ret = true;
 				} else 
