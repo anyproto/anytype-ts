@@ -2,10 +2,12 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon } from 'ts/component';
-import { DataUtil } from '../../../lib';
+import { DataUtil, I } from 'ts/lib';
+import { C } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
+	version: I.Version;
 };
 
 @observer
@@ -43,7 +45,12 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 		DataUtil.pageOpen(e, rootId);
 	};
 
-	onRestore (e: any) { 
+	onRestore (e: any) {
+		const { rootId, version } = this.props;
+
+		C.HistorySetVersion(rootId, version.id, (message: any) => {
+			DataUtil.pageOpen(e, rootId);
+		});
 	};
 
 };

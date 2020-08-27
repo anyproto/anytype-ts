@@ -312,6 +312,11 @@ const HistoryShow = (response: any) => {
 	};
 };
 
+const HistorySetVersion = (response: any) => {
+	return {
+	};
+};
+
 export {
 	VersionGet,
 
@@ -389,4 +394,5 @@ export {
 
 	HistoryVersions,
 	HistoryShow,
+	HistorySetVersion,
 };

@@ -37,3 +37,11 @@ export interface Option {
 	name: string;
 	icon?: string;
 };
+
+export interface Version {
+	id: string;
+	previousIds: string[];
+	authorId: string;
+	authorName: string;
+	time: number;
+};

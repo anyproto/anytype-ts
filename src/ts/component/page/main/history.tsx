@@ -7,16 +7,9 @@ import { I, M, C, Util, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> { };
-interface VersionItem {
-	id: string;
-	previousIds: string[];
-	authorId: string;
-	authorName: string;
-	time: number;
-};
 
 interface State {
-	versions: VersionItem[];
+	versions: I.Version[];
 };
 
 const $ = require('jquery');
@@ -25,7 +18,7 @@ const $ = require('jquery');
 class PageMainHistory extends React.Component<Props, State> {
 
 	state = {
-		versions: [] as VersionItem[],
+		versions: [] as I.Version[],
 	};
 	
 	versionId: string = '';
@@ -38,14 +31,10 @@ class PageMainHistory extends React.Component<Props, State> {
 	render () {
 		const { match } = this.props;
 		const { versions } = this.state;
-
-		if (!this.versionId) {
-			return <Loader />;
-		};
-
 		const rootId = match.params.id;
+
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root) {
+		if (!this.versionId || !root) {
 			return <Loader />;
 		};
 
@@ -107,7 +96,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} version={{ id: this.versionId, previousIds: [], authorId: '', authorName: '', time: 0 }} />
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
