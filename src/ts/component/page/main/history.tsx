@@ -1,6 +1,7 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainHistory as Header, Block } from 'ts/component';
+import { HeaderMainHistory as Header, Block, Loader } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { I, M, C, Util, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -17,6 +18,8 @@ interface VersionItem {
 interface State {
 	versions: VersionItem[];
 };
+
+const $ = require('jquery');
 
 @observer
 class PageMainHistory extends React.Component<Props, State> {
@@ -36,17 +39,20 @@ class PageMainHistory extends React.Component<Props, State> {
 		const { match } = this.props;
 		const { versions } = this.state;
 
+		if (!this.versionId) {
+			return <Loader />;
+		};
+
 		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
-
-		console.log('RENDER', rootId, root, blockStore.blockObject);
+		if (!root) {
+			return <Loader />;
+		};
 
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const length = childrenIds.length;
-
-		console.log(childrenIds, length);
 
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
@@ -102,8 +108,8 @@ class PageMainHistory extends React.Component<Props, State> {
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
-				<div className="flex">
-					<div className="wrapper">
+				<div id="body" className="flex">
+					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
 							{withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
 							<div className="editor">
@@ -142,7 +148,7 @@ class PageMainHistory extends React.Component<Props, State> {
 						</div>
 					</div>
 
-					<div className="list">
+					<div id="sideRight" className="list">
 						{versions.map((item: any, i: number) => {
 							return <Section key={i} {...item} />
 						})}
@@ -154,6 +160,7 @@ class PageMainHistory extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this.loadList();
+		this.resize();
 	};
 	
 	loadList () { 
@@ -208,6 +215,17 @@ class PageMainHistory extends React.Component<Props, State> {
 		};
 
 		return groups;
+	};
+
+	resize () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const sideLeft = node.find('#sideLeft');
+		const sideRight = node.find('#sideRight');
+		const height = win.height();
+
+		sideLeft.css({ height: height });
+		sideRight.css({ height: height });
 	};
 
 };
