@@ -1517,8 +1517,8 @@ class EditorPage extends React.Component<Props, State> {
 			mode = I.BlockSplitMode.Inner;
 		};
 
-		if (isToggle && isOpen && (mode != I.BlockSplitMode.Inner)) {
-			Storage.setToggle(rootId, focused.id, false);
+		if (isToggle && isOpen) {
+			style = I.TextStyle.Paragraph;
 		};
 
 		range = Util.rangeFixOut(content.text, range);
