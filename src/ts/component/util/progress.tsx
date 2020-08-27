@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Label } from 'ts/component';
+import { Icon, Label } from 'ts/component';
 import { Util, C } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -32,11 +32,11 @@ class Progress extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')}>
 				<div className="inner">
-					<div className="label">
-						{text}
-						{canCancel ? <div className="btn" onClick={this.onCancel}>Cancel</div> : ''}
+					<Label text={text} />
+					{canCancel ? <Icon className="close" onClick={this.onCancel} /> : ''}
+					<div className="bar">
+						<div className="fill" style={{width: (Math.ceil(current / total * 100)) + '%'}} />
 					</div>
-					<div className="bar" style={{width: (Math.ceil(current / total * 100)) + '%'}} />
 				</div>
 			</div>
 		);
