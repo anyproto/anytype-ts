@@ -302,12 +302,13 @@ const BlockSetDataviewActiveView = (response: any) => {
 
 const HistoryVersions = (response: any) => {
 	return {
-		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersionItem),
+		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
 	};
 };
 
 const HistoryShow = (response: any) => {
 	return {
+		version: Mapper.From.HistoryVersion(response.getVersion()),
 		blockShow: this.BlockShow(response.getBlockshow()),
 	};
 };

@@ -240,7 +240,7 @@ const Mapper = {
             return observable(new M.View(view));
         },
 
-        HistoryVersionItem: (obj: any) => {
+        HistoryVersion: (obj: any) => {
             return {
                 id: obj.getId(),
                 previousIds: obj.getPreviousidsList() || [],
