@@ -21,7 +21,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		versions: [] as I.Version[],
 	};
 	
-	versionId: string = '';
+	version: I.Version = null;
 	refHeader: any = null;
 
 	constructor (props: any) {
@@ -34,7 +34,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		const rootId = match.params.id;
 
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!this.versionId || !root) {
+		if (!this.version || !root) {
 			return <Loader />;
 		};
 
@@ -110,7 +110,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} version={{ id: this.versionId, previousIds: [], authorId: '', authorName: '', time: 0 }} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} version={this.version} />
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
@@ -170,7 +170,10 @@ class PageMainHistory extends React.Component<Props, State> {
 	componentDidUpdate () {
 		this.resize();
 		this.setId();
-		this.show(this.versionId);
+		
+		if (this.version) {
+			this.show(this.version.id);
+		};
 	};
 
 	setId () {
@@ -216,7 +219,6 @@ class PageMainHistory extends React.Component<Props, State> {
 		};
 	};
 
-
 	toggleChildren (e: any, id: string) {
 		e.stopPropagation();
 
@@ -245,7 +247,6 @@ class PageMainHistory extends React.Component<Props, State> {
 			setTimeout(() => { children.css({ height: height }); }, 15);
 			setTimeout(() => { children.css({ overflow: 'visible', height: 'auto' }); }, 215);
 		};
-
 	};
 	
 	loadList () { 
@@ -260,7 +261,7 @@ class PageMainHistory extends React.Component<Props, State> {
 			message.versions.reverse();
 			this.setState({ versions: message.versions });
 
-			if (!this.versionId) {
+			if (!this.version) {
 				this.loadVersion(message.versions[0].id);
 			};
 		});
@@ -270,12 +271,12 @@ class PageMainHistory extends React.Component<Props, State> {
 		const { match } = this.props;
 		const rootId = match.params.id;
 
-		this.versionId = id;
-
 		C.HistoryShow(rootId, id, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
+
+			this.version = message.version;
 
 			let bs = message.blockShow;
 			dispatcher.onBlockShow(rootId, bs.type, bs.blocks, bs.details);

@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon } from 'ts/component';
 import { DataUtil, I } from 'ts/lib';
-import { C } from '../../../lib';
+import { C, Util } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -21,6 +21,8 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { version } = this.props;
+
 		return (
 			<div className="header headerMainHistory">
 				<div className="side left">
@@ -30,7 +32,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side center">
-					<div className="item">18 July 2020, 16:02</div>
+					<div className="item">{Util.date('d F Y H:i:s', version.time)}</div>
 				</div>
 
 				<div className="side right" onClick={this.onRestore}>
