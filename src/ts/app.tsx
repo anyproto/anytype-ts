@@ -265,23 +265,27 @@ class App extends React.Component<Props, State> {
 			});
 		});
 		
-		ipcRenderer.on('checking-for-update', (e: any, text: string) => {
-			commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
+		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
+			if (!auto) {
+				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
+			};
 		});
 
-		ipcRenderer.on('update-available', (e: any, text: string) => {
+		ipcRenderer.on('update-available', (e: any, auto: boolean) => {
 			commonStore.progressSet({ status: 'Checking for update...', current: 1, total: 1 });
 		});
 
-		ipcRenderer.on('update-not-available', (e: any, text: string) => {
-			commonStore.popupOpen('confirm', {
-				data: {
-					title: 'You are up-to-date',
-					text: Util.sprintf('You are on the latest version: %s', version),
-					textConfirm: 'Great!',
-					canCancel: false,
-				},
-			});
+		ipcRenderer.on('update-not-available', (e: any, auto: boolean) => {
+			if (!auto) {
+				commonStore.popupOpen('confirm', {
+					data: {
+						title: 'You are up-to-date',
+						text: Util.sprintf('You are on the latest version: %s', version),
+						textConfirm: 'Great!',
+						canCancel: false,
+					},
+				});
+			};
 			commonStore.progressClear(); 
 		});
 

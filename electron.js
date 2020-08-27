@@ -16,6 +16,7 @@ const windowStateKeeper = require('electron-window-state');
 const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 
+const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 900;
 const MIN_HEIGHT = 640;
 
@@ -24,6 +25,7 @@ let userPath = app.getPath('userData');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
+let timeoutUpdate = 0;
 let service, server;
 let dataPath = [];
 let config = {};
@@ -38,6 +40,7 @@ let csp = [
 	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
+let autoUpdate = false;
 
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
@@ -206,7 +209,7 @@ function createWindow () {
 	});
 
 	ipcMain.on('update', (e) => {
-		checkUpdate();
+		checkUpdate(false);
 	});
 	
 	ipcMain.on('urlOpen', async (e, url) => {
@@ -272,7 +275,7 @@ function menuInit () {
 				{ type: 'separator' },
 				{
 					label: 'Check for updates',
-					click: () => { checkUpdate(); }
+					click: () => { checkUpdate(false); }
 				},
 				{ type: 'separator' },
 				{
@@ -429,7 +432,7 @@ function setChannel (channel) {
 	};
 	setConfig({ channel: channel }, (error) => {
 		autoUpdater.channel = channel;
-		checkUpdate();
+		checkUpdate(false);
 	});
 };
 
@@ -442,12 +445,15 @@ function setConfig (obj, callBack) {
 	});
 };
 
-function checkUpdate () {
+function checkUpdate (auto) {
 	if (isUpdating) {
 		return;
 	};
 
 	autoUpdater.checkForUpdatesAndNotify();
+	clearTimeout(timeoutUpdate);
+	timeoutUpdate = setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
+	autoUpdate = auto;
 };
 
 function autoUpdaterInit () {
@@ -457,21 +463,24 @@ function autoUpdaterInit () {
 	autoUpdater.logger.transports.file.level = 'debug';
 	autoUpdater.channel = config.channel;
 	
+	setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
+	
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
-		send('checking-for-update');
+		send('checking-for-update', autoUpdate);
 	});
 	
 	autoUpdater.on('update-available', (info) => {
 		Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
 		isUpdating = true;
-		send('update-available');
+		clearTimeout(timeoutUpdate);
+		send('update-available', autoUpdate);
 	});
 	
 	autoUpdater.on('update-not-available', (info) => {
 		isUpdating = false;
 		Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
-		send('update-not-available');
+		send('update-not-available', autoUpdate);
 	});
 	
 	autoUpdater.on('error', (err) => { Util.log('Error: ' + err); });
