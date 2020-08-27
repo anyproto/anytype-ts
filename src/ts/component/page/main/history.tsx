@@ -30,7 +30,7 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	render () {
 		const { match } = this.props;
-		const { versions } = this.state;
+		const versions = this.groupData(this.state.versions);
 		const rootId = match.params.id;
 
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -170,12 +170,52 @@ class PageMainHistory extends React.Component<Props, State> {
 	componentDidUpdate () {
 		this.resize();
 		this.setId();
+		this.show(this.versionId);
 	};
 
 	setId () {
 		const { match } = this.props;
 		Storage.set('pageId', match.params.id);
 	};
+
+	show (id: string) {
+		if (!id) {
+			return;
+		};
+
+		const { versions } = this.state;
+		const data = this.groupData(versions);
+		const version = versions.find((it: any) => { return it.id == id; });
+		if (!version) {
+			return;
+		};
+
+		const month = data.find((it: any) => { return it.groupId == this.monthId(version.time); });
+		if (!month) {
+			return;
+		};
+
+		let group = month.list.find((it: any) => { return it.groupId == this.groupId(version.time); });
+		if (!group) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const sideRight = node.find('#sideRight');
+		const item = sideRight.find('#item-' + version.id);
+
+		sideRight.find('.active').removeClass('active');
+		item.addClass('active');
+
+		if (group) {
+			const groupItem = sideRight.find('#item-' + group.id);
+			const children = sideRight.find('#children-' + group.id);
+
+			groupItem.addClass('expanded');
+			children.show();
+		};
+	};
+
 
 	toggleChildren (e: any, id: string) {
 		e.stopPropagation();
@@ -184,11 +224,11 @@ class PageMainHistory extends React.Component<Props, State> {
 		const sideRight = node.find('#sideRight');
 		const item = sideRight.find('#item-' + id);
 		const children = sideRight.find('#children-' + id);
-		const isActive = item.hasClass('active');
+		const isActive = item.hasClass('expanded');
 
 		let height = 0;
 		if (isActive) {
-			item.removeClass('active');
+			item.removeClass('expanded');
 			children.css({ overflow: 'visible', height: 'auto' });
 			height = children.height();
 			children.css({ overflow: 'hidden', height: height });
@@ -196,7 +236,7 @@ class PageMainHistory extends React.Component<Props, State> {
 			setTimeout(() => { children.css({ height: 0 }); }, 15);
 			setTimeout(() => { children.hide(); }, 215);
 		} else {
-			item.addClass('active');
+			item.addClass('expanded');
 			children.show();
 			children.css({ overflow: 'visible', height: 'auto' });
 			height = children.height();
@@ -217,7 +257,8 @@ class PageMainHistory extends React.Component<Props, State> {
 				return;
 			};
 
-			this.setState({ versions: this.groupData(message.versions) });
+			message.versions.reverse();
+			this.setState({ versions: message.versions });
 
 			if (!this.versionId) {
 				this.loadVersion(message.versions[0].id);
@@ -247,10 +288,8 @@ class PageMainHistory extends React.Component<Props, State> {
 		let months: any[] = [];
     	let groups: any[] = [];
 
-		versions.reverse();
-
 		for (let version of versions) {
-			let groupId = Util.date('d F Y H:i:s', Math.floor(version.time / 600) * 600);
+			let groupId = this.groupId(version.time);
 			let group = groups.find((it: any) => { return it.groupId == groupId; });
 
 			if (!group) {
@@ -262,7 +301,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		};
 
 		for (let group of groups) {
-			let groupId = Util.date('F Y', group.time);
+			let groupId = this.monthId(group.time);
 			let month = months.find((it: any) => { return it.groupId == groupId; });
       
 			if (!month) {
@@ -274,6 +313,14 @@ class PageMainHistory extends React.Component<Props, State> {
 		};
 
 		return months;
+	};
+
+	monthId (time: number) {
+		return Util.date('F Y', time);
+	};
+
+	groupId (time: number) {
+		return Util.date('d F Y H:i', Math.floor(time / 600) * 600);
 	};
 
 	resize () {

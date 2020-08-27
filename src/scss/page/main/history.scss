@@ -21,15 +21,17 @@
 				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px; 
 			}
 		}
-		.item.active {
+		.item.expanded {
 			.icon.arrow { transform: rotateZ(90deg); }
 		}
 
-		.children { padding-left: 14px; display: none; transition: $transitionFast; }
-
+		.children { display: none; transition: $transitionFast; }
+		.children {
+			.item { padding-left: 30px; }
+		}
 		.item.withChildren { padding-left: 30px; }
 
-		.item:hover { background: #f3f2ec; }
+		.item:hover, .item.active { background: #f3f2ec; }
 	}
 
 	.blockLast { height: 100px; }
