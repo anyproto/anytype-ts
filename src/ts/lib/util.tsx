@@ -467,7 +467,7 @@ class Util {
 	};
 	
 	filterFix (v: string) {
-		return escapeStringRegexp(String(v || '').replace(/[\/\\\*]/g, ''));
+		return escapeStringRegexp(String(v || ''));
 	};
 	
 	lengthFixOut (text: string, len: number): number {
@@ -545,7 +545,7 @@ class Util {
 				title: translate('confirmUpdateTitle'),
 				text: translate('confirmUpdateText'),
 				textConfirm: translate('confirmUpdateConfirm'),
-				textCancel: translate('confirmUpdateCancel'),
+				canCancel: false,
 				onConfirm: () => {
 					ipcRenderer.send('update');
 					if (onConfirm) {

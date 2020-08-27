@@ -412,7 +412,7 @@ const Mapper = {
             const item = new Rpc.Block.Paste.Request.File();
 
             item.setName(obj.name);
-            item.setData(obj.data);
+            item.setLocalpath(obj.path);
 
             return item;
         },

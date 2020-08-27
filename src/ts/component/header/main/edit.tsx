@@ -48,7 +48,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className={cn.join(' ')}>
+			<div id="header" className={cn.join(' ')}>
 				<div className="side left">
 					<Icon className="home" tooltip="Home" onClick={this.onHome} />
 					<Icon className="back" tooltip="Back" onClick={this.onBack} />
@@ -69,7 +69,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Icon id={'button-' + rootId + '-more'} tooltip="Menu" className="more" onClick={this.onMore} />
+					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);
@@ -93,7 +93,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { rootId, match } = this.props;
 		
 		commonStore.menuOpen('blockMore', { 
-			element: '#button-' + rootId + '-more',
+			element: '#button-header-more',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 8,

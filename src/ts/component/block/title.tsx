@@ -7,6 +7,7 @@ import { getRange } from 'selection-ranges';
 
 interface Props extends I.BlockComponent {
 	onPaste? (e: any): void;
+	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 };
 
 const $ = require('jquery');
@@ -122,7 +123,7 @@ class BlockTitle extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId } = this.props;
+		const { rootId, onKeyDown } = this.props;
 		const platform = Util.getPlatform();
 		const k = e.key.toLowerCase();	
 
@@ -151,16 +152,19 @@ class BlockTitle extends React.Component<Props, {}> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
-			e.preventDefault();
-			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+			onKeyDown(e, '', [], { from: 0, to: 0 });
 		});
 
 		// Redo
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
-			e.preventDefault();
-			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+			onKeyDown(e, '', [], { from: 0, to: 0 });
 		});
-		
+
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		});
+
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();

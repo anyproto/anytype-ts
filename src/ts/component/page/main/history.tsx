@@ -249,28 +249,28 @@ class PageMainHistory extends React.Component<Props, State> {
 
 		versions.reverse();
 
-		for (let item of versions) {
-			let groupId = Util.date('d F Y H:i:s', Math.floor(item.time / 600) * 600);
+		for (let version of versions) {
+			let groupId = Util.date('d F Y H:i:s', Math.floor(version.time / 600) * 600);
 			let group = groups.find((it: any) => { return it.groupId == groupId; });
 
 			if (!group) {
-				group = { ...item, groupId: groupId, list: [] };
+				group = { ...version, groupId: groupId, list: [] };
 				groups.push(group);
-      		};
-
-			group.list.push(item);
+      		} else {
+				group.list.push(version);
+			};
 		};
 
-		for (let item of groups) {
-			let groupId = Util.date('F Y', item.time);
-			let group = months.find((it: any) => { return it.groupId == groupId; });
+		for (let group of groups) {
+			let groupId = Util.date('F Y', group.time);
+			let month = months.find((it: any) => { return it.groupId == groupId; });
       
-			if (!group) {
-				group = { groupId: groupId, list: [] };
-				months.push(group);
+			if (!month) {
+				month = { groupId: groupId, list: [] };
+				months.push(month);
       		};
 
-      		group.list.push(item);
+      		month.list.push(group);
 		};
 
 		return months;

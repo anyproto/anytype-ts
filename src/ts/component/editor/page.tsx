@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, authStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -18,11 +18,13 @@ interface State {
 	loading: boolean;
 };
 
+const findAndReplaceDOMText = require('findandreplacedomtext');
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const THROTTLE = 20;
+const fs = window.require('fs');
 
 @observer
 class EditorPage extends React.Component<Props, State> {
@@ -38,6 +40,7 @@ class EditorPage extends React.Component<Props, State> {
 	state = {
 		loading: false,
 	};
+	searchIndex: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -276,7 +279,7 @@ class EditorPage extends React.Component<Props, State> {
 				length = block.getLength();
 			};
 		};
-		
+
 		switch (cmd) {
 			case 'selectAll':
 				if ((range.from == 0) && (range.to == length)) {
@@ -285,6 +288,10 @@ class EditorPage extends React.Component<Props, State> {
 					focus.set(focused, { from: 0, to: length });
 					focus.apply();
 				};
+				break;
+
+			case 'search':
+				this.onSearch();
 				break;
 		};
 	};
@@ -485,6 +492,12 @@ class EditorPage extends React.Component<Props, State> {
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			e.preventDefault();
+			this.onSearch();
+		});
+
 		// Mark-up
 		if (ids.length) {
 			let type = null;
@@ -662,6 +675,12 @@ class EditorPage extends React.Component<Props, State> {
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+		});
+
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			e.preventDefault();
+			this.onSearch();
 		});
 
 		// Duplicate
@@ -1178,6 +1197,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
+		const { path } = authStore;
 
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
@@ -1202,19 +1222,39 @@ class EditorPage extends React.Component<Props, State> {
 				};
 
 				if (files.length) {
+					commonStore.progressSet({ status: 'Processing...', current: 0, total: files.length });
+
 					for (let file of files) {
-						let reader = new FileReader();
+						const dir = path + '/tmp';
+						const fn = dir + '/' + file.name;
+						const reader = new FileReader();
+
 						reader.readAsBinaryString(file); 
 						reader.onloadend = () => {
-							data.files.push({
-								name: file.name,
-								data: btoa(reader.result as string),
+							try {
+								fs.mkdirSync(dir);
+							} catch (e) {};
+
+							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
+								if (err) {
+									console.error(err);
+									return;
+								};
+
+								data.files.push({
+									name: file.name,
+									path: fn,
+								});
+
+								commonStore.progressSet({ status: 'Processing...', current: data.files.length, total: files.length });
+
+								if (data.files.length == files.length) {
+									this.onPaste(e, true, data);
+								};
 							});
-							if (data.files.length == files.length) {
-								this.onPaste(e, true, data);
-							};
-						 };
+						};
 					};
+
 					return;
 				};
 			};
@@ -1259,8 +1299,16 @@ class EditorPage extends React.Component<Props, State> {
 		let id = '';
 		let from = 0;
 		let to = 0;
+
+		commonStore.progressSet({ status: 'Processing...', current: 0, total: 1 });
 		
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
+
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
@@ -1289,6 +1337,81 @@ class EditorPage extends React.Component<Props, State> {
 
 	onPrint () {
 		window.print();
+	};
+
+	onSearch () {
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		let lastSearch = '';
+		this.clearSearch();
+
+		commonStore.menuOpen('search', {
+			element: '#button-header-more',
+			type: I.MenuType.Horizontal,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetX: 0,
+			offsetY: 0,
+			onClose: () => {
+				this.clearSearch();
+			},
+			data: {
+				onChange: (value: string) => {
+					this.clearSearch();
+
+					if (!value) {
+						return;
+					};
+
+					if (lastSearch != value) {
+						this.searchIndex = 0;
+					};
+					lastSearch = value;
+
+					findAndReplaceDOMText(node.get(0), {
+						preset: 'prose',
+						find: new RegExp(value, 'gi'),
+						wrap: 'search',
+						forceContext: (el: any) => {
+							return true;
+						},
+					});
+
+					this.focusSearch();
+					this.searchIndex++;
+				},
+			},
+		});
+	};
+
+	clearSearch () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('search').each((i: number, item: any) => {
+			item = $(item);
+			item.replaceWith(item.html());
+		});
+	};
+
+	focusSearch () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = node.find('.editor search');
+		const wh = win.height();
+		const offset = Constant.size.lastBlock + Constant.size.header;
+
+		if (this.searchIndex >= items.length - 1) {
+			this.searchIndex = 0;
+		};
+
+		node.find('search.active').removeClass('active');
+
+		const next = $(items.get(this.searchIndex));
+		if (next && next.length) {
+			next.addClass('active');
+		
+			const y = next.offset().top;
+			$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 100);
+		};
 	};
 
 	getLayoutIds (ids: string[]) {
