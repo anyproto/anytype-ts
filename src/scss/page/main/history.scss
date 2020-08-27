@@ -18,7 +18,8 @@
 		.item {
 			.name { @include text-small; color: #6c6a5f; }
 			.icon.arrow { 
-				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px; 
+				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px;
+				transition: none;
 			}
 		}
 		.item.expanded {

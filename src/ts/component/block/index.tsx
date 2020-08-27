@@ -89,12 +89,10 @@ class Block extends React.Component<Props, {}> {
 					cn.push('isChecked');
 				};
 				
-				if (block.isTextToggle()) {
-					if (!childrenIds.length) {
-						empty = (
-							<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
-						);
-					};
+				if (block.isTextToggle() && !childrenIds.length && !readOnly) {
+					empty = (
+						<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
+					);
 				};
 				
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
@@ -127,7 +125,7 @@ class Block extends React.Component<Props, {}> {
 				if (content.state == I.FileState.Done) {
 					cn.push('withFile');
 				};
-				
+
 				switch (content.type) {
 					default: 
 					case I.FileType.File: 

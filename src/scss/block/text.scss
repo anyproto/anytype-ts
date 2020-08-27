@@ -73,9 +73,10 @@
 			.marker.check, .marker.toggle {
 				img { width: 100%; height: 100%; }
 			}
-			
 		}
 	}
+
+	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
 	
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 

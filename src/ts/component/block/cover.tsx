@@ -60,7 +60,7 @@ class BlockCover extends React.Component<Props, State> {
 	
 	render() {
 		const { editing, loading } = this.state;
-		const { rootId } = this.props;
+		const { rootId, readOnly } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType, coverId,  } = details;
 		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
@@ -114,9 +114,11 @@ class BlockCover extends React.Component<Props, State> {
 				) : (
 					<Cover id="cover" type={coverType} className={coverId} />
 				)}
-				<div id="elements" className="elements">
-					{elements}
-				</div>
+				{!readOnly ? (
+					<div id="elements" className="elements">
+						{elements}
+					</div>
+				) : ''}
 			</div>
 		);
 	};
