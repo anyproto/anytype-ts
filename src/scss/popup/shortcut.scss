@@ -7,14 +7,20 @@
 
 		.head { position: absolute; top: 0px; left: 0px; width: 100%; }
 		.head {
-			.tabs { @include text-header2; color: $colorDarkGrey; transition: $transitionFast; }
+			.tabs { @include text-header2; color: $colorDarkGrey; }
 			.tabs {
-				.item { margin-right: 24px; display: inline-block; cursor: pointer; }
+				.item { margin-right: 24px; display: inline-block; cursor: pointer; transition: $transitionFast; }
 				.item:last-child { margin: 0px; }
 				.item:hover, .item.active { color: $colorBlack; }
 			}
 		}
 
-		.body { overflow-y: auto; padding: 0px 80px 20px 80px; }
+		.body { overflow-y: auto; padding: 65px 0px 20px 0px; }
+		.body {
+			.section { margin-bottom: 25px; }
+			.section {
+				.name { @include text-paragraph; font-weight: 600; }
+			}
+		}
 	}
 }
