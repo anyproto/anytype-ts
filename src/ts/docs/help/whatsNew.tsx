@@ -5,6 +5,26 @@ const sc = 'bgColor bgColor-grey textColor textColor-red nw'
 export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
+
+	{ type: I.BlockType.Title, text: `Updates for 28 August, 2020` },
+
+	{ text: `We are happy to introduce Linux version!` },
+
+	{ text: `The following platforms are verified to be able to run the Anytype:` },
+	{ style: I.TextStyle.Bulleted, text: `Ubuntu 12.04 and newer` },
+	{ style: I.TextStyle.Bulleted, text: `Fedora 21` },
+	{ style: I.TextStyle.Bulleted, text: `Debian 8` },
+
+	{ text: `New features implemented:` },
+	{ style: I.TextStyle.Bulleted, text: `Search in page with CMD+F` },
+	{ style: I.TextStyle.Bulleted, text: `Status when manually checking for new updates` },
+	{ style: I.TextStyle.Bulleted, text: `Feedback. Template for different situations` },
+	{ style: I.TextStyle.Bulleted, text: `Syncing enhancement for pinning files and finding peers` },
+
+	{ text: `Bugs fixed:` },
+	{ style: I.TextStyle.Bulleted, text: `Cannot delete nested paragraphs` },
+	{ style: I.TextStyle.Bulleted, text: `No app image in Linux and Windows version` },
+
 	{ type: I.BlockType.Title, text: `Updates for 14 August, 2020` },
 
 	{ text: `This release brings several improvements to cross-device syncing and reduces the amount of disk space needed. This version comes with a new data format for your pages, and is a huge step towards further collaboration features in the future.<br>` },
