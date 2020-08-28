@@ -873,29 +873,12 @@ class EditorPage extends React.Component<Props, State> {
 			
 			e.preventDefault();
 			e.stopPropagation();
-			
-			if ((range.from == length) && (range.to == length)) {
-				let style = I.TextStyle.Paragraph;
-				let replace = false;
-				
-				// If block is non-empty list - create new list block of the same style, 
-				// otherwise - replace empty list block with paragraph
-				if (block.isTextNumbered() || block.isTextBulleted() || block.isTextCheckbox()) {
-					if (length) {
-						style = block.content.style;
-					} else {
-						replace = true;
-					};
-				};
-				
-				if (replace) {
-					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
-				} else {
-					this.blockSplit(block, range, style);
-				};
-			} else 
-			if (!block.isTitle()) {
-				this.blockSplit(block, range, block.content.style);
+
+			let replace = (range.from == length) && (range.to == length) && block.isTextList() && !length;
+			if (replace) {
+				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			} else {
+				this.blockSplit(block, range);
 			};
 		});
 	};
@@ -1521,20 +1504,40 @@ class EditorPage extends React.Component<Props, State> {
 		};
 	};
 	
-	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
+	blockSplit (focused: I.Block, range: I.TextRange) {
 		const { rootId } = this.props;
 		const { content } = focused;
+		const isTitle = focused.isTitle();
+		const isParagraph = focused.isTextParagraph();
 		const isToggle = focused.isTextToggle();
+		const isList = focused.isTextList();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
+		const childrenIds = blockStore.getChildrenIds(rootId, focused.id);
+		const length = focused.getLength();
+
+		let style = I.TextStyle.Paragraph;
+		let mode = I.BlockSplitMode.Bottom;
+
+		if ((length && isList) || (!isTitle && ((range.from != length) || (range.to != length)))) {
+			style = content.style;
+		};
+
+		if ((childrenIds.length > 0) || (isToggle && isOpen)) {
+			mode = I.BlockSplitMode.Inner;
+		};
 
 		if (isToggle && isOpen) {
-			Storage.setToggle(rootId, focused.id, false);
+			style = I.TextStyle.Paragraph;
 		};
-		
+
 		range = Util.rangeFixOut(content.text, range);
 		
-		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
-			this.focus(focused.id, 0, 0);
+		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			this.focus(message.blockId, 0, 0);
 			focus.scroll();
 			this.phraseCheck();
 

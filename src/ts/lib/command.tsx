@@ -274,13 +274,14 @@ const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callB
 	dispatcher.request('blockMerge', request, callBack);
 };
 
-const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, callBack?: (message: any) => void) => {
+const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, mode: I.BlockSplitMode, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Split.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setRange(Mapper.To.Range(range));
 	request.setStyle(style);
+	request.setMode(mode);
 
 	dispatcher.request('blockSplit', request, callBack);
 };
