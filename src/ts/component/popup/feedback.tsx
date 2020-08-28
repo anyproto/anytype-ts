@@ -14,7 +14,6 @@ enum Type {
 
 interface State {
 	error: string;
-	checked: boolean;
 	success: boolean;
 	loading: boolean;
 	page: Type;
@@ -28,7 +27,6 @@ class PopupFeedback extends React.Component<Props, State> {
 	refObject: any = {};
 	state = {
 		error: '',
-		checked: false,
 		success: false,
 		loading: false,
 		page: Type.Bug,
@@ -38,11 +36,10 @@ class PopupFeedback extends React.Component<Props, State> {
 		super(props);
 		
 		this.onSubmit = this.onSubmit.bind(this);
-		this.onCheck = this.onCheck.bind(this);
 	};
 	
 	render () {
-		const { error, checked, success, loading, page } = this.state;
+		const { error, success, loading, page } = this.state;
 		const tabs = [
 			{ id: Type.Bug, name: 'Bug' },
 			{ id: Type.Feature, name: 'Feature' },
@@ -123,17 +120,12 @@ class PopupFeedback extends React.Component<Props, State> {
 								<Input ref={(ref: any) => { this.refObject.link = ref; }} placeHolder="If applicable, add screenshots to help explain your problem. (Optional)" />
 							</div>
 
-							<div className="row">
+							<div className="row last">
 								<Label text="Contacts:" />
 								<div className="flex">
 									<Input ref={(ref: any) => { this.refObject.name = ref; }} placeHolder="Name (Optional)" />
 									<Input ref={(ref: any) => { this.refObject.email = ref; }} placeHolder="E-mail (Optional)" />
 								</div>
-							</div>
-							
-							<div className="row flex last">
-								<Icon className={'checkbox ' + (checked ? 'active' : '')} onClick={this.onCheck} />
-								<div className="small">Send anonymous metadata.It contains: OS & app version and technical log.</div>
 							</div>
 							
 							<div className="row flex">
@@ -151,16 +143,12 @@ class PopupFeedback extends React.Component<Props, State> {
 		this.props.position();
 	};
 	
-	onCheck (e: any) {
-		this.setState({ checked: !this.state.checked });
-	};
-
 	onPage (page: Type) {
 		this.setState({ page: page });
 	};
 	
 	onSubmit (e: any) {
-		const { checked, page } = this.state;
+		const { page } = this.state;
 		const message = [];
 		
 		e.preventDefault();
@@ -228,11 +216,8 @@ class PopupFeedback extends React.Component<Props, State> {
 		
 		request.name = request.name || 'blank';
 		request.email = request.email || 'example@example.com';
-		
-		//if (checked) {
-			Sentry.captureMessage('Feedback');
-			request.event_id = Sentry.lastEventId();
-		//};
+		Sentry.captureMessage('Feedback');
+		request.event_id = Sentry.lastEventId();
 		
 		this.setState({ loading: true });
 		
