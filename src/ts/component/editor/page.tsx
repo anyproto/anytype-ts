@@ -1373,7 +1373,16 @@ class EditorPage extends React.Component<Props, State> {
 						preset: 'prose',
 						find: new RegExp(value, 'gi'),
 						wrap: 'search',
-						forceContext: (el: any) => {
+						filterElements: (el: any) => {
+							const tag = el.nodeName.toLowerCase();
+							if ([ 'span', 'div' ].indexOf(tag) < 0) {
+								return false;
+							};
+
+							const style = window.getComputedStyle(el);
+							if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
+								return false;
+							};
 							return true;
 						},
 					});
