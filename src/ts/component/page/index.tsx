@@ -112,6 +112,10 @@ class Page extends React.Component<Props, {}> {
 				data: { document: 'whatsNew' },
 			});
 		};
+
+		if (isMain) {
+			commonStore.popupOpen('shortcut', {});
+		};
 		
 		$(window).on('resize.page', () => { this.resize(); });
 	};

@@ -2,8 +2,8 @@
 
 .popups {
 	.popup.popupShortcut {
-		.innerWrap { width: 864px; padding: 51px 48px 0px 48px; }
-		.content { position: relative; }
+		.innerWrap { width: 864px; padding: 52px 48px 0px 48px; }
+		.content { position: relative; padding-top: 20px; }
 
 		.head { position: absolute; top: 0px; left: 0px; width: 100%; }
 		.head {
@@ -15,11 +15,20 @@
 			}
 		}
 
-		.body { overflow-y: auto; padding: 65px 0px 20px 0px; }
+		.body { overflow-y: auto; padding: 37px 0px 48px 0px; }
 		.body {
 			.section { margin-bottom: 25px; }
+			.section:last-child { margin-bottom: 0px; }
 			.section {
-				.name { @include text-paragraph; font-weight: 600; }
+				.name { @include text-paragraph; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid #eae9e0; }
+				
+				.items {
+					.item { display: flex; padding: 12px 0px; border-bottom: 1px solid #eae9e0; }
+					.item {
+						.key { width: 180px; font-weight: 500; color: $colorDarkGrey; }
+						.descr { width: calc(100% - 180px); }
+					}
+				}
 			}
 		}
 	}
