@@ -1,0 +1,20 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupShortcut {
+		.innerWrap { width: 864px; padding: 51px 48px 0px 48px; }
+		.content { position: relative; }
+
+		.head { position: absolute; top: 0px; left: 0px; width: 100%; }
+		.head {
+			.tabs { @include text-header2; color: $colorDarkGrey; transition: $transitionFast; }
+			.tabs {
+				.item { margin-right: 24px; display: inline-block; cursor: pointer; }
+				.item:last-child { margin: 0px; }
+				.item:hover, .item.active { color: $colorBlack; }
+			}
+		}
+
+		.body { overflow-y: auto; padding: 0px 80px 20px 80px; }
+	}
+}

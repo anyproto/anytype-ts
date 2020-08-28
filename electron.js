@@ -347,15 +347,15 @@ function menuInit () {
 			submenu: [
 				{
 					label: 'Status',
-					click: () => { send('popupHelp', 'status'); }
+					click: () => { send('popup', 'help', { document: 'status' }); }
 				},
 				{
 					label: 'Keyboard Shortcuts',
-					click: () => { send('popupHelp', 'shortcuts'); }
+					click: () => { send('popup', 'shortcut'); }
 				},
 				{
 					label: 'What\'s new',
-					click: () => { send('popupHelp', 'whatsNew'); }
+					click: () => { send('popup', 'help', { document: 'whatsNew' }); }
 				},
 			]
 		},
