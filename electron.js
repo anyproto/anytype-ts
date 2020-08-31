@@ -383,25 +383,19 @@ function menuInit () {
 						{
 							label: 'Interface', type: 'checkbox', checked: config.debugUI,
 							click: () => {
-								setConfig({ debugUI: !config.debugUI }, () => {
-									send('toggleDebug', 'ui', config.debugUI);
-								});
+								setConfig({ debugUI: !config.debugUI });
 							}
 						},
 						{
 							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
 							click: () => {
-								setConfig({ debugMW: !config.debugMW }, () => {
-									send('toggleDebug', 'mw', config.debugMW);
-								});
+								setConfig({ debugMW: !config.debugMW });
 							}
 						},
 						{
 							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
 							click: () => {
-								setConfig({ debugAN: !config.debugAN }, () => {
-									send('toggleDebug', 'an', config.debugAN);
-								});
+								setConfig({ debugAN: !config.debugAN });
 							}
 						},
 					]
@@ -438,6 +432,7 @@ function setChannel (channel) {
 function setConfig (obj, callBack) {
 	config = Object.assign(config, obj);
 	storage.set('config', config, (error) => {
+		send('config', config);
 		if (callBack) {
 			callBack(error);
 		};
