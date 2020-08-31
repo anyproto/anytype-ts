@@ -406,9 +406,7 @@ function menuInit () {
 				},
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
-					click: () => {
-						win.webContents.openDevTools();
-					}
+					click: () => { win.webContents.openDevTools(); }
 				}
 			]
 		};
