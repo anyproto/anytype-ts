@@ -1327,54 +1327,57 @@ class EditorPage extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let lastSearch = '';
-		this.clearSearch();
+		let	onChange = (value: string) => {
+			this.clearSearch();
 
-		commonStore.menuOpen('search', {
-			element: '#button-header-more',
-			type: I.MenuType.Horizontal,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			offsetX: 0,
-			offsetY: 0,
-			onClose: () => {
-				this.clearSearch();
-			},
-			data: {
-				onChange: (value: string) => {
-					this.clearSearch();
+			if (!value) {
+				return;
+			};
 
-					if (!value) {
-						return;
+			if (lastSearch != value) {
+				this.searchIndex = 0;
+			};
+			lastSearch = value;
+
+			findAndReplaceDOMText(node.get(0), {
+				preset: 'prose',
+				find: new RegExp(value, 'gi'),
+				wrap: 'search',
+				filterElements: (el: any) => {
+					const tag = el.nodeName.toLowerCase();
+					if ([ 'span', 'div' ].indexOf(tag) < 0) {
+						return false;
 					};
 
-					if (lastSearch != value) {
-						this.searchIndex = 0;
+					const style = window.getComputedStyle(el);
+					if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
+						return false;
 					};
-					lastSearch = value;
-
-					findAndReplaceDOMText(node.get(0), {
-						preset: 'prose',
-						find: new RegExp(value, 'gi'),
-						wrap: 'search',
-						filterElements: (el: any) => {
-							const tag = el.nodeName.toLowerCase();
-							if ([ 'span', 'div' ].indexOf(tag) < 0) {
-								return false;
-							};
-
-							const style = window.getComputedStyle(el);
-							if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
-								return false;
-							};
-							return true;
-						},
-					});
-
-					this.focusSearch();
-					this.searchIndex++;
+					return true;
 				},
-			},
-		});
+			});
+
+			this.focusSearch();
+			this.searchIndex++;
+		};
+
+		window.setTimeout(() => {
+			this.clearSearch();
+			commonStore.menuOpen('search', {
+				element: '#button-header-more',
+				type: I.MenuType.Horizontal,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				offsetX: 0,
+				offsetY: 0,
+				onClose: () => {
+					this.clearSearch();
+				},
+				data: {
+					onChange: onChange,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 
 	clearSearch () {

@@ -13,6 +13,7 @@ const fileType = require('file-type');
 const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
+const { array } = require('is');
 const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 
@@ -229,6 +230,13 @@ function createWindow () {
 		await download(win, url, { saveAs: true });
 	});
 
+	ipcMain.on('proxyEvent', function () {
+		let args = Object.values(arguments);
+
+		args.shift();
+		send.apply(this, args);
+	});
+
 	storage.get('config', (error, data) => {
 		config = data || {};
 		config.channel = String(config.channel || defaultChannel);
@@ -333,9 +341,7 @@ function menuInit () {
 				},
 				{ 
 					label: 'Search', accelerator: 'CmdOrCtrl+F',
-					click: function () {
-						win.webContents.send('commandEditor', 'search');
-					}
+					click: () => { send('commandEditor', 'search'); }
 				},
 			]
 		},
