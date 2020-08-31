@@ -518,7 +518,6 @@ class Util {
 	};
 	
 	getPlatform () {
-		return I.Platform.Windows;
 		return Constant.platforms[os.platform()];
 	};
 
