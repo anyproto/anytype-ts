@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, Util } from 'ts/lib';
+import { Label } from 'ts/component';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	history: any;
@@ -36,21 +37,28 @@ class PopupShortcut extends React.Component<Props, State> {
 			</div>
 		);
 
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="name">{item.name}</div>
-				<div className="items">
-					{item.children.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
+		const Section = (item: any) => {
+			let cn = [ 'section' ];
+			if (item.className) {
+				cn.push(item.className);
+			};
+			return (
+				<div className={[ 'section', (item.className || '') ].join(' ')}>
+					{item.name ? <div className="name">{item.name}</div> : ''}
+					{item.description ? <div className="descr">{item.description}</div> : ''}
+					<div className="items">
+						{item.children.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</div>
 				</div>
-			</div>
-		);
+			);
+		};
 
 		const Item = (item: any) => {
 			return (
 				<div className="item">
-					<div className="key">{platform == I.Platform.Mac ? item.mac : item.com}</div>
+					<div className="key">{(platform == I.Platform.Mac) && item.mac ? item.mac : item.com}</div>
 					<div className="descr">{item.name}</div>
 				</div>
 			);
@@ -85,7 +93,7 @@ class PopupShortcut extends React.Component<Props, State> {
 	};
 
 	getSections (id: string) {
-		const sections = {
+		let sections = {
 
 			main: [
 				{
@@ -106,26 +114,26 @@ class PopupShortcut extends React.Component<Props, State> {
 
 				{ 
 					name: 'Structuring', children: [
-						{ mac: 'Enter',			 com: 'Enter',				 name: 'Create a new text block' },
-						{ mac: 'Shift + Enter',	 com: 'Shift + Enter',		 name: 'Create a line break within a block of text' },
-						{ mac: 'Delete',		 com: 'Delete',				 name: 'Merge block with the one above' },
-						{ mac: 'Tab',			 com: 'Tab',				 name: 'Indent. Сreates a nested block. Moves it to the right' },
-						{ mac: 'Shift + Tab',	 com: 'Shift + Tab',		 name: 'Outdent. Move block to the parent block level to the left' },
+						{ com: 'Enter',				 name: 'Create a new text block' },
+						{ com: 'Shift + Enter',		 name: 'Create a line break within a block of text' },
+						{ com: 'Delete',			 name: 'Merge block with the one above' },
+						{ com: 'Tab',				 name: 'Indent. Сreates a nested block. Moves it to the right' },
+						{ com: 'Shift + Tab',		 name: 'Outdent. Move block to the parent block level to the left' },
 					] 
 				},
 
 				{ 
 					name: 'Selection', children: [
-						{ mac: '⌘ + A',			 com: 'Ctrl + A',			 name: 'Select all text in the block, selecting twice will select the whole page' },
-						{ mac: 'Shift + ↑ or ↓', com: 'Shift + ↑ or ↓',		 name: 'Expand your selection up or down' },
-						{ mac: '⌘ + Click',		 com: 'Ctrl + Click',		 name: 'Select or de-select an entire block' },
-						{ mac: 'Shift + Click',	 com: 'Shift + Click',		 name: 'Select another block and all blocks in between' },
+						{ mac: '⌘ + A',				 com: 'Ctrl + A',			 name: 'Select all text in the block, selecting twice will select the whole page' },
+						{ com: 'Shift + ↑ or ↓',	 name: 'Expand your selection up or down' },
+						{ mac: '⌘ + Click',			 com: 'Ctrl + Click',		 name: 'Select or de-select an entire block' },
+						{ com: 'Shift + Click',		 name: 'Select another block and all blocks in between' },
 					]
 				},
 
 				{ 
 					name: 'Actions', children: [
-						{ mac: '/',				 com: '/',					 name: 'Activate command menu' },
+						{ com: '/',				 name: 'Activate command menu' },
 						{ mac: '⌘ + /',			 com: 'Ctrl + /',			 name: 'Open action menu' },
 						{ mac: '⌘ + Delete',	 com: 'Ctrl + Backspace',	 name: 'Deletes the words left to the cursor' },
 						{ mac: '⌘ + C',			 com: 'Ctrl + C',			 name: 'Copy selected block/blocks or text part' },
@@ -149,23 +157,91 @@ class PopupShortcut extends React.Component<Props, State> {
 			navigation: [
 				{ 
 					name: 'Menu, search and navigation pane', children: [
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
+						{ com: '↓ or Tab',			 name: 'Go the next option' },
+						{ com: '↑ or Shift + Tab',	 name: 'Go to the previous option' },
+						{ com: '←',					 name: 'Go to the left side of navigation. Link from page' },
+						{ com: '→',					 name: 'Go to the right side of navigation. Link to page' },
+						{ mac: '⌘ + ↑',				 com: 'Ctrl + ↑',			 name: 'Go to the start of the page' },
+						{ com: 'Enter',				 name: 'Select option' },
 					]
 				},
 
 				{ 
 					name: 'Page navigation', children: [
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
-						{ mac: '',			 com: '',			 name: '' },
+						{ com: '↓',		 name: 'Go down one line' },
+						{ com: '↑',		 name: 'Go up one line' },
+						{ mac: '⌘ + ←',	 com: 'Ctrl + ←',	 name: 'Go to the start of the line' },
+						{ mac: '⌘ + →',	 com: 'Ctrl + →',	 name: 'Go to the end of the line' },
+						{ mac: '⌘ + ↑',	 com: 'Ctrl + ↑',	 name: 'Go to the start of the page' },
+						{ mac: '⌘ + ↓',	 com: 'Ctrl + ↓',	 name: 'Go to the end of the page' },
+					]
+				},
+			],
+
+			markdown: [
+				{ 
+					description: 'To format your blocks using Markdown, simply use any of these commands at the beginning of any new line or existing block of content',
+					children: [
+						{ com: '# + Space',			 name: 'Create an H1 heading' },
+						{ com: '# # + Space',		 name: 'Create an H2 heading' },
+						{ com: '# # # + Space',		 name: 'Create an H3 heading' },
+						{ com: '" + Space',			 name: 'Create a highlighted block' },
+						{ com: '*, - or  + Space',	 name: 'Create a bulleted list' },
+						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
+						{ com: '1. + Space',		 name: 'Create a numbered list' },
+						{ com: '>  + Space',		 name: 'Create a toggle list' },
+						{ com: '```  + Space',		 name: 'Create a code block' },
+					]
+				},
+			],
+
+			command: [
+				{ 
+					name: 'Menu', children: [
+						{ com: '/',					 name: 'Activate command menu' },
+						{ com: '↓ & ↑',				 name: 'Move in menu' },
+						{ com: '→ & ←',				 name: 'Get into & close sub menu' },
+						{ com: 'Esc or Clear /',	 name: 'Close menu' },
+					]
+				},
+
+				{ description: 'Use filter and start writing the block name to choose the right one without a mouse', children: [], className: 'separator' },
+
+				{ 
+					name: 'Text', children: [
+						{ com: '/text',			 name: 'Text block' },
+						{ com: '/h1',			 name: 'Large heading' },
+						{ com: '/h2',			 name: 'Medium-sized heading' },
+						{ com: '/h3',			 name: 'Small heading' },
+						{ com: '/high',			 name: 'Highlighted block of larger text' },
+					]
+				},
+
+				{ 
+					name: 'Lists', children: [
+						{ com: '/todo',			 name: 'To-do list with checkboxes' },
+						{ com: '/bullet',		 name: 'Bulleted list' },
+						{ com: '/num',			 name: 'Numbered list' },
+						{ com: '/toggle',		 name: 'Toggle list' },
+					]
+				},
+
+				{ 
+					name: 'Objects', children: [
+						{ com: '/page',			 name: 'Page' },
+						{ com: '/file',			 name: 'File' },
+						{ com: '/image',		 name: 'Image' },
+						{ com: '/video',		 name: 'Video' },
+						{ com: '/bookmark',		 name: 'Bookmark' },
+						{ com: '/link',			 name: 'Link to page' },
+					]
+				},
+
+				{ 
+					name: 'Other', children: [
+						{ com: '/line',			 name: 'Line divider' },
+						{ com: '/dots',			 name: 'Dots divider' },
+						{ com: '/code',			 name: 'Code  snippet' },
 					]
 				},
 			]
