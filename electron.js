@@ -250,7 +250,7 @@ function createWindow () {
 				break;
 
 			case 'close':
-				win.close();
+				exit(false);
 				break;
 		};
 	});
