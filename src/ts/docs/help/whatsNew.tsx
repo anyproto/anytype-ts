@@ -8,22 +8,22 @@ export default [
 
 	{ type: I.BlockType.Title, text: `Updates for 28 August, 2020` },
 
-	{ text: `We are happy to introduce Linux version!` },
+	{ text: `We are happy to introduce <b>Anytype for Linux!</b>` },
 
 	{ text: `The following platforms are verified to be able to run the Anytype:` },
 	{ style: I.TextStyle.Bulleted, text: `Ubuntu 12.04 and newer` },
 	{ style: I.TextStyle.Bulleted, text: `Fedora 21` },
 	{ style: I.TextStyle.Bulleted, text: `Debian 8` },
 
-	{ text: `New features implemented:` },
-	{ style: I.TextStyle.Bulleted, text: `Search in page with CMD+F` },
-	{ style: I.TextStyle.Bulleted, text: `Status when manually checking for new updates` },
-	{ style: I.TextStyle.Bulleted, text: `Feedback. Template for different situations` },
-	{ style: I.TextStyle.Bulleted, text: `Syncing enhancement for pinning files and finding peers` },
+	{ text: `New features:` },
+	{ style: I.TextStyle.Bulleted, text: `You can now search in-page with <span class="${sc}">CMD+F</span>.` },
+	{ style: I.TextStyle.Bulleted, text: `Visual feedback when manually checking for software updates.` },
+	{ style: I.TextStyle.Bulleted, text: `Our feedback section now has templates for different situations.` },
+	{ style: I.TextStyle.Bulleted, text: `Enhanced syncing for pinned files and finding peers.` },
 
-	{ text: `Bugs fixed:` },
-	{ style: I.TextStyle.Bulleted, text: `Cannot delete nested paragraphs` },
-	{ style: I.TextStyle.Bulleted, text: `No app image in Linux and Windows version` },
+	{ text: `Bug fixes:` },
+	{ style: I.TextStyle.Bulleted, text: `An inability to delete nested paragraphs.` },
+	{ style: I.TextStyle.Bulleted, text: `No in-app images in Linux and Windows version.` },
 
 	{ type: I.BlockType.Title, text: `Updates for 14 August, 2020` },
 
