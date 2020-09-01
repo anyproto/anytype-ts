@@ -1395,7 +1395,7 @@ class EditorPage extends React.Component<Props, State> {
 		const wh = win.height();
 		const offset = Constant.size.lastBlock + Constant.size.header;
 
-		if (this.searchIndex >= items.length - 1) {
+		if (this.searchIndex > items.length - 1) {
 			this.searchIndex = 0;
 		};
 
