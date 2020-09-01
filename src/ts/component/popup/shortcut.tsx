@@ -19,7 +19,7 @@ class PopupShortcut extends React.Component<Props, State> {
 	state = {
 		page: 'main',
 	};
-	
+
 	render () {
 		const { page } = this.state;
 		const platform = Util.getPlatform();
@@ -112,26 +112,28 @@ class PopupShortcut extends React.Component<Props, State> {
 					]
 				},
 
-				{ 
+				{
 					name: 'Structuring', children: [
 						{ com: 'Enter',				 name: 'Create a new text block' },
 						{ com: 'Shift + Enter',		 name: 'Create a line break within a block of text' },
 						{ com: 'Delete',			 name: 'Merge block with the one above' },
 						{ com: 'Tab',				 name: 'Indent. Сreates a nested block. Moves it to the right' },
 						{ com: 'Shift + Tab',		 name: 'Outdent. Move block to the parent block level to the left' },
-					] 
+					]
 				},
 
-				{ 
+				{
 					name: 'Selection', children: [
-						{ mac: '⌘ + A',				 com: 'Ctrl + A',			 name: 'Select all text in the block, selecting twice will select the whole page' },
-						{ com: 'Shift + ↑ or ↓',	 name: 'Expand your selection up or down' },
+						{ com: 'Double Click',			 name: 'Select word' },
+						{ com: 'Triple Click',			 name: 'Select an entire block' },
 						{ mac: '⌘ + Click',			 com: 'Ctrl + Click',		 name: 'Select or de-select an entire block' },
+						{ mac: '⌘ + A',				 com: 'Ctrl + A',			 name: 'Select all blocks in the page' },
+						{ com: 'Shift + ↑ or ↓',	 name: 'Expand your selection up or down' },
 						{ com: 'Shift + Click',		 name: 'Select another block and all blocks in between' },
 					]
 				},
 
-				{ 
+				{
 					name: 'Actions', children: [
 						{ com: '/',				 name: 'Activate command menu' },
 						{ mac: '⌘ + /',			 com: 'Ctrl + /',			 name: 'Open action menu' },
@@ -143,7 +145,7 @@ class PopupShortcut extends React.Component<Props, State> {
 					]
 				},
 
-				{ 
+				{
 					name: 'Text style', children: [
 						{ mac: '⌘ + B',			 com: 'Ctrl + B',			 name: 'Bold' },
 						{ mac: '⌘ + I',			 com: 'Ctrl + I',			 name: 'Italic' },
@@ -155,7 +157,7 @@ class PopupShortcut extends React.Component<Props, State> {
 			],
 
 			navigation: [
-				{ 
+				{
 					name: 'Menu, search and navigation pane', children: [
 						{ com: '↓ or Tab',			 name: 'Go the next option' },
 						{ com: '↑ or Shift + Tab',	 name: 'Go to the previous option' },
@@ -166,7 +168,7 @@ class PopupShortcut extends React.Component<Props, State> {
 					]
 				},
 
-				{ 
+				{
 					name: 'Page navigation', children: [
 						{ com: '↓',		 name: 'Go down one line' },
 						{ com: '↑',		 name: 'Go up one line' },
@@ -179,8 +181,8 @@ class PopupShortcut extends React.Component<Props, State> {
 			],
 
 			markdown: [
-				{ 
-					description: 'To format your blocks using Markdown, simply use any of these commands at the beginning of any new line or existing block of content',
+				{
+					description: 'To format your blocks using Markdown, simply use any of these commands at the beginning of any new line or existing block of content.',
 					children: [
 						{ com: '# + Space',			 name: 'Create an H1 heading' },
 						{ com: '# # + Space',		 name: 'Create an H2 heading' },
@@ -196,7 +198,7 @@ class PopupShortcut extends React.Component<Props, State> {
 			],
 
 			command: [
-				{ 
+				{
 					name: 'Menu', children: [
 						{ com: '/',					 name: 'Activate command menu' },
 						{ com: '↓ & ↑',				 name: 'Move in menu' },
@@ -205,9 +207,8 @@ class PopupShortcut extends React.Component<Props, State> {
 					]
 				},
 
-				{ description: 'Use filter and start writing the block name to choose the right one without a mouse', children: [], className: 'separator' },
-
-				{ 
+				{ description: 'After pressing / start writing the block name to choose the right one without a mouse, change block colors, and activate actions.', children: [], className: 'separator' },
+				{
 					name: 'Text', children: [
 						{ com: '/text',			 name: 'Text block' },
 						{ com: '/h1',			 name: 'Large heading' },
@@ -217,7 +218,7 @@ class PopupShortcut extends React.Component<Props, State> {
 					]
 				},
 
-				{ 
+				{
 					name: 'Lists', children: [
 						{ com: '/todo',			 name: 'To-do list with checkboxes' },
 						{ com: '/bullet',		 name: 'Bulleted list' },
@@ -226,7 +227,7 @@ class PopupShortcut extends React.Component<Props, State> {
 					]
 				},
 
-				{ 
+				{
 					name: 'Objects', children: [
 						{ com: '/page',			 name: 'Page' },
 						{ com: '/file',			 name: 'File' },
@@ -237,7 +238,7 @@ class PopupShortcut extends React.Component<Props, State> {
 					]
 				},
 
-				{ 
+				{
 					name: 'Other', children: [
 						{ com: '/line',			 name: 'Line divider' },
 						{ com: '/dots',			 name: 'Dots divider' },
@@ -258,7 +259,7 @@ class PopupShortcut extends React.Component<Props, State> {
 
 		body.css({ height: win.height() - 100 });
 	};
-	
+
 };
 
 export default PopupShortcut;
