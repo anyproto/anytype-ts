@@ -28,7 +28,39 @@ select:-webkit-autofill:focus { transition: background-color 5000s ease-in-out 0
 input, textarea, select { font-family: 'Inter'; }
 
 #drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 38px; z-index: -1; user-select: none; pointer-events: all; }
+#drag {
+	.sides { display: none; }
+}
 #root > .loaderWrapper { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; }
+
+body.platformWindows {
+	#drag { height: 30px; background: $colorBlack; z-index: 1000; }
+	#drag {
+		.sides { display: flex; height: 100%; line-height: 30px; }
+		.side { width: 50%; }
+		.side.left { padding-left: 16px; }
+		.side.right { text-align: right; }
+		.side.right {
+			.icon { width: 20px; height: 20px; margin-right: 20px; background-size: 16px 16px; }
+			.icon:last-child { margin-right: 16px; }
+		}
+
+		.name { color: #fff; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
+
+		.icon { cursor: pointer; -webkit-app-region: none; }
+		.icon.menu { width: 20px; height: 20px; margin-right: 16px; background-image: url('~img/icon/header/windows/menu.svg'); }
+		.icon.min { background-image: url('~img/icon/header/windows/min.svg'); }
+		.icon.max { background-image: url('~img/icon/header/windows/max.svg'); }
+		.icon.close { background-image: url('~img/icon/header/windows/close.svg'); }
+	}
+	
+	.header { top: 30px !important; }
+	.header {
+		.logo { width: 20px; height: 20px; left: 16px; margin: 0px; top: 9px; background-image: url('~img/logoSmall.svg'); }
+	}
+
+	.pageMainEdit .wrapper { padding-top: 68px; }
+}
 
 .dn { display: none !important; }
 .txt { vertical-align: middle; display: inline-block; line-height: 1; }

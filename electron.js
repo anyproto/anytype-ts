@@ -30,6 +30,7 @@ let service, server;
 let dataPath = [];
 let config = {};
 let win = null;
+let menu = null;
 let csp = [
 	"default-src 'self' 'unsafe-eval'",
 	"img-src 'self' http://*:* https://*:* data: blob:",
@@ -155,15 +156,12 @@ function createWindow () {
 		height: state.height,
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
+		titleBarStyle: 'hiddenInset',
+		frame: false,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
 		webPreferences: {
 			nodeIntegration: true
 		},
-	};
-
-	if (process.platform == 'darwin') {
-		param.titleBarStyle = 'hiddenInset';
-		param.frame = false;
 	};
 
 	win = new BrowserWindow(param);
@@ -229,6 +227,26 @@ function createWindow () {
 		await download(win, url, { saveAs: true });
 	});
 
+	ipcMain.on('winCommand', (e, cmd) => {
+		switch (cmd) {
+			case 'menu':
+				menu.popup({ x: 16, y: 38 });
+				break;
+
+			case 'minimize':
+				win.minimize();
+				break;
+
+			case 'maximize':
+				win.setFullScreen(!win.isFullScreen());
+				break;
+
+			case 'close':
+				win.close();
+				break;
+		};
+	});
+
 	storage.get('config', (error, data) => {
 		config = data || {};
 		config.channel = String(config.channel || defaultChannel);
@@ -245,7 +263,7 @@ function createWindow () {
 };
 
 function menuInit () {
-	let menu = [
+	let menuParam = [
 		{
 			label: 'Anytype',
 			submenu: [
@@ -362,7 +380,7 @@ function menuInit () {
 	];
 
 	if (config.allowDebug) {
-		let menuDebug = {
+		menuParam.push({
 			label: 'Debug',
 			submenu: [
 				{
@@ -418,12 +436,11 @@ function menuInit () {
 					}
 				}
 			]
-		};
-
-		menu.push(menuDebug);
+		});
 	};
-	
-	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+
+	menu = Menu.buildFromTemplate(menuParam);
+	Menu.setApplicationMenu(menu);
 };
 
 function setChannel (channel) {
