@@ -25,10 +25,10 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
 	block: I.Block;
-	onToggle?(e: any): void;
-	onFocus?(e: any): void;
-	onBlur?(e: any): void;
-	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
+	onToggle? (e: any): void;
+	onFocus? (e: any): void;
+	onBlur? (e: any): void;
+	onKeyDown? (e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
