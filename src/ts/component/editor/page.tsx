@@ -499,6 +499,12 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			this.onHistory();
+		});
+
 		// Mark-up
 		if (ids.length) {
 			let type = null;
@@ -682,6 +688,12 @@ class EditorPage extends React.Component<Props, State> {
 		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
 			e.preventDefault();
 			this.onSearch();
+		});
+
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			this.onHistory();
 		});
 
 		// Duplicate
@@ -1321,6 +1333,11 @@ class EditorPage extends React.Component<Props, State> {
 
 	onPrint () {
 		window.print();
+	};
+
+	onHistory () {
+		const { rootId, history } = this.props;
+		history.push('/main/history/' + rootId);
 	};
 
 	onSearch () {

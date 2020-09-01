@@ -2,7 +2,6 @@ import { I, Util, DataUtil, SmileUtil, Storage, focus } from 'ts/lib';
 import { commonStore, authStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const KeyCode = require('json/key.json');
 
 class Keyboard {
@@ -85,6 +84,16 @@ class Keyboard {
 					expanded: true,
 				}, 
 			});
+		});
+
+		// Go to dashboard
+		this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
+			let check = platform == I.Platform.Mac ? pressed == 'cmd+enter' : true;
+			if (!check || !authStore.account) {
+				return;
+			};
+
+			this.history.push('/main/index');
 		});
 
 		// Create new page

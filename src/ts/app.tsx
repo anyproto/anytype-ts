@@ -68,6 +68,7 @@ import 'scss/popup/navigation.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
 import 'scss/popup/help.scss';
+import 'scss/popup/shortcut.scss';
 import 'scss/popup/feedback.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/editor/page.scss';
@@ -277,10 +278,13 @@ class App extends React.Component<Props, State> {
 			history.push(route);
 		});
 
-		ipcRenderer.on('popupHelp', (e: any, document: string) => {
-			commonStore.popupOpen('help', {
-				data: { document: document },
-			});
+		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
+			commonStore.popupCloseAll();
+			window.setTimeout(() => {
+				commonStore.popupOpen(id, {
+					data: data,
+				});
+			}, 100);
 		});
 		
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {

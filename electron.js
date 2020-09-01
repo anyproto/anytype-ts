@@ -87,22 +87,22 @@ if (useGRPC) {
 	};
 } else {
 	const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
-	
+
 	service = new Service.ClientCommandsClient('', null, null);
-	
+
 	console.log('Connect via native addon');
 
 	waitLibraryPromise = Promise.resolve();
-	
+
 	const bindings = require('bindings')({
 		bindings: 'addon.node',
 		module_root: path.join(__dirname, 'build'),
 	});
-	
+
 	let napiCall = (method, inputObj, outputObj, request, callBack) => {
 		const a = method.split('/');
 		method = a[a.length - 1];
-		
+
 		const buffer = inputObj.serializeBinary();
 		const handler = (item) => {
 			try {
@@ -147,7 +147,7 @@ function createWindow () {
 		defaultWidth: width,
 		defaultHeight: height
 	});
-	
+
 	let param = {
 		backgroundColor: '#fff',
 		show: false,
@@ -168,11 +168,11 @@ function createWindow () {
 	win = new BrowserWindow(param);
 
 	state.manage(win);
-	
+
 	win.once('ready-to-show', () => {
 		win.show();
 	});
-	
+
 	win.on('closed', () => {
 		win = null;
 	});
@@ -184,7 +184,7 @@ function createWindow () {
 		};
 		return false;
 	});
-	
+
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
 		BrowserWindow.addDevToolsExtension(
 			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
@@ -197,7 +197,7 @@ function createWindow () {
 	} else {
 		win.loadFile('./dist/index.html');
 	};
-	
+
 	ipcMain.on('appLoaded', () => {
 		send('dataPath', dataPath.join('/'));
 		send('config', config);
@@ -210,19 +210,19 @@ function createWindow () {
 	ipcMain.on('update', (e) => {
 		checkUpdate(false);
 	});
-	
+
 	ipcMain.on('urlOpen', async (e, url) => {
 		shell.openExternal(url).catch((error) => {
 			console.log(error);
 		});
 	});
-	
+
 	ipcMain.on('pathOpen', async (e, path) => {
 		shell.openItem(path).catch((error) => {
 			console.log(error);
 		});
 	});
-	
+
 	ipcMain.on('download', async (e, url) => {
 		const win = BrowserWindow.getFocusedWindow();
 		await download(win, url, { saveAs: true });
@@ -258,11 +258,11 @@ function createWindow () {
 	storage.get('config', (error, data) => {
 		config = data || {};
 		config.channel = String(config.channel || defaultChannel);
-		
+
 		if (error) {
 			console.error(error);
 		};
-		
+
 		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
 
 		autoUpdaterInit();
@@ -277,7 +277,7 @@ function menuInit () {
 			submenu: [
 				{
 					label: 'About Anytype',
-					click: () => { 
+					click: () => {
 						openAboutWindow({
 							icon_path: __dirname + '/electron/icon.png',
 							css_path: __dirname + '/electron/about.css',
@@ -347,7 +347,7 @@ function menuInit () {
 				{ label: 'Copy', role: 'copy' },
 				{ label: 'Cut', role: 'cut' },
 				{ label: 'Paste', role: 'paste' },
-				
+
 				{ type: 'separator' },
 
 				{
@@ -357,7 +357,7 @@ function menuInit () {
 						send('commandEditor', 'selectAll');
 					}
 				},
-				{ 
+				{
 					label: 'Search', accelerator: 'CmdOrCtrl+F',
 					click: () => { send('commandEditor', 'search'); }
 				},
@@ -371,15 +371,15 @@ function menuInit () {
 			submenu: [
 				{
 					label: 'Status',
-					click: () => { send('popupHelp', 'status'); }
+					click: () => { send('popup', 'help', { document: 'status' }); }
 				},
 				{
-					label: 'Keyboard Shortcuts',
-					click: () => { send('popupHelp', 'shortcuts'); }
+					label: 'Shortcuts',
+					click: () => { send('popup', 'shortcut'); }
 				},
 				{
 					label: 'What\'s new',
-					click: () => { send('popupHelp', 'whatsNew'); }
+					click: () => { send('popup', 'help', { document: 'whatsNew' }); }
 				},
 			]
 		},
@@ -481,33 +481,33 @@ function checkUpdate (auto) {
 
 function autoUpdaterInit () {
 	console.log('Channel: ', config.channel);
-	
+
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'debug';
 	autoUpdater.channel = config.channel;
-	
+
 	setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
-	
+
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
 		send('checking-for-update', autoUpdate);
 	});
-	
+
 	autoUpdater.on('update-available', (info) => {
 		Util.log('info', 'Update available: ' + JSON.stringify(info, null, 3));
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
 		send('update-available', autoUpdate);
 	});
-	
+
 	autoUpdater.on('update-not-available', (info) => {
 		isUpdating = false;
 		Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
 		send('update-not-available', autoUpdate);
 	});
-	
+
 	autoUpdater.on('error', (err) => { Util.log('Error: ' + err); });
-	
+
 	autoUpdater.on('download-progress', (progress) => {
 		isUpdating = true;
 
@@ -518,10 +518,10 @@ function autoUpdaterInit () {
 			'(' + progress.transferred + '/' + progress.total + ')'
 		];
 		Util.log('info', msg.join(' '));
-		
+
 		send('download-progress', progress);
 	});
-	
+
 	autoUpdater.on('update-downloaded', (info) => {
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
@@ -570,9 +570,9 @@ function exit (relaunch) {
 			app.exit(0);
 		}, 2000);
 	};
-	
+
 	Util.log('info', 'MW shutdown is starting');
-	
+
 	if (useGRPC) {
 		if (server) {
 			server.stop().then(()=>{
@@ -585,7 +585,7 @@ function exit (relaunch) {
 		}
 	} else {
 		const Commands = require('./dist/lib/pb/protos/commands_pb');
-		
+
 		if (service) {
 			service.shutdown(new Commands.Empty(), {}, () => {
 				Util.log('info', 'MW shutdown complete');
