@@ -60,6 +60,12 @@ body.platformWindows {
 	}
 
 	.pageMainEdit .wrapper { padding-top: 68px; }
+
+	.popups {
+		.popup.popupNavigation {
+			.innerWrap { top: 68px; }
+		}
+	}
 }
 
 .dn { display: none !important; }
