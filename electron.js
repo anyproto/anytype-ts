@@ -157,12 +157,15 @@ function createWindow () {
 		height: state.height,
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
-		titleBarStyle: 'hiddenInset',
-		frame: false,
 		icon: path.join(__dirname, '/electron/icon512x512.png'),
 		webPreferences: {
 			nodeIntegration: true
 		},
+	};
+
+	if ([ 'darwin', 'win32' ].indexOf(os) >= 0) {
+		param.frame = false;
+		param.titleBarStyle = 'hiddenInset';
 	};
 
 	win = new BrowserWindow(param);
