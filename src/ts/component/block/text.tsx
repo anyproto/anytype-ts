@@ -42,7 +42,6 @@ class BlockText extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refLang: any = null;
-	timeoutKeyUp: number = 0;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
 	marks: I.Mark[] = [];
@@ -176,14 +175,15 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 		
+		/*
 		if (focused == id) {
 			focus.apply();
 		};
+		*/
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeoutKeyUp);
 	};
 
 	onCompositionStart (e: any) {
@@ -455,6 +455,10 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (range.to && (range.from == range.to)) {
+				return;
+			};
+
 			if (!commonStore.menuIsOpen()) {
 				this.setText(this.marks, true, (message: any) => {
 					onKeyDown(e, value, this.marks, range);
@@ -630,7 +634,6 @@ class BlockText extends React.Component<Props, {}> {
 
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
-			window.clearTimeout(this.timeoutKeyUp);
 			return;
 		};
 
@@ -779,7 +782,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { onBlur } = this.props;
 	
 		this.placeHolderHide();
-		focus.clear(true);
+		focus.clearRange(true);
 		keyboard.setFocus(false);
 
 		if (!this.preventSaveOnBlur) {
