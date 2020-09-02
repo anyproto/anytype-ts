@@ -1327,7 +1327,7 @@ class EditorPage extends React.Component<Props, State> {
 				to = message.caretPosition;
 			};
 			
-			this.focus(id, from, to);
+			this.focus(id, from, to, false);
 		});
 	};
 
@@ -1474,7 +1474,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
-			this.focus(message.blockId, 0, 0);
+			this.focus(message.blockId, 0, 0, false);
 			this.phraseCheck();
 
 			if (callBack) {
@@ -1497,7 +1497,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			if (next) {
-				this.focus(next.id, nl, nl);
+				this.focus(next.id, nl, nl, false);
 			};
 		};
 
@@ -1518,7 +1518,7 @@ class EditorPage extends React.Component<Props, State> {
 				});
 				if (next) {
 					const nl = next.getLength();
-					this.focus(next.id, nl, nl);
+					this.focus(next.id, nl, nl, false);
 				};
 			});
 		};
@@ -1557,8 +1557,7 @@ class EditorPage extends React.Component<Props, State> {
 				return;
 			};
 
-			this.focus(message.blockId, 0, 0);
-			focus.scroll();
+			this.focus(message.blockId, 0, 0, true);
 			this.phraseCheck();
 
 			if (isToggle && isOpen) {
@@ -1597,7 +1596,7 @@ class EditorPage extends React.Component<Props, State> {
 			
 			if (next && next.isFocusable()) {
 				let length = next.getLength();
-				this.focus(next.id, length, length);
+				this.focus(next.id, length, length, false);
 			};
 		});
 	};
@@ -1632,7 +1631,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (create) {
 			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
-			this.focus(last.id, length, length);
+			this.focus(last.id, length, length, false);
 		};
 	};
 	
@@ -1656,9 +1655,14 @@ class EditorPage extends React.Component<Props, State> {
 		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
 	};
 	
-	focus (id: string, from: number, to: number) {
+	focus (id: string, from: number, to: number, scroll: boolean) {
 		focus.set(id, { from: from, to: to });
 		focus.apply();
+
+		if (scroll) {
+			focus.scroll();
+		};
+
 		this.resize();
 	};
 	
