@@ -64,6 +64,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onLang = this.onLang.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onInput = this.onInput.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
@@ -136,6 +137,7 @@ class BlockText extends React.Component<Props, {}> {
 				onPaste={this.onPaste}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
+				onInput={this.onInput}
 				onCompositionStart={this.onCompositionStart}
 				onCompositionUpdate={this.onCompositionUpdate}
 				onCompositionEnd={this.onCompositionEnd}
@@ -374,6 +376,10 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('.value');
 		
 		return Mark.fromHtml(value.html());
+	};
+
+	onInput (e: any) {
+		this.placeHolderCheck();
 	};
 	
 	onKeyDown (e: any) {
