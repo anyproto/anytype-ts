@@ -160,15 +160,17 @@ declare global {
 		Cmd: any; 
 		Util: any;
 		Dispatcher: any;
-		Amplitude: any;
+		Analytics: any;
+		I: any;
 	}
 };
 
-window.Store = () => { return rootStore; };
-window.Cmd = () => { return C; };
-window.Util = () => { return Util; };
-window.Dispatcher = () => { return dispatcher; };
-window.Amplitude = () => { return analytics.instance; };
+window.Store = rootStore;
+window.Cmd = C;
+window.Util = Util;
+window.Dispatcher = dispatcher;
+window.Analytics = () => { return analytics.instance; };
+window.I = I;
 
 class App extends React.Component<Props, State> {
 	
@@ -236,8 +238,6 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
-		analytics.init();
-
 		keyboard.init(history);
 		DataUtil.init(history);
 
@@ -340,8 +340,11 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
 			console.log('Config: ', config);
+			
 			commonStore.configSet(config); 
 			config.debugUI ? html.addClass('debug') : html.removeClass('debug');
+
+			analytics.init();
 		});
 	};
 
