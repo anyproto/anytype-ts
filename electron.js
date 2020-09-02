@@ -308,7 +308,7 @@ function menuInit () {
 				},
 				{ type: 'separator' },
 				{
-					label: 'Quit',
+					label: 'Quit', accelerator: 'CmdOrCtrl+Q',
 					click: () => { exit(false); }
 				},
 			]

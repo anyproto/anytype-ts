@@ -458,6 +458,7 @@ class EditorPage extends React.Component<Props, State> {
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
 		const map = blockStore.getMap(rootId);
+		const platform = Util.getPlatform();
 
 		// Print
 		keyboard.shortcut('ctrl+p,cmd+p', e, (pressed: string) => {
@@ -488,7 +489,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
@@ -499,11 +500,13 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
+		/*
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory();
 		});
+		*/
 
 		// Mark-up
 		if (ids.length) {
@@ -679,7 +682,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
@@ -690,11 +693,13 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
+		/*
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory();
 		});
+		*/
 
 		// Duplicate
 		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
