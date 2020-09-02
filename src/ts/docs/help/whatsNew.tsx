@@ -10,7 +10,7 @@ export default [
 
 	{ style: I.TextStyle.Header3, text:  `We are happy to introduce <b>Anytype for Linux!</b>` },
 
-	{ text: `To run the application in Linux OS check out the "<a href="https://discourse.appimage.org/t/how-to-run-an-appimage/80">How to run AppImage instruction</a>". New versions of Anytype will come with separate .AppImage files automatically. For updates, you just need to use a new one and delete the previous manually. Later we will add an app in Snap.` },
+	{ text: `To run the application in Linux OS check out the "<a href="https://discourse.appimage.org/t/how-to-run-an-appimage/80">How to run AppImage instruction</a>". New versions of Anytype will come with separate <span class="${sc}">.AppImage</span> files automatically. For updates, you just need to use a new one. Later we will add an app in Snap.` },
 	{ text: `The following platforms are verified to be able to run the Anytype:` },
 	{ style: I.TextStyle.Bulleted, text: `Ubuntu 12.04 and newer` },
 	{ style: I.TextStyle.Bulleted, text: `Fedora 21` },
