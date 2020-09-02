@@ -163,7 +163,7 @@ function createWindow () {
 		},
 	};
 
-	if ([ 'darwin', 'win32' ].indexOf(os) >= 0) {
+	if ([ 'darwin', 'win32' ].indexOf(process.platform) >= 0) {
 		param.frame = false;
 		param.titleBarStyle = 'hiddenInset';
 	};
