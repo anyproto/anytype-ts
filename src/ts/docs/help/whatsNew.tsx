@@ -16,14 +16,19 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Debian 8` },
 
 	{ text: `New features:` },
-	{ style: I.TextStyle.Bulleted, text: `You can now search in-page with <span class="${sc}">CMD+F</span>.` },
-	{ style: I.TextStyle.Bulleted, text: `Visual feedback when manually checking for software updates.` },
+	{ style: I.TextStyle.Bulleted, text: `The Windows menu bar was redesigned to take up less space and look better.` },
+	{ style: I.TextStyle.Bulleted, text: `We added new keyboard shortcuts and a new page for faster memorizing and usage. Now you can use the keyboard to get into the home screen, delete text to the left, and much more!` },
+	{ style: I.TextStyle.Bulleted, text: `You can now search text in-page with <span class="${sc}">CMD+F</span> and via page menu.` },
+	{ style: I.TextStyle.Bulleted, text: `Manual check for software updates now has .` },
 	{ style: I.TextStyle.Bulleted, text: `Our feedback section now has templates for different situations.` },
 	{ style: I.TextStyle.Bulleted, text: `Enhanced syncing for pinned files and finding peers.` },
 
 	{ text: `Bug fixes:` },
 	{ style: I.TextStyle.Bulleted, text: `An inability to delete nested paragraphs.` },
 	{ style: I.TextStyle.Bulleted, text: `No in-app images in Linux and Windows version.` },
+	{ style: I.TextStyle.Bulleted, text: `When setting the cursor from the last block to the top the page could scroll down.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
 	{ type: I.BlockType.Title, text: `Updates for 14 August, 2020` },
 
