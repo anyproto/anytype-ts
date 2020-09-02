@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Label, Icon } from 'ts/component';
 import { I, Docs, Storage, Util } from 'ts/lib';
@@ -10,6 +11,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 const Url = require('json/url.json');
 const { ipcRenderer } = window.require('electron');
+const $ = require('jquery');
 
 class PopupHelp extends React.Component<Props, {}> {
 	
@@ -54,6 +56,24 @@ class PopupHelp extends React.Component<Props, {}> {
 		if (document == 'whatsNew') {
 			Storage.set('popupNewBlock', 1);
 		};
+
+		this.renderLinks();
+	};
+
+	componentDidUpdate () {
+		this.renderLinks();
+	};
+
+	renderLinks () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const self = this;
+
+		console.log(node.find('a'));
+
+		node.find('a').unbind('click').click(function (e: any) {
+			e.preventDefault();
+			self.onUrl($(this).attr('href'));
+		});
 	};
 	
 	onUrl (url: string) {
