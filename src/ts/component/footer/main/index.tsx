@@ -29,7 +29,7 @@ class FooterMainIndex extends React.Component<Props, {}> {
 			type: I.MenuType.Vertical, 
 			element: '#button-help',
 			offsetX: 0,
-			offsetY: 4,
+			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right
 		});

@@ -164,7 +164,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		const Selected = (item: any) => {
 			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
-			let isSelf = (item.id == rootId) || (item.id == blockId);
 			let icon = null;
 			let withScale = true;
 			let withButtons = this.withButtons(item);
@@ -371,6 +370,8 @@ class PopupNavigation extends React.Component<Props, State> {
 			return;
 		};
 
+		const platform = Util.getPlatform();
+
 		raf(() => {
 			const { expanded } = this.state;
 			const win = $(window);
@@ -381,14 +382,19 @@ class PopupNavigation extends React.Component<Props, State> {
 			const offset = expanded ? 32 : 0;
 			const wh = win.height();
 			const ww = win.width();
-			const oh = wh - 70;
-			const sh = oh - offset;
-			const width = expanded ? Math.min(1136, Math.max(896, ww - 128)) : 400;
+			
+			let oh = wh - 70;
+			if (platform == I.Platform.Windows) {
+				oh -= 16;
+			};
+
+			let sh = oh - offset;
+			let width = expanded ? Math.min(1136, Math.max(896, ww - 128)) : 400;
 
 			sides.css({ height: sh });
 			items.css({ height: sh });
 			empty.css({ height: sh, lineHeight: sh + 'px' });
-			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0, top: 38, height: oh });
+			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0, height: oh });
 		});
 	};
 	

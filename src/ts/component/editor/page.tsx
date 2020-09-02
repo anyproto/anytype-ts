@@ -499,6 +499,12 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			this.onHistory();
+		});
+
 		// Mark-up
 		if (ids.length) {
 			let type = null;
@@ -682,6 +688,12 @@ class EditorPage extends React.Component<Props, State> {
 		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
 			e.preventDefault();
 			this.onSearch();
+		});
+
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			this.onHistory();
 		});
 
 		// Duplicate
@@ -1315,7 +1327,7 @@ class EditorPage extends React.Component<Props, State> {
 				to = message.caretPosition;
 			};
 			
-			this.focus(id, from, to);
+			this.focus(id, from, to, false);
 		});
 	};
 
@@ -1323,58 +1335,66 @@ class EditorPage extends React.Component<Props, State> {
 		window.print();
 	};
 
+	onHistory () {
+		const { rootId, history } = this.props;
+		history.push('/main/history/' + rootId);
+	};
+
 	onSearch () {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let lastSearch = '';
-		this.clearSearch();
+		let	onChange = (value: string) => {
+			this.clearSearch();
 
-		commonStore.menuOpen('search', {
-			element: '#button-header-more',
-			type: I.MenuType.Horizontal,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			offsetX: 0,
-			offsetY: 0,
-			onClose: () => {
-				this.clearSearch();
-			},
-			data: {
-				onChange: (value: string) => {
-					this.clearSearch();
+			if (!value) {
+				return;
+			};
 
-					if (!value) {
-						return;
+			if (lastSearch != value) {
+				this.searchIndex = 0;
+			};
+			lastSearch = value;
+
+			findAndReplaceDOMText(node.get(0), {
+				preset: 'prose',
+				find: new RegExp(value, 'gi'),
+				wrap: 'search',
+				filterElements: (el: any) => {
+					const tag = el.nodeName.toLowerCase();
+					if ([ 'span', 'div' ].indexOf(tag) < 0) {
+						return false;
 					};
 
-					if (lastSearch != value) {
-						this.searchIndex = 0;
+					const style = window.getComputedStyle(el);
+					if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
+						return false;
 					};
-					lastSearch = value;
-
-					findAndReplaceDOMText(node.get(0), {
-						preset: 'prose',
-						find: new RegExp(value, 'gi'),
-						wrap: 'search',
-						filterElements: (el: any) => {
-							const tag = el.nodeName.toLowerCase();
-							if ([ 'span', 'div' ].indexOf(tag) < 0) {
-								return false;
-							};
-
-							const style = window.getComputedStyle(el);
-							if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
-								return false;
-							};
-							return true;
-						},
-					});
-
-					this.focusSearch();
-					this.searchIndex++;
+					return true;
 				},
-			},
-		});
+			});
+
+			this.focusSearch();
+			this.searchIndex++;
+		};
+
+		window.setTimeout(() => {
+			this.clearSearch();
+			commonStore.menuOpen('search', {
+				element: '#button-header-more',
+				type: I.MenuType.Horizontal,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				offsetX: 0,
+				offsetY: 0,
+				onClose: () => {
+					this.clearSearch();
+				},
+				data: {
+					onChange: onChange,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 
 	clearSearch () {
@@ -1392,7 +1412,7 @@ class EditorPage extends React.Component<Props, State> {
 		const wh = win.height();
 		const offset = Constant.size.lastBlock + Constant.size.header;
 
-		if (this.searchIndex >= items.length - 1) {
+		if (this.searchIndex > items.length - 1) {
 			this.searchIndex = 0;
 		};
 
@@ -1454,7 +1474,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
-			this.focus(message.blockId, 0, 0);
+			this.focus(message.blockId, 0, 0, false);
 			this.phraseCheck();
 
 			if (callBack) {
@@ -1477,7 +1497,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			if (next) {
-				this.focus(next.id, nl, nl);
+				this.focus(next.id, nl, nl, false);
 			};
 		};
 
@@ -1498,7 +1518,7 @@ class EditorPage extends React.Component<Props, State> {
 				});
 				if (next) {
 					const nl = next.getLength();
-					this.focus(next.id, nl, nl);
+					this.focus(next.id, nl, nl, false);
 				};
 			});
 		};
@@ -1537,8 +1557,7 @@ class EditorPage extends React.Component<Props, State> {
 				return;
 			};
 
-			this.focus(message.blockId, 0, 0);
-			focus.scroll();
+			this.focus(message.blockId, 0, 0, true);
 			this.phraseCheck();
 
 			if (isToggle && isOpen) {
@@ -1577,7 +1596,7 @@ class EditorPage extends React.Component<Props, State> {
 			
 			if (next && next.isFocusable()) {
 				let length = next.getLength();
-				this.focus(next.id, length, length);
+				this.focus(next.id, length, length, false);
 			};
 		});
 	};
@@ -1612,7 +1631,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (create) {
 			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
-			this.focus(last.id, length, length);
+			this.focus(last.id, length, length, false);
 		};
 	};
 	
@@ -1636,9 +1655,14 @@ class EditorPage extends React.Component<Props, State> {
 		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
 	};
 	
-	focus (id: string, from: number, to: number) {
+	focus (id: string, from: number, to: number, scroll: boolean) {
 		focus.set(id, { from: from, to: to });
 		focus.apply();
+
+		if (scroll) {
+			focus.scroll();
+		};
+
 		this.resize();
 	};
 	

@@ -127,6 +127,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
+				{ id: 'search', icon: 'search', name: 'Search on page' },
 				//{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
@@ -162,7 +163,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, history } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, onSelect } = data;
+		const { blockId, rootId, onSelect, onSearch } = data;
 		const { breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
@@ -218,6 +219,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'copy':
+				break;
+
+			case 'search':
+				ipcRenderer.send('proxyEvent', 'commandEditor', 'search');
 				break;
 				
 			case 'archivePage':

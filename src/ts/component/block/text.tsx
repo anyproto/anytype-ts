@@ -25,10 +25,10 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
 	block: I.Block;
-	onToggle?(e: any): void;
-	onFocus?(e: any): void;
-	onBlur?(e: any): void;
-	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
+	onToggle? (e: any): void;
+	onFocus? (e: any): void;
+	onBlur? (e: any): void;
+	onKeyDown? (e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
@@ -64,6 +64,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onLang = this.onLang.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onInput = this.onInput.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
@@ -136,6 +137,7 @@ class BlockText extends React.Component<Props, {}> {
 				onPaste={this.onPaste}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
+				onInput={this.onInput}
 				onCompositionStart={this.onCompositionStart}
 				onCompositionUpdate={this.onCompositionUpdate}
 				onCompositionEnd={this.onCompositionEnd}
@@ -174,9 +176,11 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 		
+		/*
 		if (focused == id) {
 			focus.apply();
 		};
+		*/
 	};
 	
 	componentWillUnmount () {
@@ -372,6 +376,10 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('.value');
 		
 		return Mark.fromHtml(value.html());
+	};
+
+	onInput (e: any) {
+		this.placeHolderCheck();
 	};
 	
 	onKeyDown (e: any) {
