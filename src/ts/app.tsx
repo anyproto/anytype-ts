@@ -318,6 +318,22 @@ class App extends React.Component<Props, State> {
 			commonStore.progressClear(); 
 		});
 
+		ipcRenderer.on('update-error', (e: any, err: string) => {
+			console.log(err);
+			commonStore.progressClear();
+			commonStore.popupOpen('confirm', {
+				data: {
+					title: 'Oops!',
+					text: Util.sprintf('Can’t check available updates, please try again later.<br/><span class="error">%s</span>', err),
+					textConfirm: 'Retry',
+					textCancel: 'Later',
+					onConfirm: () => {
+						ipcRenderer.send('update');
+					},
+				},
+			});
+		});
+
 		ipcRenderer.on('import', this.onImport);
 
 		ipcRenderer.on('command', this.onCommand);

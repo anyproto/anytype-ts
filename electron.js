@@ -508,9 +508,12 @@ function autoUpdaterInit () {
 		Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
 		send('update-not-available', autoUpdate);
 	});
-
-	autoUpdater.on('error', (err) => { Util.log('Error: ' + err); });
-
+	
+	autoUpdater.on('error', (err) => { 
+		Util.log('Error: ' + err);
+		send('update-error', err);
+	});
+	
 	autoUpdater.on('download-progress', (progress) => {
 		isUpdating = true;
 
