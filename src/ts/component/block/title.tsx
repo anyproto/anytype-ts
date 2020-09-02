@@ -158,7 +158,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
 			onKeyDown(e, '', [], { from: 0, to: 0 });
 		});
 
