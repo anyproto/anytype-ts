@@ -128,6 +128,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
 				{ id: 'history', icon: 'history', name: 'Version history' },
+				{ id: 'search', icon: 'search', name: 'Search on page' },
 				//{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
@@ -221,6 +222,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'copy':
+				break;
+
+			case 'search':
+				ipcRenderer.send('proxyEvent', 'commandEditor', 'search');
 				break;
 				
 			case 'archivePage':

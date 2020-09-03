@@ -34,6 +34,12 @@ export enum BlockPosition {
 	Replace	 = 6,
 };
 
+export enum BlockSplitMode {
+	Bottom = 0,
+	Top = 1,
+	Inner = 2,
+};
+
 export enum BlockAlign {
 	Left	 = 0,
 	Center	 = 1,

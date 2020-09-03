@@ -13,6 +13,7 @@ import PopupPreview from './preview';
 import PopupEditorPage from './editor/page';
 import PopupFeedback from './feedback';
 import PopupConfirm from './confirm';
+import PopupShortcut from './shortcut';
 
 interface Props extends I.Popup {
 	history: any;
@@ -45,6 +46,7 @@ class Popup extends React.Component<Props, {}> {
 			preview: PopupPreview,
 			editorPage: PopupEditorPage,
 			feedback: PopupFeedback,
+			shortcut: PopupShortcut,
 		};
 		
 		const popupId = Util.toCamelCase('popup-' + id);

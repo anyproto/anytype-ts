@@ -457,6 +457,7 @@ class EditorPage extends React.Component<Props, State> {
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
 		const map = blockStore.getMap(rootId);
+		const platform = Util.getPlatform();
 
 		// Print
 		keyboard.shortcut('ctrl+p,cmd+p', e, (pressed: string) => {
@@ -487,7 +488,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
@@ -497,6 +498,14 @@ class EditorPage extends React.Component<Props, State> {
 			e.preventDefault();
 			this.onSearch();
 		});
+
+		/*
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			this.onHistory();
+		});
+		*/
 
 		// Mark-up
 		if (ids.length) {
@@ -672,7 +681,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
@@ -682,6 +691,14 @@ class EditorPage extends React.Component<Props, State> {
 			e.preventDefault();
 			this.onSearch();
 		});
+
+		/*
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			this.onHistory();
+		});
+		*/
 
 		// Duplicate
 		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
@@ -872,29 +889,12 @@ class EditorPage extends React.Component<Props, State> {
 			
 			e.preventDefault();
 			e.stopPropagation();
-			
-			if ((range.from == length) && (range.to == length)) {
-				let style = I.TextStyle.Paragraph;
-				let replace = false;
-				
-				// If block is non-empty list - create new list block of the same style, 
-				// otherwise - replace empty list block with paragraph
-				if (block.isTextNumbered() || block.isTextBulleted() || block.isTextCheckbox()) {
-					if (length) {
-						style = block.content.style;
-					} else {
-						replace = true;
-					};
-				};
-				
-				if (replace) {
-					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
-				} else {
-					this.blockSplit(block, range, style);
-				};
-			} else 
-			if (!block.isTitle()) {
-				this.blockSplit(block, range, block.content.style);
+
+			let replace = (range.from == length) && (range.to == length) && block.isTextList() && !length;
+			if (replace) {
+				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			} else {
+				this.blockSplit(block, range);
 			};
 		});
 	};
@@ -1331,7 +1331,7 @@ class EditorPage extends React.Component<Props, State> {
 				to = message.caretPosition;
 			};
 			
-			this.focus(id, from, to);
+			this.focus(id, from, to, false);
 		});
 	};
 
@@ -1339,49 +1339,66 @@ class EditorPage extends React.Component<Props, State> {
 		window.print();
 	};
 
+	onHistory () {
+		const { rootId, history } = this.props;
+		history.push('/main/history/' + rootId);
+	};
+
 	onSearch () {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		let lastSearch = '';
-		this.clearSearch();
+		let	onChange = (value: string) => {
+			this.clearSearch();
 
-		commonStore.menuOpen('search', {
-			element: '#button-header-more',
-			type: I.MenuType.Horizontal,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			offsetX: 0,
-			offsetY: 0,
-			onClose: () => {
-				this.clearSearch();
-			},
-			data: {
-				onChange: (value: string) => {
-					this.clearSearch();
+			if (!value) {
+				return;
+			};
 
-					if (!value) {
-						return;
+			if (lastSearch != value) {
+				this.searchIndex = 0;
+			};
+			lastSearch = value;
+
+			findAndReplaceDOMText(node.get(0), {
+				preset: 'prose',
+				find: new RegExp(value, 'gi'),
+				wrap: 'search',
+				filterElements: (el: any) => {
+					const tag = el.nodeName.toLowerCase();
+					if ([ 'span', 'div' ].indexOf(tag) < 0) {
+						return false;
 					};
 
-					if (lastSearch != value) {
-						this.searchIndex = 0;
+					const style = window.getComputedStyle(el);
+					if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
+						return false;
 					};
-					lastSearch = value;
-
-					findAndReplaceDOMText(node.get(0), {
-						preset: 'prose',
-						find: new RegExp(value, 'gi'),
-						wrap: 'search',
-						forceContext: (el: any) => {
-							return true;
-						},
-					});
-
-					this.focusSearch();
-					this.searchIndex++;
+					return true;
 				},
-			},
-		});
+			});
+
+			this.focusSearch();
+			this.searchIndex++;
+		};
+
+		window.setTimeout(() => {
+			this.clearSearch();
+			commonStore.menuOpen('search', {
+				element: '#button-header-more',
+				type: I.MenuType.Horizontal,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				offsetX: 0,
+				offsetY: 0,
+				onClose: () => {
+					this.clearSearch();
+				},
+				data: {
+					onChange: onChange,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 
 	clearSearch () {
@@ -1399,7 +1416,7 @@ class EditorPage extends React.Component<Props, State> {
 		const wh = win.height();
 		const offset = Constant.size.lastBlock + Constant.size.header;
 
-		if (this.searchIndex >= items.length - 1) {
+		if (this.searchIndex > items.length - 1) {
 			this.searchIndex = 0;
 		};
 
@@ -1461,7 +1478,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
-			this.focus(message.blockId, 0, 0);
+			this.focus(message.blockId, 0, 0, false);
 			this.phraseCheck();
 
 			if (callBack) {
@@ -1484,7 +1501,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			if (next) {
-				this.focus(next.id, nl, nl);
+				this.focus(next.id, nl, nl, false);
 			};
 		};
 
@@ -1505,27 +1522,46 @@ class EditorPage extends React.Component<Props, State> {
 				});
 				if (next) {
 					const nl = next.getLength();
-					this.focus(next.id, nl, nl);
+					this.focus(next.id, nl, nl, false);
 				};
 			});
 		};
 	};
 	
-	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
+	blockSplit (focused: I.Block, range: I.TextRange) {
 		const { rootId } = this.props;
 		const { content } = focused;
+		const isTitle = focused.isTitle();
+		const isParagraph = focused.isTextParagraph();
 		const isToggle = focused.isTextToggle();
+		const isList = focused.isTextList();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
+		const childrenIds = blockStore.getChildrenIds(rootId, focused.id);
+		const length = focused.getLength();
+
+		let style = I.TextStyle.Paragraph;
+		let mode = I.BlockSplitMode.Bottom;
+
+		if ((length && isList) || (!isTitle && ((range.from != length) || (range.to != length)))) {
+			style = content.style;
+		};
+
+		if ((childrenIds.length > 0) || (isToggle && isOpen)) {
+			mode = I.BlockSplitMode.Inner;
+		};
 
 		if (isToggle && isOpen) {
-			Storage.setToggle(rootId, focused.id, false);
+			style = I.TextStyle.Paragraph;
 		};
-		
+
 		range = Util.rangeFixOut(content.text, range);
 		
-		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
-			this.focus(focused.id, 0, 0);
-			focus.scroll();
+		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			this.focus(message.blockId, 0, 0, true);
 			this.phraseCheck();
 
 			if (isToggle && isOpen) {
@@ -1564,7 +1600,7 @@ class EditorPage extends React.Component<Props, State> {
 			
 			if (next && next.isFocusable()) {
 				let length = next.getLength();
-				this.focus(next.id, length, length);
+				this.focus(next.id, length, length, false);
 			};
 		});
 	};
@@ -1599,7 +1635,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (create) {
 			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
-			this.focus(last.id, length, length);
+			this.focus(last.id, length, length, false);
 		};
 	};
 	
@@ -1623,9 +1659,14 @@ class EditorPage extends React.Component<Props, State> {
 		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
 	};
 	
-	focus (id: string, from: number, to: number) {
+	focus (id: string, from: number, to: number, scroll: boolean) {
 		focus.set(id, { from: from, to: to });
 		focus.apply();
+
+		if (scroll) {
+			focus.scroll();
+		};
+
 		this.resize();
 	};
 	

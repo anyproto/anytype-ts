@@ -5,7 +5,33 @@ const sc = 'bgColor bgColor-grey textColor textColor-red nw'
 export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
-	{ type: I.BlockType.Title, text: `Updates for 14 August, 2020` },
+
+	{ type: I.BlockType.Title, text: `Updates for 28 August, 2020` },
+
+	{ style: I.TextStyle.Header3, text:  `We are happy to introduce <b>Anytype for Linux!</b>` },
+
+	{ text: `To run the application in Linux OS check out the <a href="https://discourse.appimage.org/t/how-to-run-an-appimage/80">"How to run AppImage instruction"</a>. New versions of Anytype will come with separate <span class="${sc}">.AppImage</span> files automatically. For updates, you just need to use a new one. Later we will add an app in Snap.` },
+	{ text: `The following platforms are verified to be able to run the Anytype:` },
+	{ style: I.TextStyle.Bulleted, text: `Ubuntu 12.04 and newer` },
+	{ style: I.TextStyle.Bulleted, text: `Fedora 21` },
+	{ style: I.TextStyle.Bulleted, text: `Debian 8` },
+
+	{ style: I.TextStyle.Header3, text:  `New features:` },
+	{ style: I.TextStyle.Bulleted, text: `The Windows menu bar was redesigned to take up less space and look better.` },
+	{ style: I.TextStyle.Bulleted, text: `We added new keyboard shortcuts and a new page for faster memorizing and usage. Now you can use the keyboard to get into the home screen, delete text to the left, and much more!` },
+	{ style: I.TextStyle.Bulleted, text: `You can search text in-page with <span class="${sc}">Cmd/Ctrl + F</span> and via page menu.` },
+	{ style: I.TextStyle.Bulleted, text: `Manual check for software updates now has a window with status.` },
+	{ style: I.TextStyle.Bulleted, text: `Our feedback section now has templates for different situations.` },
+	{ style: I.TextStyle.Bulleted, text: `Enhanced syncing for pinned files and finding peers.` },
+
+	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
+	{ style: I.TextStyle.Bulleted, text: `An inability to delete nested paragraphs.` },
+	{ style: I.TextStyle.Bulleted, text: `No in-app images in Linux and Windows version.` },
+	{ style: I.TextStyle.Bulleted, text: `When setting the cursor from the last block to the top the page could scroll down.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 14 August, 2020` },
 
 	{ text: `This release brings several improvements to cross-device syncing and reduces the amount of disk space needed. This version comes with a new data format for your pages, and is a huge step towards further collaboration features in the future.<br>` },
 	{ text: `Right now, however, it means your page history will use <b>much</b> less space, changes that you made in one device will come to another <b>online without having to refresh</b>.` },

@@ -30,6 +30,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onInput = this.onInput.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
@@ -58,6 +59,7 @@ class BlockTitle extends React.Component<Props, {}> {
 					onBlur={this.onBlur}
 					onPaste={this.onPaste}
 					onSelect={this.onSelect}
+					onInput={this.onInput}
 					onCompositionStart={this.onCompositionStart}
 					onCompositionUpdate={this.onCompositionUpdate}
 					onCompositionEnd={this.onCompositionEnd}
@@ -156,7 +158,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
 			onKeyDown(e, '', [], { from: 0, to: 0 });
 		});
 
@@ -275,6 +277,10 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
+	};
+
+	onInput (e: any) {
+		this.placeHolderCheck();
 	};
 	
 	getRange () {

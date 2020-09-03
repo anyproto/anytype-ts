@@ -38,7 +38,6 @@ class BlockText extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refLang: any = null;
-	timeoutKeyUp: number = 0;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
 	marks: I.Mark[] = [];
@@ -60,6 +59,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onLang = this.onLang.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onInput = this.onInput.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
@@ -132,6 +132,7 @@ class BlockText extends React.Component<Props, {}> {
 				onPaste={this.onPaste}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
+				onInput={this.onInput}
 				onCompositionStart={this.onCompositionStart}
 				onCompositionUpdate={this.onCompositionUpdate}
 				onCompositionEnd={this.onCompositionEnd}
@@ -170,14 +171,15 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 		
+		/*
 		if (focused == id) {
 			focus.apply();
 		};
+		*/
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeoutKeyUp);
 	};
 
 	onCompositionStart (e: any) {
@@ -369,6 +371,10 @@ class BlockText extends React.Component<Props, {}> {
 		
 		return Mark.fromHtml(value.html());
 	};
+
+	onInput (e: any) {
+		this.placeHolderCheck();
+	};
 	
 	onKeyDown (e: any) {
 		e.persist();
@@ -444,6 +450,10 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (range.to && (range.from == range.to)) {
+				return;
+			};
+
 			if (!commonStore.menuIsOpen()) {
 				this.setText(this.marks, true, (message: any) => {
 					onKeyDown(e, value, this.marks, range);
@@ -619,7 +629,6 @@ class BlockText extends React.Component<Props, {}> {
 
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
-			window.clearTimeout(this.timeoutKeyUp);
 			return;
 		};
 

@@ -73,12 +73,12 @@ class Focus {
 		if (!id) {
 			return;
 		};
-		
+
 		const node = $('.focusable.c' + id);
 		if (!node.length) {
 			return;
 		};
-		
+
 		const win = $(window);
 		const wh = win.height();
 		const y = node.offset().top;

@@ -1,10 +1,9 @@
 import { hot } from 'react-hot-loader/root';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Router, Route, Link } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
-import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview } from './component';
+import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview, Icon } from './component';
 import { commonStore, authStore, blockStore } from './store';
 import { C, Util, DataUtil, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
 import { throttle } from 'lodash';
@@ -70,6 +69,7 @@ import 'scss/popup/navigation.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
 import 'scss/popup/help.scss';
+import 'scss/popup/shortcut.scss';
 import 'scss/popup/feedback.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/editor/page.scss';
@@ -99,6 +99,7 @@ import 'scss/menu/dataview/tag.scss';
 import 'scss/menu/dataview/account.scss';
 
 import 'scss/media/print.scss';
+import { I } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {
@@ -160,15 +161,17 @@ declare global {
 		Cmd: any; 
 		Util: any;
 		Dispatcher: any;
-		Amplitude: any;
+		Analytics: any;
+		I: any;
 	}
 };
 
-window.Store = () => { return rootStore; };
-window.Cmd = () => { return C; };
-window.Util = () => { return Util; };
-window.Dispatcher = () => { return dispatcher; };
-window.Amplitude = () => { return analytics.instance; };
+window.Store = rootStore;
+window.Cmd = C;
+window.Util = Util;
+window.Dispatcher = dispatcher;
+window.Analytics = () => { return analytics.instance; };
+window.I = I;
 
 class App extends React.Component<Props, State> {
 	
@@ -182,6 +185,10 @@ class App extends React.Component<Props, State> {
 		this.onImport = this.onImport.bind(this);
 		this.onProgress = this.onProgress.bind(this);
 		this.onCommand = this.onCommand.bind(this);
+		this.onMenu = this.onMenu.bind(this);
+		this.onMin = this.onMin.bind(this);
+		this.onMax = this.onMax.bind(this);
+		this.onClose = this.onClose.bind(this);
 	};
 	
 	render () {
@@ -201,7 +208,21 @@ class App extends React.Component<Props, State> {
 						<Progress />
 						<Tooltip />
 						
-						<div id="drag" />
+						<div id="drag">
+							<div className="sides">
+								<div className="side left">
+									<Icon className="menu" onClick={this.onMenu} />
+									<div className="name">anytype</div>
+								</div>
+
+								<div className="side right">
+									<Icon className="min" onClick={this.onMin} />
+									<Icon className="max" onClick={this.onMax} />
+									<Icon className="close" onClick={this.onClose} />
+								</div>
+							</div>
+						</div>
+
 						<div id="selection-rect" />
 							
 						{Routes.map((item: RouteElement, i: number) => (
@@ -218,8 +239,6 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
-		analytics.init();
-
 		keyboard.init(history);
 		DataUtil.init(history);
 
@@ -260,29 +279,36 @@ class App extends React.Component<Props, State> {
 			history.push(route);
 		});
 
-		ipcRenderer.on('popupHelp', (e: any, document: string) => {
-			commonStore.popupOpen('help', {
-				data: { document: document },
-			});
+		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
+			commonStore.popupCloseAll();
+			window.setTimeout(() => {
+				commonStore.popupOpen(id, {
+					data: data,
+				});
+			}, 100);
 		});
 		
-		ipcRenderer.on('checking-for-update', (e: any, text: string) => {
-			commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
+		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
+			if (!auto) {
+				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
+			};
 		});
 
-		ipcRenderer.on('update-available', (e: any, text: string) => {
+		ipcRenderer.on('update-available', (e: any, auto: boolean) => {
 			commonStore.progressSet({ status: 'Checking for update...', current: 1, total: 1 });
 		});
 
-		ipcRenderer.on('update-not-available', (e: any, text: string) => {
-			commonStore.popupOpen('confirm', {
-				data: {
-					title: 'You are up-to-date',
-					text: Util.sprintf('You are on the latest version: %s', version),
-					textConfirm: 'Great!',
-					canCancel: false,
-				},
-			});
+		ipcRenderer.on('update-not-available', (e: any, auto: boolean) => {
+			if (!auto) {
+				commonStore.popupOpen('confirm', {
+					data: {
+						title: 'You are up-to-date',
+						text: Util.sprintf('You are on the latest version: %s', version),
+						textConfirm: 'Great!',
+						canCancel: false,
+					},
+				});
+			};
 			commonStore.progressClear(); 
 		});
 
@@ -293,14 +319,33 @@ class App extends React.Component<Props, State> {
 			commonStore.progressClear(); 
 		});
 
+		ipcRenderer.on('update-error', (e: any, err: string) => {
+			console.log(err);
+			commonStore.progressClear();
+			commonStore.popupOpen('confirm', {
+				data: {
+					title: 'Oops!',
+					text: Util.sprintf('Can’t check available updates, please try again later.<br/><span class="error">%s</span>', err),
+					textConfirm: 'Retry',
+					textCancel: 'Later',
+					onConfirm: () => {
+						ipcRenderer.send('update');
+					},
+				},
+			});
+		});
+
 		ipcRenderer.on('import', this.onImport);
 
 		ipcRenderer.on('command', this.onCommand);
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
 			console.log('Config: ', config);
+			
 			commonStore.configSet(config); 
 			config.debugUI ? html.addClass('debug') : html.removeClass('debug');
+
+			analytics.init();
 		});
 	};
 
@@ -351,6 +396,22 @@ class App extends React.Component<Props, State> {
 		commonStore.popupOpen('settings', {
 			data: { page: 'importIndex' }
 		});
+	};
+
+	onMenu (e: any) {
+		ipcRenderer.send('winCommand', 'menu');
+	};
+
+	onMin (e: any) {
+		ipcRenderer.send('winCommand', 'minimize');
+	};
+
+	onMax (e: any) {
+		ipcRenderer.send('winCommand', 'maximize');
+	};
+
+	onClose (e: any) {
+		ipcRenderer.send('winCommand', 'close');
 	};
 	
 };

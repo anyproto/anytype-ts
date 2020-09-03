@@ -114,7 +114,7 @@ class Page extends React.Component<Props, {}> {
 				data: { document: 'whatsNew' },
 			});
 		};
-		
+
 		$(window).on('resize.page', () => { this.resize(); });
 	};
 	

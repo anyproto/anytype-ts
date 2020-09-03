@@ -27,11 +27,9 @@ const Status = [
 	{ text: '<i class="note">This is a closed alpha program</i>' },
 ];
 
-import Shortcuts from './shortcuts';
 import WhatsNew from './whatsNew';
 
 export {
 	Status,
-	Shortcuts,
 	WhatsNew,
 };
