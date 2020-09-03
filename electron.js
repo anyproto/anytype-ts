@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -13,7 +13,6 @@ const fileType = require('file-type');
 const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
-const { array } = require('is');
 const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 
@@ -144,10 +143,9 @@ function createWindow () {
 		})
 	});
 
-	/*
-	tray = new Tray (path.join(__dirname, '/electron/icon22x22.png'));
+	
+	tray = new Tray (path.join(__dirname, '/electron/icon16x16.png'));
 	tray.setToolTip('Anytype');
-	*/
 
 	let state = windowStateKeeper({
 		defaultWidth: width,
@@ -163,7 +161,7 @@ function createWindow () {
 		height: state.height,
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
-		icon: path.join(__dirname, '/electron/icon64x64.png'),
+		icon: nativeImage.createFromPath(path.join(__dirname, '/electron/icon1024x1024.png')),
 		webPreferences: {
 			nodeIntegration: true
 		},

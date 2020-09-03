@@ -291,7 +291,8 @@
 			]
 		},
 		"linux": {
-			"icon": "electron/icon256x256.png",
+			"icon": "electron/icon512x512.png",
+			"category": "Utility",
 			"target": [
 				"snap",
 				"AppImage",
