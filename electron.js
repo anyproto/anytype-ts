@@ -133,9 +133,7 @@ function waitForLibraryAndCreateWindows () {
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
-	const image = electron.nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
-	
-	app.dock.setIcon(image);
+	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
 
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
@@ -170,10 +168,11 @@ function createWindow () {
 	};
 
 	if (process.platform == 'linux') {
-		param.icon = path.join(__dirname, '/electron/icon64x64.png');
+		param.icon = image;
 	};
 
 	if (process.platform == 'darwin') {
+		app.dock.setIcon(image);
 		param.icon = path.join(__dirname, '/electron/icon.icns');
 	};
 
