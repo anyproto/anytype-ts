@@ -167,15 +167,15 @@ function createWindow () {
 	};
 
 	if (process.platform == 'linux') {
-		param.icon = nativeImage.createFromPath(path.join(__dirname, '/electron/icon1024x1024.png'));
+		param.icon = path.join(__dirname, '/electron/icon64x64.png');
 	};
 
 	if (process.platform == 'darwin') {
-		param.icon = nativeImage.createFromPath(path.join(__dirname, '/electron/icon.icns'));
+		param.icon = path.join(__dirname, '/electron/icon.icns');
 	};
 
 	if (process.platform == 'win32') {
-		param.icon = nativeImage.createFromPath(path.join(__dirname, '/electron/icon.ico'));
+		param.icon = path.join(__dirname, '/electron/icon.ico');
 	};
 
 	if (process.platform != 'linux') {
@@ -196,9 +196,15 @@ function createWindow () {
 	});
 
 	win.on('close', (e) => {
-		if (!app.isQuiting) {
-			e.preventDefault();
+		if (app.isQuiting) {
+			return;
+		};
+		
+		e.preventDefault();
+		if (process.platform == 'darwin') {
 			win.minimize();
+		} else {
+			exit(false);
 		};
 		return false;
 	});
@@ -564,8 +570,13 @@ app.on('second-instance', (event, argv, cwd) => {
 	};
 });
 
-app.on('window-all-closed', () => {
+app.on('window-all-closed', (e) => {
 	Util.log('info', 'window-all-closed');
+
+	if (process.platform == 'linux') {
+		e.preventDefault();
+		exit(false);
+	};
 });
 
 app.on('before-quit', (e) => {
