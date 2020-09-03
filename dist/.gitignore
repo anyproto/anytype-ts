@@ -4,6 +4,7 @@ alpha.yml
 beta.yml
 latest.yml
 win-unpacked
+linux-unpacked
 latest-mac.yml
 builder-effective-config.yaml
 mac/*

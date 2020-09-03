@@ -1,0 +1,6 @@
+Release
+addon.target.mk
+binding.Makefile
+config.gypi
+gyp-mac-tool
+Makefile
