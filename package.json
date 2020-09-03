@@ -288,7 +288,7 @@
 			]
 		},
 		"linux": {
-			"icon": "electron/icon.png",
+			"icon": "electron/icon256x256.png",
 			"target": [
 				"snap",
 				"AppImage"

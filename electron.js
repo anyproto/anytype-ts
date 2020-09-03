@@ -157,7 +157,7 @@ function createWindow () {
 		height: state.height,
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
-		icon: path.join(__dirname, '/electron/icon256x256.png'),
+		icon: path.join(__dirname, '/electron/icon64x64.png'),
 		webPreferences: {
 			nodeIntegration: true
 		},
@@ -567,6 +567,8 @@ function send () {
 };
 
 function exit (relaunch) {
+	win.hide();
+
 	let cb = () => {
 		setTimeout(() => {
 			if (relaunch) {
