@@ -161,10 +161,21 @@ function createWindow () {
 		height: state.height,
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
-		icon: nativeImage.createFromPath(path.join(__dirname, '/electron/icon1024x1024.png')),
 		webPreferences: {
 			nodeIntegration: true
 		},
+	};
+
+	if (process.platform == 'linux') {
+		param.icon = nativeImage.createFromPath(path.join(__dirname, '/electron/icon1024x1024.png'));
+	};
+
+	if (process.platform == 'darwin') {
+		param.icon = nativeImage.createFromPath(path.join(__dirname, '/electron/icon.icns'));
+	};
+
+	if (process.platform == 'win32') {
+		param.icon = nativeImage.createFromPath(path.join(__dirname, '/electron/icon.ico'));
 	};
 
 	if (process.platform != 'linux') {
