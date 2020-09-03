@@ -133,6 +133,9 @@ function waitForLibraryAndCreateWindows () {
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+	const image = electron.nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
+	
+	app.dock.setIcon(image);
 
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
