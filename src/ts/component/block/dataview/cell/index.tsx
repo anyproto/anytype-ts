@@ -6,7 +6,6 @@ import { observable } from 'mobx';
 
 import CellText from './text';
 import CellDate from './date';
-import CellUrl from './url';
 import CellSelect from './select';
 import CellBool from './checkbox';
 import CellLink from './link';
@@ -58,7 +57,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
-				CellComponent = CellUrl;
+				CellComponent = CellText;
 				break;
 		};
 		
@@ -118,6 +117,10 @@ class Cell extends React.Component<Props, {}> {
 
 	onChange (value: any) {
 		let { id, rootId, block, data, relation } = this.props;
+		
+		if (data[relation.id] === value) {
+			return;
+		};
 		
 		data = Util.objectCopy(data);
 		data[relation.id] = value;

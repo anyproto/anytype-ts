@@ -238,7 +238,12 @@ class Menu extends React.Component<Props, {}> {
 			y = Math.max(BORDER, y);
 			y = Math.min(wh - height - BORDER, y);
 
-			node.css({ left: x, top: y });
+			let css: any = { left: x, top: y };
+			if (param.width) {
+				css.width = param.width;
+			};
+
+			node.css(css);
 			
 			if (isSub) {
 				const coords = keyboard.coords;

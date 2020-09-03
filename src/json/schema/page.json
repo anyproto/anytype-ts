@@ -86,7 +86,6 @@
     {
       "id": "url",
       "name": "Url",
-      "isHidden": false,
       "type": "https://anytype.io/schemas/types/url"
     }
   ]
