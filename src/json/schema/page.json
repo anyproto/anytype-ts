@@ -87,6 +87,16 @@
       "id": "url",
       "name": "Url",
       "type": "https://anytype.io/schemas/types/url"
+    },
+    {
+      "id": "email",
+      "name": "Email",
+      "type": "https://anytype.io/schemas/types/email"
+    },
+    {
+      "id": "phone",
+      "name": "Phone",
+      "type": "https://anytype.io/schemas/types/phone"
     }
   ]
 }

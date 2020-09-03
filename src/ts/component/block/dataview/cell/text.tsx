@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I, C, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Smile, Input, Textarea } from 'ts/component';
 import { commonStore } from 'ts/store';
+import { RelationType } from '../../../../interface';
 
 interface Props extends I.Cell {};
 
@@ -104,13 +105,14 @@ class CellText extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { editing } = this.state;
-		const { id, relation } = this.props;
+		const { id, relation, data } = this.props;
 		const cellId = DataUtil.cellId('cell', relation.id, id);
 		const cell = $('#' + cellId);
 
 		if (editing) {
 			cell.addClass('isEditing');
 			this.ref.focus();
+			this.ref.setValue(data[relation.id]);
 			this.showMenu();
 		} else {
 			cell.removeClass('isEditing');
@@ -139,7 +141,11 @@ class CellText extends React.Component<Props, State> {
 		const cellId = DataUtil.cellId('cell', relation.id, id);
 		const cell = $('#' + cellId);
 		const width = Math.max(cell.width(), Constant.size.dataview.cell.default);
-		const ref = this.ref;
+		const value = this.ref.getValue();
+
+		if (!value) {
+			return;
+		};
 
 		window.clearTimeout(this.timeoutMenu);
 		this.timeoutMenu = window.setTimeout(() => {
@@ -162,14 +168,16 @@ class CellText extends React.Component<Props, State> {
 						{ id: 'copy', name: 'Copy' },
 					],
 					onSelect: (event: any, item: any) => {
-						const value = ref.getValue();
-						console.log(ref);
-						if (!value) {
-							return;
+						let scheme = '';
+						if (relation.type == I.RelationType.Email) {
+							scheme = 'mailto:';
+						};
+						if (relation.type == I.RelationType.Phone) {
+							scheme = 'tel:';
 						};
 
 						if (item.id == 'go') {
-							ipcRenderer.send('urlOpen', value);
+							ipcRenderer.send('urlOpen', scheme + value);
 						};
 
 						if (item.id == 'copy') {
