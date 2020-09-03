@@ -1,7 +1,12 @@
 Anytype-*
 Anytype Setup*
 alpha.yml
+alpha-mac.yml
+alpha-linux.yml
 beta.yml
+beta-mac.yml
+beta-linux.yml
+latest-linux.yml
 latest.yml
 win-unpacked
 linux-unpacked
@@ -10,7 +15,8 @@ builder-effective-config.yaml
 mac/*
 main.js
 main.js.map
-alpha-mac.yml
-beta-mac.yml
 commands.js
 anytypeHelper*
+*.snap
+*.deb
+*.rpm
