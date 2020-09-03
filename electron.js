@@ -144,9 +144,14 @@ function createWindow () {
 		})
 	});
 
-	
 	tray = new Tray (path.join(__dirname, '/electron/icon16x16.png'));
 	tray.setToolTip('Anytype');
+	tray.setContextMenu(Menu.buildFromTemplate([
+		{
+            label: 'Show window',
+			click: () => { win.show(); }
+		},
+	]));
 
 	let state = windowStateKeeper({
 		defaultWidth: width,
@@ -182,7 +187,7 @@ function createWindow () {
 
 	if (process.platform != 'linux') {
 		param.frame = false;
-		param.titleBarStyle = 'titleBarStyle';
+		param.titleBarStyle = 'hiddenInset';
 	};
 
 	win = new BrowserWindow(param);
@@ -193,10 +198,6 @@ function createWindow () {
 		win.show();
 	});
 
-	win.on('closed', () => {
-		win = null;
-	});
-
 	win.on('close', (e) => {
 		if (app.isQuiting) {
 			return;
@@ -204,7 +205,7 @@ function createWindow () {
 		
 		e.preventDefault();
 		if (process.platform == 'darwin') {
-			win.minimize();
+			win.hide();
 		} else {
 			exit(false);
 		};
