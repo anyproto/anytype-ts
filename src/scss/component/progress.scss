@@ -12,16 +12,18 @@
 
 .progress {
 	.inner { 
-		position: absolute; left: 50%; top: 50%; box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.3); height: 40px; line-height: 40px;
-		border-radius: 4px; width: 350px; text-align: center; background: #fff; overflow: hidden; margin: -20px 0px 0px -175px;
+		position: absolute; left: 50%; top: 50%; box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2); height: 72px; width: 384px;
+		border-radius: 12px; text-align: center; background: #fff; overflow: hidden; margin: -36px 0px 0px -192px; padding: 12px 16px;
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 	}
 	.inner {
-		.label { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 1; color: $colorBlack; white-space: nowrap; }
-		.bar { background: #fef3c5; height: 100%; position: absolute; left: 0px; top: 0px; }
+		.label { position: absolute; left: 16px; top: 12px; z-index: 1; color: $colorBlack; white-space: nowrap; @include text-paragraph; }
+		.bar { width: calc(100% - 32px); height: 8px; background: #f3f2ec; overflow: hidden; border-radius: 8px; position: absolute; bottom: 16px; left: 16px; }
+		.fill { position: absolute; left: 0px; top: 0px; height: 100%; background: $colorOrange; }
 	}
 	
-	.btn { display: inline-block; vertical-align: middle; margin-left: 16px; font-weight: 500; font-size: 12px; cursor: pointer; }
+	.icon.close { width: 20px; height: 20px; position: absolute; top: 14px; right: 14px; cursor: pointer; background-image: url('~img/icon/progress/close0.svg'); }
+	.icon.close:hover { background-image: url('~img/icon/progress/close1.svg'); }
 }
 
 .progress.hide { background: rgba(0,0,0,0); }

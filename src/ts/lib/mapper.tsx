@@ -403,7 +403,7 @@ const Mapper = {
             const item = new Rpc.Block.Paste.Request.File();
 
             item.setName(file.name);
-            item.setData(file.data);
+            item.setLocalpath(file.path);
 
             return item;
         },

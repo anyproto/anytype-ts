@@ -1,6 +1,5 @@
 import { observable, action, computed, set } from 'mobx';
 import { I, Storage, Util, analytics } from 'ts/lib';
-import { any } from 'is';
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -190,7 +189,7 @@ class CommonStore {
 			console.error('[menuOpen] Element is not defined');
 			return;
 		};
-		
+
 		this.menuClose(id, () => {
 			this.menuList.push({ id: id, param: param });
 			

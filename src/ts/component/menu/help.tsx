@@ -26,7 +26,7 @@ class MenuHelp extends React.Component<Props, {}> {
 		const items: any[] = [
 			{ id: 'help', name: 'What\'s new', document: 'whatsNew' },
 			{ id: 'help', name: 'Status', document: 'status' },
-			{ id: 'help', name: 'Shortcuts', document: 'shortcuts' },
+			{ id: 'shortcut', name: 'Shortcuts' },
 			{ id: 'feedback', name: 'Give feedback' },
 			{ id: 'community', name: 'Join community' },
 		];
@@ -50,6 +50,10 @@ class MenuHelp extends React.Component<Props, {}> {
 				commonStore.popupOpen('help', {
 					data: { document: item.document },
 				});
+				break;
+
+			case 'shortcut':
+				commonStore.popupOpen('shortcut', {});
 				break;
 				
 			case 'feedback':

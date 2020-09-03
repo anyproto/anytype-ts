@@ -3,7 +3,7 @@ import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 
-import { PageInfo, BlockType, BlockPosition, BlockAlign, BlockComponent, Block } from './block';
+import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
 import { 
 	ViewRelation,
 	ViewComponent,
@@ -56,6 +56,7 @@ export {
 	
 	BlockType,
 	BlockPosition,
+	BlockSplitMode,
 	BlockAlign,
 	BlockComponent,
 	Block,

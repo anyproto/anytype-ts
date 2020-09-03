@@ -7,7 +7,7 @@
 	
 	.icon.logo {
 		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
-		background-position: center center;
+		background-position: center center; cursor: default;
 	}
 
 	.path { white-space: nowrap; }
@@ -57,9 +57,7 @@
 	.icon:hover { background-color: rgba(0,0,0,0.15); }
 }
 
-.headerMainEdit { background: #fff; padding: 9px 10px 9px 82px; line-height: 20px; }
-
-.headerMainEditSearch { background: #fff; padding: 5px 10px; height: 38px; }
+.headerMainEditSearch { background: #fff; padding: 5px 6px; height: 38px; }
 .headerMainEditSearch {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover { background-color: #f3f2ec; }

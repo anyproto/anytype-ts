@@ -1,0 +1,16 @@
+body { color: #2c2b27; background-color: #fff; }
+
+:focus { outline: 0px; }
+
+.logo { width: 100px; height: 100px; }
+.logo img { width: 100% !important; height: 100% !important; }
+.description { font-weight: 400; }
+.footer { display: none; }
+
+.buttons button {
+    display: inline-block; text-align: center; border: 0px;	font-weight: 500; text-decoration: none; cursor: pointer;
+	height: 30px; line-height: 30px; padding: 0px 16px; border-radius: 4px; transition: background 0.2s ease-in-out;
+    font-size: 14px; vertical-align: middle; position: relative; overflow: hidden; letter-spacing: 0.2px;
+    background: #ffb522; color: #fff;
+}
+.buttons button:hover { background: #f1981a; }
