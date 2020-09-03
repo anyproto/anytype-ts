@@ -159,7 +159,7 @@ function createWindow () {
 		minHeight: MIN_HEIGHT,
 		frame: false,
 		titleBarStyle: 'hiddenInset',
-		icon: path.join(__dirname, '/electron/icon512x512.png'),
+		icon: path.join(__dirname, '/electron/icon256x256.png'),
 		webPreferences: {
 			nodeIntegration: true
 		},
