@@ -23,12 +23,15 @@
 		"type": "git",
 		"url": "git+https://github.com/anytypeio/js-anytype.git"
 	},
-	"author": "",
+	"author": {
+		"name" : "Anytype", 
+		"email" : "info@anytype.io"
+	},
 	"license": "",
 	"bugs": {
 		"url": "https://github.com/anytypeio/js-anytype/issues"
 	},
-	"homepage": "https://github.com/anytypeio/js-anytype#readme",
+	"homepage": "https://anytype.io",
 	"devDependencies": {
 		"@babel/core": "^7.11.4",
 		"@types/history": "^4.7.7",
@@ -291,7 +294,9 @@
 			"icon": "electron/icon256x256.png",
 			"target": [
 				"snap",
-				"AppImage"
+				"AppImage",
+				"deb",
+				"rpm"
 			],
 			"description": "Anytype",
 			"publish": [

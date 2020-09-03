@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -31,6 +31,7 @@ let service, server;
 let dataPath = [];
 let config = {};
 let win = null;
+let tray = null;
 let menu = null;
 let csp = [
 	"default-src 'self' 'unsafe-eval'",
@@ -142,6 +143,11 @@ function createWindow () {
 			}
 		})
 	});
+
+	/*
+	tray = new Tray (path.join(__dirname, '/electron/icon22x22.png'));
+	tray.setToolTip('Anytype');
+	*/
 
 	let state = windowStateKeeper({
 		defaultWidth: width,
@@ -567,7 +573,9 @@ function send () {
 };
 
 function exit (relaunch) {
-	win.hide();
+	if (win) {
+		win.hide();
+	};
 
 	let cb = () => {
 		setTimeout(() => {
