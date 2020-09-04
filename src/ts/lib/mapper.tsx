@@ -25,7 +25,6 @@ const Mapper = {
                 id: obj.getId(),
                 details: Decode.decodeStruct(obj.getDetails()),
                 snippet: obj.getSnippet(),
-                state: obj.getState(),
                 hasInboundLinks: obj.getHasinboundlinks(),
             };
         },
