@@ -509,7 +509,7 @@ class EditorPage extends React.Component<Props, State> {
 		*/
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
-			if (ids.length) {
+			if (ids.length && !commonStore.menuIsOpen()) {
 				selection.clear();
 			};
 		});
