@@ -64,6 +64,9 @@ class Keyboard {
 
 		// Navigation search
 		this.shortcut('ctrl+s, cmd+s', e, (pressed: string) => {
+			if (commonStore.popupIsOpen('navigation')) {
+				return;
+			};
 			commonStore.popupOpen('navigation', { 
 				preventResize: true,
 				data: { 

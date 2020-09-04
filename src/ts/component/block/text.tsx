@@ -753,7 +753,12 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 
-		DataUtil.blockSetText(rootId, block, value, marks, update, callBack);
+		DataUtil.blockSetText(rootId, block, value, marks, update, (message: any) => {
+			focus.apply();
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 	
 	setMarks (marks: I.Mark[]) {
@@ -764,7 +769,9 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		DataUtil.blockSetText(rootId, block, value, marks, true);
+		DataUtil.blockSetText(rootId, block, value, marks, true, () => {
+			focus.apply();
+		});
 	};
 	
 	onFocus (e: any) {
@@ -877,8 +884,10 @@ class BlockText extends React.Component<Props, {}> {
 					range: { from: currentFrom, to: currentTo },
 					onChange: (marks: I.Mark[]) => {
 						this.marks = Util.objectCopy(marks);
-						focus.set(id, { from: currentFrom, to: currentTo });
 						this.setMarks(marks);
+
+						focus.set(id, { from: currentFrom, to: currentTo });
+						focus.apply();
 					},
 				},
 			});
