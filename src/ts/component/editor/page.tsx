@@ -508,6 +508,12 @@ class EditorPage extends React.Component<Props, State> {
 		});
 		*/
 
+		keyboard.shortcut('escape', e, (pressed: string) => {
+			if (ids.length) {
+				selection.clear();
+			};
+		});
+
 		// Mark-up
 		if (ids.length) {
 			let type = null;
