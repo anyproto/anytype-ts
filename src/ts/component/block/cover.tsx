@@ -130,7 +130,6 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		console.log('UPDATE');
 		this.resize();
 	};
 	
