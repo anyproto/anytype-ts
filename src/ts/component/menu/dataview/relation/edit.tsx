@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, Util } from 'ts/lib';
-import { Icon, Input } from 'ts/component';
+import { Icon, Input, Switch } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -15,15 +15,18 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onType = this.onType.bind(this);
+		this.onDateSettings = this.onDateSettings.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
 		const { relationId, view } = data;
-		const relation = view.relations.find((it: I.ViewRelation) => { it.id == relationId; });
-		
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == relationId; });
+
 		let current = null;
+		let options = null;
+
 		if (relation) {
 			current = (
 				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
@@ -32,6 +35,25 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					<Icon className="arrow" />
 				</div>
 			);
+
+			if (relation.type == I.RelationType.Date) {
+				options = (
+					<React.Fragment>
+						<div className="line" />
+						<div className="item">
+							<Icon className="clock" />
+							<div className="name">Include time</div>
+							<Switch value={relation.isVisible} className="green" onChange={(e: any, v: boolean) => { }} />
+						</div>
+
+						<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
+							<Icon className="settings" />
+							<div className="name">Preferences</div>
+							<Icon className="arrow" />
+						</div>
+					</React.Fragment>
+				);
+			};
 		} else {
 			current = (
 				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
@@ -47,6 +69,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					<Input value={relation ? relation.name : ''} placeHolder="Relation name"  />
 				</div>
 				{current}
+				{options}
 				<div className="line" />
 				<div className="item">
 					<Icon className="copy" />
@@ -76,6 +99,24 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					console.log('Type', item);
 				},
 				...data
+			}
+		});
+	};
+
+	onDateSettings (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+
+		commonStore.menuOpen('dataviewDate', { 
+			element: '#menu-date-settings',
+			offsetX: 224,
+			offsetY: -38,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				formatDate: 'Jul 1, 2020',
+				formatTime: '12 hour',
 			}
 		});
 	};

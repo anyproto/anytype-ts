@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, Key, keyboard } from 'ts/lib';
-import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
