@@ -45,7 +45,7 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextHeader() || this.isImage() || this.isVideo());
+		return !this.isSystem() && (this.isTextTitle() || this.isTextParagraph() || this.isTextHeader() || this.isImage() || this.isVideo());
 	};
 
 	canHaveColor (): boolean {
@@ -57,7 +57,7 @@ class Block implements I.Block {
 	};
 
 	canTurn (): boolean {
-		return !this.isSystem() && (this.isText() || this.isDiv());
+		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isDiv());
 	};
 	
 	isIndentable (): boolean {
