@@ -386,7 +386,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: '', className: '', isTextColor: true }
+			{ id: 'color-black', name: 'Black', value: 'black', className: '', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
 			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, className: i, isTextColor: true });
