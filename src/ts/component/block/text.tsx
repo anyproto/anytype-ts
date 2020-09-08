@@ -47,6 +47,7 @@ class BlockText extends React.Component<Props, {}> {
 	marks: I.Mark[] = [];
 	clicks: number = 0;
 	composition: boolean = false;
+	preventSaveOnBlur: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -658,6 +659,8 @@ class BlockText extends React.Component<Props, {}> {
 			y = 4;
 		};
 
+		this.preventSaveOnBlur = true;
+
 		commonStore.filterSet(range.from, '');
 		commonStore.menuOpen('blockMention', {
 			element: el,
@@ -666,6 +669,9 @@ class BlockText extends React.Component<Props, {}> {
 			offsetY: y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
+			onClose: () => {
+				this.preventSaveOnBlur = false;
+			},
 			data: {
 				rootId: rootId,
 				blockId: block.id,
@@ -777,8 +783,12 @@ class BlockText extends React.Component<Props, {}> {
 		const { onBlur } = this.props;
 	
 		this.placeHolderHide();
-		focus.clearRange(true);
+		focus.clear(true);
 		keyboard.setFocus(false);
+
+		if (!this.preventSaveOnBlur) {
+			this.setText(this.marks, true);
+		};
 
 		onBlur(e);
 	};
