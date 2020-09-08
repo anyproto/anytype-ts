@@ -10,6 +10,8 @@ const Constant = require('json/constant.json');
 
 @observer
 class MenuRelationEdit extends React.Component<Props, {}> {
+
+	timeout: number = 0;
 	
 	constructor(props: any) {
 		super(props);
@@ -29,7 +31,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		if (relation) {
 			current = (
-				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
+				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType} onMouseEnter={this.onType}>
 					<Icon className={'relation c-' + relation.type} />
 					<div className="name">{Constant.relationName[relation.type]}</div>
 					<Icon className="arrow" />
@@ -46,7 +48,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							<Switch value={relation.isVisible} className="green" onChange={(e: any, v: boolean) => { }} />
 						</div>
 
-						<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
+						<div id="menu-date-settings" className="item" onClick={this.onDateSettings} onMouseEnter={this.onDateSettings}>
 							<Icon className="settings" />
 							<div className="name">Preferences</div>
 							<Icon className="arrow" />
@@ -82,43 +84,58 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			</div>
 		);
 	};
+
+	componentWillUnmount () {
+		window.clearTimeout(this.timeout);
+	};
 	
 	onType (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		
-		commonStore.menuOpen('dataviewRelationType', { 
-			element: '#relation-type',
-			offsetX: 208,
-			offsetY: 4,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
-			data: {
-				onSelect: (item: any) => {
-					console.log('Type', item);
-				},
-				...data
-			}
-		});
+		commonStore.menuClose('dataviewRelationType');
+		commonStore.menuClose('dataviewDate');
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			commonStore.menuOpen('dataviewRelationType', { 
+				element: '#relation-type',
+				offsetX: 208,
+				offsetY: 4,
+				type: I.MenuType.Vertical,
+				vertical: I.MenuDirection.Center,
+				horizontal: I.MenuDirection.Left,
+				data: {
+					onSelect: (item: any) => {
+						console.log('Type', item);
+					},
+					...data
+				}
+			});
+		}, Constant.delay.menu);
 	};
 
 	onDateSettings (e: any) {
 		const { param } = this.props;
-		const { data } = param;
 
-		commonStore.menuOpen('dataviewDate', { 
-			element: '#menu-date-settings',
-			offsetX: 224,
-			offsetY: -38,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			data: {
-				formatDate: 'Jul 1, 2020',
-				formatTime: '12 hour',
-			}
-		});
+		commonStore.menuClose('dataviewRelationType');
+		commonStore.menuClose('dataviewDate');
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			commonStore.menuOpen('dataviewDate', { 
+				element: '#menu-date-settings',
+				offsetX: 224,
+				offsetY: -38,
+				type: I.MenuType.Vertical,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				data: {
+					formatDate: 'Jul 1, 2020',
+					formatTime: '12 hour',
+				}
+			});
+		}, Constant.delay.menu);
 	};
 	
 };

@@ -64,8 +64,6 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
@@ -195,7 +193,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			offsetY: -38,
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
+			horizontal: I.MenuDirection.Right,
 			data: {
 				value: '',
 				options: options,
