@@ -409,7 +409,7 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange() || { from: 0, to: 0 };
 		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
 		const symbolBefore = value[range.from - 1];
-		
+
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			if (block.isTextCode() || commonStore.menuIsOpen()) {
 				return;
@@ -455,11 +455,10 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range.to && (range.from == range.to)) {
-				return;
-			};
-
 			if (!commonStore.menuIsOpen()) {
+				if (range.to && (range.from == range.to)) {
+					return;
+				};
 				this.setText(this.marks, true, (message: any) => {
 					onKeyDown(e, value, this.marks, range);
 				});
