@@ -55,8 +55,6 @@ class PopupPreview extends React.Component<Props, {}> {
 		const content = node.find('#content');
 		const loader = node.find('.loaderWrapper');
 
-		console.log(content);
-		
 		switch (type) {
 			case I.FileType.Image:
 				content.unbind('load').on('load', () => {

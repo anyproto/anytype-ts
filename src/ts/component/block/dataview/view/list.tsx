@@ -10,7 +10,7 @@ interface Props extends I.ViewComponent {};
 class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { data, view, readOnly} = this.props;
+		const { rootId, block, data, view, readOnly} = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		
 		const Row = (item: any) => (
@@ -19,6 +19,8 @@ class ViewList extends React.Component<Props, {}> {
 					<Cell 
 						key={'list-cell-' + relation.id} 
 						id={item.index} 
+						rootId={rootId}
+						block={block}
 						view={view} 
 						relation={...relation} 
 						data={data[item.index]} 

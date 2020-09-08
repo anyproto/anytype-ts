@@ -58,7 +58,9 @@
 		"dataview": {
 			"cell": {
 				"default": 192,
-				"title": 288
+				"title": 288,
+				"min": 48,
+				"max": 500
 			}
 		},
 

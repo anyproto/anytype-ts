@@ -45,7 +45,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
 		const { type } = view;
 		const schema = Schema[DataUtil.schemaField(schemaURL)];
-		const readOnly = true; // TMP
+		const readOnly = false; // TMP
 
 		if (!view) {
 			return null;

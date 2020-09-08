@@ -18,7 +18,7 @@ const GROUP = 'isArchived';
 class ViewBoard extends React.Component<Props, {}> {
 
 	render () {
-		const { view, readOnly } = this.props;
+		const { rootId, block, view, readOnly } = this.props;
 		const group = view.relations.find((item: I.Relation) => { return item.id == GROUP; });
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
@@ -34,6 +34,8 @@ class ViewBoard extends React.Component<Props, {}> {
 					<Cell 
 						key={'board-cell-' + relation.id} 
 						id={item.index} 
+						rootId={rootId}
+						block={block}
 						view={view} 
 						relation={...relation} 
 						data={item.data} 
@@ -50,7 +52,15 @@ class ViewBoard extends React.Component<Props, {}> {
 			return (
 				<div className="column">
 					<div className="head">
-						<Cell id="" view={view} relation={group} data={head} readOnly={true} />
+						<Cell 
+							id="" 
+							rootId={rootId}
+							block={block}
+							view={view} 
+							relation={group} 
+							data={head} 
+							readOnly={true} 
+						/>
 					</div>
 					<div className="list">
 						{item.list.map((child: any, i: number) => (

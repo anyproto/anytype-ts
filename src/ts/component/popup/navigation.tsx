@@ -384,7 +384,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			const ww = win.width();
 			
 			let oh = wh - 70;
-			if ([ I.Platform.Windows, I.Platform.Linux ].indexOf(platform) >= 0) {
+			if ([ I.Platform.Windows ].indexOf(platform) >= 0) {
 				oh -= 16;
 			};
 
