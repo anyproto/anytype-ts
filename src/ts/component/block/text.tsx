@@ -47,7 +47,6 @@ class BlockText extends React.Component<Props, {}> {
 	marks: I.Mark[] = [];
 	clicks: number = 0;
 	composition: boolean = false;
-	preventSaveOnBlur: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -175,11 +174,9 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 		
-		/*
 		if (focused == id) {
 			focus.apply();
 		};
-		*/
 	};
 	
 	componentWillUnmount () {
@@ -390,7 +387,6 @@ class BlockText extends React.Component<Props, {}> {
 
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
-		const { filter } = commonStore;
 		
 		if (
 			commonStore.menuIsOpen('blockStyle') ||
@@ -406,9 +402,9 @@ class BlockText extends React.Component<Props, {}> {
 		let ret = false;
 
 		const k = e.key.toLowerCase();	
-		const range = this.getRange() || { from: 0, to: 0 };
-		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
-		const symbolBefore = value[range.from - 1];
+		const range = this.getRange();
+		const isSpaceBefore = range ? (!range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n')) : false;
+		const symbolBefore = range ? value[range.from - 1] : '';
 		
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			if (block.isTextCode() || commonStore.menuIsOpen()) {
@@ -662,8 +658,6 @@ class BlockText extends React.Component<Props, {}> {
 			y = 4;
 		};
 
-		this.preventSaveOnBlur = true;
-
 		commonStore.filterSet(range.from, '');
 		commonStore.menuOpen('blockMention', {
 			element: el,
@@ -672,9 +666,6 @@ class BlockText extends React.Component<Props, {}> {
 			offsetY: y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			onClose: () => {
-				this.preventSaveOnBlur = false;
-			},
 			data: {
 				rootId: rootId,
 				blockId: block.id,
@@ -754,7 +745,6 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		DataUtil.blockSetText(rootId, block, value, marks, update, (message: any) => {
-			focus.apply();
 			if (callBack) {
 				callBack(message);
 			};
@@ -769,9 +759,7 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 		
-		DataUtil.blockSetText(rootId, block, value, marks, true, () => {
-			focus.apply();
-		});
+		DataUtil.blockSetText(rootId, block, value, marks, true);
 	};
 	
 	onFocus (e: any) {
@@ -791,10 +779,6 @@ class BlockText extends React.Component<Props, {}> {
 		this.placeHolderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
-
-		if (!this.preventSaveOnBlur) {
-			this.setText(this.marks, true);
-		};
 
 		onBlur(e);
 	};
