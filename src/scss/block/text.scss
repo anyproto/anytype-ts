@@ -79,6 +79,11 @@
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; }
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .placeHolder { display: none; }
+
+	.block.blockText.isReadOnly.code {
+		.select { display: none; }
+	}
+	.block.blockText.isReadOnly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
 	
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 
@@ -119,7 +124,7 @@
 			.name { overflow: visible; }
 		}
 	}
-	
+
 	.block.blockText.paragraph > .wrapContent.bgColor > .selectable > .dropTarget, 
 	.block.blockText.header1 > .wrapContent.bgColor > .selectable > .dropTarget,
 	.block.blockText.header2 > .wrapContent.bgColor > .selectable > .dropTarget,

@@ -23,6 +23,8 @@ class PageMainHistory extends React.Component<Props, State> {
 	
 	version: I.Version = null;
 	refHeader: any = null;
+	scrollLeft: number = 0;
+	scrollRight: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -168,12 +170,23 @@ class PageMainHistory extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const sideLeft = node.find('#sideLeft');
+		const sideRight = node.find('#sideRight');
+		const self = this;
+
 		this.resize();
 		this.setId();
 		
 		if (this.version) {
 			this.show(this.version.id);
 		};
+
+		sideLeft.scrollTop(this.scrollLeft);
+		sideRight.scrollTop(this.scrollRight);
+
+		sideLeft.unbind('scroll').scroll(function () { console.log(self.scrollLeft); self.scrollLeft = $(this).scrollTop(); });
+		sideRight.unbind('scroll').scroll(function () { console.log(self.scrollRight); self.scrollRight = $(this).scrollTop(); });
 	};
 
 	setId () {

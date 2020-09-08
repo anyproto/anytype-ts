@@ -382,11 +382,12 @@ class Block extends React.Component<Props, {}> {
 	onResizeStart (e: any, index: number) {
 		e.stopPropagation();
 
-		if (!this._isMounted) {
+		const { dataset, rootId, block, readOnly } = this.props;
+
+		if (!this._isMounted || readOnly) {
 			return;
 		};
 
-		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const { selection } = dataset || {};
@@ -510,11 +511,11 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const { id } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!block.isLayoutRow() || keyboard.isDragging) {
+		if (!block.isLayoutRow() || keyboard.isDragging || readOnly) {
 			return;
 		};
 		

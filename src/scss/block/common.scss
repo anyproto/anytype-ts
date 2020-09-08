@@ -48,6 +48,9 @@
 
 	.block > .wrapContent > .children > .block.last { margin: 0px; }
 
+	.block.isReadOnly {
+		.colResize { display: none; }
+	}
 	.block.isReadOnly > .wrapMenu > .icon.dnd { display: none; }
 	
 	.block.align0 > .wrapContent { text-align: left; }
