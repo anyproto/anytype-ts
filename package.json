@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.15.1",
+	"version": "0.15.2-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -24,8 +24,8 @@
 		"url": "git+https://github.com/anytypeio/js-anytype.git"
 	},
 	"author": {
-		"name" : "Anytype", 
-		"email" : "info@anytype.io"
+		"name": "Anytype",
+		"email": "info@anytype.io"
 	},
 	"license": "",
 	"bugs": {
