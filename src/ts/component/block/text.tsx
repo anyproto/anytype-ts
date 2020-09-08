@@ -175,9 +175,11 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 		
+		/*
 		if (focused == id) {
 			focus.apply();
 		};
+		*/
 	};
 	
 	componentWillUnmount () {
@@ -682,6 +684,12 @@ class BlockText extends React.Component<Props, {}> {
 					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 						focus.set(block.id, { from: to, to: to });
 						focus.apply();
+
+						// Try to fix async detailsUpdate event
+						window.setTimeout(() => {
+							focus.set(block.id, { from: to, to: to });
+							focus.apply();
+						}, 50);
 					});
 				},
 			},
@@ -783,7 +791,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { onBlur } = this.props;
 	
 		this.placeHolderHide();
-		focus.clear(true);
+		focus.clearRange(true);
 		keyboard.setFocus(false);
 
 		if (!this.preventSaveOnBlur) {

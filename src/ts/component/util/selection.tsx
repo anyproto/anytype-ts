@@ -69,8 +69,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
 		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
-		
-		doc.on('selectstart.selection selectionchange.selection', (e: any) => {});
 	};
 	
 	componentWillUnmount () {
@@ -413,8 +411,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 	unbind () {
 		this.unbindMouse();
 		this.unbindKeyboard();
-		
-		$(document).unbind('selectstart.selection selectionchange.selection');
 	};
 	
 	unbindMouse () {
