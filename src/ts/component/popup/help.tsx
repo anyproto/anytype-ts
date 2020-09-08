@@ -20,7 +20,7 @@ class PopupHelp extends React.Component<Props, {}> {
 		const { data } = param;
 		const { document } = data;
 		const doc = Docs.Help[Util.toUpperCamelCase(document)] || [];
-		const title = doc.find((it: any) => { return it.type == I.BlockType.Title; });
+		const title = doc.find((it: any) => { return (it.type == I.BlockType.Text) && (it.style == I.TextStyle.Title); });
 
 		return (
 			<div className="wrapper">

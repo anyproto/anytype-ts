@@ -88,7 +88,7 @@ class Block extends React.Component<Props, {}> {
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
-				
+
 				if (block.isTextToggle()) {
 					if (!childrenIds.length) {
 						empty = (
@@ -99,7 +99,7 @@ class Block extends React.Component<Props, {}> {
 				
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
 				break;
-				
+
 			case I.BlockType.Layout:
 				canSelect = false;
 				cn.push('blockLayout c' + content.style);
@@ -115,12 +115,6 @@ class Block extends React.Component<Props, {}> {
 				canSelect = false;
 				cn.push('blockIconUser');
 				blockComponent = <BlockIconUser {...this.props} />;
-				break;
-				
-			case I.BlockType.Title:
-				canSelect = false;
-				cn.push('blockTitle');
-				blockComponent = <BlockTitle {...this.props} />;
 				break;
 				
 			case I.BlockType.File:

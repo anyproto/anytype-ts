@@ -6,7 +6,7 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ type: I.BlockType.Title, text: `Updates for 28 August, 2020` },
+	{ style: I.TextStyle.Title, text: `Updates for 28 August, 2020` },
 
 	{ style: I.TextStyle.Header3, text:  `We are happy to introduce <b>Anytype for Linux!</b>` },
 

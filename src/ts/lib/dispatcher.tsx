@@ -182,17 +182,6 @@ class Dispatcher {
 						break;
 					};
 
-					if (block.canHaveTitle()) {
-						block.childrenIds.unshift(rootId + '-title');
-						blocks.unshift(new M.Block({
-							id: rootId + '-title',
-							type: I.BlockType.Title,
-							childrenIds: [],
-							fields: {},
-							content: {},
-						}));
-					};
-
 					blockStore.blocksSet(rootId, blocks);
 					blockStore.detailsSet(rootId, details);
 					break;
@@ -221,10 +210,6 @@ class Dispatcher {
 					};
 
 					childrenIds = data.getChildrenidsList() || [];
-
-					if (block.canHaveTitle() && (childrenIds.indexOf(rootId + '-title') < 0)) {
-						childrenIds.unshift(rootId + '-title');
-					};
 
 					blockStore.blockUpdateStructure(rootId, id, childrenIds);
 					break;

@@ -174,12 +174,6 @@ class BlockText extends React.Component<Props, {}> {
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
-		
-		/*
-		if (focused == id) {
-			focus.apply();
-		};
-		*/
 	};
 	
 	componentWillUnmount () {

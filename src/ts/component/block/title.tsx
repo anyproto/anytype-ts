@@ -171,7 +171,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 			
-			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage() && !it.isTitle(); });
+			const next = blockStore.getFirstBlock(rootId, 1, (it: any) => { return !it.isLayoutDiv() && !it.isPage() && !it.isTextTitle(); });
 			const param = {
 				type: I.BlockType.Text,
 				content: {

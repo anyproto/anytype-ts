@@ -248,8 +248,13 @@ class DragProvider extends React.Component<Props, {}> {
 				this.position = I.BlockPosition.Right;
 			};
 
-			// You can't drop on Icon and Title
-			if ([ I.BlockType.IconPage, I.BlockType.IconUser, I.BlockType.Title ].indexOf(this.hoverData.type) >= 0) {
+			// You can't drop on Icon
+			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(this.hoverData.type) >= 0) {
+				this.position = I.BlockPosition.None;
+			};
+
+			// You can't drop on Title
+			if ((this.hoverData.type == I.BlockType.Text) && (this.hoverData.style == I.TextStyle.Title)) {
 				this.position = I.BlockPosition.None;
 			};
 

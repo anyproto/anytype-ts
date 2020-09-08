@@ -40,10 +40,6 @@ class Block implements I.Block {
 		return this.isPage() || this.isLayout();
 	};
 
-	canHaveTitle (): boolean {
-		return this.isPagePage() || this.isPageProfile() || this.isPageSet();
-	};
-
 	canHaveChildren (): boolean {
 		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
 	};
@@ -65,7 +61,7 @@ class Block implements I.Block {
 	};
 	
 	isIndentable (): boolean {
-		return !this.isSystem() && !this.isTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
+		return !this.isSystem() && !this.isTextTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
 	};
 	
 	isFocusable (): boolean {
@@ -73,11 +69,11 @@ class Block implements I.Block {
 	};
 	
 	isSelectable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle();
 	};
 	
 	isDraggable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle();
 	};
 
 	isPage (): boolean { 
@@ -164,12 +160,12 @@ class Block implements I.Block {
 		return this.isDiv() && (this.content.type == I.DivStyle.Dot);
 	};
 	
-	isTitle (): boolean {
-		return this.type == I.BlockType.Title;
-	};
-
 	isText (): boolean {
 		return this.type == I.BlockType.Text;
+	};
+
+	isTextTitle (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.Title);
 	};
 
 	isTextParagraph (): boolean {
@@ -222,7 +218,7 @@ class Block implements I.Block {
 	
 	getLength (): number {
 		let t = '';
-		if (this.isTitle()) {
+		if (this.isTextTitle()) {
 			const details = blockStore.getDetails(this.parentId, this.parentId);
 			t = details.name;
 		} else {
