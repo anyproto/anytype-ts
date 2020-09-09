@@ -32,17 +32,12 @@ class MenuCalendar extends React.Component<Props, {}> {
 
 	render() {
 		const items = this.getData();
-		const { param } = this.props;
-		const { data } = param;
 		const { value } = this.state;
 
-		let dv = Number(Util.date('d', data.value));
-		let mv = Number(Util.date('n', data.value));
-		let yv = Number(Util.date('Y', data.value));
-		
+		let d = Number(Util.date('d', value));
 		let m = Number(Util.date('n', value));
 		let y = Number(Util.date('Y', value));
-
+		
 		let months = [];
 		for (let i in Constant.month) {
 			months.push({ id: i, name: Constant.month[i] });
@@ -65,13 +60,16 @@ class MenuCalendar extends React.Component<Props, {}> {
 						if (m != item.m) {
 							cn.push('dis');
 						};
-						if ((dv == item.d) && (mv == item.m) && (yv == item.y)) {
+						if ((d == item.d) && (m == item.m) && (y == item.y)) {
 							cn.push('active');
 						};
 						return <div key={i} className={cn.join(' ')} onClick={() => { this.set(item.d, item.m, y); }}>{item.d}</div>;
 					})}
 				</div>
-				<div className="foot dn"></div>
+				<div className="foot">
+					<div className="btn" onClick={() => { this.setValue(Util.time()); }}>Today</div>
+					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400); }}>Tomorrow</div>
+				</div>
 			</div>
 		);
 	};
@@ -79,15 +77,8 @@ class MenuCalendar extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
 
-		const mv = Number(Util.date('n', data.value));
-		const yv = Number(Util.date('Y', data.value));
-
-		this.refMonth.setValue(mv);
-		this.refYear.setValue(yv);
-		
-		this.setState({ value: value });
+		this.setValue(data.value);
 	};
 
 	onChangeMonth (v: any) {
@@ -103,6 +94,13 @@ class MenuCalendar extends React.Component<Props, {}> {
 
 		this.setState({ value: Util.timestamp(v, mv, 1) });
 	};
+
+	setValue (value: number) {
+		this.refMonth.setValue(Number(Util.date('n', value)));
+		this.refYear.setValue(Number(Util.date('Y', value)));
+		
+		this.setState({ value: value });
+	};
 	
 	set (d: number, m: number, y: number) {
 		const { id, param } = this.props;
@@ -116,7 +114,6 @@ class MenuCalendar extends React.Component<Props, {}> {
 	getData () {
 		const { value } = this.state;
 		
-		let d = Number(Util.date('d', value));
 		let m = Number(Util.date('n', value));
 		let y = Number(Util.date('Y', value));
 		
