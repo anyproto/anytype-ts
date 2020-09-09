@@ -4,6 +4,7 @@ import { getEmojiDataFromNative } from 'emoji-mart';
 const EmojiData = require('json/emoji.json');
 const MAX_SIZE = 0x4000;
 const SKINS = [ '1F3FA', '1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF' ];
+const DIV = 65039;
 
 class SmileUtil {
 
@@ -61,6 +62,8 @@ class SmileUtil {
 			};
 		};
 
+console.log(result);
+
 		return result;
 	};
 
@@ -82,6 +85,7 @@ class SmileUtil {
 				uni = skinItem.unified;
 			};
 		};
+
 		return this.unifiedToNative(uni);
 	};
 
@@ -119,7 +123,13 @@ class SmileUtil {
 			return this.cache[icon];
 		};
 
-		const data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+		let data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+
+		// Try to get emoji with divider byte
+		if (!data) {
+			data = getEmojiDataFromNative(icon + String.fromCharCode(DIV), 'apple', EmojiData);
+		};
+
 		if (data) {
 			this.cache[icon] = { 
 				colons: data.colons, 
