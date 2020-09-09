@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {
@@ -384,7 +384,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			const ww = win.width();
 			
 			let oh = wh - 70;
-			if ([ I.Platform.Windows, I.Platform.Linux ].indexOf(platform) >= 0) {
+			if ([ I.Platform.Windows ].indexOf(platform) >= 0) {
 				oh -= 16;
 			};
 
@@ -527,7 +527,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { info, pages, pagesIn, pagesOut, expanded, filter } = this.state;
+		const { info, pagesIn, pagesOut, expanded } = this.state;
 
 		let items = [];
 		if (expanded) {
@@ -633,6 +633,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { skipId } = data;
+		const { config } = commonStore;
+		const { root } = blockStore;
 
 		this.setState({ loading: true });
 		this.n = -1;
@@ -648,12 +650,12 @@ class PopupNavigation extends React.Component<Props, State> {
 		let pages: I.PageInfo[] = [];
 		C.NavigationListPages((message: any) => {
 			for (let page of message.pages) {
-				if (skipId && (page.id == skipId)) {
+				if ((skipId && (page.id == skipId)) || page.id == root) {
 					continue;
 				};
 
 				page = this.getPage(page);
-				if (page.details.isArchived) {
+				if (!this.filterMapper(page, config)) {
 					continue;
 				};
 
@@ -669,6 +671,9 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	loadPage (id: string) {
+		const { config } = commonStore;
+		const filter = (it: I.PageInfo) => { return this.filterMapper(it, config); };
+
 		this.setState({ loading: true });
 		this.setCrumbs(id);
 
@@ -681,11 +686,11 @@ class PopupNavigation extends React.Component<Props, State> {
 			let pagesIn = message.page.links.inbound.map((it: any) => { return this.getPage(it); });
 			let pagesOut = message.page.links.outbound.map((it: any) => { return this.getPage(it); });
 
-			pagesIn = pagesIn.filter((it: I.PageInfo) => { return !it.details.isArchived; });
-			pagesOut = pagesOut.filter((it: I.PageInfo) => { return !it.details.isArchived; });
+			pagesIn = pagesIn.filter(filter);
+			pagesOut = pagesOut.filter(filter);
+
 			this.n = 0;
 			this.panel = Panel.Center;
-
 			this.initSearch(id);
 			this.setState({ 
 				pageId: id,
@@ -696,6 +701,13 @@ class PopupNavigation extends React.Component<Props, State> {
 				pagesOut: pagesOut,
 			});
 		});
+	};
+
+	filterMapper (it: I.PageInfo, config: any) {
+		if (it.details.isArchived || (!config.allowDataview && (it.pageType == I.PageType.Set))) {
+			return false;
+		};
+		return true;
 	};
 
 	setCrumbs (id: string) {
@@ -771,7 +783,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			ret = false;
 		};
 
-		if (isRoot && (type != I.NavigationType.Move)) {
+		if (isRoot && (type != I.NavigationType.Go)) {
 			ret = false;
 		};
 

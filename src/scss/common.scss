@@ -33,7 +33,7 @@ input, textarea, select { font-family: 'Inter'; }
 }
 #root > .loaderWrapper { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; }
 
-body.platformWindows, body.platformLinux {
+body.platformWindows {
 	#drag { height: 30px; background: $colorBlack; z-index: 1000; }
 	#drag {
 		.sides { display: flex; height: 100%; line-height: 30px; }

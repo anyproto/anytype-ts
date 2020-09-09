@@ -1,4 +1,4 @@
-import { Decode, Mapper } from 'ts/lib';
+import { Mapper } from 'ts/lib';
 
 const VersionGet = (response: any) => {
 	return {};
@@ -300,6 +300,20 @@ const BlockSetDataviewActiveView = (response: any) => {
 	return {};
 };
 
+const BlockCreateDataviewRecord = (response: any) => {
+	return {
+		record: Mapper.From.Record(response.getRecord()),
+	};
+};
+
+const BlockUpdateDataviewRecord = (response: any) => {
+	return {};
+};
+
+const BlockDeleteDataviewRecord = (response: any) => {
+	return {};
+};
+
 const HistoryVersions = (response: any) => {
 	return {
 		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
@@ -377,6 +391,10 @@ export {
 	
 	BlockSetDataviewView,
 	BlockSetDataviewActiveView,
+
+	BlockCreateDataviewRecord,
+	BlockUpdateDataviewRecord,
+	BlockDeleteDataviewRecord,
 
 	BlockListMove,
 	BlockListMoveToNewPage,
