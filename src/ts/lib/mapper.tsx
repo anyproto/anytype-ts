@@ -246,6 +246,7 @@ const Mapper = {
                 previousIds: obj.getPreviousidsList() || [],
                 authorId: obj.getAuthorid(),
                 authorName: obj.getAuthorname(),
+				groupId: obj.getGroupid(),
                 time: obj.getTime(),
             };
         },

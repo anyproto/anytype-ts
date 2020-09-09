@@ -43,5 +43,6 @@ export interface Version {
 	previousIds: string[];
 	authorId: string;
 	authorName: string;
+	groupId: number;
 	time: number;
 };

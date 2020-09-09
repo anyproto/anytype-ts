@@ -211,7 +211,7 @@ class PageMainHistory extends React.Component<Props, State> {
 			return;
 		};
 
-		let group = month.list.find((it: any) => { return it.groupId == this.groupId(version.time); });
+		let group = month.list.find((it: any) => { return it.groupId == version.groupId; });
 		if (!group) {
 			return;
 		};
@@ -271,7 +271,6 @@ class PageMainHistory extends React.Component<Props, State> {
 				return;
 			};
 
-			message.versions.reverse();
 			this.setState({ versions: message.versions });
 
 			if (!this.version) {
@@ -303,11 +302,9 @@ class PageMainHistory extends React.Component<Props, State> {
     	let groups: any[] = [];
 
 		for (let version of versions) {
-			let groupId = this.groupId(version.time);
-			let group = groups.find((it: any) => { return it.groupId == groupId; });
-
+			let group = groups.find((it: any) => { return it.groupId == version.groupId; });
 			if (!group) {
-				group = { ...version, groupId: groupId, list: [] };
+				group = { ...version, groupId: version.groupId, list: [] };
 				groups.push(group);
       		} else {
 				group.list.push(version);
@@ -331,10 +328,6 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	monthId (time: number) {
 		return Util.date('F Y', time);
-	};
-
-	groupId (time: number) {
-		return Util.date('d F Y H:i', Math.floor(time / 600) * 600);
 	};
 
 	resize () {
