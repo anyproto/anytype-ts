@@ -527,25 +527,25 @@ class EditorPage extends React.Component<Props, State> {
 				type = I.MarkType.Strike;
 			});
 
-			// Link
+			// Code
 			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
-				type = I.MarkType.Link;
+				type = I.MarkType.Code;
 			});
 
-			// Code
+			// Link
 			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
-				type = I.MarkType.Code;
+				type = I.MarkType.Link;
 			});
 
 			if (type !== null) {
 				e.preventDefault();
-					
+
 				if (type == I.MarkType.Link) {
 					commonStore.menuOpen('blockLink', {
 						type: I.MenuType.Horizontal,
-						element: '#menuBlockContext',
+						element: '#block-' + ids[0],
 						offsetX: 0,
-						offsetY: 44,
+						offsetY: -4,
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
 						data: {
@@ -754,18 +754,18 @@ class EditorPage extends React.Component<Props, State> {
 			});
 
 			// Link
-			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
+			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
 				type = I.MarkType.Link;
 			});
 
 			// Code
-			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
+			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
 				type = I.MarkType.Code;
 			});
 
 			if (type !== null) {
 				e.preventDefault();
-				
+
 				if (type == I.MarkType.Link) {
 					let mark = Mark.getInRange(marks, type, range);
 					commonStore.menuOpen('blockLink', {
