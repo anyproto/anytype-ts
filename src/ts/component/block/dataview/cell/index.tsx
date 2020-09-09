@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 import CellText from './text';
 import CellDate from './date';
-import CellUrl from './url';
 import CellSelect from './select';
 import CellBool from './checkbox';
 import CellLink from './link';
@@ -21,6 +21,7 @@ class Cell extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onChange = this.onChange.bind(this);
 	};
 
 	render () {
@@ -56,21 +57,21 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
-				CellComponent = CellUrl;
+				CellComponent = CellText;
 				break;
 		};
 		
 		return (
 			<div className={cn.join(' ')} onClick={this.onClick}>
-				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data || {}} />
+				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data || {}} onChange={this.onChange} />
 			</div>
 		);
 	};
 	
 	onClick (e: any) {
 		const { id, relation, data, readOnly } = this.props;
-		
-		if (readOnly) {
+
+		if (readOnly || relation.isReadOnly) {
 			return;
 		};
 
@@ -78,7 +79,7 @@ class Cell extends React.Component<Props, {}> {
 			this.ref.onClick(e);
 		};
 		
-		let element = '#' + DataUtil.cellId(relation.id, id);
+		let element = '#' + DataUtil.cellId('cell', relation.id, id);
 		let param: I.MenuParam = { 
 			element: element,
 			offsetX: 0,
@@ -112,6 +113,20 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Checkbox:
 				break; 
 		};
+	};
+
+	onChange (value: any) {
+		let { id, rootId, block, data, relation } = this.props;
+		
+		if (data[relation.id] === value) {
+			return;
+		};
+		
+		data = Util.objectCopy(data);
+		data[relation.id] = value;
+
+		block.content.data[id] = observable(data);
+		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);
 	};
 	
 };

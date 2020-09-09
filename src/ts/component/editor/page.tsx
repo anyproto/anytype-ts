@@ -1413,6 +1413,9 @@ class EditorPage extends React.Component<Props, State> {
 	};
 
 	clearSearch () {
+		if (!this._isMounted) {
+			return;
+		};
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('search').each((i: number, item: any) => {
 			item = $(item);

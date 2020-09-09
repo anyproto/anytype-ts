@@ -35,6 +35,7 @@ class ViewRelation implements I.ViewRelation {
 	isReadOnly: boolean = false;
 	isVisible: boolean = false;
 	order: number = 0;
+	width: number = 0;
 
 	constructor (props: I.ViewRelation) {
 		let self = this;
@@ -46,6 +47,7 @@ class ViewRelation implements I.ViewRelation {
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.isVisible = Boolean(props.isVisible);
 		self.order = Number(props.order) || 0;
+		self.width = Number(props.width) || 0;
 	};
 
 };
