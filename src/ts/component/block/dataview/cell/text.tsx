@@ -26,7 +26,6 @@ class CellText extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 
-		this.onClick = this.onClick.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
@@ -123,12 +122,13 @@ class CellText extends React.Component<Props, State> {
 		this.resize();
 	};
 
-	onClick (e: any) {
+	setEditing (v: boolean) {
+		console.log(v);
 		const { view, readOnly } = this.props;
 		const canEdit = !readOnly && (view.type == I.ViewType.Grid);
 
 		if (canEdit) {
-			this.setState({ editing: true });
+			this.setState({ editing: v });
 		};
 	};
 

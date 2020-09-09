@@ -227,11 +227,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		};
 
 		const id = DataUtil.cellId('cell', relation.id, index);
-		const node = $(ReactDOM.findDOMNode(this));
-		const cell = node.find('#' + id);
 		const ref = this.cellRefs.get(id);
-
-		cell.addClass('isEditing');
+		
 		if (ref) {
 			ref.onClick(e);
 		};
