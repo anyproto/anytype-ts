@@ -62,8 +62,6 @@ class SmileUtil {
 			};
 		};
 
-console.log(result);
-
 		return result;
 	};
 
