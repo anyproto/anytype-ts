@@ -1,24 +1,24 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewCalendar { padding: 16px; width: 228px; }
+	.menu.menuDataviewCalendar { width: 276px; }
 	.menu.menuDataviewCalendar {
 		.inner { user-select: none; }
 
-		.day { 
-			display: inline-block; vertical-align: top; width: 28px; height: 28px; text-align: center; font-size: 12px; line-height: 30px;
-			cursor: pointer; border-radius: 4px; letter-spacing: 0.1px;
-		}
-		.day:hover { background: $colorOrange; color: #fff; font-weight: 500; }
+		.day { display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; cursor: pointer; margin-right: 8px; }
+		.day:nth-child(7n + 7) { margin: 0px; }
+		.day:hover { background: rgba(172,169,150,0.15); }
+
+		.head { padding: 8px 16px 0px 16px; border-bottom: 1px solid #eae9e0; }
+		.body { padding: 8px 16px; }
+		.foot { padding: 8px 16px; border-top: 1px solid #eae9e0; }
 		
 		.day.th { color: $colorDarkGrey; cursor: default; }
 		.day.th:hover { background: none; font-weight: 400; }
 		
 		.day.active { color: $colorRed; font-weight: 500; }
-		.day.active:hover { background: $colorOrange; color: #fff; font-weight: 500; }
 		
 		.day.dis { color: $colorDarkGrey; }
-		.day.dis:hover { color: #fff; }
 		
 		.month { height: 28px; line-height: 28px; font-size: 12px; letter-spacing: 0.1px; position: relative; margin-bottom: 4px; }
 		.month { 
@@ -33,8 +33,12 @@
 		}
 		
 		.input { 
-			height: 28px; border-radius: 4px; border: solid 1px #d2d0c2; margin-bottom: 10px; padding: 0px 10px; font-size: 12px;
-			background: none;
+			height: 28px; border-radius: 4px; border: solid 1px #d2d0c2; margin-bottom: 10px; padding: 0px 10px;
+			background: none; width: 100px; vertical-align: top;
+		}
+		.select { border: 0px; padding: 0px; height: 28px; margin-right: 8px; vertical-align: top; }
+		.select {
+			.current { padding: 4px 26px 4px 6px; }
 		}
 	}
 }

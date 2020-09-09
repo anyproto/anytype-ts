@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
-import { Icon, Input } from 'ts/component';
+import { Input, Select } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -21,10 +20,14 @@ class MenuCalendar extends React.Component<Props, {}> {
 		value: 0
 	};
 	
-	valueRef: any = null;
+	refMonth: any = null;
+	refYear: any = null;
 	
 	constructor(props: any) {
 		super(props);
+
+		this.onChangeMonth = this.onChangeMonth.bind(this);
+		this.onChangeYear = this.onChangeYear.bind(this);
 	};
 
 	render() {
@@ -39,23 +42,24 @@ class MenuCalendar extends React.Component<Props, {}> {
 		
 		let m = Number(Util.date('n', value));
 		let y = Number(Util.date('Y', value));
+
+		let months = [];
+		for (let i in Constant.month) {
+			months.push({ id: i, name: Constant.month[i] });
+		};
 		
 		return (
-			<React.Fragment>
-				<Input ref={(ref: any) => { this.valueRef = ref; }} readOnly={true} />
-				<div className="inner">
-					<div className="month">
-						<div className="name">
-							{Constant.month[m]}, {y}
-						</div>
-						<div className="icons">
-							<Icon className="arrow left" onClick={() => { this.switchMonth(-1); }} />
-							<Icon className="arrow right" onClick={() => { this.switchMonth(1); }} />
-						</div>
+			<div className="inner">
+				<div className="head">	
+					<Select initial="Month" id="month" arrowClassName="light" value={String(m)} ref={(ref: any) => { this.refMonth = ref; }} options={months} onChange={this.onChangeMonth} />
+					<Input ref={(ref: any) => { this.refYear = ref; }} placeHolder="Year" onKeyUp={this.onChangeYear} />
+					<div className="days">
+						{Constant.week.map((day: string, i: number) => {
+							return <div key={i} className="day th">{day.substr(0, 2)}</div>;
+						})}
 					</div>
-					{Constant.week.map((day: string, i: number) => {
-						return <div key={i} className="day th">{day.substr(0, 2)}</div>;
-					})}
+				</div>
+				<div className="body">
 					{items.map((item, i) => {
 						let cn = [ 'day' ];
 						if (m != item.m) {
@@ -67,38 +71,37 @@ class MenuCalendar extends React.Component<Props, {}> {
 						return <div key={i} className={cn.join(' ')} onClick={() => { this.set(item.d, item.m, y); }}>{item.d}</div>;
 					})}
 				</div>
-			</React.Fragment>
+				<div className="foot dn"></div>
+			</div>
 		);
 	};
 	
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { id, value } = data;
+		const { value } = data;
+
+		const mv = Number(Util.date('n', data.value));
+		const yv = Number(Util.date('Y', data.value));
+
+		this.refMonth.setValue(mv);
+		this.refYear.setValue(yv);
 		
 		this.setState({ value: value });
-		this.valueRef.setValue(Util.date('M d, Y', value));
 	};
-	
-	switchMonth (dir: number): void {
+
+	onChangeMonth (v: any) {
 		const { value } = this.state;
-		
-		let m = Number(Util.date('n', value));
-		let y = Number(Util.date('Y', value));
-		
-		m += dir;
-		
-		if (m < 1) {
-			m = 12;
-			y--;
-		};
-		
-		if (m > 12) {
-			m = 1;
-			y++;
-		};
-		
-		this.setState({ value: Util.timestamp(y, m, 1) });
+		const yv = Number(Util.date('Y', value));
+
+		this.setState({ value: Util.timestamp(yv, v, 1) });
+	};
+
+	onChangeYear (e: any, v: any) {
+		const { value } = this.state;
+		const mv = Number(Util.date('n', value));
+
+		this.setState({ value: Util.timestamp(v, mv, 1) });
 	};
 	
 	set (d: number, m: number, y: number) {

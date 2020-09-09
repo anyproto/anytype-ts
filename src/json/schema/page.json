@@ -50,7 +50,7 @@
       "id": "lastModified",
       "name": "Last modified",
       "isHidden": false,
-      "isReadonly": true,
+      "isReadonly": false,
       "type": "https://anytype.io/schemas/types/date"
     },
     {
