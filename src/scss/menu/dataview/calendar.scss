@@ -13,14 +13,17 @@
 			.btn:last-child { margin: 0px; }
 		}
 
-		.day { display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; cursor: pointer; margin-right: 8px; }
+		.day { 
+			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; cursor: pointer; margin-right: 8px; 
+			border-radius: 2px;
+		}
 		.day:nth-child(7n + 7) { margin: 0px; }
 		.day:hover { background: rgba(172,169,150,0.15); }
 
 		.day.th { color: $colorDarkGrey; cursor: default; }
 		.day.th:hover { background: none; font-weight: 400; }
 		
-		.day.active { color: $colorRed; font-weight: 500; }
+		.day.active { color: #fff; background: $colorOrange; }
 		
 		.day.dis { color: $colorDarkGrey; }
 		
