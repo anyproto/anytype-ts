@@ -182,22 +182,7 @@ class Dispatcher {
 						break;
 					};
 
-<<<<<<< HEAD
-					if (block.isPagePage() || block.isPageProfile()) {
-						block.childrenIds.unshift(rootId + '-relation');
-						blocks.unshift(new M.Block({
-							id: rootId + '-relation',
-							type: I.BlockType.Relation,
-							childrenIds: [],
-							fields: {},
-							content: {},
-						}));
-					};
-
-					if (block.hasTitle()) {
-=======
 					if (block.canHaveTitle()) {
->>>>>>> 69c342f4409072fe991dd0b45961c46b59e6696d
 						block.childrenIds.unshift(rootId + '-title');
 						blocks.unshift(new M.Block({
 							id: rootId + '-title',
