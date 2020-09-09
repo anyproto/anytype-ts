@@ -12,7 +12,7 @@
 			.date { text-transform: uppercase; @include text-very-small; }
 		}
 
-		.item { padding: 5px 16px; cursor: pointer; transition: $transitionFast; position: relative; }
+		.item { padding: 5px 16px 5px 30px; cursor: pointer; transition: $transitionFast; position: relative; }
 		.item {
 			.name { @include text-small; color: #6c6a5f; }
 			.icon.arrow { 
@@ -28,7 +28,6 @@
 		.children {
 			.item { padding-left: 30px; }
 		}
-		.item.withChildren { padding-left: 30px; }
 
 		.item:hover, .item.active { background: #f3f2ec; }
 	}
