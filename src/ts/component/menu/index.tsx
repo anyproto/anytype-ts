@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, keyboard, Util } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -31,7 +32,7 @@ import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewTagList from './dataview/tag/list';
 import MenuDataviewTagEdit from './dataview/tag/edit';
 import MenuDataviewAccount from './dataview/account';
-import { commonStore } from '../../store';
+import MenuSearch from './search';
 
 interface Props extends I.Menu {
 	history: any;
@@ -64,6 +65,7 @@ class Menu extends React.Component<Props, {}> {
 			select:					 MenuSelect,
 			smile:					 MenuSmile,
 			smileSkin:				 MenuSmileSkin,
+			search:					 MenuSearch,
 			
 			blockContext:			 MenuBlockContext,
 			blockAction:			 MenuBlockAction,
@@ -236,7 +238,12 @@ class Menu extends React.Component<Props, {}> {
 			y = Math.max(BORDER, y);
 			y = Math.min(wh - height - BORDER, y);
 
-			node.css({ left: x, top: y });
+			let css: any = { left: x, top: y };
+			if (param.width) {
+				css.width = param.width;
+			};
+
+			node.css(css);
 			
 			if (isSub) {
 				const coords = keyboard.coords;
@@ -272,17 +279,13 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	setActiveItem (item?: any, scroll?: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(Util.toCamelCase('#menu-' + this.props.id));
 		node.find('.item.active').removeClass('active');
 		
 		if (!item) {
 			return;
 		};
-		
+
 		const el = node.find('#item-' + item.id).addClass('active');
 		
 		if (el.length && scroll) {

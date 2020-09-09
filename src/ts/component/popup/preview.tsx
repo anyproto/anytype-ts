@@ -37,11 +37,11 @@ class PopupPreview extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.props.position();
+		this.resize();
 	};
 	
 	componentDidUpdate () {
-		this.props.position();
+		this.resize();
 	};
 	
 	resize () {
@@ -54,7 +54,7 @@ class PopupPreview extends React.Component<Props, {}> {
 		const inner = node.find('#wrap');
 		const content = node.find('#content');
 		const loader = node.find('.loaderWrapper');
-		
+
 		switch (type) {
 			case I.FileType.Image:
 				content.unbind('load').on('load', () => {

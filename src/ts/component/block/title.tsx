@@ -5,10 +5,9 @@ import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 
-interface Props {
-	rootId: string;
-	block: I.Block;
+interface Props extends I.BlockComponent {
 	onPaste? (e: any): void;
+	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 };
 
 const $ = require('jquery');
@@ -31,6 +30,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onInput = this.onInput.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
@@ -42,11 +42,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 		const { id } = block;
 		
-		let { name } = details;
-		if (name == Constant.default.name) {
-			name = '';
-		};
-		
+		const name = this.checkName();
 		const cv = [ 'value', 'focusable', 'c' + id ];
 		
 		return (
@@ -63,6 +59,7 @@ class BlockTitle extends React.Component<Props, {}> {
 					onBlur={this.onBlur}
 					onPaste={this.onPaste}
 					onSelect={this.onSelect}
+					onInput={this.onInput}
 					onCompositionStart={this.onCompositionStart}
 					onCompositionUpdate={this.onCompositionUpdate}
 					onCompositionEnd={this.onCompositionEnd}
@@ -128,7 +125,7 @@ class BlockTitle extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId } = this.props;
+		const { rootId, onKeyDown } = this.props;
 		const platform = Util.getPlatform();
 		const k = e.key.toLowerCase();	
 
@@ -154,7 +151,22 @@ class BlockTitle extends React.Component<Props, {}> {
 				this.onArrow(Key.down);
 			});
 		};
-		
+
+		// Undo
+		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		});
+
+		// Redo
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		});
+
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		});
+
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
@@ -222,7 +234,7 @@ class BlockTitle extends React.Component<Props, {}> {
 		const l = next.getLength();
 
 		// Auto-open toggle blocks 
-		if (parent && parent.isToggle()) {
+		if (parent && parent.isTextToggle()) {
 			node.find('#block-' + parent.id).addClass('isToggled');
 		};
 
@@ -233,7 +245,6 @@ class BlockTitle extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.persist();
 		
-		//this.onChange(e);
 		this.placeHolderCheck();
 	};
 	
@@ -266,6 +277,10 @@ class BlockTitle extends React.Component<Props, {}> {
 	};
 	
 	onPaste (e: any) {
+	};
+
+	onInput (e: any) {
+		this.placeHolderCheck();
 	};
 	
 	getRange () {
@@ -305,10 +320,23 @@ class BlockTitle extends React.Component<Props, {}> {
 	save () {
 		const { rootId } = this.props;
 		const value = this.getValue();
+		const name = this.checkName();
 
-		DataUtil.pageSetName(rootId, value);
+		if (value != name) {
+			DataUtil.pageSetName(rootId, value);
+		};
 	};
-	
+
+	checkName () {
+		const { rootId } = this.props;
+		const details = blockStore.getDetails(rootId, rootId);
+		let { name } = details;
+		if (name == Constant.default.name) {
+			name = '';
+		};
+		return name;
+	};
+
 };
 
 export default BlockTitle;

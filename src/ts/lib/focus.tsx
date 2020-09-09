@@ -68,21 +68,27 @@ class Focus {
 		};
 	};
 	
-	scroll () {
-		if (!this.focused) {
+	scroll (id?: string) {
+		id = String(id || this.focused || '');
+		if (!id) {
 			return;
 		};
-		
-		const node = $('.focusable.c' + this.focused);
+
+		const node = $('.focusable.c' + id);
 		if (!node.length) {
 			return;
 		};
-		
+
 		const win = $(window);
 		const wh = win.height();
 		const y = node.offset().top;
 		const offset = Constant.size.lastBlock + Constant.size.header;
-		
+		const st = win.scrollTop();
+
+		if ((y >= st) && (y <= st + wh - offset)) {
+			return;
+		};
+
 		if (y >= wh - offset) {
 			win.scrollTop(y - wh + offset);
 		};

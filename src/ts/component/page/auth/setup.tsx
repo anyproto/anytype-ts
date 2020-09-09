@@ -4,6 +4,7 @@ import { Frame, Cover, Title, Error, Input, Button, Smile, HeaderAuth as Header,
 import { I, Storage, translate, keyboard, C, DataUtil } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { Util } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -12,6 +13,7 @@ interface State {
 	error: string;
 };
 
+const { ipcRenderer } = window.require('electron');
 const Errors = require('json/error.json');
 const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
@@ -103,12 +105,11 @@ class PageAuthSetup extends React.Component<Props, State> {
 		const { path } = authStore;
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
-		const pin = Storage.get('pin');
 
 		if (!phrase) {
 			return;
 		};
-		
+
 		C.WalletRecover(path, phrase, (message: any) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
@@ -118,6 +119,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				
 				C.AccountSelect(accountId, path, (message: any) => {
 					if (message.error.code) {
+						Util.checkError(message.error.code);
 						this.setError(message.error.description);
 					} else
 					if (message.account) {
@@ -138,7 +140,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 		C.AccountCreate(authStore.name, authStore.icon, authStore.code, (message: any) => {
 			if (message.error.code) {
 				const error = Errors.AccountCreate[message.error.code] || message.error.description;
-				
 				this.setError(error);
 			} else
 			if (message.account) {
@@ -162,6 +163,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		
 		C.AccountSelect(account.id, path, (message: any) => {
 			if (message.error.code) {
+				Util.checkError(message.error.code);
 				this.setError(message.error.description);
 			} else
 			if (message.account) {

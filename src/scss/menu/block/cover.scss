@@ -27,7 +27,7 @@
 	}
 }
 
-body.platformWindows {
+body.platformWindows, body.platformLinux {
 	.menus {
 		.menu.menuBlockCover { width: 425px; }
 	}

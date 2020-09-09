@@ -404,6 +404,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
+		if (force) {
+			this.preventClear(false);
+		};
 		$('.isSelected').removeClass('isSelected');
 	};
 	
@@ -435,10 +438,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const { focused } = focus;
-		
 		this.clear();
 		
 		if (!ids.length) {
@@ -465,28 +464,34 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	get (withChildren?: boolean): string[] {
-		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		
 		let ids = [] as string[];
-
-		node.find('.selectable.isSelected').each((i: number, item: any) => {
+		$('.selectable.isSelected').each((i: number, item: any) => {
 			let id = String($(item).data('id') || '');
 			if (!id) {
 				return;
 			};
 
 			ids.push(id);
-			
 			if (withChildren) {
-				$(`#block-children-${id} .selectable`).each((i: number, child: any) => {
-					ids.push(String($(child).data('id') || ''));
-				});
+				this.getChildrenIds(id, ids);
 			};
 		});
 
 		ids = ids.filter((it: string) => { return it; });
 		return [ ...new Set(ids) ];
+	};
+
+	getChildrenIds (id: string, ids: string[]) {
+		const { rootId } = this.props;
+		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		if (!childrenIds.length) {
+			return;
+		};
+
+		for (let childId of childrenIds) {
+			ids.push(childId);
+			this.getChildrenIds(childId, ids);
+		};
 	};
 	
 	injectProps (children: any) {

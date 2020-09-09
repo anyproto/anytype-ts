@@ -25,10 +25,10 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
 	block: I.Block;
-	onToggle?(e: any): void;
-	onFocus?(e: any): void;
-	onBlur?(e: any): void;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
+	onToggle? (e: any): void;
+	onFocus? (e: any): void;
+	onBlur? (e: any): void;
+	onKeyDown? (e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
@@ -42,12 +42,12 @@ class BlockText extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refLang: any = null;
-	timeoutKeyUp: number = 0;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
 	marks: I.Mark[] = [];
 	clicks: number = 0;
 	composition: boolean = false;
+	preventSaveOnBlur: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -63,6 +63,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onLang = this.onLang.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onInput = this.onInput.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
@@ -135,6 +136,7 @@ class BlockText extends React.Component<Props, {}> {
 				onPaste={this.onPaste}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
+				onInput={this.onInput}
 				onCompositionStart={this.onCompositionStart}
 				onCompositionUpdate={this.onCompositionUpdate}
 				onCompositionEnd={this.onCompositionEnd}
@@ -173,14 +175,15 @@ class BlockText extends React.Component<Props, {}> {
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 		
+		/*
 		if (focused == id) {
 			focus.apply();
 		};
+		*/
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeoutKeyUp);
 	};
 
 	onCompositionStart (e: any) {
@@ -201,7 +204,7 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		
-		let { style, color, bgColor, number } = content;
+		let { style } = content;
 		let text = String(v || '');
 		let html = text;
 		
@@ -222,7 +225,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 		
-		if (!block.isCode() && (html != text)) {
+		if (!block.isTextCode() && (html != text)) {
 			this.renderLinks();
 			this.renderMentions();
 			this.renderEmoji();
@@ -290,7 +293,6 @@ class BlockText extends React.Component<Props, {}> {
 				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
 				smile.after('<img src="./img/space.svg" class="space" />');
 				param.class += ' withImage';
-			} else {
 			};
 
 			item.addClass(param.class);
@@ -298,7 +300,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			DataUtil.pageOpen (e, $(this).data('param'));
+			DataUtil.pageOpen(e, $(this).data('param'));
 		});
 	};
 
@@ -373,6 +375,10 @@ class BlockText extends React.Component<Props, {}> {
 		
 		return Mark.fromHtml(value.html());
 	};
+
+	onInput (e: any) {
+		this.placeHolderCheck();
+	};
 	
 	onKeyDown (e: any) {
 		e.persist();
@@ -382,7 +388,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { onKeyDown, onMenuAdd, rootId, block } = this.props;
+		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
 		const { filter } = commonStore;
 		
@@ -397,29 +403,43 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		let value = this.getValue().replace(/\n$/, '');
-
-		const k = e.key.toLowerCase();	
-		const range = this.getRange();
-		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
-		
 		let ret = false;
 
+		const k = e.key.toLowerCase();	
+		const range = this.getRange() || { from: 0, to: 0 };
+		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
+		const symbolBefore = value[range.from - 1];
+		
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isCode()) {
+			if (block.isTextCode() || commonStore.menuIsOpen()) {
 				return;
 			};
 
-			this.setText(this.marks, true, (message: any) => {
-				onKeyDown(e, value, this.marks);
+			e.preventDefault();
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				onKeyDown(e, value, this.marks, range);
 			});
 
+			ret = true;
+		});
+
+		keyboard.shortcut('shift+enter', e, (pressed: string) => {
+			e.preventDefault();
+			
+			value = Util.stringInsert(value, '\r\n', range.from, range.from);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
+				focus.apply();
+
+				onKeyDown(e, value, this.marks, range);
+			});
 			ret = true;
 		});
 
 		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
 			
-			if (block.isCode()) {
+			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
@@ -427,7 +447,7 @@ class BlockText extends React.Component<Props, {}> {
 				});
 			} else {
 				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks);
+					onKeyDown(e, value, this.marks, range);
 				});
 			};
 
@@ -435,29 +455,28 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range && !range.from && !range.to) {
-				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks);
-				});
+			if (range.to && (range.from == range.to)) {
+				return;
+			};
 
+			if (!commonStore.menuIsOpen()) {
+				this.setText(this.marks, true, (message: any) => {
+					onKeyDown(e, value, this.marks, range);
+				});
 				ret = true;
 			};
-			
-			if (commonStore.menuIsOpen('blockAdd') && (range.from - 1 == filter.from)) {
+
+			if (commonStore.menuIsOpen('blockAdd') && (symbolBefore == '/')) {
 				commonStore.menuClose('blockAdd');
 			};
 
-			if (commonStore.menuIsOpen('blockMention') && (range.from - 1 == filter.from)) {
+			if (commonStore.menuIsOpen('blockMention') && (symbolBefore == '@')) {
 				commonStore.menuClose('blockMention');
 			};
 		});
 
-		keyboard.shortcut('/, shift+/', e, (pressed: string) => {
-			onMenuAdd(id, value, range);
-		});
-
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
-			if (commonStore.menuIsOpen('smile') || block.isCode()) {
+			if (commonStore.menuIsOpen('smile') || block.isTextCode()) {
 				return;
 			};
 
@@ -466,7 +485,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
-			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isCode()) {
+			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isTextCode()) {
 				return;
 			};
 			this.onMention();
@@ -481,24 +500,25 @@ class BlockText extends React.Component<Props, {}> {
 			this.placeHolderHide();
 		};
 		
-		onKeyDown(e, value, this.marks);
+		onKeyDown(e, value, this.marks, range);
 	};
 	
 	onKeyUp (e: any) {
 		e.persist();
 		
-		const { rootId, block } = this.props;
+		const { rootId, block, onMenuAdd } = this.props;
 		const { filter } = commonStore;
 		const { id } = block;
-		const value = this.getValue();
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
 		
+		let value = this.getValue();
 		let cmdParsed = false;
 		let cb = (message: any) => {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		};
+		let symbolBefore = value[range.from - 1];
 		
 		if (commonStore.menuIsOpen('blockAdd')) {
 			if (k == Key.space) {
@@ -511,6 +531,7 @@ class BlockText extends React.Component<Props, {}> {
 					commonStore.filterSetText(part);
 				};
 			};
+			return;
 		};
 
 		if (commonStore.menuIsOpen('blockMention')) {
@@ -524,6 +545,13 @@ class BlockText extends React.Component<Props, {}> {
 					commonStore.filterSetText(part);
 				};
 			};
+			return;
+		};
+
+		// Open add menu
+		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !commonStore.menuIsOpen('blockAdd')) {
+			value = Util.stringCut(value, range.from - 1, range.from);
+			onMenuAdd(id, value, range);
 		};
 		
 		// Make div
@@ -550,107 +578,72 @@ class BlockText extends React.Component<Props, {}> {
 			cmdParsed = true;
 		};
 		
-		// Make video
-		if (value == '/video') {
-			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
 		// Make list
-		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && !block.isBulleted()) {
+		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && !block.isTextBulleted()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Bulleted } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make checkbox
-		if ((value == '[]') && !block.isCheckbox()) {
+		if ((value == '[]') && !block.isTextCheckbox()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Checkbox } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make numbered
-		if ((value == '1. ') && !block.isNumbered()) {
+		if ((value == '1. ') && !block.isTextNumbered()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Numbered } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h1
-		if ((value == '# ') && !block.isHeader1()) {
+		if ((value == '# ') && !block.isTextHeader1()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header1 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h2
-		if ((value == '## ') && !block.isHeader2()) {
+		if ((value == '## ') && !block.isTextHeader2()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header2 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make h3
-		if ((value == '### ') && !block.isHeader3()) {
+		if ((value == '### ') && !block.isTextHeader3()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header3 } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make toggle
-		if ((value == '> ') && !block.isToggle()) {
+		if ((value == '> ') && !block.isTextToggle()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Toggle } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make quote
-		if ((value == '" ') && !block.isQuote()) {
+		if ((value == '" ') && !block.isTextQuote()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Quote } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 		
 		// Make code
-		if ((value == '/code') && !block.isCode()) {
+		if ((value == '/code' || value == '```') && !block.isTextCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Move to
-		if (value == '/move') {
-			commonStore.popupOpen('navigation', { 
-				preventResize: true,
-				data: { 
-					type: I.NavigationType.Move, 
-					rootId: rootId,
-					expanded: true,
-				}, 
-			});
-			cmdParsed = true;
-		};
-		
-		// Delete
-		if (value == '/delete') {
-			const next = blockStore.getNextBlock(rootId, id, -1);
-			if (next) {
-				const length = String(next.content.text || '').length;
-				focus.set(next.id, { from: length, to: length });
-				focus.apply();
-			};
-			
-			C.BlockUnlink(rootId, [ id ]);
 			cmdParsed = true;
 		};
 
 		if (cmdParsed) {
 			commonStore.menuClose('blockAdd');
-			window.clearTimeout(this.timeoutKeyUp);
 			return;
 		};
-		
-		if (k == Key.backspace) {
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
 			commonStore.menuClose('blockContext');
-		};
+		});
 		
 		this.marks = this.getMarksFromHtml();
 		this.placeHolderCheck();
-		
-		window.clearTimeout(this.timeoutKeyUp);
-		this.timeoutKeyUp = window.setTimeout(() => { this.setText(this.marks, false); }, 500);
+		this.setText(this.marks, false);
 	};
 
 	onMention () {
@@ -669,6 +662,8 @@ class BlockText extends React.Component<Props, {}> {
 			y = 4;
 		};
 
+		this.preventSaveOnBlur = true;
+
 		commonStore.filterSet(range.from, '');
 		commonStore.menuOpen('blockMention', {
 			element: el,
@@ -677,6 +672,9 @@ class BlockText extends React.Component<Props, {}> {
 			offsetY: y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
+			onClose: () => {
+				this.preventSaveOnBlur = false;
+			},
 			data: {
 				rootId: rootId,
 				blockId: block.id,
@@ -743,7 +741,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { content } = block;
 		const value = this.getValue();
 		const text = String(content.text || '');
-		
+
 		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
 			if (callBack) {
 				callBack(null);
@@ -762,7 +760,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const value = this.getValue();
 		
-		if (block.isCode()) {
+		if (block.isTextCode()) {
 			marks = [];
 		};
 		
@@ -786,7 +784,10 @@ class BlockText extends React.Component<Props, {}> {
 		this.placeHolderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
-		this.setText(this.marks, true);
+
+		if (!this.preventSaveOnBlur) {
+			this.setText(this.marks, true);
+		};
 
 		onBlur(e);
 	};
@@ -947,7 +948,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('.value').get(0) as Element);
-		
 		return range ? { from: range.start, to: range.end } : null;
 	};
 	

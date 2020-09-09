@@ -56,12 +56,11 @@
 		"cover": 1920,
 
 		"dataview": {
-			"view": {
-				"grid": 1088
-			},
 			"cell": {
 				"default": 192,
-				"title": 288
+				"title": 288,
+				"min": 48,
+				"max": 500
 			}
 		},
 

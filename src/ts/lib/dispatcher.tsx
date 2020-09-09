@@ -57,11 +57,14 @@ class Dispatcher {
 		});
 
 		this.stream.on('status', (status: any) => {
-			console.log('[Stream] status', status);
+			if (status.code) {
+				console.error('[Stream] Restarting', status);
+				this.listenEvents();
+			};
 		});
 
 		this.stream.on('end', (end: any) => {
-			console.error('[Stream] end.. restarting', end);
+			console.error('[Stream] end, restarting', end);
 			this.listenEvents();
 		});
 	};
@@ -95,9 +98,10 @@ class Dispatcher {
 	};
 
 	event (event: any, skipDebug?: boolean) {
+		const { config } = commonStore;
 		const rootId = event.getContextid();
 		const messages = event.getMessagesList() || [];
-		const debug = (Storage.get('debug') || {}).mw && !skipDebug;
+		const debug = config.debugMW && !skipDebug;
 
 		if (debug) {
 			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event.toObject(), null, 3));
@@ -178,6 +182,7 @@ class Dispatcher {
 						break;
 					};
 
+<<<<<<< HEAD
 					if (block.isPagePage() || block.isPageProfile()) {
 						block.childrenIds.unshift(rootId + '-relation');
 						blocks.unshift(new M.Block({
@@ -190,6 +195,9 @@ class Dispatcher {
 					};
 
 					if (block.hasTitle()) {
+=======
+					if (block.canHaveTitle()) {
+>>>>>>> 69c342f4409072fe991dd0b45961c46b59e6696d
 						block.childrenIds.unshift(rootId + '-title');
 						blocks.unshift(new M.Block({
 							id: rootId + '-title',
@@ -229,7 +237,7 @@ class Dispatcher {
 
 					childrenIds = data.getChildrenidsList() || [];
 
-					if (block.hasTitle() && (childrenIds.indexOf(rootId + '-title') < 0)) {
+					if (block.canHaveTitle() && (childrenIds.indexOf(rootId + '-title') < 0)) {
 						childrenIds.unshift(rootId + '-title');
 					};
 
@@ -250,7 +258,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getFields()) {
+					if (data.hasFields()) {
 						block.fields = Decode.decodeStruct(data.getFields());
 					};
 
@@ -264,7 +272,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getFields()) {
+					if (data.hasFields()) {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
@@ -278,23 +286,23 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getText()) {
+					if (data.hasText()) {
 						block.content.text = data.getText().getValue();
 					};
 
-					if (undefined !== data.getMarks()) {
+					if (data.hasMarks()) {
 						block.content.marks = (data.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark);
 					};
 
-					if (undefined !== data.getStyle()) {
+					if (data.hasStyle()) {
 						block.content.style = data.getStyle().getValue();
 					};
 
-					if (undefined !== data.getChecked()) {
+					if (data.hasChecked()) {
 						block.content.checked = data.getChecked().getValue();
 					};
 
-					if (undefined !== data.getColor()) {
+					if (data.hasColor()) {
 						block.content.color = data.getColor().getValue();
 					};
 
@@ -308,7 +316,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getStyle()) {
+					if (data.hasStyle()) {
 						block.content.style = data.getStyle().getValue();
 					};
 
@@ -322,27 +330,27 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getName()) {
+					if (data.hasName()) {
 						block.content.name = data.getName().getValue();
 					};
 
-					if (undefined !== data.getHash()) {
+					if (data.hasHash()) {
 						block.content.hash = data.getHash().getValue();
 					};
 
-					if (undefined !== data.getMime()) {
+					if (data.hasMime()) {
 						block.content.mime = data.getMime().getValue();
 					};
 
-					if (undefined !== data.getSize()) {
+					if (data.hasSize()) {
 						block.content.size = data.getSize().getValue();
 					};
 
-					if (undefined !== data.getType()) {
+					if (data.hasType()) {
 						block.content.type = data.getType().getValue();
 					};
 
-					if (undefined !== data.getState()) {
+					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
 					};
 
@@ -356,27 +364,27 @@ class Dispatcher {
 						break;
 					};
 
-					if (undefined !== data.getUrl()) {
+					if (data.hasUrl()) {
 						block.content.url = data.getUrl().getValue();
 					};
 
-					if (undefined !== data.getTitle()) {
+					if (data.hasTitle()) {
 						block.content.title = data.getTitle().getValue();
 					};
 
-					if (undefined !== data.getDescription()) {
+					if (data.hasDescription()) {
 						block.content.description = data.getDescription().getValue();
 					};
 
-					if (undefined !== data.getImagehash()) {
+					if (data.hasImagehash()) {
 						block.content.imageHash = data.getImagehash().getValue();
 					};
 
-					if (undefined !== data.getFaviconhash()) {
+					if (data.hasFaviconhash()) {
 						block.content.faviconHash = data.getFaviconhash().getValue();
 					};
 
-					if (undefined !== data.getType()) {
+					if (data.hasType()) {
 						block.content.type = data.getType().getValue();
 					};
 					break;
@@ -463,18 +471,24 @@ class Dispatcher {
 				case 'processUpdate':
 				case 'processDone':
 					const process = data.getProcess();
-					const state = process.getState();
 					const progress = process.getProgress();
+					const state = process.getState();
+					const type = process.getType();
+
+					let isUnlocked = true;
+					if (type == I.ProgressType.Import) {
+						isUnlocked = false;
+					};
 
 					switch (state) {
 						case I.ProgressState.Running:
 						case I.ProgressState.Done:
 							commonStore.progressSet({
 								id: process.getId(),
-								status: translate('progress' + process.getType()),
+								status: translate('progress' + type),
 								current: progress.getDone(),
 								total: progress.getTotal(),
-								isUnlocked: true,
+								isUnlocked: isUnlocked,
 								canCancel: true,
 							});
 							break;
@@ -519,30 +533,30 @@ class Dispatcher {
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
+		const { config } = commonStore;
 		const upper = Util.toUpperCamelCase(type);
-		const debug = (Storage.get('debug') || {}).mw;
+		const debug = config.debugMW;
 
 		if (!this.service[type]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
 
-		let t0 = 0;
+		let t0 = performance.now();
 		let t1 = 0;
 		let t2 = 0;
 
 		if (debug) {
-			t0 = performance.now();
 			console.log('[Dispatcher.request]', type, JSON.stringify(data.toObject(), null, 3));
 		};
 
-		analytics.event(upper, data);
-
 		try {
 			this.service[type](data, null, (error: any, response: any) => {
-				if (debug) {
-					t1 = performance.now();
+				if (!response) {
+					return;
 				};
+
+				t1 = performance.now();
 
 				if (error) {
 					console.error('[Dispatcher.error]', error.code, error.description);
@@ -581,22 +595,26 @@ class Dispatcher {
 					callBack(message);
 				};
 
-				if (debug) {
-					t2 = performance.now();
-					const mt = Math.ceil(t1 - t0);
-					const rt = Math.ceil(t2 - t1);
-					const tt = Math.ceil(t2 - t0);
+				t2 = performance.now();
+				const middleTime = Math.ceil(t1 - t0);
+				const renderTime = Math.ceil(t2 - t1);
+				const totalTime = middleTime + renderTime;
 
+				data.middleTime = middleTime;
+				data.renderTime = renderTime;
+				analytics.event(upper, data);
+
+				if (debug) {
 					console.log(
-						'Middle time:', mt + 'ms',
-						'Render time:', rt + 'ms',
-						'Total time:', tt + 'ms'
+						'Middle time:', middleTime + 'ms',
+						'Render time:', renderTime + 'ms',
+						'Total time:', totalTime + 'ms'
 					);
 
-					if (mt > 3000) {
+					if (middleTime > 3000) {
 						Sentry.captureMessage(`${type}: middleware time too long`);
 					};
-					if (rt > 1000) {
+					if (renderTime > 1000) {
 						Sentry.captureMessage(`${type}: render time too long`);
 					};
 				};

@@ -1,32 +1,49 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Storage, Mapper } from 'ts/lib';
+import { I, M, Storage, Mapper, Util } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('electron').remote;
 const isProduction = app.isPackaged;
+const version = app.getVersion();
+const os = window.require('os');
 
 class Analytics {
 	
 	isInit: boolean =  false;
 	instance: any = null;
+
+	debug() {
+		const { config } = commonStore;
+		return config.debugAN;
+	};
 	
 	init () {
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
+		if (!isProduction && !this.debug()) {
 			return;
 		};
-		if (debug) {
-			console.log('[Analytics.init]', Constant.amplitude);	
-		};
-		
+
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
 			batchEvents: true,
 			saveEvents: true,
 			includeUtm: true,
 			includeReferrer: true,
+			platform: Util.getPlatform(),
 		});
+
+		this.instance.setVersionName(version);
+		this.instance.setGlobalUserProperties({ 
+			deviceType: 'Desktop', 
+			platform: Util.getPlatform(),
+			osVersion: os.release(),
+		});
+
 		this.isInit = true;
+
+		if (this.debug()) {
+			console.log('[Analytics.init]', this.instance);
+		};
 	};
 	
 	profile (profile: any) {
@@ -34,47 +51,13 @@ class Analytics {
 			return;
 		};
 
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
+		if (!isProduction && !this.debug()) {
 			return;
 		};
-		if (debug) {
+		if (this.debug()) {
 			console.log('[Analytics.profile]', profile.id);
 		};
-		
 		this.instance.setUserId(profile.id);
-	};
-	
-	setUserProperties (obj: any) {
-		if (!this.instance) {
-			return;
-		};
-
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
-			return;
-		};
-		if (debug) {
-			console.log('[Analytics.setUserProperties]', obj);
-		};
-		
-		this.instance.setUserProperties(obj);
-	};
-	
-	setVersionName (name: string) {
-		if (!this.instance) {
-			return;
-		};
-
-		const debug = (Storage.get('debug') || {}).an;
-		if (!isProduction && !debug) {
-			return;
-		};
-		if (debug) {
-			console.log('[Analytics.setVersionName]', name);
-		};
-		
-		this.instance.setVersionName(name);
 	};
 	
 	event (code: string, data?: any) {
@@ -82,12 +65,17 @@ class Analytics {
 			return;
 		};
 
-		const debug = (Storage.get('debug') || {}).an;
-		if ((!isProduction && !debug) || !code) {
+		if ((!isProduction && !this.debug()) || !code) {
 			return;
 		};
 		
-		let param: any = {};
+		data = data || {};
+
+		let param: any = { 
+			middleTime: Number(data.middleTime) || 0, 
+			renderTime: Number(data.renderTime) || 0,
+		};
+
 		switch (code) {
 			case 'Error':
 				param = data;
@@ -110,8 +98,8 @@ class Analytics {
 				param.style = this.getDictionary(I.BlockType.Text, data.style);
 				break;
 		};
-		
-		if (debug) {
+
+		if (this.debug()) {
 			console.log('[Analytics.event]', code, param);
 		};
 		

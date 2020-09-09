@@ -2,6 +2,7 @@ import { I, M, Decode, Util, Encode, DataUtil } from 'ts/lib';
 import { decorate, observable } from 'mobx';
 
 const Commands = require('lib/pb/protos/commands_pb');
+const Constant = require('json/constant.json');
 const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
@@ -25,9 +26,13 @@ const Mapper = {
                 id: obj.getId(),
                 details: Decode.decodeStruct(obj.getDetails()),
                 snippet: obj.getSnippet(),
-                state: obj.getState(),
                 hasInboundLinks: obj.getHasinboundlinks(),
+				pageType: obj.getPagetype(),
             };
+        },
+
+        Record: (obj: any) => {
+            return Decode.decodeStruct(obj);
         },
 
         Range: (obj: any) => {
@@ -164,6 +169,7 @@ const Mapper = {
             return {
                 id: obj.getId(),
                 isVisible: obj.getIsvisible(),
+                width: obj.getWidth(),
             };
         },
 
@@ -217,11 +223,12 @@ const Mapper = {
     
             view.relations = relations.map((relation: I.Relation) => {
                 let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
-                return {
+                return observable({
                     ...relation,
                     isVisible: Boolean(rel.isVisible),
                     order: order[relation.id],
-                };
+                    width: Number(rel.width || Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0,
+                });
             });
 
             view.relations.sort((c1: any, c2: any) => {
@@ -240,7 +247,10 @@ const Mapper = {
     To: {
 
         Range: (obj: any) => {
-            return new Model.Range().setFrom(obj.from).setTo(obj.to);
+            let ret = new Model.Range();
+            ret.setFrom(obj.from);
+            ret.setTo(obj.to);
+            return ret;
         },
 
         Mark: (obj: any) => {
@@ -335,7 +345,7 @@ const Mapper = {
 
             if (obj.type == I.BlockType.Div) {
                 content = new Model.Block.Content.Div();
-    
+
                 content.setStyle(obj.content.style);
     
                 block.setDiv(content);
@@ -349,6 +359,7 @@ const Mapper = {
             
             item.setId(obj.id);
             item.setIsvisible(obj.isVisible);
+            item.setWidth(obj.width);
 
             return item;
         },
@@ -384,6 +395,15 @@ const Mapper = {
             item.setRelationsList(view.relations.map(Mapper.To.ViewRelation));
             item.setFiltersList(view.filters.map(Mapper.To.Filter));
             item.setSortsList(view.sorts.map(Mapper.To.Sort));
+
+            return item;
+        },
+
+        PasteFile: (file: any) => {
+            const item = new Rpc.Block.Paste.Request.File();
+
+            item.setName(file.name);
+            item.setLocalpath(file.path);
 
             return item;
         },

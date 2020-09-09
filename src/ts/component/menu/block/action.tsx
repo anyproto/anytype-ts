@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus } from 'ts/lib';
+import { Input, MenuItemVertical } from 'ts/component';
+import { I, C, keyboard, Key, Util, DataUtil, focus, Action } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -39,10 +39,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId } = data;
+		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -50,7 +49,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		const { content, bgColor } = block;
-		const { style, color } = content;
+		const { color } = content;
 		const sections = this.getSections();
 		
 		const Section = (item: any) => (
@@ -120,6 +119,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const items = this.getItems();
+
+		this.rebind();
+		this.props.setActiveItem(items[this.n]);
 		this.props.position();
 	};
 	
@@ -145,6 +148,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	onFilterChange (e: any, v: string) {
+		this.n = 0;
 		this.setState({ filter: String(v || '').replace(/[\/\\\*]/g, '') });
 	};
 	
@@ -174,8 +178,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return [];
 		};
 		
-		const { type, align, content } = block;
-		const { style } = content;
+		const { align } = block;
 
 		let sections: any[] = [
 			{ 
@@ -203,14 +206,24 @@ class MenuBlockAction extends React.Component<Props, State> {
 			//sections[0].children.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
 			//sections[0].children.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
 		};
+
+		if (!block.canHaveAlign()) {
+			sections[1].children = sections[1].children.filter((it: any) => { return [ 'align' ].indexOf(it.id) < 0; });
+		};
+
+		if (!block.canHaveColor()) {
+			sections[1].children = sections[1].children.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
+		};
+
+		if (!block.canHaveBackground()) {
+			sections[1].children = sections[1].children.filter((it: any) => { return [ 'background' ].indexOf(it.id) < 0; });
+		};
 		
-		if (!block.isText() && !block.isDiv()) {
+		if (!block.canTurn()) {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
 		};
-		
-		if (block.isIcon()) {
-			sections = sections.filter((it: any, i: number) => { return i > 0; });
-		};
+
+		sections = sections.filter((it: any) => { return it.children.length > 0; });
 		
 		if (filter) {
 			sections = [];
@@ -230,13 +243,22 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			sections = sections.concat([
-				{ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetTurnPage() },
 				{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
-				{ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() },
-				{ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() },
 			]);
+
+			if (block.canTurn()) {
+				sections.push({ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetTurnPage() });
+			};
+
+			if (block.canHaveAlign()) {
+				sections.push({ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() });
+			};
+	
+			if (block.canHaveBackground()) {
+				sections.push({ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() });
+			};
 			
-			if (!block.isCode()) {
+			if (block.isText() && !block.isTextCode()) {
 				sections.push({ id: 'color', icon: 'color', name: 'Color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
 			};
 			
@@ -272,13 +294,17 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		const k = e.key.toLowerCase();
-		
+
 		if (this.focus) {
-			if (k != Key.down) {
+			if (k == Key.down) {
+				this.ref.blur();
+				this.n = -1;
+			} else 
+			if ([ Key.enter, Key.space, Key.tab ].indexOf(k) >= 0) {
+				this.ref.blur();
+			} else {
 				return;
 			};
-			this.ref.blur();
-			this.n = -1;
 		};
 		
 		e.preventDefault();
@@ -286,8 +312,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		keyboard.disableMouse(true);
 		
-		const { param } = this.props;
-		const { data } = param;
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
@@ -314,7 +338,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					this.onOver(e, item);
 				};
 				break;
-				
+			
+			case Key.tab:
 			case Key.enter:
 			case Key.space:
 				if (item) {
@@ -478,63 +503,32 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const { selection } = dataset || {};
-		
+	
 		let block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
-		
-		const { content } = block;
 
+		let ids = selection.get();
+		if (!ids.length) {
+			ids = [ blockId ];
+		};
+		
 		switch (item.id) {
 			case 'download':
-				if (!content.hash) {
-					break;
-				};
-				
-				if (block.isImage()) {
-					ipcRenderer.send('download', commonStore.imageUrl(content.hash, Constant.size.image));
-				} else {
-					ipcRenderer.send('download', commonStore.fileUrl(content.hash));
-				};
+				Action.download(block);
 				break;
 					
 			case 'move':
-				commonStore.popupOpen('navigation', { 
-					preventResize: true,
-					data: { 
-						type: I.NavigationType.Move, 
-						rootId: rootId,
-						expanded: true,
-						blockId: blockId,
-						blockIds: blockIds,
-					}, 
-				});
+				Action.move(rootId, blockId, blockIds);
 				break;
 				
 			case 'copy':
-				let ids = selection.get();
-				if (!ids.length) {
-					ids = [ blockId ];
-				};
-
-				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {
-					if (message.blockIds && message.blockIds.length) {
-						this.setFocus(message.blockIds[message.blockIds.length - 1]);
-					};
-				});
+				Action.duplicate(rootId, ids[ids.length - 1], ids);
 				break;
 				
 			case 'remove':
-				let next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
-					return it.type == I.BlockType.Text;
-				});
-				
-				C.BlockUnlink(rootId, blockIds, (message: any) => {
-					if (next) {
-						this.setFocus(next.id);
-					};
-				});
+				Action.remove(rootId, blockId, ids);
 				break;
 				
 			default:

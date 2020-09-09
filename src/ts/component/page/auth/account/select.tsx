@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { Frame, Icon, Cover, Error, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { Storage, I, C } from 'ts/lib';
+import { Storage, I, C, Util } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -70,6 +70,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		C.WalletRecover(path, phrase, (message: any) => {
 			C.AccountRecover((message: any) => {
 				if (message.error.code) {
+					Util.checkError(message.error.code);
 					this.setState({ error: message.error.description });
 				};
 			});
@@ -86,15 +87,9 @@ class PageAccountSelect extends React.Component<Props, State> {
 
 	onSelect (account: I.Account) {
 		const { history } = this.props;
-		const pin = Storage.get('pin');
 		
 		authStore.accountSet(account);
-		
-		if (pin) {
-			history.push('/auth/pin-check/select');
-		} else {
-			history.push('/auth/setup/select');
-		};
+		history.push('/auth/setup/select');
 	};
 	
 	onAdd (e: any) {

@@ -6,8 +6,8 @@
 	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
-		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 14px; background: url('~img/logo.svg') no-repeat;
-		background-position: center center;
+		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
+		background-position: center center; cursor: default;
 	}
 
 	.path { white-space: nowrap; }
@@ -35,48 +35,46 @@
 		.icon:last-child { margin: 0px; }
 	}
 	
-	.icon.home { background-image: url('~img/icon/header/home0.svg'); }
-	.icon.home:hover { background-image: url('~img/icon/header/home1.svg'); }
+	.icon.home { background-image: url('~img/icon/header/home.svg'); }
+	.icon.back { background-image: url('~img/icon/header/back.svg'); }
+	.icon.forward { background-image: url('~img/icon/header/back.svg'); }
+	.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
+	.icon.plus { background-image: url('~img/icon/header/plus.svg'); }
+	.icon.more { background-image: url('~img/icon/header/more.svg'); }
+	.icon.search { background-image: url('~img/icon/header/search.svg'); }
+	.icon.add { background-image: url('~img/icon/header/add.svg'); }
+	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 
-	.icon.back { background-image: url('~img/icon/header/back0.svg'); }
-	.icon.back:hover { background-image: url('~img/icon/header/back1.svg'); }
-
-	.icon.forward { background-image: url('~img/icon/header/back0.svg'); }
-	.icon.forward:hover { background-image: url('~img/icon/header/back1.svg'); }
-
-	.icon.nav { background-image: url('~img/icon/header/nav0.svg'); }
-	.icon.nav:hover { background-image: url('~img/icon/header/nav1.svg'); }
-
-	.icon.plus { background-size: 16px 16px !important; background-image: url('~img/icon/header/plus0.svg'); }
-	.icon.plus:hover { background-image: url('~img/icon/header/plus1.svg'); }
-	.icon.plus.dis:hover { background-image: url('~img/icon/header/plus0.svg'); }
-
-	.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-	.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+	.side.right { position: absolute; top: 5px; right: 6px; }
+	.side.right {
+		.icon { margin: 0px; }
+	}
 }
 
-.headerMainEdit { background: #fff; padding: 9px 10px 9px 82px; line-height: 20px; }
+.headerMainIndex { height: 38px; background: rgba(44,43,39,0.1); }
+.headerMainIndex {
+	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon:hover { background-color: rgba(0,0,0,0.15); }
+}
 
-.headerMainEditSearch { background: #fff; padding: 5px 10px; height: 38px; }
+.headerMainEditSearch { background: #fff; padding: 5px 6px; height: 38px; }
 .headerMainEditSearch {
-	.mid { width: 472px; height: 28px; position: absolute; left: 50%; margin-left: -236px; top: 5px; white-space: nowrap; }
+	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon:hover { background-color: #f3f2ec; }
+
+	.mid { width: 492px; height: 28px; position: absolute; left: 50%; margin-left: -246px; top: 5px; white-space: nowrap; }
 	.mid {
-		.icon { margin: 4px 0px 0px 0px; opacity: 0; }
-		.icon.nav { margin-right: 16px; }
-		.icon.plus { margin-left: 16px; }
+		.icon { margin: 0px; opacity: 0; }
 		.icon.plus {
 			.arrow { 
-				width: 8px; height: 8px; background-image: url('~img/icon/header/arrow0.svg'); position: absolute; right: -12px;
-				top: 6px; margin: 0px;
+				width: 8px; height: 8px; background-image: url('~img/icon/header/arrow.svg'); position: absolute; right: -12px;
+				top: 10px; margin: 0px; background-color: none !important; background-size: 100% 100%;
 			}
-		}
-		.icon.plus:hover {
-			.arrow { background-image: url('~img/icon/header/arrow1.svg'); }
 		}
 	}
 
 	.path { 
-		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
+		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; margin: 0px 6px;
 		line-height: 24px; width: 400px; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
@@ -84,19 +82,11 @@
 	}
 	.path * { pointer-events: all; }
 
-	.side { position: absolute; top: 9px; }
-	.side.left { left: 9px; opacity: 0; transition: $transitionFast; }
+	.side { position: absolute; top: 5px; }
+	.side.left { left: 6px; opacity: 0; transition: $transitionFast; }
 	.side.left {
-		.icon.home { margin-right: 16px; }
-		.icon.back { margin-right: 12px; }
-	}
-
-	.side.right { position: absolute; top: 9px; right: 9px; }
-	.side.right {
-		.icon.more { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer; }
-		.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
-
-		.icon:last-child { margin: 0px; }
+		.icon { margin: 0px; }
+		.icon.back, .icon.forward { width: 32px; }
 	}
 }
 

@@ -2,7 +2,6 @@ import { I, Util, DataUtil, SmileUtil, Storage, focus } from 'ts/lib';
 import { commonStore, authStore, blockStore } from 'ts/store';
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const KeyCode = require('json/key.json');
 
 class Keyboard {
@@ -19,6 +18,7 @@ class Keyboard {
 	isPreviewDisabled: boolean = false;
 	isMouseDisabled: boolean = false;
 	isBackDisabled: boolean = false;
+	isPinChecked: boolean = false;
 	
 	init (history: any) {
 		this.history = history;
@@ -26,7 +26,6 @@ class Keyboard {
 		
 		let win = $(window); 
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); })
-		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 	};
 	
 	unbind () {
@@ -46,6 +45,14 @@ class Keyboard {
 			};
 			this.history.goBack();
 		});
+
+		if (platform == I.Platform.Mac) {
+			this.shortcut('cmd+[', e, (pressed: string) => { this.history.goBack(); });
+			this.shortcut('cmd+]', e, (pressed: string) => { this.history.goForward(); });
+		} else {
+			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.history.goBack(); });
+			this.shortcut('alt+arrowright', e, (pressed: string) => { this.history.goForward(); });
+		};
 
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
@@ -79,6 +86,16 @@ class Keyboard {
 			});
 		});
 
+		// Go to dashboard
+		this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
+			let check = platform == I.Platform.Mac ? pressed == 'cmd+enter' : true;
+			if (!check || !authStore.account) {
+				return;
+			};
+
+			this.history.push('/main/index');
+		});
+
 		// Create new page
 		this.shortcut('ctrl+n, cmd+n', e, (pressed: string) => {
 			let check = platform == I.Platform.Mac ? pressed == 'cmd+n' : true;
@@ -110,7 +127,7 @@ class Keyboard {
 			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
 		});
 		
-		this.setPinCheck();
+		this.initPinCheck();
 	};
 
 	ctrlByPlatform (e: any) {
@@ -126,10 +143,6 @@ class Keyboard {
 		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
 	};
 	
-	onKeyUp (e: any) {
-		const k = e.key.toLowerCase();
-	};
-	
 	setFocus (v: boolean) {
 		this.isFocused = v;
 	};
@@ -141,8 +154,12 @@ class Keyboard {
 	setDrag (v: boolean) {
 		this.isDragging = v;
 	};
+
+	setPinChecked (v: boolean) {
+		this.isPinChecked = v;
+	};
 	
-	setPinCheck () {
+	initPinCheck () {
 		const { account } = authStore;
 		const pin = Storage.get('pin');
 		
@@ -154,11 +171,12 @@ class Keyboard {
 		this.timeoutPin = window.setTimeout(() => {
 			const pin = Storage.get('pin');
 			if (pin) {
+				this.setPinChecked(false);
 				this.history.push('/auth/pin-check');				
 			};
 		}, 5 * 60 * 1000);
 	};
-	
+
 	setMatch (match: any) {
 		this.match = match;
 	};

@@ -74,7 +74,7 @@
 .editorWrapper.isProfile.withIcon { padding-top: 56px; }
 .editorWrapper.isProfile.withIconAndCover { padding-top: 190px; }
 
-.editorWrapper.isDataview { width: 1088px; }
+.editorWrapper.isDataview { width: calc(100% - 192px); }
 .editorWrapper.isDataview {
 	.blocks { margin-left: 0px; }
 	.blocks {
@@ -97,7 +97,7 @@
 				.icon.help { background-image: url('~img/icon/help/dark0.svg'); }
 				.icon.help:hover { background-image: url('~img/icon/help/dark0.svg'); }
 
-				.icon.nav { background-image: url('~img/icon/header/nav1.svg'); }
+				.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
 		
 				img.full { width: 100%; }
 				img.mention { margin-left: -18px; }

@@ -111,7 +111,9 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 				{ children: DataUtil.menuGetTurnDiv() },
 			];
 		} else {
-			sections = [];
+			sections = [
+				{ children: DataUtil.menuGetTurnPage() }
+			];
 		};
 		
 		sections = sections.map((s: any, i: number) => {
@@ -165,6 +167,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 				this.setActive(null, item);
 				break;
 				
+			case Key.tab:
 			case Key.enter:
 			case Key.space:
 				if (item) {

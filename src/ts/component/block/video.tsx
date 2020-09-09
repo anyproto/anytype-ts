@@ -5,13 +5,7 @@ import { I, C, DataUtil, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props {
-	dataset?: any;
-	rootId: string;
-	block: I.Block;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
-};
+interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -34,8 +28,6 @@ class BlockVideo extends React.Component<Props, {}> {
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onResizeInit = this.onResizeInit.bind(this);
-		this.onMenuDown = this.onMenuDown.bind(this);
-		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onPlay = this.onPlay.bind(this);
 	};
 
@@ -73,7 +65,6 @@ class BlockVideo extends React.Component<Props, {}> {
 						<video className="media" controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
 						<Icon className="play" onClick={this.onPlay} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
-						<Icon id={'block-video-menu-' + id} className="dots dn" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 					</div>
 				);
 				break;
@@ -143,11 +134,11 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', []);
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', []);
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {
@@ -193,6 +184,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrap = node.find('.wrap');
 		
@@ -204,6 +196,7 @@ class BlockVideo extends React.Component<Props, {}> {
 		const h = this.getHeight(w);
 		
 		wrap.css({ width: (w * 100) + '%', height: h });
+		win.trigger('resize.editor');
 	};
 	
 	onResizeStart (e: any, checkMax: boolean) {
@@ -283,40 +276,6 @@ class BlockVideo extends React.Component<Props, {}> {
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },
 		]);
-	};
-	
-	onMenuDown (e: any) {
-		const { dataset, rootId, block } = this.props;
-		const { id } = block;
-		const { selection } = dataset || {};
-		
-		if (selection) {
-			selection.preventClear(true);
-		};
-	};
-	
-	onMenuClick (e: any) {
-		const { dataset, rootId, block } = this.props;
-		const { id } = block;
-		const { selection } = dataset || {};
-		
-		commonStore.menuOpen('blockAction', { 
-			element: '#block-video-menu-' + id,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				blockId: id,
-				blockIds: DataUtil.selectionGet(id, this.props),
-				rootId: rootId,
-				dataset: dataset,
-			},
-			onClose: () => {
-				selection.preventClear(false);
-			}
-		});
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {

@@ -3,7 +3,7 @@
 .popups {
 	.popup.popupNavigation {
 		.content { overflow: visible; transition: none; }
-		.innerWrap { width: 400px; margin: 0px 0px 0px -200px; top: 38px; transform: scale3d(1,1,1); transition: none; }
+		.innerWrap { top: 38px; transform: scale3d(1,1,1); transition: none; }
 		.dimmer { transition: none; }
 
 		.head { 
@@ -20,26 +20,6 @@
 			}
 		}
 
-		.path { padding:  12px 14px 0px 14px; white-space: nowrap; }
-		.path {
-			.item { display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 6px; cursor: pointer; transition: color 0.2s ease-in-out; }
-			.item {
-				.icon { margin-right: 4px; }
-				.icon.arrow { margin: -4px 0px 0px 0px; width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); vertical-align: middle; }
-				.smile { margin-right: 4px; }
-				.name { display: inline-block; vertical-align: top; margin-right: 6px; line-height: 20px; }
-				.icon.search { width: 20px; height: 20px; vertical-align: top; }
-				.icon.home { width: 20px; height: 20px; vertical-align: top; }
-				
-			}
-			.item:last-child { margin: 0px; }
-			.item:last-child {
-				.icon.arrow { display: none; }
-				.name { margin: 0px; }
-			}
-			.item:hover { color: $colorBlack; }
-		}
-		
 		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
@@ -49,12 +29,8 @@
 		.items { padding: 12px 0px; overflow-x: hidden; overflow-y: auto; }
 		.items {
 			.item { 
-				cursor: pointer; transition: $transitionFast; position: relative; height: 64px; 
-				line-height: 48px; padding: 8px 16px; 
+				cursor: pointer; transition: $transitionFast; position: relative; height: 64px; line-height: 48px; padding: 8px 16px; 
 			}
-			
-			.item:last-child { margin: 0px; }
-
 			.item {
 				.smile { position: absolute; left: 16px; top: 8px; transition: $transitionFast; }
 				.info { padding: 0px 0px 0px 60px; display: inline-block; vertical-align: middle; width: 100%; }
@@ -62,13 +38,12 @@
 				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
 			}
 
-			.item:hover { background-color: rgba(172, 169, 150, 0.15); }
-			.item:hover {
+			.item.active { background-color: rgba(172, 169, 150, 0.15); }
+			.item.active {
 				.smile { background-color: $colorLightGrey; }
 			}
 		}
 
-		.innerWrap.expanded { width: 1136px; margin: 0px 0px 0px -578px; }
 		.innerWrap.expanded {
 			.sides { display: flex; padding: 16px; }
 			
@@ -87,27 +62,21 @@
 					}
 				}
 
-				.item:hover, .item.active { 
-					background: none; border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; 
-				}
-				.item:hover, .item.active {
+				.item.active { background: none; border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
+				.item.active {
 					.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
 					.smile { background: #f7f5f0; }
 				}
 
-				.item.empty { line-height: 80px; cursor: default; }
+				.item.empty { line-height: 78px; cursor: default; }
 				.item.empty {
 					.name { display: inline-block; vertical-align: middle; color: $colorDarkGrey; }
-				}
-				.item.empty:hover { border-color: $colorLightGrey !important; box-shadow: 0px 0px; }
-				.item.empty:hover {
-					.icon.arrow { background-image: url('~img/arrow/nav0.svg'); }
 				}
 			}
 
 			.sideName { margin-bottom: 13px; @include text-common; font-weight: 500; }
 			
-			.selected { padding: 16px 16px 12px 16px; border: 1px solid #ffda90; box-shadow: 0px 0px 0px 1px #ffda90; border-radius: 8px; }
+			.selected { padding: 16px 16px 12px 16px; border-radius: 8px; border: 1px solid $colorLightGrey; transition: $transitionFast; }
 			.selected {
 				.smile { margin-bottom: 8px; }
 				.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
@@ -122,6 +91,7 @@
 					}
 				}
 			}
+			.selected.active { border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
 			
 			.items.right {
 				.item {

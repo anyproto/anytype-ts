@@ -24,11 +24,11 @@ class MenuHelp extends React.Component<Props, {}> {
 	
 	render () {
 		const items: any[] = [
-			{ id: 'help', name: 'Help & support' },
-			{ id: 'shortcuts', name: 'Shortcuts' },
+			{ id: 'help', name: 'What\'s new', document: 'whatsNew' },
+			{ id: 'help', name: 'Status', document: 'status' },
+			{ id: 'shortcut', name: 'Shortcuts' },
 			{ id: 'feedback', name: 'Give feedback' },
 			{ id: 'community', name: 'Join community' },
-			//{ id: 'feature', icon: 'feature', name: 'Suggest a Feature' },
 		];
 		
 		return (
@@ -47,22 +47,18 @@ class MenuHelp extends React.Component<Props, {}> {
 		
 		switch (item.id) {
 			case 'help':
-				history.push('/help/index');
+				commonStore.popupOpen('help', {
+					data: { document: item.document },
+				});
+				break;
+
+			case 'shortcut':
+				commonStore.popupOpen('shortcut', {});
 				break;
 				
-			case 'shortcuts':
-				history.push('/help/shortcuts');
-				break;
-			
 			case 'feedback':
 				commonStore.popupOpen('feedback', {});
 				break;
-				
-			/*
-			case 'feature':
-				ipcRenderer.send('urlOpen', Url.feature);
-				break;
-			*/
 				
 			case 'community':
 				ipcRenderer.send('urlOpen', Url.community);

@@ -1,20 +1,12 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Smile } from 'ts/component';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { focus } from '../../lib';
+import { focus } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	block: I.Block;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
-};
-
-const Constant = require('json/constant.json');
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 @observer
 class BlockLink extends React.Component<Props, {}> {
@@ -26,6 +18,7 @@ class BlockLink extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 	};
 
@@ -38,7 +31,7 @@ class BlockLink extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={true} onSelect={this.onSelect} />
+				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
 				<div className="name" onClick={this.onClick}>
 					<div className="txt">{name}</div>
 				</div>
@@ -48,11 +41,11 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', []);
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', []);
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {
@@ -76,6 +69,14 @@ class BlockLink extends React.Component<Props, {}> {
 		const { targetBlockId } = content;
 		
 		DataUtil.pageSetIcon(targetBlockId, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const { block } = this.props;
+		const { content } = block;
+		const { targetBlockId } = content;
+		
+		DataUtil.pageSetIcon(targetBlockId, '', hash);
 	};
 	
 };

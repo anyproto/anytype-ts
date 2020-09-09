@@ -35,10 +35,12 @@ class MenuSelect extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { options, value } = data;
+		const { options, value, noKeys } = data;
 		
 		this._isMounted = true;
-		this.rebind();
+		if (!noKeys) {
+			this.rebind();
+		};
 		
 		const active = options.find((it: any) => { return it.id == value });
 		if (active && !active.isInitial) {
@@ -113,7 +115,8 @@ class MenuSelect extends React.Component<Props, {}> {
 				};
 				this.setActive(null, true);
 				break;
-				
+			
+			case Key.tab:
 			case Key.enter:
 			case Key.space:
 				if (item) {
@@ -138,8 +141,8 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onSelect } = data;
 		
-		this.props.close();
 		onSelect(e, item);
+		this.props.close();
 	};
 	
 };

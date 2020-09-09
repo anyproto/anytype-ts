@@ -1,14 +1,22 @@
 import * as React from 'react';
-import { Icon, IconUser } from 'ts/component';
-import { blockStore, commonStore, authStore } from 'ts/store';
+import { Icon, IconUser, Error } from 'ts/component';
+import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage } from 'ts/lib';
 
 interface Props extends I.Menu { history: any; };
 
+interface State {
+	error: string;
+};
+
 @observer
-class MenuAccount extends React.Component<Props, {}> {
+class MenuAccount extends React.Component<Props, State> {
 	
+	state = {
+		error: ''
+	};
+
 	constructor (props: any) {
 		super(props);
 		
@@ -18,6 +26,7 @@ class MenuAccount extends React.Component<Props, {}> {
 	
 	render () {
 		const { account, accounts } = authStore;
+		const { error } = this.state;
 		
 		const Item = (item: any) => (
 			<div className={'item ' + (item.id == account.id ? 'active' : '')} onClick={(e) => { this.onSelect(e, item.id); }}>
@@ -33,6 +42,8 @@ class MenuAccount extends React.Component<Props, {}> {
 		
 		return (
 			<div className="items">
+				<Error text={error} />
+
 				{accounts.map((item: I.Account, i: number) => (
 					<Item key={i} {...item} />
 				))}
@@ -53,7 +64,10 @@ class MenuAccount extends React.Component<Props, {}> {
 			authStore.accountClear();
 			
 			C.WalletRecover(path, phrase, (message: any) => {
-				C.AccountRecover((message: any) => {});
+				C.AccountRecover((message: any) => {
+					Util.checkError(message.error.code);
+					this.setState({ error: message.error.description });
+				});
 			});			
 		};
 	};
@@ -65,6 +79,7 @@ class MenuAccount extends React.Component<Props, {}> {
 		
 		C.AccountSelect(id, path, (message: any) => {
 			if (message.error.code) {
+				Util.checkError(message.error.code);
 			} else
 			if (message.account) {
 				Storage.set('accountId', id);

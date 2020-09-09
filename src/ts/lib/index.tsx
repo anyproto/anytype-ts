@@ -17,6 +17,7 @@ import * as C from './command';
 import * as Response from './response';
 import * as Docs from 'ts/docs';
 import Mapper from './mapper';
+import Action from './action';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
@@ -24,10 +25,10 @@ const lang = Storage.get('lang') || Constant.default.lang;
 
 const translate = (key: string): string => {
 	if (!Text[key]) {
-		return '*No key - ' + key + '*';
+		return `*No key: ${key}*`;
 	};
 	if (!Text[key][lang]) {
-		return '*No lang for key - ' + key + '*';
+		return `*No ${lang}: ${key}*`;
 	};
 	return Text[key][lang];
 };
@@ -55,4 +56,5 @@ export {
 	Encode,
 	Decode,
 	Mapper,
+	Action,
 };

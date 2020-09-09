@@ -1,7 +1,8 @@
-import { I, C, keyboard, Storage, crumbs, translate } from 'ts/lib';
+import { I, C, keyboard, Storage, crumbs, translate, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 class DataUtil {
 
@@ -132,12 +133,20 @@ class DataUtil {
 			
 			if (message.profileBlockId) {
 				blockStore.profileSet(message.profileBlockId);
-				C.BlockOpen(message.profileBlockId);
+				C.BlockOpen(message.profileBlockId, (message: any) => {
+					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+						Util.onErrorUpdate();
+					};
+				});
 			};
 			
 			crumbs.init();
 			
 			C.BlockOpen(root, (message: any) => {
+				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+					Util.onErrorUpdate();
+					return;
+				};
 				if (callBack) {
 					callBack();
 				};
@@ -146,15 +155,9 @@ class DataUtil {
 	};
 
 	onAuth () {
-		const pin = Storage.get('pin');
-
 		this.pageInit(() => {
-			if (pin) {
-				this.history.push('/auth/pin-check');
-				keyboard.setPinCheck();
-			} else {
-				this.history.push('/main/index');
-			};
+			keyboard.initPinCheck();
+			this.history.push('/main/index');
 		});
 	};
 	
@@ -163,6 +166,9 @@ class DataUtil {
 			console.error('[DataUtil.pageOpen] id is empty');
 			return;
 		};
+
+		const { root } = blockStore;
+
 		/*
 		const param = {
 			data: { 
@@ -179,8 +185,9 @@ class DataUtil {
 			history.push('/main/edit/' + targetId);
 		};
 		*/
-		
-		this.history.push('/main/edit/' + targetId);
+
+		const route = targetId == root ? '/main/index' : '/main/edit/' + targetId;
+		this.history.push(route);
 	};
 	
 	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
@@ -271,79 +278,47 @@ class DataUtil {
 			};
 		});
 	};
+
+	menuMapperBlock (it: any) {
+		it.isBlock = true;
+		it.name = translate('blockName' + it.lang);
+		it.description = translate('blockDescription' + it.lang);
+		return it;
+	};
 	
 	menuGetBlockText () {
 		return [
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Paragraph, icon: 'text', name: 'Text', isBlock: true,
-				description: translate('blockDescriptionParagraph'),
-			},
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Header1, icon: 'header1', name: 'Header 1', isBlock: true, 
-				description: translate('blockDescriptionHeader1'), aliases: [ 'h1' ],
-			},
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Header2, icon: 'header2', name: 'Header 2', isBlock: true, 
-				description: translate('blockDescriptionHeader2'), aliases: [ 'h2' ] 
-			},
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Header3, icon: 'header3', name: 'Header 3', isBlock: true, 
-				description: translate('blockDescriptionHeader3'), aliases: [ 'h3' ] 
-			},
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Quote, icon: 'quote', name: 'Highlighted',isBlock: true,
-				description: translate('blockDescriptionQuote'), 
-			},
-		];
+			{ id: I.TextStyle.Paragraph, icon: 'text', lang: 'Paragraph' },
+			{ id: I.TextStyle.Header1, icon: 'header1', lang: 'Header1', aliases: [ 'h1' ] },
+			{ id: I.TextStyle.Header2, icon: 'header2', lang: 'Header2', aliases: [ 'h2' ] },
+			{ id: I.TextStyle.Header3, icon: 'header3', lang: 'Header3', aliases: [ 'h3' ] },
+			{ id: I.TextStyle.Quote, icon: 'quote', lang: 'Quote' },
+		].map((it: any) => {
+			it.type = I.BlockType.Text;
+			return this.menuMapperBlock(it);
+		});
 	};
 	
 	menuGetBlockList () {
 		return [
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Checkbox, icon: 'checkbox', name: 'Checkbox', isBlock: true,
-				description: translate('blockDescriptionCheckbox'),  
-			},
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Bulleted, icon: 'list', name: 'Bulleted list', isBlock: true,
-				description: translate('blockDescriptionBulleted'), 
-			},
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Numbered, icon: 'numbered', name: 'Numbered list', isBlock: true,
-				description: translate('blockDescriptionNumbered'), 
-			},
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Toggle, icon: 'toggle', name: 'Toggle', isBlock: true,
-				description: translate('blockDescriptionToggle'), 
-			},
-		];
+			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox' },
+			{ id: I.TextStyle.Bulleted, icon: 'list', lang: 'Bulleted' },
+			{ id: I.TextStyle.Numbered, icon: 'numbered', lang: 'Numbered' },
+			{ id: I.TextStyle.Toggle, icon: 'toggle', lang: 'Toggle' },
+		].map((it: any) => {
+			it.type = I.BlockType.Text;
+			return this.menuMapperBlock(it);
+		});
 	};
 
 	menuGetBlockObject () {
 		return [
-			{ 
-				type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true,
-				description: translate('blockDescriptionPage'), 
-			},
-			{ 
-				type: I.BlockType.File, id: I.FileType.File, icon: 'file', name: 'File', isBlock: true,
-				description: translate('blockDescriptionFile'), 
-			},
-			{ 
-				type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', name: 'Picture', isBlock: true,
-				description: translate('blockDescriptionImage'), 
-			},
-			{ 
-				type: I.BlockType.File, id: I.FileType.Video, icon: 'video', name: 'Video', isBlock: true,
-				description: translate('blockDescriptionVideo'), 
-			},
-			{ 
-				type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', name: 'Bookmark', isBlock: true,
-				description: translate('blockDescriptionBookmark'), 
-			},
-			{ 
-				type: I.BlockType.Page, id: 'existing', icon: 'existing', name: 'Link to object', isBlock: true,
-				description: translate('blockDescriptionExisting'), 
-			},
+			{ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' },
+			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
+			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', lang: 'Image' },
+			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
+			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
+			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
 			/*
 			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
@@ -351,43 +326,34 @@ class DataUtil {
 			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
 			{ id: 'contact', icon: 'contact', name: 'Contact', color: 'blue', isBlock: true },
 			*/
-		];
+		].map(this.menuMapperBlock);
 	};
 	
 	menuGetBlockOther () {
 		return [
-			{ 
-				type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider', isBlock: true,
-				description: translate('blockDescriptionLine'),  
-			},
-			{ 
-				type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider', isBlock: true,
-				description: translate('blockDescriptionDot'),  
-			},
-			{ 
-				type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code', isBlock: true,
-				description: translate('blockDescriptionCode'), 
-			},
-		];
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
+		].map(this.menuMapperBlock);
 	};
 
 	menuGetTurnPage () {
 		return [
-			{ type: I.BlockType.Page, id: 'page', icon: 'page', name: 'Page', isBlock: true }
-		];
+			{ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' }
+		].map(this.menuMapperBlock);
 	};
 	
 	menuGetTurnObject() {
 		return [
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', name: 'Code snippet', isBlock: true },
-		];
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
+		].map(this.menuMapperBlock);
 	};
 
 	menuGetTurnDiv () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', name: 'Line divider', isBlock: true },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', name: 'Dots divider', isBlock: true },
-		];
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
+		].map(this.menuMapperBlock);
 	};
 	
 	// Action menu
@@ -403,20 +369,11 @@ class DataUtil {
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
 		
-		// Restrictions
 		if (block.isFile()) {
 			let idx = items.findIndex((it: any) => { return it.id == 'remove'; });
 			items.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
 			//items.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
 			//items.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
-		};
-		
-		if (!block.isText() && !block.isDiv()) {
-			items = items.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
-		};
-		
-		if (!block.isText() || block.isCode()) {
-			items = items.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
 		};
 		
 		items = items.map((it: any) => {
@@ -429,7 +386,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: '', className: '', isTextColor: true }
+			{ id: 'color-black', name: 'Black', value: 'black', className: '', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
 			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, className: i, isTextColor: true });
@@ -464,6 +421,9 @@ class DataUtil {
 			};
 			s.children = (s.children || []).filter((c: any) => { 
 				let ret = false;
+				if (c.skipFilter) {
+					ret = true;
+				} else 
 				if (c.name && c.name.match(reg)) {
 					ret = true;
 				} else 
@@ -506,8 +466,9 @@ class DataUtil {
 		return a.length > 1 ? a[a.length - 1] : '';
 	};
 
-	cellId (relationId: string, id: any) {
-		return [ 'cell', relationId, String(id || '') ].join('-');
+
+	cellId (prefix: string, relationId: string, id: any) {
+		return [ prefix, relationId, String(id || '') ].join('-');
 	};
 
 };

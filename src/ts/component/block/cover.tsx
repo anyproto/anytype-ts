@@ -1,17 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { Icon, Drag, Cover, Loader } from 'ts/component';
 import { I, C, Util, DataUtil, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { trace } from 'mobx';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	dataset?: any;
-	block: I.Block;
-};
+interface Props extends I.BlockComponent {};
 
 interface State {
 	editing: boolean;
@@ -19,7 +13,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant = require('json/constant.json');
 
 @observer
@@ -321,11 +314,15 @@ class BlockCover extends React.Component<Props, State> {
 		if (!this._isMounted) {
 			return false;
 		};
+
+		if (!this.cover || !this.cover.length) {
+			return;
+		};
 		
+		const node = $(ReactDOM.findDOMNode(this));
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverX, coverY } = details;
-		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#drag-value');
 		const rect = this.cover.get(0).getBoundingClientRect() as DOMRect;
 		

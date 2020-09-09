@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Emoji } from 'emoji-mart';
 import { Input, Smile } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
@@ -12,7 +11,7 @@ interface State {
 };
 
 const $ = require('jquery');
-const EmojiData = require('emoji-mart/data/apple.json');
+const EmojiData = require('json/emoji.json');
 const Constant = require('json/constant.json');
 const { dialog } = window.require('electron').remote;
 
@@ -232,13 +231,15 @@ class MenuSmile extends React.Component<Props, State> {
 			properties: [ 'openFile' ], 
 			filters: [ { name: '', extensions: Constant.extension.image } ]
 		};
+
+		this.props.close();
 		
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};
-			
+
 			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
 				if (message.error.code) {
 					return;
@@ -247,8 +248,6 @@ class MenuSmile extends React.Component<Props, State> {
 				if (onUpload) {
 					onUpload(message.hash);
 				};
-				
-				this.props.close();
 			});
 		});
 	};

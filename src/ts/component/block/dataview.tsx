@@ -12,10 +12,7 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	block: I.Block;
-};
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const Schema = {
@@ -48,7 +45,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
 		const { type } = view;
 		const schema = Schema[DataUtil.schemaField(schemaURL)];
-		const readOnly = true; // TMP
+		const readOnly = false; // TMP
 
 		if (!view) {
 			return null;

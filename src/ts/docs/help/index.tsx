@@ -3,12 +3,9 @@ import { I } from 'ts/lib';
 const { app } = window.require('electron').remote;
 const path = app.getPath('userData');
 
-const Index = [
+const Status = [
 	{ type: I.BlockType.IconPage, icon: '🔮' },
-	{ type: I.BlockType.Title, text: 'Help' },
-
-	{ type: I.BlockType.Link, icon: '⌨️', name: 'Keyboard & Shortcuts', contentId: 'shortcuts' },
-	{ type: I.BlockType.Link, icon: '👋', name: 'What\'s new', contentId: 'new' },
+	{ type: I.BlockType.Title, text: 'Status' },
 
 	{ style: I.TextStyle.Header2, text:  'About' },
 	{ text: 'You can use Anytype to create documents, tools, and organize it in a way you want.<br>Anytype is <b>free</b> for you without any storage or upload limits.' },
@@ -30,9 +27,9 @@ const Index = [
 	{ text: '<i class="note">This is a closed alpha program</i>' },
 ];
 
-import Shortcuts from './shortcuts';
+import WhatsNew from './whatsNew';
 
 export {
-	Index,
-	Shortcuts,
+	Status,
+	WhatsNew,
 };

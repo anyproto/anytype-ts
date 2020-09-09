@@ -174,7 +174,7 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	focus () {
-		setTimeout(() => {
+		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -184,7 +184,7 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	blur () {
-		setTimeout(() => {
+		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -194,12 +194,21 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	select () {
+		if (!this._isMounted) {
+			return;
+		};
+		
 		const node = $(ReactDOM.findDOMNode(this));
 		window.setTimeout(() => { node.get(0).select();	});
 	};
 	
 	setValue (v: string) {
-		this.setState({ value: String(v || '') });
+		if (!this._isMounted) {
+			return;
+		};
+
+		this.state.value = String(v || '');
+		this.setState({ value: this.state.value });
 	};
 	
 	getValue () {
@@ -207,19 +216,35 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	setType (v: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		this.setState({ type: v });
 	};
 	
 	setError (v: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		let node = $(ReactDOM.findDOMNode(this));
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 	
 	addClass (v: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		$(ReactDOM.findDOMNode(this)).addClass(v);
 	};
 	
 	removeClass (v: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		$(ReactDOM.findDOMNode(this)).removeClass(v);
 	};
 	

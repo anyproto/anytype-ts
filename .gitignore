@@ -2,7 +2,6 @@
 .project
 .settings/
 node_modules/
-build
 build.zip
 addon
 protobuf

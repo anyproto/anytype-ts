@@ -128,6 +128,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	getSections () {
+		const { root } = blockStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
@@ -136,16 +137,17 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 		let pageData = [];
 
-		pageData.push({
+		pageData.unshift({
 			id: 'create', 
 			name: 'Create new page', 
 			icon: '',
 			hash: '',
 			withSmile: true,
+			skipFilter: true,
 		});
 
 		for (let page of pages) {
-			if (page.id == rootId) {
+			if ([ root, rootId ].indexOf(page.id) >= 0) {
 				continue;
 			};
 			
@@ -193,13 +195,20 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	loadSearch () {
+		const { root } = blockStore;
+
 		this.setState({ loading: true });
 
 		C.NavigationListPages((message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			let pages = message.pages.map((it: any) => { 
 				it.details.name = String(it.details.name || Constant.default.name || '');
 				return it; 
 			});
+			pages = pages.filter((it: any) => { return it.id != root; });
 			this.setState({ pages: pages, loading: false });
 		});
 	};
@@ -237,6 +246,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				this.setActive(null, true);
 				break;
 				
+			case Key.tab:
 			case Key.enter:
 				e.preventDefault();
 				if (item) {
@@ -257,6 +267,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { filter } = commonStore;
 		const { data } = param;
@@ -268,24 +281,23 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		if (item.key == 'create') {
-			DataUtil.pageCreate(e, rootId, blockId, { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom);
+			DataUtil.pageCreate(e, rootId, blockId, { iconEmoji: SmileUtil.random(), name: filter.text }, I.BlockPosition.Bottom);
 		} else {
 			const { content } = block;
 		
 			let { marks } = content;
-			let text = item.name + ' ';
 			let from = filter.from;
-			let to = from + text.length;
+			let to = from + item.name.length + 1;
 	
 			marks = Util.objectCopy(marks);
-			marks = Mark.adjust(marks, from, item.name.length);
+			marks = Mark.adjust(marks, from, item.name.length + 1);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
 				param: item.key, 
 				range: { from: from, to: from + item.name.length },
 			});
 	
-			onChange(text, marks, from, to);
+			onChange(item.name + ' ', marks, from, to);
 		};
 
 		this.props.close();

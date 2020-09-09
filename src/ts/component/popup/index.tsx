@@ -7,11 +7,13 @@ import { commonStore } from 'ts/store';
 import PopupSettings from './settings';
 import PopupArchive from './archive';
 import PopupNavigation from './navigation';
-import PopupNew from './new';
+import PopupHelp from './help';
 import PopupPrompt from './prompt';
 import PopupPreview from './preview';
 import PopupEditorPage from './editor/page';
 import PopupFeedback from './feedback';
+import PopupConfirm from './confirm';
+import PopupShortcut from './shortcut';
 
 interface Props extends I.Popup {
 	history: any;
@@ -38,11 +40,13 @@ class Popup extends React.Component<Props, {}> {
 			settings: PopupSettings,
 			archive: PopupArchive,
 			navigation: PopupNavigation,
+			confirm: PopupConfirm,
 			prompt: PopupPrompt,
-			new: PopupNew,
+			help: PopupHelp,
 			preview: PopupPreview,
 			editorPage: PopupEditorPage,
 			feedback: PopupFeedback,
+			shortcut: PopupShortcut,
 		};
 		
 		const popupId = Util.toCamelCase('popup-' + id);

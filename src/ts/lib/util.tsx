@@ -1,6 +1,7 @@
 import { I, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
+import { translate } from '.';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -11,6 +12,7 @@ const fs = window.require('fs');
 const readChunk = window.require('read-chunk');
 const fileType = window.require('file-type');
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 const os = window.require('os');
 const sprintf = require('sprintf-kit')({
 	d: require('sprintf-kit/modifiers/d'),
@@ -349,7 +351,7 @@ class Util {
 	};
 	
 	tooltipShow (text: string, node: any, typeY: I.MenuDirection) {
-		if (!node.length) {
+		if (!node.length || keyboard.isResizing) {
 			return;
 		};
 
@@ -465,7 +467,7 @@ class Util {
 	};
 	
 	filterFix (v: string) {
-		return escapeStringRegexp(String(v || '').replace(/[\/\\\*]/g, ''));
+		return escapeStringRegexp(String(v || ''));
 	};
 	
 	lengthFixOut (text: string, len: number): number {
@@ -517,6 +519,41 @@ class Util {
 	
 	getPlatform () {
 		return Constant.platforms[os.platform()];
+	};
+
+	checkError (code: number) {
+		if (!code) {
+			return;
+		};
+
+		// App is already working
+		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
+			alert('You have another instance of anytype running on this machine. Closing...');
+			ipcRenderer.send('exit', false);
+		};
+
+		// App needs update
+		if (code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+			this.onErrorUpdate();
+		};
+	};
+
+	onErrorUpdate (onConfirm?: () => void) {
+		commonStore.popupOpen('confirm', {
+			data: {
+				icon: 'update',
+				title: translate('confirmUpdateTitle'),
+				text: translate('confirmUpdateText'),
+				textConfirm: translate('confirmUpdateConfirm'),
+				canCancel: false,
+				onConfirm: () => {
+					ipcRenderer.send('update');
+					if (onConfirm) {
+						onConfirm();
+					};
+				},
+			},
+		});
 	};
 
 };

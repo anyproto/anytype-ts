@@ -25,6 +25,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+
+		this.onPathOver = this.onPathOver.bind(this);
+		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
@@ -45,7 +48,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className={cn.join(' ')}>
+			<div id="header" className={cn.join(' ')}>
 				<div className="side left">
 					<Icon className="home" tooltip="Home" onClick={this.onHome} />
 					<Icon className="back" tooltip="Back" onClick={this.onBack} />
@@ -55,18 +58,18 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				<div className="mid">
 					<Icon className="nav" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
 
-					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }}>
+					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
 							<Smile icon={iconEmoji} hash={iconImage} />
 							<div className="name">{Util.shorten(name, 32)}</div>
 						</div>
 					</div>
 
-					<Icon className={[ 'plus', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={true} tooltip="Create new page" onClick={this.onAdd} />
+					<Icon className={[ 'plus', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 				</div>
 
 				<div className="side right">
-					<Icon id={'button-' + rootId + '-more'} tooltip="Menu" className="more" onClick={this.onMore} />
+					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);
@@ -90,7 +93,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { rootId, match } = this.props;
 		
 		commonStore.menuOpen('blockMore', { 
-			element: '#button-' + rootId + '-more',
+			element: '#button-header-more',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 8,
@@ -111,7 +114,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 
-		if (root && root.isPageSet()) {
+		if (!root || root.isPageSet()) {
 			return;
 		};
 		
@@ -148,6 +151,17 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				expanded: expanded,
 			},
 		});
+	};
+
+	onPathOver () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const path = node.find('.path');
+
+		Util.tooltipShow('Click to search', path, I.MenuDirection.Bottom);
+	};
+
+	onPathOut () {
+		Util.tooltipHide();
 	};
 	
 };

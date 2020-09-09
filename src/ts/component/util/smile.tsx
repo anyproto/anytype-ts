@@ -109,8 +109,9 @@ class Smile extends React.Component<Props, State> {
 	};
 
 	onClick (e: any) {
+		e.stopPropagation();
+
 		const { id, canEdit, offsetX, offsetY, onSelect, onUpload } = this.props;
-		
 		if (!id || !canEdit) {
 			return;
 		};
@@ -125,6 +126,7 @@ class Smile extends React.Component<Props, State> {
 			data: {
 				onSelect: (icon: string) => {
 					this.setState({ icon: icon, hash: '' });
+					
 					if (onSelect) {
 						onSelect(icon);
 					};
@@ -132,7 +134,10 @@ class Smile extends React.Component<Props, State> {
 
 				onUpload: (hash: string) => {
 					this.setState({ icon: '', hash: hash });
-					onUpload(hash);
+					
+					if (onUpload) {
+						onUpload(hash);
+					};
 				}
 			}
 		});

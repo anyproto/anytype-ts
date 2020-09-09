@@ -1,9 +1,10 @@
-import { I, M, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { I, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
-const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
+const { ipcRenderer } = window.require('electron');
 const Rpc = Commands.Rpc;
 
 const VersionGet = (callBack?: (message: any) => void) => {
@@ -273,13 +274,14 @@ const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callB
 	dispatcher.request('blockMerge', request, callBack);
 };
 
-const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, callBack?: (message: any) => void) => {
+const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, mode: I.BlockSplitMode, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Split.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setRange(Mapper.To.Range(range));
 	request.setStyle(style);
+	request.setMode(mode);
 
 	dispatcher.request('blockSplit', request, callBack);
 };
@@ -363,8 +365,9 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
     request.setIspartofblock(isPartOfBlock);
     request.setSelectedblockidsList(blockIds);
     request.setTextslot(data.text);
-    request.setHtmlslot(data.html);
-    request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
+	request.setHtmlslot(data.html);
+	request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
+	request.setFileslotList(data.files.map(Mapper.To.PasteFile));
 
 	dispatcher.request('blockPaste', request, callBack);
 };
@@ -554,6 +557,37 @@ const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: 
 	dispatcher.request('blockSetDataviewActiveView', request, callBack);
 };
 
+const BlockCreateDataviewRecord = (contextId: string, blockId: string, record: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Create.Dataview.Record.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRecord(Encode.encodeStruct(record));
+
+	dispatcher.request('blockCreateDataviewRecord', request, callBack);
+};
+
+const BlockUpdateDataviewRecord = (contextId: string, blockId: string, recordId: string, record: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Update.Dataview.Record.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRecordid(recordId);
+	request.setRecord(Encode.encodeStruct(record));
+
+	dispatcher.request('blockUpdateDataviewRecord', request, callBack);
+};
+
+const BlockDeleteDataviewRecord = (contextId: string, blockId: string, recordId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Update.Dataview.Record.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRecordid(recordId);
+
+	dispatcher.request('blockDeleteDataviewRecord', request, callBack);
+};
+
 export {
 	VersionGet,
 
@@ -563,7 +597,6 @@ export {
 	LinkPreview,
 	UploadFile,
 	ProcessCancel,
-
 
 	WalletCreate,
 	WalletRecover,
@@ -609,6 +642,10 @@ export {
 	BlockSetDataviewActiveView,
 
 	BlockDeleteDataviewView,
+
+	BlockCreateDataviewRecord,
+	BlockUpdateDataviewRecord,
+	BlockDeleteDataviewRecord,
 
 	BlockListMove,
 	BlockListMoveToNewPage,

@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper } from 'ts/lib';
+import { commonStore, blockStore, authStore } from 'ts/store';
+import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -19,10 +19,13 @@ interface State {
 	loading: boolean;
 };
 
+const findAndReplaceDOMText = require('findandreplacedomtext');
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 const $ = require('jquery');
 const THROTTLE = 20;
+const fs = window.require('fs');
 
 @observer
 class EditorPage extends React.Component<Props, State> {
@@ -38,6 +41,7 @@ class EditorPage extends React.Component<Props, State> {
 	state = {
 		loading: false,
 	};
+	searchIndex: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -141,13 +145,10 @@ class EditorPage extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		
-		const { rootId } = this.props;
 		const win = $(window);
 		
 		keyboard.disableBack(true);
 		this.unbind();
-		
 		this.open();
 		
 		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
@@ -158,6 +159,7 @@ class EditorPage extends React.Component<Props, State> {
 				this.onPaste(e); 
 			};
 		});
+		win.on('focus.editor', (e: any) => { focus.apply(); });
 		
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
@@ -232,12 +234,16 @@ class EditorPage extends React.Component<Props, State> {
 		
 		crumbs.save(I.CrumbsType.Page, cr);
 		
-		this.close(this.id);
 		this.id = rootId;
-		
 		C.BlockOpen(this.id, (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+					Util.onErrorUpdate(() => {
+						history.push('/main/index');
+					});
+				} else {
+					history.push('/main/index');
+				};
 				return;
 			};
 
@@ -274,7 +280,7 @@ class EditorPage extends React.Component<Props, State> {
 				length = block.getLength();
 			};
 		};
-		
+
 		switch (cmd) {
 			case 'selectAll':
 				if ((range.from == 0) && (range.to == length)) {
@@ -283,6 +289,10 @@ class EditorPage extends React.Component<Props, State> {
 					focus.set(focused, { from: 0, to: length });
 					focus.apply();
 				};
+				break;
+
+			case 'search':
+				this.onSearch();
 				break;
 		};
 	};
@@ -308,7 +318,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor');
+		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor');
 	};
 	
 	uiHide () {
@@ -448,6 +458,7 @@ class EditorPage extends React.Component<Props, State> {
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
 		const map = blockStore.getMap(rootId);
+		const platform = Util.getPlatform();
 
 		// Print
 		keyboard.shortcut('ctrl+p,cmd+p', e, (pressed: string) => {
@@ -473,13 +484,29 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
+
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			e.preventDefault();
+			this.onSearch();
+		});
+
+		/*
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			this.onHistory();
+		});
+		*/
 
 		// Mark-up
 		if (ids.length) {
@@ -539,6 +566,28 @@ class EditorPage extends React.Component<Props, State> {
 				focus.clear(true);
 				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
 			});
+
+			// Open action menu
+			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
+				commonStore.menuOpen('blockAction', { 
+					element: '#block-' + ids[0],
+					type: I.MenuType.Vertical,
+					offsetX: Constant.size.blockMenu,
+					offsetY: 0,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					data: {
+						blockId: ids[0],
+						blockIds: ids,
+						rootId: rootId,
+						dataset: dataset,
+					},
+					onClose: () => {
+						selection.clear(true);
+						focus.apply();
+					}
+				});
+			});
 		};
 
 		// Remove blocks
@@ -546,10 +595,6 @@ class EditorPage extends React.Component<Props, State> {
 			e.preventDefault();
 			this.blockRemove(block);
 		});
-
-		const onTab = (shift: boolean) => {
-			
-		};
 
 		// Indent block
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
@@ -566,16 +611,16 @@ class EditorPage extends React.Component<Props, State> {
 			const next = blockStore.getNextBlock(rootId, first.id, -1);
 			const obj = shift ? parent : next;
 			const canTab = obj && !first.isTitle() && obj.canHaveChildren() && first.isIndentable();
-				
+			
 			if (canTab) {
 				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
 		});
 	};
 
-	onKeyDownBlock (e: any, text?: string, marks?: I.Mark[]) {
+	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 		const { dataset, rootId } = this.props;
-		const { focused, range } = focus;
+		const { focused } = focus;
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
 
@@ -632,13 +677,29 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Undo
 		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z, ctrl+y, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
+			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
 		});
+
+		// Search
+		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
+			e.preventDefault();
+			this.onSearch();
+		});
+
+		/*
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+			e.preventDefault();
+			this.onHistory();
+		});
+		*/
 
 		// Duplicate
 		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
@@ -667,8 +728,8 @@ class EditorPage extends React.Component<Props, State> {
 					dataset: dataset,
 				},
 				onClose: () => {
-					selection.preventClear(false);
-					selection.clear();
+					selection.clear(true);
+					focus.apply();
 				}
 			});
 		});
@@ -816,7 +877,7 @@ class EditorPage extends React.Component<Props, State> {
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isCode() || (!block.isText() && keyboard.isFocused)) {
+			if (block.isTextCode() || (!block.isText() && keyboard.isFocused)) {
 				return;
 			};
 
@@ -828,34 +889,18 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			e.preventDefault();
-			
-			if ((range.from == length) && (range.to == length)) {
-				let style = I.TextStyle.Paragraph;
-				let replace = false;
-				
-				// If block is non-empty list - create new list block of the same style, 
-				// otherwise - replace empty list block with paragraph
-				if (block.isNumbered() || block.isBulleted() || block.isCheckbox()) {
-					if (length) {
-						style = block.content.style;
-					} else {
-						replace = true;
-					};
-				};
-				
-				if (replace) {
-					C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
-				} else {
-					this.blockSplit(block, range, style);
-				};
-			} else 
-			if (!block.isTitle()) {
-				this.blockSplit(block, range, block.content.style);
+			e.stopPropagation();
+
+			let replace = (range.from == length) && (range.to == length) && block.isTextList() && !length;
+			if (replace) {
+				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			} else {
+				this.blockSplit(block, range);
 			};
 		});
 	};
 	
-	onKeyUpBlock (e: any, text?: string, marks?: I.Mark[]) {
+	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 	};
 
 	onArrow (pressed: string, length: number) {
@@ -885,7 +930,7 @@ class EditorPage extends React.Component<Props, State> {
 		const l = next.getLength();
 		
 		// Auto-open toggle blocks 
-		if (parent && parent.isToggle()) {
+		if (parent && parent.isTextToggle()) {
 			node.find('#block-' + parent.id).addClass('isToggled');
 		};
 
@@ -929,7 +974,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onMenuAdd (id: string, text: string, range: I.TextRange) {
-		const { rootId, dataset } = this.props;
+		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
 
 		if (!block) {
@@ -937,17 +982,16 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const { content } = block;
-		const { marks, hash } = content;
+		const { marks } = content;
 		const length = String(text || '').length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
-		const cb = (message: any) => {
-			focus.set(message.blockId, { from: length, to: length });
-			focus.apply();
-		};
-
 		const el = $('#block-' + id);
 		const offset = el.offset() || {};
 		const rect = Util.selectionRect();
+		const onCommand = (message: any) => {
+			focus.set(message.blockId, { from: length, to: length });
+			focus.apply();
+		};
 		
 		let x = rect.x - offset.left;
 		let y = rect.y - (offset.top - $(window).scrollTop()) - el.outerHeight() + rect.height + 8;
@@ -974,105 +1018,98 @@ class EditorPage extends React.Component<Props, State> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
-					// Clear filter in block text
 					const block = blockStore.getLeaf(rootId, id);
-					if (block) {
-						DataUtil.blockSetText(rootId, block, text, marks, true);
-					};
-					
-					// Text colors
-					if (item.isTextColor) {
-						C.BlockListSetTextColor(rootId, [ id ], item.value, cb);
-					} else 
-					
-					// Background colors
-					if (item.isBgColor) {
-						C.BlockListSetBackgroundColor(rootId, [ id ], item.value, cb);
-					} else 
-					
-					// Actions
-					if (item.isAction) {
-						switch (item.key) {
+					const { filter } = commonStore;
 
-							case 'move':
-								commonStore.popupOpen('navigation', { 
-									preventResize: true,
-									data: { 
-										type: I.NavigationType.Move, 
-										rootId: rootId,
-										expanded: true,
-										blockId: id,
-										blockIds: [ id ],
-									}, 
-								});
-								break;
+					text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
 
-							case 'copy':
-								C.BlockListDuplicate(rootId, [ id ], id, I.BlockPosition.Bottom, (message: any) => {
-									if (message.blockIds && message.blockIds.length) {
-										focus.set(message.blockIds[message.blockIds.length - 1], { from: 0, to: 0 });
-										focus.apply();
-									};
-								});
-								break;
-							
-							case 'download':
-								if (hash) {
-									ipcRenderer.send('download', commonStore.fileUrl(hash));
-								};
-								break;
+					const onSave = () => {
+						// Text colors
+						if (item.isTextColor) {
+							C.BlockListSetTextColor(rootId, [ id ], item.value, onCommand);
+						} else 
+
+						// Background colors
+						if (item.isBgColor) {
+							C.BlockListSetBackgroundColor(rootId, [ id ], item.value, onCommand);
+						} else 
+
+						// Actions
+						if (item.isAction) {
+							switch (item.key) {
+								case 'download':
+									Action.download(block);
+									break;
+
+								case 'move':
+									Action.move(rootId, id, [ id ]);
+									break;
+
+								case 'copy':
+									Action.duplicate(rootId, id, [ id ]);
+									break;
 								
-							case 'remove':
-								this.blockRemove(block);
-								break;
-								
-						};
-					} else
-					
-					// Align
-					if (item.isAlign) {
-						C.BlockListSetAlign(rootId, [ id ], item.value, cb);
-					} else 
-					
-					// Blocks
-					if (item.isBlock) {
-						let param: any = {
-							type: item.type,
-							content: {},
-						};
-							
-						if (item.type == I.BlockType.Text) {
-							param.content.style = item.key;
-						};
-						
-						if (item.type == I.BlockType.File) {
-							param.content.type = item.key;
-						};
-						
-						if (item.type == I.BlockType.Div) {
-							param.content.style = item.key;
-						};
-						
-						if (item.type == I.BlockType.Page) {
-							if (item.key == 'existing') {
-								commonStore.popupOpen('navigation', { 
-									preventResize: true,
-									data: { 
-										type: I.NavigationType.Create, 
-										rootId: rootId,
-										expanded: true,
-										skipId: rootId,
-										blockId: block.id,
-										position: position,
-									}, 
-								});
-							} else {
-								DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position);
+								case 'remove':
+									Action.remove(rootId, id, [ id ]);
+									break;
 							};
-						} else {
-							this.blockCreate(block, position, param);
+						} else
+
+						// Align
+						if (item.isAlign) {
+							C.BlockListSetAlign(rootId, [ id ], item.value, onCommand);
+						} else 
+
+						// Blocks
+						if (item.isBlock) {
+							let param: any = {
+								type: item.type,
+								content: {},
+							};
+								
+							if (item.type == I.BlockType.Text) {
+								param.content.style = item.key;
+							};
+							
+							if (item.type == I.BlockType.File) {
+								param.content.type = item.key;
+							};
+							
+							if (item.type == I.BlockType.Div) {
+								param.content.style = item.key;
+							};
+							
+							if (item.type == I.BlockType.Page) {
+								if (item.key == 'existing') {
+									commonStore.popupOpen('navigation', { 
+										preventResize: true,
+										data: { 
+											type: I.NavigationType.Link, 
+											rootId: rootId,
+											expanded: true,
+											skipId: rootId,
+											blockId: block.id,
+											position: position,
+										}, 
+									});
+								} else {
+									DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position);
+								};
+							} else {
+								this.blockCreate(block, position, param);
+							};
 						};
 					};
+
+					// Clear filter in block text
+					if (block) {
+						// Hack to prevent onBlur save
+						$('#block-' + id + ' .value').text(text);
+						DataUtil.blockSetText(rootId, block, text, marks, true, onSave);
+					} else {
+						onSave();
+					};
+
 				}
 			}
 		});
@@ -1157,22 +1194,74 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onPaste (e: any, force?: boolean, data?: any) {
-		e.preventDefault();
-
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
-		
+		const { path } = authStore;
+
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
+			const items = cb.items;
+
 			data = {
 				text: String(cb.getData('text/plain') || ''),
 				html: String(cb.getData('text/html') || ''),
 				anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
+				files: [],
 			};
 			data.anytype.range = data.anytype.range || { from: 0, to: 0 };
+
+			// Read files
+			if (items && items.length) {
+				let files = [];
+				for (let item of items) {
+					if (item.kind != 'file') {
+						continue;
+					};
+					files.push(item.getAsFile());
+				};
+
+				if (files.length) {
+					commonStore.progressSet({ status: 'Processing...', current: 0, total: files.length });
+
+					for (let file of files) {
+						const dir = path + '/tmp';
+						const fn = dir + '/' + file.name;
+						const reader = new FileReader();
+
+						reader.readAsBinaryString(file); 
+						reader.onloadend = () => {
+							try {
+								fs.mkdirSync(dir);
+							} catch (e) {};
+
+							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
+								if (err) {
+									console.error(err);
+									return;
+								};
+
+								data.files.push({
+									name: file.name,
+									path: fn,
+								});
+
+								commonStore.progressSet({ status: 'Processing...', current: data.files.length, total: files.length });
+
+								if (data.files.length == files.length) {
+									this.onPaste(e, true, data);
+								};
+							});
+						};
+					};
+
+					return;
+				};
+			};
 		};
-		
+
+		e.preventDefault();
+
 		const block = blockStore.getLeaf(rootId, focused);
 		const length = block ? block.getLength() : 0;
 		const reg = new RegExp(/^((?:https?:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
@@ -1190,8 +1279,8 @@ class EditorPage extends React.Component<Props, State> {
 				data: {
 					value: '',
 					options: [
-						{ id: 'cancel', name: 'Dismiss' },
 						{ id: 'bookmark', name: 'Create bookmark' },
+						{ id: 'cancel', name: 'Dismiss' },
 						//{ id: 'embed', name: 'Create embed' },
 					],
 					onSelect: (event: any, item: any) => {
@@ -1210,8 +1299,16 @@ class EditorPage extends React.Component<Props, State> {
 		let id = '';
 		let from = 0;
 		let to = 0;
+
+		commonStore.progressSet({ status: 'Processing...', current: 0, total: 1 });
 		
-		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks }, (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
+
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
@@ -1234,12 +1331,107 @@ class EditorPage extends React.Component<Props, State> {
 				to = message.caretPosition;
 			};
 			
-			this.focus(id, from, to);
+			this.focus(id, from, to, false);
 		});
 	};
 
 	onPrint () {
 		window.print();
+	};
+
+	onHistory () {
+		const { rootId, history } = this.props;
+		history.push('/main/history/' + rootId);
+	};
+
+	onSearch () {
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		let lastSearch = '';
+		let	onChange = (value: string) => {
+			this.clearSearch();
+
+			if (!value) {
+				return;
+			};
+
+			if (lastSearch != value) {
+				this.searchIndex = 0;
+			};
+			lastSearch = value;
+
+			findAndReplaceDOMText(node.get(0), {
+				preset: 'prose',
+				find: new RegExp(value, 'gi'),
+				wrap: 'search',
+				filterElements: (el: any) => {
+					const tag = el.nodeName.toLowerCase();
+					if ([ 'span', 'div' ].indexOf(tag) < 0) {
+						return false;
+					};
+
+					const style = window.getComputedStyle(el);
+					if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
+						return false;
+					};
+					return true;
+				},
+			});
+
+			this.focusSearch();
+			this.searchIndex++;
+		};
+
+		window.setTimeout(() => {
+			this.clearSearch();
+			commonStore.menuOpen('search', {
+				element: '#button-header-more',
+				type: I.MenuType.Horizontal,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				offsetX: 0,
+				offsetY: 0,
+				onClose: () => {
+					this.clearSearch();
+				},
+				data: {
+					onChange: onChange,
+				},
+			});
+		}, Constant.delay.menu);
+	};
+
+	clearSearch () {
+		if (!this._isMounted) {
+			return;
+		};
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('search').each((i: number, item: any) => {
+			item = $(item);
+			item.replaceWith(item.html());
+		});
+	};
+
+	focusSearch () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = node.find('.editor search');
+		const wh = win.height();
+		const offset = Constant.size.lastBlock + Constant.size.header;
+
+		if (this.searchIndex > items.length - 1) {
+			this.searchIndex = 0;
+		};
+
+		node.find('search.active').removeClass('active');
+
+		const next = $(items.get(this.searchIndex));
+		if (next && next.length) {
+			next.addClass('active');
+		
+			const y = next.offset().top;
+			$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 100);
+		};
 	};
 
 	getLayoutIds (ids: string[]) {
@@ -1289,7 +1481,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
-			this.focus(message.blockId, 0, 0);
+			this.focus(message.blockId, 0, 0, false);
 			this.phraseCheck();
 
 			if (callBack) {
@@ -1312,7 +1504,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 			
 			if (next) {
-				this.focus(next.id, nl, nl);
+				this.focus(next.id, nl, nl, false);
 			};
 		};
 
@@ -1333,27 +1525,46 @@ class EditorPage extends React.Component<Props, State> {
 				});
 				if (next) {
 					const nl = next.getLength();
-					this.focus(next.id, nl, nl);
+					this.focus(next.id, nl, nl, false);
 				};
 			});
 		};
 	};
 	
-	blockSplit (focused: I.Block, range: I.TextRange, style: I.TextStyle) {
+	blockSplit (focused: I.Block, range: I.TextRange) {
 		const { rootId } = this.props;
 		const { content } = focused;
-		const isToggle = focused.isToggle();
+		const isTitle = focused.isTitle();
+		const isParagraph = focused.isTextParagraph();
+		const isToggle = focused.isTextToggle();
+		const isList = focused.isTextList();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
+		const childrenIds = blockStore.getChildrenIds(rootId, focused.id);
+		const length = focused.getLength();
+
+		let style = I.TextStyle.Paragraph;
+		let mode = I.BlockSplitMode.Bottom;
+
+		if ((length && isList) || (!isTitle && ((range.from != length) || (range.to != length)))) {
+			style = content.style;
+		};
+
+		if ((childrenIds.length > 0) || (isToggle && isOpen)) {
+			mode = I.BlockSplitMode.Inner;
+		};
 
 		if (isToggle && isOpen) {
-			Storage.setToggle(rootId, focused.id, false);
+			style = I.TextStyle.Paragraph;
 		};
-		
+
 		range = Util.rangeFixOut(content.text, range);
 		
-		C.BlockSplit(rootId, focused.id, range, style, (message: any) => {
-			this.focus(focused.id, 0, 0);
-			focus.scroll();
+		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			this.focus(message.blockId, 0, 0, true);
 			this.phraseCheck();
 
 			if (isToggle && isOpen) {
@@ -1392,7 +1603,7 @@ class EditorPage extends React.Component<Props, State> {
 			
 			if (next && next.isFocusable()) {
 				let length = next.getLength();
-				this.focus(next.id, length, length);
+				this.focus(next.id, length, length, false);
 			};
 		});
 	};
@@ -1401,7 +1612,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
-		if (root.isPageSet()) {
+		if (!root || root.isPageSet()) {
 			return;
 		};
 
@@ -1427,7 +1638,7 @@ class EditorPage extends React.Component<Props, State> {
 		if (create) {
 			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
-			this.focus(last.id, length, length);
+			this.focus(last.id, length, length, false);
 		};
 	};
 	
@@ -1451,9 +1662,14 @@ class EditorPage extends React.Component<Props, State> {
 		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
 	};
 	
-	focus (id: string, from: number, to: number) {
+	focus (id: string, from: number, to: number, scroll: boolean) {
 		focus.set(id, { from: from, to: to });
 		focus.apply();
+
+		if (scroll) {
+			focus.scroll();
+		};
+
 		this.resize();
 	};
 	

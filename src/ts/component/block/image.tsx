@@ -5,13 +5,7 @@ import { I, C, keyboard, DataUtil, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props {
-	dataset?: any;
-	rootId: string;
-	block: I.Block;
-	onKeyDown?(e: any, text?: string, marks?: I.Mark[]): void;
-	onKeyUp?(e: any, text?: string, marks?: I.Mark[]): void;
-};
+interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -33,8 +27,6 @@ class BlockImage extends React.Component<Props, {}> {
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onMenuDown = this.onMenuDown.bind(this);
-		this.onMenuClick = this.onMenuClick.bind(this);
 	};
 
 	render () {
@@ -69,7 +61,6 @@ class BlockImage extends React.Component<Props, {}> {
 					<div className="wrap resizable" style={css}>
 						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
-						<Icon id={'block-image-menu-' + id} className="dots dn" onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 					</div>
 				);
 				break;
@@ -121,11 +112,11 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', []);
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', []);
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {
@@ -238,49 +229,10 @@ class BlockImage extends React.Component<Props, {}> {
 		});
 	};
 	
-	onMenuDown (e: any) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		const win = $(window);
-		
-		if (selection) {
-			selection.preventClear(true);
-			
-			win.unbind('mouseup.selectionBlock').on('mouseup.selectionBlock', () => {
-				selection.preventClear(false);
-				win.unbind('mouseup.selectionBlock');
-			});
-		};
-	};
-	
-	onMenuClick (e: any) {
-		const { dataset, rootId, block } = this.props;
-		const { id } = block;
-		const { selection } = dataset || {};
-		
-		commonStore.menuOpen('blockAction', { 
-			element: '#block-image-menu-' + id,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				blockId: id,
-				blockIds: DataUtil.selectionGet(id, this.props),
-				rootId: rootId,
-				dataset: dataset,
-			},
-			onClose: () => {
-				selection.preventClear(false);
-			}
-		});
-	};
-	
 	getUrl () {
 		const { block } = this.props;
 		const { content } = block;
-		const { state, hash } = content;
+		const { hash } = content;
 		
 		return commonStore.imageUrl(hash, Constant.size.image);
 	};

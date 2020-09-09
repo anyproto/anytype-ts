@@ -21,16 +21,11 @@ import BlockCover from './cover';
 import BlockDiv from './div';
 import BlockRelation from './relation';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
-	rootId: string;
-	dataset?: any;
 	cnt?: number;
 	css?: any;
 	className?: string;
-	block: I.Block;
-	onKeyDown? (e: any, text?: string): void;
-	onKeyUp? (e: any, text?: string): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
 };
@@ -91,11 +86,11 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
 				
-				if (block.isCheckbox() && checked) {
+				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
 				
-				if (block.isToggle()) {
+				if (block.isTextToggle()) {
 					if (!childrenIds.length) {
 						empty = (
 							<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
@@ -266,7 +261,7 @@ class Block extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 
-		if (block.isToggle()) {
+		if (block.isTextToggle()) {
 			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
 		};
 	};
@@ -302,6 +297,8 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onDragStart (e: any) {
+		e.stopPropagation();
+
 		if (!this._isMounted) {
 			return;
 		};
@@ -315,7 +312,6 @@ class Block extends React.Component<Props, {}> {
 		
 		if (!block.isDraggable()) {
 			e.preventDefault();
-			e.stopPropagation();
 			return;
 		};
 		
@@ -326,7 +322,7 @@ class Block extends React.Component<Props, {}> {
 			selection.set([ block.id ]);
 			ids = [ block.id ];
 		};
-				
+		
 		selection.preventSelect(true);
 		selection.preventClear(true);
 		
@@ -340,6 +336,8 @@ class Block extends React.Component<Props, {}> {
 		if (selection) {
 			selection.preventClear(true);
 		};
+
+		focus.clear(true);
 	};
 	
 	onMenuClick (e: any) {
@@ -366,8 +364,8 @@ class Block extends React.Component<Props, {}> {
 				dataset: dataset,
 			},
 			onClose: () => {
-				selection.preventClear(false);
-				selection.clear();
+				selection.clear(true);
+				focus.apply();
 			}
 		});
 	};
@@ -391,10 +389,12 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	onResizeStart (e: any, index: number) {
+		e.stopPropagation();
+
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
@@ -407,6 +407,7 @@ class Block extends React.Component<Props, {}> {
 		
 		if (selection) {
 			selection.preventSelect(true);
+			selection.clear(true);
 		};
 
 		this.unbind();
@@ -417,8 +418,8 @@ class Block extends React.Component<Props, {}> {
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
 		
-		win.on('mousemove.block', throttle((e: any) => { this.onResize(e, index, offset); }, THROTTLE));
-		win.on('mouseup.block', throttle((e: any) => { this.onResizeEnd(e, index, offset); }));
+		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
+		win.on('mouseup.block', (e: any) => { this.onResizeEnd(e, index, offset); });
 		
 		node.find('.resizable').trigger('resizeStart', [ e ]);
 	};

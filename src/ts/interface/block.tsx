@@ -2,6 +2,7 @@ import { I } from 'ts/lib';
 
 export interface PageInfo {
 	id: string;
+	pageType: I.PageType;
 	snippet: string;
 	details: any;	
 	text: string;
@@ -34,10 +35,24 @@ export enum BlockPosition {
 	Replace	 = 6,
 };
 
+export enum BlockSplitMode {
+	Bottom = 0,
+	Top = 1,
+	Inner = 2,
+};
+
 export enum BlockAlign {
 	Left	 = 0,
 	Center	 = 1,
 	Right	 = 2,
+};
+
+export interface BlockComponent {
+	dataset?: any;
+	rootId: string;
+	block: I.Block;
+	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
+	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 };
 
 export interface Block {
@@ -52,8 +67,14 @@ export interface Block {
 	childrenIds: string[];
 	
 	getLength?(): number;
-	hasTitle?(): boolean;
+	isSystem?(): boolean;
+
+	canHaveTitle?(): boolean;
 	canHaveChildren?(): boolean;
+	canHaveAlign?(): boolean;
+	canHaveColor?(): boolean;
+	canHaveBackground?(): boolean;
+	canTurn?(): boolean;
 
 	isIndentable?(): boolean;
 	isFocusable?(): boolean;
@@ -78,21 +99,26 @@ export interface Block {
 	isIconPage?(): boolean;
 	isIconUser?(): boolean;
 
-	isHeader?(): boolean;
-	isHeader1?(): boolean;
-	isHeader2?(): boolean;
-	isHeader3?(): boolean;
+	isDiv?(): boolean;
+	isDivLine?(): boolean;
+	isDivDot?(): boolean;
 
 	isFile?(): boolean;
 	isImage?(): boolean;
 	isVideo?(): boolean;
-	isDiv?(): boolean;
-	isText?(): boolean;
 	isTitle?(): boolean;
-	isToggle?(): boolean;
-	isNumbered?(): boolean;
-	isBulleted?(): boolean;
-	isCheckbox?(): boolean;
-	isCode?(): boolean;
-	isQuote?(): boolean;
+
+	isText?(): boolean;
+	isTextParagraph?(): boolean;
+	isTextHeader?(): boolean;
+	isTextHeader1?(): boolean;
+	isTextHeader2?(): boolean;
+	isTextHeader3?(): boolean;
+	isTextList?(): boolean;
+	isTextToggle?(): boolean;
+	isTextNumbered?(): boolean;
+	isTextBulleted?(): boolean;
+	isTextCheckbox?(): boolean;
+	isTextCode?(): boolean;
+	isTextQuote?(): boolean;
 };
