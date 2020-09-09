@@ -67,8 +67,8 @@ class MenuCalendar extends React.Component<Props, {}> {
 					})}
 				</div>
 				<div className="foot">
-					<div className="btn" onClick={() => { this.setValue(Util.time()); }}>Today</div>
-					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400); }}>Tomorrow</div>
+					<div className="btn" onClick={() => { this.setValue(Util.time(), true); }}>Today</div>
+					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400, true); }}>Tomorrow</div>
 				</div>
 			</div>
 		);
@@ -78,7 +78,7 @@ class MenuCalendar extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 
-		this.setValue(data.value);
+		this.setValue(data.value, false);
 	};
 
 	onChangeMonth (v: any) {
@@ -95,19 +95,27 @@ class MenuCalendar extends React.Component<Props, {}> {
 		this.setState({ value: Util.timestamp(v, mv, 1) });
 	};
 
-	setValue (value: number) {
+	setValue (value: number, save: boolean) {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+
 		this.refMonth.setValue(Number(Util.date('n', value)));
 		this.refYear.setValue(Number(Util.date('Y', value)));
-		
 		this.setState({ value: value });
+
+		if (save) {
+			close();
+			onChange(value);
+		};
 	};
 	
 	set (d: number, m: number, y: number) {
-		const { id, param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		
-		commonStore.menuClose(id);
+		close();
 		onChange(Util.timestamp(y, m, d));
 	};
 	

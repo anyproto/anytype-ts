@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, Util, DataUtil, keyboard } from 'ts/lib';
+import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Smile, Input, Textarea } from 'ts/component';
 import { commonStore } from 'ts/store';
-import { RelationType } from '../../../../interface';
 
 interface Props extends I.Cell {};
 
@@ -123,7 +122,6 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	setEditing (v: boolean) {
-		console.log(v);
 		const { view, readOnly } = this.props;
 		const canEdit = !readOnly && (view.type == I.ViewType.Grid);
 

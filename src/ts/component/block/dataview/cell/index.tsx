@@ -115,6 +115,7 @@ class Cell extends React.Component<Props, {}> {
 			switch (relation.type) {
 
 				case I.RelationType.Date:
+					param.data.value = param.data.value || Util.time();
 					param.data.onChange = (value: number) => {
 						this.onChange(value);
 					};
