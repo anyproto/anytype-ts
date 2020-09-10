@@ -301,7 +301,7 @@ class DataUtil {
 	
 	menuGetBlockList () {
 		return [
-			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox' },
+			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox', aliases: [ 'todo' ] },
 			{ id: I.TextStyle.Bulleted, icon: 'list', lang: 'Bulleted' },
 			{ id: I.TextStyle.Numbered, icon: 'numbered', lang: 'Numbered' },
 			{ id: I.TextStyle.Toggle, icon: 'toggle', lang: 'Toggle' },
