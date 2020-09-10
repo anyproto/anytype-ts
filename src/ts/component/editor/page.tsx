@@ -773,24 +773,33 @@ class EditorPage extends React.Component<Props, State> {
 				e.preventDefault();
 
 				if (type == I.MarkType.Link) {
-					let mark = Mark.getInRange(marks, type, range);
-					commonStore.menuOpen('blockLink', {
-						type: I.MenuType.Horizontal,
-						element: '#menuBlockContext',
-						offsetX: 0,
-						offsetY: 44,
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Center,
-						data: {
-							value: (mark ? mark.param : ''),
-							onChange: (param: string) => {
-								marks = Mark.toggle(marks, { type: type, param: param, range: range });
-								DataUtil.blockSetText(rootId, block, text, marks, true, () => {
-									focus.apply();
-								});
+					const mark = Mark.getInRange(marks, type, range);
+					const el = $('#block-' + focused);
+					const offset = el.offset();
+					const rect = Util.selectionRect();
+					const x = rect.x - offset.left - Constant.size.menuBlockLink / 2 + rect.width / 2;
+					const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
+
+					commonStore.menuClose('blockContext');
+					window.setTimeout(() => {
+						commonStore.menuOpen('blockLink', {
+							type: I.MenuType.Horizontal,
+							element: el,
+							offsetX: x,
+							offsetY: y,
+							vertical: I.MenuDirection.Top,
+							horizontal: I.MenuDirection.Left,
+							data: {
+								value: (mark ? mark.param : ''),
+								onChange: (param: string) => {
+									marks = Mark.toggle(marks, { type: type, param: param, range: range });
+									DataUtil.blockSetText(rootId, block, text, marks, true, () => {
+										focus.apply();
+									});
+								}
 							}
-						}
-					});
+						});
+					}, Constant.delay.menu);
 				} else {
 					marks = Mark.toggle(marks, { type: type, range: range });
 					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
