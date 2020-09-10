@@ -434,7 +434,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
 				
-				if (block && !block.isLayoutColumn() && !block.isLayoutDiv()) {
+				if (block && !block.isLayoutColumn() && !block.isLayoutDiv() && !block.isLayoutHeader()) {
 					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 				};
 			};
@@ -1461,7 +1461,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 
 			let parent = blockStore.getLeaf(rootId, element.parentId);
-			if (!parent || !parent.isLayout() || parent.isLayoutDiv()) {
+			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
 				continue;
 			};
 			
