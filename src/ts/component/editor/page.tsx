@@ -1587,7 +1587,7 @@ class EditorPage extends React.Component<Props, State> {
 	blockRemove (focused?: I.Block) {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
-		
+
 		commonStore.menuClose('blockAdd');
 		commonStore.menuClose('blockAction');
 		commonStore.menuClose('blockContext');
@@ -1604,6 +1604,11 @@ class EditorPage extends React.Component<Props, State> {
 			next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => { return it.isFocusable(); });
 			blockIds = [ focused.id ];
 		};
+
+		blockIds = blockIds.filter((it: string) => {  
+			let block = blockStore.getLeaf(rootId, it);
+			return !block.isTextTitle();
+		});
 
 		focus.clear(true);
 		C.BlockUnlink(rootId, blockIds, (message: any) => {

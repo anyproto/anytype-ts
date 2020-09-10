@@ -96,7 +96,7 @@ class Block extends React.Component<Props, {}> {
 						);
 					};
 				};
-				
+
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
 				break;
 
