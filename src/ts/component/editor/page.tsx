@@ -508,6 +508,12 @@ class EditorPage extends React.Component<Props, State> {
 		});
 		*/
 
+		keyboard.shortcut('escape', e, (pressed: string) => {
+			if (ids.length && !commonStore.menuIsOpen()) {
+				selection.clear();
+			};
+		});
+
 		// Mark-up
 		if (ids.length) {
 			let type = null;
@@ -779,13 +785,17 @@ class EditorPage extends React.Component<Props, State> {
 							value: (mark ? mark.param : ''),
 							onChange: (param: string) => {
 								marks = Mark.toggle(marks, { type: type, param: param, range: range });
-								DataUtil.blockSetText(rootId, block, text, marks, true);
+								DataUtil.blockSetText(rootId, block, text, marks, true, () => {
+									focus.apply();
+								});
 							}
 						}
 					});
 				} else {
 					marks = Mark.toggle(marks, { type: type, range: range });
-					DataUtil.blockSetText(rootId, block, text, marks, true);
+					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
+						focus.apply();
+					});
 				};
 			};
 		};
