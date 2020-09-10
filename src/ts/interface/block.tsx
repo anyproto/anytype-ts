@@ -2,6 +2,7 @@ import { I } from 'ts/lib';
 
 export interface PageInfo {
 	id: string;
+	pageType: I.PageType;
 	snippet: string;
 	details: any;	
 	text: string;

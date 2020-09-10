@@ -302,7 +302,7 @@ class DataUtil {
 	
 	menuGetBlockList () {
 		return [
-			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox' },
+			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox', aliases: [ 'todo' ] },
 			{ id: I.TextStyle.Bulleted, icon: 'list', lang: 'Bulleted' },
 			{ id: I.TextStyle.Numbered, icon: 'numbered', lang: 'Numbered' },
 			{ id: I.TextStyle.Toggle, icon: 'toggle', lang: 'Toggle' },
@@ -387,7 +387,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: '', className: '', isTextColor: true }
+			{ id: 'color-black', name: 'Black', value: 'black', className: '', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
 			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, className: i, isTextColor: true });
