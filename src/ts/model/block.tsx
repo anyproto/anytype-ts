@@ -56,10 +56,14 @@ class Block implements I.Block {
 		return !this.isSystem() && !this.isBookmark();
 	};
 
+	canHaveMarks () {
+		return this.isText() && !this.isTextTitle() && !this.isTextCode();
+	};
+
 	canTurn (): boolean {
 		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isDiv());
 	};
-	
+
 	isIndentable (): boolean {
 		return !this.isSystem() && !this.isTextTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
 	};

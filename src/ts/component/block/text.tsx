@@ -850,6 +850,10 @@ class BlockText extends React.Component<Props, {}> {
 		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
 			return;
 		};
+
+		if (block.isTextTitle()) {
+			return;
+		};
 		
 		const el = $('#block-' + id);
 		const offset = el.offset();

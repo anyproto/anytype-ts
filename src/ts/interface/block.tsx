@@ -72,6 +72,7 @@ export interface Block {
 	canHaveAlign?(): boolean;
 	canHaveColor?(): boolean;
 	canHaveBackground?(): boolean;
+	canHaveMarks?(): boolean;
 	canTurn?(): boolean;
 
 	isIndentable?(): boolean;
