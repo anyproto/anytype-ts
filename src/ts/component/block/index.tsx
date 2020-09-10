@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, DataUtil, keyboard, focus, Storage } from 'ts/lib';
 import { DropTarget, ListChildren, Icon } from 'ts/component';
-import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
 
@@ -12,7 +11,6 @@ import BlockText from './text';
 import BlockImage from './image';
 import BlockIconPage from './iconPage';
 import BlockIconUser from './iconUser';
-import BlockTitle from './title';
 import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
@@ -31,7 +29,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const THROTTLE = 20;
 const SNAP = 0.02;
 
 @observer

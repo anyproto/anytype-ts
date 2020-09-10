@@ -169,8 +169,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block } = this.props;
-		const { id, content } = block
-		const { focused } = focus;
+		const { content } = block
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);

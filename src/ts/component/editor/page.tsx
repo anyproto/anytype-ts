@@ -1513,6 +1513,8 @@ class EditorPage extends React.Component<Props, State> {
 			if (message.error.code) {
 				return;
 			};
+
+			console.log(nl, next);
 			
 			if (next) {
 				this.focus(next.id, nl, nl, false);

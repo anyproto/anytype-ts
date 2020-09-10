@@ -88,6 +88,7 @@ export interface Block {
 	isLayoutRow?(): boolean;
 	isLayoutColumn?(): boolean;
 	isLayoutDiv?(): boolean;
+	isLayoutHeader?(): boolean;
 
 	isLink?(): boolean;
 	isLinkPage?(): boolean;

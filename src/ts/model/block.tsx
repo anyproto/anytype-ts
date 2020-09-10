@@ -107,6 +107,10 @@ class Block implements I.Block {
 	isLayoutDiv (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Div);
 	};
+
+	isLayoutHeader (): boolean {
+		return this.isLayout() && (this.content.style == I.LayoutStyle.Header);
+	};
 	
 	isLink (): boolean {
 		return this.type == I.BlockType.Link;
@@ -217,15 +221,7 @@ class Block implements I.Block {
 	};
 	
 	getLength (): number {
-		let t = '';
-		if (this.isTextTitle()) {
-			const details = blockStore.getDetails(this.parentId, this.parentId);
-			t = details.name;
-		} else {
-			t = this.content.text;
-		};
-
-		return String(t || '').length;
+		return this.isText() ? String(this.content.text || '').length : 0;
 	};
 };
 
