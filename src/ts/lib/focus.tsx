@@ -9,21 +9,21 @@ class Focus {
 	focused: string = '';
 	range: I.TextRange = { from: 0, to: 0 };
 	
-	set (id: string, range: I.TextRange): void {
-		if (!id || !range) {
+	set (id: string, range: I.TextRange): Focus {
+		if (!range) {
 			return;
 		};
 		
 		this.focused = String(id || '');
 		this.range.from = Number(range.from) || 0;
 		this.range.to = Number(range.to) || 0;
+
+		return this;
 	};
 	
 	clear (withRange: boolean) {
 		this.clearRange(withRange);
-		this.focused = '';
-		this.range.from = 0;
-		this.range.to = 0;
+		this.set('', { from: 0, to: 0 });
 	};
 
 	clearRange (withRange: boolean) {
@@ -41,7 +41,7 @@ class Focus {
 		};
 	};
 	
-	apply () {
+	apply (): Focus {
 		if (!this.focused) {
 			return;
 		};
@@ -66,6 +66,8 @@ class Focus {
 			keyboard.setFocus(true);
 			setRange(el, { start: this.range.from, end: this.range.to });
 		};
+
+		return this;
 	};
 	
 	scroll (id?: string) {

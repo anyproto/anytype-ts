@@ -217,7 +217,6 @@ class PopupSettings extends React.Component<Props, State> {
 						<Title text="Pin code" />
 						<Label text="The pin code will protect your secret phrase. As we do not store your secret phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or secret phrase. So, please, remember your pin code." />
 						<Pin onSuccess={this.onSelectPin} />
-						<Button text="Confirm" className="orange" onClick={this.onSelectPin} />
 					</div>
 				);
 				break;
@@ -235,7 +234,6 @@ class PopupSettings extends React.Component<Props, State> {
 							onSuccess={this.onCheckPin} 
 							onError={() => { this.setState({ error: 'Incorrect pin' }) }} 
 						/>
-						<Button text="Confirm" className="orange" onClick={() => { this.onPage('index'); }} />
 					</div>
 				);
 				break;

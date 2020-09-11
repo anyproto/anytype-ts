@@ -401,9 +401,9 @@ class BlockText extends React.Component<Props, {}> {
 		let ret = false;
 
 		const k = e.key.toLowerCase();	
-		const range = this.getRange() || { from: 0, to: 0 };
-		const isSpaceBefore = !range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n');
-		const symbolBefore = value[range.from - 1];
+		const range = this.getRange();
+		const isSpaceBefore = range ? (!range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n')) : false;
+		const symbolBefore = range ? value[range.from - 1] : '';
 		
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			if (block.isTextCode() || commonStore.menuIsOpen()) {
@@ -680,6 +680,12 @@ class BlockText extends React.Component<Props, {}> {
 					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 						focus.set(block.id, { from: to, to: to });
 						focus.apply();
+
+						// Try to fix async detailsUpdate event
+						window.setTimeout(() => {
+							focus.set(block.id, { from: to, to: to });
+							focus.apply();
+						}, 50);
 					});
 				},
 			},
@@ -748,7 +754,11 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 
-		DataUtil.blockSetText(rootId, block, value, marks, update, callBack);
+		DataUtil.blockSetText(rootId, block, value, marks, update, (message: any) => {
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 	
 	setMarks (marks: I.Mark[]) {
@@ -880,8 +890,10 @@ class BlockText extends React.Component<Props, {}> {
 					range: { from: currentFrom, to: currentTo },
 					onChange: (marks: I.Mark[]) => {
 						this.marks = Util.objectCopy(marks);
-						focus.set(id, { from: currentFrom, to: currentTo });
 						this.setMarks(marks);
+
+						focus.set(id, { from: currentFrom, to: currentTo });
+						focus.apply();
 					},
 				},
 			});
