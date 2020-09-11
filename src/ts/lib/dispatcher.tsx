@@ -596,13 +596,6 @@ class Dispatcher {
 						'Render time:', renderTime + 'ms',
 						'Total time:', totalTime + 'ms'
 					);
-
-					if (middleTime > 3000) {
-						Sentry.captureMessage(`${type}: middleware time too long`);
-					};
-					if (renderTime > 1000) {
-						Sentry.captureMessage(`${type}: render time too long`);
-					};
 				};
 			});
 		} catch (err) {
