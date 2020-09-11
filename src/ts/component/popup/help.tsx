@@ -68,8 +68,6 @@ class PopupHelp extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const self = this;
 
-		console.log(node.find('a'));
-
 		node.find('a').unbind('click').click(function (e: any) {
 			e.preventDefault();
 			self.onUrl($(this).attr('href'));

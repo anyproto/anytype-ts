@@ -58,7 +58,9 @@
 		"dataview": {
 			"cell": {
 				"default": 192,
-				"title": 288
+				"title": 288,
+				"min": 48,
+				"max": 500
 			}
 		},
 
@@ -66,6 +68,7 @@
 
 		"menuBlockAdd": 360,
 		"menuDataviewFilter": 400,
+		"menuBlockLink": 400,
 		
 		"menuBlockContext": {
 			"default": 400,

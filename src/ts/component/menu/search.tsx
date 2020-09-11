@@ -77,7 +77,6 @@ class MenuSearch extends React.Component<Props, {}> {
 		if (this.last != value) {
 			this.n = 0;
 			this.clear();
-			console.log('clear', value);
 		};
 		this.last = value;
 
@@ -92,7 +91,7 @@ class MenuSearch extends React.Component<Props, {}> {
 			portionMode: 'first',
 			filterElements: (el: any) => {
 				const tag = el.nodeName.toLowerCase();
-				if ([ 'span', 'div' ].indexOf(tag) < 0) {
+				if ([ 'span', 'div', 'name', 'mention' ].indexOf(tag) < 0) {
 					return false;
 				};
 

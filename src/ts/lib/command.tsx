@@ -557,6 +557,37 @@ const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: 
 	dispatcher.request('blockSetDataviewActiveView', request, callBack);
 };
 
+const BlockCreateDataviewRecord = (contextId: string, blockId: string, record: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Create.Dataview.Record.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRecord(Encode.encodeStruct(record));
+
+	dispatcher.request('blockCreateDataviewRecord', request, callBack);
+};
+
+const BlockUpdateDataviewRecord = (contextId: string, blockId: string, recordId: string, record: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Update.Dataview.Record.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRecordid(recordId);
+	request.setRecord(Encode.encodeStruct(record));
+
+	dispatcher.request('blockUpdateDataviewRecord', request, callBack);
+};
+
+const BlockDeleteDataviewRecord = (contextId: string, blockId: string, recordId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Update.Dataview.Record.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRecordid(recordId);
+
+	dispatcher.request('blockDeleteDataviewRecord', request, callBack);
+};
+
 export {
 	VersionGet,
 
@@ -566,7 +597,6 @@ export {
 	LinkPreview,
 	UploadFile,
 	ProcessCancel,
-
 
 	WalletCreate,
 	WalletRecover,
@@ -612,6 +642,10 @@ export {
 	BlockSetDataviewActiveView,
 
 	BlockDeleteDataviewView,
+
+	BlockCreateDataviewRecord,
+	BlockUpdateDataviewRecord,
+	BlockDeleteDataviewRecord,
 
 	BlockListMove,
 	BlockListMoveToNewPage,

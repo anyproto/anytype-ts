@@ -73,6 +73,7 @@ export interface Filter {
 export interface ViewRelation extends Relation {
 	isVisible: boolean;
 	order: number;
+	width: number;
 };
 
 export interface ViewComponent {
@@ -95,12 +96,15 @@ export interface View {
 };
 
 export interface Cell {
+	rootId: string;
+	block: I.Block;
 	id: string;
 	relation: Relation;
 	data: any;
 	view: any;
 	readOnly?: boolean;
 	onOpen?(e: any, data: any): void;
+	onChange?(data: any): void;
 };
 
 export interface ContentDataview {

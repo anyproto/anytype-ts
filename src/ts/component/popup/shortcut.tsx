@@ -150,8 +150,8 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '⌘ + B',			 com: 'Ctrl + B',			 name: 'Bold' },
 						{ mac: '⌘ + I',			 com: 'Ctrl + I',			 name: 'Italic' },
 						{ mac: '⌘ + Shift +S',	 com: 'Ctrl + Shift + S',	 name: 'Strikethrough' },
-						{ mac: '⌘ + L',			 com: 'Ctrl + L',			 name: 'Add a link' },
-						{ mac: '⌘ + K',			 com: 'Ctrl + K',			 name: 'Convert to Inline code' },
+						{ mac: '⌘ + K',			 com: 'Ctrl + K',			 name: 'Add a link' },
+						{ mac: '⌘ + L',			 com: 'Ctrl + L',			 name: 'Convert to Inline code' },
 					]
 				},
 			],
