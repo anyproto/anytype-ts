@@ -5,12 +5,15 @@
 	.wrapper { padding: 38px 0px 0px 0px; width: calc(100% - 254px); overflow: auto; position: relative; }
 	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
 
-	.list { width: 254px; border-left: 1px solid #dfddd0; position: relative; z-index: 10; background: #fff; overflow: auto; }
+	.list { width: 254px; border-left: 1px solid #dfddd0; z-index: 10; position: relative; background: #fff; overflow: auto; }
 	.list {
 		.section { padding: 11px 16px; }
 		.section {
 			.date { text-transform: uppercase; @include text-very-small; }
 		}
+		.section.fix { position: fixed; right: 0px; top: 0px; background: #fff; width: 253px; }
+
+		.wrap { position: relative; }
 
 		.item { padding: 5px 16px 5px 30px; cursor: pointer; transition: $transitionFast; position: relative; }
 		.item {

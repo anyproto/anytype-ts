@@ -10,17 +10,17 @@ interface Props extends RouteComponentProps<any> { };
 
 interface State {
 	versions: I.Version[];
-	groups: any[];
 };
 
 const $ = require('jquery');
+const LIMIT = 100;
+const GROUP_OFFSET = 300;
 
 @observer
 class PageMainHistory extends React.Component<Props, State> {
 
 	state = {
 		versions: [] as I.Version[],
-		groups: [] as any[],
 	};
 	
 	version: I.Version = null;
@@ -36,8 +36,9 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	render () {
 		const { match } = this.props;
-		const { versions, groups } = this.state;
+		const { versions } = this.state;
 		const rootId = match.params.id;
+		const groups = this.groupData(versions);
 
 		const root = blockStore.getLeaf(rootId, rootId);
 		if (!this.version || !root) {
@@ -207,16 +208,33 @@ class PageMainHistory extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const sideRight = node.find('#sideRight');
 		const wrap = sideRight.find('.wrap');
+		const sections = wrap.find('.section');
 
 		this.scrollRight = sideRight.scrollTop();
 		if (this.scrollRight >= wrap.height() - win.height()) {
 			this.loadList(versions[versions.length - 1].id);
 		};
+
+		sections.each((i: number, item: any) => {
+			item = $(item);
+			const top = item.offset().top;
+			
+			let clone = sideRight.find('.section.fix.c' + i);
+			if (top < 0) {
+				if (!clone.length) {
+					clone = item.clone();
+					sideRight.prepend(clone);
+					clone.addClass('fix c' + i).css({ zIndex: i + 1 });
+				};
+			} else {
+				clone.remove();
+			};
+		});
 	};
 
 	setId () {
 		const { match } = this.props;
-		Storage.set('redirectTo', '/main/history/' + match.params.id);
+		Storage.set('pageId', match.params.id);
 	};
 
 	show (id: string) {
@@ -224,12 +242,13 @@ class PageMainHistory extends React.Component<Props, State> {
 			return;
 		};
 
-		const { versions, groups } = this.state;
+		const { versions } = this.state;
 		const version = versions.find((it: any) => { return it.id == id; });
 		if (!version) {
 			return;
 		};
 
+		const groups = this.groupData(versions);
 		const month = groups.find((it: any) => { return it.groupId == this.monthId(version.time); });
 		if (!month) {
 			return;
@@ -288,7 +307,7 @@ class PageMainHistory extends React.Component<Props, State> {
 	
 	loadList (lastId: string) { 
 		const { match } = this.props;
-		const { versions, groups } = this.state;
+		const { versions } = this.state;
 		const rootId = match.params.id;
 		
 		if (this.loading || (this.lastId && (lastId == this.lastId))) {
@@ -298,17 +317,14 @@ class PageMainHistory extends React.Component<Props, State> {
 		this.loading = true;
 		this.lastId = lastId;
 
-		C.HistoryVersions(rootId, lastId, 100, (message: any) => {
+		C.HistoryVersions(rootId, lastId, LIMIT, (message: any) => {
 			this.loading = false;
 
 			if (message.error.code || !message.versions.length) {
 				return;
 			};
 
-			this.setState({ 
-				versions: versions.concat(message.versions),
-				groups: groups.concat(this.groupData(message.versions)),
-			});
+			this.setState({ versions: versions.concat(message.versions) });
 
 			if (!this.version) {
 				this.loadVersion(message.versions[0].id);
@@ -337,11 +353,19 @@ class PageMainHistory extends React.Component<Props, State> {
 	groupData (versions: I.Version[]) {
 		let months: any[] = [];
     	let groups: any[] = [];
+		let groupId = 0;
 
-		for (let version of versions) {
-			let group = groups.find((it: any) => { return it.groupId == version.groupId; });
+		for (let i = 0; i < versions.length; ++i) {
+			let version = versions[i];
+			let prev = versions[i - 1];
+
+			if (prev && (prev.time - version.time > GROUP_OFFSET)) {
+				groupId++;
+			};
+
+			let group = groups.find((it: any) => { return it.groupId == groupId; });
 			if (!group) {
-				group = { ...version, groupId: version.groupId, list: [] };
+				group = { ...version, groupId: groupId, list: [] };
 				groups.push(group);
       		} else {
 				group.list.push(version);
