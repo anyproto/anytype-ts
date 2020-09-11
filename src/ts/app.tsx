@@ -255,7 +255,7 @@ class App extends React.Component<Props, State> {
 		this.setWindowEvents();
 
 		if (pageId) {
-			Storage.set('redirectTo', pageId);
+			Storage.set('redirectTo', '/main/edit/' + pageId);
 		};
 	};
 

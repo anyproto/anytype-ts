@@ -10,6 +10,7 @@ interface Props extends RouteComponentProps<any> { };
 
 interface State {
 	versions: I.Version[];
+	groups: any[];
 };
 
 const $ = require('jquery');
@@ -19,12 +20,15 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	state = {
 		versions: [] as I.Version[],
+		groups: [] as any[],
 	};
 	
 	version: I.Version = null;
 	refHeader: any = null;
 	scrollLeft: number = 0;
 	scrollRight: number = 0;
+	loading: boolean = false;
+	lastId: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -32,7 +36,7 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	render () {
 		const { match } = this.props;
-		const versions = this.groupData(this.state.versions);
+		const { versions, groups } = this.state;
 		const rootId = match.params.id;
 
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -154,9 +158,11 @@ class PageMainHistory extends React.Component<Props, State> {
 					</div>
 
 					<div id="sideRight" className="list">
-						{versions.map((item: any, i: number) => {
-							return <Section key={i} {...item} />
-						})}
+						<div className="wrap">
+							{groups.map((item: any, i: number) => {
+								return <Section key={i} {...item} />
+							})}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -164,7 +170,7 @@ class PageMainHistory extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		this.loadList();
+		this.loadList('');
 		this.resize();
 		this.setId();
 	};
@@ -173,7 +179,6 @@ class PageMainHistory extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
-		const self = this;
 
 		this.resize();
 		this.setId();
@@ -185,13 +190,33 @@ class PageMainHistory extends React.Component<Props, State> {
 		sideLeft.scrollTop(this.scrollLeft);
 		sideRight.scrollTop(this.scrollRight);
 
-		sideLeft.unbind('scroll').scroll(function () { console.log(self.scrollLeft); self.scrollLeft = $(this).scrollTop(); });
-		sideRight.unbind('scroll').scroll(function () { console.log(self.scrollRight); self.scrollRight = $(this).scrollTop(); });
+		sideLeft.unbind('scroll').scroll(() => { this.onScrollLeft(); });
+		sideRight.unbind('scroll').scroll(() => { this.onScrollRight(); });
+	};
+
+	onScrollLeft () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const sideLeft = node.find('#sideLeft');
+		
+		this.scrollLeft = sideLeft.scrollTop();
+	};
+
+	onScrollRight () {
+		const { versions } = this.state;
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const sideRight = node.find('#sideRight');
+		const wrap = sideRight.find('.wrap');
+
+		this.scrollRight = sideRight.scrollTop();
+		if (this.scrollRight >= wrap.height() - win.height()) {
+			this.loadList(versions[versions.length - 1].id);
+		};
 	};
 
 	setId () {
 		const { match } = this.props;
-		Storage.set('pageId', match.params.id);
+		Storage.set('redirectTo', '/main/history/' + match.params.id);
 	};
 
 	show (id: string) {
@@ -199,14 +224,13 @@ class PageMainHistory extends React.Component<Props, State> {
 			return;
 		};
 
-		const { versions } = this.state;
-		const data = this.groupData(versions);
+		const { versions, groups } = this.state;
 		const version = versions.find((it: any) => { return it.id == id; });
 		if (!version) {
 			return;
 		};
 
-		const month = data.find((it: any) => { return it.groupId == this.monthId(version.time); });
+		const month = groups.find((it: any) => { return it.groupId == this.monthId(version.time); });
 		if (!month) {
 			return;
 		};
@@ -262,16 +286,29 @@ class PageMainHistory extends React.Component<Props, State> {
 		};
 	};
 	
-	loadList () { 
+	loadList (lastId: string) { 
 		const { match } = this.props;
+		const { versions, groups } = this.state;
 		const rootId = match.params.id;
+		
+		if (this.loading || (this.lastId && (lastId == this.lastId))) {
+			return;
+		};
 
-		C.HistoryVersions(rootId, '', 100, (message: any) => {
+		this.loading = true;
+		this.lastId = lastId;
+
+		C.HistoryVersions(rootId, lastId, 100, (message: any) => {
+			this.loading = false;
+
 			if (message.error.code || !message.versions.length) {
 				return;
 			};
 
-			this.setState({ versions: message.versions });
+			this.setState({ 
+				versions: versions.concat(message.versions),
+				groups: groups.concat(this.groupData(message.versions)),
+			});
 
 			if (!this.version) {
 				this.loadVersion(message.versions[0].id);
@@ -297,7 +334,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		});
 	};
 	
-	groupData (versions: any[]) {
+	groupData (versions: I.Version[]) {
 		let months: any[] = [];
     	let groups: any[] = [];
 
