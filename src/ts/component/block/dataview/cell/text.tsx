@@ -11,8 +11,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 class CellText extends React.Component<Props, State> {
 
@@ -28,6 +26,7 @@ class CellText extends React.Component<Props, State> {
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onChangeDate = this.onChangeDate.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
@@ -40,10 +39,17 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
+		let value = data[relation.id];
+
 		if (editing) {
 			if (relation.type == I.RelationType.Description) {
 				EditorComponent = (item: any) => (
 					<Textarea ref={(ref: any) => { this.ref = ref; }} id="textarea" {...item} />
+				);
+			} else 
+			if (relation.type == I.RelationType.Date) {
+				EditorComponent = (item: any) => (
+					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} mask='99.99.9999' onKeyUp={this.onChangeDate} />
 				);
 			} else {
 				EditorComponent = (item: any) => (
@@ -62,12 +68,15 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
+			if (relation.type == I.RelationType.Date) {
+				value = value ? Util.date('M d Y', value) : '';
+			};
 			Name = (item: any) => (
 				<div className="name">{item.name}</div>
 			);
 		};
 
-		let content: any = <Name name={data[relation.id]} />;
+		let content: any = <Name name={value} />;
 
 		if (relation.id == 'name') {
 			let cn = 'c20';
@@ -88,7 +97,7 @@ class CellText extends React.Component<Props, State> {
 			content = (
 				<React.Fragment>
 					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />
-					<Name name={data[relation.id]} />
+					<Name name={value} />
 					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
 				</React.Fragment>
 			);
@@ -108,10 +117,14 @@ class CellText extends React.Component<Props, State> {
 		const cell = $('#' + cellId);
 
 		if (editing) {
+			let value = data[relation.id];
+			if (relation.type == I.RelationType.Date) {
+				value = value ? Util.date('d.m.Y', value) : '';
+			};
+
 			cell.addClass('isEditing');
 			this.ref.focus();
-			this.ref.setValue(data[relation.id]);
-			this.showMenu();
+			this.ref.setValue(value);
 		} else {
 			cell.removeClass('isEditing');
 			window.clearTimeout(this.timeoutMenu);
@@ -130,63 +143,6 @@ class CellText extends React.Component<Props, State> {
 		};
 	};
 
-	showMenu () {
-		const { id, relation, data } = this.props;
-		if ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.type) < 0) {
-			return;
-		};
-
-		const cellId = DataUtil.cellId('cell', relation.id, id);
-		const cell = $('#' + cellId);
-		const width = Math.max(cell.width(), Constant.size.dataview.cell.default);
-		const value = this.ref.getValue();
-
-		if (!value) {
-			return;
-		};
-
-		window.clearTimeout(this.timeoutMenu);
-		this.timeoutMenu = window.setTimeout(() => {
-			commonStore.menuClose('select');
-			commonStore.menuOpen('select', { 
-				element: '#' + cellId,
-				type: I.MenuType.Horizontal,
-				offsetX: 0,
-				offsetY: 4,
-				width: width,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				className: 'button',
-				passThrough: true,
-				data: {
-					value: '',
-					noKeys: true,
-					options: [
-						{ id: 'go', name: 'Go to' },
-						{ id: 'copy', name: 'Copy' },
-					],
-					onSelect: (event: any, item: any) => {
-						let scheme = '';
-						if (relation.type == I.RelationType.Email) {
-							scheme = 'mailto:';
-						};
-						if (relation.type == I.RelationType.Phone) {
-							scheme = 'tel:';
-						};
-
-						if (item.id == 'go') {
-							ipcRenderer.send('urlOpen', scheme + value);
-						};
-
-						if (item.id == 'copy') {
-							Util.clipboardCopy({ text: value, html: value });
-						};
-					},
-				}
-			});
-		}, Constant.delay.menu);
-	};
-
 	onKeyDown (e: any, value: string) {
 		this.resize();
 	};
@@ -198,19 +154,45 @@ class CellText extends React.Component<Props, State> {
 	onChange (e: any, value: string) {
 	};
 
+	onChangeDate (e: any, value: any) {
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Popup) => { return item.id == 'dataviewCalendar'; });
+
+		value = this.parseDate(String(value || '').replace(/_/g, ''));
+		menu.param.data.value = value;
+
+		commonStore.menuUpdate('dataviewCalendar', menu.param);
+	};
+
 	onFocus (e: any) {
 		keyboard.setFocus(true);
 	};
 
 	onBlur (e: any) {
-		let { onChange } = this.props;
+		let { relation, onChange } = this.props;
+		let value = this.ref.getValue();
+
+		if (value && (relation.type == I.RelationType.Date)) {
+			value = this.parseDate(value);
+		};
 
 		keyboard.setFocus(false);
-		this.setState({ editing: false });
+
+		if (!commonStore.menuIsOpen()) {
+			this.setState({ editing: false });
+		};
 
 		if (onChange) {
-			onChange(this.ref.getValue());
+			onChange(value);
 		};
+	};
+
+	parseDate (value: any) {
+		let [ date, time ] = String(value || '').split(' ');
+		let [ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
+		let [ h, i, s ] = String(time || '').split(':').map((it: any) => { return Number(it) || 0; });
+
+		return Util.timestamp(y, m, d, h, i, s);
 	};
 
 	onSelect (icon: string) {

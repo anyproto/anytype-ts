@@ -14,25 +14,17 @@ interface State {
 };
 
 @observer
-class MenuCalendar extends React.Component<Props, {}> {
+class MenuCalendar extends React.Component<Props, State> {
 	
 	state = {
 		value: 0
 	};
 	
-	refMonth: any = null;
-	refYear: any = null;
-	
-	constructor(props: any) {
-		super(props);
-
-		this.onChangeMonth = this.onChangeMonth.bind(this);
-		this.onChangeYear = this.onChangeYear.bind(this);
-	};
-
 	render() {
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
 		const items = this.getData();
-		const { value } = this.state;
 
 		let d = Number(Util.date('d', value));
 		let m = Number(Util.date('n', value));
@@ -42,12 +34,11 @@ class MenuCalendar extends React.Component<Props, {}> {
 		for (let i in Constant.month) {
 			months.push({ id: i, name: Constant.month[i] });
 		};
-		
+
 		return (
 			<div className="inner">
-				<div className="head">	
-					<Select initial="Month" id="month" arrowClassName="light" value={String(m)} ref={(ref: any) => { this.refMonth = ref; }} options={months} onChange={this.onChangeMonth} />
-					<Input ref={(ref: any) => { this.refYear = ref; }} placeHolder="Year" onKeyUp={this.onChangeYear} />
+				<div className="head">
+					<div className="date">{Util.date('F, Y', value)}</div>
 					<div className="days">
 						{Constant.week.map((day: string, i: number) => {
 							return <div key={i} className="day th">{day.substr(0, 2)}</div>;
@@ -73,40 +64,17 @@ class MenuCalendar extends React.Component<Props, {}> {
 			</div>
 		);
 	};
-	
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
 
-		this.setValue(data.value, false);
-	};
-
-	onChangeMonth (v: any) {
-		const { value } = this.state;
-		const yv = Number(Util.date('Y', value));
-
-		this.setState({ value: Util.timestamp(yv, v, 1) });
-	};
-
-	onChangeYear (e: any, v: any) {
-		const { value } = this.state;
-		const mv = Number(Util.date('n', value));
-
-		this.setState({ value: Util.timestamp(v, mv, 1) });
-	};
-
-	setValue (value: number, save: boolean) {
+	setValue (v: number, save: boolean) {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 
-		this.refMonth.setValue(Number(Util.date('n', value)));
-		this.refYear.setValue(Number(Util.date('Y', value)));
-		this.setState({ value: value });
+		data.value = v;
 
 		if (save) {
 			close();
-			onChange(value);
+			onChange(v);
 		};
 	};
 	
@@ -120,7 +88,9 @@ class MenuCalendar extends React.Component<Props, {}> {
 	};
 	
 	getData () {
-		const { value } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
 		
 		let m = Number(Util.date('n', value));
 		let y = Number(Util.date('Y', value));

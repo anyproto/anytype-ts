@@ -6,6 +6,10 @@
 		.inner { user-select: none; }
 
 		.head { padding: 8px 16px 0px 16px; border-bottom: 1px solid #eae9e0; }
+		.head {
+			.date { color: $colorDarkGrey; margin-bottom: 6px; }
+		}
+
 		.body { padding: 8px 16px; }
 		.foot { padding: 11px 16px 3px 16px; border-top: 1px solid #eae9e0; }
 		.foot {
