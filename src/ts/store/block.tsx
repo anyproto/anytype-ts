@@ -14,6 +14,7 @@ class BlockStore {
 	public treeObject: Map<string, any[]> = new Map();
 	public blockObject: Map<string, any[]> = new Map();
 	public detailObject: Map<string, Map<string, any>> = new Map();
+	@observable public dbObject: Map<string, any> = new Map();
 
 	@computed
 	get root (): string {
@@ -177,6 +178,29 @@ class BlockStore {
 
 		blocks = blocks.filter((it: any) => { return it.id != id; });
 		delete(map[id]);
+	};
+
+	@action
+	dbSet (blockId: string, obj: any) {
+		const data = this.dbObject.get(blockId);
+		if (data) {
+			set(data, obj);
+		} else {
+			console.log('SET', obj);
+			this.dbObject.set(blockId, observable(obj));
+		};
+	};
+
+	@action
+	dbUpdate (blockId: string, obj: any) {
+		const data = this.dbObject.get(blockId);
+		if (data) {
+			set(data, obj);
+		};
+	};
+
+	getDb (blockId: string) {
+		return this.dbObject.get(blockId);
 	};
 
 	getMap (rootId: string) {

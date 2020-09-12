@@ -445,11 +445,12 @@ class Dispatcher {
 						list.push(Decode.decodeStruct(item) || {});
 					};
 
-					block.content.viewId = data.getViewid();
-					block.content.total = data.getTotal();
-					block.content.data = list;
-
 					blockStore.blockUpdate(rootId, block);
+					blockStore.dbSet(block.id, {
+						viewId: data.getViewid(),
+						total: data.getTotal(),
+						data: list,
+					});
 					break;
 
 				case 'processNew':

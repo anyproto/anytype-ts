@@ -103,11 +103,7 @@ class CellText extends React.Component<Props, State> {
 			);
 		};
 
-		return (
-			<div className="cellWrap">
-				{content}
-			</div>
-		);
+		return content;
 	};
 
 	componentDidUpdate () {
@@ -206,8 +202,10 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const area = node.find('#textarea');
+		const { id, relation } = this.props;
+		const cellId = DataUtil.cellId('cell', relation.id, id);
+		const cell = $('#' + cellId);
+		const area = cell.find('#textarea');
 
 		if (area.length) {
 			area.css({ height: 'auto' });

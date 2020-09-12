@@ -42,15 +42,11 @@
     {
       "id": "lastOpened",
       "name": "Last opened",
-      "isHidden": false,
-      "isReadonly": true,
       "type": "https://anytype.io/schemas/types/date"
     },
     {
       "id": "lastModified",
       "name": "Last modified",
-      "isHidden": false,
-      "isReadonly": false,
       "type": "https://anytype.io/schemas/types/date"
     },
     {
@@ -84,19 +80,19 @@
       "type": "https://anytype.io/schemas/types/number"
     },
     {
-      "id": "url",
-      "name": "Url",
-      "type": "https://anytype.io/schemas/types/url"
+      "id": "file",
+      "name": "File",
+      "type": "https://anytype.io/schemas/types/file"
     },
     {
-      "id": "email",
-      "name": "E-mail",
-      "type": "https://anytype.io/schemas/types/email"
+      "id": "image",
+      "name": "Image",
+      "type": "https://anytype.io/schemas/types/image"
     },
     {
-      "id": "phone",
-      "name": "Phone",
-      "type": "https://anytype.io/schemas/types/phone"
+      "id": "object",
+      "name": "Object",
+      "type": "https://anytype.io/schemas/types/object"
     }
   ]
 }

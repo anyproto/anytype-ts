@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
@@ -183,15 +182,18 @@ class Cell extends React.Component<Props, {}> {
 
 	onChange (value: any) {
 		let { id, rootId, block, data, relation } = this.props;
-		
 		if (data[relation.id] === value) {
 			return;
 		};
+
+		const obj = blockStore.getDb(block.id);
 		
 		data = Util.objectCopy(data);
 		data[relation.id] = value;
 
-		block.content.data[id] = observable(data);
+		obj.data[id] = data;
+		blockStore.dbUpdate(block.id, { data: obj.data });
+
 		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);
 	};
 	

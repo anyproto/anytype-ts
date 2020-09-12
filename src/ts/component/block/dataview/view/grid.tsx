@@ -27,10 +27,12 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, data, view, onOpen, getData, readOnly } = this.props;
-		const { content } = block;
-		const { offset, total } = content;
+		const { rootId, block, view, onOpen, getData, readOnly } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const obj = blockStore.getDb(block.id);
+		const { offset, total, data } = obj;
+
+		console.log(offset, total);
 
 		const CellHead = (item: any) => {
 			const { relation } = item;
