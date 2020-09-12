@@ -30,7 +30,7 @@
 			td.cell:last-child { border-right: 0px; }
 			td.cell.last { width: auto; }
 			td.cell {
-				.name { @include text-overflow-nw; }
+				.name { @include text-overflow-nw; width: 100%; }
 			}
 
 			td.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }

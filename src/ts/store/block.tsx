@@ -186,7 +186,6 @@ class BlockStore {
 		if (data) {
 			set(data, obj);
 		} else {
-			console.log('SET', obj);
 			this.dbObject.set(blockId, observable(obj));
 		};
 	};

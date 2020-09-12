@@ -32,8 +32,6 @@ class ViewGrid extends React.Component<Props, {}> {
 		const obj = blockStore.getDb(block.id);
 		const { offset, total, data } = obj;
 
-		console.log(offset, total);
-
 		const CellHead = (item: any) => {
 			const { relation } = item;
 			const id = DataUtil.cellId('head', relation.id, '');
