@@ -454,11 +454,10 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range.to && (range.from == range.to)) {
-				return;
-			};
-
 			if (!commonStore.menuIsOpen()) {
+				if (range.to && (range.from == range.to)) {
+					return;
+				};
 				this.setText(this.marks, true, (message: any) => {
 					onKeyDown(e, value, this.marks, range);
 				});
