@@ -15,6 +15,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const FlexSearch = require('flexsearch');
 
 const HEIGHT = 28;
 const PAGE = 12;
@@ -25,6 +26,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	_isMounted: boolean = false;	
 	n: number = 0;
 	filter: string = '';
+	index: any = null;
 
 	state = {
 		pages: [],
@@ -132,8 +134,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { pages } = this.state;
-		const { filter } = commonStore;
+		const pages = this.filterPages();
 
 		let pageData = [];
 
@@ -164,10 +165,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 			{ id: 'page', name: 'Mention a page', children: pageData },
 		];
 
-		if (filter && filter.text) {
-			sections = DataUtil.menuSectionsFilter(sections, filter.text);
-		};
-
 		sections = DataUtil.menuSectionsMap(sections);
 		return sections;
 	};
@@ -195,22 +192,54 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	loadSearch () {
-		const { root } = blockStore;
+		const pages: I.PageInfo[] = [];
 
 		this.setState({ loading: true });
+
+		this.index = new FlexSearch('balance', {
+			encode: 'extra',
+    		tokenize: 'full',
+			threshold: 1,
+    		resolution: 3,
+		});
 
 		C.NavigationListPages((message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			let pages = message.pages.map((it: any) => { 
-				it.details.name = String(it.details.name || Constant.default.name || '');
-				return it; 
-			});
-			pages = pages.filter((it: any) => { return it.id != root; });
+			for (let page of message.pages) {
+				page = this.getPage(page);
+				if (page.details.isArchived) {
+					continue;
+				};
+
+				pages.push(page);
+				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
+			};
+
 			this.setState({ pages: pages, loading: false });
 		});
+	};
+
+	filterPages (): I.PageInfo[] {
+		const { pages } = this.state;
+		const { filter } = commonStore;
+		
+		if (!filter.text) {
+			return pages;
+		};
+
+		const ids = this.index ? this.index.search(filter.text) : [];
+		
+		let ret = [];
+		if (ids.length) {
+			ret = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
+		} else {
+			const reg = new RegExp(filter.text.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
+			ret = pages.filter((it: I.PageInfo) => { return it.text.match(reg); });
+		};
+		return ret;
 	};
 
 	onKeyDown (e: any) {
@@ -301,6 +330,15 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		this.props.close();
+	};
+
+	getPage (page: any): I.PageInfo {
+		page.details.name = String(page.details.name || Constant.default.name || '');
+
+		return {
+			...page,
+			text: [ page.details.name, page.snippet ].join(' '),
+		};
 	};
 	
 };
