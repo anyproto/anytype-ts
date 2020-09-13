@@ -56,6 +56,10 @@
 		"cover": 1920,
 
 		"dataview": {
+			"gallery": {
+				"card": 260,
+				"margin": 16
+			},
 			"cell": {
 				"default": 192,
 				"title": 288,

@@ -56,12 +56,10 @@ class Controls extends React.Component<Props, State> {
 				id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0,
 				active: commonStore.menuIsOpen('dataviewSort') 
 			},
-			/*
 			{ 
 				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList', 
-				active: commonStore.menuIsOpen(List') 
+				active: commonStore.menuIsOpen('dataviewViewList') 
 			},
-			*/
 			{ 
 				id: 'more', menu: 'dataviewViewEdit', active: commonStore.menuIsOpen('dataviewViewEdit') 
 			},
