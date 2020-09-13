@@ -445,7 +445,6 @@ class Dispatcher {
 						list.push(Decode.decodeStruct(item) || {});
 					};
 
-					blockStore.blockUpdate(rootId, block);
 					blockStore.dbSetData(block.id, list);
 					blockStore.dbSetMeta(block.id, {
 						viewId: data.getViewid(),

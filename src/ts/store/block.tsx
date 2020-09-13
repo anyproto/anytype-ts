@@ -14,7 +14,7 @@ class BlockStore {
 	public treeObject: Map<string, any[]> = new Map();
 	public blockObject: Map<string, any[]> = new Map();
 	public detailObject: Map<string, Map<string, any>> = new Map();
-	public dbData: Map<string, any> = new Map();
+	public dbData: Map<string, any> = observable.map(new Map());
 	public dbMeta: Map<string, any> = new Map();
 
 	@computed
@@ -193,7 +193,7 @@ class BlockStore {
 			});
 			return it;
 		});
-		this.dbData.set(blockId, list);
+		this.dbData.set(blockId, observable(list));
 	};
 
 	@action
@@ -203,6 +203,7 @@ class BlockStore {
 		if (data) {
 			set(data, meta);
 		} else {
+			meta.offset = 0;
 			meta = observable(meta);
 
 			intercept(meta as any, (change: any) => {
