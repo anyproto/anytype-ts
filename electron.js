@@ -205,6 +205,9 @@ function createWindow () {
 		
 		e.preventDefault();
 		if (process.platform == 'darwin') {
+			if (win.isFullScreen()) {
+				win.setFullScreen(false);
+			};
 			win.hide();
 		} else {
 			exit(false);
