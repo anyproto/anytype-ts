@@ -1,17 +1,23 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { Pager } from 'ts/component';
+import { blockStore } from 'ts/store';
 
 import Cell from '../cell';
 
 interface Props extends I.ViewComponent {};
 
+const Constant = require('json/constant.json');
+
 @observer
 class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, data, view, readOnly} = this.props;
+		const { rootId, block, view, readOnly, getData } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const obj = blockStore.getDb(block.id);
+		const { offset, total, data } = obj;
 		
 		const Row = (item: any) => (
 			<div className="item">
@@ -30,6 +36,15 @@ class ViewList extends React.Component<Props, {}> {
 			</div>
 		);
 		
+		const pager = (
+			<Pager 
+				offset={offset} 
+				limit={Constant.limit.dataview.records} 
+				total={total} 
+				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
+			/>
+		);
+
 		return (
 			<div className="wrap">
 				<div className="viewItem viewList">
@@ -37,6 +52,8 @@ class ViewList extends React.Component<Props, {}> {
 						<Row key={'list-row-' + i} index={i} {...item} />
 					))}
 				</div>
+
+				{total ? pager : ''}
 			</div>
 		);
 	};

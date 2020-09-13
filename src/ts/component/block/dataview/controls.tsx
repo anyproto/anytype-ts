@@ -5,14 +5,7 @@ import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
 
-interface Props {
-	data: any[];
-	view: I.View;
-	block: I.Block;
-	rootId: string;
-	readOnly: boolean;
-	getData(viewId: string, offset: number): void;
-};
+interface Props extends I.ViewComponent {};
 
 interface State {
 	page: number;
@@ -127,7 +120,9 @@ class Controls extends React.Component<Props, State> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { rootId, block, data, view, readOnly, getData } = this.props;
+		const { rootId, block, view, readOnly, getData } = this.props;
+		const obj = blockStore.getDb(block.id);
+		const { data } = obj;
 
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,

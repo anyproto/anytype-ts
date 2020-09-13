@@ -75,9 +75,9 @@ class BlockDataview extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<Controls {...this.props} view={view} data={data} readOnly={readOnly} getData={this.getData} />
+				<Controls {...this.props} view={view} readOnly={readOnly} getData={this.getData} />
 				<div className="content">
-					<ViewComponent ref={(ref: any) => { this.viewRef = ref; }} {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} getData={this.getData} />
+					<ViewComponent ref={(ref: any) => { this.viewRef = ref; }} {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} getData={this.getData} />
 				</div>
 			</div>
 		);

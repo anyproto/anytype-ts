@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { blockStore } from 'ts/store'
 
 import Cell from '../cell';
 
@@ -12,7 +13,8 @@ interface Column {
 	list: any[];
 };
 
-const GROUP = 'isArchived';
+const GROUP = 'name';
+const Constant = require('json/constant.json');
 
 @observer
 class ViewBoard extends React.Component<Props, {}> {
@@ -26,6 +28,8 @@ class ViewBoard extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const obj = blockStore.getDb(block.id);
+		const { data } = obj;
 		const columns = this.getColumns();
 		
 		const Card = (item: any) => (
@@ -88,7 +92,10 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): Column[] {
-		let data = Util.objectCopy(this.props.data);
+		const { block } = this.props;
+		const obj = blockStore.getDb(block.id);
+		const data = Util.objectCopy(obj.data);
+
 		let r: Column[] = [];
 		
 		for (let i in data) {
