@@ -25,8 +25,7 @@ class CellText extends React.Component<Props, State> {
 
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onChangeDate = this.onChangeDate.bind(this);
+		this.onKeyUpDate = this.onKeyUpDate.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
@@ -49,7 +48,7 @@ class CellText extends React.Component<Props, State> {
 			} else 
 			if (relation.type == I.RelationType.Date) {
 				EditorComponent = (item: any) => (
-					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} mask='99.99.9999' onKeyUp={this.onChangeDate} />
+					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} mask="99.99.9999" placeHolder="dd.mm.yyyy" onKeyUp={this.onKeyUpDate} />
 				);
 			} else {
 				EditorComponent = (item: any) => (
@@ -62,7 +61,6 @@ class CellText extends React.Component<Props, State> {
 					className="name" 
 					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
-					onChange={this.onChange}
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
 				/>
@@ -147,10 +145,8 @@ class CellText extends React.Component<Props, State> {
 		this.resize();
 	};
 
-	onChange (e: any, value: string) {
-	};
-
-	onChangeDate (e: any, value: any) {
+	onKeyUpDate (e: any, value: any) {
+		const { relation, onChange } = this.props;
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Popup) => { return item.id == 'dataviewCalendar'; });
 
@@ -158,6 +154,15 @@ class CellText extends React.Component<Props, State> {
 		menu.param.data.value = value;
 
 		commonStore.menuUpdate('dataviewCalendar', menu.param);
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+			commonStore.menuClose('dataviewCalendar');
+
+			if (onChange) {
+				onChange(value);
+			};
+		});
 	};
 
 	onFocus (e: any) {

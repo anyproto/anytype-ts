@@ -14,7 +14,7 @@ class BlockStore {
 	public treeObject: Map<string, any[]> = new Map();
 	public blockObject: Map<string, any[]> = new Map();
 	public detailObject: Map<string, Map<string, any>> = new Map();
-	@observable public dbObject: Map<string, any> = new Map();
+	public dbObject: Map<string, any> = new Map();
 
 	@computed
 	get root (): string {
