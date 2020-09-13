@@ -18,8 +18,8 @@ class ViewGallery extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, view, readOnly, getData } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const obj = blockStore.getDb(block.id);
-		const { offset, total, data } = obj;
+		const data = blockStore.getDbData(block.id);
+		const { offset, total } = blockStore.getDbMeta(block.id);
 		
 		const Card = (item: any) => (
 			<div className="card">

@@ -16,8 +16,8 @@ class ViewList extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, view, readOnly, getData } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const obj = blockStore.getDb(block.id);
-		const { offset, total, data } = obj;
+		const data = blockStore.getDbData(block.id);
+		const { offset, total } = blockStore.getDbMeta(block.id);
 		
 		const Row = (item: any) => (
 			<div className="item">

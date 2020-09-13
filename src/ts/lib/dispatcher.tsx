@@ -446,10 +446,10 @@ class Dispatcher {
 					};
 
 					blockStore.blockUpdate(rootId, block);
-					blockStore.dbSet(block.id, {
+					blockStore.dbSetData(block.id, list);
+					blockStore.dbSetMeta(block.id, {
 						viewId: data.getViewid(),
 						total: data.getTotal(),
-						data: list,
 					});
 					break;
 

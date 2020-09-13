@@ -42,8 +42,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const obj = blockStore.getDb(block.id);
-		const { viewId, data } = obj;
+		const { viewId } = blockStore.getDbMeta(block.id);
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
 		const { type } = view;
 		const schema = Schema[DataUtil.schemaField(schemaURL)];
@@ -101,7 +100,7 @@ class BlockDataview extends React.Component<Props, {}> {
 	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 
-		blockStore.dbSet(block.id, { viewId: viewId, offset: offset });
+		blockStore.dbSetMeta(block.id, { viewId: viewId, offset: offset });
 		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
 	};
 

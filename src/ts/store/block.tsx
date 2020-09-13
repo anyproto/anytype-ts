@@ -14,7 +14,8 @@ class BlockStore {
 	public treeObject: Map<string, any[]> = new Map();
 	public blockObject: Map<string, any[]> = new Map();
 	public detailObject: Map<string, Map<string, any>> = new Map();
-	public dbObject: Map<string, any> = new Map();
+	public dbData: Map<string, any> = new Map();
+	public dbMeta: Map<string, any> = new Map();
 
 	@computed
 	get root (): string {
@@ -181,44 +182,44 @@ class BlockStore {
 	};
 
 	@action
-	dbSet (blockId: string, obj: any) {
-		const data = this.dbObject.get(blockId);
+	dbSetData (blockId: string, list: any[]) {
+		list = list.map((it: any) => {
+			it = observable(it);
+			intercept(it as any, (change: any) => {
+				if (change.newValue === it[change.name]) {
+					return null;
+				};
+				return change;
+			});
+			return it;
+		});
+		this.dbData.set(blockId, list);
+	};
+
+	@action
+	dbSetMeta (blockId: string, meta: any) {
+		const data = this.getDbMeta(blockId);
 
 		if (data) {
-			set(data, obj);
+			set(data, meta);
 		} else {
-			decorate(obj, {
-				viewId: observable,
-				offset: observable,
-				total: observable,
-			});
+			meta = observable(meta);
 
-			obj.data = obj.data.map((it: any) => {
-				it = observable(it);
-				intercept(it as any, (change: any) => {
-					if (change.newValue === it[change.name]) {
-						return null;
-					};
-					return change;
-				});
-				return it;
-			});
-
-			intercept(obj as any, (change: any) => {
-				if (change.newValue === obj[change.name]) {
+			intercept(meta as any, (change: any) => {
+				if (change.newValue === meta[change.name]) {
 					return null;
 				};
 				return change;
 			});
 
-			this.dbObject.set(blockId, obj);
+			this.dbMeta.set(blockId, meta);
 		};
 	};
 
 	@action
 	dbUpdateRecord (blockId: string, obj: any) {
-		const data = this.dbObject.get(blockId);
-		const record = data.data.find((it: any) => { return it.id == obj.id; });
+		const data = this.getDbData(blockId);
+		const record = data.find((it: any) => { return it.id == obj.id; });
 		if (!record) {
 			return;
 		};
@@ -226,8 +227,12 @@ class BlockStore {
 		set(record, obj);
 	};
 
-	getDb (blockId: string) {
-		return this.dbObject.get(blockId);
+	getDbMeta (blockId: string) {
+		return this.dbMeta.get(blockId);
+	};
+
+	getDbData (blockId: string) {
+		return this.dbData.get(blockId);
 	};
 
 	getMap (rootId: string) {

@@ -30,7 +30,8 @@ class Controls extends React.Component<Props, State> {
 	render () {
 		const { getData, block, view, readOnly } = this.props;
 		const { content } = block;
-		const { views, viewId } = content;
+		const { views } = content;
+		const { viewId } = blockStore.getDbMeta(block.id);
 		const { page } = this.state;
 		const limit = Constant.limit.dataview.views;
 		const filterCnt = view.filters.length;
@@ -121,8 +122,7 @@ class Controls extends React.Component<Props, State> {
 	
 	onButton (e: any, id: string, menu: string) {
 		const { rootId, block, view, readOnly, getData } = this.props;
-		const obj = blockStore.getDb(block.id);
-		const { data } = obj;
+		const data = blockStore.getDbData(block.id);
 
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,

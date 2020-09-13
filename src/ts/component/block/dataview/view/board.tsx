@@ -28,8 +28,8 @@ class ViewBoard extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const obj = blockStore.getDb(block.id);
-		const { data } = obj;
+		const data = blockStore.getDbData(block.id);
+		const { offset, total } = blockStore.getDbMeta(block.id);
 		const columns = this.getColumns();
 		
 		const Card = (item: any) => (
@@ -93,8 +93,7 @@ class ViewBoard extends React.Component<Props, {}> {
 	
 	getColumns (): Column[] {
 		const { block } = this.props;
-		const obj = blockStore.getDb(block.id);
-		const data = Util.objectCopy(obj.data);
+		const data = Util.objectCopy(blockStore.getDbData(block.id));
 
 		let r: Column[] = [];
 		
