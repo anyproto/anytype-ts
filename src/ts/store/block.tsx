@@ -1,4 +1,4 @@
-import { observable, action, computed, set, intercept } from 'mobx';
+import { observable, action, computed, set, intercept, decorate } from 'mobx';
 import { I, M, Util, Decode } from 'ts/lib';
 
 const $ = require('jquery');
@@ -183,19 +183,47 @@ class BlockStore {
 	@action
 	dbSet (blockId: string, obj: any) {
 		const data = this.dbObject.get(blockId);
+
 		if (data) {
 			set(data, obj);
 		} else {
-			this.dbObject.set(blockId, observable(obj));
+			decorate(obj, {
+				viewId: observable,
+				offset: observable,
+				total: observable,
+			});
+
+			obj.data = obj.data.map((it: any) => {
+				it = observable(it);
+				intercept(it as any, (change: any) => {
+					if (change.newValue === it[change.name]) {
+						return null;
+					};
+					return change;
+				});
+				return it;
+			});
+
+			intercept(obj as any, (change: any) => {
+				if (change.newValue === obj[change.name]) {
+					return null;
+				};
+				return change;
+			});
+
+			this.dbObject.set(blockId, obj);
 		};
 	};
 
 	@action
-	dbUpdate (blockId: string, obj: any) {
+	dbUpdateRecord (blockId: string, obj: any) {
 		const data = this.dbObject.get(blockId);
-		if (data) {
-			set(data, obj);
+		const record = data.data.find((it: any) => { return it.id == obj.id; });
+		if (!record) {
+			return;
 		};
+
+		set(record, obj);
 	};
 
 	getDb (blockId: string) {

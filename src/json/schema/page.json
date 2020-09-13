@@ -42,11 +42,13 @@
     {
       "id": "lastOpened",
       "name": "Last opened",
+      "isHidden": false,
       "type": "https://anytype.io/schemas/types/date"
     },
     {
       "id": "lastModified",
       "name": "Last modified",
+      "isHidden": false,
       "type": "https://anytype.io/schemas/types/date"
     },
     {
@@ -78,21 +80,6 @@
       "name": "Cover scale",
       "isHidden": true,
       "type": "https://anytype.io/schemas/types/number"
-    },
-    {
-      "id": "file",
-      "name": "File",
-      "type": "https://anytype.io/schemas/types/file"
-    },
-    {
-      "id": "image",
-      "name": "Image",
-      "type": "https://anytype.io/schemas/types/image"
-    },
-    {
-      "id": "object",
-      "name": "Object",
-      "type": "https://anytype.io/schemas/types/object"
     }
   ]
 }

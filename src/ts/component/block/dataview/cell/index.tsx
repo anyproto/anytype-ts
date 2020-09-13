@@ -186,14 +186,10 @@ class Cell extends React.Component<Props, {}> {
 			return;
 		};
 
-		const obj = blockStore.getDb(block.id);
-		
-		data = Util.objectCopy(data);
-		data[relation.id] = value;
+		let obj = { id: data.id };
+		obj[relation.id] = value;
 
-		obj.data[id] = data;
-		blockStore.dbUpdate(block.id, { data: obj.data });
-
+		blockStore.dbUpdateRecord(block.id, obj);
 		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);
 	};
 	
