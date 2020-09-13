@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -13,7 +13,6 @@ const fileType = require('file-type');
 const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
-const { array } = require('is');
 const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 
@@ -31,6 +30,7 @@ let service, server;
 let dataPath = [];
 let config = {};
 let win = null;
+let tray = null;
 let menu = null;
 let csp = [
 	"default-src 'self' 'unsafe-eval'",
@@ -133,6 +133,7 @@ function waitForLibraryAndCreateWindows () {
 
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
 
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
@@ -142,6 +143,15 @@ function createWindow () {
 			}
 		})
 	});
+
+	tray = new Tray (path.join(__dirname, '/electron/icon16x16.png'));
+	tray.setToolTip('Anytype');
+	tray.setContextMenu(Menu.buildFromTemplate([
+		{
+            label: 'Show window',
+			click: () => { win.show(); }
+		},
+	]));
 
 	let state = windowStateKeeper({
 		defaultWidth: width,
@@ -157,12 +167,27 @@ function createWindow () {
 		height: state.height,
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
-		frame: false,
-		titleBarStyle: 'hiddenInset',
-		icon: path.join(__dirname, '/electron/icon512x512.png'),
 		webPreferences: {
 			nodeIntegration: true
 		},
+	};
+
+	if (process.platform == 'linux') {
+		param.icon = image;
+	};
+
+	if (process.platform == 'darwin') {
+		app.dock.setIcon(image);
+		param.icon = path.join(__dirname, '/electron/icon.icns');
+	};
+
+	if (process.platform == 'win32') {
+		param.icon = path.join(__dirname, '/electron/icon.ico');
+	};
+
+	if (process.platform != 'linux') {
+		param.frame = false;
+		param.titleBarStyle = 'hiddenInset';
 	};
 
 	win = new BrowserWindow(param);
@@ -173,14 +198,16 @@ function createWindow () {
 		win.show();
 	});
 
-	win.on('closed', () => {
-		win = null;
-	});
-
 	win.on('close', (e) => {
-		if (!app.isQuiting) {
-			e.preventDefault();
-			win.minimize();
+		if (app.isQuiting) {
+			return;
+		};
+		
+		e.preventDefault();
+		if (process.platform == 'darwin') {
+			win.hide();
+		} else {
+			exit(false);
 		};
 		return false;
 	});
@@ -546,8 +573,13 @@ app.on('second-instance', (event, argv, cwd) => {
 	};
 });
 
-app.on('window-all-closed', () => {
+app.on('window-all-closed', (e) => {
 	Util.log('info', 'window-all-closed');
+
+	if (process.platform == 'linux') {
+		e.preventDefault();
+		exit(false);
+	};
 });
 
 app.on('before-quit', (e) => {
@@ -564,6 +596,10 @@ function send () {
 };
 
 function exit (relaunch) {
+	if (win) {
+		win.hide();
+	};
+
 	let cb = () => {
 		setTimeout(() => {
 			if (relaunch) {

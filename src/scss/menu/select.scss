@@ -14,4 +14,10 @@
 	.menu.menuSelect.skip {
 		.name { margin: 0px; width: calc(100% - 24px); @include text-overflow-nw; }
 	}
+
+	.menu.menuSelect.button {
+		.item { white-space: nowrap; display: inline-block; margin-right: 16px; color: $colorDarkGrey; font-weight: 500; }
+		.item:hover { color: $colorBlack; }
+		.item:last-child { margin-right: 0px; }
+	}
 }

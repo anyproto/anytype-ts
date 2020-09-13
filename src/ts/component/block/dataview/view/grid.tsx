@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
-import { I, DataUtil } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Cell from '../cell';
@@ -20,25 +21,37 @@ class ViewGrid extends React.Component<Props, {}> {
 		super (props);
 
 		this.onRowOver = this.onRowOver.bind(this);
+		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
+		this.onResizeStart = this.onResizeStart.bind(this);
 	};
 
 	render () {
-		const { block, data, view, onOpen, readOnly, getData } = this.props;
+		const { rootId, block, data, view, onOpen, getData, readOnly } = this.props;
 		const { content } = block;
 		const { offset, total } = content;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		
-		const CellHead = (item: any) => (
-			<th className={'head c-' + item.type}>
-				<Icon className={'relation c-' + item.type} />
-				<div className="name">{item.name}</div>
-			</th>
-		);
+
+		const CellHead = (item: any) => {
+			const { relation } = item;
+			const id = DataUtil.cellId('head', relation.id, '');
+
+			return (
+				<th id={id} className={'head c-' + relation.type} style={{ width: relation.width }}>
+					<div className="cellContent">
+						<Icon className={'relation c-' + relation.type} />
+						<div className="name">{relation.name}</div>
+						<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.id); }}>
+							<div className="line" />
+						</div>
+					</div>
+				</th>
+			);
+		};
 		
 		const CellBody = (item: any) => {
 			let { relation, index } = item;
-			let id = DataUtil.cellId(relation.id, index);
+			let id = DataUtil.cellId('cell', relation.id, index);
 			let cn = [ 'cell', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
 
 			if (item.relation.id == 'name') {
@@ -49,11 +62,13 @@ class ViewGrid extends React.Component<Props, {}> {
 				<td id={id} className={cn.join(' ')} onClick={(e: any) => { this.onCellClick(e, item); }}>
 					<Cell 
 						ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
-						onOpen={onOpen} 
 						{...item} 
+						rootId={rootId}
+						block={block}
 						view={view} 
-						id={item.index} 
+						id={index} 
 						readOnly={readOnly}
+						onOpen={onOpen}
 					/>
 				</td>
 			);
@@ -61,8 +76,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const RowHead = (item: any) => (
 			<tr className="row">
-				{relations.map((item: any, i: number) => (
-					<CellHead key={'grid-head-' + item.id} {...item} />
+				{relations.map((relation: any, i: number) => (
+					<CellHead key={'grid-head-' + relation.id} relation={relation} />
 				))}
 				<th className="head last">
 					{!readOnly ? <Icon className="plus" /> : ''}
@@ -73,7 +88,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowBody = (item: any) => (
 			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={...relation} data={data[item.index]} />
+					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={relation} data={data[item.index]} />
 				))}
 				<td className="cell last">&nbsp;</td>
 			</tr>
@@ -101,7 +116,7 @@ class ViewGrid extends React.Component<Props, {}> {
 							))}
 							{!readOnly ? (
 								<tr>
-									<td className="cell add" colSpan={view.relations.length + 1}>
+									<td className="cell add" colSpan={view.relations.length + 1} onClick={this.onRowAdd}>
 										<Icon className="plus" />
 										<div className="name">New</div>
 									</td>
@@ -130,24 +145,57 @@ class ViewGrid extends React.Component<Props, {}> {
 		const mw = ww - 192;
 		
 		let vw = 0;
-		let sw = 0;
 		let margin = 0;
 		let width = 0;
 
 		for (let relation of view.relations) {
-			width += Number(Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0;
+			width += relation.width;
 		};
 
 		if (width < mw) {
-			vw = sw = mw;
+			vw = mw;
 		} else {
 			vw = width;
-			sw = ww;
 			margin = (ww - mw) / 2; 
 		};
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
+	};
+
+	onResizeStart (e: any, id: string) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const win = $(window);
+		win.unbind('mousemove.cell mouseup.cell');
+		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, id); });
+		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, id); });
+	};
+
+	onResizeMove (e: any, id: string) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { view } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#' + DataUtil.cellId('head', id, ''));
+		const offset = el.offset();
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.id == id; });
+
+		let width = e.pageX - offset.left;
+		width = Math.max(Constant.size.dataview.cell.min, width); 
+		width = Math.min(Constant.size.dataview.cell.max, width);
+		
+		view.relations[idx].width = width;
+		el.css({ width: width });
+	};
+
+	onResizeEnd (e: any, id: string) {
+		const { rootId, block, view } = this.props;
+
+		$(window).unbind('mousemove.cell mouseup.cell');
+		C.BlockSetDataviewView(rootId, block.id, view.id, view);
 	};
 
 	onRowOver (id: number) {
@@ -157,14 +205,28 @@ class ViewGrid extends React.Component<Props, {}> {
 		node.find('#row-' + id).addClass('active');
 	};
 
+	onRowAdd (e: any) {
+		const { rootId, block } = this.props;
+
+		C.BlockCreateDataviewRecord(rootId, block.id, {}, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			block.content.data.push(message.record);
+			blockStore.blockUpdate(rootId, block);
+		});
+	};
+
 	onCellClick (e: any, item: any) {
 		const { readOnly } = this.props;
-		if (readOnly) {
+		const { index, relation } = item;
+		
+		if (readOnly || relation.isReadOnly) {
 			return;
 		};
 
-		const { index, relation } = item;
-		const id = DataUtil.cellId(relation.id, index);
+		const id = DataUtil.cellId('cell', relation.id, index);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cell = node.find('#' + id);
 		const ref = this.cellRefs.get(id);

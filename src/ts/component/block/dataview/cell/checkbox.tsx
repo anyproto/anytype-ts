@@ -6,6 +6,12 @@ interface Props extends I.Cell {};
 
 class CellCheckbox extends React.Component<Props, {}> {
 
+	constructor (props: any) {
+		super(props);
+
+		this.onClick = this.onClick.bind(this);
+	};
+
 	render () {
 		const { relation, data } = this.props;
 
@@ -14,6 +20,14 @@ class CellCheckbox extends React.Component<Props, {}> {
 				<Icon className={'checkbox ' + (data[relation.id] ? 'active' : '')} />
 			</React.Fragment>
 		);
+	};
+
+	onClick () {
+		const { relation, data, onChange } = this.props;
+
+		if (onChange) {
+			onChange(!data[relation.id]);
+		};
 	};
 	
 };

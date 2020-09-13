@@ -19,7 +19,6 @@ interface State {
 	loading: boolean;
 };
 
-const findAndReplaceDOMText = require('findandreplacedomtext');
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -41,7 +40,6 @@ class EditorPage extends React.Component<Props, State> {
 	state = {
 		loading: false,
 	};
-	searchIndex: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -508,6 +506,12 @@ class EditorPage extends React.Component<Props, State> {
 		});
 		*/
 
+		keyboard.shortcut('escape', e, (pressed: string) => {
+			if (ids.length && !commonStore.menuIsOpen()) {
+				selection.clear();
+			};
+		});
+
 		// Mark-up
 		if (ids.length) {
 			let type = null;
@@ -527,25 +531,25 @@ class EditorPage extends React.Component<Props, State> {
 				type = I.MarkType.Strike;
 			});
 
-			// Link
+			// Code
 			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
-				type = I.MarkType.Link;
+				type = I.MarkType.Code;
 			});
 
-			// Code
+			// Link
 			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
-				type = I.MarkType.Code;
+				type = I.MarkType.Link;
 			});
 
 			if (type !== null) {
 				e.preventDefault();
-					
+
 				if (type == I.MarkType.Link) {
 					commonStore.menuOpen('blockLink', {
 						type: I.MenuType.Horizontal,
-						element: '#menuBlockContext',
+						element: '#block-' + ids[0],
 						offsetX: 0,
-						offsetY: 44,
+						offsetY: -4,
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
 						data: {
@@ -754,38 +758,51 @@ class EditorPage extends React.Component<Props, State> {
 			});
 
 			// Link
-			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
+			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
 				type = I.MarkType.Link;
 			});
 
 			// Code
-			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
+			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
 				type = I.MarkType.Code;
 			});
 
 			if (type !== null) {
 				e.preventDefault();
-				
+
 				if (type == I.MarkType.Link) {
-					let mark = Mark.getInRange(marks, type, range);
-					commonStore.menuOpen('blockLink', {
-						type: I.MenuType.Horizontal,
-						element: '#menuBlockContext',
-						offsetX: 0,
-						offsetY: 44,
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Center,
-						data: {
-							value: (mark ? mark.param : ''),
-							onChange: (param: string) => {
-								marks = Mark.toggle(marks, { type: type, param: param, range: range });
-								DataUtil.blockSetText(rootId, block, text, marks, true);
+					const mark = Mark.getInRange(marks, type, range);
+					const el = $('#block-' + focused);
+					const offset = el.offset();
+					const rect = Util.selectionRect();
+					const x = rect.x - offset.left - Constant.size.menuBlockLink / 2 + rect.width / 2;
+					const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
+
+					commonStore.menuClose('blockContext');
+					window.setTimeout(() => {
+						commonStore.menuOpen('blockLink', {
+							type: I.MenuType.Horizontal,
+							element: el,
+							offsetX: x,
+							offsetY: y,
+							vertical: I.MenuDirection.Top,
+							horizontal: I.MenuDirection.Left,
+							data: {
+								value: (mark ? mark.param : ''),
+								onChange: (param: string) => {
+									marks = Mark.toggle(marks, { type: type, param: param, range: range });
+									DataUtil.blockSetText(rootId, block, text, marks, true, () => {
+										focus.apply();
+									});
+								}
 							}
-						}
-					});
+						});
+					}, Constant.delay.menu);
 				} else {
 					marks = Mark.toggle(marks, { type: type, range: range });
-					DataUtil.blockSetText(rootId, block, text, marks, true);
+					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
+						focus.apply();
+					});
 				};
 			};
 		};
@@ -1353,44 +1370,8 @@ class EditorPage extends React.Component<Props, State> {
 
 	onSearch () {
 		const node = $(ReactDOM.findDOMNode(this));
-		
-		let lastSearch = '';
-		let	onChange = (value: string) => {
-			this.clearSearch();
-
-			if (!value) {
-				return;
-			};
-
-			if (lastSearch != value) {
-				this.searchIndex = 0;
-			};
-			lastSearch = value;
-
-			findAndReplaceDOMText(node.get(0), {
-				preset: 'prose',
-				find: new RegExp(value, 'gi'),
-				wrap: 'search',
-				filterElements: (el: any) => {
-					const tag = el.nodeName.toLowerCase();
-					if ([ 'span', 'div' ].indexOf(tag) < 0) {
-						return false;
-					};
-
-					const style = window.getComputedStyle(el);
-					if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
-						return false;
-					};
-					return true;
-				},
-			});
-
-			this.focusSearch();
-			this.searchIndex++;
-		};
 
 		window.setTimeout(() => {
-			this.clearSearch();
 			commonStore.menuOpen('search', {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
@@ -1398,44 +1379,11 @@ class EditorPage extends React.Component<Props, State> {
 				horizontal: I.MenuDirection.Right,
 				offsetX: 0,
 				offsetY: 0,
-				onClose: () => {
-					this.clearSearch();
-				},
 				data: {
-					onChange: onChange,
+					container: node,
 				},
 			});
 		}, Constant.delay.menu);
-	};
-
-	clearSearch () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('search').each((i: number, item: any) => {
-			item = $(item);
-			item.replaceWith(item.html());
-		});
-	};
-
-	focusSearch () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.editor search');
-		const wh = win.height();
-		const offset = Constant.size.lastBlock + Constant.size.header;
-
-		if (this.searchIndex > items.length - 1) {
-			this.searchIndex = 0;
-		};
-
-		node.find('search.active').removeClass('active');
-
-		const next = $(items.get(this.searchIndex));
-		if (next && next.length) {
-			next.addClass('active');
-		
-			const y = next.offset().top;
-			$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 100);
-		};
 	};
 
 	getLayoutIds (ids: string[]) {

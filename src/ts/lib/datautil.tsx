@@ -301,7 +301,7 @@ class DataUtil {
 	
 	menuGetBlockList () {
 		return [
-			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox' },
+			{ id: I.TextStyle.Checkbox, icon: 'checkbox', lang: 'Checkbox', aliases: [ 'todo' ] },
 			{ id: I.TextStyle.Bulleted, icon: 'list', lang: 'Bulleted' },
 			{ id: I.TextStyle.Numbered, icon: 'numbered', lang: 'Numbered' },
 			{ id: I.TextStyle.Toggle, icon: 'toggle', lang: 'Toggle' },
@@ -386,7 +386,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: '', className: '', isTextColor: true }
+			{ id: 'color-black', name: 'Black', value: 'black', className: '', isTextColor: true }
 		];
 		for (let i in Constant.textColor) {
 			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, className: i, isTextColor: true });
@@ -466,8 +466,9 @@ class DataUtil {
 		return a.length > 1 ? a[a.length - 1] : '';
 	};
 
-	cellId (relationId: string, id: any) {
-		return [ 'cell', relationId, String(id || '') ].join('-');
+
+	cellId (prefix: string, relationId: string, id: any) {
+		return [ prefix, relationId, String(id || '') ].join('-');
 	};
 
 };
