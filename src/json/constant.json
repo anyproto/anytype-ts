@@ -60,6 +60,10 @@
 				"card": 260,
 				"margin": 16
 			},
+			"board": {
+				"card": 240,
+				"margin": 24
+			},
 			"cell": {
 				"default": 192,
 				"title": 288,

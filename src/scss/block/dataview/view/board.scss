@@ -20,7 +20,7 @@
 				.name { max-width: 100%; @include text-overflow-nw; }
 			}
             
-            .card { width: 100%; margin-bottom: 8px; }
+            .card { width: 100%; margin-bottom: 8px; background: #fff; }
             
             .card.add { 
                 min-height: 0px; text-align: center; padding: 10px 0px; line-height: 1; transition: $transitionFast; cursor: pointer; 
