@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -15,6 +16,7 @@ interface Column {
 
 const GROUP = 'name';
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class ViewBoard extends React.Component<Props, {}> {
@@ -80,15 +82,49 @@ class ViewBoard extends React.Component<Props, {}> {
 		
 		return (
 			<div className="wrap">
-				<div className="viewItem viewBoard">
-					<div className="columns">
-						{columns.map((item: any, i: number) => (
-							<Column key={i} index={i} {...item} />
-						))}
+				<div className="scroll">
+					<div className="viewItem viewBoard">
+						<div className="columns">
+							{columns.map((item: any, i: number) => (
+								<Column key={i} index={i} {...item} />
+							))}
+						</div>
 					</div>
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.resize();
+	};
+
+	resize () {
+		const { view } = this.props;
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+		const viewItem = node.find('.viewItem');
+		const ww = win.width();
+		const mw = ww - 192;
+		
+		let vw = 0;
+		let margin = 0;
+		let width = 0;
+
+		for (let relation of view.relations) {
+			width += relation.width;
+		};
+
+		if (width < mw) {
+			vw = mw;
+		} else {
+			vw = width;
+			margin = (ww - mw) / 2; 
+		};
+
+		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
+		viewItem.css({ width: vw });
 	};
 	
 	getColumns (): Column[] {

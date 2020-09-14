@@ -125,6 +125,9 @@ class CellText extends React.Component<Props, State> {
 			commonStore.menuClose('select');
 		};
 
+		console.log('UPDATE');
+		console.trace();
+
 		this.resize();
 	};
 

@@ -4,11 +4,12 @@
 	.block.blockDataview {
 
         .viewItem.viewBoard {
-            .columns { display: flex; }
-            .column { width: 240px; margin-right: 24px; }
+            .columns { white-space: nowrap; }
+            .column { width: 240px; margin-right: 24px; display: inline-block; vertical-align: top; }
             .column {
                 .head { padding: 10px 4px; }
             }
+			.column:last-child { margin: 0px; }
 
             .cellContent.c-title {
                 .smile { margin-bottom: 10px; }
