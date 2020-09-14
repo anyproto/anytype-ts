@@ -13,8 +13,8 @@ interface Props extends I.ViewComponent {
 	onAdd (column: number): void;
 };
 
-const getItemStyle = (snapshot: any, draggableStyle: any) => {
-	return draggableStyle;
+const getItemStyle = (snapshot: any, style: any) => {
+	return style;
 };
 
 class Column extends React.Component<Props, {}> {
@@ -23,10 +23,8 @@ class Column extends React.Component<Props, {}> {
 		const { rootId, block, groupId, view, onAdd, list, index, value } = this.props;
 		const group = view.relations.find((item: I.Relation) => { return item.id == groupId; });
 
-		console.log(index, value, list.length);
-
 		const Add = (item: any) => (
-			<Draggable draggableId={index + '-add'} index={index}>
+			<Draggable draggableId={index + '-add'} index={item.index}>
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="card add"
@@ -75,9 +73,9 @@ class Column extends React.Component<Props, {}> {
 							{(provided: any) => (
 								<div className="list" {...provided.droppableProps} ref={provided.innerRef}>
 									{list.map((child: any, i: number) => (
-										<Card key={'board-card-' + i} {...this.props} column={index} index={i} data={...child} />
+										<Card key={'board-card-' + i} {...this.props} data={...child} column={index} index={i} />
 									))}
-									<Add column={index} index={list.length + 1} />
+									<Add column={index} index={list.length} />
 									{provided.placeholder}
 								</div>
 							)}

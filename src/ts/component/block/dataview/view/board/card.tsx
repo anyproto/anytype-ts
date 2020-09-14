@@ -10,8 +10,11 @@ interface Props extends I.ViewComponent {
 	data: any;
 };
 
-const getItemStyle = (snapshot: any, draggableStyle: any) => {
-	return draggableStyle;
+const getItemStyle = (snapshot: any, style: any) => {
+	if (snapshot.isDragging) {
+		style.background = '#f3f2ef';
+	};
+	return style;
 };
 
 @observer
@@ -22,7 +25,7 @@ class Card extends React.Component<Props, {}> {
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
 		return (
-			<Draggable key={index} draggableId={column + '-' + index} index={index} type="row">
+			<Draggable draggableId={[ column, index ].join(' ')} index={index} type="row">
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="card"
