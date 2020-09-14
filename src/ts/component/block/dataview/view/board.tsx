@@ -5,21 +5,11 @@ import { Icon } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
-
-import Cell from '../cell';
+import Column from './board/column';
 
 interface Props extends I.ViewComponent {};
 
-interface Column {
-	value: string;
-	list: any[];
-};
-
-const getItemStyle = (snapshot: any, draggableStyle: any) => {
-	return draggableStyle;
-};
-
-const GROUP = 'name';
+const GROUP = 'isArchived';
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -47,99 +37,6 @@ class ViewBoard extends React.Component<Props, {}> {
 		const { offset, total } = blockStore.getDbMeta(block.id);
 		const columns = this.getColumns();
 		
-		const Card = (item: any) => {
-			return (
-				<Draggable key={item.index} draggableId={item.column + '-' + item.index} index={item.index}>
-					{(provided: any, snapshot: any) => (
-						<div 
-							className="card"
-							ref={provided.innerRef}
-							{...provided.draggableProps}
-							{...provided.dragHandleProps}
-							style={getItemStyle(snapshot, provided.draggableProps.style)}
-						>
-							{relations.map((relation: any, i: number) => (
-								<Cell 
-									key={'board-cell-' + relation.id} 
-									id={item.index} 
-									rootId={rootId}
-									block={block}
-									view={view} 
-									relation={...relation} 
-									data={item.data} 
-									readOnly={readOnly} 
-								/>
-							))}
-						</div>
-					)}
-				</Draggable>
-			);
-		};
-
-		const Add = (item: any) => (
-			<Draggable draggableId={item.column + '-add'} index={item.index}>
-				{(provided: any, snapshot: any) => (
-					<div 
-						className="card add"
-						ref={provided.innerRef}
-						{...provided.draggableProps}
-						{...provided.dragHandleProps}
-						style={getItemStyle(snapshot, provided.draggableProps.style)}
-						onClick={() => { this.onAdd(item.column); }}
-					>
-						<Icon className="plus" />
-					</div>
-				)}
-			</Draggable>
-		);
-
-		const Head = (item: any) => {
-			const head = {};
-			head[GROUP] = item.value;
-			return (
-				<div className="head">
-					<Cell 
-						id="" 
-						rootId={rootId}
-						block={block}
-						view={view} 
-						relation={group} 
-						data={head} 
-						readOnly={true} 
-					/>
-				</div>
-			);
-		};
-
-		const Column = (item: any) => {
-			return (
-				<Draggable draggableId={'column-' + item.index} index={item.index}>
-					{(provided: any, snapshot: any) => (
-						<div 
-							className="column"
-							ref={provided.innerRef}
-							{...provided.draggableProps}
-							{...provided.dragHandleProps}
-							style={getItemStyle(snapshot, provided.draggableProps.style)}
-						>
-							<Head value={item.value} />
-							<Droppable droppableId={'column-' + item.index + '-drop'} direction="vertical" type="row">
-								{(provided: any) => (
-									<div className="list" {...provided.droppableProps} ref={provided.innerRef}>
-										{item.list.map((child: any, i: number) => (
-											<Card key={'board-card-' + i} column={item.index} index={i} data={...child} />
-										))}
-										<Add column={item.index} index={item.list.length + 1} />
-										{provided.placeholder}
-									</div>
-								)}
-							</Droppable>
-						</div>
-					)}
-				</Draggable>
-			);
-		};
-
 		return (
 			<div className="wrap">
 				<div className="scroll">
@@ -149,7 +46,7 @@ class ViewBoard extends React.Component<Props, {}> {
 								{(provided: any) => (
 									<div className="columns" {...provided.droppableProps} ref={provided.innerRef}>
 										{columns.map((item: any, i: number) => (
-											<Column key={i} index={i} {...item} />
+											<Column key={i} {...this.props} {...item} index={i} groupId={GROUP} onAdd={this.onAdd} />
 										))}
 										{provided.placeholder}
 									</div>
@@ -200,11 +97,11 @@ class ViewBoard extends React.Component<Props, {}> {
 		viewItem.css({ width: vw });
 	};
 	
-	getColumns (): Column[] {
+	getColumns (): any[] {
 		const { block } = this.props;
 		const data = Util.objectCopy(blockStore.getDbData(block.id));
 
-		let r: Column[] = [];
+		let r: any[] = [];
 		
 		for (let i in data) {
 			let item = data[i];
