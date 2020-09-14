@@ -11,6 +11,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 class CellText extends React.Component<Props, State> {
 
@@ -92,6 +93,10 @@ class CellText extends React.Component<Props, State> {
 					break;
 			};
 
+			if (view.type != I.ViewType.Grid) {
+				value = value || Constant.default.name;
+			};
+
 			content = (
 				<React.Fragment>
 					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />
@@ -124,9 +129,6 @@ class CellText extends React.Component<Props, State> {
 			window.clearTimeout(this.timeoutMenu);
 			commonStore.menuClose('select');
 		};
-
-		console.log('UPDATE');
-		console.trace();
 
 		this.resize();
 	};

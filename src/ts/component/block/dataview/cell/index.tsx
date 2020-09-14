@@ -28,11 +28,11 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, relation, data, readOnly } = this.props;
+		const { id, relation, data, readOnly, view } = this.props;
 		
 		let cn = [ 'cellContent', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
 		let CellComponent: React.ReactType<Props>;
-		
+
 		switch (relation.type) {
 			default:
 			case I.RelationType.Title:
@@ -63,7 +63,7 @@ class Cell extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data || {}} onChange={this.onChange} />
+				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data} onChange={this.onChange} />
 			</div>
 		);
 	};
