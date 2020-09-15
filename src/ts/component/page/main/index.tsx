@@ -130,13 +130,40 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onAdd (e: any) {
 		const { root } = blockStore;
-		const details = { 
-			iconEmoji: SmileUtil.random(), 
-			name: '',
-		};
-		
-		DataUtil.pageCreate(e, root, '', details, I.BlockPosition.Bottom, (message: any) => {
-			Util.scrollTopEnd();
+
+		commonStore.menuOpen('select', { 
+			element: '#button-add',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: -40,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			width: 176,
+			data: {
+				value: '',
+				options: [
+					{ id: 'link', icon: 'existing', name: 'Link to page' },
+					{ id: 'create', icon: 'create', name: 'New set' },
+				],
+				onSelect: (event: any, item: any) => {
+					if (item.id == 'link') {
+						commonStore.popupOpen('navigation', { 
+							preventResize: true,
+							data: { 
+								type: I.NavigationType.Link, 
+								rootId: root,
+								expanded: true,
+								skipId: root,
+								blockId: '',
+								position: I.BlockPosition.Bottom,
+							}, 
+						});
+					};
+
+					if (item.id == 'create') {
+					};
+				},
+			}
 		});
 	};
 

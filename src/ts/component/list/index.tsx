@@ -80,7 +80,7 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const ItemAdd = SortableElement((item: any) => {
 			return (
-				<div className="item add" onClick={onAdd}>
+				<div id="button-add" className="item add" onClick={onAdd}>
 					<Icon />
 				</div>
 			);

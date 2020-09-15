@@ -183,7 +183,7 @@ class Menu extends React.Component<Props, {}> {
 			const ww = win.width();
 			const wh = win.scrollTop() + win.height();
 			const offset = el.offset();
-			const width = node.outerWidth();
+			const width = param.width ? param.width : node.outerWidth();
 			const height = node.outerHeight();
 			const ew = el.outerWidth();
 			const eh = el.outerHeight();
