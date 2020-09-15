@@ -6,7 +6,6 @@ import { commonStore, blockStore, authStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-
 import Controls from './controls';
 
 interface Props extends RouteComponentProps<any> {
@@ -449,7 +448,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		const { focused } = focus;
 
-		if (keyboard.isFocused) {
+		if (keyboard.isFocused || !selection) {
 			return;
 		};
 		

@@ -6,8 +6,8 @@
 	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
-		width: 60px; height: 13px; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
-		background-position: center center; cursor: default;
+		width: 60px !important; height: 13px !important; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
+		background-position: center center; background-size: 100% 100% !important;
 	}
 
 	.path { white-space: nowrap; }
@@ -45,33 +45,28 @@
 	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 
-	.side.right { position: absolute; top: 5px; right: 6px; }
+	.side { position: absolute; top: 5px; height: 28px; line-height: 28px; }
+
+	.side.left { left: 6px; z-index: 1; }
+
+	.side.center { width: 492px; height: 28px; left: 50%; margin-left: -246px; white-space: nowrap; }
+
+	.side.right { right: 6px; z-index: 1; }
 	.side.right {
 		.icon { margin: 0px; }
 	}
 }
 
-.headerMainIndex { height: 38px; background: rgba(44,43,39,0.1); }
-.headerMainIndex {
+.header.headerMainIndex { height: 38px; background: rgba(44,43,39,0.1); }
+.header.headerMainIndex {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover { background-color: rgba(0,0,0,0.15); }
 }
 
-.headerMainEditSearch { background: #fff; padding: 5px 6px; height: 38px; }
-.headerMainEditSearch {
+.header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }
+.header.headerMainEdit {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover { background-color: #f3f2ec; }
-
-	.mid { width: 492px; height: 28px; position: absolute; left: 50%; margin-left: -246px; top: 5px; white-space: nowrap; }
-	.mid {
-		.icon { margin: 0px; opacity: 0; }
-		.icon.plus {
-			.arrow { 
-				width: 8px; height: 8px; background-image: url('~img/icon/header/arrow.svg'); position: absolute; right: -12px;
-				top: 10px; margin: 0px; background-color: none !important; background-size: 100% 100%;
-			}
-		}
-	}
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; margin: 0px 6px;
@@ -82,23 +77,58 @@
 	}
 	.path * { pointer-events: all; }
 
-	.side { position: absolute; top: 5px; }
-	.side.left { left: 6px; opacity: 0; transition: $transitionFast; }
+	.side.left { opacity: 0; transition: $transitionFast; }
 	.side.left {
 		.icon { margin: 0px; }
 		.icon.back, .icon.forward { width: 32px; }
 	}
-}
 
-body.platformMac {
-	.headerMainEditSearch {
-		.side.left { left: 90px; }
+	.side.center {
+		.icon { margin: 0px; opacity: 0; }
+		.icon.plus {
+			.arrow { 
+				width: 8px; height: 8px; background-image: url('~img/icon/header/arrow.svg'); position: absolute; right: -12px;
+				top: 10px; margin: 0px; background-color: none !important; background-size: 100% 100%;
+			}
+		}
 	}
 }
 
-.headerMainEditSearch:hover, .headerMainEditSearch.active {
+.header.headerMainHistory { height: 38px; line-height: 22px; padding: 8px 16px; width: calc(100% - 254px); background: #fff; }
+.header.headerMainHistory {
+	.side { height: 20px; top: 8px; }
+	.side.center { text-align: center; }
+	.side.right { right: 16px; }
+
+	.side {
+		.item { color: #6c6a5f; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; }
+		.item {
+			.icon.arrow { background-image: url('~img/arrow/history0.svg'); margin: 0px; }
+		}
+		.item.orange { color: #e89d00; font-weight: 500; }
+		
+		.item.grey:hover { color: $colorBlack; }
+		.item.orange:hover { color: $colorBlack; }
+
+		.item:hover {
+			.icon.arrow { background-image: url('~img/arrow/history1.svg'); }
+		}
+	}
+}
+
+body.platformMac {
+	.header {
+		.side.left { left: 90px; }
+	}
+
+	.header.headerMainHistory {
+		.side.left { left: 80px; }
+	}
+}
+
+.header.headerMainEdit:hover, .header.headerMainEdit.active {
 	.side.left { opacity: 1; }
-	.mid {
+	.side.center {
 		.icon { opacity: 1; }
 		.icon.dis { opacity: 0.5; }
 	}

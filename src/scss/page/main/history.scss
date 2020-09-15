@@ -1,0 +1,40 @@
+@import "~scss/_vars";
+
+.pageMainHistory {
+	#body { overflow: hidden; }
+	.wrapper { padding: 38px 0px 0px 0px; width: calc(100% - 254px); overflow: auto; position: relative; }
+	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
+
+	.list { width: 254px; border-left: 1px solid #dfddd0; z-index: 10; position: relative; background: #fff; overflow: auto; }
+	.list {
+		.section { padding: 11px 16px; }
+		.section {
+			.date { text-transform: uppercase; @include text-very-small; }
+		}
+		.section.fix { position: fixed; right: 0px; top: 0px; background: #fff; width: 253px; }
+
+		.wrap { position: relative; }
+
+		.item { padding: 5px 16px 5px 30px; cursor: pointer; transition: $transitionFast; position: relative; }
+		.item {
+			.name { @include text-small; color: #6c6a5f; @include text-overflow-nw; }
+			.date { @include text-overflow-nw; }
+			.icon.arrow { 
+				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px;
+				transition: none;
+			}
+		}
+		.item.expanded {
+			.icon.arrow { transform: rotateZ(90deg); }
+		}
+
+		.children { display: none; transition: $transitionFast; }
+		.children {
+			.item { padding-left: 48px; }
+		}
+
+		.item:hover, .item.active { background: #f3f2ec; }
+	}
+
+	.blockLast { height: 100px; }
+}

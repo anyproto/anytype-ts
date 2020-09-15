@@ -104,6 +104,15 @@ const BlockOpen = (response: any) => {
 	return {};
 };
 
+const BlockShow = (response: any) => {
+	return {
+		rootId: response.getRootid(),
+		type: response.getType(),
+		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
+		details: (response.getDetailsList() || []).map(Mapper.From.Details),
+	};
+};
+
 const BlockOpenBreadcrumbs = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
@@ -305,6 +314,24 @@ const BlockDeleteDataviewRecord = (response: any) => {
 	return {};
 };
 
+const HistoryVersions = (response: any) => {
+	return {
+		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
+	};
+};
+
+const HistoryShow = (response: any) => {
+	return {
+		version: Mapper.From.HistoryVersion(response.getVersion()),
+		blockShow: this.BlockShow(response.getBlockshow()),
+	};
+};
+
+const HistorySetVersion = (response: any) => {
+	return {
+	};
+};
+
 export {
 	VersionGet,
 
@@ -333,6 +360,7 @@ export {
 	BlockOpen,
 	BlockOpenBreadcrumbs,
 	BlockSetBreadcrumbs,
+	BlockShow,
 	
 	BlockUnlink,
 	BlockClose,
@@ -383,4 +411,7 @@ export {
 	BlockListSetAlign,
 	BlockListDeletePage,
 
+	HistoryVersions,
+	HistoryShow,
+	HistorySetVersion,
 };
