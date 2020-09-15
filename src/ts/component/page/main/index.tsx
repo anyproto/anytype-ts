@@ -129,6 +129,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
+		const { history } = this.props;
 		const { root } = blockStore;
 
 		commonStore.menuOpen('select', { 
@@ -161,6 +162,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					};
 
 					if (item.id == 'create') {
+						history.push('/main/set');
 					};
 				},
 			}
