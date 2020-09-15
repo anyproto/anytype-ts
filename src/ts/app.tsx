@@ -43,6 +43,7 @@ import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
 import 'scss/page/main/history.scss';
+import 'scss/page/main/set.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
