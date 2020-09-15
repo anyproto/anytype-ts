@@ -101,6 +101,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 
 		blockStore.dbSetMeta(block.id, { viewId: viewId, offset: offset });
+		blockStore.dbSetData(block.id, []);
 		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
 	};
 
