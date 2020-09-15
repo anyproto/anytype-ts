@@ -2,5 +2,24 @@
 
 .pageMainSet {
 	.wrapper { width: 704px; margin: 0px auto; padding: 96px 0px 0px 0px; }
-	.icon.new { width: 54px; height: 64px; background-image: url('~img/icon/set/new.svg'); }
+	.icon.new { width: 54px; height: 64px; background-image: url('~img/icon/set/new.svg'); margin-bottom: 18px; }
+	.title { @include text-title; margin-bottom: 26px; }
+	.label { @include text-paragraph; margin-bottom: 28px; color: $colorDarkGrey; }
+
+	.items {
+		.item { line-height: 32px; transition: $transitionFast; cursor: pointer; }
+		.item {
+			.icon { width: 20px; height: 20px; margin-right: 8px; }
+			.smile { margin-right: 8px; vertical-align: middle; }
+			.name { 
+				display: inline-block; @include text-paragraph; @include text-overflow-nw; width: calc(100% - 28px); line-height: 32px;
+				vertical-align: middle;
+			}
+		}
+		.item:hover { background: #f3f2ec; }
+		.icon.page { background-image: url('~img/icon/menu/action/object/page0.svg'); }
+		.icon.contact { background-image: url('~img/icon/menu/action/object/contact0.svg'); }
+		.icon.task { background-image: url('~img/icon/menu/action/object/task0.svg'); }
+		.icon.add { background-image: url('~img/icon/set/add.svg'); }
+	}
 }
