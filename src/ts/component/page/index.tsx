@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Util, Storage, analytics, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';

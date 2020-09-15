@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon } from 'ts/component';
+import { Icon, HeaderMainSet as Header } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -14,8 +14,11 @@ class PageMainSet extends React.Component<Props, {}> {
 
 	render () {
 		return (
-			<div className="wrapper">
-				<Icon className="new" />
+			<div>
+				<Header {...this.props} rootId="" />
+				<div className="wrapper">
+					<Icon className="new" />
+				</div>
 			</div>
 		);
 	};
