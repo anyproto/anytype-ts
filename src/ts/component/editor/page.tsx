@@ -1318,14 +1318,10 @@ class EditorPage extends React.Component<Props, State> {
 		let from = 0;
 		let to = 0;
 
-		commonStore.progressSet({ status: 'Processing...', current: 0, total: 1 });
-		
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
-
-			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
 
 			if (message.isSameBlockCaret) {
 				id = focused;
