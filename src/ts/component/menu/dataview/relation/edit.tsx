@@ -43,9 +43,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		
 		return (
 			<div>
+				<div className="sectionName">Relation name</div>
 				<div className="wrap">
-					<Input value={relation ? relation.name : ''} placeHolder="Relation name"  />
+					<Input value={relation ? relation.name : ''}  />
 				</div>
+				<div className="sectionName">Relation type</div>
 				{current}
 				<div className="line" />
 				<div className="item">

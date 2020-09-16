@@ -2,6 +2,8 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Smile, HeaderMainSet as Header } from 'ts/component';
+import { I } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -10,6 +12,8 @@ class PageMainSet extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
+
+		this.onAdd = this.onAdd.bind(this);
 	};
 
 	render () {
@@ -47,7 +51,7 @@ class PageMainSet extends React.Component<Props, {}> {
 					<Title text="New set" />
 					<Label text="Choose a object type for this set" />
 					<div className="items">
-						<div className="item add">
+						<div id="button-add" className="item add" onClick={this.onAdd}>
 							<Icon className="add" />
 							<div className="name">Create new object type</div>
 						</div>
@@ -58,6 +62,20 @@ class PageMainSet extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	onAdd (e: any) {
+		commonStore.menuOpen('dataviewObjectType', { 
+			element: '#button-add',
+			offsetX: 0,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				
+			}
+		});
 	};
 	
 };

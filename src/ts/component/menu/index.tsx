@@ -8,6 +8,7 @@ import MenuAccount from './account';
 import MenuSelect from './select';
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
+import MenuSearch from './search';
 
 import MenuBlockContext from './block/context';
 import MenuBlockStyle from './block/style';
@@ -24,6 +25,7 @@ import MenuBlockMention from './block/mention';
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
+import MenuDataviewObjectType from './dataview/object/type';
 import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
@@ -32,7 +34,6 @@ import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewTagList from './dataview/tag/list';
 import MenuDataviewTagEdit from './dataview/tag/edit';
 import MenuDataviewAccount from './dataview/account';
-import MenuSearch from './search';
 
 interface Props extends I.Menu {
 	history: any;
@@ -82,6 +83,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewRelationList:	 MenuDataviewRelationList,
 			dataviewRelationEdit:	 MenuDataviewRelationEdit,
 			dataviewRelationType:	 MenuDataviewRelationType,
+			dataviewObjectType:		 MenuDataviewObjectType,
 			dataviewTagList:		 MenuDataviewTagList,
 			dataviewTagEdit:		 MenuDataviewTagEdit,
 			dataviewFilter:			 MenuDataviewFilter,

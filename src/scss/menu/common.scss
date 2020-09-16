@@ -78,14 +78,13 @@
 			.info { padding-left: 52px; }
 			.name { line-height: 22px; }
 		}
+
+		.sectionName { padding: 5px 16px; @include text-very-small; text-transform: uppercase; }
 		
 		.section { border-bottom: 1px solid $colorLightGrey; padding: 8px 0px; }
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { border: 0px; padding-bottom: 0px; }
-		.section > .name { 
-			padding: 3px 16px; margin-bottom: 2px; @include text-very-small; 
-			display: block; text-transform: uppercase; 
-		}
+		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; text-transform: uppercase; }
 	}
 	
 	.menu.horizontal {
