@@ -408,6 +408,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		this.ref.blur();
+
+		let menuId = '';
 		let menuParam: I.MenuParam = {
 			element: '#item-' + item.id,
 			type: I.MenuType.Vertical,
@@ -425,73 +427,73 @@ class MenuBlockAction extends React.Component<Props, State> {
 			},
 		};
 
-		this.timeout = window.setTimeout(() => {
-			switch (item.id) {
-				case 'turn':
-					menuParam.data.onSelect = (item: any) => {
-						if (item.type == I.BlockType.Text) {
-							C.BlockListSetTextStyle(rootId, blockIds, item.key, (message: any) => {
-								this.setFocus(blockIds[0]);
-							});
-						};
-						
-						if (item.type == I.BlockType.Div) {
-							C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
-								this.setFocus(blockIds[0]);
-							});
-						};
-						
-						if (item.type == I.BlockType.Page) {
-							this.moveToPage();
-						};
-						
-						this.props.close();
-					};
-					
-					commonStore.menuOpen('blockStyle', menuParam);
-					break;
-					
-				case 'color':
-					menuParam.offsetY = node.offset().top - el.offset().top - 40;
-					menuParam.data.value = color;
-					menuParam.data.onChange = (color: string) => {
-						C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
+		switch (item.id) {
+			case 'turn':
+				menuId = 'blockStyle';
+				menuParam.data.onSelect = (item: any) => {
+					if (item.type == I.BlockType.Text) {
+						C.BlockListSetTextStyle(rootId, blockIds, item.key, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
-
-						this.props.close();
 					};
-					
-					commonStore.menuOpen('blockColor', menuParam);
-					break;
-					
-				case 'background':
-					menuParam.offsetY = node.offset().top - el.offset().top - 40;
-					menuParam.data.value = bgColor;
-					menuParam.data.onChange = (color: string) => {
-						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
+						
+					if (item.type == I.BlockType.Div) {
+						C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
-
-						this.props.close();
 					};
 					
-					commonStore.menuOpen('blockBackground', menuParam);
-					break;
-					
-				case 'align':
-					menuParam.data.onChange = (align: I.BlockAlign) => {
-						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
-							this.setFocus(blockIds[0]);
-						});
-
-						this.props.close();
+					if (item.type == I.BlockType.Page) {
+						this.moveToPage();
 					};
 					
-					commonStore.menuOpen('blockAlign', menuParam);
-					break;
-			};
-		}, Constant.delay.menu);
+					this.props.close();
+				};
+				break;
+				
+			case 'color':
+				menuId = 'blockColor';
+				menuParam.offsetY = node.offset().top - el.offset().top - 40;
+				menuParam.data.value = color;
+				menuParam.data.onChange = (color: string) => {
+					C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
+						this.setFocus(blockIds[0]);
+					});
+
+					this.props.close();
+				};
+				break;
+				
+			case 'background':
+				menuId = 'blockBackground';
+				menuParam.offsetY = node.offset().top - el.offset().top - 40;
+				menuParam.data.value = bgColor;
+				menuParam.data.onChange = (color: string) => {
+					C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
+						this.setFocus(blockIds[0]);
+					});
+
+					this.props.close();
+				};
+				break;
+				
+			case 'align':
+				menuId = 'blockAlign';
+				menuParam.data.onChange = (align: I.BlockAlign) => {
+					C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
+						this.setFocus(blockIds[0]);
+					});
+
+					this.props.close();
+				};
+				break;
+		};
+
+		if (menuId) {
+			this.timeout = window.setTimeout(() => {
+				commonStore.menuOpen(menuId, menuParam);
+			}, Constant.delay.menu);
+		};
 	};
 	
 	onClick (e: any, item: any) {

@@ -234,8 +234,12 @@ function createWindow () {
 		exit(relaunch);
 	});
 
-	ipcMain.on('update', (e) => {
+	ipcMain.on('updateDownload', (e) => {
 		checkUpdate(false);
+	});
+
+	ipcMain.on('updateCancel', (e) => {
+		clearTimeout(timeoutUpdate);
 	});
 
 	ipcMain.on('urlOpen', async (e, url) => {
@@ -511,6 +515,7 @@ function autoUpdaterInit () {
 
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'debug';
+	autoUpdater.autoDownload = false;
 	autoUpdater.channel = config.channel;
 
 	setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
@@ -525,6 +530,10 @@ function autoUpdaterInit () {
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
 		send('update-available', autoUpdate);
+
+		if (!autoUpdate) {
+			autoUpdater.downloadUpdate();
+		};
 	});
 
 	autoUpdater.on('update-not-available', (info) => {
@@ -535,7 +544,7 @@ function autoUpdaterInit () {
 	
 	autoUpdater.on('error', (err) => { 
 		Util.log('Error: ' + err);
-		send('update-error', err);
+		send('update-error', err, autoUpdate);
 	});
 	
 	autoUpdater.on('download-progress', (progress) => {

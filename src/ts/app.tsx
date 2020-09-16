@@ -281,10 +281,8 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
 			commonStore.popupCloseAll();
 			window.setTimeout(() => {
-				commonStore.popupOpen(id, {
-					data: data,
-				});
-			}, 100);
+				commonStore.popupOpen(id, { data: data });
+			}, Constant.delay.popup);
 		});
 		
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
@@ -294,10 +292,14 @@ class App extends React.Component<Props, State> {
 		});
 
 		ipcRenderer.on('update-available', (e: any, auto: boolean) => {
-			commonStore.progressSet({ status: 'Checking for update...', current: 1, total: 1 });
+			if (!auto) {
+				commonStore.progressSet({ status: 'Checking for update...', current: 1, total: 1 });
+			};
 		});
 
 		ipcRenderer.on('update-not-available', (e: any, auto: boolean) => {
+			commonStore.progressClear(); 
+
 			if (!auto) {
 				commonStore.popupOpen('confirm', {
 					data: {
@@ -308,7 +310,6 @@ class App extends React.Component<Props, State> {
 					},
 				});
 			};
-			commonStore.progressClear(); 
 		});
 
 		ipcRenderer.on('download-progress', this.onProgress);
@@ -318,20 +319,26 @@ class App extends React.Component<Props, State> {
 			commonStore.progressClear(); 
 		});
 
-		ipcRenderer.on('update-error', (e: any, err: string) => {
-			console.log(err);
+		ipcRenderer.on('update-error', (e: any, err: string, auto: boolean) => {
+			console.error(err);
 			commonStore.progressClear();
-			commonStore.popupOpen('confirm', {
-				data: {
-					title: 'Oops!',
-					text: Util.sprintf('Can’t check available updates, please try again later.<br/><span class="error">%s</span>', err),
-					textConfirm: 'Retry',
-					textCancel: 'Later',
-					onConfirm: () => {
-						ipcRenderer.send('update');
+
+			if (!auto) {
+				commonStore.popupOpen('confirm', {
+					data: {
+						title: 'Oops!',
+						text: Util.sprintf('Can’t check available updates, please try again later.<br/><span class="error">%s</span>', err),
+						textConfirm: 'Retry',
+						textCancel: 'Later',
+						onConfirm: () => {
+							ipcRenderer.send('updateDownload');
+						},
+						onCancel: () => {
+							ipcRenderer.send('updateCancel');
+						}, 
 					},
-				},
-			});
+				});
+			};
 		});
 
 		ipcRenderer.on('import', this.onImport);
