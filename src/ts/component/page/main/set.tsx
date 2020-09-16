@@ -67,7 +67,7 @@ class PageMainSet extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		commonStore.menuOpen('dataviewObjectType', { 
 			element: '#button-add',
-			offsetX: 0,
+			offsetX: 28,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,

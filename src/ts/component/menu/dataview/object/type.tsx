@@ -25,9 +25,6 @@ class MenuObjectType extends React.Component<Props, {}> {
 				<div className="wrap">
 					<Input />
 				</div>
-				<div className="section">
-					<div className="name">Object view type</div>
-				</div>
 				<div className="sectionName">object type name</div>
 				<div id="object-type" className={'item ' + (commonStore.menuIsOpen('select') ? 'active' : '')} onClick={this.onType}>
 					<div className="name">Select type</div>
