@@ -81,8 +81,13 @@ class Cell extends React.Component<Props, {}> {
 		const value = data[relation.id];
 
 		cell.addClass('isEditing');
-		if (this.ref && this.ref.setEditing) {
-			this.ref.setEditing(true);
+		if (this.ref) {
+			if (this.ref.setEditing) {
+				this.ref.setEditing(true);
+			};
+			if (this.ref.onClick) {
+				this.ref.onClick();
+			};
 		};
 		
 		let menuId = '';
