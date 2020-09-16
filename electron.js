@@ -212,6 +212,14 @@ function createWindow () {
 		return false;
 	});
 
+	win.on('enter-full-screen', () => {
+		send('enter-full-screen');
+	});
+
+	win.on('leave-full-screen', () => {
+		send('leave-full-screen');
+	});
+
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
 		BrowserWindow.addDevToolsExtension(
 			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
