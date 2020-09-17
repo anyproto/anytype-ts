@@ -42,7 +42,6 @@
       "id": "lastOpened",
       "name": "Last opened",
       "isHidden": false,
-      "isReadonly": true,
       "type": "https://anytype.io/schemas/types/date"
     },
     {

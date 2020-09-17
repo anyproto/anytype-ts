@@ -16,6 +16,7 @@ interface Props {
 	readOnly?: boolean;
 	accept?: string;
 	mask?: string;
+	maskOptions?: any;
 	onChange?(e: any, value: string): void;
 	onPaste?(e: any, value: string): void;
 	onKeyUp?(e: any, value: string): void;
@@ -112,13 +113,13 @@ class Input extends React.Component<Props, State> {
 	};
 
 	initMask () {
-		const { mask, placeHolder } = this.props;
+		const { mask, placeHolder, maskOptions } = this.props;
 		if (!mask) {
 			return;
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		this.mask = new Inputmask(mask, { placeholder: placeHolder }).mask(node.get(0));
+		new Inputmask(mask, { ...maskOptions, placeholder: placeHolder }).mask(node.get(0));
 	};
 
 	onChange (e: any) {
