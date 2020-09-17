@@ -19,6 +19,7 @@ import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
 import BlockDiv from './div';
+import BlockRelation from './relation';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -169,7 +170,13 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Cover:
 				canSelect = false;
 				cn.push('blockCover');
-				blockComponent = <BlockCover {...this.props} block={block} />;
+				blockComponent = <BlockCover {...this.props} />;
+				break;
+
+			case I.BlockType.Relation:
+				canSelect = false;
+				cn.push('blockRelation');
+				blockComponent = <BlockRelation {...this.props} />;
 				break;
 		};
 		
