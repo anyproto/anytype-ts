@@ -1000,7 +1000,6 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { content } = block;
 		const { marks } = content;
-		
 		const length = String(text || '').length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const el = $('#block-' + id);
