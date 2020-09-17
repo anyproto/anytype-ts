@@ -126,7 +126,13 @@ body.platformMac {
 	}
 }
 
-.header.headerMainEdit:hover, .header.headerMainEdit.active {
+html.fullScreen {
+	.headerMainEdit {
+		.side.left { left: 6px; }
+	}
+}
+
+.headerMainEdit:hover, .headerMainEdit.active {
 	.side.left { opacity: 1; }
 	.side.center {
 		.icon { opacity: 1; }

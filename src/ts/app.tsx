@@ -350,6 +350,14 @@ class App extends React.Component<Props, State> {
 
 			analytics.init();
 		});
+
+		ipcRenderer.on('enter-full-screen', () => {
+			html.addClass('fullScreen')
+		});
+
+		ipcRenderer.on('leave-full-screen', () => {
+			html.removeClass('fullScreen');
+		});
 	};
 
 	setWindowEvents () {
