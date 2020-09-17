@@ -1,5 +1,6 @@
 @import "~scss/_vars";
 
+.pageMainHistory * { user-select: none; }
 .pageMainHistory {
 	#body { overflow: hidden; }
 	.wrapper { padding: 38px 0px 0px 0px; width: calc(100% - 254px); overflow: auto; position: relative; }
