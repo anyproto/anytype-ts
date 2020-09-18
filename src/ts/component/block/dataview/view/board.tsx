@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore, dbStore } from 'ts/store';
+import { dbStore } from 'ts/store';
 import Column from './board/column';
 
 interface Props extends I.ViewComponent {};
@@ -60,6 +60,11 @@ class ViewBoard extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.resize();
+	};
+
+	componentDidUpdate () {
+		const win = $(window);
+		win.trigger('resize.editor');
 	};
 
 	onAdd (column: number) {

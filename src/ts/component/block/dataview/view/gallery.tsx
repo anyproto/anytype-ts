@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Pager } from 'ts/component';
-import { blockStore, dbStore } from 'ts/store';
+import { dbStore } from 'ts/store';
 
 import Cell from '../cell';
 
@@ -72,6 +72,7 @@ class ViewGallery extends React.Component<Props, {}> {
 	resize () {
 		const size = Constant.size.dataview.gallery;
 
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const viewItem = node.find('.viewItem');
 		const cnt = Math.floor(node.width() / (size.card + size.margin));
@@ -82,6 +83,8 @@ class ViewGallery extends React.Component<Props, {}> {
 		cards.each((i: number, item: any) => {
 			$(item).css({ marginRight: ((i > 0) && ((i + 1) % cnt === 0) ? 0 : '') });
 		});
+
+		win.trigger('resize.editor');
 	};
 	
 };

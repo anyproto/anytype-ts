@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
-import { I, C, DataUtil, Util } from 'ts/lib';
-import { blockStore, dbStore } from 'ts/store';
+import { I, C, DataUtil } from 'ts/lib';
+import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Cell from '../cell';
@@ -137,7 +137,10 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
+		const win = $(window);
+
 		this.bind();
+		win.trigger('resize.editor');
 	};
 
 	componentWillUnmount () {

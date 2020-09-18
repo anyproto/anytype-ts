@@ -98,6 +98,7 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
+		const win = $(window);
 
 		dbStore.setMeta(block.id, { viewId: viewId, offset: offset });
 		dbStore.setData(block.id, []);
@@ -105,6 +106,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
 
 		commonStore.menuCloseAll();
+		win.trigger('resize.editor');
 	};
 
 	onOpen (e: any, data: any) {

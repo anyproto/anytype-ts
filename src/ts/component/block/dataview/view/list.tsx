@@ -2,12 +2,13 @@ import * as React from 'react';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Pager } from 'ts/component';
-import { blockStore, dbStore } from 'ts/store';
+import { dbStore } from 'ts/store';
 
 import Cell from '../cell';
 
 interface Props extends I.ViewComponent {};
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 @observer
@@ -59,6 +60,11 @@ class ViewList extends React.Component<Props, {}> {
 				{total ? pager : ''}
 			</div>
 		);
+	};
+
+	componentDidUpdate () {
+		const win = $(window);
+		win.trigger('resize.editor');
 	};
 
 };
