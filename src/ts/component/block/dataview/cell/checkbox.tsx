@@ -29,8 +29,6 @@ class CellCheckbox extends React.Component<Props, {}> {
 		const { relation, index, onChange } = this.props;
 		const data = this.props.data[index];
 
-		console.log(data, index);
-
 		if (onChange) {
 			onChange(!data[relation.id]);
 		};
