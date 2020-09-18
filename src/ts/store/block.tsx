@@ -1,4 +1,4 @@
-import { observable, action, computed, set, intercept, decorate } from 'mobx';
+import { observable, action, computed, set, intercept } from 'mobx';
 import { I, M, Util, Decode } from 'ts/lib';
 
 const $ = require('jquery');
@@ -11,11 +11,9 @@ class BlockStore {
 	@observable public profileId: string = '';
 	@observable public breadcrumbsId: string = '';
 
-	public treeObject: Map<string, any[]> = new Map();
-	public blockObject: Map<string, any[]> = new Map();
-	public detailObject: Map<string, Map<string, any>> = new Map();
-	public dbData: Map<string, any> = observable.map(new Map());
-	public dbMeta: Map<string, any> = new Map();
+	public treeMap: Map<string, any[]> = new Map();
+	public blockMap: Map<string, any[]> = new Map();
+	public detailMap: Map<string, Map<string, any>> = new Map();
 
 	@computed
 	get root (): string {
@@ -73,7 +71,7 @@ class BlockStore {
 			return change;
 		});
 
-		this.detailObject.set(rootId, map);
+		this.detailMap.set(rootId, map);
 	};
 
 	@action
@@ -82,7 +80,7 @@ class BlockStore {
 			return;
 		};
 
-		let map = this.detailObject.get(rootId);
+		let map = this.detailMap.get(rootId);
 		let create = false;
 
 		if (!map) {
@@ -101,27 +99,27 @@ class BlockStore {
 				return change;
 			});
 
-			this.detailObject.set(rootId, map);
+			this.detailMap.set(rootId, map);
 		};
 	};
 
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		this.blockObject.set(rootId, blocks);
-		this.treeObject.set(rootId, this.getStructure(blocks));
+		this.blockMap.set(rootId, blocks);
+		this.treeMap.set(rootId, this.getStructure(blocks));
 	};
 
 	@action
 	blocksClear (rootId: string) {
-		this.blockObject.delete(rootId);
-		this.treeObject.delete(rootId);
+		this.blockMap.delete(rootId);
+		this.treeMap.delete(rootId);
 	};
 
 	@action
 	blocksClearAll () {
-		this.blockObject = new Map();
-		this.treeObject = new Map();
-		this.detailObject = new Map();
+		this.blockMap = new Map();
+		this.treeMap = new Map();
+		this.detailMap = new Map();
 	};
 
 	@action
@@ -181,63 +179,8 @@ class BlockStore {
 		delete(map[id]);
 	};
 
-	@action
-	dbSetData (blockId: string, list: any[]) {
-		list = list.map((it: any) => {
-			it = observable(it);
-			intercept(it as any, (change: any) => {
-				if (change.newValue === it[change.name]) {
-					return null;
-				};
-				return change;
-			});
-			return it;
-		});
-		this.dbData.set(blockId, observable(list));
-	};
-
-	@action
-	dbSetMeta (blockId: string, meta: any) {
-		const data = this.getDbMeta(blockId);
-
-		if (data) {
-			set(data, meta);
-		} else {
-			meta.offset = 0;
-			meta = observable(meta);
-
-			intercept(meta as any, (change: any) => {
-				if (change.newValue === meta[change.name]) {
-					return null;
-				};
-				return change;
-			});
-
-			this.dbMeta.set(blockId, meta);
-		};
-	};
-
-	@action
-	dbUpdateRecord (blockId: string, obj: any) {
-		const data = this.getDbData(blockId);
-		const record = data.find((it: any) => { return it.id == obj.id; });
-		if (!record) {
-			return;
-		};
-
-		set(record, obj);
-	};
-
-	getDbMeta (blockId: string) {
-		return this.dbMeta.get(blockId);
-	};
-
-	getDbData (blockId: string) {
-		return this.dbData.get(blockId);
-	};
-
 	getMap (rootId: string) {
-		return this.treeObject.get(rootId) || {};
+		return this.treeMap.get(rootId) || {};
 	};
 
 	getLeaf (rootId: string, id: string): any {
@@ -246,7 +189,7 @@ class BlockStore {
 	};
 
 	getBlocks (rootId: string, filter?: (it: any) => boolean) {
-		let blocks = this.blockObject.get(rootId) || [];
+		let blocks = this.blockMap.get(rootId) || [];
 
 		if (!filter) {
 			return blocks;
@@ -421,7 +364,7 @@ class BlockStore {
 	};
 
 	getDetailsMap (rootId: string) {
-		return this.detailObject.get(rootId) || new Map();
+		return this.detailMap.get(rootId) || new Map();
 	};
 
 	getDetails (rootId: string, id: string): any {

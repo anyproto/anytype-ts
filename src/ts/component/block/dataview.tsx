@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { dbStore } from 'ts/store';
 
 import Controls from './dataview/controls';
 
@@ -42,7 +41,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const { viewId } = blockStore.getDbMeta(block.id);
+		const { viewId } = dbStore.getMeta(block.id);
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
 		const { type } = view;
 		const schema = Schema[DataUtil.schemaField(schemaURL)];
@@ -100,8 +99,8 @@ class BlockDataview extends React.Component<Props, {}> {
 	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 
-		blockStore.dbSetMeta(block.id, { viewId: viewId, offset: offset });
-		blockStore.dbSetData(block.id, []);
+		dbStore.setMeta(block.id, { viewId: viewId, offset: offset });
+		dbStore.setData(block.id, []);
 		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
 	};
 

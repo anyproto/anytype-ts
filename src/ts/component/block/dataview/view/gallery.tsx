@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Pager } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { blockStore, dbStore } from 'ts/store';
 
 import Cell from '../cell';
 
@@ -18,8 +18,8 @@ class ViewGallery extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, view, readOnly, getData } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const data = blockStore.getDbData(block.id);
-		const { offset, total } = blockStore.getDbMeta(block.id);
+		const data = dbStore.getData(block.id);
+		const { offset, total } = dbStore.getMeta(block.id);
 		
 		const Card = (item: any) => (
 			<div className="card">
@@ -31,7 +31,8 @@ class ViewGallery extends React.Component<Props, {}> {
 						block={block}
 						view={view} 
 						relation={...relation} 
-						data={data[item.index]} 
+						data={data} 
+						index={item.index}
 						readOnly={readOnly} 
 					/>
 				))}

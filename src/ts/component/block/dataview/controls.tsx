@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
 
@@ -31,7 +31,7 @@ class Controls extends React.Component<Props, State> {
 		const { getData, block, view, readOnly } = this.props;
 		const { content } = block;
 		const { views } = content;
-		const { viewId } = blockStore.getDbMeta(block.id);
+		const { viewId } = dbStore.getMeta(block.id);
 		const { page } = this.state;
 		const limit = Constant.limit.dataview.views;
 		const filterCnt = view.filters.length;
@@ -122,7 +122,7 @@ class Controls extends React.Component<Props, State> {
 	
 	onButton (e: any, id: string, menu: string) {
 		const { rootId, block, view, readOnly, getData } = this.props;
-		const data = blockStore.getDbData(block.id);
+		const data = dbStore.getData(block.id);
 
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,

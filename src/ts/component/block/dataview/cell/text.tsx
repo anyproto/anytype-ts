@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Smile, Input, Textarea } from 'ts/component';
 import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
 
@@ -13,6 +13,7 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
+@observer
 class CellText extends React.Component<Props, State> {
 
 	state = {
@@ -35,7 +36,8 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { data, relation, view, onOpen, readOnly } = this.props;
+		const { index, relation, view, onOpen, readOnly } = this.props;
+		const data = this.props.data[index];
 
 		let Name = null;
 		let EditorComponent = null;
@@ -111,9 +113,10 @@ class CellText extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { editing } = this.state;
-		const { id, relation, data } = this.props;
+		const { id, relation, index } = this.props;
 		const cellId = DataUtil.cellId('cell', relation.id, id);
 		const cell = $('#' + cellId);
+		const data = this.props.data[index];
 
 		if (editing) {
 			let value = data[relation.id];
@@ -147,11 +150,23 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: any, value: string) {
+		const { onChange } = this.props;
 		this.resize();
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+
+			commonStore.menuCloseAll();
+			this.setState({ editing: false });
+
+			if (onChange) {
+				onChange(value);
+			};
+		});
 	};
 
 	onKeyUpDate (e: any, value: any) {
-		const { relation, onChange } = this.props;
+		const { onChange } = this.props;
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Popup) => { return item.id == 'dataviewCalendar'; });
 
@@ -212,12 +227,16 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onSelect (icon: string) {
-		const { data } = this.props;
+		const { index } = this.props;
+		const data = this.props.data[index];
+
 		DataUtil.pageSetIcon(data.id, icon, '');
 	};
 
 	onUpload (hash: string) {
-		const { data } = this.props;
+		const { index } = this.props;
+		const data = this.props.data[index];
+
 		DataUtil.pageSetIcon(data.id, '', hash);
 	};
 

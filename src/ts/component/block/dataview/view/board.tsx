@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Icon } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { blockStore, dbStore } from 'ts/store';
 import Column from './board/column';
 
 interface Props extends I.ViewComponent {};
@@ -33,8 +32,8 @@ class ViewBoard extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const data = blockStore.getDbData(block.id);
-		const { offset, total } = blockStore.getDbMeta(block.id);
+		const data = dbStore.getData(block.id);
+		const { offset, total } = dbStore.getMeta(block.id);
 		const columns = this.getColumns();
 		
 		return (
@@ -99,7 +98,7 @@ class ViewBoard extends React.Component<Props, {}> {
 	
 	getColumns (): any[] {
 		const { block } = this.props;
-		const data = Util.objectCopy(blockStore.getDbData(block.id));
+		const data = Util.objectCopy(dbStore.getData(block.id));
 
 		let r: any[] = [];
 		

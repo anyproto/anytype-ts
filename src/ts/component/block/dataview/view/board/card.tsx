@@ -42,7 +42,8 @@ class Card extends React.Component<Props, {}> {
 								block={block}
 								view={view} 
 								relation={...relation} 
-								data={data} 
+								data={data}
+								index={index}
 								readOnly={readOnly} 
 							/>
 						))}

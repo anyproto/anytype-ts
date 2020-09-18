@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 
 import CellText from './text';
 import CellSelect from './select';
@@ -69,7 +68,8 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	onClick (e: any) {
-		const { id, relation, data, readOnly } = this.props;
+		const { id, relation, index, readOnly } = this.props;
+		const data = this.props.data[index];
 
 		if (readOnly || relation.isReadOnly) {
 			return;
@@ -80,7 +80,6 @@ class Cell extends React.Component<Props, {}> {
 		const width = Math.max(cell.width(), Constant.size.dataview.cell.default);
 		const value = data[relation.id];
 
-		cell.addClass('isEditing');
 		if (this.ref) {
 			if (this.ref.setEditing) {
 				this.ref.setEditing(true);
@@ -186,7 +185,9 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	onChange (value: any) {
-		let { id, rootId, block, data, relation } = this.props;
+		const { rootId, block, index, relation } = this.props;
+		const data = this.props.data[index];
+
 		if (data[relation.id] === value) {
 			return;
 		};
@@ -194,7 +195,7 @@ class Cell extends React.Component<Props, {}> {
 		let obj = { id: data.id };
 		obj[relation.id] = value;
 
-		blockStore.dbUpdateRecord(block.id, obj);
+		dbStore.updateRecord(block.id, obj);
 		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);
 	};
 	
