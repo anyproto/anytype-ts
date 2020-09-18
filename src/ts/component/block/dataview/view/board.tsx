@@ -115,7 +115,6 @@ class ViewBoard extends React.Component<Props, {}> {
 			col.list.push(item);
 		};
 
-		console.log(columns);
 		return columns;
 	};
 	
