@@ -81,10 +81,15 @@
       "isHidden": true,
       "type": "https://anytype.io/schemas/types/number"
     },
-{
+	{
       "id": "url",
       "name": "Url",
       "type": "https://anytype.io/schemas/types/url"
+    },
+	{
+      "id": "description",
+      "name": "Description",
+      "type": "https://anytype.io/schemas/types/description"
     }
   ]
 }

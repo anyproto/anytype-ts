@@ -69,6 +69,9 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
+			if (relation.type == I.RelationType.Description) {
+				value = String(value || '').split('\n')[0];
+			};
 			if (relation.type == I.RelationType.Date) {
 				value = value ? Util.date('M d Y', value) : '';
 			};
@@ -150,19 +153,21 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: any, value: string) {
-		const { onChange } = this.props;
+		const { relation, onChange } = this.props;
 		this.resize();
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			e.preventDefault();
+		if (relation.type != I.RelationType.Description) {
+			keyboard.shortcut('enter', e, (pressed: string) => {
+				e.preventDefault();
 
-			commonStore.menuCloseAll();
-			this.setState({ editing: false });
+				commonStore.menuCloseAll();
+				this.setState({ editing: false });
 
-			if (onChange) {
-				onChange(value);
-			};
-		});
+				if (onChange) {
+					onChange(value);
+				};
+			});
+		};
 	};
 
 	onKeyUpDate (e: any, value: any) {
@@ -248,7 +253,7 @@ class CellText extends React.Component<Props, State> {
 
 		if (area.length) {
 			area.css({ height: 'auto' });
-			area.css({ height: area.get(0).scrollHeight });
+			area.css({ height: Math.min(160, area.get(0).scrollHeight) });
 		};
 	};
 	
