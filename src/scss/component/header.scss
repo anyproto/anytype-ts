@@ -126,6 +126,12 @@ body.platformMac {
 	}
 }
 
+html.fullScreen {
+	.headerMainEditSearch {
+		.side.left { left: 6px; }
+	}
+}
+
 .header.headerMainEdit:hover, .header.headerMainEdit.active {
 	.side.left { opacity: 1; }
 	.side.center {
