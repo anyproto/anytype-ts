@@ -8,8 +8,9 @@ import Cell from 'ts/component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	groupId: string;
 	value: string;
-	index: number;
+	idx: number;
 	list: any[];
+	data: any[];
 	onAdd (column: number): void;
 };
 
@@ -20,11 +21,11 @@ const getItemStyle = (snapshot: any, style: any) => {
 class Column extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, groupId, view, onAdd, list, index, value } = this.props;
-		const group = view.relations.find((item: I.Relation) => { return item.id == groupId; });
+		const { rootId, block, groupId, view, onAdd, list, data, idx, value } = this.props;
 
+		const group = view.relations.find((item: I.Relation) => { return item.id == groupId; });
 		const Add = (item: any) => (
-			<Draggable draggableId={index + '-add'} index={item.index}>
+			<Draggable draggableId={idx + '-add'} index={item.index}>
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="card add"
@@ -43,6 +44,7 @@ class Column extends React.Component<Props, {}> {
 		const Head = () => {
 			const head = {};
 			head[groupId] = value;
+
 			return (
 				<div className="head">
 					<Cell 
@@ -60,7 +62,7 @@ class Column extends React.Component<Props, {}> {
 		};
 
 		return (
-			<Draggable draggableId={'column-' + index} index={index} type="column">
+			<Draggable draggableId={'column-' + idx} index={idx} type="column">
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="column"
@@ -70,13 +72,13 @@ class Column extends React.Component<Props, {}> {
 						style={getItemStyle(snapshot, provided.draggableProps.style)}
 					>
 						<Head />
-						<Droppable droppableId={'column-' + index} direction="vertical" type="row">
+						<Droppable droppableId={'column-' + idx} direction="vertical" type="row">
 							{(provided: any) => (
 								<div className="list" {...provided.droppableProps} ref={provided.innerRef}>
 									{list.map((child: any, i: number) => (
-										<Card key={'board-card-' + i} {...this.props} data={...child} column={index} index={i} />
+										<Card key={'board-card-' + i} {...this.props} data={data} index={child.index} column={idx} idx={i} />
 									))}
-									<Add column={index} index={list.length} />
+									<Add column={idx} index={list.length} />
 									{provided.placeholder}
 								</div>
 							)}

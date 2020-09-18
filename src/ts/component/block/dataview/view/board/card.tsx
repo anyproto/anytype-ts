@@ -7,6 +7,7 @@ import Cell from 'ts/component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	column: number;
 	index: number;
+	idx: number;
 	data: any;
 };
 
@@ -21,11 +22,11 @@ const getItemStyle = (snapshot: any, style: any) => {
 class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, view, readOnly, column, index, data } = this.props;
+		const { rootId, block, view, readOnly, column, idx, index, data } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
 		return (
-			<Draggable draggableId={[ column, index ].join(' ')} index={index} type="row">
+			<Draggable draggableId={[ column, index ].join(' ')} index={idx} type="row">
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="card"

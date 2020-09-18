@@ -45,7 +45,7 @@ class ViewBoard extends React.Component<Props, {}> {
 								{(provided: any) => (
 									<div className="columns" {...provided.droppableProps} ref={provided.innerRef}>
 										{columns.map((item: any, i: number) => (
-											<Column key={i} {...this.props} {...item} index={i} groupId={GROUP} onAdd={this.onAdd} />
+											<Column key={i} {...this.props} {...item} data={data} idx={i} groupId={GROUP} onAdd={this.onAdd} />
 										))}
 										{provided.placeholder}
 									</div>
@@ -100,21 +100,23 @@ class ViewBoard extends React.Component<Props, {}> {
 		const { block } = this.props;
 		const data = Util.objectCopy(dbStore.getData(block.id));
 
-		let r: any[] = [];
+		let columns: any[] = [];
 		
 		for (let i in data) {
 			let item = data[i];
-			let col = r.find((col) => { return col.value == item[GROUP]; });
+			let col = columns.find((col) => { return col.value == item[GROUP]; });
 			
 			item.index = i;
 			
 			if (!col) {
 				col = { value: item[GROUP], list: [] }
-				r.push(col);
+				columns.push(col);
 			};
 			col.list.push(item);
 		};
-		return r;
+
+		console.log(columns);
+		return columns;
 	};
 	
 };
