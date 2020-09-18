@@ -133,6 +133,32 @@ class ViewGrid extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.resize();
+		this.bind();
+	};
+
+	componentDidUpdate () {
+		this.bind();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	bind () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+
+		scroll.unbind('.scroll').scroll(() => {
+			win.trigger('resize.menu');
+		});
+	};
+
+	unbind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+
+		scroll.unbind('.scroll');
 	};
 
 	resize () {

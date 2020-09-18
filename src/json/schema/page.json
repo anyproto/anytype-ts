@@ -48,7 +48,6 @@
       "id": "lastModified",
       "name": "Last modified",
       "isHidden": false,
-      "isReadonly": true,
       "type": "https://anytype.io/schemas/types/date"
     },
     {
