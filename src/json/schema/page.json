@@ -87,6 +87,16 @@
       "type": "https://anytype.io/schemas/types/url"
     },
 	{
+      "id": "email",
+      "name": "Email",
+      "type": "https://anytype.io/schemas/types/email"
+    },
+	{
+      "id": "phone",
+      "name": "Phone",
+      "type": "https://anytype.io/schemas/types/phone"
+    },
+	{
       "id": "description",
       "name": "Description",
       "type": "https://anytype.io/schemas/types/description"

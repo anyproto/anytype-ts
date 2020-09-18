@@ -145,15 +145,28 @@ class Cell extends React.Component<Props, {}> {
 					width: width,
 				});
 
+				let name = 'Go to';
+				if (relation.type == I.RelationType.Email) {
+					name = 'Mail to';
+				};
+				if (relation.type == I.RelationType.Phone) {
+					name = 'Call to';
+				};
+
 				param.data = Object.assign(param.data, {
 					value: '',
 					noKeys: true,
 					options: [
-						{ id: 'go', name: 'Go to' },
+						{ id: 'go', name: name },
 						{ id: 'copy', name: 'Copy' },
 					],
 					onSelect: (event: any, item: any) => {
 						let scheme = '';
+						if (relation.type == I.RelationType.Url) {
+							if (!value.match(/:\/\//)) {
+								scheme = 'http://';
+							};
+						};
 						if (relation.type == I.RelationType.Email) {
 							scheme = 'mailto:';
 						};
