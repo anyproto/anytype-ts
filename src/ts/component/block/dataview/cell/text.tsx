@@ -11,6 +11,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const Constant = require('json/constant.json');
 
 @observer
@@ -46,7 +47,7 @@ class CellText extends React.Component<Props, State> {
 		if (editing) {
 			if (relation.type == I.RelationType.Description) {
 				EditorComponent = (item: any) => (
-					<Textarea ref={(ref: any) => { this.ref = ref; }} id="textarea" {...item} />
+					<Textarea ref={(ref: any) => { this.ref = ref; }} id="input" {...item} />
 				);
 			} else 
 			if (relation.type == I.RelationType.Date) {
@@ -122,14 +123,16 @@ class CellText extends React.Component<Props, State> {
 		const data = this.props.data[index];
 
 		if (editing) {
-			let value = data[relation.id];
+			let value = String(data[relation.id] || '');
 			if (relation.type == I.RelationType.Date) {
-				value = value ? Util.date('d.m.Y', value) : '';
+				value = value ? Util.date('d.m.Y', Number(value)) : '';
 			};
+			let length = value.length;
 
 			cell.addClass('isEditing');
 			this.ref.focus();
 			this.ref.setValue(value);
+			cell.find('#input').get(0).setSelectionRange(length, length);
 		} else {
 			cell.removeClass('isEditing');
 			window.clearTimeout(this.timeoutMenu);
@@ -141,9 +144,10 @@ class CellText extends React.Component<Props, State> {
 
 	setEditing (v: boolean) {
 		const { view, readOnly } = this.props;
+		const { editing } = this.state;
 		const canEdit = !readOnly && (view.type == I.ViewType.Grid);
 
-		if (canEdit) {
+		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });
 		};
 	};
@@ -203,8 +207,7 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		keyboard.setFocus(false);
-
-		if (!commonStore.menuIsOpen()) {
+		if (!commonStore.menuIsOpen('dataviewCalendar')) {
 			this.setState({ editing: false });
 		};
 
@@ -247,14 +250,22 @@ class CellText extends React.Component<Props, State> {
 
 	resize () {
 		const { id, relation } = this.props;
+		const { editing } = this.state;
 		const cellId = DataUtil.cellId('cell', relation.id, id);
 		const cell = $('#' + cellId);
-		const area = cell.find('#textarea');
 
-		if (area.length) {
-			area.css({ height: 'auto' });
-			area.css({ height: Math.min(160, area.get(0).scrollHeight) });
-		};
+		raf(() => {
+			if (editing) {
+				if (relation.type == I.RelationType.Description) {
+					const input = cell.find('#input');
+					input.css({ height: 'auto', overflow: 'visible' });
+
+					const sh = input.get(0).scrollHeight;
+					input.css({ height: Math.min(160, sh), overflow: 'auto' });
+					input.scrollTop(sh);
+				};
+			};
+		});
 	};
 	
 };
