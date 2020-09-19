@@ -4,6 +4,8 @@ import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 interface Props extends I.Popup {
 	history: any;
@@ -28,6 +30,8 @@ const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 const PAGE = 30;
+const HEIGHT = 64;
+const HEIGHT_EXPANDED = 96;
 
 enum Panel { 
 	Left = 1, 
@@ -59,10 +63,13 @@ class PopupNavigation extends React.Component<Props, State> {
 	n: number = 0;
 	panel: Panel = Panel.Left;
 	focused: boolean = false;
+	cache: any = {};
+	cacheIn: any = {};
+	cacheOut: any = {};
 	
 	constructor (props: any) {
 		super (props);
-		
+
 		this.onKeyDownSearch = this.onKeyDownSearch.bind(this);
 		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
@@ -86,7 +93,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		let n = 0;
 		let confirm = '';
 		let iconSearch = null;
-		let blockIds = data.blockIds || [];
 
 		if (showIcon) {
 			if (isRoot) {
@@ -129,7 +135,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		);
 
 		const Item = (item: any) => {
-			let { iconEmoji, iconImage, name } = item.details;
+			let { iconEmoji, iconImage, name } = item.details || {};
 			let isRoot = item.id == root;
 
 			return (
@@ -149,6 +155,23 @@ class PopupNavigation extends React.Component<Props, State> {
 					</div>
 					<Icon className="arrow" onClick={(e: any) => { this.onClickArrow(e, item); }} />
 				</div>
+			);
+		};
+
+		const rowRenderer = (list: I.PageInfo[], { index, key, style, parent, isScrolling }) => {
+			return (
+				<CellMeasurer
+					key={key}
+					parent={parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={index}
+					hasFixedWidth={() => {}}
+				>
+					<div style={style}>
+						<Item {...list[index]} />
+					</div>
+				</CellMeasurer>
 			);
 		};
 
@@ -213,11 +236,29 @@ class PopupNavigation extends React.Component<Props, State> {
 										{!pagesIn.length ? (
 											<ItemEmpty name="No links to this page" />
 										) : (
-											<React.Fragment>
-												{pagesIn.map((item: any, i: number) => {
-													return <Item key={i} {...item} panel={Panel.Left} />;
-												})}
-											</React.Fragment>
+											<InfiniteLoader
+												rowCount={pagesIn.length}
+												loadMoreRows={() => {}}
+												isRowLoaded={({ index }) => index < pagesIn.length}
+											>
+												{({ onRowsRendered, registerChild }) => (
+													<AutoSizer className="scrollArea">
+														{({ width, height }) => (
+															<List
+																ref={registerChild}
+																width={width}
+																height={height - 35}
+																deferredMeasurmentCache={this.cacheIn}
+																rowCount={pagesIn.length}
+																rowHeight={HEIGHT_EXPANDED}
+																rowRenderer={(param: any) => { return rowRenderer(pagesIn, param); }}
+																onRowsRendered={onRowsRendered}
+																overscanRowCount={10}
+															/>
+														)}
+													</AutoSizer>
+												)}
+											</InfiniteLoader>
 										)}
 									</React.Fragment>
 								) : ''}
@@ -230,11 +271,29 @@ class PopupNavigation extends React.Component<Props, State> {
 								{!pagesOut.length ? (
 									<ItemEmpty name="No links to other pages" />
 								) : (
-									<React.Fragment>
-										{pagesOut.map((item: any, i: number) => {
-											return <Item key={i} {...item} panel={Panel.Right} />;
-										})}
-									</React.Fragment>
+									<InfiniteLoader
+										rowCount={pagesOut.length}
+										loadMoreRows={() => {}}
+										isRowLoaded={({ index }) => index < pagesOut.length}
+									>
+										{({ onRowsRendered, registerChild }) => (
+											<AutoSizer className="scrollArea">
+												{({ width, height }) => (
+													<List
+														ref={registerChild}
+														width={width}
+														height={height - 35}
+														deferredMeasurmentCache={this.cacheOut}
+														rowCount={pagesOut.length}
+														rowHeight={HEIGHT_EXPANDED}
+														rowRenderer={(param: any) => { return rowRenderer(pagesOut, param); }}
+														onRowsRendered={onRowsRendered}
+														overscanRowCount={10}
+													/>
+												)}
+											</AutoSizer>
+										)}
+									</InfiniteLoader>
 								)}
 							</div>
 						</div>
@@ -243,7 +302,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					<React.Fragment>
 						{head}
 
-						{!pages.length && !loading ? (
+						{!pages.length ? (
 							<div id="empty" key="empty" className="empty">
 								<div className="txt">
 									<b>There are no pages named "{filter}"</b>
@@ -252,13 +311,29 @@ class PopupNavigation extends React.Component<Props, State> {
 							</div>
 						) : (
 							<div id={'panel-' + Panel.Left} key="items" className="items left">
-								{pages.map((item: any, i: number) => {
-									if (++n > (page + 1) * PAGE) {
-										return null;
-									};
-
-									return <Item key={i} {...item} panel={Panel.Left} />;
-								})}
+								<InfiniteLoader
+									rowCount={pages.length}
+									loadMoreRows={() => {}}
+									isRowLoaded={({ index }) => index < pages.length}
+								>
+									{({ onRowsRendered, registerChild }) => (
+										<AutoSizer className="scrollArea">
+											{({ width, height }) => (
+												<List
+													ref={registerChild}
+													width={width}
+													height={height}
+													deferredMeasurmentCache={this.cache}
+													rowCount={pages.length}
+													rowHeight={HEIGHT}
+													rowRenderer={(param: any) => { return rowRenderer(pages, param); }}
+													onRowsRendered={onRowsRendered}
+													overscanRowCount={10}
+												/>
+											)}
+										</AutoSizer>
+									)}
+								</InfiniteLoader>
 							</div>
 						)}
 					</React.Fragment>
@@ -291,9 +366,33 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const { expanded } = this.state;
+		const { expanded, pages, pagesIn, pagesOut } = this.state;
 		this.initSize(expanded);
 		this.setActive();
+
+		if (pages.length) {	
+			this.cache = new CellMeasurerCache({
+				fixedWidth: true,
+				defaultHeight: HEIGHT,
+				keyMapper: (i: number) => { return pages[i].id; },
+			});
+		};
+
+		if (pagesIn.length) {	
+			this.cache = new CellMeasurerCache({
+				fixedWidth: true,
+				defaultHeight: HEIGHT,
+				keyMapper: (i: number) => { return pagesIn[i].id; },
+			});
+		};
+
+		if (pagesOut.length) {	
+			this.cache = new CellMeasurerCache({
+				fixedWidth: true,
+				defaultHeight: HEIGHT,
+				keyMapper: (i: number) => { return pagesOut[i].id; },
+			});
+		};
 	};
 	
 	componentWillUnmount () {

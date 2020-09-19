@@ -26,8 +26,9 @@
 			.txt { line-height: 24px; color: $colorDarkGrey; }
 		}
 		
-		.items { padding: 12px 0px; overflow-x: hidden; overflow-y: auto; }
+		.items {  }
 		.items {
+			.pad { height: 12px; }
 			.item { 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 64px; line-height: 48px; padding: 8px 16px; 
 			}
