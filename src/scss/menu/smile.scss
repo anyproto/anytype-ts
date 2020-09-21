@@ -16,7 +16,7 @@
 		.filter.withHead { padding-top: 11px; }
 	
 		.items { overflow: auto; height: 288px; }
-		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
+		.empty { height: 100%; line-height: 256px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
 			.txt { line-height: 24px; color: $colorDarkGrey; }
@@ -24,7 +24,8 @@
 		
 		.section { padding-top: 0px; padding-bottom: 6px; border: 0px; }
 		.section:first-child { padding-top: 8px; }
-		.section > .list { padding: 0px 12px; }
+		
+		.row { padding: 0px 12px; }
 		
 		.item { 
 			cursor: pointer; width: 40px; height: 40px; position: relative; border-radius: 6px; display: inline-block;
