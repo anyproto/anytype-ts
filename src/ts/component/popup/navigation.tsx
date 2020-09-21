@@ -28,7 +28,6 @@ const $ = require('jquery');
 const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
-const PAGE = 30;
 const HEIGHT = 64;
 const HEIGHT_EXPANDED = 96;
 
@@ -58,7 +57,6 @@ class PopupNavigation extends React.Component<Props, State> {
 	timeout: number = 0;
 	index: any = null;
 	disableFirstKey: boolean = false;
-	n: number = 0;
 	panel: Panel = Panel.Left;
 	focused: boolean = false;
 	cache: any = {};

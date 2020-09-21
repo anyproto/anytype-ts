@@ -4,36 +4,36 @@ import { MenuItemVertical } from 'ts/component';
 import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {};
 
 interface State {
 	pages: I.PageInfo[];
 	loading: boolean;
-	page: number;
+	n: number;
 };
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const FlexSearch = require('flexsearch');
-
 const HEIGHT = 28;
-const PAGE = 12;
 
 @observer
 class MenuBlockMention extends React.Component<Props, State> {
 
-	_isMounted: boolean = false;	
-	n: number = 0;
-	filter: string = '';
-	index: any = null;
-
 	state = {
 		pages: [],
 		loading: false,
-		page: 0,
+		n: 0,
 	};
-	
+
+	_isMounted: boolean = false;	
+	filter: string = '';
+	index: any = null;
+	cache: any = {};
+
 	constructor (props: any) {
 		super(props);
 		
@@ -41,32 +41,59 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { page } = this.state;
-		const sections = this.getSections();
+		const { n } = this.state;
+		const items = this.getItems();
 
-		let id = 0;
-
-		const Section = (item: any) => (
-			<div className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						if (++id > (page + 1) * PAGE) {
-							return null;
-						};
-
-						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onOver(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
-					})}
-				</div>
-			</div>
-		);
+		const rowRenderer = (param: any) => {
+			const item = items[param.index];
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<div style={param.style}>
+						{item.isSection ? (
+							<div className="section">
+								{item.name ? <div className="name">{item.name}</div> : ''}
+							</div>
+						) : (
+							<MenuItemVertical {...item} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
+						)}
+					</div>
+				</CellMeasurer>
+			);
+		};
 
 		return (
 			<div className="items">
-				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={({ index }) => index < items.length}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={registerChild}
+									width={width}
+									height={204}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={HEIGHT}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={10}
+									scrollToIndex={n}
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
 			</div>
 		);
 	};
@@ -79,14 +106,15 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { filter } = commonStore;
+		const { n } = this.state;
 		const items = this.getItems();
 
 		if (this.filter != filter.text) {
 			this.filter = filter.text;
-			this.setState({ page: 0 });
+			this.setState({ n: 0 });
 		};
 
-		this.setActive(items[this.n]);
+		this.setActive(items[n]);
 		this.props.position();
 	};
 	
@@ -100,13 +128,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 			return;
 		};
 		
-		this.unbind();
-		
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		node.find('.items').unbind('scroll.menu').on('scroll.menu', (e: any) => { this.onScroll(); });
 	};
 	
 	unbind () {
@@ -114,19 +137,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		win.unbind('keydown.menu');
-		node.find('.items').unbind('scroll.menu');
-	};
-
-	onScroll () {
-		const { id } = this.props;
-		const { page } = this.state;
-		const menu = $('#' + Util.toCamelCase('menu-' + id));
-		const content = menu.find('.content');
-		const top = content.scrollTop();
-
-		if (top >= page * PAGE * HEIGHT) {
-			this.setState({ page: page + 1 });
-		};
 	};
 
 	getSections () {
@@ -135,24 +145,17 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { data } = param;
 		const { rootId } = data;
 		const pages = this.filterPages();
-
-		let pageData = [];
-
-		pageData.unshift({
-			id: 'create', 
-			name: 'Create new page', 
-			icon: '',
-			hash: '',
-			withSmile: true,
-			skipFilter: true,
-		});
+		const list: any[] = [
+			{ id: '', name: 'Mention a page', isSection: true },
+			{ id: 'create', name: 'Create new page', icon: '', hash: '', withSmile: true, skipFilter: true }
+		];
 
 		for (let page of pages) {
 			if ([ root, rootId ].indexOf(page.id) >= 0) {
 				continue;
 			};
 			
-			pageData.push({
+			list.push({
 				id: page.id, 
 				name: page.details.name, 
 				icon: page.details.iconEmoji,
@@ -162,7 +165,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		let sections = [
-			{ id: 'page', name: 'Mention a page', children: pageData },
+			{ id: 'page', children: list },
 		];
 
 		sections = DataUtil.menuSectionsMap(sections);
@@ -176,19 +179,20 @@ class MenuBlockMention extends React.Component<Props, State> {
 		for (let section of sections) {
 			items = items.concat(section.children);
 		};
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return items[i].id; },
+		});
 		
 		return items;
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.onScroll();
-		window.setTimeout(() => {
-			this.props.setActiveItem(items[this.n], scroll);
-		});
+		const { n } = this.state;
+		this.props.setActiveItem((item ? item : items[n]), scroll);
 	};
 
 	loadSearch () {
@@ -249,29 +253,32 @@ class MenuBlockMention extends React.Component<Props, State> {
 		
 		e.stopPropagation();
 
+		let { n } = this.state;
 		const k = e.key.toLowerCase();
 		keyboard.disableMouse(true);
 		
 		const items = this.getItems();
 		const l = items.length;
-		const item = items[this.n];
-		
+		const item = items[n];
+
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
+				n--;
+				if (n < 0) {
+					n = l - 1;
 				};
+				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
+				n++;
+				if (n > l - 1) {
+					n = 0;
 				};
+				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
