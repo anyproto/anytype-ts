@@ -240,6 +240,7 @@ class App extends React.Component<Props, State> {
 	init () {
 		keyboard.init(history);
 		DataUtil.init(history);
+		Storage.delete('lastSurveyCanceled');
 
 		const cover = Storage.get('cover');
 		const coverImg = Storage.get('coverImg');

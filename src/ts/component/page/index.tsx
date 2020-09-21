@@ -91,8 +91,9 @@ class Page extends React.Component<Props, {}> {
 		const isMain = match.params.page == 'main';
 		const isCheck = isAuth && (match.params.action == 'pin-check');
 		const pin = Storage.get('pin');
-		const lastSurvey = Number(Storage.get('lastSurvey') || 0);
-		const days = lastSurvey ? 30 : 14;
+		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
+		const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
+		const days = lastSurveyTime ? 30 : 14;
 
 		if (pin && !keyboard.isPinChecked && !isCheck && !isAuth && !isIndex) {
 			this.props.history.push('/auth/pin-check');
@@ -117,7 +118,7 @@ class Page extends React.Component<Props, {}> {
 				});
 			};
 
-			if (account && (lastSurvey <= Util.time() - 86400 * days)) {
+			if (account && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 				commonStore.popupOpen('confirm', {
 					data: {
 						title: 'We need your opinion',
@@ -127,10 +128,11 @@ class Page extends React.Component<Props, {}> {
 						canCancel: true,
 						onConfirm: () => {
 							ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
-							Storage.set('lastSurvey', Util.time());
+							Storage.set('lastSurveyTime', Util.time());
 						},
 						onCancel: () => {
-							Storage.set('lastSurvey', Util.time());
+							console.log('set');
+							Storage.set('lastSurveyCanceled', 1);
 						},
 					},
 				});
