@@ -32,7 +32,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	_isMounted: boolean = false;	
 	filter: string = '';
 	index: any = null;
-	cache: any = {};
+	cache: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -43,6 +43,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 	render () {
 		const { n } = this.state;
 		const items = this.getItems();
+
+		if (!this.cache) {
+			return null;
+		};
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -81,7 +85,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 								<List
 									ref={registerChild}
 									width={width}
-									height={204}
+									height={height}
 									deferredMeasurmentCache={this.cache}
 									rowCount={items.length}
 									rowHeight={HEIGHT}
@@ -109,6 +113,12 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { n } = this.state;
 		const items = this.getItems();
 
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return items[i].id; },
+		});
+
 		if (this.filter != filter.text) {
 			this.filter = filter.text;
 			this.setState({ n: 0 });
@@ -124,19 +134,11 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	unbind () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-
-		win.unbind('keydown.menu');
+		$(window).unbind('keydown.menu');
 	};
 
 	getSections () {
@@ -180,12 +182,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 			items = items.concat(section.children);
 		};
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return items[i].id; },
-		});
-		
 		return items;
 	};
 	
