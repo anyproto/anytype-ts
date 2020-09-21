@@ -59,9 +59,9 @@ class PopupNavigation extends React.Component<Props, State> {
 	disableFirstKey: boolean = false;
 	panel: Panel = Panel.Left;
 	focused: boolean = false;
-	cache: any = {};
-	cacheIn: any = {};
-	cacheOut: any = {};
+	cache: any = null;
+	cacheIn: any = null;
+	cacheOut: any = null;
 	
 	constructor (props: any) {
 		super (props);
@@ -84,6 +84,10 @@ class PopupNavigation extends React.Component<Props, State> {
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
 		const pages = this.filterPages();
+
+		if ((expanded && (!this.cacheIn || !this.cacheOut)) || (!expanded && !this.cache)) {
+			return null;
+		};
 
 		let confirm = '';
 		let iconSearch = null;
@@ -152,12 +156,12 @@ class PopupNavigation extends React.Component<Props, State> {
 			);
 		};
 
-		const rowRenderer = (list: I.PageInfo[], { index, key, style, parent, panel }) => {
+		const rowRenderer = (list: I.PageInfo[], cache: any, { index, key, style, parent, panel }) => {
 			return (
 				<CellMeasurer
 					key={key}
 					parent={parent}
-					cache={this.cache}
+					cache={cache}
 					columnIndex={0}
 					rowIndex={index}
 					hasFixedWidth={() => {}}
@@ -247,7 +251,7 @@ class PopupNavigation extends React.Component<Props, State> {
 																rowHeight={HEIGHT_EXPANDED}
 																rowRenderer={(param: any) => { 
 																	param.panel = Panel.Left;
-																	return rowRenderer(pagesIn, param); 
+																	return rowRenderer(pagesIn, this.cacheIn, param); 
 																}}
 																onRowsRendered={onRowsRendered}
 																overscanRowCount={10}
@@ -286,7 +290,7 @@ class PopupNavigation extends React.Component<Props, State> {
 														rowHeight={HEIGHT_EXPANDED}
 														rowRenderer={(param: any) => { 
 															param.panel = Panel.Right;
-															return rowRenderer(pagesOut, param); 
+															return rowRenderer(pagesOut, this.cacheOut, param); 
 														}}
 														onRowsRendered={onRowsRendered}
 														overscanRowCount={10}
@@ -330,7 +334,7 @@ class PopupNavigation extends React.Component<Props, State> {
 													rowHeight={HEIGHT}
 													rowRenderer={(param: any) => { 
 														param.panel = Panel.Left;
-														return rowRenderer(pages, param); 
+														return rowRenderer(pages, this.cache, param); 
 													}}
 													onRowsRendered={onRowsRendered}
 													overscanRowCount={10}
@@ -372,33 +376,28 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const { expanded, pages, pagesIn, pagesOut } = this.state;
+		const { expanded, pagesIn, pagesOut } = this.state;
 		this.initSize(expanded);
 		this.setActive();
 
-		if (pages.length) {	
-			this.cache = new CellMeasurerCache({
-				fixedWidth: true,
-				defaultHeight: HEIGHT,
-				keyMapper: (i: number) => { return pages[i].id; },
-			});
-		};
+		const pages = this.filterPages();
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (pages[i] || {}).id; },
+		});
 
-		if (pagesIn.length) {	
-			this.cache = new CellMeasurerCache({
-				fixedWidth: true,
-				defaultHeight: HEIGHT,
-				keyMapper: (i: number) => { return pagesIn[i].id; },
-			});
-		};
+		this.cacheIn = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (pagesIn[i] || {}).id; },
+		});
 
-		if (pagesOut.length) {	
-			this.cache = new CellMeasurerCache({
-				fixedWidth: true,
-				defaultHeight: HEIGHT,
-				keyMapper: (i: number) => { return pagesOut[i].id; },
-			});
-		};
+		this.cacheOut = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (pagesOut[i] || {}).id; },
+		});
 	};
 	
 	componentWillUnmount () {

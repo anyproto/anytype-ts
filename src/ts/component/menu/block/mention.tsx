@@ -116,7 +116,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return items[i].id; },
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
 		if (this.filter != filter.text) {
