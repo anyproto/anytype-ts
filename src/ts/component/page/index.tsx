@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Util, Storage, analytics, keyboard } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { authStore, commonStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -19,6 +18,8 @@ import PageAuthSuccess from './auth/success';
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 
+const { ipcRenderer } = window.require('electron');
+const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
 const Components: any = {
@@ -49,7 +50,6 @@ class Page extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
-		const pin = Storage.get('pin');
 		
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -83,6 +83,7 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	init () {
+		const { account } = authStore;
 		const { match } = this.props;
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
@@ -90,6 +91,8 @@ class Page extends React.Component<Props, {}> {
 		const isMain = match.params.page == 'main';
 		const isCheck = isAuth && (match.params.action == 'pin-check');
 		const pin = Storage.get('pin');
+		const lastSurvey = Number(Storage.get('lastSurvey') || 0);
+		const days = lastSurvey ? 30 : 14;
 
 		if (pin && !keyboard.isPinChecked && !isCheck && !isAuth && !isIndex) {
 			this.props.history.push('/auth/pin-check');
@@ -107,10 +110,31 @@ class Page extends React.Component<Props, {}> {
 		
 		keyboard.setMatch(match);
 
-		if (!popupNewBlock && isMain) {
-			commonStore.popupOpen('help', { 
-				data: { document: 'whatsNew' },
-			});
+		if (isMain) {
+			if (!popupNewBlock) {
+				commonStore.popupOpen('help', { 
+					data: { document: 'whatsNew' },
+				});
+			};
+
+			if (account && (lastSurvey <= Util.time() - 86400 * days)) {
+				commonStore.popupOpen('confirm', {
+					data: {
+						title: 'We need your opinion',
+						text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
+						textConfirm: 'Let\'s go!',
+						textCancel: 'Skip',
+						canCancel: true,
+						onConfirm: () => {
+							ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
+							Storage.set('lastSurvey', Util.time());
+						},
+						onCancel: () => {
+							Storage.set('lastSurvey', Util.time());
+						},
+					},
+				});
+			};
 		};
 
 		$(window).on('resize.page', () => { this.resize(); });
