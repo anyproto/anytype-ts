@@ -113,6 +113,7 @@ const THROTTLE = 20;
 const Constant =  require('json/constant.json');
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
+const fs = window.require('fs');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
 const Routes: RouteElement[] = require('json/route.json');
@@ -258,6 +259,28 @@ class App extends React.Component<Props, State> {
 		};
 	};
 
+	preload (callBack?: () => void) {
+		const prefix = './dist/img';
+		const folders = [ 'cover', 'emoji', 'help' ];
+		
+		let loaded = 0;
+		let images: string[] = [];
+		let cb = () => {
+			loaded++;
+			if (loaded == folders.length) {
+				Util.cacheImages(images, callBack);
+			};
+		};
+
+		folders.forEach(folder => {
+			const path = [ prefix, folder ].join('/')
+			fs.readdir(path, (err: any, files: any[]) => {
+				images = images.concat(files.map((it: string) => { return [ 'img', folder, it ].join('/') }));
+				cb();
+			});
+		});
+	};
+
 	setIpcEvents () {
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
@@ -268,6 +291,9 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
 			this.setState({ loading: false });
+			this.preload(() => {
+				this.setState({ loading: false });
+			});
 
 			if (phrase && accountId) {
 				history.push('/auth/setup/init');
