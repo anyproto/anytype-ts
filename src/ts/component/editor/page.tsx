@@ -1242,7 +1242,11 @@ class EditorPage extends React.Component<Props, State> {
 					if (item.kind != 'file') {
 						continue;
 					};
-					files.push(item.getAsFile());
+
+					const file = item.getAsFile();
+					if (file) {
+						files.push();
+					};
 				};
 
 				if (files.length) {
