@@ -89,6 +89,7 @@ class Page extends React.Component<Props, {}> {
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
+		const isMainIndex = isMain && (match.params.action == 'index');
 		const isCheck = isAuth && (match.params.action == 'pin-check');
 		const pin = Storage.get('pin');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
@@ -119,7 +120,8 @@ class Page extends React.Component<Props, {}> {
 				});
 			};
 
-			if (account && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+			if (account && isMainIndex && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+				Storage.delete('askSurvey');
 				commonStore.popupOpen('confirm', {
 					data: {
 						title: 'We need your opinion',
