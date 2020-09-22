@@ -293,8 +293,9 @@ class App extends React.Component<Props, State> {
 		});
 
 		ipcRenderer.on('update-available', (e: any, auto: boolean) => {
+			commonStore.progressClear(); 
+
 			if (!auto) {
-				commonStore.progressSet({ status: 'Checking for update...', current: 1, total: 1 });
 				commonStore.popupOpen('confirm', {
 					data: {
 						title: 'It\'s time to update',

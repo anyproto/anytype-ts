@@ -247,6 +247,7 @@ function createWindow () {
 	});
 
 	ipcMain.on('updateCancel', (e) => {
+		isUpdating = false;
 		clearTimeout(timeoutUpdate);
 	});
 
@@ -508,6 +509,7 @@ function setConfig (obj, callBack) {
 };
 
 function checkUpdate (auto) {
+	Util.log('info', 'isUpdating: ' + isUpdating);
 	if (isUpdating) {
 		return;
 	};
@@ -526,7 +528,7 @@ function autoUpdaterInit () {
 	autoUpdater.autoDownload = false;
 	autoUpdater.channel = config.channel;
 
-	setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
+	timeoutUpdate = setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
 
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
@@ -551,6 +553,7 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('error', (err) => { 
+		isUpdating = false;
 		Util.log('Error: ' + err);
 		send('update-error', err, autoUpdate);
 	});
@@ -570,6 +573,7 @@ function autoUpdaterInit () {
 	});
 
 	autoUpdater.on('update-downloaded', (info) => {
+		isUpdating = false;
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
 		app.isQuiting = true;
@@ -613,10 +617,6 @@ function send () {
 };
 
 function exit (relaunch) {
-	if (win) {
-		win.hide();
-	};
-
 	let cb = () => {
 		setTimeout(() => {
 			if (relaunch) {
