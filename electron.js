@@ -243,7 +243,7 @@ function createWindow () {
 	});
 
 	ipcMain.on('updateDownload', (e) => {
-		checkUpdate(false);
+		autoUpdater.downloadUpdate();
 	});
 
 	ipcMain.on('updateCancel', (e) => {
@@ -539,7 +539,7 @@ function autoUpdaterInit () {
 		clearTimeout(timeoutUpdate);
 		send('update-available', autoUpdate);
 
-		if (!autoUpdate) {
+		if (autoUpdate) {
 			autoUpdater.downloadUpdate();
 		};
 	});

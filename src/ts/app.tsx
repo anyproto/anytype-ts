@@ -295,6 +295,20 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('update-available', (e: any, auto: boolean) => {
 			if (!auto) {
 				commonStore.progressSet({ status: 'Checking for update...', current: 1, total: 1 });
+				commonStore.popupOpen('confirm', {
+					data: {
+						title: 'It\'s time to update',
+						text: 'Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features.',
+						textConfirm: 'Update',
+						textCancel: 'Later',
+						onConfirm: () => {
+							ipcRenderer.send('updateDownload');
+						},
+						onCancel: () => {
+							ipcRenderer.send('updateCancel');
+						}, 
+					},
+				});
 			};
 		});
 
