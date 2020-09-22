@@ -162,6 +162,8 @@ class EditorPage extends React.Component<Props, State> {
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
 
+		Storage.set('askSurvey', 1);
+
 		ipcRenderer.removeAllListeners('commandEditor');
 		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
 	};

@@ -93,6 +93,7 @@ class Page extends React.Component<Props, {}> {
 		const pin = Storage.get('pin');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
+		const askSurvey = Number(Storage.get('askSurvey')) || 0;
 		const days = lastSurveyTime ? 30 : 14;
 
 		if (pin && !keyboard.isPinChecked && !isCheck && !isAuth && !isIndex) {
@@ -118,7 +119,7 @@ class Page extends React.Component<Props, {}> {
 				});
 			};
 
-			if (account && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+			if (account && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 				commonStore.popupOpen('confirm', {
 					data: {
 						title: 'We need your opinion',
