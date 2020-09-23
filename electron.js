@@ -144,7 +144,7 @@ function createWindow () {
 		})
 	});
 
-	tray = new Tray (path.join(__dirname, '/electron/icon16x16.png'));
+	tray = new Tray (path.join(__dirname, '/electron/icon-tray.png'));
 	tray.setToolTip('Anytype');
 	tray.setContextMenu(Menu.buildFromTemplate([
 		{
