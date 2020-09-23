@@ -119,6 +119,14 @@ const ExternalDropFiles = (contextId: string, targetId: string, position: I.Bloc
 	dispatcher.request('externalDropFiles', request, callBack);
 };
 
+const PageCreate = (details: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Page.Create.Request();
+	
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request('pageCreate', request, callBack);
+};
+
 const NavigationListPages = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Navigation.ListPages.Request();
 	dispatcher.request('navigationListPages', request, callBack);
@@ -605,6 +613,8 @@ export {
 	AccountRecover,
 	AccountSelect,
 	AccountStop,
+
+	PageCreate,
 
 	ExternalDropFiles,
 

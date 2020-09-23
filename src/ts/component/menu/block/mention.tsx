@@ -309,24 +309,34 @@ class MenuBlockMention extends React.Component<Props, State> {
 			return;
 		};
 
-		if (item.key == 'create') {
-			DataUtil.pageCreate(e, rootId, blockId, { iconEmoji: SmileUtil.random(), name: filter.text }, I.BlockPosition.Bottom);
-		} else {
+		const cb = (id: string, name: string) => {
 			const { content } = block;
 		
 			let { marks } = content;
 			let from = filter.from;
-			let to = from + item.name.length + 1;
+			let to = from + name.length + 1;
 	
 			marks = Util.objectCopy(marks);
-			marks = Mark.adjust(marks, from, item.name.length + 1);
+			marks = Mark.adjust(marks, from, name.length + 1);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
-				param: item.key, 
-				range: { from: from, to: from + item.name.length },
+				param: id, 
+				range: { from: from, to: from + name.length },
 			});
 	
-			onChange(item.name + ' ', marks, from, to);
+			onChange(name + ' ', marks, from, to);
+		};
+
+		if (item.key == 'create') {
+			C.PageCreate({ iconEmoji: SmileUtil.random(), name: filter.text }, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				cb(message.pageId, (filter.text || Constant.default.name));
+			});
+		} else {
+			cb(item.key, item.name);
 		};
 
 		this.props.close();
