@@ -328,13 +328,12 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		if (item.key == 'create') {
-			C.BlockCreatePage(rootId, blockId, { iconEmoji: SmileUtil.random(), name: filter.text }, I.BlockPosition.Bottom, (message: any) => {
+			C.PageCreate({ iconEmoji: SmileUtil.random(), name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
-				
-				C.BlockUnlink(rootId, [ message.blockId ]);
-				cb(message.targetId, item.name);
+
+				cb(message.pageId, (filter.text || Constant.default.name));
 			});
 		} else {
 			cb(item.key, item.name);
