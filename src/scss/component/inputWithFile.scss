@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorDarkGrey;
-	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden; @include text-common;
+	padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorDarkGrey; @include text-common; 
+	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden; line-height: 20px;
 }
 .inputWithFile {
 	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }

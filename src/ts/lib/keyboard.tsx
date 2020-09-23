@@ -166,6 +166,10 @@ class Keyboard {
 		const { account } = authStore;
 		const pin = Storage.get('pin');
 		
+		if (!pin) {
+			this.setPinChecked(true);
+		};
+		
 		if (!pin || !account) {
 			return;
 		};
