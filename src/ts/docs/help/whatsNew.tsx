@@ -16,6 +16,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `☑️Typing <span class="${sc}">/todo</span> will now create a to-do list!` },
 	{ style: I.TextStyle.Bulleted, text: `Windows: Close, Restore and Minimise buttons are now more responsive. ` },
 	{ style: I.TextStyle.Bulleted, text: `Search results can now be selected using the keyboard’s up/down arrows and the tab key.` },
+	{ style: I.TextStyle.Bulleted, text: `The Highlighted block can have right align now.` },
 
 	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
 	{ style: I.TextStyle.Bulleted, text: `Windows: <span class="${sc}">Alt + F4</span> will now correctly close the application.` },
