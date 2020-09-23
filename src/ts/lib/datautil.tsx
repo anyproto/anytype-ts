@@ -404,12 +404,18 @@ class DataUtil {
 		return items;
 	};
 	
-	menuGetAlign () {
-		return [
+	menuGetAlign (block: I.Block) {
+		let ret = [
 			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
 			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
 			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
 		];
+
+		if (block.isTextQuote()) {
+			ret = ret.filter((it: any) => { return it.id != I.BlockAlign.Center; });
+		};
+
+		return ret;
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
