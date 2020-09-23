@@ -166,7 +166,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					rowIndex={index}
 					hasFixedWidth={() => {}}
 				>
-					<div style={style}>
+					<div className="row" style={style}>
 						<Item {...list[index]} index={index} panel={panel} />
 					</div>
 				</CellMeasurer>
@@ -244,7 +244,7 @@ class PopupNavigation extends React.Component<Props, State> {
 														{({ width, height }) => (
 															<List
 																ref={registerChild}
-																width={width}
+																width={width + 20}
 																height={height - 35}
 																deferredMeasurmentCache={this.cacheIn}
 																rowCount={pagesIn.length}
@@ -283,7 +283,7 @@ class PopupNavigation extends React.Component<Props, State> {
 												{({ width, height }) => (
 													<List
 														ref={registerChild}
-														width={width}
+														width={width + 20}
 														height={height - 35}
 														deferredMeasurmentCache={this.cacheOut}
 														rowCount={pagesOut.length}
