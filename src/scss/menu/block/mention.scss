@@ -3,7 +3,11 @@
 .menus {
 	.menu.menuBlockMention { width: 360px; }
 	.menu.menuBlockMention {
-		.content { max-height: 200px; }
+		.content { height: 212px; overflow: visible; transition: none; }
+		.items { height: 100%; }
+		.section {
+			.name { padding: 5px 16px; margin: 0px; }
+		}
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}

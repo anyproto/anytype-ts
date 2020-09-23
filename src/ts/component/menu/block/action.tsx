@@ -251,7 +251,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign() });
+				sections.push({ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign(block) });
 			};
 	
 			if (block.canHaveBackground()) {

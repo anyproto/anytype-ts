@@ -26,8 +26,8 @@
 			.txt { line-height: 24px; color: $colorDarkGrey; }
 		}
 		
-		.items { padding: 12px 0px; overflow-x: hidden; overflow-y: auto; }
 		.items {
+			.pad { height: 12px; }
 			.item { 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 64px; line-height: 48px; padding: 8px 16px; 
 			}
@@ -50,6 +50,7 @@
 			.items { width: 33.33%; padding: 4px 16px; }
 			.items.center { padding-top: 39px; }
 			.items {
+				.row { width: calc(100% - 20px) !important; }
 				.item { margin-bottom: 16px; padding: 0px; height: 80px; border: 1px solid $colorLightGrey; border-radius: 8px; }
 				.item {
 					.inner { padding: 16px; }
@@ -62,7 +63,7 @@
 					}
 				}
 
-				.item.active { background: none; border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
+				.item.active { background: none; border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange inset; }
 				.item.active {
 					.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
 					.smile { background: #f7f5f0; }
