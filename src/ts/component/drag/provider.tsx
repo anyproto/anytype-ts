@@ -230,10 +230,17 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
-			const { x, y, width, height } = this.hoverData;
-			const col1 = x - Constant.size.blockMenu / 2;
-			const col2 = x + width * 0.2;
-			const col3 = x + width * 0.8;
+			let { type, style, x, y, width, height } = this.hoverData;
+			let col1 = x - Constant.size.blockMenu / 2;
+			let col2 = x + Constant.size.blockMenu + 28;
+			let col3 = x + width - 30;
+
+			if ((type != I.BlockType.Text) || 
+				((type == I.BlockType.Text) &&
+				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
+			)) {
+				col2 = col3;
+			};
 
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
@@ -249,28 +256,28 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			// You can't drop on Icon and Title
-			if ([ I.BlockType.IconPage, I.BlockType.IconUser, I.BlockType.Title ].indexOf(this.hoverData.type) >= 0) {
+			if ([ I.BlockType.IconPage, I.BlockType.IconUser, I.BlockType.Title ].indexOf(type) >= 0) {
 				this.position = I.BlockPosition.None;
 			};
 
 			// You cant only drop into Paragraphs and list
 			if (
 				(this.position == I.BlockPosition.Inner) && 
-				(this.hoverData.type == I.BlockType.Text) &&
-				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(this.hoverData.style) < 0
+				(type == I.BlockType.Text) &&
+				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0
 			) {
 				this.position = I.BlockPosition.None;
 			};
 
 			if (
 				(this.position == I.BlockPosition.Inner) && 
-				([ I.BlockType.Text, I.BlockType.Link ].indexOf(this.hoverData.type) < 0)
+				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
 				this.position = I.BlockPosition.None;
 			};
 
 			// You can drop vertically on Layout.Row
-			if ((this.hoverData.type == I.BlockType.Layout) && (this.hoverData.style == I.LayoutStyle.Row)) {
+			if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
 				if (this.hoverData.isTargetTop) {
 					this.position = I.BlockPosition.Top;
 				};
