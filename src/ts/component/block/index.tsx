@@ -395,7 +395,7 @@ class Block extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
-		const offset = node.find('#block-' + prevBlockId).offset().left + Constant.size.blockMenu;
+		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
 		const add = $('#button-add');
 		
 		if (selection) {
