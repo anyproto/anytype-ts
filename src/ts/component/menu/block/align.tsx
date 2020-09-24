@@ -1,14 +1,12 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { MenuItemVertical } from 'ts/component';
+import { I, keyboard, Key, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { blockStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 @observer
 class MenuBlockAlign extends React.Component<Props, {}> {
@@ -22,10 +20,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
 		const items = this.getItems();
-		
 		return (
 			<div>
 				{items.map((action: any, i: number) => (
@@ -68,7 +63,16 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	};
 	
 	getItems () {
-		return DataUtil.menuGetAlign();
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+		
+		if (!block) {
+			return [];
+		};
+
+		return DataUtil.menuGetAlign(block);
 	};
 	
 	onKeyDown (e: any) {

@@ -73,6 +73,12 @@ const ExternalDropFiles = (response: any) => {
 	return {};
 };
 
+const PageCreate = (response: any) => {
+	return {
+		pageId: response.getPageid(),
+	};
+};
+
 const NavigationListPages = (response: any) => {
 	return {
 		pages: (response.getPagesList() || []).map(Mapper.From.PageInfo),
@@ -351,6 +357,8 @@ export {
 	AccountStop,
 
 	ExternalDropFiles,
+
+	PageCreate,
 
 	NavigationListPages,
 	NavigationGetPageInfoWithLinks,

@@ -144,7 +144,7 @@ function createWindow () {
 		})
 	});
 
-	tray = new Tray (path.join(__dirname, '/electron/icon16x16.png'));
+	tray = new Tray (path.join(__dirname, '/electron/icon-tray.png'));
 	tray.setToolTip('Anytype');
 	tray.setContextMenu(Menu.buildFromTemplate([
 		{
@@ -242,8 +242,13 @@ function createWindow () {
 		exit(relaunch);
 	});
 
-	ipcMain.on('update', (e) => {
-		checkUpdate(false);
+	ipcMain.on('updateDownload', (e) => {
+		autoUpdater.downloadUpdate();
+	});
+
+	ipcMain.on('updateCancel', (e) => {
+		isUpdating = false;
+		clearTimeout(timeoutUpdate);
 	});
 
 	ipcMain.on('urlOpen', async (e, url) => {
@@ -497,6 +502,7 @@ function setConfig (obj, callBack) {
 };
 
 function checkUpdate (auto) {
+	Util.log('info', 'isUpdating: ' + isUpdating);
 	if (isUpdating) {
 		return;
 	};
@@ -512,9 +518,10 @@ function autoUpdaterInit () {
 
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'debug';
+	autoUpdater.autoDownload = false;
 	autoUpdater.channel = config.channel;
 
-	setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
+	timeoutUpdate = setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
 
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
@@ -526,6 +533,10 @@ function autoUpdaterInit () {
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
 		send('update-available', autoUpdate);
+
+		if (autoUpdate) {
+			autoUpdater.downloadUpdate();
+		};
 	});
 
 	autoUpdater.on('update-not-available', (info) => {
@@ -535,8 +546,9 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('error', (err) => { 
+		isUpdating = false;
 		Util.log('Error: ' + err);
-		send('update-error', err);
+		send('update-error', err, autoUpdate);
 	});
 	
 	autoUpdater.on('download-progress', (progress) => {
@@ -554,6 +566,7 @@ function autoUpdaterInit () {
 	});
 
 	autoUpdater.on('update-downloaded', (info) => {
+		isUpdating = false;
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
 		app.isQuiting = true;
@@ -597,10 +610,6 @@ function send () {
 };
 
 function exit (relaunch) {
-	if (win) {
-		win.hide();
-	};
-
 	let cb = () => {
 		setTimeout(() => {
 			if (relaunch) {

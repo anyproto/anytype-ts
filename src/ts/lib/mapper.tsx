@@ -3,7 +3,7 @@ import { decorate, observable } from 'mobx';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Constant = require('json/constant.json');
-const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
+const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
 const Schema = {

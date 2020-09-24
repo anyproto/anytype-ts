@@ -2,7 +2,7 @@ import { observable, action, computed, set, intercept } from 'mobx';
 import { I, M, Util, Decode } from 'ts/lib';
 
 const $ = require('jquery');
-const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
+const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Constant = require('json/constant.json');
 
 class BlockStore {

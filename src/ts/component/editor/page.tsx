@@ -161,6 +161,8 @@ class EditorPage extends React.Component<Props, State> {
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
 
+		Storage.set('askSurvey', 1);
+
 		ipcRenderer.removeAllListeners('commandEditor');
 		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
 	};
@@ -594,7 +596,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 
 		// Remove blocks
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 			e.preventDefault();
 			this.blockRemove(block);
 		});
@@ -863,10 +865,16 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Backspace
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (block.isText() && !range.to) {
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			if (block.isText()) {
 				const ids = selection.get(true);
-				ids.length ? this.blockRemove(block) : this.blockMerge(block);
+				if ((pressed == 'backspace') && !range.to) {
+					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+				};
+
+				if ((pressed == 'delete') && (range.to == length)) {
+					ids.length ? this.blockRemove(block) : this.blockMerge(block, 1);
+				};
 			};
 			if (!block.isText() && !keyboard.isFocused) {
 				this.blockRemove(block);
@@ -1234,7 +1242,11 @@ class EditorPage extends React.Component<Props, State> {
 					if (item.kind != 'file') {
 						continue;
 					};
-					files.push(item.getAsFile());
+
+					const file = item.getAsFile();
+					if (file) {
+						files.push();
+					};
 				};
 
 				if (files.length) {
@@ -1430,26 +1442,43 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 	
-	blockMerge (focused: I.Block) {
+	blockMerge (focused: I.Block, dir: number) {
 		const { rootId } = this.props;
-		const next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => {
+		const next = blockStore.getNextBlock(rootId, focused.id, dir, (it: any) => {
 			return it.isFocusable();
 		});
 
-		const length = focused.getLength();
-		const nl = next.getLength();
+		if (!next) {
+			return;
+		};
+
+		let blockId = '';
+		let targetId = '';
+		let to = 0;
+		let length = focused.getLength();
+
+		if (dir < 0) {
+			blockId = next.id;
+			targetId = focused.id;
+			to = next.getLength();
+		} else {
+			blockId = focused.id;
+			targetId = next.id;
+			to = length;
+		};
+
 		const cb = (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 			
 			if (next) {
-				this.focus(next.id, nl, nl, false);
+				this.focus(blockId, to, to, false);
 			};
 		};
 
 		if (next.isText()) {
-			C.BlockMerge(rootId, next.id, focused.id, cb);
+			C.BlockMerge(rootId, blockId, targetId, cb);
 		} else 
 		if (!length) {
 			focus.clear(true);
@@ -1464,7 +1493,7 @@ class EditorPage extends React.Component<Props, State> {
 					return it.isFocusable();
 				});
 				if (next) {
-					const nl = next.getLength();
+					const nl = dir < 0 ? next.getLength() : 0;
 					this.focus(next.id, nl, nl, false);
 				};
 			});

@@ -24,7 +24,6 @@
 		emoji * { user-select: all; }
 		emoji {
 			name { display: none; }
-
 		}
 
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
@@ -109,6 +108,9 @@
 	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
+
+	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: inherit; padding-right: 28px; }
+	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
 	
 	.block.blockText.code { padding: 6px 0px; }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }

@@ -117,6 +117,7 @@ const THROTTLE = 20;
 const Constant =  require('json/constant.json');
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
+const fs = window.require('fs');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
 const Routes: RouteElement[] = require('json/route.json');
@@ -244,6 +245,7 @@ class App extends React.Component<Props, State> {
 	init () {
 		keyboard.init(history);
 		DataUtil.init(history);
+		Storage.delete('lastSurveyCanceled');
 
 		const cover = Storage.get('cover');
 		const coverImg = Storage.get('coverImg');
@@ -262,6 +264,28 @@ class App extends React.Component<Props, State> {
 		};
 	};
 
+	preload (callBack?: () => void) {
+		const prefix = './dist/img';
+		const folders = [ 'cover', 'emoji', 'help' ];
+		
+		let loaded = 0;
+		let images: string[] = [];
+		let cb = () => {
+			loaded++;
+			if (loaded == folders.length) {
+				Util.cacheImages(images, callBack);
+			};
+		};
+
+		folders.forEach(folder => {
+			const path = [ prefix, folder ].join('/')
+			fs.readdir(path, (err: any, files: any[]) => {
+				images = images.concat(files.map((it: string) => { return [ 'img', folder, it ].join('/') }));
+				cb();
+			});
+		});
+	};
+
 	setIpcEvents () {
 		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
@@ -272,6 +296,9 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
 			this.setState({ loading: false });
+			this.preload(() => {
+				this.setState({ loading: false });
+			});
 
 			if (phrase && accountId) {
 				history.push('/auth/setup/init');
@@ -285,10 +312,8 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
 			commonStore.popupCloseAll();
 			window.setTimeout(() => {
-				commonStore.popupOpen(id, {
-					data: data,
-				});
-			}, 100);
+				commonStore.popupOpen(id, { data: data });
+			}, Constant.delay.popup);
 		});
 		
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
@@ -298,10 +323,29 @@ class App extends React.Component<Props, State> {
 		});
 
 		ipcRenderer.on('update-available', (e: any, auto: boolean) => {
-			commonStore.progressSet({ status: 'Checking for update...', current: 1, total: 1 });
+			commonStore.progressClear(); 
+
+			if (!auto) {
+				commonStore.popupOpen('confirm', {
+					data: {
+						title: 'It\'s time to update',
+						text: 'Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features.',
+						textConfirm: 'Update',
+						textCancel: 'Later',
+						onConfirm: () => {
+							ipcRenderer.send('updateDownload');
+						},
+						onCancel: () => {
+							ipcRenderer.send('updateCancel');
+						}, 
+					},
+				});
+			};
 		});
 
 		ipcRenderer.on('update-not-available', (e: any, auto: boolean) => {
+			commonStore.progressClear(); 
+
 			if (!auto) {
 				commonStore.popupOpen('confirm', {
 					data: {
@@ -312,7 +356,6 @@ class App extends React.Component<Props, State> {
 					},
 				});
 			};
-			commonStore.progressClear(); 
 		});
 
 		ipcRenderer.on('download-progress', this.onProgress);
@@ -322,20 +365,26 @@ class App extends React.Component<Props, State> {
 			commonStore.progressClear(); 
 		});
 
-		ipcRenderer.on('update-error', (e: any, err: string) => {
-			console.log(err);
+		ipcRenderer.on('update-error', (e: any, err: string, auto: boolean) => {
+			console.error(err);
 			commonStore.progressClear();
-			commonStore.popupOpen('confirm', {
-				data: {
-					title: 'Oops!',
-					text: Util.sprintf('Can’t check available updates, please try again later.<br/><span class="error">%s</span>', err),
-					textConfirm: 'Retry',
-					textCancel: 'Later',
-					onConfirm: () => {
-						ipcRenderer.send('update');
+
+			if (!auto) {
+				commonStore.popupOpen('confirm', {
+					data: {
+						title: 'Oops!',
+						text: Util.sprintf('Can’t check available updates, please try again later.<br/><span class="error">%s</span>', err),
+						textConfirm: 'Retry',
+						textCancel: 'Later',
+						onConfirm: () => {
+							ipcRenderer.send('updateDownload');
+						},
+						onCancel: () => {
+							ipcRenderer.send('updateCancel');
+						}, 
 					},
-				},
-			});
+				});
+			};
 		});
 
 		ipcRenderer.on('import', this.onImport);

@@ -161,6 +161,24 @@ class Util {
 		let file = new File([ new Blob([ buffer ]) ], fn[fn.length - 1], { type: type.mime });
 		return file;
 	};
+
+	cacheImages (images: string[], callBack?: () => void) {
+		let loaded = 0;
+		let cb = () => {
+			loaded++;
+			if ((loaded == images.length) && callBack) {
+				callBack();
+			};
+		};
+
+		images.forEach(image => {
+			const img = new Image();
+
+			img.src = image;
+			img.onload = cb;
+			img.onerror = cb;
+		});
+	};
 	
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {
 		if (!file) {
