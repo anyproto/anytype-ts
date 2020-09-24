@@ -12,6 +12,7 @@ export default [
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
 	{ style: I.TextStyle.Bulleted, text: `Enhanced syncing time and page retriving speed up to 100%.` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="${sc}">Create new page</span> from @mention will create it in-line with written name without opening.` },
+	{ style: I.TextStyle.Bulleted, text: `Emoji's and searching lists rendering were boosted.` },
 	{ style: I.TextStyle.Bulleted, text: `Our updater has been… <i>sigh</i> updated. Download checks will take place in the background, and you will have the option to update now or later.` },
 	{ style: I.TextStyle.Bulleted, text: `☑️Typing <span class="${sc}">/todo</span> will now create a to-do list!` },
 	{ style: I.TextStyle.Bulleted, text: `Windows: Close, Restore and Minimise buttons are now more responsive. ` },
