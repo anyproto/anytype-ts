@@ -75,7 +75,7 @@ class DragProvider extends React.Component<Props, {}> {
 			const data = item.data();
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
-			
+
 			let x = offset.left;
 			let y = offset.top;
 			let w = rect.width;
@@ -86,14 +86,14 @@ class DragProvider extends React.Component<Props, {}> {
 
 			if (isTargetTop) key += '-top';
 			if (isTargetBot) key += '-bot';
-			
+
 			// Add block's paddings to height
 			if ((data.dropType == I.DragItem.Block) && (data.type != I.BlockType.Layout)) {
 				const block = $('#block-' + data.id);
 				if (block.length) {
 					const top = parseInt(block.css('paddingTop'));
 					const bot = parseInt(block.css('paddingBottom'));
-					
+
 					y -= top + 2;
 					h += top + bot + 2;
 				};
@@ -231,11 +231,11 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			let { type, style, x, y, width, height } = this.hoverData;
-			let col1 = x - Constant.size.blockMenu / 2;
-			let col2 = x + Constant.size.blockMenu + 28;
-			let col3 = x + width - 30;
+			let col1 = x - Constant.size.blockMenu / 4;
+			let col2 = x + 28;
+			let col3 = x + width - 28;
 
-			if ((type != I.BlockType.Text) || 
+			if ((type != I.BlockType.Text) ||
 				((type == I.BlockType.Text) &&
 				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
 			)) {
@@ -262,7 +262,7 @@ class DragProvider extends React.Component<Props, {}> {
 
 			// You cant only drop into Paragraphs and list
 			if (
-				(this.position == I.BlockPosition.Inner) && 
+				(this.position == I.BlockPosition.Inner) &&
 				(type == I.BlockType.Text) &&
 				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0
 			) {
@@ -270,7 +270,7 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			if (
-				(this.position == I.BlockPosition.Inner) && 
+				(this.position == I.BlockPosition.Inner) &&
 				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
 				this.position = I.BlockPosition.None;
