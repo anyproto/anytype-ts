@@ -346,7 +346,12 @@ function menuInit () {
 				{ type: 'separator' },
 				{
 					label: 'Quit', accelerator: 'CmdOrCtrl+Q',
-					click: () => { exit(false); }
+					click: () => { 
+						if (win) {
+							win.hide();
+						};
+						exit(false); 
+					}
 				},
 			]
 		},
