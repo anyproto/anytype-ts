@@ -615,13 +615,46 @@ const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any
 	dispatcher.request('historyShow', request, callBack);
 };
 
-const HistorySetVersion= (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+const HistorySetVersion = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.Show.Request();
 	
 	request.setPageid(pageId);
 	request.setVersionid(versionId);
 
 	dispatcher.request('historySetVersion', request, callBack);
+};
+
+const ObjectTypeList = (callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.List.Request();
+	
+	dispatcher.request('objectTypeList', request, callBack);
+};
+
+const ObjectTypeCreate = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Show.Request();
+	
+	request.setPageid(pageId);
+	request.setVersionid(versionId);
+
+	dispatcher.request('objectTypeCreate', request, callBack);
+};
+
+const RelationList = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Show.Request();
+	
+	request.setPageid(pageId);
+	request.setVersionid(versionId);
+
+	dispatcher.request('relationList', request, callBack);
+};
+
+const RelationAdd = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Show.Request();
+	
+	request.setPageid(pageId);
+	request.setVersionid(versionId);
+
+	dispatcher.request('relationAdd', request, callBack);
 };
 
 export {
@@ -702,4 +735,11 @@ export {
 	HistoryVersions,	
 	HistoryShow,
 	HistorySetVersion,
+
+	ObjectTypeList,
+	ObjectTypeCreate,
+
+	RelationList,
+	RelationAdd,
+
 };
