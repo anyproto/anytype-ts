@@ -7,8 +7,16 @@ import { commonStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
+interface State {
+	types: any[];
+};
+
 @observer
-class PageMainSet extends React.Component<Props, {}> {
+class PageMainSet extends React.Component<Props, State> {
+
+	state = {
+		types: [] as any[],
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -17,7 +25,8 @@ class PageMainSet extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const items = [
+		let { types } = this.state;
+		let items = [
 			{ id: '', icon: 'page', emoji: '', name: 'Page' },
 			{ id: '', icon: 'contact', emoji: '', name: 'Contact' },
 			{ id: '', icon: 'task', emoji: '', name: 'Task' },
@@ -43,6 +52,8 @@ class PageMainSet extends React.Component<Props, {}> {
 			);
 		};
 
+		types = types.concat(items);
+
 		return (
 			<div>
 				<Header {...this.props} rootId="" />
@@ -55,7 +66,7 @@ class PageMainSet extends React.Component<Props, {}> {
 							<Icon className="add" />
 							<div className="name">Create new object type</div>
 						</div>
-						{items.map((item: any, i: number) => (
+						{types.map((item: any, i: number) => (
 							<Item key={i} {...item} />
 						))}
 					</div>
@@ -66,7 +77,7 @@ class PageMainSet extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		C.ObjectTypeList((message: any) => {
-			console.log(message);
+			this.setState({ types: message.objectTypes });
 		});
 	};
 

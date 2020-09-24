@@ -172,6 +172,28 @@ const Mapper = {
             return item;
         },
 
+		ObjectType: (obj: any) => {
+            return {
+               url: obj.getUrl(),
+				name: obj.getName(),
+				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
+            };
+        },
+
+		Relation: (obj: any) => {
+			return {
+				key: obj.getKey(),
+				format: obj.getFormat(),
+				name: obj.getName(),
+				dataSource: obj.getDatasource(),
+				isHidden: obj.getHidden(),
+				isReadOnly: obj.getReadonly(),
+				isMultiple: obj.getMulti(),
+				objectType: obj.getObjecttype(),
+				options: obj.getSelectdictList(),
+            };
+        },
+
         ViewRelation: (obj: any) => {
             return {
                 id: obj.getId(),

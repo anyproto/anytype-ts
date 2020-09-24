@@ -334,7 +334,12 @@ const HistoryShow = (response: any) => {
 };
 
 const HistorySetVersion = (response: any) => {
+	return {};
+};
+
+const ObjectTypeList = (response: any) => {
 	return {
+		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
 	};
 };
 
@@ -422,4 +427,6 @@ export {
 	HistoryVersions,
 	HistoryShow,
 	HistorySetVersion,
+
+	ObjectTypeList,
 };
