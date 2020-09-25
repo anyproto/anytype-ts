@@ -132,8 +132,12 @@ function waitForLibraryAndCreateWindows () {
 };
 
 function trayIcon () {
-	const dark = nativeTheme.shouldUseDarkColors;
-	return path.join(__dirname, '/electron/icon-tray-' + (dark ? 'white' : 'black') + '.png');
+	if (is.windows) {
+		return path.join(__dirname, '/electron/icon64x64.png');
+	} else {
+		const dark = nativeTheme.shouldUseDarkColors;
+		return path.join(__dirname, '/electron/icon-tray-' + (dark ? 'white' : 'black') + '.png');
+	};
 };
 
 nativeTheme.on('updated', () => {
