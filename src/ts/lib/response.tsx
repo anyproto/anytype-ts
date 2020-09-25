@@ -345,7 +345,7 @@ const ObjectTypeList = (response: any) => {
 
 const ObjectTypeCreate = (response: any) => {
 	return {
-		objectType: Mapper.From.ObjectType(response.getObjecttype),
+		objectType: Mapper.From.ObjectType(response.getObjecttype()),
 	};
 };
 
