@@ -119,6 +119,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, block: I.Block) {
+		e.persist();
+
 		if (block.content.style == I.LinkStyle.Archive) {
 			commonStore.popupOpen('archive', {});
 		} else {
