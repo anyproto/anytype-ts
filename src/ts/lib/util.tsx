@@ -508,7 +508,7 @@ class Util {
 	};
 	
 	emailCheck (v: string) {
-		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(String(v || ''));
+		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
 	};
 
 	isNumber (s: string) {
