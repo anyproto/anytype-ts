@@ -343,6 +343,12 @@ const ObjectTypeList = (response: any) => {
 	};
 };
 
+const ObjectTypeCreate = (response: any) => {
+	return {
+		objectType: Mapper.From.ObjectType(response.getObjecttype),
+	};
+};
+
 export {
 	VersionGet,
 
@@ -429,4 +435,5 @@ export {
 	HistorySetVersion,
 
 	ObjectTypeList,
+	ObjectTypeCreate,
 };

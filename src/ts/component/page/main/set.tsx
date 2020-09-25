@@ -82,6 +82,8 @@ class PageMainSet extends React.Component<Props, State> {
 	};
 
 	onAdd (e: any) {
+		const { types } = this.state;
+
 		commonStore.menuOpen('dataviewObjectType', { 
 			element: '#button-add',
 			offsetX: 28,
@@ -90,7 +92,10 @@ class PageMainSet extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				
+				onCreate: (item: I.ObjectType) => {
+					types.push(item);
+					this.setState({ types: types });
+				}
 			}
 		});
 	};

@@ -96,11 +96,18 @@ class MenuObjectType extends React.Component<Props, State> {
 	};
 
 	onCreate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { onCreate } = data;
 		const name = this.ref.getValue();
 		const { layout } = this.state;
 
 		C.ObjectTypeCreate({ name: name, layout: layout }, (message: any) => {
-			console.log(message);
+			if (message.error.code) {
+				return;
+			};
+
+			onCreate(message.objectType);
 		});
 	};
 	
