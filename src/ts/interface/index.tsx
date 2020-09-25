@@ -1,7 +1,8 @@
-import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, Version } from './common';
+import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview } from './common';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
+import { ObjectLayout, ObjectType, RelationType, Relation } from './object';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
 import { 
@@ -9,8 +10,6 @@ import {
 	ViewComponent,
 	ViewType,
 	View,  
-	RelationType, 
-	Relation,
 	SortType,
 	Sort, 
 	FilterOperator,
@@ -38,7 +37,8 @@ export {
 	CrumbsType,
 	NavigationType,
 	Option,
-	Version,
+	HistoryVersion,
+	LinkPreview,
 	
 	Progress,
 	ProgressType,
@@ -52,6 +52,10 @@ export {
 	MenuParam, 
 	Menu, 
 	MenuItem,
+
+	ObjectLayout,
+	ObjectType,
+	Relation,
 	
 	PageInfo,
 	
@@ -67,7 +71,6 @@ export {
 	ViewType,
 	View,  
 	RelationType, 
-	Relation,
 	SortType,
 	Sort, 
 	FilterOperator,

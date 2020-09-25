@@ -38,11 +38,19 @@ export interface Option {
 	icon?: string;
 };
 
-export interface Version {
+export interface HistoryVersion {
 	id: string;
 	previousIds: string[];
 	authorId: string;
 	authorName: string;
 	groupId: number;
 	time: number;
+};
+
+export interface LinkPreview {
+	type: string;
+	title: string;
+	description: string;
+	faviconUrl: string;
+	imageUrl: string;
 };

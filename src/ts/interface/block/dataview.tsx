@@ -7,23 +7,6 @@ export enum ViewType {
 	Board	 = 3,
 };
 
-export enum RelationType { 
-	None		 = '',
-	Title		 = 'title', 
-	Description	 = 'description', 
-	Number		 = 'number', 
-	Date		 = 'date', 
-	Select		 = 'select', 
-	Link		 = 'link',
-	File		 = 'file',
-	Image		 = 'image',
-	Checkbox	 = 'checkbox', 
-	Icon		 = 'emoji',
-	Url			 = 'url',
-	Email		 = 'email',
-	Phone		 = 'phone',
-};
-
 export enum SortType { 
 	Asc		 = 0, 
 	Desc	 = 1,
@@ -49,15 +32,6 @@ export enum FilterCondition {
 	NotEmpty		 = 11,
 };
 
-export interface Relation {
-	id: string;
-	name: string;
-	type: RelationType;
-	isHidden: boolean;
-	isReadOnly: boolean;
-	values?: any[];
-};
-
 export interface Sort {
 	relationId: string;
 	type: SortType;
@@ -70,7 +44,7 @@ export interface Filter {
 	value: any;
 };
 
-export interface ViewRelation extends Relation {
+export interface ViewRelation extends I.Relation {
 	isVisible: boolean;
 	order: number;
 	width: number;
@@ -99,7 +73,7 @@ export interface Cell {
 	rootId: string;
 	block: I.Block;
 	id: string;
-	relation: Relation;
+	relation: I.Relation;
 	data: any;
 	view: any;
 	readOnly?: boolean;

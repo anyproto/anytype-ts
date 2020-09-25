@@ -89,7 +89,7 @@ class Cell extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			data: { 
 				value: data[relation.id], 
-				values: relation.values 
+				options: relation.options, 
 			},
 		};
 		

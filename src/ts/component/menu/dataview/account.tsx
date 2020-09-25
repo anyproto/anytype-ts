@@ -64,9 +64,9 @@ class MenuAccount extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { values } = data;
+		const { options } = data;
 		
-		this.setState({ items: values });
+		this.setState({ items: options });
 		this.filterRef.focus();
 	};
 	

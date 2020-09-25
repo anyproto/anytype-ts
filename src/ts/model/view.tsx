@@ -29,11 +29,17 @@ class View implements I.View {
 class ViewRelation implements I.ViewRelation {
 
 	id: string = '';
+	key: string = '';
 	name: string = '';
+	format: string = '';
+	dataSource: string = '';
+	objectType: string = '';
+	options: any[] = [] as any[];
 	type: I.RelationType = I.RelationType.None;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
 	isVisible: boolean = false;
+	isMultiple: boolean = false;
 	order: number = 0;
 	width: number = 0;
 

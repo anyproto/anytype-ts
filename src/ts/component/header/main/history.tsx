@@ -7,7 +7,7 @@ import { C, Util } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
-	version: I.Version;
+	version: I.HistoryVersion;
 };
 
 @observer

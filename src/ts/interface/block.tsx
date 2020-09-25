@@ -5,7 +5,8 @@ export interface PageInfo {
 	pageType: I.PageType;
 	snippet: string;
 	details: any;	
-	text: string;
+	text?: string;
+	hasInboundLinks?: boolean;
 };
 
 export enum BlockType {

@@ -630,11 +630,10 @@ const ObjectTypeList = (callBack?: (message: any) => void) => {
 	dispatcher.request('objectTypeList', request, callBack);
 };
 
-const ObjectTypeCreate = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.History.Show.Request();
+const ObjectTypeCreate = (objectType: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.Create.Request();
 	
-	request.setPageid(pageId);
-	request.setVersionid(versionId);
+	request.setObjecttype(Mapper.To.ObjectType(objectType));
 
 	dispatcher.request('objectTypeCreate', request, callBack);
 };

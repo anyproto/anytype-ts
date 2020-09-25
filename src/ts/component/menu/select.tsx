@@ -141,7 +141,9 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onSelect } = data;
 		
-		onSelect(e, item);
+		if (onSelect) {
+			onSelect(e, item);
+		};
 		this.props.close();
 	};
 	

@@ -81,9 +81,9 @@ class MenuTagList extends React.Component<Props, State> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { values } = data;
+		const { options } = data;
 		
-		this.setState({ items: values });
+		this.setState({ items: options });
 		window.setTimeout(() => {
 			if (this.ref) {
 				this.ref.focus();
@@ -100,7 +100,7 @@ class MenuTagList extends React.Component<Props, State> {
 	onSelect (e: any, id: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { values } = data;
+		const { options } = data;
 		
 		commonStore.menuOpen('dataviewTagEdit', { 
 			type: I.MenuType.Vertical,
@@ -110,7 +110,7 @@ class MenuTagList extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
-				value: values[id]
+				value: options[id]
 			}
 		});
 	};
