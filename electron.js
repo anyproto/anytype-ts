@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage, nativeTheme } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -131,6 +131,26 @@ function waitForLibraryAndCreateWindows () {
 	});
 };
 
+function trayIcon () {
+	const dark = nativeTheme.shouldUseDarkColors;
+	return path.join(__dirname, '/electron/icon-tray-' + (dark ? 'white' : 'black') + '.png');
+};
+
+nativeTheme.on('updated', () => {
+	tray.setImage(trayIcon());
+});
+
+function initTray () {
+	tray = new Tray (trayIcon());
+	tray.setToolTip('Anytype');
+	tray.setContextMenu(Menu.buildFromTemplate([
+		{
+            label: 'Show window',
+			click: () => { win.show(); }
+		},
+	]));
+};
+
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
 	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
@@ -144,14 +164,7 @@ function createWindow () {
 		})
 	});
 
-	tray = new Tray (path.join(__dirname, '/electron/icon-tray.png'));
-	tray.setToolTip('Anytype');
-	tray.setContextMenu(Menu.buildFromTemplate([
-		{
-            label: 'Show window',
-			click: () => { win.show(); }
-		},
-	]));
+	initTray();
 
 	let state = windowStateKeeper({
 		defaultWidth: width,
