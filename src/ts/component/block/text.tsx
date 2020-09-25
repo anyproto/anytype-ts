@@ -174,12 +174,6 @@ class BlockText extends React.Component<Props, {}> {
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
-		
-		/*
-		if (focused == id) {
-			focus.apply();
-		};
-		*/
 	};
 	
 	componentWillUnmount () {
@@ -470,6 +464,18 @@ class BlockText extends React.Component<Props, {}> {
 
 			if (commonStore.menuIsOpen('blockMention') && (symbolBefore == '@')) {
 				commonStore.menuClose('blockMention');
+			};
+		});
+
+		keyboard.shortcut('delete', e, (pressed: string) => {
+			if (!commonStore.menuIsOpen()) {
+				if (range.to && (range.to != value.length)) {
+					return;
+				};
+				this.setText(this.marks, true, (message: any) => {
+					onKeyDown(e, value, this.marks, range);
+				});
+				ret = true;
 			};
 		});
 
