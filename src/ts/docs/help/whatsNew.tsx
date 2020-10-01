@@ -6,7 +6,7 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ type: I.TextStyle.Title, text: `Updates for 23 September, 2020` },
+	{ style: I.TextStyle.Title, text: `Updates for 23 September, 2020` },
 	{ text: `Thank you to our incredible alpha testers for helping us build Anytype. In this latest build, we’ve introduced a short — 1 minute — survey. Your feedback is appreciated, and helps make our product better! ` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
