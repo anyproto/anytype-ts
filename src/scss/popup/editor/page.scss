@@ -2,9 +2,9 @@
 
 .popups {
 	.popup.popupEditorPage {
-		.innerWrap { width: 800px; height: calc(100% - 20px); padding: 0px; }
+		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
 		
-		.header { position: relative; padding: 0px; }
+		.header { position: relative; padding: 0px; border-radius: 12px 12px 0px 0px; }
 		.header {
 			.menu { right: 0px; top: 0px; }
 		}
@@ -13,7 +13,5 @@
 		.selection { height: 100%; }
 		.editor { margin-top: 36px; }
 		.blocks { margin-left: -48px; }
-
-		.block.blockCover { width: 100%; left: 0px; border-radius: 12px 12px 0px 0px; overflow: hidden; }
 	}	
 }

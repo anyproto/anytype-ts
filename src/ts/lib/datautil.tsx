@@ -178,10 +178,6 @@ class DataUtil {
 			}
 		};
 
-		if (e) {
-			console.log(e, e.metaKey);
-		};
-
 		if (commonStore.popupIsOpen('editorPage')) {
 			commonStore.popupUpdate('editorPage', param);
 		} else 
