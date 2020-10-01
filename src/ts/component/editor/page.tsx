@@ -499,13 +499,11 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
-		/*
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory();
 		});
-		*/
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
 			if (ids.length && !commonStore.menuIsOpen()) {
@@ -698,13 +696,11 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
-		/*
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory();
 		});
-		*/
 
 		// Duplicate
 		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
