@@ -172,11 +172,7 @@ class DataUtil {
 		};
 
 		const { root } = blockStore;
-		const param = {
-			data: { 
-				id: targetId,
-			}
-		};
+		const param = { data: { id: targetId } };
 
 		if (commonStore.popupIsOpen('editorPage')) {
 			commonStore.popupUpdate('editorPage', param);
@@ -187,8 +183,16 @@ class DataUtil {
 			const route = targetId == root ? '/main/index' : '/main/edit/' + targetId;
 			this.history.push(route);
 		};
+	};
 
-		
+	pageOpenPopup (targetId: string) {
+		const param = { data: { id: targetId } };
+
+		if (commonStore.popupIsOpen('editorPage')) {
+			commonStore.popupUpdate('editorPage', param);
+		} else {
+			commonStore.popupOpen('editorPage', param);
+		};
 	};
 	
 	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
@@ -207,8 +211,6 @@ class DataUtil {
 				return;
 			};
 			
-			this.pageOpen(e, message.targetId);
-				
 			if (callBack) {
 				callBack(message);
 			};

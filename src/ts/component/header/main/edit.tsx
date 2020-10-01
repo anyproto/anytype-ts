@@ -135,7 +135,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			};
 		};
 		
-		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
+		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+			DataUtil.pageOpen(e, message.targetId);
+		});
 	};
 
 	onNavigation (e: any, expanded: boolean) {

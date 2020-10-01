@@ -127,7 +127,9 @@ class Keyboard {
 				};
 			};
 			
-			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
+			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+				DataUtil.pageOpenPopup(message.targetId);
+			});
 		});
 		
 		this.initPinCheck();

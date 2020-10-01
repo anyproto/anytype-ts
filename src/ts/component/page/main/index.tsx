@@ -138,6 +138,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		DataUtil.pageCreate(e, root, '', details, I.BlockPosition.Bottom, (message: any) => {
+			DataUtil.pageOpen(e, message.targetId);
 			Util.scrollTopEnd();
 		});
 	};

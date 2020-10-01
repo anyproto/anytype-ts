@@ -49,6 +49,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		
 		DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
+			DataUtil.pageOpen(e, message.targetId);
 			Util.scrollTopEnd();
 		});
 	};
