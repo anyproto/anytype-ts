@@ -73,7 +73,7 @@ class Block implements I.Block {
 	};
 	
 	isSelectable (): boolean {
-		return !this.isSystem() && !this.isIcon();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle();
 	};
 	
 	isDraggable (): boolean {

@@ -81,11 +81,15 @@ class Block extends React.Component<Props, {}> {
 		switch (type) {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
+
+				if (block.isTextTitle()) {
+					canSelect = false;
+				};
 				
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
-				
+
 				if (block.isTextToggle() && !childrenIds.length && !readOnly) {
 					empty = (
 						<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
