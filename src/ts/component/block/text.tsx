@@ -466,7 +466,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
-			if (commonStore.menuIsOpen('smile') || block.isTextCode()) {
+			if (commonStore.menuIsOpen('smile') || !block.canHaveMarks()) {
 				return;
 			};
 
