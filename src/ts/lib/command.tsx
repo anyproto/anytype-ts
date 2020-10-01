@@ -638,6 +638,14 @@ const ObjectTypeCreate = (objectType: any, callBack?: (message: any) => void) =>
 	dispatcher.request('objectTypeCreate', request, callBack);
 };
 
+const SetCreate = (url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Set.Create.Request();
+	
+	request.setObjecttypeurl(url);
+
+	dispatcher.request('setCreate', request, callBack);
+};
+
 const RelationList = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.Show.Request();
 	
@@ -737,6 +745,8 @@ export {
 
 	ObjectTypeList,
 	ObjectTypeCreate,
+
+	SetCreate,
 
 	RelationList,
 	RelationAdd,

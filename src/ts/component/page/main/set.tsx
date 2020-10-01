@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Smile, HeaderMainSet as Header } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
@@ -45,7 +45,7 @@ class PageMainSet extends React.Component<Props, State> {
 				icon = <Icon className={item.icon} />;
 			};
 			return (
-				<div className="item">
+				<div className="item" onClick={(e: any) => { this.setCreate(item); }}>
 					{icon}
 					<div className="name">{item.name}</div>
 				</div>
@@ -97,6 +97,20 @@ class PageMainSet extends React.Component<Props, State> {
 					this.setState({ types: types });
 				}
 			}
+		});
+	};
+
+	setCreate (item: any) {
+		if (!item.url) {
+			return;
+		};
+
+		C.SetCreate(item.url, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+			
+			DataUtil.pageOpen(null, message.pageId);
 		});
 	};
 	

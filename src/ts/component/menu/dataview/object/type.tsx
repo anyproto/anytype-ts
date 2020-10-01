@@ -96,7 +96,7 @@ class MenuObjectType extends React.Component<Props, State> {
 	};
 
 	onCreate () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onCreate } = data;
 		const name = this.ref.getValue();
@@ -109,6 +109,8 @@ class MenuObjectType extends React.Component<Props, State> {
 
 			onCreate(message.objectType);
 		});
+
+		close();
 	};
 	
 };

@@ -349,6 +349,12 @@ const ObjectTypeCreate = (response: any) => {
 	};
 };
 
+const SetCreate = (response: any) => {
+	return {
+		pageId: response.getPageid(),
+	};
+};
+
 export {
 	VersionGet,
 
@@ -436,4 +442,6 @@ export {
 
 	ObjectTypeList,
 	ObjectTypeCreate,
+
+	SetCreate,
 };
