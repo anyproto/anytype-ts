@@ -3,7 +3,7 @@ import { decorate, observable } from 'mobx';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Constant = require('json/constant.json');
-const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
+const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
 const Schema = {
@@ -71,6 +71,13 @@ const Mapper = {
             if (v == ContentCase.LINK)		 t = I.BlockType.Link;
             if (v == ContentCase.DATAVIEW)	 t = I.BlockType.Dataview;
             return t;
+        },
+
+		Details: (obj: any) => {
+            return {
+                id: obj.getId(),
+                details: Decode.decodeStruct(obj.getDetails()),
+            };
         },
     
         Block: (obj: any): I.Block => {
@@ -240,6 +247,17 @@ const Mapper = {
             return observable(new M.View(view));
         },
 
+        HistoryVersion: (obj: any) => {
+            return {
+                id: obj.getId(),
+                previousIds: obj.getPreviousidsList() || [],
+                authorId: obj.getAuthorid(),
+                authorName: obj.getAuthorname(),
+				groupId: obj.getGroupid(),
+                time: obj.getTime(),
+            };
+        },
+
     },
 
     //------------------------------------------------------------
@@ -384,26 +402,26 @@ const Mapper = {
             return item;
         },
 
-        View: (view: I.View) => {
-            view = Util.objectCopy(new M.View(view));
+        View: (obj: I.View) => {
+            obj = Util.objectCopy(new M.View(obj));
 
             const item = new Model.Block.Content.Dataview.View();
 
-            item.setId(view.id);
-            item.setName(view.name);
-            item.setType(view.type);
-            item.setRelationsList(view.relations.map(Mapper.To.ViewRelation));
-            item.setFiltersList(view.filters.map(Mapper.To.Filter));
-            item.setSortsList(view.sorts.map(Mapper.To.Sort));
+            item.setId(obj.id);
+            item.setName(obj.name);
+            item.setType(obj.type);
+            item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
+            item.setFiltersList(obj.filters.map(Mapper.To.Filter));
+            item.setSortsList(obj.sorts.map(Mapper.To.Sort));
 
             return item;
         },
 
-        PasteFile: (file: any) => {
+        PasteFile: (obj: any) => {
             const item = new Rpc.Block.Paste.Request.File();
 
-            item.setName(file.name);
-            item.setLocalpath(file.path);
+            item.setName(obj.name);
+            item.setLocalpath(obj.path);
 
             return item;
         },

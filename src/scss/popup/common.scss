@@ -6,6 +6,8 @@
 		.innerWrap { opacity: 1; transform: scale3d(1,1,1); }
 		.dimmer { opacity: 1; }
 	}
+
+	.popup * { user-select: none; }
 	
 	.popup {
 		.innerWrap { 

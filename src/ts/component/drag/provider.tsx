@@ -75,7 +75,7 @@ class DragProvider extends React.Component<Props, {}> {
 			const data = item.data();
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
-			
+
 			let x = offset.left;
 			let y = offset.top;
 			let w = rect.width;
@@ -86,14 +86,14 @@ class DragProvider extends React.Component<Props, {}> {
 
 			if (isTargetTop) key += '-top';
 			if (isTargetBot) key += '-bot';
-			
+
 			// Add block's paddings to height
 			if ((data.dropType == I.DragItem.Block) && (data.type != I.BlockType.Layout)) {
 				const block = $('#block-' + data.id);
 				if (block.length) {
 					const top = parseInt(block.css('paddingTop'));
 					const bot = parseInt(block.css('paddingBottom'));
-					
+
 					y -= top + 2;
 					h += top + bot + 2;
 				};
@@ -230,10 +230,17 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
-			const { x, y, width, height } = this.hoverData;
-			const col1 = x - Constant.size.blockMenu / 2;
-			const col2 = x + width * 0.2;
-			const col3 = x + width * 0.8;
+			let { type, style, x, y, width, height } = this.hoverData;
+			let col1 = x - Constant.size.blockMenu / 4;
+			let col2 = x + 28;
+			let col3 = x + width - 28;
+
+			if ((type != I.BlockType.Text) ||
+				((type == I.BlockType.Text) &&
+				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
+			)) {
+				col2 = col3;
+			};
 
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
@@ -260,22 +267,22 @@ class DragProvider extends React.Component<Props, {}> {
 
 			// You cant only drop into Paragraphs and list
 			if (
-				(this.position == I.BlockPosition.Inner) && 
-				(this.hoverData.type == I.BlockType.Text) &&
-				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(this.hoverData.style) < 0
+				(this.position == I.BlockPosition.Inner) &&
+				(type == I.BlockType.Text) &&
+				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0
 			) {
 				this.position = I.BlockPosition.None;
 			};
 
 			if (
-				(this.position == I.BlockPosition.Inner) && 
-				([ I.BlockType.Text, I.BlockType.Link ].indexOf(this.hoverData.type) < 0)
+				(this.position == I.BlockPosition.Inner) &&
+				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
 				this.position = I.BlockPosition.None;
 			};
 
 			// You can drop vertically on Layout.Row
-			if ((this.hoverData.type == I.BlockType.Layout) && (this.hoverData.style == I.LayoutStyle.Row)) {
+			if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
 				if (this.hoverData.isTargetTop) {
 					this.position = I.BlockPosition.Top;
 				};

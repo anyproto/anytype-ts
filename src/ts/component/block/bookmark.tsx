@@ -27,7 +27,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const { url, title, description, imageHash, faviconHash } = content;
 		
@@ -58,7 +58,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 			);
 		} else {
 			element = (
-				<InputWithFile block={block} icon="bookmark" textFile="Paste a link" withFile={false} onChangeUrl={this.onChangeUrl} />
+				<InputWithFile block={block} icon="bookmark" textFile="Paste a link" withFile={false} onChangeUrl={this.onChangeUrl} readOnly={readOnly} />
 			);
 		};
 		

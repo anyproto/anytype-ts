@@ -4,6 +4,8 @@ import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 interface Props extends I.Popup {
 	history: any;
@@ -19,15 +21,15 @@ interface State {
 	info: I.PageInfo;
 	pagesIn: I.PageInfo[];
 	pagesOut: I.PageInfo[];
-	pageLeft: number;
-	pageRight: number;
+	n: number;
 };
 
 const $ = require('jquery');
 const raf = require('raf');
 const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
-const PAGE = 30;
+const HEIGHT = 64;
+const HEIGHT_EXPANDED = 96;
 
 enum Panel { 
 	Left = 1, 
@@ -49,20 +51,23 @@ class PopupNavigation extends React.Component<Props, State> {
 		info: null,
 		pagesIn: [] as I.PageInfo[],
 		pagesOut: [] as I.PageInfo[],
-		pageLeft: 0,
-		pageRight: 0,
+		n: 0,
 	};
 	ref: any = null;
 	timeout: number = 0;
 	index: any = null;
 	disableFirstKey: boolean = false;
-	n: number = 0;
 	panel: Panel = Panel.Left;
 	focused: boolean = false;
+	cache: any = null;
+	cacheIn: any = null;
+	cacheOut: any = null;
+	focus: boolean = false;
+	select: boolean = false;
 	
 	constructor (props: any) {
 		super (props);
-		
+
 		this.onKeyDownSearch = this.onKeyDownSearch.bind(this);
 		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
@@ -73,20 +78,21 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, pageLeft, pageRight, showIcon } = this.state;
+		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, showIcon, n } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { type, rootId, blockId } = data;
 		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
-		const page = pageLeft;
 		const pages = this.filterPages();
 
-		let n = 0;
+		if ((expanded && (!this.cacheIn || !this.cacheOut)) || (!expanded && !this.cache)) {
+			return null;
+		};
+
 		let confirm = '';
 		let iconSearch = null;
-		let blockIds = data.blockIds || [];
 
 		if (showIcon) {
 			if (isRoot) {
@@ -129,7 +135,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		);
 
 		const Item = (item: any) => {
-			let { iconEmoji, iconImage, name } = item.details;
+			let { iconEmoji, iconImage, name } = item.details || {};
 			let isRoot = item.id == root;
 
 			return (
@@ -149,6 +155,23 @@ class PopupNavigation extends React.Component<Props, State> {
 					</div>
 					<Icon className="arrow" onClick={(e: any) => { this.onClickArrow(e, item); }} />
 				</div>
+			);
+		};
+
+		const rowRenderer = (list: I.PageInfo[], cache: any, { index, key, style, parent, panel }) => {
+			return (
+				<CellMeasurer
+					key={key}
+					parent={parent}
+					cache={cache}
+					columnIndex={0}
+					rowIndex={index}
+					hasFixedWidth={() => {}}
+				>
+					<div className="row" style={style}>
+						<Item {...list[index]} index={index} panel={panel} />
+					</div>
+				</CellMeasurer>
 			);
 		};
 
@@ -213,11 +236,33 @@ class PopupNavigation extends React.Component<Props, State> {
 										{!pagesIn.length ? (
 											<ItemEmpty name="No links to this page" />
 										) : (
-											<React.Fragment>
-												{pagesIn.map((item: any, i: number) => {
-													return <Item key={i} {...item} panel={Panel.Left} />;
-												})}
-											</React.Fragment>
+											<InfiniteLoader
+												rowCount={pagesIn.length}
+												loadMoreRows={() => {}}
+												isRowLoaded={({ index }) => index < pagesIn.length}
+											>
+												{({ onRowsRendered, registerChild }) => (
+													<AutoSizer className="scrollArea">
+														{({ width, height }) => (
+															<List
+																ref={registerChild}
+																width={width + 20}
+																height={height - 35}
+																deferredMeasurmentCache={this.cacheIn}
+																rowCount={pagesIn.length}
+																rowHeight={HEIGHT_EXPANDED}
+																rowRenderer={(param: any) => { 
+																	param.panel = Panel.Left;
+																	return rowRenderer(pagesIn, this.cacheIn, param); 
+																}}
+																onRowsRendered={onRowsRendered}
+																overscanRowCount={10}
+																scrollToIndex={this.panel == Panel.Left ? n : 0}
+															/>
+														)}
+													</AutoSizer>
+												)}
+											</InfiniteLoader>
 										)}
 									</React.Fragment>
 								) : ''}
@@ -230,11 +275,33 @@ class PopupNavigation extends React.Component<Props, State> {
 								{!pagesOut.length ? (
 									<ItemEmpty name="No links to other pages" />
 								) : (
-									<React.Fragment>
-										{pagesOut.map((item: any, i: number) => {
-											return <Item key={i} {...item} panel={Panel.Right} />;
-										})}
-									</React.Fragment>
+									<InfiniteLoader
+										rowCount={pagesOut.length}
+										loadMoreRows={() => {}}
+										isRowLoaded={({ index }) => index < pagesOut.length}
+									>
+										{({ onRowsRendered, registerChild }) => (
+											<AutoSizer className="scrollArea">
+												{({ width, height }) => (
+													<List
+														ref={registerChild}
+														width={width + 20}
+														height={height - 35}
+														deferredMeasurmentCache={this.cacheOut}
+														rowCount={pagesOut.length}
+														rowHeight={HEIGHT_EXPANDED}
+														rowRenderer={(param: any) => { 
+															param.panel = Panel.Right;
+															return rowRenderer(pagesOut, this.cacheOut, param); 
+														}}
+														onRowsRendered={onRowsRendered}
+														overscanRowCount={10}
+														scrollToIndex={this.panel == Panel.Right ? n : 0}
+													/>
+												)}
+											</AutoSizer>
+										)}
+									</InfiniteLoader>
 								)}
 							</div>
 						</div>
@@ -243,7 +310,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					<React.Fragment>
 						{head}
 
-						{!pages.length && !loading ? (
+						{!pages.length ? (
 							<div id="empty" key="empty" className="empty">
 								<div className="txt">
 									<b>There are no pages named "{filter}"</b>
@@ -252,13 +319,33 @@ class PopupNavigation extends React.Component<Props, State> {
 							</div>
 						) : (
 							<div id={'panel-' + Panel.Left} key="items" className="items left">
-								{pages.map((item: any, i: number) => {
-									if (++n > (page + 1) * PAGE) {
-										return null;
-									};
-
-									return <Item key={i} {...item} panel={Panel.Left} />;
-								})}
+								<InfiniteLoader
+									rowCount={pages.length}
+									loadMoreRows={() => {}}
+									isRowLoaded={({ index }) => index < pages.length}
+								>
+									{({ onRowsRendered, registerChild }) => (
+										<AutoSizer className="scrollArea">
+											{({ width, height }) => (
+												<List
+													ref={registerChild}
+													width={width}
+													height={height}
+													deferredMeasurmentCache={this.cache}
+													rowCount={pages.length}
+													rowHeight={HEIGHT}
+													rowRenderer={(param: any) => { 
+														param.panel = Panel.Left;
+														return rowRenderer(pages, this.cache, param); 
+													}}
+													onRowsRendered={onRowsRendered}
+													overscanRowCount={10}
+													scrollToIndex={n}
+												/>
+											)}
+										</AutoSizer>
+									)}
+								</InfiniteLoader>
 							</div>
 						)}
 					</React.Fragment>
@@ -278,6 +365,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.setCrumbs(rootId);
 		this.initSize(expanded);
 		this.initSearch(rootId);
+		this.focus = true;
+		this.select = true;
 
 		this.setState({ pageId: rootId, expanded: expanded, showIcon: true });
 		this.loadSearch();
@@ -291,9 +380,38 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const { expanded } = this.state;
+		const { expanded, pagesIn, pagesOut } = this.state;
 		this.initSize(expanded);
 		this.setActive();
+
+		if (this.ref) {
+			if (this.focus) {
+				this.ref.focus();
+			};
+			if (this.select) {
+				this.ref.select();
+				this.select = false;
+			};
+		};
+
+		const pages = this.filterPages();
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (pages[i] || {}).id; },
+		});
+
+		this.cacheIn = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (pagesIn[i] || {}).id; },
+		});
+
+		this.cacheOut = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (pagesOut[i] || {}).id; },
+		});
 	};
 	
 	componentWillUnmount () {
@@ -324,12 +442,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const obj = $('#popupNavigation #innerWrap');
-		
 		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
-		
 		this.resize();
-		obj.find('.items.left').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Left); });
-		obj.find('.items.right').unbind('scroll.navigation').on('scroll.navigation', (e: any) => { this.onScroll(Panel.Right); });
 	};
 
 	initSearch (id: string) {
@@ -347,24 +461,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 	};
 
-	onScroll (panel: Panel) {
-		const { expanded } = this.state;
-
-		const node = $(ReactDOM.findDOMNode(this));
-		const content = panel == Panel.Left ? node.find('.items.left') : node.find('.items.right');
-		const stateKey = panel == Panel.Left ? 'pageLeft' : 'pageRight';
-		const top = content.scrollTop();
-		const page = this.state[stateKey];
-		const height = expanded ? 80 : 48;
-
-		if (top >= page * PAGE * height) {
-			let newState = {};
-			newState[stateKey] = page + 1;
-
-			this.setState(newState);
-		};
-	};
-	
 	resize () {
 		if (!this._isMounted) {
 			return;
@@ -412,10 +508,10 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
-		const { expanded } = this.state;
 		const items = this.getItems();
 		const l = items.length;
 
+		let { expanded, n } = this.state;
 		let k = e.key.toLowerCase();
 
 		keyboard.disableMouse(true);
@@ -429,17 +525,18 @@ class PopupNavigation extends React.Component<Props, State> {
 				return;
 			};
 
-			if ((k == Key.down) && (this.n == -1)) {
+			if ((k == Key.down) && (n == -1)) {
 				this.ref.blur();
+				this.focus = false;
 				this.disableFirstKey = true;
 			};
 
-			if ((k == Key.up) && (this.n == 0)) {
+			if ((k == Key.up) && (n == 0)) {
 				this.ref.focus();
 				this.ref.select();
 				this.disableFirstKey = true;
 				this.unsetActive();
-				this.n = -1;
+				this.setState({ n: -1 });
 				return;
 			};
 
@@ -457,23 +554,25 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		switch (k) {
 			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
+				n--;
+				if (n < 0) {
+					n = l - 1;
 				};
+				this.setState({ n: n });
 				this.setActive();
 				break;
 				
 			case Key.down:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
+				n++;
+				if (n > l - 1) {
+					n = 0;
 				};
+				this.setState({ n: n });
 				this.setActive();
 				break;
 
 			case Key.left:
-				this.n = 0;
+				this.setState({ n: 0 });
 				this.panel--;
 				if (this.panel < Panel.Left) {
 					this.panel = Panel.Right;
@@ -490,7 +589,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				break;
 				
 			case Key.right:
-				this.n = 0;
+				this.setState({ n: 0 });
 				this.panel++;
 				if (this.panel > Panel.Right) {
 					this.panel = Panel.Left;
@@ -508,7 +607,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				
 			case Key.enter:
 			case Key.space:
-				const item = items[this.n];
+				const item = items[n];
 				if (!item) {
 					break;
 				};
@@ -570,10 +669,12 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	setActive (item?: any) {
-		const items = this.getItems();
+		const { n } = this.state;
 		if (!item) {
-			item = items[this.n];
+			const items = this.getItems();
+			item = items[n];
 		};
+
 		if (!item) {
 			return;
 		};
@@ -582,8 +683,9 @@ class PopupNavigation extends React.Component<Props, State> {
 			this.panel = item.panel;
 		};
 
+		this.unsetActive();
+		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.active').removeClass('active');
 		node.find(`#panel-${this.panel} #item-${item.id}`).addClass('active');
 	};
 
@@ -593,8 +695,11 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	onOver (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.setActive(item);
+		const { n } = this.state;
+		
+		if (!keyboard.isMouseDisabled && ((item.panel != this.panel) || (item.index != n))) {
+			this.panel = item.panel;
+			this.setState({ n: item.index });
 		};
 	};
 
@@ -621,10 +726,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			this.setState({ 
-				pageLeft: 0, 
-				pageRight: 0,
-				filter: Util.filterFix(this.ref.getValue()),
+			this.setState({ filter: Util.filterFix(this.ref.getValue()) 
 			});
 		}, force ? 0 : 50);
 	};
@@ -636,8 +738,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const { root } = blockStore;
 
-		this.setState({ loading: true });
-		this.n = -1;
+		this.setState({ loading: true, n: -1 });
 		this.panel = Panel.Left;
 
 		this.index = new FlexSearch('balance', {
@@ -689,10 +790,10 @@ class PopupNavigation extends React.Component<Props, State> {
 			pagesIn = pagesIn.filter(filter);
 			pagesOut = pagesOut.filter(filter);
 
-			this.n = 0;
 			this.panel = Panel.Center;
 			this.initSearch(id);
 			this.setState({ 
+				n: 0,
 				pageId: id,
 				loading: false,
 				expanded: true, 

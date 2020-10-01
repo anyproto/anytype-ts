@@ -39,7 +39,7 @@ class PopupConfirm extends React.Component<Props, {}> {
 	};
 	
 	onConfirm (e: any) {
-		const { id, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { onConfirm } = data;
 		
@@ -52,7 +52,15 @@ class PopupConfirm extends React.Component<Props, {}> {
 	};
 	
 	onCancel (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onCancel } = data;
+
 		this.props.close();
+
+		if (onCancel) {
+			onCancel();
+		};
 	};
 	
 };

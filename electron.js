@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage, nativeTheme } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -131,6 +131,30 @@ function waitForLibraryAndCreateWindows () {
 	});
 };
 
+function trayIcon () {
+	if (is.windows) {
+		return path.join(__dirname, '/electron/icon64x64.png');
+	} else {
+		const dark = nativeTheme.shouldUseDarkColors;
+		return path.join(__dirname, '/electron/icon-tray-' + (dark ? 'white' : 'black') + '.png');
+	};
+};
+
+nativeTheme.on('updated', () => {
+	tray.setImage(trayIcon());
+});
+
+function initTray () {
+	tray = new Tray (trayIcon());
+	tray.setToolTip('Anytype');
+	tray.setContextMenu(Menu.buildFromTemplate([
+		{
+            label: 'Show window',
+			click: () => { win.show(); }
+		},
+	]));
+};
+
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
 	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
@@ -144,14 +168,7 @@ function createWindow () {
 		})
 	});
 
-	tray = new Tray (path.join(__dirname, '/electron/icon16x16.png'));
-	tray.setToolTip('Anytype');
-	tray.setContextMenu(Menu.buildFromTemplate([
-		{
-            label: 'Show window',
-			click: () => { win.show(); }
-		},
-	]));
+	initTray();
 
 	let state = windowStateKeeper({
 		defaultWidth: width,
@@ -212,6 +229,14 @@ function createWindow () {
 		return false;
 	});
 
+	win.on('enter-full-screen', () => {
+		send('enter-full-screen');
+	});
+
+	win.on('leave-full-screen', () => {
+		send('leave-full-screen');
+	});
+
 	if (process.env.ELECTRON_DEV_EXTENSIONS) {
 		BrowserWindow.addDevToolsExtension(
 			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
@@ -234,8 +259,13 @@ function createWindow () {
 		exit(relaunch);
 	});
 
-	ipcMain.on('update', (e) => {
-		checkUpdate(false);
+	ipcMain.on('updateDownload', (e) => {
+		autoUpdater.downloadUpdate();
+	});
+
+	ipcMain.on('updateCancel', (e) => {
+		isUpdating = false;
+		clearTimeout(timeoutUpdate);
 	});
 
 	ipcMain.on('urlOpen', async (e, url) => {
@@ -333,7 +363,12 @@ function menuInit () {
 				{ type: 'separator' },
 				{
 					label: 'Quit', accelerator: 'CmdOrCtrl+Q',
-					click: () => { exit(false); }
+					click: () => { 
+						if (win) {
+							win.hide();
+						};
+						exit(false); 
+					}
 				},
 			]
 		},
@@ -435,25 +470,19 @@ function menuInit () {
 						{
 							label: 'Interface', type: 'checkbox', checked: config.debugUI,
 							click: () => {
-								setConfig({ debugUI: !config.debugUI }, () => {
-									send('toggleDebug', 'ui', config.debugUI);
-								});
+								setConfig({ debugUI: !config.debugUI });
 							}
 						},
 						{
 							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
 							click: () => {
-								setConfig({ debugMW: !config.debugMW }, () => {
-									send('toggleDebug', 'mw', config.debugMW);
-								});
+								setConfig({ debugMW: !config.debugMW });
 							}
 						},
 						{
 							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
 							click: () => {
-								setConfig({ debugAN: !config.debugAN }, () => {
-									send('toggleDebug', 'an', config.debugAN);
-								});
+								setConfig({ debugAN: !config.debugAN });
 							}
 						},
 					]
@@ -464,9 +493,7 @@ function menuInit () {
 				},
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
-					click: () => {
-						win.webContents.openDevTools();
-					}
+					click: () => { win.webContents.openDevTools(); }
 				}
 			]
 		});
@@ -489,6 +516,7 @@ function setChannel (channel) {
 function setConfig (obj, callBack) {
 	config = Object.assign(config, obj);
 	storage.set('config', config, (error) => {
+		send('config', config);
 		if (callBack) {
 			callBack(error);
 		};
@@ -496,6 +524,7 @@ function setConfig (obj, callBack) {
 };
 
 function checkUpdate (auto) {
+	Util.log('info', 'isUpdating: ' + isUpdating);
 	if (isUpdating) {
 		return;
 	};
@@ -511,9 +540,10 @@ function autoUpdaterInit () {
 
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'debug';
+	autoUpdater.autoDownload = false;
 	autoUpdater.channel = config.channel;
 
-	setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
+	timeoutUpdate = setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
 
 	autoUpdater.on('checking-for-update', () => {
 		Util.log('info', 'Checking for update');
@@ -525,6 +555,10 @@ function autoUpdaterInit () {
 		isUpdating = true;
 		clearTimeout(timeoutUpdate);
 		send('update-available', autoUpdate);
+
+		if (autoUpdate) {
+			autoUpdater.downloadUpdate();
+		};
 	});
 
 	autoUpdater.on('update-not-available', (info) => {
@@ -534,8 +568,9 @@ function autoUpdaterInit () {
 	});
 	
 	autoUpdater.on('error', (err) => { 
+		isUpdating = false;
 		Util.log('Error: ' + err);
-		send('update-error', err);
+		send('update-error', err, autoUpdate);
 	});
 	
 	autoUpdater.on('download-progress', (progress) => {
@@ -553,6 +588,7 @@ function autoUpdaterInit () {
 	});
 
 	autoUpdater.on('update-downloaded', (info) => {
+		isUpdating = false;
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
 		app.isQuiting = true;
@@ -596,10 +632,6 @@ function send () {
 };
 
 function exit (relaunch) {
-	if (win) {
-		win.hide();
-	};
-
 	let cb = () => {
 		setTimeout(() => {
 			if (relaunch) {

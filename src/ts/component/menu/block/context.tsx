@@ -46,12 +46,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		// You can't make headers bold, since they are already bold
 		if (block.isTextHeader()) {
-			markActions = markActions.filter((it: any) => { return [ I.MarkType.Bold, I.MarkType.Code ].indexOf(it.type) < 0; });
-		};
-		
-		// You can't make quote as code
-		if (block.isTextQuote()) {
-			markActions = markActions.filter((it: any) => { return [ I.MarkType.Code ].indexOf(it.type) < 0; });
+			markActions = markActions.filter((it: any) => { return [ I.MarkType.Bold ].indexOf(it.type) < 0; });
 		};
 		
 		let icon = DataUtil.styleIcon(type, style);

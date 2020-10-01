@@ -6,7 +6,6 @@ import { commonStore, blockStore, authStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-
 import Controls from './controls';
 
 interface Props extends RouteComponentProps<any> {
@@ -19,7 +18,6 @@ interface State {
 	loading: boolean;
 };
 
-const findAndReplaceDOMText = require('findandreplacedomtext');
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -41,7 +39,6 @@ class EditorPage extends React.Component<Props, State> {
 	state = {
 		loading: false,
 	};
-	searchIndex: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -163,6 +160,8 @@ class EditorPage extends React.Component<Props, State> {
 		
 		this.resize();
 		win.on('resize.editor', (e: any) => { this.resize(); });
+
+		Storage.set('askSurvey', 1);
 
 		ipcRenderer.removeAllListeners('commandEditor');
 		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
@@ -451,7 +450,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		const { focused } = focus;
 
-		if (keyboard.isFocused) {
+		if (keyboard.isFocused || !selection) {
 			return;
 		};
 		
@@ -533,25 +532,25 @@ class EditorPage extends React.Component<Props, State> {
 				type = I.MarkType.Strike;
 			});
 
-			// Link
+			// Code
 			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
-				type = I.MarkType.Link;
+				type = I.MarkType.Code;
 			});
 
-			// Code
+			// Link
 			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
-				type = I.MarkType.Code;
+				type = I.MarkType.Link;
 			});
 
 			if (type !== null) {
 				e.preventDefault();
-					
+
 				if (type == I.MarkType.Link) {
 					commonStore.menuOpen('blockLink', {
 						type: I.MenuType.Horizontal,
-						element: '#menuBlockContext',
+						element: '#block-' + ids[0],
 						offsetX: 0,
-						offsetY: 44,
+						offsetY: -4,
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
 						data: {
@@ -597,7 +596,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 
 		// Remove blocks
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 			e.preventDefault();
 			this.blockRemove(block);
 		});
@@ -760,37 +759,46 @@ class EditorPage extends React.Component<Props, State> {
 			});
 
 			// Link
-			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
+			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
 				type = I.MarkType.Link;
 			});
 
 			// Code
-			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
+			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
 				type = I.MarkType.Code;
 			});
 
 			if (type !== null) {
 				e.preventDefault();
-				
+
 				if (type == I.MarkType.Link) {
-					let mark = Mark.getInRange(marks, type, range);
-					commonStore.menuOpen('blockLink', {
-						type: I.MenuType.Horizontal,
-						element: '#menuBlockContext',
-						offsetX: 0,
-						offsetY: 44,
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Center,
-						data: {
-							value: (mark ? mark.param : ''),
-							onChange: (param: string) => {
-								marks = Mark.toggle(marks, { type: type, param: param, range: range });
-								DataUtil.blockSetText(rootId, block, text, marks, true, () => {
-									focus.apply();
-								});
+					const mark = Mark.getInRange(marks, type, range);
+					const el = $('#block-' + focused);
+					const offset = el.offset();
+					const rect = Util.selectionRect();
+					const x = rect.x - offset.left - Constant.size.menuBlockLink / 2 + rect.width / 2;
+					const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
+
+					commonStore.menuClose('blockContext');
+					window.setTimeout(() => {
+						commonStore.menuOpen('blockLink', {
+							type: I.MenuType.Horizontal,
+							element: el,
+							offsetX: x,
+							offsetY: y,
+							vertical: I.MenuDirection.Top,
+							horizontal: I.MenuDirection.Left,
+							data: {
+								value: (mark ? mark.param : ''),
+								onChange: (param: string) => {
+									marks = Mark.toggle(marks, { type: type, param: param, range: range });
+									DataUtil.blockSetText(rootId, block, text, marks, true, () => {
+										focus.apply();
+									});
+								}
 							}
-						}
-					});
+						});
+					}, Constant.delay.menu);
 				} else {
 					marks = Mark.toggle(marks, { type: type, range: range });
 					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
@@ -857,10 +865,16 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Backspace
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (block.isText() && !range.to) {
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			if (block.isText()) {
 				const ids = selection.get(true);
-				ids.length ? this.blockRemove(block) : this.blockMerge(block);
+				if ((pressed == 'backspace') && !range.to) {
+					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+				};
+
+				if ((pressed == 'delete') && (range.to == length)) {
+					ids.length ? this.blockRemove(block) : this.blockMerge(block, 1);
+				};
 			};
 			if (!block.isText() && !keyboard.isFocused) {
 				this.blockRemove(block);
@@ -1229,7 +1243,11 @@ class EditorPage extends React.Component<Props, State> {
 					if (item.kind != 'file') {
 						continue;
 					};
-					files.push(item.getAsFile());
+
+					const file = item.getAsFile();
+					if (file) {
+						files.push();
+					};
 				};
 
 				if (files.length) {
@@ -1357,44 +1375,8 @@ class EditorPage extends React.Component<Props, State> {
 
 	onSearch () {
 		const node = $(ReactDOM.findDOMNode(this));
-		
-		let lastSearch = '';
-		let	onChange = (value: string) => {
-			this.clearSearch();
-
-			if (!value) {
-				return;
-			};
-
-			if (lastSearch != value) {
-				this.searchIndex = 0;
-			};
-			lastSearch = value;
-
-			findAndReplaceDOMText(node.get(0), {
-				preset: 'prose',
-				find: new RegExp(value, 'gi'),
-				wrap: 'search',
-				filterElements: (el: any) => {
-					const tag = el.nodeName.toLowerCase();
-					if ([ 'span', 'div' ].indexOf(tag) < 0) {
-						return false;
-					};
-
-					const style = window.getComputedStyle(el);
-					if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
-						return false;
-					};
-					return true;
-				},
-			});
-
-			this.focusSearch();
-			this.searchIndex++;
-		};
 
 		window.setTimeout(() => {
-			this.clearSearch();
 			commonStore.menuOpen('search', {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
@@ -1402,47 +1384,11 @@ class EditorPage extends React.Component<Props, State> {
 				horizontal: I.MenuDirection.Right,
 				offsetX: 0,
 				offsetY: 0,
-				onClose: () => {
-					this.clearSearch();
-				},
 				data: {
-					onChange: onChange,
+					container: node,
 				},
 			});
 		}, Constant.delay.menu);
-	};
-
-	clearSearch () {
-		if (!this._isMounted) {
-			return;
-		};
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('search').each((i: number, item: any) => {
-			item = $(item);
-			item.replaceWith(item.html());
-		});
-	};
-
-	focusSearch () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.editor search');
-		const wh = win.height();
-		const offset = Constant.size.lastBlock + Constant.size.header;
-
-		if (this.searchIndex > items.length - 1) {
-			this.searchIndex = 0;
-		};
-
-		node.find('search.active').removeClass('active');
-
-		const next = $(items.get(this.searchIndex));
-		if (next && next.length) {
-			next.addClass('active');
-		
-			const y = next.offset().top;
-			$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 100);
-		};
 	};
 
 	getLayoutIds (ids: string[]) {
@@ -1501,28 +1447,43 @@ class EditorPage extends React.Component<Props, State> {
 		});
 	};
 	
-	blockMerge (focused: I.Block) {
+	blockMerge (focused: I.Block, dir: number) {
 		const { rootId } = this.props;
-		const next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => {
+		const next = blockStore.getNextBlock(rootId, focused.id, dir, (it: any) => {
 			return it.isFocusable();
 		});
 
-		const length = focused.getLength();
-		const nl = next.getLength();
+		if (!next) {
+			return;
+		};
+
+		let blockId = '';
+		let targetId = '';
+		let to = 0;
+		let length = focused.getLength();
+
+		if (dir < 0) {
+			blockId = next.id;
+			targetId = focused.id;
+			to = next.getLength();
+		} else {
+			blockId = focused.id;
+			targetId = next.id;
+			to = length;
+		};
+
 		const cb = (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			console.log(nl, next);
-			
 			if (next) {
-				this.focus(next.id, nl, nl, false);
+				this.focus(blockId, to, to, false);
 			};
 		};
 
 		if (next.isText()) {
-			C.BlockMerge(rootId, next.id, focused.id, cb);
+			C.BlockMerge(rootId, blockId, targetId, cb);
 		} else 
 		if (!length) {
 			focus.clear(true);
@@ -1537,7 +1498,7 @@ class EditorPage extends React.Component<Props, State> {
 					return it.isFocusable();
 				});
 				if (next) {
-					const nl = next.getLength();
+					const nl = dir < 0 ? next.getLength() : 0;
 					this.focus(next.id, nl, nl, false);
 				};
 			});

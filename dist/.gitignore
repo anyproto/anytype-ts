@@ -17,6 +17,11 @@ main.js
 main.js.map
 commands.js
 anytypeHelper*
+alpha-linux.yml
+*.snap
+beta-linux.yml
+latest-linux.yml
+linux-unpacked/
 *.snap
 *.deb
 *.rpm

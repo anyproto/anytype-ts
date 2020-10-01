@@ -10,6 +10,7 @@ interface Props {
 	withFile?: boolean;
 	accept?: string[];
 	block?: I.Block;
+	readOnly?: boolean;
 	onChangeUrl? (e: any, url: string): void;
 	onChangeFile? (e: any, path: string): void;
 };
@@ -54,7 +55,7 @@ class InputWithFile extends React.Component<Props, State> {
 	
 	render () {
 		const { focused, size } = this.state;
-		const { icon, textUrl, textFile, withFile } = this.props;
+		const { icon, textUrl, textFile, withFile, readOnly } = this.props;
 
 		let cn = [ 'inputWithFile', 'resizable' ];		
 		let placeHolder = textUrl;
@@ -71,6 +72,10 @@ class InputWithFile extends React.Component<Props, State> {
 		
 		if (isSmall) {
 			cn.push('isSmall');
+		};
+
+		if (readOnly) {
+			cn.push('isReadOnly');
 		};
 		
 		if (isIcon) {
@@ -188,6 +193,11 @@ class InputWithFile extends React.Component<Props, State> {
 	
 	onFocus (e: any) {
 		e.stopPropagation();
+
+		const { readOnly } = this.props;
+		if (readOnly) {
+			return;
+		};
 		this.setState({ focused: true });
 	};
 	
@@ -201,7 +211,11 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	onChangeUrl (e: any, force: boolean) {
-		const { onChangeUrl } = this.props;
+		const { onChangeUrl, readOnly } = this.props;
+		
+		if (readOnly) {
+			return;
+		};
 		
 		window.clearTimeout(this.t);
 		this.t = window.setTimeout(() => {
@@ -221,10 +235,14 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	onClickFile (e: any) {
-		const { onChangeFile, accept } = this.props;
+		const { onChangeFile, accept, readOnly } = this.props;
 		
 		e.preventDefault();
 		e.stopPropagation();
+
+		if (readOnly) {
+			return;
+		};
 		
 		let options: any = { 
 			properties: [ 'openFile' ], 

@@ -59,13 +59,13 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, cnt, css, index, className, block } = this.props;
+		const { rootId, cnt, css, index, className, block, readOnly } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 		const { style, checked } = content || {};
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		
 		let canSelect = true;
-		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align ];
+		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align, (readOnly ? 'isReadOnly' : '')];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -85,13 +85,11 @@ class Block extends React.Component<Props, {}> {
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
-
-				if (block.isTextToggle()) {
-					if (!childrenIds.length) {
-						empty = (
-							<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
-						);
-					};
+				
+				if (block.isTextToggle() && !childrenIds.length && !readOnly) {
+					empty = (
+						<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
+					);
 				};
 
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
@@ -118,7 +116,7 @@ class Block extends React.Component<Props, {}> {
 				if (content.state == I.FileState.Done) {
 					cn.push('withFile');
 				};
-				
+
 				switch (content.type) {
 					default: 
 					case I.FileType.File: 
@@ -375,18 +373,19 @@ class Block extends React.Component<Props, {}> {
 	onResizeStart (e: any, index: number) {
 		e.stopPropagation();
 
-		if (!this._isMounted) {
+		const { dataset, rootId, block, readOnly } = this.props;
+
+		if (!this._isMounted || readOnly) {
 			return;
 		};
 
-		const { dataset, rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
-		const offset = node.find('#block-' + prevBlockId).offset().left + Constant.size.blockMenu;
+		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
 		const add = $('#button-add');
 		
 		if (selection) {
@@ -503,11 +502,11 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const { id } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!block.isLayoutRow() || keyboard.isDragging) {
+		if (!block.isLayoutRow() || keyboard.isDragging || readOnly) {
 			return;
 		};
 		

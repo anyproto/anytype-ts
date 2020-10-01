@@ -32,7 +32,7 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block } = this.props;
+		const { block, readOnly } = this.props;
 		const { id, fields, content } = block;
 		const { state, hash, type, mime } = content;
 		
@@ -49,7 +49,7 @@ class BlockVideo extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="video" textFile="Upload a video" accept={Constant.extension.video} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="video" textFile="Upload a video" accept={Constant.extension.video} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />
 				);
 				break;
 				

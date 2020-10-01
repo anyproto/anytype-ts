@@ -45,7 +45,7 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return !this.isSystem() && (this.isTextTitle() || this.isTextParagraph() || this.isTextHeader() || this.isImage() || this.isVideo());
+		return !this.isSystem() && (this.isTextTitle() || this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isImage() || this.isVideo());
 	};
 
 	canHaveColor (): boolean {
@@ -53,7 +53,7 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isSystem() && !this.isBookmark();
+		return !this.isSystem() && !this.isBookmark() && !this.isDiv();
 	};
 
 	canHaveMarks () {
