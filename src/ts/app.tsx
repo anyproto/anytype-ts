@@ -325,8 +325,8 @@ class App extends React.Component<Props, State> {
 			if (!auto) {
 				commonStore.popupOpen('confirm', {
 					data: {
-						title: 'It\'s time to update',
-						text: 'Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features.',
+						title: 'Update available',
+						text: 'Do you want to update on a new version?',
 						textConfirm: 'Update',
 						textCancel: 'Later',
 						onConfirm: () => {
