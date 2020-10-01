@@ -82,10 +82,6 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
 
-				if (block.isTextTitle()) {
-					canSelect = false;
-				};
-				
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};

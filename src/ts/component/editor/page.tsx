@@ -1175,7 +1175,8 @@ class EditorPage extends React.Component<Props, State> {
 		
 		let text: string[] = [];
 		let blocks = blockStore.unwrapTree(tree).filter((it: I.Block) => {
-			return ids.indexOf(it.id) >= 0;
+			const b = new M.Block(it);
+			return (ids.indexOf(b.id) >= 0) && !b.isTextTitle();
 		});
 		blocks = Util.arrayUniqueObjects(blocks, 'id');
 

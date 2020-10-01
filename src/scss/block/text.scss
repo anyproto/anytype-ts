@@ -97,6 +97,7 @@
 		.value { -webkit-user-modify: read-write-plaintext-only; }
 	}
 	.block.blockText.title > .wrapContent > .selectable > .dropTarget { padding: 4px 0px 2px 0px; }
+	.block.blockText.title > .wrapContent > .selectable > .selectionOver { display: none; }
 
 	.block.blockText.header1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget { @include text-header1; padding: 4px 0px 2px 0px; }
