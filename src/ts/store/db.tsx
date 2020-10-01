@@ -21,7 +21,7 @@ class DbStore {
 
 	@action
 	setMeta (blockId: string, meta: any) {
-		const data = this.getMeta(blockId);
+		const data = this.metaMap.get(blockId);
 
 		if (data) {
 			set(data, meta);
@@ -58,11 +58,11 @@ class DbStore {
 	};
 
 	getMeta (blockId: string) {
-		return this.metaMap.get(blockId);
+		return this.metaMap.get(blockId) || {};
 	};
 
 	getData (blockId: string) {
-		return this.dataMap.get(blockId);
+		return this.dataMap.get(blockId) || [];
 	};
 
 };
