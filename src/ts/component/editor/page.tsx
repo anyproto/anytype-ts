@@ -373,18 +373,18 @@ class EditorPage extends React.Component<Props, State> {
 		const withIcon = details.iconEmoji;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
-		let offset = 184;
+		let offset = 144;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
 		
 		if (withCover && withIcon) {
-			offset = 372;
+			offset = 328;
 		} else
 		if (withCover) {
-			offset = 372;
+			offset = 328;
 		} else 
 		if (withIcon) {
-			offset = 238;
+			offset = 194;
 		};
 		
 		// Find hovered block by mouse coords
@@ -432,9 +432,14 @@ class EditorPage extends React.Component<Props, State> {
 			
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
-				
-				if (block && !block.isLayoutColumn() && !block.isLayoutDiv() && !block.isLayoutHeader()) {
-					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+				if (block) {
+					if (!block.isTextTitle() && !block.isLayoutColumn() && !block.isLayoutDiv() && !block.isLayoutHeader()) {
+						hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+					};
+					if (block.isTextTitle()) {
+						this.hoverPosition = I.BlockPosition.Bottom;
+						hovered.addClass('isAdding bottom');
+					};
 				};
 			};
 		} else {
