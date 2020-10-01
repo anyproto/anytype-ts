@@ -165,36 +165,8 @@ class Dispatcher {
 					break;
 
 				case 'blockShow':
-					blocks = data.getBlocksList() || [];
-					let details = data.getDetailsList() || [];
-
-					blocks = blocks.map((it: any) => {
-						it = Mapper.From.Block(it);
-						if (it.id == rootId) {
-							it.type = I.BlockType.Page;
-							it.pageType = data.getType();
-						};
-						return new M.Block(it);
-					});
-
-					block = blocks.find((it: I.Block) => { return it.id == rootId; });
-					if (!block) {
-						break;
-					};
-
-					if (block.canHaveTitle()) {
-						block.childrenIds.unshift(rootId + '-title');
-						blocks.unshift(new M.Block({
-							id: rootId + '-title',
-							type: I.BlockType.Title,
-							childrenIds: [],
-							fields: {},
-							content: {},
-						}));
-					};
-
-					blockStore.blocksSet(rootId, blocks);
-					blockStore.detailsSet(rootId, details);
+					let res = Response.BlockShow(data);
+					this.onBlockShow(rootId, res.type, res.blocks, res.details);
 					break;
 
 				case 'blockAdd':
@@ -517,6 +489,35 @@ class Dispatcher {
 		return 0;
 	};
 
+	onBlockShow (rootId: string, type: number, blocks: any[], details: any[]) {
+		blocks = blocks.map((it: any) => {
+			if (it.id == rootId) {
+				it.type = I.BlockType.Page;
+				it.pageType = type;
+			};
+			return new M.Block(it);
+		});
+
+		let root = blocks.find((it: I.Block) => { return it.id == rootId; });
+		if (!root) {
+			return;
+		};
+
+		if (root.canHaveTitle()) {
+			root.childrenIds.unshift(rootId + '-title');
+			blocks.unshift(new M.Block({
+				id: rootId + '-title',
+				type: I.BlockType.Title,
+				childrenIds: [],
+				fields: {},
+				content: {},
+			}));
+		};
+
+		blockStore.blocksSet(rootId, blocks);
+		blockStore.detailsSet(rootId, details);
+	};
+
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		const { config } = commonStore;
 		const upper = Util.toUpperCamelCase(type);
@@ -595,13 +596,6 @@ class Dispatcher {
 						'Render time:', renderTime + 'ms',
 						'Total time:', totalTime + 'ms'
 					);
-
-					if (middleTime > 3000) {
-						Sentry.captureMessage(`${type}: middleware time too long`);
-					};
-					if (renderTime > 1000) {
-						Sentry.captureMessage(`${type}: render time too long`);
-					};
 				};
 			});
 		} catch (err) {

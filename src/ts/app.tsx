@@ -42,6 +42,7 @@ import 'scss/component/pin.scss';
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
+import 'scss/page/main/history.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -256,7 +257,7 @@ class App extends React.Component<Props, State> {
 		this.setWindowEvents();
 
 		if (pageId) {
-			Storage.set('redirectTo', pageId);
+			Storage.set('redirectTo', '/main/edit/' + pageId);
 		};
 	};
 

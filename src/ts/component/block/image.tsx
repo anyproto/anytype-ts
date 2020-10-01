@@ -31,7 +31,7 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block } = this.props;
+		const { block, readOnly } = this.props;
 		const { id, fields, content } = block;
 		const { width } = fields;
 		const { state } = content;
@@ -47,7 +47,7 @@ class BlockImage extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="image" textFile="Upload a picture" accept={Constant.extension.image} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="image" textFile="Upload a picture" accept={Constant.extension.image} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />
 				);
 				break;
 				

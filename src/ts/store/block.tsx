@@ -60,7 +60,7 @@ class BlockStore {
 		let map = observable(new Map());
 
 		for (let item of details) {
-			map.set(item.getId(), Decode.decodeStruct(item.getDetails()));
+			map.set(item.id, item.details);
 		};
 
 		intercept(map as any, (change: any) => {

@@ -265,8 +265,8 @@ class Util {
 			} else {
 				return s;
 			};
-			return false;
 		};
+		
 		const f: any = {
 			// Day
 			d: () => {
