@@ -475,7 +475,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
-			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isTextCode()) {
+			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || !block.canHaveMarks()) {
 				return;
 			};
 			this.onMention();
