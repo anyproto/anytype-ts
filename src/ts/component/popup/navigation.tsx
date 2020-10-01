@@ -62,6 +62,8 @@ class PopupNavigation extends React.Component<Props, State> {
 	cache: any = null;
 	cacheIn: any = null;
 	cacheOut: any = null;
+	focus: boolean = false;
+	select: boolean = false;
 	
 	constructor (props: any) {
 		super (props);
@@ -363,6 +365,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.setCrumbs(rootId);
 		this.initSize(expanded);
 		this.initSearch(rootId);
+		this.focus = true;
+		this.select = true;
 
 		this.setState({ pageId: rootId, expanded: expanded, showIcon: true });
 		this.loadSearch();
@@ -379,6 +383,16 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { expanded, pagesIn, pagesOut } = this.state;
 		this.initSize(expanded);
 		this.setActive();
+
+		if (this.ref) {
+			if (this.focus) {
+				this.ref.focus();
+			};
+			if (this.select) {
+				this.ref.select();
+				this.select = false;
+			};
+		};
 
 		const pages = this.filterPages();
 		this.cache = new CellMeasurerCache({
@@ -428,9 +442,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const obj = $('#popupNavigation #innerWrap');
-		
 		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
-		
 		this.resize();
 	};
 
@@ -515,6 +527,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 			if ((k == Key.down) && (n == -1)) {
 				this.ref.blur();
+				this.focus = false;
 				this.disableFirstKey = true;
 			};
 
@@ -683,10 +696,6 @@ class PopupNavigation extends React.Component<Props, State> {
 
 	onOver (e: any, item: any) {
 		const { n } = this.state;
-		
-		if (this.ref) {
-			this.ref.blur();
-		};
 		
 		if (!keyboard.isMouseDisabled && ((item.panel != this.panel) || (item.index != n))) {
 			this.panel = item.panel;
