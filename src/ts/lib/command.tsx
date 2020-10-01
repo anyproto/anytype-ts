@@ -3,7 +3,7 @@ import { commonStore } from 'ts/store';
 
 const Errors = require('json/error.json');
 const Commands = require('lib/pb/protos/commands_pb');
-const Model = require('lib/vendor/github.com/anytypeio/go-anytype-library/pb/model/protos/models_pb.js');
+const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const { ipcRenderer } = window.require('electron');
 const Rpc = Commands.Rpc;
 
@@ -117,6 +117,14 @@ const ExternalDropFiles = (contextId: string, targetId: string, position: I.Bloc
 	request.setLocalfilepathsList(paths);
 
 	dispatcher.request('externalDropFiles', request, callBack);
+};
+
+const PageCreate = (details: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Page.Create.Request();
+	
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request('pageCreate', request, callBack);
 };
 
 const NavigationListPages = (callBack?: (message: any) => void) => {
@@ -588,6 +596,34 @@ const BlockDeleteDataviewRecord = (contextId: string, blockId: string, recordId:
 	dispatcher.request('blockDeleteDataviewRecord', request, callBack);
 };
 
+const HistoryVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Versions.Request();
+	
+	request.setPageid(pageId);
+	request.setLastversionid(lastVersionId);
+	request.setLimit(limit);
+
+	dispatcher.request('historyVersions', request, callBack);
+};
+
+const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Show.Request();
+	
+	request.setPageid(pageId);
+	request.setVersionid(versionId);
+
+	dispatcher.request('historyShow', request, callBack);
+};
+
+const HistorySetVersion= (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Show.Request();
+	
+	request.setPageid(pageId);
+	request.setVersionid(versionId);
+
+	dispatcher.request('historySetVersion', request, callBack);
+};
+
 export {
 	VersionGet,
 
@@ -605,6 +641,8 @@ export {
 	AccountRecover,
 	AccountSelect,
 	AccountStop,
+
+	PageCreate,
 
 	ExternalDropFiles,
 
@@ -660,4 +698,8 @@ export {
 	BlockListSetAlign,
 	BlockListSetPageIsArchived,
 	BlockListDeletePage,
+
+	HistoryVersions,	
+	HistoryShow,
+	HistorySetVersion,
 };

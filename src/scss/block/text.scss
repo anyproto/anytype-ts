@@ -5,6 +5,7 @@
 	.block.blockText {
 		.wrap { flex: auto; position: relative; padding: 0px; width: 100%; }
 		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
+
 		.placeHolder { 
 			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
 			width: 100%; height: 100%; cursor: text; pointer-events: none;
@@ -23,7 +24,6 @@
 		emoji * { user-select: all; }
 		emoji {
 			name { display: none; }
-
 		}
 
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
@@ -72,9 +72,17 @@
 			.marker.check, .marker.toggle {
 				img { width: 100%; height: 100%; }
 			}
-			
 		}
 	}
+
+	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
+	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; }
+	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .placeHolder { display: none; }
+
+	.block.blockText.isReadOnly.code {
+		.select { display: none; }
+	}
+	.block.blockText.isReadOnly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
 	
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 
@@ -100,6 +108,9 @@
 	}
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: 28px; }
 	.block.blockText.quote > .wrapContent > .selectable > .dropTarget > .flex > .wrap > .placeHolder { left: 28px; }
+
+	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .wrap { padding-left: inherit; padding-right: 28px; }
+	.block.blockText.quote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .line { left: auto; right: 11px; }
 	
 	.block.blockText.code { padding: 6px 0px; }
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget { padding: 41px 16px 16px 16px; background: rgba(247,245,240,0.5); }
@@ -113,7 +124,7 @@
 		}
 		.select:hover, .select.active { background: none; }
 	}
-	
+
 	.block.blockText.paragraph > .wrapContent.bgColor > .selectable > .dropTarget, 
 	.block.blockText.header1 > .wrapContent.bgColor > .selectable > .dropTarget,
 	.block.blockText.header2 > .wrapContent.bgColor > .selectable > .dropTarget,

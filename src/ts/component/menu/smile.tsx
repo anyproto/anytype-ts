@@ -3,6 +3,8 @@ import * as ReactDOM from 'react-dom';
 import { Input, Smile } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {};
 interface State {
@@ -15,22 +17,24 @@ const EmojiData = require('json/emoji.json');
 const Constant = require('json/constant.json');
 const { dialog } = window.require('electron').remote;
 
-const LIMIT = 18;
-const HEIGHT = 32;
-const PAGE = 63;
-const ROWS = 7;
+const LIMIT_RECENT = 18;
+const LIMIT_ROW = 9;
+const HEIGHT_SECTION = 34;
+const HEIGHT_ITEM = 40;
 
 class MenuSmile extends React.Component<Props, State> {
+
+	state = {
+		filter: '',
+		page: 0,
+	};
 
 	ref: any = null;
 	id: string = '';
 	skin: number = 1;
 	timeoutMenu: number = 0;
 	timeoutFilter: number = 0;
-	state = {
-		filter: '',
-		page: 0,
-	};
+	cache: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -43,14 +47,13 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { filter, page } = this.state;
+		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { noHead } = data;
 		const sections = this.getSections();
-		
-		let id = 0;
-		
+		const items = this.getItems();
+
 		const Item = (item: any) => {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
@@ -61,20 +64,33 @@ class MenuSmile extends React.Component<Props, State> {
 			);
 		};
 		
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="name">{item.name}</div>
-				<div className="list">
-					{item.emojis.map((smile: any, i: number) => {
-						if (++id > (page + 1) * PAGE) {
-							return null;
-						};
-						
-						return <Item key={i} id={id} {...smile} />;
-					})}
-				</div>
-			</div>
-		);
+		const rowRenderer = (param: any) => {
+			const item = items[param.index];
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<div style={param.style}>
+						{item.isSection ? (
+							<div className="section">
+								{item.name ? <div className="name">{item.name}</div> : ''}
+							</div>
+						) : (
+							<div className="row">
+								{item.children.map((smile: any, i: number) => {
+									return <Item key={i} id={smile.smile} {...smile} />;
+								})}
+							</div>
+						)}
+					</div>
+				</CellMeasurer>
+			);
+		};
 		
 		return (
 			<div>
@@ -91,9 +107,32 @@ class MenuSmile extends React.Component<Props, State> {
 				</form>
 				
 				<div className="items">
-					{sections.map((item: any, i: number) => (
-						<Section key={i} {...item} />
-					))}
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={({ index }) => index < items.length}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={registerChild}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={({ index }) => {
+											const item = items[index];
+											return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+										}}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={20}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
 					{!sections.length ? (
 						<div className="empty">
 							<div className="txt">
@@ -108,7 +147,14 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		this.bind();
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_SECTION,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
+
 		this.skin = Number(Storage.get('skin')) || 1; 
 
 		window.setTimeout(() => {
@@ -123,11 +169,9 @@ class MenuSmile extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		keyboard.setFocus(true);
-		this.bind();
 		
 		if (this.id) {
-			const el = node.find('#item-' + this.id);
-			el.addClass('active');
+			node.find('#item-' + this.id).addClass('active');
 			this.id = '';
 		};
 	};
@@ -137,28 +181,6 @@ class MenuSmile extends React.Component<Props, State> {
 		window.clearTimeout(this.timeoutFilter);
 		keyboard.setFocus(false);
 		commonStore.menuClose('smileSkin');
-		this.unbind();
-	};
-	
-	bind () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.items').unbind('scroll.menu').on('scroll.menu', (e: any) => { this.onScroll(e); });
-	};
-	
-	unbind () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.items').unbind('scroll.menu');
-	};
-	
-	onScroll (e: any) {
-		const { page } = this.state;
-		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.items');
-		const top = items.scrollTop();
-		
-		if (top >= page * ROWS * HEIGHT) {
-			this.setState({ page: page + 1 });
-		};
 	};
 	
 	getSections () {
@@ -169,7 +191,7 @@ class MenuSmile extends React.Component<Props, State> {
 		let sections = Util.objectCopy(EmojiData.categories);
 		
 		sections = sections.map((s: any) => {
-			s.emojis = s.emojis.map((it: string) => { 
+			s.children = s.emojis.map((it: string) => { 
 				return { smile: it, skin: this.skin }; 
 			});
 			return s;
@@ -177,15 +199,16 @@ class MenuSmile extends React.Component<Props, State> {
 		
 		if (filter) {
 			sections = sections.filter((s: any) => {
-				s.emojis = (s.emojis || []).filter((c: any) => { return c.smile.match(reg); });
-				return s.emojis.length > 0;
+				s.children = (s.children || []).filter((c: any) => { return c.smile.match(reg); });
+				return s.children.length > 0;
 			});
 		};
 		
 		if (lastIds && lastIds.length) {
 			sections.unshift({
+				id: 'recent',
 				name: 'Recently used',
-				emojis: lastIds,
+				children: lastIds,
 			});
 		};
 		
@@ -194,12 +217,47 @@ class MenuSmile extends React.Component<Props, State> {
 	
 	getItems () {
 		const sections = this.getSections();
-		
+
 		let items: any[] = [];
+		let ret: any[] = [];
+
 		for (let section of sections) {
+			items.push({
+				id: section.id,
+				name: section.name,
+				isSection: true,
+			});
 			items = items.concat(section.children);
 		};
-		return items;
+
+		let n = 0;
+		let row = { children: [] };
+		for (let i = 0; i < items.length; ++i) {
+			const item = items[i];
+			const next = items[i + 1];
+
+			if (item.isSection) {
+				row = { children: [] };
+				ret.push(item);
+				n = 0;
+				continue;
+			};
+
+			row.children.push(item);
+
+			n++;
+			if ((n == LIMIT_ROW) || (next && next.isSection && (row.children.length > 0) && (row.children.length < LIMIT_ROW))) {
+				ret.push(row);
+				row = { children: [] };
+				n = 0;
+			};
+		};
+
+		if (row.children.length < LIMIT_ROW) {
+			ret.push(row);
+		};
+
+		return ret;
 	};
 	
 	onSubmit (e: any) {
@@ -331,7 +389,7 @@ class MenuSmile extends React.Component<Props, State> {
 		});
 		
 		ids = Util.arrayUniqueObjects(ids, 'key');
-		ids = ids.slice(0, LIMIT);
+		ids = ids.slice(0, LIMIT_RECENT);
 		ids = ids.map((it: any) => {
 			delete(it.key);
 			return it;

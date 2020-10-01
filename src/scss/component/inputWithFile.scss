@@ -1,14 +1,14 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorDarkGrey;
-	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden; @include text-common;
+	padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorDarkGrey; @include text-common; 
+	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden; line-height: 20px;
 }
 .inputWithFile {
 	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }
 	.fileWrap { display: inline-block; vertical-align: top; }
-	.fileWrap .border { border-bottom: 1px solid $colorDarkGrey; display: inline-block; line-height: 1; transition: $transitionFast; }
-	.fileWrap:hover .border { cursor: pointer; color: $colorBlack; }
+	.fileWrap .border { border-bottom: 1px solid $colorDarkGrey; display: inline-block; line-height: 1; transition: $transitionFast; cursor: pointer; }
+	.fileWrap:hover .border { color: $colorBlack; }
 
 	.input::placeholder { color: $colorDarkGrey; }
 	.urlToggle { cursor: text; display: inline-block; }
@@ -22,6 +22,12 @@
 	.icon.video { background-image: url('~img/icon/menu/action/block/video0.svg'); }
 	.icon.file { background-image: url('~img/icon/menu/action/block/file0.svg'); }
 	.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark0.svg'); }
+}
+
+.inputWithFile.isReadOnly {
+	.urlToggle { cursor: default; }
+	.border { border: 0px; cursor: default; }
+	.fileWrap:hover .border { color: $colorDarkGrey; }
 }
 
 .inputWithFile.isSmall {

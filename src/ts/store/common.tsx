@@ -170,7 +170,7 @@ class CommonStore {
 			if (callBack) {
 				callBack();
 			};
-		}, Constant.delay.menu);
+		}, Constant.delay.popup);
 	};
 	
 	@action

@@ -27,10 +27,11 @@ class BlockImage extends React.Component<Props, {}> {
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onError = this.onError.bind(this);
 	};
 
 	render () {
-		const { block } = this.props;
+		const { block, readOnly } = this.props;
 		const { id, fields, content } = block;
 		const { width } = fields;
 		const { state } = content;
@@ -46,7 +47,7 @@ class BlockImage extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="image" textFile="Upload a picture" accept={Constant.extension.image} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="image" textFile="Upload a picture" accept={Constant.extension.image} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />
 				);
 				break;
 				
@@ -59,7 +60,7 @@ class BlockImage extends React.Component<Props, {}> {
 			case I.FileState.Done:
 				element = (
 					<div className="wrap resizable" style={css}>
-						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} />
+						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onError={this.onError} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
 				);
@@ -214,6 +215,13 @@ class BlockImage extends React.Component<Props, {}> {
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },
 		]);
+	};
+
+	onError () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('.wrap');
+
+		wrap.addClass('broken');
 	};
 	
 	onClick (e: any) {
