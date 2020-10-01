@@ -161,31 +161,21 @@ class DataUtil {
 		});
 	};
 	
-	pageOpen (e: any, targetId: string) {
-		if (e && e.persist) {
-			e.persist();
-		};
-
+	pageOpen (targetId: string) {
 		if (!targetId) {
-			console.error('[DataUtil.pageOpen] id is empty');
 			return;
 		};
 
 		const { root } = blockStore;
-		const param = { data: { id: targetId } };
-
-		if (commonStore.popupIsOpen('editorPage')) {
-			commonStore.popupUpdate('editorPage', param);
-		} else 
-		if (e && (e.shiftKey || e.ctrlKey || e.metaKey)) {
-			commonStore.popupOpen('editorPage', param);
-		} else {
-			const route = targetId == root ? '/main/index' : '/main/edit/' + targetId;
-			this.history.push(route);
-		};
+		const route = targetId == root ? '/main/index' : '/main/edit/' + targetId;
+		this.history.push(route);
 	};
 
 	pageOpenPopup (targetId: string) {
+		if (!targetId) {
+			return;
+		};
+
 		const param = { data: { id: targetId } };
 
 		if (commonStore.popupIsOpen('editorPage')) {

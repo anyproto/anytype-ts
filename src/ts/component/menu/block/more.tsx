@@ -230,7 +230,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
 					
 					if (prev) {
-						DataUtil.pageOpen(e, prev.content.targetBlockId);
+						DataUtil.pageOpen(prev.content.targetBlockId);
 					} else {
 						history.push('/main/index');
 					};

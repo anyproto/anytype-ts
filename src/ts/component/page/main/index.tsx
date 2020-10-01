@@ -83,7 +83,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const redirectTo = Storage.get('redirectTo');
 
 		if (redirectTo) {
-			DataUtil.pageOpen(null, redirectTo);
+			DataUtil.pageOpen(redirectTo);
 			Storage.delete('redirectTo');
 		};
 
@@ -115,7 +115,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
-		DataUtil.pageOpen(e, blockStore.profile);
+		DataUtil.pageOpen(blockStore.profile);
 	};
 	
 	onSelect (e: any, block: I.Block) {
@@ -125,7 +125,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			commonStore.popupOpen('archive', {});
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
-				DataUtil.pageOpen(e, block.content.targetBlockId);
+				DataUtil.pageOpen(block.content.targetBlockId);
 			});
 		};
 	};
@@ -138,7 +138,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		DataUtil.pageCreate(e, root, '', details, I.BlockPosition.Bottom, (message: any) => {
-			DataUtil.pageOpen(e, message.targetId);
+			DataUtil.pageOpen(message.targetId);
 			Util.scrollTopEnd();
 		});
 	};
