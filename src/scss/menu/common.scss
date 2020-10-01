@@ -3,6 +3,8 @@
 .menus {
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 102; background: rgba(0,0,0,0); }
 	#menu-polygon { z-index: 1000; position: absolute; }
+
+	.menu * { user-select: none; }
 	
 	.menu { 
 		border-radius: 8px; color: $colorBlack; position: absolute; z-index: 103; text-align: left; 
@@ -66,6 +68,7 @@
 			}
 			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
 			.icon.trash { width: 16px; height: 16px; background-image: url('~img/icon/menu/trash.svg'); }
+			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			
 			.smile { margin-right: 4px; }
 			.smile {

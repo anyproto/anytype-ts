@@ -109,6 +109,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '⌘ + P',			 com: 'Ctrl + P',			 name: 'Print' },
 						{ mac: '⌘ + F',			 com: 'Ctrl + F',			 name: 'Find on page' },
 						{ mac: '⌘ + Q',			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
+						{ mac: '⌘ + Y',			 com: 'Ctrl + H',			 name: 'Show page edit history' },
 					]
 				},
 
@@ -188,7 +189,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '# # + Space',		 name: 'Create an H2 heading' },
 						{ com: '# # # + Space',		 name: 'Create an H3 heading' },
 						{ com: '" + Space',			 name: 'Create a highlighted block' },
-						{ com: '* or - + Space',	 name: 'Create a bulleted list' },
+						{ com: '* or + or - and Space',	 name: 'Create a bulleted list' },
 						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
 						{ com: '1. + Space',		 name: 'Create a numbered list' },
 						{ com: '>  + Space',		 name: 'Create a toggle list' },

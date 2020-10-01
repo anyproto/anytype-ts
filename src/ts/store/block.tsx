@@ -11,9 +11,9 @@ class BlockStore {
 	@observable public profileId: string = '';
 	@observable public breadcrumbsId: string = '';
 
-	public treeObject: Map<string, any[]> = new Map();
-	public blockObject: Map<string, any[]> = new Map();
-	public detailObject: Map<string, Map<string, any>> = new Map();
+	public treeMap: Map<string, any[]> = new Map();
+	public blockMap: Map<string, any[]> = new Map();
+	public detailMap: Map<string, Map<string, any>> = new Map();
 
 	@computed
 	get root (): string {
@@ -71,7 +71,7 @@ class BlockStore {
 			return change;
 		});
 
-		this.detailObject.set(rootId, map);
+		this.detailMap.set(rootId, map);
 	};
 
 	@action
@@ -80,7 +80,7 @@ class BlockStore {
 			return;
 		};
 
-		let map = this.detailObject.get(rootId);
+		let map = this.detailMap.get(rootId);
 		let create = false;
 
 		if (!map) {
@@ -99,27 +99,27 @@ class BlockStore {
 				return change;
 			});
 
-			this.detailObject.set(rootId, map);
+			this.detailMap.set(rootId, map);
 		};
 	};
 
 	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
-		this.blockObject.set(rootId, blocks);
-		this.treeObject.set(rootId, this.getStructure(blocks));
+		this.blockMap.set(rootId, blocks);
+		this.treeMap.set(rootId, this.getStructure(blocks));
 	};
 
 	@action
 	blocksClear (rootId: string) {
-		this.blockObject.delete(rootId);
-		this.treeObject.delete(rootId);
+		this.blockMap.delete(rootId);
+		this.treeMap.delete(rootId);
 	};
 
 	@action
 	blocksClearAll () {
-		this.blockObject = new Map();
-		this.treeObject = new Map();
-		this.detailObject = new Map();
+		this.blockMap = new Map();
+		this.treeMap = new Map();
+		this.detailMap = new Map();
 	};
 
 	@action
@@ -180,7 +180,7 @@ class BlockStore {
 	};
 
 	getMap (rootId: string) {
-		return this.treeObject.get(rootId) || {};
+		return this.treeMap.get(rootId) || {};
 	};
 
 	getLeaf (rootId: string, id: string): any {
@@ -189,7 +189,7 @@ class BlockStore {
 	};
 
 	getBlocks (rootId: string, filter?: (it: any) => boolean) {
-		let blocks = this.blockObject.get(rootId) || [];
+		let blocks = this.blockMap.get(rootId) || [];
 
 		if (!filter) {
 			return blocks;
@@ -364,7 +364,7 @@ class BlockStore {
 	};
 
 	getDetailsMap (rootId: string) {
-		return this.detailObject.get(rootId) || new Map();
+		return this.detailMap.get(rootId) || new Map();
 	};
 
 	getDetails (rootId: string, id: string): any {

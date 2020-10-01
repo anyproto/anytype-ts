@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
 
+@observer
 class CellCheckbox extends React.Component<Props, {}> {
 
 	constructor (props: any) {
@@ -13,7 +15,8 @@ class CellCheckbox extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, data } = this.props;
+		const { relation, index } = this.props;
+		const data = this.props.data[index];
 
 		return (
 			<React.Fragment>
@@ -23,7 +26,8 @@ class CellCheckbox extends React.Component<Props, {}> {
 	};
 
 	onClick () {
-		const { relation, data, onChange } = this.props;
+		const { relation, index, onChange } = this.props;
+		const data = this.props.data[index];
 
 		if (onChange) {
 			onChange(!data[relation.id]);

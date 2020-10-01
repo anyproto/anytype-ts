@@ -132,7 +132,7 @@ html.fullScreen {
 	}
 }
 
-.headerMainEdit:hover, .headerMainEdit.active {
+.header.headerMainEdit:hover, .header.headerMainEdit.active {
 	.side.left { opacity: 1; }
 	.side.center {
 		.icon { opacity: 1; }

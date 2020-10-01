@@ -34,6 +34,7 @@ import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewTagList from './dataview/tag/list';
 import MenuDataviewTagEdit from './dataview/tag/edit';
 import MenuDataviewAccount from './dataview/account';
+import MenuDataviewDate from './dataview/date';
 
 interface Props extends I.Menu {
 	history: any;
@@ -92,6 +93,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewViewEdit:		 MenuDataviewViewEdit,
 			dataviewCalendar:		 MenuDataviewCalendar,
 			dataviewAccount:		 MenuDataviewAccount,
+			dataviewDate:			 MenuDataviewDate,
 		};
 		
 		const menuId = Util.toCamelCase('menu-' + id);

@@ -236,7 +236,6 @@ class Util {
 		} else {
 			return Math.floor(Math.random() * (min + 1));
 		};
-		return 0;
 	};
 
 	time () {
@@ -508,7 +507,7 @@ class Util {
 	};
 	
 	emailCheck (v: string) {
-		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(String(v || ''));
+		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
 	};
 
 	isNumber (s: string) {

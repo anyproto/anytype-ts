@@ -359,7 +359,7 @@ class PageMainHistory extends React.Component<Props, State> {
 			let version = versions[i];
 			let prev = versions[i - 1];
 
-			if (prev && (prev.time - version.time > GROUP_OFFSET)) {
+			if (prev && ((prev.time - version.time > GROUP_OFFSET) || (prev.time - version.time < 0))) {
 				groupId++;
 			};
 
