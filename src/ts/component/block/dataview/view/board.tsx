@@ -1,21 +1,27 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import * as ReactDOM from 'react-dom';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-
-import Cell from '../cell';
+import { dbStore } from 'ts/store';
+import Column from './board/column';
 
 interface Props extends I.ViewComponent {};
 
-interface Column {
-	value: string;
-	list: any[];
-};
-
 const GROUP = 'isArchived';
+const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class ViewBoard extends React.Component<Props, {}> {
+
+	constructor (props: any) {
+		super(props);
+		
+		this.onAdd = this.onAdd.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
+	};
 
 	render () {
 		const { rootId, block, view, readOnly } = this.props;
@@ -26,84 +32,95 @@ class ViewBoard extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const data = dbStore.getData(block.id);
+		const { offset, total } = dbStore.getMeta(block.id);
 		const columns = this.getColumns();
-		
-		const Card = (item: any) => (
-			<div className="card">
-				{relations.map((relation: any, i: number) => (
-					<Cell 
-						key={'board-cell-' + relation.id} 
-						id={item.index} 
-						rootId={rootId}
-						block={block}
-						view={view} 
-						relation={...relation} 
-						data={item.data} 
-						readOnly={readOnly} 
-					/>
-				))}
-			</div>
-		);
-
-		const Column = (item: any) => {
-			const head = {};
-			head[GROUP] = item.value;
-
-			return (
-				<div className="column">
-					<div className="head">
-						<Cell 
-							id="" 
-							rootId={rootId}
-							block={block}
-							view={view} 
-							relation={group} 
-							data={head} 
-							readOnly={true} 
-						/>
-					</div>
-					<div className="list">
-						{item.list.map((child: any, i: number) => (
-							<Card key={'board-card-' + i} data={...child} />
-						))}
-						<div className="card add">
-							<Icon className="plus" />
-						</div>
-					</div>
-				</div>
-			);
-		};
 		
 		return (
 			<div className="wrap">
-				<div className="viewItem viewBoard">
-					<div className="columns">
-						{columns.map((item: any, i: number) => (
-							<Column key={i} index={i} {...item} />
-						))}
+				<div className="scroll">
+					<div className="viewItem viewBoard">
+						<DragDropContext onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+							<Droppable droppableId="columns" direction="horizontal" type="column">
+								{(provided: any) => (
+									<div className="columns" {...provided.droppableProps} ref={provided.innerRef}>
+										{columns.map((item: any, i: number) => (
+											<Column key={i} {...this.props} {...item} data={data} idx={i} groupId={GROUP} onAdd={this.onAdd} />
+										))}
+										{provided.placeholder}
+									</div>
+								)}
+							</Droppable>
+						</DragDropContext>
 					</div>
 				</div>
 			</div>
 		);
 	};
+
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		const win = $(window);
+		win.trigger('resize.editor');
+	};
+
+	onAdd (column: number) {
+	};
+
+	onDragStart () {
+	};
+
+	onDragEnd () {
+	};
+
+	resize () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+		const viewItem = node.find('.viewItem');
+		const columns = this.getColumns();
+		const ww = win.width();
+		const mw = ww - 192;
+		const size = Constant.size.dataview.board;
+		
+		let vw = 0;
+		let margin = 0;
+		let width = columns.length * (size.card + size.margin);
+
+		if (width < mw) {
+			vw = mw;
+		} else {
+			vw = width;
+			margin = (ww - mw) / 2; 
+		};
+
+		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
+		viewItem.css({ width: vw });
+	};
 	
-	getColumns (): Column[] {
-		let data = Util.objectCopy(this.props.data);
-		let r: Column[] = [];
+	getColumns (): any[] {
+		const { block } = this.props;
+		const data = Util.objectCopy(dbStore.getData(block.id));
+
+		let columns: any[] = [];
 		
 		for (let i in data) {
 			let item = data[i];
-			let col = r.find((col) => { return col.value == item[GROUP]; });
+			let col = columns.find((col) => { return col.value == item[GROUP]; });
 			
 			item.index = i;
 			
 			if (!col) {
 				col = { value: item[GROUP], list: [] }
-				r.push(col);
+				columns.push(col);
 			};
 			col.list.push(item);
 		};
-		return r;
+
+		return columns;
 	};
 	
 };

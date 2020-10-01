@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { I, C, Util, DataUtil, keyboard } from 'ts/lib';
+import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Smile, Input, Textarea } from 'ts/component';
 import { commonStore } from 'ts/store';
-import { RelationType } from '../../../../interface';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
 
@@ -12,9 +11,10 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
+@observer
 class CellText extends React.Component<Props, State> {
 
 	state = {
@@ -26,10 +26,9 @@ class CellText extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 
-		this.onClick = this.onClick.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onChange = this.onChange.bind(this);
+		this.onKeyUpDate = this.onKeyUpDate.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
@@ -38,14 +37,22 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { data, relation, view, onOpen, readOnly } = this.props;
+		const { index, relation, view, onOpen, readOnly } = this.props;
+		const data = this.props.data[index];
 
 		let Name = null;
 		let EditorComponent = null;
+		let value = data[relation.id];
+
 		if (editing) {
 			if (relation.type == I.RelationType.Description) {
 				EditorComponent = (item: any) => (
-					<Textarea ref={(ref: any) => { this.ref = ref; }} id="textarea" {...item} />
+					<Textarea ref={(ref: any) => { this.ref = ref; }} id="input" {...item} />
+				);
+			} else 
+			if (relation.type == I.RelationType.Date) {
+				EditorComponent = (item: any) => (
+					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} mask="99.99.9999" maskOptions={{ alias: 'datetime', inputFormat: 'dd.mm.yyyy' }} placeHolder="dd.mm.yyyy" onKeyUp={this.onKeyUpDate} />
 				);
 			} else {
 				EditorComponent = (item: any) => (
@@ -58,18 +65,23 @@ class CellText extends React.Component<Props, State> {
 					className="name" 
 					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
-					onChange={this.onChange}
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
 				/>
 			);
 		} else {
+			if (relation.type == I.RelationType.Description) {
+				value = String(value || '').split('\n')[0];
+			};
+			if (relation.type == I.RelationType.Date) {
+				value = value ? Util.date('M d Y', value) : '';
+			};
 			Name = (item: any) => (
 				<div className="name">{item.name}</div>
 			);
 		};
 
-		let content: any = <Name name={data[relation.id]} />;
+		let content: any = <Name name={value} />;
 
 		if (relation.id == 'name') {
 			let cn = 'c20';
@@ -87,33 +99,40 @@ class CellText extends React.Component<Props, State> {
 					break;
 			};
 
+			if (view.type != I.ViewType.Grid) {
+				value = value || Constant.default.name;
+			};
+
 			content = (
 				<React.Fragment>
 					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />
-					<Name name={data[relation.id]} />
+					<Name name={value} />
 					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
 				</React.Fragment>
 			);
 		};
 
-		return (
-			<div className="cellWrap">
-				{content}
-			</div>
-		);
+		return content;
 	};
 
 	componentDidUpdate () {
 		const { editing } = this.state;
-		const { id, relation, data } = this.props;
+		const { id, relation, index } = this.props;
 		const cellId = DataUtil.cellId('cell', relation.id, id);
 		const cell = $('#' + cellId);
+		const data = this.props.data[index];
 
 		if (editing) {
+			let value = String(data[relation.id] || '');
+			if (relation.type == I.RelationType.Date) {
+				value = value ? Util.date('d.m.Y', Number(value)) : '';
+			};
+			let length = value.length;
+
 			cell.addClass('isEditing');
 			this.ref.focus();
-			this.ref.setValue(data[relation.id]);
-			this.showMenu();
+			this.ref.setValue(value);
+			cell.find('#input').get(0).setSelectionRange(length, length);
 		} else {
 			cell.removeClass('isEditing');
 			window.clearTimeout(this.timeoutMenu);
@@ -123,70 +142,14 @@ class CellText extends React.Component<Props, State> {
 		this.resize();
 	};
 
-	onClick (e: any) {
+	setEditing (v: boolean) {
 		const { view, readOnly } = this.props;
+		const { editing } = this.state;
 		const canEdit = !readOnly && (view.type == I.ViewType.Grid);
 
-		if (canEdit) {
-			this.setState({ editing: true });
+		if (canEdit && (v != editing)) {
+			this.setState({ editing: v });
 		};
-	};
-
-	showMenu () {
-		const { id, relation, data } = this.props;
-		if ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.type) < 0) {
-			return;
-		};
-
-		const cellId = DataUtil.cellId('cell', relation.id, id);
-		const cell = $('#' + cellId);
-		const width = Math.max(cell.width(), Constant.size.dataview.cell.default);
-		const value = this.ref.getValue();
-
-		if (!value) {
-			return;
-		};
-
-		window.clearTimeout(this.timeoutMenu);
-		this.timeoutMenu = window.setTimeout(() => {
-			commonStore.menuClose('select');
-			commonStore.menuOpen('select', { 
-				element: '#' + cellId,
-				type: I.MenuType.Horizontal,
-				offsetX: 0,
-				offsetY: 4,
-				width: width,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				className: 'button',
-				passThrough: true,
-				data: {
-					value: '',
-					noKeys: true,
-					options: [
-						{ id: 'go', name: 'Go to' },
-						{ id: 'copy', name: 'Copy' },
-					],
-					onSelect: (event: any, item: any) => {
-						let scheme = '';
-						if (relation.type == I.RelationType.Email) {
-							scheme = 'mailto:';
-						};
-						if (relation.type == I.RelationType.Phone) {
-							scheme = 'tel:';
-						};
-
-						if (item.id == 'go') {
-							ipcRenderer.send('urlOpen', scheme + value);
-						};
-
-						if (item.id == 'copy') {
-							Util.clipboardCopy({ text: value, html: value });
-						};
-					},
-				}
-			});
-		}, Constant.delay.menu);
 	};
 
 	onKeyDown (e: any, value: string) {
@@ -194,10 +157,41 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: any, value: string) {
+		const { relation, onChange } = this.props;
 		this.resize();
+
+		if (relation.type != I.RelationType.Description) {
+			keyboard.shortcut('enter', e, (pressed: string) => {
+				e.preventDefault();
+
+				commonStore.menuCloseAll();
+				this.setState({ editing: false });
+
+				if (onChange) {
+					onChange(value);
+				};
+			});
+		};
 	};
 
-	onChange (e: any, value: string) {
+	onKeyUpDate (e: any, value: any) {
+		const { onChange } = this.props;
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Popup) => { return item.id == 'dataviewCalendar'; });
+
+		value = this.parseDate(String(value || '').replace(/_/g, ''));
+		menu.param.data.value = value;
+
+		commonStore.menuUpdate('dataviewCalendar', menu.param);
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+			commonStore.menuClose('dataviewCalendar');
+
+			if (onChange) {
+				onChange(value);
+			};
+		});
 	};
 
 	onFocus (e: any) {
@@ -205,34 +199,73 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onBlur (e: any) {
-		let { onChange } = this.props;
+		let { relation, onChange } = this.props;
+		let value = this.ref.getValue();
+
+		if (value && (relation.type == I.RelationType.Date)) {
+			value = this.parseDate(value);
+		};
 
 		keyboard.setFocus(false);
-		this.setState({ editing: false });
+		if (!commonStore.menuIsOpen('dataviewCalendar')) {
+			this.setState({ editing: false });
+		};
 
 		if (onChange) {
-			onChange(this.ref.getValue());
+			onChange(value);
 		};
 	};
 
+	parseDate (value: any) {
+		let [ date, time ] = String(value || '').split(' ');
+		let [ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
+		let [ h, i, s ] = String(time || '').split(':').map((it: any) => { return Number(it) || 0; });
+
+		m = Math.min(12, Math.max(1, m));
+		let maxDays = Constant.monthDays[m];
+		if ((m == 2) && (y % 4 === 0)) {
+			maxDays = 29;
+		};
+		d = Math.min(maxDays, Math.max(1, d));
+		h = Math.min(24, Math.max(0, h));
+		i = Math.min(60, Math.max(0, i));
+		s = Math.min(60, Math.max(0, s));
+
+		return Util.timestamp(y, m, d, h, i, s);
+	};
+
 	onSelect (icon: string) {
-		const { data } = this.props;
+		const { index } = this.props;
+		const data = this.props.data[index];
+
 		DataUtil.pageSetIcon(data.id, icon, '');
 	};
 
 	onUpload (hash: string) {
-		const { data } = this.props;
+		const { index } = this.props;
+		const data = this.props.data[index];
+
 		DataUtil.pageSetIcon(data.id, '', hash);
 	};
 
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const area = node.find('#textarea');
+		const { id, relation } = this.props;
+		const { editing } = this.state;
+		const cellId = DataUtil.cellId('cell', relation.id, id);
+		const cell = $('#' + cellId);
 
-		if (area.length) {
-			area.css({ height: 'auto' });
-			area.css({ height: area.get(0).scrollHeight });
-		};
+		raf(() => {
+			if (editing) {
+				if (relation.type == I.RelationType.Description) {
+					const input = cell.find('#input');
+					input.css({ height: 'auto', overflow: 'visible' });
+
+					const sh = input.get(0).scrollHeight;
+					input.css({ height: Math.min(160, sh), overflow: 'auto' });
+					input.scrollTop(sh);
+				};
+			};
+		});
 	};
 	
 };

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { keyboard } from 'ts/lib';
+import Inputmask from 'inputmask';
 
 interface Props {
 	id?: string;
@@ -15,6 +16,7 @@ interface Props {
 	readOnly?: boolean;
 	accept?: string;
 	mask?: string;
+	maskOptions?: any;
 	onChange?(e: any, value: string): void;
 	onPaste?(e: any, value: string): void;
 	onKeyUp?(e: any, value: string): void;
@@ -30,11 +32,12 @@ interface State {
 };
 
 const $ = require('jquery');
-const Inputmask = require('inputmask');
 
 class Input extends React.Component<Props, State> {
 	
 	_isMounted = false;
+	mask: any = null;
+
 	public static defaultProps = {
         type: 'text',
 		value: ''
@@ -98,28 +101,27 @@ class Input extends React.Component<Props, State> {
 		
 		this.setValue(this.props.value);
 		this.setState({ type: this.props.type });
-		this.checkMask();
+		this.initMask();
 	};
 	
 	componentDidUpdate () {
-		this.checkMask();
+		this.initMask();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
 
-	checkMask () {
-		const { mask, placeHolder } = this.props;
+	initMask () {
+		const { mask, placeHolder, maskOptions } = this.props;
 		if (!mask) {
 			return;
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		
-		new Inputmask(mask, { placeholder: placeHolder }).mask(node.get(0));
+		new Inputmask(mask, { ...maskOptions, placeholder: placeHolder }).mask(node.get(0));
 	};
-	
+
 	onChange (e: any) {
 		this.setValue(e.target.value);
 		

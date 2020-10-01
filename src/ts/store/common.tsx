@@ -207,7 +207,7 @@ class CommonStore {
 		if (!item) {
 			return;
 		};
-		
+
 		set(item, { param: param });
 	};
 	

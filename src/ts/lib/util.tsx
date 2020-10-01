@@ -236,7 +236,6 @@ class Util {
 		} else {
 			return Math.floor(Math.random() * (min + 1));
 		};
-		return 0;
 	};
 
 	time () {
