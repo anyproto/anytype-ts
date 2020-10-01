@@ -301,6 +301,11 @@ class MenuBlockMention extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (!item || item.isSection) {
+			this.props.close();
+			return;
+		};
+
 		const { param } = this.props;
 		const { filter } = commonStore;
 		const { data } = param;
