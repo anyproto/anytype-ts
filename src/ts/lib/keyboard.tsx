@@ -37,6 +37,7 @@ class Keyboard {
 		const { focused } = focus;
 		const rootId = this.isEditor() ? this.match.params.id : root;
 		const platform = Util.getPlatform();
+		const isMainIndex = this.isMainIndex();
 		
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
@@ -128,7 +129,11 @@ class Keyboard {
 			};
 			
 			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
-				DataUtil.pageOpen(message.targetId);
+				if (isMainIndex) {
+					DataUtil.pageOpen(message.targetId);
+				} else {
+					DataUtil.pageOpenPopup(message.targetId);
+				};
 			});
 		});
 		
@@ -146,6 +151,10 @@ class Keyboard {
 	
 	isEditor () {
 		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
+	};
+
+	isMainIndex () {
+		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'index');
 	};
 	
 	setFocus (v: boolean) {
