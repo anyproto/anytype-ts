@@ -80,9 +80,8 @@ export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
 	view: I.View;
-	data: any[];
 	readOnly: boolean;
-	onOpen(e: any, data: any): void;
+	onOpen?(e: any, data: any): void;
 	getData(viewId: string, offset: number): void;
 };
 
@@ -101,6 +100,7 @@ export interface Cell {
 	id: string;
 	relation: Relation;
 	data: any;
+	index: number;
 	view: any;
 	readOnly?: boolean;
 	onOpen?(e: any, data: any): void;

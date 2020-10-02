@@ -4,8 +4,8 @@ import { Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview, Icon } from './component';
-import { commonStore, authStore, blockStore } from './store';
-import { C, Util, DataUtil, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
+import { commonStore, authStore, blockStore, dbStore } from './store';
+import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -42,6 +42,7 @@ import 'scss/component/pin.scss';
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
+import 'scss/page/main/history.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -98,7 +99,6 @@ import 'scss/menu/dataview/tag.scss';
 import 'scss/menu/dataview/account.scss';
 
 import 'scss/media/print.scss';
-import { I } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {
@@ -121,6 +121,7 @@ const rootStore = {
 	commonStore: commonStore,
 	authStore: authStore,
 	blockStore: blockStore,
+	dbStore: dbStore,
 };
 
 const { app } = window.require('electron').remote;
@@ -256,7 +257,7 @@ class App extends React.Component<Props, State> {
 		this.setWindowEvents();
 
 		if (pageId) {
-			Storage.set('redirectTo', pageId);
+			Storage.set('redirectTo', '/main/edit/' + pageId);
 		};
 	};
 
@@ -324,8 +325,8 @@ class App extends React.Component<Props, State> {
 			if (!auto) {
 				commonStore.popupOpen('confirm', {
 					data: {
-						title: 'It\'s time to update',
-						text: 'Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features.',
+						title: 'Update available',
+						text: 'Do you want to update on a new version?',
 						textConfirm: 'Update',
 						textCancel: 'Later',
 						onConfirm: () => {

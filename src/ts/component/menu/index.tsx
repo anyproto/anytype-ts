@@ -8,6 +8,7 @@ import MenuAccount from './account';
 import MenuSelect from './select';
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
+import MenuSearch from './search';
 
 import MenuBlockContext from './block/context';
 import MenuBlockStyle from './block/style';
@@ -32,7 +33,7 @@ import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewTagList from './dataview/tag/list';
 import MenuDataviewTagEdit from './dataview/tag/edit';
 import MenuDataviewAccount from './dataview/account';
-import MenuSearch from './search';
+import MenuDataviewDate from './dataview/date';
 
 interface Props extends I.Menu {
 	history: any;
@@ -90,6 +91,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewViewEdit:		 MenuDataviewViewEdit,
 			dataviewCalendar:		 MenuDataviewCalendar,
 			dataviewAccount:		 MenuDataviewAccount,
+			dataviewDate:			 MenuDataviewDate,
 		};
 		
 		const menuId = Util.toCamelCase('menu-' + id);

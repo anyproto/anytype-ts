@@ -9,6 +9,18 @@ import { commonStore, blockStore } from 'ts/store';
 import * as Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
+interface Props extends I.BlockComponent, RouteComponentProps<any> {
+	onToggle?(e: any): void;
+	onFocus?(e: any): void;
+	onBlur?(e: any): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
+	onPaste? (e: any): void;
+};
+
+const { ipcRenderer } = window.require('electron');
+const Constant = require('json/constant.json');
+const $ = require('jquery');
+
 // Prism languages
 const langs = [
 	'clike', 'c', 'cpp', 'csharp', 'abap', 'arduino', 'bash', 'basic', 'clojure', 'coffeescript', 'dart', 'diff', 'docker', 'elixir',
@@ -20,22 +32,6 @@ const langs = [
 for (let lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
-
-interface Props extends RouteComponentProps<any> {
-	rootId: string;
-	dataset?: any;
-	block: I.Block;
-	onToggle? (e: any): void;
-	onFocus? (e: any): void;
-	onBlur? (e: any): void;
-	onKeyDown? (e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
-	onPaste? (e: any): void;
-};
-
-const { ipcRenderer } = window.require('electron');
-const Constant = require('json/constant.json');
-const $ = require('jquery');
 
 @observer
 class BlockText extends React.Component<Props, {}> {
@@ -71,14 +67,14 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color } = content;
 		
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'readOnly' : '') ];
 		let additional = null;
 
 		for (let mark of marks) {
@@ -126,7 +122,7 @@ class BlockText extends React.Component<Props, {}> {
 			<div
 				id="value"
 				className={cv.join(' ')}
-				contentEditable={true}
+				contentEditable={!readOnly}
 				suppressContentEditableWarning={true}
 				onKeyDown={this.onKeyDown}
 				onKeyUp={this.onKeyUp}
@@ -819,9 +815,13 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onCheck (e: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const { checked } = content;
+
+		if (readOnly) {
+			return;
+		};
 		
 		focus.clear(true);
 		DataUtil.blockSetText(rootId, block, this.getValue(), this.marks, true, () => {
@@ -830,9 +830,13 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onLang (v: string) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const l = String(content.text || '').length;
+
+		if (readOnly) {
+			return;
+		};
 		
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { lang: v } },

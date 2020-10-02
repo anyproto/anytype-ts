@@ -1,18 +1,11 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
 
-interface Props {
-	data: any[];
-	view: I.View;
-	block: I.Block;
-	rootId: string;
-	readOnly: boolean;
-	getData(viewId: string, offset: number): void;
-};
+interface Props extends I.ViewComponent {};
 
 interface State {
 	page: number;
@@ -37,7 +30,8 @@ class Controls extends React.Component<Props, State> {
 	render () {
 		const { getData, block, view, readOnly } = this.props;
 		const { content } = block;
-		const { views, viewId } = content;
+		const { views } = content;
+		const { viewId } = dbStore.getMeta(block.id);
 		const { page } = this.state;
 		const limit = Constant.limit.dataview.views;
 		const filterCnt = view.filters.length;
@@ -56,12 +50,10 @@ class Controls extends React.Component<Props, State> {
 				id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0,
 				active: commonStore.menuIsOpen('dataviewSort') 
 			},
-			/*
 			{ 
 				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList', 
-				active: commonStore.menuIsOpen(List') 
+				active: commonStore.menuIsOpen('dataviewViewList') 
 			},
-			*/
 			{ 
 				id: 'more', menu: 'dataviewViewEdit', active: commonStore.menuIsOpen('dataviewViewEdit') 
 			},
@@ -129,7 +121,8 @@ class Controls extends React.Component<Props, State> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { rootId, block, data, view, readOnly, getData } = this.props;
+		const { rootId, block, view, readOnly, getData } = this.props;
+		const data = dbStore.getData(block.id);
 
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,

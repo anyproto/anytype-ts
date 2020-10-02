@@ -20,9 +20,12 @@ class Pager extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { pageLimit, offset, limit, total } = this.props;
-		const pages = Math.ceil(total / limit);
+		const { pageLimit, limit } = this.props;
 		
+		let offset = Number(this.props.offset) || 0;
+		let total = Number(this.props.total) || 0;
+
+		const pages = Math.ceil(total / limit);
 		let pageCnt = Math.ceil(pageLimit / 2);
 		let page = Math.ceil(offset / limit) + 1;
 
@@ -37,7 +40,7 @@ class Pager extends React.Component<Props, {}> {
 		for (let i = start; i <= end ; ++i) {
 			items.push({ id: i });
 		};
-		
+
 		const Item = (item) => (
 			<div className={'page ' + (item.id == page ? 'active' : '')} onClick={() => { this.onChange(item.id); }}>
 				{item.id}

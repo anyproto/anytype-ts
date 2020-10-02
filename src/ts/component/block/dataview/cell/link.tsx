@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { IconUser } from 'ts/component';
 import { I } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
 
+@observer
 class CellLink extends React.Component<Props, {}> {
 
 	render () {
-		let { relation, data } = this.props;
+		const { relation, index } = this.props;
+		const data = this.props.data[index];
 		
 		if (!data[relation.id]) {
 			return null;
