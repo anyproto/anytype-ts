@@ -110,7 +110,7 @@ class PageMainSet extends React.Component<Props, State> {
 				return;
 			};
 			
-			DataUtil.pageOpen(message.pageId);
+			DataUtil.pageOpen(message.id);
 		});
 	};
 	

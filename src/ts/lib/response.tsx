@@ -89,7 +89,7 @@ const NavigationGetObjectInfoWithLinks = (response: any) => {
 	const object = response.getObject();
 	const links = object.getLinks();
 	return {
-		page: {
+		object: {
 			id: object.getId(),
 			info: Mapper.From.ObjectInfo(object.getInfo()),
 			links: {
@@ -351,7 +351,7 @@ const ObjectTypeCreate = (response: any) => {
 
 const SetCreate = (response: any) => {
 	return {
-		pageId: response.getPageid(),
+		id: response.getId(),
 	};
 };
 

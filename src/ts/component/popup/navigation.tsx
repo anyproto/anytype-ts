@@ -750,7 +750,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		let pages: I.PageInfo[] = [];
 		C.NavigationListObjects((message: any) => {
-			for (let page of message.pages) {
+			for (let page of message.objects) {
 				if ((skipId && (page.id == skipId)) || page.id == root) {
 					continue;
 				};
@@ -797,7 +797,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				pageId: id,
 				loading: false,
 				expanded: true, 
-				info: this.getPage(message.page.info),
+				info: this.getPage(message.object.info),
 				pagesIn: pagesIn,
 				pagesOut: pagesOut,
 			});
