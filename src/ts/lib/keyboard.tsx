@@ -36,6 +36,7 @@ class Keyboard {
 		const { root } = blockStore;
 		const { focused } = focus;
 		const rootId = this.isEditor() ? this.match.params.id : root;
+		const isMainIndex = this.isMainIndex();
 		const platform = Util.getPlatform();
 		
 		// Go back
@@ -128,7 +129,11 @@ class Keyboard {
 			};
 			
 			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
-				DataUtil.pageOpenPopup(message.targetId);
+				if (isMainIndex) {
+					DataUtil.pageOpen(message.targetId);
+				} else {
+					DataUtil.pageOpenPopup(message.targetId);
+				};
 			});
 		});
 		
@@ -146,6 +151,10 @@ class Keyboard {
 	
 	isEditor () {
 		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
+	};
+
+	isMainIndex () {
+		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'index');
 	};
 	
 	setFocus (v: boolean) {
