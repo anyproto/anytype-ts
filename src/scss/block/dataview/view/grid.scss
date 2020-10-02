@@ -26,20 +26,17 @@
 
 			.cellContent { @include text-overflow-nw; width: 100%; }
 				
-			td.cell { 
-				padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; 
-			}
+			td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
 			td.cell:last-child { border-right: 0px; }
 			td.cell.last { width: auto; }
-
-			td.cell.c-number {
-				.name { @include text-overflow-nw; max-width: 100%; }
+			td.cell {
+				.name { @include text-overflow-nw; width: 100%; }
 			}
 
 			td.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }
 			td.cell.add {
 				 .icon { vertical-align: top; margin: 0px 4px 0px 0px; }
-				 .name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; }
+				 .name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px) }
 			}
 			td.cell.add:hover { color: $colorBlack; }
 			td.cell.add:hover {
@@ -57,7 +54,7 @@
             td.cell.isEditing {
                 .input-text { padding: 0px; height: 20px; }
 				.textarea { 
-					padding: 0px; background: none; padding: 14px; box-shadow: 0px 0px 0px 2px $colorOrange inset; 
+					padding: 0px; background: none; padding: 14px; box-shadow: 0px 0px 0px 2px $colorOrange inset; overflow: auto; font-family: 'Inter';
 					position: absolute; left: 0px; top: 0px; height: auto; width: 100%; background: #fff; z-index: 1;
 				}
             }

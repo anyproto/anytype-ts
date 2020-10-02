@@ -6,7 +6,6 @@ import { commonStore, blockStore, authStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-
 import Controls from './controls';
 
 interface Props extends RouteComponentProps<any> {
@@ -451,7 +450,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { selection } = dataset || {};
 		const { focused } = focus;
 
-		if (keyboard.isFocused) {
+		if (keyboard.isFocused || !selection) {
 			return;
 		};
 		
@@ -500,13 +499,11 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
-		/*
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory();
 		});
-		*/
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
 			if (ids.length && !commonStore.menuIsOpen()) {
@@ -699,13 +696,11 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
-		/*
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory();
 		});
-		*/
 
 		// Duplicate
 		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
@@ -1332,14 +1327,10 @@ class EditorPage extends React.Component<Props, State> {
 		let from = 0;
 		let to = 0;
 
-		commonStore.progressSet({ status: 'Processing...', current: 0, total: 1 });
-		
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
-
-			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
 
 			if (message.isSameBlockCaret) {
 				id = focused;

@@ -26,7 +26,7 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const { state, hash, size, name, mime } = content;
 		
@@ -37,7 +37,7 @@ class BlockFile extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />
 				);
 				break;
 				
@@ -66,7 +66,7 @@ class BlockFile extends React.Component<Props, {}> {
 				);
 				break;
 		};
-		
+
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}

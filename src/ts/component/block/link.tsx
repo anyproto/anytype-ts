@@ -23,15 +23,15 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 
 	render() {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const details = blockStore.getDetails(rootId, content.targetBlockId);
 		const { iconEmoji, iconImage, name, isArchived } = details;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
-		
+
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
+				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={!readOnly} onSelect={this.onSelect} onUpload={this.onUpload} />
 				<div className="name" onClick={this.onClick}>
 					<div className="txt">{name}</div>
 				</div>

@@ -596,6 +596,34 @@ const BlockDeleteDataviewRecord = (contextId: string, blockId: string, recordId:
 	dispatcher.request('blockDeleteDataviewRecord', request, callBack);
 };
 
+const HistoryVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Versions.Request();
+	
+	request.setPageid(pageId);
+	request.setLastversionid(lastVersionId);
+	request.setLimit(limit);
+
+	dispatcher.request('historyVersions', request, callBack);
+};
+
+const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Show.Request();
+	
+	request.setPageid(pageId);
+	request.setVersionid(versionId);
+
+	dispatcher.request('historyShow', request, callBack);
+};
+
+const HistorySetVersion= (pageId: string, versionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.Show.Request();
+	
+	request.setPageid(pageId);
+	request.setVersionid(versionId);
+
+	dispatcher.request('historySetVersion', request, callBack);
+};
+
 export {
 	VersionGet,
 
@@ -670,4 +698,8 @@ export {
 	BlockListSetAlign,
 	BlockListSetPageIsArchived,
 	BlockListDeletePage,
+
+	HistoryVersions,	
+	HistoryShow,
+	HistorySetVersion,
 };

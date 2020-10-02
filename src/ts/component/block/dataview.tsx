@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 
 import Controls from './dataview/controls';
 
@@ -36,12 +35,13 @@ class BlockDataview extends React.Component<Props, {}> {
 	render () {
 		const { block } = this.props;
 		const { content } = block;
-		const { schemaURL, views, data, viewId } = content;
+		const { schemaURL, views } = content;
 
 		if (!views.length) {
 			return null;
 		};
 
+		const { viewId } = dbStore.getMeta(block.id);
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
 		const { type } = view;
 		const schema = Schema[DataUtil.schemaField(schemaURL)];
@@ -73,9 +73,9 @@ class BlockDataview extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<Controls {...this.props} view={view} data={data} readOnly={readOnly} getData={this.getData} />
+				<Controls {...this.props} view={view} readOnly={readOnly} getData={this.getData} />
 				<div className="content">
-					<ViewComponent ref={(ref: any) => { this.viewRef = ref; }} {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} data={data} getData={this.getData} />
+					<ViewComponent ref={(ref: any) => { this.viewRef = ref; }} {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} getData={this.getData} />
 				</div>
 			</div>
 		);
@@ -98,12 +98,15 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
+		const win = $(window);
 
-		block.content.viewId = viewId;
-		block.content.offset = offset;
-		blockStore.blockUpdate(rootId, block);
+		dbStore.setMeta(block.id, { viewId: viewId, offset: offset });
+		dbStore.setData(block.id, []);
 
 		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
+
+		commonStore.menuCloseAll();
+		win.trigger('resize.editor');
 	};
 
 	onOpen (e: any, data: any) {

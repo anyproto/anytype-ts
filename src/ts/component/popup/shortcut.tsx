@@ -117,6 +117,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '⌘ + P',			 com: 'Ctrl + P',			 name: 'Print' },
 						{ mac: '⌘ + F',			 com: 'Ctrl + F',			 name: 'Find on page' },
 						{ mac: '⌘ + Q',			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
+						{ mac: '⌘ + Y',			 com: 'Ctrl + H',			 name: 'Show page edit history' },
 					]
 				},
 

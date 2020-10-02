@@ -1,5 +1,5 @@
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu, session, Tray, nativeImage, nativeTheme } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const { download } = require('electron-dl');
@@ -131,6 +131,30 @@ function waitForLibraryAndCreateWindows () {
 	});
 };
 
+function trayIcon () {
+	if (is.windows) {
+		return path.join(__dirname, '/electron/icon64x64.png');
+	} else {
+		const dark = nativeTheme.shouldUseDarkColors;
+		return path.join(__dirname, '/electron/icon-tray-' + (dark ? 'white' : 'black') + '.png');
+	};
+};
+
+nativeTheme.on('updated', () => {
+	tray.setImage(trayIcon());
+});
+
+function initTray () {
+	tray = new Tray (trayIcon());
+	tray.setToolTip('Anytype');
+	tray.setContextMenu(Menu.buildFromTemplate([
+		{
+            label: 'Show window',
+			click: () => { win.show(); }
+		},
+	]));
+};
+
 function createWindow () {
 	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
 	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
@@ -144,14 +168,7 @@ function createWindow () {
 		})
 	});
 
-	tray = new Tray (path.join(__dirname, '/electron/icon-tray.png'));
-	tray.setToolTip('Anytype');
-	tray.setContextMenu(Menu.buildFromTemplate([
-		{
-            label: 'Show window',
-			click: () => { win.show(); }
-		},
-	]));
+	initTray();
 
 	let state = windowStateKeeper({
 		defaultWidth: width,
@@ -205,6 +222,9 @@ function createWindow () {
 		
 		e.preventDefault();
 		if (process.platform == 'darwin') {
+			if (win.isFullScreen()) {
+				win.setFullScreen(false);
+			};
 			win.hide();
 		} else {
 			exit(false);
@@ -453,25 +473,19 @@ function menuInit () {
 						{
 							label: 'Interface', type: 'checkbox', checked: config.debugUI,
 							click: () => {
-								setConfig({ debugUI: !config.debugUI }, () => {
-									send('toggleDebug', 'ui', config.debugUI);
-								});
+								setConfig({ debugUI: !config.debugUI });
 							}
 						},
 						{
 							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
 							click: () => {
-								setConfig({ debugMW: !config.debugMW }, () => {
-									send('toggleDebug', 'mw', config.debugMW);
-								});
+								setConfig({ debugMW: !config.debugMW });
 							}
 						},
 						{
 							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
 							click: () => {
-								setConfig({ debugAN: !config.debugAN }, () => {
-									send('toggleDebug', 'an', config.debugAN);
-								});
+								setConfig({ debugAN: !config.debugAN });
 							}
 						},
 					]
@@ -482,9 +496,7 @@ function menuInit () {
 				},
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
-					click: () => {
-						win.webContents.openDevTools();
-					}
+					click: () => { win.webContents.openDevTools(); }
 				}
 			]
 		});
@@ -507,6 +519,7 @@ function setChannel (channel) {
 function setConfig (obj, callBack) {
 	config = Object.assign(config, obj);
 	storage.set('config', config, (error) => {
+		send('config', config);
 		if (callBack) {
 			callBack(error);
 		};
