@@ -444,8 +444,8 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (!commonStore.menuIsOpen()) {
-				if (range.to && (range.from == range.to)) {
+			if (!commonStore.menuIsOpen('blockAdd') && !commonStore.menuIsOpen('blockMention')) {
+				if (range.to) {
 					return;
 				};
 				
