@@ -464,13 +464,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('delete', e, (pressed: string) => {
-			if (!commonStore.menuIsOpen()) {
-				if (range.to && (range.to != value.length)) {
-					return;
-				};
-				this.setText(this.marks, true, (message: any) => {
-					onKeyDown(e, value, this.marks, range);
-				});
+			if (range.to && ((range.from != range.to) || (range.to != value.length))) {
 				ret = true;
 			};
 		});
