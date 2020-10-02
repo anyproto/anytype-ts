@@ -78,12 +78,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { history } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const hello = node.find('#hello');
 		const redirectTo = Storage.get('redirectTo');
 
 		if (redirectTo) {
-			DataUtil.pageOpen(redirectTo);
+			history.push(redirectTo);
 			Storage.delete('redirectTo');
 		};
 

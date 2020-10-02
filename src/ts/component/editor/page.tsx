@@ -62,7 +62,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		
+
 		if (!root) {
 			return null;
 		};

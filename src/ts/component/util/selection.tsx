@@ -51,7 +51,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
-		
+
 		return (
 			<div className={cn.join(' ')} onMouseDown={this.onMouseDown}>
 				{children}
