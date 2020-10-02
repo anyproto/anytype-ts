@@ -202,12 +202,12 @@ class MenuBlockMention extends React.Component<Props, State> {
     		resolution: 3,
 		});
 
-		C.NavigationListPages((message: any) => {
+		C.NavigationListObjects((message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			for (let page of message.pages) {
+			for (let page of message.objects) {
 				page = this.getPage(page);
 				if (page.details.isArchived) {
 					continue;

@@ -749,7 +749,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		});
 
 		let pages: I.PageInfo[] = [];
-		C.NavigationListPages((message: any) => {
+		C.NavigationListObjects((message: any) => {
 			for (let page of message.pages) {
 				if ((skipId && (page.id == skipId)) || page.id == root) {
 					continue;
@@ -778,14 +778,14 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.setState({ loading: true });
 		this.setCrumbs(id);
 
-		C.NavigationGetPageInfoWithLinks(id, (message: any) => {
+		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
 			};
 
-			let pagesIn = message.page.links.inbound.map((it: any) => { return this.getPage(it); });
-			let pagesOut = message.page.links.outbound.map((it: any) => { return this.getPage(it); });
+			let pagesIn = message.object.links.inbound.map((it: any) => { return this.getPage(it); });
+			let pagesOut = message.object.links.outbound.map((it: any) => { return this.getPage(it); });
 
 			pagesIn = pagesIn.filter(filter);
 			pagesOut = pagesOut.filter(filter);

@@ -79,22 +79,22 @@ const PageCreate = (response: any) => {
 	};
 };
 
-const NavigationListPages = (response: any) => {
+const NavigationListObjects = (response: any) => {
 	return {
-		pages: (response.getPagesList() || []).map(Mapper.From.PageInfo),
+		objects: (response.getObjectsList() || []).map(Mapper.From.ObjectInfo),
 	};
 };
 
-const NavigationGetPageInfoWithLinks = (response: any) => {
-	const page = response.getPage();
-	const links = page.getLinks();
+const NavigationGetObjectInfoWithLinks = (response: any) => {
+	const object = response.getObject();
+	const links = object.getLinks();
 	return {
 		page: {
-			id: page.getId(),
-			info: Mapper.From.PageInfo(page.getInfo()),
+			id: object.getId(),
+			info: Mapper.From.ObjectInfo(object.getInfo()),
 			links: {
-				inbound: (links.getInboundList() || []).map(Mapper.From.PageInfo),
-				outbound: (links.getOutboundList() || []).map(Mapper.From.PageInfo),
+				inbound: (links.getInboundList() || []).map(Mapper.From.ObjectInfo),
+				outbound: (links.getOutboundList() || []).map(Mapper.From.ObjectInfo),
 			},
 		},
 	};
@@ -377,8 +377,8 @@ export {
 
 	PageCreate,
 
-	NavigationListPages,
-	NavigationGetPageInfoWithLinks,
+	NavigationListObjects,
+	NavigationGetObjectInfoWithLinks,
 
 	BlockGetPublicWebURL,
 

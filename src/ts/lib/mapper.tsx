@@ -22,13 +22,13 @@ const Mapper = {
 			};
 		},
 		
-		PageInfo: (obj: any): I.PageInfo => {
+		ObjectInfo: (obj: any): I.PageInfo => {
 			return {
 				id: obj.getId(),
 				details: Decode.decodeStruct(obj.getDetails()),
 				snippet: obj.getSnippet(),
 				hasInboundLinks: obj.getHasinboundlinks(),
-				pageType: obj.getPagetype(),
+				pageType: obj.getObjecttype(),
 			};
 		},
 

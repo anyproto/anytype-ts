@@ -127,17 +127,17 @@ const PageCreate = (details: any, callBack?: (message: any) => void) => {
 	dispatcher.request('pageCreate', request, callBack);
 };
 
-const NavigationListPages = (callBack?: (message: any) => void) => {
-	const request = new Rpc.Navigation.ListPages.Request();
-	dispatcher.request('navigationListPages', request, callBack);
+const NavigationListObjects = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Navigation.ListObjects.Request();
+	dispatcher.request('navigationListObjects', request, callBack);
 };
 
-const NavigationGetPageInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Navigation.GetPageInfoWithLinks.Request();
+const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Navigation.GetObjectInfoWithLinks.Request();
 	
-	request.setPageid(pageId);
+	request.setObjectid(pageId);
 
-	dispatcher.request('navigationGetPageInfoWithLinks', request, callBack);
+	dispatcher.request('navigationGetObjectInfoWithLinks', request, callBack);
 };
 
 const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => void) => {
@@ -686,8 +686,8 @@ export {
 
 	ExternalDropFiles,
 
-	NavigationListPages,
-	NavigationGetPageInfoWithLinks,
+	NavigationListObjects,
+	NavigationGetObjectInfoWithLinks,
 
 	BlockGetPublicWebURL,
 	BlockOpen,
