@@ -44,14 +44,14 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 
 	onBack(e: any) {
 		const { rootId } = this.props;
-		DataUtil.pageOpen(e, rootId);
+		DataUtil.pageOpen(rootId);
 	};
 
 	onRestore (e: any) {
 		const { rootId, version } = this.props;
 
 		C.HistorySetVersion(rootId, version.id, (message: any) => {
-			DataUtil.pageOpen(e, rootId);
+			DataUtil.pageOpen(rootId);
 		});
 	};
 

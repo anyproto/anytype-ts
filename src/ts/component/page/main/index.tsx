@@ -78,13 +78,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { history } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const hello = node.find('#hello');
 		const redirectTo = Storage.get('redirectTo');
 
 		if (redirectTo) {
-			history.push(redirectTo);
+			DataUtil.pageOpen(redirectTo);
 			Storage.delete('redirectTo');
 		};
 
@@ -116,15 +115,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
-		DataUtil.pageOpen(e, blockStore.profile);
+		DataUtil.pageOpen(blockStore.profile);
 	};
 	
 	onSelect (e: any, block: I.Block) {
+		e.persist();
+
 		if (block.content.style == I.LinkStyle.Archive) {
 			commonStore.popupOpen('archive', {});
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
-				DataUtil.pageOpen(e, block.content.targetBlockId);
+				DataUtil.pageOpen(block.content.targetBlockId);
 			});
 		};
 	};

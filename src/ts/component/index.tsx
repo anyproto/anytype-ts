@@ -15,6 +15,7 @@ import ListChildren from './list/children';
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
 import HeaderMainEdit from './header/main/edit';
+import HeaderMainEditPopup from './header/main/editPopup';
 import HeaderMainHistory from './header/main/history';
 import HeaderMainSet from './header/main/set';
 import HeaderHelpIndex from './header/help/index';
@@ -70,6 +71,7 @@ export {
 	HeaderAuth,
 	HeaderMainIndex,
 	HeaderMainEdit,
+	HeaderMainEditPopup,
 	HeaderMainHistory,
 	HeaderMainSet,
 	HeaderHelpIndex,

@@ -1113,7 +1113,9 @@ class EditorPage extends React.Component<Props, State> {
 										}, 
 									});
 								} else {
-									DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position);
+									DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+										DataUtil.pageOpenPopup(message.targetId);
+									});
 								};
 							} else {
 								this.blockCreate(block, position, param);
@@ -1374,7 +1376,7 @@ class EditorPage extends React.Component<Props, State> {
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				offsetX: 0,
-				offsetY: 0,
+				offsetY: 8,
 				data: {
 					container: node,
 				},

@@ -847,7 +847,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					if (item.id == root) {
 						history.push('/main/index');
 					} else {
-						DataUtil.pageOpen(e, item.id);
+						DataUtil.pageOpen(item.id);
 					};
 				});
 				break;
