@@ -448,7 +448,8 @@ class BlockText extends React.Component<Props, {}> {
 				if (range.to && (range.from == range.to)) {
 					return;
 				};
-				this.setText(this.marks, true, (message: any) => {
+				
+				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
 				});
 				ret = true;
