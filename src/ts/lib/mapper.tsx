@@ -6,6 +6,7 @@ const Constant = require('json/constant.json');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
+const OptionsCase = Model.Block.Content.Dataview.Relation.OptionsCase;
 const Schema = {
 	page: require('json/schema/page.json'),
 	relation: require('json/schema/relation.json'),
@@ -164,11 +165,21 @@ const Mapper = {
         },
 
         ViewRelation: (obj: any) => {
-            return {
+            const type = obj.getOptionsCase();
+            const ret: any = {
                 id: obj.getId(),
                 isVisible: obj.getIsvisible(),
                 width: obj.getWidth(),
+                options: {},
             };
+
+            switch (type) {
+                case OptionsCase.DATEOPTIONS:
+                    ret.options = obj.getDateoptions() || {};
+                    break;
+            };
+
+            return ret;
         },
 
         Filter: (obj: any) => {
@@ -369,6 +380,16 @@ const Mapper = {
             item.setId(obj.id);
             item.setIsvisible(obj.isVisible);
             item.setWidth(obj.width);
+
+            if (obj.type == I.RelationType.Date) {
+                const options = new Model.Block.Content.Dataview.Relation.DateOptions();
+
+                options.setIncludetime(obj.options.includeTime);
+                options.setTimeformat(obj.options.timeFormat);
+                options.setDateformat(obj.options.dateFormat);
+
+                item.setDateoptions(options);
+            };
 
             return item;
         },

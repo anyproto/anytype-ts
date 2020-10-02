@@ -36,18 +36,21 @@
     {
       "id": "isArchived",
       "name": "Archived",
+      "isHidden": true,
       "type": "https://anytype.io/schemas/types/checkbox"
     },
     {
       "id": "lastOpened",
       "name": "Last opened",
       "isHidden": false,
+      "isReadonly": true,
       "type": "https://anytype.io/schemas/types/date"
     },
     {
       "id": "lastModified",
       "name": "Last modified",
       "isHidden": false,
+      "isReadonly": true,
       "type": "https://anytype.io/schemas/types/date"
     },
     {
@@ -79,26 +82,6 @@
       "name": "Cover scale",
       "isHidden": true,
       "type": "https://anytype.io/schemas/types/number"
-    },
-	{
-      "id": "url",
-      "name": "Url",
-      "type": "https://anytype.io/schemas/types/url"
-    },
-	{
-      "id": "email",
-      "name": "Email",
-      "type": "https://anytype.io/schemas/types/email"
-    },
-	{
-      "id": "phone",
-      "name": "Phone",
-      "type": "https://anytype.io/schemas/types/phone"
-    },
-	{
-      "id": "description",
-      "name": "Description",
-      "type": "https://anytype.io/schemas/types/description"
     }
   ]
 }

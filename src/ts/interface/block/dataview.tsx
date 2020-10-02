@@ -1,5 +1,18 @@
 import { I } from 'ts/lib';
 
+export enum DateFormat {
+	MonthAbbrBeforeDay	 = 0, // Jul 30, 2020
+	MonthAbbrAfterDay	 = 1, // 30 Jul 2020
+	Short				 = 2, // 30/07/2020
+	ShortUS				 = 3, // 07/30/2020
+	ISO					 = 4, // 2020-07-30
+};
+
+export enum TimeFormat {
+	H12 = 0,
+	H24 = 1,
+};
+
 export enum ViewType {
 	Grid	 = 0,
 	List	 = 1,
@@ -74,6 +87,7 @@ export interface ViewRelation extends Relation {
 	isVisible: boolean;
 	order: number;
 	width: number;
+	options?: any;
 };
 
 export interface ViewComponent {

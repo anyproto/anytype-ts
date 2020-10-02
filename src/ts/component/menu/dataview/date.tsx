@@ -164,6 +164,12 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 	};
 
 	onOver (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, relationId, view } = data;
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == relationId; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.id == relationId; });
+
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
 		};
@@ -172,17 +178,18 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		switch (item.key) {
 			case 'formatDate':
 				options = [
-					{ id: 1, name: Util.date('d M Y', Util.time()) },
-					{ id: 2, name: Util.date('j/n/Y', Util.time()) },
-					{ id: 3, name: Util.date('n/j/Y', Util.time()) },
-					{ id: 4, name: Util.date('Y-m-d', Util.time()) }
+					{ id: I.DateFormat.MonthAbbrBeforeDay, name: Util.date('M d Y', Util.time()) },
+					{ id: I.DateFormat.MonthAbbrAfterDay, name: Util.date('d M Y', Util.time()) },
+					{ id: I.DateFormat.Short, name: Util.date('n/j/Y', Util.time()) },
+					{ id: I.DateFormat.ShortUS, name: Util.date('j/n/Y', Util.time()) },
+					{ id: I.DateFormat.ISO, name: Util.date('Y-m-d', Util.time()) },
 				];
 				break;
 
 			case 'formatTime':
 				options = [
-					{ id: 1, name: '12 hour' },
-					{ id: 2, name: '24 hour' },
+					{ id: I.TimeFormat.H12, name: '12 hour' },
+					{ id: I.TimeFormat.H24, name: '24 hour' },
 				];
 				break;
 		};
@@ -195,12 +202,18 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
-				value: '',
+				value: relation.dateOptions[item.key],
 				options: options,
+				onSelect: (e: any, el: any) => {
+					relation.options[item.key] = el.id;
+					view.relations[idx] = relation;
+
+					C.BlockSetDataviewView(rootId, blockId, view.id, { ...view });
+				}
 			}
 		});
 	};
-	
+
 };
 
 export default MenuDataviewDate;
