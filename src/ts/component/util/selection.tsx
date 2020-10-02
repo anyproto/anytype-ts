@@ -8,7 +8,6 @@ import { throttle } from 'lodash';
 
 interface Props {
 	className?: string;
-	container: string;
 	rootId: string;
 };
 

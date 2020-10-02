@@ -312,7 +312,7 @@ class App extends React.Component<Props, State> {
 				commonStore.popupOpen(id, { data: data });
 			}, Constant.delay.popup);
 		});
-		
+
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
 				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });

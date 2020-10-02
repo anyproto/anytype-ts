@@ -128,7 +128,7 @@ class Keyboard {
 			};
 			
 			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
-				DataUtil.pageOpenPopup(message.targetId);
+				DataUtil.pageOpen(message.targetId);
 			});
 		});
 		

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainEditPopup as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -26,11 +25,11 @@ class PopupEditorPage extends React.Component<Props, {}> {
 		const { id } = data;
 		
 		return (
-			<SelectionProvider rootId={id} container=".popupEditorPage .content">
+			<SelectionProvider rootId={id}>
 				<DragProvider {...this.props} rootId={id}>
 					<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={id} />
 							
-					<EditorPage history={history} location={location} match={match} rootId={id} onOpen={this.onOpen} />
+					<EditorPage isPopup={true} history={history} location={location} match={match} rootId={id} onOpen={this.onOpen} />
 				</DragProvider>
 			</SelectionProvider>
 		);
@@ -60,11 +59,11 @@ class PopupEditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
-		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
+		win.unbind('resize.popup.editorPage').on('resize.popup.editorPage', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('keydown.navigation resize.navigation');
+		$(window).unbind('resize.popup.editorPage');
 	};
 
 	resize () {

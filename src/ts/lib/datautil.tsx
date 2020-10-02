@@ -160,6 +160,14 @@ class DataUtil {
 			this.history.push('/main/index');
 		});
 	};
+
+	pageOpenEvent (e: any, targetId: string) {
+		if (e && e.shiftKey) {
+			this.pageOpenPopup(targetId);
+		} else {
+			this.pageOpen(targetId);
+		};
+	};
 	
 	pageOpen (targetId: string) {
 		if (!targetId) {

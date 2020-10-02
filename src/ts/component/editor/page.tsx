@@ -11,6 +11,7 @@ import Controls from './controls';
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
+	isPopup: boolean;
 	onOpen?(): void;
 };
 
@@ -141,25 +142,28 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		const { isPopup } = this.props;
+
 		this._isMounted = true;
 		const win = $(window);
+		const namespace = isPopup ? '.popup' : '';
 		
 		keyboard.disableBack(true);
 		this.unbind();
 		this.open();
 		
-		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('scroll.editor', (e: any) => { this.onScroll(e); });
-		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
-		win.on('paste.editor', (e: any) => {
+		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		win.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
+		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
+		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e); 
 			};
 		});
-		win.on('focus.editor', (e: any) => { focus.apply(); });
+		win.on('focus.editor' + namespace, (e: any) => { focus.apply(); });
 		
 		this.resize();
-		win.on('resize.editor', (e: any) => { this.resize(); });
+		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 
 		Storage.set('askSurvey', 1);
 
@@ -317,7 +321,12 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor');
+		const { isPopup } = this.props;
+		const namespace = isPopup ? '.popup' : '';
+		const events = 'keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor';
+		const a = events.split(' ').map((it: string) => { return it + namespace; });
+
+		$(window).unbind(a.join(' '));
 	};
 	
 	uiHide () {
@@ -1631,11 +1640,14 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
+		const { isPopup } = this.props;
+		const container = isPopup ? $('#popupEditorPage #innerWrap .content') : $(window);
+
 		focus.set(id, { from: from, to: to });
 		focus.apply();
 
 		if (scroll) {
-			focus.scroll();
+			focus.scroll(container);
 		};
 
 		this.resize();

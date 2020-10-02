@@ -102,7 +102,10 @@
 			.icon { width: 20px; height: 20px; margin-right: 4px; border-radius: 0px; vertical-align: middle; }
 		}
 		.side.center { opacity: 1; }
-		.path { border-color: $colorLightGrey; }
+		.path { border: 0px; cursor: default !important; }
+		.path {
+			.item { cursor: default; }
+		}
 
 		.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
 	}
