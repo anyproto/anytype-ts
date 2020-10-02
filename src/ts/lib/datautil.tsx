@@ -162,7 +162,7 @@ class DataUtil {
 	};
 
 	pageOpenEvent (e: any, targetId: string) {
-		if (e && e.shiftKey) {
+		if (e && (e.shiftKey || e.ctrlKey || e.metaKey)) {
 			this.pageOpenPopup(targetId);
 		} else {
 			this.pageOpen(targetId);
