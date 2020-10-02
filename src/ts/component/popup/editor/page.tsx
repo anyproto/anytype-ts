@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainEdit as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
+import { HeaderMainEditPopup as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
+import { commonStore, blockStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -79,7 +80,7 @@ class PopupEditorPage extends React.Component<Props, {}> {
 			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });
 		});
 	};
-	
+
 };
 
 export default PopupEditorPage;

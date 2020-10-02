@@ -1377,7 +1377,7 @@ class EditorPage extends React.Component<Props, State> {
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				offsetX: 0,
-				offsetY: 0,
+				offsetY: 8,
 				data: {
 					container: node,
 				},

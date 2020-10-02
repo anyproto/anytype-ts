@@ -1,10 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSearch { 
-		width: 400px; height: 44px; padding: 11px 16px; transform-origin: 50% 50% !important; position: fixed; 
-		top: 38px !important; right: 6px !important;
-	}
+	.menu.menuSearch { width: 400px; height: 44px; padding: 11px 16px; }
 	.menu.menuSearch {
 		.flex { width: 100%; }
 		.input { width: 100%; height: 22px; padding: 0px; flex: auto; width: calc(100% - 100px); }
