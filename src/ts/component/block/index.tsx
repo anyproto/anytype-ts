@@ -482,11 +482,15 @@ class Block extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		
 		const prevBlockId = childrenIds[index - 1];
-		const prevBlock = blockStore.getLeaf(rootId, prevBlockId);
+		const prevBlock = blockStore.getLeaf(rootId, prevBlockId) ||;
 		
 		const currentBlockId = childrenIds[index];
 		const currentBlock = blockStore.getLeaf(rootId, currentBlockId);
-		
+
+		if (!prevBlock || !currentBlock) {
+			return;
+		};
+
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		const offset = Constant.size.blockMenu * 2;
