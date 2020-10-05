@@ -13,12 +13,14 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 
 class PopupShortcut extends React.Component<Props, State> {
 
 	state = {
 		page: 'main',
 	};
+	_isMounted: boolean = false;
 
 	render () {
 		const { page } = this.state;
@@ -84,8 +86,14 @@ class PopupShortcut extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.resize();
 		this.props.position();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	onPage (id: string) {
@@ -254,11 +262,17 @@ class PopupShortcut extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
+		if (!this._isMounted) {
+			return;
+		};
 
-		body.css({ height: win.height() - 100 });
+		raf(() => {
+			const win = $(window);
+			const obj = $('#popupShortcut #innerWrap');
+			const width = Math.max(732, Math.min(960, win.width() - 128));
+
+			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });
+		});
 	};
 
 };

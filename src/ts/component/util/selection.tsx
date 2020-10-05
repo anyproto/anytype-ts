@@ -8,7 +8,6 @@ import { throttle } from 'lodash';
 
 interface Props {
 	className?: string;
-	container: string;
 	rootId: string;
 };
 
@@ -52,7 +51,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
-		
+
 		return (
 			<div className={cn.join(' ')} onMouseDown={this.onMouseDown}>
 				{children}

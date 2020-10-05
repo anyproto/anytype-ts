@@ -290,7 +290,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			DataUtil.pageOpen(e, $(this).data('param'));
+			DataUtil.pageOpenEvent(e, $(this).data('param'));
 		});
 	};
 

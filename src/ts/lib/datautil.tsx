@@ -160,34 +160,37 @@ class DataUtil {
 			this.history.push('/main/index');
 		});
 	};
+
+	pageOpenEvent (e: any, targetId: string) {
+		if (e && (e.shiftKey || e.ctrlKey || e.metaKey)) {
+			this.pageOpenPopup(targetId);
+		} else {
+			this.pageOpen(targetId);
+		};
+	};
 	
-	pageOpen (e: any, targetId: string) {
+	pageOpen (targetId: string) {
 		if (!targetId) {
-			console.error('[DataUtil.pageOpen] id is empty');
 			return;
 		};
 
 		const { root } = blockStore;
+		const route = targetId == root ? '/main/index' : '/main/edit/' + targetId;
+		this.history.push(route);
+	};
 
-		/*
-		const param = {
-			data: { 
-				id: targetId,
-			}
+	pageOpenPopup (targetId: string) {
+		if (!targetId) {
+			return;
 		};
+
+		const param = { data: { id: targetId } };
 
 		if (commonStore.popupIsOpen('editorPage')) {
 			commonStore.popupUpdate('editorPage', param);
-		} else 
-		if (e && (e.shiftKey || (e.ctrlKey || e.metaKey))) { 
-			commonStore.popupOpen('editorPage', param);
 		} else {
-			history.push('/main/edit/' + targetId);
+			commonStore.popupOpen('editorPage', param);
 		};
-		*/
-
-		const route = targetId == root ? '/main/index' : '/main/edit/' + targetId;
-		this.history.push(route);
 	};
 	
 	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
@@ -206,8 +209,6 @@ class DataUtil {
 				return;
 			};
 			
-			this.pageOpen(e, message.targetId);
-				
 			if (callBack) {
 				callBack(message);
 			};

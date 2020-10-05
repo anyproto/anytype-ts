@@ -2,8 +2,9 @@
 
 .popups {
 	.popup.popupShortcut {
-		.innerWrap { width: 672px; padding: 52px 0px 0px 0px; }
-		.content { position: relative; padding-top: 25px; }
+		.innerWrap { width: 672px; height: calc(100% - 128px); padding: 52px 0px 0px 0px; }
+		.content { position: relative; padding-top: 25px; height: 100%; }
+		.wrapper { height: 100%; }
 
 		.head { position: absolute; top: 0px; left: 0px; width: 100%; padding: 0px 48px; }
 		.head {
@@ -15,7 +16,7 @@
 			}
 		}
 
-		.body { overflow-y: auto; padding: 32px 48px 48px 48px; }
+		.body { overflow-y: auto; height: 100%; padding: 32px 48px 48px 48px; }
 		.body {
 			.section { margin-bottom: 25px; }
 			.section:last-child { margin-bottom: 0px; }
