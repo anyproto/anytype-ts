@@ -110,7 +110,7 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	onOpen (e: any, data: any) {
-		DataUtil.pageOpenEvent(e, data.id);
+		DataUtil.pageOpenPopup(e, data.id);
 	};
 
 	resize () {
