@@ -6,7 +6,28 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ type: I.BlockType.Title, text: `Updates for 23 September, 2020` },
+	{ type: I.BlockType.Title, text: `Updates for 05 October, 2020` },
+	{ text: `This is one for the history books. With Anytype 0.16, users can now travel through time to recover previous versions of their pages. Use <span class="${sc}">History</span> on the page's menu in the top-right corner.` },
+
+	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
+	{ style: I.TextStyle.Bulleted, text: `New page inside another one will open in modal view. All other pages can be opened this way with <span class="${sc}">Shift + Click</span>.` },
+	{ style: I.TextStyle.Bulleted, text: `Menu bar icons now alternate between light and dark.` },
+	{ style: I.TextStyle.Bulleted, text: `You can @mention new page just by pressing enter after writing a name.` },
+	{ style: I.TextStyle.Bulleted, text: `We've made the main logo clickable and display search as it works on other pages.` },
+	{ style: I.TextStyle.Bulleted, text: `We've changed header icons set a bit.` },
+	{ style: I.TextStyle.Bulleted, text: `The document building algorithm was improved.` },
+	{ style: I.TextStyle.Bulleted, text: `Pressing <span class="${sc}">CMD/CTRL + S</span> will now focus on the search bar, making it even easier for you to find what you’re looking for.` },
+
+	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
+	{ style: I.TextStyle.Bulleted, text: `Sometimes speedy typists would type so quickly, Anytype wouldn’t delete their text. That bug has been fixed with this build, so you can take it back to 88.` },
+	{ style: I.TextStyle.Bulleted, text: `Changing the text colour in-block will no longer return the carriage to the beginning of the text string.` },
+	{ style: I.TextStyle.Bulleted, text: `When selecting a block with nested blocks, those nested blocks will now also be selected.` },
+	{ style: I.TextStyle.Bulleted, text: `Users with email addresses on newer TLDs reported issues when trying to submit feedback. We’ve updated our email address validation.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 23 September, 2020` },
+
 	{ text: `Thank you to our incredible alpha testers for helping us build Anytype. In this latest build, we’ve introduced a short — 1 minute — survey. Your feedback is appreciated, and helps make our product better! ` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
