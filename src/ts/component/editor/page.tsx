@@ -311,12 +311,15 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	close (id: string) {
+		const { isPopup } = this.props;
 		if (!id) {
 			return;
 		};
 		
 		C.BlockClose(id, (message: any) => {
-			blockStore.blocksClear(id);
+			if (!isPopup) {
+				blockStore.blocksClear(id);
+			};
 		});
 	};
 	

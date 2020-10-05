@@ -91,7 +91,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	
 	onMore (e: any) {
 		const { rootId, match } = this.props;
-		
+
 		commonStore.menuOpen('blockMore', { 
 			element: '#button-header-more',
 			type: I.MenuType.Vertical,
