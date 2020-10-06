@@ -1256,7 +1256,7 @@ class EditorPage extends React.Component<Props, State> {
 
 					const file = item.getAsFile();
 					if (file) {
-						files.push();
+						files.push(file);
 					};
 				};
 
