@@ -332,6 +332,11 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 
+		let ids = DataUtil.selectionGet(id, this.props);
+		if (block.isTextTitle()) {
+			ids = DataUtil.selectionGet('', this.props);
+		};
+		
 		commonStore.menuOpen('blockAction', { 
 			element: node.find('#button-block-menu-' + id),
 			type: I.MenuType.Vertical,
