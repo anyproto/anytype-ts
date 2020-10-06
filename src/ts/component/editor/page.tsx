@@ -11,6 +11,7 @@ import Controls from './controls';
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
+	isPopup: boolean;
 	onOpen?(): void;
 };
 
@@ -61,7 +62,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		
+
 		if (!root) {
 			return null;
 		};
@@ -141,25 +142,28 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
+		const { isPopup } = this.props;
+
 		this._isMounted = true;
 		const win = $(window);
+		const namespace = isPopup ? '.popup' : '';
 		
 		keyboard.disableBack(true);
 		this.unbind();
 		this.open();
 		
-		win.on('mousemove.editor', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('scroll.editor', (e: any) => { this.onScroll(e); });
-		win.on('keydown.editor', (e: any) => { this.onKeyDownEditor(e); });
-		win.on('paste.editor', (e: any) => {
+		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		win.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
+		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
+		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e); 
 			};
 		});
-		win.on('focus.editor', (e: any) => { focus.apply(); });
+		win.on('focus.editor' + namespace, (e: any) => { focus.apply(); });
 		
 		this.resize();
-		win.on('resize.editor', (e: any) => { this.resize(); });
+		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 
 		Storage.set('askSurvey', 1);
 
@@ -307,17 +311,25 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	close (id: string) {
+		const { isPopup } = this.props;
 		if (!id) {
 			return;
 		};
 		
 		C.BlockClose(id, (message: any) => {
-			blockStore.blocksClear(id);
+			if (!isPopup) {
+				blockStore.blocksClear(id);
+			};
 		});
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor');
+		const { isPopup } = this.props;
+		const namespace = isPopup ? '.popup' : '';
+		const events = 'keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor';
+		const a = events.split(' ').map((it: string) => { return it + namespace; });
+
+		$(window).unbind(a.join(' '));
 	};
 	
 	uiHide () {
@@ -504,13 +516,11 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
-		/*
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory();
 		});
-		*/
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
 			if (ids.length && !commonStore.menuIsOpen()) {
@@ -703,13 +713,11 @@ class EditorPage extends React.Component<Props, State> {
 			this.onSearch();
 		});
 
-		/*
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
 			this.onHistory();
 		});
-		*/
 
 		// Duplicate
 		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
@@ -1123,7 +1131,9 @@ class EditorPage extends React.Component<Props, State> {
 										}, 
 									});
 								} else {
-									DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position);
+									DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+										DataUtil.pageOpenPopup(message.targetId);
+									});
 								};
 							} else {
 								this.blockCreate(block, position, param);
@@ -1251,7 +1261,7 @@ class EditorPage extends React.Component<Props, State> {
 
 					const file = item.getAsFile();
 					if (file) {
-						files.push();
+						files.push(file);
 					};
 				};
 
@@ -1334,8 +1344,6 @@ class EditorPage extends React.Component<Props, State> {
 		let from = 0;
 		let to = 0;
 
-		commonStore.progressSet({ status: 'Processing...', current: 0, total: 1 });
-		
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
 			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
 
@@ -1388,7 +1396,7 @@ class EditorPage extends React.Component<Props, State> {
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				offsetX: 0,
-				offsetY: 0,
+				offsetY: 8,
 				data: {
 					container: node,
 				},
@@ -1646,11 +1654,14 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
+		const { isPopup } = this.props;
+		const container = isPopup ? $('#popupEditorPage #innerWrap .content') : $(window);
+
 		focus.set(id, { from: from, to: to });
 		focus.apply();
 
 		if (scroll) {
-			focus.scroll();
+			focus.scroll(container);
 		};
 
 		this.resize();

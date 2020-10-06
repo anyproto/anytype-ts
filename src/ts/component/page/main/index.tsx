@@ -116,15 +116,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
-		DataUtil.pageOpen(e, blockStore.profile);
+		DataUtil.pageOpen(blockStore.profile);
 	};
 	
 	onSelect (e: any, block: I.Block) {
+		e.persist();
+
 		if (block.content.style == I.LinkStyle.Archive) {
 			commonStore.popupOpen('archive', {});
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
-				DataUtil.pageOpen(e, block.content.targetBlockId);
+				DataUtil.pageOpenEvent(e, block.content.targetBlockId);
 			});
 		};
 	};
@@ -137,6 +139,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 		
 		DataUtil.pageCreate(e, root, '', details, I.BlockPosition.Bottom, (message: any) => {
+			DataUtil.pageOpen(message.targetId);
 			Util.scrollTopEnd();
 		});
 	};

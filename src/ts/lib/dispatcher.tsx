@@ -1,12 +1,11 @@
-import { authStore, commonStore, blockStore } from 'ts/store';
+import { authStore, commonStore, blockStore, dbStore } from 'ts/store';
 import { set } from 'mobx';
-import { Util, DataUtil, I, M, Decode, Storage, translate, analytics, Response, Mapper } from 'ts/lib';
+import { Util, DataUtil, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
-const Constant = require('json/constant.json');
 const path = require('path');
 
 /// #if USE_ADDON
@@ -413,11 +412,11 @@ class Dispatcher {
 						list.push(Decode.decodeStruct(item) || {});
 					};
 
-					block.content.viewId = data.getViewid();
-					block.content.total = data.getTotal();
-					block.content.data = list;
-
-					blockStore.blockUpdate(rootId, block);
+					dbStore.setData(block.id, list);
+					dbStore.setMeta(block.id, {
+						viewId: data.getViewid(),
+						total: data.getTotal(),
+					});
 					break;
 
 				case 'processNew':

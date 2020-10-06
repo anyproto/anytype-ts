@@ -42,7 +42,7 @@
 
 	"limit": {
 		"dataview": {
-			"records": 100,
+			"records": 20,
 			"views": 100000,
 			"viewName": 24
 		}
@@ -58,6 +58,14 @@
 		"cover": 1920,
 
 		"dataview": {
+			"gallery": {
+				"card": 260,
+				"margin": 16
+			},
+			"board": {
+				"card": 240,
+				"margin": 24
+			},
 			"cell": {
 				"default": 192,
 				"title": 288,

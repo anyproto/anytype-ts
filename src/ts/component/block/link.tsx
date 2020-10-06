@@ -59,7 +59,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { targetBlockId } = content;
 		
 		if (targetBlockId != rootId) {
-			DataUtil.pageOpen(e, targetBlockId);
+			DataUtil.pageOpenEvent(e, targetBlockId);
 		};
 	};
 	

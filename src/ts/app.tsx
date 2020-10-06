@@ -4,8 +4,8 @@ import { Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview, Icon } from './component';
-import { commonStore, authStore, blockStore } from './store';
-import { C, Util, DataUtil, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
+import { commonStore, authStore, blockStore, dbStore } from './store';
+import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -98,7 +98,6 @@ import 'scss/menu/dataview/tag.scss';
 import 'scss/menu/dataview/account.scss';
 
 import 'scss/media/print.scss';
-import { I } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {
@@ -121,6 +120,7 @@ const rootStore = {
 	commonStore: commonStore,
 	authStore: authStore,
 	blockStore: blockStore,
+	dbStore: dbStore,
 };
 
 const { app } = window.require('electron').remote;
@@ -311,7 +311,7 @@ class App extends React.Component<Props, State> {
 				commonStore.popupOpen(id, { data: data });
 			}, Constant.delay.popup);
 		});
-		
+
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
 				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
@@ -324,8 +324,8 @@ class App extends React.Component<Props, State> {
 			if (!auto) {
 				commonStore.popupOpen('confirm', {
 					data: {
-						title: 'It\'s time to update',
-						text: 'Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features.',
+						title: 'Update available',
+						text: 'Do you want to update on a new version?',
 						textConfirm: 'Update',
 						textCancel: 'Later',
 						onConfirm: () => {

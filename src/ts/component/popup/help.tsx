@@ -12,8 +12,11 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 const Url = require('json/url.json');
 const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
+const raf = require('raf');
 
 class PopupHelp extends React.Component<Props, {}> {
+
+	_isMounted: boolean = false;
 	
 	render () {
 		const { param } = this.props;
@@ -49,6 +52,8 @@ class PopupHelp extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+
 		const { param } = this.props;
 		const { data } = param;
 		const { document } = data;
@@ -58,10 +63,16 @@ class PopupHelp extends React.Component<Props, {}> {
 		};
 
 		this.renderLinks();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
 		this.renderLinks();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.unbind();
 	};
 
 	renderLinks () {
@@ -76,6 +87,35 @@ class PopupHelp extends React.Component<Props, {}> {
 	
 	onUrl (url: string) {
 		ipcRenderer.send('urlOpen', url);
+	};
+
+	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		this.unbind();
+		
+		const win = $(window);
+		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
+	};
+
+	unbind () {
+		$(window).unbind('keydown.navigation resize.navigation');
+	};
+
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		raf(() => {
+			const win = $(window);
+			const obj = $('#popupHelp #innerWrap');
+			const width = Math.max(732, Math.min(960, win.width() - 128));
+
+			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });
+		});
 	};
 	
 };

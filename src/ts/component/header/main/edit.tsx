@@ -53,11 +53,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="home" tooltip="Home" onClick={this.onHome} />
 					<Icon className="back" tooltip="Back" onClick={this.onBack} />
 					<Icon className="forward" tooltip="Forward" onClick={this.onForward} />
+					<Icon className="nav" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
 				</div>
 
 				<div className="side center">
-					<Icon className="nav" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
-
 					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
 							<Smile icon={iconEmoji} hash={iconImage} />
@@ -91,7 +90,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	
 	onMore (e: any) {
 		const { rootId, match } = this.props;
-		
+
 		commonStore.menuOpen('blockMore', { 
 			element: '#button-header-more',
 			type: I.MenuType.Vertical,
@@ -134,7 +133,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			};
 		};
 		
-		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
+		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+			DataUtil.pageOpen(message.targetId);
+		});
 	};
 
 	onNavigation (e: any, expanded: boolean) {

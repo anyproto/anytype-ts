@@ -1,0 +1,89 @@
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
+import { Icon, Smile } from 'ts/component';
+import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
+import { commonStore, blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
+
+interface Props extends RouteComponentProps<any> {
+	rootId: string;
+	dataset?: any;
+};
+
+const $ = require('jquery');
+
+@observer
+class HeaderMainEditPopup extends React.Component<Props, {}> {
+
+	constructor (props: any) {
+		super(props);
+		
+		this.onOpen = this.onOpen.bind(this);
+		this.onMore = this.onMore.bind(this);
+	};
+
+	render () {
+		const { rootId } = this.props;
+		const { breadcrumbs } = blockStore;
+
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root) {
+			return null;
+		};
+		
+		const details = blockStore.getDetails(breadcrumbs, rootId);
+		const { iconEmoji, iconImage, name } = details;
+
+		return (
+			<div id="header" className="header headerMainEdit">
+				<div className="side left">
+					<div className="item" onClick={this.onOpen}>
+						<Icon className="expand" />
+						Open as page
+					</div>
+				</div>
+
+				<div className="side center">
+					<div className="path">
+						<div className="item">
+							<Smile icon={iconEmoji} hash={iconImage} />
+							<div className="name">{Util.shorten(name, 32)}</div>
+						</div>
+					</div>
+				</div>
+
+				<div className="side right">
+					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
+				</div>
+			</div>
+		);
+	};
+
+	onOpen () {
+		const { rootId } = this.props;
+		DataUtil.pageOpen(rootId);
+	};
+
+	onMore (e: any) {
+		const { rootId, match } = this.props;
+		
+		commonStore.menuOpen('blockMore', { 
+			element: '#button-header-more',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 8,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				rootId: rootId,
+				blockId: rootId,
+				blockIds: [ rootId ],
+				match: match,
+			}
+		});
+	};
+
+};
+
+export default HeaderMainEditPopup;

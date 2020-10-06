@@ -154,19 +154,10 @@ const Mapper = {
     
                 item.content = {
                     schemaURL: schemaURL,
-                    offset: 0,
-                    total: 0,
-                    data: [],
                     views: (content.getViewsList() || []).map((view: I.View) => {
                         return Mapper.From.View(schemaId, view);
                     }),
                 };
-
-                decorate(item.content, {
-                    viewId: observable,
-                    views: observable,
-                    data: observable,
-                });
             };
     
             return item;

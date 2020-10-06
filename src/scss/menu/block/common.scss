@@ -3,9 +3,6 @@
 .menus {
 	.menu.menuBlockAdd, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuBlockMore {
 		.item.empty { font-size: 12px; line-height: 18px; padding-top: 8px; }
-	
-		.icon { width: 24px; height: 24px; background-size: 100% 100%; }
-		.icon.arrow { position: absolute; right: 10px; top: 4px; margin: 0px; background-image: url('~img/arrow/menu.svg'); }
 	}
 
 	.menu.menuBlockMore.fromIndex { width: 160px; }

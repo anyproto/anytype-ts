@@ -189,7 +189,7 @@ class Block extends React.Component<Props, {}> {
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
-					<Icon id={'button-block-menu-' + id} tooltip="<b>Click</b> to open menu<br/><b>Drag</b> to move block" className="dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
+					<Icon id={'button-block-menu-' + id} /*tooltip="<b>Click</b> to open menu<br/><b>Drag</b> to move block"*/ className="dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 				</div>
 				
 				<div className={cd.join(' ')}>
@@ -482,7 +482,11 @@ class Block extends React.Component<Props, {}> {
 		
 		const currentBlockId = childrenIds[index];
 		const currentBlock = blockStore.getLeaf(rootId, currentBlockId);
-		
+
+		if (!prevBlock || !currentBlock) {
+			return;
+		};
+
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		const offset = Constant.size.blockMenu * 2;

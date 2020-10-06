@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Cell from '../cell';
@@ -27,10 +27,10 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, data, view, onOpen, getData, readOnly } = this.props;
-		const { content } = block;
-		const { offset, total } = content;
+		const { rootId, block, view, onOpen, getData, readOnly } = this.props;
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const data = dbStore.getData(block.id);
+		const { offset, total } = dbStore.getMeta(block.id);
 
 		const CellHead = (item: any) => {
 			const { relation } = item;
@@ -88,7 +88,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowBody = (item: any) => (
 			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={relation} data={data[item.index]} />
+					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={relation} data={data} />
 				))}
 				<td className="cell last">&nbsp;</td>
 			</tr>
@@ -112,7 +112,7 @@ class ViewGrid extends React.Component<Props, {}> {
 						</thead>
 						<tbody>
 							{data.map((item: any, i: number) => (
-								<RowBody key={'grid-row-' + i} index={i} {...item} />
+								<RowBody key={'grid-row-' + i} index={i} />
 							))}
 							{!readOnly ? (
 								<tr>
@@ -133,6 +133,35 @@ class ViewGrid extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.resize();
+		this.bind();
+	};
+
+	componentDidUpdate () {
+		const win = $(window);
+
+		this.bind();
+		win.trigger('resize.editor');
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	bind () {
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+
+		scroll.unbind('.scroll').scroll(() => {
+			win.trigger('resize.menu');
+		});
+	};
+
+	unbind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+
+		scroll.unbind('.scroll');
 	};
 
 	resize () {
@@ -212,9 +241,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			if (message.error.code) {
 				return;
 			};
-
-			block.content.data.push(message.record);
-			blockStore.blockUpdate(rootId, block);
+			dbStore.addRecord(block.id, message.record);
 		});
 	};
 
@@ -227,11 +254,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		};
 
 		const id = DataUtil.cellId('cell', relation.id, index);
-		const node = $(ReactDOM.findDOMNode(this));
-		const cell = node.find('#' + id);
 		const ref = this.cellRefs.get(id);
-
-		cell.addClass('isEditing');
+		
 		if (ref) {
 			ref.onClick(e);
 		};

@@ -292,7 +292,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			DataUtil.pageOpen(e, $(this).data('param'));
+			DataUtil.pageOpenEvent(e, $(this).data('param'));
 		});
 	};
 
@@ -446,11 +446,12 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (!commonStore.menuIsOpen()) {
-				if (range.to && (range.from == range.to)) {
+			if (!commonStore.menuIsOpen('blockAdd') && !commonStore.menuIsOpen('blockMention')) {
+				if (range.to) {
 					return;
 				};
-				this.setText(this.marks, true, (message: any) => {
+				
+				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
 				});
 				ret = true;
@@ -462,6 +463,12 @@ class BlockText extends React.Component<Props, {}> {
 
 			if (commonStore.menuIsOpen('blockMention') && (symbolBefore == '@')) {
 				commonStore.menuClose('blockMention');
+			};
+		});
+
+		keyboard.shortcut('delete', e, (pressed: string) => {
+			if (range.to && ((range.from != range.to) || (range.to != value.length))) {
+				ret = true;
 			};
 		});
 
@@ -891,8 +898,10 @@ class BlockText extends React.Component<Props, {}> {
 						this.marks = Util.objectCopy(marks);
 						this.setMarks(marks);
 
-						focus.set(id, { from: currentFrom, to: currentTo });
-						focus.apply();
+						window.setTimeout(() => {
+							focus.set(id, { from: currentFrom, to: currentTo });
+							focus.apply();
+						}, 50);
 					},
 				},
 			});
