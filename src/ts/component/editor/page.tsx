@@ -385,18 +385,18 @@ class EditorPage extends React.Component<Props, State> {
 		const withIcon = details.iconEmoji;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
-		let offset = 220;
+		let offset = 144;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
 		
 		if (withCover && withIcon) {
-			offset = 408;
+			offset = 328;
 		} else
 		if (withCover) {
-			offset = 408;
+			offset = 328;
 		} else 
 		if (withIcon) {
-			offset = 274;
+			offset = 194;
 		};
 		
 		// Find hovered block by mouse coords
@@ -444,9 +444,14 @@ class EditorPage extends React.Component<Props, State> {
 			
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
-				
-				if (block && !block.isLayoutColumn() && !block.isLayoutDiv()) {
-					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+				if (block) {
+					if (!block.isTextTitle() && !block.isLayoutColumn() && !block.isLayoutDiv() && !block.isLayoutHeader()) {
+						hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+					};
+					if (block.isTextTitle()) {
+						this.hoverPosition = I.BlockPosition.Bottom;
+						hovered.addClass('isAdding bottom');
+					};
 				};
 			};
 		} else {
@@ -625,7 +630,7 @@ class EditorPage extends React.Component<Props, State> {
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, first.id, -1);
 			const obj = shift ? parent : next;
-			const canTab = obj && !first.isTitle() && obj.canHaveChildren() && first.isIndentable();
+			const canTab = obj && !first.isTextTitle() && obj.canHaveChildren() && first.isIndentable();
 			
 			if (canTab) {
 				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
@@ -748,7 +753,7 @@ class EditorPage extends React.Component<Props, State> {
 		});
 
 		// Mark-up
-		if (!block.isTitle() && range.to && (range.from != range.to)) {
+		if (!block.isTextTitle() && range.to && (range.from != range.to)) {
 			let type = null;
 
 			// Bold
@@ -829,7 +834,7 @@ class EditorPage extends React.Component<Props, State> {
 
 			const dir = pressed.match(Key.up) ? -1 : 1;
 			const next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
-				return !item.isIcon() && !item.isTitle();
+				return !item.isIcon() && !item.isTextTitle();
 			});
 			if (next) {
 				C.BlockListMove(rootId, rootId, [ focused ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
@@ -898,7 +903,7 @@ class EditorPage extends React.Component<Props, State> {
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = shift ? parent : next;
-			const canTab = obj && !block.isTitle() && obj.canHaveChildren() && block.isIndentable();
+			const canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
 
 			if (canTab) {
 				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
@@ -989,7 +994,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, this.hoverId);
 		
-		if (!block || (block.isTitle() && (this.hoverPosition != I.BlockPosition.Bottom)) || block.isLayoutColumn() || block.isIcon()) {
+		if (!block || (block.isTextTitle() && (this.hoverPosition != I.BlockPosition.Bottom)) || block.isLayoutColumn() || block.isIcon()) {
 			return;
 		};
 		
@@ -1340,6 +1345,8 @@ class EditorPage extends React.Component<Props, State> {
 		let to = 0;
 
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
+			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
+
 			if (message.error.code) {
 				return;
 			};
@@ -1413,7 +1420,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 
 			let parent = blockStore.getLeaf(rootId, element.parentId);
-			if (!parent || !parent.isLayout() || parent.isLayoutDiv()) {
+			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
 				continue;
 			};
 			
@@ -1482,7 +1489,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (message.error.code) {
 				return;
 			};
-			
+
 			if (next) {
 				this.focus(blockId, to, to, false);
 			};
@@ -1514,8 +1521,7 @@ class EditorPage extends React.Component<Props, State> {
 	blockSplit (focused: I.Block, range: I.TextRange) {
 		const { rootId } = this.props;
 		const { content } = focused;
-		const isTitle = focused.isTitle();
-		const isParagraph = focused.isTextParagraph();
+		const isTitle = focused.isTextTitle();
 		const isToggle = focused.isTextToggle();
 		const isList = focused.isTextList();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
@@ -1557,7 +1563,7 @@ class EditorPage extends React.Component<Props, State> {
 	blockRemove (focused?: I.Block) {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
-		
+
 		commonStore.menuClose('blockAdd');
 		commonStore.menuClose('blockAction');
 		commonStore.menuClose('blockContext');
@@ -1574,6 +1580,11 @@ class EditorPage extends React.Component<Props, State> {
 			next = blockStore.getNextBlock(rootId, focused.id, -1, (it: any) => { return it.isFocusable(); });
 			blockIds = [ focused.id ];
 		};
+
+		blockIds = blockIds.filter((it: string) => {  
+			let block = blockStore.getLeaf(rootId, it);
+			return !block.isTextTitle();
+		});
 
 		focus.clear(true);
 		C.BlockUnlink(rootId, blockIds, (message: any) => {
@@ -1596,7 +1607,7 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 
-		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isTitle(); });
+		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isTextTitle(); });
 		const last = children[children.length - 1];
 		
 		let create = false;

@@ -40,16 +40,12 @@ class Block implements I.Block {
 		return this.isPage() || this.isLayout();
 	};
 
-	canHaveTitle (): boolean {
-		return this.isPagePage() || this.isPageProfile() || this.isPageSet();
-	};
-
 	canHaveChildren (): boolean {
 		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
 	};
 
 	canHaveAlign (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isImage() || this.isVideo());
+		return !this.isSystem() && (this.isTextTitle() || this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isImage() || this.isVideo());
 	};
 
 	canHaveColor (): boolean {
@@ -60,12 +56,16 @@ class Block implements I.Block {
 		return !this.isSystem() && !this.isBookmark() && !this.isDiv();
 	};
 
-	canTurn (): boolean {
-		return !this.isSystem() && (this.isText() || this.isDiv());
+	canHaveMarks () {
+		return this.isText() && !this.isTextTitle() && !this.isTextCode();
 	};
-	
+
+	canTurn (): boolean {
+		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isDiv());
+	};
+
 	isIndentable (): boolean {
-		return !this.isSystem() && !this.isTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
+		return !this.isSystem() && !this.isTextTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
 	};
 	
 	isFocusable (): boolean {
@@ -73,11 +73,11 @@ class Block implements I.Block {
 	};
 	
 	isSelectable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle();
 	};
 	
 	isDraggable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle();
 	};
 
 	isPage (): boolean { 
@@ -110,6 +110,10 @@ class Block implements I.Block {
 	
 	isLayoutDiv (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Div);
+	};
+
+	isLayoutHeader (): boolean {
+		return this.isLayout() && (this.content.style == I.LayoutStyle.Header);
 	};
 	
 	isLink (): boolean {
@@ -164,12 +168,12 @@ class Block implements I.Block {
 		return this.isDiv() && (this.content.type == I.DivStyle.Dot);
 	};
 	
-	isTitle (): boolean {
-		return this.type == I.BlockType.Title;
-	};
-
 	isText (): boolean {
 		return this.type == I.BlockType.Text;
+	};
+
+	isTextTitle (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.Title);
 	};
 
 	isTextParagraph (): boolean {
@@ -221,15 +225,7 @@ class Block implements I.Block {
 	};
 	
 	getLength (): number {
-		let t = '';
-		if (this.isTitle()) {
-			const details = blockStore.getDetails(this.parentId, this.parentId);
-			t = details.name;
-		} else {
-			t = this.content.text;
-		};
-
-		return String(t || '').length;
+		return this.isText() ? String(this.content.text || '').length : 0;
 	};
 };
 

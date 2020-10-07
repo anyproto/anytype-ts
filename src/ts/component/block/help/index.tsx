@@ -32,11 +32,6 @@ class Block extends React.Component<Props, {}> {
 				content = <ContentIcon {...this.props} />;
 				break;
 				
-			case I.BlockType.Title:
-				cn.push('blockTitle');
-				content = <ContentTitle {...this.props} />;
-				break;
-									
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
 				content = <ContentText {...this.props} />;

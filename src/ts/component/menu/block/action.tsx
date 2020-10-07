@@ -207,6 +207,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 			//sections[0].children.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
 		};
 
+		// Restrictions
+		if (block.isTextTitle()) {
+			sections.splice(0, 1);
+		};
+
 		if (!block.canHaveAlign()) {
 			sections[1].children = sections[1].children.filter((it: any) => { return [ 'align' ].indexOf(it.id) < 0; });
 		};
@@ -228,7 +233,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (filter) {
 			sections = [];
 			
-			if (block.isText()) {
+			if (block.isText() && !block.isTextTitle()) {
 				sections = sections.concat([
 					{ id: 'turnText', icon: '', name: 'Text', color: '', children: DataUtil.menuGetBlockText() },
 					{ id: 'turnList', icon: '', name: 'List', color: '', children: DataUtil.menuGetBlockList() },
@@ -242,9 +247,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 				]);
 			};
 			
-			sections = sections.concat([
-				{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
-			]);
+			if (!block.isTextTitle()) {
+				sections = sections.concat([
+					{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
+				]);
+			};
 
 			if (block.canTurn()) {
 				sections.push({ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetTurnPage() });

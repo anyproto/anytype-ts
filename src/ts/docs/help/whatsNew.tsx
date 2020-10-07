@@ -6,7 +6,7 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ type: I.BlockType.Title, text: `Updates for 05 October, 2020` },
+	{ style: I.TextStyle.Title, text: `Updates for 05 October, 2020` },
 	{ text: `This is one for the history books. With Anytype 0.16, users can now travel through time to recover previous versions of their pages. Use <span class="${sc}">History</span> on the page's menu in the top-right corner.` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },

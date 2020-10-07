@@ -64,8 +64,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.unbind();
 		
 		let win = $(window); 
-		let doc = $(document);
-		
 		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
 		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
 	};
@@ -147,7 +145,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { focused, range } = focus;
+		const { focused } = focus;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = $('#selection-rect');

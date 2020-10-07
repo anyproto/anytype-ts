@@ -84,6 +84,9 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		switch (style) {
+			case I.TextStyle.Title:
+				placeHolder = Constant.default.name;
+				break;
 			case I.TextStyle.Quote:
 				additional = (
 					<div className="line" />
@@ -165,8 +168,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block } = this.props;
-		const { id, content } = block
-		const { focused } = focus;
+		const { content } = block
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
@@ -471,7 +473,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
-			if (commonStore.menuIsOpen('smile') || block.isTextCode()) {
+			if (commonStore.menuIsOpen('smile') || !block.canHaveMarks()) {
 				return;
 			};
 
@@ -480,7 +482,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
-			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isTextCode()) {
+			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || !block.canHaveMarks()) {
 				return;
 			};
 			this.onMention();
@@ -859,6 +861,10 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
+			return;
+		};
+
+		if (block.isTextTitle()) {
 			return;
 		};
 		

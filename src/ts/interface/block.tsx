@@ -18,7 +18,6 @@ export enum BlockType {
 	Bookmark	 = 'bookmark',
 	IconPage	 = 'iconPage',
 	IconUser	 = 'iconUser',
-	Title		 = 'title',
 	Div			 = 'div',
 	Link		 = 'link',
 	Cover		 = 'cover',
@@ -70,11 +69,11 @@ export interface Block {
 	getLength?(): number;
 	isSystem?(): boolean;
 
-	canHaveTitle?(): boolean;
 	canHaveChildren?(): boolean;
 	canHaveAlign?(): boolean;
 	canHaveColor?(): boolean;
 	canHaveBackground?(): boolean;
+	canHaveMarks?(): boolean;
 	canTurn?(): boolean;
 
 	isIndentable?(): boolean;
@@ -91,6 +90,7 @@ export interface Block {
 	isLayoutRow?(): boolean;
 	isLayoutColumn?(): boolean;
 	isLayoutDiv?(): boolean;
+	isLayoutHeader?(): boolean;
 
 	isLink?(): boolean;
 	isLinkPage?(): boolean;
@@ -107,9 +107,9 @@ export interface Block {
 	isFile?(): boolean;
 	isImage?(): boolean;
 	isVideo?(): boolean;
-	isTitle?(): boolean;
 
 	isText?(): boolean;
+	isTextTitle?(): boolean;
 	isTextParagraph?(): boolean;
 	isTextHeader?(): boolean;
 	isTextHeader1?(): boolean;

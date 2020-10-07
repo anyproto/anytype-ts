@@ -193,10 +193,6 @@ class Dispatcher {
 
 					childrenIds = data.getChildrenidsList() || [];
 
-					if (block.canHaveTitle() && (childrenIds.indexOf(rootId + '-title') < 0)) {
-						childrenIds.unshift(rootId + '-title');
-					};
-
 					blockStore.blockUpdateStructure(rootId, id, childrenIds);
 					break;
 
@@ -500,17 +496,6 @@ class Dispatcher {
 		let root = blocks.find((it: I.Block) => { return it.id == rootId; });
 		if (!root) {
 			return;
-		};
-
-		if (root.canHaveTitle()) {
-			root.childrenIds.unshift(rootId + '-title');
-			blocks.unshift(new M.Block({
-				id: rootId + '-title',
-				type: I.BlockType.Title,
-				childrenIds: [],
-				fields: {},
-				content: {},
-			}));
 		};
 
 		blockStore.blocksSet(rootId, blocks);

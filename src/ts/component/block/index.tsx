@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, DataUtil, keyboard, focus, Storage } from 'ts/lib';
 import { DropTarget, ListChildren, Icon } from 'ts/component';
-import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
 
@@ -12,7 +11,6 @@ import BlockText from './text';
 import BlockImage from './image';
 import BlockIconPage from './iconPage';
 import BlockIconUser from './iconUser';
-import BlockTitle from './title';
 import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
@@ -31,7 +29,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const THROTTLE = 20;
 const SNAP = 0.02;
 
 @observer
@@ -84,20 +81,20 @@ class Block extends React.Component<Props, {}> {
 		switch (type) {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
-				
+
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
-				
+
 				if (block.isTextToggle() && !childrenIds.length && !readOnly) {
 					empty = (
 						<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
 					);
 				};
-				
+
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
 				break;
-				
+
 			case I.BlockType.Layout:
 				canSelect = false;
 				cn.push('blockLayout c' + content.style);
@@ -113,12 +110,6 @@ class Block extends React.Component<Props, {}> {
 				canSelect = false;
 				cn.push('blockIconUser');
 				blockComponent = <BlockIconUser {...this.props} />;
-				break;
-				
-			case I.BlockType.Title:
-				canSelect = false;
-				cn.push('blockTitle');
-				blockComponent = <BlockTitle {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
@@ -341,6 +332,11 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 
+		let ids = DataUtil.selectionGet(id, this.props);
+		if (block.isTextTitle()) {
+			ids = DataUtil.selectionGet('', this.props);
+		};
+		
 		commonStore.menuOpen('blockAction', { 
 			element: node.find('#button-block-menu-' + id),
 			type: I.MenuType.Vertical,
