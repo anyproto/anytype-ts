@@ -285,7 +285,7 @@ class Menu extends React.Component<Props, {}> {
 	setActiveItem (item?: any, scroll?: boolean) {
 		const node = $(Util.toCamelCase('#menu-' + this.props.id));
 		node.find('.item.active').removeClass('active');
-		
+
 		if (!item) {
 			return;
 		};

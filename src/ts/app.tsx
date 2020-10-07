@@ -60,7 +60,6 @@ import 'scss/block/div.scss';
 import 'scss/block/layout.scss';
 import 'scss/block/iconPage.scss';
 import 'scss/block/iconUser.scss';
-import 'scss/block/title.scss';
 import 'scss/block/cover.scss';
 import 'scss/block/relation.scss';
 
@@ -315,7 +314,7 @@ class App extends React.Component<Props, State> {
 				commonStore.popupOpen(id, { data: data });
 			}, Constant.delay.popup);
 		});
-		
+
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
 				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });

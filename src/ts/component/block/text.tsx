@@ -84,6 +84,9 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		switch (style) {
+			case I.TextStyle.Title:
+				placeHolder = Constant.default.name;
+				break;
 			case I.TextStyle.Quote:
 				additional = (
 					<div className="line" />
@@ -165,17 +168,10 @@ class BlockText extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block } = this.props;
-		const { id, content } = block
-		const { focused } = focus;
+		const { content } = block
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
-		
-		/*
-		if (focused == id) {
-			focus.apply();
-		};
-		*/
 	};
 	
 	componentWillUnmount () {
@@ -296,7 +292,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			DataUtil.pageOpen($(this).data('param'));
+			DataUtil.pageOpenEvent(e, $(this).data('param'));
 		});
 	};
 
@@ -450,11 +446,12 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (!commonStore.menuIsOpen()) {
-				if (range.to && (range.from == range.to)) {
+			if (!commonStore.menuIsOpen('blockAdd') && !commonStore.menuIsOpen('blockMention')) {
+				if (range.to) {
 					return;
 				};
-				this.setText(this.marks, true, (message: any) => {
+				
+				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
 				});
 				ret = true;
@@ -469,8 +466,14 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		});
 
+		keyboard.shortcut('delete', e, (pressed: string) => {
+			if (range.to && ((range.from != range.to) || (range.to != value.length))) {
+				ret = true;
+			};
+		});
+
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
-			if (commonStore.menuIsOpen('smile') || block.isTextCode()) {
+			if (commonStore.menuIsOpen('smile') || !block.canHaveMarks()) {
 				return;
 			};
 
@@ -479,7 +482,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
-			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || block.isTextCode()) {
+			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || !block.canHaveMarks()) {
 				return;
 			};
 			this.onMention();
@@ -860,6 +863,10 @@ class BlockText extends React.Component<Props, {}> {
 		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
 			return;
 		};
+
+		if (block.isTextTitle()) {
+			return;
+		};
 		
 		const el = $('#block-' + id);
 		const offset = el.offset();
@@ -891,8 +898,10 @@ class BlockText extends React.Component<Props, {}> {
 						this.marks = Util.objectCopy(marks);
 						this.setMarks(marks);
 
-						focus.set(id, { from: currentFrom, to: currentTo });
-						focus.apply();
+						window.setTimeout(() => {
+							focus.set(id, { from: currentFrom, to: currentTo });
+							focus.apply();
+						}, 50);
 					},
 				},
 			});

@@ -38,6 +38,7 @@ class Keyboard {
 		const rootId = this.isEditor() ? this.match.params.id : root;
 		const isMainIndex = this.isMainIndex();
 		const platform = Util.getPlatform();
+		const isMainIndex = this.isMainIndex();
 		
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
@@ -115,8 +116,8 @@ class Keyboard {
 			if (this.isEditor()) {
 				const fb = blockStore.getLeaf(rootId, focused);
 				if (fb) {
-					if (fb.isTitle()) {
-						const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTitle(); });
+					if (fb.isTextTitle()) {
+						const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
 						if (first) {
 							targetId = first.id;
 							position = I.BlockPosition.Top;

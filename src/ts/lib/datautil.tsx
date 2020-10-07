@@ -75,6 +75,7 @@ class DataUtil {
 		let c = '';
 		switch (v) {
 			default:
+			case I.TextStyle.Title:		 c = 'title'; break;
 			case I.TextStyle.Paragraph:	 c = 'paragraph'; break;
 			case I.TextStyle.Header1:	 c = 'header1'; break;
 			case I.TextStyle.Header2:	 c = 'header2'; break;
@@ -159,6 +160,14 @@ class DataUtil {
 			keyboard.initPinCheck();
 			this.history.push('/main/index');
 		});
+	};
+
+	pageOpenEvent (e: any, targetId: string) {
+		if (e && (e.shiftKey || e.ctrlKey || e.metaKey)) {
+			this.pageOpenPopup(targetId);
+		} else {
+			this.pageOpen(targetId);
+		};
 	};
 	
 	pageOpen (targetId: string) {

@@ -118,6 +118,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '⌘ + F',			 com: 'Ctrl + F',			 name: 'Find on page' },
 						{ mac: '⌘ + Q',			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
 						{ mac: '⌘ + Y',			 com: 'Ctrl + H',			 name: 'Show page edit history' },
+						{ mac: '⌘ + Click',			 com: 'Ctrl + Click',		 name: 'On page link will open it in modal view' },
 					]
 				},
 
@@ -135,10 +136,10 @@ class PopupShortcut extends React.Component<Props, State> {
 					name: 'Selection', children: [
 						{ com: 'Double Click',			 name: 'Select word' },
 						{ com: 'Triple Click',			 name: 'Select an entire block' },
-						{ mac: '⌘ + Click',			 com: 'Ctrl + Click',		 name: 'Select or de-select an entire block' },
 						{ mac: '⌘ + A',				 com: 'Ctrl + A',			 name: 'Select all blocks in the page' },
 						{ com: 'Shift + ↑ or ↓',	 name: 'Expand your selection up or down' },
-						{ com: 'Shift + Click',		 name: 'Select another block and all blocks in between' },
+						{ mac: '⌘ + Click',			 com: 'Ctrl + Click',		 name: 'On block will select or de-select an entire block' },
+						{ com: 'Shift + Click',		 name: 'Select block and all blocks in between' },
 					]
 				},
 
