@@ -1095,7 +1095,7 @@ class EditorPage extends React.Component<Props, State> {
 
 						// Align
 						if (item.isAlign) {
-							C.BlockListSetAlign(rootId, [ id ], item.value, onCommand);
+							C.BlockListSetAlign(rootId, [ id ], item.key, onCommand);
 						} else 
 
 						// Blocks
