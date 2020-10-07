@@ -17,7 +17,7 @@ const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 
 const TIMEOUT_UPDATE = 600 * 1000;
-const MIN_WIDTH = 900;
+const MIN_WIDTH = 980;
 const MIN_HEIGHT = 640;
 
 let isUpdating = false;

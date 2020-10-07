@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C } from 'ts/lib';
+import { I, C, SmileUtil } from 'ts/lib';
 import { Icon, Input, Button } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -102,7 +102,7 @@ class MenuObjectType extends React.Component<Props, State> {
 		const name = this.ref.getValue();
 		const { layout } = this.state;
 
-		C.ObjectTypeCreate({ name: name, layout: layout }, (message: any) => {
+		C.ObjectTypeCreate({ name: name, layout: layout, iconEmoji: SmileUtil.random() }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

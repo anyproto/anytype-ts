@@ -384,8 +384,8 @@ class PageMainHistory extends React.Component<Props, State> {
 		return months;
 	};
 
-	ungroupData (groups: any[]): I.Version[] {
-		let ret: I.Version[] = [] as I.Version[];
+	ungroupData (groups: any[]): I.HistoryVersion[] {
+		let ret: I.HistoryVersion[] = [] as I.HistoryVersion[];
 		for (let month of groups) {
 			for (let group of month.list) {
 				ret = ret.concat(group.list);
