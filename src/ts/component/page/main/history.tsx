@@ -183,7 +183,7 @@ class PageMainHistory extends React.Component<Props, State> {
 
 		this.resize();
 		this.setId();
-		
+
 		if (this.version) {
 			this.show(this.version.id);
 		};
@@ -245,6 +245,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		const groups = this.groupData(this.state.versions);
 		const versions = this.ungroupData(groups);
 		const version = versions.find((it: any) => { return it.id == id; });
+
 		if (!version) {
 			return;
 		};
@@ -388,6 +389,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		let ret: I.Version[] = [] as I.Version[];
 		for (let month of groups) {
 			for (let group of month.list) {
+				ret.push(group);
 				ret = ret.concat(group.list);
 			};
 		};
