@@ -8,6 +8,7 @@ export interface ObjectType {
 	url: string;
 	name: string;
 	layout: ObjectLayout;
+	iconEmoji: string;
 	relations: Relation[];
 };
 

@@ -178,6 +178,7 @@ const Mapper = {
 				url: obj.getUrl(),
 				name: obj.getName(),
 				layout: obj.getLayout(),
+				iconEmoji: obj.getIconemoji(),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
 			};
 		},
@@ -456,6 +457,7 @@ const Mapper = {
 			item.setUrl(obj.url);
 			item.setName(obj.name);
 			item.setLayout(obj.layout);
+			item.setIconemoji(obj.iconEmoji);
 			item.setRelationsList((obj.relations || []).map(Mapper.To.Relation));
 
 			return item;
