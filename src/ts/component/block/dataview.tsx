@@ -14,10 +14,6 @@ import ViewList from './dataview/view/list';
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
-const Schema = {
-	page: require('json/schema/page.json'),
-	relation: require('json/schema/relation.json'),
-};
 const Constant = require('json/constant.json');
 
 @observer
@@ -35,7 +31,7 @@ class BlockDataview extends React.Component<Props, {}> {
 	render () {
 		const { block } = this.props;
 		const { content } = block;
-		const { schemaURL, views } = content;
+		const { source, views } = content;
 
 		if (!views.length) {
 			return null;
@@ -44,7 +40,6 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { viewId } = dbStore.getMeta(block.id);
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
 		const { type } = view;
-		const schema = Schema[DataUtil.schemaField(schemaURL)];
 		const readOnly = false; // TMP
 
 		if (!view) {

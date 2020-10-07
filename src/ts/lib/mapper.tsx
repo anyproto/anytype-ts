@@ -1,5 +1,6 @@
 import { I, M, Decode, Util, Encode, DataUtil } from 'ts/lib';
 import { decorate, observable } from 'mobx';
+import { dbStore } from 'ts/store';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Constant = require('json/constant.json');
@@ -7,10 +8,6 @@ const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Relation = require('lib/pkg/lib/pb/relation/protos/relation_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
-const Schema = {
-	page: require('json/schema/page.json'),
-	relation: require('json/schema/relation.json'),
-};
 
 const Mapper = {
 
@@ -150,16 +147,11 @@ const Mapper = {
 			};
 	
 			if (type == I.BlockType.Dataview) {
-				const schemaURL = content.getSchemaurl();
-				const schemaId = DataUtil.schemaField(schemaURL);
-	
+				const source = content.getSource();
 				item.content = {
-					schemaURL: schemaURL,
-					offset: 0,
-					total: 0,
-					data: [],
+					source: source,
 					views: (content.getViewsList() || []).map((view: I.View) => {
-						return Mapper.From.View(schemaId, view);
+						return Mapper.From.View(source, view);
 					}),
 				};
 
@@ -207,7 +199,7 @@ const Mapper = {
 
 		Filter: (obj: any): I.Filter => {
 			return {
-				relationId: obj.getRelationid(),
+				relationKey: obj.getRelationkey(),
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
 				value: Decode.decodeValue(obj.getValue()),
@@ -216,26 +208,28 @@ const Mapper = {
 
 		Sort: (obj: any): I.Sort => {
 			return {
-				relationId: obj.getRelationkey(),
+				relationKey: obj.getRelationkey(),
 				type: obj.getType(),
 			};
 		},
 
-		View: (schemaId: string, obj: any): I.View => {
-			let schema = Schema[schemaId];
+		View: (source: string, obj: any): I.View => {
+			let objectType = dbStore.getObjectType(source);
 			let relations = [];
-	
-			for (let field of schema.default) {
-				if (field.isHidden) {
-					continue;
+
+			if (objectType && objectType.relations.length) {
+				for (let relation of objectType.relations) {
+					if (relation.isHidden) {
+						continue;
+					};
+		
+					relations.push({
+						id: String(relation.id || ''),
+						name: String(relation.name || ''),
+						type: DataUtil.schemaField(relation.type),
+						isReadOnly: Boolean(relation.isReadOnly),
+					});
 				};
-	
-				relations.push({
-					id: String(field.id || ''),
-					name: String(field.name || ''),
-					type: DataUtil.schemaField(field.type),
-					isReadOnly: Boolean(field.isReadonly),
-				});
 			};
 
 			let view: any = {
@@ -400,7 +394,7 @@ const Mapper = {
 		ViewRelation: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Relation();
 			
-			item.setId(obj.id);
+			item.setKey(obj.id);
 			item.setIsvisible(obj.isVisible);
 			item.setWidth(obj.width);
 
@@ -410,7 +404,7 @@ const Mapper = {
 		Filter: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Filter();
 			
-			item.setRelationid(obj.relationId);
+			item.setRelationkey(obj.relationKey);
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
 			item.setValue(Encode.encodeValue(obj.value || ''));
@@ -421,7 +415,7 @@ const Mapper = {
 		Sort: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Sort();
 			
-			item.setRelationid(obj.relationId);
+			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);
 
 			return item;

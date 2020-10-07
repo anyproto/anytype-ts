@@ -129,7 +129,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
-				relationId: id,
+				relationKey: id,
 			}
 		});
 	};

@@ -9,11 +9,6 @@ interface Props {
 	block: I.Block;
 };
 
-const Schema = {
-	page: require('json/schema/page.json'),
-	relation: require('json/schema/relation.json'),
-};
-
 @observer
 class BlockRelation extends React.Component<Props, {}> {
 
@@ -23,7 +18,7 @@ class BlockRelation extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId } = this.props;
-		const relations = Schema.page.default.filter((it: any) => { return !it.isHidden; });
+		const relations = [];
 		const details = blockStore.getDetails(rootId, rootId);
 
 		const Item = (item: any) => {

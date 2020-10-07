@@ -49,7 +49,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationId; });
+			const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationKey; });
 			if (!relation) {
 				return null;
 			};
@@ -117,7 +117,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					) : (
 						<div className="txt">Where</div>
 					)}
-					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
+					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
 					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
 					{value}
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
@@ -252,7 +252,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
 		this.items.push({ 
-			relationId: first.id, 
+			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: '',
@@ -294,20 +294,20 @@ class MenuFilter extends React.Component<Props, {}> {
 			item[k] = v;
 	
 			// Remove value when we change relation, filter non unique entries
-			if (k == 'relationId') {
+			if (k == 'relationKey') {
 				item.value = '';
 				this.items = this.items.filter((it: I.Filter, i: number) => { 
 					return (i == id) || 
-					(it.relationId != v) || 
-					((it.relationId == v) && (it.condition != item.condition)); 
+					(it.relationKey != v) || 
+					((it.relationKey == v) && (it.condition != item.condition)); 
 				});
 			};
 
 			if (k == 'condition') {
 				this.items = this.items.filter((it: I.Filter, i: number) => { 
 					return (i == id) || 
-					(it.relationId != item.relationId) || 
-					((it.relationId == item.relationId) && (it.condition != v)); 
+					(it.relationKey != item.relationKey) || 
+					((it.relationKey == item.relationKey) && (it.condition != v)); 
 				});
 			};
 	
@@ -332,7 +332,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationId; });
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationKey; });
 		
 		if (!relation || commonStore.menuIsOpen('dataviewCalendar')) {
 			return;

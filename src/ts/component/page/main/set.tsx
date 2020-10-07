@@ -3,20 +3,12 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Smile, HeaderMainSet as Header } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
-interface State {
-	types: any[];
-};
-
 @observer
-class PageMainSet extends React.Component<Props, State> {
-
-	state = {
-		types: [] as any[],
-	};
+class PageMainSet extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -25,24 +17,16 @@ class PageMainSet extends React.Component<Props, State> {
 	};
 
 	render () {
-		let { types } = this.state;
-		let items = [
-			{ id: '', icon: 'page', emoji: '', name: 'Page' },
-			{ id: '', icon: 'contact', emoji: '', name: 'Contact' },
-			{ id: '', icon: 'task', emoji: '', name: 'Task' },
-			{ id: '', icon: '', emoji: '💾', name: 'Doc' },
-			{ id: '', icon: '', emoji: '🎓', name: 'Univercity' },
-			{ id: '', icon: '', emoji: '📅', name: 'Meeting' },
-			{ id: '', icon: '', emoji: '📚', name: 'Book review' },
-		];
+		let { objectTypes } = dbStore;
 
 		const Item = (item: any) => {
 			let icon = null;
-			if (item.emoji) {
-				icon = <Smile icon={item.emoji} />;
-			} else 
-			if (item.icon) {
-				icon = <Icon className={item.icon} />;
+			let id = DataUtil.schemaField(item.url);
+			
+			if (item.iconEmoji) {
+				icon = <Smile icon={item.iconEmoji} />;
+			} else {
+				icon = <Icon className={id} />;
 			};
 			return (
 				<div className="item" onClick={(e: any) => { this.setCreate(item); }}>
@@ -51,8 +35,6 @@ class PageMainSet extends React.Component<Props, State> {
 				</div>
 			);
 		};
-
-		types = types.concat(items);
 
 		return (
 			<div>
@@ -66,7 +48,7 @@ class PageMainSet extends React.Component<Props, State> {
 							<Icon className="add" />
 							<div className="name">Create new object type</div>
 						</div>
-						{types.map((item: any, i: number) => (
+						{objectTypes.map((item: any, i: number) => (
 							<Item key={i} {...item} />
 						))}
 					</div>
@@ -75,15 +57,7 @@ class PageMainSet extends React.Component<Props, State> {
 		);
 	};
 
-	componentDidMount () {
-		C.ObjectTypeList((message: any) => {
-			this.setState({ types: message.objectTypes });
-		});
-	};
-
 	onAdd (e: any) {
-		const { types } = this.state;
-
 		commonStore.menuOpen('dataviewObjectType', { 
 			element: '#button-add',
 			offsetX: 28,
@@ -92,9 +66,8 @@ class PageMainSet extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				onCreate: (item: I.ObjectType) => {
-					types.push(item);
-					this.setState({ types: types });
+				onCreate: (type: I.ObjectType) => {
+					dbStore.addObjectType(type);
 				}
 			}
 		});

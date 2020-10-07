@@ -1,8 +1,27 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
+import { I } from 'ts/lib';
 
 class DbStore {
+	public objectTypeMap: Map<string, I.ObjectType> = observable(new Map());
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
+
+	@computed
+	get objectTypes (): I.ObjectType[] {
+		return Array.from(this.objectTypeMap, ([ url, object]) => (object));
+	};
+
+	@action
+	setObjectTypes (types: I.ObjectType[]) {
+		for (let type of types) {
+			this.objectTypeMap.set(type.url, type);
+		};
+	};
+
+	@action
+	addObjectType (type: I.ObjectType) {
+		this.objectTypeMap.set(type.url, type);
+	};
 
 	@action
 	setData (blockId: string, list: any[]) {
@@ -55,6 +74,14 @@ class DbStore {
 		};
 
 		set(record, obj);
+	};
+
+	getObjectTypesMap () {
+		return this.objectTypeMap;
+	};
+
+	getObjectType (url: string) {
+		return this.objectTypeMap.get(url);
 	};
 
 	getMeta (blockId: string) {

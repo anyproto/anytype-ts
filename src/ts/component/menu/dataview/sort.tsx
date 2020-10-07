@@ -44,7 +44,7 @@ class MenuSort extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => (
 			<div className="item">
 				<Handle />
-				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
+				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
 				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>
@@ -114,7 +114,7 @@ class MenuSort extends React.Component<Props, {}> {
 		};
 
 		this.items.push({ 
-			relationId: view.relations[0].id, 
+			relationKey: view.relations[0].id, 
 			type: I.SortType.Asc 
 		});
 		this.forceUpdate();
@@ -124,8 +124,8 @@ class MenuSort extends React.Component<Props, {}> {
 	onChange (id: number, k: string, v: string) {
 		let item = this.items.find((item: any, i: number) => { return i == id; });
 
-		if (k == 'relationId') {
-			this.items = this.items.filter((it: I.Sort, i: number) => { return (i == id) || (it.relationId != v); });
+		if (k == 'relationKey') {
+			this.items = this.items.filter((it: I.Sort, i: number) => { return (i == id) || (it.relationKey != v); });
 		};
 		
 		item[k] = v;

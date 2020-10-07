@@ -33,12 +33,12 @@ export enum FilterCondition {
 };
 
 export interface Sort {
-	relationId: string;
+	relationKey: string;
 	type: SortType;
 };
 
 export interface Filter {
-	relationId: string;
+	relationKey: string;
 	operator: FilterOperator;
 	condition: FilterCondition;
 	value: any;
@@ -82,13 +82,8 @@ export interface Cell {
 };
 
 export interface ContentDataview {
-	databaseId: string;
-	schemaURL: string;
-	viewId: string;
+	source: string;
 	views: View[];
-	data: any[];
-	offset: number;
-	total: number;
 };
 
 export interface BlockDataview extends I.Block {

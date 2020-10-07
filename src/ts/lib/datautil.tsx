@@ -1,5 +1,5 @@
-import { I, C, keyboard, Storage, crumbs, translate, Util } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { I, C, keyboard, crumbs, translate, Util } from 'ts/lib';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -140,17 +140,21 @@ class DataUtil {
 					};
 				});
 			};
-			
+
 			crumbs.init();
-			
-			C.BlockOpen(root, (message: any) => {
-				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate();
-					return;
-				};
-				if (callBack) {
-					callBack();
-				};
+
+			C.ObjectTypeList((message: any) => {
+				dbStore.setObjectTypes(message.objectTypes);
+
+				C.BlockOpen(root, (message: any) => {
+					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+						Util.onErrorUpdate();
+						return;
+					};
+					if (callBack) {
+						callBack();
+					};
+				});
 			});
 		});
 	};
@@ -475,8 +479,8 @@ class DataUtil {
 	};
 
 
-	cellId (prefix: string, relationId: string, id: any) {
-		return [ prefix, relationId, String(id || '') ].join('-');
+	cellId (prefix: string, relationKey: string, id: any) {
+		return [ prefix, relationKey, String(id || '') ].join('-');
 	};
 
 };
