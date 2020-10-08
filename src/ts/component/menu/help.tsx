@@ -15,22 +15,23 @@ const Constant = require('json/constant.json');
 
 @observer
 class MenuHelp extends React.Component<Props, {}> {
-	
+
 	constructor (props: any) {
 		super(props);
-		
+
 		this.onClick = this.onClick.bind(this);
 	};
-	
+
 	render () {
 		const items: any[] = [
 			{ id: 'help', name: 'What\'s new', document: 'whatsNew' },
 			{ id: 'help', name: 'Status', document: 'status' },
 			{ id: 'shortcut', name: 'Shortcuts' },
 			{ id: 'feedback', name: 'Give feedback' },
-			{ id: 'community', name: 'Join community' },
+			{ id: 'community', name: 'Join community forum' },
+			{ id: 'telegramclosedbeta', name: 'Telegram closed group' },
 		];
-		
+
 		return (
 			<div className="items">
 				{items.map((item: I.MenuItem, i: number) => (
@@ -39,12 +40,12 @@ class MenuHelp extends React.Component<Props, {}> {
 			</div>
 		);
 	};
-	
+
 	onClick (e: any, item: any) {
 		const { history } = this.props;
-		
+
 		this.props.close();
-		
+
 		switch (item.id) {
 			case 'help':
 				commonStore.popupOpen('help', {
@@ -55,17 +56,21 @@ class MenuHelp extends React.Component<Props, {}> {
 			case 'shortcut':
 				commonStore.popupOpen('shortcut', {});
 				break;
-				
+
 			case 'feedback':
 				commonStore.popupOpen('feedback', {});
 				break;
-				
+
 			case 'community':
 				ipcRenderer.send('urlOpen', Url.community);
 				break;
+
+			case 'telegramclosedbeta':
+				ipcRenderer.send('urlOpen', Url.telegramclosedbeta);
+				break;
 		};
 	};
-	
+
 };
 
 export default MenuHelp;

@@ -12,13 +12,13 @@ const Status = [
 	{ text: 'Your data is self-hosted. It means, that all the information is stored on your computer.' },
 
 	{ style: I.TextStyle.Header3, text:  'Feedback' },
-	{ text: 'We ask you to provide feedback in every moment, at least two times per month.<br>Please, write us via email <a href="mailto:hello@anytype.io">hello@anytype.io</a> or through the bottom-right <span id="button-menu-help" class="link"><span class="icon help"></span> question mark</span>.' },
+	{ text: 'We ask you to provide feedback in every moment, at least two times per month.<br>You can do that via <a href="https://community.anytype.io/">community forum</a> or use the build-in feedback panel via bottom-right <span class="icon help"></span> mark if you want to stay incognito.' },
 	{ text: 'More features will be added one by one during the upcoming months.' },
 
 	{ style: I.TextStyle.Header3, text:  'Backups' },
 	{ text: `In this version, all the data becomes encrypted and syncs with our servers.
 			You can restore the latest snapshot at any moment even if your device is offline, but it is an experimental feature.
-			The 100% working way for data backup is to manually copy and save Anytype's data folder, you can find it here <span id="button-path" class="cp bgColor bgColor-grey textColor textColor-red">${path}</span>.` 
+			The 100% working way for data backup is to manually copy and save Anytype's data folder, you can find it here <span id="button-path" class="cp bgColor bgColor-grey textColor textColor-red">${path}</span>.`
 	},
 
 	{ style: I.TextStyle.Header3, text:  'Help is under construction' },
