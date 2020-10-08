@@ -33,6 +33,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
+		const { account } = authStore;
 		const { root } = blockStore;
 		const { focused } = focus;
 		const rootId = this.isEditor() ? this.match.params.id : root;
@@ -65,7 +66,7 @@ class Keyboard {
 
 		// Navigation search
 		this.shortcut('ctrl+s, cmd+s', e, (pressed: string) => {
-			if (commonStore.popupIsOpen('navigation') || !this.isPinChecked) {
+			if (commonStore.popupIsOpen('navigation') || !this.isPinChecked || !account) {
 				return;
 			};
 			commonStore.popupOpen('navigation', { 
@@ -80,6 +81,9 @@ class Keyboard {
 
 		// Navigation links
 		this.shortcut('ctrl+o, cmd+o', e, (pressed: string) => {
+			if (!account) {
+				return;
+			};
 			commonStore.popupOpen('navigation', { 
 				preventResize: true,
 				data: { 
