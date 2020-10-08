@@ -6,7 +6,24 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 05 October, 2020` },
+	{ style: I.TextStyle.Title, text: `Updates for 08 October, 2020` },
+	{ text: `We’re taking another step towards our beta today, with the launch of our <a href="https://community.anytype.io/">community forum</a>. It will be a valuable resource for features, feedback and support. We hope it will also a place for you to do what you do best: discuss the future of the web and building your very own digital brain. Your invite code should wait you in mailbox, if nothing there please write us <a href="mailto:hello@anytype.io">hello@anytype.io</a>.` },
+
+	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
+	{ style: I.TextStyle.Bulleted, text: `The title can be aligned, has color and background now.` },
+
+	{ style: I.TextStyle.Header3, text:  `Bug fixes. Not anymore:` },
+	{ style: I.TextStyle.Bulleted, text: `Document structure can brake in some cases and prevent the page from opening.` },
+	{ style: I.TextStyle.Bulleted, text: `Clipboard. Can't copy and paste part of the text block in Anytype.` },
+	{ style: I.TextStyle.Bulleted, text: `Clipboard. Highlighted, checkbox, toggle, and header type blocks with content become text type if you paste the text into them.` },
+	{ style: I.TextStyle.Bulleted, text: `Clipboard. Copying block from one column to another place leads to layout brake.` },
+	{ style: I.TextStyle.Bulleted, text: `Drag and drop. Moving blocks with complex structures can't be done in some cases.` },
+	{ style: I.TextStyle.Bulleted, text: `Links without URL schema can't be opened in some cases.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+
+	{ style: I.TextStyle.Header1, text: `Updates for 05 October, 2020` },
 	{ text: `This is one for the history books. With Anytype 0.16, users can now travel through time to recover previous versions of their pages. Use <span class="${sc}">History</span> on the page's menu in the top-right corner.` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
