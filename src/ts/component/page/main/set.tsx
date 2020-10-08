@@ -19,6 +19,12 @@ class PageMainSet extends React.Component<Props, {}> {
 	render () {
 		let { objectTypes } = dbStore;
 
+		objectTypes.sort((c1: I.ObjectType, c2: I.ObjectType) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
+
 		const Item = (item: any) => {
 			let icon = null;
 			let id = DataUtil.schemaField(item.url);
