@@ -4,7 +4,7 @@
 	.popup.popupEditorPage {
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
 		
-		.header { position: relative; padding: 0px; border-radius: 12px 12px 0px 0px; }
+		.header { position: fixed; padding: 0px; border-radius: 12px 12px 0px 0px; }
 		.header {
 			.menu { right: 0px; top: 0px; }
 		}
@@ -12,5 +12,6 @@
 		.content { height: 100%; overflow-y: scroll; padding: 0px; }
 		.selection { height: 100%; }
 		.blocks { margin-left: -48px; }
+		.editor { margin-top: 38px; }
 	}	
 }
