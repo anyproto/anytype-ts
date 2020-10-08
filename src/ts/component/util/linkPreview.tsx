@@ -35,6 +35,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		faviconUrl: '',
 		imageUrl: '',
 	};
+	lastUrl: string;
 	
 	constructor (props: any) {
 		super(props);
@@ -74,7 +75,7 @@ class LinkPreview extends React.Component<Props, {}> {
 							<div className="link">
 								{faviconUrl ? <Icon icon={faviconUrl} className="fav" /> : ''}
 								{url}
-							</div>
+							</div> 
 						</div>
 					</div>
 				</React.Fragment>
@@ -94,7 +95,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		const { linkPreview } = commonStore;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!loading && linkPreview.url && (linkPreview.url != url)) {
+		if (!loading && (this.lastUrl != linkPreview.url)) {
 			this.setState({ 
 				loading: true,
 				url: linkPreview.url,
@@ -104,6 +105,8 @@ class LinkPreview extends React.Component<Props, {}> {
 				faviconUrl: '',
 				imageUrl: '',
 			});
+
+			this.lastUrl = linkPreview.url;
 			
 			C.LinkPreview(linkPreview.url, (message: any) => {
 				if (message.error.code) {
@@ -112,13 +115,8 @@ class LinkPreview extends React.Component<Props, {}> {
 				};
 
 				this.setState({
-					type: Number(message.linkPreview.type) || 0,
-					title: String(message.linkPreview.title || ''),
-					description: String(message.linkPreview.description || ''),
-					faviconUrl: String(message.linkPreview.faviconUrl || ''),
-					imageUrl: String(message.linkPreview.imageUrl || ''),
+					...message.linkPreview,
 					loading: false,
-					url: linkPreview.url,
 				});
 			});
 		};
@@ -128,8 +126,9 @@ class LinkPreview extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { linkPreview } = commonStore;
-		ipcRenderer.send('urlOpen', linkPreview.url);			
+		const { url } = this.state;
+		console.log(this.state);
+		ipcRenderer.send('urlOpen', url);		
 	};
 	
 	onCopy (e: any) {
