@@ -29,7 +29,7 @@ class PopupEditorPage extends React.Component<Props, {}> {
 				<DragProvider {...this.props} rootId={id}>
 					<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={id} />
 							
-					<EditorPage isPopup={true} history={history} location={location} match={match} rootId={id} onOpen={this.onOpen} />
+					<EditorPage key="editorPagePopup" isPopup={true} history={history} location={location} match={match} rootId={id} onOpen={this.onOpen} />
 				</DragProvider>
 			</SelectionProvider>
 		);
