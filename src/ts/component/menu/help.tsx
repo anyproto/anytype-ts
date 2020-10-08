@@ -11,7 +11,6 @@ interface Props extends I.Menu {
 
 const { ipcRenderer } = window.require('electron');
 const Url = require('json/url.json');
-const Constant = require('json/constant.json');
 
 @observer
 class MenuHelp extends React.Component<Props, {}> {
@@ -29,7 +28,7 @@ class MenuHelp extends React.Component<Props, {}> {
 			{ id: 'shortcut', name: 'Shortcuts' },
 			{ id: 'feedback', name: 'Give feedback' },
 			{ id: 'community', name: 'Join community forum' },
-			{ id: 'telegramclosedbeta', name: 'Telegram closed group' },
+			{ id: 'telegramClosedBeta', name: 'Telegram closed group' },
 		];
 
 		return (
@@ -65,8 +64,8 @@ class MenuHelp extends React.Component<Props, {}> {
 				ipcRenderer.send('urlOpen', Url.community);
 				break;
 
-			case 'telegramclosedbeta':
-				ipcRenderer.send('urlOpen', Url.telegramclosedbeta);
+			case 'telegramClosedBeta':
+				ipcRenderer.send('urlOpen', Url.telegramClosedBeta);
 				break;
 		};
 	};
