@@ -431,6 +431,10 @@ class Block extends React.Component<Props, {}> {
 		const prevNode = node.find('#block-' + prevBlockId);
 		const currentNode = node.find('#block-' + currentBlockId);
 		const res = this.calcWidth(e.pageX - offset, index);
+
+		if (!res) {
+			return;
+		};
 		
 		const w1 = res.percent * res.sum;
 		const w2 = (1 - res.percent) * res.sum;
@@ -454,6 +458,10 @@ class Block extends React.Component<Props, {}> {
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		const res = this.calcWidth(e.pageX - offset, index);
+
+		if (!res) {
+			return;
+		};
 		
 		if (selection) {
 			selection.preventSelect(false);	
