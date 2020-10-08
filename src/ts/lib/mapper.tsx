@@ -57,6 +57,7 @@ const Mapper = {
                 description: obj.getDescription(),
                 faviconUrl: obj.getFaviconurl(),
                 imageUrl: obj.getImageurl(),
+                url: obj.getUrl(),
             };
         },
 
