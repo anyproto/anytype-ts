@@ -393,7 +393,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		let value = this.getValue().replace(/\n$/, '');
+		let value = this.getValue();
 		let ret = false;
 
 		const k = e.key.toLowerCase();	
