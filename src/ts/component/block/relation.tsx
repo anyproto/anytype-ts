@@ -22,10 +22,9 @@ class BlockRelation extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 
 		const Item = (item: any) => {
-			let type = DataUtil.schemaField(item.type);
 			let value: any = details[item.id];
 
-			switch (type) {
+			switch (item.format) {
 				case I.RelationType.Date:
 					value = Util.date('d F Y', value);
 					break;
@@ -34,7 +33,7 @@ class BlockRelation extends React.Component<Props, {}> {
 			return (
 				<tr className="row">
 					<td className="cell name">
-						<Icon className={'relation c-' + type} />
+						<Icon className={'relation c-' + item.format} />
 						<div className="txt">{item.name}</div>
 					</td>
 					<td className="cell value">{value}</td>

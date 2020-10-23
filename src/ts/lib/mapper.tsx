@@ -191,7 +191,7 @@ const Mapper = {
 
 		ViewRelation: (obj: any): any => {
 			return {
-				id: obj.getKey(),
+				key: obj.getKey(),
 				isVisible: obj.getIsvisible(),
 				width: obj.getWidth(),
 			};
@@ -224,9 +224,9 @@ const Mapper = {
 					};
 		
 					relations.push({
-						id: String(relation.id || ''),
+						key: String(relation.key || ''),
 						name: String(relation.name || ''),
-						type: DataUtil.schemaField(relation.type),
+						format: relation.format,
 						isReadOnly: Boolean(relation.isReadOnly),
 					});
 				};
@@ -248,12 +248,12 @@ const Mapper = {
 			};
 	
 			view.relations = relations.map((relation: I.Relation) => {
-				let rel = view.relations.find((it: any) => { return it.id == relation.id; }) || {};
+				let rel = view.relations.find((it: any) => { return it.key == relation.key; }) || {};
 				return observable({
 					...relation,
 					isVisible: Boolean(rel.isVisible),
-					order: order[relation.id],
-					width: Number(rel.width || Constant.size.dataview.cell[relation.type] || Constant.size.dataview.cell.default) || 0,
+					order: order[relation.key],
+					width: Number(rel.width || Constant.size.dataview.cell[DataUtil.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
 				});
 			});
 

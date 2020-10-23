@@ -13,7 +13,7 @@ class CellSelect extends React.Component<Props, {}> {
 		const data = this.props.data[index];
 		
 		return (
-			<Tag text={data[relation.id]} />
+			<Tag text={data[relation.key]} />
 		);
 	};
 	

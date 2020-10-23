@@ -29,10 +29,10 @@ class Cell extends React.Component<Props, {}> {
 	render () {
 		const { id, relation, data, readOnly, view } = this.props;
 		
-		let cn = [ 'cellContent', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
+		let cn = [ 'cellContent', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
 		let CellComponent: React.ReactType<Props>;
 
-		switch (relation.type) {
+		switch (relation.format) {
 			default:
 			case I.RelationType.Title:
 			case I.RelationType.Number:
@@ -49,7 +49,7 @@ class Cell extends React.Component<Props, {}> {
 				CellComponent = CellBool;
 				break;
 				
-			case I.RelationType.Link:
+			case I.RelationType.Object:
 				CellComponent = CellLink;
 				break;
 				
@@ -75,10 +75,10 @@ class Cell extends React.Component<Props, {}> {
 			return;
 		};
 
-		const cellId = DataUtil.cellId('cell', relation.id, id);
+		const cellId = DataUtil.cellId('cell', relation.key, id);
 		const cell = $('#' + cellId);
 		const width = Math.max(cell.width(), Constant.size.dataview.cell.default);
-		const value = data[relation.id];
+		const value = data[relation.key];
 
 		if (this.ref) {
 			if (this.ref.setEditing) {
@@ -104,12 +104,12 @@ class Cell extends React.Component<Props, {}> {
 				};
 			},
 			data: { 
-				value: data[relation.id], 
+				value: data[relation.key], 
 				options: relation.options, 
 			},
 		};
 
-		switch (relation.type) {
+		switch (relation.format) {
 
 			case I.RelationType.Date:
 				param.data = Object.assign(param.data, {
@@ -126,7 +126,7 @@ class Cell extends React.Component<Props, {}> {
 				menuId = 'dataviewTagList';
 				break;
 					
-			case I.RelationType.Link:
+			case I.RelationType.Object:
 				menuId = 'dataviewAccount';
 				break;
 
@@ -146,10 +146,10 @@ class Cell extends React.Component<Props, {}> {
 				});
 
 				let name = 'Go to';
-				if (relation.type == I.RelationType.Email) {
+				if (relation.format == I.RelationType.Email) {
 					name = 'Mail to';
 				};
-				if (relation.type == I.RelationType.Phone) {
+				if (relation.format == I.RelationType.Phone) {
 					name = 'Call to';
 				};
 
@@ -162,15 +162,15 @@ class Cell extends React.Component<Props, {}> {
 					],
 					onSelect: (event: any, item: any) => {
 						let scheme = '';
-						if (relation.type == I.RelationType.Url) {
+						if (relation.format == I.RelationType.Url) {
 							if (!value.match(/:\/\//)) {
 								scheme = 'http://';
 							};
 						};
-						if (relation.type == I.RelationType.Email) {
+						if (relation.format == I.RelationType.Email) {
 							scheme = 'mailto:';
 						};
-						if (relation.type == I.RelationType.Phone) {
+						if (relation.format == I.RelationType.Phone) {
 							scheme = 'tel:';
 						};
 
@@ -201,12 +201,12 @@ class Cell extends React.Component<Props, {}> {
 		const { rootId, block, index, relation } = this.props;
 		const data = this.props.data[index];
 
-		if (data[relation.id] === value) {
+		if (data[relation.key] === value) {
 			return;
 		};
 
 		let obj = { id: data.id };
-		obj[relation.id] = value;
+		obj[relation.key] = value;
 
 		dbStore.updateRecord(block.id, obj);
 		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);

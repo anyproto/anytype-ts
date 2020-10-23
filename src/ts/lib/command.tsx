@@ -218,6 +218,20 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	dispatcher.request('blockCreatePage', request, callBack);
 };
 
+const BlockCreateSet = (contextId: string, targetId: string, objectTypeUrl: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+	details = details || {};
+
+	const request = new Rpc.Block.CreateSet.Request();
+
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setObjecttypeurl(objectTypeUrl);
+	request.setPosition(position);
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request('blockCreateSet', request, callBack);
+};
+
 const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Unlink.Request();
 	
@@ -710,6 +724,7 @@ export {
 
 	BlockCreate,
 	BlockCreatePage,
+	BlockCreateSet,
 	BlockCreateDataviewView,
 
 	BlockSetTextText,

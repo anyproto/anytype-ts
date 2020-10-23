@@ -42,15 +42,15 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
-		let value = data[relation.id];
+		let value = data[relation.key];
 
 		if (editing) {
-			if (relation.type == I.RelationType.Description) {
+			if (relation.format == I.RelationType.Description) {
 				EditorComponent = (item: any) => (
 					<Textarea ref={(ref: any) => { this.ref = ref; }} id="input" {...item} />
 				);
 			} else 
-			if (relation.type == I.RelationType.Date) {
+			if (relation.format == I.RelationType.Date) {
 				EditorComponent = (item: any) => (
 					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} mask="99.99.9999" maskOptions={{ alias: 'datetime', inputFormat: 'dd.mm.yyyy' }} placeHolder="dd.mm.yyyy" onKeyUp={this.onKeyUpDate} />
 				);
@@ -70,10 +70,10 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
-			if (relation.type == I.RelationType.Description) {
+			if (relation.format == I.RelationType.Description) {
 				value = String(value || '').split('\n')[0];
 			};
-			if (relation.type == I.RelationType.Date) {
+			if (relation.format == I.RelationType.Date) {
 				value = value ? Util.date('M d Y', value) : '';
 			};
 			Name = (item: any) => (
@@ -83,7 +83,7 @@ class CellText extends React.Component<Props, State> {
 
 		let content: any = <Name name={value} />;
 
-		if (relation.id == 'name') {
+		if (relation.key == 'name') {
 			let cn = 'c20';
 			let size = 18;
 
@@ -105,7 +105,7 @@ class CellText extends React.Component<Props, State> {
 
 			content = (
 				<React.Fragment>
-					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />
+					<Smile id={[ relation.key, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />
 					<Name name={value} />
 					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
 				</React.Fragment>
@@ -118,13 +118,13 @@ class CellText extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { editing } = this.state;
 		const { id, relation, index } = this.props;
-		const cellId = DataUtil.cellId('cell', relation.id, id);
+		const cellId = DataUtil.cellId('cell', relation.key, id);
 		const cell = $('#' + cellId);
 		const data = this.props.data[index];
 
 		if (editing) {
-			let value = String(data[relation.id] || '');
-			if (relation.type == I.RelationType.Date) {
+			let value = String(data[relation.key] || '');
+			if (relation.format == I.RelationType.Date) {
 				value = value ? Util.date('d.m.Y', Number(value)) : '';
 			};
 			let length = value.length;
@@ -160,7 +160,7 @@ class CellText extends React.Component<Props, State> {
 		const { relation, onChange } = this.props;
 		this.resize();
 
-		if (relation.type != I.RelationType.Description) {
+		if (relation.format != I.RelationType.Description) {
 			keyboard.shortcut('enter', e, (pressed: string) => {
 				e.preventDefault();
 
@@ -202,7 +202,7 @@ class CellText extends React.Component<Props, State> {
 		let { relation, onChange } = this.props;
 		let value = this.ref.getValue();
 
-		if (value && (relation.type == I.RelationType.Date)) {
+		if (value && (relation.format == I.RelationType.Date)) {
 			value = this.parseDate(value);
 		};
 
@@ -251,12 +251,12 @@ class CellText extends React.Component<Props, State> {
 	resize () {
 		const { id, relation } = this.props;
 		const { editing } = this.state;
-		const cellId = DataUtil.cellId('cell', relation.id, id);
+		const cellId = DataUtil.cellId('cell', relation.key, id);
 		const cell = $('#' + cellId);
 
 		raf(() => {
 			if (editing) {
-				if (relation.type == I.RelationType.Description) {
+				if (relation.format == I.RelationType.Description) {
 					const input = cell.find('#input');
 					input.css({ height: 'auto', overflow: 'visible' });
 

@@ -20,7 +20,7 @@ class CellCheckbox extends React.Component<Props, {}> {
 
 		return (
 			<React.Fragment>
-				<Icon className={'checkbox ' + (data[relation.id] ? 'active' : '')} />
+				<Icon className={'checkbox ' + (data[relation.key] ? 'active' : '')} />
 			</React.Fragment>
 		);
 	};
@@ -30,7 +30,7 @@ class CellCheckbox extends React.Component<Props, {}> {
 		const data = this.props.data[index];
 
 		if (onChange) {
-			onChange(!data[relation.id]);
+			onChange(!data[relation.key]);
 		};
 	};
 	

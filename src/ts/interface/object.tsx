@@ -13,27 +13,24 @@ export interface ObjectType {
 };
 
 export enum RelationType { 
-	None		 = '',
-	Title		 = 'title', 
-	Description	 = 'description', 
-	Number		 = 'number', 
-	Date		 = 'date', 
-	Select		 = 'select', 
-	Link		 = 'link',
-	File		 = 'file',
-	Image		 = 'image',
-	Checkbox	 = 'checkbox', 
-	Icon		 = 'emoji',
-	Url			 = 'url',
-	Email		 = 'email',
-	Phone		 = 'phone',
+	Description	 = 0, 
+	Title		 = 1, 
+	Number		 = 2, 
+	Date		 = 3, 
+	Select		 = 4, 
+	File		 = 5,
+	Checkbox	 = 6, 
+	Icon		 = 7,
+	Url			 = 8,
+	Email		 = 9,
+	Phone		 = 10,
+	Object		 = 100,
+	Self		 = 101,
 };
 
 export interface Relation {
-	id?: string; // TMP
-	type?: RelationType;
 	key: string;
-	format: string;
+	format: RelationType;
 	name: string;
 	dataSource: string;
 	isHidden: boolean;

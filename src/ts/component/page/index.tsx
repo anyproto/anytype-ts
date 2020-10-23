@@ -139,6 +139,7 @@ class Page extends React.Component<Props, {}> {
 						},
 						onCancel: () => {
 							Storage.set('lastSurveyCanceled', 1);
+							Storage.set('lastSurveyTime', Util.time());
 						},
 					},
 				});

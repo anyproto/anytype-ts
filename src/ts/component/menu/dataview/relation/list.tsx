@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -30,18 +30,20 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { data } = param;
 		const { readOnly } = data;
 
+		console.log(this.items);
+
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 		
 		const Item = SortableElement((item: any) => (
-			<div id={'relation-' + item.id} className="item">
+			<div id={'relation-' + item.key} className="item">
 				<Handle />
-				<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.id); }}>
-					<Icon className={'relation c-' + item.type} />
+				<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.key); }}>
+					<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
 					<div className="name">{item.name}</div>
 				</span>
-				<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.id, v); }} />
+				<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.key, v); }} />
 			</div>
 		));
 		

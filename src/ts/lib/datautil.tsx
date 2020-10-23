@@ -89,6 +89,28 @@ class DataUtil {
 		};
 		return c;
 	};
+
+	relationClass (v: I.RelationType) {
+		let c = '';
+		switch (v) {
+			default:
+			case I.RelationType.Description: c = 'description'; break;
+			case I.RelationType.Title:		 c = 'title'; break;
+			case I.RelationType.Number:		 c = 'number'; break;
+			case I.RelationType.Date:		 c = 'date'; break;
+			case I.RelationType.Select:		 c = 'select'; break;
+			case I.RelationType.File:		 c = 'file'; break;
+			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
+			case I.RelationType.Icon:		 c = 'icon'; break;
+			case I.RelationType.Url:		 c = 'url'; break;
+			case I.RelationType.Email:		 c = 'email'; break;
+			case I.RelationType.Phone:		 c = 'phone'; break;
+			case I.RelationType.Object:		 c = 'object'; break;
+			case I.RelationType.Self:		 c = 'object'; break;
+			
+		};
+		return c;
+	};
 	
 	alignIcon (v: I.BlockAlign): string {
 		let icon = '';

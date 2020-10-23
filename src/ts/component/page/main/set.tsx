@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Smile, HeaderMainSet as Header } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore, dbStore, blockStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -80,16 +80,20 @@ class PageMainSet extends React.Component<Props, {}> {
 	};
 
 	setCreate (item: any) {
+		const { root } = blockStore;
+
+		console.log(item);
+
 		if (!item.url) {
 			return;
 		};
 
-		C.SetCreate(item.url, (message: any) => {
+		C.BlockCreateSet(root, '', item.url, item, I.BlockPosition.Bottom, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
-			
-			DataUtil.pageOpen(message.id);
+
+			DataUtil.pageOpen(message.targetId);
 		});
 	};
 	

@@ -24,7 +24,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { relationKey, view } = data;
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == relationKey; });
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 
 		let current = null;
 		let options = null;

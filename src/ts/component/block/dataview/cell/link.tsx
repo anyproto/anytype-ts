@@ -12,14 +12,14 @@ class CellLink extends React.Component<Props, {}> {
 		const { relation, index } = this.props;
 		const data = this.props.data[index];
 		
-		if (!data[relation.id]) {
+		if (!data[relation.key]) {
 			return null;
 		};
 		
 		return (
 			<React.Fragment>
-				<IconUser className="c18" {...data[relation.id]} />
-				{data[relation.id].name}
+				<IconUser className="c18" {...data[relation.key]} />
+				{data[relation.key].name}
 			</React.Fragment>
 		);
 	};

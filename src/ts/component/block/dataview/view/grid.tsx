@@ -34,10 +34,10 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		const CellHead = (item: any) => {
 			const { relation } = item;
-			const id = DataUtil.cellId('head', relation.id, '');
+			const id = DataUtil.cellId('head', relation.key, '');
 
 			return (
-				<th id={id} className={'head c-' + relation.type} style={{ width: relation.width }}>
+				<th id={id} className={'head c-' + DataUtil.relationClass(relation.format)} style={{ width: relation.width }}>
 					<div className="cellContent">
 						<Icon className={'relation c-' + relation.type} />
 						<div className="name">{relation.name}</div>
@@ -54,7 +54,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			let id = DataUtil.cellId('cell', relation.id, index);
 			let cn = [ 'cell', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
 
-			if (item.relation.id == 'name') {
+			if (item.relation.key == 'name') {
 				cn.push('isName');
 			};
 
@@ -210,7 +210,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#' + DataUtil.cellId('head', id, ''));
 		const offset = el.offset();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.id == id; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == id; });
 
 		let width = e.pageX - offset.left;
 		width = Math.max(Constant.size.dataview.cell.min, width); 

@@ -28,14 +28,12 @@ class View implements I.View {
 
 class ViewRelation implements I.ViewRelation {
 
-	id: string = '';
 	key: string = '';
 	name: string = '';
-	format: string = '';
 	dataSource: string = '';
 	objectType: string = '';
 	options: any[] = [] as any[];
-	type: I.RelationType = I.RelationType.None;
+	format: I.RelationType = I.RelationType.Description;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
 	isVisible: boolean = false;
@@ -46,9 +44,9 @@ class ViewRelation implements I.ViewRelation {
 	constructor (props: I.ViewRelation) {
 		let self = this;
 		
-		self.id = String(props.id || '');
+		self.key = String(props.key || '');
 		self.name = String(props.name || '');
-		self.type = props.type || I.RelationType.None;
+		self.format = props.format || I.RelationType.Description;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.isVisible = Boolean(props.isVisible);

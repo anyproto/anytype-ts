@@ -23,7 +23,7 @@ class Column extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, groupId, view, onAdd, list, data, idx, value } = this.props;
 
-		const group = view.relations.find((item: I.Relation) => { return item.id == groupId; });
+		const group = view.relations.find((item: I.Relation) => { return item.key == groupId; });
 		const Add = (item: any) => (
 			<Draggable draggableId={idx + '-add'} index={item.index}>
 				{(provided: any, snapshot: any) => (

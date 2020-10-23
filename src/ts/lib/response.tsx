@@ -154,6 +154,13 @@ const BlockCreatePage = (response: any) => {
 	};
 };
 
+const BlockCreateSet = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+		targetId: response.getTargetid(),
+	};
+};
+
 const BlockUnlink = (response: any) => {
 	return {};
 };
