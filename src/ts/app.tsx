@@ -279,6 +279,10 @@ class App extends React.Component<Props, State> {
 		folders.forEach(folder => {
 			const path = [ prefix, folder ].join('/')
 			fs.readdir(path, (err: any, files: any[]) => {
+				if (err) {
+					cb();
+					return;
+				};
 				images = images.concat(files.map((it: string) => { return [ 'img', folder, it ].join('/') }));
 				cb();
 			});

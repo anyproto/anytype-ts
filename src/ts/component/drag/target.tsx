@@ -29,9 +29,10 @@ class DropTarget extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
-		
+
 		return (
 			<div 
+				key={'drop-target-' + id}
 				className={cn.join(' ')} 
 				onClick={this.onClick} 
 				data-id={id} 

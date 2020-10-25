@@ -305,7 +305,7 @@ class EditorPage extends React.Component<Props, State> {
 		const details = blockStore.getDetails(rootId, rootId);
 
 		if (details.name == Constant.default.name) {
-			focus.set(rootId + '-title', { from: 0, to: 0 });
+			focus.set('title', { from: 0, to: 0 });
 			focus.apply();
 		};
 	};
@@ -1094,7 +1094,7 @@ class EditorPage extends React.Component<Props, State> {
 
 						// Align
 						if (item.isAlign) {
-							C.BlockListSetAlign(rootId, [ id ], item.value, onCommand);
+							C.BlockListSetAlign(rootId, [ id ], item.key, onCommand);
 						} else 
 
 						// Blocks

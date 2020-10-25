@@ -48,15 +48,16 @@ const Mapper = {
 			};
 		},
 
-		LinkPreview: (obj: any): I.LinkPreview => {
-			return {
-				type: obj.getType(),
-				title: obj.getTitle(),
-				description: obj.getDescription(),
-				faviconUrl: obj.getFaviconurl(),
-				imageUrl: obj.getImageurl(),
-			};
-		},
+		LinkPreview: (obj: any) => {
+            return {
+                type: obj.getType(),
+                title: obj.getTitle(),
+                description: obj.getDescription(),
+                faviconUrl: obj.getFaviconurl(),
+                imageUrl: obj.getImageurl(),
+                url: obj.getUrl(),
+            };
+        },
 
 		BlockType: (v: number): I.BlockType => {
 			let t = I.BlockType.Empty;
@@ -329,6 +330,14 @@ const Mapper = {
 			if (obj.fields) {
 				block.setFields(Encode.encodeStruct(obj.fields || {}));
 			};
+
+			if (obj.type == I.BlockType.Layout) {
+                content = new Model.Block.Content.Layout();
+
+                content.setStyle(obj.content.style);
+    
+                block.setLayout(content);
+            };
 	
 			if (obj.type == I.BlockType.Text) {
 				const marks = (obj.content.marks || []).map(Mapper.To.Mark);

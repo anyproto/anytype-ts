@@ -171,11 +171,21 @@ class Block extends React.Component<Props, {}> {
 				break;
 		};
 		
-		let object = (
-			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
-				{blockComponent}
-			</DropTarget>
-		);
+		let object = null;
+
+		if (readOnly) {
+			object = (
+				<div className="dropTarget">
+					{blockComponent}
+				</div>
+			);
+		} else {
+			object = (
+				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
+					{blockComponent}
+				</DropTarget>
+			);
+		};
 		
 		if (canSelect) {
 			object = (
@@ -192,7 +202,26 @@ class Block extends React.Component<Props, {}> {
 				</div>
 			);
 		};
-		
+
+		let rowDropTargets = null;
+		if (block.isLayoutRow()) {
+			if (readOnly) {
+				rowDropTargets = (
+					<React.Fragment>
+						<div className="dropTarget targetTop" />
+						<div className="dropTarget targetBot" />
+					</React.Fragment>
+				);
+			} else {
+				rowDropTargets = (
+					<React.Fragment>
+						<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+						<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+					</React.Fragment>
+				);
+			};
+		};
+
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
@@ -201,15 +230,9 @@ class Block extends React.Component<Props, {}> {
 				
 				<div className={cd.join(' ')}>
 					{object}
-					
-					{block.isLayoutRow() ? (
-						<React.Fragment>
-							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
-							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
-						</React.Fragment>
-					): ''}
-					
+					{rowDropTargets}
 					{empty}
+
 					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 					
 					{block.isLayoutColumn() ? (
@@ -227,7 +250,7 @@ class Block extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block, dataset } = this.props;
-		const { id, content } = block
+		const { id } = block
 		const { selection } = dataset || {};
 		const { focused } = focus;
 		
@@ -438,6 +461,10 @@ class Block extends React.Component<Props, {}> {
 		const prevNode = node.find('#block-' + prevBlockId);
 		const currentNode = node.find('#block-' + currentBlockId);
 		const res = this.calcWidth(e.pageX - offset, index);
+
+		if (!res) {
+			return;
+		};
 		
 		const w1 = res.percent * res.sum;
 		const w2 = (1 - res.percent) * res.sum;
@@ -461,6 +488,10 @@ class Block extends React.Component<Props, {}> {
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		const res = this.calcWidth(e.pageX - offset, index);
+
+		if (!res) {
+			return;
+		};
 		
 		if (selection) {
 			selection.preventSelect(false);	
