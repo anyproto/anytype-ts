@@ -5,12 +5,12 @@ const Constant = require('json/constant.json');
 
 class View implements I.View {
 	
-	@observable id: string = '';
-	@observable name: string = '';
-	@observable type: I.ViewType = I.ViewType.Grid;
-	@observable sorts: I.Sort[] = [];
-	@observable filters: I.Filter[] = [];
-	@observable relations: any[] = [];
+	id: string = '';
+	name: string = '';
+	type: I.ViewType = I.ViewType.Grid;
+	sorts: I.Sort[] = [];
+	filters: I.Filter[] = [];
+	relations: any[] = [];
 	
 	constructor (props: I.View) {
 		let self = this;

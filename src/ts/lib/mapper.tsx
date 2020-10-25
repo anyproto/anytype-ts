@@ -263,8 +263,19 @@ const Mapper = {
 				if (c1.order < c2.order) return -1;
 				return 0;
 			});
+
+			view = new M.View(view);
+
+			decorate(view, {
+				id: observable,
+				name: observable,
+				type: observable,
+				sorts: observable,
+				filters: observable,
+				relations: observable,
+			});
 	
-			return observable(new M.View(view));
+			return view;
 		},
 
 		HistoryVersion: (obj: any): I.HistoryVersion => {
