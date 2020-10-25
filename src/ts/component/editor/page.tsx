@@ -1107,6 +1107,11 @@ class EditorPage extends React.Component<Props, State> {
 								
 							if (item.type == I.BlockType.Text) {
 								param.content.style = item.key;
+
+								if (param.content.style == I.TextStyle.Code) {
+									const lang = Storage.get('codeLang') || Constant.default.codeLang;
+									param.fields = { lang: lang };
+								};
 							};
 							
 							if (item.type == I.BlockType.File) {
