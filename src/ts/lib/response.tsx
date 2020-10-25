@@ -415,6 +415,7 @@ export {
 	BlockCreate,
 	BlockCreatePage,
 	BlockCreateDataviewView,
+	BlockCreateSet,
 
 	BlockSetTextText,
 	BlockSetTextChecked,

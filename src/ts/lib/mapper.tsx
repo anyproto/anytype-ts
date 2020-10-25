@@ -394,7 +394,7 @@ const Mapper = {
 		ViewRelation: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Relation();
 			
-			item.setKey(obj.id);
+			item.setKey(obj.key);
 			item.setIsvisible(obj.isVisible);
 			item.setWidth(obj.width);
 

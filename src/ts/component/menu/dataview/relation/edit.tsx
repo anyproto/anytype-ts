@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { Icon, Input, Switch } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -32,13 +32,13 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		if (relation) {
 			current = (
 				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType} onMouseEnter={this.onType}>
-					<Icon className={'relation c-' + relation.type} />
-					<div className="name">{Constant.relationName[relation.type]}</div>
+					<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
+					<div className="name">{Constant.relationName[relation.format]}</div>
 					<Icon className="arrow" />
 				</div>
 			);
 
-			if (relation.type == I.RelationType.Date) {
+			if (relation.format == I.RelationType.Date) {
 				options = (
 					<React.Fragment>
 						<div className="line" />

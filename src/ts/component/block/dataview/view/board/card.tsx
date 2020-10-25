@@ -37,7 +37,7 @@ class Card extends React.Component<Props, {}> {
 					>
 						{relations.map((relation: any, i: number) => (
 							<Cell 
-								key={'board-cell-' + relation.id} 
+								key={'board-cell-' + relation.key} 
 								id={String(index)} 
 								rootId={rootId}
 								block={block}

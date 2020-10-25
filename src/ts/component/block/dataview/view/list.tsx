@@ -25,7 +25,7 @@ class ViewList extends React.Component<Props, {}> {
 				<div className="item">
 					{relations.map((relation: any, i: number) => (
 						<Cell 
-							key={'list-cell-' + relation.id} 
+							key={'list-cell-' + relation.key} 
 							id={item.index} 
 							rootId={rootId}
 							block={block}

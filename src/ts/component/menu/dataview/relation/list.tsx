@@ -30,22 +30,22 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { data } = param;
 		const { readOnly } = data;
 
-		console.log(this.items);
-
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 		
-		const Item = SortableElement((item: any) => (
-			<div id={'relation-' + item.key} className="item">
-				<Handle />
-				<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.key); }}>
-					<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
-					<div className="name">{item.name}</div>
-				</span>
-				<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.key, v); }} />
-			</div>
-		));
+		const Item = SortableElement((item: any) => {
+			return (
+				<div id={'relation-' + item.id} className="item">
+					<Handle />
+					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.id); }}>
+						<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
+						<div className="name">{item.name}</div>
+					</span>
+					<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.id, v); }} />
+				</div>
+			);
+		});
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div id="relation-add" className="item add" onClick={this.onAdd}>
@@ -59,7 +59,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 			return (
 				<div className="items">
 					{this.items.map((item: any, i: number) => (
-						<Item key={item.id} {...item} index={i} />
+						<Item key={item.key} {...item} id={item.key} index={i} />
 					))}
 					{!readOnly ? <ItemAdd index={this.items.length + 1} disabled={true} /> : ''}
 				</div>
@@ -145,7 +145,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 	};
 
 	onSwitch (e: any, id: string, v: boolean) {
-		const item = this.items.find((it: any) => { return it.id == id; });
+		const item = this.items.find((it: any) => { return it.key == id; });
 		if (item) {
 			item.isVisible = v;
 			this.save();

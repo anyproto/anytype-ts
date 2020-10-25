@@ -25,7 +25,7 @@ class ViewGallery extends React.Component<Props, {}> {
 			<div className="card">
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={'gallery-cell-' + relation.id} 
+						key={'gallery-cell-' + relation.key} 
 						id={item.index} 
 						rootId={rootId}
 						block={block}

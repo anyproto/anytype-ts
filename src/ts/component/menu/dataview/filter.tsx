@@ -34,6 +34,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
+
+		console.log(JSON.stringify(this.items, null, 3));
 		
 		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },
@@ -50,17 +52,19 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		const Item = SortableElement((item: any) => {
 			const relation = view.relations.find((it: I.ViewRelation) => { return it.key == item.relationKey; });
+
+			console.log();
 			if (!relation) {
 				return null;
 			};
 
-			const conditionOptions = this.conditionsByType(relation.type);
+			const conditionOptions = this.conditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 
 			let value = null;
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
 
-			switch (relation.type) {
+			switch (relation.format) {
 				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
@@ -248,11 +252,11 @@ class MenuFilter extends React.Component<Props, {}> {
 		};
 
 		const first = view.relations[0];
-		const conditions = this.conditionsByType(first.type);
+		const conditions = this.conditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
 		this.items.push({ 
-			relationKey: first.id, 
+			relationKey: first.key, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: '',

@@ -39,9 +39,9 @@ class ViewGrid extends React.Component<Props, {}> {
 			return (
 				<th id={id} className={'head c-' + DataUtil.relationClass(relation.format)} style={{ width: relation.width }}>
 					<div className="cellContent">
-						<Icon className={'relation c-' + relation.type} />
+						<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
 						<div className="name">{relation.name}</div>
-						<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.id); }}>
+						<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.key); }}>
 							<div className="line" />
 						</div>
 					</div>
@@ -51,8 +51,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		const CellBody = (item: any) => {
 			let { relation, index } = item;
-			let id = DataUtil.cellId('cell', relation.id, index);
-			let cn = [ 'cell', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
+			let id = DataUtil.cellId('cell', relation.key, index);
+			let cn = [ 'cell', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
 
 			if (item.relation.key == 'name') {
 				cn.push('isName');
@@ -77,7 +77,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowHead = (item: any) => (
 			<tr className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellHead key={'grid-head-' + relation.id} relation={relation} />
+					<CellHead key={'grid-head-' + relation.key} relation={relation} />
 				))}
 				<th className="head last">
 					{!readOnly ? <Icon className="plus" /> : ''}
@@ -88,7 +88,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const RowBody = (item: any) => (
 			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={relation} data={data} />
+					<CellBody key={'grid-cell-' + relation.key} index={item.index} relation={relation} data={data} />
 				))}
 				<td className="cell last">&nbsp;</td>
 			</tr>
@@ -253,7 +253,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			return;
 		};
 
-		const id = DataUtil.cellId('cell', relation.id, index);
+		const id = DataUtil.cellId('cell', relation.key, index);
 		const ref = this.cellRefs.get(id);
 		
 		if (ref) {

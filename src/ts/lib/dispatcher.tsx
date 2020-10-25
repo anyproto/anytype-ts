@@ -370,7 +370,7 @@ class Dispatcher {
 						break;
 					};
 
-					data.view = Mapper.From.View(DataUtil.schemaField(block.content.source), data.getView());
+					data.view = Mapper.From.View(block.content.source, data.getView());
 
 					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {

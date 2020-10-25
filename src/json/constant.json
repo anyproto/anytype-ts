@@ -97,16 +97,19 @@
 	},
 
 	"relationName": {
-		"title": "Title",
-		"description": "Description",
-		"number": "Number",
-		"select": "Select",
-		"date": "Date",
-		"file": "File & Media",
-		"checkbox": "Checkbox",
-		"url": "URL",
-		"email": "E-mail",
-		"phone": "Phone"
+		"0": "Description",
+		"1": "Title",
+		"2": "Number",
+		"3": "Select",
+		"4": "Date",
+		"5": "File & Media",
+		"6": "Checkbox",
+		"7": "Icon",
+		"8": "URL",
+		"9": "E-mail",
+		"10": "Phone",
+		"100": "Object",
+		"101": "Object"
 	},
 	
 	"textColor": {

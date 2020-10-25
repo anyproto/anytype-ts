@@ -36,7 +36,7 @@ class MenuRelationType extends React.Component<Props, {}> {
 
 		const Item = (item: any) => {
 			return (
-				<div className={'item ' + (relation && (item.code == relation.type) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item); }}>
+				<div className={'item ' + (relation && (item.code == relation.format) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item); }}>
 					<Icon className={'relation c-' + item.code} />
 					<div className="name">{Constant.relationName[item.code] || item.code}</div>
 				</div>

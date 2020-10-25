@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select } from 'ts/component';
-import { I, C, Util } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore } from 'ts/store';
 
@@ -34,7 +34,7 @@ class MenuSort extends React.Component<Props, {}> {
 		
 		const relationOptions: any[] = [];
 		for (let relation of view.relations) {
-			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
+			relationOptions.push({ id: relation.key, name: relation.name, icon: 'relation c-' + DataUtil.relationClass(relation.format) });
 		};
 
 		const Handle = SortableHandle(() => (
@@ -114,7 +114,7 @@ class MenuSort extends React.Component<Props, {}> {
 		};
 
 		this.items.push({ 
-			relationKey: view.relations[0].id, 
+			relationKey: view.relations[0].key, 
 			type: I.SortType.Asc 
 		});
 		this.forceUpdate();
