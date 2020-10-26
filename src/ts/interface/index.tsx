@@ -6,6 +6,8 @@ import { ObjectLayout, ObjectType, RelationType, Relation } from './object';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
 import { 
+	DateFormat,
+	TimeFormat,
 	ViewRelation,
 	ViewComponent,
 	ViewType,
@@ -66,6 +68,8 @@ export {
 	BlockComponent,
 	Block,
 	
+	DateFormat,
+	TimeFormat,
 	ViewRelation,
 	ViewComponent,
 	ViewType,

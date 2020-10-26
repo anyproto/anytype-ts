@@ -8,6 +8,7 @@ const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Relation = require('lib/pkg/lib/pb/relation/protos/relation_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
+const OptionsCase = Model.Block.Content.Dataview.Relation.OptionsCase;
 
 const Mapper = {
 
@@ -190,13 +191,23 @@ const Mapper = {
 			};
 		},
 
-		ViewRelation: (obj: any): any => {
-			return {
-				key: obj.getKey(),
-				isVisible: obj.getIsvisible(),
-				width: obj.getWidth(),
-			};
-		},
+		ViewRelation: (obj: any) => {
+            const type = obj.getOptionsCase();
+            const ret: any = {
+                key: obj.getKey(),
+                isVisible: obj.getIsvisible(),
+                width: obj.getWidth(),
+                options: {},
+            };
+
+            switch (type) {
+                case OptionsCase.DATEOPTIONS:
+                    ret.options = obj.getDateoptions() || {};
+                    break;
+            };
+
+            return ret;
+        },
 
 		Filter: (obj: any): I.Filter => {
 			return {

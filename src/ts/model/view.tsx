@@ -32,7 +32,6 @@ class ViewRelation implements I.ViewRelation {
 	name: string = '';
 	dataSource: string = '';
 	objectType: string = '';
-	options: any[] = [] as any[];
 	format: I.RelationType = I.RelationType.Description;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
@@ -40,6 +39,7 @@ class ViewRelation implements I.ViewRelation {
 	isMultiple: boolean = false;
 	order: number = 0;
 	width: number = 0;
+	options: any = {} as any;
 
 	constructor (props: I.ViewRelation) {
 		let self = this;
@@ -52,6 +52,7 @@ class ViewRelation implements I.ViewRelation {
 		self.isVisible = Boolean(props.isVisible);
 		self.order = Number(props.order) || 0;
 		self.width = Number(props.width) || 0;
+		self.options = props.options || {};
 	};
 
 };
