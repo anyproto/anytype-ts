@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util } from 'ts/lib';
+import { I, C } from 'ts/lib';
 import { Icon, Input, Switch } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -29,6 +29,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		let current = null;
 		let options = null;
 
+		console.log(relation);
+
 		if (relation) {
 			current = (
 				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType} onMouseEnter={this.onType}>
@@ -45,7 +47,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<div className="item">
 							<Icon className="clock" />
 							<div className="name">Include time</div>
-							<Switch value={relation.isVisible} className="green" onChange={(e: any, v: boolean) => { }} />
+							<Switch value={relation.options.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 						</div>
 
 						<div id="menu-date-settings" className="item" onClick={this.onDateSettings} onMouseEnter={this.onDateSettings}>
@@ -115,8 +117,24 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		}, Constant.delay.menu);
 	};
 
+	onChangeTime (v: boolean) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, relationId, view } = data;
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == relationId; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.id == relationId; });
+
+		relation.options.includeTime = v;
+		view.relations[idx] = relation;
+
+		C.BlockSetDataviewView(rootId, blockId, view.id, view, (message: any) => {
+			console.log(message);
+		});
+	};
+
 	onDateSettings (e: any) {
 		const { param } = this.props;
+		const { data } = param;
 
 		commonStore.menuClose('dataviewRelationType');
 		commonStore.menuClose('dataviewDate');
@@ -130,10 +148,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				type: I.MenuType.Vertical,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Left,
-				data: {
-					formatDate: 'Jul 1, 2020',
-					formatTime: '12 hour',
-				}
+				data: data
 			});
 		}, Constant.delay.menu);
 	};
