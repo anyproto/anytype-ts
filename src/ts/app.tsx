@@ -59,7 +59,6 @@ import 'scss/block/div.scss';
 import 'scss/block/layout.scss';
 import 'scss/block/iconPage.scss';
 import 'scss/block/iconUser.scss';
-import 'scss/block/title.scss';
 import 'scss/block/cover.scss';
 
 import 'scss/popup/common.scss';
@@ -277,6 +276,10 @@ class App extends React.Component<Props, State> {
 		folders.forEach(folder => {
 			const path = [ prefix, folder ].join('/')
 			fs.readdir(path, (err: any, files: any[]) => {
+				if (err) {
+					cb();
+					return;
+				};
 				images = images.concat(files.map((it: string) => { return [ 'img', folder, it ].join('/') }));
 				cb();
 			});
@@ -312,7 +315,7 @@ class App extends React.Component<Props, State> {
 				commonStore.popupOpen(id, { data: data });
 			}, Constant.delay.popup);
 		});
-		
+
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
 				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
@@ -325,8 +328,8 @@ class App extends React.Component<Props, State> {
 			if (!auto) {
 				commonStore.popupOpen('confirm', {
 					data: {
-						title: 'It\'s time to update',
-						text: 'Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features.',
+						title: 'Update available',
+						text: 'Do you want to update on a new version?',
 						textConfirm: 'Update',
 						textCancel: 'Later',
 						onConfirm: () => {

@@ -13,12 +13,14 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 
 class PopupShortcut extends React.Component<Props, State> {
 
 	state = {
 		page: 'main',
 	};
+	_isMounted: boolean = false;
 
 	render () {
 		const { page } = this.state;
@@ -84,8 +86,14 @@ class PopupShortcut extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.resize();
 		this.props.position();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	onPage (id: string) {
@@ -109,6 +117,8 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '⌘ + P',			 com: 'Ctrl + P',			 name: 'Print' },
 						{ mac: '⌘ + F',			 com: 'Ctrl + F',			 name: 'Find on page' },
 						{ mac: '⌘ + Q',			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
+						{ mac: '⌘ + Y',			 com: 'Ctrl + H',			 name: 'Show page edit history' },
+						{ mac: '⌘ + Click',			 com: 'Ctrl + Click',		 name: 'On page link will open it in modal view' },
 					]
 				},
 
@@ -126,10 +136,10 @@ class PopupShortcut extends React.Component<Props, State> {
 					name: 'Selection', children: [
 						{ com: 'Double Click',			 name: 'Select word' },
 						{ com: 'Triple Click',			 name: 'Select an entire block' },
-						{ mac: '⌘ + Click',			 com: 'Ctrl + Click',		 name: 'Select or de-select an entire block' },
 						{ mac: '⌘ + A',				 com: 'Ctrl + A',			 name: 'Select all blocks in the page' },
 						{ com: 'Shift + ↑ or ↓',	 name: 'Expand your selection up or down' },
-						{ com: 'Shift + Click',		 name: 'Select another block and all blocks in between' },
+						{ mac: '⌘ + Click',			 com: 'Ctrl + Click',		 name: 'On block will select or de-select an entire block' },
+						{ com: 'Shift + Click',		 name: 'Select block and all blocks in between' },
 					]
 				},
 
@@ -253,11 +263,17 @@ class PopupShortcut extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const body = node.find('.body');
+		if (!this._isMounted) {
+			return;
+		};
 
-		body.css({ height: win.height() - 100 });
+		raf(() => {
+			const win = $(window);
+			const obj = $('#popupShortcut #innerWrap');
+			const width = Math.max(732, Math.min(960, win.width() - 128));
+
+			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });
+		});
 	};
 
 };

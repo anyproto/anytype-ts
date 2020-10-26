@@ -183,7 +183,7 @@ class PageMainHistory extends React.Component<Props, State> {
 
 		this.resize();
 		this.setId();
-		
+
 		if (this.version) {
 			this.show(this.version.id);
 		};
@@ -242,23 +242,20 @@ class PageMainHistory extends React.Component<Props, State> {
 			return;
 		};
 
-		const { versions } = this.state;
+		const groups = this.groupData(this.state.versions);
+		const versions = this.ungroupData(groups);
 		const version = versions.find((it: any) => { return it.id == id; });
+
 		if (!version) {
 			return;
 		};
 
-		const groups = this.groupData(versions);
 		const month = groups.find((it: any) => { return it.groupId == this.monthId(version.time); });
 		if (!month) {
 			return;
 		};
 
-		let group = month.list.find((it: any) => { return it.groupId == version.groupId; });
-		if (!group) {
-			return;
-		};
-
+		const group = month.list.find((it: any) => { return it.groupId == version.groupId; });
 		const node = $(ReactDOM.findDOMNode(this));
 		const sideRight = node.find('#sideRight');
 		const item = sideRight.find('#item-' + version.id);
@@ -368,6 +365,7 @@ class PageMainHistory extends React.Component<Props, State> {
 				group = { ...version, groupId: groupId, list: [] };
 				groups.push(group);
       		} else {
+				version.groupId = groupId;
 				group.list.push(version);
 			};
 		};
@@ -385,6 +383,17 @@ class PageMainHistory extends React.Component<Props, State> {
 		};
 
 		return months;
+	};
+
+	ungroupData (groups: any[]): I.Version[] {
+		let ret: I.Version[] = [] as I.Version[];
+		for (let month of groups) {
+			for (let group of month.list) {
+				ret.push(group);
+				ret = ret.concat(group.list);
+			};
+		};
+		return ret;
 	};
 
 	monthId (time: number) {

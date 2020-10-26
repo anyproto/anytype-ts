@@ -21,7 +21,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	render () {
 		return (
 			<div className="header headerMainIndex">
-				<Icon className="logo" />
+				<Icon className="logo" onClick={this.onSearch} />
 
 				<div className="side right">
 					<Icon tooltip="Search for page" className={[ 'search', (commonStore.popupIsOpen('navigation') ? 'active' : '') ].join(' ')} onClick={this.onSearch} />
@@ -49,6 +49,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		
 		DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
+			DataUtil.pageOpen(message.targetId);
 			Util.scrollTopEnd();
 		});
 	};

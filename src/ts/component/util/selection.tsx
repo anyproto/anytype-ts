@@ -8,7 +8,6 @@ import { throttle } from 'lodash';
 
 interface Props {
 	className?: string;
-	container: string;
 	rootId: string;
 };
 
@@ -52,7 +51,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
-		
+
 		return (
 			<div className={cn.join(' ')} onMouseDown={this.onMouseDown}>
 				{children}
@@ -65,8 +64,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.unbind();
 		
 		let win = $(window); 
-		let doc = $(document);
-		
 		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
 		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
 	};
@@ -148,7 +145,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { focused, range } = focus;
+		const { focused } = focus;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = $('#selection-rect');

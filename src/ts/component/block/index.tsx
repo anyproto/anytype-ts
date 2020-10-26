@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, DataUtil, keyboard, focus, Storage } from 'ts/lib';
 import { DropTarget, ListChildren, Icon } from 'ts/component';
-import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
 
@@ -12,7 +11,6 @@ import BlockText from './text';
 import BlockImage from './image';
 import BlockIconPage from './iconPage';
 import BlockIconUser from './iconUser';
-import BlockTitle from './title';
 import BlockVideo from './video';
 import BlockFile from './file';
 import BlockBookmark from './bookmark';
@@ -31,7 +29,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const THROTTLE = 20;
 const SNAP = 0.02;
 
 @observer
@@ -84,20 +81,20 @@ class Block extends React.Component<Props, {}> {
 		switch (type) {
 			case I.BlockType.Text:
 				cn.push('blockText ' + DataUtil.styleClassText(style));
-				
+
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
-				
+
 				if (block.isTextToggle() && !childrenIds.length && !readOnly) {
 					empty = (
 						<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
 					);
 				};
-				
+
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
 				break;
-				
+
 			case I.BlockType.Layout:
 				canSelect = false;
 				cn.push('blockLayout c' + content.style);
@@ -113,12 +110,6 @@ class Block extends React.Component<Props, {}> {
 				canSelect = false;
 				cn.push('blockIconUser');
 				blockComponent = <BlockIconUser {...this.props} />;
-				break;
-				
-			case I.BlockType.Title:
-				canSelect = false;
-				cn.push('blockTitle');
-				blockComponent = <BlockTitle {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
@@ -173,11 +164,21 @@ class Block extends React.Component<Props, {}> {
 				break;
 		};
 		
-		let object = (
-			<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
-				{blockComponent}
-			</DropTarget>
-		);
+		let object = null;
+
+		if (readOnly) {
+			object = (
+				<div className="dropTarget">
+					{blockComponent}
+				</div>
+			);
+		} else {
+			object = (
+				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
+					{blockComponent}
+				</DropTarget>
+			);
+		};
 		
 		if (canSelect) {
 			object = (
@@ -194,24 +195,37 @@ class Block extends React.Component<Props, {}> {
 				</div>
 			);
 		};
-		
+
+		let rowDropTargets = null;
+		if (block.isLayoutRow()) {
+			if (readOnly) {
+				rowDropTargets = (
+					<React.Fragment>
+						<div className="dropTarget targetTop" />
+						<div className="dropTarget targetBot" />
+					</React.Fragment>
+				);
+			} else {
+				rowDropTargets = (
+					<React.Fragment>
+						<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+						<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+					</React.Fragment>
+				);
+			};
+		};
+
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
-					<Icon id={'button-block-menu-' + id} tooltip="<b>Click</b> to open menu<br/><b>Drag</b> to move block" className="dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
+					<Icon id={'button-block-menu-' + id} /*tooltip="<b>Click</b> to open menu<br/><b>Drag</b> to move block"*/ className="dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
 				</div>
 				
 				<div className={cd.join(' ')}>
 					{object}
-					
-					{block.isLayoutRow() ? (
-						<React.Fragment>
-							<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
-							<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
-						</React.Fragment>
-					): ''}
-					
+					{rowDropTargets}
 					{empty}
+
 					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 					
 					{block.isLayoutColumn() ? (
@@ -229,7 +243,7 @@ class Block extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block, dataset } = this.props;
-		const { id, content } = block
+		const { id } = block
 		const { selection } = dataset || {};
 		const { focused } = focus;
 		
@@ -341,6 +355,11 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 
+		let ids = DataUtil.selectionGet(id, this.props);
+		if (block.isTextTitle()) {
+			ids = DataUtil.selectionGet('', this.props);
+		};
+		
 		commonStore.menuOpen('blockAction', { 
 			element: node.find('#button-block-menu-' + id),
 			type: I.MenuType.Vertical,
@@ -435,6 +454,10 @@ class Block extends React.Component<Props, {}> {
 		const prevNode = node.find('#block-' + prevBlockId);
 		const currentNode = node.find('#block-' + currentBlockId);
 		const res = this.calcWidth(e.pageX - offset, index);
+
+		if (!res) {
+			return;
+		};
 		
 		const w1 = res.percent * res.sum;
 		const w2 = (1 - res.percent) * res.sum;
@@ -458,6 +481,10 @@ class Block extends React.Component<Props, {}> {
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		const res = this.calcWidth(e.pageX - offset, index);
+
+		if (!res) {
+			return;
+		};
 		
 		if (selection) {
 			selection.preventSelect(false);	
@@ -486,7 +513,11 @@ class Block extends React.Component<Props, {}> {
 		
 		const currentBlockId = childrenIds[index];
 		const currentBlock = blockStore.getLeaf(rootId, currentBlockId);
-		
+
+		if (!prevBlock || !currentBlock) {
+			return;
+		};
+
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		const offset = Constant.size.blockMenu * 2;

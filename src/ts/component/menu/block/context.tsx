@@ -36,7 +36,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { type, content } = block;
 		const { marks, style } = content;
 		
-		let canMark = true;
 		let markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
 			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
@@ -44,11 +43,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			{ type: I.MarkType.Link, icon: 'link', name: 'Link' },
 			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code' },
 		];
-		
-		// You can't mark code, as it's highlighted automatically
-		if (block.isTextCode()) {
-			canMark = false;
-		};
 		
 		// You can't make headers bold, since they are already bold
 		if (block.isTextHeader()) {
@@ -69,11 +63,13 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		return (
 			<div className="flex" onClick={this.onMenuClick}>
-				<div className="section">
-					<Icon id={'button-' + blockId + '-switch'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
-				</div>
+				{block.canTurn() ? (
+					<div className="section">
+						<Icon id={'button-' + blockId + '-switch'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
+					</div>
+				) : ''}
 				
-				{canMark && markActions.length ? (
+				{block.canHaveMarks() && markActions.length ? (
 					<div className="section">
 						{markActions.map((action: any, i: number) => {
 							let cn = [ action.icon ];
@@ -85,7 +81,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					</div>
 				) : ''}
 				
-				{canMark ? (
+				{block.canHaveMarks() ? (
 					<div className="section">
 						<Icon id={'button-' + blockId + '-color'} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
 						<Icon id={'button-' + blockId + '-background'} className={[ 'color', (commonStore.menuIsOpen('blockBackground') ? 'active' : '') ].join(' ')} inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />

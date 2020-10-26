@@ -94,6 +94,23 @@
 	}
 }
 
+.popup {
+	.header.headerMainEdit {
+		.side.left { opacity: 1; left: 14px; }
+		.side.left {
+			.item { cursor: pointer; color: #6c6a5f; }
+			.icon { width: 20px; height: 20px; margin-right: 4px; border-radius: 0px; vertical-align: middle; }
+		}
+		.side.center { opacity: 1; }
+		.path { border: 0px; cursor: default !important; }
+		.path {
+			.item { cursor: default; }
+		}
+
+		.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
+	}
+}
+
 .header.headerMainHistory { height: 38px; line-height: 22px; padding: 8px 16px; width: calc(100% - 254px); background: #fff; }
 .header.headerMainHistory {
 	.side { height: 20px; top: 8px; }
@@ -127,7 +144,7 @@ body.platformMac {
 }
 
 html.fullScreen {
-	.headerMainEditSearch {
+	.header {
 		.side.left { left: 6px; }
 	}
 }

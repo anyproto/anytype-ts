@@ -33,10 +33,12 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
+		const { account } = authStore;
 		const { root } = blockStore;
 		const { focused } = focus;
 		const rootId = this.isEditor() ? this.match.params.id : root;
 		const platform = Util.getPlatform();
+		const isMainIndex = this.isMainIndex();
 		
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
@@ -64,7 +66,7 @@ class Keyboard {
 
 		// Navigation search
 		this.shortcut('ctrl+s, cmd+s', e, (pressed: string) => {
-			if (commonStore.popupIsOpen('navigation') || !this.isPinChecked) {
+			if (commonStore.popupIsOpen('navigation') || !this.isPinChecked || !account) {
 				return;
 			};
 			commonStore.popupOpen('navigation', { 
@@ -79,6 +81,9 @@ class Keyboard {
 
 		// Navigation links
 		this.shortcut('ctrl+o, cmd+o', e, (pressed: string) => {
+			if (!account) {
+				return;
+			};
 			commonStore.popupOpen('navigation', { 
 				preventResize: true,
 				data: { 
@@ -114,8 +119,8 @@ class Keyboard {
 			if (this.isEditor()) {
 				const fb = blockStore.getLeaf(rootId, focused);
 				if (fb) {
-					if (fb.isTitle()) {
-						const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTitle(); });
+					if (fb.isTextTitle()) {
+						const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
 						if (first) {
 							targetId = first.id;
 							position = I.BlockPosition.Top;
@@ -127,7 +132,13 @@ class Keyboard {
 				};
 			};
 			
-			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
+			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+				if (isMainIndex) {
+					DataUtil.pageOpen(message.targetId);
+				} else {
+					DataUtil.pageOpenPopup(message.targetId);
+				};
+			});
 		});
 		
 		this.initPinCheck();
@@ -144,6 +155,10 @@ class Keyboard {
 	
 	isEditor () {
 		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
+	};
+
+	isMainIndex () {
+		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'index');
 	};
 	
 	setFocus (v: boolean) {

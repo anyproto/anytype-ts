@@ -21,12 +21,12 @@ class PageMainEdit extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<SelectionProvider container=".pageMainEdit" rootId={match.params.id}>
+				<SelectionProvider rootId={match.params.id}>
 					<DragProvider {...this.props} rootId={rootId}>
 						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 	
 						<div className="wrapper">
-							<EditorPage history={history} location={location} match={match} rootId={rootId} onOpen={this.onOpen} />
+							<EditorPage key="editorPage" isPopup={false} history={history} location={location} match={match} rootId={rootId} onOpen={this.onOpen} />
 						</div>
 					</DragProvider>
 				</SelectionProvider>

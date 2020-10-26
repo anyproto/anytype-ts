@@ -58,6 +58,7 @@ const Mapper = {
                 description: obj.getDescription(),
                 faviconUrl: obj.getFaviconurl(),
                 imageUrl: obj.getImageurl(),
+                url: obj.getUrl(),
             };
         },
 
@@ -311,6 +312,14 @@ const Mapper = {
     
             if (obj.fields) {
                 block.setFields(Encode.encodeStruct(obj.fields || {}));
+            };
+
+            if (obj.type == I.BlockType.Layout) {
+                content = new Model.Block.Content.Layout();
+
+                content.setStyle(obj.content.style);
+    
+                block.setLayout(content);
             };
     
             if (obj.type == I.BlockType.Text) {

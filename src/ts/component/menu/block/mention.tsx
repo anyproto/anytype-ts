@@ -41,7 +41,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	
 	render () {
 		const { n } = this.state;
-		const items = this.getItems();
+		const items = this.getItems(true);
 
 		if (!this.cache) {
 			return null;
@@ -110,7 +110,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { filter } = commonStore;
 		const { n } = this.state;
-		const items = this.getItems();
+		const items = this.getItems(false);
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -123,8 +123,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 			this.setState({ n: 0 });
 		};
 
-		this.setActive(items[n]);
-		this.props.position();
+		window.setTimeout(() => {
+			this.setActive(items[n]);
+			this.props.position();
+		}, 15);
 	};
 	
 	componentWillUnmount () {
@@ -173,7 +175,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		return sections;
 	};
 	
-	getItems () {
+	getItems (withSections: boolean) {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
@@ -181,11 +183,15 @@ class MenuBlockMention extends React.Component<Props, State> {
 			items = items.concat(section.children);
 		};
 
+		if (!withSections) {
+			items = items.filter((it: any) => { return !it.isSection; });
+		};
+
 		return items;
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
+		const items = this.getItems(false);
 		const { n } = this.state;
 		this.props.setActiveItem((item ? item : items[n]), scroll);
 	};
@@ -252,7 +258,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const k = e.key.toLowerCase();
 		keyboard.disableMouse(true);
 		
-		const items = this.getItems();
+		const items = this.getItems(false);
 		const l = items.length;
 		const item = items[n];
 
@@ -300,6 +306,11 @@ class MenuBlockMention extends React.Component<Props, State> {
 	onClick (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
+
+		if (!item || item.isSection) {
+			this.props.close();
+			return;
+		};
 
 		const { param } = this.props;
 		const { filter } = commonStore;
