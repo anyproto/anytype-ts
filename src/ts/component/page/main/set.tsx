@@ -87,7 +87,6 @@ class PageMainSet extends React.Component<Props, {}> {
 		};
 
 		C.BlockCreateSet(root, '', item.url, { name: item.name + ' set', iconEmoji: item.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
-			console.log(message);
 			if (message.error.code) {
 				return;
 			};
