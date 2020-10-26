@@ -12,6 +12,7 @@ const Constant = require('json/constant.json');
 class MenuRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
+	format: I.RelationType = I.RelationType.Description;
 	
 	constructor(props: any) {
 		super(props);
@@ -29,16 +30,16 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		let current = null;
 		let options = null;
 
-		console.log(relation);
+		const Current = (item: any) => (
+			<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
+				{item.format ? <Icon className={'relation c-' + DataUtil.relationClass(item.format)} /> : ''}
+				<div className="name">{item.format ? Constant.relationName[item.format] : 'Select type'}</div>
+				<Icon className="arrow" />
+			</div>
+		);
 
 		if (relation) {
-			current = (
-				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType} onMouseEnter={this.onType}>
-					<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
-					<div className="name">{Constant.relationName[relation.format]}</div>
-					<Icon className="arrow" />
-				</div>
-			);
+			current = <Current format={relation.format} />;
 
 			if (relation.format == I.RelationType.Date) {
 				options = (
@@ -58,13 +59,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					</React.Fragment>
 				);
 			};
+		} else 
+		if (this.format) { 
+			current = <Current format={this.format} />;
 		} else {
-			current = (
-				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
-					<div className="name">Select type</div>
-					<Icon className="arrow" />
-				</div>
-			);
+			current = <Current format={0} />;
 		};
 		
 		return (
@@ -82,7 +81,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					<div className="name">Duplicate</div>
 				</div>
 				<div className="item">
-					<Icon className="trash" />
+					<Icon className="remove" />
 					<div className="name">Delete relation</div>
 				</div>
 			</div>
@@ -111,7 +110,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				horizontal: I.MenuDirection.Left,
 				data: {
 					onSelect: (item: any) => {
-						console.log('Type', item);
+						this.format = item.format;
+						this.forceUpdate();
 					},
 					...data
 				}

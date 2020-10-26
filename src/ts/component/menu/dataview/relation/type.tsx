@@ -1,16 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
-const Schema = {
-	relation: require('json/schema/relation.json'),
-};
 
 @observer
 class MenuRelationType extends React.Component<Props, {}> {
@@ -27,25 +22,34 @@ class MenuRelationType extends React.Component<Props, {}> {
 		const { relationKey, view } = data;
 		const relation = view.relations.find((it: I.ViewRelation) => { it.key == relationKey; });
 		
-		let relations = [];
-		for (let i in Schema.relation.definitions) {
-			let item = Schema.relation.definitions[i];
-			item.code = i;
-			relations.push(item);
+		let relations: any[] = [
+			{ format: I.RelationType.Description },
+			{ format: I.RelationType.Title },
+			{ format: I.RelationType.Number },
+			{ format: I.RelationType.Select },
+			{ format: I.RelationType.Date },
+			{ format: I.RelationType.File },
+			{ format: I.RelationType.Url },
+			{ format: I.RelationType.Email },
+			{ format: I.RelationType.Phone },
+			{ format: I.RelationType.Object },
+		];
+		for (let item of relations) {
+			item.name = Constant.relationName[item.format];
 		};
 
 		const Item = (item: any) => {
 			return (
-				<div className={'item ' + (relation && (item.code == relation.format) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item); }}>
-					<Icon className={'relation c-' + item.code} />
-					<div className="name">{Constant.relationName[item.code] || item.code}</div>
+				<div className={'item ' + (relation && (item.format == relation.format) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item); }}>
+					<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
+					<div className="name">{item.name}</div>
 				</div>
 			);
 		};
 
 		return (
-			<div>
-				<div className="title">Type of relation</div>
+			<div className="section">
+				<div className="name">Type of relation</div>
 				<div className="items">
 					{relations.map((item: any, i: number) => (
 						<Item key={i} {...item} />
