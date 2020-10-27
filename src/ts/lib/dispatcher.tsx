@@ -164,11 +164,12 @@ class Dispatcher {
 					break;
 
 				case 'blockShow':
+					// Store object types for Sets
+					dbStore.setObjectTypes((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
+					dbStore.setObjectTypesPerObject((data.getObjecttypesperobjectList() || []).map(Mapper.From.ObjectTypePerObject));
+
 					let res = Response.BlockShow(data);
 					this.onBlockShow(rootId, res.type, res.blocks, res.details);
-
-					dbStore.setObjectTypes(res.objectTypes);
-					dbStore.setObjectTypesPerObject(res.objectTypesPerObject);
 					break;
 
 				case 'blockAdd':

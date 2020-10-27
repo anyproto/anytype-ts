@@ -9,8 +9,10 @@ class DbStore {
 
 	@action
 	setObjectTypes (types: I.ObjectType[]) {
+		console.log('set');
 		for (let type of types) {
-			this.objectTypeMap.set(type.url, type);
+			console.log(DataUtil.schemaField(type.url), type);
+			this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
 		};
 	};
 
@@ -22,7 +24,11 @@ class DbStore {
 	};
 
 	getObjectType (url: string): I.ObjectType {
-		return this.objectTypeMap.get(url);
+		console.log('get');
+		console.trace();
+		console.log(DataUtil.schemaField(url), this.objectTypeMap, this.objectTypeMap.get(DataUtil.schemaField(url)));
+
+		return this.objectTypeMap.get(DataUtil.schemaField(url));
 	};
 
 	@action
