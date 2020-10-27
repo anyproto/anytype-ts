@@ -291,9 +291,9 @@ class DataUtil {
 	menuGetBlockText () {
 		return [
 			{ id: I.TextStyle.Paragraph, icon: 'text', lang: 'Paragraph' },
-			{ id: I.TextStyle.Header1, icon: 'header1', lang: 'Header1', aliases: [ 'h1' ] },
-			{ id: I.TextStyle.Header2, icon: 'header2', lang: 'Header2', aliases: [ 'h2' ] },
-			{ id: I.TextStyle.Header3, icon: 'header3', lang: 'Header3', aliases: [ 'h3' ] },
+			{ id: I.TextStyle.Header1, icon: 'header1', lang: 'Header1', aliases: [ 'h1', 'head1' ] },
+			{ id: I.TextStyle.Header2, icon: 'header2', lang: 'Header2', aliases: [ 'h2', 'head2' ] },
+			{ id: I.TextStyle.Header3, icon: 'header3', lang: 'Header3', aliases: [ 'h3', 'head3' ] },
 			{ id: I.TextStyle.Quote, icon: 'quote', lang: 'Quote' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
