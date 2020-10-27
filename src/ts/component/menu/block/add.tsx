@@ -94,8 +94,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			this.emptyLength = filter.text.length;
 		};
 
-		console.log(filter.text.length, this.emptyLength, items.length);
-
 		if ((filter.text.length - this.emptyLength > 3) && !items.length) {
 			this.props.close();
 			return;
