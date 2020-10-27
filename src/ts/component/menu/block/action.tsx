@@ -237,6 +237,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 				sections = sections.concat([
 					{ id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() },
 					{ id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() },
+				]);
+			};
+
+			if (block.canTurn()) {
+				sections.push({ id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() });
+			};
+
+			if (block.isText() && !block.isTextTitle()) {
+				sections = sections.concat([
 					{ id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() },
 				]);
 			};
@@ -251,10 +260,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				sections = sections.concat([
 					{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
 				]);
-			};
-
-			if (block.canTurn()) {
-				sections.push({ id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() });
 			};
 
 			if (block.canHaveAlign()) {
