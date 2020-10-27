@@ -14,6 +14,10 @@ interface State {
 @observer
 class PageMainSet extends React.Component<Props, State> {
 
+	state = {
+		objectTypes: [] as I.ObjectType[],
+	};
+
 	constructor (props: any) {
 		super(props);
 
