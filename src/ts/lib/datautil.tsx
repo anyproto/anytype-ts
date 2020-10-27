@@ -165,18 +165,14 @@ class DataUtil {
 
 			crumbs.init();
 
-			C.ObjectTypeList((message: any) => {
-				dbStore.setObjectTypes(message.objectTypes);
-
-				C.BlockOpen(root, (message: any) => {
-					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-						Util.onErrorUpdate();
-						return;
-					};
-					if (callBack) {
-						callBack();
-					};
-				});
+			C.BlockOpen(root, (message: any) => {
+				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+					Util.onErrorUpdate();
+					return;
+				};
+				if (callBack) {
+					callBack();
+				};
 			});
 		});
 	};

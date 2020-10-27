@@ -116,6 +116,7 @@ const BlockShow = (response: any) => {
 		type: response.getType(),
 		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
 		details: (response.getDetailsList() || []).map(Mapper.From.Details),
+		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
 	};
 };
 

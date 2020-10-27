@@ -7,8 +7,12 @@ import { commonStore, dbStore, blockStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
+interface State {
+	objectTypes: I.ObjectType[];
+};
+
 @observer
-class PageMainSet extends React.Component<Props, {}> {
+class PageMainSet extends React.Component<Props, State> {
 
 	constructor (props: any) {
 		super(props);
@@ -17,7 +21,7 @@ class PageMainSet extends React.Component<Props, {}> {
 	};
 
 	render () {
-		let { objectTypes } = dbStore;
+		let { objectTypes } = this.state;
 
 		objectTypes.sort((c1: I.ObjectType, c2: I.ObjectType) => {
 			if (c1.name > c2.name) return 1;
@@ -63,7 +67,15 @@ class PageMainSet extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount () {
+		C.ObjectTypeList((message: any) => {
+			this.setState({ objectTypes: message.objectTypes });
+		});
+	};
+
 	onAdd (e: any) {
+		const { objectTypes } = this.state;
+
 		commonStore.menuOpen('dataviewObjectType', { 
 			element: '#button-add',
 			offsetX: 28,
@@ -73,7 +85,8 @@ class PageMainSet extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				onCreate: (type: I.ObjectType) => {
-					dbStore.addObjectType(type);
+					objectTypes.push(type);
+					this.setState({ objectTypes: objectTypes });
 				}
 			}
 		});

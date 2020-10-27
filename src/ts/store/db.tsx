@@ -6,11 +6,6 @@ class DbStore {
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 
-	@computed
-	get objectTypes (): I.ObjectType[] {
-		return Array.from(this.objectTypeMap, ([ url, object]) => (object));
-	};
-
 	@action
 	setObjectTypes (types: I.ObjectType[]) {
 		for (let type of types) {
@@ -18,9 +13,8 @@ class DbStore {
 		};
 	};
 
-	@action
-	addObjectType (type: I.ObjectType) {
-		this.objectTypeMap.set(type.url, type);
+	getObjectType (url: string): I.ObjectType {
+		return this.objectTypeMap.get(url);
 	};
 
 	@action
@@ -74,14 +68,6 @@ class DbStore {
 		};
 
 		set(record, obj);
-	};
-
-	getObjectTypesMap () {
-		return this.objectTypeMap;
-	};
-
-	getObjectType (url: string) {
-		return this.objectTypeMap.get(url);
 	};
 
 	getMeta (blockId: string) {
