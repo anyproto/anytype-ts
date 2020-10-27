@@ -229,6 +229,8 @@ const Mapper = {
 			let objectType = dbStore.getObjectType(source);
 			let relations = [];
 
+			console.log(source, objectType);
+
 			if (objectType && objectType.relations.length) {
 				for (let relation of objectType.relations) {
 					if (relation.isHidden) {
