@@ -429,6 +429,10 @@ class BlockText extends React.Component<Props, {}> {
 
 		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
+
+			if (!range) {
+				return;
+			};
 			
 			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
