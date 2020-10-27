@@ -393,7 +393,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		let value = this.getValue().replace(/\n$/, '');
+		let value = this.getValue();
 		let ret = false;
 
 		const k = e.key.toLowerCase();	
@@ -417,7 +417,7 @@ class BlockText extends React.Component<Props, {}> {
 		keyboard.shortcut('shift+enter', e, (pressed: string) => {
 			e.preventDefault();
 			
-			value = Util.stringInsert(value, '\r\n', range.from, range.from);
+			value = Util.stringInsert(value, '\n', range.from, range.from);
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 				focus.apply();
