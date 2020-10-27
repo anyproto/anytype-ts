@@ -1,8 +1,9 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable(new Map());
+	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable(new Map());
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 
@@ -13,8 +14,24 @@ class DbStore {
 		};
 	};
 
+	@action
+	setObjectTypesPerObject (types: I.ObjectTypePerObject[]) {
+		console.log(types);
+		for (let type of types) {
+			console.log(type);
+			this.objectTypePerObjectMap.set(type.objectId, type);
+		};
+	};
+
 	getObjectType (url: string): I.ObjectType {
-		return this.objectTypeMap.get(url);
+		let type = this.objectTypeMap.get(url);
+		let typePerObject = this.objectTypePerObjectMap.get(DataUtil.schemaField(url));
+
+		console.log(url, DataUtil.schemaField(url));
+		console.log(type);
+		console.log(typePerObject);
+
+		return type;
 	};
 
 	@action

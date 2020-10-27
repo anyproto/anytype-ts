@@ -2,7 +2,7 @@ import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Opt
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
-import { ObjectLayout, ObjectType, RelationType, Relation } from './object';
+import { ObjectLayout, ObjectType, ObjectTypePerObject, RelationType, Relation } from './object';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
 import { 
@@ -57,6 +57,7 @@ export {
 
 	ObjectLayout,
 	ObjectType,
+	ObjectTypePerObject,
 	Relation,
 	
 	PageInfo,

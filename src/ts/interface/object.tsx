@@ -12,6 +12,11 @@ export interface ObjectType {
 	relations: Relation[];
 };
 
+export interface ObjectTypePerObject {
+	objectId: string;
+	objectTypes: string[];
+}
+
 export enum RelationType { 
 	Description	 = 0, 
 	Title		 = 1, 

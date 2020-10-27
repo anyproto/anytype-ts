@@ -177,6 +177,13 @@ const Mapper = {
 			};
 		},
 
+		ObjectTypePerObject: (obj: any): I.ObjectTypePerObject => {
+			return {
+				objectId: obj.getObjectid(),
+				objectTypes: obj.getObjecttypesList(),
+			};
+		},
+
 		Relation: (obj: any): I.Relation => {
 			return {
 				key: obj.getKey(),

@@ -165,7 +165,10 @@ class Dispatcher {
 
 				case 'blockShow':
 					let res = Response.BlockShow(data);
-					this.onBlockShow(rootId, res.type, res.blocks, res.details, res.objectTypes);
+					this.onBlockShow(rootId, res.type, res.blocks, res.details);
+
+					dbStore.setObjectTypes(res.objectTypes);
+					dbStore.setObjectTypesPerObject(res.objectTypesPerObject);
 					break;
 
 				case 'blockAdd':
@@ -484,7 +487,7 @@ class Dispatcher {
 		return 0;
 	};
 
-	onBlockShow (rootId: string, type: number, blocks: I.Block[], details: any[], objectTypes: I.ObjectType[]) {
+	onBlockShow (rootId: string, type: number, blocks: I.Block[], details: any[]) {
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {
 				it.type = I.BlockType.Page;
@@ -500,7 +503,6 @@ class Dispatcher {
 
 		blockStore.blocksSet(rootId, blocks);
 		blockStore.detailsSet(rootId, details);
-		dbStore.setObjectTypes(objectTypes);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
