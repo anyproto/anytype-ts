@@ -16,22 +16,13 @@ class DbStore {
 
 	@action
 	setObjectTypesPerObject (types: I.ObjectTypePerObject[]) {
-		console.log(types);
 		for (let type of types) {
-			console.log(type);
 			this.objectTypePerObjectMap.set(type.objectId, type);
 		};
 	};
 
 	getObjectType (url: string): I.ObjectType {
-		let type = this.objectTypeMap.get(url);
-		let typePerObject = this.objectTypePerObjectMap.get(DataUtil.schemaField(url));
-
-		console.log(url, DataUtil.schemaField(url));
-		console.log(type);
-		console.log(typePerObject);
-
-		return type;
+		return this.objectTypeMap.get(url);
 	};
 
 	@action
