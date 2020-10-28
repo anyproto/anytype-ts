@@ -13,12 +13,14 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 	format: I.RelationType = I.RelationType.Description;
+	ref: any = null;
 	
 	constructor(props: any) {
 		super(props);
 		
 		this.onType = this.onType.bind(this);
 		this.onDateSettings = this.onDateSettings.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 	};
 
 	render () {
@@ -67,10 +69,10 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div>
+			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
 				<div className="wrap">
-					<Input value={relation ? relation.name : ''}  />
+					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
 				</div>
 				<div className="sectionName">Relation type</div>
 				{current}
@@ -84,7 +86,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					<Icon className="remove" />
 					<div className="name">Delete relation</div>
 				</div>
-			</div>
+			</form>
 		);
 	};
 
@@ -153,6 +155,28 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				data: data
 			});
 		}, Constant.delay.menu);
+	};
+
+	onSubmit (e: any) {
+		e.preventDefault();
+
+		const { param, close } = this.props;
+		const { data } = param;
+		const { rootId, relationKey, view } = data;
+		const name = this.ref.getValue();
+		if (!name || !this.format) {
+			return;
+		};
+		
+		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		let newRelation = { name: name, format: this.format };
+		if (relation) {
+			C.BlockRelationUpdate(rootId, Object.assign(relation, newRelation));
+		} else {
+			C.BlockRelationAdd(rootId, [ newRelation ]);
+		};
+
+		close();
 	};
 	
 };

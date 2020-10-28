@@ -610,6 +610,41 @@ const BlockDeleteDataviewRecord = (contextId: string, blockId: string, recordId:
 	dispatcher.request('blockDeleteDataviewRecord', request, callBack);
 };
 
+const BlockRelationList = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Relation.List.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('blockRelationList', request, callBack);
+};
+
+const BlockRelationAdd = (contextId: string, relations: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Relation.Add.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationsList(relations.map(Mapper.To.Relation));
+
+	dispatcher.request('blockRelationAdd', request, callBack);
+};
+
+const BlockRelationRemove = (contextId: string, key: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Relation.Remove.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationkey(key);
+
+	dispatcher.request('blockRelationRemove', request, callBack);
+};
+
+ const BlockRelationUpdate = (contextId: string, relation: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Relation.Update.Request();
+	
+	request.setContextid(contextId);
+	request.setRelation(Mapper.To.Relation(relation));
+
+	dispatcher.request('blockRelationUpdate', request, callBack);
+}; 
+
 const HistoryVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.Versions.Request();
 	
@@ -658,24 +693,6 @@ const SetCreate = (url: string, callBack?: (message: any) => void) => {
 	request.setObjecttypeurl(url);
 
 	dispatcher.request('setCreate', request, callBack);
-};
-
-const RelationList = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.History.Show.Request();
-	
-	request.setPageid(pageId);
-	request.setVersionid(versionId);
-
-	dispatcher.request('relationList', request, callBack);
-};
-
-const RelationAdd = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.History.Show.Request();
-	
-	request.setPageid(pageId);
-	request.setVersionid(versionId);
-
-	dispatcher.request('relationAdd', request, callBack);
 };
 
 export {
@@ -754,6 +771,11 @@ export {
 	BlockListSetPageIsArchived,
 	BlockListDeletePage,
 
+	BlockRelationList,
+	BlockRelationAdd,
+	BlockRelationUpdate,
+	BlockRelationRemove,
+
 	HistoryVersions,	
 	HistoryShow,
 	HistorySetVersion,
@@ -762,8 +784,5 @@ export {
 	ObjectTypeCreate,
 
 	SetCreate,
-
-	RelationList,
-	RelationAdd,
 
 };
