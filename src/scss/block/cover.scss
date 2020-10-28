@@ -35,7 +35,7 @@
 	}
 	
 	.elements {
-		.buttons { position: absolute; right: 0px; bottom: 8px; }
+		.buttons { position: absolute; left: 0px; bottom: 8px; }
 		
 		.dragWrap { 
 			width: 160px; height: 24px; background: rgba(0,0,0,0.5); position: absolute; left: 50%; bottom: 8px; margin-left: -80px;
@@ -71,6 +71,22 @@
 		
 		.btn.addCover {
 			.icon { background-image: url('~img/icon/add/cover1.svg'); }
+		}
+	}
+}
+
+.editorWrapper.withIconAndCover {
+	.block.blockCover {
+		.elements {
+			.buttons { left: 80px; }
+		}
+	}
+}
+
+.editorWrapper.isProfile.withIconAndCover {
+	.block.blockCover {
+		.elements {
+			.buttons { left: 112px; }
 		}
 	}
 }

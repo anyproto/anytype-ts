@@ -235,9 +235,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 			
 			if (block.isText() && !block.isTextTitle()) {
 				sections = sections.concat([
-					{ id: 'turnText', icon: '', name: 'Text', color: '', children: DataUtil.menuGetBlockText() },
-					{ id: 'turnList', icon: '', name: 'List', color: '', children: DataUtil.menuGetBlockList() },
-					{ id: 'turnObject', icon: '', name: 'Object', color: '', children: DataUtil.menuGetTurnObject() },
+					{ id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() },
+				]);
+			};
+
+			if (block.canTurn()) {
+				sections.push({ id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() });
+			};
+
+			if (block.isText() && !block.isTextTitle()) {
+				sections = sections.concat([
+					{ id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() },
+					{ id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() },
 				]);
 			};
 			
