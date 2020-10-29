@@ -166,18 +166,16 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const name = this.ref.getValue();
 		const block = blockStore.getLeaf(rootId, blockId);
 
-		if (!name || !this.format) {
+		if (!name || !this.format || !block) {
 			return;
 		};
 
-		console.log('SOURCE', block.content.source);
-		
 		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 		let newRelation = { name: name, format: this.format };
 		if (relation) {
-			C.BlockRelationUpdate(rootId, Object.assign(relation, newRelation));
+			C.ObjectTypeRelationUpdate(block.content.source, Object.assign(relation, newRelation));
 		} else {
-			C.BlockRelationAdd(rootId, [ newRelation ]);
+			C.ObjectTypeRelationAdd(block.content.source, [ newRelation ]);
 		};
 
 		close();
