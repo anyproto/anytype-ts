@@ -387,6 +387,20 @@ const Mapper = {
 			item.setIsvisible(obj.isVisible);
 			item.setWidth(obj.width);
 
+			let options = new Model.Block.Content.Dataview.Relation.EmptyOptions();
+			
+			if (obj.format == I.RelationType.Date) {
+                options = new Model.Block.Content.Dataview.Relation.DateOptions();
+
+				options.setIncludetime(obj.options.includeTime);
+				options.setTimeformat(obj.options.timeFormat);
+				options.setDateformat(obj.options.dateFormat);
+
+				item.setDateoptions(options);
+            } else {
+				item.setEmptyoptions(options);
+			};
+
 			return item;
 		},
 

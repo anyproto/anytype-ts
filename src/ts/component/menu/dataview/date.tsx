@@ -24,7 +24,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
-						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
+						return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -78,17 +78,26 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { formatDate, formatTime } = data;
+		const { getView, relationKey } = data;
+
+		const view = getView();
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		
+		const dateOptions = this.getOptions('formatDate');
+		const formatDate = dateOptions.find((it: any) => { return it.id == relation.options.formatDate; }) || dateOptions[0];
+
+		const timeOptions = this.getOptions('formatTime');
+		const formatTime = timeOptions.find((it: any) => { return it.id == relation.options.formatTime; }) || timeOptions[0];
 
 		let sections = [
 			{ 
 				id: 'date', name: 'Date format', children: [
-					{ id: 'formatDate', name: formatDate, arrow: true }
+					{ id: 'formatDate', name: formatDate.name, arrow: true }
 				] 
 			},
 			{ 
 				id: 'time', name: 'Time format', children: [
-					{ id: 'formatTime', name: formatTime, arrow: true }
+					{ id: 'formatTime', name: formatTime.name, arrow: true }
 				] 
 			},
 		];
@@ -106,6 +115,29 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		};
 		
 		return items;
+	};
+
+	getOptions (key: string) {
+		let options = [];
+		switch (key) {
+			case 'formatDate':
+				options = [
+					{ id: I.DateFormat.MonthAbbrBeforeDay, name: Util.date('M d Y', Util.time()) },
+					{ id: I.DateFormat.MonthAbbrAfterDay, name: Util.date('d M Y', Util.time()) },
+					{ id: I.DateFormat.Short, name: Util.date('n/j/Y', Util.time()) },
+					{ id: I.DateFormat.ShortUS, name: Util.date('j/n/Y', Util.time()) },
+					{ id: I.DateFormat.ISO, name: Util.date('Y-m-d', Util.time()) },
+				];
+				break;
+
+			case 'formatTime':
+				options = [
+					{ id: I.TimeFormat.H12, name: '12 hour' },
+					{ id: I.TimeFormat.H24, name: '24 hour' },
+				];
+				break;
+		};
+		return options;
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
@@ -153,7 +185,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			case Key.enter:
 				e.preventDefault();
 				if (item) {
-					this.onOver(e, item);
+					this.onClick(e, item);
 				};
 				break;
 				
@@ -163,37 +195,15 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		};
 	};
 
-	onOver (e: any, item: any) {
-		const { param } = this.props;
+	onClick (e: any, item: any) {
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView } = data;
 		const view = getView();
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relationKey; });
-
-		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
-		};
-
-		let options = [];
-		switch (item.key) {
-			case 'formatDate':
-				options = [
-					{ id: I.DateFormat.MonthAbbrBeforeDay, name: Util.date('M d Y', Util.time()) },
-					{ id: I.DateFormat.MonthAbbrAfterDay, name: Util.date('d M Y', Util.time()) },
-					{ id: I.DateFormat.Short, name: Util.date('n/j/Y', Util.time()) },
-					{ id: I.DateFormat.ShortUS, name: Util.date('j/n/Y', Util.time()) },
-					{ id: I.DateFormat.ISO, name: Util.date('Y-m-d', Util.time()) },
-				];
-				break;
-
-			case 'formatTime':
-				options = [
-					{ id: I.TimeFormat.H12, name: '12 hour' },
-					{ id: I.TimeFormat.H24, name: '24 hour' },
-				];
-				break;
-		};
+		const options = this.getOptions(item.key);
+		const value = options.find((it: any) => { return it.id == relation.options[item.key]; }) || options[0];
 
 		commonStore.menuOpen('select', {
 			element: '#item-' + item.id,
@@ -203,14 +213,22 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
-				value: relation.options[item.key],
+				value: value.name,
 				options: options,
 				onSelect: (e: any, el: any) => {
 					view.relations[idx].options[item.key] = el.id;
 					C.BlockSetDataviewView(rootId, blockId, view.id, view);
+
+					close();
 				}
 			}
 		});
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item, false);
+		};
 	};
 
 };

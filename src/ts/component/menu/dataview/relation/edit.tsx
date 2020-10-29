@@ -60,7 +60,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							<Switch value={relation.options.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 						</div>
 
-						<div id="menu-date-settings" className="item" onClick={this.onDateSettings} onMouseEnter={this.onDateSettings}>
+						<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
 							<Icon className="settings" />
 							<div className="name">Preferences</div>
 							<Icon className="arrow" />
@@ -173,6 +173,9 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				type: I.MenuType.Vertical,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Left,
+				onClose: () => {
+					commonStore.menuClose('select');
+				},
 				data: data
 			});
 		}, Constant.delay.menu);
@@ -228,7 +231,9 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					return;
 				};
 
-				dbStore.objectTypeRelationUpdate(source, message.relations);
+				console.log(relation);
+
+				dbStore.objectTypeRelationUpdate(source, relation);
 				view = DataUtil.viewSetRelations(source, view);
 
 				C.BlockSetDataviewView(rootId, blockId, view.id, view);
