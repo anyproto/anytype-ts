@@ -127,7 +127,6 @@ class LinkPreview extends React.Component<Props, {}> {
 	
 	onClick (e: any) {
 		const { url } = this.state;
-		console.log(this.state);
 		ipcRenderer.send('urlOpen', url);		
 	};
 	

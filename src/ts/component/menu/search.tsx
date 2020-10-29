@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from 'ts/component';
-import { I, keyboard } from 'ts/lib';
+import { I, Util, keyboard } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
@@ -61,7 +61,7 @@ class MenuSearch extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { container } = data;
-		const value = this.ref.getValue();
+		const value = Util.filterFix(this.ref.getValue());
 
 		let ret = false;
 		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {

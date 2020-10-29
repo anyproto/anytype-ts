@@ -687,6 +687,42 @@ const ObjectTypeCreate = (objectType: any, callBack?: (message: any) => void) =>
 	dispatcher.request('objectTypeCreate', request, callBack);
 };
 
+const ObjectTypeRelationList = (objectTypeUrl: string, otherTypes: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.Relation.List.Request();
+	
+	request.setObjecttypeurl(objectTypeUrl);
+	request.setAppendrelationsfromothertypes(otherTypes);
+
+	dispatcher.request('objectTypeRelationList', request, callBack);
+};
+
+const ObjectTypeRelationAdd = (objectTypeUrl: string, relations: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.Relation.Add.Request();
+	
+	request.setObjecttypeurl(objectTypeUrl);
+	request.setRelationsList(relations.map(Mapper.To.Relation));
+
+	dispatcher.request('objectTypeRelationAdd', request, callBack);
+};
+
+const ObjectTypeRelationUpdate = (objectTypeUrl: string, relation: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.Relation.Update.Request();
+	
+	request.setObjecttypeurl(objectTypeUrl);
+	request.setRelation(Mapper.To.Relation(relation));
+
+	dispatcher.request('objectTypeRelationUpdate', request, callBack);
+};
+
+const ObjectTypeRelationRemove = (objectTypeUrl: string, relationKey: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectType.Relation.Remove.Request();
+	
+	request.setObjecttypeurl(objectTypeUrl);
+	request.setRelationkey(relationKey);
+
+	dispatcher.request('objectTypeRelationRemove', request, callBack);
+};
+
 const SetCreate = (url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Set.Create.Request();
 	
@@ -782,6 +818,10 @@ export {
 
 	ObjectTypeList,
 	ObjectTypeCreate,
+	ObjectTypeRelationList,
+	ObjectTypeRelationAdd,
+	ObjectTypeRelationUpdate,
+	ObjectTypeRelationRemove,
 
 	SetCreate,
 

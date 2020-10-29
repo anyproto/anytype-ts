@@ -235,7 +235,7 @@ class DragProvider extends React.Component<Props, {}> {
 			let col2 = x + 28;
 			let col3 = x + width - 28;
 
-			if ((type != I.BlockType.Text) ||
+			if (([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0) ||
 				((type == I.BlockType.Text) &&
 				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
 			)) {

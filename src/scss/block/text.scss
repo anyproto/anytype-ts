@@ -32,11 +32,13 @@
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; }
 
-			name { display: inline; max-width: 400px; @include text-overflow-nw; vertical-align: top; position: relative; }
+			name { display: inline; white-space: normal; vertical-align: top; position: relative; border-bottom: 1px solid $colorDarkGrey; }
+			/*
 			name::before {
 				content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast;
 				position: absolute; bottom: 0px; left: 0px; z-index: 1;
 			}
+			*/
 		}
 
 		mention.withImage {

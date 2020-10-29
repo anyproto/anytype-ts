@@ -35,8 +35,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { data } = param;
 		const { view } = data;
 
-		console.log(JSON.stringify(this.items, null, 3));
-		
 		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
@@ -52,8 +50,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		const Item = SortableElement((item: any) => {
 			const relation = view.relations.find((it: I.ViewRelation) => { return it.key == item.relationKey; });
-
-			console.log();
 			if (!relation) {
 				return null;
 			};

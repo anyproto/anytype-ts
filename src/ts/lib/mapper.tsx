@@ -255,15 +255,23 @@ const Mapper = {
 				id: obj.getId(),
 				type: obj.getType(),
 				name: obj.getName(),
+				sorts: obj.getSortsList().map(Mapper.From.Sort),
+				filters: obj.getFiltersList().map(Mapper.From.Filter),
+				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
 			};
-	
-			view.relations = obj.getRelationsList().map(Mapper.From.ViewRelation);
-			view.filters = obj.getFiltersList().map(Mapper.From.Filter);
-			view.sorts = obj.getSortsList().map(Mapper.From.Sort);
+
+			decorate(view, {
+				id: observable,
+				name: observable,
+				type: observable,
+				sorts: observable,
+				filters: observable,
+				relations: observable,
+			});
 	
 			let order = {};
 			for (let i = 0; i < view.relations.length; ++i) {
-				order[view.relations[i].id] = i;
+				order[view.relations[i].key] = i;
 			};
 	
 			view.relations = relations.map((relation: I.Relation) => {
@@ -282,18 +290,11 @@ const Mapper = {
 				return 0;
 			});
 
-			view = new M.View(view);
+			console.log(view.relations);
 
-			decorate(view, {
-				id: observable,
-				name: observable,
-				type: observable,
-				sorts: observable,
-				filters: observable,
-				relations: observable,
-			});
-	
-			return view;
+			console.log(JSON.stringify(view, null, 5));
+
+			return new M.View(view);
 		},
 
 		HistoryVersion: (obj: any): I.HistoryVersion => {

@@ -8,13 +8,13 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 @observer
 class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	_isMounted = false;
 	n: number = 0;
+	emptyLength: number = 0;
 	timeout: number = 0;
 	
 	constructor (props: any) {
@@ -90,11 +90,15 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { filter } = commonStore;
 		const items = this.getItems();
 
-		if ((filter.text.length > 3) && !items.length) {
+		if (!items.length && !this.emptyLength) {
+			this.emptyLength = filter.text.length;
+		};
+
+		if ((filter.text.length - this.emptyLength > 3) && !items.length) {
 			this.props.close();
 			return;
 		};
-		
+
 		this.checkFilter();
 		this.setActive(items[this.n]);
 		this.props.position();

@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "https://anytype.io/schemas/page",
+  "title": "Anytype Page",
+  "description": "This schema contains the base properties of Anytype Page and should be refereed if you want to extend it",
+  "type": "array",
+  "items": {
+    "$ref": "https://anytype.io/schemas/relation"
+  },
+  "uniqueItems": true,
+  "default": [
+    {
+      "id": "id",
+      "name": "ID",
+      "isHidden": true,
+      "isReadonly": true,
+      "type": "https://anytype.io/schemas/types/page"
+    },
+    {
+      "id": "name",
+      "name": "Name",
+      "type": "https://anytype.io/schemas/types/title"
+    },
+    {
+      "id": "iconEmoji",
+      "name": "Emoji",
+      "isHidden": true,
+      "type": "https://anytype.io/schemas/types/emoji"
+    },
+    {
+      "id": "iconImage",
+      "name": "Image",
+      "isHidden": true,
+      "type": "https://anytype.io/schemas/types/image"
+    },
+    {
+      "id": "isArchived",
+      "name": "Archived",
+      "isHidden": true,
+      "type": "https://anytype.io/schemas/types/checkbox"
+    },
+    {
+      "id": "lastOpened",
+      "name": "Last opened",
+      "isHidden": false,
+      "isReadonly": true,
+      "type": "https://anytype.io/schemas/types/date"
+    },
+    {
+      "id": "lastModified",
+      "name": "Last modified",
+      "isHidden": false,
+      "isReadonly": true,
+      "type": "https://anytype.io/schemas/types/date"
+    },
+    {
+      "id": "coverType",
+      "name": "Cover Type",
+      "isHidden": true,
+      "type": "https://anytype.io/schemas/types/coverType"
+    },
+    {
+      "id": "coverId",
+      "name": "Predefined ID or Image",
+      "isHidden": true,
+      "type": "https://anytype.io/schemas/types/image"
+    },
+    {
+      "id": "coverX",
+      "name": "Cover x offset",
+      "isHidden": true,
+      "type": "https://anytype.io/schemas/types/number"
+    },
+    {
+      "id": "coverY",
+      "name": "Cover y offset",
+      "isHidden": true,
+      "type": "https://anytype.io/schemas/types/number"
+    },
+    {
+      "id": "coverScale",
+      "name": "Cover scale",
+      "isHidden": true,
+      "type": "https://anytype.io/schemas/types/number"
+    }
+  ]
+}

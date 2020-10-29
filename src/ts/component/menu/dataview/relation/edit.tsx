@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil } from 'ts/lib';
 import { Icon, Input, Switch } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -162,11 +162,15 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, relationKey, view } = data;
+		const { rootId, blockId, relationKey, view } = data;
 		const name = this.ref.getValue();
+		const block = blockStore.getLeaf(rootId, blockId);
+
 		if (!name || !this.format) {
 			return;
 		};
+
+		console.log('SOURCE', block.content.source);
 		
 		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 		let newRelation = { name: name, format: this.format };

@@ -5,6 +5,7 @@ import { I, Key, keyboard } from 'ts/lib';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 class MenuSelect extends React.Component<Props, {}> {
 
@@ -43,7 +44,9 @@ class MenuSelect extends React.Component<Props, {}> {
 		
 		const active = options.find((it: any) => { return it.id == value });
 		if (active && !active.isInitial) {
-			this.setActive(active);
+			window.setTimeout(() => {
+				this.setActive(active, true);
+			}, 210);
 		};
 	};
 	
@@ -130,6 +133,14 @@ class MenuSelect extends React.Component<Props, {}> {
 	};
 
 	onOver (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { canSelectInitial } = data;
+
+		if (item.isInitial && !canSelectInitial) {
+			return;
+		};
+
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
 		};
@@ -138,7 +149,11 @@ class MenuSelect extends React.Component<Props, {}> {
 	onSelect (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
+		const { onSelect, canSelectInitial } = data;
+
+		if (item.isInitial && !canSelectInitial) {
+			return;
+		};
 		
 		if (onSelect) {
 			onSelect(e, item);

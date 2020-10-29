@@ -375,6 +375,7 @@ class Dispatcher {
 					};
 
 					data.view = Mapper.From.View(block.content.source, data.getView());
+					console.log('1 VIEW', JSON.stringify(data.view.relations, null, 3));
 
 					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
@@ -382,6 +383,8 @@ class Dispatcher {
 					} else {
 						block.content.views.push(data.view);
 					};
+
+					console.log('VIEWS', JSON.stringify(block.content.views, null, 3));
 
 					blockStore.blockUpdate(rootId, block);
 					break;

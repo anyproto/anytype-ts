@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Smile } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore } from 'ts/store';
@@ -100,7 +100,7 @@ class BlockText extends React.Component<Props, {}> {
 				};
 				
 				additional = (
-					<Select initial="Language" id={'lang-' + id} arrowClassName="light" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
+					<Select id={'lang-' + id} arrowClassName="light" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
 				);
 				break;
 				
@@ -191,22 +191,27 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setValue (v: string) {
 		const { block } = this.props;
-		const { fields, content } = block
+		const { content } = block
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		
+		let fields = block.fields || {};
 		let { style } = content;
 		let text = String(v || '');
 		let html = text;
 		
 		if (style == I.TextStyle.Code) {
-			let lang = (fields || {}).lang;
+			let lang = fields.lang;
 			let grammar = Prism.languages[lang];
 
 			if (!grammar) {
 				lang = Constant.default.codeLang;
 				grammar = Prism.languages[lang];
+			};
+
+			if (this.refLang) {
+				this.refLang.setValue(lang);
 			};
 
 			html = Prism.highlight(html, grammar, lang);
@@ -393,7 +398,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		let value = this.getValue().replace(/\n$/, '');
+		let value = this.getValue();
 		let ret = false;
 
 		const k = e.key.toLowerCase();	
@@ -417,7 +422,7 @@ class BlockText extends React.Component<Props, {}> {
 		keyboard.shortcut('shift+enter', e, (pressed: string) => {
 			e.preventDefault();
 			
-			value = Util.stringInsert(value, '\r\n', range.from, range.from);
+			value = Util.stringInsert(value, '\n', range.from, range.from);
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 				focus.apply();
@@ -429,6 +434,10 @@ class BlockText extends React.Component<Props, {}> {
 
 		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
+
+			if (!range) {
+				return;
+			};
 			
 			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
@@ -838,6 +847,8 @@ class BlockText extends React.Component<Props, {}> {
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { lang: v } },
 		], (message: any) => {
+			Storage.set('codeLang', v);
+
 			focus.set(id, { from: l, to: l });
 			focus.apply();
 		});

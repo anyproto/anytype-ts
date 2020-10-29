@@ -37,6 +37,8 @@ class Controls extends React.Component<Props, State> {
 		const filterCnt = view.filters.length;
 		const sortCnt = view.sorts.length;
 
+		console.log(block);
+
 		const buttons: any[] = [
 			{ 
 				id: 'relation', name: 'Relations', menu: 'dataviewRelationList', 
