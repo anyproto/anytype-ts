@@ -174,13 +174,10 @@ class ViewGrid extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
-		const lastHead = node.find('.head.last');
-		const lastCell = node.find('.cell.last');
 		const ww = win.width();
 		const mw = ww - 192;
 		
 		let vw = 0;
-		let lw = 0;
 		let margin = 0;
 		let width = 0;
 
@@ -193,7 +190,6 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		if (width < mw) {
 			vw = mw;
-			lw = Math.max(0, mw - width);
 		} else {
 			vw = width;
 			margin = (ww - mw) / 2; 
@@ -201,6 +197,34 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
+		
+		this.resizeLast();
+	};
+
+	resizeLast () {
+		const { getView } = this.props;
+		const view = getView();
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const lastHead = node.find('.head.last');
+		const lastCell = node.find('.cell.last');
+		const ww = win.width();
+		const mw = ww - 192;
+		
+		let width = 0;
+		let lw = 48;
+
+		for (let relation of view.relations) {
+			if (!relation.isVisible) {
+				continue;
+			};
+			width += relation.width;
+		};
+
+		if (width < mw) {
+			lw = Math.max(48, mw - width);
+		};
+
 		lastHead.css({ width: lw });
 		lastCell.css({ width: lw });
 	};
@@ -234,6 +258,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		view.relations[idx].width = width;
 		el.css({ width: width });
+
+		this.resizeLast();
 	};
 
 	onResizeEnd (e: any, id: string) {
