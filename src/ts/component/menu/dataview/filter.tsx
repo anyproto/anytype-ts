@@ -33,7 +33,8 @@ class MenuFilter extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { getView } = data;
+		const view = getView();
 
 		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },

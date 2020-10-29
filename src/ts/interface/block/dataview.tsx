@@ -71,6 +71,7 @@ export interface ViewComponent {
 	readOnly: boolean;
 	onOpen?(e: any, data: any): void;
 	getData(viewId: string, offset: number): void;
+	getView(): View;
 };
 
 export interface View {

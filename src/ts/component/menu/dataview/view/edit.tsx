@@ -28,7 +28,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { getView } = data;
+		const view = getView();
 		const items = this.getItems();
 		
 		return (

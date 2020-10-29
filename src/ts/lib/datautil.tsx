@@ -1,5 +1,6 @@
 import { I, C, keyboard, crumbs, translate, Util } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
+import { decorate, observable } from 'mobx';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -499,6 +500,49 @@ class DataUtil {
 
 	cellId (prefix: string, relationKey: string, id: any) {
 		return [ prefix, relationKey, String(id || '') ].join('-');
+	};
+
+	viewSetRelations (url: string, view: I.View): I.View {
+		let objectType = dbStore.getObjectType(url);
+		let relations = [];
+
+		if (objectType && objectType.relations.length) {
+			for (let relation of objectType.relations) {
+				if (relation.isHidden) {
+					continue;
+				};
+		
+				relations.push({
+					key: String(relation.key || ''),
+					name: String(relation.name || ''),
+					format: relation.format,
+					isReadOnly: Boolean(relation.isReadOnly),
+				});
+			};
+		};
+
+		let order = {};
+		for (let i = 0; i < view.relations.length; ++i) {
+			order[view.relations[i].key] = i;
+		};
+
+		view.relations = relations.map((relation: I.Relation) => {
+			let rel = view.relations.find((it: any) => { return it.key == relation.key; }) || {};
+			return {
+				...relation,
+				isVisible: Boolean(rel.isVisible),
+				order: order[relation.key],
+				width: Number(rel.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
+			};
+		});
+
+		view.relations.sort((c1: any, c2: any) => {
+			if (c1.order > c2.order) return 1;
+			if (c1.order < c2.order) return -1;
+			return 0;
+		});
+
+		return view;
 	};
 
 };

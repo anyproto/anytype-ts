@@ -166,9 +166,10 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 	onOver (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationId, view } = data;
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationId; });
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relationId; });
+		const { rootId, blockId, relationKey, getView } = data;
+		const view = getView();
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relationKey; });
 
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
@@ -202,13 +203,11 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
-				value: relation.dateOptions[item.key],
+				value: relation.options[item.key],
 				options: options,
 				onSelect: (e: any, el: any) => {
-					relation.options[item.key] = el.id;
-					view.relations[idx] = relation;
-
-					C.BlockSetDataviewView(rootId, blockId, view.id, { ...view });
+					view.relations[idx].options[item.key] = el.id;
+					C.BlockSetDataviewView(rootId, blockId, view.id, view);
 				}
 			}
 		});

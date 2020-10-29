@@ -232,25 +232,7 @@ const Mapper = {
 			};
 		},
 
-		View: (source: string, obj: any): I.View => {
-			let objectType = dbStore.getObjectType(source);
-			let relations = [];
-
-			if (objectType && objectType.relations.length) {
-				for (let relation of objectType.relations) {
-					if (relation.isHidden) {
-						continue;
-					};
-		
-					relations.push({
-						key: String(relation.key || ''),
-						name: String(relation.name || ''),
-						format: relation.format,
-						isReadOnly: Boolean(relation.isReadOnly),
-					});
-				};
-			};
-
+		View: (url: string, obj: any): I.View => {
 			let view: any = {
 				id: obj.getId(),
 				type: obj.getType(),
@@ -260,41 +242,9 @@ const Mapper = {
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
 			};
 
-			decorate(view, {
-				id: observable,
-				name: observable,
-				type: observable,
-				sorts: observable,
-				filters: observable,
-				relations: observable,
-			});
-	
-			let order = {};
-			for (let i = 0; i < view.relations.length; ++i) {
-				order[view.relations[i].key] = i;
-			};
-	
-			view.relations = relations.map((relation: I.Relation) => {
-				let rel = view.relations.find((it: any) => { return it.key == relation.key; }) || {};
-				return observable({
-					...relation,
-					isVisible: Boolean(rel.isVisible),
-					order: order[relation.key],
-					width: Number(rel.width || Constant.size.dataview.cell[DataUtil.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
-				});
-			});
+			view = DataUtil.viewSetRelations(url, view);
 
-			view.relations.sort((c1: any, c2: any) => {
-				if (c1.order > c2.order) return 1;
-				if (c1.order < c2.order) return -1;
-				return 0;
-			});
-
-			console.log(view.relations);
-
-			console.log(JSON.stringify(view, null, 5));
-
-			return new M.View(view);
+			return observable(new M.View(view));
 		},
 
 		HistoryVersion: (obj: any): I.HistoryVersion => {

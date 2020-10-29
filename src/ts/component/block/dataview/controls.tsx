@@ -37,8 +37,6 @@ class Controls extends React.Component<Props, State> {
 		const filterCnt = view.filters.length;
 		const sortCnt = view.sorts.length;
 
-		console.log(block);
-
 		const buttons: any[] = [
 			{ 
 				id: 'relation', name: 'Relations', menu: 'dataviewRelationList', 
@@ -123,8 +121,7 @@ class Controls extends React.Component<Props, State> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { rootId, block, view, readOnly, getData } = this.props;
-		const data = dbStore.getData(block.id);
+		const { rootId, block, readOnly, getData, getView } = this.props;
 
 		commonStore.menuOpen(menu, { 
 			element: '#button-' + id,
@@ -137,9 +134,8 @@ class Controls extends React.Component<Props, State> {
 				readOnly: readOnly,
 				rootId: rootId,
 				blockId: block.id, 
-				view: view,
-				data: data,
-				getData: getData
+				getData: getData,
+				getView: getView,
 			},
 		});
 	};

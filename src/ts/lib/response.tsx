@@ -358,6 +358,12 @@ const ObjectTypeCreate = (response: any) => {
 	};
 };
 
+const ObjectTypeRelationAdd = (response: any) => {
+	return {
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+	};
+};
+
 const SetCreate = (response: any) => {
 	return {
 		id: response.getId(),
@@ -452,6 +458,7 @@ export {
 
 	ObjectTypeList,
 	ObjectTypeCreate,
+	ObjectTypeRelationAdd,
 
 	SetCreate,
 };

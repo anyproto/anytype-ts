@@ -19,7 +19,8 @@ class MenuRelationType extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationKey, view } = data;
+		const { relationKey, getView } = data;
+		const view = getView();
 		const relation = view.relations.find((it: I.ViewRelation) => { it.key == relationKey; });
 		
 		let relations: any[] = [

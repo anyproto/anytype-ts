@@ -27,7 +27,8 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, view, onOpen, getData, readOnly } = this.props;
+		const { rootId, block, onOpen, getData, getView, readOnly } = this.props;
+		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);
@@ -140,6 +141,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		const win = $(window);
 
 		this.bind();
+		this.resize();
+
 		win.trigger('resize.editor');
 	};
 
@@ -165,24 +168,32 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { view } = this.props;
+		const { getView } = this.props;
+		const view = getView();
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
+		const lastHead = node.find('.head.last');
+		const lastCell = node.find('.cell.last');
 		const ww = win.width();
 		const mw = ww - 192;
 		
 		let vw = 0;
+		let lw = 0;
 		let margin = 0;
 		let width = 0;
 
 		for (let relation of view.relations) {
+			if (!relation.isVisible) {
+				continue;
+			};
 			width += relation.width;
 		};
 
 		if (width < mw) {
 			vw = mw;
+			lw = Math.max(0, mw - width);
 		} else {
 			vw = width;
 			margin = (ww - mw) / 2; 
@@ -190,6 +201,8 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
+		lastHead.css({ width: lw });
+		lastCell.css({ width: lw });
 	};
 
 	onResizeStart (e: any, id: string) {
@@ -206,7 +219,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { view } = this.props;
+		const { getView } = this.props;
+		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#' + DataUtil.cellId('head', id, ''));
 		const offset = el.offset();
@@ -221,7 +235,8 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	onResizeEnd (e: any, id: string) {
-		const { rootId, block, view } = this.props;
+		const { rootId, block, getView } = this.props;
+		const view = getView();
 
 		$(window).unbind('mousemove.cell mouseup.cell');
 		C.BlockSetDataviewView(rootId, block.id, view.id, view);

@@ -25,6 +25,31 @@ class DbStore {
 		return this.objectTypeMap.get(DataUtil.schemaField(url));
 	};
 
+	@action 
+	objectTypeRelationsAdd (url: string, relations: I.Relation[]) {
+		const type = this.getObjectType(url);
+		type.relations = type.relations.concat(relations);
+
+		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+	};
+
+	@action 
+	objectTypeRelationUpdate (url: string, relation: I.Relation) {
+		const type = this.getObjectType(url);
+		const idx = type.relations.findIndex((it: I.Relation) => { return it.key == relation.key; });
+
+		set(type.relations[idx], relation);
+		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+	};
+
+	@action 
+	objectTypeRelationsRemove (url: string, relationKey: string) {
+		const type = this.getObjectType(url);
+		type.relations = type.relations.filter((it: I.Relation) => { return it.key != relationKey; });
+
+		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+	};
+
 	@action
 	setData (blockId: string, list: any[]) {
 		list = list.map((it: any) => {
