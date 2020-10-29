@@ -21,6 +21,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		this.onType = this.onType.bind(this);
 		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onCopy = this.onCopy.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 	};
 
 	render () {
@@ -29,20 +31,17 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { relationKey, view } = data;
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 
-		let current = null;
 		let options = null;
 
 		const Current = (item: any) => (
 			<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
-				{item.format ? <Icon className={'relation c-' + DataUtil.relationClass(item.format)} /> : ''}
-				<div className="name">{item.format ? Constant.relationName[item.format] : 'Select type'}</div>
+				<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
+				<div className="name">{Constant.relationName[item.format]}</div>
 				<Icon className="arrow" />
 			</div>
 		);
 
 		if (relation) {
-			current = <Current format={relation.format} />;
-
 			if (relation.format == I.RelationType.Date) {
 				options = (
 					<React.Fragment>
@@ -61,13 +60,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					</React.Fragment>
 				);
 			};
-		} else 
-		if (this.format) { 
-			current = <Current format={this.format} />;
-		} else {
-			current = <Current format={0} />;
-		};
-		
+		}
+
 		return (
 			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
@@ -75,19 +69,31 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
 				</div>
 				<div className="sectionName">Relation type</div>
-				{current}
+				<Current format={this.format} />
 				{options}
 				<div className="line" />
-				<div className="item">
+				<div className="item" onClick={this.onCopy}>
 					<Icon className="copy" />
 					<div className="name">Duplicate</div>
 				</div>
-				<div className="item">
+				<div className="item" onClick={this.onRemove}>
 					<Icon className="remove" />
 					<div className="name">Delete relation</div>
 				</div>
 			</form>
 		);
+	};
+
+	componentDidMount() {
+		const { param } = this.props;
+		const { data } = param;
+		const { relationKey, view } = data;
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+
+		if (relation) {
+			this.format = relation.format;
+			this.forceUpdate();
+		};
 	};
 
 	componentWillUnmount () {
@@ -157,6 +163,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		}, Constant.delay.menu);
 	};
 
+	onCopy (e: any) {
+	};
+
+	onRemove (e: any) {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { rootId, blockId, relationKey } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		C.ObjectTypeRelationRemove(block.content.source, relationKey);
+		close();
+	};
+
 	onSubmit (e: any) {
 		e.preventDefault();
 
@@ -166,7 +185,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const name = this.ref.getValue();
 		const block = blockStore.getLeaf(rootId, blockId);
 
-		if (!name || !this.format || !block) {
+		if (!name || !block) {
 			return;
 		};
 
@@ -180,7 +199,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		close();
 	};
-	
+
 };
 
 export default MenuRelationEdit;
