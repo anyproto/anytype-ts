@@ -139,7 +139,7 @@ class Cell extends React.Component<Props, {}> {
 
 				param = Object.assign(param, {
 					type: I.MenuType.Horizontal,
-					horizontal: I.MenuDirection.Left,
+					horizontal: I.MenuDirection.Center,
 					className: 'button',
 					passThrough: true,
 					width: width,

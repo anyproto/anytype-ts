@@ -135,6 +135,9 @@ class CellText extends React.Component<Props, State> {
 			cell.find('#input').get(0).setSelectionRange(length, length);
 		} else {
 			cell.removeClass('isEditing');
+			window.setTimeout(() => {
+				commonStore.menuClose('select');
+			}, 200);
 		};
 
 		this.resize();
