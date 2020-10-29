@@ -21,7 +21,6 @@ class CellText extends React.Component<Props, State> {
 		editing: false,
 	};
 	ref: any = null;
-	timeoutMenu: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -129,14 +128,13 @@ class CellText extends React.Component<Props, State> {
 			};
 			let length = value.length;
 
-			cell.addClass('isEditing');
 			this.ref.focus();
 			this.ref.setValue(value);
+
+			cell.addClass('isEditing');
 			cell.find('#input').get(0).setSelectionRange(length, length);
 		} else {
 			cell.removeClass('isEditing');
-			window.clearTimeout(this.timeoutMenu);
-			commonStore.menuClose('select');
 		};
 
 		this.resize();

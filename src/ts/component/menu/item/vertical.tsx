@@ -29,10 +29,11 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		let element = null;
 		if (withSmile) {
 			element = <Smile icon={icon} hash={hash} />;
-		} else if (icon) {
+		} else 
+		if (icon) {
 			element = <Icon className={icon} inner={inner} />;
 		};
-		
+
 		return (
 			<div id={'item-' + id} className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter}>
 				{withDescription ? (
