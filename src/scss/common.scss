@@ -12,6 +12,7 @@ body {
 	overscroll-behavior: none;
 }
 body.over { overflow-y: hidden; }
+body.colResize { cursor: col-resize !important; }
 
 :focus { outline: 0px; }
 

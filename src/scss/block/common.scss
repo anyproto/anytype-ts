@@ -57,7 +57,7 @@
 	.block.align1 > .wrapContent { text-align: center; }
 	.block.align2 > .wrapContent { text-align: right; }
 	
-	.block.isResizing { cursor: col-resize; user-select: none; }
+	.block.isResizing { user-select: none; }
 	.block.isResizing {
 		.icon.dnd { opacity: 1; }
 	}

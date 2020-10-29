@@ -210,6 +210,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const win = $(window);
+
+		$('body').addClass('colResize');
 		win.unbind('mousemove.cell mouseup.cell');
 		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, id); });
 		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, id); });
@@ -239,6 +241,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		const view = getView();
 
 		$(window).unbind('mousemove.cell mouseup.cell');
+		$('body').removeClass('colResize');
+
 		C.BlockSetDataviewView(rootId, block.id, view.id, view);
 	};
 

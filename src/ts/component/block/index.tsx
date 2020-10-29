@@ -430,6 +430,7 @@ class Block extends React.Component<Props, {}> {
 
 		this.unbind();
 		node.addClass('isResizing');
+		$('body').addClass('colResize');
 		keyboard.setResize(true);
 		add.css({ opacity: 0 });
 		
@@ -498,6 +499,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		this.unbind();
 		node.removeClass('isResizing');
+		$('body').removeClass('colResize');
 		keyboard.setResize(false);
 		
 		node.find('.colResize.active').removeClass('active');
