@@ -10,6 +10,8 @@ interface State {
 	error: string;
 };
 
+const { ipcRenderer } = window.require('electron');
+
 @observer
 class PageAuthSelect extends React.Component<Props, State> {
 
@@ -64,6 +66,7 @@ class PageAuthSelect extends React.Component<Props, State> {
 				this.setState({ error: message.error.description });
 			} else {
 				authStore.phraseSet(message.mnemonic);
+				ipcRenderer.send('keytarSet', 'phrase', message.mnemonic);
 				history.push('/auth/register/register');
 			};
 		});

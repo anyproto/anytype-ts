@@ -287,11 +287,20 @@ class App extends React.Component<Props, State> {
 	};
 
 	setIpcEvents () {
-		const phrase = Storage.get('phrase');
 		const accountId = Storage.get('accountId');
 		const html = $('html');
 
 		ipcRenderer.send('appLoaded', true);
+
+		ipcRenderer.send('keytarGet', 'phrase');
+
+		ipcRenderer.on('keytarGet', (e: any, key: string, value: string) => {
+			console.log('keytarGet', key, value, accountId);
+			if ((key == 'phrase') && value && accountId) {
+				authStore.phraseSet(value);
+				history.push('/auth/setup/init');
+			};
+		});
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
@@ -299,10 +308,6 @@ class App extends React.Component<Props, State> {
 			this.preload(() => {
 				this.setState({ loading: false });
 			});
-
-			if (phrase && accountId) {
-				history.push('/auth/setup/init');
-			};
 		});
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
