@@ -108,6 +108,12 @@
 	"blockNameDot": { "en": "Dots divider" },
 	"blockDescriptionDot": { "en": "Separate information with three dots" },
 
+	"blockNameRelation": { "en": "Relation" },
+	"blockDescriptionRelation": { "en": "..." },
+
+	"blockNameNewRelation": { "en": "New Relation" },
+	"blockDescriptionNewRelation": { "en": "..." },
+
 	"filterConditionEqual": { "en": "is" },
 	"filterConditionNotEqual": { "en": "is not" },
 	"filterConditionGreater": { "en": "is greater" },

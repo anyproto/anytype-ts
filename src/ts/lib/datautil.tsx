@@ -344,6 +344,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
+
 			/*
 			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
@@ -351,6 +352,13 @@ class DataUtil {
 			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
 			{ id: 'contact', icon: 'contact', name: 'Contact', color: 'blue', isBlock: true },
 			*/
+		].map(this.menuMapperBlock);
+	};
+
+	menuGetBlockRelation () {
+		return [
+			{ type: I.BlockType.Relation, id: 'relation', icon: 'relation', lang: 'Relation' },
+			{ type: I.BlockType.Relation, id: 'new-relation', icon: 'relation', lang: 'NewRelation' },
 		].map(this.menuMapperBlock);
 	};
 	

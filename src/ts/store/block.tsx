@@ -387,6 +387,7 @@ class BlockStore {
 		if (v == V.BOOKMARK)	 t = I.BlockType.Bookmark;
 		if (v == V.LINK)		 t = I.BlockType.Link;
 		if (v == V.DATAVIEW)	 t = I.BlockType.Dataview;
+		if (v == V.RELATION)	 t = I.BlockType.Relation;
 
 		return t;
 	};

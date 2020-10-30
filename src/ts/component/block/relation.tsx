@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { Icon, Label } from 'ts/component';
 import { I, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 
-interface Props {
-	rootId: string;
-	block: I.Block;
-};
+interface Props extends I.BlockComponent {};
 
 @observer
 class BlockRelation extends React.Component<Props, {}> {
@@ -17,38 +14,22 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId } = this.props;
-		const relations = [];
+		const { rootId, block, readOnly } = this.props;
+		const { content } = block;
+		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
 
-		const Item = (item: any) => {
-			let value: any = details[item.id];
-
-			switch (item.format) {
-				case I.RelationType.Date:
-					value = Util.date('d F Y', value);
-					break;
-			};
-
-			return (
-				<tr className="row">
-					<td className="cell name">
-						<Icon className={'relation c-' + item.format} />
-						<div className="txt">{item.name}</div>
-					</td>
-					<td className="cell value">{value}</td>
-				</tr>
-			);
-		};
-
 		return (
-			<table className="table">
-				<tbody>
-				{relations.map((item: any, i: number) => (
-					<Item key={i} {...item} />
-				))}
-				</tbody>
-			</table>
+			<div className="wrap">
+				{!key ? 
+				(
+					<React.Fragment>
+						<Icon className="relation" />
+						<Label text="New relation" />
+					</React.Fragment>
+				) : 
+				''}
+			</div>
 		);
 	};
 

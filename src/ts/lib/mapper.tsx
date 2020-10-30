@@ -70,6 +70,7 @@ const Mapper = {
 			if (v == ContentCase.BOOKMARK)	 t = I.BlockType.Bookmark;
 			if (v == ContentCase.LINK)		 t = I.BlockType.Link;
 			if (v == ContentCase.DATAVIEW)	 t = I.BlockType.Dataview;
+			if (v == ContentCase.RELATION)	 t = I.BlockType.Relation;
 			return t;
 		},
 
@@ -162,6 +163,12 @@ const Mapper = {
 					views: observable,
 					data: observable,
 				});
+			};
+
+			if (type == I.BlockType.Relation) {
+				item.content = {
+					key: content.getKey(),
+				};
 			};
 	
 			return item;
@@ -375,6 +382,14 @@ const Mapper = {
 				content.setStyle(obj.content.style);
 	
 				block.setDiv(content);
+			};
+
+			if (obj.type == I.BlockType.Relation) {
+				content = new Model.Block.Content.Relation();
+
+				content.setKey(obj.content.key);
+	
+				block.setRelation(content);
 			};
 
 			return block;

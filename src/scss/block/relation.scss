@@ -1,19 +1,17 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockRelation {}
+	.block.blockRelation { line-height: 20px; }
 	.block.blockRelation {
-		.table { border-collapse: collapse; width: 100%; }
-
-		.row {
-			.cell.name { @include text-common; line-height: 20px; padding: 4px 2px; color: #6c6a5f; transition: $transitionFast; }
-			.cell.name {
-				.icon { width: 20px; height: 20px; margin-right: 8px; }
-			}
-			.cell.name:hover { background: #f3f2ec; }
-
-			.cell.value { padding: 4px 8px; transition: $transitionFast; }
-			.cell.value:hover { background: #f3f2ec; }
+		.wrap { vertical-align: middle; display: inline-block; line-height: 1; }
+		.icon.relation { 
+			width: 20px; height: 20px; margin-right: 4px; vertical-align: middle; background-image: url('~img/icon/menu/action/block/relation0.svg')
+		}
+		.label { 
+			@include text-common; line-height: 20px; vertical-align: middle; display: inline-block; width: calc(100% - 24px); 
+			color: $colorDarkGrey;
 		}
 	}
+
+	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
 }

@@ -30,6 +30,7 @@ import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './
 import { FileType, FileState, File, BlockFile } from './block/file';
 import { BookmarkType, ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
+import { ContentRelation, BlockRelation } from './block/relation';
 
 export {
 	Account,
@@ -118,4 +119,7 @@ export {
 	BookmarkType,
 	ContentBookmark, 
 	BlockBookmark,
+
+	ContentRelation, 
+	BlockRelation,
 }
