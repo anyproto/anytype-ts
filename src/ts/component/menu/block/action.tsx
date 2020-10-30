@@ -240,7 +240,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				]);
 			};
 
-			if (block.canTurn()) {
+			if (block.isText() && block.canTurn()) {
 				sections.push({ id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() });
 			};
 
@@ -252,7 +252,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			
 			if (block.isDiv()) {
 				sections = sections.concat([
-					{ id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetBlockOther() },
+					{ id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() },
 				]);
 			};
 			
