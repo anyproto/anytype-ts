@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
+import { observer } from 'mobx-react';
+import { commonStore } from 'ts/store';
 
 interface Props {
 	id?: string;
@@ -11,6 +13,7 @@ interface Props {
 	tooltipY?: I.MenuDirection;
 	inner?: any;
 	draggable?: boolean;
+	menuId?: string;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -20,9 +23,10 @@ interface Props {
 
 const $ = require('jquery');
 
+@observer
 class Icon extends React.Component<Props, {}> {
 	
-	private static defaultProps = {
+	public static defaultProps = {
 		tooltipY: I.MenuDirection.Bottom,
 	};
 	
@@ -35,13 +39,16 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { id, icon, arrow, draggable, className, inner, onClick, onMouseDown, onMouseEnter, onMouseLeave, onDragStart } = this.props;
+		const { id, icon, arrow, draggable, className, inner, menuId, onClick, onMouseDown, onMouseEnter, onMouseLeave, onDragStart } = this.props;
 		
 		let cn = [ 'icon' ];
 		let style: any = {};
 		
 		if (className) {
 			cn.push(className);
+		};
+		if (menuId && commonStore.menuIsOpen(menuId)) {
+			cn.push('active');
 		};
 		
 		if (icon) {

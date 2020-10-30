@@ -2,11 +2,9 @@ import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 interface Props {};
 
-@observer
 class FooterAuth extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
@@ -21,7 +19,7 @@ class FooterAuth extends React.Component<Props, {}> {
 		return (
 			<div className="footer">
 				<div className="copy">{Util.date('Y', date)}, Anytype</div>
-				<Icon id="button-help" className={'help light ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
+				<Icon id="button-help" menuId="help" className="help light" onMouseDown={this.onHelp} />
 			</div>
 		);
 	};

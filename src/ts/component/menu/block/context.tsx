@@ -65,7 +65,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			<div className="flex" onClick={this.onMenuClick}>
 				{block.canTurn() ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-switch'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
+						<Icon id={'button-' + blockId + '-switch'} arrow={true} tooltip="Switch style" menuId="blockStyle" className={[ icon, 'blockStyle' ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
 					</div>
 				) : ''}
 				
@@ -83,14 +83,14 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				
 				{block.canHaveMarks() ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-color'} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
-						<Icon id={'button-' + blockId + '-background'} className={[ 'color', (commonStore.menuIsOpen('blockBackground') ? 'active' : '') ].join(' ')} inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
+						<Icon id={'button-' + blockId + '-color'} menuId="blockColor" className="color" inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
+						<Icon id={'button-' + blockId + '-background'} menuId="blockBackground" className="color" inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
 					</div>
 				) : ''}
 				
 				<div className="section">
 					<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" onClick={(e: any) => {}} />
-					<Icon id={'button-' + blockId + '-more'} className={[ 'more', (commonStore.menuIsOpen('blockMore') ? 'active' : '') ].join(' ')} tooltip="More options" onClick={(e: any) => { this.onMark(e, 'more'); }} />
+					<Icon id={'button-' + blockId + '-more'} menuId="blockMore" className="more" tooltip="More options" onClick={(e: any) => { this.onMark(e, 'more'); }} />
 				</div>
 			</div>
 		);

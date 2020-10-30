@@ -56,7 +56,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
 						
 						<div className="rightMenu">
-							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} tooltip="Accounts" onClick={this.onAccount} />
+							<Icon id="button-account" menuId="account" className="profile" tooltip="Accounts" onClick={this.onAccount} />
 							<IconUser avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>

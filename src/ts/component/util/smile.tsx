@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Emoji } from 'emoji-mart';
 import { commonStore } from 'ts/store';
 import { I, SmileUtil } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
@@ -14,6 +15,7 @@ interface Props {
 	canEdit?: boolean;
 	offsetX?: number;
 	offsetY?: number;
+	menuId?: string;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 };
@@ -30,9 +32,10 @@ const Blank = {
 	big: require('img/blank/smile/big.svg'),
 };
 
+@observer
 class Smile extends React.Component<Props, State> {
 	
-	private static defaultProps = {
+	public static defaultProps = {
 		offsetX: 0,
 		offsetY: 0,
 		size: 18,
@@ -53,7 +56,7 @@ class Smile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, size, native, asImage, className, canEdit } = this.props;
+		const { id, size, native, asImage, className, canEdit, menuId } = this.props;
 		let icon = String(this.state.icon || this.props.icon || '');
 		const hash = String(this.state.hash || this.props.hash || '');
 		
@@ -63,6 +66,9 @@ class Smile extends React.Component<Props, State> {
 		};
 		if (canEdit) {
 			cn.push('canEdit');
+		};
+		if (menuId && commonStore.menuIsOpen(menuId)) {
+			cn.push('active');
 		};
 
 		let blank = Blank.small;
