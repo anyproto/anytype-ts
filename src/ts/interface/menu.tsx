@@ -38,6 +38,7 @@ export interface MenuItem {
 	arrow?: boolean;
 	className?: string;
 	isActive?: boolean;
+	menuId?: string;
 	withSmile?: boolean;
 	withDescription?: boolean;
 	onClick?(e: any): void;

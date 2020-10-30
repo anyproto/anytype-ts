@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.editorWrapper { padding-top: 106px; width: 704px; margin: 0px auto; }
+.editorWrapper { padding-top: 100px; width: 704px; margin: 0px auto; }
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
@@ -17,16 +17,18 @@
 
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
-	.editorControls { position: absolute; width: inherit; height: 162px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
+	.editorControls { position: absolute; width: inherit; height: 140px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
-		.sides { display: flex; width: 100%; position: absolute; bottom: 16px; }
+		.sides { display: flex; width: 100%; position: absolute; bottom: 0px; }
 		.side { width: 50%; }
 		.side.right { text-align: right; }
 		
 		.btn { 
 			font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast; opacity: 0;
+			margin-right: 24px;
 		}
 		.btn:hover { color: $colorBlack; }
+		.btn:last-child { margin: 0px; }
 		.btn {
 			.icon { width: 16px; height: 16px; margin-right: 6px; }
 		}
@@ -51,16 +53,22 @@
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
-.editorWrapper.withIcon { padding-top: 90px; }
 .editorWrapper.withIcon {
+	.editorControls { height: 156px; }
 	.editorControls {
 		.btn.addIcon { display: none; }
 	}
 }
 
+.editorWrapper.withIcon.align0 {
+	.editorControls {
+		.side.left { padding-left: 80px; }
+	}
+}
+
 .editorWrapper.withCover { padding-top: 288px; }
 .editorWrapper.withCover {
-	.editorControls { height: 346px; }
+	.editorControls { height: 326px; }
 	.editorControls {
 		.btn.addCover { display: none; }
 	}
@@ -72,6 +80,12 @@
 }
 
 .editorWrapper.isProfile.withIcon { padding-top: 56px; }
+.editorWrapper.isProfile.withIcon {
+	.editorControls { height: 112px; }
+	.editorControls { 
+		.side.left { padding-left: 112px; }
+	}
+}
 .editorWrapper.isProfile.withIconAndCover { padding-top: 190px; }
 
 .editorWrapper.isDataview { width: calc(100% - 192px); }

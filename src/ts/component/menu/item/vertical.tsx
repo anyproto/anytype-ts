@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { Icon, Smile } from 'ts/component';
 import { I } from 'ts/lib';
+import { observer } from 'mobx-react';
+import { commonStore } from 'ts/store';
 
 interface Props extends I.MenuItem {};
 
+@observer
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, hash, inner, name, description, color, arrow, isActive, withSmile, withDescription, className, onClick, onMouseEnter } = this.props;
+		const { id, icon, hash, inner, name, menuId, description, color, arrow, isActive, withSmile, withDescription, className, onClick, onMouseEnter } = this.props;
 		
 		let cn = [ 'item' ];
 		if (className) {
@@ -23,6 +26,9 @@ class MenuItemVertical extends React.Component<Props, {}> {
 			cn.push('withDescription');
 		};
 		if (isActive) {
+			cn.push('active');
+		};
+		if (menuId && commonStore.menuIsOpen(menuId)) {
 			cn.push('active');
 		};
 		

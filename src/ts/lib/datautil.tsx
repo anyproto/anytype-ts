@@ -108,9 +108,25 @@ class DataUtil {
 			case I.RelationType.Phone:		 c = 'phone'; break;
 			case I.RelationType.Object:		 c = 'object'; break;
 			case I.RelationType.Self:		 c = 'object'; break;
-			
 		};
 		return c;
+	};
+
+	coverColors () {
+		return [
+			{ type: I.CoverType.Color, id: 'yellow' },
+			{ type: I.CoverType.Color, id: 'orange' },
+			{ type: I.CoverType.Color, id: 'red' },
+			{ type: I.CoverType.Color, id: 'pink' },
+			{ type: I.CoverType.Color, id: 'purple' },
+			{ type: I.CoverType.Color, id: 'blue' },
+			{ type: I.CoverType.Color, id: 'ice' },
+			{ type: I.CoverType.Color, id: 'teal' },
+			{ type: I.CoverType.Color, id: 'green' },
+			{ type: I.CoverType.Color, id: 'lightgrey' },
+			{ type: I.CoverType.Color, id: 'darkgrey' },
+			{ type: I.CoverType.Color, id: 'black' },
+		];
 	};
 	
 	alignIcon (v: I.BlockAlign): string {

@@ -6,6 +6,7 @@ import { commonStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
@@ -14,10 +15,10 @@ const $ = require('jquery');
 const raf = require('raf');
 const TIMEOUT = 500;
 
+@observer
 class MenuFilter extends React.Component<Props, {}> {
 	
 	refObj: any = {};
-	items: I.Filter[] = [] as I.Filter[];
 	timeoutChange: number = 0;
 	
 	constructor (props: any) {
@@ -137,17 +138,17 @@ class MenuFilter extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{this.items.map((item: any, i: number) => (
+					{view.filters.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
-					{!this.items.length ? (
+					{!view.filters.length ? (
 						<div className="item empty">
 							<div className="inner">
 								No filters applied to this view
 							</div>
 						</div>
 					) : ''}
-					<ItemAdd index={this.items.length + 1} disabled={true} />
+					<ItemAdd index={view.filters.length + 1} disabled={true} />
 				</div>
 			);
 		});
@@ -168,13 +169,6 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { view } = data;
-
-		this.items = view.filters;
-		this.forceUpdate();
-
 		this.resize();
 	};
 
@@ -242,7 +236,8 @@ class MenuFilter extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { getView } = data;
+		const view = getView();
 
 		if (!view.relations.length) {
 			return;
@@ -252,42 +247,58 @@ class MenuFilter extends React.Component<Props, {}> {
 		const conditions = this.conditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
-		this.items.push({ 
+		view.filters.push({ 
 			relationKey: first.key, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: '',
 		});
-		this.forceUpdate();
 		this.save();
 	};
 
 	onDelete (e: any, id: number) {
-		this.items = this.items.filter((it: any, i: number) => { return i != id; });
-		this.forceUpdate();
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
+		view.filters = view.filters.filter((it: any, i: number) => { return i != id; });
 		this.save();
 
 		commonStore.menuClose('select');
 	};
 	
 	onSortEnd (result: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
 		const { oldIndex, newIndex } = result;
 
-		this.items = arrayMove(this.items, oldIndex, newIndex);
-		this.forceUpdate();
+		view.filters = arrayMove(view.filters, oldIndex, newIndex);
 		this.save();
 	};
 
 	onSubmit (e: any, item: any) {
 		e.preventDefault();
 
-		this.items[item.id].value = this.refObj[item.id].getValue();
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
+		view.filters[item.id].value = this.refObj[item.id].getValue();
 	};
 
 	onChange (id: number, k: string, v: any, timeout?: boolean) {
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
-			const item = this.items.find((it: any, i: number) => { return i == id; });
+			const item = view.filters.find((it: any, i: number) => { return i == id; });
 			if (!item) {
 				return;
 			};
@@ -297,7 +308,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
 				item.value = '';
-				this.items = this.items.filter((it: I.Filter, i: number) => { 
+				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
 					return (i == id) || 
 					(it.relationKey != v) || 
 					((it.relationKey == v) && (it.condition != item.condition)); 
@@ -305,7 +316,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			};
 
 			if (k == 'condition') {
-				this.items = this.items.filter((it: I.Filter, i: number) => { 
+				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
 					return (i == id) || 
 					(it.relationKey != item.relationKey) || 
 					((it.relationKey == item.relationKey) && (it.condition != v)); 
@@ -367,9 +378,10 @@ class MenuFilter extends React.Component<Props, {}> {
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, rootId, blockId, onSave } = data;
+		const { getView, rootId, blockId, onSave } = data;
+		const view = getView();
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, filters: this.items }, onSave);
+		C.BlockSetDataviewView(rootId, blockId, view.id, view, onSave);
 	};
 
 	resize () {

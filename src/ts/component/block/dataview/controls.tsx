@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
+import { Icon, MenuItemVertical } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -38,25 +38,11 @@ class Controls extends React.Component<Props, State> {
 		const sortCnt = view.sorts.length;
 
 		const buttons: any[] = [
-			{ 
-				id: 'relation', name: 'Relations', menu: 'dataviewRelationList', 
-				active: commonStore.menuIsOpen('dataviewRelationList') 
-			},
-			{ 
-				id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0,
-				active: commonStore.menuIsOpen('dataviewFilter') 
-			},
-			{ 
-				id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0,
-				active: commonStore.menuIsOpen('dataviewSort') 
-			},
-			{ 
-				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList', 
-				active: commonStore.menuIsOpen('dataviewViewList') 
-			},
-			{ 
-				id: 'more', menu: 'dataviewViewEdit', active: commonStore.menuIsOpen('dataviewViewEdit') 
-			},
+			{ id: 'relation', name: 'Relations', menu: 'dataviewRelationList' },
+			{ id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0 },
+			{ id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0 },
+			{ id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList' },
+			{ id: 'more', menu: 'dataviewViewEdit' },
 		];
 
 		const ViewItem = (item: any) => (
@@ -66,16 +52,31 @@ class Controls extends React.Component<Props, State> {
 		);
 		
 		const ButtonItem = (item: any) => {
-			let cn = [ item.id, String(item.className || '') ];
+			let icn = [ item.id, String(item.className || '') ];
+			let cn = icn;
 			
+			cn.unshift('item');
+
 			if (item.active) {
 				cn.push('active');
 			};
-
 			if (item.on) {
 				cn.push('on');
 			};
+
+			return (
+				<MenuItemVertical 
+					id={'button-' + item.id} 
+					menuId={item.menu}
+					name={item.name}
+					className={cn.join(' ')} 
+					icon={icn.join(' ')}
+					arrow={item.arrow}
+					onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}
+				/>
+			);
 			
+			/*
 			return (
 				<div id={'button-' + item.id} className={[ 'item' ].concat(cn).join(' ')} onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}>
 					<Icon className={cn.join(' ')} />
@@ -83,6 +84,7 @@ class Controls extends React.Component<Props, State> {
 					{item.arrow ? <Icon className="arrow" /> : ''}
 				</div>
 			);
+			*/
 		};
 		
 		return (
@@ -124,7 +126,7 @@ class Controls extends React.Component<Props, State> {
 		const { rootId, block, readOnly, getData, getView } = this.props;
 
 		commonStore.menuOpen(menu, { 
-			element: '#button-' + id,
+			element: '#item-button-' + id,
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 4,

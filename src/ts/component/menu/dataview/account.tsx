@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, IconUser, Input } from 'ts/component';
 import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
