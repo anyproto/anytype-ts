@@ -275,9 +275,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter);
-			sections = DataUtil.menuSectionsMap(sections);
 		};
-		
+
+		sections = DataUtil.menuSectionsMap(sections);
 		return sections;
 	};
 	
@@ -439,7 +439,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			},
 		};
 
-		switch (item.id) {
+		switch (item.key) {
 			case 'turn':
 				menuId = 'blockStyle';
 				menuParam.data.onSelect = (item: any) => {
