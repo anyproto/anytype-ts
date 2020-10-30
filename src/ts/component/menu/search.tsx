@@ -19,6 +19,7 @@ class MenuSearch extends React.Component<Props, {}> {
 		
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onSearch = this.onSearch.bind(this);
 	};
 
 	render () {
@@ -30,7 +31,7 @@ class MenuSearch extends React.Component<Props, {}> {
 			<div className="flex">
 				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeHolder="Search..." onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
 				<div className="buttons">
-					<div className="btn" onClick={this.onKeyUp}>Search</div>
+					<div className="btn" onClick={this.onSearch}>Search</div>
 				</div>
 			</div>
 		);
@@ -58,11 +59,6 @@ class MenuSearch extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.preventDefault();
 		
-		const { param } = this.props;
-		const { data } = param;
-		const { container } = data;
-		const value = Util.filterFix(this.ref.getValue());
-
 		let ret = false;
 		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
 			this.focus();
@@ -73,6 +69,21 @@ class MenuSearch extends React.Component<Props, {}> {
 		if (ret) {
 			return;
 		};
+
+		this.search();
+	};
+
+	onSearch (e: any) {
+		this.focus();
+		this.n++;
+		this.search();
+	};
+
+	search () {
+		const { param } = this.props;
+		const { data } = param;
+		const { container } = data;
+		const value = Util.filterFix(this.ref.getValue());
 
 		if (this.last != value) {
 			this.n = 0;

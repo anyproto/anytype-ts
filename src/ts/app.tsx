@@ -246,6 +246,11 @@ class App extends React.Component<Props, State> {
 		const cover = Storage.get('cover');
 		const coverImg = Storage.get('coverImg');
 		const pageId = Storage.get('pageId');
+		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
+
+		if (!lastSurveyTime) {
+			Storage.set('lastSurveyTime', Util.time());
+		};
 
 		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
 		if (coverImg) {

@@ -230,6 +230,10 @@ class Keyboard {
 	};
 
 	shortcut (s: string, e: any, callBack: (pressed: string) => void) {
+		if (!e || !e.key) {
+			return;
+		};
+
 		const a = s.split(',').map((it: string) => { return it.trim(); });
 		const key = e.key.toLowerCase();
 		const which = e.which;
