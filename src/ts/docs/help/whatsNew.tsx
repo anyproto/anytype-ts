@@ -6,7 +6,26 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 08 October, 2020` },
+	{ style: I.TextStyle.Title, text: `Updates for 30 October, 2020` },
+	{ text: `This is a technical minor release with bug fixes and minor enchancements.` },
+
+	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
+	{ style: I.TextStyle.Bulleted, text: `The page icon is now moving with the title, so you can make a page with a centered layout.` },
+	{ text: `<img src="./img/help/centered.png" class="full">` },
+	{ style: I.TextStyle.Bulleted, text: `We moved page cover controls position in a more convenient place.` },
+	{ style: I.TextStyle.Bulleted, text: `Mentions now have the ability to break into a new line.` },
+	{ style: I.TextStyle.Bulleted, text: `We have enabled dropping blocks into the page.` },
+	{ style: I.TextStyle.Bulleted, text: `App usage survey pop-up was tuned not to show for new users.` },
+
+	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
+	{ style: I.TextStyle.Bulleted, text: `Functions like move to, duplicate, delete, and align didn't work in block’s turn into menu.` },
+	{ style: I.TextStyle.Bulleted, text: `The search on the page did not highlight the found data in the text where the styles were added.` },
+	{ style: I.TextStyle.Bulleted, text: `In-page search position is now fixed to the top.` },
+	{ style: I.TextStyle.Bulleted, text: `In-page search had no possibility to find special characters.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 08 October, 2020` },
 	{ text: `We’re taking another step towards our beta today, with the launch of our <a href="https://community.anytype.io/">community forum</a>. It will be a valuable resource for features, feedback and support. We hope it will also a place for you to do what you do best: discuss the future of the web and building your very own digital brain. Your invite code should wait you in mailbox, if nothing there please write us <a href="mailto:hello@anytype.io">hello@anytype.io</a>.` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
