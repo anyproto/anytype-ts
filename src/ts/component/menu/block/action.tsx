@@ -252,7 +252,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			
 			if (block.isDiv()) {
 				sections = sections.concat([
-					{ id: 'turnDiv', icon: '', name: 'Divider', color: '', children: DataUtil.menuGetBlockOther() },
+					{ id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetBlockOther() },
 				]);
 			};
 			
@@ -260,10 +260,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				sections = sections.concat([
 					{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
 				]);
-			};
-
-			if (block.canTurn()) {
-				sections.push({ id: 'turnPage', icon: '', name: 'Page', color: '', children: DataUtil.menuGetTurnPage() });
 			};
 
 			if (block.canHaveAlign()) {
