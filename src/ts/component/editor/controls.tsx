@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, C, focus, DataUtil } from 'ts/lib';
+import { I, C, focus, DataUtil, Util } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -49,9 +49,7 @@ class Controls extends React.Component<Props, {}> {
 							<Icon />
 							<div className="txt">Add icon</div>
 						</div>
-					</div>
-					
-					<div className="side right">
+
 						<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
 							<Icon />
 							<div className="txt">Add cover image</div>
@@ -133,23 +131,11 @@ class Controls extends React.Component<Props, {}> {
 	
 	onAddCover (e: any) {
 		const { rootId } = this.props;
+		const colors = DataUtil.coverColors();
+		const color = colors[Util.rand(0, colors.length - 1)];
 		
 		focus.clear(true);
-		
-		commonStore.menuOpen('blockCover', { 
-			element: '#button-add-cover',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Center,
-			data: {
-				rootId: rootId,
-				onSelect: (item: any) => {
-					DataUtil.pageSetCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
-				}
-			}
-		});
+		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
 	};
 	
 	onDragOver (e: any) {

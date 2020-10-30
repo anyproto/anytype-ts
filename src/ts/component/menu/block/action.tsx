@@ -236,7 +236,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (block.isText() && !block.isTextTitle()) {
 				sections = sections.concat([
 					{ id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() },
-					{ id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() },
 				]);
 			};
 
@@ -246,6 +245,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			if (block.isText() && !block.isTextTitle()) {
 				sections = sections.concat([
+					{ id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() },
 					{ id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() },
 				]);
 			};
