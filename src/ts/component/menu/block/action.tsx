@@ -527,8 +527,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (!ids.length) {
 			ids = [ blockId ];
 		};
-		
-		switch (item.id) {
+
+		switch (item.key) {
 			case 'download':
 				Action.download(block);
 				break;
@@ -558,7 +558,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				// Align
 				if (item.isAlign) {
-					C.BlockListSetAlign(rootId, blockIds, item.value);
+					C.BlockListSetAlign(rootId, blockIds, item.key);
 				} else 
 					
 				// Blocks
