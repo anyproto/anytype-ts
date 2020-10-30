@@ -102,7 +102,7 @@ class MenuSearch extends React.Component<Props, {}> {
 			portionMode: 'first',
 			filterElements: (el: any) => {
 				const tag = el.nodeName.toLowerCase();
-				if ([ 'span', 'div', 'name', 'mention' ].indexOf(tag) < 0) {
+				if ([ 'span', 'div', 'name', 'mention', 'color', 'bgcolor' ].indexOf(tag) < 0) {
 					return false;
 				};
 
