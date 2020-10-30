@@ -56,7 +56,7 @@ class PageMainSet extends React.Component<Props, State> {
 				<div className="wrapper">
 					<Icon className="new-set" />
 					<Title text="New set" />
-					<Label text="Choose a object type for this set" />
+					<Label text="Choose an object type for this set" />
 					<div className="items">
 						<div id="button-add" className="item add" onClick={this.onAdd}>
 							<Icon className="add" />
