@@ -49,6 +49,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 
 					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
+							<Icon className="new-set" />
 							<div className="name">New set</div>
 						</div>
 					</div>
@@ -127,12 +128,12 @@ class HeaderMainSet extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
+		const { root } = blockStore;
 
 		commonStore.popupOpen('navigation', {
 			preventResize: true, 
 			data: {
-				rootId: rootId,
+				rootId: root,
 				type: I.NavigationType.Go, 
 				expanded: expanded,
 			},

@@ -85,6 +85,8 @@
 
 	.side.center {
 		.icon { margin: 0px; opacity: 0; }
+		.icon.new-set { width: 20px; height: 20px; opacity: 1; transition: none; margin-right: 4px; }
+		.icon.new-set:hover { background-color: transparent; }
 		.icon.plus {
 			.arrow { 
 				width: 8px; height: 8px; background-image: url('~img/icon/header/arrow.svg'); position: absolute; right: -12px;
