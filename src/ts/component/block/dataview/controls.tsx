@@ -53,17 +53,7 @@ class Controls extends React.Component<Props, State> {
 		
 		const ButtonItem = (item: any) => {
 			let icn = [ item.id, String(item.className || '') ];
-			let cn = icn;
-			
-			cn.unshift('item');
-
-			if (item.active) {
-				cn.push('active');
-			};
-			if (item.on) {
-				cn.push('on');
-			};
-
+			let cn = [ 'item', (item.on ? 'on' : '') ].concat(icn);
 			return (
 				<MenuItemVertical 
 					id={'button-' + item.id} 
@@ -75,16 +65,6 @@ class Controls extends React.Component<Props, State> {
 					onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}
 				/>
 			);
-			
-			/*
-			return (
-				<div id={'button-' + item.id} className={[ 'item' ].concat(cn).join(' ')} onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}>
-					<Icon className={cn.join(' ')} />
-					{item.name ? <div className="name">{item.name}</div> : ''}
-					{item.arrow ? <Icon className="arrow" /> : ''}
-				</div>
-			);
-			*/
 		};
 		
 		return (

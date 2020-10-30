@@ -15,6 +15,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	n: number = -1;
 	ref: any = null;
 	focus: boolean = false;
+	timeout: number = 0;
 
 	constructor(props: any) {
 		super(props);
@@ -151,9 +152,13 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view } = data;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: v });
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: v });
+		}, 500);
 	};
 
 	onSubmit (e: any) {
@@ -177,10 +182,11 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view, getData } = data;
+		const { rootId, blockId, getData, getView } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { content } = block;
 		const { views } = content;
+		const view = getView();
 		const viewId = view.id;
 
 		this.props.close();
