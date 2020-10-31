@@ -86,7 +86,7 @@ class Page extends React.Component<Props, {}> {
 	
 	init () {
 		const { account } = authStore;
-		const { match } = this.props;
+		const { match, history } = this.props;
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
@@ -100,7 +100,7 @@ class Page extends React.Component<Props, {}> {
 		const days = lastSurveyTime ? 30 : 14;
 
 		if (pin && !keyboard.isPinChecked && !isCheck && !isAuth && !isIndex) {
-			this.props.history.push('/auth/pin-check');
+			history.push('/auth/pin-check');
 			return;
 		};
 
@@ -114,6 +114,11 @@ class Page extends React.Component<Props, {}> {
 		Util.linkPreviewHide(true);
 		
 		keyboard.setMatch(match);
+
+		if (isAuth && account) {
+			history.push('/main/index');
+			return;
+		};
 
 		if (isMain) {
 			if (!popupNewBlock) {
