@@ -11,11 +11,11 @@
 		.div { width: 100%; position: absolute; top: 50%; left: 0px; text-align: center; }
 	}
 	.block.blockDiv.c0 {
-		.div { height: 1px; background: #d2d0c2; }
+		.div { height: 1px; border-bottom: 1px solid #d2d0c2; }
 	}
 	.block.blockDiv.c1 {
 		.div { height: 2px; margin-top: -1px; white-space: nowrap; }
-		.dot { width: 2px; height: 2px; background: $colorBlack; margin-right: 18px; display: inline-block; vertical-align: top; }
+		.dot { width: 2px; height: 2px; border: 1px solid $colorBlack; margin-right: 18px; display: inline-block; vertical-align: top; }
 		.dot:last-child { margin: 0px; }
 	}
 }
