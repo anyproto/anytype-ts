@@ -24,6 +24,7 @@ interface Props {
 	onFocus?(e: any, value: string): void;
 	onBlur?(e: any, value: string): void;
 	onSelect?(e: any, value: string): void;
+	onClick?(e: any): void;
 };
 
 interface State {
@@ -61,7 +62,7 @@ class Input extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, name, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept } = this.props;
+		const { id, name, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept, onClick } = this.props;
 		
 		let type: string = this.state.type || this.props.type;
 		let cn = [ 'input', 'input-' + type ];
@@ -89,6 +90,7 @@ class Input extends React.Component<Props, State> {
 				onBlur={this.onBlur}
 				onPaste={this.onPaste}
 				onSelect={this.onSelect}
+				onClick={onClick}
 				maxLength={maxLength ? maxLength : undefined}
 				accept={accept ? accept : undefined}
 				multiple={multiple}

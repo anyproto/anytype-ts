@@ -60,7 +60,7 @@
 		.item {
 			.name { display: inline-block; vertical-align: top; }
 			
-			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; }
+			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; }
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.delete { 
 				width: 20px; height: 20px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;

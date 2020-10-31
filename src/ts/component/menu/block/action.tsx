@@ -149,7 +149,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	onFilterChange (e: any, v: string) {
 		this.n = 0;
-		this.setState({ filter: String(v || '').replace(/[\/\\\*]/g, '') });
+		this.setState({ filter: v });
 	};
 	
 	rebind () {

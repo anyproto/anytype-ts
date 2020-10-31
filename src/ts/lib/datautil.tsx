@@ -468,7 +468,7 @@ class DataUtil {
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
-		const reg = new RegExp(filter, 'gi');
+		const reg = new RegExp(Util.filterFix(filter), 'gi');
 		
 		sections = sections.filter((s: any) => {
 			if (s.name.match(reg)) {

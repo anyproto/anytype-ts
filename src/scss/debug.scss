@@ -38,6 +38,10 @@ html.debug {
 				name { background-color: rgba(0,0,255,0.1); }
 			}
 		}
+
+		.block.blockRelation {
+			.icon, .input { background-color: rgba(0,0,255,0.1); }
+		}
 	}
 	
 	.blockLast { background: rgba(0,0,255,0.1); }

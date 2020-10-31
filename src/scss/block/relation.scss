@@ -3,13 +3,13 @@
 .blocks {
 	.block.blockRelation { line-height: 20px; }
 	.block.blockRelation {
-		.wrap { vertical-align: middle; display: inline-block; line-height: 1; }
+		.wrap { }
 		.icon.relation { 
-			width: 20px; height: 20px; margin-right: 4px; vertical-align: middle; background-image: url('~img/icon/menu/action/block/relation0.svg')
+			width: 20px; height: 20px; margin-right: 4px; vertical-align: top; background-image: url('~img/icon/menu/action/block/relation0.svg')
 		}
-		.label { 
-			@include text-common; line-height: 20px; vertical-align: middle; display: inline-block; width: calc(100% - 24px); 
-			color: $colorDarkGrey;
+		.input { 
+			@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
+			height: 20px; padding: 0px;
 		}
 	}
 

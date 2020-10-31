@@ -208,7 +208,9 @@ class CommonStore {
 			return;
 		};
 
-		set(item, { param: param });
+		param = Object.assign(item.param, param);
+		console.log(param);
+		set(item, param);
 	};
 	
 	menuIsOpen (id?: string): boolean {
