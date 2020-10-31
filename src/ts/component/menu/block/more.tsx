@@ -133,13 +133,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 			
-			/*
 			if (details.isArchived) {
 				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
 			} else {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
 			};
-			*/
 		} else 
 		if (block.isLinkPage()) {
 			items = [
