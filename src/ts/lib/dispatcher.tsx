@@ -376,6 +376,7 @@ class Dispatcher {
 					};
 
 					data.view = Mapper.From.View(data.getView());
+					data.view = DataUtil.viewSetRelations(rootId, data.view);
 
 					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
