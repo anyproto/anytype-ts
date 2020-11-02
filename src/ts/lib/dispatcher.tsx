@@ -165,6 +165,7 @@ class Dispatcher {
 
 				case 'blockShow':
 					// Store object types for Sets
+					dbStore.setRelations(rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
 					dbStore.setObjectTypes((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
 					dbStore.setObjectTypesPerObject((data.getObjecttypesperobjectList() || []).map(Mapper.From.ObjectTypePerObject));
 
@@ -374,7 +375,7 @@ class Dispatcher {
 						break;
 					};
 
-					data.view = Mapper.From.View(block.content.source, data.getView());
+					data.view = Mapper.From.View(data.getView());
 
 					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
@@ -493,6 +494,11 @@ class Dispatcher {
 			if (it.id == rootId) {
 				it.type = I.BlockType.Page;
 				it.pageType = type;
+			};
+			if (it.type == I.BlockType.Dataview) {
+				it.content.views = it.content.views.map((view: any) => {
+					return DataUtil.viewSetRelations(rootId, view);
+				});
 			};
 			return new M.Block(it);
 		});

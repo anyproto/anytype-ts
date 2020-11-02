@@ -526,29 +526,19 @@ class DataUtil {
 		return [ prefix, relationKey, String(id || '') ].join('-');
 	};
 
-	viewSetRelations (url: string, view: I.View): I.View {
-		let objectType = dbStore.getObjectType(url);
-		let relations = [];
-
-		if (objectType && objectType.relations.length) {
-			for (let relation of objectType.relations) {
-				if (relation.isHidden) {
-					continue;
-				};
-		
-				relations.push(relation);
-			};
-		};
+	viewSetRelations (rootId: string, view: I.View): I.View {
+		let relations = Util.objectCopy(dbStore.getRelations(rootId));
+		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
 
 		view.relations = view.relations.map((it: I.ViewRelation) => {
 			const relation = relations.find((relation: I.Relation) => { return relation.key == it.key; });
 			return {
 				...relation,
-				...it,
+				isVisible: it.isVisible,
+				options: it.options,
 				width: Number(it.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
 			};
 		});
-
 		return view;
 	};
 

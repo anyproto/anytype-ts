@@ -106,7 +106,7 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	getView () {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const { views } = block.content;
 
 		if (!views.length) {

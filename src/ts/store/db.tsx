@@ -4,6 +4,7 @@ import { I, DataUtil } from 'ts/lib';
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable(new Map());
 	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable(new Map());
+	public relationMap: Map<string, any> = observable.map(new Map());
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 
@@ -48,6 +49,12 @@ class DbStore {
 		type.relations = type.relations.filter((it: I.Relation) => { return it.key != relationKey; });
 
 		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+	};
+
+	@action
+	setRelations (blockId: string, list: I.Relation[]) {
+		console.log(blockId, list);
+		this.relationMap.set(blockId, observable(list));
 	};
 
 	@action
@@ -101,6 +108,10 @@ class DbStore {
 		};
 
 		set(record, obj);
+	};
+
+	getRelations (blockId: string) {
+		return this.relationMap.get(blockId) || [];
 	};
 
 	getMeta (blockId: string) {

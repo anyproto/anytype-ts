@@ -150,18 +150,15 @@ const Mapper = {
 			};
 	
 			if (type == I.BlockType.Dataview) {
-				const source = content.getSource();
 				item.content = {
-					source: source,
+					source: content.getSource(),
 					views: (content.getViewsList() || []).map((view: I.View) => {
-						return Mapper.From.View(source, view);
+						return Mapper.From.View(view);
 					}),
 				};
 
 				decorate(item.content, {
-					viewId: observable,
 					views: observable,
-					data: observable,
 				});
 			};
 
@@ -239,7 +236,7 @@ const Mapper = {
 			};
 		},
 
-		View: (url: string, obj: any): I.View => {
+		View: (obj: any): I.View => {
 			let view: any = {
 				id: obj.getId(),
 				type: obj.getType(),
@@ -248,9 +245,6 @@ const Mapper = {
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
 			};
-
-			view = DataUtil.viewSetRelations(url, view);
-
 			return observable(new M.View(view));
 		},
 

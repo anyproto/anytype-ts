@@ -59,7 +59,6 @@ export interface Filter {
 
 export interface ViewRelation extends I.Relation {
 	isVisible: boolean;
-	order: number;
 	width: number;
 	options: any;
 };

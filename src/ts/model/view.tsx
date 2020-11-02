@@ -37,7 +37,6 @@ class ViewRelation implements I.ViewRelation {
 	isReadOnly: boolean = false;
 	isVisible: boolean = false;
 	isMultiple: boolean = false;
-	order: number = 0;
 	width: number = 0;
 	options: any = {} as any;
 	selectDict: any[] = [] as any[];
@@ -52,7 +51,6 @@ class ViewRelation implements I.ViewRelation {
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.isVisible = Boolean(props.isVisible);
 		self.isMultiple = Boolean(props.isMultiple);
-		self.order = Number(props.order) || 0;
 		self.width = Number(props.width) || 0;
 		self.options = props.options || {};
 		self.selectDict = props.selectDict || [];
