@@ -153,6 +153,9 @@ class Keyboard {
 			if ((route.page == 'auth') && account) {
 				return;
 			};
+			if ((route.page == 'main') && !account) {
+				return;
+			};
 		};
 
 		this.history.goBack();
