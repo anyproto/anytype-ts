@@ -54,7 +54,7 @@ class PageMainSet extends React.Component<Props, State> {
 			<div>
 				<Header {...this.props} rootId="" />
 				<div className="wrapper">
-					<Icon className="new-set" />
+					<Smile className="c64" iconClass="newSet" />
 					<Title text="New set" />
 					<Label text="Choose an object type for this set" />
 					<div className="items">

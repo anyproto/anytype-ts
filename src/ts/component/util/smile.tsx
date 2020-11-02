@@ -6,7 +6,8 @@ import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
-	icon: string;
+	icon?: string;
+	iconClass?: string;
 	hash?: string;
 	size?: number;
 	native?: boolean;
@@ -30,6 +31,9 @@ const Blank = {
 	small: require('img/blank/smile/small.svg'),
 	medium: require('img/blank/smile/medium.svg'),
 	big: require('img/blank/smile/big.svg'),
+};
+const IconSrc = {
+	newSet: require('img/icon/set/new.svg'),
 };
 
 @observer
@@ -56,7 +60,7 @@ class Smile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, size, native, asImage, className, canEdit, menuId } = this.props;
+		const { id, size, native, asImage, className, canEdit, menuId, iconClass } = this.props;
 		let icon = String(this.state.icon || this.props.icon || '');
 		const hash = String(this.state.hash || this.props.hash || '');
 		
@@ -105,6 +109,9 @@ class Smile extends React.Component<Props, State> {
 		if (hash) {
 			cn.push('withImage');
 			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')}  onDragStart={(e: any) => { e.preventDefault(); }} />;
+		} else 
+		if (iconClass) {
+			element = <img src={IconSrc[iconClass]} className={[ 'icon', iconClass ].join(' ')} />
 		};
 		
 		return (
