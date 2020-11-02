@@ -25,6 +25,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -68,7 +69,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelation" className="relation" onClick={this.onRelation} />
+					<Icon id="button-header-more" tooltip="Menu" menuId="blockMore" className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);
@@ -163,6 +165,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 	onPathOut () {
 		Util.tooltipHide();
+	};
+
+	onRelation () {
 	};
 	
 };

@@ -51,6 +51,8 @@ class Focus {
 			return;
 		};
 
+		console.trace();
+
 		this.clearRange(true);
 		
 		$('.focusable.isFocused').removeClass('isFocused');

@@ -176,19 +176,17 @@ class EditorPage extends React.Component<Props, State> {
 		
 		this.open();
 		
-		window.setTimeout(() => {
-			if (this.uiHidden) {
-				this.uiHide();
-			};
-			
-			focus.apply();
+		if (this.uiHidden) {
+			this.uiHide();
+		};
+		
+		focus.apply();
 
-			if (resizable.length) {
-				resizable.trigger('resizeInit');
-			};
-			
-			this.resize();
-		}, 15);
+		if (resizable.length) {
+			resizable.trigger('resizeInit');
+		};
+		
+		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -301,12 +299,14 @@ class EditorPage extends React.Component<Props, State> {
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-
-		if (details.name == Constant.default.name) {
-			focus.set('title', { from: 0, to: 0 });
-			focus.apply();
+		const block = blockStore.getLeaf(rootId, 'title');
+		if (!block) {
+			return;
 		};
+
+		const length = block.getLength();
+		focus.set('title', { from: length, to: length });
+		focus.apply();
 	};
 	
 	close (id: string) {
