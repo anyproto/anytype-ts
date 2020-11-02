@@ -13,6 +13,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 	format: I.RelationType = I.RelationType.Description;
+	isMultiple: boolean = false;
 	ref: any = null;
 	
 	constructor(props: any) {
@@ -68,7 +69,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					</React.Fragment>
 				);
 			};
-		}
+		};
 
 		return (
 			<form onSubmit={this.onSubmit}>
@@ -79,6 +80,13 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				<div className="sectionName">Relation type</div>
 				<Current format={this.format} />
 				{options}
+				
+				<div className="item">
+					<Icon className="clock" />
+					<div className="name">Is multiple</div>
+					<Switch value={relation.isMultiple} className="green" onChange={(e: any, v: boolean) => { this.isMultiple = v; this.save(); }} />
+				</div>
+
 				<div className="line" />
 				<div className="item" onClick={this.onCopy}>
 					<Icon className="copy" />
@@ -101,6 +109,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		if (relation) {
 			this.format = relation.format;
+			this.isMultiple = relation.isMultiple;
 			this.forceUpdate();
 		};
 	};
@@ -209,7 +218,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		const { param, close } = this.props;
+		this.save();
+		this.props.close();
+	};
+
+	save () {
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView } = data;
 		const name = this.ref.getValue();
@@ -222,7 +236,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		let view = getView();
 		let source = block.content.source;
 		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
-		let newRelation = { name: name, format: this.format };
+		let newRelation = { name: name, format: this.format, isMultiple: this.isMultiple };
 
 		if (relation) {
 			relation = Object.assign(relation, newRelation);
@@ -230,8 +244,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				if (message.error.code) {
 					return;
 				};
-
-				console.log(relation);
 
 				dbStore.objectTypeRelationUpdate(source, relation);
 				view = DataUtil.viewSetRelations(source, view);
@@ -251,8 +263,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				C.BlockSetDataviewView(rootId, blockId, view.id, view);
 			});
 		};
-
-		close();
 	};
 
 };

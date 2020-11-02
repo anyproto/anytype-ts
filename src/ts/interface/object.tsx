@@ -42,5 +42,5 @@ export interface Relation {
 	isReadOnly: boolean;
 	isMultiple: boolean;
 	objectType: string;
-	options: any[];
+	selectDict: any[];
 };

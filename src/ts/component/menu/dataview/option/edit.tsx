@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 @observer
-class MenuTagEdit extends React.Component<Props, {}> {
+class MenuOptionEdit extends React.Component<Props, {}> {
 	
 	constructor(props: any) {
 		super(props);
@@ -24,7 +24,7 @@ class MenuTagEdit extends React.Component<Props, {}> {
 					<Input value={value} placeHolder="Option name"  />
 				</div>
 				<div className="item">
-					<Icon className="trash" />
+					<Icon className="remove" />
 					<div className="name">Delete option</div>
 				</div>
 			</div>
@@ -33,4 +33,4 @@ class MenuTagEdit extends React.Component<Props, {}> {
 	
 };
 
-export default MenuTagEdit;
+export default MenuOptionEdit;

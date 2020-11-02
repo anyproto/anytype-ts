@@ -17,7 +17,7 @@ interface State {
 const $ = require('jquery');
 
 @observer
-class MenuTagList extends React.Component<Props, State> {
+class MenuOptionList extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	ref: any = null;
@@ -139,4 +139,4 @@ class MenuTagList extends React.Component<Props, State> {
 	
 };
 
-export default MenuTagList;
+export default MenuOptionList;

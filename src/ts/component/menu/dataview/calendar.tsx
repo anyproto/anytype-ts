@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { I, Util } from 'ts/lib';
-import { Input, Select } from 'ts/component';
-import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 interface Props extends I.Menu {};

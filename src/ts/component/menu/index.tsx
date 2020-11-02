@@ -30,9 +30,9 @@ import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
 import MenuDataviewViewEdit from './dataview/view/edit';
-import MenuDataviewCalendar from './dataview/calendar';
-import MenuDataviewTagList from './dataview/tag/list';
-import MenuDataviewTagEdit from './dataview/tag/edit';
+import MenuDataviewCalendar from './dataview/option/list';
+import MenuDataviewOptionList from './dataview/option/edit';
+import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewAccount from './dataview/account';
 import MenuDataviewDate from './dataview/date';
 
@@ -85,8 +85,8 @@ class Menu extends React.Component<Props, {}> {
 			dataviewRelationEdit:	 MenuDataviewRelationEdit,
 			dataviewRelationType:	 MenuDataviewRelationType,
 			dataviewObjectType:		 MenuDataviewObjectType,
-			dataviewTagList:		 MenuDataviewTagList,
-			dataviewTagEdit:		 MenuDataviewTagEdit,
+			dataviewTagList:		 MenuDataviewOptionList,
+			dataviewTagEdit:		 MenuDataviewOptionEdit,
 			dataviewFilter:			 MenuDataviewFilter,
 			dataviewSort:			 MenuDataviewSort,
 			dataviewViewList:		 MenuDataviewViewList,

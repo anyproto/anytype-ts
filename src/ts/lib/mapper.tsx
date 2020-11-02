@@ -201,7 +201,7 @@ const Mapper = {
 				isReadOnly: obj.getReadonly(),
 				isMultiple: obj.getMulti(),
 				objectType: obj.getObjecttype(),
-				options: obj.getSelectdictList(),
+				selectDict: obj.getSelectdictList(),
 			};
 		},
 
@@ -487,7 +487,7 @@ const Mapper = {
 			item.setReadonly(obj.isReadOnly);
 			item.setMulti(obj.isMultiple);
 			item.setObjecttype(obj.objectType);
-			item.setSelectdictList(obj.options);
+			item.setSelectdictList(obj.selectDict);
 
 			return item;
 		},

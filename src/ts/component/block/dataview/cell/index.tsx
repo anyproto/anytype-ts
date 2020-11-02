@@ -123,6 +123,10 @@ class Cell extends React.Component<Props, {}> {
 				break;
 					
 			case I.RelationType.Select:
+				param.data = Object.assign(param.data, {
+					selectDict: relation.selectDict,
+				});
+
 				menuId = 'dataviewTagList';
 				break;
 					
