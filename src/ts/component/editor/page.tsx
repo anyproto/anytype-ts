@@ -305,7 +305,7 @@ class EditorPage extends React.Component<Props, State> {
 		};
 
 		const length = block.getLength();
-		focus.set('title', { from: length, to: length });
+		focus.set(block.id, { from: length, to: length });
 		focus.apply();
 	};
 	
