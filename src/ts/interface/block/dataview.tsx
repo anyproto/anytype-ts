@@ -90,7 +90,7 @@ export interface Cell {
 	relation: I.Relation;
 	data: any;
 	index: number;
-	view: any;
+	viewType: I.ViewType;
 	readOnly?: boolean;
 	onOpen?(e: any, data: any): void;
 	onChange?(data: any): void;

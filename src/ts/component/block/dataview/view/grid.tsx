@@ -66,8 +66,8 @@ class ViewGrid extends React.Component<Props, {}> {
 						{...item} 
 						rootId={rootId}
 						block={block}
-						view={view} 
 						id={index} 
+						viewType={I.ViewType.Grid}
 						readOnly={readOnly}
 						onOpen={onOpen}
 					/>

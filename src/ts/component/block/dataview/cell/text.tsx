@@ -36,7 +36,7 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, view, onOpen, readOnly } = this.props;
+		const { index, relation, onOpen, readOnly, viewType } = this.props;
 		const data = this.props.data[index];
 
 		let Name = null;
@@ -86,7 +86,7 @@ class CellText extends React.Component<Props, State> {
 			let cn = 'c20';
 			let size = 18;
 
-			switch (view.type) {
+			switch (viewType) {
 				case I.ViewType.List:
 					cn = 'c24';
 					break;
@@ -98,7 +98,7 @@ class CellText extends React.Component<Props, State> {
 					break;
 			};
 
-			if (view.type != I.ViewType.Grid) {
+			if (viewType != I.ViewType.Grid) {
 				value = value || Constant.default.name;
 			};
 
@@ -144,9 +144,9 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	setEditing (v: boolean) {
-		const { view, readOnly } = this.props;
+		const { viewType, readOnly } = this.props;
 		const { editing } = this.state;
-		const canEdit = !readOnly && (view.type == I.ViewType.Grid);
+		const canEdit = !readOnly && (viewType == I.ViewType.Grid);
 
 		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });

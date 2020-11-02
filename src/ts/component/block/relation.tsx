@@ -33,7 +33,11 @@ class BlockRelation extends React.Component<Props, {}> {
 						<Input id={'relation-type-' + block.id} ref={(ref: any) => { this.ref = ref; }} placeHolder="New relation" onClick={this.onMenu} onKeyUp={this.onKeyUp} />
 					</React.Fragment>
 				) : 
-				''}
+				(
+					<React.Fragment>
+						
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
@@ -58,7 +62,10 @@ class BlockRelation extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				options: options
+				options: options,
+				onSelect: (event: any, item: any) => {
+					C.BlockRelationSetKey(rootId, block.id, item.id);
+				}
 			}
 		});
 	};

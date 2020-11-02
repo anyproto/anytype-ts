@@ -29,8 +29,8 @@ class ViewGallery extends React.Component<Props, {}> {
 						id={item.index} 
 						rootId={rootId}
 						block={block}
-						view={view} 
 						relation={...relation} 
+						viewType={I.ViewType.Gallery}
 						data={data} 
 						index={item.index}
 						readOnly={readOnly} 

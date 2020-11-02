@@ -618,6 +618,16 @@ const BlockRelationList = (contextId: string, callBack?: (message: any) => void)
 	dispatcher.request('blockRelationList', request, callBack);
 };
 
+const BlockRelationSetKey = (contextId: string, blockId: string, key: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Relation.SetKey.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setKey(key);
+
+	dispatcher.request('blockRelationSetKey', request, callBack);
+};
+
 const BlockRelationAdd = (contextId: string, relations: any[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.Add.Request();
 	
@@ -807,6 +817,7 @@ export {
 	BlockListSetPageIsArchived,
 	BlockListDeletePage,
 
+	BlockRelationSetKey,
 	BlockRelationList,
 	BlockRelationAdd,
 	BlockRelationUpdate,

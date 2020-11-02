@@ -21,7 +21,8 @@ const getItemStyle = (snapshot: any, style: any) => {
 class Column extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, groupId, view, onAdd, list, data, idx, value } = this.props;
+		const { rootId, block, groupId, getView, onAdd, list, data, idx, value } = this.props;
+		const view = getView();
 
 		const group = view.relations.find((item: I.Relation) => { return item.key == groupId; });
 		const Add = (item: any) => (
@@ -51,8 +52,8 @@ class Column extends React.Component<Props, {}> {
 						id="" 
 						rootId={rootId}
 						block={block}
-						view={view} 
 						relation={group} 
+						viewType={I.ViewType.Board}
 						data={[ head ]}
 						index={0}
 						readOnly={true} 

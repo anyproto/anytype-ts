@@ -41,7 +41,7 @@ class Card extends React.Component<Props, {}> {
 								id={String(index)} 
 								rootId={rootId}
 								block={block}
-								view={view} 
+								viewType={I.ViewType.Board}
 								relation={...relation} 
 								data={data}
 								index={index}
