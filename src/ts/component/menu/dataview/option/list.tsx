@@ -102,7 +102,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 		const { options } = data;
 		
-		commonStore.menuOpen('dataviewTagEdit', { 
+		commonStore.menuOpen('dataviewOptionEdit', { 
 			type: I.MenuType.Vertical,
 			element: '#tag-' + id,
 			offsetX: 0,

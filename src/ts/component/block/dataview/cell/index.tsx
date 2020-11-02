@@ -68,7 +68,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	onClick (e: any) {
-		const { id, relation, index, readOnly } = this.props;
+		const { id, relation, block, index, readOnly } = this.props;
 		const data = this.props.data[index];
 
 		if (readOnly || relation.isReadOnly) {
@@ -79,6 +79,7 @@ class Cell extends React.Component<Props, {}> {
 		const cell = $('#' + cellId);
 		const width = Math.max(cell.width(), Constant.size.dataview.cell.default);
 		const value = data[relation.key];
+		const element = $('#block-' + block.id);
 
 		if (this.ref) {
 			if (this.ref.setEditing) {
@@ -127,7 +128,7 @@ class Cell extends React.Component<Props, {}> {
 					selectDict: relation.selectDict,
 				});
 
-				menuId = 'dataviewTagList';
+				menuId = 'dataviewOptionList';
 				break;
 					
 			case I.RelationType.Object:
@@ -197,7 +198,12 @@ class Cell extends React.Component<Props, {}> {
 
 		if (menuId) {
 			commonStore.menuCloseAll();
-			window.setTimeout(() => { commonStore.menuOpen(menuId, param); }, Constant.delay.menu);
+			window.setTimeout(() => { 
+				commonStore.menuOpen(menuId, param); 
+				element.unbind('click').on('click', () => {
+					commonStore.menuCloseAll();
+				});
+			}, Constant.delay.menu);
 		};
 	};
 
