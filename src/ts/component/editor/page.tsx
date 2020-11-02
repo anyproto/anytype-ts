@@ -301,12 +301,14 @@ class EditorPage extends React.Component<Props, State> {
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-
-		if (details.name == Constant.default.name) {
-			focus.set('title', { from: 0, to: 0 });
-			focus.apply();
+		const block = blockStore.getLeaf(rootId, 'title');
+		if (!block) {
+			return;
 		};
+
+		const length = block.getLength();
+		focus.set(block.id, { from: length, to: length });
+		focus.apply();
 	};
 	
 	close (id: string) {
