@@ -293,14 +293,14 @@ class ViewGrid extends React.Component<Props, {}> {
 	onCellClick (e: any, item: any) {
 		const { readOnly } = this.props;
 		const { index, relation } = item;
-		
+
 		if (readOnly || relation.isReadOnly) {
 			return;
 		};
 
 		const id = DataUtil.cellId('cell', relation.key, index);
 		const ref = this.cellRefs.get(id);
-		
+
 		if (ref) {
 			ref.onClick(e);
 		};

@@ -33,12 +33,14 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const view = getView();
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 
-		let options = null;
+		let options: any = {};
+		let opts = null;
 		let ccn = [ 'item' ];
 		if (commonStore.menuIsOpen('dataviewRelationType')) {
 			ccn.push('active');
 		};
 		if (relation) {
+			options = relation.options || {};
 			ccn.push('disabled');
 		};
 
@@ -51,24 +53,39 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		);
 
 		if (relation) {
-			if (relation.format == I.RelationType.Date) {
-				options = (
-					<React.Fragment>
-						<div className="line" />
-						<div className="item">
-							<Icon className="clock" />
-							<div className="name">Include time</div>
-							<Switch value={relation.options.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
-						</div>
+			const isDate = relation.format == I.RelationType.Date;
+			const hasMultiple = [ I.RelationType.File, I.RelationType.Select, I.RelationType.Object ].indexOf(relation.format) >= 0;
 
-						<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
-							<Icon className="settings" />
-							<div className="name">Preferences</div>
-							<Icon className="arrow" />
-						</div>
-					</React.Fragment>
-				);
-			};
+			opts = (
+				<React.Fragment>
+					{isDate ? (
+						<React.Fragment>
+							<div className="line" />
+							<div className="item">
+								<Icon className="clock" />
+								<div className="name">Include time</div>
+								<Switch value={options.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+							</div>
+
+							<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
+								<Icon className="settings" />
+								<div className="name">Preferences</div>
+								<Icon className="arrow" />
+							</div>
+						</React.Fragment>
+					) : ''}
+
+					{hasMultiple ? (
+						<React.Fragment>
+							<div className="item">
+								<Icon className="clock" />
+								<div className="name">Is multiple</div>
+								<Switch value={relation.isMultiple} className="green" onChange={(e: any, v: boolean) => { this.isMultiple = v; this.save(); }} />
+							</div>
+						</React.Fragment>
+					) : ''}
+				</React.Fragment>
+			);
 		};
 
 		return (
@@ -79,14 +96,9 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				</div>
 				<div className="sectionName">Relation type</div>
 				<Current format={this.format} />
-				{options}
 				
-				<div className="item">
-					<Icon className="clock" />
-					<div className="name">Is multiple</div>
-					<Switch value={relation.isMultiple} className="green" onChange={(e: any, v: boolean) => { this.isMultiple = v; this.save(); }} />
-				</div>
-
+				{opts}
+				
 				<div className="line" />
 				<div className="item" onClick={this.onCopy}>
 					<Icon className="copy" />

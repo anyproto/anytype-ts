@@ -1,6 +1,5 @@
-import { I, C, keyboard, crumbs, translate, Util } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
-import { decorate, observable } from 'mobx';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -531,13 +530,14 @@ class DataUtil {
 		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
 
 		view.relations = view.relations.map((it: I.ViewRelation) => {
-			const relation = relations.find((relation: I.Relation) => { return relation.key == it.key; });
-			return {
+			const relation = relations.find((relation: I.Relation) => { return relation.key == it.key; }) || {};
+			return new M.ViewRelation({
 				...relation,
+				key: it.key,
 				isVisible: it.isVisible,
-				options: it.options,
+				options: it.options || {},
 				width: Number(it.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
-			};
+			});
 		});
 		return view;
 	};

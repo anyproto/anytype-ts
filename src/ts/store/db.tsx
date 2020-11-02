@@ -53,7 +53,6 @@ class DbStore {
 
 	@action
 	setRelations (blockId: string, list: I.Relation[]) {
-		console.log(blockId, list);
 		this.relationMap.set(blockId, observable(list));
 	};
 
