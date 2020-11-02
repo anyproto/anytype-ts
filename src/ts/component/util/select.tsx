@@ -98,13 +98,10 @@ class Select extends React.Component<Props, State> {
 		if (this._isMounted) {
 			this.setState({ value: v });
 		};
-		if (this.props.onChange) {
-			this.props.onChange(v);
-		};
 	};
 	
 	show () {
-		const { id, value, horizontal } = this.props;
+		const { id, value, horizontal, onChange } = this.props;
 		const { options } = this.state;
 		
 		commonStore.menuOpen('select', { 
@@ -126,6 +123,9 @@ class Select extends React.Component<Props, State> {
 				value: value,
 				options: options,
 				onSelect: (e: any, item: any) => {
+					if (onChange) {
+						onChange(item.id);
+					};
 					this.setValue(item.id);
 					this.hide();
 				},

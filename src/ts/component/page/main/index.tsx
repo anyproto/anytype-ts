@@ -83,6 +83,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const hello = node.find('#hello');
 		const redirectTo = Storage.get('redirectTo');
 
+		Storage.set('mainIndex', 1);
+
 		if (redirectTo) {
 			history.push(redirectTo);
 			Storage.delete('redirectTo');

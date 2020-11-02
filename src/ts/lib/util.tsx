@@ -573,6 +573,16 @@ class Util {
 		});
 	};
 
+	getRoute (path: string) {
+		let route = path.split('/');
+		route.shift();
+
+		let page = route[0] ? route[0] : 'index';
+		let action = route[1] ? route[1] : 'index';
+
+		return { page, action };
+	};
+
 };
 
 export default new Util();
