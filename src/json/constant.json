@@ -79,6 +79,7 @@
 		"menuBlockAdd": 360,
 		"menuDataviewFilter": 400,
 		"menuBlockLink": 400,
+		"menuDataviewOptionList": 256,
 		
 		"menuBlockContext": {
 			"default": 400,

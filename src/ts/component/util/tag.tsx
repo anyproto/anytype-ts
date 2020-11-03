@@ -22,14 +22,12 @@ class Tag extends React.Component<Props, {}> {
 			color = this.getColor();
 		};
 		if (color) {
-			cn.push(color);			
+			cn.push(color);
 		};
 		
 		return (
 			<span className={cn.join(' ')}>
-				<span className="inner">
-					{text}
-				</span>
+				<span className="inner">{text}</span>
 			</span>
 		);
 	};

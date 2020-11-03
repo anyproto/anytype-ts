@@ -3,9 +3,8 @@
 .menus {
 	.menu.menuDataviewOptionList { width: 228px; }
 	.menu.menuDataviewOptionList {
-		.form { padding: 0px 10px; }
+		.label { color: $colorDarkGrey; @include text-common; padding: 0px 16px; }
 		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
-		.input { padding: 0px; font-size: 12px; height: 18px; }
 		.item { padding: 5px 10px; }
 	}
 	

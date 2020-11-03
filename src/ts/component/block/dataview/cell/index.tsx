@@ -77,7 +77,7 @@ class Cell extends React.Component<Props, {}> {
 
 		const cellId = DataUtil.cellId('cell', relation.key, id);
 		const cell = $('#' + cellId);
-		const width = Math.max(cell.width(), Constant.size.dataview.cell.default);
+		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
 		const value = data[relation.key];
 		const element = $('#block-' + block.id);
 
@@ -94,7 +94,7 @@ class Cell extends React.Component<Props, {}> {
 		let param: I.MenuParam = { 
 			element: '#' + cellId,
 			offsetX: 0,
-			offsetY: 4,
+			offsetY: 0,
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
@@ -106,7 +106,7 @@ class Cell extends React.Component<Props, {}> {
 			},
 			data: { 
 				value: data[relation.key], 
-				options: relation.options, 
+				relation: relation,
 			},
 		};
 
@@ -124,8 +124,8 @@ class Cell extends React.Component<Props, {}> {
 				break;
 					
 			case I.RelationType.Select:
-				param.data = Object.assign(param.data, {
-					selectDict: relation.selectDict,
+				param = Object.assign(param, {
+					width: Math.max(Constant.size.menuDataviewOptionList, width),
 				});
 
 				menuId = 'dataviewOptionList';

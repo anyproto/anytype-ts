@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, Tag, Input } from 'ts/component';
-import { I, keyboard } from 'ts/lib';
+import { Icon, Tag, Label } from 'ts/component';
+import { I } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -11,7 +11,6 @@ interface Props extends I.Menu {};
 
 interface State {
 	items: any[];
-	filter: string;
 };
 
 const $ = require('jquery');
@@ -20,26 +19,20 @@ const $ = require('jquery');
 class MenuOptionList extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
-	ref: any = null;
 	state = {
 		items: [] as any[],
-		filter: ''
 	};
 	
 	constructor (props: any) {
 		super(props);
 		
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
 	render () {
 		const { param } = this.props;
-		const { items, filter } = this.state;
-		
-		let regExp = new RegExp(filter, 'i');
-		let filtered = items.filter((item: any) => { return filter ? item.match(regExp) : true; });
+		const { data } = param;
+		const { relation } = data;
 		
 		const Item = SortableElement((item: any) => (
 			<div id={'tag-' + item.id} className="item" onClick={(e: any) => { this.onSelect(e, item.id); }}>
@@ -51,7 +44,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{filtered.map((item: any, i: number) => (
+					{relation.selectDict.map((item: any, i: number) => (
 						<Item key={i} text={item} id={i} index={i} />
 					))}
 				</div>
@@ -60,9 +53,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<form className="form" onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} onKeyUp={this.onKeyUp} placeHolder="Create or select an option" />
-				</form>
+				<Label text="Create or select an option" />
 				<div className="line" />
 				<List 
 					axis="y" 
@@ -78,29 +69,15 @@ class MenuOptionList extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-
-		const { param } = this.props;
-		const { data } = param;
-		const { options } = data;
-		
-		this.setState({ items: options });
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-				keyboard.setFocus(true);
-			};
-		}, 15);
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		keyboard.setFocus(false);
 	};
 	
 	onSelect (e: any, id: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { options } = data;
 		
 		commonStore.menuOpen('dataviewOptionEdit', { 
 			type: I.MenuType.Vertical,
@@ -109,27 +86,11 @@ class MenuOptionList extends React.Component<Props, State> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
+			width: param.width,
 			data: {
-				value: options[id]
+				...data,
 			}
 		});
-	};
-	
-	onSubmit (e: any) {
-		e.preventDefault();
-		
-		let { items } = this.state; 
-		let filter = this.ref.getValue();
-		
-		if (items.indexOf(filter) < 0) {
-			items.push(filter);
-			this.setState({ items: items });			
-		};
-	};
-	
-	onKeyUp (e: any) {
-		const filter = this.ref.getValue().toLowerCase();
-		this.setState({ filter: filter });
 	};
 	
 	onSortEnd (result: any) {
