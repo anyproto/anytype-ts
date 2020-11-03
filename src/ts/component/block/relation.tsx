@@ -71,13 +71,15 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	getItems () {
+		const { rootId } = this.props;
 		const filter = new RegExp(Util.filterFix(this.ref.getValue()), 'gi');
-		const objectType = dbStore.getObjectType('https://anytype.io/schemas/object/bundled/page');
+		const relations = dbStore.getRelations(rootId);
 		
-		let options = [
-			{ id: 'add', icon: 'add', name: 'Add new' }
-		];
-		for (let relation of objectType.relations) {
+		let options: any[] = [];
+		for (let relation of relations) {
+			if (relation.isHidden) {
+				continue;
+			};
 			options.push({
 				id: relation.key,
 				icon: 'relation c-' + DataUtil.relationClass(relation.format),
@@ -90,6 +92,8 @@ class BlockRelation extends React.Component<Props, {}> {
 				return it.name.match(filter);
 			});
 		};
+
+		options.unshift({ id: 'add', icon: 'add', name: 'Add new' });
 
 		return options;
 	};

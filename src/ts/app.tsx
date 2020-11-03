@@ -97,7 +97,7 @@ import 'scss/menu/dataview/relation.scss';
 import 'scss/menu/dataview/object.scss';
 import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/calendar.scss';
-import 'scss/menu/dataview/tag.scss';
+import 'scss/menu/dataview/option.scss';
 import 'scss/menu/dataview/account.scss';
 
 import 'scss/media/print.scss';
