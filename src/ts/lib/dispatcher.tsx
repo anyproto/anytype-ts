@@ -165,9 +165,9 @@ class Dispatcher {
 
 				case 'blockShow':
 					// Store object types for Sets
-					dbStore.setRelations(rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
-					dbStore.setObjectTypes((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
-					dbStore.setObjectTypesPerObject((data.getObjecttypesperobjectList() || []).map(Mapper.From.ObjectTypePerObject));
+					dbStore.relationsSet(rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
+					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
+					dbStore.objectTypesPerObjectSet((data.getObjecttypesperobjectList() || []).map(Mapper.From.ObjectTypePerObject));
 
 					let res = Response.BlockShow(data);
 					this.onBlockShow(rootId, res.type, res.blocks, res.details);

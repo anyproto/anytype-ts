@@ -9,21 +9,17 @@ class DbStore {
 	public metaMap: Map<string, any> = new Map();
 
 	@action
-	setObjectTypes (types: I.ObjectType[]) {
+	objectTypesSet (types: I.ObjectType[]) {
 		for (let type of types) {
 			this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
 		};
 	};
 
 	@action
-	setObjectTypesPerObject (types: I.ObjectTypePerObject[]) {
+	objectTypesPerObjectSet (types: I.ObjectTypePerObject[]) {
 		for (let type of types) {
 			this.objectTypePerObjectMap.set(type.objectId, type);
 		};
-	};
-
-	getObjectType (url: string): I.ObjectType {
-		return this.objectTypeMap.get(DataUtil.schemaField(url));
 	};
 
 	@action 
@@ -52,8 +48,24 @@ class DbStore {
 	};
 
 	@action
-	setRelations (blockId: string, list: I.Relation[]) {
+	relationsSet (blockId: string, list: I.Relation[]) {
+		list = list.map((it: I.Relation) => { return observable(it); });
 		this.relationMap.set(blockId, observable(list));
+	};
+
+	@action
+	relationsRemove (blockId: string) {
+		this.relationMap.delete(blockId);
+	};
+
+	@action
+	relationUpdate (blockId: string, item: any) {
+		const relations = this.getRelations(blockId);
+		const relation = relations.find((it: I.Relation) => { return it.key == item.key; }); 
+		
+		if (relation) {
+			set(relation, item);
+		};
 	};
 
 	@action
@@ -95,7 +107,7 @@ class DbStore {
 	@action
 	addRecord (blockId: string, obj: any) {
 		const data = this.getData(blockId);
-		data.push(obj);
+		data.push(observable(obj));
 	};
 
 	@action
@@ -107,6 +119,10 @@ class DbStore {
 		};
 
 		set(record, obj);
+	};
+
+	getObjectType (url: string): I.ObjectType {
+		return this.objectTypeMap.get(DataUtil.schemaField(url));
 	};
 
 	getRelations (blockId: string) {

@@ -33,19 +33,20 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { relation } = data;
-		
+		const { selectDict } = relation;
+
 		const Item = SortableElement((item: any) => (
 			<div id={'tag-' + item.id} className="item" onClick={(e: any) => { this.onSelect(e, item.id); }}>
 				<Icon className="dnd" />
-				<Tag text={item.text} />
+				<Tag text={item.text} color={item.color} />
 			</div>
 		));
 		
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{relation.selectDict.map((item: any, i: number) => (
-						<Item key={i} text={item} id={i} index={i} />
+					{selectDict.map((item: any, i: number) => (
+						<Item key={i} text={item.text} color={item.color} id={i} index={i} />
 					))}
 				</div>
 			);

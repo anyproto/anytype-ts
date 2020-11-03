@@ -27,6 +27,7 @@
 			}
 
 			.cellContent { @include text-overflow-nw; width: 100%; }
+			.cellContent.c-select { white-space: normal; width: auto; }
 				
 			td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
 			td.cell:last-child { border-right: 0px; }
@@ -72,6 +73,12 @@
 			}
 
 			td.cell.c-checkbox { padding: 12px 14px; }
+
+			td.cell.c-select { padding: 0px; cursor: text; }
+			td.cell.c-select {
+				.tagItem { margin: 0px 0px 6px 0px; vertical-align: top; }
+				#edit { cursor: text; -webkit-user-modify: read-write-plaintext-only; }
+			}
 
 			.icon.checkbox { vertical-align: top; }
 		}

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 import CellText from './text';
 import CellSelect from './select';
@@ -126,6 +127,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Select:
 				param = Object.assign(param, {
 					width: Math.max(Constant.size.menuDataviewOptionList, width),
+					passThrough: true,
 				});
 
 				menuId = 'dataviewOptionList';
@@ -216,7 +218,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let obj = { id: data.id };
-		obj[relation.key] = value;
+		obj[relation.key] = observable(value);
 
 		dbStore.updateRecord(block.id, obj);
 		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);

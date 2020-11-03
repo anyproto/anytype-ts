@@ -209,7 +209,6 @@ class CommonStore {
 		};
 
 		param = Object.assign(item.param, param);
-		console.log(param);
 		set(item, param);
 	};
 	

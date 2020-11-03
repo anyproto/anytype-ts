@@ -26,7 +26,7 @@ class Tag extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<span className={cn.join(' ')}>
+			<span contentEditable={false} className={cn.join(' ')}>
 				<span className="inner">{text}</span>
 			</span>
 		);

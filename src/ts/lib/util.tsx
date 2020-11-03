@@ -84,6 +84,18 @@ class Util {
 		return (JSON.stringify(k1) === JSON.stringify(k2)) && 
 			(JSON.stringify(v1) === JSON.stringify(v2));
 	};
+
+	arrayUnique (array: any[]) {
+		let v = {};
+		for (let i = 0; i < array.length; ++i) {
+			if (v[array[i]]) {
+				array.splice(i, 1);
+			} else {
+				v[array[i]] = true;
+			};
+		};
+		return array;
+	};
 	
 	arrayUniqueObjects (array: any[], k: string) {
 		const res: any[] = [];

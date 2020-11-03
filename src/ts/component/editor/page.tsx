@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore, authStore } from 'ts/store';
+import { commonStore, blockStore, authStore, dbStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -318,6 +318,7 @@ class EditorPage extends React.Component<Props, State> {
 		C.BlockClose(id, (message: any) => {
 			if (!isPopup) {
 				blockStore.blocksClear(id);
+				dbStore.relationsRemove(id);
 			};
 		});
 	};
