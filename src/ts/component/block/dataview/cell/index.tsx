@@ -81,8 +81,10 @@ class Cell extends React.Component<Props, {}> {
 		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
 		const value = data[relation.key];
 		const element = $('#block-' + block.id);
-
-		if (this.ref) {
+		const setOn = () => {
+			if (!this.ref) {
+				return;
+			};
 			if (this.ref.setEditing) {
 				this.ref.setEditing(true);
 			};
@@ -90,7 +92,7 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.onClick();
 			};
 		};
-		
+
 		let menuId = '';
 		let param: I.MenuParam = { 
 			element: '#' + cellId,
@@ -99,6 +101,7 @@ class Cell extends React.Component<Props, {}> {
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
+			onOpen: setOn,
 			onClose: () => {
 				cell.removeClass('isEditing');
 				if (this.ref && this.ref.setEditing) {
@@ -206,6 +209,8 @@ class Cell extends React.Component<Props, {}> {
 					commonStore.menuCloseAll();
 				});
 			}, Constant.delay.menu);
+		} else {
+			setOn();
 		};
 	};
 

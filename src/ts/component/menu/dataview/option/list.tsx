@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Tag, Label } from 'ts/component';
 import { I } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -35,10 +35,15 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { relation } = data;
 		const { selectDict } = relation;
 
+		const Handle = SortableHandle(() => (
+			<Icon className="dnd" />
+		));
+
 		const Item = SortableElement((item: any) => (
 			<div id={'tag-' + item.id} className="item" onClick={(e: any) => { this.onSelect(e, item.id); }}>
-				<Icon className="dnd" />
+				<Handle />
 				<Tag text={item.text} color={item.color} />
+				<Icon className="more" onClick={(e: any) => { this.onEdit(e, item.id); }} />
 			</div>
 		));
 		
@@ -55,11 +60,11 @@ class MenuOptionList extends React.Component<Props, State> {
 		return (
 			<div>
 				<Label text="Create or select an option" />
-				<div className="line" />
 				<List 
 					axis="y" 
 					transitionDuration={150}
 					distance={10}
+					useDragHandle={true}
 					onSortEnd={this.onSortEnd}
 					helperClass="dragging"
 					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
@@ -75,21 +80,26 @@ class MenuOptionList extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
-	
+
 	onSelect (e: any, id: number) {
+	};
+	
+	onEdit (e: any, id: number) {
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { data } = param;
 		
 		commonStore.menuOpen('dataviewOptionEdit', { 
 			type: I.MenuType.Vertical,
 			element: '#tag-' + id,
-			offsetX: 0,
-			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Center,
-			width: param.width,
+			offsetX: param.width,
+			offsetY: 0,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
 			data: {
 				...data,
+				id: id,
 			}
 		});
 	};
