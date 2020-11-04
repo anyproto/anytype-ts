@@ -10,11 +10,10 @@
 		width: 10px; height: 10px; position: absolute; right: 4px; top: 4px; background-image: url('~img/icon/dataview/tagRemove0.svg'); 
 		cursor: pointer;
 	}
+	.icon.remove:hover { background-image: url('~img/icon/dataview/tagRemove1.svg'); }
 }
 .tagItem.canEdit { padding-right: 18px; }
-.tagItem:hover {
-	.icon.remove { background-image: url('~img/icon/dataview/tagRemove1.svg'); }
-}
+
 .tagItem.grey { color: #8c9ea5; background: #ebeff1; }
 .tagItem.yellow { color: #b2a616; background: #fbf5b8; }
 .tagItem.orange { color: #d3720d; background: #ffEcc8; }

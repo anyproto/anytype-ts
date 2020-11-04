@@ -102,6 +102,9 @@ class BlockDataview extends React.Component<Props, {}> {
 		dbStore.setMeta(block.id, { viewId: viewId, offset: offset });
 		dbStore.setData(block.id, []);
 
+		const view = this.getView();
+		view.relations = DataUtil.viewGetRelations(block.id, view);
+
 		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
 
 		commonStore.menuCloseAll();
@@ -109,7 +112,7 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	getView () {
-		const { rootId, block } = this.props;
+		const { block } = this.props;
 		const { views } = block.content;
 
 		if (!views.length) {
