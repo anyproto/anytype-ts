@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
+import { I, DataUtil, Util } from 'ts/lib';
 import { Icon, Input, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -93,6 +93,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		relation.selectDict[idx].text = this.ref.getValue();
 		relation.selectDict[idx].color = this.color;
+		relation.selectDict = Util.arrayUniqueObjects(relation.selectDict, 'text');
 
 		menu.param.data.relation = observable.box(relation);
 		commonStore.menuUpdate('dataviewOptionList', menu.param);
