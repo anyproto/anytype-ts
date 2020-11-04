@@ -59,6 +59,14 @@ class DbStore {
 	};
 
 	@action
+	relationAdd (blockId: string, relation: any) {
+		const relations = this.getRelations(blockId);
+
+		relations.push(relation);
+		this.relationsSet(blockId, relations);
+	};
+
+	@action
 	relationUpdate (blockId: string, item: any) {
 		const relations = this.getRelations(blockId);
 		const relation = relations.find((it: I.Relation) => { return it.key == item.key; }); 
@@ -66,6 +74,14 @@ class DbStore {
 		if (relation) {
 			set(relation, item);
 		};
+	};
+
+	@action
+	relationRemove (blockId: string, key: string) {
+		let relations = this.getRelations(blockId);
+		relations = relations.filter((it: I.Relation) => { return it.key != key; });
+
+		this.relationsSet(blockId, relations);
 	};
 
 	@action

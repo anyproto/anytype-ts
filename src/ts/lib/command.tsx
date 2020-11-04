@@ -665,6 +665,26 @@ const HistoryVersions = (pageId: string, lastVersionId: string, limit: number, c
 	dispatcher.request('historyVersions', request, callBack);
 };
 
+const BlockDataviewRelationAdd = (contextId: string, blockId: string, relation: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RelationAdd.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRelation(Mapper.To.Relation(relation));
+
+	dispatcher.request('blockDataviewRelationAdd', request, callBack);
+};
+
+const BlockDataviewRelationDelete = (contextId: string, blockId: string, key: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RelationDelete.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRelationkey(key);
+
+	dispatcher.request('blockDataviewRelationRemove', request, callBack);
+};
+
 const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.Show.Request();
 	
@@ -796,8 +816,9 @@ export {
 	BlockSetDetails,
 	BlockSetDataviewView,
 	BlockSetDataviewActiveView,
-
 	BlockDeleteDataviewView,
+	BlockDataviewRelationAdd,
+	BlockDataviewRelationDelete,
 
 	BlockCreateDataviewRecord,
 	BlockUpdateDataviewRecord,

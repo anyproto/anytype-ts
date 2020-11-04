@@ -211,14 +211,13 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		let { rootId, blockId, relationKey, getView } = data;
 		let view = getView();
 		let block = blockStore.getLeaf(rootId, blockId);
-		let source = block.content.source;
 
-		C.ObjectTypeRelationRemove(source, relationKey, (message: any) => {
+		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			dbStore.objectTypeRelationsRemove(source, relationKey);
+			dbStore.relationRemove(blockId, relationKey);
 			view = DataUtil.viewSetRelations(rootId, view);
 
 			C.BlockSetDataviewView(rootId, blockId, view.id, view);
@@ -248,7 +247,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		let view = getView();
 		let source = block.content.source;
 		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
-		let newRelation = { name: name, format: this.format, isMultiple: this.isMultiple };
+		let newRelation: any = { name: name, format: this.format, isMultiple: this.isMultiple };
 
 		if (relation) {
 			relation = Object.assign(relation, newRelation);
@@ -263,12 +262,14 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				C.BlockSetDataviewView(rootId, blockId, view.id, view);
 			});
 		} else {
-			C.ObjectTypeRelationAdd(source, [ newRelation ], (message: any) => {
+			C.BlockDataviewRelationAdd(rootId, blockId, newRelation, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				dbStore.objectTypeRelationsAdd(source, message.relations);
+				newRelation.key = message.relationKey;
+				dbStore.relationAdd(rootId, newRelation);
+
 				view.relations.push(newRelation);
 				view = DataUtil.viewSetRelations(rootId, view);
 

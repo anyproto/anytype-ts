@@ -529,6 +529,10 @@ class DataUtil {
 		let relations = Util.objectCopy(dbStore.getRelations(rootId));
 		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
 
+		view.relations = view.relations.filter((it: any) => {
+			return it.key;
+		});
+
 		view.relations = view.relations.map((it: I.ViewRelation) => {
 			const relation = relations.find((relation: I.Relation) => { return relation.key == it.key; }) || {};
 			return new M.ViewRelation({

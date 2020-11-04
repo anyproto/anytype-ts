@@ -329,6 +329,12 @@ const BlockDeleteDataviewRecord = (response: any) => {
 	return {};
 };
 
+const BlockDataviewRelationAdd = (response: any) => {
+	return {
+		relationKey: response.getRelationkey(),
+	};
+};
+
 const HistoryVersions = (response: any) => {
 	return {
 		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
@@ -436,6 +442,8 @@ export {
 	BlockCreateDataviewRecord,
 	BlockUpdateDataviewRecord,
 	BlockDeleteDataviewRecord,
+
+	BlockDataviewRelationAdd,
 
 	BlockListMove,
 	BlockListMoveToNewPage,
