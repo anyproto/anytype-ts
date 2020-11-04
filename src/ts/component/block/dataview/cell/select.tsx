@@ -51,7 +51,7 @@ class CellSelect extends React.Component<Props, State> {
 
 		const render = ({ tag }) => {
 			return (
-				<Tag {...tag} canEdit={true} onRemove={(e: any) => { this.onRemove(e, tag.text); }} />
+				<Tag {...tag} canEdit={true} onRemove={(e: any) => { e.stopPropagation(); this.onRemove(e, tag.text); }} />
 			);
 		};
 
