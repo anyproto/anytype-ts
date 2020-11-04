@@ -99,15 +99,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				
 				{opts}
 				
-				<div className="line" />
-				<div className="item" onClick={this.onCopy}>
-					<Icon className="copy" />
-					<div className="name">Duplicate</div>
-				</div>
-				<div className="item" onClick={this.onRemove}>
-					<Icon className="remove" />
-					<div className="name">Delete relation</div>
-				</div>
+				{relation ? (
+					<React.Fragment>
+						<div className="line" />
+						<div className="item" onClick={this.onCopy}>
+							<Icon className="copy" />
+							<div className="name">Duplicate</div>
+						</div>
+						<div className="item" onClick={this.onRemove}>
+							<Icon className="remove" />
+							<div className="name">Delete relation</div>
+						</div>
+					</React.Fragment>
+				) : ''}
 			</form>
 		);
 	};
@@ -203,6 +207,16 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onCopy (e: any) {
+		let { param, close } = this.props;
+		let { data } = param;
+		let { relationKey, getView } = data;
+		let view = getView();
+
+		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		let newRelation: any = { name: relation.name, format: relation.format };
+
+		this.add(newRelation);
+		close();
 	};
 
 	onRemove (e: any) {
@@ -244,37 +258,59 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 
 		let view = getView();
-		let source = block.content.source;
 		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 		let newRelation: any = { name: name, format: this.format, isMultiple: this.isMultiple };
 
 		if (relation) {
-			relation = Object.assign(relation, newRelation);
-			C.ObjectTypeRelationUpdate(source, relation, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				dbStore.objectTypeRelationUpdate(source, relation);
-				view = DataUtil.viewSetRelations(blockId, view);
-
-				C.BlockSetDataviewView(blockId, blockId, view.id, view);
-			});
+			this.update(newRelation);
 		} else {
-			C.BlockDataviewRelationAdd(rootId, blockId, newRelation, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				newRelation.key = message.relationKey;
-				dbStore.relationAdd(blockId, newRelation);
-
-				view.relations.push(newRelation);
-				view = DataUtil.viewSetRelations(blockId, view);
-
-				C.BlockSetDataviewView(rootId, blockId, view.id, view);
-			});
+			this.add(newRelation);
 		};
+	};
+
+	add (newRelation: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+
+		let view = getView();
+
+		C.BlockDataviewRelationAdd(rootId, blockId, newRelation, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			newRelation.key = message.relationKey;
+			dbStore.relationAdd(blockId, newRelation);
+
+			view.relations.push(newRelation);
+			view = DataUtil.viewSetRelations(blockId, view);
+
+			C.BlockSetDataviewView(rootId, blockId, view.id, view);
+		});
+	};
+
+	update (newRelation: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+
+		let view = getView();
+		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relation.key; });
+		
+		relation = Object.assign(relation, newRelation);
+		/*
+		C.BlockDataviewRelationUpdate(rootId, blockId, relation, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			dbStore.relationUpdate(blockId, relation);
+			view = DataUtil.viewSetRelations(blockId, view);
+
+			C.BlockSetDataviewView(blockId, blockId, view.id, view);
+		});
+		*/
 	};
 
 };
