@@ -376,7 +376,7 @@ class Dispatcher {
 					};
 
 					data.view = Mapper.From.View(data.getView());
-					data.view = DataUtil.viewSetRelations(rootId, data.view);
+					data.view = DataUtil.viewSetRelations(block.id, data.view);
 
 					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
@@ -498,7 +498,7 @@ class Dispatcher {
 			};
 			if (it.type == I.BlockType.Dataview) {
 				it.content.views = it.content.views.map((view: any) => {
-					return DataUtil.viewSetRelations(rootId, view);
+					return DataUtil.viewSetRelations(it.id, view);
 				});
 			};
 			return new M.Block(it);

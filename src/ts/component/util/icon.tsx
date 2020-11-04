@@ -19,6 +19,7 @@ interface Props {
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 	onDragStart?(e: any): void;
+	onContextMenu?(e: any): void;
 };
 
 const $ = require('jquery');
@@ -36,10 +37,11 @@ class Icon extends React.Component<Props, {}> {
 		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
 	};
 	
 	render () {
-		const { id, icon, arrow, draggable, className, inner, menuId, onClick, onMouseDown, onMouseEnter, onMouseLeave, onDragStart } = this.props;
+		const { id, icon, arrow, draggable, className, inner, menuId, onClick, onDragStart } = this.props;
 		
 		let cn = [ 'icon' ];
 		let style: any = {};
@@ -56,7 +58,7 @@ class Icon extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={id} draggable={draggable} onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} onDragStart={onDragStart} className={cn.join(' ')} style={style}>
+			<div id={id} draggable={draggable} onMouseDown={this.onMouseDown} onContextMenu={this.onContextMenu} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} onDragStart={onDragStart} className={cn.join(' ')} style={style}>
 				{arrow ? <div className="icon arrow" /> : ''}
 				{inner ? inner : null}
 			</div>
@@ -97,6 +99,16 @@ class Icon extends React.Component<Props, {}> {
 		
 		if (onMouseDown) {
 			onMouseDown(e);
+		};
+	};
+
+	onContextMenu (e: any) {
+		const { onContextMenu } = this.props;
+		
+		Util.tooltipHide();
+		
+		if (onContextMenu) {
+			onContextMenu(e);
 		};
 	};
 	

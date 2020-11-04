@@ -30,7 +30,6 @@ export enum RelationType {
 	Email		 = 9,
 	Phone		 = 10,
 	Object		 = 100,
-	Self		 = 101,
 };
 
 export interface Relation {

@@ -1382,6 +1382,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 
 	onPrint () {
+		focus.clearRange(true);
 		window.print();
 	};
 

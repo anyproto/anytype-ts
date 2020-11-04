@@ -160,6 +160,8 @@ const Mapper = {
 				decorate(item.content, {
 					views: observable,
 				});
+
+				dbStore.relationsSet(item.id, (content.getRelationsList() || []).map(Mapper.From.Relation));
 			};
 
 			if (type == I.BlockType.Relation) {

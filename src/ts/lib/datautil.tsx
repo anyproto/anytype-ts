@@ -106,7 +106,6 @@ class DataUtil {
 			case I.RelationType.Email:		 c = 'email'; break;
 			case I.RelationType.Phone:		 c = 'phone'; break;
 			case I.RelationType.Object:		 c = 'object'; break;
-			case I.RelationType.Self:		 c = 'object'; break;
 		};
 		return c;
 	};
@@ -525,9 +524,23 @@ class DataUtil {
 		return [ prefix, relationKey, String(id || '') ].join('-');
 	};
 
-	viewSetRelations (rootId: string, view: I.View): I.View {
-		let relations = Util.objectCopy(dbStore.getRelations(rootId));
+	viewSetRelations (blockId: string, view: I.View): I.View {
+		let relations = Util.objectCopy(dbStore.getRelations(blockId));
+
 		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
+
+		for (let relation of relations) {
+			let vr = view.relations.find((it: I.ViewRelation) => { return it.key == relation.key; });
+			if (!vr) {
+				continue;
+			};
+			let idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relation.key; });
+
+			view.relations[idx] = Object.assign(vr, {
+				name: relation.name,
+				format: relation.format,
+			});
+		};
 
 		view.relations = view.relations.filter((it: any) => {
 			return it.key;
@@ -543,6 +556,7 @@ class DataUtil {
 				width: Number(it.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
 			});
 		});
+
 		return view;
 	};
 

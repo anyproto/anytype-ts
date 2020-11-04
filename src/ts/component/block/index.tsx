@@ -225,7 +225,7 @@ class Block extends React.Component<Props, {}> {
 		return (
 			<div id={'block-' + id} data-id={id} className={cn.join(' ')} style={css}>
 				<div className="wrapMenu">
-					<Icon id={'button-block-menu-' + id} /*tooltip="<b>Click</b> to open menu<br/><b>Drag</b> to move block"*/ className="dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} />
+					<Icon id={'button-block-menu-' + id} className="dnd" draggable={true} onDragStart={this.onDragStart} onMouseDown={this.onMenuDown} onClick={this.onMenuClick} onContextMenu={this.onMenuClick} />
 				</div>
 				
 				<div className={cd.join(' ')}>

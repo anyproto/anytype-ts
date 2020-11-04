@@ -97,7 +97,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	};
 	
 	onMark (e: any, type: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, onChange, dataset, range } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -183,7 +183,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 									C.BlockListConvertChildrenToPages(rootId, blockIds);
 								};
 								
-								this.props.close();
+								close();
 							},
 						}
 					});
@@ -206,7 +206,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							blockId: blockId,
 							blockIds: [ blockId ],
 							onSelect: (item: any) => {
-								this.props.close();
+								close();
 							},
 						}
 					});
@@ -228,8 +228,12 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							horizontal: I.MenuDirection.Center,
 							data: {
 								value: (mark ? mark.param : ''),
-								onChange: (value: string) => {
-									marks = Mark.toggle(marks, { type: type, param: value, range: { from: from, to: to } });
+								onChange: (param: string) => {
+									if (!mark && !param) {
+										return;
+									};
+
+									marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
 									onChange(marks);
 									window.setTimeout(() => { focus.apply(); }, 15);
 								}
@@ -243,7 +247,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						break;
 					};
 					
-					mark = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to }) || {};
+					mark = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
 					
 					commonStore.menuOpen('blockColor', { 
 						element: '#button-' + blockId + '-color',
@@ -256,11 +260,15 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							rootId: rootId,
 							blockId: blockId,
 							blockIds: blockIds,
-							value: String(mark.param || ''),
+							value: (mark ? mark.param : ''),
 							onChange: (param: string) => {
+								if (!mark && !param) {
+									return;
+								};
+
 								marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
 								onChange(marks);
-								this.props.close();
+								close();
 							}
 						},
 					});
@@ -271,7 +279,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						break;
 					};
 					
-					mark = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to }) || {};
+					mark = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
 					
 					commonStore.menuOpen('blockBackground', { 
 						element: '#button-' + blockId + '-background',
@@ -284,11 +292,15 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							rootId: rootId,
 							blockId: blockId,
 							blockIds: blockIds,
-							value: String(mark.param || ''),
+							value: (mark ? mark.param : ''),
 							onChange: (param: string) => {
+								if (!mark && !param) {
+									return;
+								};
+
 								marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
 								onChange(marks);
-								this.props.close();
+								close();
 							},
 						},
 					});

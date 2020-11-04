@@ -49,11 +49,11 @@ class Keyboard {
 		});
 
 		if (platform == I.Platform.Mac) {
-			this.shortcut('cmd+[', e, (pressed: string) => { this.history.goBack(); });
-			this.shortcut('cmd+]', e, (pressed: string) => { this.history.goForward(); });
+			this.shortcut('cmd+[', e, (pressed: string) => { this.back(); });
+			this.shortcut('cmd+]', e, (pressed: string) => { this.forward(); });
 		} else {
-			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.history.goBack(); });
-			this.shortcut('alt+arrowright', e, (pressed: string) => { this.history.goForward(); });
+			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.back(); });
+			this.shortcut('alt+arrowright', e, (pressed: string) => { this.forward(); });
 		};
 
 		// Close popups
@@ -142,6 +142,27 @@ class Keyboard {
 		});
 		
 		this.initPinCheck();
+	};
+
+	back () {
+		const { account } = authStore;
+
+		const prev = this.history.entries[this.history.index - 1];
+		if (prev) {
+			let route = Util.getRoute(prev.pathname);
+			if ((route.page == 'auth') && account) {
+				return;
+			};
+			if ((route.page == 'main') && !account) {
+				return;
+			};
+		};
+
+		this.history.goBack();
+	};
+
+	forward () {
+		this.history.goForward();
 	};
 
 	ctrlByPlatform (e: any) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Util, Storage, analytics, keyboard } from 'ts/lib';
+import { Util, Storage, analytics, keyboard, DataUtil } from 'ts/lib';
 import { authStore, commonStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
@@ -88,21 +88,21 @@ class Page extends React.Component<Props, {}> {
 	
 	init () {
 		const { account } = authStore;
-		const { match } = this.props;
+		const { match, history } = this.props;
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
 		const isMainIndex = isMain && (match.params.action == 'index');
-		const isCheck = isAuth && (match.params.action == 'pin-check');
+		const isPinCheck = isAuth && (match.params.action == 'pin-check');
 		const pin = Storage.get('pin');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
 		const askSurvey = Number(Storage.get('askSurvey')) || 0;
 		const days = lastSurveyTime ? 30 : 14;
 
-		if (pin && !keyboard.isPinChecked && !isCheck && !isAuth && !isIndex) {
-			this.props.history.push('/auth/pin-check');
+		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
+			history.push('/auth/pin-check');
 			return;
 		};
 

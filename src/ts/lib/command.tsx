@@ -682,7 +682,7 @@ const BlockDataviewRelationDelete = (contextId: string, blockId: string, key: st
 	request.setBlockid(blockId);
 	request.setRelationkey(key);
 
-	dispatcher.request('blockDataviewRelationRemove', request, callBack);
+	dispatcher.request('blockDataviewRelationDelete', request, callBack);
 };
 
 const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -814,8 +814,10 @@ export {
 	BlockSetTextChecked,
 	BlockSetFields,
 	BlockSetDetails,
+
 	BlockSetDataviewView,
 	BlockSetDataviewActiveView,
+
 	BlockDeleteDataviewView,
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationDelete,

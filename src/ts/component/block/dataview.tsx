@@ -89,7 +89,10 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		const { block } = this.props;
+
 		$(window).unbind('resize.dataview');
+		dbStore.relationsRemove(block.id);
 	};
 
 	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
