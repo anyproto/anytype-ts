@@ -99,8 +99,6 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		commonStore.menuUpdate('dataviewOptionList', menu.param);
 
 		dbStore.relationUpdate(blockId, relation);
-		
-		this.props.close();
 	};
 	
 };
