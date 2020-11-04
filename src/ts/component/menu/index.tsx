@@ -30,7 +30,7 @@ import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
 import MenuDataviewViewEdit from './dataview/view/edit';
-import MenuDataviewCalendar from './dataview/option/list';
+import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewAccount from './dataview/account';
