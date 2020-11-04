@@ -526,9 +526,6 @@ class DataUtil {
 
 	viewSetRelations (blockId: string, view: I.View): I.View {
 		let relations = Util.objectCopy(dbStore.getRelations(blockId));
-
-		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
-
 		for (let relation of relations) {
 			let vr = view.relations.find((it: I.ViewRelation) => { return it.key == relation.key; });
 			if (!vr) {
@@ -542,12 +539,13 @@ class DataUtil {
 			});
 		};
 
-		view.relations = view.relations.filter((it: any) => {
-			return it.key;
-		});
+		
 
 		view.relations = view.relations.map((it: I.ViewRelation) => {
 			const relation = relations.find((relation: I.Relation) => { return relation.key == it.key; }) || {};
+			if (!relation) {
+				return null;
+			};
 			return new M.ViewRelation({
 				...relation,
 				key: it.key,
@@ -555,6 +553,10 @@ class DataUtil {
 				options: it.options || {},
 				width: Number(it.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
 			});
+		});
+
+		view.relations = view.relations.filter((it: any) => {
+			return it && !it.isHidden;
 		});
 
 		return view;
