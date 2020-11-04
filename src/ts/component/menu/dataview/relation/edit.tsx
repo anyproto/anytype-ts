@@ -259,7 +259,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				dbStore.objectTypeRelationUpdate(source, relation);
 				view = DataUtil.viewSetRelations(blockId, view);
 
-				C.BlockSetDataviewView(rootId, blockId, view.id, view);
+				C.BlockSetDataviewView(blockId, blockId, view.id, view);
 			});
 		} else {
 			C.BlockDataviewRelationAdd(rootId, blockId, newRelation, (message: any) => {
@@ -268,7 +268,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				};
 
 				newRelation.key = message.relationKey;
-				dbStore.relationAdd(rootId, newRelation);
+				dbStore.relationAdd(blockId, newRelation);
 
 				view.relations.push(newRelation);
 				view = DataUtil.viewSetRelations(blockId, view);
