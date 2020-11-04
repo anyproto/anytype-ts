@@ -54,7 +54,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		if (relation) {
 			const isDate = relation.format == I.RelationType.Date;
-			const hasMultiple = [ I.RelationType.File, I.RelationType.Select, I.RelationType.Object ].indexOf(relation.format) >= 0;
+			const hasMultiple = false;//[ I.RelationType.File, I.RelationType.Select, I.RelationType.Object ].indexOf(relation.format) >= 0;
 
 			opts = (
 				<React.Fragment>

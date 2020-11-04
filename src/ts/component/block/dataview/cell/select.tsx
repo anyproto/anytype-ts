@@ -4,8 +4,9 @@ import { Tag } from 'ts/component';
 import { I, keyboard, DataUtil, Util } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { set, observable } from 'mobx';
+import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
+import { DraggableArea } from 'react-draggable-tags';
 
 interface Props extends I.Cell {};
 interface State { 
@@ -34,22 +35,33 @@ class CellSelect extends React.Component<Props, State> {
 		const { index, block, relation, readOnly } = this.props;
 		const data = dbStore.getData(block.id);
 		const rel = dbStore.getRelation(block.id, relation.key);
-		const value = data[index][relation.key] || [];
+		
+		let value = data[index][relation.key] || [];
+		value = value.map((text: string, i: number) => {
+			const option = true;
+			/*
+			const option = (rel.selectDict || []).find((it: any) => { return it.text == text; });
+			if (!option) {
+				return null;
+			};
+			*/
+			return option ? { id: i, text: text } : null;
+		});
+		value = value.filter((it: any) => { return it; });
+
+		const render = ({ tag }) => {
+			return (
+				<Tag {...tag} canEdit={true} onRemove={(e: any) => { this.onRemove(e, tag.text); }} />
+			);
+		};
 
 		return (
 			<div>
-				{value.map((item: string, i: any) => {
-					const option = (rel.selectDict || []).find((it: any) => { return it.text == item; });
-					if (!option) {
-						return null;
-					};
-					return (
-						<React.Fragment key={i}>
-							<Tag text={option.text} color={option.color} canEdit={true} onRemove={(e: any) => { this.onRemove(e, option.text); }} />
-							{" "}
-						</React.Fragment>
-					);
-				})}
+				<DraggableArea
+					tags={value}
+					render={render}
+					onChange={(value: any[]) => { this.onSort(value); }}
+				/>
 				<div 
 					id="edit" 
 					className="tagItem" 
@@ -59,7 +71,7 @@ class CellSelect extends React.Component<Props, State> {
 					onKeyUp={this.onKeyUp}
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
-				/>
+				/>	
 			</div>
 		);
 	};
@@ -95,12 +107,18 @@ class CellSelect extends React.Component<Props, State> {
 		this.focus();
 	};
 
+	onSort (value: any[]) {
+		const text = value.map((it: any) => { return it.text; });
+		this.setValue(text, []);
+	};
+
 	focus () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const edit = node.find('#edit');
+		const length = edit.text().length;
 
 		edit.focus();
-		setRange(edit.get(0), { start: 0, end: 0 });
+		setRange(edit.get(0), { start: length, end: length });
 	};
 
 	onFocus () {
@@ -117,27 +135,12 @@ class CellSelect extends React.Component<Props, State> {
 		const edit = node.find('#edit');
 		const data = dbStore.getData(block.id);
 		const value = data[index][relation.key] || [];
-
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			e.preventDefault();
-
-			this.getValue(value, edit.text().split(/\s/));
-			edit.html('');
-		});
-	};
-
-	onKeyUp (e: any) {
-		const { relation, block, index } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const edit = node.find('#edit');
 		const length = edit.text().length;
-		const data = dbStore.getData(block.id);
-		const value = data[index][relation.key] || [];
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.getValue(value, edit.text().split(/\s/));
+			this.setValue(value, edit.text().split(/\s/));
 			edit.html('');
 		});
 
@@ -147,6 +150,21 @@ class CellSelect extends React.Component<Props, State> {
 			};
 
 			this.remove(value[value.length - 1]);
+		});
+	};
+
+	onKeyUp (e: any) {
+		const { relation, block, index } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const edit = node.find('#edit');
+		const data = dbStore.getData(block.id);
+		const value = data[index][relation.key] || [];
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+
+			this.setValue(value, edit.text().split(/\s/));
+			edit.html('');
 		});
 	};
 
@@ -162,10 +180,10 @@ class CellSelect extends React.Component<Props, State> {
 		
 		let value = data[index][relation.key] || [];
 		value = value.filter((it: string) => { return it != text });
-		this.getValue(value, []);
+		this.setValue(value, []);
 	};
 
-	getValue (value: string[], text: string[]) {
+	setValue (value: string[], text: string[]) {
 		const { block, relation, onChange } = this.props;
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });

@@ -27,7 +27,7 @@
 			}
 
 			.cellContent { @include text-overflow-nw; width: 100%; }
-			.cellContent.c-select { white-space: normal; width: auto; }
+			.cellContent.c-select { white-space: normal; width: auto; overflow: visible; }
 				
 			td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
 			td.cell:last-child { border-right: 0px; }
@@ -76,8 +76,14 @@
 
 			td.cell.c-select { cursor: text; padding-bottom: 8px; }
 			td.cell.c-select {
-				.tagItem { margin: 0px 0px 6px 0px; vertical-align: top; }
-				#edit { cursor: text; -webkit-user-modify: read-write-plaintext-only; }
+				.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
+				#edit { 
+					cursor: text; -webkit-user-modify: read-write-plaintext-only; margin-right: 0px; height: 18px; width: 18px; padding: 0px; 
+					line-height: 16px;
+				}
+				.DraggableTags { display: inline; vertical-align: top; line-height: 0px; }
+				.DraggableTags::after { display: none; }
+				.DraggableTags-tag { float: left; }
 			}
 
 			.icon.checkbox { vertical-align: top; }
