@@ -36,8 +36,6 @@ class CellSelect extends React.Component<Props, State> {
 		const rel = dbStore.getRelation(block.id, relation.key);
 		const value = data[index][relation.key] || [];
 
-		console.log('RELATION', JSON.stringify(rel, null, 5));
-
 		return (
 			<div>
 				{value.map((item: string, i: any) => {
