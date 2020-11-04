@@ -59,9 +59,9 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{relations.map((item: any, i: number) => (
-						<Item key={item.key} {...item} id={item.key} index={i} />
-					))}
+					{relations.map((item: any, i: number) => {
+						return item ? <Item key={item.key} {...item} id={item.key} index={i} /> : null;
+					})}
 					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
 				</div>
 			);

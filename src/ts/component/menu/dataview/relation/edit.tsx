@@ -210,7 +210,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		let { data } = param;
 		let { rootId, blockId, relationKey, getView } = data;
 		let view = getView();
-		let block = blockStore.getLeaf(rootId, blockId);
 
 		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
 			if (message.error.code) {

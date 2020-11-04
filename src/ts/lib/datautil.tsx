@@ -539,16 +539,10 @@ class DataUtil {
 			});
 		};
 
-		
-
 		view.relations = view.relations.map((it: I.ViewRelation) => {
 			const relation = relations.find((relation: I.Relation) => { return relation.key == it.key; }) || {};
-			if (!relation) {
-				return null;
-			};
 			return new M.ViewRelation({
 				...relation,
-				key: it.key,
 				isVisible: it.isVisible,
 				options: it.options || {},
 				width: Number(it.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
@@ -556,7 +550,7 @@ class DataUtil {
 		});
 
 		view.relations = view.relations.filter((it: any) => {
-			return it && !it.isHidden;
+			return it.key && !it.isHidden;
 		});
 
 		return view;
