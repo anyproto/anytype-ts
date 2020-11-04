@@ -52,7 +52,7 @@
 				.name { line-height: 20px; @include text-overflow-nw; width: calc(100% - 24px); }
 			}
 
-            td.cell.isEditing { box-shadow: 0px 0px 0px 2px $colorOrange inset; border-radius: 2px; }
+            td.cell.isEditing { box-shadow: 0px 0px 0px 2px $colorOrange inset; border-radius: 2px; z-index: 1; }
             td.cell.isEditing {
                 .input-text { padding: 0px; height: 20px; }
 				.textarea { 

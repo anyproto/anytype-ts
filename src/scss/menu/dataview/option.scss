@@ -1,7 +1,6 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewOptionList { width: 228px; }
 	.menu.menuDataviewOptionList {
 		.label { color: $colorDarkGrey; @include text-common; padding: 0px 16px; }
 		.item { padding: 5px 10px; }

@@ -50,9 +50,7 @@ class CellSelect extends React.Component<Props, State> {
 		value = value.filter((it: any) => { return it; });
 
 		const render = ({ tag }) => {
-			return (
-				<Tag {...tag} canEdit={true} onRemove={(e: any) => { e.stopPropagation(); this.onRemove(e, tag.text); }} />
-			);
+			return <Tag {...tag} canEdit={true} onRemove={(e: any) => { this.onRemove(e, tag.text); }} />;
 		};
 
 		return (
@@ -84,6 +82,7 @@ class CellSelect extends React.Component<Props, State> {
 
 		if (editing) {
 			cell.addClass('isEditing');
+			this.focus();
 		} else {
 			cell.removeClass('isEditing');
 		};
@@ -169,8 +168,6 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onRemove (e: any, text: string) {
-		e.stopPropagation();
-
 		this.remove(text);
 	};
 
