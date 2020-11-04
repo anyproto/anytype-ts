@@ -92,6 +92,7 @@ class Dispatcher {
 		if (v == V.PROCESSNEW)				 t = 'processNew';
 		if (v == V.PROCESSUPDATE)			 t = 'processUpdate';
 		if (v == V.PROCESSDONE)				 t = 'processDone';
+		if (v == V.THREADSTATUS)			 t = 'threadStatus';
 
 		return t;
 	};
@@ -101,10 +102,6 @@ class Dispatcher {
 		const rootId = event.getContextid();
 		const messages = event.getMessagesList() || [];
 		const debug = config.debugMW && !skipDebug;
-
-		if (debug) {
-			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event.toObject(), null, 3));
-		};
 
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
@@ -119,6 +116,10 @@ class Dispatcher {
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
 			let childrenIds: string[] = [];
+
+			if (debug && (type != 'threadStatus')) {
+				console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(message.toObject(), null, 3));
+			};
 
 			switch (type) {
 				case 'blockSetChildrenIds':
