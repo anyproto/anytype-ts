@@ -90,6 +90,7 @@ class Util {
 		for (let i = 0; i < array.length; ++i) {
 			if (v[array[i]]) {
 				array.splice(i, 1);
+				i--;
 			} else {
 				v[array[i]] = true;
 			};

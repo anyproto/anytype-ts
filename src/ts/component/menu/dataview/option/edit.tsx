@@ -17,6 +17,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		super(props);
 
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 	};
 
 	render () {
@@ -31,7 +32,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 				<form className="wrap" onSubmit={this.onSubmit}>
 					<Input ref={(ref: any) => { this.ref = ref; }} value={option.text} placeHolder="Option name"  />
 				</form>
-				<div className="item">
+				<div className="item" onClick={this.onRemove}>
 					<Icon className="remove" />
 					<div className="name">Delete option</div>
 				</div>
@@ -62,6 +63,23 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	onColor (e: any, item: any) {
 		this.color = item.value;
 		this.save();
+	};
+
+	onRemove (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { option, blockId } = data;
+		const relation = data.relation.get();
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
+
+		relation.selectDict = relation.selectDict.filter((it: any) => { return it.text != option.text; });
+		dbStore.relationUpdate(blockId, relation);
+
+		menu.param.data.relation = observable.box(relation);
+		commonStore.menuUpdate('dataviewOptionList', menu.param);
+		
+		this.props.close();
 	};
 
 	save () {

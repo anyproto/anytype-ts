@@ -45,7 +45,7 @@ class CellSelect extends React.Component<Props, State> {
 					};
 					return (
 						<React.Fragment key={i}>
-							<Tag text={option.text} color={option.color} />
+							<Tag text={option.text} color={option.color} canEdit={true} onRemove={(e: any) => { this.onRemove(e, option.text); }} />
 							{" "}
 						</React.Fragment>
 					);
@@ -142,15 +142,27 @@ class CellSelect extends React.Component<Props, State> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (length) {
+			if (length || !value.length) {
 				return;
 			};
 
-			let value = data[index][relation.key] || [];
-			value.pop();
-
-			this.getValue(value, []);
+			this.remove(value[value.length - 1]);
 		});
+	};
+
+	onRemove (e: any, text: string) {
+		e.stopPropagation();
+
+		this.remove(text);
+	};
+
+	remove (text: string) {
+		const { relation, block, index } = this.props;
+		const data = dbStore.getData(block.id);
+		
+		let value = data[index][relation.key] || [];
+		value = value.filter((it: string) => { return it != text });
+		this.getValue(value, []);
 	};
 
 	getValue (value: string[], text: string[]) {
@@ -177,9 +189,11 @@ class CellSelect extends React.Component<Props, State> {
 		relation.selectDict = options;
 		dbStore.relationUpdate(block.id, relation);
 
-		menu.param.data.value = text;
-		menu.param.data.relation = observable.box(relation);
-		commonStore.menuUpdate('dataviewOptionList', menu.param);
+		if (menu) {
+			menu.param.data.value = text;
+			menu.param.data.relation = observable.box(relation);
+			commonStore.menuUpdate('dataviewOptionList', menu.param);
+		};
 
 		onChange(text);
 	};

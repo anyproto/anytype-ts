@@ -77,6 +77,10 @@ class MenuOptionList extends React.Component<Props> {
 		this._isMounted = true;
 	};
 
+	componentDidUpdate () {
+		this.props.position();
+	};
+
 	componentWillUnmount () {
 		this._isMounted = false;
 	};

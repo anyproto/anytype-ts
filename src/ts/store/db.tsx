@@ -70,6 +70,9 @@ class DbStore {
 		const relations = this.getRelations(blockId);
 		const relation = relations.find((it: I.Relation) => { return it.key == item.key; });
 		const idx = relations.findIndex((it: I.Relation) => { return it.key == item.key; });
+		if (!relation) {
+			return;
+		};
 
 		relations[idx] = Object.assign(relation, item);
 		this.relationsSet(blockId, relations);
