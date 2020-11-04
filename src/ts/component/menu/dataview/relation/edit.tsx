@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, M, DataUtil } from 'ts/lib';
 import { Icon, Input, Switch } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -274,6 +274,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { rootId, blockId, getView } = data;
 
 		let view = getView();
+		newRelation = new M.Relation(newRelation);
 
 		C.BlockDataviewRelationAdd(rootId, blockId, newRelation, (message: any) => {
 			if (message.error.code) {

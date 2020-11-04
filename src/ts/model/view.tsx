@@ -26,7 +26,7 @@ class View implements I.View {
 
 };
 
-class ViewRelation implements I.ViewRelation {
+class Relation implements I.Relation {
 
 	key: string = '';
 	name: string = '';
@@ -35,25 +35,41 @@ class ViewRelation implements I.ViewRelation {
 	format: I.RelationType = I.RelationType.Description;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
-	isVisible: boolean = false;
 	isMultiple: boolean = false;
-	width: number = 0;
-	options: any = {} as any;
 	selectDict: any[] = [] as any[];
 
 	constructor (props: I.ViewRelation) {
 		let self = this;
-		
+
 		self.key = String(props.key || '');
 		self.name = String(props.name || '');
+		self.dataSource = String(props.dataSource || '');
+		self.objectType = String(props.objectType || '');
 		self.format = props.format || I.RelationType.Description;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
-		self.isVisible = Boolean(props.isVisible);
 		self.isMultiple = Boolean(props.isMultiple);
+		self.selectDict = props.selectDict || [];
+	};
+
+};
+
+class ViewRelation extends Relation implements I.ViewRelation {
+
+	key: string = '';
+	width: number = 0;
+	options: any = {} as any;
+	isVisible: boolean = false;
+
+	constructor (props: I.ViewRelation) {
+		super(props);
+
+		let self = this;
+
+		self.key = String(props.key || '');
 		self.width = Number(props.width) || 0;
 		self.options = props.options || {};
-		self.selectDict = props.selectDict || [];
+		self.isVisible = Boolean(props.isVisible);
 	};
 
 };
@@ -92,6 +108,7 @@ class Sort implements I.Sort {
 
 export {
 	View,
+	Relation,
 	ViewRelation,
 	Filter,
 	Sort,

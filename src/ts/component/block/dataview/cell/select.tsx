@@ -4,6 +4,7 @@ import { Tag } from 'ts/component';
 import { I, keyboard, DataUtil, Util } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { set, observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 
 interface Props extends I.Cell {};
@@ -32,13 +33,15 @@ class CellSelect extends React.Component<Props, State> {
 	render () {
 		const { index, block, relation, readOnly } = this.props;
 		const data = dbStore.getData(block.id);
-		const { selectDict } = relation;
+		const rel = dbStore.getRelation(block.id, relation.key);
 		const value = data[index][relation.key] || [];
+
+		console.log('RELATION', JSON.stringify(rel, null, 5));
 
 		return (
 			<div>
 				{value.map((item: string, i: any) => {
-					const option = selectDict.find((it: any) => { return it.text == item; });
+					const option = (rel.selectDict || []).find((it: any) => { return it.text == item; });
 					if (!option) {
 						return null;
 					};
@@ -87,6 +90,14 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onClick () {
+		this.focus();
+	};
+
+	onChange (value: string[]) {
+		this.focus();
+	};
+
+	focus () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const edit = node.find('#edit');
 
@@ -103,30 +114,54 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
+		const { relation, block, index } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const edit = node.find('#edit');
+		const data = dbStore.getData(block.id);
+		const value = data[index][relation.key] || [];
+
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.save();
+			this.getValue(value, edit.text().split(/\s/));
+			edit.html('');
 		});
 	};
 
 	onKeyUp (e: any) {
-		keyboard.shortcut('space', e, (pressed: string) => {
-			this.save();
+		const { relation, block, index } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const edit = node.find('#edit');
+		const length = edit.text().length;
+		const data = dbStore.getData(block.id);
+		const value = data[index][relation.key] || [];
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+
+			this.getValue(value, edit.text().split(/\s/));
+			edit.html('');
+		});
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (length) {
+				return;
+			};
+
+			let value = data[index][relation.key] || [];
+			value.pop();
+
+			this.getValue(value, []);
 		});
 	};
 
-	save () {
-		const { rootId, relation, block, index, onChange } = this.props;
+	getValue (value: string[], text: string[]) {
+		const { block, relation, onChange } = this.props;
 		const { menus } = commonStore;
-		const node = $(ReactDOM.findDOMNode(this));
-		const edit = node.find('#edit');
-		const colors = DataUtil.menuGetBgColors();
-		const data = dbStore.getData(block.id);
-		const value = data[index][relation.key] || [];
 		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
+		const colors = DataUtil.menuGetBgColors();
 
-		let text = edit.text().split(/\s/).map((it: string) => {
+		text = text.map((it: string) => {
 			return String(it || '').trim();
 		});
 		text = text.filter((it: string) => { return it; });
@@ -142,18 +177,15 @@ class CellSelect extends React.Component<Props, State> {
 		options = Util.arrayUniqueObjects(options, 'text');
 
 		relation.selectDict = options;
-		dbStore.relationUpdate(rootId, relation);
+		dbStore.relationUpdate(block.id, relation);
 
-		menu.param.data.relation = relation;
+		menu.param.data.value = text;
+		menu.param.data.relation = observable.box(relation);
 		commonStore.menuUpdate('dataviewOptionList', menu.param);
 
-		console.log(JSON.stringify(relation, null, 5));
-
 		onChange(text);
-
-		edit.html('');
 	};
-	
+
 };
 
 export default CellSelect;

@@ -4,7 +4,7 @@ import { I, DataUtil } from 'ts/lib';
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable(new Map());
 	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable(new Map());
-	public relationMap: Map<string, any> = observable.map(new Map());
+	public relationMap: Map<string, any> = observable(new Map());
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 
@@ -49,7 +49,6 @@ class DbStore {
 
 	@action
 	relationsSet (blockId: string, list: I.Relation[]) {
-		list = list.map((it: I.Relation) => { return observable(it); });
 		this.relationMap.set(blockId, observable(list));
 	};
 
@@ -69,11 +68,11 @@ class DbStore {
 	@action
 	relationUpdate (blockId: string, item: any) {
 		const relations = this.getRelations(blockId);
-		const relation = relations.find((it: I.Relation) => { return it.key == item.key; }); 
-		
-		if (relation) {
-			set(relation, item);
-		};
+		const relation = relations.find((it: I.Relation) => { return it.key == item.key; });
+		const idx = relations.findIndex((it: I.Relation) => { return it.key == item.key; });
+
+		relations[idx] = Object.assign(relation, item);
+		this.relationsSet(blockId, relations);
 	};
 
 	@action
@@ -141,8 +140,13 @@ class DbStore {
 		return this.objectTypeMap.get(DataUtil.schemaField(url));
 	};
 
-	getRelations (blockId: string) {
+	getRelations (blockId: string): I.Relation[] {
 		return this.relationMap.get(blockId) || [];
+	};
+
+	getRelation (blockId: string, key: string): I.Relation {
+		const relations = this.relationMap.get(blockId) || [];
+		return relations.find((it: I.Relation) => { return it.key == key; });
 	};
 
 	getMeta (blockId: string) {

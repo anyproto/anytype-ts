@@ -70,7 +70,6 @@ class Cell extends React.Component<Props, {}> {
 
 	onClick (e: any) {
 		const { id, relation, block, index, readOnly } = this.props;
-		const data = this.props.data[index];
 
 		if (readOnly || relation.isReadOnly) {
 			return;
@@ -79,7 +78,8 @@ class Cell extends React.Component<Props, {}> {
 		const cellId = DataUtil.cellId('cell', relation.key, id);
 		const cell = $('#' + cellId);
 		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
-		const value = data[relation.key];
+		const data = dbStore.getData(block.id);
+		const value = data[index][relation.key] || [];
 		const element = $('#block-' + block.id);
 		const setOn = () => {
 			if (!this.ref) {
@@ -109,8 +109,14 @@ class Cell extends React.Component<Props, {}> {
 				};
 			},
 			data: { 
-				value: data[relation.key], 
-				relation: relation,
+				value: value, 
+				relation: observable.box(relation),
+				onChange: (value: any) => {
+					if (this.ref.onChange) {
+						this.ref.onChange(value);
+					};
+					this.onChange(value);
+				},
 			},
 		};
 
@@ -119,9 +125,6 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Date:
 				param.data = Object.assign(param.data, {
 					value: param.data.value || Util.time(),
-					onChange: (value: number) => {
-						this.onChange(value);
-					},
 				});
 					
 				menuId = 'dataviewCalendar';

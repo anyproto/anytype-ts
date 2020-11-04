@@ -303,10 +303,9 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
+
 			this.setState({ loading: false });
-			this.preload(() => {
-				this.setState({ loading: false });
-			});
+			this.preload();
 
 			if (phrase && accountId) {
 				history.push('/auth/setup/init');

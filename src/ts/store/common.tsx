@@ -191,7 +191,7 @@ class CommonStore {
 		};
 
 		this.menuClose(id, () => {
-			this.menuList.push({ id: id, param: param });
+			this.menuList.push(observable({ id: id, param: param }));
 			
 			if (param.onOpen) {
 				param.onOpen();
@@ -208,8 +208,7 @@ class CommonStore {
 			return;
 		};
 
-		param = Object.assign(item.param, param);
-		set(item, param);
+		set(item, observable({ param: Object.assign(item.param, param) }));
 	};
 	
 	menuIsOpen (id?: string): boolean {

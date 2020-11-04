@@ -2,26 +2,20 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Tag, Label } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 interface Props extends I.Menu {};
-
-interface State {
-	items: any[];
-};
 
 const $ = require('jquery');
 
 @observer
-class MenuOptionList extends React.Component<Props, State> {
+class MenuOptionList extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
-	state = {
-		items: [] as any[],
-	};
 	
 	constructor (props: any) {
 		super(props);
@@ -32,25 +26,31 @@ class MenuOptionList extends React.Component<Props, State> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relation } = data;
-		const { selectDict } = relation;
+		const value = data.value || [];
+		const relation = data.relation.get();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 
-		const Item = SortableElement((item: any) => (
-			<div id={'tag-' + item.id} className="item" onClick={(e: any) => { this.onSelect(e, item.id); }}>
-				<Handle />
-				<Tag text={item.text} color={item.color} />
-				<Icon className="more" onClick={(e: any) => { this.onEdit(e, item.id); }} />
-			</div>
-		));
+		const Item = SortableElement((item: any) => {
+			const cn = [ 'item' ];
+			//if (value.indexOf(item.text) >= 0) {
+			//	cn.push('active');
+			//};
+			return (
+				<div id={'tag-' + item.id} className={cn.join(' ')} onClick={(e: any) => { this.onSelect(e, item); }}>
+					<Handle />
+					<Tag text={item.text} color={item.color} />
+					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
+				</div>
+			);
+		});
 		
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{selectDict.map((item: any, i: number) => (
+					{(relation.selectDict || []).map((item: any, i: number) => (
 						<Item key={i} text={item.text} color={item.color} id={i} index={i} />
 					))}
 				</div>
@@ -81,10 +81,19 @@ class MenuOptionList extends React.Component<Props, State> {
 		this._isMounted = false;
 	};
 
-	onSelect (e: any, id: number) {
+	onSelect (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+		
+		let value = data.value || [];
+		value.push(item.text);
+		value = Util.arrayUnique(value);
+
+		onChange(value);
 	};
 	
-	onEdit (e: any, id: number) {
+	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
 		const { param } = this.props;
@@ -92,21 +101,34 @@ class MenuOptionList extends React.Component<Props, State> {
 		
 		commonStore.menuOpen('dataviewOptionEdit', { 
 			type: I.MenuType.Vertical,
-			element: '#tag-' + id,
+			element: '#tag-' + item.id,
 			offsetX: param.width,
 			offsetY: 0,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
 			data: {
 				...data,
-				id: id,
+				option: item,
 			}
 		});
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		this.setState({ items: arrayMove(this.state.items, oldIndex, newIndex) });
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
+		const relation = data.relation.get();
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Menu) => { return item.id == this.props.id; });
+
+		relation.selectDict = arrayMove(relation.selectDict, oldIndex, newIndex);
+		data.relation.set(relation);
+
+		menu.param.data.relation = observable.box(relation);
+		commonStore.menuUpdate(this.props.id, menu.param);
+
+		dbStore.relationUpdate(blockId, relation);
 	};
 	
 };
