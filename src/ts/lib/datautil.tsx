@@ -524,36 +524,32 @@ class DataUtil {
 		return [ prefix, relationKey, String(id || '') ].join('-');
 	};
 
-	viewSetRelations (blockId: string, view: I.View): I.View {
+	viewGetRelations (blockId: string, view: I.View): I.ViewRelation[] {
 		let relations = Util.objectCopy(dbStore.getRelations(blockId));
-		for (let relation of relations) {
-			let vr = view.relations.find((it: I.ViewRelation) => { return it.key == relation.key; });
-			if (!vr) {
-				continue;
-			};
-			let idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relation.key; });
+		let order: any = {};
 
-			view.relations[idx] = Object.assign(vr, {
-				name: relation.name,
-				format: relation.format,
-			});
+		for (let i = 0; i < view.relations.length; ++i) {
+			order[view.relations[i].key] = i;
 		};
 
-		view.relations = view.relations.map((it: I.ViewRelation) => {
-			const relation = relations.find((relation: I.Relation) => { return relation.key == it.key; }) || {};
+		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
+		relations.sort((c1: any, c2: any) => {
+			let o1 = order[c1.key];
+			let o2 = order[c2.key];
+			if (o1 > o2) return 1;
+			if (o1 < o2) return -1;
+			return 0;
+		});
+
+		return relations.map((relation: any) => {
+			const vr = view.relations.find((it: I.Relation) => { return it.key == relation.key; }) || {};
 			return new M.ViewRelation({
 				...relation,
-				isVisible: it.isVisible,
-				options: it.options || {},
-				width: Number(it.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
+				isVisible: vr.isVisible,
+				options: vr.options || {},
+				width: Number(vr.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
 			});
 		});
-
-		view.relations = view.relations.filter((it: any) => {
-			return it.key && !it.isHidden;
-		});
-
-		return view;
 	};
 
 };

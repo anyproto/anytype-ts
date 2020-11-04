@@ -123,7 +123,7 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	onViewAdd (e: any) {
-		const { rootId, block, getData } = this.props;
+		const { rootId, block, getData, getView } = this.props;
 		const { content } = block;
 		const { views } = content;
 
@@ -146,7 +146,8 @@ class Controls extends React.Component<Props, State> {
 					rootId: rootId,
 					blockId: block.id,
 					view: view,
-					getData: getData
+					getData: getData,
+					getView: getView,
 				},
 			});
 		});

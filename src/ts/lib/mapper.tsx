@@ -215,7 +215,12 @@ const Mapper = {
 
             switch (type) {
                 case OptionsCase.DATEOPTIONS:
-                    ret.options = obj.getDateoptions() || {};
+                    let options = obj.getDateoptions() || {};
+					ret.options = {
+						includeTime: options.getIncludetime(),
+						timeFormat: options.getTimeformat(),
+						dateFormat: options.getDateformat(),
+					};
                     break;
             };
 
