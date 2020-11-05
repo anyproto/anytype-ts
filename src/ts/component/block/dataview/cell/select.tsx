@@ -99,6 +99,8 @@ class CellSelect extends React.Component<Props, State> {
 		} else {
 			cell.removeClass('isEditing');
 		};
+
+		this.placeHolderCheck();
 	};
 
 	setEditing (v: boolean) {
@@ -145,10 +147,14 @@ class CellSelect extends React.Component<Props, State> {
 		if (!this._isMounted) {
 			return;
 		};
-		
+
+		const { relation, block, index } = this.props;
+		const data = dbStore.getData(block.id);
+		const value = data[index][relation.key] || [];
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#filter').text();
-		value.length ? this.placeHolderHide() : this.placeHolderShow();			
+		const text = node.find('#filter').text();
+
+		text.length || value.length ? this.placeHolderHide() : this.placeHolderShow();			
 	};
 
 	placeHolderHide () {
