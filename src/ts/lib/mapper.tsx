@@ -200,8 +200,12 @@ const Mapper = {
 				isReadOnly: obj.getReadonly(),
 				isMultiple: obj.getMulti(),
 				objectType: obj.getObjecttype(),
-				selectDict: obj.getSelectdictList(),
+				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
 			};
+		},
+
+		SelectOption: (obj: any) => {
+			return obj;
 		},
 
 		ViewRelation: (obj: any) => {
@@ -488,9 +492,13 @@ const Mapper = {
 			item.setReadonly(obj.isReadOnly);
 			item.setMulti(obj.isMultiple);
 			item.setObjecttype(obj.objectType);
-			item.setSelectdictList(obj.selectDict);
+			item.setSelectdictList(obj.selectDict.map(Mapper.To.SelectOption));
 
 			return item;
+		},
+
+		SelectOption: (obj: any) => {
+			return obj;
 		},
 
 	}

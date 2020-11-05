@@ -947,6 +947,15 @@ class BlockText extends React.Component<Props, {}> {
 		const value = this.getValue();
 		value.length ? this.placeHolderHide() : this.placeHolderShow();			
 	};
+
+	placeHolderSet (v: string) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder').text(v);
+	};
 	
 	placeHolderHide () {
 		if (!this._isMounted) {
@@ -955,15 +964,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeHolder').hide();
-	};
-	
-	placeHolderSet (v: string) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeHolder').text(v);
 	};
 	
 	placeHolderShow () {

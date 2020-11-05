@@ -28,6 +28,12 @@ class MenuOptionList extends React.Component<Props> {
 		const { data } = param;
 		const value = data.value || [];
 		const relation = data.relation.get();
+		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+
+		let options = relation.selectDict || [];
+		if (filter) {
+			options = options.filter((it: I.SelectOption) => { return it.text.match(filter); });
+		};
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -50,7 +56,7 @@ class MenuOptionList extends React.Component<Props> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{(relation.selectDict || []).map((item: any, i: number) => (
+					{options.map((item: any, i: number) => (
 						<Item key={i} text={item.text} color={item.color} id={i} index={i} />
 					))}
 				</div>

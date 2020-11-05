@@ -138,6 +138,10 @@ class Cell extends React.Component<Props, {}> {
 					passThrough: true,
 				});
 
+				param.data = Object.assign(param.data, {
+					filter: '',
+				});
+
 				menuId = 'dataviewOptionList';
 				break;
 					

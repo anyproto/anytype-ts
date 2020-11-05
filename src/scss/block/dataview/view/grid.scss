@@ -77,13 +77,19 @@
 			td.cell.c-select { cursor: text; padding-bottom: 8px; }
 			td.cell.c-select {
 				.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
-				#edit { 
-					cursor: text; -webkit-user-modify: read-write-plaintext-only; margin-right: 0px; height: 18px; width: 18px; padding: 0px; 
-					line-height: 16px;
-				}
 				.DraggableTags { display: inline; vertical-align: top; line-height: 0px; }
 				.DraggableTags::after { display: none; }
-				.DraggableTags-tag { float: left; }
+
+				.filter { 
+					cursor: text; margin-right: 0px; height: 18px; padding: 0px; width: 100%; display: none;
+				}
+				.filter {
+					#filter { -webkit-user-modify: read-write-plaintext-only; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; }
+					#placeHolder { color: $colorDarkGrey; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; }
+				}
+			}
+			td.cell.isEditing.c-select {
+				.filter { display: block; }
 			}
 
 			.icon.checkbox { vertical-align: top; }

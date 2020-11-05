@@ -49,9 +49,26 @@ class Relation implements I.Relation {
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.isMultiple = Boolean(props.isMultiple);
-		self.selectDict = props.selectDict || [];
+		self.selectDict = (props.selectDict || []).map((it: any) => {
+			return new SelectOption(it);
+		});
 	};
 
+};
+
+class SelectOption implements I.SelectOption {
+	
+	id: string = '';
+	text: string = '';
+	color: string = '';
+
+	constructor (props: I.SelectOption) {
+		let self = this;
+
+		self.id = String(props.id || '');
+		self.text = String(props.text || '');
+		self.color = String(props.color || '');
+	};
 };
 
 class ViewRelation extends Relation implements I.ViewRelation {
@@ -109,6 +126,7 @@ class Sort implements I.Sort {
 export {
 	View,
 	Relation,
+	SelectOption,
 	ViewRelation,
 	Filter,
 	Sort,

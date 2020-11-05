@@ -43,3 +43,9 @@ export interface Relation {
 	objectType: string;
 	selectDict: any[];
 };
+
+export interface SelectOption {
+	id: string;
+	text: string;
+	color: string;
+};
