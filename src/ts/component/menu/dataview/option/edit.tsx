@@ -68,16 +68,18 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	onRemove (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { option, blockId } = data;
+		const { option, rootId, blockId } = data;
 		const relation = data.relation.get();
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
 
 		relation.selectDict = relation.selectDict.filter((it: any) => { return it.text != option.text; });
-		dbStore.relationUpdate(blockId, relation);
+		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
 
-		menu.param.data.relation = observable.box(relation);
-		commonStore.menuUpdate('dataviewOptionList', menu.param);
+		if (menu) {
+			menu.param.data.relation = observable.box(relation);
+			commonStore.menuUpdate('dataviewOptionList', menu.param);
+		};
 		
 		this.props.close();
 	};
@@ -85,7 +87,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option, blockId } = data;
+		const { option, rootId, blockId } = data;
 		const relation = data.relation.get();
 		const idx = relation.selectDict.findIndex((it: any) => { return it.text == option.text; });
 		const { menus } = commonStore;
@@ -94,11 +96,12 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		relation.selectDict[idx].text = this.ref.getValue();
 		relation.selectDict[idx].color = this.color;
 		relation.selectDict = Util.arrayUniqueObjects(relation.selectDict, 'text');
+		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
 
-		menu.param.data.relation = observable.box(relation);
-		commonStore.menuUpdate('dataviewOptionList', menu.param);
-
-		dbStore.relationUpdate(blockId, relation);
+		if (menu) {
+			menu.param.data.relation = observable.box(relation);
+			commonStore.menuUpdate('dataviewOptionList', menu.param);
+		};
 	};
 	
 };

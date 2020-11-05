@@ -261,11 +261,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 		let newRelation: any = { name: name, format: this.format, isMultiple: this.isMultiple };
 
-		if (relation) {
-			this.update(newRelation);
-		} else {
-			this.add(newRelation);
-		};
+		relation ? this.update(newRelation) : this.add(newRelation);
 	};
 
 	add (newRelation: any) {
@@ -273,45 +269,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 
-		let view = getView();
-		newRelation = new M.Relation(newRelation);
+		const view = getView();
 
-		C.BlockDataviewRelationAdd(rootId, blockId, newRelation, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			newRelation.key = message.relationKey;
-			dbStore.relationAdd(blockId, newRelation);
-
-			view.relations.push(newRelation);
-			view.relations = DataUtil.viewGetRelations(blockId, view);
-
-			C.BlockSetDataviewView(rootId, blockId, view.id, view);
-		});
+		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view);
 	};
 
 	update (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
-
-		let view = getView();
-		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relation.key; });
+		const { rootId, blockId, getView, relationKey } = data;
+		const view = getView();
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 		
-		relation = Object.assign(relation, newRelation);
-		/*
-		C.BlockDataviewRelationUpdate(rootId, blockId, relation, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			dbStore.relationUpdate(blockId, relation);
-			view.relations = DataUtil.viewGetRelations(blockId, view);
-
-			C.BlockSetDataviewView(blockId, blockId, view.id, view);
-		});
-		*/
+		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view);
 	};
 
 };

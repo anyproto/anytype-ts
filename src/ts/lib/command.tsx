@@ -675,6 +675,17 @@ const BlockDataviewRelationAdd = (contextId: string, blockId: string, relation: 
 	dispatcher.request('blockDataviewRelationAdd', request, callBack);
 };
 
+const BlockDataviewRelationUpdate = (contextId: string, blockId: string, relationKey: string, relation: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RelationUpdate.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRelationkey(relationKey);
+	request.setRelation(Mapper.To.Relation(relation));
+
+	dispatcher.request('blockDataviewRelationUpdate', request, callBack);
+};
+
 const BlockDataviewRelationDelete = (contextId: string, blockId: string, key: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RelationDelete.Request();
 	
@@ -820,6 +831,7 @@ export {
 
 	BlockDeleteDataviewView,
 	BlockDataviewRelationAdd,
+	BlockDataviewRelationUpdate,
 	BlockDataviewRelationDelete,
 
 	BlockCreateDataviewRecord,

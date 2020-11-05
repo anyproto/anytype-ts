@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Tag, Label } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, Util, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
@@ -127,18 +127,19 @@ class MenuOptionList extends React.Component<Props> {
 		const { oldIndex, newIndex } = result;
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId } = data;
+		const { rootId, blockId } = data;
 		const relation = data.relation.get();
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == this.props.id; });
 
 		relation.selectDict = arrayMove(relation.selectDict, oldIndex, newIndex);
 		data.relation.set(relation);
+		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
 
-		menu.param.data.relation = observable.box(relation);
-		commonStore.menuUpdate(this.props.id, menu.param);
-
-		dbStore.relationUpdate(blockId, relation);
+		if (menu) {
+			menu.param.data.relation = observable.box(relation);
+			commonStore.menuUpdate(this.props.id, menu.param);
+		};
 	};
 	
 };

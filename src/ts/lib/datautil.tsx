@@ -552,6 +552,36 @@ class DataUtil {
 		});
 	};
 
+	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View) {
+		relation = new M.Relation(relation);
+
+		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (view) {
+				relation.key = message.relationKey;
+				view.relations.push(relation);
+				view.relations = this.viewGetRelations(blockId, view);
+				C.BlockSetDataviewView(rootId, blockId, view.id, view);
+			};
+		});
+	};
+
+	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View) {
+		C.BlockDataviewRelationUpdate(rootId, blockId, relation.key, new M.Relation(relation), (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (view) {
+				view.relations = this.viewGetRelations(blockId, view);
+				C.BlockSetDataviewView(rootId, blockId, view.id, view);
+			};
+		});
+	};
+
 };
 
 export default new DataUtil();

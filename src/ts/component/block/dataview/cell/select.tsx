@@ -237,7 +237,7 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	setValue (value: string[], text: string[]) {
-		const { block, relation, onChange } = this.props;
+		const { rootId, block, relation, onChange } = this.props;
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 		const colors = DataUtil.menuGetBgColors();
@@ -258,7 +258,7 @@ class CellSelect extends React.Component<Props, State> {
 		options = Util.arrayUniqueObjects(options, 'text');
 
 		relation.selectDict = options;
-		dbStore.relationUpdate(block.id, relation);
+		DataUtil.dataviewRelationUpdate(rootId, block.id, relation);
 
 		if (menu) {
 			menu.param.data.value = text;

@@ -88,6 +88,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETDATAVIEWRECORDS)	 t = 'blockSetDataviewRecords';
 		if (v == V.BLOCKSETDATAVIEWVIEW)	 t = 'blockSetDataviewView';
 		if (v == V.BLOCKDELETEDATAVIEWVIEW)	 t = 'blockDeleteDataviewView';
+		if (v == V.BLOCKSETDATAVIEWRELATION) t = 'blockSetDataviewRelation';
 		if (v == V.BLOCKSHOW)				 t = 'blockShow';
 		if (v == V.PROCESSNEW)				 t = 'processNew';
 		if (v == V.PROCESSUPDATE)			 t = 'processUpdate';
@@ -424,6 +425,16 @@ class Dispatcher {
 						viewId: data.getViewid(),
 						total: data.getTotal(),
 					});
+					break;
+
+				case 'blockSetDataviewRelation':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					dbStore.relationUpdate(id, Mapper.From.Relation(data.getRelation()));
 					break;
 
 				case 'processNew':
