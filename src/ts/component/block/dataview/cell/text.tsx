@@ -13,6 +13,7 @@ interface State {
 const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
+const MENU_ID = 'dataviewCalendar';
 
 @observer
 class CellText extends React.Component<Props, State> {
@@ -73,7 +74,12 @@ class CellText extends React.Component<Props, State> {
 				value = String(value || '').split('\n')[0];
 			};
 			if (relation.format == I.RelationType.Date) {
-				value = value ? Util.date('M d Y', value) : '';
+				let format = [ DataUtil.dateFormat(relation.options.dateFormat) ];
+				if (relation.options.includeTime) {
+					format.push(DataUtil.timeFormat(relation.options.timeFormat));
+				};
+
+				value = value ? Util.date(format.join(' '), value) : '';
 			};
 			Name = (item: any) => (
 				<div className="name">{item.name}</div>
@@ -175,16 +181,16 @@ class CellText extends React.Component<Props, State> {
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
 		const { menus } = commonStore;
-		const menu = menus.find((item: I.Popup) => { return item.id == 'dataviewCalendar'; });
+		const menu = menus.find((item: I.Popup) => { return item.id == MENU_ID; });
 
 		value = this.parseDate(String(value || '').replace(/_/g, ''));
 		menu.param.data.value = value;
 
-		commonStore.menuUpdate('dataviewCalendar', menu.param);
+		commonStore.menuUpdate(MENU_ID, menu.param);
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
-			commonStore.menuClose('dataviewCalendar');
+			commonStore.menuClose(MENU_ID);
 
 			if (onChange) {
 				onChange(value);

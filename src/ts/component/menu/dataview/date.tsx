@@ -82,21 +82,21 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const view = getView();
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 		
-		const dateOptions = this.getOptions('formatDate');
-		const formatDate = dateOptions.find((it: any) => { return it.id == relation.options.formatDate; }) || dateOptions[0];
+		const dateOptions = this.getOptions('dateFormat');
+		const dateFormat = dateOptions.find((it: any) => { return it.id == relation.options.dateFormat; }) || dateOptions[0];
 
-		const timeOptions = this.getOptions('formatTime');
-		const formatTime = timeOptions.find((it: any) => { return it.id == relation.options.formatTime; }) || timeOptions[0];
+		const timeOptions = this.getOptions('timeFormat');
+		const timeFormat = timeOptions.find((it: any) => { return it.id == relation.options.timeFormat; }) || timeOptions[0];
 
 		let sections = [
 			{ 
 				id: 'date', name: 'Date format', children: [
-					{ id: 'formatDate', name: formatDate.name, arrow: true }
+					{ id: 'dateFormat', name: dateFormat.name, arrow: true }
 				] 
 			},
 			{ 
 				id: 'time', name: 'Time format', children: [
-					{ id: 'formatTime', name: formatTime.name, arrow: true }
+					{ id: 'timeFormat', name: timeFormat.name, arrow: true }
 				] 
 			},
 		];
@@ -119,7 +119,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 	getOptions (key: string) {
 		let options = [];
 		switch (key) {
-			case 'formatDate':
+			case 'dateFormat':
 				options = [
 					{ id: I.DateFormat.MonthAbbrBeforeDay, name: Util.date('M d Y', Util.time()) },
 					{ id: I.DateFormat.MonthAbbrAfterDay, name: Util.date('d M Y', Util.time()) },
@@ -129,7 +129,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 				];
 				break;
 
-			case 'formatTime':
+			case 'timeFormat':
 				options = [
 					{ id: I.TimeFormat.H12, name: '12 hour' },
 					{ id: I.TimeFormat.H24, name: '24 hour' },
@@ -215,6 +215,8 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 				value: value.name,
 				options: options,
 				onSelect: (e: any, el: any) => {
+					console.log(item.key, el);
+
 					view.relations[idx].options[item.key] = el.id;
 					C.BlockSetDataviewView(rootId, blockId, view.id, view);
 

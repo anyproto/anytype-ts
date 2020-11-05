@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, M, DataUtil } from 'ts/lib';
 import { Icon, Input, Switch } from 'ts/component';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -207,13 +207,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onCopy (e: any) {
-		let { param, close } = this.props;
-		let { data } = param;
-		let { relationKey, getView } = data;
-		let view = getView();
-
-		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
-		let newRelation: any = { name: relation.name, format: relation.format };
+		const { param, close } = this.props;
+		const { data } = param;
+		const { relationKey, getView } = data;
+		const view = getView();
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		const newRelation: any = { name: relation.name, format: relation.format };
 
 		this.add(newRelation);
 		close();
@@ -225,17 +224,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		let { rootId, blockId, relationKey, getView } = data;
 		let view = getView();
 
-		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			dbStore.relationRemove(blockId, relationKey);
-			view.relations = DataUtil.viewGetRelations(blockId, view);
-
-			C.BlockSetDataviewView(rootId, blockId, view.id, view);
-		});
-
+		DataUtil.dataviewRelationDelete (rootId, blockId, relationKey, view);
 		close();
 	};
 
@@ -257,9 +246,9 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		let view = getView();
-		let relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
-		let newRelation: any = { name: name, format: this.format, isMultiple: this.isMultiple };
+		const view = getView();
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		const newRelation: any = { name: name, format: this.format, isMultiple: this.isMultiple };
 
 		relation ? this.update(newRelation) : this.add(newRelation);
 	};
@@ -268,7 +257,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
-
 		const view = getView();
 
 		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view);

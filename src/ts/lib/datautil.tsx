@@ -90,7 +90,7 @@ class DataUtil {
 		return c;
 	};
 
-	relationClass (v: I.RelationType) {
+	relationClass (v: I.RelationType): string {
 		let c = '';
 		switch (v) {
 			default:
@@ -108,6 +108,29 @@ class DataUtil {
 			case I.RelationType.Object:		 c = 'object'; break;
 		};
 		return c;
+	};
+
+	dateFormat (v: I.DateFormat): string {
+		let f = '';
+		switch (v) {
+			default:
+			case I.DateFormat.MonthAbbrBeforeDay:	 f = 'M d Y'; break;
+			case I.DateFormat.MonthAbbrAfterDay:	 f = 'd M Y'; break;
+			case I.DateFormat.Short:				 f = 'd/m/Y'; break;
+			case I.DateFormat.ShortUS:				 f = 'm/d/Y'; break;
+			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
+		};
+		return f;
+	};
+
+	timeFormat (v: I.TimeFormat): string {
+		let f = '';
+		switch (v) {
+			default:
+			case I.TimeFormat.H12:	 f = 'g:i A'; break;
+			case I.TimeFormat.H24:	 f = 'H:i'; break;
+		};
+		return f;
 	};
 
 	coverColors () {
@@ -557,29 +580,36 @@ class DataUtil {
 		relation = new M.Relation(relation);
 
 		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
-			if (message.error.code) {
+			if (message.error.code || !view) {
 				return;
 			};
 
-			if (view) {
-				relation.key = message.relationKey;
-				view.relations.push(relation);
-				view.relations = this.viewGetRelations(blockId, view);
-				C.BlockSetDataviewView(rootId, blockId, view.id, view);
-			};
+			relation.key = message.relationKey;
+			view.relations.push(relation);
+			view.relations = this.viewGetRelations(blockId, view);
+			C.BlockSetDataviewView(rootId, blockId, view.id, view);
 		});
 	};
 
 	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View) {
 		C.BlockDataviewRelationUpdate(rootId, blockId, relation.key, new M.Relation(relation), (message: any) => {
-			if (message.error.code) {
+			if (message.error.code || !view) {
 				return;
 			};
 
-			if (view) {
-				view.relations = this.viewGetRelations(blockId, view);
-				C.BlockSetDataviewView(rootId, blockId, view.id, view);
+			view.relations = this.viewGetRelations(blockId, view);
+			C.BlockSetDataviewView(rootId, blockId, view.id, view);
+		});
+	};
+
+	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View) {
+		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
+			if (message.error.code || !view) {
+				return;
 			};
+
+			view.relations = this.viewGetRelations(blockId, view);
+			C.BlockSetDataviewView(rootId, blockId, view.id, view);
 		});
 	};
 
