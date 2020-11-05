@@ -59,27 +59,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 					{item.children.map((action: any, i: number) => {
 						let icn: string[] = [ 'inner' ];
 						
-						if (action.id == 'color') {
-							icn.push('textColor textColor-' + (color || 'black'));
-						};
-						
-						if (action.id == 'background') {
-							icn.push('bgColor bgColor-' + (bgColor || 'default'));
-						};
-						
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + action.value);
 						};
 						if (action.isBgColor) {
 							icn.push('bgColor bgColor-' + action.value);
 						};
-						
 						if (action.isTextColor || action.isBgColor) {
 							action.icon = 'color';
 							action.inner = <div className={icn.join(' ')} />;
 						};
 						
-						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -178,7 +169,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return [];
 		};
 		
-		const { align } = block;
+		const { align, content, bgColor } = block;
+		const { color } = content;
 
 		let sections: any[] = [
 			{ 
@@ -192,8 +184,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			{ 
 				children: [
 					{ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true },
-					{ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true },
-					{ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true },
+					{ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'black') },
+					{ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
 			}

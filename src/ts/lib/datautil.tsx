@@ -474,7 +474,8 @@ class DataUtil {
 	};
 	
 	menuSectionsMap (sections: any[]) {
-		sections = sections.map((s: any) => {
+		sections = sections.map((s: any, i: number) => {
+			s.id = s.id || i;
 			s.children = s.children.map((it: any) => {
 				it.key = it.id;
 				it.id = s.id + '-' + it.id;
