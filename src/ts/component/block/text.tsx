@@ -159,8 +159,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		const { block } = this.props;
-		const { content } = block
-		
+		const { content } = block;
+
 		this.marks = Util.objectCopy(content.marks || []);
 		this._isMounted = true;
 		this.setValue(content.text);
@@ -856,9 +856,16 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block } = this.props;
+		const { selection } = dataset || {};
 		const { id, content } = block;
+		const { focused } = focus;
 		const { from, to } = focus.range;
 		const { style } = content;
+
+		if ((focused != block.id) && keyboard.isShiftPressed) {
+			e.preventDefault();
+			return;
+		};
 
 		focus.set(id, this.getRange());
 		keyboard.setFocus(true);

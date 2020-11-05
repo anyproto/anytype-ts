@@ -204,7 +204,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return
 		};
 		
-		const { rootId } = this.props;
+		let { rootId } = this.props;
+		let first = this.focused;
 		
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
@@ -212,16 +213,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 			} else {
 				this.checkNodes(e);
 				
-				let first = this.focused;
 				let ids = this.get(true);
+				let target = $(e.target.closest('.selectable'));
+				let targetId = target.data('id');
 				
 				if (ids.length > 0) {
 					first = ids[0];
 				};
-				
-				let target = $(e.target.closest('.selectable'));
-				let targetId = target.data('id');
-				
+
 				if (target.length && e.shiftKey && (targetId != first)) {
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 					const list = blockStore.unwrapTree(tree);
@@ -229,13 +228,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 					const idxEnd = list.findIndex((it: I.Block) => { return it.id == targetId; });
 					const start = idxStart < idxEnd ? idxStart : idxEnd;
 					const end = idxStart < idxEnd ? idxEnd : idxStart;
-					
+
 					let slice = list.slice(start, end + 1).
 						map((it: I.Block) => { return new M.Block(it); }).
 						filter((it: I.Block) => { return it.isSelectable(); }).
 						map((it: I.Block) => { return it.id; });
-					
-					this.set(slice);
+
+					this.set(ids.concat(slice));
 				};
 			};
 		};
