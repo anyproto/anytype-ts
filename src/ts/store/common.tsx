@@ -230,10 +230,15 @@ class CommonStore {
 		};
 		
 		const el = $('#' + Util.toCamelCase('menu-' + id));
+		const t = item.param.noAnimation ? 0 : Constant.delay.menu;
+
 		if (el.length) {
 			el.css({ transform: '' }).removeClass('show');
+			if (item.param.noAnimation) {
+				el.addClass('noAnimation');
+			};
 		};
-		
+
 		window.setTimeout(() => {
 			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
 			
@@ -244,7 +249,7 @@ class CommonStore {
 			if (callBack) {
 				callBack();
 			};
-		}, Constant.delay.menu);
+		}, t);
 	};
 	
 	@action

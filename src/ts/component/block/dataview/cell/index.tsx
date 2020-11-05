@@ -103,6 +103,7 @@ class Cell extends React.Component<Props, {}> {
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
+			noAnimation: true,
 			onOpen: setOn,
 			onClose: () => {
 				cell.removeClass('isEditing');
@@ -212,12 +213,11 @@ class Cell extends React.Component<Props, {}> {
 
 		if (menuId) {
 			commonStore.menuCloseAll();
-			window.setTimeout(() => { 
-				commonStore.menuOpen(menuId, param); 
-				element.unbind('click').on('click', () => {
-					commonStore.menuCloseAll();
-				});
-			}, Constant.delay.menu);
+			commonStore.menuOpen(menuId, param); 
+			
+			element.unbind('click').on('click', () => {
+				commonStore.menuCloseAll();
+			});
 		} else {
 			setOn();
 		};
