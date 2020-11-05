@@ -7,6 +7,9 @@ interface Props extends I.Menu {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const findAndReplaceDOMText = require('findandreplacedomtext');
+const SKIP = [ 
+	'span', 'div', 'name', 'mention', 'color', 'bgcolor', 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'emoji',
+];
 
 class MenuSearch extends React.Component<Props, {}> {
 	
@@ -102,7 +105,7 @@ class MenuSearch extends React.Component<Props, {}> {
 			portionMode: 'first',
 			filterElements: (el: any) => {
 				const tag = el.nodeName.toLowerCase();
-				if ([ 'span', 'div', 'name', 'mention', 'color', 'bgcolor' ].indexOf(tag) < 0) {
+				if (SKIP.indexOf(tag) < 0) {
 					return false;
 				};
 
