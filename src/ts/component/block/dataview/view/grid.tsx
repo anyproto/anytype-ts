@@ -286,7 +286,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			if (message.error.code) {
 				return;
 			};
-			dbStore.addRecord(block.id, message.record);
+			dbStore.recordAdd(block.id, message.record);
 		});
 	};
 

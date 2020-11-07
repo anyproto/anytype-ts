@@ -234,7 +234,7 @@ class Cell extends React.Component<Props, {}> {
 		let obj = { id: data.id };
 		obj[relation.key] = value;
 
-		dbStore.updateRecord(block.id, obj);
+		dbStore.recordUpdate(block.id, obj);
 		C.BlockUpdateDataviewRecord(rootId, block.id, data.id, data);
 	};
 	

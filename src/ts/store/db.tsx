@@ -123,13 +123,13 @@ class DbStore {
 	};
 
 	@action
-	addRecord (blockId: string, obj: any) {
+	recordAdd (blockId: string, obj: any) {
 		const data = this.getData(blockId);
 		data.push(observable(obj));
 	};
 
 	@action
-	updateRecord (blockId: string, obj: any) {
+	recordUpdate (blockId: string, obj: any) {
 		const data = this.getData(blockId);
 		const record = data.find((it: any) => { return it.id == obj.id; });
 		if (!record) {
@@ -137,6 +137,12 @@ class DbStore {
 		};
 
 		set(record, obj);
+	};
+
+	@action
+	recordDelete (blockId: string, id: string) {
+		let data = this.getData(blockId);
+		data = data.filter((it: any) => { return it.id == id; });
 	};
 
 	getObjectType (url: string): I.ObjectType {

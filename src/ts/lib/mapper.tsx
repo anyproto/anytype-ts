@@ -409,8 +409,6 @@ const Mapper = {
 
 			let options = new Model.Block.Content.Dataview.Relation.EmptyOptions();
 			
-			console.log(obj);
-
 			if (obj.format == I.RelationType.Date) {
                 options = new Model.Block.Content.Dataview.Relation.DateOptions();
 
