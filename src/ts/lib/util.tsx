@@ -289,7 +289,7 @@ class Util {
 				return t.substr(0,3);
 			},
 			j: () => {
-				return jsdate.getDate();
+				return jsdate.getUTCDate();
 			},
 			// Month
 			F: () => {
@@ -302,39 +302,39 @@ class Util {
 				return f.F().substr(0, 3);
 			},
 			n: () => {
-				return jsdate.getMonth() + 1;
+				return jsdate.getUTCMonth() + 1;
 			},
 			// Year
 			Y: () => {
-				return jsdate.getFullYear();
+				return jsdate.getUTCFullYear();
 			},
 			y: () => {
-				return (jsdate.getFullYear() + '').slice(2);
+				return (jsdate.getUTCFullYear() + '').slice(2);
 			},
 			// Time
 			a: () => {
-				return jsdate.getHours() > 11 ? 'pm' : 'am';
+				return jsdate.getUTCHours() > 11 ? 'pm' : 'am';
 			},
 			A: () => {
-				return jsdate.getHours() > 11 ? 'PM' : 'AM';
+				return jsdate.getUTCHours() > 11 ? 'PM' : 'AM';
 			},
 			g: () => {
-				return jsdate.getHours() % 12 || 12;
+				return jsdate.getUTCHours() % 12 || 12;
 			},
 			h: () => {
 				return pad(f.g(), 2);
 			},
 			H: () => {
-				return pad(jsdate.getHours(), 2);
+				return pad(jsdate.getUTCHours(), 2);
 			},
 			i: () => {
-				return pad(jsdate.getMinutes(), 2);
+				return pad(jsdate.getUTCMinutes(), 2);
 			},
 			s: () => {
-				return pad(jsdate.getSeconds(), 2);
+				return pad(jsdate.getUTCSeconds(), 2);
 			},
 			w: () => {
-				return jsdate.getDay();
+				return jsdate.getUTCDay();
 			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {

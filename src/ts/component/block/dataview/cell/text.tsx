@@ -51,8 +51,20 @@ class CellText extends React.Component<Props, State> {
 				);
 			} else 
 			if (relation.format == I.RelationType.Date) {
+				let mask = [ '99.99.9999' ];
+				let placeHolder = [ 'dd.mm.yyyy' ];
+				if (relation.options.includeTime) {
+					mask.push('99:99');
+					placeHolder.push('hh:mm');
+				};
 				EditorComponent = (item: any) => (
-					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} mask="99.99.9999" maskOptions={{ alias: 'datetime', inputFormat: 'dd.mm.yyyy' }} placeHolder="dd.mm.yyyy" onKeyUp={this.onKeyUpDate} />
+					<Input 
+						ref={(ref: any) => { this.ref = ref; }} 
+						id="input" {...item} 
+						mask={mask.join(' ')} 
+						placeHolder={placeHolder.join(' ')} 
+						onKeyUp={this.onKeyUpDate} 
+					/>
 				);
 			} else {
 				EditorComponent = (item: any) => (
@@ -221,7 +233,7 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	parseDate (value: any) {
-		let [ date, time ] = String(value || '').split(' ');
+		let [ date, time, half ] = String(value || '').split(' ');
 		let [ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
 		let [ h, i, s ] = String(time || '').split(':').map((it: any) => { return Number(it) || 0; });
 

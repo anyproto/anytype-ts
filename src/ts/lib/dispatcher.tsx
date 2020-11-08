@@ -482,6 +482,16 @@ class Dispatcher {
 					dbStore.relationUpdate(id, Mapper.From.Relation(data.getRelation()));
 					break;
 
+				case 'blockDataviewRelationDelete':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					dbStore.relationRemove(id, data.getRelationkey());
+					break;
+
 				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':
