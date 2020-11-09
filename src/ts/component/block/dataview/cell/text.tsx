@@ -39,6 +39,7 @@ class CellText extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { index, relation, onOpen, readOnly, viewType } = this.props;
 		const data = this.props.data[index];
+		const options = relation.options || {};
 
 		let Name = null;
 		let EditorComponent = null;
@@ -53,7 +54,7 @@ class CellText extends React.Component<Props, State> {
 			if (relation.format == I.RelationType.Date) {
 				let mask = [ '99.99.9999' ];
 				let placeHolder = [ 'dd.mm.yyyy' ];
-				if (relation.options.includeTime) {
+				if (options.includeTime) {
 					mask.push('99:99');
 					placeHolder.push('hh:mm');
 				};
@@ -86,9 +87,9 @@ class CellText extends React.Component<Props, State> {
 				value = String(value || '').split('\n')[0];
 			};
 			if (relation.format == I.RelationType.Date) {
-				let format = [ DataUtil.dateFormat(relation.options.dateFormat) ];
-				if (relation.options.includeTime) {
-					format.push(DataUtil.timeFormat(relation.options.timeFormat));
+				let format = [ DataUtil.dateFormat(options.dateFormat) ];
+				if (options.includeTime) {
+					format.push(DataUtil.timeFormat(options.timeFormat));
 				};
 
 				value = value ? Util.date(format.join(' '), value) : '';
