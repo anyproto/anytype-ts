@@ -68,13 +68,9 @@ class PageAuthLogin extends React.Component<Props, State> {
 		
 		const { history } = this.props;
 		const { path } = authStore;
+		const phrase = this.phraseRef.getValue();
 		
 		this.phraseRef.setError(false);
-		
-		const phrase = this.phraseRef.getValue();
-
-		console.log(phrase);
-
 		
 		C.WalletRecover(path, phrase, (message: any) => {
 			if (message.error.code) {

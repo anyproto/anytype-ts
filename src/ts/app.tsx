@@ -294,14 +294,23 @@ class App extends React.Component<Props, State> {
 	setIpcEvents () {
 		const accountId = Storage.get('accountId');
 		const html = $('html');
+		const phrase = Storage.get('phrase');
 
 		ipcRenderer.send('appLoaded', true);
-
 		ipcRenderer.send('keytarGet', 'phrase');
 
 		ipcRenderer.on('keytarGet', (e: any, key: string, value: string) => {
-			console.log('keytarGet', key, value, accountId);
-			if ((key == 'phrase') && value && accountId) {
+			if ((key == 'phrase') && accountId) {
+				if (!value) {
+					if (phrase) {
+						value = phrase;
+						ipcRenderer.send('keytarSet', 'phrase', phrase);
+						Storage.delete('phrase');
+					} else {
+						return;
+					};
+				};
+
 				authStore.phraseSet(value);
 				history.push('/auth/setup/init');
 			};
