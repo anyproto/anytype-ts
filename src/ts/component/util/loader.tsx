@@ -1,10 +1,20 @@
 import * as React from 'react';
 
-class Loader extends React.Component<{}, {}> {
-	
+interface Props {
+	className?: string;
+};
+
+class Loader extends React.Component<Props, {}> {
+
+	public static defaultProps = {
+		className: '',
+	};
+
 	render () {
+		const { className } = this.props;
+
 		return (
-			<div className="loaderWrapper">
+			<div className={[ 'loaderWrapper', className ].join(' ')}>
 				<div className="loader" />
 			</div>
 		);
