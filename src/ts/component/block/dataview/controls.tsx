@@ -28,7 +28,8 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { getData, block, view, readOnly } = this.props;
+		const { getData, block, getView, readOnly, onRowAdd } = this.props;
+		const view = getView();
 		const { content } = block;
 		const { views } = content;
 		const { viewId } = dbStore.getMeta(block.id);
@@ -85,7 +86,7 @@ class Controls extends React.Component<Props, State> {
 				<div className="buttons">
 					<div className="side left">
 						{!readOnly ? (
-							<div className="item">
+							<div className="item" onClick={onRowAdd}>
 								<Icon className="plus" />
 								<div className="name">New</div>
 							</div>

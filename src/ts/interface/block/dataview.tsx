@@ -66,11 +66,11 @@ export interface ViewRelation extends I.Relation {
 export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
-	view: I.View;
 	readOnly: boolean;
 	onOpen?(e: any, data: any): void;
 	getData(viewId: string, offset: number): void;
 	getView(): View;
+	onRowAdd?: (e: any) => void;
 };
 
 export interface View {

@@ -22,7 +22,8 @@ const getItemStyle = (snapshot: any, style: any) => {
 class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, view, readOnly, column, idx, index, data } = this.props;
+		const { rootId, block, readOnly, column, idx, index, data, getView } = this.props;
+		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
 		return (

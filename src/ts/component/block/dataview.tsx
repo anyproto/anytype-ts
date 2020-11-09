@@ -27,6 +27,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		this.onOpen = this.onOpen.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getView = this.getView.bind(this);
+		this.onRowAdd = this.onRowAdd.bind(this);
 	};
 
 	render () {
@@ -69,9 +70,23 @@ class BlockDataview extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<Controls {...this.props} view={view} readOnly={readOnly} getData={this.getData} getView={this.getView} />
+				<Controls 
+					{...this.props} 
+					readOnly={readOnly} 
+					getData={this.getData} 
+					getView={this.getView} 
+					onRowAdd={this.onRowAdd}
+				/>
 				<div className="content">
-					<ViewComponent ref={(ref: any) => { this.viewRef = ref; }} {...this.props} onOpen={this.onOpen} readOnly={readOnly} view={view} getData={this.getData} getView={this.getView} />
+					<ViewComponent 
+						ref={(ref: any) => { this.viewRef = ref; }} 
+						{...this.props} 
+						onOpen={this.onOpen} 
+						readOnly={readOnly} 
+						getData={this.getData} 
+						getView={this.getView} 
+						onRowAdd={this.onRowAdd}
+					/>
 				</div>
 			</div>
 		);
@@ -121,6 +136,17 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		const { viewId } = dbStore.getMeta(block.id);
 		return views.find((item: any) => { return item.id == (viewId || views[0].id); });
+	};
+
+	onRowAdd (e: any) {
+		const { rootId, block } = this.props;
+
+		C.BlockCreateDataviewRecord(rootId, block.id, {}, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+			dbStore.recordAdd(block.id, message.record);
+		});
 	};
 
 	onOpen (e: any, data: any) {

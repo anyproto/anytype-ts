@@ -585,6 +585,7 @@ class DataUtil {
 			};
 
 			relation.key = message.relationKey;
+			relation.isVisible = true;
 
 			view.relations.push(relation);
 			view.relations = this.viewGetRelations(blockId, view);

@@ -14,7 +14,8 @@ const Constant = require('json/constant.json');
 class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, view, readOnly, getData } = this.props;
+		const { rootId, block, readOnly, getData, getView } = this.props;
+		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);

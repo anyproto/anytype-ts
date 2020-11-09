@@ -167,10 +167,15 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	getItems () {
-		return [
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
+		return view ? [
 			{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
 			{ id: 'remove', icon: 'remove', name: 'Remove view' },
-		];
+		] : [];
 	};
 	
 	onOver (e: any, item: any) {

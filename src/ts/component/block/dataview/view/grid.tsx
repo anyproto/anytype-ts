@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager, Cell } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.ViewComponent {};
@@ -19,13 +19,13 @@ class ViewGrid extends React.Component<Props, {}> {
 		super (props);
 
 		this.onRowOver = this.onRowOver.bind(this);
-		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
+		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 	};
 
 	render () {
-		const { rootId, block, onOpen, getData, getView, readOnly } = this.props;
+		const { rootId, block, onOpen, getData, getView, readOnly, onRowAdd } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(block.id);
@@ -79,7 +79,7 @@ class ViewGrid extends React.Component<Props, {}> {
 					<CellHead key={'grid-head-' + relation.key} relation={relation} />
 				))}
 				<th className="head last">
-					{!readOnly ? <Icon className="plus" /> : ''}
+					{!readOnly ? <Icon id="cell-add" className="plus" onClick={this.onCellAdd} /> : ''}
 				</th>
 			</tr>
 		);
@@ -115,7 +115,7 @@ class ViewGrid extends React.Component<Props, {}> {
 							))}
 							{!readOnly ? (
 								<tr>
-									<td className="cell add" colSpan={view.relations.length + 1} onClick={this.onRowAdd}>
+									<td className="cell add" colSpan={view.relations.length + 1} onClick={onRowAdd}>
 										<Icon className="plus" />
 										<div className="name">New</div>
 									</td>
@@ -277,14 +277,23 @@ class ViewGrid extends React.Component<Props, {}> {
 		node.find('#row-' + id).addClass('active');
 	};
 
-	onRowAdd (e: any) {
-		const { rootId, block } = this.props;
+	onCellAdd (e: any) {
+		const { rootId, block, readOnly, getData, getView } = this.props;
 
-		C.BlockCreateDataviewRecord(rootId, block.id, {}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			dbStore.recordAdd(block.id, message.record);
+		commonStore.menuOpen('dataviewRelationEdit', { 
+			element: '#cell-add',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				readOnly: readOnly,
+				rootId: rootId,
+				blockId: block.id, 
+				getData: getData,
+				getView: getView,
+			},
 		});
 	};
 
