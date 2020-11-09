@@ -6,8 +6,6 @@ import { HeaderMainEdit as Header, FooterMainEdit as Footer, DragProvider, Selec
 
 interface Props extends RouteComponentProps<any> {};
 
-const $ = require('jquery');
-
 class PageMainEdit extends React.Component<Props, {}> {
 	
 	refHeader: any = null;
@@ -41,16 +39,10 @@ class PageMainEdit extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this.setId();
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.header').hide();
 	};
 	
 	componentDidUpdate () {
 		this.setId();
-
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.header').hide();
 	};
 	
 	setId () {
@@ -59,9 +51,6 @@ class PageMainEdit extends React.Component<Props, {}> {
 	};
 
 	onOpen () {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.header').show();
-
 		if (this.refHeader) {
 			this.refHeader.forceUpdate();
 		};

@@ -48,7 +48,7 @@ class ListIndex extends React.Component<Props, {}> {
 			if (_detailsEmpty_) {
 				return (
 					<div className="item" onMouseDown={(e: any) => { onSelect(e, item); }}>
-						<div className="smile c48 animatedBackground" />
+						<div className="smile c48" />
 						<div className="line animatedBackground" />
 					</div>
 				);
