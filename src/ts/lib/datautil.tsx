@@ -586,8 +586,6 @@ class DataUtil {
 
 			relation.key = message.relationKey;
 
-			dbStore.relationAdd(blockId, relation);
-
 			view.relations.push(relation);
 			view.relations = this.viewGetRelations(blockId, view);
 			C.BlockSetDataviewView(rootId, blockId, view.id, view);

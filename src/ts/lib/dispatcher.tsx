@@ -494,7 +494,10 @@ class Dispatcher {
 						break;
 					};
 
-					dbStore.relationUpdate(id, Mapper.From.Relation(data.getRelation()));
+					const relation = Mapper.From.Relation(data.getRelation());
+					const item = dbStore.getRelation(id, relation.key);
+
+					item ? dbStore.relationUpdate(id, relation) : dbStore.relationAdd(id, relation);
 					break;
 
 				case 'blockDataviewRelationDelete':

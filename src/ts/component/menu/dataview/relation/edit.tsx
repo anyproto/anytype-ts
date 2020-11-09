@@ -128,6 +128,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			this.isMultiple = relation.isMultiple;
 			this.forceUpdate();
 		};
+
+		this.ref.focus();
+	};
+
+	componentDidUpdate () {
+		this.ref.focus();
 	};
 
 	componentWillUnmount () {
