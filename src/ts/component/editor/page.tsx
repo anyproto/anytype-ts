@@ -159,7 +159,10 @@ class EditorPage extends React.Component<Props, State> {
 				this.onPaste(e); 
 			};
 		});
-		win.on('focus.editor' + namespace, (e: any) => { focus.apply(); });
+		win.on('focus.editor' + namespace, (e: any) => { 
+			focus.apply(); 
+			win.scrollTop(this.scrollTop);
+		});
 		
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
@@ -171,24 +174,24 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));		
 		const resizable = node.find('.resizable');
 		
 		this.open();
 		
-		window.setTimeout(() => {
-			if (this.uiHidden) {
-				this.uiHide();
-			};
-			
-			focus.apply();
+		if (this.uiHidden) {
+			this.uiHide();
+		};
+		
+		focus.apply();
+		win.scrollTop(this.scrollTop);
 
-			if (resizable.length) {
-				resizable.trigger('resizeInit');
-			};
-			
-			this.resize();
-		}, 15);
+		if (resizable.length) {
+			resizable.trigger('resizeInit');
+		};
+		
+		this.resize();
 	};
 	
 	componentWillUnmount () {
