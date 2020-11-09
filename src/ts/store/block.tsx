@@ -368,8 +368,10 @@ class BlockStore {
 	};
 
 	getDetails (rootId: string, id: string): any {
+		return { _detailsEmpty_: true };
+
 		const map = this.getDetailsMap(rootId);
-		const item = Util.objectCopy(map.get(id) || {});
+		const item = Util.objectCopy(map.get(id) || { _detailsEmpty_: true });
 
 		item.name = String(item.name || Constant.default.name || '');
 		return item;
