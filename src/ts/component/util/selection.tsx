@@ -158,11 +158,16 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.moved = false;
 		this.lastIds = [];
 		this.focused = focused;
+
 		keyboard.disablePreview(true);
 		
 		this.nodes.each((i: number, item: any) => {
 			this.cacheRect($(item));
 		});
+
+		if (e.shiftKey) {
+			this.set(this.get().concat([ focused ]));
+		};
 		
 		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
@@ -205,7 +210,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		let { rootId } = this.props;
-		let first = this.focused;
 		
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
@@ -216,6 +220,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				let ids = this.get(true);
 				let target = $(e.target.closest('.selectable'));
 				let targetId = target.data('id');
+				let first = this.focused;
 				
 				if (ids.length > 0) {
 					first = ids[0];
