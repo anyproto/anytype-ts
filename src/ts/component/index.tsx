@@ -57,6 +57,8 @@ import IconUser from './util/iconUser';
 
 import LinkPreview from './util/linkPreview';
 
+import Cell from './block/dataview/cell';
+
 export {
 	Page,
 	EditorPage,
@@ -107,4 +109,5 @@ export {
 	Icon,
 	IconUser,
 	LinkPreview,
+	Cell,
 };

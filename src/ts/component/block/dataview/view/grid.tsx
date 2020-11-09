@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Pager } from 'ts/component';
+import { Icon, Pager, Cell } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-
-import Cell from '../cell';
 
 interface Props extends I.ViewComponent {};
 

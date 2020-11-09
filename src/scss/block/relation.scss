@@ -3,13 +3,26 @@
 .blocks {
 	.block.blockRelation { line-height: 20px; }
 	.block.blockRelation {
-		.wrap { }
-		.icon.relation { 
-			width: 20px; height: 20px; margin-right: 4px; vertical-align: top; background-image: url('~img/icon/menu/action/block/relation0.svg')
-		}
+		.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
 		.input { 
 			@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
 			height: 20px; padding: 0px;
+		}
+
+		.sides { display: flex; }
+		.side {
+			.name { display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; }
+		}
+
+		.side.left { width: 200px; margin-right: 20px; }
+		.side.left {
+			.name { width: calc(100% - 24px); }
+		}
+
+		.side.right { width: calc(100% - 220px); }
+		
+		.cellContent.c-title {
+			.name { width: calc(100% - 24px); }
 		}
 	}
 

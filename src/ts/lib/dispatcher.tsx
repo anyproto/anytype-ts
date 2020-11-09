@@ -85,6 +85,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
 		if (v == V.BLOCKSETDETAILS)				 t = 'blockSetDetails';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
+		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
@@ -375,6 +376,20 @@ class Dispatcher {
 					};
 
 					block.align = data.getAlign();
+					blockStore.blockUpdate(rootId, block);
+					break;
+
+				case 'blockSetRelation':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasKey()) {
+						block.content.key = data.getKey().getValue();
+					};
+
 					blockStore.blockUpdate(rootId, block);
 					break;
 

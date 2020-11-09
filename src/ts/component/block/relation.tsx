@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Input } from 'ts/component';
+import { Icon, Input, Cell } from 'ts/component';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore, dbStore } from 'ts/store';
@@ -9,13 +9,15 @@ interface Props extends I.BlockComponent {};
 @observer
 class BlockRelation extends React.Component<Props, {}> {
 
-	ref: any = null;
+	refInput: any = null;
+	refCell: any = null;
 
 	constructor (props: any) {
 		super(props);
 
 		this.onMenu = this.onMenu.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onCellClick = this.onCellClick.bind(this);
 	};
 
 	render (): any {
@@ -23,20 +25,37 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { content } = block;
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
+		const relation = dbStore.getRelation(rootId, key);
 
 		return (
 			<div className="wrap">
-				{!key ? 
+				{!relation ? 
 				(
 					<React.Fragment>
-						<Icon className="relation" />
-						<Input id={'relation-type-' + block.id} ref={(ref: any) => { this.ref = ref; }} placeHolder="New relation" onClick={this.onMenu} onKeyUp={this.onKeyUp} />
+						<Icon className="relation default" />
+						<Input id={'relation-type-' + block.id} ref={(ref: any) => { this.refInput = ref; }} placeHolder="New relation" onClick={this.onMenu} onKeyUp={this.onKeyUp} />
 					</React.Fragment>
 				) : 
 				(
-					<React.Fragment>
-						
-					</React.Fragment>
+					<div className="sides">
+						<div className="side left">
+							<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
+							<div className="name">{relation.name}</div>
+						</div>
+						<div className="side right" onClick={this.onCellClick}>
+							<Cell 
+								id="0"
+								ref={(ref: any) => { this.refCell = ref; }}
+								rootId={rootId}
+								block={block}
+								relation={relation}
+								data={[ details ]}
+								index={0}
+								viewType={I.ViewType.Grid}
+								readOnly={readOnly}
+							/>
+						</div>
+					</div>
 				)}
 			</div>
 		);
@@ -72,7 +91,7 @@ class BlockRelation extends React.Component<Props, {}> {
 
 	getItems () {
 		const { rootId } = this.props;
-		const filter = new RegExp(Util.filterFix(this.ref.getValue()), 'gi');
+		const filter = new RegExp(Util.filterFix(this.refInput.getValue()), 'gi');
 		const relations = dbStore.getRelations(rootId);
 		
 		let options: any[] = [];
@@ -96,6 +115,12 @@ class BlockRelation extends React.Component<Props, {}> {
 		options.unshift({ id: 'add', icon: 'add', name: 'Add new' });
 
 		return options;
+	};
+
+	onCellClick (e: any) {
+		if (this.refCell) {
+			this.refCell.onClick(e);
+		};
 	};
 
 };

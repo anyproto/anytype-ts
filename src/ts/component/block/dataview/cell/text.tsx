@@ -144,13 +144,18 @@ class CellText extends React.Component<Props, State> {
 			if (relation.format == I.RelationType.Date) {
 				value = value ? Util.date('d.m.Y', Number(value)) : '';
 			};
+
+			let input = cell.find('#input');
 			let length = value.length;
 
 			this.ref.focus();
 			this.ref.setValue(value);
 
 			cell.addClass('isEditing');
-			cell.find('#input').get(0).setSelectionRange(length, length);
+
+			if (input.length) {
+				input.get(0).setSelectionRange(length, length);
+			};
 		} else {
 			cell.removeClass('isEditing');
 		};

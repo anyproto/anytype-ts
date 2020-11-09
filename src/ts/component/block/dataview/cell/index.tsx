@@ -73,6 +73,8 @@ class Cell extends React.Component<Props, {}> {
 
 		const { id, relation, block, index, readOnly } = this.props;
 
+		console.log(123);
+
 		if (readOnly || relation.isReadOnly) {
 			return;
 		};
@@ -81,7 +83,8 @@ class Cell extends React.Component<Props, {}> {
 		const cell = $('#' + cellId);
 		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
 		const data = dbStore.getData(block.id);
-		const value = data[index][relation.key] || [];
+		const item = data[index] || {};
+		const value = item[relation.key] || '';
 		const element = $('#block-' + block.id);
 		const setOn = () => {
 			if (!this.ref) {
@@ -141,6 +144,7 @@ class Cell extends React.Component<Props, {}> {
 
 				param.data = Object.assign(param.data, {
 					filter: '',
+					value: value || [],
 				});
 
 				menuId = 'dataviewOptionList';
