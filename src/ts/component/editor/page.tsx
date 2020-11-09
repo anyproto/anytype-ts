@@ -75,10 +75,11 @@ class EditorPage extends React.Component<Props, State> {
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
+		const title = blockStore.getLeaf(rootId, 'title');
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
-		
-		let cn = [ 'editorWrapper' ];
-		let icon: any = { id: rootId + '-icon', childrenIds: [], fields: {}, content: {} };
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], align: title.align, fields: {}, content: {} });
+
+		let cn = [ 'editorWrapper', 'align' + title.align ];
 		
 		if (root.isPageProfile()) {
 			cn.push('isProfile');
@@ -90,8 +91,6 @@ class EditorPage extends React.Component<Props, State> {
 		if (root.isPageSet()) {
 			cn.push('isDataview');
 		};
-		
-		icon = new M.Block(icon);
 		
 		if (withIcon && withCover) {
 			cn.push('withIconAndCover');
@@ -302,12 +301,14 @@ class EditorPage extends React.Component<Props, State> {
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-
-		if (details.name == Constant.default.name) {
-			focus.set('title', { from: 0, to: 0 });
-			focus.apply();
+		const block = blockStore.getLeaf(rootId, 'title');
+		if (!block) {
+			return;
 		};
+
+		const length = block.getLength();
+		focus.set(block.id, { from: length, to: length });
+		focus.apply();
 	};
 	
 	close (id: string) {
@@ -1383,6 +1384,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 
 	onPrint () {
+		focus.clearRange(true);
 		window.print();
 	};
 

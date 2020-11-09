@@ -89,6 +89,23 @@ class DataUtil {
 		};
 		return c;
 	};
+
+	coverColors () {
+		return [
+			{ type: I.CoverType.Color, id: 'yellow' },
+			{ type: I.CoverType.Color, id: 'orange' },
+			{ type: I.CoverType.Color, id: 'red' },
+			{ type: I.CoverType.Color, id: 'pink' },
+			{ type: I.CoverType.Color, id: 'purple' },
+			{ type: I.CoverType.Color, id: 'blue' },
+			{ type: I.CoverType.Color, id: 'ice' },
+			{ type: I.CoverType.Color, id: 'teal' },
+			{ type: I.CoverType.Color, id: 'green' },
+			{ type: I.CoverType.Color, id: 'lightgrey' },
+			{ type: I.CoverType.Color, id: 'darkgrey' },
+			{ type: I.CoverType.Color, id: 'black' },
+		];
+	};
 	
 	alignIcon (v: I.BlockAlign): string {
 		let icon = '';
@@ -457,7 +474,8 @@ class DataUtil {
 	};
 	
 	menuSectionsMap (sections: any[]) {
-		sections = sections.map((s: any) => {
+		sections = sections.map((s: any, i: number) => {
+			s.id = s.id || i;
 			s.children = s.children.map((it: any) => {
 				it.key = it.id;
 				it.id = s.id + '-' + it.id;

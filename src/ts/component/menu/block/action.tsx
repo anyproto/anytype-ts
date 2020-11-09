@@ -59,27 +59,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 					{item.children.map((action: any, i: number) => {
 						let icn: string[] = [ 'inner' ];
 						
-						if (action.id == 'color') {
-							icn.push('textColor textColor-' + (color || 'black'));
-						};
-						
-						if (action.id == 'background') {
-							icn.push('bgColor bgColor-' + (bgColor || 'default'));
-						};
-						
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + action.value);
 						};
 						if (action.isBgColor) {
 							icn.push('bgColor bgColor-' + action.value);
 						};
-						
 						if (action.isTextColor || action.isBgColor) {
 							action.icon = 'color';
 							action.inner = <div className={icn.join(' ')} />;
 						};
 						
-						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -178,7 +169,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return [];
 		};
 		
-		const { align } = block;
+		const { align, content, bgColor } = block;
+		const { color } = content;
 
 		let sections: any[] = [
 			{ 
@@ -192,8 +184,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			{ 
 				children: [
 					{ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true },
-					{ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true },
-					{ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true },
+					{ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'black') },
+					{ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') },
 					//{ id: 'comment', icon: 'comment', name: 'Comment' },
 				]
 			}
@@ -236,23 +228,23 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (block.isText() && !block.isTextTitle()) {
 				sections = sections.concat([
 					{ id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() },
-					{ id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() },
 				]);
 			};
 
-			if (block.canTurn()) {
+			if (block.isText() && block.canTurn()) {
 				sections.push({ id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() });
 			};
 
 			if (block.isText() && !block.isTextTitle()) {
 				sections = sections.concat([
+					{ id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() },
 					{ id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() },
 				]);
 			};
 			
 			if (block.isDiv()) {
 				sections = sections.concat([
-					{ id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetBlockOther() },
+					{ id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() },
 				]);
 			};
 			
@@ -275,9 +267,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter);
-			sections = DataUtil.menuSectionsMap(sections);
 		};
-		
+
+		sections = DataUtil.menuSectionsMap(sections);
 		return sections;
 	};
 	
@@ -439,7 +431,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			},
 		};
 
-		switch (item.id) {
+		switch (item.key) {
 			case 'turn':
 				menuId = 'blockStyle';
 				menuParam.data.onSelect = (item: any) => {
@@ -527,8 +519,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (!ids.length) {
 			ids = [ blockId ];
 		};
-		
-		switch (item.id) {
+
+		switch (item.key) {
 			case 'download':
 				Action.download(block);
 				break;
@@ -558,7 +550,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				// Align
 				if (item.isAlign) {
-					C.BlockListSetAlign(rootId, blockIds, item.value);
+					C.BlockListSetAlign(rootId, blockIds, item.key);
 				} else 
 					
 				// Blocks

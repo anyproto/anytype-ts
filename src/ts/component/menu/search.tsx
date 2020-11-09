@@ -7,6 +7,9 @@ interface Props extends I.Menu {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const findAndReplaceDOMText = require('findandreplacedomtext');
+const SKIP = [ 
+	'span', 'div', 'name', 'mention', 'color', 'bgcolor', 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'emoji',
+];
 
 class MenuSearch extends React.Component<Props, {}> {
 	
@@ -19,6 +22,7 @@ class MenuSearch extends React.Component<Props, {}> {
 		
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onSearch = this.onSearch.bind(this);
 	};
 
 	render () {
@@ -30,7 +34,7 @@ class MenuSearch extends React.Component<Props, {}> {
 			<div className="flex">
 				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeHolder="Search..." onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
 				<div className="buttons">
-					<div className="btn" onClick={this.onKeyUp}>Search</div>
+					<div className="btn" onClick={this.onSearch}>Search</div>
 				</div>
 			</div>
 		);
@@ -58,11 +62,6 @@ class MenuSearch extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 		e.preventDefault();
 		
-		const { param } = this.props;
-		const { data } = param;
-		const { container } = data;
-		const value = Util.filterFix(this.ref.getValue());
-
 		let ret = false;
 		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
 			this.focus();
@@ -73,6 +72,21 @@ class MenuSearch extends React.Component<Props, {}> {
 		if (ret) {
 			return;
 		};
+
+		this.search();
+	};
+
+	onSearch (e: any) {
+		this.focus();
+		this.n++;
+		this.search();
+	};
+
+	search () {
+		const { param } = this.props;
+		const { data } = param;
+		const { container } = data;
+		const value = Util.filterFix(this.ref.getValue());
 
 		if (this.last != value) {
 			this.n = 0;
@@ -91,7 +105,7 @@ class MenuSearch extends React.Component<Props, {}> {
 			portionMode: 'first',
 			filterElements: (el: any) => {
 				const tag = el.nodeName.toLowerCase();
-				if ([ 'span', 'div', 'name', 'mention' ].indexOf(tag) < 0) {
+				if (SKIP.indexOf(tag) < 0) {
 					return false;
 				};
 

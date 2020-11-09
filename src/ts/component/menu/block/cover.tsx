@@ -156,6 +156,8 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		};
 
 		let sections: any[] = [
+			{ name: 'Solid colors', children: DataUtil.coverColors() },
+
 			{ name: 'Art Institute of Chicago – Impressionism', children: [
 				{ type: I.CoverType.BgImage, id: 'the-crystal-pallace', name: 'Camille Pissarro - The Crystal Palace' },
 				{ type: I.CoverType.BgImage, id: 'the-little-pond', name: 'Childe Hassam - The Little Pond' },
@@ -182,21 +184,6 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				{ type: I.CoverType.BgImage, id: 'third-sleep', name: 'Kay Sage In the Third Sleep' },
 				{ type: I.CoverType.BgImage, id: 'banquet', name: 'René Magritte The Banquet' },
 				{ type: I.CoverType.BgImage, id: 'chemist', name: 'Salvador Dalí A Chemist Lifting with Extreme Precaution the Cuticle of a Grand Piano' },
-			] as any[] },
-
-			{ name: 'Solid colors', children: [
-				{ type: I.CoverType.Color, id: 'yellow' },
-				{ type: I.CoverType.Color, id: 'orange' },
-				{ type: I.CoverType.Color, id: 'red' },
-				{ type: I.CoverType.Color, id: 'pink' },
-				{ type: I.CoverType.Color, id: 'purple' },
-				{ type: I.CoverType.Color, id: 'blue' },
-				{ type: I.CoverType.Color, id: 'ice' },
-				{ type: I.CoverType.Color, id: 'teal' },
-				{ type: I.CoverType.Color, id: 'green' },
-				{ type: I.CoverType.Color, id: 'lightgrey' },
-				{ type: I.CoverType.Color, id: 'darkgrey' },
-				{ type: I.CoverType.Color, id: 'black' },
 			] as any[] },
 
 			{ name: 'Gradients', children: [
