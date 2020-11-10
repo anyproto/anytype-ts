@@ -61,6 +61,9 @@ export interface ViewRelation extends I.Relation {
 	isVisible: boolean;
 	width: number;
 	options: any;
+	includeTime: boolean;
+	dateFormat: I.DateFormat;
+	timeFormat: I.TimeFormat;
 };
 
 export interface ViewComponent {

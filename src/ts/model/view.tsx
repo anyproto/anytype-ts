@@ -36,9 +36,6 @@ class Relation implements I.Relation {
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
 	isMultiple: boolean = false;
-	includeTime: boolean = false;
-	dateFormat: I.DateFormat = I.DateFormat.MonthAbbrBeforeDay;
-	timeFormat: I.TimeFormat = I.TimeFormat.H12;
 	selectDict: any[] = [] as any[];
 
 	constructor (props: I.ViewRelation) {
@@ -52,9 +49,6 @@ class Relation implements I.Relation {
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.isMultiple = Boolean(props.isMultiple);
-		self.includeTime = Boolean(props.includeTime);
-		self.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
-		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
 		self.selectDict = (props.selectDict || []).map((it: any) => { return new SelectOption(it); });
 	};
 
@@ -81,6 +75,9 @@ class ViewRelation extends Relation implements I.ViewRelation {
 	width: number = 0;
 	options: any = {} as any;
 	isVisible: boolean = false;
+	includeTime: boolean = false;
+	dateFormat: I.DateFormat = I.DateFormat.MonthAbbrBeforeDay;
+	timeFormat: I.TimeFormat = I.TimeFormat.H12;
 
 	constructor (props: I.ViewRelation) {
 		super(props);
@@ -91,6 +88,9 @@ class ViewRelation extends Relation implements I.ViewRelation {
 		self.width = Number(props.width) || 0;
 		self.options = props.options || {};
 		self.isVisible = Boolean(props.isVisible);
+		self.includeTime = Boolean(props.includeTime);
+		self.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
+		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
 	};
 
 };

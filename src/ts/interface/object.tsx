@@ -43,9 +43,6 @@ export interface Relation {
 	isReadOnly: boolean;
 	isMultiple: boolean;
 	objectType: string;
-	includeTime: boolean;
-	dateFormat: I.DateFormat;
-	timeFormat: I.TimeFormat;
 	selectDict: any[];
 };
 
