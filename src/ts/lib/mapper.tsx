@@ -200,6 +200,9 @@ const Mapper = {
 				isReadOnly: obj.getReadonly(),
 				isMultiple: obj.getMulti(),
 				objectType: obj.getObjecttype(),
+				includeTime: obj.getIncludetime(),
+				dateFormat: obj.getDateformat(),
+				timeFormat: obj.getTimeformat(),
 				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
 			};
 		},
@@ -209,26 +212,14 @@ const Mapper = {
 		},
 
 		ViewRelation: (obj: any) => {
-            const type = obj.getOptionsCase();
-            const ret: any = {
+            return {
                 key: obj.getKey(),
                 isVisible: obj.getIsvisible(),
                 width: obj.getWidth(),
-                options: {},
+				includeTime: obj.getDateincludetime(),
+                timeFormat: obj.getTimeformat(),
+				dateFormat: obj.getDateformat(),
             };
-
-            switch (type) {
-                case OptionsCase.DATEOPTIONS:
-                    let options = obj.getDateoptions() || {};
-					ret.options = {
-						includeTime: options.getIncludetime(),
-						timeFormat: options.getTimeformat(),
-						dateFormat: options.getDateformat(),
-					};
-                    break;
-            };
-
-            return ret;
         },
 
 		Filter: (obj: any): I.Filter => {
@@ -406,20 +397,9 @@ const Mapper = {
 			item.setKey(obj.key);
 			item.setIsvisible(obj.isVisible);
 			item.setWidth(obj.width);
-
-			let options = new Model.Block.Content.Dataview.Relation.EmptyOptions();
-			
-			if (obj.format == I.RelationType.Date) {
-                options = new Model.Block.Content.Dataview.Relation.DateOptions();
-
-				options.setIncludetime(obj.options.includeTime);
-				options.setTimeformat(obj.options.timeFormat);
-				options.setDateformat(obj.options.dateFormat);
-
-				item.setDateoptions(options);
-            } else {
-				item.setEmptyoptions(options);
-			};
+			item.setDateincludetime(obj.includeTime);
+			item.setTimeformat(obj.timeFormat);
+			item.setDateformat(obj.dateFormat);
 
 			return item;
 		},
@@ -492,13 +472,22 @@ const Mapper = {
 			item.setReadonly(obj.isReadOnly);
 			item.setMulti(obj.isMultiple);
 			item.setObjecttype(obj.objectType);
+			item.setDateincludetime(obj.includeTime);
+			item.setDateformat(obj.dateFormat);
+			item.setTimeformat(obj.timeFormat);
 			item.setSelectdictList(obj.selectDict.map(Mapper.To.SelectOption));
 
 			return item;
 		},
 
 		SelectOption: (obj: any) => {
-			return obj;
+			const item = new Relation.Relation.SelectOption();
+
+			item.setId(obj.id);
+			item.setText(obj.text);
+			item.setColor(obj.color);
+
+			return item;
 		},
 
 	}

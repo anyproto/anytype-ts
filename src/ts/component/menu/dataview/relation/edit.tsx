@@ -33,14 +33,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const view = getView();
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 
-		let options: any = {};
 		let opts = null;
 		let ccn = [ 'item' ];
 		if (commonStore.menuIsOpen('dataviewRelationType')) {
 			ccn.push('active');
 		};
 		if (relation) {
-			options = relation.options || {};
 			ccn.push('disabled');
 		};
 
@@ -64,7 +62,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							<div className="item">
 								<Icon className="clock" />
 								<div className="name">Include time</div>
-								<Switch value={options.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 							</div>
 
 							<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
@@ -182,7 +180,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relationKey; });
 
-		relation.options.includeTime = v;
+		relation.includeTime = v;
 		view.relations[idx] = relation;
 
 		C.BlockSetDataviewView(rootId, blockId, view.id, view);

@@ -73,8 +73,6 @@ class Cell extends React.Component<Props, {}> {
 
 		const { id, relation, block, index, readOnly } = this.props;
 
-		console.log(123);
-
 		if (readOnly || relation.isReadOnly) {
 			return;
 		};

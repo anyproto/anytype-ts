@@ -26,6 +26,7 @@ interface State {
 
 class Textarea extends React.Component<Props, State> {
 
+	_isMounted = false;
 	public static defaultProps = {
 		value: ''
 	};
@@ -73,9 +74,12 @@ class Textarea extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		let value = this.props.value ? this.props.value : '';
-		
-		this.setValue(value);
+		this._isMounted = true;
+		this.setValue(this.props.value ? this.props.value : '');
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 	
 	onChange (e: any) {
@@ -116,13 +120,25 @@ class Textarea extends React.Component<Props, State> {
 	};
 	
 	focus () {
-		let node = $(ReactDOM.findDOMNode(this));
-		node.focus();
+		window.setTimeout(() => { 
+			if (!this._isMounted) {
+				return;
+			};
+
+			let node = $(ReactDOM.findDOMNode(this));
+			node.focus();	
+		});
 	};
 	
 	select () {
-		const node = $(ReactDOM.findDOMNode(this));
-		window.setTimeout(() => { node.get(0).select();	});
+		window.setTimeout(() => { 
+			if (!this._isMounted) {
+				return;
+			};
+
+			const node = $(ReactDOM.findDOMNode(this));
+			node.get(0).select();
+		});
 	};
 	
 	setValue (v: string) {
@@ -134,6 +150,10 @@ class Textarea extends React.Component<Props, State> {
 	};
 	
 	setError (v: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		let node = $(ReactDOM.findDOMNode(this));
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};

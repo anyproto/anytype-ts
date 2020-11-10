@@ -36,6 +36,9 @@ class Relation implements I.Relation {
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
 	isMultiple: boolean = false;
+	includeTime: boolean = false;
+	dateFormat: I.DateFormat = I.DateFormat.MonthAbbrBeforeDay;
+	timeFormat: I.TimeFormat = I.TimeFormat.H12;
 	selectDict: any[] = [] as any[];
 
 	constructor (props: I.ViewRelation) {
@@ -49,9 +52,10 @@ class Relation implements I.Relation {
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.isMultiple = Boolean(props.isMultiple);
-		self.selectDict = (props.selectDict || []).map((it: any) => {
-			return new SelectOption(it);
-		});
+		self.includeTime = Boolean(props.includeTime);
+		self.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
+		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
+		self.selectDict = (props.selectDict || []).map((it: any) => { return new SelectOption(it); });
 	};
 
 };
@@ -60,14 +64,14 @@ class SelectOption implements I.SelectOption {
 	
 	id: string = '';
 	text: string = '';
-	color: string = '';
+	color: I.Color = I.Color.Grey;
 
 	constructor (props: I.SelectOption) {
 		let self = this;
 
 		self.id = String(props.id || '');
 		self.text = String(props.text || '');
-		self.color = String(props.color || '');
+		self.color = Number(props.color) || I.Color.Grey;
 	};
 };
 

@@ -116,7 +116,7 @@ class Input extends React.Component<Props, State> {
 
 	initMask () {
 		const { mask, placeHolder, maskOptions } = this.props;
-		if (!mask) {
+		if (!mask || !this._isMounted) {
 			return;
 		};
 

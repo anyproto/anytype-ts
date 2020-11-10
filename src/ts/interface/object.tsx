@@ -1,3 +1,5 @@
+import { I } from 'ts/lib';
+
 export enum ObjectLayout {
 	Page	 = 0,
 	Contact	 = 1,
@@ -41,11 +43,14 @@ export interface Relation {
 	isReadOnly: boolean;
 	isMultiple: boolean;
 	objectType: string;
+	includeTime: boolean;
+	dateFormat: I.DateFormat;
+	timeFormat: I.TimeFormat;
 	selectDict: any[];
 };
 
 export interface SelectOption {
 	id: string;
 	text: string;
-	color: string;
+	color: I.Color;
 };
