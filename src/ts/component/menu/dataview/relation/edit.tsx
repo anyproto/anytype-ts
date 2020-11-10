@@ -13,7 +13,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 	format: I.RelationType = I.RelationType.Description;
-	isMultiple: boolean = false;
 	ref: any = null;
 	
 	constructor(props: any) {
@@ -52,8 +51,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		if (relation) {
 			const isDate = relation.format == I.RelationType.Date;
-			const hasMultiple = false;//[ I.RelationType.File, I.RelationType.Select, I.RelationType.Object ].indexOf(relation.format) >= 0;
-
 			opts = (
 				<React.Fragment>
 					{isDate ? (
@@ -69,16 +66,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 								<Icon className="settings" />
 								<div className="name">Preferences</div>
 								<Icon className="arrow" />
-							</div>
-						</React.Fragment>
-					) : ''}
-
-					{hasMultiple ? (
-						<React.Fragment>
-							<div className="item">
-								<Icon className="clock" />
-								<div className="name">Is multiple</div>
-								<Switch value={relation.isMultiple} className="green" onChange={(e: any, v: boolean) => { this.isMultiple = v; this.save(); }} />
 							</div>
 						</React.Fragment>
 					) : ''}
@@ -123,7 +110,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		if (relation) {
 			this.format = relation.format;
-			this.isMultiple = relation.isMultiple;
 			this.forceUpdate();
 		};
 
@@ -252,7 +238,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		const view = getView();
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
-		const newRelation: any = { name: name, format: this.format, isMultiple: this.isMultiple };
+		const newRelation: any = { name: name, format: this.format };
 
 		relation ? this.update(newRelation) : this.add(newRelation);
 	};

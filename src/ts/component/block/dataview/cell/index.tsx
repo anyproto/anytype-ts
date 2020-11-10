@@ -83,7 +83,7 @@ class Cell extends React.Component<Props, {}> {
 		const data = dbStore.getData(block.id);
 		const item = data[index] || {};
 		const value = item[relation.key] || '';
-		const element = $('#block-' + block.id);
+		const page = $('.pageMainEdit');
 		const setOn = () => {
 			if (!this.ref) {
 				return;
@@ -217,7 +217,7 @@ class Cell extends React.Component<Props, {}> {
 			commonStore.menuCloseAll();
 			commonStore.menuOpen(menuId, param); 
 			
-			element.unbind('click').on('click', () => {
+			page.unbind('click').on('click', () => {
 				commonStore.menuCloseAll();
 			});
 		} else {
