@@ -200,7 +200,7 @@ const Mapper = {
 				isReadOnly: obj.getReadonly(),
 				isMultiple: obj.getMulti(),
 				objectType: obj.getObjecttype(),
-				includeTime: obj.getIncludetime(),
+				includeTime: obj.getDateincludetime(),
 				dateFormat: obj.getDateformat(),
 				timeFormat: obj.getTimeformat(),
 				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
