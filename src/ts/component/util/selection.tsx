@@ -167,7 +167,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		if (e.shiftKey) {
 			let ids = this.get();
-			if (!ids.length) {
+			let target = $(e.target.closest('.selectable'));
+			let targetId = target.data('id');
+
+			if (!ids.length && (targetId != focused)) {
 				this.set(this.get().concat([ focused ]));
 			};
 		};
