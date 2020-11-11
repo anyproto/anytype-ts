@@ -568,9 +568,8 @@ class DataUtil {
 		return relations.map((relation: any) => {
 			const vr = view.relations.find((it: I.Relation) => { return it.key == relation.key; }) || {};
 			return new M.ViewRelation({
+				...vr,
 				...relation,
-				isVisible: vr.isVisible,
-				options: vr.options || {},
 				width: Number(vr.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
 			});
 		});

@@ -158,7 +158,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		relation.includeTime = v;
 		view.relations[idx] = relation;
-
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 	};
 
@@ -254,6 +253,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { relationKey, getView } = data;
 		const view = getView();
+
 		return view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 	};
 

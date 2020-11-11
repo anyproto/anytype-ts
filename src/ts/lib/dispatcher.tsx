@@ -410,6 +410,8 @@ class Dispatcher {
 						block.content.views.push(data.view);
 					};
 
+					console.log(JSON.stringify(data.view, null, 3));
+
 					blockStore.blockUpdate(rootId, block);
 					break;
 

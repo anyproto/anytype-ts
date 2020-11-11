@@ -39,7 +39,11 @@ class CellSelect extends React.Component<Props, State> {
 		const data = dbStore.getData(block.id);
 		const rel = dbStore.getRelation(block.id, relation.key);
 		
-		let value = data[index][relation.key] || [];
+		let value: any = data[index][relation.key];
+		if (!value || ('object' != typeof(value))) {
+			value = [];
+		};
+
 		value = value.map((text: string, i: number) => {
 			const option = true;
 			/*
