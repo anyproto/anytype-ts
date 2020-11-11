@@ -157,7 +157,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, name: v });
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, name: v });
 		}, 500);
 	};
 
@@ -198,7 +198,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		switch (item.id) {
 			case 'copy':
-				C.BlockCreateDataviewView(rootId, blockId, view);
+				C.BlockDataviewViewCreate(rootId, blockId, view);
 				break;
 
 			case 'remove':
@@ -207,7 +207,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 				if (next) {
 					getData(next.id, 0, () => {
-						C.BlockDeleteDataviewView(rootId, blockId, viewId);
+						C.BlockDataviewViewDelete(rootId, blockId, viewId);
 					});
 				};
 				break;

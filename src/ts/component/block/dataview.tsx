@@ -120,7 +120,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const view = this.getView();
 		view.relations = DataUtil.viewGetRelations(block.id, view);
 
-		C.BlockSetDataviewActiveView(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
+		C.BlockDataviewViewSetActive(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
 
 		commonStore.menuCloseAll();
 		win.trigger('resize.editor');
@@ -141,7 +141,7 @@ class BlockDataview extends React.Component<Props, {}> {
 	onRowAdd (e: any) {
 		const { rootId, block } = this.props;
 
-		C.BlockCreateDataviewRecord(rootId, block.id, {}, (message: any) => {
+		C.BlockDataviewRecordCreate(rootId, block.id, {}, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

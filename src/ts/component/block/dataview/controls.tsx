@@ -128,7 +128,7 @@ class Controls extends React.Component<Props, State> {
 		const { content } = block;
 		const { views } = content;
 
-		C.BlockCreateDataviewView(rootId, block.id, { name: Constant.default.viewName }, (message: any) => {
+		C.BlockDataviewViewCreate(rootId, block.id, { name: Constant.default.viewName }, (message: any) => {
 			getData(message.viewId, 0);
 
 			const view = views.find((item: any) => { return item.id == message.viewId; });

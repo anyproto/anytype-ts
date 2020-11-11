@@ -536,39 +536,39 @@ const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => vo
 	dispatcher.request('blockListDeletePage', request, callBack);
 };
 
-const BlockCreateDataviewView = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Create.Dataview.View.Request();
+const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.ViewCreate.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setView(Mapper.To.View(view));
 
-	dispatcher.request('blockCreateDataviewView', request, callBack);
+	dispatcher.request('blockDataviewViewCreate', request, callBack);
 };
 
-const BlockSetDataviewView = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Set.Dataview.View.Request();
+const BlockDataviewViewUpdate = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.ViewUpdate.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
 	request.setView(Mapper.To.View(view));
 
-	dispatcher.request('blockSetDataviewView', request, callBack);
+	dispatcher.request('blockDataviewViewUpdate', request, callBack);
 };
 
-const BlockDeleteDataviewView = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Delete.Dataview.View.Request();
+const BlockDataviewViewDelete = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.ViewDelete.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
 
-	dispatcher.request('blockDeleteDataviewView', request, callBack);
+	dispatcher.request('blockDataviewViewDelete', request, callBack);
 };
 
-const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Set.Dataview.ActiveView.Request();
+const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.ViewSetActive.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
@@ -576,38 +576,38 @@ const BlockSetDataviewActiveView = (contextId: string, blockId: string, viewId: 
 	request.setOffset(offset);
 	request.setLimit(limit);
 
-	dispatcher.request('blockSetDataviewActiveView', request, callBack);
+	dispatcher.request('blockDataviewViewSetActive', request, callBack);
 };
 
-const BlockCreateDataviewRecord = (contextId: string, blockId: string, record: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Create.Dataview.Record.Request();
+const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RecordCreate.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setRecord(Encode.encodeStruct(record));
 
-	dispatcher.request('blockCreateDataviewRecord', request, callBack);
+	dispatcher.request('blockDataviewRecordCreate', request, callBack);
 };
 
-const BlockUpdateDataviewRecord = (contextId: string, blockId: string, recordId: string, record: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Update.Dataview.Record.Request();
+const BlockDataviewRecordUpdate = (contextId: string, blockId: string, recordId: string, record: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RecordUpdate.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setRecordid(recordId);
 	request.setRecord(Encode.encodeStruct(record));
 
-	dispatcher.request('blockUpdateDataviewRecord', request, callBack);
+	dispatcher.request('blockDataviewRecordUpdate', request, callBack);
 };
 
-const BlockDeleteDataviewRecord = (contextId: string, blockId: string, recordId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Update.Dataview.Record.Request();
+const BlockDataviewRecordDelete = (contextId: string, blockId: string, recordId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RecordDelete.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setRecordid(recordId);
 
-	dispatcher.request('blockDeleteDataviewRecord', request, callBack);
+	dispatcher.request('blockDataviewRecordDelete', request, callBack);
 };
 
 const BlockRelationList = (contextId: string, callBack?: (message: any) => void) => {
@@ -819,24 +819,11 @@ export {
 	BlockCreate,
 	BlockCreatePage,
 	BlockCreateSet,
-	BlockCreateDataviewView,
 
 	BlockSetTextText,
 	BlockSetTextChecked,
 	BlockSetFields,
 	BlockSetDetails,
-
-	BlockSetDataviewView,
-	BlockSetDataviewActiveView,
-
-	BlockDeleteDataviewView,
-	BlockDataviewRelationAdd,
-	BlockDataviewRelationUpdate,
-	BlockDataviewRelationDelete,
-
-	BlockCreateDataviewRecord,
-	BlockUpdateDataviewRecord,
-	BlockDeleteDataviewRecord,
 
 	BlockListMove,
 	BlockListMoveToNewPage,
@@ -851,6 +838,19 @@ export {
 	BlockListSetAlign,
 	BlockListSetPageIsArchived,
 	BlockListDeletePage,
+
+	BlockDataviewViewCreate,
+	BlockDataviewViewUpdate,
+	BlockDataviewViewDelete,
+	BlockDataviewViewSetActive,
+
+	BlockDataviewRelationAdd,
+	BlockDataviewRelationUpdate,
+	BlockDataviewRelationDelete,
+
+	BlockDataviewRecordCreate,
+	BlockDataviewRecordUpdate,
+	BlockDataviewRecordDelete,
 
 	BlockRelationSetKey,
 	BlockRelationList,

@@ -158,7 +158,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { rootId, blockId, onSave, getView } = data;
 		const view = getView();
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, view, onSave);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 	
 };

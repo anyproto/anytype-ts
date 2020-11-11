@@ -381,7 +381,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { getView, rootId, blockId, onSave } = data;
 		const view = getView();
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, view, onSave);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 
 	resize () {

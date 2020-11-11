@@ -589,7 +589,7 @@ class DataUtil {
 
 			view.relations.push(relation);
 			view.relations = this.viewGetRelations(blockId, view);
-			C.BlockSetDataviewView(rootId, blockId, view.id, view);
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 
@@ -600,7 +600,7 @@ class DataUtil {
 			};
 
 			view.relations = this.viewGetRelations(blockId, view);
-			C.BlockSetDataviewView(rootId, blockId, view.id, view);
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 
@@ -611,7 +611,7 @@ class DataUtil {
 			};
 
 			view.relations = this.viewGetRelations(blockId, view);
-			C.BlockSetDataviewView(rootId, blockId, view.id, view);
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 

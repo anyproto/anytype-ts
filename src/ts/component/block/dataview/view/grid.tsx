@@ -267,7 +267,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		$(window).unbind('mousemove.cell mouseup.cell');
 		$('body').removeClass('colResize');
 
-		C.BlockSetDataviewView(rootId, block.id, view.id, view);
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 	};
 
 	onRowOver (id: number) {

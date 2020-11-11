@@ -51,7 +51,7 @@ class MenuViewList extends React.Component<Props, {}> {
 		const view = getView();
 
 		this.props.close();
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, type: id });
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, type: id });
 	};
 	
 };

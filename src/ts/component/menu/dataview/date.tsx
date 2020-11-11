@@ -216,7 +216,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 				options: options,
 				onSelect: (e: any, el: any) => {
 					view.relations[idx][item.key] = el.id;
-					C.BlockSetDataviewView(rootId, blockId, view.id, view);
+					C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 
 					close();
 				}

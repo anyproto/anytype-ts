@@ -159,7 +159,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		relation.includeTime = v;
 		view.relations[idx] = relation;
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, view);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 	};
 
 	onDateSettings (e: any) {

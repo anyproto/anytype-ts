@@ -301,31 +301,31 @@ const BlockListDeletePage = (response: any) => {
 	return {};
 };
 
-const BlockCreateDataviewView = (response: any) => {
+const BlockDataviewViewCreate = (response: any) => {
 	return {
 		viewId: response.getViewid(),
 	};
 };
 
-const BlockSetDataviewView = (response: any) => {
+const BlockDataviewViewUpdate = (response: any) => {
 	return {};
 };
 
-const BlockSetDataviewActiveView = (response: any) => {
+const BlockDataviewViewSetActive = (response: any) => {
 	return {};
 };
 
-const BlockCreateDataviewRecord = (response: any) => {
+const BlockDataviewRecordCreate = (response: any) => {
 	return {
 		record: Mapper.From.Record(response.getRecord()),
 	};
 };
 
-const BlockUpdateDataviewRecord = (response: any) => {
+const BlockDataviewRecordUpdate = (response: any) => {
 	return {};
 };
 
-const BlockDeleteDataviewRecord = (response: any) => {
+const BlockDataviewRecordDelete = (response: any) => {
 	return {};
 };
 
@@ -428,7 +428,7 @@ export {
 
 	BlockCreate,
 	BlockCreatePage,
-	BlockCreateDataviewView,
+	BlockDataviewViewCreate,
 	BlockCreateSet,
 
 	BlockSetTextText,
@@ -436,12 +436,12 @@ export {
 	BlockSetFields,
 	BlockSetDetails,
 	
-	BlockSetDataviewView,
-	BlockSetDataviewActiveView,
+	BlockDataviewViewUpdate,
+	BlockDataviewViewSetActive,
 
-	BlockCreateDataviewRecord,
-	BlockUpdateDataviewRecord,
-	BlockDeleteDataviewRecord,
+	BlockDataviewRecordCreate,
+	BlockDataviewRecordUpdate,
+	BlockDataviewRecordDelete,
 
 	BlockDataviewRelationAdd,
 
