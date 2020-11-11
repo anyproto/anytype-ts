@@ -166,7 +166,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 		});
 
 		if (e.shiftKey) {
-			this.set(this.get().concat([ focused ]));
+			let ids = this.get();
+			if (!ids.length) {
+				this.set(this.get().concat([ focused ]));
+			};
 		};
 		
 		scrollOnMove.onMouseDown(e);
@@ -209,24 +212,21 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return
 		};
 		
-		let { rootId } = this.props;
+		const { rootId } = this.props;
 		
+		let ids = this.get(true);
+		let first = ids.length ? ids[0] : this.focused;
+
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 				this.clear();
 			} else {
 				this.checkNodes(e);
 				
-				let ids = this.get(true);
 				let target = $(e.target.closest('.selectable'));
 				let targetId = target.data('id');
-				let first = this.focused;
 				
-				if (ids.length > 0) {
-					first = ids[0];
-				};
-
-				if (target.length && e.shiftKey && (targetId != first)) {
+				if (target.length && e.shiftKey && ids.length) {
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 					const list = blockStore.unwrapTree(tree);
 					const idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
@@ -244,7 +244,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
-		let ids = this.get(true);
+		ids = this.get(true);
 		if (ids.length > 0) {
 			commonStore.menuClose('blockContext');
 		};

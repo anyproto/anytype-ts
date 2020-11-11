@@ -856,7 +856,6 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block } = this.props;
-		const { selection } = dataset || {};
 		const { id, content } = block;
 		const { focused } = focus;
 		const { from, to } = focus.range;
