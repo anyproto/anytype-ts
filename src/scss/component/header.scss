@@ -62,13 +62,13 @@
 .header.headerMainIndex { height: 38px; background: rgba(44,43,39,0.1); }
 .header.headerMainIndex {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
-	.icon:hover { background-color: rgba(0,0,0,0.15); }
+	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 }
 
 .header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }
 .header.headerMainEdit {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
-	.icon:hover { background-color: #f3f2ec; }
+	.icon:hover, .icon.active { background-color: #f3f2ec; }
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;

@@ -26,6 +26,8 @@
 		.cellContent.c-title {
 			.name { width: calc(100% - 24px); }
 		}
+
+		.icon.expand { display: none; }
 	}
 
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }

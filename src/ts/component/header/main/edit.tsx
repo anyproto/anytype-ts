@@ -69,7 +69,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelation" className="relation" onClick={this.onRelation} />
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation" onClick={this.onRelation} />
 					<Icon id="button-header-more" tooltip="Menu" menuId="blockMore" className="more" onClick={this.onMore} />
 				</div>
 			</div>
@@ -168,6 +168,21 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onRelation () {
+		const { rootId } = this.props;
+
+		commonStore.menuOpen('blockRelationList', { 
+			element: '#button-header-relation',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 8,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				relationKey: '',
+				readOnly: false,
+				rootId: rootId,
+			},
+		});
 	};
 	
 };

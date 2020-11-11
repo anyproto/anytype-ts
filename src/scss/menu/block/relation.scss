@@ -6,8 +6,22 @@
 		.item:hover::before { opacity: 0.15; }
 	}
 
-	.menu.menuBlockRelationList {  }
+	.menu.menuBlockRelationList { width: 640px; }
 	.menu.menuBlockRelationList {
+		.content { max-height: 338px; padding: 12px 0px; }
+		.item { display: flex; }
+
+		.side.left { width: 200px; margin-right: 20px; }
+		.side.left {
+			.name { width: calc(100% - 24px); color: #6c6a5f;}
+		}
+
+		.side.right { width: calc(100% - 220px); }
+		.cellContent.c-title {
+			.name { width: calc(100% - 24px); }
+		}
+
+		.icon.expand { display: none; }
 	}
 	
 	.menu.menuBlockRelationEdit { width: 224px; }

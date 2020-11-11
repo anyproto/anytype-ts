@@ -86,7 +86,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				noClose: true,
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'add') {
-						commonStore.menuOpen('blockRelationEdit', { 
+						commonStore.menuOpen('blockRelationList', { 
 							element: '#menuSelect #item-add',
 							type: I.MenuType.Vertical,
 							offsetX: 320,

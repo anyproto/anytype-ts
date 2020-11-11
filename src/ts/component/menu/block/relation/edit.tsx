@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, C, M, DataUtil } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { Icon, Input, Switch } from 'ts/component';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -9,7 +9,7 @@ interface Props extends I.Menu {};
 const Constant = require('json/constant.json');
 
 @observer
-class MenuRelationEdit extends React.Component<Props, {}> {
+class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 	format: I.RelationType = I.RelationType.Description;
@@ -234,4 +234,4 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 };
 
-export default MenuRelationEdit;
+export default MenuBlockRelationEdit;
