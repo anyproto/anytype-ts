@@ -131,7 +131,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		this.timeout = window.setTimeout(() => {
 			commonStore.menuOpen('dataviewRelationType', { 
 				element: '#relation-type',
-				offsetX: 208,
+				offsetX: 224,
 				offsetY: 4,
 				type: I.MenuType.Vertical,
 				vertical: I.MenuDirection.Center,
