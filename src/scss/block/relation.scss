@@ -16,11 +16,13 @@
 
 		.side.left { width: 200px; margin-right: 20px; }
 		.side.left {
-			.name { width: calc(100% - 24px); }
+			.name { width: calc(100% - 24px); color: #6c6a5f;}
 		}
 
 		.side.right { width: calc(100% - 220px); }
 		
+		.cellContent.c-title { cursor: text; }
+
 		.cellContent.c-title {
 			.name { width: calc(100% - 24px); }
 		}

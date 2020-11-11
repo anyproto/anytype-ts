@@ -70,7 +70,7 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onMenu (e: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
 		const options = this.getItems();
 
 		commonStore.menuOpen('select', {
@@ -80,10 +80,33 @@ class BlockRelation extends React.Component<Props, {}> {
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
+			width: 320,
 			data: {
 				options: options,
+				noClose: true,
 				onSelect: (event: any, item: any) => {
-					C.BlockRelationSetKey(rootId, block.id, item.id);
+					if (item.id == 'add') {
+						commonStore.menuOpen('blockRelationEdit', { 
+							element: '#menuSelect #item-add',
+							type: I.MenuType.Vertical,
+							offsetX: 320,
+							offsetY: -36,
+							vertical: I.MenuDirection.Bottom,
+							horizontal: I.MenuDirection.Left,
+							onClose: () => {
+								commonStore.menuClose('select');
+							},
+							data: {
+								relationKey: '',
+								readOnly: readOnly,
+								rootId: rootId,
+								blockId: block.id, 
+							},
+						});
+					} else {
+						C.BlockRelationSetKey(rootId, block.id, item.id);
+						commonStore.menuClose('select');
+					};
 				}
 			}
 		});

@@ -19,9 +19,7 @@ class MenuRelationType extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationKey, getView } = data;
-		const view = getView();
-		const relation = view.relations.find((it: I.ViewRelation) => { it.key == relationKey; });
+		const { value } = data;
 		
 		let relations: any[] = [
 			{ format: I.RelationType.Description },
@@ -41,7 +39,7 @@ class MenuRelationType extends React.Component<Props, {}> {
 
 		const Item = (item: any) => {
 			return (
-				<div className={'item ' + (relation && (item.format == relation.format) ? 'active' : '')} onClick={(e: any) => { this.onSelect(e, item); }}>
+				<div className={[ 'item', (item.format == value ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onSelect(e, item); }}>
 					<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
 					<div className="name">{item.name}</div>
 				</div>

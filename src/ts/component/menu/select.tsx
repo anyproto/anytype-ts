@@ -157,7 +157,7 @@ class MenuSelect extends React.Component<Props, {}> {
 	onSelect (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { onSelect, canSelectInitial } = data;
+		const { onSelect, canSelectInitial, noClose } = data;
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
@@ -167,7 +167,9 @@ class MenuSelect extends React.Component<Props, {}> {
 			onSelect(e, item);
 		};
 
-		close();
+		if (!noClose) {
+			close();
+		};
 	};
 	
 };

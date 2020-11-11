@@ -44,6 +44,9 @@ export interface Relation {
 	isMultiple: boolean;
 	objectType: string;
 	selectDict: any[];
+	includeTime?: boolean;
+	dateFormat?: I.DateFormat;
+	timeFormat?: I.TimeFormat;
 };
 
 export interface SelectOption {

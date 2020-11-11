@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, M, DataUtil } from 'ts/lib';
 import { Icon, Input, Switch } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -151,15 +151,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	onChangeTime (v: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationKey, getView } = data;
-		const view = getView();
+		const { rootId, relationKey } = data;
+		const relations = dbStore.getRelations(rootId);
 		const relation = this.getRelation();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relationKey; });
+		const idx = relations.findIndex((it: I.ViewRelation) => { return it.key == relationKey; });
 
 		relation.includeTime = v;
-		view.relations[idx] = relation;
-
-		C.BlockSetDataviewView(rootId, blockId, view.id, view);
 	};
 
 	onDateSettings (e: any) {
@@ -188,21 +185,13 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	onCopy (e: any) {
 		const relation = this.getRelation();
-		if (!relation) {
-			return;
-		};
+		const newRelation: any = { name: relation.name, format: relation.format };
 
-		this.add({ name: relation.name, format: relation.format });
+		this.add(newRelation);
 		close();
 	};
 
 	onRemove (e: any) {
-		let { param, close } = this.props;
-		let { data } = param;
-		let { rootId, blockId, relationKey, getView } = data;
-		let view = getView();
-
-		DataUtil.dataviewRelationDelete (rootId, blockId, relationKey, view);
 		close();
 	};
 
@@ -214,13 +203,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
 		const name = this.ref.getValue();
-		const block = blockStore.getLeaf(rootId, blockId);
-
-		if (!name || !block) {
+		if (!name) {
 			return;
 		};
 
@@ -233,28 +217,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
-		const view = getView();
-
-		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view);
+		const { rootId, blockId } = data;
 	};
 
 	update (newRelation: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-		const view = getView();
 		const relation = this.getRelation();
-		
-		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view);
 	};
 
-	getRelation (): I.ViewRelation {
+	getRelation () {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationKey, getView } = data;
-		const view = getView();
-		return view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		const { rootId, relationKey } = data;
+		const relations = dbStore.getRelations(rootId);
+		return relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
 	};
 
 };
