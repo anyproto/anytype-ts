@@ -25,7 +25,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, onOpen, getData, getView, readOnly, onRowAdd } = this.props;
+		const { rootId, block, onOpen, getData, getView, readOnly, onRowAdd, onCellChange } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(block.id);
@@ -68,6 +68,7 @@ class ViewGrid extends React.Component<Props, {}> {
 						viewType={I.ViewType.Grid}
 						readOnly={readOnly}
 						onOpen={onOpen}
+						onCellChange={onCellChange}
 					/>
 				</td>
 			);

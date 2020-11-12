@@ -86,6 +86,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETDETAILS)				 t = 'blockSetDetails';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
+		if (v == V.BLOCKSETRELATIONS)			 t = 'blockSetRelations';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
@@ -377,6 +378,20 @@ class Dispatcher {
 
 					block.align = data.getAlign();
 					blockStore.blockUpdate(rootId, block);
+					break;
+
+				case 'blockSetRelations':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					const relations = (data.getRelationsList() || []).map(Mapper.From.Relation);
+					for (let relation of relations) {
+						dbStore.relationAdd(rootId, relation);
+					};
+
 					break;
 
 				case 'blockSetRelation':

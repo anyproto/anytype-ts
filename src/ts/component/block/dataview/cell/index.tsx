@@ -226,18 +226,10 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	onChange (value: any) {
-		const { rootId, block, index, relation } = this.props;
-		const data = this.props.data[index];
-
-		if (data[relation.key] === value) {
-			return;
+		const { relation, onCellChange, data, index } = this.props;
+		if (onCellChange) {
+			onCellChange(data[index].id, relation.key, value);
 		};
-
-		let obj = { id: data.id };
-		obj[relation.key] = value;
-
-		dbStore.recordUpdate(block.id, obj);
-		C.BlockDataviewRecordUpdate(rootId, block.id, data.id, data);
 	};
 	
 };

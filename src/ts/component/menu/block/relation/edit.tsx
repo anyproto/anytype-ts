@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { Icon, Input, Switch } from 'ts/component';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -99,10 +99,13 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 	componentDidMount() {
 		const relation = this.getRelation();
+
 		if (relation) {
 			this.format = relation.format;
 			this.forceUpdate();
 		};
+
+		console.log(123123);
 
 		this.ref.focus();
 	};
@@ -198,6 +201,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
+		console.log('SUBMIT');
+
 		this.save();
 		this.props.close();
 	};
@@ -211,6 +216,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const newRelation: any = { name: name, format: this.format };
 
+		console.log(relation);
+
 		relation ? this.update(newRelation) : this.add(newRelation);
 	};
 
@@ -218,6 +225,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
+
+		C.BlockRelationAdd(rootId, blockId, newRelation);
 	};
 
 	update (newRelation: any) {
@@ -229,7 +238,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, relationKey } = data;
 		const relations = dbStore.getRelations(rootId);
-		return relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		return relations.find((it: I.Relation) => { return it.key == relationKey; });
 	};
 
 };

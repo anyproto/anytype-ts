@@ -28,6 +28,7 @@ class MenuRelationType extends React.Component<Props, {}> {
 			{ format: I.RelationType.Select },
 			{ format: I.RelationType.Date },
 			{ format: I.RelationType.File },
+			{ format: I.RelationType.Checkbox },
 			{ format: I.RelationType.Url },
 			{ format: I.RelationType.Email },
 			{ format: I.RelationType.Phone },

@@ -74,6 +74,7 @@ export interface ViewComponent {
 	getData(viewId: string, offset: number): void;
 	getView(): View;
 	onRowAdd?: (e: any) => void;
+	onCellChange?: (id: string, key: string, value: any) => void;
 };
 
 export interface View {
@@ -96,6 +97,7 @@ export interface Cell {
 	readOnly?: boolean;
 	onOpen?(e: any, data: any): void;
 	onChange?(data: any): void;
+	onCellChange?: (id: string, key: string, value: any) => void;
 };
 
 export interface ContentDataview {

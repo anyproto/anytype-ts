@@ -2,9 +2,9 @@ import { observable, action, computed, set, intercept, decorate } from 'mobx';
 import { I, DataUtil } from 'ts/lib';
 
 class DbStore {
-	public objectTypeMap: Map<string, I.ObjectType> = observable(new Map());
-	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable(new Map());
-	public relationMap: Map<string, any> = observable(new Map());
+	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
+	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable.map(new Map());
+	public relationMap: Map<string, any> = observable.map(new Map());
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 

@@ -261,6 +261,10 @@ class CellText extends React.Component<Props, State> {
 			if (editing) {
 				if (relation.format == I.RelationType.Description) {
 					const input = cell.find('#input');
+					if (!input.length) {
+						return;
+					};
+
 					input.css({ height: 'auto', overflow: 'visible' });
 
 					const sh = input.get(0).scrollHeight;

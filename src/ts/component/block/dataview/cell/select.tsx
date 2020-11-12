@@ -34,10 +34,8 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { index, block, relation, readOnly } = this.props;
+		const { index, relation, readOnly, data } = this.props;
 		const { editing } = this.state;
-		const data = dbStore.getData(block.id);
-		const rel = dbStore.getRelation(block.id, relation.key);
 		
 		let value: any = data[index][relation.key];
 		if (!value || ('object' != typeof(value))) {
@@ -152,8 +150,7 @@ class CellSelect extends React.Component<Props, State> {
 			return;
 		};
 
-		const { relation, block, index } = this.props;
-		const data = dbStore.getData(block.id);
+		const { relation, index, data } = this.props;
 		const value = data[index][relation.key] || [];
 		const node = $(ReactDOM.findDOMNode(this));
 		const text = node.find('#filter').text();
@@ -180,10 +177,9 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
-		const { relation, block, index } = this.props;
+		const { relation, block, index, data } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const filter = node.find('#filter');
-		const data = dbStore.getData(block.id);
 		const value = data[index][relation.key] || [];
 		const length = filter.text().length;
 
@@ -204,10 +200,9 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: any) {
-		const { relation, block, index } = this.props;
+		const { relation, block, index, data } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const filter = node.find('#filter');
-		const data = dbStore.getData(block.id);
 		const value = data[index][relation.key] || [];
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });

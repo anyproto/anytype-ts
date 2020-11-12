@@ -162,13 +162,13 @@ class MenuSelect extends React.Component<Props, {}> {
 		if (item.isInitial && !canSelectInitial) {
 			return;
 		};
-		
-		if (onSelect) {
-			onSelect(e, item);
-		};
 
 		if (!noClose) {
 			close();
+		};
+		
+		if (onSelect) {
+			onSelect(e, item);
 		};
 	};
 	

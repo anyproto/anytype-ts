@@ -628,11 +628,12 @@ const BlockRelationSetKey = (contextId: string, blockId: string, key: string, ca
 	dispatcher.request('blockRelationSetKey', request, callBack);
 };
 
-const BlockRelationAdd = (contextId: string, relations: any[], callBack?: (message: any) => void) => {
+const BlockRelationAdd = (contextId: string, blockId: string, relation: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.Add.Request();
 	
 	request.setContextid(contextId);
-	request.setRelationsList(relations.map(Mapper.To.Relation));
+	request.setBlockid(blockId);
+	request.setRelation(Mapper.To.Relation(relation));
 
 	dispatcher.request('blockRelationAdd', request, callBack);
 };

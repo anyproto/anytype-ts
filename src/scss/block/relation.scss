@@ -4,6 +4,8 @@
 	.block.blockRelation { line-height: 20px; }
 	.block.blockRelation {
 		.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
+		.icon.expand { display: none; }
+
 		.input { 
 			@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
 			height: 20px; padding: 0px;
@@ -13,21 +15,30 @@
 		.side {
 			.name { display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; }
 		}
-
 		.side.left { width: 200px; margin-right: 20px; }
 		.side.left {
 			.name { width: calc(100% - 24px); color: #6c6a5f;}
 		}
-
 		.side.right { width: calc(100% - 220px); }
 		
 		.cellContent.c-title { cursor: text; }
-
 		.cellContent.c-title {
 			.name { width: calc(100% - 24px); }
 		}
 
-		.icon.expand { display: none; }
+		.cellContent.c-select { cursor: text; padding-bottom: 8px; }
+		.cellContent.c-select {
+			.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
+			.DraggableTags { display: inline; vertical-align: top; line-height: 0px; }
+			.DraggableTags::after { display: none; }
+
+			.filter { cursor: text; margin-right: 0px; height: 18px; min-width: 18px; padding: 0px; display: none; }
+			.filter {
+				#filter { -webkit-user-modify: read-write-plaintext-only; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; }
+				#placeHolder { color: $colorDarkGrey; }
+			}
+		}
+		
 	}
 
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }

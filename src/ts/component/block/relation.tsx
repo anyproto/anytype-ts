@@ -6,6 +6,8 @@ import { commonStore, blockStore, dbStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {};
 
+const Constant = require('json/constant.json');
+
 @observer
 class BlockRelation extends React.Component<Props, {}> {
 
@@ -18,6 +20,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		this.onMenu = this.onMenu.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
+		this.onCellChange = this.onCellChange.bind(this);
 	};
 
 	render (): any {
@@ -25,7 +28,8 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { content } = block;
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
-		const relation = dbStore.getRelation(rootId, key);
+		const relations = dbStore.getRelations(rootId);
+		const relation = relations.find((it: any) => { return it.key == key; });
 
 		return (
 			<div className="wrap">
@@ -42,7 +46,7 @@ class BlockRelation extends React.Component<Props, {}> {
 							<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
 							<div className="name">{relation.name}</div>
 						</div>
-						<div className="side right" onClick={this.onCellClick}>
+						<div id={DataUtil.cellId('cell', key, '0')} className="side right" onClick={this.onCellClick}>
 							<Cell 
 								id="0"
 								ref={(ref: any) => { this.refCell = ref; }}
@@ -53,6 +57,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								index={0}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
+								onCellChange={this.onCellChange}
 							/>
 						</div>
 					</div>
@@ -74,8 +79,8 @@ class BlockRelation extends React.Component<Props, {}> {
 		const options = this.getItems();
 
 		commonStore.menuOpen('select', {
-			element: '#relation-type-' + block.id,
-			offsetX: 0,
+			element: '#block-' + block.id,
+			offsetX: Constant.size.blockMenu,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
@@ -83,33 +88,42 @@ class BlockRelation extends React.Component<Props, {}> {
 			width: 320,
 			data: {
 				options: options,
-				noClose: true,
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'add') {
-						commonStore.menuOpen('blockRelationList', { 
-							element: '#menuSelect #item-add',
-							type: I.MenuType.Vertical,
-							offsetX: 320,
-							offsetY: -36,
-							vertical: I.MenuDirection.Bottom,
-							horizontal: I.MenuDirection.Left,
-							onClose: () => {
-								commonStore.menuClose('select');
-							},
-							data: {
-								relationKey: '',
-								readOnly: readOnly,
-								rootId: rootId,
-								blockId: block.id, 
-							},
-						});
+						window.setTimeout(() => { this.onMenuAdd(); }, Constant.delay.menu);
 					} else {
 						C.BlockRelationSetKey(rootId, block.id, item.id);
-						commonStore.menuClose('select');
 					};
 				}
 			}
 		});
+	};
+
+	onMenuAdd () {
+		const { rootId, block, readOnly } = this.props;
+
+		commonStore.menuOpen('blockRelationEdit', { 
+			element: '#block-' + block.id,
+			type: I.MenuType.Vertical,
+			offsetX: Constant.size.blockMenu,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				relationKey: '',
+				readOnly: readOnly,
+				rootId: rootId,
+				blockId: block.id, 
+			},
+		});
+	};
+
+	onCellChange (id: string, key: string, value: any) {
+		const { rootId } = this.props;
+
+		C.BlockSetDetails(rootId, [ 
+			{ key: key, value: value },
+		]);
 	};
 
 	getItems () {

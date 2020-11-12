@@ -28,6 +28,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		this.getData = this.getData.bind(this);
 		this.getView = this.getView.bind(this);
 		this.onRowAdd = this.onRowAdd.bind(this);
+		this.onCellChange = this.onCellChange.bind(this);
 	};
 
 	render () {
@@ -86,6 +87,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						getData={this.getData} 
 						getView={this.getView} 
 						onRowAdd={this.onRowAdd}
+						onCellChange={this.onCellChange}
 					/>
 				</div>
 			</div>
@@ -147,6 +149,22 @@ class BlockDataview extends React.Component<Props, {}> {
 			};
 			dbStore.recordAdd(block.id, message.record);
 		});
+	};
+
+	onCellChange (id: string, key: string, value: any) {
+		const { rootId, block } = this.props;
+		const data = dbStore.getData(block.id);
+		const record = data.find((it: any) => { return it.id == key; });
+
+		if (record && (record[key] === value)) {
+			return;
+		};
+
+		let obj: any = { id: record.id };
+		obj[key] = value;
+
+		dbStore.recordUpdate(block.id, obj);
+		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, record);
 	};
 
 	onOpen (e: any, data: any) {

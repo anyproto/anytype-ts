@@ -469,7 +469,7 @@ const Mapper = {
 			item.setReadonly(obj.isReadOnly);
 			item.setMulti(obj.isMultiple);
 			item.setObjecttype(obj.objectType);
-			item.setSelectdictList(obj.selectDict.map(Mapper.To.SelectOption));
+			item.setSelectdictList((obj.selectDict || []).map(Mapper.To.SelectOption));
 
 			return item;
 		},
