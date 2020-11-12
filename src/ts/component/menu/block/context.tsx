@@ -204,7 +204,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						data: {
 							rootId: rootId,
 							blockId: blockId,
-							blockIds: [ blockId ],
+							blockIds: blockIds,
 							onSelect: (item: any) => {
 								close();
 							},

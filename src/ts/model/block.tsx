@@ -53,7 +53,7 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isSystem() && !this.isBookmark() && !this.isDiv();
+		return !this.isSystem();
 	};
 
 	canHaveMarks () {

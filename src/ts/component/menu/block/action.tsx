@@ -39,17 +39,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
-
-		if (!block) {
-			return null;
-		};
-		
-		const { content, bgColor } = block;
-		const { color } = content;
 		const sections = this.getSections();
 		
 		const Section = (item: any) => (
@@ -70,7 +59,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 							action.inner = <div className={icn.join(' ')} />;
 						};
 						
-return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -515,10 +504,7 @@ return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.on
 			return;
 		};
 
-		let ids = selection.get();
-		if (!ids.length) {
-			ids = [ blockId ];
-		};
+		let ids = DataUtil.selectionGet(blockId, false, this.props);
 
 		switch (item.key) {
 			case 'download':

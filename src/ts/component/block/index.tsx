@@ -355,9 +355,9 @@ class Block extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 
-		let ids = DataUtil.selectionGet(id, this.props);
+		let ids = DataUtil.selectionGet(id, true, this.props);
 		if (block.isTextTitle()) {
-			ids = DataUtil.selectionGet('', this.props);
+			ids = DataUtil.selectionGet('', true, this.props);
 		};
 		
 		commonStore.menuOpen('blockAction', { 
@@ -369,7 +369,7 @@ class Block extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: id,
-				blockIds: DataUtil.selectionGet(id, this.props),
+				blockIds: DataUtil.selectionGet(id, true, this.props),
 				rootId: rootId,
 				dataset: dataset,
 			},

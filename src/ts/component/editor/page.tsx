@@ -742,7 +742,7 @@ class EditorPage extends React.Component<Props, State> {
 				horizontal: I.MenuDirection.Left,
 				data: {
 					blockId: focused,
-					blockIds: DataUtil.selectionGet(focused, this.props),
+					blockIds: DataUtil.selectionGet(focused, true, this.props),
 					rootId: rootId,
 					dataset: dataset,
 				},

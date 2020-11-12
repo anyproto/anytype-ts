@@ -118,7 +118,7 @@ class DataUtil {
 		return icon;
 	};
 	
-	selectionGet (id: string, props: any): string[] {
+	selectionGet (id: string, withChildren: boolean, props: any): string[] {
 		const { dataset } = props;
 		const { selection } = dataset || {};
 		
@@ -126,11 +126,11 @@ class DataUtil {
 			return [];
 		};
 		
-		let ids: string[] = selection.get(true);
+		let ids: string[] = selection.get(withChildren);
 		if (id && ids.indexOf(id) < 0) {
 			selection.clear(true);
 			selection.set([ id ]);
-			ids = selection.get(true);
+			ids = selection.get(withChildren);
 		};
 		return ids;
 	};
