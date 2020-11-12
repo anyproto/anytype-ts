@@ -1335,8 +1335,22 @@ class EditorPage extends React.Component<Props, State> {
 					],
 					onSelect: (event: any, item: any) => {
 						if (item.id == 'cancel') {
-							this.onPaste(e, true, data);
+							const to = range.from + url.length;
+							const value = Util.stringInsert(block.content.text, url, range.from, range.from);
+							const marks = Util.objectCopy(block.content.marks);
+
+							marks.push({
+								type: I.MarkType.Link,
+								range: { from: range.from, to: to },
+								param: url,
+							});
+
+							DataUtil.blockSetText(rootId, block, value, marks, true, () => {
+								focus.set(block.id, { from: to, to: to });
+								focus.apply();
+							});
 						};
+
 						if (item.id == 'bookmark') {
 							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
 						};
