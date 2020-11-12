@@ -149,7 +149,7 @@ class Cell extends React.Component<Props, {}> {
 				break;
 					
 			case I.RelationType.Object:
-				menuId = 'dataviewAccount';
+				menuId = 'dataviewObject';
 				break;
 
 			case I.RelationType.Url:

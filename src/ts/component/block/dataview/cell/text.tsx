@@ -198,9 +198,9 @@ class CellText extends React.Component<Props, State> {
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
 		const { menus } = commonStore;
-		const menu = menus.find((item: I.Popup) => { return item.id == MENU_ID; });
+		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 
-		value = this.parseDate(String(value || '').replace(/_/g, ''));
+		value = Util.parseDate(String(value || '').replace(/_/g, ''));
 		menu.param.data.value = value;
 
 		commonStore.menuUpdate(MENU_ID, menu.param);
@@ -224,7 +224,7 @@ class CellText extends React.Component<Props, State> {
 		let value = this.ref.getValue();
 
 		if (value && (relation.format == I.RelationType.Date)) {
-			value = this.parseDate(value);
+			value = Util.parseDate(value);
 		};
 
 		keyboard.setFocus(false);
@@ -235,24 +235,6 @@ class CellText extends React.Component<Props, State> {
 		if (onChange) {
 			onChange(value);
 		};
-	};
-
-	parseDate (value: any) {
-		let [ date, time, half ] = String(value || '').split(' ');
-		let [ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
-		let [ h, i, s ] = String(time || '').split(':').map((it: any) => { return Number(it) || 0; });
-
-		m = Math.min(12, Math.max(1, m));
-		let maxDays = Constant.monthDays[m];
-		if ((m == 2) && (y % 4 === 0)) {
-			maxDays = 29;
-		};
-		d = Math.min(maxDays, Math.max(1, d));
-		h = Math.min(24, Math.max(0, h));
-		i = Math.min(60, Math.max(0, i));
-		s = Math.min(60, Math.max(0, s));
-
-		return Util.timestamp(y, m, d, h, i, s);
 	};
 
 	onSelect (icon: string) {

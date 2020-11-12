@@ -36,7 +36,7 @@ import MenuDataviewViewEdit from './dataview/view/edit';
 import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
-import MenuDataviewAccount from './dataview/account';
+import MenuDataviewObject from './dataview/object';
 import MenuDataviewDate from './dataview/date';
 
 interface Props extends I.Menu {
@@ -98,7 +98,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewViewList:		 MenuDataviewViewList,
 			dataviewViewEdit:		 MenuDataviewViewEdit,
 			dataviewCalendar:		 MenuDataviewCalendar,
-			dataviewAccount:		 MenuDataviewAccount,
+			dataviewObject:			 MenuDataviewObject,
 			dataviewDate:			 MenuDataviewDate,
 		};
 		

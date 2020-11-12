@@ -79,10 +79,9 @@ class MenuFilter extends React.Component<Props, {}> {
 						<Input 
 							id={'item-' + item.id + '-value'}
 							ref={refGet} 
-							value={item.value !== '' ? Util.date('d.m.Y', item.value) : ''} 
-							placeHolder="dd.mm.yyyy"
-							mask="99.99.9999"
-							onKeyUp={(e: any, v: string) => { this.onChangeDate(item.id, v, true); }} 
+							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
+							placeHolder="dd.mm.yyyy hh:mm:ss"
+							mask="99.99.9999 99:99:99"
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 						/>
 					);
@@ -143,9 +142,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					))}
 					{!view.filters.length ? (
 						<div className="item empty">
-							<div className="inner">
-								No filters applied to this view
-							</div>
+							<div className="inner">No filters applied to this view</div>
 						</div>
 					) : ''}
 					<ItemAdd index={view.filters.length + 1} disabled={true} />
@@ -330,27 +327,23 @@ class MenuFilter extends React.Component<Props, {}> {
 	onSubmitDate (e: any, item: any) {
 		e.preventDefault();
 
-		const a = this.refObj[item.id].getValue().split('.').reverse().join('/');
-		const value = Util.timestamp(a[0], a[1], a[2]);
+		const value = Util.parseDate(this.refObj[item.id].getValue());
 		
 		this.onChange(item.id, 'value', value);
 		this.calendarOpen(item.id, value);
 	};
 
-	onChangeDate (item: any, v: any, timeout?: boolean) {
-	};
-
 	onFocusDate (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { view } = data;
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == item.relationKey; });
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewCalendar'; });
+		const value = item.value || Util.time();
 		
-		if (!relation || commonStore.menuIsOpen('dataviewCalendar')) {
-			return;
+		if (menu) {
+			menu.param.data.value = value;
+			commonStore.menuUpdate('dataviewCalendar', menu.param);
+		} else {
+			this.calendarOpen(item.id, value);
 		};
-
-		this.calendarOpen(item.id, item.value || Util.time());
 	};
 
 	calendarOpen (id: number, value: number) {

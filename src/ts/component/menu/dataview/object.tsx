@@ -14,7 +14,7 @@ interface State {
 const $ = require('jquery');
 
 @observer
-class MenuAccount extends React.Component<Props, State> {
+class MenuDataviewObject extends React.Component<Props, State> {
 	
 	filterRef: any = null;
 	state = {
@@ -65,7 +65,7 @@ class MenuAccount extends React.Component<Props, State> {
 		const { data } = param;
 		const { options } = data;
 		
-		this.setState({ items: options });
+		this.setState({ items: options || [] });
 		this.filterRef.focus();
 	};
 	
@@ -84,4 +84,4 @@ class MenuAccount extends React.Component<Props, State> {
 	
 };
 
-export default MenuAccount;
+export default MenuDataviewObject;
