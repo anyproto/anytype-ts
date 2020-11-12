@@ -522,15 +522,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, dataset } = data;
-		const { selection } = dataset || {};
+		const { blockId, blockIds, rootId } = data;
 	
 		let block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
 
-		let ids = DataUtil.selectionGet(blockId, false, this.props);
+		let ids = DataUtil.selectionGet(blockId, false, data);
 
 		switch (item.key) {
 			case 'download':
