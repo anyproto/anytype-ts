@@ -232,9 +232,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				},
 				{ 
 					children: [
-						{ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true },
-						{ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'black') },
-						{ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') },
 						//{ id: 'comment', icon: 'comment', name: 'Comment' },
 					]
 				},

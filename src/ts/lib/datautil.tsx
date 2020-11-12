@@ -385,7 +385,7 @@ class DataUtil {
 		];
 		
 		if (hasFile) {
-			//items.push({ id: 'download', icon: 'download', name: 'Download' });
+			items.push({ id: 'download', icon: 'download', name: 'Download' });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
 		};
