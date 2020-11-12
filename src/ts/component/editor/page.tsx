@@ -176,33 +176,30 @@ class EditorPage extends React.Component<Props, State> {
 		
 		this.open();
 		
-		window.setTimeout(() => {
-			if (this.uiHidden) {
-				this.uiHide();
-			};
-			
-			focus.apply();
+		if (this.uiHidden) {
+			this.uiHide();
+		};
+		
+		focus.apply();
 
-			if (resizable.length) {
-				resizable.trigger('resizeInit');
-			};
+		if (resizable.length) {
+			resizable.trigger('resizeInit');
+		};
 			
-			this.resize();
-		}, 15);
+		this.resize();
 	};
 	
 	componentWillUnmount () {
-		this._isMounted = false;
-		
 		const { rootId } = this.props;
-		
+
+		this._isMounted = false;
 		this.uiHidden = false;
-		keyboard.disableBack(false);
 		this.unbind();
 		this.close(rootId);
+		keyboard.disableBack(false);
+
 		focus.clear(false);
 		Storage.delete('pageId');
-
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 	
