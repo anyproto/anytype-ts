@@ -29,6 +29,7 @@ import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
 import MenuDataviewObjectType from './dataview/object/type';
+import MenuDataviewObjectList from './dataview/object/list';
 import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
@@ -36,7 +37,6 @@ import MenuDataviewViewEdit from './dataview/view/edit';
 import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
-import MenuDataviewObject from './dataview/object';
 import MenuDataviewDate from './dataview/date';
 
 interface Props extends I.Menu {
@@ -91,6 +91,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewRelationEdit:	 MenuDataviewRelationEdit,
 			dataviewRelationType:	 MenuDataviewRelationType,
 			dataviewObjectType:		 MenuDataviewObjectType,
+			dataviewObjectList:		 MenuDataviewObjectList,
 			dataviewOptionList:		 MenuDataviewOptionList,
 			dataviewOptionEdit:		 MenuDataviewOptionEdit,
 			dataviewFilter:			 MenuDataviewFilter,
@@ -98,7 +99,6 @@ class Menu extends React.Component<Props, {}> {
 			dataviewViewList:		 MenuDataviewViewList,
 			dataviewViewEdit:		 MenuDataviewViewEdit,
 			dataviewCalendar:		 MenuDataviewCalendar,
-			dataviewObject:			 MenuDataviewObject,
 			dataviewDate:			 MenuDataviewDate,
 		};
 		

@@ -14,7 +14,7 @@ interface State {
 const $ = require('jquery');
 
 @observer
-class MenuDataviewObject extends React.Component<Props, State> {
+class MenuDataviewObjectList extends React.Component<Props, State> {
 	
 	filterRef: any = null;
 	state = {
@@ -84,4 +84,4 @@ class MenuDataviewObject extends React.Component<Props, State> {
 	
 };
 
-export default MenuDataviewObject;
+export default MenuDataviewObjectList;
