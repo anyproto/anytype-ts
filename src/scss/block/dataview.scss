@@ -86,6 +86,10 @@
 				span:empty { display: none; }
 			}
 
+			.cell.c-file {
+				.inputWithFile { border: 0px; padding: 0px; }
+			}
+
 			.cell.c-link {
 				.icon.user { margin-right: 5px; }
 			}

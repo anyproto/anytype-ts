@@ -39,11 +39,11 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('linkPreview', request, callBack);
 };
 
-const UploadFile = (url: string, localPath: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
+const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.UploadFile.Request();
 	
 	request.setUrl(url);
-	request.setLocalpath(localPath);
+	request.setLocalpath(path);
 	request.setType(type);
 	request.setDisableencryption(enc);
 

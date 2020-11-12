@@ -154,9 +154,9 @@ class BlockDataview extends React.Component<Props, {}> {
 	onCellChange (id: string, key: string, value: any) {
 		const { rootId, block } = this.props;
 		const data = dbStore.getData(block.id);
-		const record = data.find((it: any) => { return it.id == key; });
+		const record = data.find((it: any) => { return it.id == id; });
 
-		if (record && (record[key] === value)) {
+		if (!record || (record[key] === value)) {
 			return;
 		};
 

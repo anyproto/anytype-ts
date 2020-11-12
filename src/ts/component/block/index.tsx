@@ -165,7 +165,6 @@ class Block extends React.Component<Props, {}> {
 				break;
 
 			case I.BlockType.Relation:
-				canSelect = false;
 				cn.push('blockRelation');
 				blockComponent = <BlockRelation {...this.props} />;
 				break;

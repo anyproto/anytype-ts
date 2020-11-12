@@ -7,7 +7,8 @@ import { observable } from 'mobx';
 import CellText from './text';
 import CellSelect from './select';
 import CellBool from './checkbox';
-import CellLink from './link';
+import CellObject from './object';
+import CellMedia from './media';
 
 interface Props extends I.Cell {};
 
@@ -49,9 +50,14 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Checkbox:
 				CellComponent = CellBool;
 				break;
+
+			case I.RelationType.File:
+			case I.RelationType.Media:
+				CellComponent = CellMedia;
+				break;
 				
 			case I.RelationType.Object:
-				CellComponent = CellLink;
+				CellComponent = CellObject;
 				break;
 				
 			case I.RelationType.Url:

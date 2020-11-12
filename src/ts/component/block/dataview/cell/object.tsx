@@ -6,24 +6,24 @@ import { observer } from 'mobx-react';
 interface Props extends I.Cell {};
 
 @observer
-class CellLink extends React.Component<Props, {}> {
+class CellObject extends React.Component<Props, {}> {
 
 	render () {
 		const { relation, index } = this.props;
-		const data = this.props.data[index];
-		
-		if (!data[relation.key]) {
+		const data = this.props.data[index][relation.key];
+
+		if (!data) {
 			return null;
 		};
 		
 		return (
 			<React.Fragment>
-				<IconUser className="c18" {...data[relation.key]} />
-				{data[relation.key].name}
+				<IconUser className="c18" {...data} />
+				{data.name}
 			</React.Fragment>
 		);
 	};
 	
 };
 
-export default CellLink;
+export default CellObject;

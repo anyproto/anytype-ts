@@ -453,8 +453,8 @@ class Dispatcher {
 						list.push(Decode.decodeStruct(item) || {});
 					};
 
-					dbStore.setData(block.id, list);
-					dbStore.setMeta(block.id, {
+					dbStore.setData(id, list);
+					dbStore.setMeta(id, {
 						viewId: data.getViewid(),
 						total: data.getTotal(),
 					});

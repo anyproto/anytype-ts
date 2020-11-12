@@ -257,6 +257,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		view.relations[idx].width = width;
 		el.css({ width: width });
+		node.find('.resizable').trigger('resize');
 
 		this.resizeLast();
 	};
