@@ -371,6 +371,10 @@ class PageMainHistory extends React.Component<Props, State> {
 		};
 
 		for (let group of groups) {
+			if ((group.list.length == 1) && (group.time == group.list[0].time)) {
+				group.list = [];
+			};
+
 			let groupId = this.monthId(group.time);
 			let month = months.find((it: any) => { return it.groupId == groupId; });
       
