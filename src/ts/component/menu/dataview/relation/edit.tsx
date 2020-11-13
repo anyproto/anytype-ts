@@ -104,15 +104,23 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			this.forceUpdate();
 		};
 
-		this.ref.focus();
+		this.focus();
 	};
 
 	componentDidUpdate () {
-		this.ref.focus();
+		this.focus();
 	};
 
 	componentWillUnmount () {
 		window.clearTimeout(this.timeout);
+	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
 	};
 	
 	onType (e: any) {

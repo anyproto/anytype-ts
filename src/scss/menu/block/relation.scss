@@ -22,6 +22,8 @@
 		}
 
 		.icon.expand { display: none; }
+		.icon.checkbox { background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 	}
 	
 	.menu.menuBlockRelationEdit { width: 224px; }

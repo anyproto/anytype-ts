@@ -5,6 +5,8 @@
 	.block.blockRelation {
 		.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
 		.icon.expand { display: none; }
+		.icon.checkbox { background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
 		.input { 
 			@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
@@ -24,6 +26,7 @@
 		.cellContent.c-title { cursor: text; }
 		.cellContent.c-title {
 			.name { width: calc(100% - 24px); }
+			.smile { margin-right: 4px; }
 		}
 
 		.cellContent.c-select { cursor: text; padding-bottom: 8px; }

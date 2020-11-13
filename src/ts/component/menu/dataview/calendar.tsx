@@ -62,6 +62,10 @@ class MenuCalendar extends React.Component<Props, State> {
 		);
 	};
 
+	componentDidUpdate () {
+		this.props.position();
+	};
+
 	setValue (v: number, save: boolean) {
 		const { param, close } = this.props;
 		const { data } = param;

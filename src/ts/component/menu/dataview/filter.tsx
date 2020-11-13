@@ -173,10 +173,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.resize();
 	};
 
-	componentWillUnmount () {
-		this.save();
-	};
-
 	conditionsByType (type: I.RelationType): I.Option[] {
 		let ret = [];
 

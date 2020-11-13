@@ -86,10 +86,6 @@ class MenuRelationList extends React.Component<Props, {}> {
 		this.props.position();
 	};
 
-	componentWillUnmount () {
-		this.save();
-	};
-	
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;

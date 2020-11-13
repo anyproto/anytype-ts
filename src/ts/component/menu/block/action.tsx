@@ -70,7 +70,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 							action.inner = <div className={icn.join(' ')} />;
 						};
 						
-return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
