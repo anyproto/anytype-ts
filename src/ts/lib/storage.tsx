@@ -48,12 +48,26 @@ class Storage {
 		obj[rootId] = [ ...new Set(obj[rootId]) ];
 
 		this.set('toggle', obj, true);
+		return obj;
 	};
 
 	checkToggle (rootId: string, id: string): boolean {
 		const map = this.get('toggle') || {};
 		const list = map[rootId] || [];
 		return list.indexOf(id) >= 0;
+	};
+
+	setScroll (key: string, rootId: string, scroll: number) {
+		const obj = this.get('scroll') || {};
+		obj[key] = obj[key] || {};
+		obj[key][rootId] = Number(scroll) || 0;
+		this.set('scroll', obj, true);
+		return obj;
+	};
+
+	getScroll (key: string, rootId: string) {
+		const obj = this.get('scroll') || {};
+		return Number((obj[key] || {})[rootId]) || 0;
 	};
 
 	logout () {
