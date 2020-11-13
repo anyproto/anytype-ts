@@ -65,6 +65,9 @@
 			td.cell.isEditing .cellContent {
 				.name { display: inline-block; }
 			}
+			td.cell.isEditing.c-select {
+				.filter { display: inline-block; }
+			}
             
 			tr.active {
 				td.cell.isName {
@@ -85,9 +88,6 @@
 					#filter { -webkit-user-modify: read-write-plaintext-only; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; }
 					#placeHolder { color: $colorDarkGrey; }
 				}
-			}
-			td.cell.isEditing.c-select {
-				.filter { display: inline-block; }
 			}
 
 			.icon.checkbox { vertical-align: top; }

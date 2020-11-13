@@ -21,7 +21,24 @@
 		.side.left {
 			.name { width: calc(100% - 24px); color: #6c6a5f;}
 		}
-		.side.right { width: calc(100% - 220px); }
+		.side.right { width: calc(100% - 220px); position: relative; }
+
+		.cell.isEditing { box-shadow: 0px 0px 0px 2px $colorOrange inset; border-radius: 2px; z-index: 1; }
+		.cell.isEditing {
+			.input-text { padding: 0px; height: 20px; }
+			.textarea { 
+				padding: 0px; background: none; padding: 14px; box-shadow: 0px 0px 0px 2px $colorOrange inset; overflow: auto; font-family: 'Inter';
+				position: absolute; left: 0px; top: 0px; height: auto; width: 100%; background: #fff; z-index: 1;
+			}
+		}
+		.cell.isEditing.c-description { padding: 0px !important; box-shadow: 0px 0px; }
+		.cell.isEditing .cellContent { height: auto; }
+		.cell.isEditing .cellContent {
+			.name { display: inline-block; }
+		}
+		.cell.isEditing.c-select {
+			.filter { display: inline-block; }
+		}
 		
 		.cellContent.c-title { cursor: text; }
 		.cellContent.c-title {

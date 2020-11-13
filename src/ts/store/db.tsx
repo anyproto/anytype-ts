@@ -4,7 +4,7 @@ import { I, DataUtil } from 'ts/lib';
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
 	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable.map(new Map());
-	public relationMap: Map<string, any> = observable.map(new Map());
+	public relationMap: Map<string, any> = observable(new Map());
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 
@@ -58,11 +58,15 @@ class DbStore {
 	};
 
 	@action
-	relationAdd (blockId: string, relation: any) {
+	relationAdd (blockId: string, item: any) {
 		const relations = this.getRelations(blockId);
-
-		relations.push(relation);
-		this.relationsSet(blockId, relations);
+		const relation = relations.find((it: I.Relation) => { return it.key == item.key; });
+		if (relation) {
+			this.relationUpdate(blockId, item);
+		} else {
+			relations.push(relation);
+			this.relationsSet(blockId, relations);
+		};
 	};
 
 	@action
@@ -74,7 +78,7 @@ class DbStore {
 			return;
 		};
 
-		relations[idx] = Object.assign(relation, item);
+		set(relations[idx], item);
 		this.relationsSet(blockId, relations);
 	};
 

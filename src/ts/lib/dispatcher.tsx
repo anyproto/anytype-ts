@@ -383,10 +383,14 @@ class Dispatcher {
 				case 'blockSetRelations':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
+
+					console.log('EVENT ROOT', rootId);
+					console.log('EVENT BLOCK', id);
+					console.log('BLOCK', block);
+
 					if (!block) {
 						break;
 					};
-
 					const relations = (data.getRelationsList() || []).map(Mapper.From.Relation);
 					for (let relation of relations) {
 						dbStore.relationAdd(rootId, relation);

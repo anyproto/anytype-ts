@@ -46,7 +46,7 @@ class BlockRelation extends React.Component<Props, {}> {
 							<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
 							<div className="name">{relation.name}</div>
 						</div>
-						<div id={DataUtil.cellId('cell', key, '0')} className="side right" onClick={this.onCellClick}>
+						<div id={DataUtil.cellId('cell', key, '0')} className="side right cell" onClick={this.onCellClick}>
 							<Cell 
 								id="0"
 								ref={(ref: any) => { this.refCell = ref; }}
@@ -150,7 +150,6 @@ class BlockRelation extends React.Component<Props, {}> {
 		};
 
 		options.unshift({ id: 'add', icon: 'add', name: 'Add new' });
-
 		return options;
 	};
 
