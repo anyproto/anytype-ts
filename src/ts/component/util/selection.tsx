@@ -158,11 +158,22 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.moved = false;
 		this.lastIds = [];
 		this.focused = focused;
+
 		keyboard.disablePreview(true);
 		
 		this.nodes.each((i: number, item: any) => {
 			this.cacheRect($(item));
 		});
+
+		if (e.shiftKey) {
+			let ids = this.get();
+			let target = $(e.target.closest('.selectable'));
+			let targetId = target.data('id');
+
+			if (!ids.length && (targetId != focused)) {
+				this.set(this.get().concat([ focused ]));
+			};
+		};
 		
 		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
@@ -206,41 +217,37 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		
+		let ids = this.get(true);
+		let first = ids.length ? ids[0] : this.focused;
+
 		if (!this.moved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 				this.clear();
 			} else {
 				this.checkNodes(e);
 				
-				let first = this.focused;
-				let ids = this.get(true);
-				
-				if (ids.length > 0) {
-					first = ids[0];
-				};
-				
 				let target = $(e.target.closest('.selectable'));
 				let targetId = target.data('id');
 				
-				if (target.length && e.shiftKey && (targetId != first)) {
+				if (target.length && e.shiftKey && ids.length) {
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
 					const list = blockStore.unwrapTree(tree);
 					const idxStart = list.findIndex((it: I.Block) => { return it.id == first; });
 					const idxEnd = list.findIndex((it: I.Block) => { return it.id == targetId; });
 					const start = idxStart < idxEnd ? idxStart : idxEnd;
 					const end = idxStart < idxEnd ? idxEnd : idxStart;
-					
+
 					let slice = list.slice(start, end + 1).
 						map((it: I.Block) => { return new M.Block(it); }).
 						filter((it: I.Block) => { return it.isSelectable(); }).
 						map((it: I.Block) => { return it.id; });
-					
-					this.set(slice);
+
+					this.set(ids.concat(slice));
 				};
 			};
 		};
 		
-		let ids = this.get(true);
+		ids = this.get(true);
 		if (ids.length > 0) {
 			commonStore.menuClose('blockContext');
 		};
