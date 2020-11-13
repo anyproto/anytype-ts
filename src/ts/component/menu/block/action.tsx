@@ -423,7 +423,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'blockStyle';
 				menuParam.data.onSelect = (item: any) => {
 					if (item.type == I.BlockType.Text) {
-						C.BlockListSetTextStyle(rootId, blockIds, item.key, (message: any) => {
+						C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
 					};
@@ -545,7 +545,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					if (item.type == I.BlockType.Div) {
 						C.BlockListSetDivStyle(rootId, blockIds, item.key);
 					} else {
-						C.BlockListSetTextStyle(rootId, blockIds, item.key, () => {
+						C.BlockListTurnInto(rootId, blockIds, item.key, () => {
 							this.setFocus(blockIds[0]);
 						});
 					};
