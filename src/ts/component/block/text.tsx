@@ -159,8 +159,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		const { block } = this.props;
-		const { content } = block
-		
+		const { content } = block;
+
 		this.marks = Util.objectCopy(content.marks || []);
 		this._isMounted = true;
 		this.setValue(content.text);
@@ -432,14 +432,19 @@ class BlockText extends React.Component<Props, {}> {
 
 		keyboard.shortcut('shift+enter', e, (pressed: string) => {
 			e.preventDefault();
+			let t = '\n';
+			if (range.from == value.length) {
+				t += t;
+			};
 			
-			value = Util.stringInsert(value, '\n', range.from, range.from);
+			value = Util.stringInsert(value, t, range.from, range.from);
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
-				focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
+				focus.set(block.id, { from: range.from + t.length, to: range.from + t.length });
 				focus.apply();
 
 				onKeyDown(e, value, this.marks, range);
 			});
+
 			ret = true;
 		});
 
@@ -868,8 +873,14 @@ class BlockText extends React.Component<Props, {}> {
 	onSelect (e: any) {
 		const { rootId, dataset, block } = this.props;
 		const { id, content } = block;
+		const { focused } = focus;
 		const { from, to } = focus.range;
 		const { style } = content;
+
+		if ((focused != block.id) && keyboard.isShiftPressed) {
+			e.preventDefault();
+			return;
+		};
 
 		focus.set(id, this.getRange());
 		keyboard.setFocus(true);

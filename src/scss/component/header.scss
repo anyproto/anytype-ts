@@ -69,7 +69,7 @@
 	.icon:hover { background-color: #f3f2ec; }
 
 	.path { 
-		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; margin: 0px 6px;
+		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
 		line-height: 24px; width: 400px; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
@@ -85,6 +85,7 @@
 
 	.side.center {
 		.icon { margin: 0px; opacity: 0; }
+		.icon.plus { margin-left: 6px; }
 		.icon.plus {
 			.arrow { 
 				width: 8px; height: 8px; background-image: url('~img/icon/header/arrow.svg'); position: absolute; right: -12px;
