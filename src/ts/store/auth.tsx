@@ -14,15 +14,21 @@ class AuthStore {
 	@observable public name: string = '';
 	@observable public phrase: string = '';
 	@observable public code: string = '';
+	@observable public cafeObj: I.ThreadCafe = null;
 	
 	@computed
 	get accounts(): I.Account[] {
 		return this.accountList;
 	};
-	
+
 	@computed
 	get account(): I.Account {
 		return this.accountItem;
+	};
+
+	@computed
+	get cafe(): I.ThreadCafe {
+		return this.cafeObj;
 	};
 	
 	@computed
@@ -66,6 +72,11 @@ class AuthStore {
 	@action
 	accountAdd (account: I.Account) {
 		this.accountList.push(account);
+	};
+
+	@action
+	cafeSet (obj: I.ThreadCafe) {
+		this.cafeObj = obj;
 	};
 	
 	accountClear () {

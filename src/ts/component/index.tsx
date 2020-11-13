@@ -50,6 +50,7 @@ import Tooltip from './util/tooltip';
 import Drag from './util/drag';
 import Marker from './util/marker';
 import Pin from './util/pin';
+import Sync from './util/sync';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
@@ -82,6 +83,7 @@ export {
 	Input,
 	InputWithFile,
 	Pin,
+	Sync,
 	Checkbox,
 	Textarea,
 	Button,

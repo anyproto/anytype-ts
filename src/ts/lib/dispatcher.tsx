@@ -73,6 +73,7 @@ class Dispatcher {
 		let V = Events.Event.Message.ValueCase;
 
 		if (v == V.ACCOUNTSHOW)				 t = 'accountShow';
+		if (v == V.THREADSTATUS)			 t = 'threadStatus';
 		if (v == V.BLOCKADD)				 t = 'blockAdd';
 		if (v == V.BLOCKDELETE)				 t = 'blockDelete';
 		if (v == V.BLOCKSETFIELDS)			 t = 'blockSetFields';
@@ -161,6 +162,110 @@ class Dispatcher {
 
 				case 'accountShow':
 					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
+					break;
+
+				case 'threadStatus': 
+					authStore.cafeSet(Mapper.From.ThreadCafe(data.getCafe()));
+/*
+
+[Dispatcher.event] rootId bafkrdwwkhiwk5bdeg2tig2sclpfftzmo4pdoseb4oqxl3mftrx2c7ipt event {
+   "messagesList": [
+      {
+         "threadstatus": {
+            "summary": {
+               "status": 1
+            },
+            "accountsList": [
+               {
+                  "id": "",
+                  "online": false,
+                  "lastpulled": 0,
+                  "lastedited": 0,
+                  "devicesList": [
+                     {
+                        "name": "s7MZ6BP8",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     },
+                     {
+                        "name": "kwVyZVzr",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     },
+                     {
+                        "name": "VtmjyKVv",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     },
+                     {
+                        "name": "u1XnybAP",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     },
+                     {
+                        "name": "f85Py4rh",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     },
+                     {
+                        "name": "XBsiAXGD",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     },
+                     {
+                        "name": "Yip65ybR",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     },
+                     {
+                        "name": "ZX8VcbR9",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     }
+                  ]
+               },
+               {
+                  "id": "sbeDGUU2",
+                  "online": false,
+                  "lastpulled": 0,
+                  "lastedited": 1605021192,
+                  "devicesList": [
+                     {
+                        "name": "NdfGFLeR",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     },
+                     {
+                        "name": "4e3kGswG",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 1605021192
+                     },
+                     {
+                        "name": "wM5EMbB5",
+                        "online": false,
+                        "lastpulled": 0,
+                        "lastedited": 0
+                     }
+                  ]
+               }
+            ]
+         }
+      }
+   ],
+   "contextid": "bafkrdwwkhiwk5bdeg2tig2sclpfftzmo4pdoseb4oqxl3mftrx2c7ipt"
+}
+*/
+
 					break;
 
 				case 'blockShow':

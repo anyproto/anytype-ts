@@ -261,6 +261,14 @@ const Mapper = {
             };
         },
 
+		ThreadCafe: (obj: any) => {
+            return {
+                status: obj.getStatus(),
+                lastPulled: obj.getLastpulled(),
+                lastPushSucceed: obj.getLastpushsucceed(),
+            };
+        },
+
     },
 
     //------------------------------------------------------------
