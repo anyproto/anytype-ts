@@ -209,8 +209,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
 		};
 
-		sections = sections.filter((it: any) => { return it.children.length > 0; });
-		
 		if (filter) {
 			sections = [];
 			

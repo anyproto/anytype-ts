@@ -466,7 +466,6 @@ class DataUtil {
 				
 				return ret; 
 			});
-			
 			return s.children.length > 0;
 		});
 		
@@ -474,16 +473,18 @@ class DataUtil {
 	};
 	
 	menuSectionsMap (sections: any[]) {
+		sections = sections.filter((it: any) => { return it.children.length > 0; });
 		sections = sections.map((s: any, i: number) => {
 			s.id = s.id || i;
-			s.children = s.children.map((it: any) => {
-				it.key = it.id;
+			s.children = s.children.map((it: any, i: number) => {
+				it.key = it.id || i;
 				it.id = s.id + '-' + it.id;
 				return it;
 			});
+			s.children = Util.arrayUniqueObjects(s.children, 'key');
 			return s;
 		});
-		
+		sections = Util.arrayUniqueObjects(sections, 'id');
 		return sections;
 	};
 	
