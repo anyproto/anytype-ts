@@ -121,6 +121,12 @@
 	"filterConditionEmpty": { "en": "is empty" },
 	"filterConditionNotEmpty": { "en": "is not empty" },
 
-	"inputWithFileTextUrl": { "en": "Paste a link" }
+	"inputWithFileTextUrl": { "en": "Paste a link" },
+
+	"syncStatus0": { "en": "Unknown" },
+	"syncStatus1": { "en": "Offline" },
+	"syncStatus2": { "en": "Syncyng..." },
+	"syncStatus3": { "en": "Synced" },
+	"syncStatus4": { "en": "Failed" }
 
 }

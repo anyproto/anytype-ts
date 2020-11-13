@@ -81,6 +81,7 @@ import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/select.scss';
 import 'scss/menu/search.scss';
+import 'scss/menu/thread.scss';
 
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';

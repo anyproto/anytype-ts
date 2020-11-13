@@ -483,6 +483,12 @@ function menuInit () {
 							}
 						},
 						{
+							label: 'Threads', type: 'checkbox', checked: config.debugTH,
+							click: () => {
+								setConfig({ debugTH: !config.debugTH });
+							}
+						},
+						{
 							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
 							click: () => {
 								setConfig({ debugAN: !config.debugAN });

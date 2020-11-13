@@ -14,7 +14,9 @@ class AuthStore {
 	@observable public name: string = '';
 	@observable public phrase: string = '';
 	@observable public code: string = '';
-	@observable public cafeObj: I.ThreadCafe = null;
+	@observable public threadSummaryObj: I.ThreadSummary = null;
+	@observable public threadCafeObj: I.ThreadCafe = null;
+	@observable public threadAccountList: I.ThreadAccount[] = [];
 	
 	@computed
 	get accounts(): I.Account[] {
@@ -27,8 +29,18 @@ class AuthStore {
 	};
 
 	@computed
-	get cafe(): I.ThreadCafe {
-		return this.cafeObj;
+	get threadSummary(): I.ThreadSummary {
+		return this.threadSummaryObj;
+	};
+
+	@computed
+	get threadCafe(): I.ThreadCafe {
+		return this.threadCafeObj;
+	};
+
+	@computed
+	get threadAccounts(): I.Account[] {
+		return this.threadAccountList;
 	};
 	
 	@computed
@@ -74,11 +86,6 @@ class AuthStore {
 		this.accountList.push(account);
 	};
 
-	@action
-	cafeSet (obj: I.ThreadCafe) {
-		this.cafeObj = obj;
-	};
-	
 	accountClear () {
 		this.accountList = [];
 	};
@@ -89,6 +96,21 @@ class AuthStore {
 
 		analytics.profile(account);
 		Sentry.setUser({ id: account.id });
+	};
+
+	@action
+	threadSummarySet (obj: I.ThreadSummary) {
+		this.threadSummaryObj = obj;
+	};
+
+	@action
+	threadCafeSet (obj: I.ThreadCafe) {
+		this.threadCafeObj = obj;
+	};
+
+	@action
+	threadAccountsSet (accounts: I.ThreadAccount[]) {
+		this.threadAccountList = accounts;
 	};
 	
 	@action

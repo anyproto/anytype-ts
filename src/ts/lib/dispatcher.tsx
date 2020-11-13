@@ -1,6 +1,6 @@
 import { authStore, commonStore, blockStore, dbStore } from 'ts/store';
 import { set } from 'mobx';
-import { Util, DataUtil, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
+import { Util, DataUtil, I, M, Decode, translate, analytics, Response, Mapper, Storage } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
@@ -102,10 +102,8 @@ class Dispatcher {
 		const rootId = event.getContextid();
 		const messages = event.getMessagesList() || [];
 		const debug = config.debugMW && !skipDebug;
-
-		if (debug) {
-			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event.toObject(), null, 3));
-		};
+		const debugThread = config.debugTH && !skipDebug;
+		const pageId = Storage.get('pageId');
 
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
@@ -157,6 +155,14 @@ class Dispatcher {
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
+			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(event.toObject(), null, 3)); };
+
+			if (debugThread && (type == 'threadStatus')) {
+				log();
+			} else
+			if (debug && (type != 'threadStatus')) {
+				log();
+			};
 
 			switch (type) {
 
@@ -165,107 +171,11 @@ class Dispatcher {
 					break;
 
 				case 'threadStatus': 
-					authStore.cafeSet(Mapper.From.ThreadCafe(data.getCafe()));
-/*
-
-[Dispatcher.event] rootId bafkrdwwkhiwk5bdeg2tig2sclpfftzmo4pdoseb4oqxl3mftrx2c7ipt event {
-   "messagesList": [
-      {
-         "threadstatus": {
-            "summary": {
-               "status": 1
-            },
-            "accountsList": [
-               {
-                  "id": "",
-                  "online": false,
-                  "lastpulled": 0,
-                  "lastedited": 0,
-                  "devicesList": [
-                     {
-                        "name": "s7MZ6BP8",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     },
-                     {
-                        "name": "kwVyZVzr",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     },
-                     {
-                        "name": "VtmjyKVv",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     },
-                     {
-                        "name": "u1XnybAP",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     },
-                     {
-                        "name": "f85Py4rh",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     },
-                     {
-                        "name": "XBsiAXGD",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     },
-                     {
-                        "name": "Yip65ybR",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     },
-                     {
-                        "name": "ZX8VcbR9",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     }
-                  ]
-               },
-               {
-                  "id": "sbeDGUU2",
-                  "online": false,
-                  "lastpulled": 0,
-                  "lastedited": 1605021192,
-                  "devicesList": [
-                     {
-                        "name": "NdfGFLeR",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     },
-                     {
-                        "name": "4e3kGswG",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 1605021192
-                     },
-                     {
-                        "name": "wM5EMbB5",
-                        "online": false,
-                        "lastpulled": 0,
-                        "lastedited": 0
-                     }
-                  ]
-               }
-            ]
-         }
-      }
-   ],
-   "contextid": "bafkrdwwkhiwk5bdeg2tig2sclpfftzmo4pdoseb4oqxl3mftrx2c7ipt"
-}
-*/
-
+					if (pageId == rootId) {
+						authStore.threadSummarySet(Mapper.From.ThreadSummary(data.getSummary()));
+						authStore.threadCafeSet(Mapper.From.ThreadCafe(data.getCafe()));
+						authStore.threadAccountsSet((data.getAccountsList() || []).map(Mapper.From.ThreadAccount));
+					};
 					break;
 
 				case 'blockShow':

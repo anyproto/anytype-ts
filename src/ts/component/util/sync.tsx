@@ -1,56 +1,35 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I, DataUtil, translate } from 'ts/lib';
 import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
+	id?: string;
 	className?: string;
+	onClick: (e: any) => void;
 };
 
 @observer
 class Sync extends React.Component<Props, {}> {
 
+	public static defaultProps = {
+		className: '',
+	};
+
 	render () {
-		const { className } = this.props;
-		const { cafe } = authStore;
+		const { id, className, onClick } = this.props;
+		const { threadSummary } = authStore;
+
+		if (!threadSummary) {
+			return null;
+		};
+
+		const { status } = threadSummary;
 		
-		let cn = [ 'sync' ];
-		if (className) {
-			cn.push(className);
-		};
-		let text = '';
-		let color = '';
-
-		switch (cafe.status) {
-			case I.SyncStatus.Unknown:
-				text = 'Unknown';
-				break;
-
-			case I.SyncStatus.Offline:
-				text = 'Offline';
-				color = 'red';
-				break;
-
-			case I.SyncStatus.Syncing:
-				text = 'Syncyng...';
-				color = 'orange';
-				break;
-
-			case I.SyncStatus.Synced:
-				text = 'Synced';
-				color = 'green';
-				break;
-
-			case I.SyncStatus.Failed:
-				text = 'Failed';
-				color = 'red';
-				break;
-		};
-
 		return (
-			<div className={cn.join(' ')}>
-				<div className={[ 'bullet', color ].join(' ')} />
-				{text}
+			<div id={id} className={[ 'sync', className ].join(' ')} onClick={onClick}>
+				<div className={[ 'bullet', DataUtil.threadColor(status) ].join(' ')} />
+				{translate('syncStatus' + status)}
 			</div>
 		);
 	};

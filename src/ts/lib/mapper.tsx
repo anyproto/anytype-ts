@@ -261,11 +261,36 @@ const Mapper = {
             };
         },
 
+		ThreadSummary: (obj: any) => {
+            return {
+                status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
+            };
+        },
+
 		ThreadCafe: (obj: any) => {
             return {
-                status: obj.getStatus(),
+                status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
                 lastPulled: obj.getLastpulled(),
                 lastPushSucceed: obj.getLastpushsucceed(),
+            };
+        },
+
+		ThreadDevice: (obj: any) => {
+            return {
+                name: obj.getName(),
+				online: obj.getOnline(),
+                lastPulled: obj.getLastpulled(),
+                lastEdited: obj.getLastedited(),
+            };
+        },
+
+		ThreadAccount: (obj: any) => {
+            return {
+				id: obj.getId(),
+				online: obj.getOnline(),
+                lastPulled: obj.getLastpulled(),
+                lastEdited: obj.getLastedited(),
+				devices: (obj.getDevicesList() || []).map(Mapper.From.ThreadDevice),
             };
         },
 

@@ -25,6 +25,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onSync = this.onSync.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -68,7 +69,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Sync />
+					<Sync id="button-sync" onClick={this.onSync} />
 					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
@@ -136,6 +137,17 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		
 		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
 			DataUtil.pageOpen(message.targetId);
+		});
+	};
+
+	onSync () {
+		commonStore.menuOpen('threadList', {
+			type: I.MenuType.Vertical, 
+			element: '#button-sync',
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right
 		});
 	};
 

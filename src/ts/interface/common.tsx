@@ -46,17 +46,3 @@ export interface HistoryVersion {
 	groupId: number;
 	time: number;
 };
-
-export enum SyncStatus {
-	Unknown	 = 0,
-	Offline	 = 1,
-	Syncing	 = 2,
-	Synced	 = 3,
-	Failed	 = 4,
-};
-
-export interface ThreadCafe {
-	status: SyncStatus;
-	lastPulled: number;
-	lastPushSucceed: boolean;
-};
