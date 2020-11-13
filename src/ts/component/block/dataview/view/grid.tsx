@@ -4,6 +4,8 @@ import { Icon, Pager, Cell } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 
 interface Props extends I.ViewComponent {};
 
@@ -22,6 +24,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
 	render () {
@@ -31,7 +34,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);
 
-		const CellHead = (item: any) => {
+		const CellHead = SortableElement((item: any) => {
 			const { relation } = item;
 			const id = DataUtil.cellId('head', relation.key, '');
 
@@ -46,7 +49,7 @@ class ViewGrid extends React.Component<Props, {}> {
 					</div>
 				</th>
 			);
-		};
+		});
 		
 		const CellBody = (item: any) => {
 			let { relation, index } = item;
@@ -74,16 +77,16 @@ class ViewGrid extends React.Component<Props, {}> {
 			);
 		};
 		
-		const RowHead = (item: any) => (
+		const RowHead = SortableContainer((item: any) => (
 			<tr className="row">
 				{relations.map((relation: any, i: number) => (
-					<CellHead key={'grid-head-' + relation.key} relation={relation} />
+					<CellHead key={'grid-head-' + relation.key} relation={relation} index={i} />
 				))}
 				<th className="head last">
 					{!readOnly ? <Icon id="cell-add" className="plus" onClick={this.onCellAdd} /> : ''}
 				</th>
 			</tr>
-		);
+		));
 		
 		const RowBody = (item: any) => (
 			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
@@ -108,7 +111,16 @@ class ViewGrid extends React.Component<Props, {}> {
 				<div className="scroll">
 					<table className="viewItem viewGrid">
 						<thead>
-							<RowHead />
+							<RowHead 
+								axis="x" 
+								lockAxis="x"
+								lockToContainerEdges={true}
+								transitionDuration={150}
+								distance={10}
+								onSortEnd={this.onSortEnd}
+								helperClass="dragging"
+								helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.viewItem').get(0); }}
+							/>
 						</thead>
 						<tbody>
 							{data.map((item: any, i: number) => (
@@ -313,6 +325,15 @@ class ViewGrid extends React.Component<Props, {}> {
 		if (ref) {
 			ref.onClick(e);
 		};
+	};
+
+	onSortEnd (result: any) {
+		const { rootId, block, getView } = this.props;
+		const { oldIndex, newIndex } = result;
+		const view = getView();
+		
+		view.relations = arrayMove(view.relations, oldIndex, newIndex);
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 	};
 	
 };

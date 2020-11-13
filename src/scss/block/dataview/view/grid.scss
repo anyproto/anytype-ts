@@ -6,7 +6,7 @@
 		.viewItem.viewGrid {
 			.head { 
 				text-align: left; color: #6c6a5f; padding: 14px; border-bottom: 1px solid #e0ded2; white-space: nowrap; 
-				font-weight: 400; line-height: 20px; position: relative; @include text-overflow-nw;
+				font-weight: 400; line-height: 20px; position: relative; @include text-overflow-nw; cursor: grab;
 			}
 			.head {
 				.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
