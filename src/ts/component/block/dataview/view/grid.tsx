@@ -4,7 +4,7 @@ import { Icon, Pager, Cell } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
 interface Props extends I.ViewComponent {};
@@ -34,6 +34,13 @@ class ViewGrid extends React.Component<Props, {}> {
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);
 
+		const Handle = SortableHandle((item: any) => (
+			<div>
+				<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
+				<div className="name">{item.name}</div>
+			</div>
+		));
+
 		const CellHead = SortableElement((item: any) => {
 			const { relation } = item;
 			const id = DataUtil.cellId('head', relation.key, '');
@@ -41,8 +48,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			return (
 				<th id={id} className={'head c-' + DataUtil.relationClass(relation.format)} style={{ width: relation.width }}>
 					<div className="cellContent">
-						<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
-						<div className="name">{relation.name}</div>
+						<Handle {...relation} />
 						<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.key); }}>
 							<div className="line" />
 						</div>
@@ -117,8 +123,9 @@ class ViewGrid extends React.Component<Props, {}> {
 								lockToContainerEdges={true}
 								transitionDuration={150}
 								distance={10}
+								useDragHandle={true}
 								onSortEnd={this.onSortEnd}
-								helperClass="dragging"
+								helperClass="isDragging"
 								helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.viewItem').get(0); }}
 							/>
 						</thead>

@@ -25,6 +25,7 @@
 			.head.last {
 				.icon.plus { margin: 0px; }
 			}
+			.head.isDragging { border: 0px; }
 
 			.cellContent { @include text-overflow-nw; width: 100%; }
 			.cellContent.c-select { white-space: normal; width: auto; overflow: visible; }

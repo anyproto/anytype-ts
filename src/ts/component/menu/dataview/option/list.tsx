@@ -72,7 +72,7 @@ class MenuOptionList extends React.Component<Props> {
 					distance={10}
 					useDragHandle={true}
 					onSortEnd={this.onSortEnd}
-					helperClass="dragging"
+					helperClass="isDragging"
 					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
 				/>
 			</div>

@@ -76,7 +76,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 				distance={10}
 				onSortEnd={this.onSortEnd}
 				useDragHandle={true}
-				helperClass="dragging"
+				helperClass="isDragging"
 				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
 			/>
 		);
