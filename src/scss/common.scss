@@ -61,8 +61,10 @@ body.platformWindows {
 	
 	.header { top: 30px !important; }
 	.header {
-		.icon.logo { width: 20px !important; height: 20px!important; left: 16px; margin: 0px; top: 9px; background: url('~img/logoSmall.svg'); }
-		.icon.logo:hover { background-color: none; }
+		.icon.logo { 
+			width: 40px !important; height: 28px !important; background-size: 20px 20px !important; left: 6px; margin: 0px; top: 5px; 
+			background-image: url('~img/logoSmall.svg'); 
+		}
 	}
 
 	.pageMainEdit .wrapper { padding-top: 68px; }
