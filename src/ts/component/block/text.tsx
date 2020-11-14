@@ -446,6 +446,8 @@ class BlockText extends React.Component<Props, {}> {
 			
 			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
+				this.marks = Mark.checkRanges(value, this.marks);
+
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 					focus.apply();
@@ -465,6 +467,7 @@ class BlockText extends React.Component<Props, {}> {
 					return;
 				};
 				
+				this.marks = Mark.checkRanges(value, this.marks);
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
 				});
@@ -499,6 +502,7 @@ class BlockText extends React.Component<Props, {}> {
 			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || !block.canHaveMarks()) {
 				return;
 			};
+
 			this.onMention();
 		});
 
@@ -689,9 +693,10 @@ class BlockText extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: block.id,
+				marks: this.marks,
 				onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
-					this.marks = marks;
 					value = Util.stringInsert(value, text, from, from);
+					this.marks = Mark.checkRanges(value, marks);
 
 					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 						focus.set(block.id, { from: to, to: to });
