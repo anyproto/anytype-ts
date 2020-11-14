@@ -805,6 +805,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.placeHolderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
+		commonStore.menuClose('blockContext');
 
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
