@@ -27,11 +27,15 @@ class Focus {
 	};
 
 	clearRange (withRange: boolean) {
-		$('.focusable.isFocused').removeClass('isFocused');
-		
+		const focusable = $('.focusable.isFocused');
 		const el = $('.focusable.c' + this.focused);
+		
 		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);
+		};
+
+		if (focusable.length) {
+			focusable.removeClass('isFocused');
 		};
 		
 		if (withRange) {

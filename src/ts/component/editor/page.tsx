@@ -8,6 +8,8 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import Controls from './controls';
 
+import EditorHeaderPage from './header/page';
+
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
@@ -74,20 +76,22 @@ class EditorPage extends React.Component<Props, State> {
 
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
-		
 		const title = blockStore.getLeaf(rootId, 'title') || {};
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], align: title.align, fields: {}, content: {} });
 
 		let cn = [ 'editorWrapper', 'align' + title.align ];
+		let header = (
+			<EditorHeaderPage 
+				{...this.props} 
+				onKeyDown={this.onKeyDownBlock}
+				onKeyUp={this.onKeyUpBlock}  
+				onMenuAdd={this.onMenuAdd}
+				onPaste={this.onPaste}
+			/>
+		);
 		
 		if (root.isPageProfile()) {
 			cn.push('isProfile');
-			icon.type = I.BlockType.IconUser;
-		} else {
-			icon.type = I.BlockType.IconPage;
-		};
-
+		} else 
 		if (root.isPageSet()) {
 			cn.push('isDataview');
 		};
@@ -105,20 +109,17 @@ class EditorPage extends React.Component<Props, State> {
 		return (
 			<div className={cn.join(' ')}>
 				<Controls {...this.props} />
-				{withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
 				
 				<div className="editor">
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
+
+						{header}
 					
-						{withIcon ? (
-							<Block 
-								{...this.props} key={icon.id} block={icon} 
-								className="root" 
-							/>	
-						) : ''}
-						
 						{children.map((block: I.Block, i: number) => {
+							if (block.isLayoutHeader()) {
+								return null;
+							};
 							return (
 								<Block 
 									key={block.id} 

@@ -24,8 +24,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	cnt?: number;
 	css?: any;
 	className?: string;
-	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
-	onPaste? (e: any): void;
 };
 
 const $ = require('jquery');

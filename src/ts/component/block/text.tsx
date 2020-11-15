@@ -13,8 +13,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
-	onPaste? (e: any): void;
 };
 
 const { ipcRenderer } = window.require('electron');
