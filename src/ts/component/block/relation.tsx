@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Input, Cell } from 'ts/component';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 
@@ -158,9 +158,13 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onCellClick (e: any) {
+		const { block } = this.props;
+
 		if (this.refCell) {
 			this.refCell.onClick(e);
 		};
+
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 
 };
