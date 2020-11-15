@@ -367,14 +367,14 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.block');
 		const container = $('.editor');
-		
 		if (!container.length) {
 			return;
 		};
+
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = node.find('.block');
 		
 		const details = blockStore.getDetails(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
@@ -391,9 +391,6 @@ class EditorPage extends React.Component<Props, State> {
 		if (withCover && withIcon) {
 			offset = 328;
 		} else
-		if (withCover) {
-			offset = 328;
-		} else 
 		if (withIcon) {
 			offset = 194;
 		};
@@ -418,12 +415,12 @@ class EditorPage extends React.Component<Props, State> {
 			hovered = null;
 		};
 		
-		const { x, y, width, height } = hoveredRect;
+		const { x, y, height } = hoveredRect;
 		
 		window.clearTimeout(this.timeoutHover);
 		
 		if (keyboard.isDragging) {
-			add.css({ opacity: 0 });
+			add.css({ display: 'none' });
 			items.removeClass('showMenu isAdding top bottom');
 			
 			if (hovered) {
@@ -438,7 +435,7 @@ class EditorPage extends React.Component<Props, State> {
 			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
 			let ay = pageY - rectContainer.y - 10 - st;
 			
-			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
+			add.css({ display: 'block', transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
@@ -455,7 +452,7 @@ class EditorPage extends React.Component<Props, State> {
 			};
 		} else {
 			this.timeoutHover = window.setTimeout(() => {
-				add.css({ opacity: 0 });
+				add.css({ display: 'none' });
 				items.removeClass('showMenu isAdding top bottom');
 			}, 10);
 		};
