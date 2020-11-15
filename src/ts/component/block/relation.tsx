@@ -30,6 +30,10 @@ class BlockRelation extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 		const relations = dbStore.getRelations(rootId);
 		const relation = relations.find((it: any) => { return it.key == key; });
+		const isNew = (block.fields || {}).isNew;
+		const placeHolder = isNew ? 'New relation' : 'Relation';
+
+		console.log('isNew', isNew);
 
 		return (
 			<div className="wrap">
@@ -37,7 +41,13 @@ class BlockRelation extends React.Component<Props, {}> {
 				(
 					<React.Fragment>
 						<Icon className="relation default" />
-						<Input id={'relation-type-' + block.id} ref={(ref: any) => { this.refInput = ref; }} placeHolder="New relation" onClick={this.onMenu} onKeyUp={this.onKeyUp} />
+						<Input 
+							id={'relation-type-' + block.id} 
+							ref={(ref: any) => { this.refInput = ref; }} 
+							placeHolder={placeHolder} 
+							onClick={this.onMenu} 
+							onKeyUp={this.onKeyUp} 
+						/>
 					</React.Fragment>
 				) : 
 				(
@@ -71,27 +81,42 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any) {
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == 'select'; });
+		const { block } = this.props;
+		const isNew = (block.fields || {}).isNew;
+		const menuId = isNew ? 'select' : 'blockRelationList';
 
-		menu.param.data.options = this.getItems();
-		commonStore.menuUpdate('select', menu.param);
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Menu) => { return item.id == menuId; });
+
+		if (menu) {
+			if (isNew) {
+				menu.param.data.options = this.getItems();
+			} else {
+				menu.param.data.filter = this.refInput.getValue();
+			};
+			commonStore.menuUpdate(menuId, menu.param);
+		};
 	};
 
 	onMenu (e: any) {
 		const { rootId, block, readOnly } = this.props;
-		const options = this.getItems();
+		const isNew = (block.fields || {}).isNew;
+		const menuId = isNew ? 'select' : 'blockRelationList';
 
-		commonStore.menuOpen('select', {
+		let param: any = {
 			element: '#block-' + block.id,
 			offsetX: Constant.size.blockMenu,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			width: 320,
-			data: {
-				options: options,
+			data: {}
+		};
+
+		if (isNew) {
+			param = Object.assign(param, { width: 320 });
+			param.data = Object.assign(param.data, {
+				options: this.getItems(),
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'add') {
 						window.setTimeout(() => { this.onMenuAdd(); }, Constant.delay.menu);
@@ -99,8 +124,20 @@ class BlockRelation extends React.Component<Props, {}> {
 						C.BlockRelationSetKey(rootId, block.id, item.id);
 					};
 				}
-			}
-		});
+			});
+		} else {
+			param.data = Object.assign(param.data, {
+				relationKey: '',
+				readOnly: false,
+				rootId: rootId,
+				filter: this.refInput.getValue(),
+				onSelect: (item: any) => {
+					C.BlockRelationSetKey(rootId, block.id, item.key);
+				}
+			});
+		};
+
+		commonStore.menuOpen(menuId, param);
 	};
 
 	onMenuAdd () {

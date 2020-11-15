@@ -1121,6 +1121,10 @@ class EditorPage extends React.Component<Props, State> {
 									param.fields = { lang: lang };
 								};
 							};
+
+							if ((item.type == I.BlockType.Relation) && (item.key == 'new-relation')) {
+								param.fields = { isNew: true };
+							};
 							
 							if (item.type == I.BlockType.File) {
 								param.content.type = item.key;

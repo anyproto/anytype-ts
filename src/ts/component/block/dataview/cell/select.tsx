@@ -54,35 +54,46 @@ class CellSelect extends React.Component<Props, State> {
 		});
 		value = value.filter((it: any) => { return it; });
 
-		const render = ({ tag }) => {
-			return <Tag {...tag} canEdit={editing} onRemove={(e: any) => { this.onRemove(e, tag.text); }} />;
+		const render = ({ tag, index }) => {
+			return <Tag {...tag} key={index} canEdit={editing} onRemove={(e: any) => { this.onRemove(e, tag.text); }} />;
 		};
 
 		return (
 			<div>
-				<DraggableArea
-					tags={value}
-					render={render}
-					onChange={(value: any[]) => { this.onSort(value); }}
-				/>
-				<div className="filter tagItem">
-					<div 
-						id="filter" 
-						contentEditable={!readOnly} 
-						suppressContentEditableWarning={true} 
-						onKeyDown={this.onKeyDown} 
-						onKeyUp={this.onKeyUp}
-						onFocus={this.onFocus} 
-						onBlur={this.onBlur}
-					/>
-					<div id="placeHolder">Find an option</div>
-				</div>
+				{!readOnly ? (
+					<React.Fragment>
+						<DraggableArea
+							tags={value}
+							render={render}
+							onChange={(value: any[]) => { this.onSort(value); }}
+						/>
+						<div className="filter tagItem">
+							<div 
+								id="filter" 
+								contentEditable={!readOnly} 
+								suppressContentEditableWarning={true} 
+								onKeyDown={this.onKeyDown} 
+								onKeyUp={this.onKeyUp}
+								onFocus={this.onFocus} 
+								onBlur={this.onBlur}
+							/>
+							<div id="placeHolder">Find an option</div>
+						</div>
+					</React.Fragment>
+				) : (
+					<React.Fragment>
+						{value.map((item: any, i: number) => {
+							return render({ tag: item, index: i });
+						})}
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.placeHolderCheck();
 	};
 
 	componentWillUnmount () {
@@ -149,7 +160,13 @@ class CellSelect extends React.Component<Props, State> {
 			return;
 		};
 
-		const { relation, index, data } = this.props;
+		const { relation, index, data, readOnly } = this.props;
+		
+		if (readOnly) {
+			this.placeHolderHide();
+			return;
+		};
+
 		const value = data[index][relation.key] || [];
 		const node = $(ReactDOM.findDOMNode(this));
 		const text = node.find('#filter').text();
