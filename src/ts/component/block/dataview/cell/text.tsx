@@ -228,7 +228,7 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		keyboard.setFocus(false);
-		if (!commonStore.menuIsOpen('dataviewCalendar')) {
+		if (!commonStore.menuIsOpen(MENU_ID)) {
 			this.setState({ editing: false });
 		};
 

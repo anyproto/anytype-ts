@@ -42,11 +42,15 @@ class BlockRelation extends React.Component<Props, {}> {
 				) : 
 				(
 					<div className="sides">
-						<div className="side left">
+						<div className="info">
 							<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
 							<div className="name">{relation.name}</div>
 						</div>
-						<div id={DataUtil.cellId('cell', key, '0')} className="side right cell" onClick={this.onCellClick}>
+						<div 
+							id={DataUtil.cellId('cell', key, '0')} 
+							className={[ 'cell', 'c-' + DataUtil.relationClass(relation.format) ].join(' ')} 
+							onClick={this.onCellClick}
+						>
 							<Cell 
 								id="0"
 								ref={(ref: any) => { this.refCell = ref; }}

@@ -39,6 +39,8 @@ class EditorPage extends React.Component<Props, State> {
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
+	withIcon: boolean = false;
+	withCover: boolean = false;
 	state = {
 		loading: false,
 	};
@@ -48,7 +50,7 @@ class EditorPage extends React.Component<Props, State> {
 		
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
 		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
-		this.onMouseMove = this.onMouseMove.bind(this);
+		//this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
@@ -71,12 +73,10 @@ class EditorPage extends React.Component<Props, State> {
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
 		const length = childrenIds.length;
-
-		const withIcon = details.iconEmoji || details.iconImage;
-		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		const title = blockStore.getLeaf(rootId, 'title') || {};
+
+		this.checkDetails();
 
 		let cn = [ 'editorWrapper', 'align' + title.align ];
 		let header = (
@@ -96,13 +96,13 @@ class EditorPage extends React.Component<Props, State> {
 			cn.push('isDataview');
 		};
 		
-		if (withIcon && withCover) {
+		if (this.withIcon && this.withCover) {
 			cn.push('withIconAndCover');
 		} else
-		if (withIcon) {
+		if (this.withIcon) {
 			cn.push('withIcon');
 		} else
-		if (withCover) {
+		if (this.withCover) {
 			cn.push('withCover');
 		};
 		
@@ -170,11 +170,22 @@ class EditorPage extends React.Component<Props, State> {
 		ipcRenderer.removeAllListeners('commandEditor');
 		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
 	};
+
+	getSnapshotBeforeUpdate () {
+		const { rootId } = this.props;
+		const details = blockStore.getDetails(rootId, rootId);
+
+		this.withIcon = details.iconEmoji || details.iconImage;
+		this.withCover = (details.coverType != I.CoverType.None) && details.coverId;
+
+		return null;
+	};
 	
 	componentDidUpdate () {
 		const node = $(ReactDOM.findDOMNode(this));		
 		const resizable = node.find('.resizable');
 		
+		this.checkDetails();
 		this.open();
 		
 		if (this.uiHidden) {
@@ -201,6 +212,14 @@ class EditorPage extends React.Component<Props, State> {
 		focus.clear(false);
 		Storage.delete('pageId');
 		ipcRenderer.removeAllListeners('commandEditor');
+	};
+
+	checkDetails () {
+		const { rootId } = this.props;
+		const details = blockStore.getDetails(rootId, rootId);
+
+		this.withIcon = details.iconEmoji || details.iconImage;
+		this.withCover = (details.coverType != I.CoverType.None) && details.coverId;
 	};
 	
 	open (skipInit?: boolean) {
@@ -375,23 +394,19 @@ class EditorPage extends React.Component<Props, State> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.block');
-		
-		const details = blockStore.getDetails(rootId, rootId);
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const withIcon = details.iconEmoji;
-		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
 		let offset = 144;
 		let hovered: any = null;
-		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
+		let hoveredRect = { x: 0, y: 0, height: 0 };
 		
-		if (withCover && withIcon) {
+		if (this.withCover && this.withIcon) {
 			offset = 328;
 		} else
-		if (withIcon) {
+		if (this.withIcon) {
 			offset = 194;
 		};
 		
@@ -416,12 +431,15 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		const { x, y, height } = hoveredRect;
+		const out = () => {
+			add.removeClass('show');
+			items.removeClass('showMenu isAdding top bottom');
+		};
 		
 		window.clearTimeout(this.timeoutHover);
-		
+
 		if (keyboard.isDragging) {
-			add.css({ display: 'none' });
-			items.removeClass('showMenu isAdding top bottom');
+			out();
 			
 			if (hovered) {
 				hovered.addClass('showMenu');
@@ -435,7 +453,7 @@ class EditorPage extends React.Component<Props, State> {
 			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
 			let ay = pageY - rectContainer.y - 10 - st;
 			
-			add.css({ display: 'block', transform: `translate3d(${ax}px,${ay}px,0px)` });
+			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
@@ -451,10 +469,7 @@ class EditorPage extends React.Component<Props, State> {
 				};
 			};
 		} else {
-			this.timeoutHover = window.setTimeout(() => {
-				add.css({ display: 'none' });
-				items.removeClass('showMenu isAdding top bottom');
-			}, 10);
+			this.timeoutHover = window.setTimeout(out, 10);
 		};
 	};
 	

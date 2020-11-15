@@ -77,7 +77,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { id, relation, block, index, readOnly } = this.props;
+		const { id, relation, block, index, readOnly, data } = this.props;
 
 		if (readOnly || relation.isReadOnly) {
 			return;
@@ -86,7 +86,6 @@ class Cell extends React.Component<Props, {}> {
 		const cellId = DataUtil.cellId('cell', relation.key, id);
 		const cell = $('#' + cellId);
 		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
-		const data = dbStore.getData(block.id);
 		const item = data[index] || {};
 		const value = item[relation.key] || '';
 		const page = $('.pageMainEdit');

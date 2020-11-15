@@ -114,10 +114,10 @@ class DataUtil {
 		let f = '';
 		switch (v) {
 			default:
-			case I.DateFormat.MonthAbbrBeforeDay:	 f = 'M d Y'; break;
-			case I.DateFormat.MonthAbbrAfterDay:	 f = 'd M Y'; break;
-			case I.DateFormat.Short:				 f = 'd/m/Y'; break;
-			case I.DateFormat.ShortUS:				 f = 'm/d/Y'; break;
+			case I.DateFormat.MonthAbbrBeforeDay:	 f = 'M d, Y'; break;
+			case I.DateFormat.MonthAbbrAfterDay:	 f = 'd M, Y'; break;
+			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
+			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
 			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
 		};
 		return f;

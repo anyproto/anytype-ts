@@ -124,8 +124,7 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onSort (value: any[]) {
-		const text = value.map((it: any) => { return it.text; });
-		this.setValue(text, []);
+		this.setValue(value.map((it: any) => { return it.text; }), '');
 	};
 
 	focus () {
@@ -186,7 +185,7 @@ class CellSelect extends React.Component<Props, State> {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.setValue(value, filter.text().split(/\s/));
+			this.setValue(value, filter.text());
 			filter.html('');
 		});
 
@@ -210,7 +209,7 @@ class CellSelect extends React.Component<Props, State> {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.setValue(value, filter.text().split(/\s/));
+			this.setValue(value, filter.text());
 			filter.html('');
 		});
 
@@ -232,23 +231,24 @@ class CellSelect extends React.Component<Props, State> {
 		
 		let value = data[index][relation.key] || [];
 		value = value.filter((it: string) => { return it != text });
-		this.setValue(value, []);
+		this.setValue(value, '');
 	};
 
-	setValue (value: string[], text: string[]) {
+	setValue (value: string[], text: string) {
 		const { rootId, block, relation, onChange } = this.props;
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 		const colors = DataUtil.menuGetBgColors();
 
-		text = text.map((it: string) => {
-			return String(it || '').trim();
-		});
-		text = text.filter((it: string) => { return it; });
-		text = value.concat(text);
-		text = Util.arrayUnique(text);
+		value = value && ('object' == typeof(value)) ? value : [];
+		text = String(text || '').trim();
 
-		let options = text.map((it: string) => {
+		if (text) {
+			value.push(text);
+			value = Util.arrayUnique(value);
+		};
+
+		let options = value.map((it: string) => {
 			const color = colors[Util.rand(0, colors.length - 1)];
 			return { text: it, color: color.value };
 		});
@@ -260,12 +260,12 @@ class CellSelect extends React.Component<Props, State> {
 		DataUtil.dataviewRelationUpdate(rootId, block.id, relation);
 
 		if (menu) {
-			menu.param.data.value = text;
+			menu.param.data.value = value;
 			menu.param.data.relation = observable.box(relation);
 			commonStore.menuUpdate(MENU_ID, menu.param);
 		};
 
-		onChange(text);
+		onChange(value);
 	};
 
 };
