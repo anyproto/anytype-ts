@@ -58,23 +58,23 @@ class MenuThreadList extends React.Component<Props, {}> {
 		);
 	};
 
-	onMenu (id: string, isCafe: boolean) {
+	componentDidUpdate () {
 		commonStore.menuClose('threadStatus');
+	};
 
-		window.setTimeout(() => {
-			commonStore.menuOpen('threadStatus', {
-				element: '#item-' + id,
-				type: I.MenuType.Vertical,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Right,
-				offsetX: 272,
-				offsetY: -62,
-				data: {
-					accountId: id,
-					isCafe: isCafe,
-				},
-			});
-		}, Constant.delay.menu);
+	onMenu (id: string, isCafe: boolean) {
+		commonStore.menuOpen('threadStatus', {
+			element: '#item-' + id,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetX: 272,
+			offsetY: -62,
+			data: {
+				accountId: id,
+				isCafe: isCafe,
+			},
+		});
 	};
 	
 };

@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { Icon, IconUser } from 'ts/component';
 import { authStore } from 'ts/store';
-import { observer } from 'mobx-react';
-import { I, DataUtil, translate, Util } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
-@observer
 class MenuThreadStatus extends React.Component<Props, {}> {
 	
 	render () {
@@ -18,9 +15,9 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		
 		const Item = (item: any) => (
 			<div className="item">
-				<div className="name">Status</div>
+				<div className="name">{item.name}</div>
 				{item.fields.map((field: any, i: number) => (
-					<div className="description">
+					<div key={i} className="description">
 						<div className="side left">{field.key}</div>
 						<div className="side right">{field.value}</div>
 					</div>
@@ -47,7 +44,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 								{ key: 'Last sync',  value: Util.timeAgo(item.lastPulled) },
 								{ key: 'Last edit',  value: Util.timeAgo(item.lastEdited) }
 							];
-							return <Item key={i} fields={fields} />;
+							return <Item key={i} {...item} fields={fields} />;
 						})}
 					</div>
 				</div>
