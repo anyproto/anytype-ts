@@ -805,7 +805,6 @@ class BlockText extends React.Component<Props, {}> {
 		this.placeHolderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
-		commonStore.menuClose('blockContext');
 
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
@@ -897,6 +896,7 @@ class BlockText extends React.Component<Props, {}> {
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
 		const x = rect.x - offset.left - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
+		const sel = $('.selection');
 
 		commonStore.menuClose('blockAdd');
 		commonStore.menuClose('blockMention');
