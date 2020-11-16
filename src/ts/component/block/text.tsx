@@ -896,7 +896,6 @@ class BlockText extends React.Component<Props, {}> {
 		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
 		const x = rect.x - offset.left - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
-		const sel = $('.selection');
 
 		commonStore.menuClose('blockAdd');
 		commonStore.menuClose('blockMention');
@@ -921,10 +920,8 @@ class BlockText extends React.Component<Props, {}> {
 						this.marks = Util.objectCopy(marks);
 						this.setMarks(marks);
 
-						window.setTimeout(() => {
-							focus.set(id, { from: currentFrom, to: currentTo });
-							focus.apply();
-						}, 50);
+						focus.set(id, { from: currentFrom, to: currentTo });
+						focus.apply();
 					},
 				},
 			});
