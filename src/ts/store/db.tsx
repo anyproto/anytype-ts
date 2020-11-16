@@ -61,10 +61,11 @@ class DbStore {
 	relationAdd (blockId: string, item: any) {
 		const relations = this.getRelations(blockId);
 		const relation = relations.find((it: I.Relation) => { return it.key == item.key; });
+
 		if (relation) {
 			this.relationUpdate(blockId, item);
 		} else {
-			relations.push(relation);
+			relations.push(item);
 			this.relationsSet(blockId, relations);
 		};
 	};
@@ -73,10 +74,11 @@ class DbStore {
 	relationUpdate (blockId: string, item: any) {
 		const relations = this.getRelations(blockId);
 		const relation = relations.find((it: I.Relation) => { return it.key == item.key; });
-		const idx = relations.findIndex((it: I.Relation) => { return it.key == item.key; });
 		if (!relation) {
 			return;
 		};
+
+		const idx = relations.findIndex((it: I.Relation) => { return it.key == item.key; });
 
 		set(relations[idx], item);
 		this.relationsSet(blockId, relations);

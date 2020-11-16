@@ -54,6 +54,10 @@ class MenuSelect extends React.Component<Props, {}> {
 			}, 210);
 		};
 	};
+
+	componentDidUpdate () {
+		this.props.position();
+	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;

@@ -207,8 +207,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		console.log('SUBMIT');
-
 		this.save();
 		this.props.close();
 	};
@@ -221,8 +219,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 		const relation = this.getRelation();
 		const newRelation: any = { name: name, format: this.format };
-
-		console.log(relation);
 
 		relation ? this.update(newRelation) : this.add(newRelation);
 	};
