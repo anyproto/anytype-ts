@@ -19,13 +19,15 @@ class Keyboard {
 	isMouseDisabled: boolean = false;
 	isBackDisabled: boolean = false;
 	isPinChecked: boolean = false;
+	isShiftPressed: boolean = false;
 	
 	init (history: any) {
 		this.history = history;
 		this.unbind();
 		
 		let win = $(window); 
-		win.on('keydown.common', (e: any) => { this.onKeyDown(e); })
+		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
+		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 	};
 	
 	unbind () {
@@ -55,6 +57,10 @@ class Keyboard {
 			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.back(); });
 			this.shortcut('alt+arrowright', e, (pressed: string) => { this.forward(); });
 		};
+
+		this.shortcut('shift', e, (pressed: string) => {
+			this.isShiftPressed = true;
+		});
 
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
@@ -142,6 +148,12 @@ class Keyboard {
 		});
 		
 		this.initPinCheck();
+	};
+
+	onKeyUp (e: any) {
+		this.shortcut('shift', e, (pressed: string) => {
+			this.isShiftPressed = false;
+		});
 	};
 
 	back () {
