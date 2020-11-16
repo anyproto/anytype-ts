@@ -61,7 +61,23 @@ class Block implements I.Block {
 	};
 
 	canTurn (): boolean {
-		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isDiv());
+		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isDiv() || this.isLink());
+	};
+
+	canTurnText (): boolean {
+		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isLink());
+	};
+
+	canTurnPage (): boolean {
+		return !this.isSystem() && this.isText() && !this.isTextTitle();
+	};
+
+	canTurnList (): boolean {
+		return this.canTurnText();
+	};
+
+	canTurnObject (): boolean {
+		return this.canTurnPage();
 	};
 
 	isIndentable (): boolean {

@@ -65,14 +65,17 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const { rootId, blockId, blockIds } = data;
 		
-		if (!block) {
-			return [];
+		let hasQuote = false;
+		for (let id of blockIds) {
+			let block = blockStore.getLeaf(rootId, id);
+			if (block.isTextQuote())	{
+				hasQuote = true;
+			};
 		};
 
-		return DataUtil.menuGetAlign(block);
+		return DataUtil.menuGetAlign(hasQuote);
 	};
 	
 	onKeyDown (e: any) {

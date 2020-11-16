@@ -89,43 +89,38 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
-		
-		if (!block) {
-			return [];
-		};
-		
+		const { rootId, blockIds } = data;
+
+		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
+		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
+		const turnPage = { id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() };
+		const turnObject = { id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() };
+		const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
+
+		let hasTurnText = true;
+		let hasTurnPage = true;
+		let hasTurnList = true;
+		let hasTurnObject = true;
+		let hasTurnDiv = true;
+
 		let sections: any[] = [];
-		
-		if (block.isText()) {
-			sections = [
-				{ children: DataUtil.menuGetBlockText() },
-				{ children: DataUtil.menuGetTurnPage() },
-				{ children: DataUtil.menuGetBlockList() },
-				{ children: DataUtil.menuGetTurnObject() },
-			];
-		} else
-		if (block.isDiv()) {
-			sections = [
-				{ children: DataUtil.menuGetTurnDiv() },
-			];
-		} else {
-			sections = [
-				{ children: DataUtil.menuGetTurnPage() }
-			];
+
+		for (let id of blockIds) {
+			const block = blockStore.getLeaf(rootId, id);
+			if (!block.canTurnText())		 hasTurnText = false;
+			if (!block.canTurnPage())		 hasTurnPage = false;
+			if (!block.canTurnList())		 hasTurnList = false;
+			if (!block.canTurnObject())		 hasTurnObject = false;
+			if (!block.isDiv())				 hasTurnDiv = false;
 		};
+
+		if (hasTurnText)	 sections.push(turnText);
+		if (hasTurnPage)	 sections.push(turnPage);
+		if (hasTurnList)	 sections.push(turnList);
+		if (hasTurnObject)	 sections.push(turnObject);
+		if (hasTurnDiv)		 sections.push(turnDiv);
 		
-		sections = sections.map((s: any, i: number) => {
-			s.children = s.children.map((it: any) => {
-				it.key = it.id;
-				it.id = i + '-' + it.id;
-				return it;
-			});
-			return s;
-		});
-		
-		return sections;
+		return DataUtil.menuSectionsMap(sections);
 	};
 	
 	getItems () {

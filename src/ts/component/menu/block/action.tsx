@@ -161,103 +161,131 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { align, content, bgColor } = block;
 		const { color } = content;
 
-		let sections: any[] = [
-			{ 
-				children: [
-					{ id: 'move', icon: 'move', name: 'Move to' },
-					{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-					{ id: 'remove', icon: 'remove', name: 'Delete' },
-					{ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true },
-				] 
-			},
-			{ 
-				children: [
-					{ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true },
-					{ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'black') },
-					{ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') },
-					//{ id: 'comment', icon: 'comment', name: 'Comment' },
-				]
-			}
-		];
+		let sections: any[] = [];
 		
-		// Restrictions
-		if (block.isFile()) {
-			let idx = sections[0].children.findIndex((it: any) => { return it.id == 'remove'; });
-			sections[0].children.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
-			//sections[0].children.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
-			//sections[0].children.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
-		};
-
-		// Restrictions
-		if (block.isTextTitle()) {
-			sections.splice(0, 1);
-		};
-
-		if (!block.canHaveAlign()) {
-			sections[1].children = sections[1].children.filter((it: any) => { return [ 'align' ].indexOf(it.id) < 0; });
-		};
-
-		if (!block.canHaveColor()) {
-			sections[1].children = sections[1].children.filter((it: any) => { return [ 'color' ].indexOf(it.id) < 0; });
-		};
-
-		if (!block.canHaveBackground()) {
-			sections[1].children = sections[1].children.filter((it: any) => { return [ 'background' ].indexOf(it.id) < 0; });
-		};
-		
-		if (!block.canTurn()) {
-			sections[0].children = sections[0].children.filter((it: any) => { return [ 'turn' ].indexOf(it.id) < 0; });
-		};
-
 		if (filter) {
-			sections = [];
-			
-			if (block.isText() && !block.isTextTitle()) {
-				sections = sections.concat([
-					{ id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() },
-				]);
+			const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() };
+			const turnObject = { id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
+			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
+			const align = { id: 'align', icon: '', name: 'Align', color: '', children: [] };
+			const bgColor = { id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() };
+			const color = { id: 'color', icon: 'color', name: 'Color', color: '', arrow: true, children: DataUtil.menuGetTextColors() };
+
+			let hasTurnText = true;
+			let hasTurnPage = true;
+			let hasTurnList = true;
+			let hasTurnObject = true;
+			let hasTurnDiv = true;
+			let hasFile = false;
+			let hasQuote = false;
+			let hasAction = true;
+			let hasAlign = true;
+			let hasColor = true;
+			let hasBg = true;
+
+			for (let id of blockIds) {
+				const block = blockStore.getLeaf(rootId, id);
+				if (!block.canTurnText())		 hasTurnText = false;
+				if (!block.canTurnPage())		 hasTurnPage = false;
+				if (!block.canTurnList())		 hasTurnList = false;
+				if (!block.canTurnObject())		 hasTurnObject = false;
+				if (!block.isDiv())				 hasTurnDiv = false;
+				if (!block.canHaveAlign())		 hasAlign = false;
+				if (!block.canHaveColor())		 hasColor = false;
+				if (!block.canHaveBackground())	 hasBg = false;
+
+				if (block.isTextTitle())		 hasAction = false;
+				if (block.isTextQuote())		 hasQuote = true;
+				if (block.isFile())				 hasFile = true;
 			};
 
-			if (block.isText() && block.canTurn()) {
-				sections.push({ id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() });
+			if (hasTurnText)	 sections.push(turnText);
+			if (hasTurnPage)	 sections.push(turnPage);
+			if (hasTurnList)	 sections.push(turnList);
+			if (hasTurnObject)	 sections.push(turnObject);
+			if (hasTurnDiv)		 sections.push(turnDiv);
+			if (hasColor)		 sections.push(color);
+			if (hasBg)			 sections.push(bgColor);
+
+			if (hasAlign) {
+				align.children = DataUtil.menuGetAlign(hasQuote);
+				sections.push(align);
+			};
+			
+			if (hasAction) {
+				action.children = DataUtil.menuGetActions(hasFile);
+				sections.push(action);
 			};
 
-			if (block.isText() && !block.isTextTitle()) {
-				sections = sections.concat([
-					{ id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() },
-					{ id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() },
-				]);
-			};
-			
-			if (block.isDiv()) {
-				sections = sections.concat([
-					{ id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() },
-				]);
-			};
-			
-			if (!block.isTextTitle()) {
-				sections = sections.concat([
-					{ id: 'action', icon: '', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
-				]);
-			};
-
-			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: '', name: 'Align', color: '', children: DataUtil.menuGetAlign(block) });
-			};
-	
-			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() });
-			};
-			
-			if (block.isText() && !block.isTextCode()) {
-				sections.push({ id: 'color', icon: 'color', name: 'Color', color: '', arrow: true, children: DataUtil.menuGetTextColors() });
-			};
-			
 			sections = DataUtil.menuSectionsFilter(sections, filter);
+		} else {
+			sections = [
+				{ 
+					children: [
+						{ id: 'move', icon: 'move', name: 'Move to' },
+						{ id: 'copy', icon: 'copy', name: 'Duplicate' },
+						{ id: 'remove', icon: 'remove', name: 'Delete' },
+					] 
+				},
+				{ 
+					children: [
+						{ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true },
+						{ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'black') },
+						{ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') },
+						//{ id: 'comment', icon: 'comment', name: 'Comment' },
+					]
+				},
+			];
+
+			let hasTurn = true;
+			let hasFile = true;
+			let hasTitle = false;
+			let hasAlign = true;
+			let hasColor = true;
+			let hasBg = true;
+
+			for (let id of blockIds) {
+				const block = blockStore.getLeaf(rootId, id);
+				if (!block.canTurnText())		 hasTurn = false;
+				if (!block.isFile())			 hasFile = false;
+				if (!block.canHaveAlign())		 hasAlign = false;
+				if (!block.canHaveColor())		 hasColor = false;
+				if (!block.canHaveBackground())	 hasBg = false;
+
+				if (block.isTextTitle())		 hasTitle = true;
+			};
+
+			if (hasTurn) {
+				sections[0].children.push({ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true });
+			};
+
+			if (hasFile) {
+				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
+				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
+				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
+			};
+
+			if (hasTitle) {
+				sections[0].children = [];
+			};
+
+			if (hasAlign) {
+				sections[1].children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
+			};
+
+			if (hasColor) {
+				sections[1].children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'black') });
+			};
+
+			if (hasBg) {
+				sections[1].children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
+			};
 		};
 
-		sections = DataUtil.menuSectionsMap(sections);
-		return sections;
+		return DataUtil.menuSectionsMap(sections);
 	};
 	
 	getItems () {
