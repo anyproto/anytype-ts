@@ -39,7 +39,7 @@ class AuthStore {
 	};
 
 	@computed
-	get threadAccounts(): I.Account[] {
+	get threadAccounts(): I.ThreadAccount[] {
 		return this.threadAccountList;
 	};
 	

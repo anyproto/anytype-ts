@@ -20,4 +20,11 @@
 			.green { color: $colorGreen; }
 		}
 	}
+
+	.menu.menuThreadStatus { width: 272px; }
+	.menu.menuThreadStatus {
+		.description { color: $colorDarkGrey; display: flex; }
+		.side { width: 50%; }
+		.side.right { text-align: right; }
+	}
 }

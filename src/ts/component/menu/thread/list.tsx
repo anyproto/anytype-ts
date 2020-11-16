@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Icon, IconUser } from 'ts/component';
-import { authStore } from 'ts/store';
+import { authStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, DataUtil, translate, Util } from 'ts/lib';
 
 interface Props extends I.Menu {};
+
+const Constant = require('json/constant.json');
 
 @observer
 class MenuThreadList extends React.Component<Props, {}> {
@@ -14,7 +16,12 @@ class MenuThreadList extends React.Component<Props, {}> {
 		const { status } = threadCafe;
 
 		const Item = (item: any) => (
-			<div className="item">
+			<div 
+				id={'item-' + item.id} 
+				className="item" 
+				onMouseOver={(e: any) => { this.onMenu(item.id, false); }}
+				onMouseLeave={(e: any) => { commonStore.menuClose('threadStatus'); }}
+			>
 				<IconUser className="c40" {...item} />
 				<div className="info">
 					<div className="name">{item.id}</div>
@@ -30,7 +37,12 @@ class MenuThreadList extends React.Component<Props, {}> {
 		
 		return (
 			<div className="items">
-				<div className="item">
+				<div 
+					id="item-cafe" 
+					className="item" 
+					onMouseOver={(e: any) => { this.onMenu('cafe', true); }} 
+					onMouseLeave={(e: any) => { commonStore.menuClose('threadStatus'); }}
+				>
 					<Icon className="cafe" />
 					<div className="info">
 						<div className="name">Backup node</div>
@@ -44,6 +56,25 @@ class MenuThreadList extends React.Component<Props, {}> {
 				))}
 			</div>
 		);
+	};
+
+	onMenu (id: string, isCafe: boolean) {
+		commonStore.menuClose('threadStatus');
+
+		window.setTimeout(() => {
+			commonStore.menuOpen('threadStatus', {
+				element: '#item-' + id,
+				type: I.MenuType.Vertical,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				offsetX: 272,
+				offsetY: -62,
+				data: {
+					accountId: id,
+					isCafe: isCafe,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 	
 };
