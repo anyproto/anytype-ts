@@ -175,8 +175,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
+		commonStore.menuClose('blockContext');
 		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
+
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
 	};

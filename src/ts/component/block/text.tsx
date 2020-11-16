@@ -925,10 +925,8 @@ class BlockText extends React.Component<Props, {}> {
 						this.marks = Util.objectCopy(marks);
 						this.setMarks(marks);
 
-						window.setTimeout(() => {
-							focus.set(id, { from: currentFrom, to: currentTo });
-							focus.apply();
-						}, 50);
+						focus.set(id, { from: currentFrom, to: currentTo });
+						focus.apply();
 					},
 				},
 			});
