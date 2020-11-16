@@ -33,8 +33,6 @@ class BlockRelation extends React.Component<Props, {}> {
 		const isNew = (block.fields || {}).isNew;
 		const placeHolder = isNew ? 'New relation' : 'Relation';
 
-		console.log('isNew', isNew);
-
 		return (
 			<div className="wrap">
 				{!relation ? 

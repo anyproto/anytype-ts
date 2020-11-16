@@ -34,9 +34,12 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
+		const { rootId } = this.props;
+		const title = blockStore.getLeaf(rootId, 'title') || {};
+
 		return (
 			<div 
-				className="editorControls"
+				className={[ 'editorControls', 'align' + title.align ].join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}

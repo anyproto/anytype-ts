@@ -39,9 +39,9 @@ class Focus {
 		};
 		
 		if (withRange) {
+			$(document.activeElement).blur();
 			window.getSelection().empty();
 			keyboard.setFocus(false);
-			$(document.activeElement).blur();
 		};
 	};
 	
@@ -55,8 +55,6 @@ class Focus {
 			return;
 		};
 
-		this.clearRange(true);
-		
 		$('.focusable.isFocused').removeClass('isFocused');
 		node.addClass('isFocused');
 		

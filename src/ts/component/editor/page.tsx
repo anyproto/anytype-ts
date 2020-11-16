@@ -74,11 +74,10 @@ class EditorPage extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
-		const title = blockStore.getLeaf(rootId, 'title') || {};
 
 		this.checkDetails();
 
-		let cn = [ 'editorWrapper', 'align' + title.align ];
+		let cn = [ 'editorWrapper' ];
 		let header = (
 			<EditorHeaderPage 
 				{...this.props} 

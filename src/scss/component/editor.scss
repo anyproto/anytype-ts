@@ -57,10 +57,7 @@
 	.editorControls {
 		.btn.addIcon { display: none; }
 	}
-}
-
-.editorWrapper.withIcon.align0 {
-	.editorControls {
+	.editorControls.align0 {
 		.side.left { padding-left: 80px; }
 	}
 }
