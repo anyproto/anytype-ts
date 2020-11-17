@@ -13,6 +13,21 @@
 		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); display: none; }
 	}
 
+	@keyframes shimmer {
+		0% { background-position: -400px 0px; }
+		100% { background-position: 400px 0px; }
+	}
+
+	.animatedBackground {
+		animation-duration: 1.25s;
+		animation-fill-mode: forwards;
+		animation-iteration-count: infinite;
+		animation-name: shimmer;
+		animation-timing-function: linear;
+		background-image: linear-gradient(to right, rgba(0,0,0,0) 8%, #f0f0f0 18%, rgba(0,0,0,0) 33%);
+		background-size: 800px 100%;
+	}
+
 	#hello { transition: opacity 0.5s ease-in-out; }
 	#hello.hide { opacity: 0; }
 	
@@ -33,6 +48,8 @@
 				right: 16px; top: 16px; opacity: 0;
 			}
 			.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
+
+			.line { width: 88px; height: 10px; background-color: #dfddd0; position: absolute; left: 16px; bottom: 16px; }
 		}
 		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.last { margin-right: 0px; }

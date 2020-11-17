@@ -102,10 +102,6 @@ class Dispatcher {
 		const messages = event.getMessagesList() || [];
 		const debug = config.debugMW && !skipDebug;
 
-		if (debug) {
-			console.log('[Dispatcher.event] rootId', rootId, 'event', JSON.stringify(event.toObject(), null, 3));
-		};
-
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
 		let blocks: any[] = [];
@@ -119,6 +115,10 @@ class Dispatcher {
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
 			let childrenIds: string[] = [];
+
+			if (debug && type) {
+				console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(event.toObject(), null, 3));
+			};
 
 			switch (type) {
 				case 'blockSetChildrenIds':

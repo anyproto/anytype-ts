@@ -2,12 +2,21 @@
 
 .loaderWrapper { width: 24px; height: 24px; margin: 0px auto; position: relative; }
 .loaderWrapper {
-	.loader, .loader:after { border-radius: 100%; width: 24px; height: 24px; }
 	.loader {
-		border: 2px solid #eae9e0; border-left: 2px solid $colorDarkGrey; position: absolute; left: 50%; top: 50%; 
-		margin: -12px 0px 0px -12px; transform: translateZ(0); animation: load 0.8s infinite linear;
+		border: 2px solid #eae9e0; border-radius: 100%; width: 24px; height: 24px; border-left: 2px solid $colorDarkGrey; position: absolute; 
+		left: 50%; top: 50%; margin: -12px 0px 0px -12px; transform: translateZ(0); animation: load 0.8s infinite linear;
 	}
 }
+
+.loaderWrapper.inline { margin: 0px; display: inline-block; vertical-align: top; }
+.loaderWrapper.inline {
+	.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+}
+
+.loaderWrapper.c20 { width: 20px; height: 20px; }
+.loaderWrapper.c26 { width: 26px; height: 26px; }
+.loaderWrapper.c28 { width: 28px; height: 28px; }
+.loaderWrapper.c32 { width: 32px; height: 32px; }
 
 @keyframes load {
 	0% { transform: rotate(0deg); }
