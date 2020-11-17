@@ -167,6 +167,9 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const resizable = node.find('.resizable');
+
 		this.open();
 		
 		if (this.uiHidden) {
@@ -175,6 +178,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 		focus.apply();
 		this.resize();
+
+		if (resizable.length) {
+			resizable.trigger('resizeInit');
+		};
 	};
 	
 	componentWillUnmount () {
@@ -1659,15 +1666,10 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const resizable = node.find('.resizable');
 		const wh = win.height();
 		const height = blocks.outerHeight() + blocks.offset().top;
 
 		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
-
-		if (resizable.length) {
-			resizable.trigger('resizeInit');
-		};
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
