@@ -58,14 +58,14 @@ class SelectOption implements I.SelectOption {
 	
 	id: string = '';
 	text: string = '';
-	color: I.Color = I.Color.Grey;
+	color: string = '';
 
 	constructor (props: I.SelectOption) {
 		let self = this;
 
 		self.id = String(props.id || '');
 		self.text = String(props.text || '');
-		self.color = Number(props.color) || I.Color.Grey;
+		self.color = String(props.color || '');
 	};
 };
 

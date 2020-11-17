@@ -1,4 +1,4 @@
-import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview, Color } from './common';
+import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview } from './common';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
@@ -42,7 +42,6 @@ export {
 	Option,
 	HistoryVersion,
 	LinkPreview,
-	Color,
 	
 	Progress,
 	ProgressType,

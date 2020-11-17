@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Tag } from 'ts/component';
-import { I, keyboard, DataUtil, Util } from 'ts/lib';
+import { I, C, keyboard, DataUtil, Util } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -43,19 +43,13 @@ class CellSelect extends React.Component<Props, State> {
 		};
 
 		value = value.map((text: string, i: number) => {
-			const option = true;
-			/*
-			const option = (rel.selectDict || []).find((it: any) => { return it.text == text; });
-			if (!option) {
-				return null;
-			};
-			*/
-			return option ? { id: i, text: text } : null;
+			const option = (relation.selectDict || []).find((it: any) => { return it.id == text; });
+			return option ? option : null;
 		});
-		value = value.filter((it: any) => { return it; });
+		value = value.filter((it: any) => { return it && it.id && it.text; });
 
 		const render = ({ tag, index }) => {
-			return <Tag {...tag} key={index} canEdit={editing} onRemove={(e: any) => { this.onRemove(e, tag.text); }} />;
+			return <Tag {...tag} key={index} canEdit={editing} onRemove={(e: any) => { this.onRemove(e, tag.id); }} />;
 		};
 
 		return (
@@ -256,33 +250,49 @@ class CellSelect extends React.Component<Props, State> {
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 		const colors = DataUtil.menuGetBgColors();
-
-		value = value && ('object' == typeof(value)) ? value : [];
+		
 		text = String(text || '').trim();
+		value = value && ('object' == typeof(value)) ? value : [];
 
-		if (text) {
-			value.push(text);
+		if (!text) {
+			return;
+		};
+
+		let option = relation.selectDict.find((it: I.SelectOption) => { return it.text == text; });
+		let cb = () => {
+			value.push(option.id);
 			value = Util.arrayUnique(value);
+	
+			onChange(value);
+			console.log('SET', value);
+
+			console.log(onChange);
+	
+			if (menu) {
+				menu.param.data.value = value;
+				menu.param.data.relation = observable.box(relation);
+				commonStore.menuUpdate(MENU_ID, menu.param);
+			};
+		}
+
+		if (option) {
+			cb();
+		} else {
+			option = { 
+				id: '',
+				text: text, 
+				color: colors[Util.rand(0, colors.length - 1)].value, 
+			};
+	
+			C.BlockDataviewRelationSelectOptionAdd(rootId, block.id, relation.key, option, (message: any) => {
+				if (!message.option) {
+					return;
+				};
+	
+				relation.selectDict.push(message.option);
+				cb();
+			});
 		};
-
-		let options = value.map((it: string) => {
-			const color = colors[Util.rand(0, colors.length - 1)];
-			return { text: it, color: color.value };
-		});
-
-		options = relation.selectDict.concat(options);
-		options = Util.arrayUniqueObjects(options, 'text');
-
-		relation.selectDict = options;
-		DataUtil.dataviewRelationUpdate(rootId, block.id, relation);
-
-		if (menu) {
-			menu.param.data.value = value;
-			menu.param.data.relation = observable.box(relation);
-			commonStore.menuUpdate(MENU_ID, menu.param);
-		};
-
-		onChange(value);
 	};
 
 };

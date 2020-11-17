@@ -697,6 +697,39 @@ const BlockDataviewRelationDelete = (contextId: string, blockId: string, key: st
 	dispatcher.request('blockDataviewRelationDelete', request, callBack);
 };
 
+const BlockDataviewRelationSelectOptionAdd = (contextId: string, blockId: string, key: string, option: I.SelectOption, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RelationSelectOptionAdd.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRelationkey(key);
+	request.setOption(Mapper.To.SelectOption(option));
+
+	dispatcher.request('blockDataviewRelationSelectOptionAdd', request, callBack);
+};
+
+const BlockDataviewRelationSelectOptionUpdate = (contextId: string, blockId: string, key: string, option: I.SelectOption, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RelationSelectOptionUpdate.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRelationkey(key);
+	request.setOption(Mapper.To.SelectOption(option));
+
+	dispatcher.request('blockDataviewRelationSelectOptionUpdate', request, callBack);
+};
+
+const BlockDataviewRelationSelectOptionDelete = (contextId: string, blockId: string, key: string, optionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RelationSelectOptionDelete.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRelationkey(key);
+	request.setOptionid(optionId);
+
+	dispatcher.request('blockDataviewRelationSelectOptionDelete', request, callBack);
+};
+
 const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.Show.Request();
 	
@@ -848,6 +881,10 @@ export {
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationUpdate,
 	BlockDataviewRelationDelete,
+
+	BlockDataviewRelationSelectOptionAdd,
+	BlockDataviewRelationSelectOptionUpdate,
+	BlockDataviewRelationSelectOptionDelete,
 
 	BlockDataviewRecordCreate,
 	BlockDataviewRecordUpdate,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon, Input, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -66,7 +66,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	};
 
 	onRemove (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { option, rootId, blockId } = data;
 		const relation = data.relation.get();
@@ -74,14 +74,14 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
 
 		relation.selectDict = relation.selectDict.filter((it: any) => { return it.text != option.text; });
-		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
+		C.BlockDataviewRelationSelectOptionDelete(rootId, blockId, relation.key, option.id);
 
 		if (menu) {
 			menu.param.data.relation = observable.box(relation);
 			commonStore.menuUpdate('dataviewOptionList', menu.param);
 		};
 		
-		this.props.close();
+		close();
 	};
 
 	save () {
@@ -96,6 +96,9 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		relation.selectDict[idx].text = this.ref.getValue();
 		relation.selectDict[idx].color = this.color;
 		relation.selectDict = Util.arrayUniqueObjects(relation.selectDict, 'text');
+
+		C.BlockDataviewRelationSelectOptionUpdate(rootId, blockId, relation.key, relation.selectDict[idx]);
+
 		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
 
 		if (menu) {

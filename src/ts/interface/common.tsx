@@ -54,16 +54,3 @@ export interface LinkPreview {
 	faviconUrl: string;
 	imageUrl: string;
 };
-
- export enum Color {
-	Grey	 = 0,
-	Yellow	 = 1,
-	Amber	 = 2,
-	Red		 = 3,
-	Pink	 = 4,
-	Purple	 = 5,
-	Blue	 = 6,
-	Sky		 = 7,
-	Teal	 = 8,
-	Green	 = 9,
-};

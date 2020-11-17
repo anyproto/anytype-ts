@@ -205,7 +205,11 @@ const Mapper = {
 		},
 
 		SelectOption: (obj: any) => {
-			return obj;
+			return {
+				id: obj.getId(),
+				text: obj.getText(),
+				color: obj.getColor(),
+			};
 		},
 
 		ViewRelation: (obj: any) => {

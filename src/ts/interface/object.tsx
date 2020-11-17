@@ -53,5 +53,5 @@ export interface Relation {
 export interface SelectOption {
 	id: string;
 	text: string;
-	color: I.Color;
+	color: string;
 };

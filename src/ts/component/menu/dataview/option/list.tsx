@@ -40,12 +40,8 @@ class MenuOptionList extends React.Component<Props> {
 		));
 
 		const Item = SortableElement((item: any) => {
-			const cn = [ 'item' ];
-			//if (value.indexOf(item.text) >= 0) {
-			//	cn.push('active');
-			//};
 			return (
-				<div id={'tag-' + item.id} className={cn.join(' ')} onClick={(e: any) => { this.onSelect(e, item); }}>
+				<div id={'tag-' + item.id} className="item" onClick={(e: any) => { this.onSelect(e, item); }}>
 					<Handle />
 					<Tag text={item.text} color={item.color} />
 					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
@@ -57,7 +53,7 @@ class MenuOptionList extends React.Component<Props> {
 			return (
 				<div className="items">
 					{options.map((item: any, i: number) => (
-						<Item key={i} text={item.text} color={item.color} id={i} index={i} />
+						<Item key={i} {...item} index={i} />
 					))}
 				</div>
 			);
@@ -97,8 +93,10 @@ class MenuOptionList extends React.Component<Props> {
 		const { onChange } = data;
 		
 		let value = data.value || [];
-		value.push(item.text);
+		value.push(item.id);
 		value = Util.arrayUnique(value);
+
+		console.log('VALUE', value);
 
 		onChange(value);
 	};

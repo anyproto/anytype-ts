@@ -335,6 +335,22 @@ const BlockDataviewRelationAdd = (response: any) => {
 	};
 };
 
+const BlockDataviewRelationSelectOptionAdd = (response: any) => {
+	return {
+		option: Mapper.From.SelectOption(response.getOption()),
+	};
+};
+
+const BlockDataviewRelationSelectOptionUpdate = (response: any) => {
+	return {
+		option: Mapper.From.SelectOption(response.getOption()),
+	};
+};
+
+const BlockDataviewRelationSelectOptionDelete = (response: any) => {
+	return {};
+};
+
 const HistoryVersions = (response: any) => {
 	return {
 		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
@@ -444,6 +460,10 @@ export {
 	BlockDataviewRecordDelete,
 
 	BlockDataviewRelationAdd,
+
+	BlockDataviewRelationSelectOptionAdd,
+	BlockDataviewRelationSelectOptionUpdate,
+	BlockDataviewRelationSelectOptionDelete,
 
 	BlockListMove,
 	BlockListMoveToNewPage,
