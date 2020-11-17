@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Smile } from 'ts/component';
+import { Select, Marker, Smile, Loader } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -285,11 +285,22 @@ class BlockText extends React.Component<Props, {}> {
 
 			const details = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
+			const { _detailsEmpty_, iconEmoji, iconImage } = details;
 
-			if (smile && smile.length && (details.iconEmoji || details.iconImage)) {
-				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
-				smile.after('<img src="./img/space.svg" class="space" />');
-				param.class += ' withImage';
+			if (smile && smile.length) {
+				let icon = null;
+				if (_detailsEmpty_) {
+					icon = <Loader className={[ param.class, 'inline' ].join(' ')} />;
+				} else 
+				if (iconEmoji || iconImage) {
+					icon = <Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />;
+				};
+
+				if (icon) {
+					ReactDOM.render(icon, smile.get(0));
+					smile.after('<img src="./img/space.svg" class="space" />');
+					param.class += ' withImage';
+				};
 			};
 
 			item.addClass(param.class);
