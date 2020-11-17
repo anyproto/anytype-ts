@@ -267,7 +267,6 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('mention');
-		const self = this;
 		
 		if (!items.length) {
 			return;
@@ -290,6 +289,7 @@ class BlockText extends React.Component<Props, {}> {
 			if (smile && smile.length) {
 				let icon = null;
 				if (_detailsEmpty_) {
+					item.addClass('dis');
 					icon = <Loader className={[ param.class, 'inline' ].join(' ')} />;
 				} else 
 				if (iconEmoji || iconImage) {
@@ -308,7 +308,10 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			DataUtil.pageOpenEvent(e, $(this).data('param'));
+			const el = $(this);
+			if (!el.hasClass('dis')) {
+				DataUtil.pageOpenEvent(e, el.data('param'));
+			};
 		});
 	};
 

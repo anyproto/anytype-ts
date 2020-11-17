@@ -66,8 +66,10 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
+		const details = blockStore.getDetails(rootId, targetBlockId);
+		const { _detailsEmpty_ } = details;
 		
-		if (targetBlockId != rootId) {
+		if (!_detailsEmpty_ && (targetBlockId != rootId)) {
 			DataUtil.pageOpenEvent(e, targetBlockId);
 		};
 	};
