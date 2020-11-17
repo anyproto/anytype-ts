@@ -10,6 +10,15 @@ const Constant = require('json/constant.json');
 
 @observer
 class MenuThreadList extends React.Component<Props, {}> {
+
+	timeout: number = 0;
+
+	constructor (props: any) {
+		super(props);
+
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
+	};
 	
 	render () {
 		const { param } = this.props;
@@ -23,8 +32,8 @@ class MenuThreadList extends React.Component<Props, {}> {
 			<div 
 				id={'item-' + item.id} 
 				className="item" 
-				onMouseOver={(e: any) => { this.onMenu(item.name, false); }}
-				onMouseLeave={(e: any) => { commonStore.menuClose('threadStatus'); }}
+				onMouseEnter={(e: any) => { this.onMouseEnter(item.id, false); }}
+				onMouseLeave={this.onMouseLeave}
 			>
 				<IconUser className="c40" {...item} avatar={item.imageHash} />
 				<div className="info">
@@ -44,7 +53,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				<div 
 					id="item-cafe" 
 					className="item" 
-					onMouseOver={(e: any) => { this.onMenu('cafe', true); }} 
+					onMouseOver={(e: any) => { this.onMouseEnter('cafe', true); }} 
 					onMouseLeave={(e: any) => { commonStore.menuClose('threadStatus'); }}
 				>
 					<Icon className="cafe" />
@@ -66,29 +75,38 @@ class MenuThreadList extends React.Component<Props, {}> {
 		commonStore.menuClose('threadStatus');
 	};
 
-	onMenu (id: string, isCafe: boolean) {
+	onMouseEnter (id: string, isCafe: boolean) {
 		const { param } = this.props;
 		const { data } = param;
+		const { menus } = commonStore;
+		const menu = menus.find((it: I.Menu) => { return it.id == 'threadStatus'; });
 
-		if (commonStore.menuIsOpen('threadStatus')) {
+		if (menu && (menu.param.data.accountId == id)) {
 			return;
 		};
 
-		commonStore.menuOpen('threadStatus', {
-			element: '#item-' + id,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			offsetX: 272,
-			offsetY: -62,
-			data: {
-				...data,
-				name: id,
-				isCafe: isCafe,
-			},
-		});
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			commonStore.menuOpen('threadStatus', {
+				element: '#item-' + id,
+				type: I.MenuType.Vertical,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				offsetX: 272,
+				offsetY: -62,
+				data: {
+					...data,
+					accountId: id,
+					isCafe: isCafe,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 	
+	onMouseLeave (e: any) {
+		commonStore.menuClose('threadStatus');
+	};
+
 };
 
 export default MenuThreadList;

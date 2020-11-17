@@ -18,6 +18,7 @@ export interface ThreadDevice {
 };
 
 export interface ThreadAccount {
+	id: string;
 	name: string;
 	imageHash: string;
 	online: false;
