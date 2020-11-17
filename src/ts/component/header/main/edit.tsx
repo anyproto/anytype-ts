@@ -69,7 +69,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Sync id="button-sync" onClick={this.onSync} />
+					<Sync id="button-sync" rootId={rootId} onClick={this.onSync} />
 					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
@@ -140,14 +140,19 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		});
 	};
 
-	onSync () {
+	onSync (e: any) {
+		const { rootId } = this.props;
+
 		commonStore.menuOpen('threadList', {
 			type: I.MenuType.Vertical, 
 			element: '#button-sync',
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right
+			horizontal: I.MenuDirection.Right,
+			data: {
+				rootId: rootId,
+			}
 		});
 	};
 

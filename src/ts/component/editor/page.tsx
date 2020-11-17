@@ -321,6 +321,7 @@ class EditorPage extends React.Component<Props, State> {
 			if (!isPopup) {
 				blockStore.blocksClear(id);
 			};
+			authStore.threadRemove(id);
 		});
 	};
 	

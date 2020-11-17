@@ -1,6 +1,20 @@
 @import "~scss/_vars";
 
 .menus {
+	.menu.menuThreadList, 
+	.menu.menuThreadStatus { width: 272px; }
+
+	.menu.menuThreadList, 
+	.menu.menuThreadStatus {
+		.description { color: $colorDarkGrey; display: flex; }
+		.side { width: 50%; }
+		.side.right { text-align: right; }
+
+		.red { color: $colorRed; }
+		.orange { color: $colorOrange; }
+		.green { color: $colorGreen; }
+	}
+
 	.menu.menuThreadList { width: 272px; }
 	.menu.menuThreadList {
 		.content { padding: 0px; }
@@ -11,20 +25,7 @@
 			.icon { position: absolute; left: 16px; top: 11px; width: 20px; height: 20px; }
 			.icon.cafe { background-size: 18px 16px; background-image: url('~img/icon/cafe.svg'); }
 			.info { padding-left: 28px; }
-			.description { color: $colorDarkGrey; display: flex; }
-			.side { width: 50%; }
-			.side.right { text-align: right; }
-
-			.red { color: $colorRed; }
-			.orange { color: $colorOrange; }
-			.green { color: $colorGreen; }
 		}
 	}
 
-	.menu.menuThreadStatus { width: 272px; }
-	.menu.menuThreadStatus {
-		.description { color: $colorDarkGrey; display: flex; }
-		.side { width: 50%; }
-		.side.right { text-align: right; }
-	}
 }

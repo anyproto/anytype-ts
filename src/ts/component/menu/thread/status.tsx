@@ -9,9 +9,10 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { isCafe, accountId } = data;
-		const { threadAccounts, threadCafe } = authStore;
-		const account = threadAccounts.find((it: I.ThreadAccount) => { return it.id == accountId; });
+		const { rootId, isCafe, name } = data;
+		const thread = authStore.threadGet(rootId);
+		const { cafe, accounts } = thread;
+		const account = accounts.find((it: I.ThreadAccount) => { return it.name == name; });
 		
 		const Item = (item: any) => (
 			<div className="item">
@@ -19,15 +20,15 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 				{item.fields.map((field: any, i: number) => (
 					<div key={i} className="description">
 						<div className="side left">{field.key}</div>
-						<div className="side right">{field.value}</div>
+						<div className={[ 'side', 'right', field.color ].join(' ')}>{field.value}</div>
 					</div>
 				))}
 			</div>
 		);
 
 		const cafeFields = [ 
-			{ key: 'Data is backed up', value: (threadCafe.status ? 'Success' : 'Failure') },
-			{ key: 'All edits sync', value: Util.timeAgo(threadCafe.lastPulled) }
+			{ key: 'Data is backed up', value: (cafe.status ? 'Success' : 'Failure'), color: (cafe.status ? 'green' : 'red') },
+			{ key: 'All edits sync', value: Util.timeAgo(cafe.lastPulled), color: '' }
 		];
 
 		return isCafe ? (
@@ -41,8 +42,8 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 					<div className="items">	
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
-								{ key: 'Last sync',  value: Util.timeAgo(item.lastPulled) },
-								{ key: 'Last edit',  value: Util.timeAgo(item.lastEdited) }
+								{ key: 'Last sync',  value: Util.timeAgo(item.lastPulled), color: '' },
+								{ key: 'Last edit',  value: Util.timeAgo(item.lastEdited), color: '' }
 							];
 							return <Item key={i} {...item} fields={fields} />;
 						})}

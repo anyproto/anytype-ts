@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 interface Props {
 	id?: string;
 	className?: string;
+	rootId: string;
 	onClick: (e: any) => void;
 };
 
@@ -17,19 +18,18 @@ class Sync extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, className, onClick } = this.props;
-		const { threadSummary } = authStore;
+		const { id, className, rootId, onClick } = this.props;
+		const thread = authStore.threadGet(rootId);
+		const { summary } = thread;
 
-		if (!threadSummary) {
+		if (!summary) {
 			return null;
 		};
 
-		const { status } = threadSummary;
-		
 		return (
 			<div id={id} className={[ 'sync', className ].join(' ')} onClick={onClick}>
-				<div className={[ 'bullet', DataUtil.threadColor(status) ].join(' ')} />
-				{translate('syncStatus' + status)}
+				<div className={[ 'bullet', DataUtil.threadColor(summary.status) ].join(' ')} />
+				{translate('syncStatus' + summary.status)}
 			</div>
 		);
 	};

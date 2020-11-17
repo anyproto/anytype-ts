@@ -18,7 +18,8 @@ export interface ThreadDevice {
 };
 
 export interface ThreadAccount {
-	id: string;
+	name: string;
+	imageHash: string;
 	online: false;
 	lastPulled: number;
 	lastEdited: number;
@@ -29,4 +30,10 @@ export interface ThreadCafe {
 	status: ThreadStatus;
 	lastPulled: number;
 	lastPushSucceed: boolean;
+};
+
+export interface ThreadObj {
+	summary: ThreadSummary;
+	cafe: ThreadCafe;
+	accounts: ThreadAccount[];
 };

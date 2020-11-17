@@ -14,9 +14,7 @@ class AuthStore {
 	@observable public name: string = '';
 	@observable public phrase: string = '';
 	@observable public code: string = '';
-	@observable public threadSummaryObj: I.ThreadSummary = null;
-	@observable public threadCafeObj: I.ThreadCafe = null;
-	@observable public threadAccountList: I.ThreadAccount[] = [];
+	@observable public threadMap: Map<string, any> = new Map();
 	
 	@computed
 	get accounts(): I.Account[] {
@@ -28,21 +26,6 @@ class AuthStore {
 		return this.accountItem;
 	};
 
-	@computed
-	get threadSummary(): I.ThreadSummary {
-		return this.threadSummaryObj;
-	};
-
-	@computed
-	get threadCafe(): I.ThreadCafe {
-		return this.threadCafeObj;
-	};
-
-	@computed
-	get threadAccounts(): I.ThreadAccount[] {
-		return this.threadAccountList;
-	};
-	
 	@computed
 	get path(): string {
 		return this.dataPath || Storage.get('dataPath') || '';
@@ -99,20 +82,24 @@ class AuthStore {
 	};
 
 	@action
-	threadSummarySet (obj: I.ThreadSummary) {
-		this.threadSummaryObj = obj;
+	threadSet (rootId: string, obj: any) {
+		const thread = this.threadMap.get(rootId);
+		if (thread) {
+			set(thread, obj);
+		} else {
+			this.threadMap.set(rootId, observable(obj));
+		};
 	};
 
 	@action
-	threadCafeSet (obj: I.ThreadCafe) {
-		this.threadCafeObj = obj;
+	threadRemove (rootId: string) {
+		this.threadMap.delete(rootId);
 	};
 
-	@action
-	threadAccountsSet (accounts: I.ThreadAccount[]) {
-		this.threadAccountList = accounts;
+	threadGet (rootId) {
+		return this.threadMap.get(rootId) || {};
 	};
-	
+
 	@action
 	logout () {
 		Storage.logout();

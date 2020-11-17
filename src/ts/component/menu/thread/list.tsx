@@ -12,19 +12,23 @@ const Constant = require('json/constant.json');
 class MenuThreadList extends React.Component<Props, {}> {
 	
 	render () {
-		const { threadAccounts, threadCafe } = authStore;
-		const { status } = threadCafe;
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const thread = authStore.threadGet(rootId);
+		const { accounts, cafe } = thread;
+		const { status } = cafe;
 
 		const Item = (item: any) => (
 			<div 
 				id={'item-' + item.id} 
 				className="item" 
-				onMouseOver={(e: any) => { this.onMenu(item.id, false); }}
+				onMouseOver={(e: any) => { this.onMenu(item.name, false); }}
 				onMouseLeave={(e: any) => { commonStore.menuClose('threadStatus'); }}
 			>
-				<IconUser className="c40" {...item} />
+				<IconUser className="c40" {...item} avatar={item.imageHash} />
 				<div className="info">
-					<div className="name">{item.id}</div>
+					<div className="name">{item.name}</div>
 					<div className="description">
 						<div className="side left">Last sync</div>
 						<div className="side right">
@@ -51,7 +55,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 						</div>
 					</div>
 				</div>
-				{threadAccounts.map((item: I.Account, i: number) => (
+				{accounts.map((item: I.ThreadAccount, i: number) => (
 					<Item key={i} {...item} />
 				))}
 			</div>
@@ -63,6 +67,9 @@ class MenuThreadList extends React.Component<Props, {}> {
 	};
 
 	onMenu (id: string, isCafe: boolean) {
+		const { param } = this.props;
+		const { data } = param;
+
 		commonStore.menuOpen('threadStatus', {
 			element: '#item-' + id,
 			type: I.MenuType.Vertical,
@@ -71,7 +78,8 @@ class MenuThreadList extends React.Component<Props, {}> {
 			offsetX: 272,
 			offsetY: -62,
 			data: {
-				accountId: id,
+				...data,
+				name: id,
 				isCafe: isCafe,
 			},
 		});
