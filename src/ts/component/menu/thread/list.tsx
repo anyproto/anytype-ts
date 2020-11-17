@@ -70,6 +70,10 @@ class MenuThreadList extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 
+		if (commonStore.menuIsOpen('threadStatus')) {
+			return;
+		};
+
 		commonStore.menuOpen('threadStatus', {
 			element: '#item-' + id,
 			type: I.MenuType.Vertical,
