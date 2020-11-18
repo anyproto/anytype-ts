@@ -77,7 +77,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { id, relation, block, index, readOnly, data } = this.props;
+		const { id, relation, rootId, block, index, readOnly, data } = this.props;
 
 		if (readOnly || relation.isReadOnly) {
 			return;
@@ -118,6 +118,8 @@ class Cell extends React.Component<Props, {}> {
 				};
 			},
 			data: { 
+				rootId: rootId,
+				blockId: block.id,
 				value: value, 
 				relation: observable.box(relation),
 				onChange: (value: any) => {

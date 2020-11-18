@@ -95,11 +95,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		relation.selectDict[idx].text = this.ref.getValue();
 		relation.selectDict[idx].color = this.color;
-		relation.selectDict = Util.arrayUniqueObjects(relation.selectDict, 'text');
-
 		C.BlockDataviewRelationSelectOptionUpdate(rootId, blockId, relation.key, relation.selectDict[idx]);
-
-		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
 
 		if (menu) {
 			menu.param.data.relation = observable.box(relation);

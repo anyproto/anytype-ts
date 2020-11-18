@@ -342,9 +342,7 @@ const BlockDataviewRelationSelectOptionAdd = (response: any) => {
 };
 
 const BlockDataviewRelationSelectOptionUpdate = (response: any) => {
-	return {
-		option: Mapper.From.SelectOption(response.getOption()),
-	};
+	return {};
 };
 
 const BlockDataviewRelationSelectOptionDelete = (response: any) => {

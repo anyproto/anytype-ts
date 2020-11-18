@@ -106,6 +106,8 @@ class MenuOptionList extends React.Component<Props> {
 
 		const { param } = this.props;
 		const { data } = param;
+
+		console.log(data);
 		
 		commonStore.menuOpen('dataviewOptionEdit', { 
 			type: I.MenuType.Vertical,
