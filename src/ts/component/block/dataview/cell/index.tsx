@@ -140,6 +140,19 @@ class Cell extends React.Component<Props, {}> {
 					
 				menuId = 'dataviewCalendar';
 				break;
+
+			case I.RelationType.File:
+			case I.RelationType.Media:
+				if (!value) {
+					break;
+				};
+				
+				param = Object.assign(param, {
+					width: width,
+				});
+
+				menuId = 'dataviewMedia';
+				break;
 					
 			case I.RelationType.Select:
 				param = Object.assign(param, {
