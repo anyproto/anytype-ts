@@ -227,6 +227,7 @@
 			"node_modules/is-plain-obj",
 			"node_modules/js-yaml",
 			"node_modules/jsonfile",
+			"node_modules/keytar",
 			"node_modules/lazy-val",
 			"node_modules/lockfile",
 			"node_modules/lodash",
