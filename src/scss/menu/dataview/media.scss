@@ -3,5 +3,6 @@
 .menus {
 	.menu.menuDataviewMedia {}
 	.menu.menuDataviewMedia {
+		.item:hover::before { opacity: 0.15; }
 	}
 }
