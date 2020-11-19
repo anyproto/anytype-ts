@@ -248,8 +248,6 @@ class Cell extends React.Component<Props, {}> {
 	onChange (value: any) {
 		const { relation, onCellChange, data, index } = this.props;
 
-		console.log('onCellChange', onCellChange);
-
 		if (onCellChange) {
 			onCellChange(data[index].id, relation.key, value);
 		};

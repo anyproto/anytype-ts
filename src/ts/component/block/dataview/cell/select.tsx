@@ -253,6 +253,7 @@ class CellSelect extends React.Component<Props, State> {
 		
 		text = String(text || '').trim();
 		value = value && ('object' == typeof(value)) ? value : [];
+		value = Util.objectCopy(value);
 
 		if (!text) {
 			return;
@@ -262,11 +263,8 @@ class CellSelect extends React.Component<Props, State> {
 		let cb = () => {
 			value.push(option.id);
 			value = Util.arrayUnique(value);
-	
-			onChange(value);
-			console.log('SET', value);
 
-			console.log(onChange);
+			onChange(value);
 	
 			if (menu) {
 				menu.param.data.value = value;
@@ -288,7 +286,8 @@ class CellSelect extends React.Component<Props, State> {
 				if (!message.option) {
 					return;
 				};
-	
+				
+				option.id = message.option.id;
 				relation.selectDict.push(message.option);
 				cb();
 			});
