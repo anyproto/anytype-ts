@@ -1602,7 +1602,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		blockIds = blockIds.filter((it: string) => {  
 			let block = blockStore.getLeaf(rootId, it);
-			return !block.isTextTitle();
+			return block && !block.isTextTitle();
 		});
 
 		focus.clear(true);
