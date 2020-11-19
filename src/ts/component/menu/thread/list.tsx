@@ -7,11 +7,13 @@ import { I, DataUtil, translate, Util } from 'ts/lib';
 interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class MenuThreadList extends React.Component<Props, {}> {
 
-	timeout: number = 0;
+	timeoutMenu: number = 0;
+	timeoutClose: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -71,8 +73,33 @@ class MenuThreadList extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount () {
+		const win = $(window);
+		const obj = $('#menuThreadList');
+
+		win.unbind('scroll').on('scroll', (e: any) => {
+			commonStore.menuClose('threadStatus');
+		});
+
+		obj.unbind('mouseenter').on('mouseenter', () => {
+			window.clearTimeout(this.timeoutClose);
+		});
+
+		obj.unbind('mouseleave').on('mouseleave', () => {
+			window.clearTimeout(this.timeoutClose);
+			this.timeoutClose = window.setTimeout(() => {
+				commonStore.menuClose(this.props.id);
+				commonStore.menuClose('threadStatus');
+			}, 1000);
+		});
+	};
+
 	componentDidUpdate () {
 		commonStore.menuClose('threadStatus');
+	};
+
+	componentWillUnmount () {
+		$(window).unbind('scroll');
 	};
 
 	onMouseEnter (id: string, isCafe: boolean) {
@@ -85,8 +112,8 @@ class MenuThreadList extends React.Component<Props, {}> {
 			return;
 		};
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
+		window.clearTimeout(this.timeoutMenu);
+		this.timeoutMenu = window.setTimeout(() => {
 			commonStore.menuOpen('threadStatus', {
 				element: '#item-' + id,
 				type: I.MenuType.Vertical,

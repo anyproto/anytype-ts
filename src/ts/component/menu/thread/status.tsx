@@ -20,15 +20,15 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 				{item.fields.map((field: any, i: number) => (
 					<div key={i} className="description">
 						<div className="side left">{field.key}</div>
-						<div className={[ 'side', 'right', field.color ].join(' ')}>{field.value}</div>
+						<div className="side right">{field.value}</div>
 					</div>
 				))}
 			</div>
 		);
 
 		const cafeFields = [ 
-			{ key: 'Data is backed up', value: (cafe.status ? 'Success' : 'Failure'), color: (cafe.status ? 'green' : 'red') },
-			{ key: 'All edits sync', value: Util.timeAgo(cafe.lastPulled), color: '' }
+			{ key: 'Data is backed up', value: (cafe.status ? 'Success' : 'Failure') },
+			{ key: 'All edits sync', value: Util.timeAgo(cafe.lastPulled) }
 		];
 
 		return isCafe ? (
@@ -42,8 +42,8 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 					<div className="items">	
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
-								{ key: 'Last sync',  value: Util.timeAgo(item.lastPulled), color: '' },
-								{ key: 'Last edit',  value: Util.timeAgo(item.lastEdited), color: '' }
+								{ key: 'Last sync',  value: Util.timeAgo(item.lastPulled) },
+								{ key: 'Last edit',  value: Util.timeAgo(item.lastEdited) }
 							];
 							return <Item key={i} {...item} fields={fields} />;
 						})}

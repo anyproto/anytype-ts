@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuThreadList, 
-	.menu.menuThreadStatus { width: 272px; }
+	.menu.menuThreadStatus { width: 272px; position: fixed; }
 
 	.menu.menuThreadList, 
 	.menu.menuThreadStatus {
