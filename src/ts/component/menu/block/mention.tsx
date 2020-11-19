@@ -104,6 +104,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
+		this.resize();
 		this.loadSearch();
 	};
 
@@ -123,10 +124,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 			this.setState({ n: 0 });
 		};
 
-		window.setTimeout(() => {
-			this.setActive(items[n]);
-			this.props.position();
-		}, 15);
+		this.resize();
+		this.setActive(items[n]);
 	};
 	
 	componentWillUnmount () {
@@ -362,6 +361,16 @@ class MenuBlockMention extends React.Component<Props, State> {
 			...page,
 			text: [ page.details.name, page.snippet ].join(' '),
 		};
+	};
+
+	resize () {
+		const { id, position } = this.props;
+		const items = this.getItems(true);
+		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
+		const height = Math.max(40, Math.min(240, items.length * 28 + 16));
+
+		obj.css({ height: height });
+		position();
 	};
 	
 };
