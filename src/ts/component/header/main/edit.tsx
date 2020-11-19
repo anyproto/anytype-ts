@@ -147,7 +147,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			type: I.MenuType.Vertical, 
 			element: '#button-sync',
 			offsetX: 0,
-			offsetY: 4,
+			offsetY: 0,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {

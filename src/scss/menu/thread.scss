@@ -15,7 +15,7 @@
 		.green { color: $colorGreen; }
 	}
 
-	.menu.menuThreadList { width: 272px; }
+	.menu.menuThreadList { width: 272px; top: 42px !important; }
 	.menu.menuThreadList {
 		.content { padding: 0px; }
 		.item { padding: 11px 16px; }

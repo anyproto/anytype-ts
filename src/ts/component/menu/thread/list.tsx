@@ -37,7 +37,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				onMouseEnter={(e: any) => { this.onMouseEnter(item.id, false); }}
 				onMouseLeave={this.onMouseLeave}
 			>
-				<IconUser className="c40" {...item} avatar={item.imageHash} />
+				<IconUser className="c18" {...item} />
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">
@@ -85,13 +85,16 @@ class MenuThreadList extends React.Component<Props, {}> {
 			window.clearTimeout(this.timeoutClose);
 		});
 
+		/*
 		obj.unbind('mouseleave').on('mouseleave', () => {
 			window.clearTimeout(this.timeoutClose);
 			this.timeoutClose = window.setTimeout(() => {
+				window.clearTimeout(this.timeoutMenu);
 				commonStore.menuClose(this.props.id);
 				commonStore.menuClose('threadStatus');
 			}, 1000);
 		});
+		*/
 	};
 
 	componentDidUpdate () {
