@@ -200,10 +200,10 @@ const Mapper = {
         },
 
         View: (schemaId: string, obj: any) => {
-            let schema = Schema[schemaId];
+            let schema = Schema[schemaId] || {};
             let relations = [];
     
-            for (let field of schema.default) {
+            for (let field of (schema.default || [])) {
                 if (field.isHidden) {
                     continue;
                 };
