@@ -81,6 +81,7 @@ body.platformWindows {
 .through { pointer-events: none; }
 .rel { position: relative; }
 .disabled { opacity: 0.5 !important; cursor: default !important; }
+.dis { cursor: default !important; }
 .readOnly { -webkit-user-modify: read-only !important; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
