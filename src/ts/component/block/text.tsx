@@ -433,24 +433,6 @@ class BlockText extends React.Component<Props, {}> {
 			ret = true;
 		});
 
-		keyboard.shortcut('shift+enter', e, (pressed: string) => {
-			e.preventDefault();
-			let t = '\n';
-			if (range.from == value.length) {
-				t += t;
-			};
-			
-			value = Util.stringInsert(value, t, range.from, range.from);
-			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
-				focus.set(block.id, { from: range.from + t.length, to: range.from + t.length });
-				focus.apply();
-
-				onKeyDown(e, value, this.marks, range);
-			});
-
-			ret = true;
-		});
-
 		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
 
