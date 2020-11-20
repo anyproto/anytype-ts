@@ -14,9 +14,8 @@ interface Props {
 class Tag extends React.Component<Props, {}> {
 
 	render () {
-		let { text, className, canEdit, onRemove } = this.props;
-		let color = this.props.color || this.getColor();
-		let cn = [ 'tagItem', color ];
+		let { text, color, className, canEdit, onRemove } = this.props;
+		let cn = [ 'tagItem', (color || 'default') ];
 		
 		if (className) {
 			cn.push(className);
@@ -31,17 +30,6 @@ class Tag extends React.Component<Props, {}> {
 				{canEdit ? <Icon className="remove" onMouseDown={(e: any) => { onRemove(e, text); }} /> : '' }
 			</span>
 		);
-	};
-	
-	getColor (): string {
-		const a = Object.keys(Constant.textColor);
-		
-		let text = String(this.props.text || '');
-		let n = 0;
-		for (let i = 0; i < text.length; i++) {
-			n += text.charCodeAt(i);
-		};
-		return a[n % a.length];
 	};
 	
 };

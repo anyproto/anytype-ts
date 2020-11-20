@@ -291,7 +291,7 @@ class CellSelect extends React.Component<Props, State> {
 			option = { 
 				id: '',
 				text: text, 
-				color: colors[Util.rand(0, colors.length - 1)].value, 
+				color: '', 
 			};
 	
 			C.BlockDataviewRelationSelectOptionAdd(rootId, block.id, relation.key, option, (message: any) => {
