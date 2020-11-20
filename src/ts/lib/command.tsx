@@ -457,6 +457,16 @@ const BlockListSetTextStyle = (contextId: string, blockIds: string[], style: I.T
 	dispatcher.request('blockListSetTextStyle', request, callBack);
 };
 
+const BlockListTurnInto = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockList.TurnInto.Request();
+	
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+    request.setStyle(style);
+
+	dispatcher.request('blockListTurnInto', request, callBack);
+};
+
 const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Set.Div.Style.Request();
 	
@@ -866,6 +876,7 @@ export {
 	BlockListSetBackgroundColor,
 	BlockListSetTextColor,
 	BlockListSetTextStyle,
+	BlockListTurnInto,
 	BlockListSetTextMark,
 	BlockListSetDivStyle,
 	BlockListSetFields,

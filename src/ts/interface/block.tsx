@@ -78,6 +78,10 @@ export interface Block {
 	canHaveBackground?(): boolean;
 	canHaveMarks?(): boolean;
 	canTurn?(): boolean;
+	canTurnText?(): boolean;
+	canTurnPage?(): boolean;
+	canTurnList?(): boolean;
+	canTurnObject?(): boolean;
 
 	isIndentable?(): boolean;
 	isFocusable?(): boolean;

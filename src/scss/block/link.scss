@@ -23,6 +23,14 @@
 			border-radius: 3px; background-color: #f3f2ec; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 8px;
 			@include text-small; color: $colorDarkGrey; padding: 0px 6px; display: none;
 		}
+
+		.loading {
+			color: $colorDarkGrey;
+		}
+		.loading {
+			.loaderWrapper { width: 24px; height: 24px; margin: 0px 4px 0px 0px; display: inline-block; vertical-align: top; }
+			.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+		}
 	}
 	.block.blockLink:hover {
 		.name .txt:before { border-color: $colorBlack; }

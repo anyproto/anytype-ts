@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Smile } from 'ts/component';
+import { Select, Marker, Smile, Loader } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -265,7 +265,6 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('mention');
-		const self = this;
 		
 		if (!items.length) {
 			return;
@@ -283,11 +282,23 @@ class BlockText extends React.Component<Props, {}> {
 
 			const details = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
+			const { _detailsEmpty_, iconEmoji, iconImage } = details;
 
-			if (smile && smile.length && (details.iconEmoji || details.iconImage)) {
-				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />, smile.get(0));
-				smile.after('<img src="./img/space.svg" class="space" />');
-				param.class += ' withImage';
+			if (smile && smile.length) {
+				let icon = null;
+				if (_detailsEmpty_) {
+					item.addClass('dis');
+					icon = <Loader className={[ param.class, 'inline' ].join(' ')} />;
+				} else 
+				if (iconEmoji || iconImage) {
+					icon = <Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />;
+				};
+
+				if (icon) {
+					ReactDOM.render(icon, smile.get(0));
+					smile.after('<img src="./img/space.svg" class="space" />');
+					param.class += ' withImage';
+				};
 			};
 
 			item.addClass(param.class);
@@ -295,7 +306,10 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
-			DataUtil.pageOpenEvent(e, $(this).data('param'));
+			const el = $(this);
+			if (!el.hasClass('dis')) {
+				DataUtil.pageOpenEvent(e, el.data('param'));
+			};
 		});
 	};
 
@@ -417,24 +431,6 @@ class BlockText extends React.Component<Props, {}> {
 			ret = true;
 		});
 
-		keyboard.shortcut('shift+enter', e, (pressed: string) => {
-			e.preventDefault();
-			let t = '\n';
-			if (range.from == value.length) {
-				t += t;
-			};
-			
-			value = Util.stringInsert(value, t, range.from, range.from);
-			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
-				focus.set(block.id, { from: range.from + t.length, to: range.from + t.length });
-				focus.apply();
-
-				onKeyDown(e, value, this.marks, range);
-			});
-
-			ret = true;
-		});
-
 		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
 
@@ -444,6 +440,8 @@ class BlockText extends React.Component<Props, {}> {
 			
 			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
+				this.marks = Mark.checkRanges(value, this.marks);
+
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 					focus.apply();
@@ -463,6 +461,7 @@ class BlockText extends React.Component<Props, {}> {
 					return;
 				};
 				
+				this.marks = Mark.checkRanges(value, this.marks);
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
 				});
@@ -497,6 +496,7 @@ class BlockText extends React.Component<Props, {}> {
 			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || !block.canHaveMarks()) {
 				return;
 			};
+
 			this.onMention();
 		});
 
@@ -687,9 +687,10 @@ class BlockText extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				blockId: block.id,
+				marks: this.marks,
 				onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
-					this.marks = marks;
 					value = Util.stringInsert(value, text, from, from);
+					this.marks = Mark.checkRanges(value, marks);
 
 					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 						focus.set(block.id, { from: to, to: to });
@@ -910,7 +911,7 @@ class BlockText extends React.Component<Props, {}> {
 				passThrough: true,
 				data: {
 					blockId: id,
-					blockIds: [ id ],
+					blockIds: DataUtil.selectionGet(id, true, this.props),
 					rootId: rootId,
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
@@ -918,10 +919,8 @@ class BlockText extends React.Component<Props, {}> {
 						this.marks = Util.objectCopy(marks);
 						this.setMarks(marks);
 
-						window.setTimeout(() => {
-							focus.set(id, { from: currentFrom, to: currentTo });
-							focus.apply();
-						}, 50);
+						focus.set(id, { from: currentFrom, to: currentTo });
+						focus.apply();
 					},
 				},
 			});

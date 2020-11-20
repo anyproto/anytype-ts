@@ -314,21 +314,13 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { filter } = commonStore;
 		const { data } = param;
-		const { rootId, blockId, onChange } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
-
-		if (!block) {
-			return;
-		};
+		const { onChange } = data;
 
 		const cb = (id: string, name: string) => {
-			const { content } = block;
-		
-			let { marks } = content;
 			let from = filter.from;
 			let to = from + name.length + 1;
-	
-			marks = Util.objectCopy(marks);
+			let marks = Util.objectCopy(data.marks || []);
+
 			marks = Mark.adjust(marks, from, name.length + 1);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 

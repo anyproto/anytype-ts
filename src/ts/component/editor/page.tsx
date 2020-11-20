@@ -17,10 +17,6 @@ interface Props extends RouteComponentProps<any> {
 	onOpen?(): void;
 };
 
-interface State {
-	loading: boolean;
-};
-
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -29,7 +25,7 @@ const THROTTLE = 20;
 const fs = window.require('fs');
 
 @observer
-class EditorPage extends React.Component<Props, State> {
+class EditorPage extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	id: string = '';
@@ -41,9 +37,7 @@ class EditorPage extends React.Component<Props, State> {
 	uiHidden: boolean = false;
 	withIcon: boolean = false;
 	withCover: boolean = false;
-	state = {
-		loading: false,
-	};
+	loading: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -59,8 +53,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { loading } = this.state;
-		if (loading) {
+		if (this.loading) {
 			return <Loader />;
 		};
 		
@@ -152,14 +145,17 @@ class EditorPage extends React.Component<Props, State> {
 		this.open();
 		
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
+		win.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e); 
 			};
 		});
-		win.on('focus.editor' + namespace, (e: any) => { focus.apply(); });
+		win.on('focus.editor' + namespace, (e: any) => { 
+			focus.apply(); 
+			win.scrollTop(this.scrollTop);
+		});
 		
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
@@ -181,7 +177,7 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const node = $(ReactDOM.findDOMNode(this));		
+		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
 		
 		this.checkDetails();
@@ -190,8 +186,9 @@ class EditorPage extends React.Component<Props, State> {
 		if (this.uiHidden) {
 			this.uiHide();
 		};
-		
+
 		focus.apply();
+		this.resize();
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -225,6 +222,7 @@ class EditorPage extends React.Component<Props, State> {
 		const { rootId, onOpen, history } = this.props;
 		const { breadcrumbs } = blockStore;
 		const { focused } = focus;
+		const win = $(window);
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
 		if (!breadcrumbs && !skipInit) {
@@ -238,7 +236,8 @@ class EditorPage extends React.Component<Props, State> {
 			return;
 		};
 		
-		this.setState({ loading: true });
+		this.loading = true;
+		this.forceUpdate();
 		
 		let cr = crumbs.get(I.CrumbsType.Page);
 		let lastTargetId = '';
@@ -251,8 +250,8 @@ class EditorPage extends React.Component<Props, State> {
 		};
 		
 		crumbs.save(I.CrumbsType.Page, cr);
-		
 		this.id = rootId;
+
 		C.BlockOpen(this.id, (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
@@ -269,9 +268,11 @@ class EditorPage extends React.Component<Props, State> {
 				this.focusTitle();
 			};
 
-			this.setState({ loading: false });
+			this.loading = false;
+			this.forceUpdate();
 			this.resize();
 
+			win.scrollTop(Storage.getScroll('editor', rootId));
 			blockStore.setNumbers(rootId);
 
 			if (onOpen) {
@@ -749,7 +750,7 @@ class EditorPage extends React.Component<Props, State> {
 				horizontal: I.MenuDirection.Left,
 				data: {
 					blockId: focused,
-					blockIds: DataUtil.selectionGet(focused, this.props),
+					blockIds: DataUtil.selectionGet(focused, true, this.props),
 					rootId: rootId,
 					dataset: dataset,
 				},
@@ -1172,13 +1173,15 @@ class EditorPage extends React.Component<Props, State> {
 	};
 	
 	onScroll (e: any) {
+		const { rootId } = this.props;
 		const top = $(window).scrollTop();
-		
+
 		if (Math.abs(top - this.scrollTop) >= 10) {
 			this.uiHide();
 		};
 		
 		this.scrollTop = top;
+		Storage.setScroll('editor', rootId, top);
 		Util.linkPreviewHide(false);
 	};
 	
@@ -1614,7 +1617,7 @@ class EditorPage extends React.Component<Props, State> {
 
 		blockIds = blockIds.filter((it: string) => {  
 			let block = blockStore.getLeaf(rootId, it);
-			return !block.isTextTitle();
+			return block && !block.isTextTitle();
 		});
 
 		focus.clear(true);

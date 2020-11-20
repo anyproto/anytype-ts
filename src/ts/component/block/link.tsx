@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Smile } from 'ts/component';
+import { Smile, Loader } from 'ts/component';
 import { I, DataUtil } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -26,8 +26,17 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const details = blockStore.getDetails(rootId, content.targetBlockId);
-		const { iconEmoji, iconImage, name, isArchived } = details;
+		const { _detailsEmpty_, iconEmoji, iconImage, name, isArchived } = details;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
+
+		if (_detailsEmpty_) {
+			return (
+				<div className="loading">
+					<Loader />
+					<div className="name">Syncing...</div>
+				</div>
+			);
+		};
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
@@ -57,8 +66,10 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
+		const details = blockStore.getDetails(rootId, targetBlockId);
+		const { _detailsEmpty_ } = details;
 		
-		if (targetBlockId != rootId) {
+		if (!_detailsEmpty_ && (targetBlockId != rootId)) {
 			DataUtil.pageOpenEvent(e, targetBlockId);
 		};
 	};

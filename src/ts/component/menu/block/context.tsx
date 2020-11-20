@@ -166,7 +166,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 							dataset: dataset,
 							onSelect: (item: any) => {
 								if (item.type == I.BlockType.Text) {
-									C.BlockListSetTextStyle(rootId, blockIds, item.key, (message: any) => {
+									C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
 										focus.set(message.blockId, { from: length, to: length });
 										focus.apply();
 									});
@@ -204,7 +204,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						data: {
 							rootId: rootId,
 							blockId: blockId,
-							blockIds: [ blockId ],
+							blockIds: blockIds,
 							onSelect: (item: any) => {
 								close();
 							},

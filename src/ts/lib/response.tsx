@@ -269,6 +269,10 @@ const BlockListSetTextStyle = (response: any) => {
 	return {};
 };
 
+const BlockListTurnInto = (response: any) => {
+	return {};
+};
+
 const BlockListSetDivStyle = (response: any) => {
 	return {};
 };
@@ -472,6 +476,7 @@ export {
 	BlockListSetBackgroundColor,
 	BlockListSetTextColor,
 	BlockListSetTextStyle,
+	BlockListTurnInto,
 	BlockListSetTextMark,
 	BlockListSetDivStyle,
 	BlockListSetFields,

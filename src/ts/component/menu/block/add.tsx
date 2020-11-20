@@ -212,11 +212,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		if (filter && filter.text) {
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: 'Actions', color: '', children: DataUtil.menuGetActions(block) },
+				{ id: 'action', icon: 'action', name: 'Actions', color: '', children: DataUtil.menuGetActions(false) },
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign(block) });
+				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign(false) });
 			};
 			if (block.canHaveColor()) {
 				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: DataUtil.menuGetTextColors() });

@@ -43,7 +43,16 @@ class ListIndex extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const content = item.content || {};
 			const details = blockStore.getDetails(root, content.targetBlockId);
-			const { name, iconEmoji, iconImage } = details;
+			const { _detailsEmpty_, name, iconEmoji, iconImage } = details;
+
+			if (_detailsEmpty_) {
+				return (
+					<div className="item">
+						<div className="smile c48" />
+						<div className="line animatedBackground" />
+					</div>
+				);
+			};
 
 			let icon = <Smile className="c48" icon={iconEmoji} hash={iconImage} size={24} />;
 			let showMenu = true;
@@ -59,7 +68,7 @@ class ListIndex extends React.Component<Props, {}> {
 				);
 				showMenu = false;
 			};
-			
+
 			return (
 				<div 
 					id={'item-' + item.id} 
