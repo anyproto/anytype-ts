@@ -1,10 +1,10 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuThreadList, 
-	.menu.menuThreadStatus { width: 272px; position: fixed; }
+	.menu.menuThreadList,
+	.menu.menuThreadStatus { width: 320px; position: fixed; }
 
-	.menu.menuThreadList, 
+	.menu.menuThreadList,
 	.menu.menuThreadStatus {
 		.description { color: $colorDarkGrey; display: flex; }
 		.side { width: 50%; }

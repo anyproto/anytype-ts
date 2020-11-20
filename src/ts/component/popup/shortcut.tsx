@@ -173,7 +173,6 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '↑ or Shift + Tab',	 name: 'Go to the previous option' },
 						{ com: '←',					 name: 'Go to the left side of navigation. Link from page' },
 						{ com: '→',					 name: 'Go to the right side of navigation. Link to page' },
-						{ mac: '⌘ + ↑',				 com: 'Ctrl + ↑',			 name: 'Go to the start of the page' },
 						{ com: 'Enter',				 name: 'Select option' },
 					]
 				},

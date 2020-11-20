@@ -5,7 +5,7 @@ import { I, Util } from 'ts/lib';
 interface Props extends I.Menu {};
 
 class MenuThreadStatus extends React.Component<Props, {}> {
-	
+
 	render () {
 		const { param } = this.props;
 		const { data } = param;
@@ -13,7 +13,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		const thread = authStore.threadGet(rootId);
 		const { cafe, accounts } = thread;
 		const account = accounts.find((it: I.ThreadAccount) => { return it.id == accountId; });
-		
+
 		const Item = (item: any) => (
 			<div className="item">
 				<div className="name">{item.name}</div>
@@ -26,24 +26,30 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 			</div>
 		);
 
-		const cafeFields = [ 
-			{ key: 'Data is backed up', value: (cafe.status ? 'Success' : 'Failure') },
-			{ key: 'All edits sync', value: Util.timeAgo(cafe.lastPulled) }
-		];
+		var cafeFields
+
+		cafe.lastPushSucceed ? (
+			cafeFields = [
+				{ key: 'All changes are backed up on server'},
+				{ key: 'Data recieved', value: Util.timeAgo(cafe.lastPulled) }
+		]) : (
+			cafeFields = [
+				{ key: 'Data recieved', value: Util.timeAgo(cafe.lastPulled) }
+		]);
 
 		return isCafe ? (
-			<div className="items">	
+			<div className="items">
 				<Item name="Status" fields={cafeFields} />
 			</div>
 		) : (
 			<React.Fragment>
 				<div className="section">
 					<div className="name">My devices</div>
-					<div className="items">	
+					<div className="items">
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
-								{ key: 'Last sync',  value: Util.timeAgo(item.lastPulled) },
-								{ key: 'Last edit',  value: Util.timeAgo(item.lastEdited) }
+								{ key: 'Changes sent',  value: Util.timeAgo(item.lastEdited) },
+								{ key: 'Data recieved',  value: Util.timeAgo(item.lastPulled) }
 							];
 							return <Item key={i} {...item} fields={fields} />;
 						})}
@@ -52,7 +58,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 			</React.Fragment>
 		);
 	};
-	
+
 };
 
 export default MenuThreadStatus;
