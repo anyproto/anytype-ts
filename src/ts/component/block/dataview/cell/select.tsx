@@ -37,7 +37,11 @@ class CellSelect extends React.Component<Props, State> {
 		const { index, rootId, block, readOnly, data } = this.props;
 		const { editing } = this.state;
 		const relation = dbStore.getRelation(block.id, this.props.relation.key);
-		const { selectDict } = relation
+		if (!relation) {
+			return null;
+		};
+
+		const { selectDict } = relation;
 
 		let value: any = data[index][relation.key];
 		if (!value || ('object' != typeof(value))) {

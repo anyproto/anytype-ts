@@ -68,15 +68,22 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	onRemove (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { option, rootId, blockId } = data;
+		const { option, rootId, blockId, onChange } = data;
 		const relation = data.relation.get();
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
 
-		relation.selectDict = relation.selectDict.filter((it: any) => { return it.text != option.text; });
+		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });
 		C.BlockDataviewRelationSelectOptionDelete(rootId, blockId, relation.key, option.id);
 
+		let value = Util.objectCopy(data.value || []);
+		value = value.filter((it: any) => { return it != option.id; });
+		value = Util.arrayUnique(value);
+
+		onChange(value);
+
 		if (menu) {
+			menu.param.data.value = value;
 			menu.param.data.relation = observable.box(relation);
 			commonStore.menuUpdate('dataviewOptionList', menu.param);
 		};
