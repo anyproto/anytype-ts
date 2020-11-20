@@ -164,6 +164,7 @@ class Dispatcher {
 
 		for (let message of messages) {
 			let block: any = null;
+			let view: any = null;
 			let childrenIds: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
@@ -414,7 +415,7 @@ class Dispatcher {
 					data.view = Mapper.From.View(data.getView());
 					data.view.relations = DataUtil.viewGetRelations(block.id, data.view);
 
-					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
+					view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
 						set(view, data.view);
 					} else {
