@@ -6,7 +6,28 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 30 October, 2020` },
+	{ style: I.TextStyle.Title, text: `Updates for 20 November, 2020` },
+  { text: `New encryption. We now using AES with stream encryption with CFB mode. Old encryption could increase the RAM consumption to 13,46 GB with 4GB file and could even crash Anytype. Now it takes less than 100 megabytes with any size of the file. For the best performance, you need to be up-to-date in each Desktop app and use the latest Android version. It starts to work with the new files added to Anytype, so, please, re-upload big files. ` },
+
+	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
+	{ style: I.TextStyle.Bulleted, text: `Turn into now can turn page links into mentions with other text styles.` },
+	{ style: I.TextStyle.Bulleted, text: `We now show the loading object state for pages that downloading from the remote node.` },
+
+	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="${sc}">Shift + Enter</span> doesn’t create a new line within a block. Thanks, Poochy!` },
+	{ style: I.TextStyle.Bulleted, text: `Markup menu remains open when click outside the editor container. Thanks, BGray!` },
+	{ style: I.TextStyle.Bulleted, text: `The text disappears if you type and press the system button back after typing and open the page again. Thanks, BGray!` },
+	{ style: I.TextStyle.Bulleted, text: `Markup menu remains open when click outside the editor container. Thanks, BGray!` },
+	{ style: I.TextStyle.Bulleted, text: `Clipboard. Dismiss after pasting an URL gets pasted as plain text not as URL. Thanks, Luuk!` },
+	{ style: I.TextStyle.Bulleted, text: `Clipboard. Columns cut and copy part of the text block doesn't work properly.` },
+	{ style: I.TextStyle.Bulleted, text: `Mention. Several creation and deletion attempts can break the style range.` },
+	{ style: I.TextStyle.Bulleted, text: `Selection with shift pressed. If there is a carriage inside the block and you press shift and click on another block, the first block should also become selected. ` },
+	{ style: I.TextStyle.Bulleted, text: `Selection with shift should work from bottom to top and select all blocks between. If users starting to click in another direction the selection should always extend.` },
+	{ style: I.TextStyle.Bulleted, text: `The search window doesn't match with the search pane frame.` },
+	{ style: I.TextStyle.Bulleted, text: `Undo / Redo can return events with wrong order.` },
+	{ style: I.TextStyle.Bulleted, text: `You cannot open the page from the dashboard if you click in the icon zone.` },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 30 October, 2020` },
 	{ text: `This is a technical minor release with bug fixes and minor enchancements.` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
