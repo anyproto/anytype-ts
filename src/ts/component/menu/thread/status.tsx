@@ -19,23 +19,28 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 				<div className="name">{item.name}</div>
 				{item.fields.map((field: any, i: number) => (
 					<div key={i} className="description">
-						<div className="side left">{field.key}</div>
-						<div className="side right">{field.value}</div>
+						{field.value ? (
+							<React.Fragment>
+								<div className="side left">{field.key}</div>
+								<div className="side right">{field.value}</div>
+							</React.Fragment>
+						) : field.key}
 					</div>
 				))}
 			</div>
 		);
 
-		var cafeFields
-
-		cafe.lastPushSucceed ? (
+		let cafeFields = [];
+		if (cafe.lastPushSucceed) {
 			cafeFields = [
 				{ key: 'All changes are backed up on server'},
 				{ key: 'Data recieved', value: Util.timeAgo(cafe.lastPulled) }
-		]) : (
+			];
+		} else {
 			cafeFields = [
 				{ key: 'Data recieved', value: Util.timeAgo(cafe.lastPulled) }
-		]);
+			];
+		};
 
 		return isCafe ? (
 			<div className="items">
