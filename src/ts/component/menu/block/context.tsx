@@ -163,6 +163,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						data: {
 							rootId: rootId,
 							blockId: blockId,
+							blockIds: blockIds,
 							dataset: dataset,
 							onSelect: (item: any) => {
 								if (item.type == I.BlockType.Text) {

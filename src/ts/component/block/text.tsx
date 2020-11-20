@@ -913,7 +913,7 @@ class BlockText extends React.Component<Props, {}> {
 				passThrough: true,
 				data: {
 					blockId: id,
-					blockIds: DataUtil.selectionGet(id, true, this.props),
+					blockIds: [ id ],
 					rootId: rootId,
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
