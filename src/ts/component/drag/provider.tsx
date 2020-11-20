@@ -108,7 +108,6 @@ class DragProvider extends React.Component<Props, {}> {
 				y: y,
 				isTargetTop: isTargetTop,
 				isTargetBot: isTargetBot,
-				...data
 			});
 		});
 	};
@@ -230,7 +229,8 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
-			let { type, style, x, y, width, height } = this.hoverData;
+			let { x, y, width, height } = this.hoverData;
+			let { type, style } = $(this.hoverData.obj).data();
 			let col1 = x - Constant.size.blockMenu / 4;
 			let col2 = x + 28;
 			let col3 = x + width - 28;
