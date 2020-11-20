@@ -92,12 +92,11 @@ class MenuOptionList extends React.Component<Props> {
 		const { data } = param;
 		const { onChange } = data;
 		
-		let value = data.value || [];
+		let value = Util.objectCopy(data.value || []);
 		value.push(item.id);
 		value = Util.arrayUnique(value);
 
-		console.log('VALUE', value);
-
+		this.props.param.data.value = value;
 		onChange(value);
 	};
 	
@@ -107,8 +106,6 @@ class MenuOptionList extends React.Component<Props> {
 		const { param } = this.props;
 		const { data } = param;
 
-		console.log(data);
-		
 		commonStore.menuOpen('dataviewOptionEdit', { 
 			type: I.MenuType.Vertical,
 			element: '#tag-' + item.id,

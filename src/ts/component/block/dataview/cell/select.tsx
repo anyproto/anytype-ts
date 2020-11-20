@@ -125,7 +125,12 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onChange (value: string[]) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const filter = node.find('#filter');
+
 		this.focus();
+		filter.text('');
+		this.updateMenuFilter('');
 	};
 
 	onSort (value: any[]) {
@@ -213,27 +218,32 @@ class CellSelect extends React.Component<Props, State> {
 		const { relation, block, index, data } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const filter = node.find('#filter');
+		const text = filter.text();
 		const value = data[index][relation.key] || [];
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.setValue(value, filter.text());
-			filter.html('');
+			this.setValue(value, text);
+			filter.text('');
 		});
 
-		if (menu) {
-			menu.param.data.filter = filter.text();
-			commonStore.menuUpdate(MENU_ID, menu.param);
-		};
-
+		this.updateMenuFilter(text);
 		this.placeHolderCheck();
 	};
 
 	onRemove (e: any, text: string) {
 		this.remove(text);
+	};
+
+	updateMenuFilter (text: string) {
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
+
+		if (menu) {
+			menu.param.data.filter = text;
+			commonStore.menuUpdate(MENU_ID, menu.param);
+		};
 	};
 
 	remove (text: string) {
