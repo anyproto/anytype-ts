@@ -100,6 +100,7 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			this.objectData.set(key, {
+				...data,
 				obj: item,
 				index: i,
 				width: w,
@@ -108,7 +109,6 @@ class DragProvider extends React.Component<Props, {}> {
 				y: y,
 				isTargetTop: isTargetTop,
 				isTargetBot: isTargetBot,
-				...data
 			});
 		});
 	};
@@ -137,7 +137,7 @@ class DragProvider extends React.Component<Props, {}> {
 			C.ExternalDropFiles(rootId, targetId, this.position, paths);
 		} else
 		if (this.hoverData && this.canDrop && (this.position != I.BlockPosition.None)) {
-			this.onDrop (e, data.dropType, data.rootId, targetId, this.position);
+			this.onDrop(e, data.dropType, data.rootId, targetId, this.position);
 		};
 
 		this.clear();
@@ -230,7 +230,8 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
-			let { type, style, x, y, width, height } = this.hoverData;
+			let { x, y, width, height } = this.hoverData;
+			let { type, style } = $(this.hoverData.obj).data();
 			let col1 = x - Constant.size.blockMenu / 4;
 			let col2 = x + 28;
 			let col3 = x + width - 28;
