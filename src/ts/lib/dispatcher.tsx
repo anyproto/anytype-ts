@@ -24,7 +24,7 @@ class Dispatcher {
 	constructor () {
 
 		/// #if USE_ADDON
-		this.service = new Service.ClientCommandsClient("http://127.0.0.1:80", null, null);
+		this.service = new Service.ClientCommandsClient('http://127.0.0.1:80', null, null);
 
 		const handler = (item: any) => {
 				try {

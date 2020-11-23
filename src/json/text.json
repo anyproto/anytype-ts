@@ -34,9 +34,13 @@
 	"authRegisterName": { "en": "Type your name" },
 	"authRegisterSubmit": { "en": "Create profile" },
 
+	"authAccountSelectTitle": { "en": "Choose profile" },
+	"authAccountSelectAdd": { "en": "Add profile" },
+
 	"authSetupLogin": { "en": "Logging in..." },
 	"authSetupRegister": { "en": "Creating profile..." },
 	"authSetupSelect": { "en": "Selecting profile..." },
+	"authSetupBack": { "en": "Back" },
 
 	"authSuccessTitle": { "en": "Congratulations!" },
 	"authSuccessLabel": { "en": "You've created your first profile! It is stored on your device and nobody will know about it until you share it!" },
@@ -107,6 +111,24 @@
 
 	"blockNameDot": { "en": "Dots divider" },
 	"blockDescriptionDot": { "en": "Separate information with three dots" },
+
+	"popupArchiveTitle": { "en": "Archive" },
+	"popupArchiveSelectAll": { "en": "Select All" },
+	"popupArchivePutBack": { "en": "Put it back" },
+	"popupArchiveDelete": { "en": "Delete" },
+
+	"popupHelpLabel": { "en": "Stay tuned for Anytype’s news" },
+
+	"popupNavigationOpen": { "en": "Open" },
+	"popupNavigationMove": { "en": "Move to" },
+	"popupNavigationLink": { "en": "Link" },
+	"popupNavigationPlaceholder": { "en": "Search for a page..." },
+	"popupNavigationCancel": { "en": "Cancel" },
+	"popupNavigationLinkFrom": { "en": "Link from page" },
+	"popupNavigationLinkTo": { "en": "Link to page" },
+	"popupNavigationEmptyTo": { "en": "No links to this page" },
+	"popupNavigationEmptyFrom": { "en": "No links to other pages" },
+	"popupNavigationEmptyFilter": { "en": "<b>There are no pages named \"%s\"</b>Try creating a new one or search for something else." },
 
 	"filterConditionEqual": { "en": "is" },
 	"filterConditionNotEqual": { "en": "is not" },
