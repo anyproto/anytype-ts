@@ -129,7 +129,7 @@ class DataUtil {
 		return icon;
 	};
 	
-	selectionGet (id: string, props: any): string[] {
+	selectionGet (id: string, withChildren: boolean, props: any): string[] {
 		const { dataset } = props;
 		const { selection } = dataset || {};
 		
@@ -137,11 +137,11 @@ class DataUtil {
 			return [];
 		};
 		
-		let ids: string[] = selection.get(true);
+		let ids: string[] = selection.get(withChildren);
 		if (id && ids.indexOf(id) < 0) {
 			selection.clear(true);
 			selection.set([ id ]);
-			ids = selection.get(true);
+			ids = selection.get(withChildren);
 		};
 		return ids;
 	};
@@ -387,11 +387,7 @@ class DataUtil {
 	};
 	
 	// Action menu
-	menuGetActions (block: I.Block) {
-		if (!block) {
-			return;
-		};
-		
+	menuGetActions (hasFile: boolean) {
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to' },
 			{ id: 'copy', icon: 'copy', name: 'Duplicate' },
@@ -399,11 +395,10 @@ class DataUtil {
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
 		
-		if (block.isFile()) {
-			let idx = items.findIndex((it: any) => { return it.id == 'remove'; });
-			items.splice(++idx, 0, { id: 'download', icon: 'download', name: 'Download' });
-			//items.splice(++idx, 0, { id: 'rename', icon: 'rename', name: 'Rename' })
-			//items.splice(++idx, 0, { id: 'replace', icon: 'replace', name: 'Replace' })
+		if (hasFile) {
+			items.push({ id: 'download', icon: 'download', name: 'Download' });
+			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
+			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
 		};
 		
 		items = items.map((it: any) => {
@@ -434,14 +429,14 @@ class DataUtil {
 		return items;
 	};
 	
-	menuGetAlign (block: I.Block) {
+	menuGetAlign (hasQuote: boolean) {
 		let ret = [
 			{ id: I.BlockAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
 			{ id: I.BlockAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
 			{ id: I.BlockAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
 		];
 
-		if (block.isTextQuote()) {
+		if (hasQuote) {
 			ret = ret.filter((it: any) => { return it.id != I.BlockAlign.Center; });
 		};
 
@@ -477,7 +472,6 @@ class DataUtil {
 				
 				return ret; 
 			});
-			
 			return s.children.length > 0;
 		});
 		
@@ -485,16 +479,18 @@ class DataUtil {
 	};
 	
 	menuSectionsMap (sections: any[]) {
+		sections = sections.filter((it: any) => { return it.children.length > 0; });
 		sections = sections.map((s: any, i: number) => {
 			s.id = s.id || i;
-			s.children = s.children.map((it: any) => {
-				it.key = it.id;
+			s.children = s.children.map((it: any, i: number) => {
+				it.key = it.id || i;
 				it.id = s.id + '-' + it.id;
 				return it;
 			});
+			s.children = Util.arrayUniqueObjects(s.children, 'key');
 			return s;
 		});
-		
+		sections = Util.arrayUniqueObjects(sections, 'id');
 		return sections;
 	};
 	

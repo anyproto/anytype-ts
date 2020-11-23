@@ -191,7 +191,7 @@ class PopupShortcut extends React.Component<Props, State> {
 
 			markdown: [
 				{
-					description: 'To format your blocks using Markdown, simply use any of these commands at the beginning of any new line or existing block of content.',
+					description: 'To format your blocks using Markdown, simply use any of these commands at the beginning of any new line.',
 					children: [
 						{ com: '# + Space',			 name: 'Create an H1 heading' },
 						{ com: '# # + Space',		 name: 'Create an H2 heading' },

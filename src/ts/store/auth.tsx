@@ -5,6 +5,8 @@ import { commonStore } from './common';
 import * as Sentry from '@sentry/browser';
 import { keyboard } from 'ts/lib';
 
+const { ipcRenderer } = window.require('electron');
+
 class AuthStore {
 	@observable public dataPath: string = '';
 	@observable public accountItem: I.Account = null;
@@ -45,8 +47,6 @@ class AuthStore {
 	@action
 	phraseSet (v: string) {
 		this.phrase = v;
-		Storage.set('phrase', v);
-		Storage.set('phraseBackup', v);
 	};
 	
 	@action
@@ -114,6 +114,7 @@ class AuthStore {
 
 		this.accountItem = null;
 		this.phraseSet('');
+		ipcRenderer.send('keytarDelete', 'phrase');
 	};
 	
 };

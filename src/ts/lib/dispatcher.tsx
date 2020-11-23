@@ -105,7 +105,7 @@ class Dispatcher {
 		const { config } = commonStore;
 		const rootId = event.getContextid();
 		const messages = event.getMessagesList() || [];
-		const debug = config.debugMW && !skipDebug;
+		const debugCommon = config.debugMW && !skipDebug;
 		const debugThread = config.debugTH && !skipDebug;
 		const pageId = Storage.get('pageId');
 
@@ -164,7 +164,7 @@ class Dispatcher {
 			if (debugThread && (type == 'threadStatus')) {
 				log();
 			} else
-			if (debug && (type != 'threadStatus')) {
+			if (debugCommon && (type != 'threadStatus')) {
 				log();
 			};
 

@@ -95,6 +95,7 @@ class Analytics {
 				break;
 				
 			case 'BlockListSetTextStyle':
+			case 'BlockListTurnInto':
 				param.style = this.getDictionary(I.BlockType.Text, data.style);
 				break;
 		};

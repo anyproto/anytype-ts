@@ -10,6 +10,8 @@ interface State {
 	error: string;
 };
 
+const { ipcRenderer } = window.require('electron');
+
 @observer
 class PageAuthLogin extends React.Component<Props, State> {
 
@@ -66,10 +68,9 @@ class PageAuthLogin extends React.Component<Props, State> {
 		
 		const { history } = this.props;
 		const { path } = authStore;
+		const phrase = this.phraseRef.getValue();
 		
 		this.phraseRef.setError(false);
-		
-		const phrase = this.phraseRef.getValue();
 		
 		C.WalletRecover(path, phrase, (message: any) => {
 			if (message.error.code) {
@@ -77,6 +78,7 @@ class PageAuthLogin extends React.Component<Props, State> {
 				this.setState({ error: message.error.description });
 			} else {
 				authStore.phraseSet(phrase);
+				ipcRenderer.send('keytarSet', 'phrase', phrase);
 				history.push('/auth/account-select');
 			};
 		});

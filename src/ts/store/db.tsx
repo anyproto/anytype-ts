@@ -58,11 +58,11 @@ class DbStore {
 	};
 
 	getMeta (blockId: string) {
-		return this.metaMap.get(blockId);
+		return this.metaMap.get(blockId) || {};
 	};
 
 	getData (blockId: string) {
-		return this.dataMap.get(blockId);
+		return this.dataMap.get(blockId) || [];
 	};
 
 };
