@@ -237,7 +237,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				},
 			];
 
-			let hasTurn = true;
+			let hasTurnText = true;
+			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasTitle = false;
 			let hasAlign = true;
@@ -246,7 +247,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
-				if (!block.canTurnText())		 hasTurn = false;
+				if (!block.canTurnText() || block.isDiv()) {
+					hasTurnText = false;
+				};
+				if (block.canTurnText() || !block.isDiv()) {
+					hasTurnDiv = false;
+				};
 				if (!block.isFile())			 hasFile = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
@@ -255,7 +261,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.isTextTitle())		 hasTitle = true;
 			};
 
-			if (hasTurn) {
+			if (hasTurnText || hasTurnDiv) {
 				sections[0].children.push({ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true });
 			};
 

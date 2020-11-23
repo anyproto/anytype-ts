@@ -122,12 +122,12 @@ class Smile extends React.Component<Props, State> {
 	};
 
 	onClick (e: any) {
-		e.stopPropagation();
-
 		const { id, canEdit, offsetX, offsetY, onSelect, onUpload } = this.props;
 		if (!id || !canEdit) {
 			return;
 		};
+
+		e.stopPropagation();
 		
 		commonStore.menuOpen('smile', { 
 			element: '#' + id,
