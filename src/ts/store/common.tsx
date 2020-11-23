@@ -220,8 +220,6 @@ class CommonStore {
 	
 	@action
 	menuClose (id: string, callBack?: () => void) {
-		console.log('CLOSE', id);
-		console.trace();
 		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
 
 		if (!item) {
