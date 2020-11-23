@@ -185,7 +185,7 @@ class CellSelect extends React.Component<Props, State> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('#placeHolder').hide();
+		node.addClass('noPlaceholder');
 	};
 	
 	placeHolderShow () {
@@ -194,7 +194,7 @@ class CellSelect extends React.Component<Props, State> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('#placeHolder').show();
+		node.removeClass('noPlaceholder');
 	};
 
 	onKeyDown (e: any) {

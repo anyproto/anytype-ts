@@ -84,10 +84,17 @@
 				.DraggableTags { display: inline; vertical-align: top; line-height: 0px; }
 				.DraggableTags::after { display: none; }
 
-				.filter { cursor: text; margin-right: 0px; height: 18px; min-width: 18px; padding: 0px; display: none; }
+				.filter { cursor: text; margin-right: 0px; height: 18px; min-width: 18px; max-width: 100%; padding: 0px; display: none; }
 				.filter {
-					#filter { -webkit-user-modify: read-write-plaintext-only; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; }
+					#filter { 
+						-webkit-user-modify: read-write-plaintext-only; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; 
+						word-wrap: break-word; white-space: normal;
+					}
 					#placeHolder { color: $colorDarkGrey; width: 100%; @include text-overflow-nw;}
+				}
+				.noPlaceholder {
+					.filter #filter { position: relative; }
+					#placeHolder { display: none; }
 				}
 			}
 
