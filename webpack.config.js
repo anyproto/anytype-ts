@@ -6,7 +6,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 module.exports = (env) => {
 	const useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == 'win32') || (env.NODE_ENV == 'development'));
 	const port = env.SERVER_PORT;
-	
+
 	return {
 		mode: env.NODE_ENV,
 	
@@ -65,6 +65,7 @@ module.exports = (env) => {
 						},
 					]
 				},
+				{ test: /\.node$/, loader: 'node-loader' },
 				{
 					enforce: 'pre',
 					test: /\.js$/,
