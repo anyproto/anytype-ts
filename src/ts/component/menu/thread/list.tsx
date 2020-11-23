@@ -57,7 +57,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 					id="item-cafe" 
 					className="item" 
 					onMouseOver={(e: any) => { this.onMouseEnter('cafe', true); }} 
-					onMouseLeave={(e: any) => { commonStore.menuClose('threadStatus'); }}
+					/*onMouseLeave={this.onMouseLeave}*/
 				>
 					<Icon className="cafe" />
 					<div className="info">
@@ -86,6 +86,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 			window.clearTimeout(this.timeoutClose);
 		});
 
+		/*
 		obj.unbind('mouseleave').on('mouseleave', () => {
 			window.clearTimeout(this.timeoutClose);
 			this.timeoutClose = window.setTimeout(() => {
@@ -94,6 +95,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				commonStore.menuClose('threadStatus');
 			}, 1000);
 		});
+		*/
 	};
 
 	componentDidUpdate () {
@@ -138,7 +140,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 	};
 	
 	onMouseLeave (e: any) {
-		commonStore.menuClose('threadStatus');
+		//commonStore.menuClose('threadStatus');
 	};
 
 };

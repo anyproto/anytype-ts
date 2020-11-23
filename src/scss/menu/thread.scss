@@ -8,22 +8,30 @@
 	.menu.menuThreadStatus {
 		.description { color: $colorDarkGrey; display: flex; }
 		.side { width: 50%; }
-		.side.right { text-align: right; }
+		.side.right { text-align: right; white-space: nowrap; }
+
+		.icon { margin-right: 9px; }
 
 		.red { color: $colorRed; }
 		.orange { color: $colorOrange; }
 		.green { color: $colorGreen; }
 	}
 
+	.menu.menuThreadStatus {
+		.item { padding: 5px 16px; }
+	}
+
 	.menu.menuThreadList { width: 272px; top: 42px !important; }
 	.menu.menuThreadList {
 		.content { padding: 0px; }
-		.item { padding: 11px 16px; }
+		.item { padding: 11px 16px; border-bottom: 1px solid #eae9e0;}
 		.item:hover::before { opacity: 0.15; }
+		.item:last-child { border: 0px; }
 
 		.item {
-			.icon { position: absolute; left: 16px; top: 11px; width: 20px; height: 20px; }
-			.icon.cafe { background-size: 18px 16px; background-image: url('~img/icon/cafe.svg'); }
+			.icon { position: absolute; left: 16px; top: 11px; }
+			.icon.user { top: 12px; }
+			.icon.cafe { left: 15px; width: 20px; height: 20px; background-size: 18px 16px; background-image: url('~img/icon/cafe.svg'); }
 			.info { padding-left: 28px; }
 		}
 	}
