@@ -113,33 +113,13 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		const obj = $('#menuBlockContext');
-		
+
 		focus.set(blockId, range);
 		focus.apply();
 		
 		let marks = Util.objectCopy(content.marks);
 		let mark: any = null;
-		let isOpen = false;
-		
-		if ((type == 'style') && commonStore.menuIsOpen('blockStyle')) {
-			isOpen = true;
-		};
-		
-		if ((type == 'more') && commonStore.menuIsOpen('blockMore')) {
-			isOpen = true;
-		};
-		
-		if ((type == I.MarkType.TextColor) && commonStore.menuIsOpen('blockColor')) {
-			isOpen = true;
-		};
-		
-		commonStore.menuClose('blockStyle');
-		commonStore.menuClose('blockMore');
-		commonStore.menuClose('blockLink');
-		commonStore.menuClose('blockColor');
-		commonStore.menuClose('blockBackground');
-		commonStore.menuClose('select');
-
+		let menuId = '';
 		let menuParam = {
 			element: '#button-' + blockId + '-' + type,
 			type: I.MenuType.Vertical,
@@ -155,135 +135,130 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			} as any,
 		};
 		
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
+		switch (type) {
 			
-			switch (type) {
+			default:
+				marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
+				onChange(marks);
+				break;
 				
-				default:
-					marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
-					onChange(marks);
-					break;
-					
-				case 'style':
-					if (isOpen) {
-						break;
-					};
-					
-					focus.clear(false);
+			case 'style':
+				focus.clear(false);
+				menuParam.data = Object.assign(menuParam.data, {
+					onSelect: (item: any) => {
+						if (item.type == I.BlockType.Text) {
+							C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
+								focus.set(message.blockId, { from: length, to: length });
+								focus.apply();
+							});
+						};
+						
+						if (item.type == I.BlockType.Div) {
+							C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
+								focus.set(message.blockId, { from: 0, to: 0 });
+								focus.apply();
+							});
+						};
+						
+						if (item.type == I.BlockType.Page) {
+							C.BlockListConvertChildrenToPages(rootId, blockIds);
+						};
+						
+						close();
+					},
+				});
 
-					menuParam.data = Object.assign(menuParam.data, {
-						onSelect: (item: any) => {
-							if (item.type == I.BlockType.Text) {
-								C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
-									focus.set(message.blockId, { from: length, to: length });
-									focus.apply();
-								});
-							};
-							
-							if (item.type == I.BlockType.Div) {
-								C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
-									focus.set(message.blockId, { from: 0, to: 0 });
-									focus.apply();
-								});
-							};
-							
-							if (item.type == I.BlockType.Page) {
-								C.BlockListConvertChildrenToPages(rootId, blockIds);
-							};
-							
-							close();
-						},
-					});
+				menuId = 'blockStyle';
+				break;
+				
+			case 'more':
+				menuParam.data = Object.assign(menuParam.data, {
+					onSelect: (item: any) => {
+						close();
+					},
+				});
 
-					commonStore.menuOpen('blockStyle', menuParam);
-					break;
-					
-				case 'more':
-					if (isOpen) {
-						break;
-					};
-					
-					menuParam.data = Object.assign(menuParam.data, {
-						onSelect: (item: any) => {
-							close();
-						},
-					});
-					break;
-					
-				case I.MarkType.Link:
-					const offset = obj.offset();
-					mark = Mark.getInRange(marks, type, { from: from, to: to });
+				menuId = 'blockMore';
+				break;
+				
+			case I.MarkType.Link:
+				const offset = obj.offset();
+				mark = Mark.getInRange(marks, type, { from: from, to: to });
+				commonStore.menuClose(this.props.id);
 
-					commonStore.menuClose(this.props.id, () => {
-						commonStore.menuOpen('blockLink', {
-							type: I.MenuType.Horizontal,
-							element: node,
-							offsetX: 0,
-							offsetY: 0,
-							forceX: offset.left,
-							forceY: offset.top,
-							vertical: I.MenuDirection.Top,
-							horizontal: I.MenuDirection.Center,
-							data: {
-								value: (mark ? mark.param : ''),
-								onChange: (param: string) => {
-									if (!mark && !param) {
-										return;
-									};
+				menuParam = Object.assign(menuParam, {
+					type: I.MenuType.Horizontal,
+					element: node,
+					offsetX: 0,
+					offsetY: 0,
+					forceX: offset.left,
+					forceY: offset.top,
+					vertical: I.MenuDirection.Top,
+					horizontal: I.MenuDirection.Center,
+				});
+				menuParam.data = Object.assign(menuParam.data, {
+					value: (mark ? mark.param : ''),
+					onChange: (param: string) => {
+						if (!mark && !param) {
+							return;
+						};
 
-									marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
-									onChange(marks);
-									window.setTimeout(() => { focus.apply(); }, 15);
-								}
-							}
-						});
-					});
-					break;
-					
-				case 'color':
-					if (isOpen) {
-						break;
-					};
-					
-					mark = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
-					menuParam.data = Object.assign(menuParam.data, {
-						value: (mark ? mark.param : ''),
-						onChange: (param: string) => {
-							if (!mark && !param) {
-								return;
-							};
+						marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
+						onChange(marks);
+						window.setTimeout(() => { focus.apply(); }, 15);
+					}
+				});
 
-							marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
-							onChange(marks);
-						},
-					});
+				menuId = 'blockLink';
+				break;
+				
+			case 'color':
+				mark = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
+				menuParam.data = Object.assign(menuParam.data, {
+					value: (mark ? mark.param : ''),
+					onChange: (param: string) => {
+						if (!mark && !param) {
+							return;
+						};
 
-					commonStore.menuOpen('blockColor', menuParam);
-					break;
-					
-				case 'background':
-					if (isOpen) {
-						break;
-					};
-					
-					mark = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
-					menuParam.data = Object.assign(menuParam.data, {
-						value: (mark ? mark.param : ''),
-						onChange: (param: string) => {
-							if (!mark && !param) {
-								return;
-							};
+						marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
+						onChange(marks);
+					},
+				});
 
-							marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
-							onChange(marks);
-						},
-					});
+				menuId = 'blockColor';
+				break;
+				
+			case 'background':
+				mark = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
+				menuParam.data = Object.assign(menuParam.data, {
+					value: (mark ? mark.param : ''),
+					onChange: (param: string) => {
+						if (!mark && !param) {
+							return;
+						};
 
-					commonStore.menuOpen('blockBackground', menuParam);
-					break;
-			};
-		}, Constant.delay.menu);
+						marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
+						onChange(marks);
+					},
+				});
+				menuId = 'blockBackground';
+				break;
+		};
+
+		if (menuId && !commonStore.menuIsOpen(menuId)) {
+			commonStore.menuClose('blockStyle');
+			commonStore.menuClose('blockMore');
+			commonStore.menuClose('blockLink');
+			commonStore.menuClose('blockColor');
+			commonStore.menuClose('blockBackground');
+			commonStore.menuClose('select');
+
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => {
+				commonStore.menuOpen(menuId, menuParam);
+			}, Constant.delay.menu);
+		};
 	};
 	
 	onMenuClick () {
