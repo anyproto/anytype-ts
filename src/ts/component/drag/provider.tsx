@@ -100,8 +100,7 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			this.objectData.set(key, {
-				id: data.id,
-				rootId: data.rootId,
+				...data,
 				obj: item,
 				index: i,
 				width: w,
