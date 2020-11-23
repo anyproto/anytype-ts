@@ -20,6 +20,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+const raf = require('raf');
 
 // Prism languages
 const langs = [
@@ -529,7 +530,7 @@ class BlockText extends React.Component<Props, {}> {
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		};
-		let symbolBefore = value[range.from - 1];
+		let symbolBefore = range ? value[range.from - 1] : '';
 		
 		if (commonStore.menuIsOpen('blockAdd')) {
 			if (k == Key.space) {
@@ -878,19 +879,11 @@ class BlockText extends React.Component<Props, {}> {
 		const { range } = focus;
 		const currentFrom = range.from;
 		const currentTo = range.to;
-		
-		if (!currentTo || (currentFrom == currentTo)) {
-			commonStore.menuClose('blockContext');
-		};
-		
-		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo)) {
+
+		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || block.isTextTitle()) {
 			return;
 		};
 
-		if (block.isTextTitle()) {
-			return;
-		};
-		
 		const el = $('#block-' + id);
 		const offset = el.offset();
 		const rect = Util.selectionRect();
@@ -918,11 +911,13 @@ class BlockText extends React.Component<Props, {}> {
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
 					onChange: (marks: I.Mark[]) => {
-						this.marks = Util.objectCopy(marks);
+						this.marks = marks;
 						this.setMarks(marks);
 
-						focus.set(id, { from: currentFrom, to: currentTo });
-						focus.apply();
+						raf(() => {
+							focus.set(id, { from: currentFrom, to: currentTo });
+							focus.apply();
+						});
 					},
 				},
 			});
