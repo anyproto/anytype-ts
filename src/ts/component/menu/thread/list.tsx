@@ -86,7 +86,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 			window.clearTimeout(this.timeoutClose);
 		});
 
-		/*
 		obj.unbind('mouseleave').on('mouseleave', () => {
 			window.clearTimeout(this.timeoutClose);
 			this.timeoutClose = window.setTimeout(() => {
@@ -95,11 +94,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 				commonStore.menuClose('threadStatus');
 			}, 1000);
 		});
-		*/
-	};
-
-	componentDidUpdate () {
-		commonStore.menuClose('threadStatus');
 	};
 
 	componentWillUnmount () {
@@ -140,7 +134,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 	};
 	
 	onMouseLeave (e: any) {
-		//commonStore.menuClose('threadStatus');
+		commonStore.menuClose('threadStatus');
 	};
 
 };
