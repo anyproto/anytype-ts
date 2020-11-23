@@ -13,6 +13,12 @@ module.exports = (env) => {
 		output: {
 			filename: "bundle-back.js"
 		},
+
+		module: {
+			rules: [
+				{ test: /\.node$/, loader: 'node-loader' },
+			]
+		}
 		
 	};
 };

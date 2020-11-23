@@ -9,3 +9,4 @@ todo.md
 done.md
 commands.md
 .idea
+dist/*.node
