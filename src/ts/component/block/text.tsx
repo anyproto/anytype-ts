@@ -201,6 +201,9 @@ class BlockText extends React.Component<Props, {}> {
 		let { style } = content;
 		let text = String(v || '');
 		let html = text;
+
+		html = html.replace(/</g, '&lt;');
+		html = html.replace(/>/g, '&gt;');
 		
 		if (style == I.TextStyle.Code) {
 			let lang = fields.lang;
@@ -377,8 +380,11 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		const obj = Mark.cleanHtml(value.html());
-
-		return String(obj.get(0).innerText || '');
+		
+		let text = String(obj.get(0).innerText || '');
+		text = text.replace(/</g, '&lt;');
+		text = text.replace(/>/g, '&gt;');
+		return text;
 	};
 	
 	getMarksFromHtml (): I.Mark[] {
