@@ -49,7 +49,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		) : (
 			<React.Fragment>
 				<div className="section">
-					<div className="name">My devices</div>
+					<div className="name">My other devices</div>
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
