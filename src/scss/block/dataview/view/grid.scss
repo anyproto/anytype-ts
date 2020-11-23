@@ -30,7 +30,9 @@
 			.cellContent { @include text-overflow-nw; width: 100%; }
 			.cellContent.c-select { white-space: normal; width: auto; overflow: visible; }
 				
-			td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
+			td.cell { 
+				padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; overflow: hidden;
+			}
 			td.cell:last-child { border-right: 0px; }
 			td.cell {
 				.name { @include text-overflow-nw; width: 100%; }
@@ -83,6 +85,7 @@
 				.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
 				.DraggableTags { display: inline; vertical-align: top; line-height: 0px; }
 				.DraggableTags::after { display: none; }
+				.DraggableTags-tag { max-width: 100%; }
 
 				.filter { cursor: text; margin-right: 0px; height: 18px; min-width: 18px; max-width: 100%; padding: 0px; display: none; }
 				.filter {
