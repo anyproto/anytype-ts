@@ -100,6 +100,8 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			this.objectData.set(key, {
+				id: data.id,
+				rootId: data.rootId,
 				obj: item,
 				index: i,
 				width: w,
@@ -136,7 +138,7 @@ class DragProvider extends React.Component<Props, {}> {
 			C.ExternalDropFiles(rootId, targetId, this.position, paths);
 		} else
 		if (this.hoverData && this.canDrop && (this.position != I.BlockPosition.None)) {
-			this.onDrop (e, data.dropType, data.rootId, targetId, this.position);
+			this.onDrop(e, data.dropType, data.rootId, targetId, this.position);
 		};
 
 		this.clear();

@@ -65,7 +65,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			<div className="flex" onClick={this.onMenuClick}>
 				{block.canTurn() ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-switch'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
+						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle', (commonStore.menuIsOpen('blockStyle') ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
 					</div>
 				) : ''}
 				
@@ -83,8 +83,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				
 				{block.canHaveMarks() ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-color'} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
-						<Icon id={'button-' + blockId + '-background'} className={[ 'color', (commonStore.menuIsOpen('blockBackground') ? 'active' : '') ].join(' ')} inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
+						<Icon id={'button-' + blockId + '-color'} className={[ 'color', (commonStore.menuIsOpen('blockColor') ? 'active' : '') ].join(' ')} inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, 'color'); }} />
+						<Icon id={'button-' + blockId + '-background'} className={[ 'color', (commonStore.menuIsOpen('blockBackground') ? 'active' : '') ].join(' ')} inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, 'background'); }} />
 					</div>
 				) : ''}
 				
@@ -97,6 +97,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	};
 	
 	onMark (e: any, type: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, onChange, dataset, range } = data;
@@ -114,7 +117,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		focus.set(blockId, range);
 		focus.apply();
 		
-		let { marks } = content;
+		let marks = Util.objectCopy(content.marks);
 		let mark: any = null;
 		let isOpen = false;
 		
@@ -136,6 +139,21 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		commonStore.menuClose('blockColor');
 		commonStore.menuClose('blockBackground');
 		commonStore.menuClose('select');
+
+		let menuParam = {
+			element: '#button-' + blockId + '-' + type,
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 15,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				blockId: blockId,
+				blockIds: blockIds,
+				dataset: dataset,
+			} as any,
+		};
 		
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
@@ -153,41 +171,32 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					};
 					
 					focus.clear(false);
-					commonStore.menuOpen('blockStyle', { 
-						element: '#button-' + blockId + '-switch',
-						type: I.MenuType.Vertical,
-						offsetX: 0,
-						offsetY: 15,
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Center,
-						data: {
-							rootId: rootId,
-							blockId: blockId,
-							blockIds: blockIds,
-							dataset: dataset,
-							onSelect: (item: any) => {
-								if (item.type == I.BlockType.Text) {
-									C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
-										focus.set(message.blockId, { from: length, to: length });
-										focus.apply();
-									});
-								};
-								
-								if (item.type == I.BlockType.Div) {
-									C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
-										focus.set(message.blockId, { from: 0, to: 0 });
-										focus.apply();
-									});
-								};
-								
-								if (item.type == I.BlockType.Page) {
-									C.BlockListConvertChildrenToPages(rootId, blockIds);
-								};
-								
-								close();
-							},
-						}
+
+					menuParam.data = Object.assign(menuParam.data, {
+						onSelect: (item: any) => {
+							if (item.type == I.BlockType.Text) {
+								C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
+									focus.set(message.blockId, { from: length, to: length });
+									focus.apply();
+								});
+							};
+							
+							if (item.type == I.BlockType.Div) {
+								C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
+									focus.set(message.blockId, { from: 0, to: 0 });
+									focus.apply();
+								});
+							};
+							
+							if (item.type == I.BlockType.Page) {
+								C.BlockListConvertChildrenToPages(rootId, blockIds);
+							};
+							
+							close();
+						},
 					});
+
+					commonStore.menuOpen('blockStyle', menuParam);
 					break;
 					
 				case 'more':
@@ -195,21 +204,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						break;
 					};
 					
-					commonStore.menuOpen('blockMore', { 
-						element: '#button-' + blockId + '-more',
-						type: I.MenuType.Vertical,
-						offsetX: 0,
-						offsetY: 15,
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Center,
-						data: {
-							rootId: rootId,
-							blockId: blockId,
-							blockIds: blockIds,
-							onSelect: (item: any) => {
-								close();
-							},
-						}
+					menuParam.data = Object.assign(menuParam.data, {
+						onSelect: (item: any) => {
+							close();
+						},
 					});
 					break;
 					
@@ -243,68 +241,46 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					});
 					break;
 					
-				case I.MarkType.TextColor:
+				case 'color':
 					if (isOpen) {
 						break;
 					};
 					
 					mark = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
-					
-					commonStore.menuOpen('blockColor', { 
-						element: '#button-' + blockId + '-color',
-						type: I.MenuType.Vertical,
-						offsetX: 0,
-						offsetY: 15,
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Center,
-						data: {
-							rootId: rootId,
-							blockId: blockId,
-							blockIds: blockIds,
-							value: (mark ? mark.param : ''),
-							onChange: (param: string) => {
-								if (!mark && !param) {
-									return;
-								};
+					menuParam.data = Object.assign(menuParam.data, {
+						value: (mark ? mark.param : ''),
+						onChange: (param: string) => {
+							if (!mark && !param) {
+								return;
+							};
 
-								marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
-								onChange(marks);
-								close();
-							}
+							marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
+							onChange(marks);
 						},
 					});
+
+					commonStore.menuOpen('blockColor', menuParam);
 					break;
 					
-				case I.MarkType.BgColor:
+				case 'background':
 					if (isOpen) {
 						break;
 					};
 					
 					mark = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
-					
-					commonStore.menuOpen('blockBackground', { 
-						element: '#button-' + blockId + '-background',
-						type: I.MenuType.Vertical,
-						offsetX: 0,
-						offsetY: 15,
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Center,
-						data: {
-							rootId: rootId,
-							blockId: blockId,
-							blockIds: blockIds,
-							value: (mark ? mark.param : ''),
-							onChange: (param: string) => {
-								if (!mark && !param) {
-									return;
-								};
+					menuParam.data = Object.assign(menuParam.data, {
+						value: (mark ? mark.param : ''),
+						onChange: (param: string) => {
+							if (!mark && !param) {
+								return;
+							};
 
-								marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
-								onChange(marks);
-								close();
-							},
+							marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
+							onChange(marks);
 						},
 					});
+
+					commonStore.menuOpen('blockBackground', menuParam);
 					break;
 			};
 		}, Constant.delay.menu);

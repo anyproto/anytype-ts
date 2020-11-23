@@ -918,11 +918,13 @@ class BlockText extends React.Component<Props, {}> {
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
 					onChange: (marks: I.Mark[]) => {
-						this.marks = Util.objectCopy(marks);
+						this.marks = marks;
 						this.setMarks(marks);
 
-						focus.set(id, { from: currentFrom, to: currentTo });
-						focus.apply();
+						window.setTimeout(() => {
+							focus.set(id, { from: currentFrom, to: currentTo });
+							focus.apply();
+						}, 15);
 					},
 				},
 			});
