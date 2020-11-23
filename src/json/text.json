@@ -1,4 +1,9 @@
 {
+	"commonError": { "en": "Error" },
+	"commonOr": { "en": "or" },
+	"commonCancel": { "en": "Cancel" },
+	"commonSoon": { "en": "Soon" },
+
 	"progress0": { "en": "Copying files %s/%s" },
 	"progress1": { "en": "Import in progress" },
 
@@ -59,58 +64,89 @@
 	"indexHi": { "en": "Hi, %s" },
 	
 	"blockNameParagraph": { "en": "Text" },
-	"blockDescriptionParagraph": { "en": "Write a plain text" },
+	"blockTextParagraph": { "en": "Write a plain text" },
 
 	"blockNameHeader1": { "en": "Header 1" },
-	"blockDescriptionHeader1": { "en": "Big headline of a chapter, paragraph or section" },
+	"blockTextHeader1": { "en": "Big headline of a chapter, paragraph or section" },
 
 	"blockNameHeader2": { "en": "Header 2" },
-	"blockDescriptionHeader2": { "en": "Medium headline" },
+	"blockTextHeader2": { "en": "Medium headline" },
 
 	"blockNameHeader3": { "en": "Header 3" },
-	"blockDescriptionHeader3": { "en": "Small headline" },
+	"blockTextHeader3": { "en": "Small headline" },
 
 	"blockNameQuote": { "en": "Highlighted" },
-	"blockDescriptionQuote": { "en": "Spotlight, that needs special attention" },
+	"blockTextQuote": { "en": "Spotlight, that needs special attention" },
 
 	"blockNameCheckbox": { "en": "Checkbox" },
-	"blockDescriptionCheckbox": { "en": "Create and track task with to-do list" },
+	"blockTextCheckbox": { "en": "Create and track task with to-do list" },
 
 	"blockNameBulleted": { "en": "Bulleted list" },
-	"blockDescriptionBulleted": { "en": "Simple list" },
+	"blockTextBulleted": { "en": "Simple list" },
 
 	"blockNameNumbered": { "en": "Numbered list" },
-	"blockDescriptionNumbered": { "en": "Numbered list" },
+	"blockTextNumbered": { "en": "Numbered list" },
 
 	"blockNameToggle": { "en": "Toggle" },
-	"blockDescriptionToggle": { "en": "Hide and show content inside" },
+	"blockTextToggle": { "en": "Hide and show content inside" },
 
 	"blockNamePage": { "en": "Page" },
-	"blockDescriptionPage": { "en": "Create new page inside this one" },
+	"blockTextPage": { "en": "Create new page inside this one" },
 
 	"blockNameExisting": { "en": "Link to object" },
-	"blockDescriptionExisting": { "en": "Link to existing page" },
+	"blockTextExisting": { "en": "Link to existing page" },
 
 	"blockNameFile": { "en": "File" },
-	"blockDescriptionFile": { "en": "Store file in original state" },
+	"blockTextFile": { "en": "Store file in original state" },
 
 	"blockNameImage": { "en": "Picture" },
-	"blockDescriptionImage": { "en": "Upload and enrich the page with image" },
+	"blockTextImage": { "en": "Upload and enrich the page with image" },
 
 	"blockNameVideo": { "en": "Video" },
-	"blockDescriptionVideo": { "en": "Upload playable video" },
+	"blockTextVideo": { "en": "Upload playable video" },
 
 	"blockNameBookmark": { "en": "Bookmark" },
-	"blockDescriptionBookmark": { "en": "Save your favorite link with summary" },
+	"blockTextBookmark": { "en": "Save your favorite link with summary" },
 
 	"blockNameCode": { "en": "Code snippet" },
-	"blockDescriptionCode": { "en": "Capture code snippet " },
+	"blockTextCode": { "en": "Capture code snippet " },
 
 	"blockNameLine": { "en": "Line divider" },
-	"blockDescriptionLine": { "en": "Separate information with line" },
+	"blockTextLine": { "en": "Separate information with line" },
 
 	"blockNameDot": { "en": "Dots divider" },
-	"blockDescriptionDot": { "en": "Separate information with three dots" },
+	"blockTextDot": { "en": "Separate information with three dots" },
+
+	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
+
+	"blockFileDownload": { "en": "Download" },
+
+	"blockDataviewNew": { "en": "New" },
+
+	"popupSettingsTitle": { "en": "Settings" },
+	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
+	"popupSettingsWallpaperText": { "en": "Choose or upload the wallpaper. For best results upload high resolution images." },
+	"popupSettingsPicture": { "en": "Pictures" },
+	"popupSettingsColor": { "en": "Colours" },
+	"popupSettingsPhraseTitle": { "en": "Keychain phrase" },
+	"popupSettingsPhraseText": { "en": "Your Keychain phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place." },
+	"popupSettingsPhraseOk": { "en": "I've written it down" },
+	"popupSettingsPinTitle": { "en": "Pin code" },
+	"popupSettingsPinText": { "en": "The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number,  id recovery without your pin code or keychain phrase. So, please, remember your pin code" },
+	"popupSettingsPinOn": { "en": "Turn pin code on" },
+	"popupSettingsPinOff": { "en": "Turn pin code off" },
+	"popupSettingsPinChange": { "en": "Change pin code" },
+	"popupSettingsPinVerify": { "en": "To continue, first verify that it’s you. Enter current pin code" },
+	"popupSettingsPinError": { "en": "Incorrect pin" },
+	"popupSettingsImportTitle": { "en": "Import" },
+	"popupSettingsImportText": { "en": "Choose application or format, which data you want to import" },
+	"popupSettingsImportHow": { "en": "How to import from Notion" },
+	"popupSettingsImportFirst": { "en": "First you need to export data." },
+	"popupSettingsImportGetTitle": { "en": "Get all data:" },
+	"popupSettingsImportPageTitle": { "en": "Get certain pages:" },
+	"popupSettingsImportZip": { "en": "After that you need to select Zip archive and Anytype will do the rest." },
+	"popupSettingsImportOk": { "en": "Import data" },
+	"popupSettingsLogout": { "en": "Log out" },
 
 	"popupArchiveTitle": { "en": "Archive" },
 	"popupArchiveSelectAll": { "en": "Select All" },
@@ -129,6 +165,9 @@
 	"popupNavigationEmptyTo": { "en": "No links to this page" },
 	"popupNavigationEmptyFrom": { "en": "No links to other pages" },
 	"popupNavigationEmptyFilter": { "en": "<b>There are no pages named \"%s\"</b>Try creating a new one or search for something else." },
+
+	"popupConfirmUpdateTitle": { "en": "Oops!" },
+	"popupConfirmUpdateText": { "en": "Can’t check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
 
 	"filterConditionEqual": { "en": "is" },
 	"filterConditionNotEqual": { "en": "is not" },

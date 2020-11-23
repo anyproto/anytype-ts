@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, translate } from 'ts/lib';
 import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -118,7 +118,7 @@ class ViewGrid extends React.Component<Props, {}> {
 								<tr>
 									<td className="cell add" colSpan={view.relations.length + 1} onClick={this.onRowAdd}>
 										<Icon className="plus" />
-										<div className="name">New</div>
+										<div className="name">{translate('blockDataviewNew')}</div>
 									</td>
 								</tr>
 							) : null}
