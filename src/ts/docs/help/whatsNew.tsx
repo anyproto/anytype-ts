@@ -27,6 +27,8 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Undo / Redo can return events with wrong order.` },
 	{ style: I.TextStyle.Bulleted, text: `You cannot open the page from the dashboard if you click in the icon zone.` },
 
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
 	{ style: I.TextStyle.Header1, text: `Updates for 30 October, 2020` },
 	{ text: `This is a technical minor release with bug fixes and minor enchancements.` },
 
