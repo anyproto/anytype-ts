@@ -12,7 +12,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 @observer
 class MenuBlockAction extends React.Component<Props, State> {
@@ -68,7 +67,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return (
 			<div>
 				<div className="filter">
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				</div>
 				
 				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}

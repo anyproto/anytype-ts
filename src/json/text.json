@@ -1,13 +1,17 @@
 {
 	"commonError": { "en": "Error" },
 	"commonOr": { "en": "or" },
+	"commonOk": { "en": "Ok" },
+	"commonSave": { "en": "Save" },
 	"commonCancel": { "en": "Cancel" },
 	"commonSoon": { "en": "Soon" },
 	"commonTitle": { "en": "anytype" },
-	"commonSearch": { "en": "Search" },
+	"commonSearch": { "en": "Search..." },
+	"commonSearchButton": { "en": "Search" },
 	"commonFilter": { "en": "Type to filter..." },
 	"commonFilterEmpty": { "en": "No items match filter" },
 	"commonHome": { "en": "Home" },
+	"commonSubmit": { "en": "Submit" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -158,6 +162,11 @@
 
 	"blockDataviewNew": { "en": "New" },
 
+	"blockCoverDrag": { "en": "Drag image to reposition" },
+	"blockCoverSave": { "en": "Save changes" },
+	"blockCoverUpdate": { "en": "Update cover" },
+	"blockCover": { "en": "" },
+
 	"popupSettingsTitle": { "en": "Settings" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
 	"popupSettingsWallpaperText": { "en": "Choose or upload the wallpaper. For best results upload high resolution images." },
@@ -182,6 +191,23 @@
 	"popupSettingsImportZip": { "en": "After that you need to select Zip archive and Anytype will do the rest." },
 	"popupSettingsImportOk": { "en": "Import data" },
 	"popupSettingsLogout": { "en": "Log out" },
+
+	"popupFeedbackBugLabel1": { "en": "Describe the bug:" },
+	"popupFeedbackBugText1": { "en": "Ex. I pressed Enter and this happened [...]" },
+	"popupFeedbackBugLabel2": { "en": "Steps to reproduce the behavior:" },
+	"popupFeedbackBugText2": { "en": "1. Go to '...'&#10;2. Click on '....'&#10;3. See error" },
+	"popupFeedbackFeatureLabel1": { "en": "Is your feature request related to a problem? Please describe:" },
+	"popupFeedbackFeatureText1": { "en": "Ex. I'm always frustrated when [...]" },
+	"popupFeedbackFeatureLabel2": { "en": "Describe the solution you'd like:" },
+	"popupFeedbackFeatureText2": { "en": "A clear and concise description of what you want to happen." },
+	"popupFeedbackHelpLabel": { "en": "Got a question or need help? Please ask:" },
+	"popupFeedbackSuccessTitle": { "en": "Your feedback was sent" },
+	"popupFeedbackSuccessText": { "en": "Thank you for making the new web together!<br />If you left email we will get in touch soon." },
+	"popupFeedbackSuccessBack": { "en": "Back to dashboard" },
+	"popupFeedbackScreenLabel": { "en": "Link to screenshots or video:" },
+	"popupFeedbackScreenText": { "en": "If applicable, add screenshots to help explain your problem. (Optional)" },
+	"popupFeedbackName": { "en": "Name (Optional)" },
+	"popupFeedbackEmail": { "en": "E-mail (Optional)" },
 
 	"popupArchiveTitle": { "en": "Archive" },
 	"popupArchiveSelectAll": { "en": "Select All" },
@@ -218,6 +244,10 @@
 	"menuBlockCoverUpload": { "en": "Upload image" },
 	"menuBlockCoverEdit": { "en": "Reposition" },
 	"menuBlockCoverRemove": { "en": "Remove" },
+
+	"menuBlockLinkPlaceholder": { "en": "Enter link URL" },
+	"menuBlockLinkLink": { "en": "Link" },
+	"menuBlockLinkUnlink": { "en": "Unlink" },
 
 	"linkPreviewCopy": { "en": "Copy link" },
 	"linkPreviewEdit": { "en": "Edit link" },

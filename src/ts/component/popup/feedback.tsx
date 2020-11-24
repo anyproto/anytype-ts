@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Input, Icon, Textarea, Button, Error, Smile, Loader } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { Title, Label, Input, Textarea, Button, Error, Smile, Loader } from 'ts/component';
+import { I, Util, translate } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -52,12 +52,12 @@ class PopupFeedback extends React.Component<Props, State> {
 				content = (
 					<React.Fragment>
 						<div className="row">
-							<Label text="Describe the bug:" />
-							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} placeHolder="Ex. I pressed Enter and this happened [...]" />
+							<Label text={translate('popupFeedbackBugLabel1')} />
+							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} placeHolder={translate('popupFeedbackBugText1')} />
 						</div>
 						<div className="row">
-							<Label text="Steps to reproduce the behavior:" />
-							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeHolder="1. Go to '...'&#10;2. Click on '....'&#10;3. See error" />
+							<Label text={translate('popupFeedbackBugLabel2')} />
+							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeHolder={translate('popupFeedbackBugText2')} />
 						</div>
 					</React.Fragment>
 				);
@@ -67,12 +67,12 @@ class PopupFeedback extends React.Component<Props, State> {
 				content = (
 					<React.Fragment>
 						<div className="row">
-							<Label text="Is your feature request related to a problem? Please describe:" />
-							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} placeHolder="Ex. I'm always frustrated when [...]" />
+							<Label text={translate('popupFeedbackFeatureLabel1')} />
+							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} placeHolder={translate('popupFeedbackFeatureText1')} />
 						</div>
 						<div className="row">
-							<Label text="Describe the solution you'd like:" />
-							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeHolder="A clear and concise description of what you want to happen." />
+							<Label text={translate('popupFeedbackFeatureLabel2')} />
+							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeHolder={translate('popupFeedbackFeatureText2')} />
 						</div>
 					</React.Fragment>
 				);
@@ -82,7 +82,7 @@ class PopupFeedback extends React.Component<Props, State> {
 				content = (
 					<React.Fragment>
 						<div className="row">
-							<Label text="Got a question or need help? Please ask:" />
+							<Label text={translate('popupFeedbackHelpLabel')} />
 							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} />
 						</div>
 					</React.Fragment>
@@ -96,9 +96,9 @@ class PopupFeedback extends React.Component<Props, State> {
 				{success ? (
 					<React.Fragment>
 						<Smile className="c64" size={32} icon=":relieved:" />
-						<Title text="Your feedback was sent" />
-						<Label text="Thank you for making the new web together!<br />If you left email we will get in touch soon." />
-						<Button className="orange" text="Back to dashboard" onClick={() => { this.props.close(); }} />
+						<Title text={translate('popupFeedbackSuccessTitle')} />
+						<Label text={translate('popupFeedbackSuccessText')} />
+						<Button className="orange" text={translate('popupFeedbackSuccessBack')} onClick={() => { this.props.close(); }} />
 					</React.Fragment>
 				) : (
 					<React.Fragment>
@@ -116,20 +116,20 @@ class PopupFeedback extends React.Component<Props, State> {
 							{content}
 
 							<div className="row">
-								<Label text="Link to screenshots or video:" />
-								<Input ref={(ref: any) => { this.refObject.link = ref; }} placeHolder="If applicable, add screenshots to help explain your problem. (Optional)" />
+								<Label text={translate('popupFeedbackScreenLabel')} />
+								<Input ref={(ref: any) => { this.refObject.link = ref; }} placeHolder={translate('popupFeedbackScreenText')} />
 							</div>
 
 							<div className="row last">
 								<Label text="Contacts:" />
 								<div className="flex">
-									<Input ref={(ref: any) => { this.refObject.name = ref; }} placeHolder="Name (Optional)" />
-									<Input ref={(ref: any) => { this.refObject.email = ref; }} placeHolder="E-mail (Optional)" />
+									<Input ref={(ref: any) => { this.refObject.name = ref; }} placeHolder={translate('popupFeedbackName')} />
+									<Input ref={(ref: any) => { this.refObject.email = ref; }} placeHolder={translate('popupFeedbackEmail')} />
 								</div>
 							</div>
 							
 							<div className="row flex">
-								<Button className="orange submit" type="input" text="Submit" /> 
+								<Button className="orange submit" type="input" text={translate('commonSubmit')} /> 
 								<Error text={error} />
 							</div>
 						</form>
