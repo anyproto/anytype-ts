@@ -101,6 +101,10 @@ class MenuThreadList extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (id: string, isCafe: boolean) {
+		if (!id) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { menus } = commonStore;
@@ -112,6 +116,10 @@ class MenuThreadList extends React.Component<Props, {}> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const item = node.find('#item-' + id);
+		if (!item.length) {
+			return;
+		};
+
 		const top = item.offset().top - $(window).scrollTop();
 
 		window.clearTimeout(this.timeoutMenu);
