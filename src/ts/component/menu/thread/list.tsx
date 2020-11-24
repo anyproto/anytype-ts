@@ -75,12 +75,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		const win = $(window);
 		const obj = $('#menuThreadList');
-
-		win.unbind('scroll').on('scroll', (e: any) => {
-			commonStore.menuClose('threadStatus');
-		});
 
 		obj.unbind('mouseenter').on('mouseenter', () => {
 			window.clearTimeout(this.timeoutClose);
@@ -94,10 +89,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 				commonStore.menuClose('threadStatus');
 			}, 1000);
 		});
-	};
-
-	componentWillUnmount () {
-		$(window).unbind('scroll');
 	};
 
 	onMouseEnter (id: string, isCafe: boolean) {
