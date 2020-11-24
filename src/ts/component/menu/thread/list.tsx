@@ -50,7 +50,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
-		
+
 		return (
 			<div className="items">
 				<div 

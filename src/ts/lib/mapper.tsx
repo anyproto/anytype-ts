@@ -286,6 +286,7 @@ const Mapper = {
 
 		ThreadAccount: (obj: any) => {
             return {
+				id: obj.getId(),
 				name: obj.getName(),
 				imageHash: obj.getImagehash(),
 				online: obj.getOnline(),
