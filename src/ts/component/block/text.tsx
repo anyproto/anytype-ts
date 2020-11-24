@@ -192,19 +192,14 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setValue (v: string) {
 		const { block } = this.props;
-		const { content } = block
-		
+		const { content } = block;
+		const fields = block.fields || {};
+		const { style } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
-		
-		let fields = block.fields || {};
-		let { style } = content;
-		let text = String(v || '');
-		let html = text;
+		const text = String(v || '');
 
-		html = html.replace(/</g, '&lt;');
-		html = html.replace(/>/g, '&gt;');
-		
+		let html = text;
 		if (style == I.TextStyle.Code) {
 			let lang = fields.lang;
 			let grammar = Prism.languages[lang];
@@ -220,6 +215,8 @@ class BlockText extends React.Component<Props, {}> {
 
 			html = Prism.highlight(html, grammar, lang);
 		} else {
+			html = html.replace(/</g, '&lt;');
+			html = html.replace(/>/g, '&gt;');
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
 		};
@@ -377,13 +374,18 @@ class BlockText extends React.Component<Props, {}> {
 			return '';
 		};
 		
+		const { block } = this.props;
+		const { content } = block;
+		const { style } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		const obj = Mark.cleanHtml(value.html());
 		
 		let text = String(obj.get(0).innerText || '');
-		text = text.replace(/</g, '&lt;');
-		text = text.replace(/>/g, '&gt;');
+		if (style != I.TextStyle.Code) {
+			text = text.replace(/</g, '&lt;');
+			text = text.replace(/>/g, '&gt;');
+		};
 		return text;
 	};
 	
