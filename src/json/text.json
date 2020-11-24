@@ -3,6 +3,30 @@
 	"commonOr": { "en": "or" },
 	"commonCancel": { "en": "Cancel" },
 	"commonSoon": { "en": "Soon" },
+	"commonTitle": { "en": "anytype" },
+	"commonSearch": { "en": "Search" },
+	"commonFilter": { "en": "Type to filter..." },
+
+	"month1": { "en": "January" },
+	"month2": { "en": "February" },
+	"month3": { "en": "March" },
+	"month4": { "en": "April" },
+	"month5": { "en": "May" },
+	"month6": { "en": "June" },
+	"month7": { "en": "July" },
+	"month8": { "en": "August" },
+	"month9": { "en": "September" },
+	"month10": { "en": "October" },
+	"month11": { "en": "November" },
+	"month12": { "en": "December" },
+
+	"day1": { "en": "Sunday" },
+	"day2": { "en": "Monday" },
+	"day3": { "en": "Tuesday" },
+	"day4": { "en": "Wednesday" },
+	"day5": { "en": "Thursday" },
+	"day6": { "en": "Friday" },
+	"day7": { "en": "Saturday" },
 
 	"progress0": { "en": "Copying files %s/%s" },
 	"progress1": { "en": "Import in progress" },
@@ -121,6 +145,9 @@
 
 	"blockFileDownload": { "en": "Download" },
 
+	"blockLinkSyncing": { "en": "Syncing..." },
+	"blockLinkArchived": { "en": "Archived" },
+
 	"blockDataviewNew": { "en": "New" },
 
 	"popupSettingsTitle": { "en": "Settings" },
@@ -168,6 +195,21 @@
 
 	"popupConfirmUpdateTitle": { "en": "Oops!" },
 	"popupConfirmUpdateText": { "en": "Can’t check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
+
+	"menuAccountAdd": { "en": "Add profile" },
+	"menuAccountPeer": { "en": "%d/%d peers" },
+
+	"menuSmileRandom": { "en": "Random emoji" },
+	"menuSmileUpload": { "en": "Upload image" },
+	"menuSmileRemove": { "en": "Remove" },
+	"menuSmileEmpty": { "en": "<b>There are no emojis named \"%s\"</b>Try to find a new one or upload your image" },
+
+	"menuCalendarToday": { "en": "Today" },
+	"menuCalendarTomorrow": { "en": "Tomorrow" },
+
+	"linkPreviewCopy": { "en": "Copy link" },
+	"linkPreviewEdit": { "en": "Edit link" },
+	"linkPreviewUnlink": { "en": "Unlink" },
 
 	"filterConditionEqual": { "en": "is" },
 	"filterConditionNotEqual": { "en": "is not" },

@@ -212,7 +212,7 @@ class App extends React.Component<Props, State> {
 							<div className="sides">
 								<div className="side left">
 									<Icon className="menu" onClick={this.onMenu} />
-									<div className="name">anytype</div>
+									<div className="name">{translate('commonTitle')}</div>
 								</div>
 
 								<div className="side right">

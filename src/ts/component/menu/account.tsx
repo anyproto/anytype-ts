@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, IconUser, Error } from 'ts/component';
 import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, Storage } from 'ts/lib';
+import { I, C, Util, DataUtil, Storage, translate } from 'ts/lib';
 
 interface Props extends I.Menu { history: any; };
 
@@ -34,7 +34,7 @@ class MenuAccount extends React.Component<Props, State> {
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">
-						<Icon className="check" />0/30 peers
+						<Icon className="check" />{Util.sprintf(translate('menuAccountPeer'), 0, 30)}
 					</div>
 				</div>
 			</div>
@@ -50,7 +50,7 @@ class MenuAccount extends React.Component<Props, State> {
 				
 				<div className="item add" onClick={this.onAdd}>
 					<Icon className="plus" />
-					<div className="name">Add profile</div>
+					<div className="name">{translate('menuAccountAdd')}</div>
 				</div>
 			</div>
 		);

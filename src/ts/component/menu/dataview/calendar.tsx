@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { I, Util } from 'ts/lib';
-import { Input, Select } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { I, Util, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 interface Props extends I.Menu {};
@@ -29,10 +26,15 @@ class MenuCalendar extends React.Component<Props, State> {
 		let d = Number(Util.date('d', value));
 		let m = Number(Util.date('n', value));
 		let y = Number(Util.date('Y', value));
-		
 		let months = [];
-		for (let i in Constant.month) {
-			months.push({ id: i, name: Constant.month[i] });
+		let days = [];
+
+		for (let i = 1; i <= 12; ++i) {
+			months.push({ id: i, name: translate('month' + i) });
+		};
+
+		for (let i = 1; i <= 7; ++i) {
+			days.push({ id: i, name: translate('day' + i) });
 		};
 
 		return (
@@ -40,8 +42,8 @@ class MenuCalendar extends React.Component<Props, State> {
 				<div className="head">
 					<div className="date">{Util.date('F, Y', value)}</div>
 					<div className="days">
-						{Constant.week.map((day: string, i: number) => {
-							return <div key={i} className="day th">{day.substr(0, 2)}</div>;
+						{days.map((item: any, i: number) => {
+							return <div key={i} className="day th">{item.name.substr(0, 2)}</div>;
 						})}
 					</div>
 				</div>
@@ -58,8 +60,8 @@ class MenuCalendar extends React.Component<Props, State> {
 					})}
 				</div>
 				<div className="foot">
-					<div className="btn" onClick={() => { this.setValue(Util.time(), true); }}>Today</div>
-					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400, true); }}>Tomorrow</div>
+					<div className="btn" onClick={() => { this.setValue(Util.time(), true); }}>{translate('menuCalendarToday')}</div>
+					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400, true); }}>{translate('menuCalendarTomorrow')}</div>
 				</div>
 			</div>
 		);
