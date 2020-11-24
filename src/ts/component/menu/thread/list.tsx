@@ -57,7 +57,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 					id="item-cafe" 
 					className="item" 
 					onMouseOver={(e: any) => { this.onMouseEnter('cafe', true); }} 
-					/*onMouseLeave={this.onMouseLeave}*/
+					onMouseLeave={this.onMouseLeave}
 				>
 					<Icon className="cafe" />
 					<div className="info">
