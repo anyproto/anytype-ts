@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, C, focus, DataUtil, Util } from 'ts/lib';
+import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -47,12 +47,12 @@ class Controls extends React.Component<Props, {}> {
 					<div className="side left">
 						<div id="button-add-icon" className="btn addIcon" onClick={this.onAddIcon}>
 							<Icon />
-							<div className="txt">Add icon</div>
+							<div className="txt">{translate('editorControlIcon')}</div>
 						</div>
 
 						<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
 							<Icon />
-							<div className="txt">Add cover image</div>
+							<div className="txt">{translate('editorControlCover')}</div>
 						</div>
 					</div>
 				</div>

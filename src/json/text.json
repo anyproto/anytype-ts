@@ -6,6 +6,8 @@
 	"commonTitle": { "en": "anytype" },
 	"commonSearch": { "en": "Search" },
 	"commonFilter": { "en": "Type to filter..." },
+	"commonFilterEmpty": { "en": "No items match filter" },
+	"commonHome": { "en": "Home" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -30,6 +32,9 @@
 
 	"progress0": { "en": "Copying files %s/%s" },
 	"progress1": { "en": "Import in progress" },
+
+	"headerMainHistoryCurrent": { "en": "Current version" },
+	"headerMainHistoryRestore": { "en": "Restore version" },
 
 	"confirmUpdateTitle": { "en": "It's time to update" },
 	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features." },
@@ -86,6 +91,9 @@
 	"authPinConfirmError": { "en": "Pin codes do not match" },
 
 	"indexHi": { "en": "Hi, %s" },
+
+	"editorControlIcon": { "en": "Add icon" },
+	"editorControlCover": { "en": "Add cover image" },
 	
 	"blockNameParagraph": { "en": "Text" },
 	"blockTextParagraph": { "en": "Write a plain text" },
@@ -206,6 +214,10 @@
 
 	"menuCalendarToday": { "en": "Today" },
 	"menuCalendarTomorrow": { "en": "Tomorrow" },
+
+	"menuBlockCoverUpload": { "en": "Upload image" },
+	"menuBlockCoverEdit": { "en": "Reposition" },
+	"menuBlockCoverRemove": { "en": "Remove" },
 
 	"linkPreviewCopy": { "en": "Copy link" },
 	"linkPreviewEdit": { "en": "Edit link" },

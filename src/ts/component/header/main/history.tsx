@@ -2,8 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon } from 'ts/component';
-import { DataUtil, I } from 'ts/lib';
-import { C, Util } from '../../../lib';
+import { C, Util, DataUtil, I, translate } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -27,7 +26,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 			<div className="header headerMainHistory">
 				<div className="side left">
 					<div className="item grey" onClick={this.onBack}>
-						<Icon className="arrow" />Current version
+						<Icon className="arrow" />{translate('headerHistoryCurrent')}
 					</div>
 				</div>
 
@@ -36,7 +35,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right" onClick={this.onRestore}>
-					<div className="item orange">Restore version</div>
+					<div className="item orange">{translate('headerHistoryRestore')}</div>
 				</div>
 			</div>
 		);
