@@ -12,6 +12,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		const { rootId, isCafe, accountId } = data;
 		const thread = authStore.threadGet(rootId);
 		const { cafe, accounts } = thread;
+		const { status } = cafe;
 		const account = accounts.find((it: I.ThreadAccount) => { return it.id == accountId; });
 
 		const Item = (item: any) => (
@@ -33,12 +34,13 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		let cafeFields = [];
 		if (cafe.lastPushSucceed) {
 			cafeFields = [
-				{ key: 'All changes are backed up on server'},
-				{ key: 'Data recieved', value: Util.timeAgo(cafe.lastPulled) }
+				{ key: 'Object is backed up on the server'},
+				{ key: 'Changes requested', value: Util.timeAgo(cafe.lastPulled) }
 			];
 		} else {
 			cafeFields = [
-				{ key: 'Data recieved', value: Util.timeAgo(cafe.lastPulled) }
+				{ key: 'Some local changes are not backed up'},
+				{ key: 'Changes requested', value: Util.timeAgo(cafe.lastPulled) }
 			];
 		};
 
@@ -52,10 +54,17 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 					<div className="name">My other devices</div>
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
+							if (status == "3") {
+								const fields = [
+									{ key: 'Edits were made',  value: Util.timeAgo(item.lastEdited) }
+								];
+								return <Item key={i} {...item} fields={fields} />;
+							}
 							const fields = [
-								{ key: 'Changes sent',  value: item.lastEdited ? Util.timeAgo(item.lastEdited) : 'No direct interaction' },
-								{ key: 'Data recieved',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No direct interaction' }
-							];
+									item.online ? { key: 'Online'} : {key: 'Offline'},
+									{ key: 'Edits were made',  value: Util.timeAgo(item.lastEdited) },
+									{ key: 'Changes requested',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No direct interaction' }
+								];
 							return <Item key={i} {...item} fields={fields} />;
 						})}
 					</div>
