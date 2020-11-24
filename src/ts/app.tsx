@@ -163,6 +163,7 @@ declare global {
 		Dispatcher: any;
 		Analytics: any;
 		I: any;
+		Go: any;
 	}
 };
 
@@ -172,6 +173,7 @@ window.Util = Util;
 window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
+window.Go = (route: string) => { history.push(route); };
 
 class App extends React.Component<Props, State> {
 	
