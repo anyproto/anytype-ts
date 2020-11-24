@@ -54,17 +54,16 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 					<div className="name">My other devices</div>
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
-							if (status == "3") {
-								const fields = [
-									{ key: 'Edits were made',  value: Util.timeAgo(item.lastEdited) }
-								];
-								return <Item key={i} {...item} fields={fields} />;
-							}
-							const fields = [
-									item.online ? { key: 'Online'} : {key: 'Offline'},
+							let fields = [];
+							if (status == I.ThreadStatus.Synced) {
+								fields.push({ key: 'Edits were made',  value: Util.timeAgo(item.lastEdited) });
+							} else {
+								fields = fields.concat([
+									{ key: item.online ? 'Online' : 'Offline' },
 									{ key: 'Edits were made',  value: Util.timeAgo(item.lastEdited) },
 									{ key: 'Changes requested',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No direct interaction' }
-								];
+								]);
+							};
 							return <Item key={i} {...item} fields={fields} />;
 						})}
 					</div>
