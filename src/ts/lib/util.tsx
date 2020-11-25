@@ -389,6 +389,63 @@ class Util {
 		};
 		return v;
 	};
+
+	fileIcon (obj: any): string {
+		let icon = '';
+		let t: string[] = [];
+		let name = String(obj.name || '');
+		let mime = String(obj.mime || '');
+		
+		let a: string[] = name.split('.');
+		let e = a[a.length - 1];
+			
+		if ([ 'm4v' ].indexOf(e) >= 0) {
+			icon = 'video';
+		};
+			
+		if ([ 'csv', 'json', 'txt', 'doc', 'docx' ].indexOf(e) >= 0) {
+			icon = 'text';
+		};
+			
+		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
+			icon = 'archive';
+		};
+		
+		if (icon) {
+			return icon;
+		};
+		
+		if (mime) {
+			let a: string[] = mime.split(';');
+			if (a.length) {
+				t = a[0].split('/');
+			};
+		};
+		
+		if (t.length) {
+			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
+				icon = t[0];
+			};
+			
+			if ([ 'pdf' ].indexOf(t[1]) >= 0) {
+				icon = t[1];
+			};
+			
+			if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(t[1]) >= 0) {
+				icon = 'archive';
+			};
+			
+			if ([ 'vnd.ms-powerpoint' ].indexOf(t[1]) >= 0) {
+				icon = 'presentation';
+			};
+			
+			if ([ 'vnd.openxmlformats-officedocument.spreadsheetml.sheet' ].indexOf(t[1]) >= 0) {
+				icon = 'table';
+			};
+		};
+		
+		return String(icon || 'other');
+	};
 	
 	scrollTop (top: number) {
 		$('html, body').stop().animate({ scrollTop: top }, 300, 'swing');	

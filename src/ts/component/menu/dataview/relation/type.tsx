@@ -33,10 +33,9 @@ class MenuRelationType extends React.Component<Props, {}> {
 			{ format: I.RelationType.Email },
 			{ format: I.RelationType.Phone },
 			{ format: I.RelationType.Object },
-		];
-		for (let item of relations) {
-			item.name = Constant.relationName[item.format];
-		};
+		].map((it: any) => {
+			return { ...it, name: Constant.relationName[it.format] };
+		});
 
 		const Item = (item: any) => {
 			return (
