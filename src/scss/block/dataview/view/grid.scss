@@ -27,8 +27,7 @@
 			}
 			.head.isDragging { border: 0px; background: rgba(255,255,255,0.5); }
 
-			.cellContent { width: 100%; }
-			.cellContent.c-select { white-space: normal; width: auto; overflow: visible; }
+			.cellContent { width: 100%; @include text-overflow-nw; height: 20px; }
 				
 			td.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
 			td.cell:last-child { border-right: 0px; }

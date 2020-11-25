@@ -89,13 +89,6 @@
 				span:empty { display: none; }
 			}
 
-			.cellContent.c-title, 
-			.cellContent.c-date, 
-			.cellContent.c-url, 
-			.cellContent.c-phone,
-			.cellContent.c-email, 
-			.cellContent.c-number { @include text-overflow-nw; }
-
 			.cell.c-file {
 				.inputWithFile { border: 0px; padding: 0px; }
 				.item { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 150px; margin-right: 8px; }
