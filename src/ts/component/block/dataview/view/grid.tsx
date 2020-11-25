@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager, Cell } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
@@ -338,8 +338,11 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { rootId, block, getView } = this.props;
 		const { oldIndex, newIndex } = result;
 		const view = getView();
+		const filtered = view.relations.filter((it: any) => { return it.isVisible; });
+		const oldIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == filtered[oldIndex].key; });
+		const newIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == filtered[newIndex].key; });
 		
-		view.relations = arrayMove(view.relations, oldIndex, newIndex);
+		view.relations = arrayMove(view.relations, oldIdx, newIdx);
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 	};
 	
