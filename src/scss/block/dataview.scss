@@ -91,6 +91,9 @@
 			.cell.c-file {
 				.inputWithFile { border: 0px; padding: 0px; }
 				.item { display: inline-block; vertical-align: top; }
+				.item {
+					.name { line-height: 20px; }
+				}
 			}
 
 			.cell.c-link {

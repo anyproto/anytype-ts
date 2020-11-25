@@ -3,6 +3,16 @@
 .menus {
 	.menu.menuDataviewMedia {}
 	.menu.menuDataviewMedia {
+		.content { padding-bottom: 0px; }
+
+		.item {
+			img { display: block; }
+			.name { line-height: 20px; }
+			.element { width: calc(100% - 20px); display: inline-block; vertical-align: top; }
+		}
 		.item:hover::before { opacity: 0.15; }
+
+		.item.add { padding: 14px 16px; border-top: 1px solid #e0ded2; }
+		.inputWithFile { border: 0px; padding: 0px; }
 	}
 }

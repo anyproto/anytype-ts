@@ -19,19 +19,18 @@ class CellMedia extends React.Component<Props, {}> {
 	render () {
 		const { relation, rootId, block, index, readOnly, data, onOpen } = this.props;
 		
-		let value = (data[index] || {})[relation.key] || [];
+		let value = this.getValue();
+		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
+		value = value.filter((it: any) => { return !it._detailsEmpty_; });
+
 		if (!value.length) {
 			return <InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />;
 		};
 
-		value = value.map((it: string) => {
-			return blockStore.getDetails(rootId, it);
-		});
-
 		const File = (item: any) => (
 			<div className="item file" onClick={(e: any) => { this.onOpen(e, item, item.type); }}>
 				<Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />
-				{item.name}
+				<div className="name">{item.name}</div>
 			</div>
 		);
 
@@ -55,6 +54,11 @@ class CellMedia extends React.Component<Props, {}> {
 				})}
 			</React.Fragment>
 		);
+	};
+
+	getValue (): string[] {
+		const { relation, index, data } = this.props;
+		return Util.objectCopy((data[index] || {})[relation.key] || []);
 	};
 
 	onOpen (e: any, item: any, type: string) {	
@@ -82,11 +86,11 @@ class CellMedia extends React.Component<Props, {}> {
 	};
 
 	save (hash: string) {
-		const { relation, index, onChange } = this.props;
-		const data = this.props.data[index][relation.key] || [];
+		const { onChange } = this.props;
+		const value = this.getValue();
 
-		data.push(hash);
-		onChange(data);
+		value.push(hash);
+		onChange(value);
 	};
 	
 };

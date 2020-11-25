@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { Icon, InputWithFile } from 'ts/component';
+import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { commonStore, blockStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
@@ -14,30 +15,70 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
+	constructor (props: any) {
+		super(props);
+
+		this.onChangeUrl = this.onChangeUrl.bind(this);
+		this.onChangeFile = this.onChangeFile.bind(this);
+	};
+
 	render () {
-        const items = [
-            { name: '1.png' },
-            { name: '2.png' },
-            { name: '3.png' },
-        ];
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+		
+		let value = Util.objectCopy(data.value || []);
+		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
+		value = value.filter((it: any) => { return !it._detailsEmpty_; });
 
         const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 
-        const Item = SortableElement((item: any) => (
-            <div className="item">
-                <Handle />
-                <div className="name">{item.name}</div>
-            </div>
-        ));
+		const File = (item: any) => (
+			<div className="element file">
+				<Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />
+				<div className="name">{item.name}</div>
+			</div>
+		);
+
+		const Image = (item: any) => (
+			<div className="element image">
+				<img src={commonStore.imageUrl(item.id, 208)} className="preview" />
+			</div>
+		);
+
+        const Item = SortableElement((item: any) => {
+			const type = DataUtil.schemaField(item.type && item.type.length ? item.type[0] : '');
+
+			let content = null;
+			switch (type) {
+				case 'file':
+					content = <File {...item} />;
+					break;
+
+				case 'image':
+					content = <Image {...item} />;
+					break;
+			};
+			return (
+				<div className="item">
+					<Handle />
+					{content}
+				</div>
+			);
+		});
 
         const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} id={i} index={i} />
+					{value.map((item: any, i: number) => (
+						<Item key={i} {...item} index={i} />
 					))}
+					<div className="item add">
+						<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+					</div>
 				</div>
 			);
 		});
@@ -73,6 +114,20 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
     onSortEnd (result: any) {
 
     };
+
+	onChangeUrl (e: any, url: string) {
+		C.UploadFile(url, '', I.FileType.None, false, (message: any) => {
+			if (!message.error.code) {
+			};
+		});
+	};
+	
+	onChangeFile (e: any, path: string) {
+		C.UploadFile('', path, I.FileType.None, false, (message: any) => {
+			if (!message.error.code) {
+			};
+		});
+	};
 
 };
 
