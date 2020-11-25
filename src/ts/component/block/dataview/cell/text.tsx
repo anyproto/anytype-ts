@@ -83,9 +83,14 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
+			Name = (item: any) => (
+				<div className="name">{item.name}</div>
+			);
+
 			if (relation.format == I.RelationType.Description) {
 				value = String(value || '').split('\n')[0];
 			};
+
 			if (relation.format == I.RelationType.Date) {
 				let format = [ DataUtil.dateFormat(relation.dateFormat) ];
 				if (relation.includeTime) {
@@ -94,9 +99,6 @@ class CellText extends React.Component<Props, State> {
 
 				value = value ? Util.date(format.join(' '), value) : '';
 			};
-			Name = (item: any) => (
-				<div className="name">{item.name}</div>
-			);
 		};
 
 		let content: any = <Name name={value} />;
