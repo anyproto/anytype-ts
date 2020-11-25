@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
-import { observer } from 'mobx-react';
+import { I, DataUtil, Util } from 'ts/lib';
+import { commonStore } from 'ts/store';
 import { observable } from 'mobx';
 
 import CellText from './text';
 import CellSelect from './select';
-import CellBool from './checkbox';
+import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
 
@@ -16,7 +15,6 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
-@observer
 class Cell extends React.Component<Props, {}> {
 
 	ref: any = null;
@@ -29,11 +27,10 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, relation, data, readOnly } = this.props;
-		
-		let cn = [ 'cellContent', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
-		let CellComponent: React.ReactType<Props>;
+		const { relation, readOnly } = this.props;
+		const cn = [ 'cellContent', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
 
+		let CellComponent: React.ReactType<Props>;
 		switch (relation.format) {
 			default:
 			case I.RelationType.Title:
@@ -48,7 +45,7 @@ class Cell extends React.Component<Props, {}> {
 				break;
 				
 			case I.RelationType.Checkbox:
-				CellComponent = CellBool;
+				CellComponent = CellCheckbox;
 				break;
 
 			case I.RelationType.File:
@@ -68,7 +65,7 @@ class Cell extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} data={data} onChange={this.onChange} />
+				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} onChange={this.onChange} />
 			</div>
 		);
 	};

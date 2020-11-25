@@ -15,14 +15,10 @@ class CellCheckbox extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, index } = this.props;
-		const data = this.props.data[index];
+		const { relation, index, data } = this.props;
+		const value = Boolean(data[index][relation.key]);
 
-		return (
-			<React.Fragment>
-				<Icon className={'checkbox ' + (data[relation.key] ? 'active' : '')} />
-			</React.Fragment>
-		);
+		return <Icon className={[ 'checkbox', (value ? 'active' : '') ].join(' ')} />;
 	};
 
 	onClick () {
