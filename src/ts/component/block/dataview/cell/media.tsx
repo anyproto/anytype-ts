@@ -37,7 +37,7 @@ class CellMedia extends React.Component<Props, {}> {
 	};
 
 	onChangeUrl (e: any, url: string) {
-		C.UploadFile(url, '', I.FileType.File, false, (message: any) => {
+		C.UploadFile(url, '', I.FileType.None, false, (message: any) => {
 			if (!message.error.code) {
 				this.save(message.hash);
 			};
@@ -45,7 +45,7 @@ class CellMedia extends React.Component<Props, {}> {
 	};
 	
 	onChangeFile (e: any, path: string) {
-		C.UploadFile('', path, I.FileType.File, false, (message: any) => {
+		C.UploadFile('', path, I.FileType.None, false, (message: any) => {
 			if (!message.error.code) {
 				this.save(message.hash);
 			};

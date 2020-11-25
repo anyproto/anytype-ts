@@ -122,22 +122,25 @@ class CellText extends React.Component<Props, State> {
 
 			let type = DataUtil.schemaField(data.type && data.type.length ? data.type[0] : '');
 			let icon = null;
+			let canOpen = true;
+
 			switch (type) {
 				default:
 					icon = <Smile id={[ relation.key, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />;
 					break;
 
+				case 'image':
 				case 'file':
 					icon = <Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />;
+					canOpen = false;
 					break;
 			};
-			console.log(type);
 
 			content = (
 				<React.Fragment>
 					{icon}
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
+					{canOpen ? <Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} /> : ''}
 				</React.Fragment>
 			);
 		};
