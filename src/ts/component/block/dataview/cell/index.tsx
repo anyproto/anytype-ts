@@ -27,8 +27,8 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, readOnly } = this.props;
-		const cn = [ 'cellContent', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
+		const { relation } = this.props;
+		const cn = [ 'cellContent', 'c-' + DataUtil.relationClass(relation.format), (!relation.readOnly ? 'canEdit' : '') ];
 
 		let CellComponent: React.ReactType<Props>;
 		switch (relation.format) {
@@ -73,9 +73,9 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { id, relation, rootId, block, index, readOnly, data } = this.props;
+		const { id, relation, rootId, block, index, data } = this.props;
 
-		if (readOnly || relation.isReadOnly) {
+		if (relation.isReadOnly) {
 			return;
 		};
 

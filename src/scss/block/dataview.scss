@@ -88,8 +88,7 @@
 				.name:empty { display: none; }
 				span:empty { display: none; }
 			}
-
-			.cell.c-file {
+			.cellContent.c-file {
 				.inputWithFile { border: 0px; padding: 0px; }
 				.item { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 150px; margin-right: 8px; }
 				.item {
@@ -98,13 +97,13 @@
 				.cellContent { white-space: normal; }
 			}
 
-			.cell.c-link {
+			.cellContent.c-link {
 				.icon.user { margin-right: 5px; }
 			}
+			.cellContent.canEdit.c-date { cursor: text; }
+			.cellContent.canEdit.c-checkbox { cursor: pointer; }
 			
-			.cell.canEdit.c-checkbox { cursor: pointer; }
-			
-			.cell.c-url, .cell.c-email, .cell.c-phone {
+			.cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
 				a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }
 				a:hover { border-color: $colorBlack; }
 			}
