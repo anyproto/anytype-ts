@@ -6,7 +6,7 @@
 		.content { padding-bottom: 0px; }
 
 		.item {
-			img { display: block; max-width: 100%; max-height: 208px; object-fit: cover; }
+			img { display: block; max-width: 100%; max-height: 208px; object-fit: contain; }
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }
 			.element { width: calc(100% - 20px); display: inline-block; vertical-align: top; }
 		}
