@@ -90,3 +90,9 @@
 		}
 	}
 }
+
+.editorWrapper.isDataview {
+	.block.blockCover {
+		.elements { width: calc(100% - 144px); left: 72px; margin: 0px; }
+	}
+}
