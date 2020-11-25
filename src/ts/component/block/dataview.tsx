@@ -157,6 +157,8 @@ class BlockDataview extends React.Component<Props, {}> {
 		const data = dbStore.getData(block.id);
 		const record = data.find((it: any) => { return it.id == id; });
 
+		console.log(JSON.stringify(record[key]), JSON.stringify(value));
+
 		if (!record || (JSON.stringify(record[key]) === JSON.stringify(value))) {
 			return;
 		};

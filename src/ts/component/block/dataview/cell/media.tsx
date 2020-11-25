@@ -29,7 +29,7 @@ class CellMedia extends React.Component<Props, {}> {
 
 		const File = (item: any) => (
 			<div className="item file" onClick={(e: any) => { this.onOpen(e, item, item.type); }}>
-				<Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />
+				<Icon className={[ 'file-type', Util.fileIcon(item) ].join(' ')} />
 				<div className="name">{item.name}</div>
 			</div>
 		);

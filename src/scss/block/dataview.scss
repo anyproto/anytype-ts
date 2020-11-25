@@ -90,10 +90,11 @@
 
 			.cell.c-file {
 				.inputWithFile { border: 0px; padding: 0px; }
-				.item { display: inline-block; vertical-align: top; }
+				.item { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 150px; margin-right: 8px; }
 				.item {
-					.name { line-height: 20px; }
+					.name { line-height: 20px; width: calc(100% - 24px); @include text-overflow-nw; }
 				}
+				.cellContent { white-space: normal; }
 			}
 
 			.cell.c-link {

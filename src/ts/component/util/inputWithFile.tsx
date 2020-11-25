@@ -11,6 +11,7 @@ interface Props {
 	accept?: string[];
 	block?: I.Block;
 	readOnly?: boolean;
+	canResize?: boolean;
 	onChangeUrl? (e: any, url: string): void;
 	onChangeFile? (e: any, path: string): void;
 };
@@ -33,6 +34,7 @@ class InputWithFile extends React.Component<Props, State> {
 	private static defaultProps = {
 		textUrl: translate('inputWithFileTextUrl'),
 		withFile: true,
+		canResize: true,
 	};
 	
 	_isMounted: boolean = false;
@@ -169,6 +171,11 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	resize () {
+		const { canResize } = this.props;
+		if (!canResize) {
+			return;
+		};
+
 		raf(() => {
 			if (!this._isMounted) {
 				return;

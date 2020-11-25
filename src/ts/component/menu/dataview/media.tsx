@@ -38,7 +38,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 		const File = (item: any) => (
 			<div className="element file">
-				<Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />
+				<Icon className={[ 'file-type', Util.fileIcon(item) ].join(' ')} />
 				<div className="name">{item.name}</div>
 			</div>
 		);
@@ -77,7 +77,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 						<Item key={i} {...item} index={i} />
 					))}
 					<div className="item add">
-						<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} />
+						<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} canResize={false} />
 					</div>
 				</div>
 			);
@@ -118,6 +118,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 	onChangeUrl (e: any, url: string) {
 		C.UploadFile(url, '', I.FileType.None, false, (message: any) => {
 			if (!message.error.code) {
+				this.save(message.hash);
 			};
 		});
 	};
@@ -125,8 +126,26 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 	onChangeFile (e: any, path: string) {
 		C.UploadFile('', path, I.FileType.None, false, (message: any) => {
 			if (!message.error.code) {
+				this.save(message.hash);
 			};
 		});
+	};
+
+	save (hash: string) {
+		const { param, id } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+		const value = Util.objectCopy(data.value || []);
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Menu) => { return item.id == id; });
+
+		value.push(hash);
+		onChange(value);
+
+		if (menu) {
+			menu.param.data.value = value;
+			commonStore.menuUpdate(id, menu.param);
+		};
 	};
 
 };
