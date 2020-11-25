@@ -70,7 +70,7 @@ export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
 	readOnly: boolean;
-	onOpen?(e: any, data: any): void;
+	onOpen?(e: any, data: any, type: string): void;
 	getData(viewId: string, offset: number): void;
 	getView(): View;
 	onRowAdd?: (e: any) => void;
@@ -95,7 +95,7 @@ export interface Cell {
 	index: number;
 	viewType: I.ViewType;
 	readOnly?: boolean;
-	onOpen?(e: any, data: any): void;
+	onOpen?(e: any, data: any, type: string): void;
 	onChange?(data: any): void;
 	onCellChange?: (id: string, key: string, value: any) => void;
 };

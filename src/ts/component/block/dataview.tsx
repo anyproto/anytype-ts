@@ -15,6 +15,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const { ipcRenderer } = window.require('electron');
 
 @observer
 class BlockDataview extends React.Component<Props, {}> {
@@ -167,8 +168,25 @@ class BlockDataview extends React.Component<Props, {}> {
 		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, record);
 	};
 
-	onOpen (e: any, data: any) {
-		DataUtil.pageOpenPopup(data.id);
+	onOpen (e: any, data: any, type: string) {
+		switch (type) {
+			default:
+				DataUtil.pageOpenPopup(data.id);
+				break;
+
+			case 'image':
+				commonStore.popupOpen('preview', {
+					data: {
+						type: I.FileType.Image,
+						url: commonStore.fileUrl(data.id),
+					}
+				});
+				break;
+
+			case 'file':
+				ipcRenderer.send('urlOpen', commonStore.fileUrl(data.id));
+				break;
+		};
 	};
 
 	resize () {

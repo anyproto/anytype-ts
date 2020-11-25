@@ -122,7 +122,6 @@ class CellText extends React.Component<Props, State> {
 
 			let type = DataUtil.schemaField(data.type && data.type.length ? data.type[0] : '');
 			let icon = null;
-			let canOpen = true;
 
 			switch (type) {
 				default:
@@ -132,7 +131,6 @@ class CellText extends React.Component<Props, State> {
 				case 'image':
 				case 'file':
 					icon = <Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />;
-					canOpen = false;
 					break;
 			};
 
@@ -140,7 +138,7 @@ class CellText extends React.Component<Props, State> {
 				<React.Fragment>
 					{icon}
 					<Name name={value} />
-					{canOpen ? <Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} /> : ''}
+					<Icon className="expand" onClick={(e: any) => { onOpen(e, data, type); }} />
 				</React.Fragment>
 			);
 		};
