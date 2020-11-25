@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { InputWithFile } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { InputWithFile, Icon } from 'ts/component';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 
 interface Props extends I.Cell {};
 
@@ -17,23 +17,52 @@ class CellMedia extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, rootId, block, index, readOnly, data } = this.props;
-		const value = (data[index] || {})[relation.key] || [];
-
+		const { relation, rootId, block, index, readOnly, data, onOpen } = this.props;
+		
+		let value = (data[index] || {})[relation.key] || [];
 		if (!value.length) {
 			return <InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />;
 		};
 
-		for (let id of value) {
-			const details = blockStore.getDetails(rootId, id);
-			console.log(details);
-		};
+		value = value.map((it: string) => {
+			return blockStore.getDetails(rootId, it);
+		});
+
+		const File = (item: any) => (
+			<div className="item file" onClick={(e: any) => { this.onOpen(e, item, item.type); }}>
+				<Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />
+				{item.name}
+			</div>
+		);
+
+		const Image = (item: any) => (
+			<div className="item image" onClick={(e: any) => { this.onOpen(e, item, item.type); }}>
+				<img src={commonStore.imageUrl(item.id, 20)} className="preview" />
+			</div>
+		);
 
 		return (
 			<React.Fragment>
-				{value.join('<br/>')}
+				{value.map((item: any, i: number) => {
+					const type = DataUtil.schemaField(item.type && item.type.length ? item.type[0] : '');
+					switch (type) {
+						case 'file':
+							return <File key={i} {...item} type={type} />;
+
+						case 'image':
+							return <Image key={i} {...item} type={type} />;
+					};
+				})}
 			</React.Fragment>
 		);
+	};
+
+	onOpen (e: any, item: any, type: string) {	
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { onOpen } = this.props;
+		onOpen(e, item, item.type);
 	};
 
 	onChangeUrl (e: any, url: string) {

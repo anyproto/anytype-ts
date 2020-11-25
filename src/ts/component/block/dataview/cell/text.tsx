@@ -39,6 +39,7 @@ class CellText extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { index, relation, onOpen, readOnly, viewType } = this.props;
 		const data = this.props.data[index];
+		const type = DataUtil.schemaField(data.type && data.type.length ? data.type[0] : '');
 
 		let Name = null;
 		let EditorComponent = null;
@@ -120,7 +121,6 @@ class CellText extends React.Component<Props, State> {
 				value = value || Constant.default.name;
 			};
 
-			let type = DataUtil.schemaField(data.type && data.type.length ? data.type[0] : '');
 			let icon = null;
 
 			switch (type) {
