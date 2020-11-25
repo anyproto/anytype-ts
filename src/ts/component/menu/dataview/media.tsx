@@ -5,6 +5,7 @@ import { Icon, InputWithFile } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
+import arrayMove from 'array-move';
 
 interface Props extends I.Menu {};
 
@@ -18,6 +19,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
+		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 	};
@@ -112,13 +114,20 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
     };
     
     onSortEnd (result: any) {
+		const { oldIndex, newIndex } = result;
+		const { param } = this.props;
+		const { data } = param;
+		
+		let value = Util.objectCopy(data.value || []);
+		value = arrayMove(value, oldIndex, newIndex);
 
+		this.save(value);
     };
 
 	onChangeUrl (e: any, url: string) {
 		C.UploadFile(url, '', I.FileType.None, false, (message: any) => {
 			if (!message.error.code) {
-				this.save(message.hash);
+				this.add(message.hash);
 			};
 		});
 	};
@@ -126,20 +135,27 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 	onChangeFile (e: any, path: string) {
 		C.UploadFile('', path, I.FileType.None, false, (message: any) => {
 			if (!message.error.code) {
-				this.save(message.hash);
+				this.add(message.hash);
 			};
 		});
 	};
 
-	save (hash: string) {
+	add (hash: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const value = Util.objectCopy(data.value || []);
+
+		value.push(hash);
+		this.save(value);
+	};	
+
+	save (value: string[]) {
 		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
-		const value = Util.objectCopy(data.value || []);
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == id; });
 
-		value.push(hash);
 		onChange(value);
 
 		if (menu) {
