@@ -24,7 +24,7 @@ class CellMedia extends React.Component<Props, {}> {
 		value = value.filter((it: any) => { return !it._detailsEmpty_; });
 
 		if (!value.length) {
-			return <InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />;
+			return readOnly ? null : <InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />;
 		};
 
 		const File = (item: any) => (
@@ -87,9 +87,11 @@ class CellMedia extends React.Component<Props, {}> {
 
 	save (hash: string) {
 		const { onChange } = this.props;
-		const value = this.getValue();
-
+		
+		let value = this.getValue();
 		value.push(hash);
+		value = Util.arrayUnique(value);
+
 		onChange(value);
 	};
 	

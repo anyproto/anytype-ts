@@ -6,8 +6,8 @@ export interface MenuParam {
 	type: MenuType;
 	vertical: MenuDirection;
 	horizontal: MenuDirection;
-	forceX?: number;
-	forceY?: number;
+	fixedX?: number;
+	fixedY?: number;
 	offsetX: number;
 	offsetY: number;
 	width?: number;

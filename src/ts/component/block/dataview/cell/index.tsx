@@ -144,10 +144,10 @@ class Cell extends React.Component<Props, {}> {
 
 			case I.RelationType.File:
 			case I.RelationType.Media:
-				if (!value) {
+				if (!value.length) {
 					break;
 				};
-				
+
 				param = Object.assign(param, {
 					offsetY: -height + 1,
 					width: width,

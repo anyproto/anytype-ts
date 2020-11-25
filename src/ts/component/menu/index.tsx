@@ -171,7 +171,7 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, offsetX, offsetY, forceX, forceY, isSub } = param;
+		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -241,8 +241,8 @@ class Menu extends React.Component<Props, {}> {
 					break;
 			};
 
-			if (undefined !== forceX) x = forceX;
-			if (undefined !== forceY) y = forceY;
+			if (undefined !== fixedX) x = fixedX;
+			if (undefined !== fixedY) y = fixedY;
 
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);

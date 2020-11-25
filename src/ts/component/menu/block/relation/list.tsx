@@ -69,9 +69,8 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onSelect } = data;
 
-		close();
-
 		if (onSelect) {
+			close();
 			onSelect(item);
 		};
 	};

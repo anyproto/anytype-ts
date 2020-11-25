@@ -146,6 +146,10 @@ class CellSelect extends React.Component<Props, State> {
 	focus () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const filter = node.find('#filter');
+		if (!filter.length) {
+			return;
+		};
+
 		const length = filter.text().length;
 
 		filter.focus();

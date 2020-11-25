@@ -191,8 +191,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 					element: node,
 					offsetX: 0,
 					offsetY: 0,
-					forceX: offset.left,
-					forceY: offset.top,
+					fixedX: offset.left,
+					fixedY: offset.top,
 					vertical: I.MenuDirection.Top,
 					horizontal: I.MenuDirection.Center,
 				});

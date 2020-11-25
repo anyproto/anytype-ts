@@ -6,6 +6,13 @@
 		.item:hover::before { opacity: 0.15; }
 	}
 
+	.menu.menuBlockRelationList.isReadOnly { position: fixed; }
+	.menu.menuBlockRelationList.isReadOnly { 
+		.item { cursor: default; }
+		.item:hover::before { opacity: 0; }
+		.cell.c-select { cursor: default; }
+	}
+
 	.menu.menuBlockRelationList { width: 640px; }
 	.menu.menuBlockRelationList {
 		.content { max-height: 338px; padding: 12px 0px; }

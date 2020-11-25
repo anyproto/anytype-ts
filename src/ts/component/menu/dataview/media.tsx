@@ -143,9 +143,11 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 	add (hash: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const value = Util.objectCopy(data.value || []);
 
+		let value = Util.objectCopy(data.value || []);
 		value.push(hash);
+		value = Util.arrayUnique(value);
+
 		this.save(value);
 	};	
 

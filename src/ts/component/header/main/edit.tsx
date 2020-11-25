@@ -174,9 +174,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			element: '#button-header-relation',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
-			offsetY: 8,
+			offsetY: 0,
+			fixedY: 38,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
+			className: 'isReadOnly',
 			data: {
 				relationKey: '',
 				readOnly: false,
