@@ -31,7 +31,6 @@ export enum RelationType {
 	Url			 = 8,
 	Email		 = 9,
 	Phone		 = 10,
-	Media		 = 11,
 	Object		 = 100,
 };
 

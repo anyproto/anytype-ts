@@ -43,14 +43,8 @@ class CellSelect extends React.Component<Props, State> {
 
 		const { selectDict } = relation;
 
-		let value: any = data[index][relation.key];
-		if (!value || ('object' != typeof(value))) {
-			value = [];
-		};
-
-		value = value.map((id: string, i: number) => {
-			return { id: id };
-		});
+		let value: any = this.getValue();
+		value = value.map((id: string, i: number) => { return { id: id }; });
 		value = value.filter((it: any) => { return it.id; });
 
 		const render = ({ tag, index }) => {
@@ -140,7 +134,8 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onSort (value: any[]) {
-		this.setValue(value.map((it: any) => { return it.text; }), '');
+		const { onChange } = this.props;
+		onChange(value.map((it: any) => { return it.id; }));
 	};
 
 	focus () {
@@ -176,7 +171,7 @@ class CellSelect extends React.Component<Props, State> {
 			return;
 		};
 
-		const value = data[index][relation.key] || [];
+		const value = this.getValue();
 		const node = $(ReactDOM.findDOMNode(this));
 		const text = node.find('#filter').text();
 
@@ -202,16 +197,15 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
-		const { relation, block, index, data } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const filter = node.find('#filter');
-		const value = data[index][relation.key] || [];
+		const value = this.getValue();
 		const length = filter.text().length;
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.setValue(value, filter.text());
+			this.add(value, filter.text());
 			filter.html('');
 		});
 
@@ -225,16 +219,15 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: any) {
-		const { relation, block, index, data } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const filter = node.find('#filter');
 		const text = filter.text();
-		const value = data[index][relation.key] || [];
+		const value = this.getValue();
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.setValue(value, text);
+			this.add(value, text);
 			filter.text('');
 		});
 
@@ -242,8 +235,11 @@ class CellSelect extends React.Component<Props, State> {
 		this.placeHolderCheck();
 	};
 
-	onRemove (e: any, text: string) {
-		this.remove(text);
+	onRemove (e: any, id: string) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.remove(id);
 	};
 
 	updateMenuFilter (text: string) {
@@ -256,25 +252,23 @@ class CellSelect extends React.Component<Props, State> {
 		};
 	};
 
-	remove (text: string) {
+	getValue () {
 		const { relation, block, index } = this.props;
 		const data = dbStore.getData(block.id);
-		
-		let value = data[index][relation.key] || [];
-		value = value.filter((it: string) => { return it != text });
-		this.setValue(value, '');
+
+		let value = data[index][relation.key];
+		if (!value || ('object' != typeof(value))) {
+			value = [];
+		};
+		return Util.objectCopy(value);
 	};
 
-	setValue (value: string[], text: string) {
+	add (value: string[], text: string) {
 		const { rootId, block, relation, onChange } = this.props;
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
-		const colors = DataUtil.menuGetBgColors();
 		
 		text = String(text || '').trim();
-		value = value && ('object' == typeof(value)) ? value : [];
-		value = Util.objectCopy(value);
-
 		if (!text) {
 			return;
 		};
@@ -291,7 +285,7 @@ class CellSelect extends React.Component<Props, State> {
 				menu.param.data.relation = observable.box(relation);
 				commonStore.menuUpdate(MENU_ID, menu.param);
 			};
-		}
+		};
 
 		if (option) {
 			cb();
@@ -312,6 +306,16 @@ class CellSelect extends React.Component<Props, State> {
 				cb();
 			});
 		};
+	};
+
+	remove (id: string) {
+		const { onChange } = this.props;
+
+		let value = this.getValue();
+		value = value.filter((it: string) => { return it != id; });
+		value = Util.arrayUnique(value);
+
+		onChange(value);
 	};
 
 };

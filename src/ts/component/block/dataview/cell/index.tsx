@@ -8,7 +8,7 @@ import CellText from './text';
 import CellSelect from './select';
 import CellBool from './checkbox';
 import CellObject from './object';
-import CellMedia from './media';
+import CellFile from './file';
 
 interface Props extends I.Cell {};
 
@@ -52,8 +52,7 @@ class Cell extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.File:
-			case I.RelationType.Media:
-				CellComponent = CellMedia;
+				CellComponent = CellFile;
 				break;
 				
 			case I.RelationType.Object:
@@ -143,7 +142,6 @@ class Cell extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.File:
-			case I.RelationType.Media:
 				if (!value.length) {
 					break;
 				};

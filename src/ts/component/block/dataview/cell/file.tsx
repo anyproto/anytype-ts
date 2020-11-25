@@ -7,7 +7,7 @@ import { commonStore, blockStore } from 'ts/store';
 interface Props extends I.Cell {};
 
 @observer
-class CellMedia extends React.Component<Props, {}> {
+class CellFile extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -56,9 +56,14 @@ class CellMedia extends React.Component<Props, {}> {
 		);
 	};
 
-	getValue (): string[] {
+	getValue () {
 		const { relation, index, data } = this.props;
-		return Util.objectCopy((data[index] || {})[relation.key] || []);
+
+		let value = data[index][relation.key];
+		if (!value || ('object' != typeof(value))) {
+			value = [];
+		};
+		return Util.objectCopy(value);
 	};
 
 	onOpen (e: any, item: any, type: string) {	
@@ -97,4 +102,4 @@ class CellMedia extends React.Component<Props, {}> {
 	
 };
 
-export default CellMedia;
+export default CellFile;
