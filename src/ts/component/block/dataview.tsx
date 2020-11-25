@@ -178,7 +178,7 @@ class BlockDataview extends React.Component<Props, {}> {
 				commonStore.popupOpen('preview', {
 					data: {
 						type: I.FileType.Image,
-						url: commonStore.fileUrl(data.id),
+						url: commonStore.imageUrl(data.id, Constant.size.image),
 					}
 				});
 				break;

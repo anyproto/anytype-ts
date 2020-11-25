@@ -129,6 +129,9 @@ class CellText extends React.Component<Props, State> {
 					break;
 
 				case 'image':
+					icon = <img src={commonStore.imageUrl(data.id, 20)} className="preview" />;
+					break;
+
 				case 'file':
 					icon = <Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />;
 					break;

@@ -81,7 +81,8 @@
 			
 			.cellContent {
 				.smile { margin: 0px 4px 0px 0px; }
-				.icon.file-type { width: 20px; height: 20px; margin-right: 4px; transition: none; vertical-align: top; }
+				.icon.file-type, .preview { width: 20px; height: 20px; margin-right: 4px; transition: none; vertical-align: top; }
+
 				.name { display: inline-block; vertical-align: top; }
 				.name:empty { display: none; }
 				span:empty { display: none; }
