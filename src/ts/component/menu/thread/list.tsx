@@ -20,7 +20,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 		super(props);
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 	
 	render () {
@@ -36,7 +35,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 				id={'item-' + item.id} 
 				className="item" 
 				onMouseEnter={(e: any) => { this.onMouseEnter(item.id, false); }}
-				onMouseLeave={this.onMouseLeave}
 			>
 				<IconUser className="c18" {...item} />
 				<div className="info">
@@ -57,7 +55,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 					id="item-cafe" 
 					className="item" 
 					onMouseOver={(e: any) => { this.onMouseEnter('cafe', true); }} 
-					onMouseLeave={this.onMouseLeave}
 				>
 					<Icon className="cafe" />
 					<div className="info">
@@ -84,9 +81,11 @@ class MenuThreadList extends React.Component<Props, {}> {
 		obj.unbind('mouseleave').on('mouseleave', () => {
 			window.clearTimeout(this.timeoutClose);
 			this.timeoutClose = window.setTimeout(() => {
-				window.clearTimeout(this.timeoutMenu);
-				commonStore.menuClose(this.props.id);
-				commonStore.menuClose('threadStatus');
+				if (!commonStore.menuIsOpen('threadStatus')) {
+					window.clearTimeout(this.timeoutMenu);
+					commonStore.menuClose(this.props.id);
+					commonStore.menuClose('threadStatus');
+				};
 			}, 1000);
 		});
 	};
@@ -132,10 +131,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 		}, Constant.delay.menu);
 	};
 	
-	onMouseLeave (e: any) {
-		commonStore.menuClose('threadStatus');
-	};
-
 };
 
 export default MenuThreadList;
