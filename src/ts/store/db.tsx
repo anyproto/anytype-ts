@@ -4,8 +4,8 @@ import { I, DataUtil } from 'ts/lib';
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
 	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable.map(new Map());
-	public relationMap: Map<string, any> = observable(new Map());
-	public dataMap: Map<string, any> = new Map();
+	public relationMap: Map<string, any> = observable.map(new Map());
+	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 
 	@action
@@ -98,22 +98,7 @@ class DbStore {
 	};
 
 	@action
-	setData (blockId: string, list: any[]) {
-		list = list.map((it: any) => {
-			it = observable(it);
-			intercept(it as any, (change: any) => {
-				if (change.newValue === it[change.name]) {
-					return null;
-				};
-				return change;
-			});
-			return it;
-		});
-		this.dataMap.set(blockId, observable.array(list));
-	};
-
-	@action
-	setMeta (blockId: string, meta: any) {
+	metaSet (blockId: string, meta: any) {
 		const data = this.metaMap.get(blockId);
 
 		if (data) {
@@ -134,13 +119,28 @@ class DbStore {
 	};
 
 	@action
+	recordsSet (blockId: string, list: any[]) {
+		list = list.map((obj: any) => {
+			obj = observable(obj);
+			intercept(obj as any, (change: any) => {
+				if (JSON.stringify(change.newValue) === JSON.stringify(obj[change.name])) {
+					return null;
+				};
+				return change;
+			});
+			return obj;
+		});
+
+		this.dataMap.set(blockId, observable.array(list));
+	};
+
+	@action
 	recordAdd (blockId: string, obj: any) {
 		const data = this.getData(blockId);
-
 		obj = observable(obj);
 
 		intercept(obj as any, (change: any) => {
-			if (change.newValue === obj[change.name]) {
+			if (JSON.stringify(change.newValue) === JSON.stringify(obj[change.name])) {
 				return null;
 			};
 			return change;

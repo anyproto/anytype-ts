@@ -15,7 +15,10 @@ class CellCheckbox extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { index, getRecord } = this.props;
+		const record = getRecord(index);
 		const value = this.getValue();
+
 		return <Icon className={[ 'checkbox', (value ? 'active' : '') ].join(' ')} />;
 	};
 

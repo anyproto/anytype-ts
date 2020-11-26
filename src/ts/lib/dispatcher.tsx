@@ -443,18 +443,9 @@ class Dispatcher {
 						break;
 					};
 
-					data.records = data.getRecordsList() || [];
-
-					let list = [];
-					for (let item of data.records) {
-						list.push(Decode.decodeStruct(item) || {});
-					};
-
-					dbStore.setData(id, list);
-					dbStore.setMeta(id, {
-						viewId: data.getViewid(),
-						total: data.getTotal(),
-					});
+					data.records = (data.getRecordsList() || []).map((it: any) => { return Decode.decodeStruct(it) || {}; });
+					dbStore.recordsSet(id, data.records);
+					dbStore.metaSet(id, { viewId: data.getViewid(), total: data.getTotal() });
 					break;
 
 				case 'blockDataviewRecordsInsert':

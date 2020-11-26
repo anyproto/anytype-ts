@@ -32,10 +32,11 @@ class Cell extends React.Component<Props, {}> {
 
 	render () {
 		const { relation } = this.props;
-		const cn = [ 'cellContent', 'c-' + DataUtil.relationClass(relation.format), (!relation.isReadOnly ? 'canEdit' : '') ];
+		const { format, isReadOnly } = relation;
+		const cn = [ 'cellContent', 'c-' + DataUtil.relationClass(format), (!isReadOnly ? 'canEdit' : '') ];
 
 		let CellComponent: React.ReactType<Props>;
-		switch (relation.format) {
+		switch (format) {
 			default:
 			case I.RelationType.Title:
 			case I.RelationType.Number:
