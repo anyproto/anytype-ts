@@ -62,8 +62,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		const { path } = authStore;
-		const phrase = Storage.get('phrase');
+		const { path, phrase } = authStore;
 		
 		authStore.accountClear();
 		

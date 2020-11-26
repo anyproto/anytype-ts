@@ -10,3 +10,4 @@ done.md
 commands.md
 .idea
 tools
+dist/*.node

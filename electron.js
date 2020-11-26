@@ -15,10 +15,12 @@ const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
 const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
+const keytar = require('keytar');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 960;
 const MIN_HEIGHT = 640;
+const KEYTAR_SERVICE = 'Anytype';
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
@@ -257,6 +259,22 @@ function createWindow () {
 	ipcMain.on('appLoaded', () => {
 		send('dataPath', dataPath.join('/'));
 		send('config', config);
+	});
+
+	ipcMain.on('keytarSet', (e, key, value) => {
+		if (key && value) {
+			keytar.setPassword(KEYTAR_SERVICE, key, value);
+		};
+	});
+
+	ipcMain.on('keytarGet', (e, key) => {
+		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => {
+			send('keytarGet', key, value);
+		});
+	});
+
+	ipcMain.on('keytarDelete', (e, key) => {
+		keytar.deletePassword(KEYTAR_SERVICE, key);
 	});
 
 	ipcMain.on('exit', (e, relaunch) => {
