@@ -36,7 +36,7 @@ class ViewList extends React.Component<Props, {}> {
 			<div className="wrap">
 				<div className="viewItem viewList">
 					{data.map((item: any, i: number) => (
-						<Row key={'list-row-' + i} index={i} {...this.props} />
+						<Row key={'list-row-' + i} {...this.props} index={i}  />
 					))}
 				</div>
 

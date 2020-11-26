@@ -71,10 +71,12 @@ export interface ViewComponent {
 	block: I.Block;
 	readOnly: boolean;
 	onOpen?(e: any, data: any, type: string): void;
+	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
 	getRecord(index: number): any;
 	getView(): View;
 	onRowAdd?: (e: any) => void;
+	onCellClick?(e: any, key: string, index: number): void;
 	onCellChange?: (id: string, key: string, value: any) => void;
 };
 
@@ -98,6 +100,7 @@ export interface Cell {
 	getRecord(index: number): any;
 	onOpen?(e: any, data: any, type: string): void;
 	onChange?(data: any): void;
+	onClick?(e: any): void;
 	onCellChange?: (id: string, key: string, value: any) => void;
 };
 

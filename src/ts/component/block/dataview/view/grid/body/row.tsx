@@ -8,8 +8,8 @@ interface Props extends I.ViewComponent {
 	index: number;
 	readOnly: boolean;
 	onRowOver(index: number): void;
-	onRef(ref: any, id: string): void;
-	onCellClick(e: any, key: string, index: number): void;
+	onRef?(ref: any, id: string): void;
+	onCellClick?(e: any, key: string, index: number): void;
 };
 
 @observer

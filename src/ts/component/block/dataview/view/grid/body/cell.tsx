@@ -10,8 +10,8 @@ interface Props {
 	index: number;
 	readOnly: boolean;
 	getRecord(index: number): any;
-	onRef(ref: any, id: string): void;
-	onCellClick(e: any, key: string, index: number): void;
+	onRef?(ref: any, id: string): void;
+	onCellClick?(e: any, key: string, index: number): void;
 	onCellChange?(id: string, key: string, value: any): void;
 };
 

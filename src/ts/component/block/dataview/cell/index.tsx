@@ -31,7 +31,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation } = this.props;
+		const { relation, onClick } = this.props;
 		const { format, isReadOnly } = relation;
 		const cn = [ 'cellContent', 'c-' + DataUtil.relationClass(format), (!isReadOnly ? 'canEdit' : '') ];
 
@@ -69,7 +69,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div className={cn.join(' ')} onClick={onClick}>
 				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} onChange={this.onChange} />
 			</div>
 		);
@@ -150,6 +150,9 @@ class Cell extends React.Component<Props, {}> {
 				param = Object.assign(param, {
 					offsetY: -height + 1,
 					width: width,
+				});
+				param.data = Object.assign(param.data, {
+					value: value || [],
 				});
 
 				menuId = 'dataviewMedia';

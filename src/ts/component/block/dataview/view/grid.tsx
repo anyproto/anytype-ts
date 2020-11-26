@@ -17,20 +17,17 @@ const Constant = require('json/constant.json');
 @observer
 class ViewGrid extends React.Component<Props, {}> {
 
-	cellRefs: Map<string, any> = new Map();
-
 	constructor (props: any) {
 		super (props);
 
 		this.onRowOver = this.onRowOver.bind(this);
-		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
 	render () {
-		const { block, getData, getView, readOnly, onRowAdd } = this.props;
+		const { block, getData, getView, readOnly, onRowAdd, onCellClick, onRef } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(block.id);
@@ -59,10 +56,9 @@ class ViewGrid extends React.Component<Props, {}> {
 							{data.map((item: any, i: number) => (
 								<BodyRow 
 									key={'grid-row-' + i} 
-									{...this.props} index={i} 
-									onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
+									{...this.props} 
+									index={i} 
 									onRowOver={this.onRowOver} 
-									onCellClick={this.onCellClick}
 								/>
 							))}
 							{!readOnly ? (
@@ -248,23 +244,6 @@ class ViewGrid extends React.Component<Props, {}> {
 				getView: getView,
 			},
 		});
-	};
-
-	onCellClick (e: any, key: string, index: number) {
-		const { getView } = this.props;
-		const view = getView();
-		const relation = view.relations.find((it: any) => { return it.key == key; });
-
-		if (relation.isReadOnly) {
-			return;
-		};
-
-		const id = DataUtil.cellId('cell', key, index);
-		const ref = this.cellRefs.get(id);
-
-		if (ref) {
-			ref.onClick(e);
-		};
 	};
 
 	onSortEnd (result: any) {

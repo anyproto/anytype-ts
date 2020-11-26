@@ -17,14 +17,16 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, rootId, block, index, readOnly, onOpen } = this.props;
+		const { relation, rootId, block, readOnly, viewType } = this.props;
 		
+		let canEdit = !relation.isReadOnly && (viewType == I.ViewType.Grid);
 		let value = this.getValue();
+
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
 		value = value.filter((it: any) => { return !it._detailsEmpty_; });
 
 		if (!value.length) {
-			return readOnly ? null : (
+			return !canEdit ? null : (
 				<InputWithFile 
 					block={block} 
 					icon="file" 

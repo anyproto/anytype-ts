@@ -21,6 +21,7 @@ const { ipcRenderer } = window.require('electron');
 class BlockDataview extends React.Component<Props, {}> {
 
 	viewRef: any = null;
+	cellRefs: Map<string, any> = new Map();
 
 	constructor (props: any) {
 		super(props);
@@ -30,6 +31,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
 		this.onRowAdd = this.onRowAdd.bind(this);
+		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 	};
 
@@ -84,6 +86,7 @@ class BlockDataview extends React.Component<Props, {}> {
 				<div className="content">
 					<ViewComponent 
 						ref={(ref: any) => { this.viewRef = ref; }} 
+						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
 						onOpen={this.onOpen} 
 						readOnly={readOnly} 
@@ -91,6 +94,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						getRecord={this.getRecord}
 						getView={this.getView} 
 						onRowAdd={this.onRowAdd}
+						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 					/>
 				</div>
@@ -155,6 +159,26 @@ class BlockDataview extends React.Component<Props, {}> {
 			};
 			dbStore.recordAdd(block.id, message.record);
 		});
+	};
+
+	onCellClick (e: any, key: string, index: number) {
+		const view = this.getView();
+		const relation = view.relations.find((it: any) => { return it.key == key; });
+
+		console.log(key, index);
+
+		if (relation.isReadOnly) {
+			return;
+		};
+
+		const id = DataUtil.cellId('cell', key, index);
+		const ref = this.cellRefs.get(id);
+
+		console.log(ref, this.cellRefs);
+
+		if (ref) {
+			ref.onClick(e);
+		};
 	};
 
 	onCellChange (id: string, key: string, value: any) {
