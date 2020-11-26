@@ -36,12 +36,12 @@ let tray = null;
 let menu = null;
 let csp = [
 	"default-src 'self' 'unsafe-eval'",
-	"img-src 'self' http://127.0.0.1:* http://*:* https://*:* data: blob:",
-	"media-src 'self' http://127.0.0.1:* http://*:* https://*:* data: blob:",
-	"style-src 'unsafe-inline' http://localhost:*",
-	"font-src data:",
+	"img-src 'self' http://*:* https://*:* data: blob: file://*",
+	"media-src 'self' http://*:* https://*:* data: blob: file://*",
+	"style-src 'unsafe-inline' http://localhost:* file://*",
+	"font-src data: file://*",
 	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
+	"script-src-elem file://* http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
 let autoUpdate = false;
@@ -187,6 +187,7 @@ function createWindow () {
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
 		webPreferences: {
+			enableRemoteModule: true,
 			nodeIntegration: true
 		},
 	};
@@ -357,8 +358,8 @@ function menuInit () {
 					label: 'About Anytype',
 					click: () => {
 						openAboutWindow({
-							icon_path: __dirname + '/electron/icon.png',
-							css_path: __dirname + '/electron/about.css',
+							icon_path: path.join(__dirname, '/electron/icon.png'),
+							css_path: path.join(__dirname, '/electron/about.css'),
 							product_name: 'Anytype',
 							description: 'Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.',
 							copyright: 'Copyright (c) 2020 Anytype',

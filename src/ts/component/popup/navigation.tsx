@@ -197,6 +197,8 @@ class PopupNavigation extends React.Component<Props, State> {
 						<Icon className="home big" />
 					</div>
 				);
+
+				name = 'Home';
 				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
