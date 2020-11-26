@@ -28,9 +28,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 	render () {
 		const { cover } = commonStore;
 		const { error } = this.state;
-		//const { accounts } = authStore;
-
-		const accounts = [];
+		const { accounts } = authStore;
 
 		const Item = (item: any) => (
 			<div className="item" onClick={(e) => { this.onSelect(item as I.Account); }}>
