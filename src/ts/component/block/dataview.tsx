@@ -27,6 +27,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		
 		this.onOpen = this.onOpen.bind(this);
 		this.getData = this.getData.bind(this);
+		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
 		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -77,6 +78,7 @@ class BlockDataview extends React.Component<Props, {}> {
 					readOnly={readOnly} 
 					getData={this.getData} 
 					getView={this.getView} 
+					getRecord={this.getRecord}
 					onRowAdd={this.onRowAdd}
 				/>
 				<div className="content">
@@ -86,6 +88,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						onOpen={this.onOpen} 
 						readOnly={readOnly} 
 						getData={this.getData} 
+						getRecord={this.getRecord}
 						getView={this.getView} 
 						onRowAdd={this.onRowAdd}
 						onCellChange={this.onCellChange}
@@ -127,6 +130,13 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		commonStore.menuCloseAll();
 		win.trigger('resize.editor');
+	};
+
+	getRecord (index: number) {
+		const { block } = this.props;
+		const data = dbStore.getData(block.id);
+
+		return data[index];
 	};
 
 	getView () {

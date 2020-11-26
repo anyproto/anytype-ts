@@ -54,8 +54,7 @@ class Column extends React.Component<Props, {}> {
 						block={block}
 						relation={group} 
 						viewType={I.ViewType.Board}
-						data={[ head ]}
-						index={0}
+						getRecord={() => { return head; }}
 						readOnly={true} 
 					/>
 				</div>

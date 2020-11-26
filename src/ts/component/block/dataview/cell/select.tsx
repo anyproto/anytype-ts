@@ -34,7 +34,7 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { index, rootId, block, readOnly, data } = this.props;
+		const { index, rootId, block, readOnly } = this.props;
 		const { editing } = this.state;
 		const relation = dbStore.getRelation(block.id, this.props.relation.key);
 		if (!relation) {
@@ -164,7 +164,7 @@ class CellSelect extends React.Component<Props, State> {
 			return;
 		};
 
-		const { relation, index, data, readOnly } = this.props;
+		const { readOnly } = this.props;
 		
 		if (readOnly) {
 			this.placeHolderHide();
@@ -253,10 +253,10 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	getValue () {
-		const { relation, block, index } = this.props;
-		const data = dbStore.getData(block.id);
+		const { relation, index, getRecord } = this.props;
+		const record = getRecord(index);
 
-		let value = data[index][relation.key];
+		let value = record[relation.key];
 		if (!value || ('object' != typeof(value))) {
 			value = [];
 		};

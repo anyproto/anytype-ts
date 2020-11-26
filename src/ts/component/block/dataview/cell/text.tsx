@@ -37,13 +37,13 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, onOpen, readOnly, viewType } = this.props;
-		const data = this.props.data[index];
-		const type = DataUtil.schemaField(data.type && data.type.length ? data.type[0] : '');
+		const { index, relation, onOpen, readOnly, viewType, getRecord } = this.props;
+		const record = getRecord(index);
+		const type = DataUtil.schemaField(record.type && record.type.length ? record.type[0] : '');
 
 		let Name = null;
 		let EditorComponent = null;
-		let value = data[relation.key];
+		let value = String(record[relation.key] || '');
 
 		if (editing) {
 			if (relation.format == I.RelationType.Description) {
@@ -61,7 +61,8 @@ class CellText extends React.Component<Props, State> {
 				EditorComponent = (item: any) => (
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
-						id="input" {...item} 
+						id="input" 
+						{...item} 
 						mask={mask.join(' ')} 
 						placeHolder={placeHolder.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
@@ -97,11 +98,11 @@ class CellText extends React.Component<Props, State> {
 					format.push(DataUtil.timeFormat(relation.timeFormat));
 				};
 
-				value = value ? Util.date(format.join(' '), value) : '';
+				value = value ? Util.date(format.join(' '), Number(value)) : '';
 			};
 		};
 
-		let content: any = <Name name={value} />;
+		let content: any = null;
 
 		if (relation.key == 'name') {
 			let cn = 'c20';
@@ -127,15 +128,23 @@ class CellText extends React.Component<Props, State> {
 
 			switch (type) {
 				default:
-					icon = <Smile id={[ relation.key, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />;
+					icon = (
+						<Smile 
+							id={[ relation.key, record.id ].join('-')} 
+							icon={record.iconEmoji} 
+							hash={record.iconImage} 
+							className={cn} size={size} canEdit={!readOnly} offsetY={4} 
+							onSelect={this.onSelect} onUpload={this.onUpload} 
+						/>
+					);
 					break;
 
 				case 'image':
-					icon = <img src={commonStore.imageUrl(data.id, 20)} className="preview" />;
+					icon = <img src={commonStore.imageUrl(record.id, 20)} className="preview" />;
 					break;
 
 				case 'file':
-					icon = <Icon className={[ 'file-type', Util.fileIcon(data) ].join(' ')} />;
+					icon = <Icon className={[ 'file-type', Util.fileIcon(record) ].join(' ')} />;
 					break;
 			};
 
@@ -143,9 +152,11 @@ class CellText extends React.Component<Props, State> {
 				<React.Fragment>
 					{icon}
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { onOpen(e, data, type); }} />
+					<Icon className="expand" onClick={(e: any) => { onOpen(e, record, type); }} />
 				</React.Fragment>
 			);
+		} else {
+			content = <Name name={value} />;
 		};
 
 		return content;
@@ -153,19 +164,18 @@ class CellText extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { editing } = this.state;
-		const { id, relation, index } = this.props;
+		const { id, relation, index, getRecord } = this.props;
 		const cellId = DataUtil.cellId('cell', relation.key, id);
 		const cell = $('#' + cellId);
-		const data = this.props.data[index];
+		const record = getRecord(index);
 
 		if (editing) {
-			let value = String(data[relation.key] || '');
+			let value = String(record[relation.key] || '');
+			let input = cell.find('#input');
+
 			if (relation.format == I.RelationType.Date) {
 				value = value ? Util.date('d.m.Y', Number(value)) : '';
 			};
-
-			let input = cell.find('#input');
-			let length = value.length;
 
 			this.ref.focus();
 			this.ref.setValue(value);
@@ -173,6 +183,7 @@ class CellText extends React.Component<Props, State> {
 			cell.addClass('isEditing');
 
 			if (input.length) {
+				let length = value.length;
 				input.get(0).setSelectionRange(length, length);
 			};
 		} else {
@@ -257,17 +268,17 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onSelect (icon: string) {
-		const { index } = this.props;
-		const data = this.props.data[index];
+		const { index, getRecord } = this.props;
+		const record = getRecord(index);
 
-		DataUtil.pageSetIcon(data.id, icon, '');
+		DataUtil.pageSetIcon(record.id, icon, '');
 	};
 
 	onUpload (hash: string) {
-		const { index } = this.props;
-		const data = this.props.data[index];
+		const { index, getRecord } = this.props;
+		const record = getRecord(index);
 
-		DataUtil.pageSetIcon(data.id, '', hash);
+		DataUtil.pageSetIcon(record.id, '', hash);
 	};
 
 	resize () {

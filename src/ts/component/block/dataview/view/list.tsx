@@ -13,7 +13,7 @@ const Constant = require('json/constant.json');
 class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readOnly, getData, getView } = this.props;
+		const { rootId, block, readOnly, getData, getRecord, getView } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(block.id);
@@ -25,14 +25,11 @@ class ViewList extends React.Component<Props, {}> {
 					{relations.map((relation: any, i: number) => (
 						<Cell 
 							key={'list-cell-' + relation.key} 
+							{...this.props}
 							id={item.index} 
-							rootId={rootId}
-							block={block}
 							relation={...relation} 
 							viewType={I.ViewType.List}
-							data={data} 
 							index={item.index}
-							readOnly={readOnly}
 						/>
 					))}
 				</div>

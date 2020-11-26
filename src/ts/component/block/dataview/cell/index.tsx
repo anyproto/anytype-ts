@@ -17,6 +17,10 @@ const { ipcRenderer } = window.require('electron');
 
 class Cell extends React.Component<Props, {}> {
 
+	public static defaultProps = {
+		index: 0,
+	};
+
 	ref: any = null;
 	
 	constructor (props: any) {
@@ -73,7 +77,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { id, relation, rootId, block, index, data } = this.props;
+		const { id, relation, rootId, block, index, getRecord } = this.props;
 
 		if (relation.isReadOnly) {
 			return;
@@ -83,8 +87,8 @@ class Cell extends React.Component<Props, {}> {
 		const cell = $('#' + cellId);
 		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
 		const height = cell.outerHeight();
-		const item = data[index] || {};
-		const value = item[relation.key] || '';
+		const record = getRecord(index);
+		const value = record[relation.key] || '';
 		const page = $('.pageMainEdit');
 		const setOn = () => {
 			if (!this.ref) {
@@ -243,10 +247,11 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	onChange (value: any) {
-		const { relation, onCellChange, data, index } = this.props;
+		const { relation, onCellChange, index, getRecord } = this.props;
+		const record = getRecord(index);
 
 		if (onCellChange) {
-			onCellChange(data[index].id, relation.key, value);
+			onCellChange(record.id, relation.key, value);
 		};
 	};
 	

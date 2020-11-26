@@ -9,17 +9,16 @@ interface Props extends I.Cell {};
 class CellObject extends React.Component<Props, {}> {
 
 	render () {
-		const { relation, index } = this.props;
-		const data = this.props.data[index][relation.key];
+		const { relation, index, getRecord } = this.props;
+		const record = getRecord(index);
+		const value = record[relation.key] || [];
 
-		if (!data) {
+		if (!value.length) {
 			return null;
 		};
-		
+
 		return (
 			<React.Fragment>
-				<IconUser className="c18" {...data} />
-				{data.name}
 			</React.Fragment>
 		);
 	};

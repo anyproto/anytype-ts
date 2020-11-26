@@ -25,12 +25,10 @@ class ViewGallery extends React.Component<Props, {}> {
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'gallery-cell-' + relation.key} 
+						{...this.props}
 						id={item.index} 
-						rootId={rootId}
-						block={block}
 						relation={...relation} 
 						viewType={I.ViewType.Gallery}
-						data={data} 
 						index={item.index}
 						readOnly={readOnly} 
 					/>

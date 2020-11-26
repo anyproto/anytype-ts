@@ -17,7 +17,7 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, rootId, block, index, readOnly, data, onOpen } = this.props;
+		const { relation, rootId, block, index, readOnly, onOpen } = this.props;
 		
 		let value = this.getValue();
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
@@ -57,9 +57,10 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	getValue () {
-		const { relation, index, data } = this.props;
+		const { relation, index, getRecord } = this.props;
+		const record = getRecord(index);
 
-		let value = data[index][relation.key];
+		let value = record[relation.key];
 		if (!value || ('object' != typeof(value))) {
 			value = [];
 		};

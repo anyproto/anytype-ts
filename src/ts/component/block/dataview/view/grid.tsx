@@ -70,13 +70,10 @@ class ViewGrid extends React.Component<Props, {}> {
 				<td id={id} className={cn.join(' ')} onClick={(e: any) => { this.onCellClick(e, item); }}>
 					<Cell 
 						ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
+						{...this.props}
 						{...item} 
-						rootId={rootId}
-						block={block}
 						id={index} 
 						viewType={I.ViewType.Grid}
-						readOnly={readOnly}
-						onOpen={onOpen}
 						onCellChange={onCellChange}
 					/>
 				</td>
