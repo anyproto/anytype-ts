@@ -349,9 +349,6 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	uiHide () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-
 		$('.footer').css({ opacity: 0 });
 		$('#button-add').css({ opacity: 0 });
 		
@@ -359,7 +356,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		window.clearTimeout(this.timeoutMove);
 		this.timeoutMove = window.setTimeout(() => {
-			win.unbind('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
+			$(window).unbind('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
 		}, 100);
 	};
 
