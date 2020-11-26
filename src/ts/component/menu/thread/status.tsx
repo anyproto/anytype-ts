@@ -34,12 +34,12 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		let cafeFields = [];
 		if (cafe.lastPushSucceed) {
 			cafeFields = [
-				{ key: 'Object is backed up on the server'},
+				{ key: 'The object is fully backed up'},
 				{ key: 'Changes requested', value: Util.timeAgo(cafe.lastPulled) }
 			];
 		} else {
 			cafeFields = [
-				{ key: 'Some local changes are not backed up'},
+				{ key: 'Some changes are not backed up'},
 				{ key: 'Changes requested', value: Util.timeAgo(cafe.lastPulled) }
 			];
 		};
@@ -51,19 +51,14 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		) : (
 			<React.Fragment>
 				<div className="section">
-					<div className="name">My other devices</div>
+					<div className="name">My devices</div>
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
-							let fields = [];
-							if (status == I.ThreadStatus.Synced) {
-								fields.push({ key: 'Edits were made',  value: Util.timeAgo(item.lastEdited) });
-							} else {
-								fields = fields.concat([
-									{ key: item.online ? 'Online' : 'Offline' },
-									{ key: 'Edits were made',  value: Util.timeAgo(item.lastEdited) },
-									{ key: 'Changes requested',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No direct interaction' }
-								]);
-							};
+							const fields = [
+								{ key: 'Direct connection',  value: item.online ? 'Online' : 'Offline' },
+								{ key: 'Changes requested',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction' },
+								{ key: 'Last edit',  value: item.lastEdited ?  Util.timeAgo(item.lastEdited) : 'Without changes' }
+							];
 							return <Item key={i} {...item} fields={fields} />;
 						})}
 					</div>
