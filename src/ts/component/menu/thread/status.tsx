@@ -56,8 +56,8 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
 								{ key: 'Direct connection',  value: item.online ? 'Online' : 'Offline' },
-								{ key: 'Edits were made',  value: item.lastEdited ?  Util.timeAgo(item.lastEdited) : 'No direct interaction' },
-								{ key: 'Changes requested',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No direct interaction' }
+								{ key: 'Changes requested',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction' },
+								{ key: 'Last edit',  value: item.lastEdited ?  Util.timeAgo(item.lastEdited) : 'Without changes' }
 							];
 							return <Item key={i} {...item} fields={fields} />;
 						})}
