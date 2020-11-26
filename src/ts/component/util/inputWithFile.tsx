@@ -153,7 +153,8 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	bind () {
-		if (!this._isMounted) {
+		const { canResize } = this.props;
+		if (!this._isMounted || !canResize) {
 			return;
 		};
 		
@@ -162,7 +163,8 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		if (!this._isMounted) {
+		const { canResize } = this.props;
+		if (!this._isMounted || !canResize) {
 			return;
 		};
 		

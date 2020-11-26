@@ -156,7 +156,7 @@ class CellText extends React.Component<Props, State> {
 				</React.Fragment>
 			);
 		} else {
-			content = <Name name={value} />;
+			content = editing ? <Name name={value} /> : value;
 		};
 
 		return content;
