@@ -165,8 +165,7 @@ class CellText extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { editing } = this.state;
 		const { id, relation, index, getRecord } = this.props;
-		const cellId = DataUtil.cellId('cell', relation.key, id);
-		const cell = $('#' + cellId);
+		const cell = $('#' + id);
 		const record = getRecord(index);
 
 		if (editing) {
@@ -284,8 +283,7 @@ class CellText extends React.Component<Props, State> {
 	resize () {
 		const { id, relation } = this.props;
 		const { editing } = this.state;
-		const cellId = DataUtil.cellId('cell', relation.key, id);
-		const cell = $('#' + cellId);
+		const cell = $('#' + id);
 
 		raf(() => {
 			if (editing) {

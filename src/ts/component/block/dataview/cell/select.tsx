@@ -96,9 +96,8 @@ class CellSelect extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { editing } = this.state;
-		const { id, relation } = this.props;
-		const cellId = DataUtil.cellId('cell', relation.key, id);
-		const cell = $('#' + cellId);
+		const { id } = this.props;
+		const cell = $('#' + id);
 
 		if (editing) {
 			cell.addClass('isEditing');

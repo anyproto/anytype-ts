@@ -121,11 +121,6 @@ class BlockDataview extends React.Component<Props, {}> {
 		const win = $(window);
 
 		dbStore.setMeta(block.id, { viewId: viewId, offset: offset });
-		dbStore.setData(block.id, []);
-
-		const view = this.getView();
-		view.relations = DataUtil.viewGetRelations(block.id, view);
-
 		C.BlockDataviewViewSetActive(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
 
 		commonStore.menuCloseAll();

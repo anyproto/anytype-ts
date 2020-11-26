@@ -178,7 +178,6 @@ class Dispatcher {
 					break;
 
 				case 'blockShow':
-					// Store object types for Sets
 					dbStore.relationsSet(rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
 					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
 					dbStore.objectTypesPerObjectSet((data.getObjecttypesperobjectList() || []).map(Mapper.From.ObjectTypePerObject));

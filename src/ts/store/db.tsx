@@ -5,7 +5,7 @@ class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
 	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable.map(new Map());
 	public relationMap: Map<string, any> = observable(new Map());
-	public dataMap: Map<string, any> = observable.map(new Map());
+	public dataMap: Map<string, any> = new Map();
 	public metaMap: Map<string, any> = new Map();
 
 	@action
@@ -136,7 +136,17 @@ class DbStore {
 	@action
 	recordAdd (blockId: string, obj: any) {
 		const data = this.getData(blockId);
-		data.push(observable(obj));
+
+		obj = observable(obj);
+
+		intercept(obj as any, (change: any) => {
+			if (change.newValue === obj[change.name]) {
+				return null;
+			};
+			return change;
+		});
+
+		data.push(obj);
 	};
 
 	@action

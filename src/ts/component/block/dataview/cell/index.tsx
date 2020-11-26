@@ -83,8 +83,7 @@ class Cell extends React.Component<Props, {}> {
 			return;
 		};
 
-		const cellId = DataUtil.cellId('cell', relation.key, id);
-		const cell = $('#' + cellId);
+		const cell = $('#' + id);
 		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
 		const height = cell.outerHeight();
 		const record = getRecord(index);
@@ -104,7 +103,7 @@ class Cell extends React.Component<Props, {}> {
 
 		let menuId = '';
 		let param: I.MenuParam = { 
-			element: '#' + cellId,
+			element: '#' + id,
 			offsetX: 0,
 			offsetY: 0,
 			type: I.MenuType.Vertical,

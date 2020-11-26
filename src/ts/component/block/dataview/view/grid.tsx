@@ -4,8 +4,10 @@ import { Icon, Pager, Cell } from 'ts/component';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
+
+import HeadRow from './grid/head/row';
+import BodyRow from './grid/body/row';
 
 interface Props extends I.ViewComponent {};
 
@@ -28,111 +30,44 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, onOpen, getData, getView, readOnly, onRowAdd, onCellChange } = this.props;
+		const { block, getData, getView, readOnly, onRowAdd } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);
 
-		const Handle = SortableHandle((item: any) => (
-			<div>
-				<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
-				<div className="name">{item.name}</div>
-			</div>
-		));
-
-		const CellHead = SortableElement((item: any) => {
-			const { relation } = item;
-			const id = DataUtil.cellId('head', relation.key, '');
-
-			return (
-				<th id={id} className={'head c-' + DataUtil.relationClass(relation.format)} style={{ width: relation.width }}>
-					<div className="cellContent">
-						<Handle {...relation} />
-						<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.key); }}>
-							<div className="line" />
-						</div>
-					</div>
-				</th>
-			);
-		});
-		
-		const CellBody = (item: any) => {
-			let { relation, index } = item;
-			let id = DataUtil.cellId('cell', relation.key, index);
-			let cn = [ 'cell', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
-
-			if (item.relation.key == 'name') {
-				cn.push('isName');
-			};
-
-			return (
-				<td id={id} className={cn.join(' ')} onClick={(e: any) => { this.onCellClick(e, item); }}>
-					<Cell 
-						ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
-						{...this.props}
-						{...item} 
-						id={index} 
-						viewType={I.ViewType.Grid}
-						onCellChange={onCellChange}
-					/>
-				</td>
+		let pager = null;
+		if (total) {
+			pager = (
+				<Pager 
+					offset={offset} 
+					limit={Constant.limit.dataview.records} 
+					total={total} 
+					onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
+				/>
 			);
 		};
-		
-		const RowHead = SortableContainer((item: any) => (
-			<tr className="row">
-				{relations.map((relation: any, i: number) => (
-					<CellHead key={'grid-head-' + relation.key} relation={relation} index={i} />
-				))}
-				<th className="head last">
-					{!readOnly ? <Icon id="cell-add" className="plus" onClick={this.onCellAdd} /> : ''}
-				</th>
-			</tr>
-		));
-		
-		const RowBody = (item: any) => (
-			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
-				{relations.map((relation: any, i: number) => (
-					<CellBody key={'grid-cell-' + relation.key} index={item.index} relation={relation} data={data} />
-				))}
-				<td className="cell last">&nbsp;</td>
-			</tr>
-		);
-
-		const pager = (
-			<Pager 
-				offset={offset} 
-				limit={Constant.limit.dataview.records} 
-				total={total} 
-				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
-			/>
-		);
 		
 		return (
 			<div className="wrap">
 				<div className="scroll">
 					<table className="viewItem viewGrid">
 						<thead>
-							<RowHead 
-								axis="x" 
-								lockAxis="x"
-								lockToContainerEdges={true}
-								transitionDuration={150}
-								distance={10}
-								useDragHandle={true}
-								onSortEnd={this.onSortEnd}
-								helperClass="isDragging"
-								helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.viewItem').get(0); }}
-							/>
+							<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
 						</thead>
 						<tbody>
 							{data.map((item: any, i: number) => (
-								<RowBody key={'grid-row-' + i} index={i} />
+								<BodyRow 
+									key={'grid-row-' + i} 
+									{...this.props} index={i} 
+									onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
+									onRowOver={this.onRowOver} 
+									onCellClick={this.onCellClick}
+								/>
 							))}
 							{!readOnly ? (
 								<tr>
-									<td className="cell add" colSpan={view.relations.length + 1} onClick={onRowAdd}>
+									<td className="cell add" colSpan={relations.length + 1} onClick={onRowAdd}>
 										<Icon className="plus" />
 										<div className="name">New</div>
 									</td>
@@ -142,7 +77,7 @@ class ViewGrid extends React.Component<Props, {}> {
 					</table>
 				</div>
 
-				{total ? pager : ''}
+				{pager}
 			</div>
 		);
 	};
@@ -315,15 +250,16 @@ class ViewGrid extends React.Component<Props, {}> {
 		});
 	};
 
-	onCellClick (e: any, item: any) {
-		const { readOnly } = this.props;
-		const { index, relation } = item;
+	onCellClick (e: any, key: string, index: number) {
+		const { getView } = this.props;
+		const view = getView();
+		const relation = view.relations.find((it: any) => { return it.key == key; });
 
-		if (readOnly || relation.isReadOnly) {
+		if (relation.isReadOnly) {
 			return;
 		};
 
-		const id = DataUtil.cellId('cell', relation.key, index);
+		const id = DataUtil.cellId('cell', key, index);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {
