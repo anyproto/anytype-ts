@@ -1,12 +1,21 @@
 import * as React from 'react';
-import { IconUser } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
 
+interface State {
+	editing: boolean;
+};
+
+const $ = require('jquery');
+
 @observer
-class CellObject extends React.Component<Props, {}> {
+class CellObject extends React.Component<Props, State> {
+
+	state = {
+		editing: false,
+	};
 
 	render () {
 		const { relation, index, getRecord } = this.props;
@@ -21,6 +30,28 @@ class CellObject extends React.Component<Props, {}> {
 			<React.Fragment>
 			</React.Fragment>
 		);
+	};
+
+	componentDidUpdate () {
+		const { editing } = this.state;
+		const { id } = this.props;
+		const cell = $('#' + id);
+
+		if (editing) {
+			cell.addClass('isEditing');
+		} else {
+			cell.removeClass('isEditing');
+		};
+	};
+
+	setEditing (v: boolean) {
+		const { viewType, readOnly } = this.props;
+		const { editing } = this.state;
+		const canEdit = !readOnly && (viewType == I.ViewType.Grid);
+
+		if (canEdit && (v != editing)) {
+			this.setState({ editing: v });
+		};
 	};
 	
 };

@@ -267,6 +267,8 @@
 	"menuDataviewObjectTypeEditName": { "en": "Object type name" },
 	"menuDataviewObjectTypeEditLayout": { "en": "Layout" },
 
+	"menuDataviewObjectListFind": { "en": "Find an object" },
+
 	"menuDataviewViewEditName": { "en": "View name" },
 
 	"linkPreviewCopy": { "en": "Copy link" },
