@@ -1317,6 +1317,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const url = match && match[0];
 		
 		if (url && !force) {
+			focus.apply();
+
 			commonStore.menuOpen('select', { 
 				element: '#block-' + focused,
 				type: I.MenuType.Vertical,
