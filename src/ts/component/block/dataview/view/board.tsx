@@ -64,8 +64,8 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		const win = $(window);
-		win.trigger('resize.editor');
+		this.resize();
+		$(window).trigger('resize.editor');
 	};
 
 	onAdd (column: number) {

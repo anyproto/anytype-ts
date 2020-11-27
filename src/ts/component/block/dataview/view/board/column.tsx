@@ -80,7 +80,6 @@ class Column extends React.Component<Props, {}> {
 						<Droppable droppableId={'column-' + columnId} direction="vertical" type="row">
 							{(provided: any) => (
 								<div className="list" {...provided.droppableProps} ref={provided.innerRef}>
-									Length: {list.length}
 									{list.map((child: any, i: number) => (
 										<Card key={'board-card-' + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
 									))}
