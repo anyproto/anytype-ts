@@ -1242,6 +1242,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
 		const { path } = authStore;
+		const currentFrom = range.from;
+		const currentTo = range.to;
 
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
@@ -1317,8 +1319,6 @@ class EditorPage extends React.Component<Props, {}> {
 		const url = match && match[0];
 		
 		if (url && !force) {
-			focus.apply();
-
 			commonStore.menuOpen('select', { 
 				element: '#block-' + focused,
 				type: I.MenuType.Vertical,
@@ -1326,6 +1326,10 @@ class EditorPage extends React.Component<Props, {}> {
 				offsetY: 4,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Left,
+				onOpen: () => {
+					focus.set(block.id, { from: currentFrom, to: currentTo });
+					focus.apply();
+				},
 				data: {
 					value: '',
 					options: [
