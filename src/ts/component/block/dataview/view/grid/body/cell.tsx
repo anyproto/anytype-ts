@@ -28,7 +28,6 @@ class BodyCell extends React.Component<Props, {}> {
 				<Cell 
 					ref={(ref: any) => { onRef(ref, id); }} 
 					{...this.props}
-					id={id} 
 					viewType={I.ViewType.Grid}
 					onCellChange={onCellChange}
 				/>

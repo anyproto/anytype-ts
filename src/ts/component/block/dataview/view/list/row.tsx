@@ -24,7 +24,6 @@ class Row extends React.Component<Props, {}> {
 							key={'list-cell-' + relation.key} 
 							ref={(ref: any) => { onRef(ref, id); }} 
 							{...this.props}
-							id={id} 
 							relation={...relation} 
 							viewType={I.ViewType.List}
 							onClick={(e: any) => { onCellClick(e, relation.key, index); }}

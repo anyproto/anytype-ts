@@ -31,7 +31,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, onClick } = this.props;
+		const { relation, index, onClick } = this.props;
 		const { key, format, isReadOnly } = relation;
 		const cn = [ 
 			'cellContent', 
@@ -75,7 +75,12 @@ class Cell extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')} onClick={onClick}>
-				<CellComponent ref={(ref: any) => { this.ref = ref; }} {...this.props} onChange={this.onChange} />
+				<CellComponent 
+					ref={(ref: any) => { this.ref = ref; }} 
+					id={DataUtil.cellId('cell', relation.key, index)} 
+					{...this.props} 
+					onChange={this.onChange} 
+				/>
 			</div>
 		);
 	};
@@ -83,12 +88,13 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { id, relation, rootId, block, index, getRecord } = this.props;
+		const { relation, rootId, block, index, getRecord, readOnly } = this.props;
 
-		if (relation.isReadOnly) {
+		if (readOnly || relation.isReadOnly) {
 			return;
 		};
 
+		const id = DataUtil.cellId('cell', relation.key, index);
 		const cell = $('#' + id);
 		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
 		const height = cell.outerHeight();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { I, Util } from 'ts/lib';
+import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'ts/store';
 import Column from './board/column';
@@ -46,7 +46,7 @@ class ViewBoard extends React.Component<Props, {}> {
 								{(provided: any) => (
 									<div className="columns" {...provided.droppableProps} ref={provided.innerRef}>
 										{columns.map((item: any, i: number) => (
-											<Column key={i} {...this.props} {...item} data={data} idx={i} groupId={GROUP} onAdd={this.onAdd} />
+											<Column key={i} {...this.props} {...item} columnId={i} groupId={GROUP} onAdd={this.onAdd} />
 										))}
 										{provided.placeholder}
 									</div>
@@ -104,23 +104,22 @@ class ViewBoard extends React.Component<Props, {}> {
 	
 	getColumns (): any[] {
 		const { block } = this.props;
-		const data = Util.objectCopy(dbStore.getData(block.id));
+		const data = dbStore.getData(block.id);
 
 		let columns: any[] = [];
-		
 		for (let i in data) {
 			let item = data[i];
-			let col = columns.find((col) => { return col.value == item[GROUP]; });
+			let value = item[GROUP] || '';
+			let col = columns.find((col) => { return col.value == value; });
 			
 			item.index = i;
-			
+
 			if (!col) {
-				col = { value: item[GROUP], list: [] }
+				col = { value: value, list: [] }
 				columns.push(col);
 			};
 			col.list.push(item);
 		};
-
 		return columns;
 	};
 	

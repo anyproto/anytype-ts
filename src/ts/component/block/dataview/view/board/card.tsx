@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
-	column: number;
+	columnId: number;
 	index: number;
 	idx: number;
-	data: any;
 };
 
 const getItemStyle = (snapshot: any, style: any) => {
@@ -22,12 +21,12 @@ const getItemStyle = (snapshot: any, style: any) => {
 class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readOnly, column, idx, index, data, getView } = this.props;
+		const { columnId, idx, index, getView } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
 		return (
-			<Draggable draggableId={[ column, index ].join(' ')} index={idx} type="row">
+			<Draggable draggableId={[ columnId, index ].join(' ')} index={idx} type="row">
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="card"
@@ -40,7 +39,7 @@ class Card extends React.Component<Props, {}> {
 							<Cell 
 								key={'board-cell-' + relation.key} 
 								{...this.props}
-								id={String(index)} 
+								index={index}
 								viewType={I.ViewType.Board}
 								relation={...relation} 
 							/>

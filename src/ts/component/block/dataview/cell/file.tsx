@@ -17,7 +17,11 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, rootId, block, readOnly, viewType } = this.props;
+		const { relation, rootId, block, readOnly, viewType, index, getRecord } = this.props;
+		const record = getRecord(index);
+		if (!record) {
+			return null;
+		};
 		
 		let canEdit = !relation.isReadOnly && (viewType == I.ViewType.Grid);
 		let value = this.getValue();

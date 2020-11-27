@@ -34,21 +34,21 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { index, rootId, block, readOnly } = this.props;
+		const { block, readOnly, getRecord, index } = this.props;
 		const { editing } = this.state;
 		const relation = dbStore.getRelation(block.id, this.props.relation.key);
-		if (!relation) {
+		const record = getRecord(index);
+
+		if (!relation || !record) {
 			return null;
 		};
-
-		const { selectDict } = relation;
 
 		let value: any = this.getValue();
 		value = value.map((id: string, i: number) => { return { id: id }; });
 		value = value.filter((it: any) => { return it.id; });
 
 		const render = ({ tag, index }) => {
-			const option = (selectDict || []).find((it: any) => { return it.id == tag.id; });
+			const option = (relation.selectDict || []).find((it: any) => { return it.id == tag.id; });
 			return option && option.text ? <Tag {...option} key={option.id} canEdit={editing} onRemove={(e: any) => { this.onRemove(e, option.id); }} /> : null;
 		};
 

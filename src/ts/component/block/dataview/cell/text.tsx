@@ -39,6 +39,10 @@ class CellText extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { index, relation, onOpen, readOnly, viewType, getRecord } = this.props;
 		const record = getRecord(index);
+		if (!record) {
+			return null;
+		};
+
 		const type = DataUtil.schemaField(record.type && record.type.length ? record.type[0] : '');
 
 		let Name = null;

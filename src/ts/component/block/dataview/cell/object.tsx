@@ -20,8 +20,11 @@ class CellObject extends React.Component<Props, State> {
 	render () {
 		const { relation, index, getRecord } = this.props;
 		const record = getRecord(index);
-		const value = record[relation.key] || [];
+		if (!record) {
+			return null;
+		};
 
+		const value = record[relation.key] || [];
 		if (!value.length) {
 			return null;
 		};
