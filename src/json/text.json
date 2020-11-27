@@ -98,6 +98,9 @@
 
 	"editorControlIcon": { "en": "Add icon" },
 	"editorControlCover": { "en": "Add cover image" },
+
+	"setTitle": { "en": "New set" },
+	"setText": { "en": "Choose an object type for this set" },
 	
 	"blockNameParagraph": { "en": "Text" },
 	"blockTextParagraph": { "en": "Write a plain text" },
@@ -192,6 +195,10 @@
 	"popupSettingsImportOk": { "en": "Import data" },
 	"popupSettingsLogout": { "en": "Log out" },
 
+	"popupFeedbackTitle": { "en": "Feedback" },
+	"popupFeedbackMenuBug": { "en": "Bug" },
+	"popupFeedbackMenuFeature": { "en": "Feature" },
+	"popupFeedbackMenuHelp": { "en": "Help" },
 	"popupFeedbackBugLabel1": { "en": "Describe the bug:" },
 	"popupFeedbackBugText1": { "en": "Ex. I pressed Enter and this happened [...]" },
 	"popupFeedbackBugLabel2": { "en": "Steps to reproduce the behavior:" },
@@ -206,6 +213,7 @@
 	"popupFeedbackSuccessBack": { "en": "Back to dashboard" },
 	"popupFeedbackScreenLabel": { "en": "Link to screenshots or video:" },
 	"popupFeedbackScreenText": { "en": "If applicable, add screenshots to help explain your problem. (Optional)" },
+	"popupFeedbackContacts": { "en": "Contacts:" },
 	"popupFeedbackName": { "en": "Name (Optional)" },
 	"popupFeedbackEmail": { "en": "E-mail (Optional)" },
 
@@ -248,6 +256,11 @@
 	"menuBlockLinkPlaceholder": { "en": "Enter link URL" },
 	"menuBlockLinkLink": { "en": "Link" },
 	"menuBlockLinkUnlink": { "en": "Unlink" },
+
+	"menuDataviewOptionListCreate": { "en": "Create or select an option" },
+
+	"menuDataviewOptionEditPlaceholder": { "en": "Option name" },
+	"menuDataviewOptionEditDelete": { "en": "Delete option" },
 
 	"linkPreviewCopy": { "en": "Copy link" },
 	"linkPreviewEdit": { "en": "Edit link" },

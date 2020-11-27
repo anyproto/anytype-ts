@@ -41,9 +41,9 @@ class PopupFeedback extends React.Component<Props, State> {
 	render () {
 		const { error, success, loading, page } = this.state;
 		const tabs = [
-			{ id: Type.Bug, name: 'Bug' },
-			{ id: Type.Feature, name: 'Feature' },
-			{ id: Type.Help, name: 'Help' },
+			{ id: Type.Bug, name: translate('popupFeedbackMenuBug') },
+			{ id: Type.Feature, name: translate('popupFeedbackMenuFeature') },
+			{ id: Type.Help, name: translate('popupFeedbackMenuHelp') },
 		];
 
 		let content = null;
@@ -102,7 +102,7 @@ class PopupFeedback extends React.Component<Props, State> {
 					</React.Fragment>
 				) : (
 					<React.Fragment>
-						<Title text="Feedback" />
+						<Title text={translate('popupFeedbackTitle')} />
 						
 						<div className="tabs">
 							{tabs.map((item: any, i: number) => (
@@ -121,7 +121,7 @@ class PopupFeedback extends React.Component<Props, State> {
 							</div>
 
 							<div className="row last">
-								<Label text="Contacts:" />
+								<Label text={translate('popupFeedbackContacts')} />
 								<div className="flex">
 									<Input ref={(ref: any) => { this.refObject.name = ref; }} placeHolder={translate('popupFeedbackName')} />
 									<Input ref={(ref: any) => { this.refObject.email = ref; }} placeHolder={translate('popupFeedbackEmail')} />

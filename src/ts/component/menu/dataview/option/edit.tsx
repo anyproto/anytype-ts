@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, Util, translate } from 'ts/lib';
 import { Icon, Input, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
@@ -30,11 +30,11 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		return (
 			<div>
 				<form className="wrap" onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} value={option.text} placeHolder="Option name"  />
+					<Input ref={(ref: any) => { this.ref = ref; }} value={option.text} placeHolder={translate('menuDataviewOptionEditPlaceholder')}  />
 				</form>
 				<div className="item" onClick={this.onRemove}>
 					<Icon className="remove" />
-					<div className="name">Delete option</div>
+					<div className="name">{translate('menuDataviewOptionEditDelete')}</div>
 				</div>
 				<div className="line" />
 				{colors.map((action: any, i: number) => {

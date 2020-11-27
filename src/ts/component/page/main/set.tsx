@@ -2,8 +2,8 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Smile, HeaderMainSet as Header } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
-import { commonStore, dbStore, blockStore } from 'ts/store';
+import { I, C, DataUtil, translate } from 'ts/lib';
+import { commonStore, blockStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -55,8 +55,8 @@ class PageMainSet extends React.Component<Props, State> {
 				<Header {...this.props} rootId="" />
 				<div className="wrapper">
 					<Smile className="c64" iconClass="newSet" />
-					<Title text="New set" />
-					<Label text="Choose an object type for this set" />
+					<Title text={translate('setTitle')} />
+					<Label text={translate('setText')} />
 					<div className="items">
 						<div id="button-add" className="item add" onClick={this.onAdd}>
 							<Icon className="add" />

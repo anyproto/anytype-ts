@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Tag, Label } from 'ts/component';
-import { I, Util, DataUtil } from 'ts/lib';
+import { I, Util, DataUtil, translate } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -61,7 +61,7 @@ class MenuOptionList extends React.Component<Props> {
 		
 		return (
 			<div>
-				<Label text="Create or select an option" />
+				<Label text={translate('menuDataviewOptionListCreate')} />
 				<List 
 					axis="y" 
 					transitionDuration={150}
