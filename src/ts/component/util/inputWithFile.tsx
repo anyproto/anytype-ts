@@ -110,7 +110,7 @@ class InputWithFile extends React.Component<Props, State> {
 					</form>
 					{withFile ? (
 						<span className="fileWrap" onMouseDown={this.onClickFile}>
-							{!isSmall ? <span>&nbsp;or&nbsp;</span> : ''}
+							{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}
 							<span className="border">{textFile}</span>
 						</span>
 					) : ''}

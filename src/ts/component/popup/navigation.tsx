@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -107,15 +107,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		switch (type) {
 			default:
 			case I.NavigationType.Go:
-				confirm = 'Open';
+				confirm = translate('popupNavigationOpen');
 				break;
 
 			case I.NavigationType.Move:
-				confirm = 'Move to';
+				confirm = translate('popupNavigationMove');
 				break;
 
 			case I.NavigationType.Link:
-				confirm = 'Link';
+				confirm = translate('popupNavigationLink');
 				break;
 		};
 
@@ -125,7 +125,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				<Input 
 					ref={(ref: any) => { this.ref = ref; }} 
 					value={details.name} 
-					placeHolder="Search for a page..." 
+					placeHolder={translate('popupNavigationPlaceholder')} 
 					onKeyDown={this.onKeyDownSearch} 
 					onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
 					onFocus={this.onFocus}
@@ -218,7 +218,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					{withButtons ? (
 						<div className="buttons">
 							<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
-							<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
+							<Button text={translate('popupNavigationCancel')} className="blank" onClick={(e: any) => { close(); }} />
 						</div>
 					) : ''}
 				</div>
@@ -234,9 +234,9 @@ class PopupNavigation extends React.Component<Props, State> {
 							<div id={'panel-' + Panel.Left} className="items left">
 								{!isRoot ? (
 									<React.Fragment>
-										<div className="sideName">Link from page</div>
+										<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
 										{!pagesIn.length ? (
-											<ItemEmpty name="No links to this page" />
+											<ItemEmpty name={translate('popupNavigationEmptyTo')} />
 										) : (
 											<InfiniteLoader
 												rowCount={pagesIn.length}
@@ -273,9 +273,9 @@ class PopupNavigation extends React.Component<Props, State> {
 								{info ? <Selected {...info} /> : ''}
 							</div>
 							<div id={'panel-' + Panel.Right} className="items right">
-								<div className="sideName">Link to page</div>
+								<div className="sideName">{translate('popupNavigationLinkTo')}</div>
 								{!pagesOut.length ? (
-									<ItemEmpty name="No links to other pages" />
+									<ItemEmpty name={translate('popupNavigationEmptyFrom')} />
 								) : (
 									<InfiniteLoader
 										rowCount={pagesOut.length}
@@ -314,10 +314,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 						{!pages.length ? (
 							<div id="empty" key="empty" className="empty">
-								<div className="txt">
-									<b>There are no pages named "{filter}"</b>
-									Try creating a new one or search for something else.
-								</div>
+								<div className="txt">{Util.sprintf(translate('popupNavigationEmptyFilter'), filter)}</div>
 							</div>
 						) : (
 							<div id={'panel-' + Panel.Left} key="items" className="items left">

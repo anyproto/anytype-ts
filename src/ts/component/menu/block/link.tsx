@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from 'ts/component';
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard, translate } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
@@ -22,10 +22,10 @@ class MenuBlockLink extends React.Component<Props, {}> {
 		
 		return (
 			<form className="flex" onSubmit={this.onLink}>
-				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeHolder="Enter link URL" />
+				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeHolder={translate('menuBlockLinkPlaceholder')} />
 				<div className="buttons">
-					<div className="btn" onClick={this.onLink}>Link</div>
-					<div className="btn" onClick={this.onUnlink}>Unlink</div>
+					<div className="btn" onClick={this.onLink}>{translate('menuBlockLinkLink')}</div>
+					<div className="btn" onClick={this.onUnlink}>{translate('menuBlockLinkUnlink')}</div>
 				</div>
 			</form>
 		);

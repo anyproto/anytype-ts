@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage } from 'ts/lib';
+import { I, C, DataUtil, keyboard, focus, Storage, translate } from 'ts/lib';
 import { DropTarget, ListChildren, Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
@@ -87,7 +87,7 @@ class Block extends React.Component<Props, {}> {
 
 				if (block.isTextToggle() && !childrenIds.length && !readOnly) {
 					empty = (
-						<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
+						<div className="emptyToggle" onClick={this.onToggleClick}>{translate('blockTextToggleEmpty')}</div>
 					);
 				};
 

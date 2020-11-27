@@ -5,7 +5,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview, Icon } from './component';
 import { commonStore, authStore, blockStore, dbStore } from './store';
-import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
+import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -218,7 +218,7 @@ class App extends React.Component<Props, State> {
 							<div className="sides">
 								<div className="side left">
 									<Icon className="menu" onClick={this.onMenu} />
-									<div className="name">anytype</div>
+									<div className="name">{translate('commonTitle')}</div>
 								</div>
 
 								<div className="side right">
@@ -396,8 +396,8 @@ class App extends React.Component<Props, State> {
 			if (!auto) {
 				commonStore.popupOpen('confirm', {
 					data: {
-						title: 'Oops!',
-						text: Util.sprintf('Can’t check available updates, please try again later.<br/><span class="error">%s</span>', err),
+						title: translate('popupConfirmUpdateTitle'),
+						text: Util.sprintf(translate('popupConfirmUpdateText'), err),
 						textConfirm: 'Retry',
 						textCancel: 'Later',
 						onConfirm: () => {

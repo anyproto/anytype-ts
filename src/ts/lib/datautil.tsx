@@ -344,7 +344,7 @@ class DataUtil {
 	menuMapperBlock (it: any) {
 		it.isBlock = true;
 		it.name = translate('blockName' + it.lang);
-		it.description = translate('blockDescription' + it.lang);
+		it.description = translate('blockText' + it.lang);
 		return it;
 	};
 	

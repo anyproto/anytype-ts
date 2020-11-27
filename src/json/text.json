@@ -1,6 +1,44 @@
 {
+	"commonError": { "en": "Error" },
+	"commonOr": { "en": "or" },
+	"commonOk": { "en": "Ok" },
+	"commonSave": { "en": "Save" },
+	"commonCancel": { "en": "Cancel" },
+	"commonSoon": { "en": "Soon" },
+	"commonTitle": { "en": "anytype" },
+	"commonSearch": { "en": "Search..." },
+	"commonSearchButton": { "en": "Search" },
+	"commonFilter": { "en": "Type to filter..." },
+	"commonFilterEmpty": { "en": "No items match filter" },
+	"commonHome": { "en": "Home" },
+	"commonSubmit": { "en": "Submit" },
+
+	"month1": { "en": "January" },
+	"month2": { "en": "February" },
+	"month3": { "en": "March" },
+	"month4": { "en": "April" },
+	"month5": { "en": "May" },
+	"month6": { "en": "June" },
+	"month7": { "en": "July" },
+	"month8": { "en": "August" },
+	"month9": { "en": "September" },
+	"month10": { "en": "October" },
+	"month11": { "en": "November" },
+	"month12": { "en": "December" },
+
+	"day1": { "en": "Sunday" },
+	"day2": { "en": "Monday" },
+	"day3": { "en": "Tuesday" },
+	"day4": { "en": "Wednesday" },
+	"day5": { "en": "Thursday" },
+	"day6": { "en": "Friday" },
+	"day7": { "en": "Saturday" },
+
 	"progress0": { "en": "Copying files %s/%s" },
 	"progress1": { "en": "Import in progress" },
+
+	"headerMainHistoryCurrent": { "en": "Current version" },
+	"headerMainHistoryRestore": { "en": "Restore version" },
 
 	"confirmUpdateTitle": { "en": "It's time to update" },
 	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features." },
@@ -34,9 +72,13 @@
 	"authRegisterName": { "en": "Type your name" },
 	"authRegisterSubmit": { "en": "Create profile" },
 
+	"authAccountSelectTitle": { "en": "Choose profile" },
+	"authAccountSelectAdd": { "en": "Add profile" },
+
 	"authSetupLogin": { "en": "Logging in..." },
 	"authSetupRegister": { "en": "Creating profile..." },
 	"authSetupSelect": { "en": "Selecting profile..." },
+	"authSetupBack": { "en": "Back" },
 
 	"authSuccessTitle": { "en": "Congratulations!" },
 	"authSuccessLabel": { "en": "You've created your first profile! It is stored on your device and nobody will know about it until you share it!" },
@@ -53,60 +95,163 @@
 	"authPinConfirmError": { "en": "Pin codes do not match" },
 
 	"indexHi": { "en": "Hi, %s" },
+
+	"editorControlIcon": { "en": "Add icon" },
+	"editorControlCover": { "en": "Add cover image" },
 	
 	"blockNameParagraph": { "en": "Text" },
-	"blockDescriptionParagraph": { "en": "Write a plain text" },
+	"blockTextParagraph": { "en": "Write a plain text" },
 
 	"blockNameHeader1": { "en": "Header 1" },
-	"blockDescriptionHeader1": { "en": "Big headline of a chapter, paragraph or section" },
+	"blockTextHeader1": { "en": "Big headline of a chapter, paragraph or section" },
 
 	"blockNameHeader2": { "en": "Header 2" },
-	"blockDescriptionHeader2": { "en": "Medium headline" },
+	"blockTextHeader2": { "en": "Medium headline" },
 
 	"blockNameHeader3": { "en": "Header 3" },
-	"blockDescriptionHeader3": { "en": "Small headline" },
+	"blockTextHeader3": { "en": "Small headline" },
 
 	"blockNameQuote": { "en": "Highlighted" },
-	"blockDescriptionQuote": { "en": "Spotlight, that needs special attention" },
+	"blockTextQuote": { "en": "Spotlight, that needs special attention" },
 
 	"blockNameCheckbox": { "en": "Checkbox" },
-	"blockDescriptionCheckbox": { "en": "Create and track task with to-do list" },
+	"blockTextCheckbox": { "en": "Create and track task with to-do list" },
 
 	"blockNameBulleted": { "en": "Bulleted list" },
-	"blockDescriptionBulleted": { "en": "Simple list" },
+	"blockTextBulleted": { "en": "Simple list" },
 
 	"blockNameNumbered": { "en": "Numbered list" },
-	"blockDescriptionNumbered": { "en": "Numbered list" },
+	"blockTextNumbered": { "en": "Numbered list" },
 
 	"blockNameToggle": { "en": "Toggle" },
-	"blockDescriptionToggle": { "en": "Hide and show content inside" },
+	"blockTextToggle": { "en": "Hide and show content inside" },
 
 	"blockNamePage": { "en": "Page" },
-	"blockDescriptionPage": { "en": "Create new page inside this one" },
+	"blockTextPage": { "en": "Create new page inside this one" },
 
 	"blockNameExisting": { "en": "Link to object" },
-	"blockDescriptionExisting": { "en": "Link to existing page" },
+	"blockTextExisting": { "en": "Link to existing page" },
 
 	"blockNameFile": { "en": "File" },
-	"blockDescriptionFile": { "en": "Store file in original state" },
+	"blockTextFile": { "en": "Store file in original state" },
 
 	"blockNameImage": { "en": "Picture" },
-	"blockDescriptionImage": { "en": "Upload and enrich the page with image" },
+	"blockTextImage": { "en": "Upload and enrich the page with image" },
 
 	"blockNameVideo": { "en": "Video" },
-	"blockDescriptionVideo": { "en": "Upload playable video" },
+	"blockTextVideo": { "en": "Upload playable video" },
 
 	"blockNameBookmark": { "en": "Bookmark" },
-	"blockDescriptionBookmark": { "en": "Save your favorite link with summary" },
+	"blockTextBookmark": { "en": "Save your favorite link with summary" },
 
 	"blockNameCode": { "en": "Code snippet" },
-	"blockDescriptionCode": { "en": "Capture code snippet " },
+	"blockTextCode": { "en": "Capture code snippet " },
 
 	"blockNameLine": { "en": "Line divider" },
-	"blockDescriptionLine": { "en": "Separate information with line" },
+	"blockTextLine": { "en": "Separate information with line" },
 
 	"blockNameDot": { "en": "Dots divider" },
-	"blockDescriptionDot": { "en": "Separate information with three dots" },
+	"blockTextDot": { "en": "Separate information with three dots" },
+
+	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
+
+	"blockFileDownload": { "en": "Download" },
+
+	"blockLinkSyncing": { "en": "Syncing..." },
+	"blockLinkArchived": { "en": "Archived" },
+
+	"blockDataviewNew": { "en": "New" },
+
+	"blockCoverDrag": { "en": "Drag image to reposition" },
+	"blockCoverSave": { "en": "Save changes" },
+	"blockCoverUpdate": { "en": "Update cover" },
+	"blockCover": { "en": "" },
+
+	"popupSettingsTitle": { "en": "Settings" },
+	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
+	"popupSettingsWallpaperText": { "en": "Choose or upload the wallpaper. For best results upload high resolution images." },
+	"popupSettingsPicture": { "en": "Pictures" },
+	"popupSettingsColor": { "en": "Colours" },
+	"popupSettingsPhraseTitle": { "en": "Keychain phrase" },
+	"popupSettingsPhraseText": { "en": "Your Keychain phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place." },
+	"popupSettingsPhraseOk": { "en": "I've written it down" },
+	"popupSettingsPinTitle": { "en": "Pin code" },
+	"popupSettingsPinText": { "en": "The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number,  id recovery without your pin code or keychain phrase. So, please, remember your pin code" },
+	"popupSettingsPinOn": { "en": "Turn pin code on" },
+	"popupSettingsPinOff": { "en": "Turn pin code off" },
+	"popupSettingsPinChange": { "en": "Change pin code" },
+	"popupSettingsPinVerify": { "en": "To continue, first verify that it’s you. Enter current pin code" },
+	"popupSettingsPinError": { "en": "Incorrect pin" },
+	"popupSettingsImportTitle": { "en": "Import" },
+	"popupSettingsImportText": { "en": "Choose application or format, which data you want to import" },
+	"popupSettingsImportHow": { "en": "How to import from Notion" },
+	"popupSettingsImportFirst": { "en": "First you need to export data." },
+	"popupSettingsImportGetTitle": { "en": "Get all data:" },
+	"popupSettingsImportPageTitle": { "en": "Get certain pages:" },
+	"popupSettingsImportZip": { "en": "After that you need to select Zip archive and Anytype will do the rest." },
+	"popupSettingsImportOk": { "en": "Import data" },
+	"popupSettingsLogout": { "en": "Log out" },
+
+	"popupFeedbackBugLabel1": { "en": "Describe the bug:" },
+	"popupFeedbackBugText1": { "en": "Ex. I pressed Enter and this happened [...]" },
+	"popupFeedbackBugLabel2": { "en": "Steps to reproduce the behavior:" },
+	"popupFeedbackBugText2": { "en": "1. Go to '...'&#10;2. Click on '....'&#10;3. See error" },
+	"popupFeedbackFeatureLabel1": { "en": "Is your feature request related to a problem? Please describe:" },
+	"popupFeedbackFeatureText1": { "en": "Ex. I'm always frustrated when [...]" },
+	"popupFeedbackFeatureLabel2": { "en": "Describe the solution you'd like:" },
+	"popupFeedbackFeatureText2": { "en": "A clear and concise description of what you want to happen." },
+	"popupFeedbackHelpLabel": { "en": "Got a question or need help? Please ask:" },
+	"popupFeedbackSuccessTitle": { "en": "Your feedback was sent" },
+	"popupFeedbackSuccessText": { "en": "Thank you for making the new web together!<br />If you left email we will get in touch soon." },
+	"popupFeedbackSuccessBack": { "en": "Back to dashboard" },
+	"popupFeedbackScreenLabel": { "en": "Link to screenshots or video:" },
+	"popupFeedbackScreenText": { "en": "If applicable, add screenshots to help explain your problem. (Optional)" },
+	"popupFeedbackName": { "en": "Name (Optional)" },
+	"popupFeedbackEmail": { "en": "E-mail (Optional)" },
+
+	"popupArchiveTitle": { "en": "Archive" },
+	"popupArchiveSelectAll": { "en": "Select All" },
+	"popupArchivePutBack": { "en": "Put it back" },
+	"popupArchiveDelete": { "en": "Delete" },
+
+	"popupHelpLabel": { "en": "Stay tuned for Anytype’s news" },
+
+	"popupNavigationOpen": { "en": "Open" },
+	"popupNavigationMove": { "en": "Move to" },
+	"popupNavigationLink": { "en": "Link" },
+	"popupNavigationPlaceholder": { "en": "Search for a page..." },
+	"popupNavigationCancel": { "en": "Cancel" },
+	"popupNavigationLinkFrom": { "en": "Link from page" },
+	"popupNavigationLinkTo": { "en": "Link to page" },
+	"popupNavigationEmptyTo": { "en": "No links to this page" },
+	"popupNavigationEmptyFrom": { "en": "No links to other pages" },
+	"popupNavigationEmptyFilter": { "en": "<b>There are no pages named \"%s\"</b>Try creating a new one or search for something else." },
+
+	"popupConfirmUpdateTitle": { "en": "Oops!" },
+	"popupConfirmUpdateText": { "en": "Can’t check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
+
+	"menuAccountAdd": { "en": "Add profile" },
+	"menuAccountPeer": { "en": "%d/%d peers" },
+
+	"menuSmileRandom": { "en": "Random emoji" },
+	"menuSmileUpload": { "en": "Upload image" },
+	"menuSmileRemove": { "en": "Remove" },
+	"menuSmileEmpty": { "en": "<b>There are no emojis named \"%s\"</b>Try to find a new one or upload your image" },
+
+	"menuCalendarToday": { "en": "Today" },
+	"menuCalendarTomorrow": { "en": "Tomorrow" },
+
+	"menuBlockCoverUpload": { "en": "Upload image" },
+	"menuBlockCoverEdit": { "en": "Reposition" },
+	"menuBlockCoverRemove": { "en": "Remove" },
+
+	"menuBlockLinkPlaceholder": { "en": "Enter link URL" },
+	"menuBlockLinkLink": { "en": "Link" },
+	"menuBlockLinkUnlink": { "en": "Unlink" },
+
+	"linkPreviewCopy": { "en": "Copy link" },
+	"linkPreviewEdit": { "en": "Edit link" },
+	"linkPreviewUnlink": { "en": "Unlink" },
 
 	"blockNameRelation": { "en": "Relation" },
 	"blockDescriptionRelation": { "en": "..." },

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Title, Smile, Loader } from 'ts/component';
-import { I, C, Util } from 'ts/lib';
+import { I, C, Util, translate } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -56,14 +56,14 @@ class PopupArchive extends React.Component<Props, State> {
 			<div>
 				{loading ? <Loader /> : ''}
 				<div className="head">
-					<Title text="Archive" />
+					<Title text={translate('popupArchiveTitle')} />
 					<div className="sides">
 						<div className="side left">
-							<div className="btn" onClick={(e: any) => { this.onSelectAll(); }}>Select all</div>
+							<div className="btn" onClick={(e: any) => { this.onSelectAll(); }}>{translate('popupArchiveSelectAll')}</div>
 						</div>
 						<div className="side right">
-							<div className="btn" onClick={(e: any) => { this.onReturn(); }}>Put it back</div>
-							<div className="btn dn" onClick={(e: any) => { this.onDelete(); }}>Delete</div>
+							<div className="btn" onClick={(e: any) => { this.onReturn(); }}>{translate('popupArchivePutBack')}</div>
+							<div className="btn dn" onClick={(e: any) => { this.onDelete(); }}>{translate('popupArchiveDelete')}</div>
 						</div>
 					</div>
 				</div>

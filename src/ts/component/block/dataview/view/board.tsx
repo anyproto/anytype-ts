@@ -8,7 +8,7 @@ import Column from './board/column';
 
 interface Props extends I.ViewComponent {};
 
-const GROUP = 'isArchived';
+const GROUP = 'name';
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 

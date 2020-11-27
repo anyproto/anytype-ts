@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Smile } from 'ts/component';
 import { authStore } from 'ts/store';
-import { DataUtil } from 'ts/lib';
+import { DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -30,7 +30,7 @@ class HeaderHelpIndex extends React.Component<Props, {}> {
 		const PathItemHome = (item: any) => (
 			<div className="item" onClick={this.onHome}>
 				<Icon className="home" />
-				<div className="name">Home</div>
+				<div className="name">{translate('commonHome')}</div>
 				<Icon className="arrow" />
 			</div>
 		);

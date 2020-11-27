@@ -311,7 +311,7 @@ class Util {
 			},
 			// Month
 			F: () => {
-				return Constant.month[f.n()];
+				return translate('month' + f.n());
 			},
 			m: () => {
 				return pad(f.n(), 2);

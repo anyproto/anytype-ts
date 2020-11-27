@@ -165,16 +165,12 @@ class BlockDataview extends React.Component<Props, {}> {
 		const view = this.getView();
 		const relation = view.relations.find((it: any) => { return it.key == key; });
 
-		console.log(key, index);
-
 		if (relation.isReadOnly) {
 			return;
 		};
 
 		const id = DataUtil.cellId('cell', key, index);
 		const ref = this.cellRefs.get(id);
-
-		console.log(ref, this.cellRefs);
 
 		if (ref) {
 			ref.onClick(e);

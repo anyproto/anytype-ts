@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Label, Icon } from 'ts/component';
-import { I, Docs, Storage, Util } from 'ts/lib';
+import { I, Docs, Storage, Util, translate } from 'ts/lib';
 import Block from 'ts/component/block/help';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -33,7 +33,7 @@ class PopupHelp extends React.Component<Props, {}> {
 					</div>
 					{document == 'whatsNew' ? (
 						<div className="side right">
-							<Label text="Stay tuned for Anytype’s news " />
+							<Label text={translate('popupHelpLabel')} />
 							<Icon onClick={(e) => { this.onUrl(Url.telegram); }} className="telegram" />
 							<Icon onClick={(e) => { this.onUrl(Url.twitter); }} className="twitter" />
 						</div>

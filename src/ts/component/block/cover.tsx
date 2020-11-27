@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Drag, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, focus } from 'ts/lib';
+import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -71,7 +71,7 @@ class BlockCover extends React.Component<Props, State> {
 				<React.Fragment>
 					<div key="btn-drag" className="btn black drag">
 						<Icon />
-						<div className="txt">Drag image to reposition</div>
+						<div className="txt">{translate('blockCoverDrag')}</div>
 					</div>
 					
 					<div className="dragWrap">
@@ -80,8 +80,8 @@ class BlockCover extends React.Component<Props, State> {
 					</div>
 					
 					<div className="buttons">
-						<div className="btn white" onMouseDown={this.onSave}>Save changes</div>
-						<div className="btn white" onMouseDown={this.onCancel}>Cancel</div>
+						<div className="btn white" onMouseDown={this.onSave}>{translate('commonSave')}</div>
+						<div className="btn white" onMouseDown={this.onCancel}>{translate('commonCancel')}</div>
 					</div>
 				</React.Fragment>
 			);
@@ -91,7 +91,7 @@ class BlockCover extends React.Component<Props, State> {
 					<div className="buttons">
 						<div id="button-cover-edit" className={[ 'btn', 'white', 'addCover', (commonStore.menuIsOpen('blockCover') ? 'active' : '') ].join(' ')} onClick={this.onMenu}>
 							<Icon />
-							<div className="txt">Update cover</div>
+							<div className="txt">{translate('blockCoverUpdate')}</div>
 						</div>
 					</div>
 				</React.Fragment>

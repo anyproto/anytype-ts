@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, keyboard, DataUtil, focus } from 'ts/lib';
+import { I, C, translate, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -68,7 +68,7 @@ class BlockImage extends React.Component<Props, {}> {
 				
 			case I.FileState.Error:
 				element = (
-					<Error text="Error" />
+					<Error text={translate('commonError')} />
 				);
 				break;
 		};

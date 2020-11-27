@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, Util, translate } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
@@ -88,7 +88,7 @@ class Controls extends React.Component<Props, State> {
 						{!readOnly ? (
 							<div className="item" onClick={onRowAdd}>
 								<Icon className="plus" />
-								<div className="name">New</div>
+								<div className="name">{translate('blockDataviewNew')}</div>
 							</div>
 						) : ''}
 					</div>
