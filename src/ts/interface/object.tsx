@@ -42,7 +42,7 @@ export interface Relation {
 	isHidden: boolean;
 	isReadOnly: boolean;
 	isMultiple: boolean;
-	objectType: string;
+	objectTypes: string[];
 	selectDict: any[];
 	includeTime?: boolean;
 	dateFormat?: I.DateFormat;

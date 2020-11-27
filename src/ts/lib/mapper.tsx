@@ -199,7 +199,7 @@ const Mapper = {
 				isHidden: obj.getHidden(),
 				isReadOnly: obj.getReadonly(),
 				isMultiple: obj.getMulti(),
-				objectType: obj.getObjecttype(),
+				objectTypes: obj.getObjecttypesList(),
 				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
 			};
 		},

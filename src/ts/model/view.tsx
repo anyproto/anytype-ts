@@ -31,7 +31,7 @@ class Relation implements I.Relation {
 	key: string = '';
 	name: string = '';
 	dataSource: string = '';
-	objectType: string = '';
+	objectTypes: string[] = [];
 	format: I.RelationType = I.RelationType.Description;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
@@ -44,7 +44,7 @@ class Relation implements I.Relation {
 		self.key = String(props.key || '');
 		self.name = String(props.name || '');
 		self.dataSource = String(props.dataSource || '');
-		self.objectType = String(props.objectType || '');
+		self.objectTypes = props.objectTypes || [];
 		self.format = props.format || I.RelationType.Description;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
@@ -73,7 +73,6 @@ class ViewRelation extends Relation implements I.ViewRelation {
 
 	key: string = '';
 	width: number = 0;
-	options: any = {} as any;
 	isVisible: boolean = false;
 	includeTime: boolean = false;
 	dateFormat: I.DateFormat = I.DateFormat.MonthAbbrBeforeDay;
@@ -86,7 +85,6 @@ class ViewRelation extends Relation implements I.ViewRelation {
 
 		self.key = String(props.key || '');
 		self.width = Number(props.width) || 0;
-		self.options = props.options || {};
 		self.isVisible = Boolean(props.isVisible);
 		self.includeTime = Boolean(props.includeTime);
 		self.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
