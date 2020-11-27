@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, keyboard, Key } from 'ts/lib';
+import { I, C, keyboard, Key, translate } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
@@ -39,7 +39,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
 						value={view.name} 
-						placeHolder="View name" 
+						placeHolder={translate('menuDataviewViewEditName')}
 						maxLength={Constant.limit.dataview.viewName} 
 						onKeyUp={this.onKeyUp} 
 						onFocus={this.onNameFocus}

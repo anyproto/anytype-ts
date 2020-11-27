@@ -94,7 +94,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							id={'item-' + item.id + '-value'}
 							ref={refGet} 
 							value={item.value} 
-							placeHolder="Value" 
+							placeHolder={translate('commonValue')} 
 							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v, true); }} 
 						/>
 					);

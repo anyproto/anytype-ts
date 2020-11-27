@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, SmileUtil } from 'ts/lib';
+import { I, C, SmileUtil, translate } from 'ts/lib';
 import { Icon, Input, Button } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -54,14 +54,14 @@ class MenuObjectType extends React.Component<Props, State> {
 
 		return (
 			<div>
-				<div className="sectionName">Object type name</div>
+				<div className="sectionName">{translate('menuDataviewObjectTypeEditName')}</div>
 				<div className="wrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} />
 				</div>
-				<div className="sectionName">object type name</div>
+				<div className="sectionName">{translate('menuDataviewObjectTypeEditLayout')}</div>
 				{current}
 				<div className="buttons">
-					<Button text="Create" className="orange" onClick={this.onCreate} />
+					<Button text={translate('commonCreate')} className="orange" onClick={this.onCreate} />
 				</div>
 			</div>
 		);

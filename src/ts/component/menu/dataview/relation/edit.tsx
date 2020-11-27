@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I, C, M, DataUtil } from 'ts/lib';
-import { Icon, Input, Switch } from 'ts/component';
+import { I, C, DataUtil } from 'ts/lib';
+import { Icon, Input, Switch, MenuItemVertical } from 'ts/component';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -18,7 +18,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	constructor(props: any) {
 		super(props);
 		
-		this.onType = this.onType.bind(this);
+		this.onRelationType = this.onRelationType.bind(this);
+		this.onObjectType = this.onObjectType.bind(this);
 		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCopy = this.onCopy.bind(this);
@@ -38,15 +39,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 
 		const Current = (item: any) => (
-			<div id="relation-type" className={ccn.join(' ')} onClick={this.onType}>
-				<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
-				<div className="name">{Constant.relationName[item.format]}</div>
-				{!relation ? <Icon className="arrow" /> : ''}
-			</div>
+			<MenuItemVertical 
+				id="relation-type" 
+				icon={'relation c-' + DataUtil.relationClass(item.format)} 
+				name={Constant.relationName[item.format]} 
+				onClick={this.onRelationType} 
+				arrow={!relation}
+			/>
 		);
 
 		if (relation) {
 			const isDate = relation.format == I.RelationType.Date;
+			const isObject = relation.format == I.RelationType.Object;
+
 			opts = (
 				<React.Fragment>
 					{isDate ? (
@@ -58,10 +63,17 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 							</div>
 
-							<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
-								<Icon className="settings" />
-								<div className="name">Preferences</div>
-								<Icon className="arrow" />
+							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
+						</React.Fragment>
+					) : ''}
+
+					{isObject ? (
+						<React.Fragment>
+							<div className="line" />
+
+							<div className="sectionName">Object types</div>
+							<div id="item-object-type" className="item" onClick={this.onObjectType}>
+								List
 							</div>
 						</React.Fragment>
 					) : ''}
@@ -83,14 +95,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				{relation ? (
 					<React.Fragment>
 						<div className="line" />
-						<div className="item" onClick={this.onCopy}>
-							<Icon className="copy" />
-							<div className="name">Duplicate</div>
-						</div>
-						<div className="item" onClick={this.onRemove}>
-							<Icon className="remove" />
-							<div className="name">Delete relation</div>
-						</div>
+						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} />
+						<MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} />
 					</React.Fragment>
 				) : ''}
 			</form>
@@ -123,7 +129,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		}, 15);
 	};
 	
-	onType (e: any) {
+	onRelationType (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
@@ -132,28 +138,66 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 		
-		commonStore.menuClose('dataviewRelationType');
-		commonStore.menuClose('dataviewDate');
+		this.menuOpen('dataviewRelationType', { 
+			element: '#item-relation-type',
+			offsetX: 224,
+			offsetY: 0,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				value: this.format,
+				onSelect: (item: any) => {
+					this.format = item.format;
+					this.forceUpdate();
+				},
+				...data
+			}
+		});
+	};
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			commonStore.menuOpen('dataviewRelationType', { 
-				element: '#relation-type',
+	onObjectType (e: any) {
+		const cb = (message: any) => {
+			const options = message.objectTypes.map((it: I.ObjectType) => {
+				const id = DataUtil.schemaField(it.url);
+				return {
+					id: id, 
+					name: it.name, 
+					icon: it.iconEmoji,
+					hash: '',
+					withSmile: true,
+				};
+			});
+			options.sort((c1: any, c2: any) => {
+				if (c1.name > c2.name) return 1;
+				if (c1.name < c2.name) return -1;
+				return 0;
+			});
+
+			this.menuOpen('select', { 
+				element: '#item-object-type',
 				offsetX: 224,
 				offsetY: 4,
 				type: I.MenuType.Vertical,
 				vertical: I.MenuDirection.Center,
 				horizontal: I.MenuDirection.Left,
 				data: {
-					value: this.format,
-					onSelect: (item: any) => {
-						this.format = item.format;
-						this.forceUpdate();
-					},
-					...data
+					value: '',
+					options: options,
 				}
 			});
-		}, Constant.delay.menu);
+		};
+
+		C.ObjectTypeList(cb);
+	};
+
+	menuOpen (id: string, param: I.MenuParam) {
+		commonStore.menuClose('dataviewRelationType');
+		commonStore.menuClose('dataviewDate');
+		commonStore.menuClose('select');
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { commonStore.menuOpen(id, param); }, Constant.delay.menu);
 	};
 
 	onChangeTime (v: boolean) {
@@ -179,7 +223,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			commonStore.menuOpen('dataviewDate', { 
-				element: '#menu-date-settings',
+				element: '#item-date-settings',
 				offsetX: 224,
 				offsetY: -38,
 				type: I.MenuType.Vertical,

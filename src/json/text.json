@@ -2,6 +2,7 @@
 	"commonError": { "en": "Error" },
 	"commonOr": { "en": "or" },
 	"commonOk": { "en": "Ok" },
+	"commonCreate": { "en": "Create" },
 	"commonSave": { "en": "Save" },
 	"commonCancel": { "en": "Cancel" },
 	"commonSoon": { "en": "Soon" },
@@ -12,6 +13,7 @@
 	"commonFilterEmpty": { "en": "No items match filter" },
 	"commonHome": { "en": "Home" },
 	"commonSubmit": { "en": "Submit" },
+	"commonValue": { "en": "Value" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -261,6 +263,11 @@
 
 	"menuDataviewOptionEditPlaceholder": { "en": "Option name" },
 	"menuDataviewOptionEditDelete": { "en": "Delete option" },
+
+	"menuDataviewObjectTypeEditName": { "en": "Object type name" },
+	"menuDataviewObjectTypeEditLayout": { "en": "Layout" },
+
+	"menuDataviewViewEditName": { "en": "View name" },
 
 	"linkPreviewCopy": { "en": "Copy link" },
 	"linkPreviewEdit": { "en": "Edit link" },
