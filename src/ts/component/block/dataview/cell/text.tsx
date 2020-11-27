@@ -173,7 +173,8 @@ class CellText extends React.Component<Props, State> {
 			let input = cell.find('#input');
 
 			if (relation.format == I.RelationType.Date) {
-				value = value ? Util.date('d.m.Y', Number(value)) : '';
+				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
+				value = value ? Util.date(format.join(' ').trim(), Number(value)) : '';
 			};
 
 			this.ref.focus();

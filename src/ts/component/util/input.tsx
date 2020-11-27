@@ -115,10 +115,13 @@ class Input extends React.Component<Props, State> {
 	};
 
 	initMask () {
-		const { mask, placeHolder, maskOptions } = this.props;
+		let { mask, maskOptions } = this.props;
 		if (!mask || !this._isMounted) {
 			return;
 		};
+
+		maskOptions = maskOptions || {};
+		maskOptions.positionCaretOnClick = 'ignore';
 
 		const node = $(ReactDOM.findDOMNode(this));
 		new Inputmask(mask, { ...maskOptions }).mask(node.get(0));

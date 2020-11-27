@@ -32,8 +32,13 @@ class Cell extends React.Component<Props, {}> {
 
 	render () {
 		const { relation, onClick } = this.props;
-		const { format, isReadOnly } = relation;
-		const cn = [ 'cellContent', 'c-' + DataUtil.relationClass(format), (!isReadOnly ? 'canEdit' : '') ];
+		const { key, format, isReadOnly } = relation;
+		const cn = [ 
+			'cellContent', 
+			'c-' + DataUtil.relationClass(format), 
+			(!isReadOnly ? 'canEdit' : ''), 
+			(key == 'name' ? 'isName' : ''),
+		];
 
 		let CellComponent: React.ReactType<Props>;
 		switch (format) {
