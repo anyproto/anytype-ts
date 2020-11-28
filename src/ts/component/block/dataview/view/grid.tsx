@@ -55,7 +55,7 @@ class ViewGrid extends React.Component<Props, {}> {
 						<tbody>
 							{data.map((item: any, i: number) => (
 								<BodyRow 
-									key={'grid-row-' + i} 
+									key={'grid-row-' + view.id + i} 
 									{...this.props} 
 									index={i} 
 									onRowOver={this.onRowOver} 

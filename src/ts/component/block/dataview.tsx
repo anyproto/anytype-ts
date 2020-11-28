@@ -120,12 +120,17 @@ class BlockDataview extends React.Component<Props, {}> {
 		dbStore.relationsRemove(block.id);
 	};
 
-	getData (viewId: string, offset: number, callBack?: (message: any) => void) {
+	getData (id: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const win = $(window);
+		const { viewId } = dbStore.getMeta(block.id);
 
-		dbStore.metaSet(block.id, { viewId: viewId, offset: offset });
-		C.BlockDataviewViewSetActive(rootId, block.id, viewId, offset, Constant.limit.dataview.records, callBack);
+		dbStore.metaSet(block.id, { viewId: id, offset: offset });
+		if (id != viewId) {
+			dbStore.recordsSet(block.id, []);
+		};
+
+		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, callBack);
 
 		commonStore.menuCloseAll();
 		win.trigger('resize.editor');

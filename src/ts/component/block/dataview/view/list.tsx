@@ -21,7 +21,7 @@ class ViewList extends React.Component<Props, {}> {
 		const { offset, total } = dbStore.getMeta(block.id);
 
 		let pager = null;
-		if (total) {
+		if (total && data.length) {
 			pager = (
 				<Pager 
 					offset={offset} 

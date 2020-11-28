@@ -19,7 +19,7 @@ class Card extends React.Component<Props, {}> {
 			<div className="card">
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={'list-cell-' + relation.key} 
+						key={'list-cell-' + view.id + relation.key} 
 						{...this.props}
 						id={DataUtil.cellId('cell', relation.key, index)} 
 						relation={...relation} 

@@ -81,7 +81,7 @@ class Column extends React.Component<Props, {}> {
 							{(provided: any) => (
 								<div className="list" {...provided.droppableProps} ref={provided.innerRef}>
 									{list.map((child: any, i: number) => (
-										<Card key={'board-card-' + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
+										<Card key={'board-card-' +  view.id + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
 									))}
 									<Add column={columnId} index={list.length} />
 									{provided.placeholder}
