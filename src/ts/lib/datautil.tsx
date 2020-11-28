@@ -546,13 +546,21 @@ class DataUtil {
 
 	viewGetRelations (blockId: string, view: I.View): I.ViewRelation[] {
 		let relations = Util.objectCopy(dbStore.getRelations(blockId));
+		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
+
 		let order: any = {};
+		let o = 0;
 
 		for (let i = 0; i < view.relations.length; ++i) {
-			order[view.relations[i].key] = i;
+			order[view.relations[i].key] = o++;
 		};
 
-		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
+		for (let i = 0; i < relations.length; ++i) {
+			if (undefined === order[relations[i].key]) {
+				order[relations[i].key] = o++;
+			};
+		};
+
 		relations.sort((c1: any, c2: any) => {
 			let o1 = order[c1.key];
 			let o2 = order[c2.key];
