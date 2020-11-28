@@ -21,7 +21,7 @@ const getItemStyle = (snapshot: any, style: any) => {
 class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { columnId, idx, index, getView } = this.props;
+		const { columnId, idx, index, getView, onCellClick, onRef } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
@@ -35,15 +35,20 @@ class Card extends React.Component<Props, {}> {
 						{...provided.dragHandleProps}
 						style={getItemStyle(snapshot, provided.draggableProps.style)}
 					>
-						{relations.map((relation: any, i: number) => (
-							<Cell 
-								key={'board-cell-' + view.id + relation.key} 
-								{...this.props}
-								index={index}
-								viewType={I.ViewType.Board}
-								relation={...relation} 
-							/>
-						))}
+						{relations.map((relation: any, i: number) => {
+							const id = DataUtil.cellId('cell', relation.key, index);
+							return (
+								<Cell 
+									key={'board-cell-' + view.id + relation.key} 
+									{...this.props}
+									ref={(ref: any) => { onRef(ref, id); }} 
+									index={index}
+									viewType={I.ViewType.Board}
+									onClick={(e: any) => { onCellClick(e, relation.key, index); }}
+									relation={...relation} 
+								/>
+							);
+						})}
 					</div>
 				)}
 			</Draggable>
