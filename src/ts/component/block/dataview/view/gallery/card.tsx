@@ -25,7 +25,7 @@ class Card extends React.Component<Props, {}> {
 							{...this.props}
 							ref={(ref: any) => { onRef(ref, id); }} 
 							relation={...relation} 
-							viewType={I.ViewType.List}
+							viewType={view.type}
 							onClick={(e: any) => { onCellClick(e, relation.key, index); }}
 							index={index}
 						/>

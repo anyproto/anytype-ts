@@ -46,7 +46,6 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		const { viewId } = dbStore.getMeta(block.id);
 		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
-		const { type } = view;
 		const readOnly = false; // TMP
 
 		if (!view) {
@@ -54,7 +53,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		};
 
 		let ViewComponent: React.ReactType<I.ViewComponent>;
-		switch (type) {
+		switch (view.type) {
 			default:
 			case I.ViewType.Grid:
 				ViewComponent = ViewGrid;
@@ -124,13 +123,25 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const win = $(window);
 		const { viewId } = dbStore.getMeta(block.id);
+		const viewChange = id != viewId;
+
+		const cb = (message: any) => {
+			if (viewChange) {
+				const view = this.getView();
+				view.relations = DataUtil.viewGetRelations(block.id, view);
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+		};
 
 		dbStore.metaSet(block.id, { viewId: id, offset: offset });
-		if (id != viewId) {
+		if (viewChange) {
 			dbStore.recordsSet(block.id, []);
 		};
 
-		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, callBack);
+		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, cb);
 
 		commonStore.menuCloseAll();
 		win.trigger('resize.editor');

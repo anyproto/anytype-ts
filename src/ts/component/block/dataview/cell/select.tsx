@@ -34,7 +34,7 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { block, readOnly, getRecord, index } = this.props;
+		const { block, readOnly, getRecord, index, viewType } = this.props;
 		const { editing } = this.state;
 		const relation = dbStore.getRelation(block.id, this.props.relation.key);
 		const record = getRecord(index);
@@ -43,9 +43,13 @@ class CellSelect extends React.Component<Props, State> {
 			return null;
 		};
 
+		const canEdit = !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
+
 		let value: any = this.getValue();
-		value = value.map((id: string, i: number) => { return { id: id }; });
-		value = value.filter((it: any) => { return it.id; });
+		value = value.map((id: string, i: number) => { 
+			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+		});
+		value = value.filter((it: any) => { return it && it.id; });
 
 		const render = ({ tag, index }) => {
 			const option = (relation.selectDict || []).find((it: any) => { return it.id == tag.id; });
@@ -54,7 +58,7 @@ class CellSelect extends React.Component<Props, State> {
 
 		return (
 			<div>
-				{!readOnly ? (
+				{!canEdit ? (
 					<React.Fragment>
 						<DraggableArea
 							tags={value}

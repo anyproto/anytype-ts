@@ -10,9 +10,11 @@
                 .head { padding: 10px 4px; }
             }
 
+			.cellContent.c-select { white-space: normal; margin-bottom: 0px; }
+
             .cellContent.c-title {
                 .smile { margin-bottom: 10px; }
-                .name { max-width: 100%; height: 24px; }
+                .name { width: 100% !important; height: 24px; }
             }
 
             .cellContent {

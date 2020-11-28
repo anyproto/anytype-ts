@@ -4,24 +4,6 @@
 	.block.blockDataview {
 		.viewItem.viewGallery { padding: 16px 0px; display: flex; flex-wrap: wrap; column-count: 4; }
 		.viewItem.viewGallery {
-			.cellContent {
-				.name { max-width: 100%; @include text-overflow-nw; }
-			}
-
-			.cellContent:last-child { margin: 0px; }
-
-			.cellContent.c-date { color: #6c6a5f; }
-
-			.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
-			.cellContent.c-title {
-				.smile { margin-bottom: 10px; }
-				.name { height: 24px; width: calc(100% - 28px) !important; }
-			}
-
-			.cellContent.c-file {
-				.inputWithFile { display: none; }
-			}
-
 			.card { 
 				width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
 				margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;

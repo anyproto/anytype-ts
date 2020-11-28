@@ -472,7 +472,7 @@ const Mapper = {
 			item.setHidden(obj.isHidden);
 			item.setReadonly(obj.isReadOnly);
 			item.setMulti(obj.isMultiple);
-			item.setObjecttype(obj.objectType);
+			item.setObjecttypesList(obj.objectTypes);
 			item.setSelectdictList((obj.selectDict || []).map(Mapper.To.SelectOption));
 
 			return item;

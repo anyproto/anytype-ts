@@ -1,0 +1,31 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockDataview {
+		.viewItem.viewGallery, 
+		.viewItem.viewBoard {
+			.card { white-space: normal; }
+
+			.cellContent { margin-bottom: 6px; }
+			.cellContent:last-child { margin-bottom: 0px; }
+			.cellContent {
+				.name { max-width: 100%; @include text-overflow-nw; }
+			}
+
+			.cellContent.c-date { color: #6c6a5f; }
+
+			.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
+			.cellContent.c-title {
+				.smile { margin-bottom: 10px; }
+				.name { height: 24px; width: 100% !important; }
+			}
+
+			.cellContent.c-description {  }
+
+			.cellContent.c-file {
+				.inputWithFile { display: none; }
+			}
+
+		}
+	}
+}
