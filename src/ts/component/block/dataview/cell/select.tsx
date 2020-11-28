@@ -57,8 +57,8 @@ class CellSelect extends React.Component<Props, State> {
 		};
 
 		return (
-			<div>
-				{!canEdit ? (
+			<div className="wrap">
+				{canEdit ? (
 					<React.Fragment>
 						<DraggableArea
 							tags={value}
