@@ -60,7 +60,8 @@ class ViewGallery extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const viewItem = node.find('.viewItem');
-		const cnt = Math.floor(node.width() / (size.card + size.margin));
+
+		const cnt = Math.floor((node.width() + size.margin) / (size.card + size.margin));
 		const width = cnt * (size.card + size.margin) - size.margin;
 		const cards = viewItem.find('.card');
 
