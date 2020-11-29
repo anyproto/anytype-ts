@@ -21,6 +21,7 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 		
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 	};
 
 	render () {
@@ -54,6 +55,7 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation" onClick={this.onRelation} />
 					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
@@ -69,7 +71,7 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 		const { rootId, match } = this.props;
 		
 		commonStore.menuOpen('blockMore', { 
-			element: '#button-header-more',
+			element: '#popupEditorPage #button-header-more',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 8,
@@ -81,6 +83,24 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 				blockIds: [ rootId ],
 				match: match,
 			}
+		});
+	};
+
+	onRelation () {
+		const { rootId } = this.props;
+
+		commonStore.menuOpen('blockRelationList', { 
+			element: '#popupEditorPage #button-header-relation',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				relationKey: '',
+				readOnly: false,
+				rootId: rootId,
+			},
 		});
 	};
 

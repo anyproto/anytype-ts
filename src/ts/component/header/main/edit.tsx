@@ -178,7 +178,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			fixedY: 38,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
-			className: 'isReadOnly',
+			className: 'fixed',
 			data: {
 				relationKey: '',
 				readOnly: false,

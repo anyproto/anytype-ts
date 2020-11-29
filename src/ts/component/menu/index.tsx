@@ -199,6 +199,8 @@ class Menu extends React.Component<Props, {}> {
 			const height = node.outerHeight();
 			const ew = el.outerWidth();
 			const eh = el.outerHeight();
+
+			console.log(el, offset);
 			
 			let x = offset.left;
 			let y = offset.top;

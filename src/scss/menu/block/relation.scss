@@ -6,7 +6,7 @@
 		.item:hover::before { opacity: 0.15; }
 	}
 
-	.menu.menuBlockRelationList.isReadOnly { position: fixed; }
+	.menu.menuBlockRelationList.fixed { position: fixed; }
 	.menu.menuBlockRelationList.isReadOnly { 
 		.item { cursor: default; }
 		.item:hover::before { opacity: 0; }
