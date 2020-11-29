@@ -669,6 +669,10 @@ class Util {
 		return { page, action };
 	};
 
+	intercept (obj: any, change: any) {
+		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
+	};
+
 };
 
 export default new Util();

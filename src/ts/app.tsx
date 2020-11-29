@@ -47,6 +47,7 @@ import 'scss/page/main/set.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
+import 'scss/block/dataview/cell.scss';
 import 'scss/block/dataview/view/common.scss';
 import 'scss/block/dataview/view/grid.scss';
 import 'scss/block/dataview/view/board.scss';

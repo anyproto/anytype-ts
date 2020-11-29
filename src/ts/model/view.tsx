@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { decorate, observable, intercept } from 'mobx';
 
 const Constant = require('json/constant.json');
@@ -32,12 +32,7 @@ class View implements I.View {
 			relations: observable,
 		});
 
-		intercept(self as any, (change: any) => {
-			if (JSON.stringify(change.newValue) === JSON.stringify(self[change.name])) {
-				return null;
-			};
-			return change;
-		});
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
@@ -82,6 +77,13 @@ class SelectOption implements I.SelectOption {
 		self.id = String(props.id || '');
 		self.text = String(props.text || '');
 		self.color = String(props.color || '');
+
+		decorate(self, {
+			text: observable,
+			color: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 };
 
@@ -105,6 +107,16 @@ class ViewRelation extends Relation implements I.ViewRelation {
 		self.includeTime = Boolean(props.includeTime);
 		self.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
 		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
+
+		decorate(self, {
+			width: observable,
+			isVisible: observable,
+			includeTime: observable, 
+			dateFormat: observable,
+			timeFormat: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
@@ -123,6 +135,15 @@ class Filter implements I.Filter {
 		self.operator = Number(props.operator) || I.FilterOperator.And;
 		self.condition = Number(props.condition) || I.FilterCondition.Equal;
 		self.value = props.value || '';
+
+		decorate(self, {
+			relationKey: observable,
+			operator: observable,
+			condition: observable,
+			value: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
@@ -137,6 +158,13 @@ class Sort implements I.Sort {
 		
 		self.relationKey = String(props.relationKey || '');
 		self.type = Number(props.type) || I.SortType.Asc;
+
+		decorate(self, {
+			relationKey: observable,
+			type: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
