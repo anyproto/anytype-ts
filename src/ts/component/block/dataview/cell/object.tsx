@@ -40,11 +40,7 @@ class CellObject extends React.Component<Props, State> {
 		const { id } = this.props;
 		const cell = $('#' + id);
 
-		if (editing) {
-			cell.addClass('isEditing');
-		} else {
-			cell.removeClass('isEditing');
-		};
+		editing ? cell.addClass('isEditing') : cell.removeClass('isEditing');
 	};
 
 	setEditing (v: boolean) {

@@ -184,15 +184,13 @@ class CellText extends React.Component<Props, State> {
 			this.ref.focus();
 			this.ref.setValue(value);
 
-			cell.addClass('isEditing');
-
 			if (input.length) {
 				let length = value.length;
 				input.get(0).setSelectionRange(length, length);
 			};
-		} else {
-			cell.removeClass('isEditing');
 		};
+
+		editing ? cell.addClass('isEditing') : cell.removeClass('isEditing');
 
 		this.resize();
 	};
