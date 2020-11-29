@@ -1,16 +1,16 @@
 import { I } from 'ts/lib';
-import { observable } from 'mobx';
+import { decorate, observable, intercept } from 'mobx';
 
 const Constant = require('json/constant.json');
 
 class View implements I.View {
 	
-	@observable id: string = '';
-	@observable name: string = '';
-	@observable type: I.ViewType = I.ViewType.Grid;
-	@observable sorts: I.Sort[] = [];
-	@observable filters: I.Filter[] = [];
-	@observable relations: any[] = [];
+	id: string = '';
+	name: string = '';
+	type: I.ViewType = I.ViewType.Grid;
+	sorts: I.Sort[] = [];
+	filters: I.Filter[] = [];
+	relations: any[] = [];
 	
 	constructor (props: I.View) {
 		let self = this;
@@ -22,6 +22,22 @@ class View implements I.View {
 		self.relations = (props.relations || []).map((it: I.ViewRelation) => { return new ViewRelation(it); });
 		self.filters = (props.filters || []).map((it: I.Filter) => { return new Filter(it); });
 		self.sorts = (props.sorts || []).map((it: I.Sort) => { return new Sort(it); });
+
+		decorate(self, {
+			id: observable,
+			name: observable,
+			type: observable,
+			sorts: observable,
+			filters: observable,
+			relations: observable,
+		});
+
+		intercept(self as any, (change: any) => {
+			if (JSON.stringify(change.newValue) === JSON.stringify(self[change.name])) {
+				return null;
+			};
+			return change;
+		});
 	};
 
 };

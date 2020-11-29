@@ -152,15 +152,8 @@ const Mapper = {
 			if (type == I.BlockType.Dataview) {
 				item.content = {
 					source: content.getSource(),
-					views: (content.getViewsList() || []).map((view: I.View) => {
-						return Mapper.From.View(view);
-					}),
+					views: (content.getViewsList() || []).map(Mapper.From.View),
 				};
-
-				decorate(item.content, {
-					views: observable,
-				});
-
 				dbStore.relationsSet(item.id, (content.getRelationsList() || []).map(Mapper.From.Relation));
 			};
 
@@ -240,7 +233,7 @@ const Mapper = {
 		},
 
 		View: (obj: any): I.View => {
-			let view: any = {
+			return {
 				id: obj.getId(),
 				type: obj.getType(),
 				name: obj.getName(),
@@ -248,7 +241,6 @@ const Mapper = {
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
 			};
-			return observable(new M.View(view));
 		},
 
 		HistoryVersion: (obj: any): I.HistoryVersion => {
