@@ -114,6 +114,9 @@ class BlockVideo extends React.Component<Props, {}> {
 		node.on('resizeInit', (e: any, oe: any) => { this.onResizeInit(); });
 		
 		if (video.length) {
+			this.div = 16 / 9;
+			this.onResizeInit();
+
 			video.on('canplay', (e: any) => {
 				this.div = el.videoWidth / el.videoHeight;
 				this.onResizeInit();

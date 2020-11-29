@@ -100,7 +100,7 @@ class DragLayer extends React.Component<Props, State> {
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		this.setState({ type: '', ids: [] });
 	};
 	
