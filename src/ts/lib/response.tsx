@@ -394,6 +394,12 @@ const SetCreate = (response: any) => {
 	};
 };
 
+const ObjectSearch = (response: any) => {
+	return {
+		records: (response.getRecordsList() || []).map(Mapper.From.Details),
+	};
+};
+
 export {
 	VersionGet,
 
@@ -492,4 +498,6 @@ export {
 	ObjectTypeRelationAdd,
 
 	SetCreate,
+	ObjectSearch,
+
 };

@@ -816,6 +816,15 @@ const SetCreate = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('setCreate', request, callBack);
 };
 
+const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Search.Request();
+	
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+
+	dispatcher.request('objectSearch', request, callBack);
+};
+
 export {
 	VersionGet,
 
@@ -919,5 +928,6 @@ export {
 	ObjectTypeRelationRemove,
 
 	SetCreate,
+	ObjectSearch,
 
 };

@@ -13,6 +13,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 	format: I.RelationType = I.RelationType.Description;
+	objectTypes: string[] = [];
 	ref: any = null;
 	
 	constructor(props: any) {
@@ -157,15 +158,20 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
+		const relation = this.getRelation();
+		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
+
+		console.log(relation);
+		
 		const cb = (message: any) => {
 			const options = message.objectTypes.map((it: I.ObjectType) => {
-				const id = DataUtil.schemaField(it.url);
 				return {
-					id: id, 
+					id: DataUtil.schemaField(it.url), 
 					name: it.name, 
 					icon: it.iconEmoji,
 					hash: '',
 					withSmile: true,
+					url: it.url,
 				};
 			});
 			options.sort((c1: any, c2: any) => {
@@ -178,12 +184,20 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				element: '#item-object-type',
 				offsetX: 224,
 				offsetY: 4,
+				width: 280,
 				type: I.MenuType.Vertical,
 				vertical: I.MenuDirection.Center,
 				horizontal: I.MenuDirection.Left,
 				data: {
-					value: '',
+					value: value,
 					options: options,
+					onSelect: (e: any, item: any) => {
+						this.objectTypes = [ item.url ];
+
+						if (relation) {
+							this.save();
+						};
+					},
 				}
 			});
 		};
@@ -277,6 +291,10 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		const relation = this.getRelation();
 		const newRelation: any = { name: name, format: this.format };
+
+		if (this.format == I.RelationType.Object) {
+			newRelation.objectTypes = this.objectTypes;
+		};
 
 		relation ? this.update(newRelation) : this.add(newRelation);
 	};
