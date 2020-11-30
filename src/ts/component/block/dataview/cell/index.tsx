@@ -115,7 +115,7 @@ class Cell extends React.Component<Props, {}> {
 
 		let menuId = '';
 		let param: I.MenuParam = { 
-			element: '#' + id,
+			element: '#' + id + ' .cellContent',
 			offsetX: 0,
 			offsetY: 0,
 			type: I.MenuType.Vertical,
