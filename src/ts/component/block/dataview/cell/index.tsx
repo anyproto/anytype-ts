@@ -191,9 +191,11 @@ class Cell extends React.Component<Props, {}> {
 					width: width,
 					offsetY: 14,
 				});
+
 				param.data = Object.assign(param.data, {
 					filter: '',
 					value: value || [],
+					types: relation.objectTypes,
 				});
 
 				menuId = 'dataviewObjectList';

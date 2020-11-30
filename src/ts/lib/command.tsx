@@ -816,11 +816,13 @@ const SetCreate = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('setCreate', request, callBack);
 };
 
-const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], callBack?: (message: any) => void) => {
+const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setOffset(offset);
+	request.setLimit(limit);
 
 	dispatcher.request('objectSearch', request, callBack);
 };

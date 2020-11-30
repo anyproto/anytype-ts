@@ -17,6 +17,7 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
+const LIMIT = 40;
 
 @observer
 class MenuDataviewObjectList extends React.Component<Props, State> {
@@ -30,10 +31,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	_isMounted: boolean = false;	
 	filter: string = '';
 	cache: any = null;
+	offset: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 	
@@ -47,6 +50,10 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
+			if (!item) {
+				return null;
+			};
+
 			const type = DataUtil.schemaField(item.type && item.type.length ? item.type[0] : '');
 
 			let icon = null;
@@ -89,12 +96,15 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			);
 		};
 
+		const count = 400;
+
 		return (
 			<div className="items">
 				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => index < items.length}
+					rowCount={count}
+					loadMoreRows={this.loadMoreRows}
+					isRowLoaded={({ index }) => { return !!items[index]; }}
+					threshold={LIMIT}
 				>
 					{({ onRowsRendered, registerChild }) => (
 						<AutoSizer className="scrollArea">
@@ -104,11 +114,11 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
+									rowCount={count}
 									rowHeight={HEIGHT}
 									rowRenderer={rowRenderer}
 									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
+									overscanRowCount={LIMIT}
 									scrollToIndex={n}
 								/>
 							)}
@@ -197,7 +207,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		this.props.setActiveItem((item ? item : items[n]), scroll);
 	};
 
-	load () {
+	load (callBack?: (message: any) => void) {
+		const { param } = this.props;
+		const { data } = param;
+		const { types } = data;
+		const { items } = this.state;
+
 		this.setState({ loading: true });
 
 		const filters = [
@@ -208,13 +223,24 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		C.ObjectSearch(filters, sorts, (message: any) => {
+		C.ObjectSearch(filters, sorts, this.offset, LIMIT, (message: any) => {
+			if (callBack) {
+				callBack(message);
+			};
+
 			this.setState({ 
-				items: message.records.map((it: any) => {
+				items: items.concat(message.records.map((it: any) => {
 					it.name = String(it.name || Constant.default.name);
 					return it;
-				}),
+				})),
 			});
+		});
+	};
+
+	loadMoreRows ({ startIndex, stopIndex }) {
+        return new Promise((resolve, reject) => {
+			this.offset += LIMIT;
+			this.load(resolve);
 		});
 	};
 
@@ -310,31 +336,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		position();
 	};
 
-	/*
-load () {
-		const { param } = this.props;
-		const { data } = param;
-		const { types } = data;
-
-		const filters = [
-			//{ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types },
-		];
-
-		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
-		];
-
-		C.ObjectSearch(filters, sorts, (message: any) => {
-			this.setState({ 
-				items: message.records.map((it: any) => {
-					it.name = String(it.name || Constant.default.name);
-					return it;
-				}),
-			});
-		});
-	};
-	*/
-	
 };
 
 export default MenuDataviewObjectList;
