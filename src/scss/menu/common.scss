@@ -70,7 +70,10 @@
 			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			
-			.smile { margin-right: 4px; }
+			.icon.file-type, .preview { width: 20px; height: 20px; transition: none; vertical-align: top; }
+			.preview { object-fit: cover; }
+
+			.smile, .preview, .icon.file-type { margin-right: 4px; }
 			.smile {
 				.icon.blank { margin: 0px; }
 			}

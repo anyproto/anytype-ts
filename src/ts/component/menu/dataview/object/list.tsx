@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
+import { Icon, Smile } from 'ts/component';
 import { I, C, DataUtil, Util, Key, keyboard } from 'ts/lib';
+import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -46,6 +47,23 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
+			const type = DataUtil.schemaField(item.type && item.type.length ? item.type[0] : '');
+
+			let icon = null;
+			switch (type) {
+				default:
+					icon = <Smile {...item} />;
+					break;
+
+				case 'image':
+					icon = <img src={commonStore.imageUrl(item.id, 20)} className="preview" />;
+					break;
+
+				case 'file':
+					icon = <Icon className={[ 'file-type', Util.fileIcon(item) ].join(' ')} />;
+					break;
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -61,7 +79,10 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 								{item.name ? <div className="name">{item.name}</div> : ''}
 							</div>
 						) : (
-							<MenuItemVertical {...item} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
+							<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+								{icon}
+								<div className="name">{item.name}</div>
+							</div>
 						)}
 					</div>
 				</CellMeasurer>
