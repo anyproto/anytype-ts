@@ -105,7 +105,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.loadSearch();
+		this.load();
 	};
 
 	componentDidUpdate () {
@@ -195,7 +195,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this.props.setActiveItem((item ? item : items[n]), scroll);
 	};
 
-	loadSearch () {
+	load () {
 		const pages: I.PageInfo[] = [];
 
 		this.setState({ loading: true });
@@ -252,11 +252,11 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 		
 		e.stopPropagation();
+		keyboard.disableMouse(true);
 
 		let { n } = this.state;
-		const k = e.key.toLowerCase();
-		keyboard.disableMouse(true);
 		
+		const k = e.key.toLowerCase();
 		const items = this.getItems(false);
 		const l = items.length;
 		const item = items[n];

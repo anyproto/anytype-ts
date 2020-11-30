@@ -1,14 +1,11 @@
-import { I, M, Decode, Util, Encode, DataUtil } from 'ts/lib';
-import { decorate, observable } from 'mobx';
+import { I, M, Decode, Util, Encode } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
 const Commands = require('lib/pb/protos/commands_pb');
-const Constant = require('json/constant.json');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Relation = require('lib/pkg/lib/pb/relation/protos/relation_pb.js');
 const Rpc = Commands.Rpc;
 const ContentCase = Model.Block.ContentCase;
-const OptionsCase = Model.Block.Content.Dataview.Relation.OptionsCase;
 
 const Mapper = {
 

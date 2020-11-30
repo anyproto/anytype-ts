@@ -2,7 +2,11 @@
 
 .menus {
 	.menu.menuDataviewObjectList {
-		.item { padding: 5px 10px; }
+		.content { height: 212px; overflow: visible; transition: none; }
+		.items { height: 100%; }
+		.item {
+			.name { @include text-overflow-nw; width: calc(100% - 26px); }
+		}
 		.label { color: $colorDarkGrey; @include text-common; padding: 0px 16px; }
 	}
 

@@ -1,4 +1,4 @@
-import { Mapper } from 'ts/lib';
+import { Mapper, Decode } from 'ts/lib';
 
 const VersionGet = (response: any) => {
 	return {};
@@ -396,7 +396,9 @@ const SetCreate = (response: any) => {
 
 const ObjectSearch = (response: any) => {
 	return {
-		records: (response.getRecordsList() || []).map(Mapper.From.Details),
+		records: (response.getRecordsList() || []).map((it: any) => {
+			return Decode.decodeStruct(it);
+		}),
 	};
 };
 
