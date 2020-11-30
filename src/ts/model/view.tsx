@@ -109,6 +109,8 @@ class ViewRelation extends Relation implements I.ViewRelation {
 		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
 
 		decorate(self, {
+			name: observable,
+			selectDict: observable,
 			width: observable,
 			isVisible: observable,
 			includeTime: observable, 

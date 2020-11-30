@@ -39,11 +39,9 @@ class Dispatcher {
 			bindings.setEventHandler(handler);
 		/// #else
 			let serverAddr = remote.getGlobal('serverAddr');
-			
-			console.log('Server address: ', serverAddr);
+			console.log('[Dispatcher] Server address: ', serverAddr);
 			
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
-
 			this.listenEvents();
 
 		/// #endif
@@ -58,13 +56,13 @@ class Dispatcher {
 
 		this.stream.on('status', (status: any) => {
 			if (status.code) {
-				console.error('[Stream] Restarting', status);
+				console.error('[Dispatcher.stream] Restarting', status);
 				this.listenEvents();
 			};
 		});
 
 		this.stream.on('end', (end: any) => {
-			console.error('[Stream] end, restarting', end);
+			console.error('[Dispatcher.stream] end, restarting', end);
 			this.listenEvents();
 		});
 	};
@@ -503,12 +501,6 @@ class Dispatcher {
 					const item = dbStore.getRelation(id, relation.key);
 
 					item ? dbStore.relationUpdate(id, relation) : dbStore.relationAdd(id, relation);
-
-					viewId = dbStore.getMeta(id).viewId;
-					index = block.content.views.findIndex((it: I.View) => { return it.id == viewId; });
-					block.content.views[index].relations = DataUtil.viewGetRelations(id, block.content.views[index]);
-
-					console.log(block.content.views[index]);
 					break;
 
 				case 'blockDataviewRelationDelete':
@@ -519,12 +511,6 @@ class Dispatcher {
 					};
 
 					dbStore.relationRemove(id, data.getRelationkey());
-
-					viewId = dbStore.getMeta(id).viewId;
-					view = block.content.views.find((it: I.View) => { return it.id == viewId; });
-					view.relations = DataUtil.viewGetRelations(id, view);
-
-					
 					break;
 
 				case 'processNew':

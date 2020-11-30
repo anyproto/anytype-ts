@@ -84,17 +84,13 @@ class DbStore {
 		};
 
 		const idx = relations.findIndex((it: I.Relation) => { return it.key == item.key; });
-
 		set(relations[idx], item);
-		this.relationsSet(blockId, relations);
 	};
 
 	@action
 	relationRemove (blockId: string, key: string) {
 		let relations = this.getRelations(blockId);
 		relations = relations.filter((it: I.Relation) => { return it.key != key; });
-
-		this.relationsSet(blockId, relations);
 	};
 
 	@action

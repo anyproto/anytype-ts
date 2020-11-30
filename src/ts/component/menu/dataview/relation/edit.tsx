@@ -161,8 +161,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 
-		console.log(relation);
-		
 		const cb = (message: any) => {
 			const options = message.objectTypes.map((it: I.ObjectType) => {
 				return {

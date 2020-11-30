@@ -23,8 +23,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const relation = data.relation.get();
 		const reg = new RegExp(filter, 'i');
 
-		console.log(relation.objectTypes);
-		
 		const Item = (item: any) => (
 			<div className="item" onClick={(e: any) => { this.onSelect(e, item.id); }}>
 				<IconUser className="c18" {...item} />

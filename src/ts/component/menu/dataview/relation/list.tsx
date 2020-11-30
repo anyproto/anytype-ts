@@ -34,7 +34,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
-		
+
 		const Item = SortableElement((item: any) => {
 			return (
 				<div id={'relation-' + item.id} className="item">
