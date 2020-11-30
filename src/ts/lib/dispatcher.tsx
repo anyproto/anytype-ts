@@ -165,7 +165,9 @@ class Dispatcher {
 
 		for (let message of messages) {
 			let block: any = null;
+			let viewId: string = '';
 			let view: any = null;
+			let index: number = 0;
 			let childrenIds: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
@@ -501,6 +503,12 @@ class Dispatcher {
 					const item = dbStore.getRelation(id, relation.key);
 
 					item ? dbStore.relationUpdate(id, relation) : dbStore.relationAdd(id, relation);
+
+					viewId = dbStore.getMeta(id).viewId;
+					index = block.content.views.findIndex((it: I.View) => { return it.id == viewId; });
+					block.content.views[index].relations = DataUtil.viewGetRelations(id, block.content.views[index]);
+
+					console.log(block.content.views[index]);
 					break;
 
 				case 'blockDataviewRelationDelete':
@@ -511,6 +519,12 @@ class Dispatcher {
 					};
 
 					dbStore.relationRemove(id, data.getRelationkey());
+
+					viewId = dbStore.getMeta(id).viewId;
+					view = block.content.views.find((it: I.View) => { return it.id == viewId; });
+					view.relations = DataUtil.viewGetRelations(id, view);
+
+					
 					break;
 
 				case 'processNew':

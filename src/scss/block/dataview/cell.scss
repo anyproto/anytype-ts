@@ -2,7 +2,7 @@
 
 .cell.c-title { cursor: text; }
 .cell.c-title {
-	.name { width: calc(100% - 24px); @include text-overflow-nw; display: inline-block; vertical-align: top; }
+	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; }
 	.smile { margin-right: 4px; }
 }
 
@@ -31,7 +31,11 @@
 	}
 }
 
-.cell.isEditing.c-description { padding: 0px !important; box-shadow: 0px 0px; }
+.cell.isEditing.c-description, .cell.isEditing.c-select {
+	.cellContent { position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; }
+}
+
+.cell.isEditing.c-description { padding: 14px; }
 
 .cell.isEditing.c-select {
 	.filter { display: inline-block; }
@@ -77,8 +81,8 @@
 	}
 }
 
-.cellContent.c-title {
-	.name { width: calc(100% - 24px) !important; }
+.cellContent.isName {
+	.name { line-height: 20px; @include text-overflow-nw; width: calc(100% - 24px); }
 }
 
 .cellContent.c-link {
@@ -86,6 +90,7 @@
 }
 .cellContent.canEdit.c-date { cursor: text; }
 .cellContent.canEdit.c-checkbox { cursor: pointer; }
+.cellContent.canEdit.c-object { cursor: text; }
 
 .cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
 	a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }
