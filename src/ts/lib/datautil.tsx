@@ -544,7 +544,7 @@ class DataUtil {
 	};
 
 	cellId (prefix: string, relationKey: string, id: any) {
-		return [ prefix, relationKey, String(id || '') ].join('-');
+		return [ prefix, relationKey, id.toString() ].join('-');
 	};
 
 	viewGetRelations (blockId: string, view: I.View): I.ViewRelation[] {

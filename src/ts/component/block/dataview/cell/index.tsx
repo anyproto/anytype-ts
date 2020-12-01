@@ -95,6 +95,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		const id = DataUtil.cellId('cell', relation.key, index);
+		console.log(id);
 		const cell = $('#' + id);
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);

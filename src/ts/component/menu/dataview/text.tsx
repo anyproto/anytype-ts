@@ -32,6 +32,7 @@ class MenuText extends React.Component<Props, {}> {
 				<Textarea 
 					ref={(ref: any) => { this.ref = ref; }} 
 					id="input" 
+					value={value}
 					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
 					onBlur={this.onBlur}
@@ -55,7 +56,7 @@ class MenuText extends React.Component<Props, {}> {
 			input.get(0).setSelectionRange(length, length);
 		};
 
-		this.resize();
+		window.setTimeout(() => { this.resize(); });
 	};
 
 	onKeyDown (e: any) {
@@ -85,6 +86,8 @@ class MenuText extends React.Component<Props, {}> {
 			input.css({ height: 'auto', overflow: 'visible' });
 		
 			const sh = input.get(0).scrollHeight;
+
+			console.log(sh);
 
 			input.css({ height: Math.min(wh - 76, sh), overflow: 'auto' });
 			input.scrollTop(sh);

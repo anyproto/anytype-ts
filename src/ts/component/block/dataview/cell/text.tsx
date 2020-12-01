@@ -52,7 +52,7 @@ class CellText extends React.Component<Props, State> {
 		if (editing) {
 			if (relation.format == I.RelationType.Description) {
 				EditorComponent = (item: any) => (
-					<div />
+					<div className="name">{value}</div>
 				);
 			} else 
 			if (relation.format == I.RelationType.Date) {

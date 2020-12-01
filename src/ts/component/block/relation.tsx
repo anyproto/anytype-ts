@@ -56,11 +56,10 @@ class BlockRelation extends React.Component<Props, {}> {
 						</div>
 						<div 
 							id={DataUtil.cellId('cell', key, '0')} 
-							className={[ 'cell', 'c-' + DataUtil.relationClass(relation.format) ].join(' ')} 
+							className={[ 'cell', 'c-' + DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
 							onClick={this.onCellClick}
 						>
 							<Cell 
-								id="0"
 								ref={(ref: any) => { this.refCell = ref; }}
 								rootId={rootId}
 								block={block}
@@ -68,6 +67,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								getRecord={() => { return details; }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
+								index={0}
 								onCellChange={this.onCellChange}
 							/>
 						</div>

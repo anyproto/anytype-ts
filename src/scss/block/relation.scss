@@ -28,6 +28,8 @@
 	}
 
 	.cell { @include text-common; width: calc(100% - 220px); position: relative; padding: 2px 0px; line-height: 20px; }
-	.cell.c-date { cursor: text; }
-	.cell.c-select { cursor: text; }
+
+	.cell.isEditing {
+		.cellContent { position: static; }
+	}
 }

@@ -69,9 +69,9 @@
 			"cell": {
 				"default": 192,
 				"title": 288,
-				"min": 48,
+				"min": 192,
 				"max": 500,
-				"edit": 256
+				"edit": 300
 			}
 		},
 
