@@ -20,10 +20,10 @@
 				.inputWithFile { display: none; }
 			}
 
-			.cellContent.c-select { line-height: 24px; vertical-align: middle; }
-			.cellContent.c-select {
+			.cellContent.c-select, .cellContent.c-object { line-height: 24px; vertical-align: middle; }
+			.cellContent.c-select, .cellContent.c-object {
 				.wrap { display: inline; line-height: 24px; vertical-align: middle; }
-				.tagItem { margin-bottom: 0px; }
+				.tagItem, .item { margin-bottom: 0px; }
 			}
 
 			.icon.checkbox { width: 24px; height: 24px; vertical-align: top; }
