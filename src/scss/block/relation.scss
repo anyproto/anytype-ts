@@ -33,7 +33,7 @@
 		.cellContent { position: static; padding: 5px !important; }
 	}
 
-	.cell.isEditing.c-description { 
+	.cell.isEditing.c-description, .cell.isEditing.c-file { 
 		.cellContent { box-shadow: 0px 0px; padding: 0px !important; }
 	}
 }

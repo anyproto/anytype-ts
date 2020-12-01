@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { InputWithFile, Icon } from 'ts/component';
+import { InputWithFile, IconObject } from 'ts/component';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore } from 'ts/store';
+import { blockStore } from 'ts/store';
 
 interface Props extends I.Cell {};
 
@@ -55,14 +55,14 @@ class CellFile extends React.Component<Props, State> {
 
 		const File = (item: any) => (
 			<div className="item file" onClick={(e: any) => { this.onOpen(e, item, item.type); }}>
-				<Icon className={[ 'file-type', Util.fileIcon(item) ].join(' ')} />
+				<IconObject type="file" object={item} />
 				<div className="name">{item.name}</div>
 			</div>
 		);
 
 		const Image = (item: any) => (
 			<div className="item image" onClick={(e: any) => { this.onOpen(e, item, item.type); }}>
-				<img src={commonStore.imageUrl(item.id, 20)} className="preview" />
+				<IconObject type="image" object={item} />
 			</div>
 		);
 
