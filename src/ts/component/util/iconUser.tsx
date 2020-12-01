@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Label } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
@@ -18,23 +17,15 @@ interface Props {
 	onMouseLeave?(e: any): void;
 };
 
-interface State {
-	icon: string;
-};
-
 const $ = require('jquery');
 
-class IconUser extends React.Component<Props, State> {
+class IconUser extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	
 	public static defaultProps = {
 		color: '',
 		tooltipY: I.MenuDirection.Bottom,
-	};
-
-	state = {
-		icon: '',
 	};
 
 	constructor (props: any) {
@@ -46,9 +37,8 @@ class IconUser extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { className, avatar, name, color, onClick } = this.props;
+		let  { className, avatar, name, color, icon, onClick } = this.props;
 		
-		let icon = this.state.icon || this.props.icon || '';
 		let cn = [ 'icon', 'user' ];
 		let text = name || '';
 		

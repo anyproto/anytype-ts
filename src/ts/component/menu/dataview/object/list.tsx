@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Smile } from 'ts/component';
+import { Icon, IconObject, Smile } from 'ts/component';
 import { I, C, DataUtil, Util, Key, keyboard } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -56,23 +56,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 			const type = DataUtil.schemaField(item.type && item.type.length ? item.type[0] : '');
 
-			let icon = null;
 			let cn = [];
-
-			switch (type) {
-				default:
-					icon = <Smile {...item} />;
-					break;
-
-				case 'image':
-					icon = <img src={commonStore.imageUrl(item.id, 20)} className="preview" />;
-					break;
-
-				case 'file':
-					icon = <Icon className={[ 'file-type', Util.fileIcon(item) ].join(' ')} />;
-					break;
-			};
-
 			if (item.isSection) {
 				cn.push('section');
 				if (param.index == 0) {
@@ -99,7 +83,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 							</div>
 						) : (
 							<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-								{icon}
+								<IconObject type={type} object={item} />
 								<div className="name">{item.name}</div>
 							</div>
 						)}

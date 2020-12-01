@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
-import { Icon, Smile, Input, Textarea } from 'ts/component';
+import { Icon, Smile, Input, IconObject } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -128,33 +128,19 @@ class CellText extends React.Component<Props, State> {
 				value = value || Constant.default.name;
 			};
 
-			let icon = null;
-
-			switch (type) {
-				default:
-					icon = (
-						<Smile 
-							id={[ relation.key, record.id ].join('-')} 
-							icon={record.iconEmoji} 
-							hash={record.iconImage} 
-							className={cn} size={size} canEdit={!readOnly} offsetY={4} 
-							onSelect={this.onSelect} onUpload={this.onUpload} 
-						/>
-					);
-					break;
-
-				case 'image':
-					icon = <img src={commonStore.imageUrl(record.id, 20)} className="preview" />;
-					break;
-
-				case 'file':
-					icon = <Icon className={[ 'file-type', Util.fileIcon(record) ].join(' ')} />;
-					break;
-			};
-
 			content = (
 				<React.Fragment>
-					{icon}
+					<IconObject 
+						id={[ relation.key, record.id ].join('-')} 
+						type={type}
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload}
+						className={cn} 
+						size={size} 
+						canEdit={!readOnly} 
+						offsetY={4} 
+						object={record} 
+					/>
 					<Name name={value} />
 					<Icon className="expand" onClick={(e: any) => { onOpen(e, record, type); }} />
 				</React.Fragment>

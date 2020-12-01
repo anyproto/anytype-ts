@@ -3,7 +3,6 @@
 .cell.c-title { cursor: text; }
 .cell.c-title {
 	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; }
-	.smile { margin-right: 4px; }
 }
 
 .cell.c-select {
@@ -44,10 +43,7 @@
 }
 
 .cellContent {
-	.smile { margin: 0px 4px 0px 0px; }
-	.icon.file-type, .preview { width: 20px; height: 20px; margin-right: 4px; transition: none; vertical-align: top; }
-	.preview { object-fit: cover; }
-
+	.icon.object { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
 	.name { display: inline-block; vertical-align: top; }
 	div.name:empty { display: none; }
 	span:empty { display: none; }

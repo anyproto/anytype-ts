@@ -72,3 +72,8 @@
 .icon.user.blue { background-color: $colorBlue; }
 .icon.user.teal { background-color: $colorTeal; }
 .icon.user.green { background-color: $colorLime; }
+
+.icon.object {
+	.smile, .icon.file-type, .img { width: 100%; height: 100%; margin: 0px !important; transition: none; vertical-align: top; }
+	.img { display: block; object-fit: cover; }
+}

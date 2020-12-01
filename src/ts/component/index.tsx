@@ -54,6 +54,7 @@ import Pin from './util/pin';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
+import IconObject from './util/iconObject';
 
 import LinkPreview from './util/linkPreview';
 
@@ -108,6 +109,7 @@ export {
 	Error,
 	Icon,
 	IconUser,
+	IconObject,
 	LinkPreview,
 	Cell,
 };
