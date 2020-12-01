@@ -91,6 +91,7 @@ class DbStore {
 	relationRemove (blockId: string, key: string) {
 		let relations = this.getRelations(blockId);
 		relations = relations.filter((it: I.Relation) => { return it.key != key; });
+		this.relationsSet(blockId, relations);
 	};
 
 	@action

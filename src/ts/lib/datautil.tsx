@@ -545,6 +545,10 @@ class DataUtil {
 	};
 
 	viewGetRelations (blockId: string, view: I.View): I.ViewRelation[] {
+		if (!view) {
+			return [];
+		};
+
 		let relations = Util.objectCopy(dbStore.getRelations(blockId));
 		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
 
@@ -590,8 +594,6 @@ class DataUtil {
 			relation.key = message.relationKey;
 			relation.isVisible = true;
 
-			view.relations.push(relation);
-			view.relations = this.viewGetRelations(blockId, view);
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
@@ -601,8 +603,6 @@ class DataUtil {
 			if (message.error.code || !view) {
 				return;
 			};
-
-			view.relations = this.viewGetRelations(blockId, view);
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
@@ -612,8 +612,6 @@ class DataUtil {
 			if (message.error.code || !view) {
 				return;
 			};
-
-			view.relations = this.viewGetRelations(blockId, view);
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
