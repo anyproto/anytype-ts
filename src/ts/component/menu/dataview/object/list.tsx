@@ -169,12 +169,8 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	getSections () {
 		const items = this.filterItems();
-		const list: any[] = [
-			{ id: '', name: 'Find and object', isSection: true },
-		];
 
 		let obj: any = {};
-
 		for (let item of items) {
 			let url = item.type && item.type.length ? item.type[0] : '';
 			let ot = dbStore.getObjectType(url);
