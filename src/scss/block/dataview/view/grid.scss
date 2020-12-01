@@ -46,7 +46,7 @@
 			.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
 			.cell:last-child { border-right: 0px; }
 
-			.cell.isEditing.c-description, .cell.isEditing.c-select {
+			.cell.isEditing.c-description, .cell.isEditing.c-select, .cell.isEditing.c-object {
 				.cellContent { min-width: 256px; padding: 14px; }
 			}
 			.cell.isEditing.c-select { 

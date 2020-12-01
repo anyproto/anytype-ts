@@ -52,7 +52,7 @@ class CellText extends React.Component<Props, State> {
 		if (editing) {
 			if (relation.format == I.RelationType.Description) {
 				EditorComponent = (item: any) => (
-					<Textarea ref={(ref: any) => { this.ref = ref; }} id="input" {...item} />
+					<div />
 				);
 			} else 
 			if (relation.format == I.RelationType.Date) {
@@ -170,6 +170,7 @@ class CellText extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { id, relation, index, getRecord } = this.props;
 		const cell = $('#' + id);
+		const body = $('body');
 		const record = getRecord(index);
 
 		if (editing) {
@@ -181,18 +182,21 @@ class CellText extends React.Component<Props, State> {
 				value = value ? Util.date(format.join(' ').trim(), Number(value)) : '';
 			};
 
-			this.ref.focus();
-			this.ref.setValue(value);
+			if (this.ref) {
+				this.ref.focus();
+				this.ref.setValue(value);
+			};
 
 			if (input.length) {
 				let length = value.length;
 				input.get(0).setSelectionRange(length, length);
 			};
+			cell.addClass('isEditing');
+			body.addClass('over');
+		} else {
+			cell.removeClass('isEditing');
+			body.removeClass('over');
 		};
-
-		editing ? cell.addClass('isEditing') : cell.removeClass('isEditing');
-
-		this.resize();
 	};
 
 	setEditing (v: boolean) {
@@ -206,25 +210,25 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any, value: string) {
-		this.resize();
 	};
 
 	onKeyUp (e: any, value: string) {
 		const { relation, onChange } = this.props;
-		this.resize();
 
-		if (relation.format != I.RelationType.Description) {
-			keyboard.shortcut('enter', e, (pressed: string) => {
-				e.preventDefault();
-
-				commonStore.menuCloseAll();
-				this.setState({ editing: false });
-
-				if (onChange) {
-					onChange(value);
-				};
-			});
+		if (relation.format == I.RelationType.Description) {
+			return;
 		};
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+
+			commonStore.menuCloseAll();
+			this.setState({ editing: false });
+
+			if (onChange) {
+				onChange(value);
+			};
+		});
 	};
 
 	onKeyUpDate (e: any, value: any) {
@@ -283,29 +287,6 @@ class CellText extends React.Component<Props, State> {
 		DataUtil.pageSetIcon(record.id, '', hash);
 	};
 
-	resize () {
-		const { id, relation } = this.props;
-		const { editing } = this.state;
-		const cell = $('#' + id);
-
-		raf(() => {
-			if (editing) {
-				if (relation.format == I.RelationType.Description) {
-					const input = cell.find('#input');
-					if (!input.length) {
-						return;
-					};
-
-					input.css({ height: 'auto', overflow: 'visible' });
-
-					const sh = input.get(0).scrollHeight;
-					input.css({ height: Math.min(160, sh), overflow: 'auto' });
-					input.scrollTop(sh);
-				};
-			};
-		});
-	};
-	
 };
 
 export default CellText;

@@ -21,25 +21,23 @@
 .cell.isEditing { box-shadow: 0px 0px 0px 2px $colorOrange inset; border-radius: 2px; }
 .cell.isEditing {
 	.input-text { padding: 0px; height: 20px; }
-	.textarea { 
-		padding: 0px; background: none; padding: 14px; box-shadow: 0px 0px 0px 2px $colorOrange inset; overflow: auto; font-family: 'Inter';
-		position: absolute; left: 0px; top: 0px; height: auto; width: 100%; background: #fff; z-index: 1; white-space: normal;
-	}
 	.cellContent { height: auto; overflow: visible; white-space: normal; }
 	.cellContent {
 		.name { display: inline-block; }
 	}
 }
 
-.cell.isEditing.c-description, .cell.isEditing.c-select { box-shadow: 0px 0px; }
-.cell.isEditing.c-description, .cell.isEditing.c-select {
+.cell.isEditing.c-description, .cell.isEditing.c-select, .cell.isEditing.c-object { box-shadow: 0px 0px; }
+.cell.isEditing.c-description, .cell.isEditing.c-select, .cell.isEditing.c-object {
 	.cellContent { 
 		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
 		box-shadow: 0px 0px 0px 2px $colorOrange inset; background: #fff; z-index: 10;
 	}
 }
 
-.cell.isEditing.c-description { padding: 14px; }
+.cell.isEditing.c-description {
+	.cellContent { display: none; }
+}
 
 .cell.isEditing.c-select {
 	.filter { display: inline-block; }

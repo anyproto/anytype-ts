@@ -96,7 +96,8 @@ class Cell extends React.Component<Props, {}> {
 
 		const id = DataUtil.cellId('cell', relation.key, index);
 		const cell = $('#' + id);
-		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.default);
+		const element = cell.find('.cellContent');
+		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
 		const record = getRecord(index);
 		const value = record[relation.key] || '';
@@ -115,12 +116,12 @@ class Cell extends React.Component<Props, {}> {
 
 		let menuId = '';
 		let param: I.MenuParam = { 
-			element: '#' + id + ' .cellContent',
+			element: element,
 			offsetX: 0,
 			offsetY: 0,
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
 			noAnimation: true,
 			onOpen: setOn,
 			onClose: () => {
@@ -162,6 +163,7 @@ class Cell extends React.Component<Props, {}> {
 				};
 
 				param = Object.assign(param, {
+					element: cell,
 					offsetY: -height + 1,
 					width: width,
 				});
@@ -191,7 +193,6 @@ class Cell extends React.Component<Props, {}> {
 					width: width,
 					offsetY: 14,
 				});
-
 				param.data = Object.assign(param.data, {
 					filter: '',
 					value: value || [],
@@ -201,6 +202,14 @@ class Cell extends React.Component<Props, {}> {
 				menuId = 'dataviewObjectList';
 				break;
 
+			case I.RelationType.Description:
+				param = Object.assign(param, {
+					element: cell,
+					offsetY: -height + 1,
+					width: width,
+				});
+				menuId = 'dataviewText';
+				break;
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
