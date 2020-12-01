@@ -6,4 +6,7 @@
 		.content { overflow: visible; padding: 14px; max-height: none; }
 		.textarea { padding: 0px; overflow: auto; font-family: 'Inter'; height: auto; width: 100%; background: #fff; z-index: 1; white-space: normal; }
 	}
+	.menu.menuDataviewText.fromBlock {
+		.content { padding: 5px; }
+	}
 }

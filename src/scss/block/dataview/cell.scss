@@ -71,7 +71,6 @@
 	}
 }
 
-.cellContent.c-object { line-height: 0px; }
 .cellContent.c-object {
 	.item { margin: 0px 6px 6px 0px; vertical-align: top; max-width: 100%; line-height: 20px; }
 	.filter { cursor: text; margin-right: 0px; height: 18px; min-width: 18px; max-width: 100%; padding: 0px; display: none; }
@@ -95,9 +94,11 @@
 .cellContent.c-link {
 	.icon.user { margin-right: 5px; }
 }
-.cellContent.canEdit.c-date { cursor: text; }
+.cellContent.canEdit.c-description, 
+.cellContent.canEdit.c-date, 
+.cellContent.canEdit.c-object, 
+.cellContent.canEdit.c-select { cursor: text; }
 .cellContent.canEdit.c-checkbox { cursor: pointer; }
-.cellContent.canEdit.c-object { cursor: text; }
 
 .cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
 	a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }

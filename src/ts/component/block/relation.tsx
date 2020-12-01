@@ -68,6 +68,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
 								index={0}
+								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
 							/>
 						</div>

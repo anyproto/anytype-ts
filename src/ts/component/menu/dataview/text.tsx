@@ -12,6 +12,7 @@ const raf = require('raf');
 @observer
 class MenuText extends React.Component<Props, {}> {
 	
+	_isMounted: boolean = false;
 	ref: any = null;
 
 	constructor (props: any) {
@@ -42,6 +43,8 @@ class MenuText extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
@@ -57,6 +60,10 @@ class MenuText extends React.Component<Props, {}> {
 		};
 
 		window.setTimeout(() => { this.resize(); });
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	onKeyDown (e: any) {
@@ -77,17 +84,19 @@ class MenuText extends React.Component<Props, {}> {
 
 	resize () {
 		const { position } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-		const win = $(window);
-		const wh = win.height();
-
 		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+
+			const node = $(ReactDOM.findDOMNode(this));
+			const input = node.find('#input');
+			const win = $(window);
+			const wh = win.height();
+
 			input.css({ height: 'auto', overflow: 'visible' });
 		
 			const sh = input.get(0).scrollHeight;
-
-			console.log(sh);
 
 			input.css({ height: Math.min(wh - 76, sh), overflow: 'auto' });
 			input.scrollTop(sh);

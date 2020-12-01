@@ -9,7 +9,9 @@ import CellCheckbox from './checkbox';
 import CellObject from './object';
 import CellFile from './file';
 
-interface Props extends I.Cell {};
+interface Props extends I.Cell {
+	menuClassName?: string;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -88,14 +90,13 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { relation, rootId, block, index, getRecord, readOnly } = this.props;
+		const { relation, rootId, block, index, getRecord, readOnly, menuClassName } = this.props;
 
 		if (readOnly || relation.isReadOnly) {
 			return;
 		};
 
 		const id = DataUtil.cellId('cell', relation.key, index);
-		console.log(id);
 		const cell = $('#' + id);
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
@@ -124,6 +125,7 @@ class Cell extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			noAnimation: true,
+			className: menuClassName,
 			onOpen: setOn,
 			onClose: () => {
 				cell.removeClass('isEditing');

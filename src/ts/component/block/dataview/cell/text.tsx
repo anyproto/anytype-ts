@@ -51,8 +51,9 @@ class CellText extends React.Component<Props, State> {
 
 		if (editing) {
 			if (relation.format == I.RelationType.Description) {
+				value = value.replace(/\n/g, '<br/>');
 				EditorComponent = (item: any) => (
-					<div className="name">{value}</div>
+					<span dangerouslySetInnerHTML={{ __html: value }} />
 				);
 			} else 
 			if (relation.format == I.RelationType.Date) {
@@ -88,13 +89,11 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
-			Name = (item: any) => (
-				<div className="name">{item.name}</div>
-			);
+			value = value.replace(/\n/g, '<br/>');
 
-			if (relation.format == I.RelationType.Description) {
-				value = String(value || '').split('\n')[0];
-			};
+			Name = (item: any) => (
+				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
+			);
 
 			if (relation.format == I.RelationType.Date) {
 				let format = [ DataUtil.dateFormat(relation.dateFormat) ];
@@ -145,8 +144,11 @@ class CellText extends React.Component<Props, State> {
 					<Icon className="expand" onClick={(e: any) => { onOpen(e, record, type); }} />
 				</React.Fragment>
 			);
+		} else 
+		if (editing) {
+			content = <Name name={value} />;
 		} else {
-			content = editing ? <Name name={value} /> : value;
+			content = <span className="name" dangerouslySetInnerHTML={{ __html: value }} />;
 		};
 
 		return content;
