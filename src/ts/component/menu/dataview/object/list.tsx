@@ -17,7 +17,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT_SECTION = 42;
 const HEIGHT_ITEM = 28;
-const LIMIT = 40;
+const LIMIT = 20;
 
 @observer
 class MenuDataviewObjectList extends React.Component<Props, State> {

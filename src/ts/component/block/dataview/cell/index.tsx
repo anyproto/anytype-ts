@@ -34,7 +34,7 @@ class Cell extends React.Component<Props, {}> {
 
 	render () {
 		const { block, relationKey, index, onClick } = this.props;
-		const relation = dbStore.getRelation(block.id, relationKey);
+		const relation = this.getRelation();
 		if (!relation) {
 			return null;
 		};
@@ -97,7 +97,7 @@ class Cell extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const { relationKey, rootId, block, index, getRecord, readOnly, menuClassName } = this.props;
-		const relation = dbStore.getRelation(block.id, relationKey);
+		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
 			return;
@@ -300,6 +300,11 @@ class Cell extends React.Component<Props, {}> {
 		if (onCellChange) {
 			onCellChange(record.id, relation.relationKey, value);
 		};
+	};
+
+	getRelation () {
+		const { block, relation, relationKey } = this.props;
+		return relation ? relation : dbStore.getRelation(block.id, relationKey);
 	};
 	
 };

@@ -64,6 +64,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								rootId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
+								relation={relation}
 								getRecord={() => { return details; }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
