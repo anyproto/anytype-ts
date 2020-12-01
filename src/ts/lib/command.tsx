@@ -40,6 +40,10 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 };
 
 const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
+	if (!url && !path) {
+		return;
+	};
+
 	const request = new Rpc.UploadFile.Request();
 	
 	request.setUrl(url);

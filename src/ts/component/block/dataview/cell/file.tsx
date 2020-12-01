@@ -6,18 +6,8 @@ import { blockStore } from 'ts/store';
 
 interface Props extends I.Cell {};
 
-interface State { 
-	editing: boolean; 
-};
-
-const $ = require('jquery');
-
 @observer
-class CellFile extends React.Component<Props, State> {
-
-	state = {
-		editing: false,
-	};
+class CellFile extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -82,31 +72,6 @@ class CellFile extends React.Component<Props, State> {
 		);
 	};
 
-	componentDidUpdate () {
-		const { editing } = this.state;
-		const { id } = this.props;
-		const cell = $('#' + id);
-		const body = $('body');
-
-		if (editing) {
-			cell.addClass('isEditing');
-			body.addClass('over');
-		} else {
-			cell.removeClass('isEditing');
-			body.removeClass('over');
-		};
-	};
-
-	setEditing (v: boolean) {
-		const { viewType, readOnly } = this.props;
-		const { editing } = this.state;
-		const canEdit = !readOnly && (viewType == I.ViewType.Grid);
-
-		if (canEdit && (v != editing)) {
-			this.setState({ editing: v });
-		};
-	};
-
 	getValue () {
 		const { relation, index, getRecord } = this.props;
 		const record = getRecord(index);
@@ -128,7 +93,6 @@ class CellFile extends React.Component<Props, State> {
 
 	onChangeUrl (e: any, url: string) {
 		C.UploadFile(url, '', I.FileType.None, false, (message: any) => {
-			this.setEditing(false);
 			if (!message.error.code) {
 				this.save(message.hash);
 			};
@@ -137,7 +101,6 @@ class CellFile extends React.Component<Props, State> {
 	
 	onChangeFile (e: any, path: string) {
 		C.UploadFile('', path, I.FileType.None, false, (message: any) => {
-			this.setEditing(false);
 			if (!message.error.code) {
 				this.save(message.hash);
 			};
