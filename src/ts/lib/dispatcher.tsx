@@ -576,6 +576,8 @@ class Dispatcher {
 
 				if (debug) {
 					console.log(
+						'[Dispatcher.callback]',
+						type,
 						'Middle time:', middleTime + 'ms',
 						'Render time:', renderTime + 'ms',
 						'Total time:', totalTime + 'ms'

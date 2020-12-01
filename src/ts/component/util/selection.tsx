@@ -32,6 +32,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 	isSelectionPrevented: boolean = false;
 	isClearPrevented: boolean = false;
 	rects: Map<string, any> = new Map();
+	selecting: boolean = false;
+	top: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -64,8 +66,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.unbind();
 		
 		let win = $(window); 
+
 		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
 		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
+		win.on('scroll.selection', (e: any) => { this.onScroll(e); });
 	};
 	
 	componentWillUnmount () {
@@ -134,6 +138,30 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	onKeyUp (e: any) {
 	};
+
+	onScroll (e: any) {
+		if (!this.selecting || !this.moved) {
+			return;
+		};
+
+		const win = $(window);
+		const top = win.scrollTop();
+		const d = top > this.top ? 1 : -1;
+
+		e.pageX = keyboard.coords.x;
+		e.pageY = keyboard.coords.y + Math.abs(top - this.top) * d;
+
+		const rect = this.getRect(e);
+		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
+			return;
+		};
+
+		this.checkNodes(e);
+		this.drawRect(rect);
+
+		scrollOnMove.onMouseMove(e);
+		this.moved = true;
+	};
 	
 	onMouseDown (e: any) {
 		if (!this._isMounted) {
@@ -158,6 +186,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.moved = false;
 		this.lastIds = [];
 		this.focused = focused;
+		this.selecting = true;
 
 		keyboard.disablePreview(true);
 		
@@ -199,14 +228,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
-		
+
+		this.top = $(window).scrollTop();
 		this.checkNodes(e);
-		
-		$('#selection-rect').css({ 
-			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
-			width: rect.width - 10, 
-			height: rect.height - 10,
-		});
+		this.drawRect(rect);
 		
 		scrollOnMove.onMouseMove(e);
 		this.moved = true;
@@ -262,6 +287,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		this.focused = '';
 		this.range = null;
+		this.selecting = false;
+	};
+
+	drawRect (rect: any) {
+		$('#selection-rect').css({ 
+			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
+			width: rect.width - 10, 
+			height: rect.height - 10,
+		});
 	};
 	
 	getRect (e: any) {
@@ -424,7 +458,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	unbindKeyboard () {
-		$(window).unbind('keydown.selection keyup.selection');
+		$(window).unbind('keydown.selection keyup.selection scroll.selection');
 	};
 	
 	preventSelect (v: boolean) {
