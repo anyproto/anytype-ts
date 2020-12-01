@@ -54,7 +54,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 				return null;
 			};
 
-			const type = DataUtil.schemaField(item.type && item.type.length ? item.type[0] : '');
+			const type = DataUtil.schemaField(item.type);
 
 			let cn = [];
 			if (item.isSection) {
@@ -172,13 +172,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		let obj: any = {};
 		for (let item of items) {
-			let url = item.type && item.type.length ? item.type[0] : '';
-			let ot = dbStore.getObjectType(url);
+			let ot = dbStore.getObjectType(item.type);
 			if (!ot) {
 				continue;
 			};
 
-			let type = DataUtil.schemaField(url) || 'page';
+			let type = DataUtil.schemaField(item.type) || 'page';
 			let section = obj[type];
 
 			if (!section) {
@@ -231,12 +230,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	load (callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { types, filter } = data;
+		const { types } = data;
 
 		this.setState({ loading: true });
 
 		const filters = [
-			//{ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types },
+			{ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types },
 		];
 
 		const sorts = [

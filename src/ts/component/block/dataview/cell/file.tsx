@@ -59,7 +59,7 @@ class CellFile extends React.Component<Props, {}> {
 		return (
 			<React.Fragment>
 				{value.map((item: any, i: number) => {
-					const type = DataUtil.schemaField(item.type && item.type.length ? item.type[0] : '');
+					const type = DataUtil.schemaField(item.type);
 					switch (type) {
 						case 'file':
 							return <File key={i} {...item} type={type} />;

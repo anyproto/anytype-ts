@@ -3,7 +3,6 @@ import { I, DataUtil } from 'ts/lib';
 
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
-	public objectTypePerObjectMap: Map<string, I.ObjectTypePerObject> = observable.map(new Map());
 	public relationMap: Map<string, any> = observable.map(new Map());
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
@@ -12,13 +11,6 @@ class DbStore {
 	objectTypesSet (types: I.ObjectType[]) {
 		for (let type of types) {
 			this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
-		};
-	};
-
-	@action
-	objectTypesPerObjectSet (types: I.ObjectTypePerObject[]) {
-		for (let type of types) {
-			this.objectTypePerObjectMap.set(type.objectId, type);
 		};
 	};
 

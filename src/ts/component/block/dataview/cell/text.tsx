@@ -43,7 +43,7 @@ class CellText extends React.Component<Props, State> {
 			return null;
 		};
 
-		const type = DataUtil.schemaField(record.type && record.type.length ? record.type[0] : '');
+		const type = DataUtil.schemaField(record.type);
 
 		let Name = null;
 		let EditorComponent = null;
