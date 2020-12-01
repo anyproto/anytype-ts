@@ -74,7 +74,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
 
 		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });
-		C.BlockDataviewRelationSelectOptionDelete(rootId, blockId, relation.key, option.id);
+		C.BlockDataviewRelationSelectOptionDelete(rootId, blockId, relation.relationKey, option.id);
 
 		let value = Util.objectCopy(data.value || []);
 		value = value.filter((it: any) => { return it != option.id; });
@@ -102,7 +102,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		relation.selectDict[idx].text = this.ref.getValue();
 		relation.selectDict[idx].color = this.color;
-		C.BlockDataviewRelationSelectOptionUpdate(rootId, blockId, relation.key, relation.selectDict[idx]);
+		C.BlockDataviewRelationSelectOptionUpdate(rootId, blockId, relation.relationKey, relation.selectDict[idx]);
 
 		if (menu) {
 			menu.param.data.relation = observable.box(relation);

@@ -39,7 +39,7 @@ class View implements I.View {
 
 class Relation implements I.Relation {
 
-	key: string = '';
+	relationKey: string = '';
 	name: string = '';
 	dataSource: string = '';
 	objectTypes: string[] = [];
@@ -52,7 +52,7 @@ class Relation implements I.Relation {
 	constructor (props: I.ViewRelation) {
 		let self = this;
 
-		self.key = String(props.key || '');
+		self.relationKey = String(props.relationKey || '');
 		self.name = String(props.name || '');
 		self.dataSource = String(props.dataSource || '');
 		self.objectTypes = props.objectTypes || [];
@@ -89,7 +89,6 @@ class SelectOption implements I.SelectOption {
 
 class ViewRelation extends Relation implements I.ViewRelation {
 
-	key: string = '';
 	width: number = 0;
 	isVisible: boolean = false;
 	includeTime: boolean = false;
@@ -101,7 +100,6 @@ class ViewRelation extends Relation implements I.ViewRelation {
 
 		let self = this;
 
-		self.key = String(props.key || '');
 		self.width = Number(props.width) || 0;
 		self.isVisible = Boolean(props.isVisible);
 		self.includeTime = Boolean(props.includeTime);

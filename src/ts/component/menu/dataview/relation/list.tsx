@@ -60,7 +60,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 			return (
 				<div className="items">
 					{relations.map((item: any, i: number) => {
-						return item ? <Item key={item.key} {...item} id={item.key} index={i} /> : null;
+						return item ? <Item key={item.relationKey} {...item} id={item.relationKey} index={i} /> : null;
 					})}
 					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
 				</div>
@@ -141,7 +141,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { getView } = data;
 		const view = getView();
 
-		const relation = view.relations.find((it: any) => { return it.key == id; });
+		const relation = view.relations.find((it: any) => { return it.relationKey == id; });
 		if (relation) {
 			relation.isVisible = v;
 			this.save();

@@ -92,7 +92,8 @@ export interface Cell {
 	rootId: string;
 	block: I.Block;
 	id?: string;
-	relation: any;
+	relationKey?: string;
+	relation?: I.Relation;
 	index?: number;
 	viewType: I.ViewType;
 	readOnly?: boolean;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
+import { I } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { SortableContainer } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
@@ -26,9 +26,9 @@ class HeadRow extends React.Component<Props, {}> {
 			<tr className="row">
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={'grid-head-' + relation.key} 
-						relation={relation} 
+						key={'grid-head-' + relation.relationKey} 
 						index={i} 
+						{...relation}
 						onResizeStart={onResizeStart} 
 					/>
 				))}

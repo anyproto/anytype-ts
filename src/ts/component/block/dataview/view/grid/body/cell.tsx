@@ -21,13 +21,14 @@ class BodyCell extends React.Component<Props, {}> {
 	render () {
 		const { relation, index, readOnly, onRef, onCellClick, onCellChange } = this.props;
 		const cn = [ 'cell', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
-		const id = DataUtil.cellId('cell', relation.key, index);
+		const id = DataUtil.cellId('cell', relation.relationKey, index);
 
 		return (
-			<td id={id} className={cn.join(' ')} onClick={(e: any) => { onCellClick(e, relation.key, index); }}>
+			<td id={id} className={cn.join(' ')} onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}>
 				<Cell 
 					ref={(ref: any) => { onRef(ref, id); }} 
 					{...this.props}
+					relationKey={relation.relationKey}
 					viewType={I.ViewType.Grid}
 					onCellChange={onCellChange}
 				/>

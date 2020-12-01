@@ -179,7 +179,7 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	onCellClick (e: any, key: string, index: number) {
 		const view = this.getView();
-		const relation = view.relations.find((it: any) => { return it.key == key; });
+		const relation = view.relations.find((it: any) => { return it.relationKey == key; });
 
 		if (relation.isReadOnly) {
 			return;

@@ -182,7 +182,7 @@ const Mapper = {
 
 		Relation: (obj: any): I.Relation => {
 			return {
-				key: obj.getKey(),
+				relationKey: obj.getKey(),
 				format: obj.getFormat(),
 				name: obj.getName(),
 				dataSource: obj.getDatasource(),
@@ -204,7 +204,7 @@ const Mapper = {
 
 		ViewRelation: (obj: any) => {
             return {
-                key: obj.getKey(),
+                relationKey: obj.getKey(),
                 isVisible: obj.getIsvisible(),
                 width: obj.getWidth(),
 				includeTime: obj.getDateincludetime(),
@@ -384,7 +384,7 @@ const Mapper = {
 		ViewRelation: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Relation();
 
-			item.setKey(obj.key);
+			item.setKey(obj.relationKey);
 			item.setIsvisible(obj.isVisible);
 			item.setWidth(obj.width);
 			item.setDateincludetime(obj.includeTime);
@@ -453,7 +453,7 @@ const Mapper = {
 		Relation: (obj: any) => {
 			const item = new Relation.Relation();
 			
-			item.setKey(obj.key);
+			item.setKey(obj.relationKey);
 			item.setFormat(obj.format);
 			item.setName(obj.name);
 			item.setDefaultvalue(obj.defaultValue);

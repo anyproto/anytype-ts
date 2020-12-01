@@ -43,7 +43,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		];
 		
 		const relationOptions: I.Option[] = view.relations.map((it: I.ViewRelation) => {
-			return { id: it.key, name: it.name, icon: 'relation c-' + DataUtil.relationClass(it.format) };
+			return { id: it.relationKey, name: it.name, icon: 'relation c-' + DataUtil.relationClass(it.format) };
 		});
 
 		const Handle = SortableHandle(() => (
@@ -51,7 +51,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation = view.relations.find((it: I.ViewRelation) => { return it.key == item.relationKey; });
+			const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == item.relationKey; });
 			if (!relation) {
 				return null;
 			};
@@ -241,7 +241,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
 		view.filters.push({ 
-			relationKey: first.key, 
+			relationKey: first.relationKey, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: '',

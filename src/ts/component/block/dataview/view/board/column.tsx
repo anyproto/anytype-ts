@@ -26,7 +26,7 @@ class Column extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, groupId, getView, onAdd, list, columnId, value } = this.props;
 		const view = getView();
-		const group = view.relations.find((item: I.Relation) => { return item.key == groupId; });
+		const group = view.relations.find((item: I.Relation) => { return item.relationKey == groupId; });
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);
 

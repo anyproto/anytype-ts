@@ -218,7 +218,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { rootId, blockId, relationKey, getView } = data;
 		const view = getView();
 		const relation = this.getRelation();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relationKey; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 
 		relation.includeTime = v;
 		view.relations[idx] = relation;
@@ -322,7 +322,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { relationKey, getView } = data;
 		const view = getView();
 
-		return view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		return view.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 	};
 
 };

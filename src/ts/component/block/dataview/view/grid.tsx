@@ -196,7 +196,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#' + DataUtil.cellId('head', id, ''));
 		const offset = el.offset();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == id; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == id; });
 
 		let width = e.pageX - offset.left;
 		width = Math.max(Constant.size.dataview.cell.min, width); 
@@ -251,8 +251,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { oldIndex, newIndex } = result;
 		const view = getView();
 		const filtered = view.relations.filter((it: any) => { return it.isVisible; });
-		const oldIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == filtered[oldIndex].key; });
-		const newIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == filtered[newIndex].key; });
+		const oldIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == filtered[oldIndex].relationKey; });
+		const newIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == filtered[newIndex].relationKey; });
 		
 		view.relations = arrayMove(view.relations, oldIdx, newIdx);
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);

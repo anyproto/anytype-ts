@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, DataUtil, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
 
 import CellText from './text';
@@ -33,13 +33,18 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, index, onClick } = this.props;
-		const { key, format, isReadOnly } = relation;
+		const { block, relationKey, index, onClick } = this.props;
+		const relation = dbStore.getRelation(block.id, relationKey);
+		if (!relation) {
+			return null;
+		};
+
+		const { format, isReadOnly } = relation;
 		const cn = [ 
 			'cellContent', 
 			'c-' + DataUtil.relationClass(format), 
 			(!isReadOnly ? 'canEdit' : ''), 
-			(key == 'name' ? 'isName' : ''),
+			(relationKey == 'name' ? 'isName' : ''),
 		];
 
 		let CellComponent: React.ReactType<Props>;
@@ -79,8 +84,9 @@ class Cell extends React.Component<Props, {}> {
 			<div className={cn.join(' ')} onClick={onClick}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
-					id={DataUtil.cellId('cell', relation.key, index)} 
+					id={DataUtil.cellId('cell', relation.relationKey, index)} 
 					{...this.props} 
+					relation={relation}
 					onChange={this.onChange} 
 				/>
 			</div>
@@ -90,19 +96,20 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { relation, rootId, block, index, getRecord, readOnly, menuClassName } = this.props;
+		const { relationKey, rootId, block, index, getRecord, readOnly, menuClassName } = this.props;
+		const relation = dbStore.getRelation(block.id, relationKey);
 
-		if (readOnly || relation.isReadOnly) {
+		if (!relation || readOnly || relation.isReadOnly) {
 			return;
 		};
 
-		const id = DataUtil.cellId('cell', relation.key, index);
+		const id = DataUtil.cellId('cell', relation.relationKey, index);
 		const cell = $('#' + id);
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
 		const record = getRecord(index);
-		const value = record[relation.key] || '';
+		const value = record[relation.relationKey] || '';
 		const page = $('.pageMainEdit');
 		const setOn = () => {
 			if (!this.ref) {
@@ -291,7 +298,7 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 
 		if (onCellChange) {
-			onCellChange(record.id, relation.key, value);
+			onCellChange(record.id, relation.relationKey, value);
 		};
 	};
 	

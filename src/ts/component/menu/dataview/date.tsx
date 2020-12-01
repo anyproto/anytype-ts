@@ -80,7 +80,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const { getView, relationKey } = data;
 
 		const view = getView();
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		
 		const dateOptions = this.getOptions('dateFormat');
 		const dateFormat = dateOptions.find((it: any) => { return it.id == relation.dateFormat; }) || dateOptions[0];
@@ -199,10 +199,10 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView } = data;
 		const view = getView();
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.key == relationKey; });
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.key == relationKey; });
-		const options = this.getOptions(item.key);
-		const value = options.find((it: any) => { return it.id == relation[item.key]; }) || options[0];
+		const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+		const options = this.getOptions(item.relationKey);
+		const value = options.find((it: any) => { return it.id == relation[item.relationKey]; }) || options[0];
 
 		commonStore.menuOpen('select', {
 			element: '#item-' + item.id,
@@ -215,7 +215,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 				value: value.name,
 				options: options,
 				onSelect: (e: any, el: any) => {
-					view.relations[idx][item.key] = el.id;
+					view.relations[idx][item.relationKey] = el.id;
 					C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 
 					close();

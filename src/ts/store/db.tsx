@@ -33,7 +33,7 @@ class DbStore {
 	@action 
 	objectTypeRelationUpdate (url: string, relation: I.Relation) {
 		const type = this.getObjectType(url);
-		const idx = type.relations.findIndex((it: I.Relation) => { return it.key == relation.key; });
+		const idx = type.relations.findIndex((it: I.Relation) => { return it.relationKey == relation.relationKey; });
 
 		set(type.relations[idx], relation);
 		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
@@ -42,7 +42,7 @@ class DbStore {
 	@action 
 	objectTypeRelationsRemove (url: string, relationKey: string) {
 		const type = this.getObjectType(url);
-		type.relations = type.relations.filter((it: I.Relation) => { return it.key != relationKey; });
+		type.relations = type.relations.filter((it: I.Relation) => { return it.relationKey != relationKey; });
 
 		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
 	};
@@ -65,7 +65,7 @@ class DbStore {
 	@action
 	relationAdd (blockId: string, item: any) {
 		const relations = this.getRelations(blockId);
-		const relation = relations.find((it: I.Relation) => { return it.key == item.key; });
+		const relation = relations.find((it: I.Relation) => { return it.relationKey == item.relationKey; });
 
 		if (relation) {
 			this.relationUpdate(blockId, item);
@@ -78,19 +78,19 @@ class DbStore {
 	@action
 	relationUpdate (blockId: string, item: any) {
 		const relations = this.getRelations(blockId);
-		const relation = relations.find((it: I.Relation) => { return it.key == item.key; });
+		const relation = relations.find((it: I.Relation) => { return it.relationKey == item.relationKey; });
 		if (!relation) {
 			return;
 		};
 
-		const idx = relations.findIndex((it: I.Relation) => { return it.key == item.key; });
+		const idx = relations.findIndex((it: I.Relation) => { return it.relationKey == item.relationKey; });
 		set(relations[idx], item);
 	};
 
 	@action
 	relationRemove (blockId: string, key: string) {
 		let relations = this.getRelations(blockId);
-		relations = relations.filter((it: I.Relation) => { return it.key != key; });
+		relations = relations.filter((it: I.Relation) => { return it.relationKey != key; });
 		this.relationsSet(blockId, relations);
 	};
 
@@ -171,9 +171,9 @@ class DbStore {
 		return this.relationMap.get(blockId) || [];
 	};
 
-	getRelation (blockId: string, key: string): I.Relation {
+	getRelation (blockId: string, relationKey: string): I.Relation {
 		const relations = this.relationMap.get(blockId) || [];
-		return relations.find((it: I.Relation) => { return it.key == key; });
+		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
 	};
 
 	getMeta (blockId: string) {

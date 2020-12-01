@@ -37,7 +37,7 @@ class MenuSort extends React.Component<Props, {}> {
 		
 		const relationOptions: any[] = [];
 		for (let relation of view.relations) {
-			relationOptions.push({ id: relation.key, name: relation.name, icon: 'relation c-' + DataUtil.relationClass(relation.format) });
+			relationOptions.push({ id: relation.relationKey, name: relation.name, icon: 'relation c-' + DataUtil.relationClass(relation.format) });
 		};
 
 		const Handle = SortableHandle(() => (
@@ -105,7 +105,7 @@ class MenuSort extends React.Component<Props, {}> {
 		};
 
 		view.sorts.push({ 
-			relationKey: view.relations[0].key, 
+			relationKey: view.relations[0].relationKey, 
 			type: I.SortType.Asc 
 		});
 		this.save();

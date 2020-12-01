@@ -18,15 +18,15 @@ class Card extends React.Component<Props, {}> {
 		return (
 			<div className="card">
 				{relations.map((relation: any, i: number) => {
-					const id = DataUtil.cellId('cell', relation.key, index);
+					const id = DataUtil.cellId('cell', relation.relationKey, index);
 					return (
 						<Cell 
-							key={'list-cell-' + view.id + relation.key} 
+							key={'list-cell-' + view.id + relation.relationKey} 
 							{...this.props}
 							ref={(ref: any) => { onRef(ref, id); }} 
-							relation={...relation} 
+							relationKey={relation.relationKey}
 							viewType={view.type}
-							onClick={(e: any) => { onCellClick(e, relation.key, index); }}
+							onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
 							index={index}
 						/>
 					);

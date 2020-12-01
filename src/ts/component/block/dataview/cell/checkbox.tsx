@@ -28,7 +28,7 @@ class CellCheckbox extends React.Component<Props, {}> {
 	getValue () {
 		const { relation, index, getRecord } = this.props;
 		const record = getRecord(index);
-		return Boolean(record[relation.key]);
+		return Boolean(record[relation.relationKey]);
 	};
 
 	onClick () {

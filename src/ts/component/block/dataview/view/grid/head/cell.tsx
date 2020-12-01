@@ -5,8 +5,7 @@ import { observer } from 'mobx-react';
 
 import Handle from './handle';
 
-interface Props {
-	relation: I.ViewRelation;
+interface Props extends I.ViewRelation {
 	index: number;
 	onResizeStart(e: any, key: string): void;
 };
@@ -15,16 +14,14 @@ interface Props {
 class HeadCell extends React.Component<Props, {}> {
 
 	render () {
-		const { relation, index, onResizeStart } = this.props;
+		const { relationKey, format, width, index, onResizeStart } = this.props;
 
 		const Cell = SortableElement((item: any) => {
-			const id = DataUtil.cellId('head', relation.key, '');
-
 			return (
-				<th id={id} className={'head c-' + DataUtil.relationClass(relation.format)} style={{ width: relation.width }}>
+				<th id={DataUtil.cellId('head', relationKey, '')} className={'head c-' + DataUtil.relationClass(format)} style={{ width: width }}>
 					<div className="cellContent">
-						<Handle {...relation} />
-						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relation.key); }}>
+						<Handle {...this.props} />
+						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }}>
 							<div className="line" />
 						</div>
 					</div>

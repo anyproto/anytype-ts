@@ -36,7 +36,7 @@ class CellSelect extends React.Component<Props, State> {
 	render () {
 		const { block, readOnly, getRecord, index, viewType } = this.props;
 		const { editing } = this.state;
-		const relation = dbStore.getRelation(block.id, this.props.relation.key);
+		const relation = dbStore.getRelation(block.id, this.props.relation.relationKey);
 		const record = getRecord(index);
 
 		if (!relation || !record) {
@@ -262,7 +262,7 @@ class CellSelect extends React.Component<Props, State> {
 		const { relation, index, getRecord } = this.props;
 		const record = getRecord(index);
 
-		let value = record[relation.key];
+		let value = record[relation.relationKey];
 		if (!value || ('object' != typeof(value))) {
 			value = [];
 		};
@@ -302,7 +302,7 @@ class CellSelect extends React.Component<Props, State> {
 				color: '', 
 			};
 	
-			C.BlockDataviewRelationSelectOptionAdd(rootId, block.id, relation.key, option, (message: any) => {
+			C.BlockDataviewRelationSelectOptionAdd(rootId, block.id, relation.relationKey, option, (message: any) => {
 				if (!message.option) {
 					return;
 				};

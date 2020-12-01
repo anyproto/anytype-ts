@@ -498,13 +498,13 @@ class Dispatcher {
 					};
 
 					const relation = Mapper.From.Relation(data.getRelation());
-					const item = dbStore.getRelation(id, relation.key);
+					const item = dbStore.getRelation(id, relation.relationKey);
 
 					item ? dbStore.relationUpdate(id, relation) : dbStore.relationAdd(id, relation);
 
 					viewId = dbStore.getMeta(id).viewId;
 					view = block.content.views.find((it: any) => { return it.id == viewId; });
-					view.relations = DataUtil.viewGetRelations(id, view);
+					set(view, { relations: DataUtil.viewGetRelations(id, view) });
 					break;
 
 				case 'blockDataviewRelationDelete':
@@ -518,7 +518,7 @@ class Dispatcher {
 
 					viewId = dbStore.getMeta(id).viewId;
 					view = block.content.views.find((it: any) => { return it.id == viewId; });
-					view.relations = DataUtil.viewGetRelations(id, view);
+					set(view, { relations: DataUtil.viewGetRelations(id, view) });
 					break;
 
 				case 'processNew':

@@ -35,7 +35,7 @@ export enum RelationType {
 };
 
 export interface Relation {
-	key: string;
+	relationKey: string;
 	format: RelationType;
 	name: string;
 	dataSource: string;

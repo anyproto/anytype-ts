@@ -76,7 +76,7 @@ class CellFile extends React.Component<Props, {}> {
 		const { relation, index, getRecord } = this.props;
 		const record = getRecord(index);
 
-		let value = record[relation.key];
+		let value = record[relation.relationKey];
 		if (!value || ('object' != typeof(value))) {
 			value = [];
 		};

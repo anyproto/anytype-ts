@@ -163,7 +163,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { rootId, relationKey } = data;
 		const relations = dbStore.getRelations(rootId);
 		const relation = this.getRelation();
-		const idx = relations.findIndex((it: I.ViewRelation) => { return it.key == relationKey; });
+		const idx = relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 
 		relation.includeTime = v;
 	};
@@ -240,7 +240,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, relationKey } = data;
 		const relations = dbStore.getRelations(rootId);
-		return relations.find((it: I.Relation) => { return it.key == relationKey; });
+		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
 	};
 
 };

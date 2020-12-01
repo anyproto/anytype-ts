@@ -29,7 +29,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
 		const relations = dbStore.getRelations(rootId);
-		const relation = relations.find((it: any) => { return it.key == key; });
+		const relation = relations.find((it: any) => { return it.relationKey == key; });
 		const isNew = (block.fields || {}).isNew;
 		const placeHolder = isNew ? 'New relation' : 'Relation';
 
@@ -63,7 +63,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								ref={(ref: any) => { this.refCell = ref; }}
 								rootId={rootId}
 								block={block}
-								relation={relation}
+								relationKey={relation.relationKey}
 								getRecord={() => { return details; }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
@@ -130,7 +130,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				rootId: rootId,
 				filter: this.refInput.getValue(),
 				onSelect: (item: any) => {
-					C.BlockRelationSetKey(rootId, block.id, item.key);
+					C.BlockRelationSetKey(rootId, block.id, item.relationKey);
 				}
 			});
 		};
@@ -176,7 +176,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				continue;
 			};
 			options.push({
-				id: relation.key,
+				id: relation.relationKey,
 				icon: 'relation c-' + DataUtil.relationClass(relation.format),
 				name: relation.name,
 			});

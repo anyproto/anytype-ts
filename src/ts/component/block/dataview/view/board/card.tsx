@@ -36,16 +36,16 @@ class Card extends React.Component<Props, {}> {
 						style={getItemStyle(snapshot, provided.draggableProps.style)}
 					>
 						{relations.map((relation: any, i: number) => {
-							const id = DataUtil.cellId('cell', relation.key, index);
+							const id = DataUtil.cellId('cell', relation.relationKey, index);
 							return (
 								<Cell 
-									key={'board-cell-' + view.id + relation.key} 
+									key={'board-cell-' + view.id + relation.relationKey} 
 									{...this.props}
 									ref={(ref: any) => { onRef(ref, id); }} 
 									index={index}
 									viewType={view.type}
-									onClick={(e: any) => { onCellClick(e, relation.key, index); }}
-									relation={...relation} 
+									onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
+									relationKey={relation.relationKey}
 								/>
 							);
 						})}

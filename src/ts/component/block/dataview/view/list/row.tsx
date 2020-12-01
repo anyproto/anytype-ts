@@ -18,15 +18,15 @@ class Row extends React.Component<Props, {}> {
 		return (
 			<div className="row">
 				{relations.map((relation: any, i: number) => {
-					const id = DataUtil.cellId('cell', relation.key, index);
+					const id = DataUtil.cellId('cell', relation.relationKey, index);
 					return (
 						<Cell 
-							key={'list-cell-' + relation.key} 
+							key={'list-cell-' + relation.relationKey} 
 							ref={(ref: any) => { onRef(ref, id); }} 
 							{...this.props}
-							relation={...relation} 
+							relationKey={relation.relationKey}
 							viewType={I.ViewType.List}
-							onClick={(e: any) => { onCellClick(e, relation.key, index); }}
+							onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
 							index={index}
 						/>
 					);

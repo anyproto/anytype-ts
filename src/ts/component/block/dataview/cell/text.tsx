@@ -47,7 +47,7 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
-		let value = String(record[relation.key] || '');
+		let value = String(record[relation.relationKey] || '');
 
 		if (editing) {
 			if (relation.format == I.RelationType.Description) {
@@ -107,7 +107,7 @@ class CellText extends React.Component<Props, State> {
 
 		let content: any = null;
 
-		if (relation.key == 'name') {
+		if (relation.relationKey == 'name') {
 			let cn = 'c20';
 			let size = 18;
 
@@ -130,7 +130,7 @@ class CellText extends React.Component<Props, State> {
 			content = (
 				<React.Fragment>
 					<IconObject 
-						id={[ relation.key, record.id ].join('-')} 
+						id={[ relation.relationKey, record.id ].join('-')} 
 						type={type}
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload}
@@ -162,7 +162,7 @@ class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		if (editing) {
-			let value = String(record[relation.key] || '');
+			let value = String(record[relation.relationKey] || '');
 			let input = cell.find('#input');
 
 			if (relation.format == I.RelationType.Date) {

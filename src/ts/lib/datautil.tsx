@@ -559,25 +559,25 @@ class DataUtil {
 		let o = 0;
 
 		for (let i = 0; i < view.relations.length; ++i) {
-			order[view.relations[i].key] = o++;
+			order[view.relations[i].relationKey] = o++;
 		};
 
 		for (let i = 0; i < relations.length; ++i) {
-			if (undefined === order[relations[i].key]) {
-				order[relations[i].key] = o++;
+			if (undefined === order[relations[i].relationKey]) {
+				order[relations[i].relationKey] = o++;
 			};
 		};
 
 		relations.sort((c1: any, c2: any) => {
-			let o1 = order[c1.key];
-			let o2 = order[c2.key];
+			let o1 = order[c1.relationKey];
+			let o2 = order[c2.relationKey];
 			if (o1 > o2) return 1;
 			if (o1 < o2) return -1;
 			return 0;
 		});
 
 		return relations.map((relation: any) => {
-			const vr = view.relations.find((it: I.Relation) => { return it.key == relation.key; }) || {};
+			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
 			return new M.ViewRelation({
 				...vr,
 				...relation,
@@ -594,7 +594,7 @@ class DataUtil {
 				return;
 			};
 
-			relation.key = message.relationKey;
+			relation.relationKey = message.relationKey;
 			relation.isVisible = true;
 
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
@@ -602,7 +602,7 @@ class DataUtil {
 	};
 
 	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View) {
-		C.BlockDataviewRelationUpdate(rootId, blockId, relation.key, new M.Relation(relation), (message: any) => {
+		C.BlockDataviewRelationUpdate(rootId, blockId, relation.relationKey, new M.Relation(relation), (message: any) => {
 			if (message.error.code || !view) {
 				return;
 			};

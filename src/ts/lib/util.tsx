@@ -670,8 +670,10 @@ class Util {
 	};
 
 	intercept (obj: any, change: any) {
-		return change;
-		//return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
+		if (change.name == 'relations') {
+			return change;
+		};
+		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
 };

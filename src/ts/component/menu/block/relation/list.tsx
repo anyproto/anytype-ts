@@ -40,7 +40,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 							id="0"
 							rootId={rootId}
 							block={block}
-							relation={relation}
+							relationKey={relation.relationKey}
 							getRecord={() => { return details; }}
 							viewType={I.ViewType.Grid}
 							readOnly={true}
