@@ -133,8 +133,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 		
-		commonStore.menuClose('dataviewRelationType');
-		commonStore.menuClose('dataviewDate');
+		commonStore.menuCloseAll([ 'dataviewRelationType', 'dataviewDate' ]);
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
@@ -172,8 +171,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 
-		commonStore.menuClose('dataviewRelationType');
-		commonStore.menuClose('dataviewDate');
+		commonStore.menuCloseAll([ 'dataviewRelationType', 'dataviewDate' ]);
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {

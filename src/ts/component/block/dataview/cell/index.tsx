@@ -10,6 +10,8 @@ import CellObject from './object';
 import CellFile from './file';
 
 interface Props extends I.Cell {
+	relationKey?: string;
+	storeId?: string;
 	menuClassName?: string;
 };
 
@@ -33,7 +35,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block, relationKey, index, onClick } = this.props;
+		const { relationKey, index, onClick } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
 			return null;
@@ -96,8 +98,10 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { relationKey, rootId, block, index, getRecord, readOnly, menuClassName } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName } = this.props;
 		const relation = this.getRelation();
+
+		console.log(relation, readOnly, relation.isReadOnly);
 
 		if (!relation || readOnly || relation.isReadOnly) {
 			return;
@@ -146,7 +150,7 @@ class Cell extends React.Component<Props, {}> {
 				value: value, 
 				relation: observable.box(relation),
 				onChange: (value: any) => {
-					if (this.ref.onChange) {
+					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
 					};
 					this.onChange(value);
@@ -282,7 +286,14 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (menuId) {
-			commonStore.menuCloseAll();
+			commonStore.menuCloseAll([ 
+				'select', 
+				'dataviewText', 
+				'dataviewObjectList', 
+				'dataviewOptionList', 
+				'dataviewMedia', 
+				'dataviewCalendar',
+			]);
 			commonStore.menuOpen(menuId, param); 
 			
 			page.unbind('click').on('click', () => {
@@ -294,17 +305,21 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	onChange (value: any) {
-		const { relation, onCellChange, index, getRecord } = this.props;
-		const record = getRecord(index);
+		const { onCellChange, index, getRecord } = this.props;
+		const relation = this.getRelation();
+		if (!relation) {
+			return null;
+		};
 
+		const record = getRecord(index);
 		if (onCellChange) {
 			onCellChange(record.id, relation.relationKey, value);
 		};
 	};
 
 	getRelation () {
-		const { block, relation, relationKey } = this.props;
-		return relation ? relation : dbStore.getRelation(block.id, relationKey);
+		const { storeId, block, relationKey } = this.props;
+		return dbStore.getRelation(storeId || block.id, relationKey);
 	};
 	
 };

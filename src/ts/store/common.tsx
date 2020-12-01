@@ -253,12 +253,13 @@ class CommonStore {
 	};
 	
 	@action
-	menuCloseAll () {
-		for (let item of this.menuList) {
-			this.menuClose(item.id);
+	menuCloseAll (ids?: string[]) {
+		ids = ids || this.menuList.map((it: I.Menu) => { return it.id; });
+		for (let id of ids) {
+			this.menuClose(id);
 		};
 	};
-	
+
 	@action
 	filterSetFrom (from: number) {
 		this.filterObj.from = from;

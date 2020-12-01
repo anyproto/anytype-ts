@@ -113,10 +113,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	onFilterFocus (e: any) {
-		commonStore.menuClose('blockStyle');
-		commonStore.menuClose('blockColor');
-		commonStore.menuClose('blockBackground');
-		commonStore.menuClose('blockAlign');
+		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
 		
 		this.focus = true;
 		this.props.setActiveItem();
@@ -419,10 +416,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		commonStore.menuClose('blockStyle');
-		commonStore.menuClose('blockColor');
-		commonStore.menuClose('blockBackground');
-		commonStore.menuClose('blockAlign');
+		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
 		
 		if (!item.arrow) {
 			return;

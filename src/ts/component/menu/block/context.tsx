@@ -247,17 +247,17 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 
 		if (menuId && !commonStore.menuIsOpen(menuId)) {
-			commonStore.menuClose('blockStyle');
-			commonStore.menuClose('blockMore');
-			commonStore.menuClose('blockLink');
-			commonStore.menuClose('blockColor');
-			commonStore.menuClose('blockBackground');
-			commonStore.menuClose('select');
+			commonStore.menuCloseAll([ 
+				'select',
+				'blockStyle', 
+				'blockMore',
+				'blockLink',
+				'blockColor',
+				'blockBackground',
+			]);
 
 			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => {
-				commonStore.menuOpen(menuId, menuParam);
-			}, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => { commonStore.menuOpen(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};
 	

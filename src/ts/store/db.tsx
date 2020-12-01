@@ -49,11 +49,6 @@ class DbStore {
 
 	@action
 	relationsSet (blockId: string, list: I.Relation[]) {
-		list.sort((c1: I.Relation, c2: I.Relation) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
 		this.relationMap.set(blockId, observable(list));
 	};
 

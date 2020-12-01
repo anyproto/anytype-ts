@@ -177,15 +177,15 @@ class BlockDataview extends React.Component<Props, {}> {
 		});
 	};
 
-	onCellClick (e: any, key: string, index: number) {
+	onCellClick (e: any, relationKey: string, index: number) {
 		const view = this.getView();
-		const relation = view.relations.find((it: any) => { return it.relationKey == key; });
+		const relation = view.relations.find((it: any) => { return it.relationKey == relationKey; });
 
-		if (relation.isReadOnly) {
+		if (!relation || relation.isReadOnly) {
 			return;
 		};
 
-		const id = DataUtil.cellId('cell', key, index);
+		const id = DataUtil.cellId('cell', relationKey, index);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {
@@ -193,17 +193,17 @@ class BlockDataview extends React.Component<Props, {}> {
 		};
 	};
 
-	onCellChange (id: string, key: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any) {
 		const { rootId, block } = this.props;
 		const data = dbStore.getData(block.id);
 		const record = data.find((it: any) => { return it.id == id; });
 
-		if (!record || (JSON.stringify(record[key]) === JSON.stringify(value))) {
+		if (!record || (JSON.stringify(record[relationKey]) === JSON.stringify(value))) {
 			return;
 		};
 
 		let obj: any = { id: record.id };
-		obj[key] = value;
+		obj[relationKey] = value;
 
 		dbStore.recordUpdate(block.id, obj);
 		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, record);

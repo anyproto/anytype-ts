@@ -876,8 +876,8 @@ class EditorPage extends React.Component<Props, {}> {
 				selection.set([ focused ]);
 				focus.clear(true);
 				
-				commonStore.menuClose('blockContext');
-				commonStore.menuClose('blockAction');
+				commonStore.menuCloseAll([ 'blockContext', 'blockAction' ]);
+
 			};
 		});
 
@@ -1593,9 +1593,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 
-		commonStore.menuClose('blockAdd');
-		commonStore.menuClose('blockAction');
-		commonStore.menuClose('blockContext');
+		commonStore.menuCloseAll([ 'blockAdd', 'blockAction', 'blockContext' ]);
 
 		let next: any = null;
 		let ids = selection.get();

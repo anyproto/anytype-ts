@@ -62,9 +62,9 @@ class BlockRelation extends React.Component<Props, {}> {
 							<Cell 
 								ref={(ref: any) => { this.refCell = ref; }}
 								rootId={rootId}
+								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
-								relation={relation}
 								getRecord={() => { return details; }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
@@ -127,7 +127,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		} else {
 			param.data = Object.assign(param.data, {
 				relationKey: '',
-				readOnly: false,
+				readOnly: true,
 				rootId: rootId,
 				filter: this.refInput.getValue(),
 				onSelect: (item: any) => {
@@ -166,6 +166,16 @@ class BlockRelation extends React.Component<Props, {}> {
 		]);
 	};
 
+	onCellClick (e: any) {
+		const { block } = this.props;
+
+		if (this.refCell) {
+			this.refCell.onClick(e);
+		};
+
+		focus.set(block.id, { from: 0, to: 0 });
+	};
+
 	getItems () {
 		const { rootId } = this.props;
 		const filter = new RegExp(Util.filterFix(this.refInput.getValue()), 'gi');
@@ -191,16 +201,6 @@ class BlockRelation extends React.Component<Props, {}> {
 
 		options.unshift({ id: 'add', icon: 'add', name: 'Add new' });
 		return options;
-	};
-
-	onCellClick (e: any) {
-		const { block } = this.props;
-
-		if (this.refCell) {
-			this.refCell.onClick(e);
-		};
-
-		focus.set(block.id, { from: 0, to: 0 });
 	};
 
 };

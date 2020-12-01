@@ -204,9 +204,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	menuOpen (id: string, param: I.MenuParam) {
-		commonStore.menuClose('dataviewRelationType');
-		commonStore.menuClose('dataviewDate');
-		commonStore.menuClose('select');
+		commonStore.menuCloseAll([ 'select', 'dataviewRelationType', 'dataviewDate' ]);
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { commonStore.menuOpen(id, param); }, Constant.delay.menu);
@@ -229,8 +227,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 
-		commonStore.menuClose('dataviewRelationType');
-		commonStore.menuClose('dataviewDate');
+		commonStore.menuCloseAll([ 'dataviewRelationType', 'dataviewDate' ]);
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
