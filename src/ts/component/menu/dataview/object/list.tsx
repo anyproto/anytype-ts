@@ -367,7 +367,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { onChange } = data;
 
 		let value = Util.objectCopy(data.value || []);
-		value.push(item.id);
+		value.push(item.key);
 		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;

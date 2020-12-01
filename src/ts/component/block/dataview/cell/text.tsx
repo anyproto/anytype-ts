@@ -191,6 +191,7 @@ class CellText extends React.Component<Props, State> {
 				let length = value.length;
 				input.get(0).setSelectionRange(length, length);
 			};
+
 			cell.addClass('isEditing');
 			body.addClass('over');
 		} else {

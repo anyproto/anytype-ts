@@ -30,8 +30,8 @@
 .cell.isEditing.c-description, .cell.isEditing.c-select, .cell.isEditing.c-object { box-shadow: 0px 0px; }
 .cell.isEditing.c-description, .cell.isEditing.c-select, .cell.isEditing.c-object {
 	.cellContent { 
-		position: absolute; left: 0px; top: -1px; overflow: visible !important; height: calc(100% + 2px) !important; white-space: normal !important; 
-		box-shadow: 0px 0px 0px 2px $colorOrange inset; background: #fff; z-index: 10;
+		position: absolute; left: 0px; top: -1px; overflow: visible !important; height: auto !important; white-space: normal !important; 
+		box-shadow: 0px 0px 0px 2px $colorOrange inset; background: #fff; z-index: 10; min-height: calc(100% + 2px);
 	}
 }
 
@@ -85,7 +85,7 @@
 
 .cellContent.c-object { line-height: 0px; }
 .cellContent.c-object {
-	.item { margin: 0px 6px 6px 0px; vertical-align: top; max-width: 100%; }
+	.item { margin: 0px 6px 6px 0px; vertical-align: top; max-width: 100%; line-height: 20px; }
 	.filter { cursor: text; margin-right: 0px; height: 18px; min-width: 18px; max-width: 100%; padding: 0px; display: none; }
 	.filter {
 		#filter { 

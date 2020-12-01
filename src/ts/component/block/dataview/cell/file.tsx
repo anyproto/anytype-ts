@@ -86,8 +86,15 @@ class CellFile extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { id } = this.props;
 		const cell = $('#' + id);
+		const body = $('body');
 
-		editing ? cell.addClass('isEditing') : cell.removeClass('isEditing');
+		if (editing) {
+			cell.addClass('isEditing');
+			body.addClass('over');
+		} else {
+			cell.removeClass('isEditing');
+			body.removeClass('over');
+		};
 	};
 
 	setEditing (v: boolean) {
