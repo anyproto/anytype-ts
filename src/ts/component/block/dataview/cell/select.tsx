@@ -103,10 +103,10 @@ class CellSelect extends React.Component<Props, State> {
 		const { id } = this.props;
 		const cell = $('#' + id);
 
+		editing ? cell.addClass('isEditing') : cell.removeClass('isEditing');
 		if (editing) {
 			this.focus();
 		};
-		editing ? cell.addClass('isEditing') : cell.removeClass('isEditing');
 
 		this.placeHolderCheck();
 	};

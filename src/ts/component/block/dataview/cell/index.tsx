@@ -191,7 +191,6 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Object:
 				param = Object.assign(param, {
 					width: width,
-					offsetY: 14,
 				});
 				param.data = Object.assign(param.data, {
 					filter: '',

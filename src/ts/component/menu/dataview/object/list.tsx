@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, Smile } from 'ts/component';
 import { I, C, DataUtil, Util, Key, keyboard } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -9,21 +9,20 @@ import 'react-virtualized/styles.css';
 interface Props extends I.Menu {};
 
 interface State {
-	items: any[];
 	n: number;
 	loading: boolean;
 };
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 28;
+const HEIGHT_SECTION = 42;
+const HEIGHT_ITEM = 28;
 const LIMIT = 40;
 
 @observer
 class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	state = {
-		items: [],
 		loading: false,
 		n: 0,
 	};
@@ -32,6 +31,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	filter: string = '';
 	cache: any = null;
 	offset: number = 0;
+	items: any[] = [];
 
 	constructor (props: any) {
 		super(props);
@@ -57,6 +57,8 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			const type = DataUtil.schemaField(item.type && item.type.length ? item.type[0] : '');
 
 			let icon = null;
+			let cn = [];
+
 			switch (type) {
 				default:
 					icon = <Smile {...item} />;
@@ -71,6 +73,16 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 					break;
 			};
 
+			if (item.isSection) {
+				cn.push('section');
+				if (param.index == 0) {
+					cn.push('first');
+				};
+				if (param.index == items.length - 1) {
+					cn.push('last');
+				};
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -82,7 +94,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 				>
 					<div style={param.style}>
 						{item.isSection ? (
-							<div className="section">
+							<div className={cn.join(' ')}>
 								{item.name ? <div className="name">{item.name}</div> : ''}
 							</div>
 						) : (
@@ -96,14 +108,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			);
 		};
 
-		const count = 400;
-
 		return (
 			<div className="items">
 				<InfiniteLoader
-					rowCount={count}
-					loadMoreRows={this.loadMoreRows}
-					isRowLoaded={({ index }) => { return !!items[index]; }}
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => { return true; }}
 					threshold={LIMIT}
 				>
 					{({ onRowsRendered, registerChild }) => (
@@ -114,8 +124,18 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
-									rowCount={count}
-									rowHeight={HEIGHT}
+									rowCount={items.length}
+									rowHeight={({ index }) => {
+										const item = items[index];
+										let height = HEIGHT_ITEM;
+										if (item.isSection) {
+											height = HEIGHT_SECTION;
+											if ((index == 0) || index == (items.length - 1)) {
+												height -= 8;
+											};
+										};
+										return height;
+									}}
 									rowRenderer={rowRenderer}
 									onRowsRendered={onRowsRendered}
 									overscanRowCount={LIMIT}
@@ -142,7 +162,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -169,8 +189,28 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			{ id: '', name: 'Find and object', isSection: true },
 		];
 
+		let obj: any = {};
+
 		for (let item of items) {
-			list.push({
+			let url = item.type && item.type.length ? item.type[0] : '';
+			let ot = dbStore.getObjectType(url);
+			if (!ot) {
+				continue;
+			};
+
+			let type = DataUtil.schemaField(url) || 'page';
+			let section = obj[type];
+
+			if (!section) {
+				 obj[type] = section = { 
+					id: type, 
+					children: [ 
+						{ id: '', name: ot.name, isSection: true },
+					] 
+				};
+			};
+
+			section.children.push({
 				...item,
 				icon: item.iconEmoji,
 				hash: item.iconImage,
@@ -178,11 +218,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			});
 		};
 
-		let sections = [
-			{ id: 'page', children: list },
-		];
-
-		sections = DataUtil.menuSectionsMap(sections);
+		const sections = DataUtil.menuSectionsMap(Object.values(obj));
+		sections.sort((c1: any, c2: any) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
 		return sections;
 	};
 	
@@ -210,8 +251,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	load (callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { types } = data;
-		const { items } = this.state;
+		const { types, filter } = data;
 
 		this.setState({ loading: true });
 
@@ -223,17 +263,17 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		C.ObjectSearch(filters, sorts, this.offset, LIMIT, (message: any) => {
+		C.ObjectSearch(filters, sorts, this.offset, 1000000, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
 
-			this.setState({ 
-				items: items.concat(message.records.map((it: any) => {
-					it.name = String(it.name || Constant.default.name);
-					return it;
-				})),
-			});
+			this.items = this.items.concat(message.records.map((it: any) => {
+				it.name = String(it.name || Constant.default.name);
+				return it;
+			}));
+
+			this.setState({ loading: false });
 		});
 	};
 
@@ -248,14 +288,13 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const { items } = this.state;
 		
 		if (!filter) {
-			return items;
+			return this.items;
 		};
 
-		const reg = new RegExp(filter.text.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
-		return items.filter((it: any) => { return it.name.match(reg); });
+		const reg = new RegExp(filter.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
+		return this.items.filter((it: any) => { return it.name.match(reg); });
 	};
 
 	onKeyDown (e: any) {
@@ -322,6 +361,17 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			this.props.close();
 			return;
 		};
+
+		const { param } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+
+		let value = Util.objectCopy(data.value || []);
+		value.push(item.id);
+		value = Util.arrayUnique(value);
+
+		this.props.param.data.value = value;
+		onChange(value);
 
 		this.props.close();
 	};

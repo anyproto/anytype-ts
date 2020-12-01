@@ -226,9 +226,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
 		if (!breadcrumbs && !skipInit) {
-			DataUtil.pageInit(() => {
-				this.open(true);
-			});
+			DataUtil.pageInit(() => { this.open(true); });
 			return;
 		};
 		

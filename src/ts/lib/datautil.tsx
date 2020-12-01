@@ -191,6 +191,10 @@ class DataUtil {
 			
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
+
+			C.ObjectTypeList((message: any) => {
+				dbStore.objectTypesSet(message.objectTypes);
+			});
 			
 			if (message.profileBlockId) {
 				blockStore.profileSet(message.profileBlockId);
@@ -538,7 +542,6 @@ class DataUtil {
 		const a = String(v || '').split('/');
 		return a.length > 1 ? a[a.length - 1] : '';
 	};
-
 
 	cellId (prefix: string, relationKey: string, id: any) {
 		return [ prefix, relationKey, String(id || '') ].join('-');
