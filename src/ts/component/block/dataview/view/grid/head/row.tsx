@@ -48,7 +48,7 @@ class HeadRow extends React.Component<Props, {}> {
 				useDragHandle={true}
 				onSortEnd={onSortEnd}
 				helperClass="isDragging"
-				helperContainer={() => { return $('#block-' + block.id + ' .viewItem').get(0); }}
+				helperContainer={() => { return $('#block-' + block.id + ' .wrap').get(0); }}
 			/>
 		);
 	};
