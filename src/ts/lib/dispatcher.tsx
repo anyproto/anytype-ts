@@ -218,6 +218,10 @@ class Dispatcher {
 						id: data.getId(),
 						details: Decode.decodeStruct(data.getDetails()),
 					});
+					console.log({
+						id: data.getId(),
+						details: Decode.decodeStruct(data.getDetails()),
+					});
 					break;
 
 				case 'blockSetFields':

@@ -114,6 +114,9 @@ class CellFile extends React.Component<Props, {}> {
 		value.push(hash);
 		value = Util.arrayUnique(value);
 
+		console.log('HASH', hash);
+		console.log(value);
+
 		onChange(value);
 	};
 
