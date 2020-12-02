@@ -209,23 +209,14 @@ class Mark {
 	};
 	
 	toHtml (text: string, marks: I.Mark[]) {
-		const hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Smile ];
-		const pos = [];
-
 		text = String(text || '');
-		text.replace(/(<|>)/g, (s: string, p: string, o: number) => {
-			if (p == '<') p = '&lt;';
-			if (p == '>') p = '&gt;';
-			pos.push({ s: p, o: o });
-			return s;
-		});
-
 		marks = this.checkRanges(text, marks || []);
 
 		let r = text.split('');
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
 		let ranges: any[] = [];
+		let hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Smile ];
 		
 		for (let mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -285,7 +276,7 @@ class Mark {
 				r[mark.range.to - 1] += `${suffix}</${tag}>`;
 			};
 		};
-		
+
 		for (let mark of parts) {
 			if (mark.type == I.MarkType.Mention) {
 				continue;
@@ -300,10 +291,11 @@ class Mark {
 			render(mark);
 		};
 
-		for	(let p of pos) {
-			r[p.o] = p.s;
+		// Replace tags in text
+		for (let i = 0; i < r.length; ++i) {
+			r[i] = r[i].replace(/<$/, '&lt;');
+			r[i] = r[i].replace(/^>/, '&gt;');
 		};
-
 		return r.join('');
 	};
 
