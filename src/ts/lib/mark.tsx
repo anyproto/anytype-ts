@@ -210,10 +210,18 @@ class Mark {
 	
 	toHtml (text: string, marks: I.Mark[]) {
 		const hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Smile ];
+		const pos = [];
 
 		text = String(text || '');
+		text.replace(/(<|>)/g, (s: string, p: string, o: number) => {
+			if (p == '<') p = '&lt;';
+			if (p == '>') p = '&gt;';
+			pos.push({ s: p, o: o });
+			return s;
+		});
+
 		marks = this.checkRanges(text, marks || []);
-		
+
 		let r = text.split('');
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
@@ -258,7 +266,11 @@ class Mark {
 
 			const attr = this.paramToAttr(mark.type, param);
 			const tag = Tags[mark.type];
-			const data = `data-range="${mark.range.from}-${mark.range.to}" data-param="${param}"`;
+			const data = [ `data-range="${mark.range.from}-${mark.range.to}"` ];
+			
+			if (param) {
+				data.push(`data-param="${param}"`);
+			};
 
 			let prefix = '';
 			let suffix = '';
@@ -269,7 +281,7 @@ class Mark {
 			};
 
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
-				r[mark.range.from] = `<${tag} ${attr} ${data}>${prefix}${r[mark.range.from]}`;
+				r[mark.range.from] = `<${tag} ${attr} ${data.join(' ')}>${prefix}${r[mark.range.from]}`;
 				r[mark.range.to - 1] += `${suffix}</${tag}>`;
 			};
 		};
@@ -286,6 +298,10 @@ class Mark {
 				continue;
 			};
 			render(mark);
+		};
+
+		for	(let p of pos) {
+			r[p.o] = p.s;
 		};
 
 		return r.join('');
@@ -319,6 +335,14 @@ class Mark {
 		let text = html;
 		let marks: any[] = [];
 
+		html.replace(/(&lt;|&gt;)/g, (s: string, p: string, o: number) => {
+			if (p == '&lt;') p = '{';
+			if (p == '&gt;') p = '}';
+			text = text.replace(s, p);
+			return '';
+		});
+
+		html = text;
 		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();

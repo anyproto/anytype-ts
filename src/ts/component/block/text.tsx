@@ -215,8 +215,6 @@ class BlockText extends React.Component<Props, {}> {
 
 			html = Prism.highlight(html, grammar, lang);
 		} else {
-			html = html.replace(/</g, '&lt;');
-			html = html.replace(/>/g, '&gt;');
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
 		};
@@ -374,19 +372,10 @@ class BlockText extends React.Component<Props, {}> {
 			return '';
 		};
 		
-		const { block } = this.props;
-		const { content } = block;
-		const { style } = content;
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('.value');
-		const obj = Mark.cleanHtml(value.html());
+		const obj = Mark.cleanHtml(node.find('.value').html());
 		
-		let text = String(obj.get(0).innerText || '');
-		if (style != I.TextStyle.Code) {
-			text = text.replace(/</g, '&lt;');
-			text = text.replace(/>/g, '&gt;');
-		};
-		return text;
+		return String(obj.get(0).innerText || '');
 	};
 	
 	getMarksFromHtml (): I.Mark[] {
