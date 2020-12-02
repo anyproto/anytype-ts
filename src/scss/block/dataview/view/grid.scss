@@ -52,6 +52,9 @@
 			.cell.isEditing.c-select { 
 				.cellContent { padding-bottom: 8px; }
 			}
+			.cell.isEditing.c-description { 
+				.cellContent { display: none; }
+			}
 
 			.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }
 			.cell.add {

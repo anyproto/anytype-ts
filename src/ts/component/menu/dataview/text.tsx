@@ -67,7 +67,6 @@ class MenuText extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any) {
-		this.resize();
 	};
 
 	onKeyUp (e: any) {
