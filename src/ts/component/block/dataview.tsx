@@ -210,6 +210,9 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	onOpen (e: any, data: any, type: string) {
+		e.stopPropagation();
+		e.preventDefault();
+
 		switch (type) {
 			default:
 				DataUtil.pageOpenPopup(data.id);

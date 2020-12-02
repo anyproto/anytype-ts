@@ -121,10 +121,10 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		switch (key) {
 			case 'dateFormat':
 				options = [
-					{ id: I.DateFormat.MonthAbbrBeforeDay, name: Util.date('M d Y', Util.time()) },
-					{ id: I.DateFormat.MonthAbbrAfterDay, name: Util.date('d M Y', Util.time()) },
-					{ id: I.DateFormat.Short, name: Util.date('n/j/Y', Util.time()) },
-					{ id: I.DateFormat.ShortUS, name: Util.date('j/n/Y', Util.time()) },
+					{ id: I.DateFormat.MonthAbbrBeforeDay, name: Util.date('M d, Y', Util.time()) },
+					{ id: I.DateFormat.MonthAbbrAfterDay, name: Util.date('d M, Y', Util.time()) },
+					{ id: I.DateFormat.Short, name: Util.date('d.m.Y', Util.time()) },
+					{ id: I.DateFormat.ShortUS, name: Util.date('m.d.Y', Util.time()) },
 					{ id: I.DateFormat.ISO, name: Util.date('Y-m-d', Util.time()) },
 				];
 				break;
@@ -201,8 +201,8 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const view = getView();
 		const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
-		const options = this.getOptions(item.relationKey);
-		const value = options.find((it: any) => { return it.id == relation[item.relationKey]; }) || options[0];
+		const options = this.getOptions(item.key);
+		const value = options.find((it: any) => { return it.id == relation[item.key]; }) || options[0];
 
 		commonStore.menuOpen('select', {
 			element: '#item-' + item.id,
@@ -215,7 +215,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 				value: value.name,
 				options: options,
 				onSelect: (e: any, el: any) => {
-					view.relations[idx][item.relationKey] = el.id;
+					view.relations[idx][item.key] = el.id;
 					C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 
 					close();
