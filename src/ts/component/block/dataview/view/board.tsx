@@ -82,7 +82,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
-		const columns = this.getColumns();
+		const columns = node.find('.column');
 		const ww = win.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
@@ -98,6 +98,7 @@ class ViewBoard extends React.Component<Props, {}> {
 			margin = (ww - mw) / 2; 
 		};
 
+		columns.css({  });
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
 	};

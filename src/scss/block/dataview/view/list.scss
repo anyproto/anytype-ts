@@ -7,7 +7,7 @@
 		    .row { width: 100%; display: inline-block; margin-bottom: 8px; }
 			.row:last-child { margin: 0px; }
 
-			.cellContent { display: inline; vertical-align: top; margin-right: 8px; line-height: 24px; }
+			.cellContent { display: inline; vertical-align: top; margin-right: 8px; line-height: 24px; cursor: default !important; }
 			.cellContent:last-child { margin: 0px; }
 			.cellContent:empty { display: none; }
 

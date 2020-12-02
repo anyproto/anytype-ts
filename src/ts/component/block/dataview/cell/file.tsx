@@ -23,7 +23,7 @@ class CellFile extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		let canEdit = !relation.isReadOnly && (viewType == I.ViewType.Grid);
+		let canEdit = this.canEdit();
 		let value = this.getValue();
 
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
@@ -115,6 +115,11 @@ class CellFile extends React.Component<Props, {}> {
 		value = Util.arrayUnique(value);
 
 		onChange(value);
+	};
+
+	canEdit () {
+		const { relation, readOnly, viewType } = this.props;
+		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
 	
 };

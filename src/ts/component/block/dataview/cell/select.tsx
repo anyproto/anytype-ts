@@ -43,7 +43,7 @@ class CellSelect extends React.Component<Props, State> {
 			return null;
 		};
 
-		const canEdit = !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
+		const canEdit = this.canEdit();
 
 		let value: any = this.getValue();
 		value = value.map((id: string, i: number) => { 
@@ -322,6 +322,11 @@ class CellSelect extends React.Component<Props, State> {
 		value = Util.arrayUnique(value);
 
 		onChange(value);
+	};
+
+	canEdit () {
+		const { relation, readOnly, viewType } = this.props;
+		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
 
 };

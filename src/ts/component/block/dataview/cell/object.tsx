@@ -42,9 +42,8 @@ class CellObject extends React.Component<Props, State> {
 			return null;
 		};
 
-		const canEdit = !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
-
-		let value: any = this.getValue();
+		const canEdit = this.canEdit();
+		const value = this.getValue();
 
 		const Item = (item: any) => {
 			return (
@@ -318,6 +317,11 @@ class CellObject extends React.Component<Props, State> {
 		value = Util.arrayUnique(value);
 
 		onChange(value);
+	};
+
+	canEdit () {
+		const { relation, readOnly, viewType } = this.props;
+		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
 
 };

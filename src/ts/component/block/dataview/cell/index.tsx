@@ -98,11 +98,17 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, viewType } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
 			return;
+		};
+
+		if (this.ref && this.ref.canEdit) {
+			if (!this.ref.canEdit()) {
+				return;
+			};
 		};
 
 		const id = DataUtil.cellId('cell', relation.relationKey, index);
@@ -317,8 +323,8 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	getRelation () {
-		const { storeId, block, relationKey } = this.props;
-		return dbStore.getRelation(storeId || block.id, relationKey);
+		const { storeId, relation, block, relationKey } = this.props;
+		return relation ? relation : dbStore.getRelation(storeId || block.id, relationKey);
 	};
 	
 };

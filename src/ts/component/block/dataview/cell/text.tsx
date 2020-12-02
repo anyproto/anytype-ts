@@ -37,12 +37,13 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, onOpen, readOnly, viewType, getRecord } = this.props;
+		const { index, relation, onOpen, viewType, getRecord } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
 		};
 
+		const canEdit = this.canEdit();
 		const type = DataUtil.schemaField(record.type);
 
 		let Name = null;
@@ -136,7 +137,7 @@ class CellText extends React.Component<Props, State> {
 						onUpload={this.onUpload}
 						className={cn} 
 						size={size} 
-						canEdit={!readOnly} 
+						canEdit={canEdit} 
 						offsetY={4} 
 						object={record} 
 					/>
@@ -274,6 +275,11 @@ class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		DataUtil.pageSetIcon(record.id, '', hash);
+	};
+
+	canEdit () {
+		const { relation, readOnly, viewType } = this.props;
+		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
 
 };
