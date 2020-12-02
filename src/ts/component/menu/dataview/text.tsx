@@ -67,6 +67,7 @@ class MenuText extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any) {
+		this.resize();
 	};
 
 	onKeyUp (e: any) {
@@ -92,11 +93,10 @@ class MenuText extends React.Component<Props, {}> {
 		const win = $(window);
 		const wh = win.height();
 
-		input.css({ height: 'auto', overflow: 'visible' });
-	
+		input.css({ height: 'auto' });
 		const sh = input.get(0).scrollHeight;
 
-		input.css({ height: Math.min(wh - 76, sh), overflow: 'auto' });
+		input.css({ height: Math.min(wh - 76, sh) });
 		input.scrollTop(sh);
 
 		position();
