@@ -83,26 +83,24 @@ class MenuText extends React.Component<Props, {}> {
 	};
 
 	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { position } = this.props;
-		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+		const win = $(window);
+		const wh = win.height();
 
-			const node = $(ReactDOM.findDOMNode(this));
-			const input = node.find('#input');
-			const win = $(window);
-			const wh = win.height();
+		input.css({ height: 'auto', overflow: 'visible' });
+	
+		const sh = input.get(0).scrollHeight;
 
-			input.css({ height: 'auto', overflow: 'visible' });
-		
-			const sh = input.get(0).scrollHeight;
+		input.css({ height: Math.min(wh - 76, sh), overflow: 'auto' });
+		input.scrollTop(sh);
 
-			input.css({ height: Math.min(wh - 76, sh), overflow: 'auto' });
-			input.scrollTop(sh);
-
-			position();
-		});
+		position();
 	};
 
 };

@@ -173,7 +173,7 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub } = param;
+		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlip } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -210,7 +210,7 @@ class Menu extends React.Component<Props, {}> {
 					y = offset.top - height + offsetY;
 					
 					// Switch
-					if (y <= BORDER) {
+					if (!noFlip && (y <= BORDER)) {
 						y = offset.top + eh - offsetY;
 					};
 					break;
@@ -223,7 +223,7 @@ class Menu extends React.Component<Props, {}> {
 					y = offset.top + eh + offsetY;
 
 					// Switch
-					if (y >= wh - height - BORDER) {
+					if (!noFlip && (y >= wh - height - BORDER)) {
 						y = offset.top - height - offsetY;
 					};
 					break;

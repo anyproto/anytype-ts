@@ -14,8 +14,9 @@ export interface MenuParam {
 	data?: any;
 	isSub?: boolean;
 	passThrough?: boolean;
-	noAnimation?: boolean;
 	className?: string;
+	noAnimation?: boolean;
+	noFlip?: boolean;
 	onClose?(): void;
 	onOpen?(): void;
 };

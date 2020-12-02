@@ -101,8 +101,6 @@ class Cell extends React.Component<Props, {}> {
 		const { rootId, block, index, getRecord, readOnly, menuClassName } = this.props;
 		const relation = this.getRelation();
 
-		console.log(relation, readOnly, relation.isReadOnly);
-
 		if (!relation || readOnly || relation.isReadOnly) {
 			return;
 		};
@@ -218,8 +216,9 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Description:
 				param = Object.assign(param, {
 					element: cell,
-					offsetY: -height + 1,
+					offsetY: -height,
 					width: width,
+					noFlip: true,
 				});
 				menuId = 'dataviewText';
 				break;
