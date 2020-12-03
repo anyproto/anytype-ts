@@ -45,14 +45,14 @@ class CellFile extends React.Component<Props, {}> {
 
 		const File = (item: any) => (
 			<div className="element file" onClick={(e: any) => { this.onOpen(e, item, item.type); }}>
-				<IconObject type="file" object={item} />
+				<IconObject object={item} />
 				<div className="name">{item.name}</div>
 			</div>
 		);
 
 		const Image = (item: any) => (
 			<div className="element image" onClick={(e: any) => { this.onOpen(e, item, item.type); }}>
-				<IconObject type="image" object={item} />
+				<IconObject object={item} />
 			</div>
 		);
 

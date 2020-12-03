@@ -207,7 +207,7 @@ class MenuBlockMention extends React.Component<Props, State> {
     		resolution: 3,
 		});
 
-		C.NavigationListObjects((message: any) => {
+		C.NavigationListObjects(I.NavigationType.Go, '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};

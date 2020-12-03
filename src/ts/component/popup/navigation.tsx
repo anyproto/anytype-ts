@@ -314,7 +314,10 @@ class PopupNavigation extends React.Component<Props, State> {
 
 						{!pages.length ? (
 							<div id="empty" key="empty" className="empty">
-								<div className="txt">{Util.sprintf(translate('popupNavigationEmptyFilter'), filter)}</div>
+								<div 
+									className="txt" 
+									dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('popupNavigationEmptyFilter'), filter) }} 
+								/>
 							</div>
 						) : (
 							<div id={'panel-' + Panel.Left} key="items" className="items left">
@@ -733,7 +736,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	loadSearch () {
 		const { param } = this.props;
 		const { data } = param;
-		const { skipId } = data;
+		const { type, skipId } = data;
 		const { config } = commonStore;
 		const { root } = blockStore;
 
@@ -748,7 +751,12 @@ class PopupNavigation extends React.Component<Props, State> {
 		});
 
 		let pages: I.PageInfo[] = [];
-		C.NavigationListObjects((message: any) => {
+		C.NavigationListObjects(type, '', (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			for (let page of message.objects) {
 				if ((skipId && (page.id == skipId)) || page.id == root) {
 					continue;

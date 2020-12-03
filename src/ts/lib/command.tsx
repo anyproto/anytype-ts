@@ -131,8 +131,12 @@ const PageCreate = (details: any, callBack?: (message: any) => void) => {
 	dispatcher.request('pageCreate', request, callBack);
 };
 
-const NavigationListObjects = (callBack?: (message: any) => void) => {
+const NavigationListObjects = (context: I.NavigationType, fullText: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Navigation.ListObjects.Request();
+	
+	request.setContext(context);
+	request.setFulltext(fullText);
+
 	dispatcher.request('navigationListObjects', request, callBack);
 };
 

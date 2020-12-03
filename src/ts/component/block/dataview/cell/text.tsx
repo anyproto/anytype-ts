@@ -132,7 +132,6 @@ class CellText extends React.Component<Props, State> {
 				<React.Fragment>
 					<IconObject 
 						id={[ relation.relationKey, record.id ].join('-')} 
-						type={type}
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload}
 						className={cn} 

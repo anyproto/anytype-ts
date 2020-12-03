@@ -1,12 +1,10 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { Icon, Smile } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, Util, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 interface Props {
 	id?: string;
-	type?: string;
 	layout?: I.ObjectLayout;
 	object?: any;
 	className?: string;
@@ -25,8 +23,9 @@ interface Props {
 class IconObject extends React.Component<Props, {}> {
 	
 	render () {
-		let { type, layout, object, className } = this.props;
+		let { layout, object, className } = this.props;
 		let cn = [ 'icon', 'object' ];
+		let type = DataUtil.schemaField(object.type);
 		
 		if (className) {
 			cn.push(className);

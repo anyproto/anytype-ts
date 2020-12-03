@@ -72,7 +72,7 @@
 }
 
 .cellContent.c-object {
-	.item { margin: 0px 6px 6px 0px; vertical-align: top; max-width: 100%; line-height: 20px; }
+	.element { display: inline-block; margin: 0px 6px 6px 0px; vertical-align: top; max-width: 100%; line-height: 20px; }
 	.filter { cursor: text; margin-right: 0px; height: 18px; min-width: 18px; max-width: 100%; padding: 0px; display: none; }
 	.filter {
 		#filter { 

@@ -135,9 +135,10 @@ class MenuSmile extends React.Component<Props, State> {
 					</InfiniteLoader>
 					{!sections.length ? (
 						<div className="empty">
-							<div className="txt">
-								{Util.sprintf(translate('menuSmileEmpty'), filter)}
-							</div>
+							<div 
+								className="txt" 
+								dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('menuSmileEmpty'), filter) }} 
+							/>
 						</div>
 					): ''}
 				</div>

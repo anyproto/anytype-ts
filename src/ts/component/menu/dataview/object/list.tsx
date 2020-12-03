@@ -57,8 +57,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 				return null;
 			};
 
-			const type = DataUtil.schemaField(item.type);
-
 			let cn = [];
 			if (item.isSection) {
 				cn.push('section');
@@ -86,7 +84,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 							</div>
 						) : (
 							<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-								<IconObject type={type} object={item} />
+								<IconObject object={item} />
 								<div className="name">{item.name}</div>
 							</div>
 						)}

@@ -27,9 +27,9 @@ export enum CrumbsType {
 };
 
 export enum NavigationType {
-	Go		 = 'go',
-	Move	 = 'move',
-	Link	 = 'link',
+	Go		 = 0,
+	Move	 = 1,
+	Link	 = 2,
 };
 
 export interface Option {

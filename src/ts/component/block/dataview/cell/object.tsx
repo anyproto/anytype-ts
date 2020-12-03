@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Tag } from 'ts/component';
-import { I, C, keyboard, DataUtil, Util } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, C, keyboard, Util } from 'ts/lib';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
-import { DraggableArea } from 'react-draggable-tags';
+import { IconObject } from 'ts/component';
 
 interface Props extends I.Cell {};
 interface State { 
@@ -34,7 +33,7 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { block, readOnly, getRecord, index, viewType } = this.props;
+		const { rootId, block, readOnly, getRecord, index, viewType } = this.props;
 		const relation = dbStore.getRelation(block.id, this.props.relation.relationKey);
 		const record = getRecord(index);
 
@@ -43,12 +42,16 @@ class CellObject extends React.Component<Props, State> {
 		};
 
 		const canEdit = this.canEdit();
-		const value = this.getValue();
+		
+		let value = this.getValue();
+		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
+		value = value.filter((it: any) => { return !it._detailsEmpty_; });
 
 		const Item = (item: any) => {
 			return (
-				<div className="item">
-					{item.text}
+				<div className="element">
+					<IconObject object={item} />
+					<div className="name">{item.name}</div>
 				</div>
 			);
 		};
@@ -58,7 +61,7 @@ class CellObject extends React.Component<Props, State> {
 				{canEdit ? (
 					<React.Fragment>
 						{value.map((item: any, i: number) => {
-							return <Item key={i} text={...item} />;
+							return <Item key={i} {...item} />;
 						})}
 						<div className="filter tagItem">
 							<div 
