@@ -31,18 +31,16 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 			</div>
 		);
 
-		console.log("cafe params " + cafe.lastPushSucceed + files.pinning);
-
 		let cafeStatus = [];
 		if (cafe.lastPushSucceed) {
 			cafeStatus = [
 				{ key: 'This object is backed up'},
-				cafe.lastPulled == 0 ? {} : { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) }
+				cafe.lastPulled ? { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) } : {},
 			];
 		} else {
 			cafeStatus = [
 				{ key: 'Some changes are not backed up'},
-				cafe.lastPulled == 0 ? {} : { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) }
+				cafe.lastPulled ? { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) } : {},
 			];
 		};
 

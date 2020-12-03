@@ -272,16 +272,16 @@ const Mapper = {
                 status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
                 lastPulled: obj.getLastpulled(),
                 lastPushSucceed: obj.getLastpushsucceed(),
-								files: Mapper.From.FilesStatus,
+				files: Mapper.From.ThreadFiles(obj.getFiles()),
             };
         },
 
-	  FilesStatus: (obj: any) => {
+		ThreadFiles: (obj: any) => {
             return {
-                pinning: obj.getPinning(),
-								pinned: obj.getPinned(),
-                failed: obj.getFailed(),
-								updated: obj.getUpdated(),
+				pinning: obj.getPinning(),
+				pinned: obj.getPinned(),
+				failed: obj.getFailed(),
+				updated: obj.getUpdated(),
             };
         },
 
