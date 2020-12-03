@@ -36,7 +36,7 @@ class MenuBlockLink extends React.Component<Props, {}> {
 			if (this.ref) {
 				this.ref.focus(); 
 			};
-		}, 100);
+		});
 	};
 
 	componentWillUnmount () {

@@ -68,7 +68,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const withIcon = details.iconEmoji || details.iconImage;
 		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		
-		const title = blockStore.getLeaf(rootId, 'title');
+		const title = blockStore.getLeaf(rootId, 'title') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], align: title.align, fields: {}, content: {} });
 
@@ -1242,6 +1242,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
 		const { path } = authStore;
+		const currentFrom = range.from;
+		const currentTo = range.to;
 
 		if (!data) {
 			const cb = e.clipboardData || e.originalEvent.clipboardData;
@@ -1324,6 +1326,10 @@ class EditorPage extends React.Component<Props, {}> {
 				offsetY: 4,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Left,
+				onOpen: () => {
+					focus.set(block.id, { from: currentFrom, to: currentTo });
+					focus.apply();
+				},
 				data: {
 					value: '',
 					options: [
