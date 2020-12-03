@@ -26,7 +26,6 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
-const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 const HEIGHT = 64;
 const HEIGHT_EXPANDED = 96;
@@ -55,7 +54,6 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	ref: any = null;
 	timeout: number = 0;
-	index: any = null;
 	disableFirstKey: boolean = false;
 	panel: Panel = Panel.Left;
 	focused: boolean = false;
@@ -85,7 +83,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
-		const pages = this.filterPages();
+		const pages = this.getItems();
 
 		if ((expanded && (!this.cacheIn || !this.cacheOut)) || (!expanded && !this.cache)) {
 			return null;
@@ -381,8 +379,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		focus.clear(true);
 	};
 	
-	componentDidUpdate () {
-		const { expanded, pagesIn, pagesOut } = this.state;
+	componentDidUpdate (prevProps: any, prevState: any) {
+		const { expanded, pages, pagesIn, pagesOut, filter } = this.state;
+
+		if (filter != prevState.filter) {
+			console.log('LOAD', filter);
+			this.loadSearch();
+			return;
+		};
+
 		this.initSize(expanded);
 		this.setActive();
 
@@ -396,7 +401,6 @@ class PopupNavigation extends React.Component<Props, State> {
 			};
 		};
 
-		const pages = this.filterPages();
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
@@ -628,46 +632,22 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { info, pagesIn, pagesOut, expanded } = this.state;
+		const { info, pages, pagesIn, pagesOut, expanded } = this.state;
 
-		let items = [];
 		if (expanded) {
 			switch (this.panel) {
 				case Panel.Left:
-					items = pagesIn;
-					break;
+					return pagesIn;
 				
 				case Panel.Center:
-					items = [ info ];
-					break;
+					return [ info ];
 	
 				case Panel.Right:
-					items = pagesOut;
-					break;
+					return pagesOut;
 			};
 		} else {
-			items = this.filterPages();
-		};
-		return items;
-	};
-
-	filterPages (): I.PageInfo[] {
-		const { pages, filter } = this.state;
-		
-		if (!filter) {
 			return pages;
 		};
-
-		const ids = this.index ? this.index.search(filter) : [];
-		
-		let ret = [];
-		if (ids.length) {
-			ret = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
-		} else {
-			const reg = new RegExp(filter.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
-			ret = pages.filter((it: I.PageInfo) => { return it.text.match(reg); });
-		};
-		return ret;
 	};
 
 	setActive (item?: any) {
@@ -728,8 +708,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			this.setState({ filter: Util.filterFix(this.ref.getValue()) 
-			});
+			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
 		}, force ? 0 : 50);
 	};
 
@@ -737,21 +716,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { type, skipId } = data;
+		const { filter } = this.state;
 		const { config } = commonStore;
 		const { root } = blockStore;
 
 		this.setState({ loading: true, n: -1 });
 		this.panel = Panel.Left;
 
-		this.index = new FlexSearch('balance', {
-			encode: 'extra',
-    		tokenize: 'full',
-			threshold: 1,
-    		resolution: 3,
-		});
-
 		let pages: I.PageInfo[] = [];
-		C.NavigationListObjects(type, '', (message: any) => {
+		C.NavigationListObjects(type, filter, 0, 100000000, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
@@ -768,7 +741,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				};
 
 				pages.push(page);
-				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
 			};
 
 			if (this.ref) {
