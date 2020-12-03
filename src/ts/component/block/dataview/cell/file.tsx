@@ -62,10 +62,10 @@ class CellFile extends React.Component<Props, {}> {
 					const type = DataUtil.schemaField(item.type);
 					switch (type) {
 						case 'file':
-							return <File key={i} {...item} type={type} />;
+							return <File key={i} {...item} />;
 
 						case 'image':
-							return <Image key={i} {...item} type={type} />;
+							return <Image key={i} {...item} />;
 					};
 				})}
 			</React.Fragment>

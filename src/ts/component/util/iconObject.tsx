@@ -24,8 +24,8 @@ class IconObject extends React.Component<Props, {}> {
 	
 	render () {
 		let { layout, object, className } = this.props;
-		let cn = [ 'icon', 'object' ];
 		let type = DataUtil.schemaField(object.type);
+		let cn = [ 'icon', 'object' ];
 		
 		if (className) {
 			cn.push(className);
