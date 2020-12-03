@@ -38,9 +38,9 @@ class Dispatcher {
 			bindings.setEventHandler(handler);
 		/// #else
 			let serverAddr = window.require('electron').remote.getGlobal('serverAddr');
-			
+
 			console.log('Server address: ', serverAddr);
-			
+
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
 			this.listenEvents();
@@ -177,7 +177,7 @@ class Dispatcher {
 				case 'threadStatus':
 					authStore.threadSet(rootId, {
 						summary: Mapper.From.ThreadSummary(data.getSummary()),
-						cafe: Mapper.From.ThreadCafe(data.getCafe()),()),
+						cafe: Mapper.From.ThreadCafe(data.getCafe()),
 						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
 					});
 					break;

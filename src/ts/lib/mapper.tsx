@@ -272,7 +272,7 @@ const Mapper = {
                 status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
                 lastPulled: obj.getLastpulled(),
                 lastPushSucceed: obj.getLastpushsucceed(),
-								files: obj.getFiles(),
+								files: (obj.getFiles() || []).map(Mapper.From.FilesStatus),
             };
         },
 
