@@ -272,6 +272,16 @@ const Mapper = {
                 status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
                 lastPulled: obj.getLastpulled(),
                 lastPushSucceed: obj.getLastpushsucceed(),
+								files: obj.getFiles(),
+            };
+        },
+
+	  FilesStatus: (obj: any) => {
+            return {
+                pinning: obj.getPinning(),
+								pinned: obj.getPinned(),
+                failed: obj.getFailed(),
+								updated: obj.getUpdated(),
             };
         },
 

@@ -6,6 +6,13 @@ export enum ThreadStatus {
 	Failed	 = 4,
 };
 
+export interface FilesStatus {
+	pinning: number;
+	pinned: number;
+	failed: number;
+	updated: number;
+}
+
 export interface ThreadSummary {
 	status: ThreadStatus;
 };
@@ -31,6 +38,7 @@ export interface ThreadCafe {
 	status: ThreadStatus;
 	lastPulled: number;
 	lastPushSucceed: boolean;
+	files: FilesStatus;
 };
 
 export interface ThreadObj {

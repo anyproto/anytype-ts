@@ -174,10 +174,10 @@ class Dispatcher {
 					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
 					break;
 
-				case 'threadStatus': 
+				case 'threadStatus':
 					authStore.threadSet(rootId, {
 						summary: Mapper.From.ThreadSummary(data.getSummary()),
-						cafe: Mapper.From.ThreadCafe(data.getCafe()),
+						cafe: Mapper.From.ThreadCafe(data.getCafe()),()),
 						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
 					});
 					break;

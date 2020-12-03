@@ -12,7 +12,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		const { rootId, isCafe, accountId } = data;
 		const thread = authStore.threadGet(rootId);
 		const { cafe, accounts } = thread;
-		const { status } = cafe;
+		const { status, files } = cafe;
 		const account = accounts.find((it: I.ThreadAccount) => { return it.id == accountId; });
 
 		const Item = (item: any) => (
@@ -31,22 +31,32 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 			</div>
 		);
 
-		let cafeFields = [];
+		console.log("cafe params " + cafe.lastPushSucceed + files.pinning);
+
+		let cafeStatus = [];
 		if (cafe.lastPushSucceed) {
-			cafeFields = [
-				{ key: 'The object is fully backed up'},
-				{ key: 'Changes requested', value: Util.timeAgo(cafe.lastPulled) }
+			cafeStatus = [
+				{ key: 'This object is backed up'},
+				cafe.lastPulled == 0 ? {} : { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) }
 			];
 		} else {
-			cafeFields = [
+			cafeStatus = [
 				{ key: 'Some changes are not backed up'},
-				{ key: 'Changes requested', value: Util.timeAgo(cafe.lastPulled) }
+				cafe.lastPulled == 0 ? {} : { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) }
 			];
 		};
 
+		const fileStatus = [
+			{ key: 'Uploading', value: files.pinning + files.failed },
+			{ key: 'Waiting for upload', value: files.failed },
+			{ key: 'Stored', value: files.pinned },
+			{ key: 'Updates requested', value: Util.timeAgo(files.updated) }
+		];
+
 		return isCafe ? (
 			<div className="items">
-				<Item name="Status" fields={cafeFields} />
+				<Item name="Status" fields={cafeStatus} />
+				<Item name="Files" fields={fileStatus} />
 			</div>
 		) : (
 			<React.Fragment>
@@ -55,9 +65,9 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
-								{ key: 'Direct connection', value: item.online ? 'Online' : 'Offline' },
-								{ key: 'Changes requested', value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction' },
-								{ key: 'Last edit',  value: item.lastEdited ? Util.timeAgo(item.lastEdited) : 'Without changes' },
+								{ key: 'Direct connection',  value: item.online ? 'Online' : 'Offline' },
+								{ key: 'Updates requested',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction' },
+								{ key: 'Last edits recieved',  value: item.lastEdited ?  Util.timeAgo(item.lastEdited) : 'No changes' }
 							];
 							return <Item key={i} {...item} fields={fields} />;
 						})}
