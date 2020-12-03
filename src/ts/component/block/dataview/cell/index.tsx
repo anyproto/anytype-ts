@@ -140,6 +140,7 @@ class Cell extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			noAnimation: true,
+			noFlip: true,
 			className: menuClassName,
 			onOpen: setOn,
 			onClose: () => {
@@ -224,7 +225,6 @@ class Cell extends React.Component<Props, {}> {
 					element: cell,
 					offsetY: -height,
 					width: width,
-					noFlip: true,
 				});
 				menuId = 'dataviewText';
 				break;

@@ -25,7 +25,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, position } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -47,7 +47,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 		const Image = (item: any) => (
 			<div className="element image">
-				<img src={commonStore.imageUrl(item.id, 208)} className="preview" />
+				<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
 			</div>
 		);
 

@@ -203,9 +203,10 @@ class EditorPage extends React.Component<Props, {}> {
 		this.uiHidden = false;
 		this.unbind();
 		this.close(rootId);
-		keyboard.disableBack(false);
 
+		keyboard.disableBack(false);
 		focus.clear(false);
+
 		Storage.delete('pageId');
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
@@ -325,15 +326,13 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	close (id: string) {
 		const { isPopup } = this.props;
-		if (!id) {
+		if (isPopup || !id) {
 			return;
 		};
 		
 		C.BlockClose(id, (message: any) => {
-			if (!isPopup) {
-				blockStore.blocksClear(id);
-				dbStore.relationsRemove(id);
-			};
+			blockStore.blocksClear(id);
+			dbStore.relationsRemove(id);
 		});
 	};
 	

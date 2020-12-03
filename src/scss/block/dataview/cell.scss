@@ -43,8 +43,8 @@
 
 .cellContent.c-file {
 	.inputWithFile { border: 0px; padding: 0px; }
-	.item { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; cursor: pointer; }
-	.item {
+	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; cursor: pointer; }
+	.element {
 		.name { line-height: 20px; width: calc(100% - 24px); @include text-overflow-nw; }
 	}
 	.cellContent { white-space: normal; }

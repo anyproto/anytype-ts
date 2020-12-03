@@ -99,10 +99,13 @@ class CommonStore {
 	};
 	
 	fileUrl (hash: string) {
+		hash = String(hash || '');
 		return this.gateway + '/file/' + hash;
 	};
 	
 	imageUrl (hash: string, width: number) {
+		hash = String(hash || '');
+		width = Number(width) || 0;
 		return this.gateway + '/image/' + hash + '?width=' + width;
 	};
 	
