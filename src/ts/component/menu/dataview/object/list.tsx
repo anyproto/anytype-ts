@@ -41,6 +41,9 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const { n } = this.state;
 		const items = this.getItems(true);
 
@@ -143,6 +146,16 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { n } = this.state;
 		const items = this.getItems(false);
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+
+		if (filter != this.filter) {
+			this.offset = 0;
+			this.filter = filter;
+			this.load();
+			return;
+		};
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -168,10 +181,8 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	getSections () {
-		const items = this.filterItems();
-
 		let obj: any = {};
-		for (let item of items) {
+		for (let item of this.items) {
 			let ot = dbStore.getObjectType(item.type);
 			if (!ot) {
 				continue;
@@ -230,7 +241,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	load (callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { types } = data;
+		const { types, filter } = data;
 
 		this.setState({ loading: true });
 
@@ -242,7 +253,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		C.ObjectSearch(filters, sorts, this.offset, 1000000, (message: any) => {
+		C.ObjectSearch(filters, sorts, filter, this.offset, 1000000, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
