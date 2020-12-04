@@ -7,7 +7,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 @observer
 class MenuBlockRelationList extends React.Component<Props, {}> {
@@ -19,7 +18,6 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
-		this.onOpen = this.onOpen.bind(this);
 	};
 
 	render () {
@@ -60,7 +58,6 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 							index={0}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
-							onOpen={this.onOpen}
 							readOnly={readOnly}
 						/>
 					</div>
@@ -118,30 +115,6 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		C.BlockSetDetails(rootId, [ 
 			{ key: key, value: value },
 		]);
-	};
-
-	onOpen (e: any, data: any, type: string) {
-		e.stopPropagation();
-		e.preventDefault();
-
-		switch (type) {
-			default:
-				DataUtil.pageOpenPopup(data.id);
-				break;
-
-			case 'image':
-				commonStore.popupOpen('preview', {
-					data: {
-						type: I.FileType.Image,
-						url: commonStore.imageUrl(data.id, Constant.size.image),
-					}
-				});
-				break;
-
-			case 'file':
-				ipcRenderer.send('urlOpen', commonStore.fileUrl(data.id));
-				break;
-		};
 	};
 
 };

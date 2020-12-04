@@ -11,7 +11,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewCalendar';
 
@@ -37,7 +36,7 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, onOpen, viewType, getRecord } = this.props;
+		const { index, relation, viewType, getRecord } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
@@ -141,7 +140,7 @@ class CellText extends React.Component<Props, State> {
 						object={record} 
 					/>
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { onOpen(e, record, type); }} />
+					<Icon className="expand" onClick={(e: any) => { DataUtil.dataviewRelationOpen(e, record, type); }} />
 				</React.Fragment>
 			);
 		} else 

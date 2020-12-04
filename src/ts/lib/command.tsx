@@ -252,6 +252,9 @@ const BlockUnlink = (contextId: string, blockIds: any[], callBack?: (message: an
 };
 
 const BlockSetTextText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
+	text = text.replace(/&lt;/g, '<');
+	text = text.replace(/&gt;/g, '>');
+
 	marks = Util.objectCopy(marks);
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark);
 

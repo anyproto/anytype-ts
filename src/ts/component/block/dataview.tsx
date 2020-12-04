@@ -15,7 +15,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 @observer
 class BlockDataview extends React.Component<Props, {}> {
@@ -26,7 +25,6 @@ class BlockDataview extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onOpen = this.onOpen.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
@@ -87,7 +85,6 @@ class BlockDataview extends React.Component<Props, {}> {
 						ref={(ref: any) => { this.viewRef = ref; }} 
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
-						onOpen={this.onOpen} 
 						readOnly={readOnly} 
 						getData={this.getData} 
 						getRecord={this.getRecord}
@@ -207,30 +204,6 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		dbStore.recordUpdate(block.id, obj);
 		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, record);
-	};
-
-	onOpen (e: any, data: any, type: string) {
-		e.stopPropagation();
-		e.preventDefault();
-
-		switch (type) {
-			default:
-				DataUtil.pageOpenPopup(data.id);
-				break;
-
-			case 'image':
-				commonStore.popupOpen('preview', {
-					data: {
-						type: I.FileType.Image,
-						url: commonStore.imageUrl(data.id, Constant.size.image),
-					}
-				});
-				break;
-
-			case 'file':
-				ipcRenderer.send('urlOpen', commonStore.fileUrl(data.id));
-				break;
-		};
 	};
 
 	resize () {

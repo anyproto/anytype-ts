@@ -190,16 +190,14 @@ class BlockText extends React.Component<Props, {}> {
 	
 	setValue (v: string) {
 		const { block } = this.props;
-		const { content } = block
-		
+		const { content } = block;
+		const fields = block.fields || {};
+		const { style } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
-		
-		let fields = block.fields || {};
-		let { style } = content;
-		let text = String(v || '');
+		const text = String(v || '');
+
 		let html = text;
-		
 		if (style == I.TextStyle.Code) {
 			let lang = fields.lang;
 			let grammar = Prism.languages[lang];
@@ -375,7 +373,7 @@ class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		const obj = Mark.cleanHtml(value.html());
-
+		
 		return String(obj.get(0).innerText || '');
 	};
 	

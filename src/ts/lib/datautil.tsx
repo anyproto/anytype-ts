@@ -3,6 +3,7 @@ import { commonStore, blockStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
+const { ipcRenderer } = window.require('electron');
 
 class DataUtil {
 
@@ -617,6 +618,33 @@ class DataUtil {
 			};
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
+	};
+
+
+	dataviewRelationOpen (e: any, data: any, type: string) {
+		e.stopPropagation();
+		e.preventDefault();
+
+		type = this.schemaField(type);
+
+		switch (type) {
+			default:
+				this.pageOpenPopup(data.id);
+				break;
+
+			case 'image':
+				commonStore.popupOpen('preview', {
+					data: {
+						type: I.FileType.Image,
+						url: commonStore.imageUrl(data.id, Constant.size.image),
+					}
+				});
+				break;
+
+			case 'file':
+				ipcRenderer.send('urlOpen', commonStore.fileUrl(data.id));
+				break;
+		};
 	};
 
 };
