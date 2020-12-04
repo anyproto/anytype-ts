@@ -16,7 +16,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const FlexSearch = require('flexsearch');
 const HEIGHT = 28;
 
 @observer
@@ -42,6 +41,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 	render () {
 		const { n } = this.state;
 		const items = this.getItems(true);
+		const { filter } = commonStore;
+		const { text } = filter;
 
 		if (!this.cache) {
 			return null;
@@ -113,16 +114,18 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { n } = this.state;
 		const items = this.getItems(false);
 
+		if (this.filter != filter.text) {
+			this.load();
+			this.filter = filter.text;
+			this.setState({ n: 0 });
+			return;
+		};
+
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
-
-		if (this.filter != filter.text) {
-			this.filter = filter.text;
-			this.setState({ n: 0 });
-		};
 
 		this.resize();
 		this.setActive(items[n]);
@@ -146,7 +149,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const pages = this.filterPages();
+		const { pages } = this.state;
 		const list: any[] = [
 			{ id: '', name: 'Mention a page', isSection: true },
 			{ id: 'create', name: 'Create new page', icon: '', hash: '', withSmile: true, skipFilter: true }
@@ -173,7 +176,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		sections = DataUtil.menuSectionsMap(sections);
 		return sections;
 	};
-	
+
 	getItems (withSections: boolean) {
 		const sections = this.getSections();
 		
@@ -196,18 +199,12 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	load () {
+		const { filter } = commonStore;
 		const pages: I.PageInfo[] = [];
 
 		this.setState({ loading: true });
 
-		this.index = new FlexSearch('balance', {
-			encode: 'extra',
-    		tokenize: 'full',
-			threshold: 1,
-    		resolution: 3,
-		});
-
-		C.NavigationListObjects(I.NavigationType.Go, '', 0, 100000000, (message: any) => {
+		C.NavigationListObjects(I.NavigationType.Go, filter.text, 0, 100000000, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -219,7 +216,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 				};
 
 				pages.push(page);
-				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
 			};
 
 			this.setState({ pages: pages, loading: false });
