@@ -24,6 +24,7 @@ class Card extends React.Component<Props, {}> {
 		const { columnId, idx, index, getView, onCellClick, onRef } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const idPrefix = 'dataviewCell';
 
 		return (
 			<Draggable draggableId={[ columnId, index ].join(' ')} index={idx} type="row">
@@ -36,7 +37,7 @@ class Card extends React.Component<Props, {}> {
 						style={getItemStyle(snapshot, provided.draggableProps.style)}
 					>
 						{relations.map((relation: any, i: number) => {
-							const id = DataUtil.cellId('cell', relation.relationKey, index);
+							const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 							return (
 								<Cell 
 									key={'board-cell-' + view.id + relation.relationKey} 
@@ -44,6 +45,7 @@ class Card extends React.Component<Props, {}> {
 									ref={(ref: any) => { onRef(ref, id); }} 
 									index={index}
 									viewType={view.type}
+									idPrefix={idPrefix}
 									onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
 									relationKey={relation.relationKey}
 								/>

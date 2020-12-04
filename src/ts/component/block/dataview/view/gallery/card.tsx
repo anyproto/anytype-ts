@@ -14,11 +14,12 @@ class Card extends React.Component<Props, {}> {
 		const { index, getView, onCellClick, onRef } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const idPrefix = 'dataviewCell';
 
 		return (
 			<div className="card">
 				{relations.map((relation: any, i: number) => {
-					const id = DataUtil.cellId('cell', relation.relationKey, index);
+					const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 					return (
 						<Cell 
 							key={'list-cell-' + view.id + relation.relationKey} 
@@ -26,6 +27,7 @@ class Card extends React.Component<Props, {}> {
 							ref={(ref: any) => { onRef(ref, id); }} 
 							relationKey={relation.relationKey}
 							viewType={view.type}
+							idPrefix={idPrefix}
 							onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
 							index={index}
 						/>

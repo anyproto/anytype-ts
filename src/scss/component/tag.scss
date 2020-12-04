@@ -7,10 +7,10 @@
 .tagItem {
 	.inner { display: inline-block; width: 100%; @include text-overflow-nw;  vertical-align: top; }
 	.icon.remove { 
-		width: 10px; height: 10px; position: absolute; right: 4px; top: 4px; background-image: url('~img/icon/dataview/tagRemove0.svg'); 
+		width: 10px; height: 10px; position: absolute; right: 4px; top: 4px; background-image: url('~img/icon/dataview/tagRemove0.svg') !important; 
 		cursor: pointer;
 	}
-	.icon.remove:hover { background-image: url('~img/icon/dataview/tagRemove1.svg'); }
+	.icon.remove:hover { background-image: url('~img/icon/dataview/tagRemove1.svg') !important; }
 }
 .tagItem.canEdit { padding-right: 18px; }
 

@@ -27,6 +27,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+		const idPrefix = 'menuBlockRelationListCell';
 
 		let relations = dbStore.getRelations(rootId).filter((it: I.Relation) => { return !it.isHidden; });
 		if (filter) {
@@ -35,7 +36,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 
 		const Item = (item: any) => {
 			const relation = item.relation;
-			const id = DataUtil.cellId('cell', relation.relationKey, '0');
+			const id = DataUtil.cellId(idPrefix, relation.relationKey, '0');
 			return (
 				<div className="item sides" onClick={(e: any) => { this.onSelect(e, relation); }}>
 					<div className="info">
@@ -56,6 +57,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 							getRecord={() => { return details; }}
 							viewType={I.ViewType.Grid}
 							index={0}
+							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
 							readOnly={readOnly}
@@ -99,7 +101,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 			return;
 		};
 
-		const id = DataUtil.cellId('cell', relationKey, index);
+		const id = DataUtil.cellId('menuBlockRelationListCell', relationKey, index);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {

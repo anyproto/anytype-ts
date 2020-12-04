@@ -182,7 +182,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			return;
 		};
 
-		const id = DataUtil.cellId('cell', relationKey, index);
+		const id = DataUtil.cellId('dataviewCell', relationKey, index);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {

@@ -32,6 +32,8 @@ class BlockRelation extends React.Component<Props, {}> {
 		const relation = relations.find((it: any) => { return it.relationKey == key; });
 		const isNew = (block.fields || {}).isNew;
 		const placeHolder = isNew ? 'New relation' : 'Relation';
+		const idPrefix = 'blockRelationCell';
+		const id = DataUtil.cellId(idPrefix, key, '0');
 
 		return (
 			<div className="wrap">
@@ -55,7 +57,7 @@ class BlockRelation extends React.Component<Props, {}> {
 							<div className="name">{relation.name}</div>
 						</div>
 						<div 
-							id={DataUtil.cellId('cell', key, '0')} 
+							id={id} 
 							className={[ 'cell', 'c-' + DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
 							onClick={this.onCellClick}
 						>
@@ -69,6 +71,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
 								index={0}
+								idPrefix={idPrefix}
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
 							/>

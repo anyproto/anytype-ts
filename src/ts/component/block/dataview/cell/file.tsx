@@ -17,7 +17,7 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relation, rootId, block, readOnly, viewType, index, getRecord } = this.props;
+		const { rootId, block, readOnly, index, getRecord } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;

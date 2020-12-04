@@ -91,6 +91,7 @@ export interface Cell {
 	rootId: string;
 	block: I.Block;
 	id?: string;
+	idPrefix?: string;
 	relation?: I.Relation;
 	index?: number;
 	viewType: I.ViewType;

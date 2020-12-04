@@ -35,7 +35,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relationKey, index, onClick } = this.props;
+		const { relationKey, index, onClick, idPrefix } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
 			return null;
@@ -86,7 +86,7 @@ class Cell extends React.Component<Props, {}> {
 			<div className={cn.join(' ')} onClick={onClick}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
-					id={DataUtil.cellId('cell', relation.relationKey, index)} 
+					id={DataUtil.cellId(idPrefix, relation.relationKey, index)} 
 					{...this.props} 
 					relation={relation}
 					onChange={this.onChange} 
@@ -98,7 +98,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, viewType } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
@@ -111,7 +111,7 @@ class Cell extends React.Component<Props, {}> {
 			};
 		};
 
-		const id = DataUtil.cellId('cell', relation.relationKey, index);
+		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const cell = $('#' + id);
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
