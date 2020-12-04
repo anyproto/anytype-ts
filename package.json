@@ -94,7 +94,6 @@
 		"file-loader": "^4.3.0",
 		"file-type": "^12.4.2",
 		"findandreplacedomtext": "^0.4.6",
-		"flexsearch": "^0.6.32",
 		"fs": "0.0.1-security",
 		"get-input-selection": "^1.1.4",
 		"google-protobuf": "^3.14.0",
