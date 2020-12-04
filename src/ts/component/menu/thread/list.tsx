@@ -73,20 +73,28 @@ class MenuThreadList extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		const obj = $('#menuThreadList');
-		const leave = () => {
+		const clear = () => {
 			window.clearTimeout(this.timeoutClose);
+			window.clearTimeout(this.timeoutMenu);
+		};
+		const leave = () => {
+			clear();
 			this.timeoutClose = window.setTimeout(() => {
-				window.clearTimeout(this.timeoutMenu);
+				clear();
 				commonStore.menuClose(this.props.id);
 				commonStore.menuClose('threadStatus');
 			}, 1000);
 		};
 
-		obj.unbind('mouseenter').on('mouseenter', () => { window.clearTimeout(this.timeoutMenu); });
+		obj.unbind('mouseenter').on('mouseenter', () => { 
+			clear();
+		});
 		obj.unbind('mouseleave').on('mouseleave', () => {
 			const status = $('#menuThreadStatus');
 			if (status.length) {
-				status.unbind('mouseenter').on('mouseenter', () => { window.clearTimeout(this.timeoutClose); });
+				status.unbind('mouseenter').on('mouseenter', () => { 
+					clear();
+				});
 				status.unbind('mouseleave').on('mouseleave', leave);
 			};
 			leave();
