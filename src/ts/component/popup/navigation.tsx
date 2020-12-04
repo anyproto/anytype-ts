@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
+import { Smile, Icon, Button, Input, Cover, Loader, IconObject } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -144,7 +144,7 @@ class PopupNavigation extends React.Component<Props, State> {
 								<Icon className="home big" />
 							</div>
 						) : (
-							<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+							<IconObject object={item.details} className="c48" size={24} />
 						)}
 						<div className="info">
 							<div className="name">{name}</div>

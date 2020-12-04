@@ -32,7 +32,7 @@
 				cursor: pointer; transition: $transitionFast; position: relative; height: 64px; line-height: 48px; padding: 8px 16px; 
 			}
 			.item {
-				.smile { position: absolute; left: 16px; top: 8px; transition: $transitionFast; }
+				.icon.object { position: absolute; left: 16px; top: 8px; transition: $transitionFast; }
 				.info { padding: 0px 0px 0px 60px; display: inline-block; vertical-align: middle; width: 100%; }
 				.name { width: 100%; line-height: 22px; height: 22px; @include text-overflow-nw;  }
 				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
