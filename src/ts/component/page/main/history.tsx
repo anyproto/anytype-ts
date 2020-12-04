@@ -152,8 +152,6 @@ class PageMainHistory extends React.Component<Props, State> {
 										)
 									})}
 								</div>
-
-								<div className="blockLast" />
 							</div>
 						</div>
 					</div>
