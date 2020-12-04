@@ -84,7 +84,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 									value: (item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction'),
 								},
 								{
-									key: 'Last edits recieved',
+									key: 'Last edits received',
 									value: (item.lastEdited ? Util.timeAgo(item.lastEdited) : 'No changes'),
 								},
 							];
