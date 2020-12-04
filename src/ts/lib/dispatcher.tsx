@@ -23,11 +23,10 @@ class Dispatcher {
 	stream: any = null;
 
 	constructor () {
-
 		/// #if USE_ADDON
-		this.service = new Service.ClientCommandsClient('http://127.0.0.1:80', null, null);
+			this.service = new Service.ClientCommandsClient('http://127.0.0.1:80', null, null);
 
-		const handler = (item: any) => {
+			const handler = (item: any) => {
 				try {
 					this.event(Events.Event.deserializeBinary(item.data.buffer), false);
 				} catch (e) {
@@ -43,7 +42,6 @@ class Dispatcher {
 			
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 			this.listenEvents();
-
 		/// #endif
 	};
 
@@ -51,7 +49,11 @@ class Dispatcher {
 		this.stream = this.service.listenEvents(new Commands.Empty(), null);
 
 		this.stream.on('data', (event: any) => {
-			this.event(event, false);
+			try {
+				this.event(event, false);
+			} catch (e) {
+				console.error(e);
+			};
 		});
 
 		this.stream.on('status', (status: any) => {

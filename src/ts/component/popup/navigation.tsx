@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Smile, Icon, Button, Input, Cover, Loader, IconObject } from 'ts/component';
+import { Icon, Button, Input, Cover, Loader, IconObject } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -96,7 +96,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			if (isRoot) {
 				iconSearch = <Icon key="icon-home" className="home" />;
 			} else {
-				iconSearch = <Smile icon={details.iconEmoji} hash={details.iconImage} />;
+				iconSearch = <IconObject object={details} />;
 			};
 		} else {
 			iconSearch = <Icon key="icon-search" className="search" />;
@@ -133,15 +133,17 @@ class PopupNavigation extends React.Component<Props, State> {
 		);
 
 		const Item = (item: any) => {
-			let { iconEmoji, iconImage, name } = item.details || {};
+			let { name } = item.details || {};
 			let isRoot = item.id == root;
 
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
 						{isRoot ? (
-							<div className="smile c48">
-								<Icon className="home big" />
+							<div className="icon object c48">
+								<div className="smile c48">
+									<Icon className="home big" />
+								</div>
 							</div>
 						) : (
 							<IconObject object={item.details} className="c48" size={24} />
@@ -183,7 +185,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const Selected = (item: any) => {
-			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
+			let { name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
 			let icon = null;
 			let withScale = true;
@@ -204,7 +206,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				};
 				withScale = false;
 			} else {
-				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+				icon = <IconObject object={item.details} className="c48" size={24} />
 			};
 
 			return (
