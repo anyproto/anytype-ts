@@ -17,12 +17,12 @@ class PopupPreview extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { type, url } = data;
+		const { type } = data;
 		
 		let content = null;
 		switch (type) {
 			case I.FileType.Image:
-				content = <img id="content" src={url} />;
+				content = <img id="content" />;
 				break;
 		};
 		
@@ -45,7 +45,7 @@ class PopupPreview extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		const { param } = this.props;
+		const { param, position } = this.props;
 		const { data } = param;
 		const { type, url } = data;
 		
@@ -57,11 +57,12 @@ class PopupPreview extends React.Component<Props, {}> {
 
 		switch (type) {
 			case I.FileType.Image:
-				content.unbind('load').on('load', () => {
+				const img = new Image();
+				img.onload = function () {
 					loader.remove();
 					
-					let cw = content.width();
-					let ch = content.height();
+					let cw = img.width;
+					let ch = img.height;
 					let mw = win.width() - 68;
 					let mh = win.height() - 68;
 					let width = 0, height = 0;
@@ -74,15 +75,15 @@ class PopupPreview extends React.Component<Props, {}> {
 						width = Math.min(mw, height / (ch / cw));
 					};
 					
-					content.css({ width: width });
+					content.css({ width: width }).attr({ src: url });
 					inner.css({ height: height });
 					
-					this.props.position();
-				});
+					position();
+				};
+				img.src = url;
 				break;
 		};
 		
-		this.props.position();
 	};
 	
 };
