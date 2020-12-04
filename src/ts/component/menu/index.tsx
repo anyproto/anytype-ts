@@ -10,6 +10,9 @@ import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
 import MenuSearch from './search';
 
+import MenuThreadList from './thread/list';
+import MenuThreadStatus from './thread/status';
+
 import MenuBlockContext from './block/context';
 import MenuBlockStyle from './block/style';
 import MenuBlockAdd from './block/add';
@@ -67,6 +70,9 @@ class Menu extends React.Component<Props, {}> {
 			smile:					 MenuSmile,
 			smileSkin:				 MenuSmileSkin,
 			search:					 MenuSearch,
+
+			threadList:				 MenuThreadList,
+			threadStatus:			 MenuThreadStatus,
 			
 			blockContext:			 MenuBlockContext,
 			blockAction:			 MenuBlockAction,

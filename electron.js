@@ -41,7 +41,7 @@ let csp = [
 	"style-src 'unsafe-inline' http://localhost:*",
 	"font-src data:",
 	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://sentry.anytype.io https://anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
+	"script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools"
 ];
 let autoUpdate = false;
@@ -498,6 +498,12 @@ function menuInit () {
 							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
 							click: () => {
 								setConfig({ debugMW: !config.debugMW });
+							}
+						},
+						{
+							label: 'Threads', type: 'checkbox', checked: config.debugTH,
+							click: () => {
+								setConfig({ debugTH: !config.debugTH });
 							}
 						},
 						{

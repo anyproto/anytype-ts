@@ -9,7 +9,7 @@ import { observer } from 'mobx-react';
 interface Props extends RouteComponentProps<any> { };
 
 interface State {
-	versions: I.Version[];
+	versions: I.HistoryVersion[];
 };
 
 const $ = require('jquery');
@@ -20,10 +20,10 @@ const GROUP_OFFSET = 300;
 class PageMainHistory extends React.Component<Props, State> {
 
 	state = {
-		versions: [] as I.Version[],
+		versions: [] as I.HistoryVersion[],
 	};
 	
-	version: I.Version = null;
+	version: I.HistoryVersion = null;
 	refHeader: any = null;
 	scrollLeft: number = 0;
 	scrollRight: number = 0;
@@ -345,7 +345,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		});
 	};
 	
-	groupData (versions: I.Version[]) {
+	groupData (versions: I.HistoryVersion[]) {
 		let months: any[] = [];
     	let groups: any[] = [];
 		let groupId = 0;
@@ -387,8 +387,8 @@ class PageMainHistory extends React.Component<Props, State> {
 		return months;
 	};
 
-	ungroupData (groups: any[]): I.Version[] {
-		let ret: I.Version[] = [] as I.Version[];
+	ungroupData (groups: any[]): I.HistoryVersion[] {
+		let ret: I.HistoryVersion[] = [] as I.HistoryVersion[];
 		for (let month of groups) {
 			for (let group of month.list) {
 				ret.push(group);

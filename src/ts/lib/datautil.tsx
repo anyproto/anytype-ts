@@ -106,6 +106,17 @@ class DataUtil {
 			{ type: I.CoverType.Color, id: 'black' },
 		];
 	};
+
+	threadColor (s: I.ThreadStatus) {
+		let c = '';
+		switch (s) {
+			case I.ThreadStatus.Failed:
+			case I.ThreadStatus.Offline: c = 'red'; break;
+			case I.ThreadStatus.Syncing: c = 'orange'; break;
+			case I.ThreadStatus.Synced: c = 'green'; break;
+		};
+		return c;
+	};
 	
 	alignIcon (v: I.BlockAlign): string {
 		let icon = '';

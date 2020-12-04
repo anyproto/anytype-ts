@@ -38,7 +38,7 @@ export interface Option {
 	icon?: string;
 };
 
-export interface Version {
+export interface HistoryVersion {
 	id: string;
 	previousIds: string[];
 	authorId: string;

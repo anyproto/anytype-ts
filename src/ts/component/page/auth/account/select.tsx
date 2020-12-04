@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Icon, Cover, Error, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Icon, Cover, Error, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer, Loader } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Storage, I, C, Util } from 'ts/lib';
@@ -29,7 +29,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 		const { cover } = commonStore;
 		const { error } = this.state;
 		const { accounts } = authStore;
-		
+
 		const Item = (item: any) => (
 			<div className="item" onClick={(e) => { this.onSelect(item as I.Account); }}>
 				<IconUser {...item} />
@@ -44,18 +44,22 @@ class PageAccountSelect extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<Title text="Choose profile" />
-					<Error text={error} />
-					
-					<div className="list">
-						{accounts.map((item: I.Account, i: number) => (
-							<Item key={i} {...item} />	
-						))}
-						<div className="item add dn" onMouseDown={this.onAdd}>
-							<Icon className="plus" />
-							<div className="name">Add profile</div>
-						</div>
-					</div>
+					{!accounts.length ? <Loader /> : (
+						<React.Fragment>
+							<Title text="Choose profile" />
+							<Error text={error} />
+
+							<div className="list">
+								{accounts.map((item: I.Account, i: number) => (
+									<Item key={i} {...item} />	
+								))}
+								<div className="item add dn" onMouseDown={this.onAdd}>
+									<Icon className="plus" />
+									<div className="name">Add profile</div>
+								</div>
+							</div>
+						</React.Fragment>
+					)}
 				</Frame>
 			</div>
 		);

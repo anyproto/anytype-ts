@@ -1,6 +1,6 @@
 import { authStore, commonStore, blockStore, dbStore } from 'ts/store';
 import { set } from 'mobx';
-import { Util, DataUtil, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
+import { Util, DataUtil, I, M, Decode, translate, analytics, Response, Mapper, Storage } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
@@ -24,9 +24,9 @@ class Dispatcher {
 	constructor () {
 
 		/// #if USE_ADDON
-		this.service = new Service.ClientCommandsClient("http://127.0.0.1:80", null, null);
+			this.service = new Service.ClientCommandsClient("http://127.0.0.1:80", null, null);
 
-		const handler = (item: any) => {
+			const handler = (item: any) => {
 				try {
 					this.event(Events.Event.deserializeBinary(item.data.buffer), false);
 				} catch (e) {
@@ -38,9 +38,9 @@ class Dispatcher {
 			bindings.setEventHandler(handler);
 		/// #else
 			let serverAddr = window.require('electron').remote.getGlobal('serverAddr');
-			
+
 			console.log('Server address: ', serverAddr);
-			
+
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
 			this.listenEvents();
@@ -52,7 +52,11 @@ class Dispatcher {
 		this.stream = this.service.listenEvents(new Commands.Empty(), null);
 
 		this.stream.on('data', (event: any) => {
-			this.event(event, false);
+			try {
+				this.event(event, false);
+			} catch (e) {
+				console.error(e);
+			};
 		});
 
 		this.stream.on('status', (status: any) => {
@@ -73,6 +77,7 @@ class Dispatcher {
 		let V = Events.Event.Message.ValueCase;
 
 		if (v == V.ACCOUNTSHOW)				 t = 'accountShow';
+		if (v == V.THREADSTATUS)			 t = 'threadStatus';
 		if (v == V.BLOCKADD)				 t = 'blockAdd';
 		if (v == V.BLOCKDELETE)				 t = 'blockDelete';
 		if (v == V.BLOCKSETFIELDS)			 t = 'blockSetFields';
@@ -100,7 +105,9 @@ class Dispatcher {
 		const { config } = commonStore;
 		const rootId = event.getContextid();
 		const messages = event.getMessagesList() || [];
-		const debug = config.debugMW && !skipDebug;
+		const debugCommon = config.debugMW && !skipDebug;
+		const debugThread = config.debugTH && !skipDebug;
+		const pageId = Storage.get('pageId');
 
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
@@ -115,10 +122,6 @@ class Dispatcher {
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
 			let childrenIds: string[] = [];
-
-			if (debug && type) {
-				console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(event.toObject(), null, 3));
-			};
 
 			switch (type) {
 				case 'blockSetChildrenIds':
@@ -156,11 +159,27 @@ class Dispatcher {
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
+			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(event.toObject(), null, 3)); };
+
+			if (debugThread && (type == 'threadStatus')) {
+				log();
+			} else
+			if (debugCommon && (type != 'threadStatus')) {
+				log();
+			};
 
 			switch (type) {
 
 				case 'accountShow':
 					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
+					break;
+
+				case 'threadStatus':
+					authStore.threadSet(rootId, {
+						summary: Mapper.From.ThreadSummary(data.getSummary()),
+						cafe: Mapper.From.ThreadCafe(data.getCafe()),
+						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
+					});
 					break;
 
 				case 'blockShow':
