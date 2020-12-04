@@ -48,12 +48,12 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		if (cafe.lastPushSucceed) {
 			cafeStatus = [
 				{ key: 'This object is backed up', value: '' },
-				cafe.lastPulled ? { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) } : {},
+				{ key: 'Updates requested', value: cafe.lastPulled ? Util.timeAgo(cafe.lastPulled) : 'No interaction' }
 			];
 		} else {
 			cafeStatus = [
 				{ key: 'Some changes are not backed up', value: '' },
-				cafe.lastPulled ? { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) } : {},
+				{ key: 'Updates requested', value: cafe.lastPulled ?  Util.timeAgo(cafe.lastPulled) : 'No interaction' }
 			];
 		};
 
@@ -61,7 +61,6 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 			{ key: 'Uploading', value: files.pinning + files.failed },
 			{ key: 'Waiting for upload', value: files.failed },
 			{ key: 'Stored', value: files.pinned },
-			{ key: 'Updates requested', value: Util.timeAgo(files.updated) }
 		];
 
 		return isCafe ? (
@@ -72,20 +71,20 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		) : (
 			<React.Fragment>
 				<div className="section">
-					<div className="name">My devices</div>
+					<div className="name">My devices direct interaction</div>
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
-								{ 
-									key: 'Direct connection', 
-									value: (item.online ? 'Online' : 'Offline'),
-								},
-								{ 
-									key: 'Updates requested', 
+								// {
+								// 	key: 'Direct interation status:',
+								// 	value: (item.online ? 'Online' : 'Offline'),
+								// },
+								{
+									key: 'Updates requested',
 									value: (item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction'),
 								},
-								{ 
-									key: 'Last edits recieved', 
+								{
+									key: 'Last edits recieved',
 									value: (item.lastEdited ? Util.timeAgo(item.lastEdited) : 'No changes'),
 								},
 							];
