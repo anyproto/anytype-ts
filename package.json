@@ -174,7 +174,8 @@
 			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
 			"electron/icon*",
-			"build"
+			"build",
+			"dist/*.node"
 		],
 		"extraResources": [],
 		"files": [
