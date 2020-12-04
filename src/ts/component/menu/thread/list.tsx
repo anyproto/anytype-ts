@@ -101,6 +101,11 @@ class MenuThreadList extends React.Component<Props, {}> {
 		});
 	};
 
+	componentWillUnmount () {
+		window.clearTimeout(this.timeoutClose);
+		window.clearTimeout(this.timeoutMenu);
+	};
+
 	onMouseEnter (id: string, isCafe: boolean) {
 		if (!id) {
 			return;

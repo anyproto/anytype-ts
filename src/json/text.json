@@ -129,10 +129,10 @@
 	"syncStatus3": { "en": "Synced" },
 	"syncStatus4": { "en": "Not syncing" },
 
-	"tooltip0": { "en": "Preparing..." },
-	"tooltip1": { "en": "No connection" },
-	"tooltip2": { "en": "Syncing..." },
-	"tooltip3": { "en": "Synced" },
-	"tooltip4": { "en": "Not syncing" }
+	"tooltip0": { "en": "Initializing sync" },
+	"tooltip1": { "en": "Can’t connect to Anytype node" },
+	"tooltip2": { "en": "Data is uploading to node" },
+	"tooltip3": { "en": "Backed up on one node at least" },
+	"tooltip4": { "en": "Failed to sync, trying again..." }
 
 }
