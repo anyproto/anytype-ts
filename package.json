@@ -192,6 +192,7 @@
 			"dist/img/**/*",
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",
+			"dist/*.node",
 			"!node_modules/**/*",
 			"node_modules/about-window",
 			"node_modules/async",
@@ -233,6 +234,7 @@
 			"node_modules/lockfile",
 			"node_modules/lodash",
 			"node_modules/lodash.isequal",
+			"node_modules/lru-cache",
 			"node_modules/mime-db",
 			"node_modules/minimatch",
 			"node_modules/mkdirp",
@@ -258,7 +260,8 @@
 			"node_modules/unused-filename",
 			"node_modules/with-open-file",
 			"node_modules/wrappy",
-			"node_modules/write-file-atomic"
+			"node_modules/write-file-atomic",
+			"node_modules/yallist"
 		],
 		"dmg": {
 			"sign": false

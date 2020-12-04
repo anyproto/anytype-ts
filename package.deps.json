@@ -13,5 +13,6 @@
   "dist/img/**/*",
   "dist/anytypeHelper.exe",
   "dist/anytypeHelper",
+  "dist/*.node",
   "!node_modules/**/*"
 ]
