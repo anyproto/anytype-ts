@@ -18,28 +18,41 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		const Item = (item: any) => (
 			<div className="item">
 				<div className="name">{item.name}</div>
-				{item.fields.map((field: any, i: number) => (
-					<div key={i} className="description">
-						{field.value ? (
+				{item.fields.map((field: any, i: number) => {
+					if (!field.key) {
+						return null;
+					};
+
+					let content = null;
+					if (field.value.toString()) {
+						content = (
 							<React.Fragment>
 								<div className="side left">{field.key}</div>
 								<div className="side right">{field.value}</div>
 							</React.Fragment>
-						) : field.key}
-					</div>
-				))}
+						);
+					} else {
+						content = field.key;
+					};
+
+					return (
+						<div key={i} className="description">
+							{content}
+						</div>
+					);
+				})}
 			</div>
 		);
 
 		let cafeStatus = [];
 		if (cafe.lastPushSucceed) {
 			cafeStatus = [
-				{ key: 'This object is backed up'},
+				{ key: 'This object is backed up', value: '' },
 				cafe.lastPulled ? { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) } : {},
 			];
 		} else {
 			cafeStatus = [
-				{ key: 'Some changes are not backed up'},
+				{ key: 'Some changes are not backed up', value: '' },
 				cafe.lastPulled ? { key: 'Updates requested', value: Util.timeAgo(cafe.lastPulled) } : {},
 			];
 		};
@@ -63,9 +76,18 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
-								{ key: 'Direct connection',  value: item.online ? 'Online' : 'Offline' },
-								{ key: 'Updates requested',  value: item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction' },
-								{ key: 'Last edits recieved',  value: item.lastEdited ?  Util.timeAgo(item.lastEdited) : 'No changes' }
+								{ 
+									key: 'Direct connection', 
+									value: (item.online ? 'Online' : 'Offline'),
+								},
+								{ 
+									key: 'Updates requested', 
+									value: (item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction'),
+								},
+								{ 
+									key: 'Last edits recieved', 
+									value: (item.lastEdited ? Util.timeAgo(item.lastEdited) : 'No changes'),
+								},
 							];
 							return <Item key={i} {...item} fields={fields} />;
 						})}

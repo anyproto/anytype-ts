@@ -123,10 +123,16 @@
 
 	"inputWithFileTextUrl": { "en": "Paste a link" },
 
-	"syncStatus0": { "en": "Preparing…" },
+	"syncStatus0": { "en": "Preparing..." },
 	"syncStatus1": { "en": "No connection" },
 	"syncStatus2": { "en": "Syncing..." },
 	"syncStatus3": { "en": "Synced" },
-	"syncStatus4": { "en": "Not syncing" }
+	"syncStatus4": { "en": "Not syncing" },
+
+	"tooltip0": { "en": "Preparing..." },
+	"tooltip1": { "en": "No connection" },
+	"tooltip2": { "en": "Syncing..." },
+	"tooltip3": { "en": "Synced" },
+	"tooltip4": { "en": "Not syncing" }
 
 }
