@@ -175,7 +175,8 @@
 			"dist/anytypeHelper.exe",
 			"electron/icon*",
 			"build",
-			"dist/*.node"
+			"dist/*.node",
+			"node_modules/keytar/build/Release/keytar.node"
 		],
 		"extraResources": [],
 		"files": [
