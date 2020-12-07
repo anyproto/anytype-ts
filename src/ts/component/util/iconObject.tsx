@@ -23,10 +23,15 @@ interface Props {
 class IconObject extends React.Component<Props, {}> {
 	
 	render () {
-		let { layout, object, className } = this.props;
-		let type = DataUtil.schemaField(object.type);
-		let cn = [ 'icon', 'object' ];
-		
+		const { object, className } = this.props;
+		if (!object) {
+			return null;
+		};
+
+		const { id, iconEmoji, iconImage } = object;
+		const type = DataUtil.schemaField(object.type);
+		const cn = [ 'icon', 'object' ];
+
 		if (className) {
 			cn.push(className);
 		};
@@ -34,18 +39,20 @@ class IconObject extends React.Component<Props, {}> {
 		let icon = null;
 		switch (type) {
 			default:
-				icon = <Smile {...this.props} icon={object.iconEmoji} hash={object.iconImage} />;
+				if (iconEmoji || iconImage) {
+					icon = <Smile {...this.props} icon={iconEmoji} hash={iconImage} />;
+				};
 				break;
 
 			case 'image':
-				icon = <img className="img" src={commonStore.imageUrl(object.id, 20)} />;
+				icon = <img className="img" src={commonStore.imageUrl(id, 20)} />;
 				break;
 
 			case 'file':
 				icon = <Icon className={[ 'file-type', Util.fileIcon(object) ].join(' ')} />;
 				break;
 		};
-		
+
 		return (
 			<div className={cn.join(' ')}>
 				{icon}
