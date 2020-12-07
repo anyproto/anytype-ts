@@ -428,8 +428,6 @@ class Util {
 		const a: string[] = name.split('.');
 		const e = a[a.length - 1];
 
-		console.log(name, mime);
-
 		let t: string[] = [];
 		let icon = '';
 

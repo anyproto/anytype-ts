@@ -385,7 +385,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { expanded, pages, pagesIn, pagesOut, filter } = this.state;
 
 		if (filter != prevState.filter) {
-			console.log('LOAD', filter);
 			this.loadSearch();
 			return;
 		};
