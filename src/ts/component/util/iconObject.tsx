@@ -34,7 +34,7 @@ class IconObject extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const { id, iconEmoji, iconImage } = object;
+		const { id, iconEmoji, iconImage } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'icon-object', type ];
 

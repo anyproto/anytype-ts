@@ -1030,7 +1030,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const offset = el.offset() || {};
 		const rect = Util.selectionRect();
 		const onCommand = (message: any) => {
-			focus.set(message.blockId, { from: length, to: length });
+			focus.set(message.blockId || id, { from: length, to: length });
 			focus.apply();
 		};
 		
