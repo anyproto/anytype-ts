@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Smile, Sync } from 'ts/component';
+import { Icon, IconObject, Sync } from 'ts/component';
 import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -42,7 +42,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		const details = blockStore.getDetails(breadcrumbs, rootId);
-		const { iconEmoji, iconImage, name } = details;
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (commonStore.popupIsOpen('navigation')) {
@@ -61,8 +60,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<Smile icon={iconEmoji} hash={iconImage} />
-							<div className="name">{Util.shorten(name, 32)}</div>
+							<IconObject object={details} />
+							<div className="name">{Util.shorten(details.name, 32)}</div>
 						</div>
 					</div>
 

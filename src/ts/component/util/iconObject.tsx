@@ -36,7 +36,7 @@ class IconObject extends React.Component<Props, {}> {
 
 		const { id, iconEmoji, iconImage } = object;
 		const type = DataUtil.schemaField(object.type);
-		const cn = [ 'icon', 'object', type ];
+		const cn = [ 'icon-object', type ];
 
 		if (className) {
 			cn.push(className);
@@ -54,7 +54,7 @@ class IconObject extends React.Component<Props, {}> {
 				if (id) {
 					icon = <img className="img" src={commonStore.imageUrl(id, size * 2)} />;
 				} else {
-					icon = <Icon className="picture" />;
+					icon = <Icon className={[ 'file-type', Util.fileIcon(object) ].join(' ')} />;
 					cn.push('no-br');
 				};
 				break;

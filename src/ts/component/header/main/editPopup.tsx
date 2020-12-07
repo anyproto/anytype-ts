@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Smile } from 'ts/component';
-import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
+import { Icon, IconObject } from 'ts/component';
+import { I, Util, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -34,7 +33,6 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 		};
 		
 		const details = blockStore.getDetails(breadcrumbs, rootId);
-		const { iconEmoji, iconImage, name } = details;
 
 		return (
 			<div id="header" className="header headerMainEdit">
@@ -48,8 +46,8 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path">
 						<div className="item">
-							<Smile icon={iconEmoji} hash={iconImage} />
-							<div className="name">{Util.shorten(name, 32)}</div>
+							<IconObject object={details} />
+							<div className="name">{Util.shorten(details.name, 32)}</div>
 						</div>
 					</div>
 				</div>
