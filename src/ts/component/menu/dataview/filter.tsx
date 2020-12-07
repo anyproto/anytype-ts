@@ -63,6 +63,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
 
 			switch (relation.format) {
+				
 				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
@@ -87,7 +88,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					);
 					onSubmit = (e: any) => { this.onSubmitDate(e, item); };
 					break;
-					
+
 				default:
 					value = (
 						<Input 
@@ -99,6 +100,10 @@ class MenuFilter extends React.Component<Props, {}> {
 						/>
 					);
 					break;
+			};
+
+			if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
+				value = null;
 			};
 
 			return (
@@ -192,6 +197,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				];
 				break;
 
+			case I.RelationType.Object: 
 			case I.RelationType.Select: 
 				ret = [ 
 					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 

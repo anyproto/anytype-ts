@@ -215,7 +215,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign(false) });
+				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: DataUtil.menuGetAlign(block.isTextQuote()) });
 			};
 			if (block.canHaveColor()) {
 				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: DataUtil.menuGetTextColors() });

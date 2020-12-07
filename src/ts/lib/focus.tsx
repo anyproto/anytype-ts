@@ -18,7 +18,6 @@ class Focus {
 		this.range.from = Number(range.from) || 0;
 		this.range.to = Number(range.to) || 0;
 
-		console.log('set', id, range.from, range.to);
 		return this;
 	};
 	
