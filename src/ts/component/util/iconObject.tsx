@@ -52,7 +52,7 @@ class IconObject extends React.Component<Props, {}> {
 
 			case 'image':
 				if (id) {
-					icon = <img className="img" src={commonStore.imageUrl(id, size)} />;
+					icon = <img className="img" src={commonStore.imageUrl(id, size * 2)} />;
 				} else {
 					icon = <Icon className="picture" />;
 					cn.push('no-br');
