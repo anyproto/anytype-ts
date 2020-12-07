@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Icon, Smile } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
@@ -20,17 +21,22 @@ interface Props {
 	onUpload?(hash: string): void;
 };
 
+@observer
 class IconObject extends React.Component<Props, {}> {
+
+	public static defaultProps = {
+		size: 20,
+	};
 	
 	render () {
-		const { object, className } = this.props;
+		const { object, className, size } = this.props;
 		if (!object) {
 			return null;
 		};
 
 		const { id, iconEmoji, iconImage } = object;
 		const type = DataUtil.schemaField(object.type);
-		const cn = [ 'icon', 'object' ];
+		const cn = [ 'icon', 'object', type ];
 
 		if (className) {
 			cn.push(className);
@@ -45,11 +51,17 @@ class IconObject extends React.Component<Props, {}> {
 				break;
 
 			case 'image':
-				icon = <img className="img" src={commonStore.imageUrl(id, 20)} />;
+				if (id) {
+					icon = <img className="img" src={commonStore.imageUrl(id, size)} />;
+				} else {
+					icon = <Icon className="picture" />;
+					cn.push('no-br');
+				};
 				break;
 
 			case 'file':
 				icon = <Icon className={[ 'file-type', Util.fileIcon(object) ].join(' ')} />;
+				cn.push('no-br');
 				break;
 		};
 
