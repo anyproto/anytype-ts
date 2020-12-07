@@ -135,15 +135,19 @@ class PageAuthSetup extends React.Component<Props, State> {
 	
 	add () {
 		const { history, match } = this.props;
+		const { name, icon, code, phrase } = authStore;
 		
-		C.AccountCreate(authStore.name, authStore.icon, authStore.code, (message: any) => {
+		C.AccountCreate(name, icon, code, (message: any) => {
 			if (message.error.code) {
 				const error = Errors.AccountCreate[message.error.code] || message.error.description;
 				this.setError(error);
 			} else
 			if (message.account) {
-				Storage.set('accountId', message.account.id);
+				const accountId = message.account.id;
+
+				Storage.set('accountId', accountId);
 				authStore.accountSet(message.account);
+				ipcRenderer.send('keytarSet', accountId, phrase);
 				
 				if (match.params.id == 'register') {
 					history.push('/auth/success');

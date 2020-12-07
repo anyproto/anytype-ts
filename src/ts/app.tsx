@@ -301,13 +301,15 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 
 		ipcRenderer.send('appLoaded', true);
-		ipcRenderer.send('keytarGet', 'phrase');
+		ipcRenderer.send('keytarGet', accountId);
+
+		console.log(accountId);
 
 		ipcRenderer.on('keytarGet', (e: any, key: string, value: string) => {
-			if ((key == 'phrase') && accountId) {
+			if (accountId && (key == accountId)) {
 				if (phrase) {
 					value = phrase;
-					ipcRenderer.send('keytarSet', 'phrase', phrase);
+					ipcRenderer.send('keytarSet', accountId, phrase);
 					Storage.delete('phrase');
 				};
 
