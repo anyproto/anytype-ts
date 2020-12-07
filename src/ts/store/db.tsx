@@ -7,6 +7,11 @@ class DbStore {
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 
+	@computed
+	get objectTypes (): I.ObjectType[] {
+		return Array.from(this.objectTypeMap.values());
+	};
+
 	@action
 	objectTypesSet (types: I.ObjectType[]) {
 		for (let type of types) {

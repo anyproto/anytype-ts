@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil } from 'ts/lib';
 import { Icon, Input, Switch, MenuItemVertical } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -29,6 +29,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	render () {
 		const relation = this.getRelation();
+		const { objectTypes } = dbStore;
 
 		let opts = null;
 		let ccn = [ 'item' ];
@@ -39,19 +40,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			ccn.push('disabled');
 		};
 
-		const Current = (item: any) => (
-			<MenuItemVertical 
-				id="relation-type" 
-				icon={'relation c-' + DataUtil.relationClass(item.format)} 
-				name={Constant.relationName[item.format]} 
-				onClick={this.onRelationType} 
-				arrow={!relation}
-			/>
-		);
-
 		if (relation) {
 			const isDate = relation.format == I.RelationType.Date;
 			const isObject = relation.format == I.RelationType.Object;
+			const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
+			const objectType = objectTypes.find((it: I.ObjectType) => { return it.url == url; });
 
 			opts = (
 				<React.Fragment>
@@ -72,10 +65,17 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<React.Fragment>
 							<div className="line" />
 
-							<div className="sectionName">Object types</div>
+							<div className="sectionName">Object type</div>
 							<div id="item-object-type" className="item" onClick={this.onObjectType}>
-								List
 							</div>
+							<MenuItemVertical 
+								id="object-type" 
+								icon={objectType ? objectType.iconEmoji : ''} 
+								name={objectType ? objectType.name : 'Select object type'} 
+								withSmile={true}
+								onClick={this.onObjectType} 
+								arrow={true}
+							/>
 						</React.Fragment>
 					) : ''}
 				</React.Fragment>
@@ -89,7 +89,13 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
 				</div>
 				<div className="sectionName">Relation type</div>
-				<Current format={this.format} />
+				<MenuItemVertical 
+					id="relation-type" 
+					icon={'relation c-' + DataUtil.relationClass(this.format)} 
+					name={Constant.relationName[this.format]} 
+					onClick={this.onRelationType} 
+					arrow={!relation}
+				/>
 				
 				{opts}
 				
@@ -158,49 +164,47 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
+		const { objectTypes } = dbStore;
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
+		const options = objectTypes.map((it: I.ObjectType) => {
+			return {
+				id: DataUtil.schemaField(it.url), 
+				name: it.name, 
+				icon: it.iconEmoji,
+				hash: '',
+				withSmile: true,
+				url: it.url,
+			};
+		});
 
-		const cb = (message: any) => {
-			const options = message.objectTypes.map((it: I.ObjectType) => {
-				return {
-					id: DataUtil.schemaField(it.url), 
-					name: it.name, 
-					icon: it.iconEmoji,
-					hash: '',
-					withSmile: true,
-					url: it.url,
-				};
-			});
-			options.sort((c1: any, c2: any) => {
-				if (c1.name > c2.name) return 1;
-				if (c1.name < c2.name) return -1;
-				return 0;
-			});
+		options.sort((c1: any, c2: any) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
 
-			this.menuOpen('select', { 
-				element: '#item-object-type',
-				offsetX: 224,
-				offsetY: 4,
-				width: 280,
-				type: I.MenuType.Vertical,
-				vertical: I.MenuDirection.Center,
-				horizontal: I.MenuDirection.Left,
-				data: {
-					value: value,
-					options: options,
-					onSelect: (e: any, item: any) => {
-						this.objectTypes = [ item.url ];
+		this.menuOpen('select', { 
+			element: '#item-object-type',
+			offsetX: 224,
+			offsetY: 4,
+			width: 280,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				value: value,
+				options: options,
+				onSelect: (e: any, item: any) => {
+					this.objectTypes = [ item.url ];
 
-						if (relation) {
-							this.save();
-						};
-					},
-				}
-			});
-		};
+					if (relation) {
+						this.save();
+					};
+				},
+			}
+		});
 
-		C.ObjectTypeList(cb);
 	};
 
 	menuOpen (id: string, param: I.MenuParam) {
