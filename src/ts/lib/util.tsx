@@ -428,6 +428,8 @@ class Util {
 		const a: string[] = name.split('.');
 		const e = a[a.length - 1];
 
+		console.log(name, mime);
+
 		let t: string[] = [];
 		let icon = '';
 
@@ -441,6 +443,10 @@ class Util {
 			
 		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
 			icon = 'archive';
+		};
+
+		if ([ 'xls', 'xlsx' ].indexOf(e) >= 0) {
+			icon = 'table';
 		};
 		
 		if (icon) {
