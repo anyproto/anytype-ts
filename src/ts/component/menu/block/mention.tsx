@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
+import { IconObject } from 'ts/component';
 import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -9,7 +9,6 @@ import 'react-virtualized/styles.css';
 interface Props extends I.Menu {};
 
 interface State {
-	pages: I.PageInfo[];
 	loading: boolean;
 	n: number;
 };
@@ -22,7 +21,6 @@ const HEIGHT = 28;
 class MenuBlockMention extends React.Component<Props, State> {
 
 	state = {
-		pages: [],
 		loading: false,
 		n: 0,
 	};
@@ -31,6 +29,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	filter: string = '';
 	index: any = null;
 	cache: any = null;
+	items: any = [];
 
 	constructor (props: any) {
 		super(props);
@@ -65,7 +64,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 								{item.name ? <div className="name">{item.name}</div> : ''}
 							</div>
 						) : (
-							<MenuItemVertical {...item} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
+							<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+								<IconObject object={item} />
+								<div className="name">{item.name}</div>
+							</div>
 						)}
 					</div>
 				</CellMeasurer>
@@ -145,35 +147,42 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	getSections () {
-		const { root } = blockStore;
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const { pages } = this.state;
-		const list: any[] = [
-			{ id: '', name: 'Mention a page', isSection: true },
-			{ id: 'create', name: 'Create new page', icon: '', hash: '', withSmile: true, skipFilter: true }
-		];
-
-		for (let page of pages) {
-			if ([ root, rootId ].indexOf(page.id) >= 0) {
+		let obj: any = {};
+		for (let item of this.items) {
+			let ot = dbStore.getObjectType(item.type);
+			if (!ot) {
 				continue;
 			};
-			
-			list.push({
-				id: page.id, 
-				name: page.details.name, 
-				icon: page.details.iconEmoji,
-				hash: page.details.iconImage,
+
+			let type = DataUtil.schemaField(item.type) || 'page';
+			let section = obj[type];
+
+			if (!section) {
+				 obj[type] = section = { 
+					id: type, 
+					children: [ 
+						{ id: '', name: ot.name, isSection: true },
+					] 
+				};
+				if (type == 'page') {	
+					obj[type].children.push({ id: 'create', name: 'Create new page', icon: '', hash: '', withSmile: true, skipFilter: true });
+				};
+			};
+
+			section.children.push({
+				...item,
+				icon: item.iconEmoji,
+				hash: item.iconImage,
 				withSmile: true,
 			});
 		};
 
-		let sections = [
-			{ id: 'page', children: list },
-		];
-
-		sections = DataUtil.menuSectionsMap(sections);
+		const sections = DataUtil.menuSectionsMap(Object.values(obj));
+		sections.sort((c1: any, c2: any) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
 		return sections;
 	};
 
@@ -198,48 +207,27 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this.props.setActiveItem((item ? item : items[n]), scroll);
 	};
 
-	load () {
+	load (callBack?: (message: any) => void) {
 		const { filter } = commonStore;
-		const pages: I.PageInfo[] = [];
+		const filters = [];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
 
 		this.setState({ loading: true });
 
-		C.NavigationListObjects(I.NavigationType.Go, filter.text, 0, 100000000, (message: any) => {
-			if (message.error.code) {
-				return;
+		C.ObjectSearch(filters, sorts, filter.text, 0, 1000000, (message: any) => {
+			if (callBack) {
+				callBack(message);
 			};
 
-			for (let page of message.objects) {
-				page = this.getPage(page);
-				if (page.details.isArchived) {
-					continue;
-				};
+			this.items = this.items.concat(message.records.map((it: any) => {
+				it.name = String(it.name || Constant.default.name);
+				return it;
+			}));
 
-				pages.push(page);
-			};
-
-			this.setState({ pages: pages, loading: false });
+			this.setState({ loading: false });
 		});
-	};
-
-	filterPages (): I.PageInfo[] {
-		const { pages } = this.state;
-		const { filter } = commonStore;
-		
-		if (!filter.text) {
-			return pages;
-		};
-
-		const ids = this.index ? this.index.search(filter.text) : [];
-		
-		let ret = [];
-		if (ids.length) {
-			ret = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
-		} else {
-			const reg = new RegExp(filter.text.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
-			ret = pages.filter((it: I.PageInfo) => { return it.text.match(reg); });
-		};
-		return ret;
 	};
 
 	onKeyDown (e: any) {
@@ -340,15 +328,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		this.props.close();
-	};
-
-	getPage (page: any): I.PageInfo {
-		page.details.name = String(page.details.name || Constant.default.name || '');
-
-		return {
-			...page,
-			text: [ page.details.name, page.snippet ].join(' '),
-		};
 	};
 
 	resize () {

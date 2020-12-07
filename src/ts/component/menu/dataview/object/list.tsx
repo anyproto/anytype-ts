@@ -240,16 +240,14 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-
-		this.setState({ loading: true });
-
 		const filters = [
 			{ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types },
 		];
-
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+
+		this.setState({ loading: true });
 
 		C.ObjectSearch(filters, sorts, filter, this.offset, 1000000, (message: any) => {
 			if (callBack) {
