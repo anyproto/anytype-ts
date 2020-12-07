@@ -115,7 +115,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const obj = $('#menuBlockContext');
 
 		focus.set(blockId, range);
-		focus.apply();
+		if (type != 'style') {
+			focus.apply();
+		};
 		
 		let marks = Util.objectCopy(content.marks);
 		let mark: any = null;

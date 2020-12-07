@@ -204,7 +204,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
-		commonStore.menuClose('blockContext');
 		scrollOnMove.onMouseDown(e);
 		this.unbindMouse();
 
