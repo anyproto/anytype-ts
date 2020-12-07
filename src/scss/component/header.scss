@@ -55,6 +55,7 @@
 
 	.side.right { right: 6px; z-index: 1; }
 	.side.right {
+		.sync { margin-right: 8px; cursor: pointer; }
 		.icon { margin: 0px; }
 	}
 }
@@ -99,6 +100,7 @@
 			}
 		}
 	}
+
 }
 
 .popup {

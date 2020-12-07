@@ -52,8 +52,8 @@
 	"authInviteLogin": { "en": "Enter" },
 	"authInviteEmpty": { "en": "Invite code is empty" },
 
-	"authSelectTitle": { 
-		"en": "Organize everything", 
+	"authSelectTitle": {
+		"en": "Organize everything",
 		"ru": "Организуй все"
 	},
 	"authSelectLabel": { "en": "With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." },
@@ -294,6 +294,18 @@
 	"filterConditionEmpty": { "en": "is empty" },
 	"filterConditionNotEmpty": { "en": "is not empty" },
 
-	"inputWithFileTextUrl": { "en": "Paste a link" }
+	"inputWithFileTextUrl": { "en": "Paste a link" },
+
+	"syncStatus0": { "en": "Preparing..." },
+	"syncStatus1": { "en": "No connection" },
+	"syncStatus2": { "en": "Syncing..." },
+	"syncStatus3": { "en": "Synced" },
+	"syncStatus4": { "en": "Not syncing" },
+
+	"tooltip0": { "en": "Initializing sync" },
+	"tooltip1": { "en": "Can’t connect to Anytype node" },
+	"tooltip2": { "en": "Downloading or uploading data to some node" },
+	"tooltip3": { "en": "Backed up on one node at least" },
+	"tooltip4": { "en": "Failed to sync, trying again..." }
 
 }

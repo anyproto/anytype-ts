@@ -1,6 +1,6 @@
 import { authStore, commonStore, blockStore, dbStore } from 'ts/store';
 import { set } from 'mobx';
-import { Util, DataUtil, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
+import { Util, DataUtil, I, M, Decode, translate, analytics, Response, Mapper, Storage } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
@@ -39,7 +39,6 @@ class Dispatcher {
 		/// #else
 			let serverAddr = remote.getGlobal('serverAddr');
 			console.log('[Dispatcher] Server address: ', serverAddr);
-			
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 			this.listenEvents();
 		/// #endif
@@ -74,6 +73,7 @@ class Dispatcher {
 		let V = Events.Event.Message.ValueCase;
 
 		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
+		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 		if (v == V.BLOCKADD)					 t = 'blockAdd';
 		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
 		if (v == V.BLOCKSETFIELDS)				 t = 'blockSetFields';
@@ -113,7 +113,9 @@ class Dispatcher {
 		const { config } = commonStore;
 		const rootId = event.getContextid();
 		const messages = event.getMessagesList() || [];
-		const debug = config.debugMW && !skipDebug;
+		const debugCommon = config.debugMW && !skipDebug;
+		const debugThread = config.debugTH && !skipDebug;
+		const pageId = Storage.get('pageId');
 
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
@@ -128,10 +130,6 @@ class Dispatcher {
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
 			let childrenIds: string[] = [];
-
-			if (debug && (type != 'threadStatus')) {
-				console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(message.toObject(), null, 3));
-			};
 
 			switch (type) {
 				case 'blockSetChildrenIds':
@@ -167,16 +165,31 @@ class Dispatcher {
 			let block: any = null;
 			let viewId: string = '';
 			let view: any = null;
-			let index: number = 0;
 			let childrenIds: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
+			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(event.toObject(), null, 3)); };
+
+			if (debugThread && (type == 'threadStatus')) {
+				log();
+			} else
+			if (debugCommon && (type != 'threadStatus')) {
+				log();
+			};
 
 			switch (type) {
 
 				case 'accountShow':
 					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
+					break;
+
+				case 'threadStatus':
+					authStore.threadSet(rootId, {
+						summary: Mapper.From.ThreadSummary(data.getSummary()),
+						cafe: Mapper.From.ThreadCafe(data.getCafe()),
+						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
+					});
 					break;
 
 				case 'blockShow':

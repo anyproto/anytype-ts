@@ -38,6 +38,7 @@ import 'scss/component/linkPreview.scss';
 import 'scss/component/drag.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
+import 'scss/component/sync.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -84,6 +85,7 @@ import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/select.scss';
 import 'scss/menu/search.scss';
+import 'scss/menu/thread.scss';
 
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';
@@ -310,14 +312,10 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('keytarGet', (e: any, key: string, value: string) => {
 			if ((key == 'phrase') && accountId) {
-				if (!value) {
-					if (phrase) {
-						value = phrase;
-						ipcRenderer.send('keytarSet', 'phrase', phrase);
-						Storage.delete('phrase');
-					} else {
-						return;
-					};
+				if (phrase) {
+					value = phrase;
+					ipcRenderer.send('keytarSet', 'phrase', phrase);
+					Storage.delete('phrase');
 				};
 
 				authStore.phraseSet(value);

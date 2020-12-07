@@ -367,6 +367,38 @@ class Util {
 			return ret;
 		});
 	};
+
+	timeAgo (t: number): string {
+		if (!t) {
+			return '';
+		};
+
+		let delta = this.time() - t;
+		let d = Math.floor(delta / 86400);
+
+		delta -= d * 86400;
+		let h = Math.floor(delta / 3600);
+
+		delta -= h * 3600;
+		let m = Math.floor(delta / 60);
+
+		delta -= m * 60;
+		let s = delta;
+
+		if (d > 0) {
+			return sprintf('%d days ago', d);
+		};
+		if (h > 0) {
+			return sprintf('%d hours ago', h);
+		};
+		if (m > 0) {
+			return sprintf('%d minutes ago', m);
+		};
+		if (s > 0) {
+			return sprintf('%d seconds ago', s);
+		};
+		return '';
+	};
 	
 	round (v: number, l: number) {
 		let d = Math.pow(10, l);

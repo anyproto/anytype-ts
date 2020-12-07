@@ -55,7 +55,7 @@
 	width: 64px; height: 64px; border-radius: 100%; font-weight: 500; position: relative; overflow: hidden;
 	text-transform: uppercase; font-size: 22px; color: #fff; text-align: center; line-height: 62px; background-color: $colorIce;
 }
-.icon.user.c18 { width: 18px; height: 18px; line-height: 18px; font-size: 11px; }
+.icon.user.c18 { width: 18px !important; height: 18px !important; line-height: 18px; font-size: 12px; }
 .icon.user.c40 { width: 40px; height: 40px; line-height: 40px; font-size: 18px; }
 .icon.user.c96 { width: 96px; height: 96px; line-height: 96px; font-size: 44px; font-weight: 500; }
 

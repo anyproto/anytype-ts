@@ -16,17 +16,18 @@ class AuthStore {
 	@observable public name: string = '';
 	@observable public phrase: string = '';
 	@observable public code: string = '';
+	@observable public threadMap: Map<string, any> = new Map();
 	
 	@computed
 	get accounts(): I.Account[] {
 		return this.accountList;
 	};
-	
+
 	@computed
 	get account(): I.Account {
 		return this.accountItem;
 	};
-	
+
 	@computed
 	get path(): string {
 		return this.dataPath || Storage.get('dataPath') || '';
@@ -67,7 +68,7 @@ class AuthStore {
 	accountAdd (account: I.Account) {
 		this.accountList.push(account);
 	};
-	
+
 	accountClear () {
 		this.accountList = [];
 	};
@@ -79,7 +80,26 @@ class AuthStore {
 		analytics.profile(account);
 		Sentry.setUser({ id: account.id });
 	};
-	
+
+	@action
+	threadSet (rootId: string, obj: any) {
+		const thread = this.threadMap.get(rootId);
+		if (thread) {
+			set(thread, observable(obj));
+		} else {
+			this.threadMap.set(rootId, observable(obj));
+		};
+	};
+
+	@action
+	threadRemove (rootId: string) {
+		this.threadMap.delete(rootId);
+	};
+
+	threadGet (rootId) {
+		return this.threadMap.get(rootId) || {};
+	};
+
 	@action
 	logout () {
 		Storage.logout();

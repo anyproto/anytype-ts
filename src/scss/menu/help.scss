@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuHelp { width: 224px; }
+	.menu.menuHelp { width: 224px; position: fixed; top: auto !important; bottom: 38px !important; }
 	.menu.menuHelp {
 		.item:hover { background: #f3f2ec; }
 	

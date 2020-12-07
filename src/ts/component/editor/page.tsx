@@ -333,6 +333,7 @@ class EditorPage extends React.Component<Props, {}> {
 		C.BlockClose(id, (message: any) => {
 			blockStore.blocksClear(id);
 			dbStore.relationsRemove(id);
+			authStore.threadRemove(id);
 		});
 	};
 	
