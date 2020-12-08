@@ -20,7 +20,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `The dashboard pages and links to pages have received special states also to help you better understand the sync status.` },
 	{ text: `<span class="${sc}">Updates requested</span> status calculation starts to work from this release.` },
 
-	{ style: I.TextStyle.Header3, text:  `Further Enhancements:` }
+	{ style: I.TextStyle.Header3, text:  `Further Enhancements:` },
 	{ style: I.TextStyle.Bulleted, text: `Your mnemonic passphrase is now stored in your system’s keychain.` },
 	{ style: I.TextStyle.Bulleted, text: `We disabled the noise security protocol and enabled the latest TLS, rewrote initial sync logic, and now we have more successful connections between devices. This means new objects will sync faster. ` },
 	{ text: `We’re currently working on another major update which should increase the sync success rate even more.` },
