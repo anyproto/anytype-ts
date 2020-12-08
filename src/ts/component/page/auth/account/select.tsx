@@ -11,6 +11,8 @@ interface State {
 	error: string;
 };
 
+const { ipcRenderer } = window.require('electron');
+
 @observer
 class PageAccountSelect extends React.Component<Props, State> {
 
@@ -90,8 +92,10 @@ class PageAccountSelect extends React.Component<Props, State> {
 
 	onSelect (account: I.Account) {
 		const { history } = this.props;
+		const { phrase } = authStore;
 		
 		authStore.accountSet(account);
+		ipcRenderer.send('keytarSet', account.id, phrase);
 		history.push('/auth/setup/select');
 	};
 	
