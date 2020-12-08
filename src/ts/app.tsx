@@ -301,22 +301,22 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 
 		ipcRenderer.send('appLoaded', true);
-		ipcRenderer.send('keytarGet', accountId);
 
-		console.log(accountId);
+		if (accountId) {
+			ipcRenderer.send('keytarGet', accountId);
+			ipcRenderer.on('keytarGet', (e: any, key: string, value: string) => {
+				if (accountId && (key == accountId)) {
+					if (phrase) {
+						value = phrase;
+						ipcRenderer.send('keytarSet', accountId, phrase);
+						Storage.delete('phrase');
+					};
 
-		ipcRenderer.on('keytarGet', (e: any, key: string, value: string) => {
-			if (accountId && (key == accountId)) {
-				if (phrase) {
-					value = phrase;
-					ipcRenderer.send('keytarSet', accountId, phrase);
-					Storage.delete('phrase');
+					authStore.phraseSet(value);
+					history.push('/auth/setup/init');
 				};
-
-				authStore.phraseSet(value);
-				history.push('/auth/setup/init');
-			};
-		});
+			});
+		};
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
