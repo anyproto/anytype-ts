@@ -30,10 +30,6 @@ class IconObject extends React.Component<Props, {}> {
 	
 	render () {
 		const { object, className, size } = this.props;
-		if (!object) {
-			return null;
-		};
-
 		const { id, iconEmoji, iconImage } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'icon-object', type ];
@@ -45,9 +41,7 @@ class IconObject extends React.Component<Props, {}> {
 		let icon = null;
 		switch (type) {
 			default:
-				if (iconEmoji || iconImage) {
-					icon = <Smile {...this.props} icon={iconEmoji} hash={iconImage} />;
-				};
+				icon = <Smile {...this.props} icon={iconEmoji} hash={iconImage} />;
 				break;
 
 			case 'image':
