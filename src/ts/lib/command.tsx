@@ -135,7 +135,7 @@ const NavigationListObjects = (context: I.NavigationType, fullText: string, offs
 	const request = new Rpc.Navigation.ListObjects.Request();
 	
 	request.setContext(context);
-	request.setFulltext(fullText);
+	//request.setFulltext(fullText);
 	request.setOffset(offset);
 	request.setLimit(limit);
 
@@ -834,7 +834,7 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], fullText: string, of
 	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
-	request.setFulltext(fullText);
+	//request.setFulltext(fullText);
 	request.setOffset(offset);
 	request.setLimit(limit);
 
