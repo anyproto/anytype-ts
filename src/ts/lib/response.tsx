@@ -1,4 +1,4 @@
-import { Mapper } from 'ts/lib';
+import { Mapper, Decode } from 'ts/lib';
 
 const VersionGet = (response: any) => {
 	return {};
@@ -79,22 +79,22 @@ const PageCreate = (response: any) => {
 	};
 };
 
-const NavigationListPages = (response: any) => {
+const NavigationListObjects = (response: any) => {
 	return {
-		pages: (response.getPagesList() || []).map(Mapper.From.PageInfo),
+		objects: (response.getObjectsList() || []).map(Mapper.From.ObjectInfo),
 	};
 };
 
-const NavigationGetPageInfoWithLinks = (response: any) => {
-	const page = response.getPage();
-	const links = page.getLinks();
+const NavigationGetObjectInfoWithLinks = (response: any) => {
+	const object = response.getObject();
+	const links = object.getLinks();
 	return {
-		page: {
-			id: page.getId(),
-			info: Mapper.From.PageInfo(page.getInfo()),
+		object: {
+			id: object.getId(),
+			info: Mapper.From.ObjectInfo(object.getInfo()),
 			links: {
-				inbound: (links.getInboundList() || []).map(Mapper.From.PageInfo),
-				outbound: (links.getOutboundList() || []).map(Mapper.From.PageInfo),
+				inbound: (links.getInboundList() || []).map(Mapper.From.ObjectInfo),
+				outbound: (links.getOutboundList() || []).map(Mapper.From.ObjectInfo),
 			},
 		},
 	};
@@ -116,6 +116,7 @@ const BlockShow = (response: any) => {
 		type: response.getType(),
 		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
 		details: (response.getDetailsList() || []).map(Mapper.From.Details),
+		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
 	};
 };
 
@@ -148,6 +149,13 @@ const BlockCreate = (response: any) => {
 };
 
 const BlockCreatePage = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+		targetId: response.getTargetid(),
+	};
+};
+
+const BlockCreateSet = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 		targetId: response.getTargetid(),
@@ -296,31 +304,51 @@ const BlockListDeletePage = (response: any) => {
 	return {};
 };
 
-const BlockCreateDataviewView = (response: any) => {
+const BlockDataviewViewCreate = (response: any) => {
 	return {
 		viewId: response.getViewid(),
 	};
 };
 
-const BlockSetDataviewView = (response: any) => {
+const BlockDataviewViewUpdate = (response: any) => {
 	return {};
 };
 
-const BlockSetDataviewActiveView = (response: any) => {
+const BlockDataviewViewSetActive = (response: any) => {
 	return {};
 };
 
-const BlockCreateDataviewRecord = (response: any) => {
+const BlockDataviewRecordCreate = (response: any) => {
 	return {
 		record: Mapper.From.Record(response.getRecord()),
 	};
 };
 
-const BlockUpdateDataviewRecord = (response: any) => {
+const BlockDataviewRecordUpdate = (response: any) => {
 	return {};
 };
 
-const BlockDeleteDataviewRecord = (response: any) => {
+const BlockDataviewRecordDelete = (response: any) => {
+	return {};
+};
+
+const BlockDataviewRelationAdd = (response: any) => {
+	return {
+		relationKey: response.getRelationkey(),
+	};
+};
+
+const BlockDataviewRelationSelectOptionAdd = (response: any) => {
+	return {
+		option: Mapper.From.SelectOption(response.getOption()),
+	};
+};
+
+const BlockDataviewRelationSelectOptionUpdate = (response: any) => {
+	return {};
+};
+
+const BlockDataviewRelationSelectOptionDelete = (response: any) => {
 	return {};
 };
 
@@ -338,7 +366,38 @@ const HistoryShow = (response: any) => {
 };
 
 const HistorySetVersion = (response: any) => {
+	return {};
+};
+
+const ObjectTypeList = (response: any) => {
 	return {
+		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
+	};
+};
+
+const ObjectTypeCreate = (response: any) => {
+	return {
+		objectType: Mapper.From.ObjectType(response.getObjecttype()),
+	};
+};
+
+const ObjectTypeRelationAdd = (response: any) => {
+	return {
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+	};
+};
+
+const SetCreate = (response: any) => {
+	return {
+		id: response.getId(),
+	};
+};
+
+const ObjectSearch = (response: any) => {
+	return {
+		records: (response.getRecordsList() || []).map((it: any) => {
+			return Decode.decodeStruct(it);
+		}),
 	};
 };
 
@@ -364,8 +423,8 @@ export {
 
 	PageCreate,
 
-	NavigationListPages,
-	NavigationGetPageInfoWithLinks,
+	NavigationListObjects,
+	NavigationGetObjectInfoWithLinks,
 
 	BlockGetPublicWebURL,
 
@@ -394,19 +453,26 @@ export {
 
 	BlockCreate,
 	BlockCreatePage,
-	BlockCreateDataviewView,
+	BlockDataviewViewCreate,
+	BlockCreateSet,
 
 	BlockSetTextText,
 	BlockSetTextChecked,
 	BlockSetFields,
 	BlockSetDetails,
 	
-	BlockSetDataviewView,
-	BlockSetDataviewActiveView,
+	BlockDataviewViewUpdate,
+	BlockDataviewViewSetActive,
 
-	BlockCreateDataviewRecord,
-	BlockUpdateDataviewRecord,
-	BlockDeleteDataviewRecord,
+	BlockDataviewRecordCreate,
+	BlockDataviewRecordUpdate,
+	BlockDataviewRecordDelete,
+
+	BlockDataviewRelationAdd,
+
+	BlockDataviewRelationSelectOptionAdd,
+	BlockDataviewRelationSelectOptionUpdate,
+	BlockDataviewRelationSelectOptionDelete,
 
 	BlockListMove,
 	BlockListMoveToNewPage,
@@ -427,4 +493,12 @@ export {
 	HistoryVersions,
 	HistoryShow,
 	HistorySetVersion,
+
+	ObjectTypeList,
+	ObjectTypeCreate,
+	ObjectTypeRelationAdd,
+
+	SetCreate,
+	ObjectSearch,
+
 };

@@ -15,7 +15,8 @@ class MenuViewList extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { getView } = data;
+		const view = getView();
 		
 		const items: any[] = [
 			{ id: I.ViewType.Grid, name: 'Grid' },
@@ -46,10 +47,11 @@ class MenuViewList extends React.Component<Props, {}> {
 	onClick (e: any, id: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, rootId, blockId } = data;
+		const { getView, rootId, blockId } = data;
+		const view = getView();
 
 		this.props.close();
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, type: id });
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, type: id });
 	};
 	
 };

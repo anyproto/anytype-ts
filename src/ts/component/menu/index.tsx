@@ -25,18 +25,24 @@ import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 
+import MenuBlockRelationEdit from './block/relation/edit';
+import MenuBlockRelationList from './block/relation/list';
+
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
+import MenuDataviewObjectType from './dataview/object/type';
+import MenuDataviewObjectList from './dataview/object/list';
 import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
 import MenuDataviewViewEdit from './dataview/view/edit';
 import MenuDataviewCalendar from './dataview/calendar';
-import MenuDataviewTagList from './dataview/tag/list';
-import MenuDataviewTagEdit from './dataview/tag/edit';
-import MenuDataviewAccount from './dataview/account';
+import MenuDataviewOptionList from './dataview/option/list';
+import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewDate from './dataview/date';
+import MenuDataviewMedia from './dataview/media';
+import MenuDataviewText from './dataview/text';
 
 interface Props extends I.Menu {
 	history: any;
@@ -85,19 +91,25 @@ class Menu extends React.Component<Props, {}> {
 			blockLink:				 MenuBlockLink,
 			blockCover:				 MenuBlockCover,
 			blockMention:			 MenuBlockMention,
+
+			blockRelationEdit:		 MenuBlockRelationEdit,
+			blockRelationList:		 MenuBlockRelationList,
 			
 			dataviewRelationList:	 MenuDataviewRelationList,
 			dataviewRelationEdit:	 MenuDataviewRelationEdit,
 			dataviewRelationType:	 MenuDataviewRelationType,
-			dataviewTagList:		 MenuDataviewTagList,
-			dataviewTagEdit:		 MenuDataviewTagEdit,
+			dataviewObjectType:		 MenuDataviewObjectType,
+			dataviewObjectList:		 MenuDataviewObjectList,
+			dataviewOptionList:		 MenuDataviewOptionList,
+			dataviewOptionEdit:		 MenuDataviewOptionEdit,
 			dataviewFilter:			 MenuDataviewFilter,
 			dataviewSort:			 MenuDataviewSort,
 			dataviewViewList:		 MenuDataviewViewList,
 			dataviewViewEdit:		 MenuDataviewViewEdit,
 			dataviewCalendar:		 MenuDataviewCalendar,
-			dataviewAccount:		 MenuDataviewAccount,
 			dataviewDate:			 MenuDataviewDate,
+			dataviewMedia:			 MenuDataviewMedia,
+			dataviewText:			 MenuDataviewText,
 		};
 		
 		const menuId = Util.toCamelCase('menu-' + id);
@@ -167,7 +179,7 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, offsetX, offsetY, forceX, forceY, isSub } = param;
+		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlip } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -191,11 +203,11 @@ class Menu extends React.Component<Props, {}> {
 			const ww = win.width();
 			const wh = win.scrollTop() + win.height();
 			const offset = el.offset();
-			const width = node.outerWidth();
+			const width = param.width ? param.width : node.outerWidth();
 			const height = node.outerHeight();
 			const ew = el.outerWidth();
 			const eh = el.outerHeight();
-			
+
 			let x = offset.left;
 			let y = offset.top;
 
@@ -204,7 +216,7 @@ class Menu extends React.Component<Props, {}> {
 					y = offset.top - height + offsetY;
 					
 					// Switch
-					if (y <= BORDER) {
+					if (!noFlip && (y <= BORDER)) {
 						y = offset.top + eh - offsetY;
 					};
 					break;
@@ -217,7 +229,7 @@ class Menu extends React.Component<Props, {}> {
 					y = offset.top + eh + offsetY;
 
 					// Switch
-					if (y >= wh - height - BORDER) {
+					if (!noFlip && (y >= wh - height - BORDER)) {
 						y = offset.top - height - offsetY;
 					};
 					break;
@@ -237,8 +249,8 @@ class Menu extends React.Component<Props, {}> {
 					break;
 			};
 
-			if (undefined !== forceX) x = forceX;
-			if (undefined !== forceY) y = forceY;
+			if (undefined !== fixedX) x = fixedX;
+			if (undefined !== fixedY) y = fixedY;
 
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);

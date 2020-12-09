@@ -2,11 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore, authStore } from 'ts/store';
+import { commonStore, blockStore, authStore, dbStore } from 'ts/store';
 import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import Controls from './controls';
+
+import EditorHeaderPage from './header/page';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -33,6 +35,8 @@ class EditorPage extends React.Component<Props, {}> {
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
+	withIcon: boolean = false;
+	withCover: boolean = false;
 	loading: boolean = false;
 
 	constructor (props: any) {
@@ -40,7 +44,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
 		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
-		this.onMouseMove = this.onMouseMove.bind(this);
+		//this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
@@ -62,56 +66,52 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
 		const length = childrenIds.length;
 
-		const withIcon = details.iconEmoji || details.iconImage;
-		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
-		
-		const title = blockStore.getLeaf(rootId, 'title') || {};
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], align: title.align, fields: {}, content: {} });
+		this.checkDetails();
 
-		let cn = [ 'editorWrapper', 'align' + title.align ];
+		let cn = [ 'editorWrapper' ];
+		let header = (
+			<EditorHeaderPage 
+				{...this.props} 
+				onKeyDown={this.onKeyDownBlock}
+				onKeyUp={this.onKeyUpBlock}  
+				onMenuAdd={this.onMenuAdd}
+				onPaste={this.onPaste}
+			/>
+		);
 		
 		if (root.isPageProfile()) {
 			cn.push('isProfile');
-			icon.type = I.BlockType.IconUser;
-		} else {
-			icon.type = I.BlockType.IconPage;
-		};
-
+		} else 
 		if (root.isPageSet()) {
 			cn.push('isDataview');
 		};
 		
-		if (withIcon && withCover) {
+		if (this.withIcon && this.withCover) {
 			cn.push('withIconAndCover');
 		} else
-		if (withIcon) {
+		if (this.withIcon) {
 			cn.push('withIcon');
 		} else
-		if (withCover) {
+		if (this.withCover) {
 			cn.push('withCover');
 		};
 		
 		return (
 			<div className={cn.join(' ')}>
 				<Controls {...this.props} />
-				{withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
 				
 				<div className="editor">
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
+
+						{header}
 					
-						{withIcon ? (
-							<Block 
-								{...this.props} key={icon.id} block={icon} 
-								className="root" 
-							/>	
-						) : ''}
-						
 						{children.map((block: I.Block, i: number) => {
+							if (block.isLayoutHeader()) {
+								return null;
+							};
 							return (
 								<Block 
 									key={block.id} 
@@ -166,10 +166,21 @@ class EditorPage extends React.Component<Props, {}> {
 		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
 	};
 
+	getSnapshotBeforeUpdate () {
+		const { rootId } = this.props;
+		const details = blockStore.getDetails(rootId, rootId);
+
+		this.withIcon = details.iconEmoji || details.iconImage;
+		this.withCover = (details.coverType != I.CoverType.None) && details.coverId;
+
+		return null;
+	};
+	
 	componentDidUpdate () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
-
+		
+		this.checkDetails();
 		this.open();
 		
 		if (this.uiHidden) {
@@ -182,6 +193,7 @@ class EditorPage extends React.Component<Props, {}> {
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
 		};
+		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -191,23 +203,31 @@ class EditorPage extends React.Component<Props, {}> {
 		this.uiHidden = false;
 		this.unbind();
 		this.close(rootId);
-		keyboard.disableBack(false);
 
+		keyboard.disableBack(false);
 		focus.clear(false);
+
 		Storage.delete('pageId');
 		ipcRenderer.removeAllListeners('commandEditor');
+	};
+
+	checkDetails () {
+		const { rootId } = this.props;
+		const details = blockStore.getDetails(rootId, rootId);
+
+		this.withIcon = details.iconEmoji || details.iconImage;
+		this.withCover = (details.coverType != I.CoverType.None) && details.coverId;
 	};
 	
 	open (skipInit?: boolean) {
 		const { rootId, onOpen, history } = this.props;
 		const { breadcrumbs } = blockStore;
+		const { focused } = focus;
 		const win = $(window);
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
 		if (!breadcrumbs && !skipInit) {
-			DataUtil.pageInit(() => {
-				this.open(true);
-			});
+			DataUtil.pageInit(() => { this.open(true); });
 			return;
 		};
 		
@@ -242,11 +262,8 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 				return;
 			};
-
-			const { focused } = focus;
-			const focusedBlock = blockStore.getLeaf(rootId, focused);
 			
-			if (!focusedBlock) {
+			if (!focused) {
 				this.focusTitle();
 			};
 
@@ -309,14 +326,13 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	close (id: string) {
 		const { isPopup } = this.props;
-		if (!id) {
+		if (isPopup || !id) {
 			return;
 		};
 		
 		C.BlockClose(id, (message: any) => {
-			if (!isPopup) {
-				blockStore.blocksClear(id);
-			};
+			blockStore.blocksClear(id);
+			dbStore.relationsRemove(id);
 			authStore.threadRemove(id);
 		});
 	};
@@ -331,9 +347,6 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	uiHide () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-
 		$('.footer').css({ opacity: 0 });
 		$('#button-add').css({ opacity: 0 });
 		
@@ -341,7 +354,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		window.clearTimeout(this.timeoutMove);
 		this.timeoutMove = window.setTimeout(() => {
-			win.unbind('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
+			$(window).unbind('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
 		}, 100);
 	};
 
@@ -366,34 +379,27 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const items = node.find('.block');
 		const container = $('.editor');
-		
 		if (!container.length) {
 			return;
 		};
-		
-		const details = blockStore.getDetails(rootId, rootId);
+
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const items = node.find('.block');
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const withIcon = details.iconEmoji;
-		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 
 		let offset = 144;
 		let hovered: any = null;
-		let hoveredRect = { x: 0, y: 0, width: 0, height: 0 };
+		let hoveredRect = { x: 0, y: 0, height: 0 };
 		
-		if (withCover && withIcon) {
+		if (this.withCover && this.withIcon) {
 			offset = 328;
 		} else
-		if (withCover) {
-			offset = 328;
-		} else 
-		if (withIcon) {
+		if (this.withIcon) {
 			offset = 194;
 		};
 		
@@ -417,13 +423,16 @@ class EditorPage extends React.Component<Props, {}> {
 			hovered = null;
 		};
 		
-		const { x, y, width, height } = hoveredRect;
+		const { x, y, height } = hoveredRect;
+		const out = () => {
+			add.removeClass('show');
+			items.removeClass('showMenu isAdding top bottom');
+		};
 		
 		window.clearTimeout(this.timeoutHover);
-		
+
 		if (keyboard.isDragging) {
-			add.css({ opacity: 0 });
-			items.removeClass('showMenu isAdding top bottom');
+			out();
 			
 			if (hovered) {
 				hovered.addClass('showMenu');
@@ -437,7 +446,7 @@ class EditorPage extends React.Component<Props, {}> {
 			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
 			let ay = pageY - rectContainer.y - 10 - st;
 			
-			add.css({ opacity: 1, transform: `translate3d(${ax}px,${ay}px,0px)` });
+			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');
 			
 			if (pageX <= x + 20) {
@@ -453,10 +462,7 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 			};
 		} else {
-			this.timeoutHover = window.setTimeout(() => {
-				add.css({ opacity: 0 });
-				items.removeClass('showMenu isAdding top bottom');
-			}, 10);
+			this.timeoutHover = window.setTimeout(out, 10);
 		};
 	};
 	
@@ -870,8 +876,8 @@ class EditorPage extends React.Component<Props, {}> {
 				selection.set([ focused ]);
 				focus.clear(true);
 				
-				commonStore.menuClose('blockContext');
-				commonStore.menuClose('blockAction');
+				commonStore.menuCloseAll([ 'blockContext', 'blockAction' ]);
+
 			};
 		});
 
@@ -1018,7 +1024,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { content } = block;
 		const { marks } = content;
-		
 		const length = String(text || '').length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const el = $('#block-' + id);
@@ -1110,6 +1115,10 @@ class EditorPage extends React.Component<Props, {}> {
 									const lang = Storage.get('codeLang') || Constant.default.codeLang;
 									param.fields = { lang: lang };
 								};
+							};
+
+							if ((item.type == I.BlockType.Relation) && (item.key == 'new-relation')) {
+								param.fields = { isNew: true };
 							};
 							
 							if (item.type == I.BlockType.File) {
@@ -1590,9 +1599,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 
-		commonStore.menuClose('blockAdd');
-		commonStore.menuClose('blockAction');
-		commonStore.menuClose('blockContext');
+		commonStore.menuCloseAll([ 'blockAdd', 'blockAction', 'blockContext' ]);
 
 		let next: any = null;
 		let ids = selection.get();

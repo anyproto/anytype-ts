@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Smile, Icon, Button, Input, Cover, Loader } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus } from 'ts/lib';
+import { Icon, Button, Input, Cover, Loader, IconObject } from 'ts/component';
+import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -26,7 +26,6 @@ interface State {
 
 const $ = require('jquery');
 const raf = require('raf');
-const FlexSearch = require('flexsearch');
 const Constant = require('json/constant.json');
 const HEIGHT = 64;
 const HEIGHT_EXPANDED = 96;
@@ -55,7 +54,6 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	ref: any = null;
 	timeout: number = 0;
-	index: any = null;
 	disableFirstKey: boolean = false;
 	panel: Panel = Panel.Left;
 	focused: boolean = false;
@@ -85,7 +83,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
-		const pages = this.filterPages();
+		const pages = this.getItems();
 
 		if ((expanded && (!this.cacheIn || !this.cacheOut)) || (!expanded && !this.cache)) {
 			return null;
@@ -98,7 +96,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			if (isRoot) {
 				iconSearch = <Icon key="icon-home" className="home" />;
 			} else {
-				iconSearch = <Smile icon={details.iconEmoji} hash={details.iconImage} />;
+				iconSearch = <IconObject object={details} />;
 			};
 		} else {
 			iconSearch = <Icon key="icon-search" className="search" />;
@@ -107,15 +105,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		switch (type) {
 			default:
 			case I.NavigationType.Go:
-				confirm = 'Open';
+				confirm = translate('popupNavigationOpen');
 				break;
 
 			case I.NavigationType.Move:
-				confirm = 'Move to';
+				confirm = translate('popupNavigationMove');
 				break;
 
 			case I.NavigationType.Link:
-				confirm = 'Link';
+				confirm = translate('popupNavigationLink');
 				break;
 		};
 
@@ -125,7 +123,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				<Input 
 					ref={(ref: any) => { this.ref = ref; }} 
 					value={details.name} 
-					placeHolder="Search for a page..." 
+					placeHolder={translate('popupNavigationPlaceholder')} 
 					onKeyDown={this.onKeyDownSearch} 
 					onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
 					onFocus={this.onFocus}
@@ -135,18 +133,20 @@ class PopupNavigation extends React.Component<Props, State> {
 		);
 
 		const Item = (item: any) => {
-			let { iconEmoji, iconImage, name } = item.details || {};
+			let { name } = item.details || {};
 			let isRoot = item.id == root;
 
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
 						{isRoot ? (
-							<div className="smile c48">
-								<Icon className="home big" />
+							<div className="icon object c48">
+								<div className="smile c48">
+									<Icon className="home big" />
+								</div>
 							</div>
 						) : (
-							<Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+							<IconObject object={item.details} className="c48" size={24} />
 						)}
 						<div className="info">
 							<div className="name">{name}</div>
@@ -185,7 +185,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const Selected = (item: any) => {
-			let { iconEmoji, iconImage, name, coverType, coverId, coverX, coverY, coverScale } = item.details;
+			let { name, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
 			let icon = null;
 			let withScale = true;
@@ -197,6 +197,8 @@ class PopupNavigation extends React.Component<Props, State> {
 						<Icon className="home big" />
 					</div>
 				);
+
+				name = 'Home';
 				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
@@ -204,7 +206,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				};
 				withScale = false;
 			} else {
-				icon = <Smile icon={iconEmoji} hash={iconImage} className="c48" size={24} />
+				icon = <IconObject object={item.details} className="c48" size={24} />
 			};
 
 			return (
@@ -216,7 +218,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					{withButtons ? (
 						<div className="buttons">
 							<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
-							<Button text="Cancel" className="blank" onClick={(e: any) => { close(); }} />
+							<Button text={translate('popupNavigationCancel')} className="blank" onClick={(e: any) => { close(); }} />
 						</div>
 					) : ''}
 				</div>
@@ -232,9 +234,9 @@ class PopupNavigation extends React.Component<Props, State> {
 							<div id={'panel-' + Panel.Left} className="items left">
 								{!isRoot ? (
 									<React.Fragment>
-										<div className="sideName">Link from page</div>
+										<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
 										{!pagesIn.length ? (
-											<ItemEmpty name="No links to this page" />
+											<ItemEmpty name={translate('popupNavigationEmptyTo')} />
 										) : (
 											<InfiniteLoader
 												rowCount={pagesIn.length}
@@ -271,9 +273,9 @@ class PopupNavigation extends React.Component<Props, State> {
 								{info ? <Selected {...info} /> : ''}
 							</div>
 							<div id={'panel-' + Panel.Right} className="items right">
-								<div className="sideName">Link to page</div>
+								<div className="sideName">{translate('popupNavigationLinkTo')}</div>
 								{!pagesOut.length ? (
-									<ItemEmpty name="No links to other pages" />
+									<ItemEmpty name={translate('popupNavigationEmptyFrom')} />
 								) : (
 									<InfiniteLoader
 										rowCount={pagesOut.length}
@@ -312,10 +314,10 @@ class PopupNavigation extends React.Component<Props, State> {
 
 						{!pages.length ? (
 							<div id="empty" key="empty" className="empty">
-								<div className="txt">
-									<b>There are no pages named "{filter}"</b>
-									Try creating a new one or search for something else.
-								</div>
+								<div 
+									className="txt" 
+									dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('popupNavigationEmptyFilter'), filter) }} 
+								/>
 							</div>
 						) : (
 							<div id={'panel-' + Panel.Left} key="items" className="items left">
@@ -379,8 +381,14 @@ class PopupNavigation extends React.Component<Props, State> {
 		focus.clear(true);
 	};
 	
-	componentDidUpdate () {
-		const { expanded, pagesIn, pagesOut } = this.state;
+	componentDidUpdate (prevProps: any, prevState: any) {
+		const { expanded, pages, pagesIn, pagesOut, filter } = this.state;
+
+		if (filter != prevState.filter) {
+			this.loadSearch();
+			return;
+		};
+
 		this.initSize(expanded);
 		this.setActive();
 
@@ -394,7 +402,6 @@ class PopupNavigation extends React.Component<Props, State> {
 			};
 		};
 
-		const pages = this.filterPages();
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
@@ -626,46 +633,22 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { info, pagesIn, pagesOut, expanded } = this.state;
+		const { info, pages, pagesIn, pagesOut, expanded } = this.state;
 
-		let items = [];
 		if (expanded) {
 			switch (this.panel) {
 				case Panel.Left:
-					items = pagesIn;
-					break;
+					return pagesIn;
 				
 				case Panel.Center:
-					items = [ info ];
-					break;
+					return [ info ];
 	
 				case Panel.Right:
-					items = pagesOut;
-					break;
+					return pagesOut;
 			};
 		} else {
-			items = this.filterPages();
-		};
-		return items;
-	};
-
-	filterPages (): I.PageInfo[] {
-		const { pages, filter } = this.state;
-		
-		if (!filter) {
 			return pages;
 		};
-
-		const ids = this.index ? this.index.search(filter) : [];
-		
-		let ret = [];
-		if (ids.length) {
-			ret = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
-		} else {
-			const reg = new RegExp(filter.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
-			ret = pages.filter((it: I.PageInfo) => { return it.text.match(reg); });
-		};
-		return ret;
 	};
 
 	setActive (item?: any) {
@@ -726,31 +709,29 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			this.setState({ filter: Util.filterFix(this.ref.getValue()) 
-			});
+			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
 		}, force ? 0 : 50);
 	};
 
 	loadSearch () {
 		const { param } = this.props;
 		const { data } = param;
-		const { skipId } = data;
+		const { type, skipId } = data;
+		const { filter } = this.state;
 		const { config } = commonStore;
 		const { root } = blockStore;
 
 		this.setState({ loading: true, n: -1 });
 		this.panel = Panel.Left;
 
-		this.index = new FlexSearch('balance', {
-			encode: 'extra',
-    		tokenize: 'full',
-			threshold: 1,
-    		resolution: 3,
-		});
-
 		let pages: I.PageInfo[] = [];
-		C.NavigationListPages((message: any) => {
-			for (let page of message.pages) {
+		C.NavigationListObjects(type, filter, 0, 100000000, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
+			for (let page of message.objects) {
 				if ((skipId && (page.id == skipId)) || page.id == root) {
 					continue;
 				};
@@ -761,7 +742,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				};
 
 				pages.push(page);
-				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
 			};
 
 			if (this.ref) {
@@ -778,14 +758,14 @@ class PopupNavigation extends React.Component<Props, State> {
 		this.setState({ loading: true });
 		this.setCrumbs(id);
 
-		C.NavigationGetPageInfoWithLinks(id, (message: any) => {
+		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
 			};
 
-			let pagesIn = message.page.links.inbound.map((it: any) => { return this.getPage(it); });
-			let pagesOut = message.page.links.outbound.map((it: any) => { return this.getPage(it); });
+			let pagesIn = message.object.links.inbound.map((it: any) => { return this.getPage(it); });
+			let pagesOut = message.object.links.outbound.map((it: any) => { return this.getPage(it); });
 
 			pagesIn = pagesIn.filter(filter);
 			pagesOut = pagesOut.filter(filter);
@@ -797,7 +777,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				pageId: id,
 				loading: false,
 				expanded: true, 
-				info: this.getPage(message.page.info),
+				info: this.getPage(message.object.info),
 				pagesIn: pagesIn,
 				pagesOut: pagesOut,
 			});

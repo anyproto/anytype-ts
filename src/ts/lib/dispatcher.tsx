@@ -7,6 +7,7 @@ const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
+const { remote } = window.require('electron');
 
 /// #if USE_ADDON
 const { app } = window.require('electron').remote;
@@ -22,9 +23,8 @@ class Dispatcher {
 	stream: any = null;
 
 	constructor () {
-
 		/// #if USE_ADDON
-			this.service = new Service.ClientCommandsClient("http://127.0.0.1:80", null, null);
+			this.service = new Service.ClientCommandsClient('http://127.0.0.1:80', null, null);
 
 			const handler = (item: any) => {
 				try {
@@ -37,14 +37,10 @@ class Dispatcher {
 			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			let serverAddr = window.require('electron').remote.getGlobal('serverAddr');
-
-			console.log('Server address: ', serverAddr);
-
+			let serverAddr = remote.getGlobal('serverAddr');
+			console.log('[Dispatcher] Server address: ', serverAddr);
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
-
 			this.listenEvents();
-
 		/// #endif
 	};
 
@@ -61,13 +57,13 @@ class Dispatcher {
 
 		this.stream.on('status', (status: any) => {
 			if (status.code) {
-				console.error('[Stream] Restarting', status);
+				console.error('[Dispatcher.stream] Restarting', status);
 				this.listenEvents();
 			};
 		});
 
 		this.stream.on('end', (end: any) => {
-			console.error('[Stream] end, restarting', end);
+			console.error('[Dispatcher.stream] end, restarting', end);
 			this.listenEvents();
 		});
 	};
@@ -76,27 +72,39 @@ class Dispatcher {
 		let t = '';
 		let V = Events.Event.Message.ValueCase;
 
-		if (v == V.ACCOUNTSHOW)				 t = 'accountShow';
-		if (v == V.THREADSTATUS)			 t = 'threadStatus';
-		if (v == V.BLOCKADD)				 t = 'blockAdd';
-		if (v == V.BLOCKDELETE)				 t = 'blockDelete';
-		if (v == V.BLOCKSETFIELDS)			 t = 'blockSetFields';
-		if (v == V.BLOCKSETCHILDRENIDS)		 t = 'blockSetChildrenIds';
-		if (v == V.BLOCKSETBACKGROUNDCOLOR)	 t = 'blockSetBackgroundColor';
-		if (v == V.BLOCKSETTEXT)			 t = 'blockSetText';
-		if (v == V.BLOCKSETFILE)			 t = 'blockSetFile';
-		if (v == V.BLOCKSETLINK)			 t = 'blockSetLink';
-		if (v == V.BLOCKSETBOOKMARK)		 t = 'blockSetBookmark';
-		if (v == V.BLOCKSETALIGN)			 t = 'blockSetAlign';
-		if (v == V.BLOCKSETDETAILS)			 t = 'blockSetDetails';
-		if (v == V.BLOCKSETDIV)				 t = 'blockSetDiv';
-		if (v == V.BLOCKSETDATAVIEWRECORDS)	 t = 'blockSetDataviewRecords';
-		if (v == V.BLOCKSETDATAVIEWVIEW)	 t = 'blockSetDataviewView';
-		if (v == V.BLOCKDELETEDATAVIEWVIEW)	 t = 'blockDeleteDataviewView';
-		if (v == V.BLOCKSHOW)				 t = 'blockShow';
-		if (v == V.PROCESSNEW)				 t = 'processNew';
-		if (v == V.PROCESSUPDATE)			 t = 'processUpdate';
-		if (v == V.PROCESSDONE)				 t = 'processDone';
+		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
+		if (v == V.THREADSTATUS)				 t = 'threadStatus';
+		if (v == V.BLOCKADD)					 t = 'blockAdd';
+		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
+		if (v == V.BLOCKSETFIELDS)				 t = 'blockSetFields';
+		if (v == V.BLOCKSETCHILDRENIDS)			 t = 'blockSetChildrenIds';
+		if (v == V.BLOCKSETBACKGROUNDCOLOR)		 t = 'blockSetBackgroundColor';
+		if (v == V.BLOCKSETTEXT)				 t = 'blockSetText';
+		if (v == V.BLOCKSETFILE)				 t = 'blockSetFile';
+		if (v == V.BLOCKSETLINK)				 t = 'blockSetLink';
+		if (v == V.BLOCKSETBOOKMARK)			 t = 'blockSetBookmark';
+		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
+		if (v == V.BLOCKSETDETAILS)				 t = 'blockSetDetails';
+		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
+		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
+		if (v == V.BLOCKSETRELATIONS)			 t = 'blockSetRelations';
+
+		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
+		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
+
+		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
+		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
+
+		if (v == V.BLOCKDATAVIEWRECORDSSET)		 t = 'blockDataviewRecordsSet';
+		if (v == V.BLOCKDATAVIEWRECORDSINSERT)	 t = 'blockDataviewRecordsInsert';
+		if (v == V.BLOCKDATAVIEWRECORDSUPDATE)	 t = 'blockDataviewRecordsUpdate';
+		if (v == V.BLOCKDATAVIEWRECORDSDELETE)	 t = 'blockDataviewRecordsDelete';
+
+		if (v == V.BLOCKSHOW)					 t = 'blockShow';
+		if (v == V.PROCESSNEW)					 t = 'processNew';
+		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
+		if (v == V.PROCESSDONE)					 t = 'processDone';
+		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 
 		return t;
 	};
@@ -155,6 +163,8 @@ class Dispatcher {
 
 		for (let message of messages) {
 			let block: any = null;
+			let viewId: string = '';
+			let view: any = null;
 			let childrenIds: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
@@ -183,6 +193,9 @@ class Dispatcher {
 					break;
 
 				case 'blockShow':
+					dbStore.relationsSet(rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
+					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
+
 					let res = Response.BlockShow(data);
 					this.onBlockShow(rootId, res.type, res.blocks, res.details);
 					break;
@@ -382,26 +395,51 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 
-				case 'blockSetDataviewView':
+				case 'blockSetRelations':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
 					};
 
-					data.view = Mapper.From.View(DataUtil.schemaField(block.content.schemaURL), data.getView());
+					dbStore.relationsSet(rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
+					break;
 
-					let view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
-					if (view) {
-						set(view, data.view);
-					} else {
-						block.content.views.push(data.view);
+				case 'blockSetRelation':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasKey()) {
+						block.content.key = data.getKey().getValue();
 					};
 
 					blockStore.blockUpdate(rootId, block);
 					break;
 
-				case 'blockDeleteDataviewView':
+				case 'blockDataviewViewSet':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					data.view = Mapper.From.View(data.getView());
+					data.view.relations = DataUtil.viewGetRelations(block.id, data.view);
+
+					view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
+					if (view) {
+						set(view, data.view);
+					} else {
+						block.content.views.push(new M.View(data.view));
+					};
+
+					blockStore.blockUpdate(rootId, block);
+					break;
+
+				case 'blockDataviewViewDelete':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -412,30 +450,89 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 
-				case 'blockSetDataviewRecords':
+				case 'blockDataviewRecordsSet':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
 					};
 
-					data.inserted = data.getInsertedList() || [];
-					data.updated = data.getUpdatedList() || [];
-					data.removed = data.getRemovedList() || [];
+					data.records = (data.getRecordsList() || []).map((it: any) => { return Decode.decodeStruct(it) || {}; });
+					dbStore.recordsSet(id, data.records);
+					dbStore.metaSet(id, { viewId: data.getViewid(), total: data.getTotal() });
+					break;
 
-					let list = [];
-					for (let id of data.removed) {
-						list = list.filter((it: any) => { return it.id != id; });
-					};
-					for (let item of data.inserted) {
-						list.push(Decode.decodeStruct(item) || {});
+				case 'blockDataviewRecordsInsert':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
 					};
 
-					dbStore.setData(block.id, list);
-					dbStore.setMeta(block.id, {
-						viewId: data.getViewid(),
-						total: data.getTotal(),
-					});
+					data.records = data.getRecordsList() || [];
+					for (let item of data.records) {
+						item = Decode.decodeStruct(item) || {};
+						dbStore.recordAdd(block.id, item);
+					};
+					break;
+
+				case 'blockDataviewRecordsUpdate':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					data.records = data.getRecordsList() || [];
+					for (let item of data.records) {
+						item = Decode.decodeStruct(item) || {};
+						dbStore.recordUpdate(block.id, item);
+					};
+					break;
+
+				case 'blockDataviewRecordsDelete':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					data.records = data.getRecordsList() || [];
+					for (let item of data.records) {
+						item = Decode.decodeStruct(item) || {};
+						dbStore.recordDelete(block.id, item.id);
+					};
+					break;
+
+				case 'blockDataviewRelationSet':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					const relation = Mapper.From.Relation(data.getRelation());
+					const item = dbStore.getRelation(id, relation.relationKey);
+
+					item ? dbStore.relationUpdate(id, relation) : dbStore.relationAdd(id, relation);
+
+					viewId = dbStore.getMeta(id).viewId;
+					view = block.content.views.find((it: any) => { return it.id == viewId; });
+					set(view, { relations: DataUtil.viewGetRelations(id, view) });
+					break;
+
+				case 'blockDataviewRelationDelete':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					dbStore.relationRemove(id, data.getRelationkey());
+
+					viewId = dbStore.getMeta(id).viewId;
+					view = block.content.views.find((it: any) => { return it.id == viewId; });
+					set(view, { relations: DataUtil.viewGetRelations(id, view) });
 					break;
 
 				case 'processNew':
@@ -503,11 +600,17 @@ class Dispatcher {
 		return 0;
 	};
 
-	onBlockShow (rootId: string, type: number, blocks: any[], details: any[]) {
+	onBlockShow (rootId: string, type: number, blocks: I.Block[], details: any[]) {
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {
 				it.type = I.BlockType.Page;
 				it.pageType = type;
+			};
+			if (it.type == I.BlockType.Dataview) {
+				it.content.views = it.content.views.map((view: any) => {
+					view.relations = DataUtil.viewGetRelations(it.id, view);
+					return new M.View(view);
+				});
 			};
 			return new M.Block(it);
 		});
@@ -595,6 +698,8 @@ class Dispatcher {
 
 				if (debug) {
 					console.log(
+						'[Dispatcher.callback]',
+						type,
 						'Middle time:', middleTime + 'ms',
 						'Render time:', renderTime + 'ms',
 						'Total time:', totalTime + 'ms'

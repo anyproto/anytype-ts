@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Icon, Loader, Error } from 'ts/component';
-import { I, C, DataUtil, focus } from 'ts/lib';
+import { I, C, translate, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -71,7 +71,7 @@ class BlockVideo extends React.Component<Props, {}> {
 				
 			case I.FileState.Error:
 				element = (
-					<Error text="Error" />
+					<Error text={translate('commonError')} />
 				);
 				break;
 		};
@@ -114,6 +114,9 @@ class BlockVideo extends React.Component<Props, {}> {
 		node.on('resizeInit', (e: any, oe: any) => { this.onResizeInit(); });
 		
 		if (video.length) {
+			this.div = 16 / 9;
+			this.onResizeInit();
+
 			video.on('canplay', (e: any) => {
 				this.div = el.videoWidth / el.videoHeight;
 				this.onResizeInit();

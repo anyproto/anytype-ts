@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Smile, Loader } from 'ts/component';
+import { Select, Marker, Smile, Loader, IconObject } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -13,8 +13,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
-	onPaste? (e: any): void;
 };
 
 const { ipcRenderer } = window.require('electron');
@@ -71,7 +69,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color } = content;
-		
+
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
@@ -290,9 +288,8 @@ class BlockText extends React.Component<Props, {}> {
 				if (_detailsEmpty_) {
 					item.addClass('dis');
 					icon = <Loader className={[ param.class, 'inline' ].join(' ')} />;
-				} else 
-				if (iconEmoji || iconImage) {
-					icon = <Smile className={param.class} size={param.size} native={false} icon={details.iconEmoji} hash={details.iconImage} />;
+				} else {
+					icon = <IconObject className={param.class} size={param.size} object={details} />;
 				};
 
 				if (icon) {
@@ -889,8 +886,7 @@ class BlockText extends React.Component<Props, {}> {
 		const x = rect.x - offset.left - size / 2 + rect.width / 2;
 		const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
 
-		commonStore.menuClose('blockAdd');
-		commonStore.menuClose('blockMention');
+		commonStore.menuCloseAll([ 'blockAdd', 'blockMention' ]);
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
@@ -950,6 +946,15 @@ class BlockText extends React.Component<Props, {}> {
 		const value = this.getValue();
 		value.length ? this.placeHolderHide() : this.placeHolderShow();			
 	};
+
+	placeHolderSet (v: string) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder').text(v);
+	};
 	
 	placeHolderHide () {
 		if (!this._isMounted) {
@@ -958,15 +963,6 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeHolder').hide();
-	};
-	
-	placeHolderSet (v: string) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeHolder').text(v);
 	};
 	
 	placeHolderShow () {

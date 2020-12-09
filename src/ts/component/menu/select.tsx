@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, Key, keyboard } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
+@observer
 class MenuSelect extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;	
@@ -28,6 +30,9 @@ class MenuSelect extends React.Component<Props, {}> {
 				{options.map((item: any, i: number) => {
 					return <MenuItemVertical key={i} {...item} className={item.isInitial ? 'initial' : ''} isActive={item.id == value} onClick={(e: any) => { this.onSelect(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} />
 				})}
+				{!options.length ? (
+					<div className="item empty">No items found</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -48,6 +53,10 @@ class MenuSelect extends React.Component<Props, {}> {
 				this.setActive(active, true);
 			}, 210);
 		};
+	};
+
+	componentDidUpdate () {
+		this.props.position();
 	};
 	
 	componentWillUnmount () {
@@ -91,7 +100,6 @@ class MenuSelect extends React.Component<Props, {}> {
 			return;
 		};
 		
-		e.preventDefault();
 		e.stopPropagation();
 		
 		keyboard.disableMouse(true);
@@ -103,6 +111,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		
 		switch (k) {
 			case Key.up:
+				e.preventDefault();
 				this.n--;
 				if (this.n < 0) {
 					this.n = l - 1;
@@ -111,6 +120,7 @@ class MenuSelect extends React.Component<Props, {}> {
 				break;
 				
 			case Key.down:
+				e.preventDefault();
 				this.n++;
 				if (this.n > l - 1) {
 					this.n = 0;
@@ -121,12 +131,14 @@ class MenuSelect extends React.Component<Props, {}> {
 			case Key.tab:
 			case Key.enter:
 			case Key.space:
+				e.preventDefault();
 				if (item) {
 					this.onSelect(e, item);
 				};
 				break;
 				
 			case Key.escape:
+				e.preventDefault();
 				this.props.close();
 				break;
 		};
@@ -147,16 +159,21 @@ class MenuSelect extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any, item: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
-		const { onSelect, canSelectInitial } = data;
+		const { onSelect, canSelectInitial, noClose } = data;
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
 		};
+
+		if (!noClose) {
+			close();
+		};
 		
-		onSelect(e, item);
-		this.props.close();
+		if (onSelect) {
+			onSelect(e, item);
+		};
 	};
 	
 };

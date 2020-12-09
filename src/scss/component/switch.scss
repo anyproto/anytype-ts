@@ -2,7 +2,7 @@
 
 .switch { 
 	width: 28px; height: 16px; background: #e0ded2; border-radius: 16px; position: relative; cursor: pointer; 
-	transition: $transitionFast; display: inline-block; vertical-align: middle;
+	display: inline-block; vertical-align: middle;
 }
 .switch {
 	.inner { 

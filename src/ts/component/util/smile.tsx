@@ -2,10 +2,12 @@ import * as React from 'react';
 import { Emoji } from 'emoji-mart';
 import { commonStore } from 'ts/store';
 import { I, SmileUtil } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
-	icon: string;
+	icon?: string;
+	iconClass?: string;
 	hash?: string;
 	size?: number;
 	native?: boolean;
@@ -14,6 +16,7 @@ interface Props {
 	canEdit?: boolean;
 	offsetX?: number;
 	offsetY?: number;
+	menuId?: string;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 };
@@ -29,10 +32,14 @@ const Blank = {
 	medium: require('img/blank/smile/medium.svg'),
 	big: require('img/blank/smile/big.svg'),
 };
+const IconSrc = {
+	newSet: require('img/icon/set/new.svg'),
+};
 
+@observer
 class Smile extends React.Component<Props, State> {
 	
-	private static defaultProps = {
+	public static defaultProps = {
 		offsetX: 0,
 		offsetY: 0,
 		size: 18,
@@ -53,7 +60,7 @@ class Smile extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, size, native, asImage, className, canEdit } = this.props;
+		const { id, size, native, asImage, className, canEdit, menuId, iconClass } = this.props;
 		let icon = String(this.state.icon || this.props.icon || '');
 		const hash = String(this.state.hash || this.props.hash || '');
 		
@@ -63,6 +70,9 @@ class Smile extends React.Component<Props, State> {
 		};
 		if (canEdit) {
 			cn.push('canEdit');
+		};
+		if (menuId && commonStore.menuIsOpen(menuId)) {
+			cn.push('active');
 		};
 
 		let blank = Blank.small;
@@ -99,6 +109,9 @@ class Smile extends React.Component<Props, State> {
 		if (hash) {
 			cn.push('withImage');
 			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')}  onDragStart={(e: any) => { e.preventDefault(); }} />;
+		} else 
+		if (iconClass) {
+			element = <img src={IconSrc[iconClass]} className={[ 'icon', iconClass ].join(' ')} />
 		};
 		
 		return (

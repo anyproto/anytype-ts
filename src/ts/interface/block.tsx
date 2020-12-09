@@ -5,7 +5,8 @@ export interface PageInfo {
 	pageType: I.PageType;
 	snippet: string;
 	details: any;	
-	text: string;
+	text?: string;
+	hasInboundLinks?: boolean;
 };
 
 export enum BlockType {
@@ -53,6 +54,8 @@ export interface BlockComponent {
 	readOnly?: boolean;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
+	onPaste? (e: any): void;
 };
 
 export interface Block {

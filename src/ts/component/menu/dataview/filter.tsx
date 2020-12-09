@@ -3,9 +3,10 @@ import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select, Input, Checkbox } from 'ts/component';
 import { commonStore } from 'ts/store';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
@@ -14,10 +15,10 @@ const $ = require('jquery');
 const raf = require('raf');
 const TIMEOUT = 500;
 
+@observer
 class MenuFilter extends React.Component<Props, {}> {
 	
 	refObj: any = {};
-	items: I.Filter[] = [] as I.Filter[];
 	timeoutChange: number = 0;
 	
 	constructor (props: any) {
@@ -33,15 +34,16 @@ class MenuFilter extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
-		
+		const { getView } = data;
+		const view = getView();
+
 		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
 		
 		const relationOptions: I.Option[] = view.relations.map((it: I.ViewRelation) => {
-			return { id: it.id, name: it.name, icon: 'relation c-' + it.type };
+			return { id: it.relationKey, name: it.name, icon: 'relation c-' + DataUtil.relationClass(it.format) };
 		});
 
 		const Handle = SortableHandle(() => (
@@ -49,18 +51,19 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationId; });
+			const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == item.relationKey; });
 			if (!relation) {
 				return null;
 			};
 
-			const conditionOptions = this.conditionsByType(relation.type);
+			const conditionOptions = this.conditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 
 			let value = null;
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
 
-			switch (relation.type) {
+			switch (relation.format) {
+				
 				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
@@ -77,27 +80,30 @@ class MenuFilter extends React.Component<Props, {}> {
 						<Input 
 							id={'item-' + item.id + '-value'}
 							ref={refGet} 
-							value={item.value !== '' ? Util.date('d.m.Y', item.value) : ''} 
-							placeHolder="dd.mm.yyyy"
-							mask="99.99.9999"
-							onKeyUp={(e: any, v: string) => { this.onChangeDate(item.id, v, true); }} 
+							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
+							placeHolder="dd.mm.yyyy hh:mm:ss"
+							mask="99.99.9999 99:99:99"
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 						/>
 					);
 					onSubmit = (e: any) => { this.onSubmitDate(e, item); };
 					break;
-					
+
 				default:
 					value = (
 						<Input 
 							id={'item-' + item.id + '-value'}
 							ref={refGet} 
 							value={item.value} 
-							placeHolder="Value" 
+							placeHolder={translate('commonValue')} 
 							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v, true); }} 
 						/>
 					);
 					break;
+			};
+
+			if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
+				value = null;
 			};
 
 			return (
@@ -117,7 +123,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					) : (
 						<div className="txt">Where</div>
 					)}
-					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
+					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
 					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
 					{value}
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
@@ -136,17 +142,15 @@ class MenuFilter extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{this.items.map((item: any, i: number) => (
+					{view.filters.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
-					{!this.items.length ? (
+					{!view.filters.length ? (
 						<div className="item empty">
-							<div className="inner">
-								No filters applied to this view
-							</div>
+							<div className="inner">No filters applied to this view</div>
 						</div>
 					) : ''}
-					<ItemAdd index={this.items.length + 1} disabled={true} />
+					<ItemAdd index={view.filters.length + 1} disabled={true} />
 				</div>
 			);
 		});
@@ -160,29 +164,18 @@ class MenuFilter extends React.Component<Props, {}> {
 				distance={10}
 				onSortEnd={this.onSortEnd}
 				useDragHandle={true}
-				helperClass="dragging"
+				helperClass="isDragging"
 				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
 			/>
 		);
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { view } = data;
-
-		this.items = view.filters;
-		this.forceUpdate();
-
 		this.resize();
 	};
 
 	componentDidUpdate () {
 		this.resize();
-	};
-
-	componentWillUnmount () {
-		this.save();
 	};
 
 	conditionsByType (type: I.RelationType): I.Option[] {
@@ -204,6 +197,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				];
 				break;
 
+			case I.RelationType.Object: 
 			case I.RelationType.Select: 
 				ret = [ 
 					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
@@ -241,52 +235,69 @@ class MenuFilter extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { getView } = data;
+		const view = getView();
 
 		if (!view.relations.length) {
 			return;
 		};
 
 		const first = view.relations[0];
-		const conditions = this.conditionsByType(first.type);
+		const conditions = this.conditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
-		this.items.push({ 
-			relationId: first.id, 
+		view.filters.push({ 
+			relationKey: first.relationKey, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: '',
 		});
-		this.forceUpdate();
 		this.save();
 	};
 
 	onDelete (e: any, id: number) {
-		this.items = this.items.filter((it: any, i: number) => { return i != id; });
-		this.forceUpdate();
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
+		view.filters = view.filters.filter((it: any, i: number) => { return i != id; });
 		this.save();
 
 		commonStore.menuClose('select');
 	};
 	
 	onSortEnd (result: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
 		const { oldIndex, newIndex } = result;
 
-		this.items = arrayMove(this.items, oldIndex, newIndex);
-		this.forceUpdate();
+		view.filters = arrayMove(view.filters, oldIndex, newIndex);
 		this.save();
 	};
 
 	onSubmit (e: any, item: any) {
 		e.preventDefault();
 
-		this.items[item.id].value = this.refObj[item.id].getValue();
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
+		view.filters[item.id].value = this.refObj[item.id].getValue();
 	};
 
 	onChange (id: number, k: string, v: any, timeout?: boolean) {
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
-			const item = this.items.find((it: any, i: number) => { return i == id; });
+			const item = view.filters.find((it: any, i: number) => { return i == id; });
 			if (!item) {
 				return;
 			};
@@ -294,20 +305,20 @@ class MenuFilter extends React.Component<Props, {}> {
 			item[k] = v;
 	
 			// Remove value when we change relation, filter non unique entries
-			if (k == 'relationId') {
+			if (k == 'relationKey') {
 				item.value = '';
-				this.items = this.items.filter((it: I.Filter, i: number) => { 
+				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
 					return (i == id) || 
-					(it.relationId != v) || 
-					((it.relationId == v) && (it.condition != item.condition)); 
+					(it.relationKey != v) || 
+					((it.relationKey == v) && (it.condition != item.condition)); 
 				});
 			};
 
 			if (k == 'condition') {
-				this.items = this.items.filter((it: I.Filter, i: number) => { 
+				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
 					return (i == id) || 
-					(it.relationId != item.relationId) || 
-					((it.relationId == item.relationId) && (it.condition != v)); 
+					(it.relationKey != item.relationKey) || 
+					((it.relationKey == item.relationKey) && (it.condition != v)); 
 				});
 			};
 	
@@ -318,27 +329,23 @@ class MenuFilter extends React.Component<Props, {}> {
 	onSubmitDate (e: any, item: any) {
 		e.preventDefault();
 
-		const a = this.refObj[item.id].getValue().split('.').reverse().join('/');
-		const value = Util.timestamp(a[0], a[1], a[2]);
+		const value = Util.parseDate(this.refObj[item.id].getValue());
 		
 		this.onChange(item.id, 'value', value);
 		this.calendarOpen(item.id, value);
 	};
 
-	onChangeDate (item: any, v: any, timeout?: boolean) {
-	};
-
 	onFocusDate (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { view } = data;
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == item.relationId; });
+		const { menus } = commonStore;
+		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewCalendar'; });
+		const value = item.value || Util.time();
 		
-		if (!relation || commonStore.menuIsOpen('dataviewCalendar')) {
-			return;
+		if (menu) {
+			menu.param.data.value = value;
+			commonStore.menuUpdate('dataviewCalendar', menu.param);
+		} else {
+			this.calendarOpen(item.id, value);
 		};
-
-		this.calendarOpen(item.id, item.value || Util.time());
 	};
 
 	calendarOpen (id: number, value: number) {
@@ -366,9 +373,10 @@ class MenuFilter extends React.Component<Props, {}> {
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, rootId, blockId, onSave } = data;
+		const { getView, rootId, blockId, onSave } = data;
+		const view = getView();
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, filters: this.items }, onSave);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 
 	resize () {

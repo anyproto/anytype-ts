@@ -24,6 +24,7 @@ interface Props {
 	onFocus?(e: any, value: string): void;
 	onBlur?(e: any, value: string): void;
 	onSelect?(e: any, value: string): void;
+	onClick?(e: any): void;
 };
 
 interface State {
@@ -61,7 +62,7 @@ class Input extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, name, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept } = this.props;
+		const { id, name, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept, onClick } = this.props;
 		
 		let type: string = this.state.type || this.props.type;
 		let cn = [ 'input', 'input-' + type ];
@@ -89,6 +90,7 @@ class Input extends React.Component<Props, State> {
 				onBlur={this.onBlur}
 				onPaste={this.onPaste}
 				onSelect={this.onSelect}
+				onClick={onClick}
 				maxLength={maxLength ? maxLength : undefined}
 				accept={accept ? accept : undefined}
 				multiple={multiple}
@@ -113,13 +115,16 @@ class Input extends React.Component<Props, State> {
 	};
 
 	initMask () {
-		const { mask, placeHolder, maskOptions } = this.props;
-		if (!mask) {
+		let { mask, maskOptions } = this.props;
+		if (!mask || !this._isMounted) {
 			return;
 		};
 
+		maskOptions = maskOptions || {};
+		maskOptions.positionCaretOnClick = 'ignore';
+
 		const node = $(ReactDOM.findDOMNode(this));
-		new Inputmask(mask, { ...maskOptions, placeholder: placeHolder }).mask(node.get(0));
+		new Inputmask(mask, { ...maskOptions }).mask(node.get(0));
 	};
 
 	onChange (e: any) {

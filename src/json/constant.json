@@ -5,7 +5,7 @@
 	"amplitude": "081a79db340854305408c8fa15706adc",
 	"smile": "https://unpkg.com/emoji-datasource-apple@4.0.4/img/apple/sheets-256/64.png",
 	"survey": "https://anytype.typeform.com/to/kpqcOT47#anytypeid=%s",
-	
+
 	"platforms": {
 		"win32": 	"Windows",
 		"darwin":	"Mac",
@@ -69,8 +69,9 @@
 			"cell": {
 				"default": 192,
 				"title": 288,
-				"min": 48,
-				"max": 500
+				"min": 192,
+				"max": 500,
+				"edit": 300
 			}
 		},
 
@@ -79,6 +80,7 @@
 		"menuBlockAdd": 360,
 		"menuDataviewFilter": 400,
 		"menuBlockLink": 400,
+		"menuDataviewOptionList": 256,
 		
 		"menuBlockContext": {
 			"default": 400,
@@ -97,16 +99,18 @@
 	},
 
 	"relationName": {
-		"title": "Title",
-		"description": "Description",
-		"number": "Number",
-		"select": "Select",
-		"date": "Date",
-		"file": "File & Media",
-		"checkbox": "Checkbox",
-		"url": "URL",
-		"email": "E-mail",
-		"phone": "Phone"
+		"0": "Description",
+		"1": "Title",
+		"2": "Number",
+		"3": "Select",
+		"4": "Date",
+		"5": "File & Media",
+		"6": "Checkbox",
+		"7": "Icon",
+		"8": "URL",
+		"9": "E-mail",
+		"10": "Phone",
+		"100": "Object"
 	},
 	
 	"textColor": {
@@ -121,31 +125,6 @@
 		"teal": "Teal",
 		"lime": "Green"
 	},
-	
-	"month": {
-		"1": "January",
-		"2": "February",
-		"3": "March",
-		"4": "April",
-		"5": "May",
-		"6": "June",
-		"7": "July",
-		"8": "August",
-		"9": "September",
-		"10": "October",
-		"11": "November",
-		"12": "December"
-	},
-	
-	"week": [
-		"Sunday",
-		"Monday",
-		"Tuesday",
-		"Wednesday",
-		"Thursday",
-		"Friday",
-		"Saturday"
-	],
 	
 	"monthDays": {
 		"1": 31,

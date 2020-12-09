@@ -1,27 +1,94 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
+import { I, DataUtil } from 'ts/lib';
 
 class DbStore {
+	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
+	public relationMap: Map<string, any> = observable.map(new Map());
 	public dataMap: Map<string, any> = observable.map(new Map());
 	public metaMap: Map<string, any> = new Map();
 
-	@action
-	setData (blockId: string, list: any[]) {
-		list = list.map((it: any) => {
-			it = observable(it);
-			intercept(it as any, (change: any) => {
-				if (change.newValue === it[change.name]) {
-					return null;
-				};
-				return change;
-			});
-			return it;
-		});
-		this.dataMap.set(blockId, observable.array(list));
+	@computed
+	get objectTypes (): I.ObjectType[] {
+		return Array.from(this.objectTypeMap.values());
 	};
 
 	@action
-	setMeta (blockId: string, meta: any) {
-		const data = this.getMeta(blockId);
+	objectTypesSet (types: I.ObjectType[]) {
+		for (let type of types) {
+			this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+		};
+	};
+
+	@action 
+	objectTypeRelationsAdd (url: string, relations: I.Relation[]) {
+		const type = this.getObjectType(url);
+		type.relations = type.relations.concat(relations);
+
+		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+	};
+
+	@action 
+	objectTypeRelationUpdate (url: string, relation: I.Relation) {
+		const type = this.getObjectType(url);
+		const idx = type.relations.findIndex((it: I.Relation) => { return it.relationKey == relation.relationKey; });
+
+		set(type.relations[idx], relation);
+		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+	};
+
+	@action 
+	objectTypeRelationsRemove (url: string, relationKey: string) {
+		const type = this.getObjectType(url);
+		type.relations = type.relations.filter((it: I.Relation) => { return it.relationKey != relationKey; });
+
+		this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+	};
+
+	@action
+	relationsSet (blockId: string, list: I.Relation[]) {
+		this.relationMap.set(blockId, observable(list));
+	};
+
+	@action
+	relationsRemove (blockId: string) {
+		this.relationMap.delete(blockId);
+	};
+
+	@action
+	relationAdd (blockId: string, item: any) {
+		const relations = this.getRelations(blockId);
+		const relation = relations.find((it: I.Relation) => { return it.relationKey == item.relationKey; });
+
+		if (relation) {
+			this.relationUpdate(blockId, item);
+		} else {
+			relations.push(item);
+			this.relationsSet(blockId, relations);
+		};
+	};
+
+	@action
+	relationUpdate (blockId: string, item: any) {
+		const relations = this.getRelations(blockId);
+		const relation = relations.find((it: I.Relation) => { return it.relationKey == item.relationKey; });
+		if (!relation) {
+			return;
+		};
+
+		const idx = relations.findIndex((it: I.Relation) => { return it.relationKey == item.relationKey; });
+		set(relations[idx], item);
+	};
+
+	@action
+	relationRemove (blockId: string, key: string) {
+		let relations = this.getRelations(blockId);
+		relations = relations.filter((it: I.Relation) => { return it.relationKey != key; });
+		this.relationsSet(blockId, relations);
+	};
+
+	@action
+	metaSet (blockId: string, meta: any) {
+		const data = this.metaMap.get(blockId);
 
 		if (data) {
 			set(data, meta);
@@ -41,13 +108,38 @@ class DbStore {
 	};
 
 	@action
-	addRecord (blockId: string, obj: any) {
+	recordsSet (blockId: string, list: any[]) {
+		list = list.map((obj: any) => {
+			obj = observable(obj);
+			intercept(obj as any, (change: any) => {
+				if (JSON.stringify(change.newValue) === JSON.stringify(obj[change.name])) {
+					return null;
+				};
+				return change;
+			});
+			return obj;
+		});
+
+		this.dataMap.set(blockId, observable.array(list));
+	};
+
+	@action
+	recordAdd (blockId: string, obj: any) {
 		const data = this.getData(blockId);
+		obj = observable(obj);
+
+		intercept(obj as any, (change: any) => {
+			if (JSON.stringify(change.newValue) === JSON.stringify(obj[change.name])) {
+				return null;
+			};
+			return change;
+		});
+
 		data.push(obj);
 	};
 
 	@action
-	updateRecord (blockId: string, obj: any) {
+	recordUpdate (blockId: string, obj: any) {
 		const data = this.getData(blockId);
 		const record = data.find((it: any) => { return it.id == obj.id; });
 		if (!record) {
@@ -55,6 +147,25 @@ class DbStore {
 		};
 
 		set(record, obj);
+	};
+
+	@action
+	recordDelete (blockId: string, id: string) {
+		let data = this.getData(blockId);
+		data = data.filter((it: any) => { return it.id == id; });
+	};
+
+	getObjectType (url: string): I.ObjectType {
+		return this.objectTypeMap.get(DataUtil.schemaField(url));
+	};
+
+	getRelations (blockId: string): I.Relation[] {
+		return this.relationMap.get(blockId) || [];
+	};
+
+	getRelation (blockId: string, relationKey: string): I.Relation {
+		const relations = this.relationMap.get(blockId) || [];
+		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
 	};
 
 	getMeta (blockId: string) {

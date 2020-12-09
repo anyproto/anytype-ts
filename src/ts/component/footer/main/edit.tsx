@@ -3,13 +3,11 @@ import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 import { commonStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any>  {
 	rootId: string;
 };
 
-@observer
 class FooterMainEdit extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
@@ -21,7 +19,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 	render () {
 		return (
 			<div className="footer">
-				<Icon id="button-help" className={'help ' + (commonStore.menuIsOpen('help') ? 'active' : '')} onMouseDown={this.onHelp} />
+				<Icon id="button-help" menuId="help" className="help" onMouseDown={this.onHelp} />
 			</div>
 		);
 	};

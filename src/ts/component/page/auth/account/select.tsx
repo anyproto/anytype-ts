@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { Frame, Icon, Cover, Error, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer, Loader } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { Storage, I, C, Util } from 'ts/lib';
+import { I, C, Util, translate } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -48,7 +48,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 				<Frame>
 					{!accounts.length ? <Loader /> : (
 						<React.Fragment>
-							<Title text="Choose profile" />
+							<Title text={translate('authAccountSelectTitle')} />
 							<Error text={error} />
 
 							<div className="list">
@@ -57,7 +57,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 								))}
 								<div className="item add dn" onMouseDown={this.onAdd}>
 									<Icon className="plus" />
-									<div className="name">Add profile</div>
+									<div className="name">{translate('authAccountSelectAdd')}</div>
 								</div>
 							</div>
 						</React.Fragment>

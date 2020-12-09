@@ -1,0 +1,37 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuBlockRelationList, 
+	.menu.menuBlockRelationEdit {
+		.item:hover::before { opacity: 0.15; }
+	}
+
+	.menu.menuBlockRelationList.fixed { position: fixed; }
+	.menu.menuBlockRelationList.isReadOnly { 
+		.item { cursor: default; }
+		.item:hover::before { opacity: 0; }
+		.cell.c-select { cursor: default; }
+	}
+
+	.menu.menuBlockRelationList { width: 640px; }
+	.menu.menuBlockRelationList {
+		.content { max-height: 338px; padding: 12px 0px; }
+	}
+	
+	.menu.menuBlockRelationEdit { width: 224px; }
+	.menu.menuBlockRelationEdit {
+		.wrap { padding: 0px 16px 8px 16px; }
+		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
+		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
+		.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+
+		.item.disabled { cursor: default; opacity: 1 !important; }
+		.item.disabled:hover::before { opacity: 0; }
+		
+		.icon.arrow { 
+			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
+			background-image: url('~img/arrow/menu.svg'); 
+		}
+	}
+
+}

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Smile } from 'ts/component';
-import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
+import { Icon, IconObject } from 'ts/component';
+import { I, Util, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -21,6 +20,7 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 		
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 	};
 
 	render () {
@@ -33,7 +33,6 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 		};
 		
 		const details = blockStore.getDetails(breadcrumbs, rootId);
-		const { iconEmoji, iconImage, name } = details;
 
 		return (
 			<div id="header" className="header headerMainEdit">
@@ -47,13 +46,14 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path">
 						<div className="item">
-							<Smile icon={iconEmoji} hash={iconImage} />
-							<div className="name">{Util.shorten(name, 32)}</div>
+							<IconObject object={details} />
+							<div className="name">{Util.shorten(details.name, 32)}</div>
 						</div>
 					</div>
 				</div>
 
 				<div className="side right">
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation" onClick={this.onRelation} />
 					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
@@ -69,7 +69,7 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 		const { rootId, match } = this.props;
 		
 		commonStore.menuOpen('blockMore', { 
-			element: '#button-header-more',
+			element: '#popupEditorPage #button-header-more',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 8,
@@ -81,6 +81,24 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 				blockIds: [ rootId ],
 				match: match,
 			}
+		});
+	};
+
+	onRelation () {
+		const { rootId } = this.props;
+
+		commonStore.menuOpen('blockRelationList', { 
+			element: '#popupEditorPage #button-header-relation',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				relationKey: '',
+				readOnly: false,
+				rootId: rootId,
+			},
 		});
 	};
 

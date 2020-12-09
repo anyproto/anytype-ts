@@ -137,7 +137,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				horizontal: I.MenuDirection.Right,
 				offsetX: 272,
 				offsetY: 0,
-				forceY: top,
+				fixedY: top,
 				data: {
 					...data,
 					accountId: id,

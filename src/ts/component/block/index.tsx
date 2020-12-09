@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage } from 'ts/lib';
+import { I, C, DataUtil, keyboard, focus, Storage, translate } from 'ts/lib';
 import { DropTarget, ListChildren, Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore } from 'ts/store';
@@ -17,14 +17,13 @@ import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
 import BlockDiv from './div';
+import BlockRelation from './relation';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
-	cnt?: number;
+	//cnt?: number;
 	css?: any;
 	className?: string;
-	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
-	onPaste? (e: any): void;
 };
 
 const $ = require('jquery');
@@ -59,11 +58,11 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, cnt, css, index, className, block, readOnly } = this.props;
+		const { rootId, css, index, className, block, readOnly } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 		const { style, checked } = content || {};
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		
+
 		let canSelect = true;
 		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align, (readOnly ? 'isReadOnly' : '')];
 		let cd: string[] = [ 'wrapContent' ];
@@ -88,7 +87,7 @@ class Block extends React.Component<Props, {}> {
 
 				if (block.isTextToggle() && !childrenIds.length && !readOnly) {
 					empty = (
-						<div className="emptyToggle" onClick={this.onToggleClick}>Empty toggle. Click and drop block inside</div>
+						<div className="emptyToggle" onClick={this.onToggleClick}>{translate('blockTextToggleEmpty')}</div>
 					);
 				};
 
@@ -160,7 +159,12 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Cover:
 				canSelect = false;
 				cn.push('blockCover');
-				blockComponent = <BlockCover {...this.props} block={block} />;
+				blockComponent = <BlockCover {...this.props} />;
+				break;
+
+			case I.BlockType.Relation:
+				cn.push('blockRelation');
+				blockComponent = <BlockRelation {...this.props} />;
 				break;
 		};
 		
@@ -416,6 +420,7 @@ class Block extends React.Component<Props, {}> {
 
 		this.unbind();
 		node.addClass('isResizing');
+		$('body').addClass('colResize');
 		keyboard.setResize(true);
 		add.css({ opacity: 0 });
 		
@@ -484,6 +489,7 @@ class Block extends React.Component<Props, {}> {
 		};
 		this.unbind();
 		node.removeClass('isResizing');
+		$('body').removeClass('colResize');
 		keyboard.setResize(false);
 		
 		node.find('.colResize.active').removeClass('active');

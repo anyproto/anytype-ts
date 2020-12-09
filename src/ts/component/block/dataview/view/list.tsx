@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { Pager } from 'ts/component';
+import { Pager, Cell } from 'ts/component';
 import { dbStore } from 'ts/store';
 
-import Cell from '../cell';
+import Row from './list/row';
 
 interface Props extends I.ViewComponent {};
 
@@ -15,49 +15,32 @@ const Constant = require('json/constant.json');
 class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, view, readOnly, getData } = this.props;
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const { block, getData, getView } = this.props;
+		const view = getView();
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);
 
-		const Row = (item: any) => {
-			return (
-				<div className="item">
-					{relations.map((relation: any, i: number) => (
-						<Cell 
-							key={'list-cell-' + relation.id} 
-							id={item.index} 
-							rootId={rootId}
-							block={block}
-							view={view} 
-							relation={...relation} 
-							data={data} 
-							index={item.index}
-							readOnly={readOnly}
-						/>
-					))}
-				</div>
+		let pager = null;
+		if (total && data.length) {
+			pager = (
+				<Pager 
+					offset={offset} 
+					limit={Constant.limit.dataview.records} 
+					total={total} 
+					onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
+				/>
 			);
 		};
-		
-		const pager = (
-			<Pager 
-				offset={offset} 
-				limit={Constant.limit.dataview.records} 
-				total={total} 
-				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
-			/>
-		);
 
 		return (
 			<div className="wrap">
 				<div className="viewItem viewList">
 					{data.map((item: any, i: number) => (
-						<Row key={'list-row-' + i} index={i} {...item} />
+						<Row key={'list-row-' + i} {...this.props} index={i}  />
 					))}
 				</div>
 
-				{total ? pager : ''}
+				{pager}
 			</div>
 		);
 	};

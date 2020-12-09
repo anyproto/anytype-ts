@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { commonStore } from 'ts/store';
 import { Icon, Loader } from 'ts/component';
 import { observer } from 'mobx-react';
-import { I, C, Mark, Util, focus } from 'ts/lib';
+import { I, C, Mark, Util, translate } from 'ts/lib';
 
 interface Props {};
 interface State {
@@ -63,9 +63,9 @@ class LinkPreview extends React.Component<Props, {}> {
 			content = (
 				<React.Fragment>
 					<div className="head">
-						<div id="button-copy" className="item" onClick={this.onCopy}>Copy link</div>
-						<div id="button-edit" className="item" onClick={this.onEdit}>Edit link</div>
-						<div id="button-unlink" className="item" onClick={this.onUnlink}>Unlink</div>
+						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('linkPreviewCopy')}</div>
+						<div id="button-edit" className="item" onClick={this.onEdit}>{translate('linkPreviewEdit')}</div>
+						<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('linkPreviewUnlink')}</div>
 					</div>
 					<div className="cp" onClick={this.onClick}>
 						{imageUrl ? <div className="img" style={style} /> : ''}

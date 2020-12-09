@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Smile, Sync } from 'ts/component';
+import { Icon, IconObject, Sync } from 'ts/component';
 import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -25,6 +25,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 		this.onSync = this.onSync.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
@@ -41,7 +42,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		const details = blockStore.getDetails(breadcrumbs, rootId);
-		const { iconEmoji, iconImage, name } = details;
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (commonStore.popupIsOpen('navigation')) {
@@ -60,8 +60,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<Smile icon={iconEmoji} hash={iconImage} />
-							<div className="name">{Util.shorten(name, 32)}</div>
+							<IconObject object={details} />
+							<div className="name">{Util.shorten(details.name, 32)}</div>
 						</div>
 					</div>
 
@@ -70,6 +70,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 				<div className="side right">
 					<Sync id="button-sync" rootId={rootId} onClick={this.onSync} />
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation" onClick={this.onRelation} />
 					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
@@ -181,6 +182,26 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 	onPathOut () {
 		Util.tooltipHide();
+	};
+
+	onRelation () {
+		const { rootId } = this.props;
+
+		commonStore.menuOpen('blockRelationList', { 
+			element: '#button-header-relation',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 0,
+			fixedY: 38,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			className: 'fixed',
+			data: {
+				relationKey: '',
+				readOnly: false,
+				rootId: rootId,
+			},
+		});
 	};
 	
 };

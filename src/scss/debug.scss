@@ -17,47 +17,13 @@ html.debug {
 		.block.blockLayout.c1 { border-color: rgba(0,0,255,0.3); }
 		
 		.block.blockLayout.c2 { border-width: 2px; border-color: rgba(0,255,0,0.3); }
-		
-		.block.blockLink {
-			.smile { background-color: rgba(0,0,255,0.1); }
-			.name { background-color: rgba(0,0,255,0.1); }
-		}
-		
-		.block.blockFile {
-			.icon { background-color: rgba(0,0,255,0.1); }
-			.name { background-color: rgba(0,0,255,0.1); }
-			.size { background-color: rgba(0,0,255,0.1); }
-			.download { background-color: rgba(0,0,255,0.1); }
-		}
-		
-		.block.blockText {
-			.marker { background-color: rgba(0,0,255,0.1); }
-
-			mention, emoji {
-				smile { background-color: rgba(0,0,255,0.1); }
-				name { background-color: rgba(0,0,255,0.1); }
-			}
-		}
 	}
 	
 	.blockLast { background: rgba(0,0,255,0.1); }
 	
 	.focusable.isFocused { border: 1px solid rgba(255,127,127,0.3); }
 	
-	.inputWithFile {
-		.icon { background-color: rgba(0,0,255,0.1); }
-		.txt { background-color: rgba(0,0,255,0.1); }
-	}
-	
 	.popups {
-		.popupArchive {
-			.item {
-				.checkbox { background-color: rgba(0,0,255,0.1); }
-				.smile { background-color: rgba(0,0,255,0.1); }
-				.name { background-color: rgba(0,0,255,0.1); line-height: 24px; height: 24px; }
-			}
-		}
-
 		.popupNavigation {
 			.path {
 				.item {

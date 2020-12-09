@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Input, Button } from 'ts/component';
-import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {
@@ -28,8 +27,8 @@ class PopupPrompt extends React.Component<Props, {}> {
 		return (
 			<form onSubmit={this.onSubmit}>
 				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} placeHolder={placeHolder} maxLength={maxLength} />
-				<Button type="input" text="Ok" className="orange" />
-				<Button text="Cancel" className="grey" onClick={this.onCancel} />
+				<Button type="input" text={translate('commonOk')} className="orange" />
+				<Button text={translate('commonCancel')} className="grey" onClick={this.onCancel} />
 			</form>
 		);
 	};

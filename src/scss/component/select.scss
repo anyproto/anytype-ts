@@ -10,7 +10,7 @@
 .select {
 	.icon { transition: none; }
 	.icon.arrow {
-		margin: -10px 0px 0px 0px !important; right: 2px; width: 20px; height: 20px; position: absolute; top: 50%;
+		margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px; height: 20px; position: absolute; top: 50%;
 		background-image: url('~img/arrow/select/dark.svg'); 
 	}
 	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg'); }

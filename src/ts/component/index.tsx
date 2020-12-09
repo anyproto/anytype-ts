@@ -17,6 +17,7 @@ import HeaderMainIndex from './header/main/index';
 import HeaderMainEdit from './header/main/edit';
 import HeaderMainEditPopup from './header/main/editPopup';
 import HeaderMainHistory from './header/main/history';
+import HeaderMainSet from './header/main/set';
 import HeaderHelpIndex from './header/help/index';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
@@ -54,8 +55,11 @@ import Sync from './util/sync';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
+import IconObject from './util/iconObject';
 
 import LinkPreview from './util/linkPreview';
+
+import Cell from './block/dataview/cell';
 
 export {
 	Page,
@@ -73,6 +77,7 @@ export {
 	HeaderMainEdit,
 	HeaderMainEditPopup,
 	HeaderMainHistory,
+	HeaderMainSet,
 	HeaderHelpIndex,
 	FooterAuth,
 	FooterMainIndex,
@@ -106,5 +111,7 @@ export {
 	Error,
 	Icon,
 	IconUser,
+	IconObject,
 	LinkPreview,
+	Cell,
 };

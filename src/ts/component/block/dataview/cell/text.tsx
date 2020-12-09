@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
-import { Icon, Smile, Input, Textarea } from 'ts/component';
+import { Icon, Smile, Input, IconObject } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -11,8 +11,8 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant = require('json/constant.json');
+const MENU_ID = 'dataviewCalendar';
 
 @observer
 class CellText extends React.Component<Props, State> {
@@ -21,7 +21,6 @@ class CellText extends React.Component<Props, State> {
 		editing: false,
 	};
 	ref: any = null;
-	timeoutMenu: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -37,22 +36,42 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, view, onOpen, readOnly } = this.props;
-		const data = this.props.data[index];
+		const { index, relation, viewType, getRecord } = this.props;
+		const record = getRecord(index);
+		if (!record) {
+			return null;
+		};
+
+		const canEdit = this.canEdit();
+		const type = DataUtil.schemaField(record.type);
 
 		let Name = null;
 		let EditorComponent = null;
-		let value = data[relation.id];
+		let value = String(record[relation.relationKey] || '');
 
 		if (editing) {
-			if (relation.type == I.RelationType.Description) {
+			if (relation.format == I.RelationType.Description) {
+				value = value.replace(/\n/g, '<br/>');
 				EditorComponent = (item: any) => (
-					<Textarea ref={(ref: any) => { this.ref = ref; }} id="input" {...item} />
+					<span dangerouslySetInnerHTML={{ __html: value }} />
 				);
 			} else 
-			if (relation.type == I.RelationType.Date) {
+			if (relation.format == I.RelationType.Date) {
+				let mask = [ '99.99.9999' ];
+				let placeHolder = [ 'dd.mm.yyyy' ];
+				if (relation.includeTime) {
+					mask.push('99:99');
+					placeHolder.push('hh:mm');
+				};
 				EditorComponent = (item: any) => (
-					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} mask="99.99.9999" maskOptions={{ alias: 'datetime', inputFormat: 'dd.mm.yyyy' }} placeHolder="dd.mm.yyyy" onKeyUp={this.onKeyUpDate} />
+					<Input 
+						ref={(ref: any) => { this.ref = ref; }} 
+						id="input" 
+						{...item} 
+						mask={mask.join(' ')} 
+						placeHolder={placeHolder.join(' ')} 
+						onKeyUp={this.onKeyUpDate} 
+					/>
 				);
 			} else {
 				EditorComponent = (item: any) => (
@@ -70,24 +89,29 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
-			if (relation.type == I.RelationType.Description) {
-				value = String(value || '').split('\n')[0];
-			};
-			if (relation.type == I.RelationType.Date) {
-				value = value ? Util.date('M d Y', value) : '';
-			};
+			value = value.replace(/\n/g, '<br/>');
+
 			Name = (item: any) => (
-				<div className="name">{item.name}</div>
+				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
 			);
+
+			if (relation.format == I.RelationType.Date) {
+				let format = [ DataUtil.dateFormat(relation.dateFormat) ];
+				if (relation.includeTime) {
+					format.push(DataUtil.timeFormat(relation.timeFormat));
+				};
+
+				value = value ? Util.date(format.join(' '), Number(value)) : '';
+			};
 		};
 
-		let content: any = <Name name={value} />;
+		let content: any = null;
 
-		if (relation.id == 'name') {
+		if (relation.relationKey == 'name') {
 			let cn = 'c20';
 			let size = 18;
 
-			switch (view.type) {
+			switch (viewType) {
 				case I.ViewType.List:
 					cn = 'c24';
 					break;
@@ -99,17 +123,31 @@ class CellText extends React.Component<Props, State> {
 					break;
 			};
 
-			if (view.type != I.ViewType.Grid) {
+			if (viewType != I.ViewType.Grid) {
 				value = value || Constant.default.name;
 			};
 
 			content = (
 				<React.Fragment>
-					<Smile id={[ relation.id, data.id ].join('-')} icon={data.iconEmoji} hash={data.iconImage} className={cn} size={size} canEdit={!readOnly} offsetY={4} onSelect={this.onSelect} onUpload={this.onUpload} />
+					<IconObject 
+						id={[ relation.relationKey, record.id ].join('-')} 
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload}
+						className={cn} 
+						size={size} 
+						canEdit={canEdit} 
+						offsetY={4} 
+						object={record} 
+					/>
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { onOpen(e, data); }} />
+					<Icon className="expand" onClick={(e: any) => { DataUtil.dataviewRelationOpen(e, record, type); }} />
 				</React.Fragment>
 			);
+		} else 
+		if (editing) {
+			content = <Name name={value} />;
+		} else {
+			content = <span className="name" dangerouslySetInnerHTML={{ __html: value }} />;
 		};
 
 		return content;
@@ -117,35 +155,42 @@ class CellText extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { editing } = this.state;
-		const { id, relation, index } = this.props;
-		const cellId = DataUtil.cellId('cell', relation.id, id);
-		const cell = $('#' + cellId);
-		const data = this.props.data[index];
+		const { id, relation, index, getRecord } = this.props;
+		const cell = $('#' + id);
+		const body = $('body');
+		const record = getRecord(index);
 
 		if (editing) {
-			let value = String(data[relation.id] || '');
-			if (relation.type == I.RelationType.Date) {
-				value = value ? Util.date('d.m.Y', Number(value)) : '';
+			let value = String(record[relation.relationKey] || '');
+			let input = cell.find('#input');
+
+			if (relation.format == I.RelationType.Date) {
+				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
+				value = value ? Util.date(format.join(' ').trim(), Number(value)) : '';
 			};
-			let length = value.length;
+
+			if (this.ref) {
+				this.ref.focus();
+				this.ref.setValue(value);
+			};
+
+			if (input.length) {
+				let length = value.length;
+				input.get(0).setSelectionRange(length, length);
+			};
 
 			cell.addClass('isEditing');
-			this.ref.focus();
-			this.ref.setValue(value);
-			cell.find('#input').get(0).setSelectionRange(length, length);
+			body.addClass('over');
 		} else {
 			cell.removeClass('isEditing');
-			window.clearTimeout(this.timeoutMenu);
-			commonStore.menuClose('select');
+			body.removeClass('over');
 		};
-
-		this.resize();
 	};
 
 	setEditing (v: boolean) {
-		const { view, readOnly } = this.props;
+		const { viewType, readOnly } = this.props;
 		const { editing } = this.state;
-		const canEdit = !readOnly && (view.type == I.ViewType.Grid);
+		const canEdit = !readOnly && (viewType == I.ViewType.Grid);
 
 		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });
@@ -153,40 +198,40 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any, value: string) {
-		this.resize();
 	};
 
 	onKeyUp (e: any, value: string) {
 		const { relation, onChange } = this.props;
-		this.resize();
 
-		if (relation.type != I.RelationType.Description) {
-			keyboard.shortcut('enter', e, (pressed: string) => {
-				e.preventDefault();
-
-				commonStore.menuCloseAll();
-				this.setState({ editing: false });
-
-				if (onChange) {
-					onChange(value);
-				};
-			});
+		if (relation.format == I.RelationType.Description) {
+			return;
 		};
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+
+			commonStore.menuCloseAll();
+			this.setState({ editing: false });
+
+			if (onChange) {
+				onChange(value);
+			};
+		});
 	};
 
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
 		const { menus } = commonStore;
-		const menu = menus.find((item: I.Popup) => { return item.id == 'dataviewCalendar'; });
+		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 
-		value = this.parseDate(String(value || '').replace(/_/g, ''));
+		value = Util.parseDate(String(value || '').replace(/_/g, ''));
 		menu.param.data.value = value;
 
-		commonStore.menuUpdate('dataviewCalendar', menu.param);
+		commonStore.menuUpdate(MENU_ID, menu.param);
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
-			commonStore.menuClose('dataviewCalendar');
+			commonStore.menuClose(MENU_ID);
 
 			if (onChange) {
 				onChange(value);
@@ -202,12 +247,12 @@ class CellText extends React.Component<Props, State> {
 		let { relation, onChange } = this.props;
 		let value = this.ref.getValue();
 
-		if (value && (relation.type == I.RelationType.Date)) {
-			value = this.parseDate(value);
+		if (value && (relation.format == I.RelationType.Date)) {
+			value = Util.parseDate(value);
 		};
 
 		keyboard.setFocus(false);
-		if (!commonStore.menuIsOpen('dataviewCalendar')) {
+		if (!commonStore.menuIsOpen(MENU_ID)) {
 			this.setState({ editing: false });
 		};
 
@@ -216,58 +261,25 @@ class CellText extends React.Component<Props, State> {
 		};
 	};
 
-	parseDate (value: any) {
-		let [ date, time ] = String(value || '').split(' ');
-		let [ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
-		let [ h, i, s ] = String(time || '').split(':').map((it: any) => { return Number(it) || 0; });
-
-		m = Math.min(12, Math.max(1, m));
-		let maxDays = Constant.monthDays[m];
-		if ((m == 2) && (y % 4 === 0)) {
-			maxDays = 29;
-		};
-		d = Math.min(maxDays, Math.max(1, d));
-		h = Math.min(24, Math.max(0, h));
-		i = Math.min(60, Math.max(0, i));
-		s = Math.min(60, Math.max(0, s));
-
-		return Util.timestamp(y, m, d, h, i, s);
-	};
-
 	onSelect (icon: string) {
-		const { index } = this.props;
-		const data = this.props.data[index];
+		const { index, getRecord } = this.props;
+		const record = getRecord(index);
 
-		DataUtil.pageSetIcon(data.id, icon, '');
+		DataUtil.pageSetIcon(record.id, icon, '');
 	};
 
 	onUpload (hash: string) {
-		const { index } = this.props;
-		const data = this.props.data[index];
+		const { index, getRecord } = this.props;
+		const record = getRecord(index);
 
-		DataUtil.pageSetIcon(data.id, '', hash);
+		DataUtil.pageSetIcon(record.id, '', hash);
 	};
 
-	resize () {
-		const { id, relation } = this.props;
-		const { editing } = this.state;
-		const cellId = DataUtil.cellId('cell', relation.id, id);
-		const cell = $('#' + cellId);
-
-		raf(() => {
-			if (editing) {
-				if (relation.type == I.RelationType.Description) {
-					const input = cell.find('#input');
-					input.css({ height: 'auto', overflow: 'visible' });
-
-					const sh = input.get(0).scrollHeight;
-					input.css({ height: Math.min(160, sh), overflow: 'auto' });
-					input.scrollTop(sh);
-				};
-			};
-		});
+	canEdit () {
+		const { relation, readOnly, viewType } = this.props;
+		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
-	
+
 };
 
 export default CellText;

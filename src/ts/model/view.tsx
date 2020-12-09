@@ -1,16 +1,16 @@
-import { I } from 'ts/lib';
-import { observable } from 'mobx';
+import { I, Util } from 'ts/lib';
+import { decorate, observable, intercept } from 'mobx';
 
 const Constant = require('json/constant.json');
 
 class View implements I.View {
 	
-	@observable id: string = '';
-	@observable name: string = '';
-	@observable type: I.ViewType = I.ViewType.Grid;
-	@observable sorts: I.Sort[] = [];
-	@observable filters: I.Filter[] = [];
-	@observable relations: any[] = [];
+	id: string = '';
+	name: string = '';
+	type: I.ViewType = I.ViewType.Grid;
+	sorts: I.Sort[] = [];
+	filters: I.Filter[] = [];
+	relations: any[] = [];
 	
 	constructor (props: I.View) {
 		let self = this;
@@ -22,41 +22,108 @@ class View implements I.View {
 		self.relations = (props.relations || []).map((it: I.ViewRelation) => { return new ViewRelation(it); });
 		self.filters = (props.filters || []).map((it: I.Filter) => { return new Filter(it); });
 		self.sorts = (props.sorts || []).map((it: I.Sort) => { return new Sort(it); });
+
+		decorate(self, {
+			id: observable,
+			name: observable,
+			type: observable,
+			sorts: observable,
+			filters: observable,
+			relations: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
 
-class ViewRelation implements I.ViewRelation {
+class Relation implements I.Relation {
 
-	id: string = '';
+	relationKey: string = '';
 	name: string = '';
-	type: I.RelationType = I.RelationType.None;
+	dataSource: string = '';
+	objectTypes: string[] = [];
+	format: I.RelationType = I.RelationType.Description;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
-	isVisible: boolean = false;
-	order: number = 0;
-	width: number = 0;
-	options: any = {};
+	isMultiple: boolean = false;
+	selectDict: any[] = [] as any[];
 
 	constructor (props: I.ViewRelation) {
 		let self = this;
-		
-		self.id = String(props.id || '');
+
+		self.relationKey = String(props.relationKey || '');
 		self.name = String(props.name || '');
-		self.type = props.type || I.RelationType.None;
+		self.dataSource = String(props.dataSource || '');
+		self.objectTypes = props.objectTypes || [];
+		self.format = props.format || I.RelationType.Description;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
-		self.isVisible = Boolean(props.isVisible);
-		self.order = Number(props.order) || 0;
+		self.isMultiple = Boolean(props.isMultiple);
+		self.selectDict = (props.selectDict || []).map((it: any) => { return new SelectOption(it); });
+	};
+
+};
+
+class SelectOption implements I.SelectOption {
+	
+	id: string = '';
+	text: string = '';
+	color: string = '';
+
+	constructor (props: I.SelectOption) {
+		let self = this;
+
+		self.id = String(props.id || '');
+		self.text = String(props.text || '');
+		self.color = String(props.color || '');
+
+		decorate(self, {
+			text: observable,
+			color: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+	};
+};
+
+class ViewRelation extends Relation implements I.ViewRelation {
+
+	width: number = 0;
+	isVisible: boolean = false;
+	includeTime: boolean = false;
+	dateFormat: I.DateFormat = I.DateFormat.MonthAbbrBeforeDay;
+	timeFormat: I.TimeFormat = I.TimeFormat.H12;
+
+	constructor (props: I.ViewRelation) {
+		super(props);
+
+		let self = this;
+
 		self.width = Number(props.width) || 0;
-		self.options = props.options || {};
+		self.isVisible = Boolean(props.isVisible);
+		self.includeTime = Boolean(props.includeTime);
+		self.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
+		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
+
+		decorate(self, {
+			name: observable,
+			selectDict: observable,
+			width: observable,
+			isVisible: observable,
+			includeTime: observable, 
+			dateFormat: observable,
+			timeFormat: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
 
 class Filter implements I.Filter {
 
-	relationId: string = '';
+	relationKey: string = '';
 	operator: I.FilterOperator = I.FilterOperator.And;
 	condition: I.FilterCondition = I.FilterCondition.Equal;
 	value: any = {};
@@ -64,30 +131,48 @@ class Filter implements I.Filter {
 	constructor (props: I.Filter) {
 		let self = this;
 		
-		self.relationId = String(props.relationId || '');
+		self.relationKey = String(props.relationKey || '');
 		self.operator = Number(props.operator) || I.FilterOperator.And;
 		self.condition = Number(props.condition) || I.FilterCondition.Equal;
 		self.value = props.value || '';
+
+		decorate(self, {
+			relationKey: observable,
+			operator: observable,
+			condition: observable,
+			value: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
 
 class Sort implements I.Sort {
 
-	relationId: string = '';
+	relationKey: string = '';
 	type: I.SortType = I.SortType.Asc;
 
 	constructor (props: I.Sort) {
 		let self = this;
 		
-		self.relationId = String(props.relationId || '');
+		self.relationKey = String(props.relationKey || '');
 		self.type = Number(props.type) || I.SortType.Asc;
+
+		decorate(self, {
+			relationKey: observable,
+			type: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
 
 export {
 	View,
+	Relation,
+	SelectOption,
 	ViewRelation,
 	Filter,
 	Sort,

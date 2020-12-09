@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { Icon, MenuItemVertical } from 'ts/component';
+import { I, Util, translate } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
@@ -28,7 +28,8 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { getData, block, view, readOnly } = this.props;
+		const { getData, block, getView, readOnly, onRowAdd } = this.props;
+		const view = getView();
 		const { content } = block;
 		const { views } = content;
 		const { viewId } = dbStore.getMeta(block.id);
@@ -38,25 +39,11 @@ class Controls extends React.Component<Props, State> {
 		const sortCnt = view.sorts.length;
 
 		const buttons: any[] = [
-			{ 
-				id: 'relation', name: 'Relations', menu: 'dataviewRelationList', 
-				active: commonStore.menuIsOpen('dataviewRelationList') 
-			},
-			{ 
-				id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0,
-				active: commonStore.menuIsOpen('dataviewFilter') 
-			},
-			{ 
-				id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0,
-				active: commonStore.menuIsOpen('dataviewSort') 
-			},
-			{ 
-				id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList', 
-				active: commonStore.menuIsOpen('dataviewViewList') 
-			},
-			{ 
-				id: 'more', menu: 'dataviewViewEdit', active: commonStore.menuIsOpen('dataviewViewEdit') 
-			},
+			{ id: 'relation', name: 'Relations', menu: 'dataviewRelationList' },
+			{ id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0 },
+			{ id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0 },
+			{ id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList' },
+			{ id: 'more', menu: 'dataviewViewEdit' },
 		];
 
 		const ViewItem = (item: any) => (
@@ -66,22 +53,18 @@ class Controls extends React.Component<Props, State> {
 		);
 		
 		const ButtonItem = (item: any) => {
-			let cn = [ item.id, String(item.className || '') ];
-			
-			if (item.active) {
-				cn.push('active');
-			};
-
-			if (item.on) {
-				cn.push('on');
-			};
-			
+			let icn = [ item.id, String(item.className || '') ];
+			let cn = [ 'item', (item.on ? 'on' : '') ].concat(icn);
 			return (
-				<div id={'button-' + item.id} className={[ 'item' ].concat(cn).join(' ')} onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}>
-					<Icon className={cn.join(' ')} />
-					{item.name ? <div className="name">{item.name}</div> : ''}
-					{item.arrow ? <Icon className="arrow" /> : ''}
-				</div>
+				<MenuItemVertical 
+					id={'button-' + item.id} 
+					menuId={item.menu}
+					name={item.name}
+					className={cn.join(' ')} 
+					icon={icn.join(' ')}
+					arrow={item.arrow}
+					onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}
+				/>
 			);
 		};
 		
@@ -103,9 +86,9 @@ class Controls extends React.Component<Props, State> {
 				<div className="buttons">
 					<div className="side left">
 						{!readOnly ? (
-							<div className="item">
+							<div className="item" onClick={onRowAdd}>
 								<Icon className="plus" />
-								<div className="name">New</div>
+								<div className="name">{translate('blockDataviewNew')}</div>
 							</div>
 						) : ''}
 					</div>
@@ -121,11 +104,10 @@ class Controls extends React.Component<Props, State> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
-		const { rootId, block, view, readOnly, getData } = this.props;
-		const data = dbStore.getData(block.id);
+		const { rootId, block, readOnly, getData, getView } = this.props;
 
 		commonStore.menuOpen(menu, { 
-			element: '#button-' + id,
+			element: '#item-button-' + id,
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 4,
@@ -135,19 +117,18 @@ class Controls extends React.Component<Props, State> {
 				readOnly: readOnly,
 				rootId: rootId,
 				blockId: block.id, 
-				view: view,
-				data: data,
-				getData: getData
+				getData: getData,
+				getView: getView,
 			},
 		});
 	};
 
 	onViewAdd (e: any) {
-		const { rootId, block, getData } = this.props;
+		const { rootId, block, getData, getView } = this.props;
 		const { content } = block;
 		const { views } = content;
 
-		C.BlockCreateDataviewView(rootId, block.id, { name: Constant.default.viewName }, (message: any) => {
+		C.BlockDataviewViewCreate(rootId, block.id, { name: Constant.default.viewName }, (message: any) => {
 			getData(message.viewId, 0);
 
 			const view = views.find((item: any) => { return item.id == message.viewId; });
@@ -166,7 +147,8 @@ class Controls extends React.Component<Props, State> {
 					rootId: rootId,
 					blockId: block.id,
 					view: view,
-					getData: getData
+					getData: getData,
+					getView: getView,
 				},
 			});
 		});

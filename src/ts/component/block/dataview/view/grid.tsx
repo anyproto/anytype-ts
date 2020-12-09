@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { I, C, DataUtil, translate } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import arrayMove from 'array-move';
 
-import Cell from '../cell';
+import HeadRow from './grid/head/row';
+import BodyRow from './grid/body/row';
 
 interface Props extends I.ViewComponent {};
 
@@ -15,110 +17,55 @@ const Constant = require('json/constant.json');
 @observer
 class ViewGrid extends React.Component<Props, {}> {
 
-	cellRefs: Map<string, any> = new Map();
-
 	constructor (props: any) {
 		super (props);
 
 		this.onRowOver = this.onRowOver.bind(this);
-		this.onRowAdd = this.onRowAdd.bind(this);
-		this.onCellClick = this.onCellClick.bind(this);
+		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
 	render () {
-		const { rootId, block, view, onOpen, getData, readOnly } = this.props;
+		const { block, getData, getView, readOnly, onRowAdd, onCellClick, onRef } = this.props;
+		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);
 
-		const CellHead = (item: any) => {
-			const { relation } = item;
-			const id = DataUtil.cellId('head', relation.id, '');
-
-			return (
-				<th id={id} className={'head c-' + relation.type} style={{ width: relation.width }}>
-					<div className="cellContent">
-						<Icon className={'relation c-' + relation.type} />
-						<div className="name">{relation.name}</div>
-						<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, relation.id); }}>
-							<div className="line" />
-						</div>
-					</div>
-				</th>
+		let pager = null;
+		if (total && data.length) {
+			pager = (
+				<Pager 
+					offset={offset} 
+					limit={Constant.limit.dataview.records} 
+					total={total} 
+					onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
+				/>
 			);
 		};
-		
-		const CellBody = (item: any) => {
-			let { relation, index } = item;
-			let id = DataUtil.cellId('cell', relation.id, index);
-			let cn = [ 'cell', 'c-' + relation.type, (!readOnly ? 'canEdit' : '') ];
-
-			if (item.relation.id == 'name') {
-				cn.push('isName');
-			};
-
-			return (
-				<td id={id} className={cn.join(' ')} onClick={(e: any) => { this.onCellClick(e, item); }}>
-					<Cell 
-						ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
-						{...item} 
-						rootId={rootId}
-						block={block}
-						view={view} 
-						id={index} 
-						readOnly={readOnly}
-						onOpen={onOpen}
-					/>
-				</td>
-			);
-		};
-		
-		const RowHead = (item: any) => (
-			<tr className="row">
-				{relations.map((relation: any, i: number) => (
-					<CellHead key={'grid-head-' + relation.id} relation={relation} />
-				))}
-				<th className="head last">
-					{!readOnly ? <Icon className="plus" /> : ''}
-				</th>
-			</tr>
-		);
-		
-		const RowBody = (item: any) => (
-			<tr id={'row-' + item.index} onMouseOver={(e: any) => { this.onRowOver(item.index); }} className="row">
-				{relations.map((relation: any, i: number) => (
-					<CellBody key={'grid-cell-' + relation.id} index={item.index} relation={relation} data={data} />
-				))}
-				<td className="cell last">&nbsp;</td>
-			</tr>
-		);
-
-		const pager = (
-			<Pager 
-				offset={offset} 
-				limit={Constant.limit.dataview.records} 
-				total={total} 
-				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
-			/>
-		);
 		
 		return (
 			<div className="wrap">
 				<div className="scroll">
 					<table className="viewItem viewGrid">
 						<thead>
-							<RowHead />
+							<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
 						</thead>
 						<tbody>
 							{data.map((item: any, i: number) => (
-								<RowBody key={'grid-row-' + i} index={i} />
+								<BodyRow 
+									key={'grid-row-' + view.id + i} 
+									{...this.props} 
+									index={i} 
+									onRowOver={this.onRowOver} 
+								/>
 							))}
 							{!readOnly ? (
 								<tr>
-									<td className="cell add" colSpan={view.relations.length + 1} onClick={this.onRowAdd}>
+									<td className="cell add" colSpan={relations.length + 1} onClick={onRowAdd}>
 										<Icon className="plus" />
-										<div className="name">New</div>
+										<div className="name">{translate('blockDataviewNew')}</div>
 									</td>
 								</tr>
 							) : null}
@@ -126,7 +73,7 @@ class ViewGrid extends React.Component<Props, {}> {
 					</table>
 				</div>
 
-				{total ? pager : ''}
+				{pager}
 			</div>
 		);
 	};
@@ -140,6 +87,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		const win = $(window);
 
 		this.bind();
+		this.resize();
+
 		win.trigger('resize.editor');
 	};
 
@@ -165,7 +114,8 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { view } = this.props;
+		const { getView } = this.props;
+		const view = getView();
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
@@ -178,6 +128,9 @@ class ViewGrid extends React.Component<Props, {}> {
 		let width = 0;
 
 		for (let relation of view.relations) {
+			if (!relation.isVisible) {
+				continue;
+			};
 			width += relation.width;
 		};
 
@@ -190,6 +143,36 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
+		
+		this.resizeLast();
+	};
+
+	resizeLast () {
+		const { getView } = this.props;
+		const view = getView();
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const lastHead = node.find('.head.last');
+		const lastCell = node.find('.cell.last');
+		const ww = win.width();
+		const mw = ww - 192;
+		
+		let width = 0;
+		let lw = 48;
+
+		for (let relation of view.relations) {
+			if (!relation.isVisible) {
+				continue;
+			};
+			width += relation.width;
+		};
+
+		if (width < mw) {
+			lw = Math.max(48, mw - width);
+		};
+
+		lastHead.css({ width: lw });
+		lastCell.css({ width: lw });
 	};
 
 	onResizeStart (e: any, id: string) {
@@ -197,6 +180,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const win = $(window);
+
+		$('body').addClass('colResize');
 		win.unbind('mousemove.cell mouseup.cell');
 		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, id); });
 		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, id); });
@@ -206,11 +191,12 @@ class ViewGrid extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { view } = this.props;
+		const { getView } = this.props;
+		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#' + DataUtil.cellId('head', id, ''));
 		const offset = el.offset();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.id == id; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == id; });
 
 		let width = e.pageX - offset.left;
 		width = Math.max(Constant.size.dataview.cell.min, width); 
@@ -218,13 +204,19 @@ class ViewGrid extends React.Component<Props, {}> {
 		
 		view.relations[idx].width = width;
 		el.css({ width: width });
+		node.find('.resizable').trigger('resize');
+
+		this.resizeLast();
 	};
 
 	onResizeEnd (e: any, id: string) {
-		const { rootId, block, view } = this.props;
+		const { rootId, block, getView } = this.props;
+		const view = getView();
 
 		$(window).unbind('mousemove.cell mouseup.cell');
-		C.BlockSetDataviewView(rootId, block.id, view.id, view);
+		$('body').removeClass('colResize');
+
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 	};
 
 	onRowOver (id: number) {
@@ -234,31 +226,36 @@ class ViewGrid extends React.Component<Props, {}> {
 		node.find('#row-' + id).addClass('active');
 	};
 
-	onRowAdd (e: any) {
-		const { rootId, block } = this.props;
+	onCellAdd (e: any) {
+		const { rootId, block, readOnly, getData, getView } = this.props;
 
-		C.BlockCreateDataviewRecord(rootId, block.id, {}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			dbStore.addRecord(block.id, message.record);
+		commonStore.menuOpen('dataviewRelationEdit', { 
+			element: '#cell-add',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				readOnly: readOnly,
+				rootId: rootId,
+				blockId: block.id, 
+				getData: getData,
+				getView: getView,
+			},
 		});
 	};
 
-	onCellClick (e: any, item: any) {
-		const { readOnly } = this.props;
-		const { index, relation } = item;
+	onSortEnd (result: any) {
+		const { rootId, block, getView } = this.props;
+		const { oldIndex, newIndex } = result;
+		const view = getView();
+		const filtered = view.relations.filter((it: any) => { return it.isVisible; });
+		const oldIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == filtered[oldIndex].relationKey; });
+		const newIdx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == filtered[newIndex].relationKey; });
 		
-		if (readOnly || relation.isReadOnly) {
-			return;
-		};
-
-		const id = DataUtil.cellId('cell', relation.id, index);
-		const ref = this.cellRefs.get(id);
-		
-		if (ref) {
-			ref.onClick(e);
-		};
+		view.relations = arrayMove(view.relations, oldIdx, newIdx);
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 	};
 	
 };

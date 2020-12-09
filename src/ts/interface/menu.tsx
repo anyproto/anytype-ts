@@ -6,8 +6,8 @@ export interface MenuParam {
 	type: MenuType;
 	vertical: MenuDirection;
 	horizontal: MenuDirection;
-	forceX?: number;
-	forceY?: number;
+	fixedX?: number;
+	fixedY?: number;
 	offsetX: number;
 	offsetY: number;
 	width?: number;
@@ -15,6 +15,8 @@ export interface MenuParam {
 	isSub?: boolean;
 	passThrough?: boolean;
 	className?: string;
+	noAnimation?: boolean;
+	noFlip?: boolean;
 	onClose?(): void;
 	onOpen?(): void;
 };
@@ -38,6 +40,7 @@ export interface MenuItem {
 	arrow?: boolean;
 	className?: string;
 	isActive?: boolean;
+	menuId?: string;
 	withSmile?: boolean;
 	withDescription?: boolean;
 	onClick?(e: any): void;

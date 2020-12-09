@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, IconUser, Smile } from 'ts/component';
+import { Icon, IconObject } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, Util} from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I } from 'ts/lib';
 
 interface Props {
 	getList?(): void;
@@ -54,7 +53,7 @@ class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
-			let icon = <Smile className="c48" icon={iconEmoji} hash={iconImage} size={24} />;
+			let icon = <IconObject className="c48" object={details} size={24} />;
 			let showMenu = true;
 
 			if (content.style == I.LinkStyle.Dataview) {
@@ -89,7 +88,7 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const ItemAdd = SortableElement((item: any) => {
 			return (
-				<div className="item add" onClick={onAdd}>
+				<div id="button-add" className="item add" onClick={onAdd}>
 					<Icon />
 				</div>
 			);
@@ -112,7 +111,7 @@ class ListIndex extends React.Component<Props, {}> {
 				transitionDuration={150}
 				distance={10}
 				list={children} 
-				helperClass="dragging"
+				helperClass="isDragging"
 				getContainer={helperContainer}
 				helperContainer={helperContainer} 
 				onSortEnd={this.onSortEnd} 

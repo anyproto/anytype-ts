@@ -369,10 +369,11 @@ class BlockStore {
 
 	getDetails (rootId: string, id: string): any {
 		const map = this.getDetailsMap(rootId);
-		const item = Util.objectCopy(map.get(id) || { _detailsEmpty_: true });
-
-		item.name = String(item.name || Constant.default.name || '');
-		return item;
+		const item = map.get(id) || { _detailsEmpty_: true };
+		return {
+			...item,
+			name: String(item.name || Constant.default.name || ''),
+		};
 	};
 
 	blockType (v: number): I.BlockType {
@@ -387,6 +388,7 @@ class BlockStore {
 		if (v == V.BOOKMARK)	 t = I.BlockType.Bookmark;
 		if (v == V.LINK)		 t = I.BlockType.Link;
 		if (v == V.DATAVIEW)	 t = I.BlockType.Dataview;
+		if (v == V.RELATION)	 t = I.BlockType.Relation;
 
 		return t;
 	};

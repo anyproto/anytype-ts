@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { I, Util } from 'ts/lib';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'ts/store';
 import Column from './board/column';
 
 interface Props extends I.ViewComponent {};
 
-const GROUP = 'isArchived';
+const GROUP = 'name';
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -24,8 +24,9 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, view, readOnly } = this.props;
-		const group = view.relations.find((item: I.Relation) => { return item.id == GROUP; });
+		const { block, readOnly, getView } = this.props;
+		const view = getView();
+		const group = view.relations.find((item: I.Relation) => { return item.relationKey == GROUP; });
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
 		if (!group) {
@@ -45,7 +46,7 @@ class ViewBoard extends React.Component<Props, {}> {
 								{(provided: any) => (
 									<div className="columns" {...provided.droppableProps} ref={provided.innerRef}>
 										{columns.map((item: any, i: number) => (
-											<Column key={i} {...this.props} {...item} data={data} idx={i} groupId={GROUP} onAdd={this.onAdd} />
+											<Column key={i} {...this.props} {...item} columnId={i} groupId={GROUP} onAdd={this.onAdd} />
 										))}
 										{provided.placeholder}
 									</div>
@@ -63,8 +64,8 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		const win = $(window);
-		win.trigger('resize.editor');
+		this.resize();
+		$(window).trigger('resize.editor');
 	};
 
 	onAdd (column: number) {
@@ -81,7 +82,7 @@ class ViewBoard extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
-		const columns = this.getColumns();
+		const columns = node.find('.column');
 		const ww = win.width();
 		const mw = ww - 192;
 		const size = Constant.size.dataview.board;
@@ -97,29 +98,29 @@ class ViewBoard extends React.Component<Props, {}> {
 			margin = (ww - mw) / 2; 
 		};
 
+		columns.css({  });
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		viewItem.css({ width: vw });
 	};
 	
 	getColumns (): any[] {
 		const { block } = this.props;
-		const data = Util.objectCopy(dbStore.getData(block.id));
+		const data = dbStore.getData(block.id);
 
 		let columns: any[] = [];
-		
 		for (let i in data) {
 			let item = data[i];
-			let col = columns.find((col) => { return col.value == item[GROUP]; });
+			let value = item[GROUP] || '';
+			let col = columns.find((col) => { return col.value == value; });
 			
 			item.index = i;
-			
+
 			if (!col) {
-				col = { value: item[GROUP], list: [] }
+				col = { value: value, list: [] }
 				columns.push(col);
 			};
 			col.list.push(item);
 		};
-
 		return columns;
 	};
 	

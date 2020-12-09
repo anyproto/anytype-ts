@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from 'ts/component';
-import { I, Util, keyboard } from 'ts/lib';
+import { I, Util, keyboard, translate } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
@@ -32,9 +32,9 @@ class MenuSearch extends React.Component<Props, {}> {
 		
 		return (
 			<div className="flex">
-				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeHolder="Search..." onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
+				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeHolder={translate('commonSearch')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
 				<div className="buttons">
-					<div className="btn" onClick={this.onSearch}>Search</div>
+					<div className="btn" onClick={this.onSearch}>{translate('commonSearchButton')}</div>
 				</div>
 			</div>
 		);

@@ -1,0 +1,28 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockDataview {
+		.viewItem.viewGallery, 
+		.viewItem.viewBoard {
+			.card { white-space: normal; }
+			.card {
+				.cellContent { margin-bottom: 6px; cursor: default !important; }
+				.cellContent:last-child { margin-bottom: 0px; }
+				
+				.cellContent.c-date { color: #6c6a5f; }
+
+				.cellContent.c-title { @include text-paragraph; margin-bottom: 6px; }
+				.cellContent.c-title {
+					.smile { margin-bottom: 10px; }
+					.name { height: 24px; width: 100% !important; }
+				}
+
+				.cellContent.c-select { margin-bottom: 0px; }
+
+				.cellContent.c-file {
+					.inputWithFile { display: none; }
+				}
+			}
+		}
+	}
+}

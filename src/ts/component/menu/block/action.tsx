@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Input, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus, Action } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, focus, Action, translate } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -12,7 +12,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { ipcRenderer } = window.require('electron');
 
 @observer
 class MenuBlockAction extends React.Component<Props, State> {
@@ -68,10 +67,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return (
 			<div>
 				<div className="filter">
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				</div>
 				
-				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
+				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
 				{sections.map((item: any, i: number) => (
 					<Section key={i} {...item} />
 				))}
@@ -114,10 +113,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	onFilterFocus (e: any) {
-		commonStore.menuClose('blockStyle');
-		commonStore.menuClose('blockColor');
-		commonStore.menuClose('blockBackground');
-		commonStore.menuClose('blockAlign');
+		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
 		
 		this.focus = true;
 		this.props.setActiveItem();
@@ -129,7 +125,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	onFilterChange (e: any, v: string) {
 		this.n = 0;
-		this.setState({ filter: String(v || '').replace(/[\/\\\*]/g, '') });
+		this.setState({ filter: v });
 	};
 	
 	rebind () {
@@ -420,10 +416,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		commonStore.menuClose('blockStyle');
-		commonStore.menuClose('blockColor');
-		commonStore.menuClose('blockBackground');
-		commonStore.menuClose('blockAlign');
+		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
 		
 		if (!item.arrow) {
 			return;

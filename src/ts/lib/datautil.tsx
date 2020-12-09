@@ -1,8 +1,9 @@
-import { I, C, keyboard, Storage, crumbs, translate, Util } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util } from 'ts/lib';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
+const { ipcRenderer } = window.require('electron');
 
 class DataUtil {
 
@@ -90,6 +91,49 @@ class DataUtil {
 		return c;
 	};
 
+	relationClass (v: I.RelationType): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.RelationType.Description: c = 'description'; break;
+			case I.RelationType.Title:		 c = 'title'; break;
+			case I.RelationType.Number:		 c = 'number'; break;
+			case I.RelationType.Date:		 c = 'date'; break;
+			case I.RelationType.Select:		 c = 'select'; break;
+			case I.RelationType.File:		 c = 'file'; break;
+			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
+			case I.RelationType.Icon:		 c = 'icon'; break;
+			case I.RelationType.Url:		 c = 'url'; break;
+			case I.RelationType.Email:		 c = 'email'; break;
+			case I.RelationType.Phone:		 c = 'phone'; break;
+			case I.RelationType.Object:		 c = 'object'; break;
+		};
+		return c;
+	};
+
+	dateFormat (v: I.DateFormat): string {
+		let f = '';
+		switch (v) {
+			default:
+			case I.DateFormat.MonthAbbrBeforeDay:	 f = 'M d, Y'; break;
+			case I.DateFormat.MonthAbbrAfterDay:	 f = 'd M, Y'; break;
+			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
+			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
+			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
+		};
+		return f;
+	};
+
+	timeFormat (v: I.TimeFormat): string {
+		let f = '';
+		switch (v) {
+			default:
+			case I.TimeFormat.H12:	 f = 'g:i A'; break;
+			case I.TimeFormat.H24:	 f = 'H:i'; break;
+		};
+		return f;
+	};
+
 	coverColors () {
 		return [
 			{ type: I.CoverType.Color, id: 'yellow' },
@@ -159,6 +203,10 @@ class DataUtil {
 			
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
+
+			C.ObjectTypeList((message: any) => {
+				dbStore.objectTypesSet(message.objectTypes);
+			});
 			
 			if (message.profileBlockId) {
 				blockStore.profileSet(message.profileBlockId);
@@ -168,9 +216,9 @@ class DataUtil {
 					};
 				});
 			};
-			
+
 			crumbs.init();
-			
+
 			C.BlockOpen(root, (message: any) => {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 					Util.onErrorUpdate();
@@ -312,7 +360,7 @@ class DataUtil {
 	menuMapperBlock (it: any) {
 		it.isBlock = true;
 		it.name = translate('blockName' + it.lang);
-		it.description = translate('blockDescription' + it.lang);
+		it.description = translate('blockText' + it.lang);
 		return it;
 	};
 	
@@ -349,6 +397,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
+
 			/*
 			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
 			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
@@ -356,6 +405,13 @@ class DataUtil {
 			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
 			{ id: 'contact', icon: 'contact', name: 'Contact', color: 'blue', isBlock: true },
 			*/
+		].map(this.menuMapperBlock);
+	};
+
+	menuGetBlockRelation () {
+		return [
+			{ type: I.BlockType.Relation, id: 'relation', icon: 'relation default', lang: 'Relation' },
+			{ type: I.BlockType.Relation, id: 'new-relation', icon: 'relation', lang: 'NewRelation' },
 		].map(this.menuMapperBlock);
 	};
 	
@@ -444,7 +500,7 @@ class DataUtil {
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
-		const reg = new RegExp(filter, 'gi');
+		const reg = new RegExp(Util.filterFix(filter), 'gi');
 		
 		sections = sections.filter((s: any) => {
 			if (s.name.match(reg)) {
@@ -499,9 +555,106 @@ class DataUtil {
 		return a.length > 1 ? a[a.length - 1] : '';
 	};
 
+	cellId (prefix: string, relationKey: string, id: any) {
+		return [ prefix, relationKey, id.toString() ].join('-');
+	};
 
-	cellId (prefix: string, relationId: string, id: any) {
-		return [ prefix, relationId, String(id || '') ].join('-');
+	viewGetRelations (blockId: string, view: I.View): I.ViewRelation[] {
+		if (!view) {
+			return [];
+		};
+
+		let relations = Util.objectCopy(dbStore.getRelations(blockId));
+		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
+
+		let order: any = {};
+		let o = 0;
+
+		for (let i = 0; i < view.relations.length; ++i) {
+			order[view.relations[i].relationKey] = o++;
+		};
+
+		for (let i = 0; i < relations.length; ++i) {
+			if (undefined === order[relations[i].relationKey]) {
+				order[relations[i].relationKey] = o++;
+			};
+		};
+
+		relations.sort((c1: any, c2: any) => {
+			let o1 = order[c1.relationKey];
+			let o2 = order[c2.relationKey];
+			if (o1 > o2) return 1;
+			if (o1 < o2) return -1;
+			return 0;
+		});
+
+		return relations.map((relation: any) => {
+			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
+			return new M.ViewRelation({
+				...vr,
+				...relation,
+				width: Number(vr.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
+			});
+		});
+	};
+
+	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View) {
+		relation = new M.Relation(relation);
+
+		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
+			if (message.error.code || !view) {
+				return;
+			};
+
+			relation.relationKey = message.relationKey;
+			relation.isVisible = true;
+
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+		});
+	};
+
+	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View) {
+		C.BlockDataviewRelationUpdate(rootId, blockId, relation.relationKey, new M.Relation(relation), (message: any) => {
+			if (message.error.code || !view) {
+				return;
+			};
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+		});
+	};
+
+	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View) {
+		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
+			if (message.error.code || !view) {
+				return;
+			};
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+		});
+	};
+
+	dataviewRelationOpen (e: any, data: any, type: string) {
+		e.stopPropagation();
+		e.preventDefault();
+
+		type = this.schemaField(type);
+
+		switch (type) {
+			default:
+				this.pageOpenPopup(data.id);
+				break;
+
+			case 'image':
+				commonStore.popupOpen('preview', {
+					data: {
+						type: I.FileType.Image,
+						url: commonStore.imageUrl(data.id, Constant.size.image),
+					}
+				});
+				break;
+
+			case 'file':
+				ipcRenderer.send('urlOpen', commonStore.fileUrl(data.id));
+				break;
+		};
 	};
 
 };

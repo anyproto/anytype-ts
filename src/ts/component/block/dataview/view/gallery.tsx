@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { Pager } from 'ts/component';
 import { dbStore } from 'ts/store';
 
-import Cell from '../cell';
+import Card from './gallery/card';
 
 interface Props extends I.ViewComponent {};
 
@@ -16,47 +16,32 @@ const Constant = require('json/constant.json');
 class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, view, readOnly, getData } = this.props;
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const { block, getData, getView } = this.props;
+		const view = getView();
 		const data = dbStore.getData(block.id);
 		const { offset, total } = dbStore.getMeta(block.id);
 		
-		const Card = (item: any) => (
-			<div className="card">
-				{relations.map((relation: any, i: number) => (
-					<Cell 
-						key={'gallery-cell-' + relation.id} 
-						id={item.index} 
-						rootId={rootId}
-						block={block}
-						view={view} 
-						relation={...relation} 
-						data={data} 
-						index={item.index}
-						readOnly={readOnly} 
-					/>
-				))}
-			</div>
-		);
-
-		const pager = (
-			<Pager 
-				offset={offset} 
-				limit={Constant.limit.dataview.records} 
-				total={total} 
-				onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
-			/>
-		);
+		let pager = null;
+		if (total && data.length) {
+			pager = (
+				<Pager 
+					offset={offset} 
+					limit={Constant.limit.dataview.records} 
+					total={total} 
+					onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
+				/>
+			);
+		};
 		
 		return (
 			<div className="wrap">
 				<div className="viewItem viewGallery">
 					{data.map((item: any, i: number) => (
-						<Card key={'gallery-card-' + i} index={i} {...item} />
+						<Card key={'gallery-card-' + i} {...this.props} index={i} />
 					))}
 				</div>
 
-				{total ? pager : ''}
+				{pager}
 			</div>
 		);
 	};
@@ -75,7 +60,8 @@ class ViewGallery extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const viewItem = node.find('.viewItem');
-		const cnt = Math.floor(node.width() / (size.card + size.margin));
+
+		const cnt = Math.floor((node.width() + size.margin) / (size.card + size.margin));
 		const width = cnt * (size.card + size.margin) - size.margin;
 		const cards = viewItem.find('.card');
 

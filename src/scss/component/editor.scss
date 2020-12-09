@@ -4,13 +4,12 @@
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
-	.editor { position: relative; }
 	.editor {
 		.icon.buttonAdd { 
 			width: 20px; height: 20px; position: absolute; z-index: 5; cursor: pointer; user-select: none;
-			background-image: url('~img/icon/block/add.svg'); opacity: 0;
-			transition: opacity 0.05s ease-in-out;
+			background-image: url('~img/icon/block/add.svg'); transition: none; display: none;
 		}
+		.icon.buttonAdd.show { display: block; }
 		
 		.blockLast { margin-left: -50px; }
 	}
@@ -58,10 +57,7 @@
 	.editorControls {
 		.btn.addIcon { display: none; }
 	}
-}
-
-.editorWrapper.withIcon.align0 {
-	.editorControls {
+	.editorControls.align0 {
 		.side.left { padding-left: 80px; }
 	}
 }

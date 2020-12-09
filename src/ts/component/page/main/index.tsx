@@ -56,7 +56,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
 						
 						<div className="rightMenu">
-							<Icon id="button-account" className={'profile ' + (commonStore.menuIsOpen('account') ? 'active' : '')} tooltip="Accounts" onClick={this.onAccount} />
+							<Icon id="button-account" menuId="account" className="profile" tooltip="Accounts" onClick={this.onAccount} />
 							<IconUser avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
@@ -134,16 +134,54 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
+		const { history } = this.props;
 		const { root } = blockStore;
-		const details = { 
-			iconEmoji: SmileUtil.random(), 
-			name: '',
+		const { config } = commonStore;
+
+		if (config.allowDataview) {
+			commonStore.menuOpen('select', { 
+				element: '#button-add',
+				type: I.MenuType.Vertical,
+				offsetX: 0,
+				offsetY: -40,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Center,
+				width: 176,
+				data: {
+					value: '',
+					options: [
+						{ id: 'link', icon: 'existing', name: 'Link to page' },
+						{ id: 'create', icon: 'create', name: 'New set' },
+					],
+					onSelect: (event: any, item: any) => {
+						if (item.id == 'link') {
+							commonStore.popupOpen('navigation', { 
+								preventResize: true,
+								data: { 
+									type: I.NavigationType.Link, 
+									rootId: root,
+									expanded: true,
+									skipId: root,
+									blockId: '',
+									position: I.BlockPosition.Bottom,
+								}, 
+							});
+						};
+
+						if (item.id == 'create') {
+							history.push('/main/set');
+						};
+					},
+				}
+			});
+		} else {
+			DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				DataUtil.pageOpen(message.targetId);
+			});
 		};
-		
-		DataUtil.pageCreate(e, root, '', details, I.BlockPosition.Bottom, (message: any) => {
-			DataUtil.pageOpen(message.targetId);
-			Util.scrollTopEnd();
-		});
 	};
 
 	onMore (e: any, item: any) {

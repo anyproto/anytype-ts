@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, C } from 'ts/lib';
-import { Icon, Input, Switch } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { I, C, DataUtil } from 'ts/lib';
+import { Icon, Input, Switch, MenuItemVertical } from 'ts/component';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -12,147 +12,320 @@ const Constant = require('json/constant.json');
 class MenuRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
+	format: I.RelationType = I.RelationType.Description;
+	objectTypes: string[] = [];
+	ref: any = null;
 	
 	constructor(props: any) {
 		super(props);
 		
-		this.onType = this.onType.bind(this);
+		this.onRelationType = this.onRelationType.bind(this);
+		this.onObjectType = this.onObjectType.bind(this);
 		this.onDateSettings = this.onDateSettings.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
+		this.onCopy = this.onCopy.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 	};
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { relationId, view } = data;
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == relationId; });
+		const relation = this.getRelation();
+		const { objectTypes } = dbStore;
 
-		let current = null;
-		let options = null;
-
-		console.log(relation);
+		let opts = null;
+		let ccn = [ 'item' ];
+		if (commonStore.menuIsOpen('dataviewRelationType')) {
+			ccn.push('active');
+		};
+		if (relation) {
+			ccn.push('disabled');
+		};
 
 		if (relation) {
-			current = (
-				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType} onMouseEnter={this.onType}>
-					<Icon className={'relation c-' + relation.type} />
-					<div className="name">{Constant.relationName[relation.type]}</div>
-					<Icon className="arrow" />
-				</div>
-			);
+			const isDate = relation.format == I.RelationType.Date;
+			const isObject = relation.format == I.RelationType.Object;
+			const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
+			const objectType = objectTypes.find((it: I.ObjectType) => { return it.url == url; });
 
-			if (relation.type == I.RelationType.Date) {
-				options = (
-					<React.Fragment>
-						<div className="line" />
-						<div className="item">
-							<Icon className="clock" />
-							<div className="name">Include time</div>
-							<Switch value={relation.options.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
-						</div>
+			opts = (
+				<React.Fragment>
+					{isDate ? (
+						<React.Fragment>
+							<div className="line" />
+							<div className="item">
+								<Icon className="clock" />
+								<div className="name">Include time</div>
+								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+							</div>
 
-						<div id="menu-date-settings" className="item" onClick={this.onDateSettings} onMouseEnter={this.onDateSettings}>
-							<Icon className="settings" />
-							<div className="name">Preferences</div>
-							<Icon className="arrow" />
-						</div>
-					</React.Fragment>
-				);
-			};
-		} else {
-			current = (
-				<div id="relation-type" className={'item ' + (commonStore.menuIsOpen('dataviewRelationType') ? 'active' : '')} onClick={this.onType}>
-					<div className="name">Select type</div>
-					<Icon className="arrow" />
-				</div>
+							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
+						</React.Fragment>
+					) : ''}
+
+					{isObject ? (
+						<React.Fragment>
+							<div className="line" />
+
+							<div className="sectionName">Object type</div>
+							<div id="item-object-type" className="item" onClick={this.onObjectType}>
+							</div>
+							<MenuItemVertical 
+								id="object-type" 
+								icon={objectType ? objectType.iconEmoji : ''} 
+								name={objectType ? objectType.name : 'Select object type'} 
+								withSmile={true}
+								onClick={this.onObjectType} 
+								arrow={true}
+							/>
+						</React.Fragment>
+					) : ''}
+				</React.Fragment>
 			);
 		};
-		
+
 		return (
-			<div>
+			<form onSubmit={this.onSubmit}>
+				<div className="sectionName">Relation name</div>
 				<div className="wrap">
-					<Input value={relation ? relation.name : ''} placeHolder="Relation name"  />
+					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
 				</div>
-				{current}
-				{options}
-				<div className="line" />
-				<div className="item">
-					<Icon className="copy" />
-					<div className="name">Duplicate</div>
-				</div>
-				<div className="item">
-					<Icon className="trash" />
-					<div className="name">Delete relation</div>
-				</div>
-			</div>
+				<div className="sectionName">Relation type</div>
+				<MenuItemVertical 
+					id="relation-type" 
+					icon={'relation c-' + DataUtil.relationClass(this.format)} 
+					name={Constant.relationName[this.format]} 
+					onClick={this.onRelationType} 
+					arrow={!relation}
+				/>
+				
+				{opts}
+				
+				{relation ? (
+					<React.Fragment>
+						<div className="line" />
+						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} />
+						<MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} />
+					</React.Fragment>
+				) : ''}
+			</form>
 		);
+	};
+
+	componentDidMount() {
+		const relation = this.getRelation();
+		if (relation) {
+			this.format = relation.format;
+			this.forceUpdate();
+		};
+
+		this.focus();
+	};
+
+	componentDidUpdate () {
+		this.focus();
 	};
 
 	componentWillUnmount () {
 		window.clearTimeout(this.timeout);
 	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
+	};
 	
-	onType (e: any) {
+	onRelationType (e: any) {
 		const { param } = this.props;
 		const { data } = param;
+		const relation = this.getRelation();
 		
-		commonStore.menuClose('dataviewRelationType');
-		commonStore.menuClose('dataviewDate');
+		if (relation) {
+			return;
+		};
+		
+		this.menuOpen('dataviewRelationType', { 
+			element: '#item-relation-type',
+			offsetX: 224,
+			offsetY: 0,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				value: this.format,
+				onSelect: (item: any) => {
+					this.format = item.format;
+					this.forceUpdate();
+				},
+				...data
+			}
+		});
+	};
+
+	onObjectType (e: any) {
+		const { objectTypes } = dbStore;
+		const relation = this.getRelation();
+		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
+		const options = objectTypes.map((it: I.ObjectType) => {
+			return {
+				id: DataUtil.schemaField(it.url), 
+				name: it.name, 
+				icon: it.iconEmoji,
+				hash: '',
+				withSmile: true,
+				url: it.url,
+			};
+		});
+
+		options.sort((c1: any, c2: any) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
+
+		this.menuOpen('select', { 
+			element: '#item-object-type',
+			offsetX: 224,
+			offsetY: 4,
+			width: 280,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				value: value,
+				options: options,
+				onSelect: (e: any, item: any) => {
+					this.objectTypes = [ item.url ];
+
+					if (relation) {
+						this.save();
+					};
+				},
+			}
+		});
+
+	};
+
+	menuOpen (id: string, param: I.MenuParam) {
+		commonStore.menuCloseAll([ 'select', 'dataviewRelationType', 'dataviewDate' ]);
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			commonStore.menuOpen('dataviewRelationType', { 
-				element: '#relation-type',
-				offsetX: 208,
-				offsetY: 4,
-				type: I.MenuType.Vertical,
-				vertical: I.MenuDirection.Center,
-				horizontal: I.MenuDirection.Left,
-				data: {
-					onSelect: (item: any) => {
-						console.log('Type', item);
-					},
-					...data
-				}
-			});
-		}, Constant.delay.menu);
+		this.timeout = window.setTimeout(() => { commonStore.menuOpen(id, param); }, Constant.delay.menu);
 	};
 
 	onChangeTime (v: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationId, view } = data;
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.id == relationId; });
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.id == relationId; });
+		const { rootId, blockId, relationKey, getView } = data;
+		const view = getView();
+		const relation = this.getRelation();
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 
-		relation.options.includeTime = v;
+		relation.includeTime = v;
 		view.relations[idx] = relation;
-
-		C.BlockSetDataviewView(rootId, blockId, view.id, view, (message: any) => {
-			console.log(message);
-		});
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 	};
 
 	onDateSettings (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 
-		commonStore.menuClose('dataviewRelationType');
-		commonStore.menuClose('dataviewDate');
+		commonStore.menuCloseAll([ 'dataviewRelationType', 'dataviewDate' ]);
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			commonStore.menuOpen('dataviewDate', { 
-				element: '#menu-date-settings',
+				element: '#item-date-settings',
 				offsetX: 224,
 				offsetY: -38,
 				type: I.MenuType.Vertical,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Left,
+				onClose: () => {
+					commonStore.menuClose('select');
+				},
 				data: data
 			});
 		}, Constant.delay.menu);
 	};
-	
+
+	onCopy (e: any) {
+		const relation = this.getRelation();
+		if (!relation) {
+			return;
+		};
+
+		this.add({ name: relation.name, format: relation.format });
+		close();
+	};
+
+	onRemove (e: any) {
+		let { param, close } = this.props;
+		let { data } = param;
+		let { rootId, blockId, relationKey, getView } = data;
+		let view = getView();
+
+		DataUtil.dataviewRelationDelete (rootId, blockId, relationKey, view);
+		close();
+	};
+
+	onSubmit (e: any) {
+		e.preventDefault();
+
+		this.save();
+		this.props.close();
+	};
+
+	save () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const name = this.ref.getValue();
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!name || !block) {
+			return;
+		};
+
+		const relation = this.getRelation();
+		const newRelation: any = { name: name, format: this.format };
+
+		if (this.format == I.RelationType.Object) {
+			newRelation.objectTypes = this.objectTypes;
+		};
+
+		relation ? this.update(newRelation) : this.add(newRelation);
+	};
+
+	add (newRelation: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+
+		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view);
+	};
+
+	update (newRelation: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		const relation = this.getRelation();
+		
+		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view);
+	};
+
+	getRelation (): I.ViewRelation {
+		const { param } = this.props;
+		const { data } = param;
+		const { relationKey, getView } = data;
+		const view = getView();
+
+		return view.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+	};
+
 };
 
 export default MenuRelationEdit;

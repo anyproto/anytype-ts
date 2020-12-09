@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Input, Smile } from 'ts/component';
-import { I, C, Util, SmileUtil, keyboard, Storage } from 'ts/lib';
+import { I, C, Util, SmileUtil, keyboard, Storage, translate } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -96,14 +96,14 @@ class MenuSmile extends React.Component<Props, State> {
 			<div>
 				{!noHead ? (
 					<div className="head">
-						<div className="btn" onClick={this.onRandom}>Random emoji</div>
-						<div className="btn" onClick={this.onUpload}>Upload image</div>
-						<div className="btn" onClick={this.onRemove}>Remove</div>
+						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>
+						<div className="btn" onClick={this.onUpload}>{translate('menuSmileUpload')}</div>
+						<div className="btn" onClick={this.onRemove}>{translate('menuSmileRemove')}</div>
 					</div>
 				) : ''}
 				
 				<form className={[ 'filter', (!noHead ? 'withHead' : '') ].join(' ')} onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder="Type to filter..." value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 				</form>
 				
 				<div className="items">
@@ -135,10 +135,10 @@ class MenuSmile extends React.Component<Props, State> {
 					</InfiniteLoader>
 					{!sections.length ? (
 						<div className="empty">
-							<div className="txt">
-								<b>There are no emojis named "{filter}"</b>
-								Try to find a new one or upload your image
-							</div>
+							<div 
+								className="txt" 
+								dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('menuSmileEmpty'), filter) }} 
+							/>
 						</div>
 					): ''}
 				</div>

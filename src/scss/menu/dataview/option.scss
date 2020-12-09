@@ -1,0 +1,19 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuDataviewOptionList {
+		.content { max-height: 250px; }
+		.label { color: $colorDarkGrey; @include text-common; padding: 0px 16px; }
+		.item { padding: 5px 10px; }
+		.item:hover::before { opacity: 0.15; }
+		.tagItem { vertical-align: top; margin-top: 1px; }
+		.icon.more { position: absolute; right: 14px; top: 50%; margin-top: -10px; }
+	}
+	
+	.menu.menuDataviewOptionEdit { width: 224px; }
+	.menu.menuDataviewOptionEdit {
+		.wrap { padding: 8px 16px; }
+		.input { border: 1px solid $colorLightGrey; font-size: 12px; padding: 0px 8px; }
+		.item:hover::before { opacity: 0.15; }
+	}	
+}

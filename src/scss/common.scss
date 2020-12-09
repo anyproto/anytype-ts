@@ -12,6 +12,7 @@ body {
 	overscroll-behavior: none;
 }
 body.over { overflow-y: hidden; }
+body.colResize { cursor: col-resize !important; }
 
 :focus { outline: 0px; }
 
@@ -93,6 +94,7 @@ html.platformWindows {
 .disabled { opacity: 0.5 !important; cursor: default !important; }
 .dis { cursor: default !important; }
 .readOnly { -webkit-user-modify: read-only !important; }
+.no-br { border-radius: unset !important;}
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

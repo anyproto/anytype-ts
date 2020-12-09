@@ -58,7 +58,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 					<Smile className="c64" icon={icon} size={32} />
 					<Title text={title} />
 					<Error text={error} />
-					{error ? <Button className="orange" text="Back" onClick={() => { history.goBack(); }} /> : ''}
+					{error ? <Button className="orange" text={translate('authSetupBack')} onClick={() => { history.goBack(); }} /> : ''}
 				</Frame>
 			</div>
 		);

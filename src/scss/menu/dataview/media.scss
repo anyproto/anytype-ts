@@ -1,0 +1,18 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuDataviewMedia { border-radius: 2px; box-shadow: 0px 0px 0px 2px $colorOrange;  }
+	.menu.menuDataviewMedia {
+		.content { padding-bottom: 0px; }
+
+		.item {
+			img { display: block; max-width: 100%; max-height: 208px; object-fit: contain; }
+			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }
+			.element { width: calc(100% - 20px); display: inline-block; vertical-align: top; }
+		}
+		.item:hover::before { opacity: 0.15; }
+
+		.item.add { padding: 14px 16px; border-top: 1px solid #e0ded2; }
+		.inputWithFile { border: 0px; padding: 0px; }
+	}
+}

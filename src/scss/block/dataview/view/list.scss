@@ -4,15 +4,26 @@
 	.block.blockDataview {
         .viewItem.viewList { padding: 20px 0px 0px 0px; }
 		.viewItem.viewList {
-		    .item { width: 100%; display: inline-block; margin-bottom: 8px; }
-			.item:last-child { margin: 0px; }
+		    .row { width: 100%; display: inline-block; margin-bottom: 8px; }
+			.row:last-child { margin: 0px; }
 
-			.cellContent { display: inline-block; vertical-align: top; margin-right: 8px; line-height: 24px; }
+			.cellContent { display: inline; vertical-align: top; margin-right: 8px; line-height: 24px; cursor: default !important; }
 			.cellContent:last-child { margin: 0px; }
+			.cellContent:empty { display: none; }
 
             .cellContent.c-title { @include text-paragraph; }
 			.cellContent.c-title {
-				.name { @include text-overflow-nw; max-width: 240px; line-height: 24px; }
+				.name { @include text-overflow-nw; max-width: 200px; display: inline; line-height: 24px; }
+			}
+
+			.cellContent.c-file {
+				.inputWithFile { display: none; }
+			}
+
+			.cellContent.c-select, .cellContent.c-object { line-height: 24px; vertical-align: middle; }
+			.cellContent.c-select, .cellContent.c-object {
+				.wrap { display: inline; line-height: 24px; vertical-align: middle; }
+				.tagItem, .item { margin-bottom: 0px; }
 			}
 
 			.icon.checkbox { width: 24px; height: 24px; vertical-align: top; }

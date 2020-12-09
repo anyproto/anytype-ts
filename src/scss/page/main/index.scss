@@ -51,7 +51,7 @@
 
 			.line { width: 88px; height: 10px; background-color: #dfddd0; position: absolute; left: 16px; bottom: 16px; }
 		}
-		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
+		.item.isDragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.last { margin-right: 0px; }
 		
 		.item:hover {

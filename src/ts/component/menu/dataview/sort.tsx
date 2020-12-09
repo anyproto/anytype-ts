@@ -2,14 +2,16 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select } from 'ts/component';
-import { I, C, Util } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
 
+@observer
 class MenuSort extends React.Component<Props, {}> {
 	
 	items: I.Sort[] = [];
@@ -25,7 +27,8 @@ class MenuSort extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { getView } = data;
+		const view = getView();
 		
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: 'Ascending' },
@@ -34,7 +37,7 @@ class MenuSort extends React.Component<Props, {}> {
 		
 		const relationOptions: any[] = [];
 		for (let relation of view.relations) {
-			relationOptions.push({ id: relation.id, name: relation.name, icon: 'relation c-' + relation.type });
+			relationOptions.push({ id: relation.relationKey, name: relation.name, icon: 'relation c-' + DataUtil.relationClass(relation.format) });
 		};
 
 		const Handle = SortableHandle(() => (
@@ -44,7 +47,7 @@ class MenuSort extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => (
 			<div className="item">
 				<Handle />
-				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationId} onChange={(v: string) => { this.onChange(item.id, 'relationId', v); }} />
+				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
 				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
 				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 			</div>
@@ -61,13 +64,13 @@ class MenuSort extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{this.items.map((item: any, i: number) => (
+					{view.sorts.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
-					{!this.items.length ? (
+					{!view.sorts.length ? (
 						<div className="item empty">No sorts applied to this view</div>
 					) : ''}
-					<ItemAdd index={this.items.length + 1} disabled={true} />
+					<ItemAdd index={view.sorts.length + 1} disabled={true} />
 				</div>
 			);
 		});
@@ -81,51 +84,43 @@ class MenuSort extends React.Component<Props, {}> {
 				distance={10}
 				onSortEnd={this.onSortEnd}
 				useDragHandle={true}
-				helperClass="dragging"
+				helperClass="isDragging"
 				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
 			/>
 		);
 	};
 	
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { view } = data;
-		
-		this.items = view.sorts;
-		this.forceUpdate();
-	};
-
 	componentDidUpdate () {
 		this.props.position();
 	};
 
-	componentWillUnmount () {
-		this.save();
-	};
-	
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { getView } = data;
+		const view = getView();
 
 		if (!view.relations.length) {
 			return;
 		};
 
-		this.items.push({ 
-			relationId: view.relations[0].id, 
+		view.sorts.push({ 
+			relationKey: view.relations[0].relationKey, 
 			type: I.SortType.Asc 
 		});
-		this.forceUpdate();
 		this.save();
 	};
 
 	onChange (id: number, k: string, v: string) {
-		let item = this.items.find((item: any, i: number) => { return i == id; });
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
 
-		if (k == 'relationId') {
-			this.items = this.items.filter((it: I.Sort, i: number) => { return (i == id) || (it.relationId != v); });
+		let item = view.sorts.find((item: any, i: number) => { return i == id; });
+
+		if (k == 'relationKey') {
+			view.sorts = view.sorts.filter((it: I.Sort, i: number) => { return (i == id) || (it.relationKey != v); });
 		};
 		
 		item[k] = v;
@@ -133,8 +128,12 @@ class MenuSort extends React.Component<Props, {}> {
 	};
 	
 	onDelete (e: any, id: number) {
-		this.items = this.items.filter((item: any, i: number) => { return i != id; });
-		this.forceUpdate();
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
+		view.sorts = view.sorts.filter((item: any, i: number) => { return i != id; });
 		this.save();
 
 		commonStore.menuClose('select');
@@ -142,18 +141,22 @@ class MenuSort extends React.Component<Props, {}> {
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
 		
-		this.items = arrayMove(this.items, oldIndex, newIndex);
-		this.forceUpdate();
+		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		this.save();
 	};
 
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, rootId, blockId, onSave } = data;
+		const { rootId, blockId, onSave, getView } = data;
+		const view = getView();
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, sorts: this.items }, onSave);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 	
 };

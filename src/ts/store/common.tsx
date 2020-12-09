@@ -99,10 +99,13 @@ class CommonStore {
 	};
 	
 	fileUrl (hash: string) {
+		hash = String(hash || '');
 		return this.gateway + '/file/' + hash;
 	};
 	
 	imageUrl (hash: string, width: number) {
+		hash = String(hash || '');
+		width = Number(width) || 0;
 		return this.gateway + '/image/' + hash + '?width=' + width;
 	};
 	
@@ -191,7 +194,7 @@ class CommonStore {
 		};
 
 		this.menuClose(id, () => {
-			this.menuList.push({ id: id, param: param });
+			this.menuList.push(observable({ id: id, param: param }));
 			
 			if (param.onOpen) {
 				param.onOpen();
@@ -208,7 +211,7 @@ class CommonStore {
 			return;
 		};
 
-		set(item, { param: param });
+		set(item, observable({ param: Object.assign(item.param, param) }));
 	};
 	
 	menuIsOpen (id?: string): boolean {
@@ -230,10 +233,15 @@ class CommonStore {
 		};
 		
 		const el = $('#' + Util.toCamelCase('menu-' + id));
+		const t = item.param.noAnimation ? 0 : Constant.delay.menu;
+
 		if (el.length) {
 			el.css({ transform: '' }).removeClass('show');
+			if (item.param.noAnimation) {
+				el.addClass('noAnimation');
+			};
 		};
-		
+
 		window.setTimeout(() => {
 			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
 			
@@ -244,16 +252,17 @@ class CommonStore {
 			if (callBack) {
 				callBack();
 			};
-		}, Constant.delay.menu);
+		}, t);
 	};
 	
 	@action
-	menuCloseAll () {
-		for (let item of this.menuList) {
-			this.menuClose(item.id);
+	menuCloseAll (ids?: string[]) {
+		ids = ids || this.menuList.map((it: I.Menu) => { return it.id; });
+		for (let id of ids) {
+			this.menuClose(id);
 		};
 	};
-	
+
 	@action
 	filterSetFrom (from: number) {
 		this.filterObj.from = from;

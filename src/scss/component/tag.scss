@@ -1,12 +1,20 @@
 @import "~scss/_vars";
 
 .tagItem {
-	padding: 0px 4px; @include text-small; border-radius: 3px; white-space: nowrap;
+	padding: 0px 4px; @include text-small; border-radius: 3px; white-space: nowrap; position: relative;
 	display: inline-block; vertical-align: middle; cursor: pointer; max-width: 100%;
 }
 .tagItem {
 	.inner { display: inline-block; width: 100%; @include text-overflow-nw;  vertical-align: top; }
+	.icon.remove { 
+		width: 10px; height: 10px; position: absolute; right: 4px; top: 4px; background-image: url('~img/icon/dataview/tagRemove0.svg') !important; 
+		cursor: pointer;
+	}
+	.icon.remove:hover { background-image: url('~img/icon/dataview/tagRemove1.svg') !important; }
 }
+.tagItem.canEdit { padding-right: 18px; }
+
+.tagItem.default { color: $colorBlack; background: #fff; box-shadow: 0px 0px 0px 1px #dfddd0 inset; }
 .tagItem.grey { color: #8c9ea5; background: #ebeff1; }
 .tagItem.yellow { color: #b2a616; background: #fbf5b8; }
 .tagItem.orange { color: #d3720d; background: #ffEcc8; }

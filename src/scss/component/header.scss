@@ -19,7 +19,7 @@
 		.item {
 			.icon { margin-right: 4px; }
 			.icon.arrow { margin: -2px 0px 0px 0px; width: 6px; height: 10px; background-image: url('~img/arrow/path.svg'); vertical-align: middle; }
-			.smile { margin-right: 4px; }
+			.icon-object { margin-right: 4px; vertical-align: top; }
 			.name { display: inline-block; vertical-align: top; margin-right: 6px; line-height: 20px; }
 		}
 		.item:last-child { margin: 0px; }
@@ -44,6 +44,8 @@
 	.icon.search { background-image: url('~img/icon/header/search.svg'); }
 	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
+	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
+	.icon.new-set { background-image: url('~img/icon/header/set.svg'); }
 
 	.side { position: absolute; top: 5px; height: 28px; line-height: 28px; }
 
@@ -61,13 +63,13 @@
 .header.headerMainIndex { height: 38px; background: rgba(44,43,39,0.1); }
 .header.headerMainIndex {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
-	.icon:hover { background-color: rgba(0,0,0,0.15); }
+	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 }
 
 .header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }
 .header.headerMainEdit {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
-	.icon:hover { background-color: #f3f2ec; }
+	.icon:hover, .icon.active { background-color: #f3f2ec; }
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
@@ -86,6 +88,10 @@
 
 	.side.center {
 		.icon { margin: 0px; opacity: 0; }
+
+		.icon.new-set { width: 20px; height: 20px; opacity: 1; transition: none; margin-right: 4px; }
+		.icon.new-set:hover { background-color: transparent; }
+
 		.icon.plus { margin-left: 6px; }
 		.icon.plus {
 			.arrow { 

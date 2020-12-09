@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
-	column: number;
+	columnId: number;
 	index: number;
 	idx: number;
-	data: any;
 };
 
 const getItemStyle = (snapshot: any, style: any) => {
@@ -22,11 +21,13 @@ const getItemStyle = (snapshot: any, style: any) => {
 class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, view, readOnly, column, idx, index, data } = this.props;
+		const { columnId, idx, index, getView, onCellClick, onRef } = this.props;
+		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const idPrefix = 'dataviewCell';
 
 		return (
-			<Draggable draggableId={[ column, index ].join(' ')} index={idx} type="row">
+			<Draggable draggableId={[ columnId, index ].join(' ')} index={idx} type="row">
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="card"
@@ -35,19 +36,21 @@ class Card extends React.Component<Props, {}> {
 						{...provided.dragHandleProps}
 						style={getItemStyle(snapshot, provided.draggableProps.style)}
 					>
-						{relations.map((relation: any, i: number) => (
-							<Cell 
-								key={'board-cell-' + relation.id} 
-								id={String(index)} 
-								rootId={rootId}
-								block={block}
-								view={view} 
-								relation={...relation} 
-								data={data}
-								index={index}
-								readOnly={readOnly} 
-							/>
-						))}
+						{relations.map((relation: any, i: number) => {
+							const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+							return (
+								<Cell 
+									key={'board-cell-' + view.id + relation.relationKey} 
+									{...this.props}
+									ref={(ref: any) => { onRef(ref, id); }} 
+									index={index}
+									viewType={view.type}
+									idPrefix={idPrefix}
+									onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
+									relationKey={relation.relationKey}
+								/>
+							);
+						})}
 					</div>
 				)}
 			</Draggable>

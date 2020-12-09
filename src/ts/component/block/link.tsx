@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Smile, Loader } from 'ts/component';
-import { I, DataUtil } from 'ts/lib';
+import { I, DataUtil, translate } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
@@ -33,7 +33,7 @@ class BlockLink extends React.Component<Props, {}> {
 			return (
 				<div className="loading">
 					<Loader />
-					<div className="name">Syncing...</div>
+					<div className="name">{translate('blockLinkSyncing')}</div>
 				</div>
 			);
 		};
@@ -44,7 +44,7 @@ class BlockLink extends React.Component<Props, {}> {
 				<div className="name" onClick={this.onClick}>
 					<div className="txt">{name}</div>
 				</div>
-				<div className="archive">Archived</div>
+				<div className="archive">{translate('blockLinkArchived')}</div>
 			</div>
 		);
 	};

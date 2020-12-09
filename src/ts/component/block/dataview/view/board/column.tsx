@@ -2,15 +2,17 @@ import * as React from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
+import { observer } from 'mobx-react';
+import { dbStore } from 'ts/store';
+
 import Card from './card';
 import Cell from 'ts/component/block/dataview/cell';
 
 interface Props extends I.ViewComponent {
 	groupId: string;
 	value: string;
-	idx: number;
+	columnId: number;
 	list: any[];
-	data: any[];
 	onAdd (column: number): void;
 };
 
@@ -18,14 +20,18 @@ const getItemStyle = (snapshot: any, style: any) => {
 	return style;
 };
 
+@observer
 class Column extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, groupId, view, onAdd, list, data, idx, value } = this.props;
+		const { rootId, block, groupId, getView, onAdd, list, columnId, value } = this.props;
+		const view = getView();
+		const group = view.relations.find((item: I.Relation) => { return item.relationKey == groupId; });
+		const data = dbStore.getData(block.id);
+		const { offset, total } = dbStore.getMeta(block.id);
 
-		const group = view.relations.find((item: I.Relation) => { return item.id == groupId; });
 		const Add = (item: any) => (
-			<Draggable draggableId={idx + '-add'} index={item.index}>
+			<Draggable draggableId={columnId + '-add'} index={item.index}>
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="card add"
@@ -41,20 +47,19 @@ class Column extends React.Component<Props, {}> {
 			</Draggable>
 		);
 
-		const Head = () => {
+		const Head = (item: any) => {
 			const head = {};
 			head[groupId] = value;
 
 			return (
 				<div className="head">
 					<Cell 
-						id="" 
+						id={'board-head-' + item.index} 
 						rootId={rootId}
 						block={block}
-						view={view} 
 						relation={group} 
-						data={[ head ]}
-						index={0}
+						viewType={I.ViewType.Board}
+						getRecord={() => { return head; }}
 						readOnly={true} 
 					/>
 				</div>
@@ -62,7 +67,7 @@ class Column extends React.Component<Props, {}> {
 		};
 
 		return (
-			<Draggable draggableId={'column-' + idx} index={idx} type="column">
+			<Draggable draggableId={'column-' + columnId} index={columnId} type="column">
 				{(provided: any, snapshot: any) => (
 					<div 
 						className="column"
@@ -71,14 +76,14 @@ class Column extends React.Component<Props, {}> {
 						{...provided.dragHandleProps}
 						style={getItemStyle(snapshot, provided.draggableProps.style)}
 					>
-						<Head />
-						<Droppable droppableId={'column-' + idx} direction="vertical" type="row">
+						<Head index={columnId} />
+						<Droppable droppableId={'column-' + columnId} direction="vertical" type="row">
 							{(provided: any) => (
 								<div className="list" {...provided.droppableProps} ref={provided.innerRef}>
 									{list.map((child: any, i: number) => (
-										<Card key={'board-card-' + i} {...this.props} data={data} index={child.index} column={idx} idx={i} />
+										<Card key={'board-card-' +  view.id + i} {...this.props} index={child.index} columnId={columnId} idx={i} />
 									))}
-									<Add column={idx} index={list.length} />
+									<Add column={columnId} index={list.length} />
 									{provided.placeholder}
 								</div>
 							)}
@@ -87,10 +92,6 @@ class Column extends React.Component<Props, {}> {
 				)}
 			</Draggable>
 		);
-	};
-
-	shouldComponentUpdate (nextProps: Props) {
-		return (nextProps.list === this.props.list) && (nextProps.value === this.props.value);
 	};
 
 };

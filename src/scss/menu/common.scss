@@ -11,7 +11,9 @@
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 	}
+	.menu.noAnimation { transition: none; }
 	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
+	.menu * { user-select: none; }
 	
 	.menu.v1.h3 { transform-origin: 0% 100%; } /* left top */
 	.menu.v2.h3 { transform-origin: 0% 0%; } /* left bottom */
@@ -27,6 +29,7 @@
 	
 	.menu {
 		.content { opacity: 0; transition: opacity 0.05s ease-in-out; transition-delay: 0.05s; }
+		.input { user-select: text; }
 	}
 	.menu.show {
 		.content { opacity: 1; }
@@ -47,7 +50,7 @@
 			padding: 4px 14px; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
 			transition: all 0.05s ease-in-out; width: 100%; background: #fff;
 		}
-		.item.dragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
+		.item.isDragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		
 		.item::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorDarkGrey; z-index: 1;
@@ -58,17 +61,18 @@
 		.item {
 			.name { display: inline-block; vertical-align: top; }
 			
-			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; }
+			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; }
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.delete { 
 				width: 20px; height: 20px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
 				position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px;
 			}
 			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
-			.icon.trash { width: 16px; height: 16px; background-image: url('~img/icon/menu/trash.svg'); }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			
-			.smile { margin-right: 4px; }
+			.icon-object { vertical-align: top; }
+
+			.smile, .icon-object { margin-right: 4px; }
 			.smile {
 				.icon.blank { margin: 0px; }
 			}
@@ -81,14 +85,15 @@
 			.info { padding-left: 52px; }
 			.name { line-height: 22px; }
 		}
+
+		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
+
+		.sectionName { padding: 5px 16px; @include text-very-small; text-transform: uppercase; }
 		
 		.section { border-bottom: 1px solid $colorLightGrey; padding: 8px 0px; }
 		.section:first-child { padding-top: 0px; }
 		.section:last-child { border: 0px; padding-bottom: 0px; }
-		.section > .name { 
-			padding: 3px 16px; margin-bottom: 2px; @include text-very-small; 
-			display: block; text-transform: uppercase; 
-		}
+		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; text-transform: uppercase; }
 	}
 	
 	.menu.horizontal {

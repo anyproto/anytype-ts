@@ -1,6 +1,5 @@
-import { I, Util } from 'ts/lib';
-import { blockStore } from 'ts/store';
-import { observable, intercept } from 'mobx';
+import { I } from 'ts/lib';
+import { decorate, observable, intercept } from 'mobx';
 
 class Block implements I.Block {
 	
@@ -9,11 +8,11 @@ class Block implements I.Block {
 	pageType: any = null;
 	type: I.BlockType = I.BlockType.Empty;
 	
-	@observable childrenIds: string[] = [];
-	@observable align: I.BlockAlign = I.BlockAlign.Left;
-	@observable bgColor: string = '';
-	@observable fields: any = {};
-	@observable content: any = {};
+	childrenIds: string[] = [];
+	align: I.BlockAlign = I.BlockAlign.Left;
+	bgColor: string = '';
+	fields: any = {};
+	content: any = {};
 	
 	constructor (props: I.Block) {
 		let self = this;
@@ -27,9 +26,17 @@ class Block implements I.Block {
 		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
 		self.pageType = props.pageType;
-		
+
+		decorate(self, {
+			childrenIds: observable,
+			align: observable,
+			bgColor: observable,
+			fields: observable,
+			content: observable,
+		});
+
 		intercept(self as any, (change: any) => {
-			if (change.newValue === self[change.name]) {
+			if (JSON.stringify(change.newValue) === JSON.stringify(self[change.name])) {
 				return null;
 			};
 			return change;

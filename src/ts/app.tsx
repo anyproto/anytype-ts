@@ -5,7 +5,7 @@ import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview, Icon } from './component';
 import { commonStore, authStore, blockStore, dbStore } from './store';
-import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher } from 'ts/lib';
+import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
 
@@ -44,9 +44,12 @@ import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
 import 'scss/page/main/history.scss';
+import 'scss/page/main/set.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
+import 'scss/block/dataview/cell.scss';
+import 'scss/block/dataview/view/common.scss';
 import 'scss/block/dataview/view/grid.scss';
 import 'scss/block/dataview/view/board.scss';
 import 'scss/block/dataview/view/list.scss';
@@ -61,6 +64,7 @@ import 'scss/block/layout.scss';
 import 'scss/block/iconPage.scss';
 import 'scss/block/iconUser.scss';
 import 'scss/block/cover.scss';
+import 'scss/block/relation.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -89,15 +93,18 @@ import 'scss/menu/block/link.scss';
 import 'scss/menu/block/icon.scss';
 import 'scss/menu/block/cover.scss';
 import 'scss/menu/block/mention.scss';
+import 'scss/menu/block/relation.scss';
 
 import 'scss/menu/dataview/common.scss';
 import 'scss/menu/dataview/sort.scss';
 import 'scss/menu/dataview/filter.scss';
 import 'scss/menu/dataview/relation.scss';
+import 'scss/menu/dataview/object.scss';
 import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/calendar.scss';
-import 'scss/menu/dataview/tag.scss';
-import 'scss/menu/dataview/account.scss';
+import 'scss/menu/dataview/option.scss';
+import 'scss/menu/dataview/media.scss';
+import 'scss/menu/dataview/text.scss';
 
 import 'scss/media/print.scss';
 
@@ -216,7 +223,7 @@ class App extends React.Component<Props, State> {
 							<div className="sides">
 								<div className="side left">
 									<Icon className="menu" onClick={this.onMenu} />
-									<div className="name">anytype</div>
+									<div className="name">{translate('commonTitle')}</div>
 								</div>
 
 								<div className="side right">
@@ -301,7 +308,6 @@ class App extends React.Component<Props, State> {
 		const phrase = Storage.get('phrase');
 
 		ipcRenderer.send('appLoaded', true);
-		ipcRenderer.send('keytarGet', accountId);
 
 		if (accountId) {
 			ipcRenderer.send('keytarGet', accountId);
@@ -316,20 +322,18 @@ class App extends React.Component<Props, State> {
 					if (value) {
 						authStore.phraseSet(value);
 						history.push('/auth/setup/init');
+					} else {
+						Storage.logout();
 					};
 				};
-
-				authStore.phraseSet(value);
-				history.push('/auth/setup/init');
 			});
 		};
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
+
 			this.setState({ loading: false });
-			this.preload(() => {
-				this.setState({ loading: false });
-			});
+			this.preload();
 		});
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
@@ -399,8 +403,8 @@ class App extends React.Component<Props, State> {
 			if (!auto) {
 				commonStore.popupOpen('confirm', {
 					data: {
-						title: 'Oops!',
-						text: Util.sprintf('Can’t check available updates, please try again later.<br/><span class="error">%s</span>', err),
+						title: translate('popupConfirmUpdateTitle'),
+						text: Util.sprintf(translate('popupConfirmUpdateText'), err),
 						textConfirm: 'Retry',
 						textCancel: 'Later',
 						onConfirm: () => {

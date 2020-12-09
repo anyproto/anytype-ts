@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, translate } from 'ts/lib';
 import { Cover } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -46,11 +45,11 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		return (
 			<div>
 				<div className="head">
-					<div className="btn" onClick={this.onUpload}>Upload image</div>
+					<div className="btn" onClick={this.onUpload}>{translate('menuBlockCoverUpload')}</div>
 					{canEdit ? (
-						<div className="btn" onClick={this.onEdit}>Reposition</div>
+						<div className="btn" onClick={this.onEdit}>{translate('menuBlockCoverEdit')}</div>
 					) : ''}
-					<div className="btn" onClick={this.onRemove}>Remove</div>
+					<div className="btn" onClick={this.onRemove}>{translate('menuBlockCoverRemove')}</div>
 				</div>
 				<div className="sections">
 					{sections.map((section: any, i: number) => {

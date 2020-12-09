@@ -18,6 +18,7 @@ import PageAuthSuccess from './auth/success';
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
+import PageMainSet from './main/set';
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
@@ -39,6 +40,7 @@ const Components: any = {
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
+	'main/set':				 PageMainSet,
 };
 
 interface Props extends RouteComponentProps<any> {};

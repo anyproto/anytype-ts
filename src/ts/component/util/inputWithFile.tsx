@@ -11,6 +11,7 @@ interface Props {
 	accept?: string[];
 	block?: I.Block;
 	readOnly?: boolean;
+	canResize?: boolean;
 	onChangeUrl? (e: any, url: string): void;
 	onChangeFile? (e: any, path: string): void;
 };
@@ -33,6 +34,7 @@ class InputWithFile extends React.Component<Props, State> {
 	private static defaultProps = {
 		textUrl: translate('inputWithFileTextUrl'),
 		withFile: true,
+		canResize: true,
 	};
 	
 	_isMounted: boolean = false;
@@ -108,7 +110,7 @@ class InputWithFile extends React.Component<Props, State> {
 					</form>
 					{withFile ? (
 						<span className="fileWrap" onMouseDown={this.onClickFile}>
-							{!isSmall ? <span>&nbsp;or&nbsp;</span> : ''}
+							{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}
 							<span className="border">{textFile}</span>
 						</span>
 					) : ''}
@@ -151,7 +153,8 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	bind () {
-		if (!this._isMounted) {
+		const { canResize } = this.props;
+		if (!this._isMounted || !canResize) {
 			return;
 		};
 		
@@ -160,7 +163,8 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		if (!this._isMounted) {
+		const { canResize } = this.props;
+		if (!this._isMounted || !canResize) {
 			return;
 		};
 		
@@ -169,6 +173,11 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	resize () {
+		const { canResize } = this.props;
+		if (!canResize) {
+			return;
+		};
+
 		raf(() => {
 			if (!this._isMounted) {
 				return;
@@ -256,12 +265,9 @@ class InputWithFile extends React.Component<Props, State> {
 		
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-			
+			const file = files && files.length ? files[0] : '';
 			if (onChangeFile) {
-				onChangeFile(e, files[0]);	
+				onChangeFile(e, file);	
 			};
 		});
 	};

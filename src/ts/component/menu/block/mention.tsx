@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
+import { IconObject } from 'ts/component';
 import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -9,21 +9,18 @@ import 'react-virtualized/styles.css';
 interface Props extends I.Menu {};
 
 interface State {
-	pages: I.PageInfo[];
 	loading: boolean;
 	n: number;
 };
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const FlexSearch = require('flexsearch');
 const HEIGHT = 28;
 
 @observer
 class MenuBlockMention extends React.Component<Props, State> {
 
 	state = {
-		pages: [],
 		loading: false,
 		n: 0,
 	};
@@ -32,6 +29,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	filter: string = '';
 	index: any = null;
 	cache: any = null;
+	items: any = [];
 
 	constructor (props: any) {
 		super(props);
@@ -42,6 +40,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 	render () {
 		const { n } = this.state;
 		const items = this.getItems(true);
+		const { filter } = commonStore;
+		const { text } = filter;
 
 		if (!this.cache) {
 			return null;
@@ -64,7 +64,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 								{item.name ? <div className="name">{item.name}</div> : ''}
 							</div>
 						) : (
-							<MenuItemVertical {...item} onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} />
+							<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+								<IconObject object={item} />
+								<div className="name">{item.name}</div>
+							</div>
 						)}
 					</div>
 				</CellMeasurer>
@@ -105,7 +108,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.loadSearch();
+		this.load();
 	};
 
 	componentDidUpdate () {
@@ -113,16 +116,18 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { n } = this.state;
 		const items = this.getItems(false);
 
+		if (this.filter != filter.text) {
+			this.load();
+			this.filter = filter.text;
+			this.setState({ n: 0 });
+			return;
+		};
+
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
-
-		if (this.filter != filter.text) {
-			this.filter = filter.text;
-			this.setState({ n: 0 });
-		};
 
 		this.resize();
 		this.setActive(items[n]);
@@ -142,38 +147,45 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	getSections () {
-		const { root } = blockStore;
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const pages = this.filterPages();
-		const list: any[] = [
-			{ id: '', name: 'Mention a page', isSection: true },
-			{ id: 'create', name: 'Create new page', icon: '', hash: '', withSmile: true, skipFilter: true }
-		];
-
-		for (let page of pages) {
-			if ([ root, rootId ].indexOf(page.id) >= 0) {
+		let obj: any = {};
+		for (let item of this.items) {
+			let ot = dbStore.getObjectType(item.type);
+			if (!ot) {
 				continue;
 			};
-			
-			list.push({
-				id: page.id, 
-				name: page.details.name, 
-				icon: page.details.iconEmoji,
-				hash: page.details.iconImage,
+
+			let type = DataUtil.schemaField(item.type) || 'page';
+			let section = obj[type];
+
+			if (!section) {
+				 obj[type] = section = { 
+					id: type, 
+					children: [ 
+						{ id: '', name: ot.name, isSection: true },
+					] 
+				};
+				if (type == 'page') {	
+					obj[type].children.push({ id: 'create', name: 'Create new page', icon: '', hash: '', withSmile: true, skipFilter: true });
+				};
+			};
+
+			section.children.push({
+				...item,
+				icon: item.iconEmoji,
+				hash: item.iconImage,
 				withSmile: true,
 			});
 		};
 
-		let sections = [
-			{ id: 'page', children: list },
-		];
-
-		sections = DataUtil.menuSectionsMap(sections);
+		const sections = DataUtil.menuSectionsMap(Object.values(obj));
+		sections.sort((c1: any, c2: any) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
 		return sections;
 	};
-	
+
 	getItems (withSections: boolean) {
 		const sections = this.getSections();
 		
@@ -195,55 +207,27 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this.props.setActiveItem((item ? item : items[n]), scroll);
 	};
 
-	loadSearch () {
-		const pages: I.PageInfo[] = [];
+	load (callBack?: (message: any) => void) {
+		const { filter } = commonStore;
+		const filters = [];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
 
 		this.setState({ loading: true });
 
-		this.index = new FlexSearch('balance', {
-			encode: 'extra',
-    		tokenize: 'full',
-			threshold: 1,
-    		resolution: 3,
-		});
-
-		C.NavigationListPages((message: any) => {
-			if (message.error.code) {
-				return;
+		C.ObjectSearch(filters, sorts, filter.text, 0, 1000000, (message: any) => {
+			if (callBack) {
+				callBack(message);
 			};
 
-			for (let page of message.pages) {
-				page = this.getPage(page);
-				if (page.details.isArchived) {
-					continue;
-				};
+			this.items = this.items.concat(message.records.map((it: any) => {
+				it.name = String(it.name || Constant.default.name);
+				return it;
+			}));
 
-				pages.push(page);
-				this.index.add(page.id, [ page.details.name, page.snippet ].join(' '));
-			};
-
-			this.setState({ pages: pages, loading: false });
+			this.setState({ loading: false });
 		});
-	};
-
-	filterPages (): I.PageInfo[] {
-		const { pages } = this.state;
-		const { filter } = commonStore;
-		
-		if (!filter.text) {
-			return pages;
-		};
-
-		const ids = this.index ? this.index.search(filter.text) : [];
-		
-		let ret = [];
-		if (ids.length) {
-			ret = pages.filter((it: I.PageInfo) => { return ids.indexOf(it.id) >= 0; });
-		} else {
-			const reg = new RegExp(filter.text.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
-			ret = pages.filter((it: I.PageInfo) => { return it.text.match(reg); });
-		};
-		return ret;
 	};
 
 	onKeyDown (e: any) {
@@ -252,11 +236,11 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 		
 		e.stopPropagation();
+		keyboard.disableMouse(true);
 
 		let { n } = this.state;
-		const k = e.key.toLowerCase();
-		keyboard.disableMouse(true);
 		
+		const k = e.key.toLowerCase();
 		const items = this.getItems(false);
 		const l = items.length;
 		const item = items[n];
@@ -344,15 +328,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		this.props.close();
-	};
-
-	getPage (page: any): I.PageInfo {
-		page.details.name = String(page.details.name || Constant.default.name || '');
-
-		return {
-			...page,
-			text: [ page.details.name, page.snippet ].join(' '),
-		};
 	};
 
 	resize () {

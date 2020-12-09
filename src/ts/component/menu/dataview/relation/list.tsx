@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
-import { I, C } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, C, DataUtil } from 'ts/lib';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
@@ -13,8 +13,6 @@ const $ = require('jquery');
 
 @observer
 class MenuRelationList extends React.Component<Props, {}> {
-	
-	items: I.ViewRelation[] = [];
 	
 	constructor (props: any) {
 		super(props);
@@ -28,22 +26,27 @@ class MenuRelationList extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { readOnly } = data;
+		const { readOnly, rootId, blockId, getView } = data;
+		const view = getView();
+		const { relations } = view;
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
-		
-		const Item = SortableElement((item: any) => (
-			<div id={'relation-' + item.id} className="item">
-				<Handle />
-				<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.id); }}>
-					<Icon className={'relation c-' + item.type} />
-					<div className="name">{item.name}</div>
-				</span>
-				<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.id, v); }} />
-			</div>
-		));
+
+		const Item = SortableElement((item: any) => {
+			return (
+				<div id={'relation-' + item.id} className="item">
+					<Handle />
+					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.id); }}>
+						<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
+						<div className="name">{item.name}</div>
+					</span>
+					<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.id, v); }} />
+				</div>
+			);
+		});
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div id="relation-add" className="item add" onClick={this.onAdd}>
@@ -56,10 +59,10 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{this.items.map((item: any, i: number) => (
-						<Item key={item.id} {...item} index={i} />
-					))}
-					{!readOnly ? <ItemAdd index={this.items.length + 1} disabled={true} /> : ''}
+					{relations.map((item: any, i: number) => {
+						return item ? <Item key={item.relationKey} {...item} id={item.relationKey} index={i} /> : null;
+					})}
+					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});
@@ -73,29 +76,16 @@ class MenuRelationList extends React.Component<Props, {}> {
 				distance={10}
 				onSortEnd={this.onSortEnd}
 				useDragHandle={true}
-				helperClass="dragging"
+				helperClass="isDragging"
 				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
 			/>
 		);
 	};
 	
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { view } = data;
-		
-		this.items = view.relations;
-		this.forceUpdate();
-	};
-
 	componentDidUpdate () {
 		this.props.position();
 	};
 
-	componentWillUnmount () {
-		this.save();
-	};
-	
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
@@ -129,23 +119,31 @@ class MenuRelationList extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
-				relationId: id,
+				relationKey: id,
 			}
 		});
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
 		
-		this.items = arrayMove(this.items, oldIndex, newIndex);
-		this.forceUpdate();
+		view.relations = arrayMove(view.relations, oldIndex, newIndex);
 		this.save();
 	};
 
 	onSwitch (e: any, id: string, v: boolean) {
-		const item = this.items.find((it: any) => { return it.id == id; });
-		if (item) {
-			item.isVisible = v;
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
+		const relation = view.relations.find((it: any) => { return it.relationKey == id; });
+		if (relation) {
+			relation.isVisible = v;
 			this.save();
 		};
 	};
@@ -153,9 +151,10 @@ class MenuRelationList extends React.Component<Props, {}> {
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, rootId, blockId, onSave } = data;
+		const { rootId, blockId, onSave, getView } = data;
+		const view = getView();
 
-		C.BlockSetDataviewView(rootId, blockId, view.id, { ...view, relations: this.items }, onSave);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 	
 };

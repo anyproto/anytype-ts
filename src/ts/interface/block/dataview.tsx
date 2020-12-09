@@ -20,23 +20,6 @@ export enum ViewType {
 	Board	 = 3,
 };
 
-export enum RelationType { 
-	None		 = '',
-	Title		 = 'title', 
-	Description	 = 'description', 
-	Number		 = 'number', 
-	Date		 = 'date', 
-	Select		 = 'select', 
-	Link		 = 'link',
-	File		 = 'file',
-	Image		 = 'image',
-	Checkbox	 = 'checkbox', 
-	Icon		 = 'emoji',
-	Url			 = 'url',
-	Email		 = 'email',
-	Phone		 = 'phone',
-};
-
 export enum SortType { 
 	Asc		 = 0, 
 	Desc	 = 1,
@@ -62,41 +45,37 @@ export enum FilterCondition {
 	NotEmpty		 = 11,
 };
 
-export interface Relation {
-	id: string;
-	name: string;
-	type: RelationType;
-	isHidden: boolean;
-	isReadOnly: boolean;
-	values?: any[];
-};
-
 export interface Sort {
-	relationId: string;
+	relationKey: string;
 	type: SortType;
 };
 
 export interface Filter {
-	relationId: string;
+	relationKey: string;
 	operator: FilterOperator;
 	condition: FilterCondition;
 	value: any;
 };
 
-export interface ViewRelation extends Relation {
+export interface ViewRelation extends I.Relation {
 	isVisible: boolean;
-	order: number;
 	width: number;
-	options?: any;
+	includeTime: boolean;
+	dateFormat: I.DateFormat;
+	timeFormat: I.TimeFormat;
 };
 
 export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
-	view: I.View;
 	readOnly: boolean;
-	onOpen?(e: any, data: any): void;
+	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
+	getRecord(index: number): any;
+	getView(): View;
+	onRowAdd?: (e: any) => void;
+	onCellClick?(e: any, key: string, index: number): void;
+	onCellChange?: (id: string, key: string, value: any) => void;
 };
 
 export interface View {
@@ -111,24 +90,21 @@ export interface View {
 export interface Cell {
 	rootId: string;
 	block: I.Block;
-	id: string;
-	relation: Relation;
-	data: any;
-	index: number;
-	view: any;
+	id?: string;
+	idPrefix?: string;
+	relation?: I.Relation;
+	index?: number;
+	viewType: I.ViewType;
 	readOnly?: boolean;
-	onOpen?(e: any, data: any): void;
+	getRecord(index: number): any;
 	onChange?(data: any): void;
+	onClick?(e: any): void;
+	onCellChange?: (id: string, key: string, value: any) => void;
 };
 
 export interface ContentDataview {
-	databaseId: string;
-	schemaURL: string;
-	viewId: string;
+	source: string;
 	views: View[];
-	data: any[];
-	offset: number;
-	total: number;
 };
 
 export interface BlockDataview extends I.Block {

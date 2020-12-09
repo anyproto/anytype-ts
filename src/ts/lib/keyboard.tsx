@@ -39,8 +39,8 @@ class Keyboard {
 		const { root } = blockStore;
 		const { focused } = focus;
 		const rootId = this.isEditor() ? this.match.params.id : root;
-		const platform = Util.getPlatform();
 		const isMainIndex = this.isMainIndex();
+		const platform = Util.getPlatform();
 		
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {

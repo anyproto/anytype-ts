@@ -1,8 +1,9 @@
-import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion } from './common';
+import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
+import { ObjectLayout, ObjectType, ObjectTypePerObject, RelationType, Relation, SelectOption } from './object';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
 import {
@@ -12,8 +13,6 @@ import {
 	ViewComponent,
 	ViewType,
 	View,
-	RelationType,
-	Relation,
 	SortType,
 	Sort,
 	FilterOperator,
@@ -32,6 +31,7 @@ import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './
 import { FileType, FileState, File, BlockFile } from './block/file';
 import { BookmarkType, ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
+import { ContentRelation, BlockRelation } from './block/relation';
 
 export {
 	Account,
@@ -42,7 +42,8 @@ export {
 	NavigationType,
 	Option,
 	HistoryVersion,
-
+	LinkPreview,
+	
 	ThreadStatus,
 	ThreadSummary,
 	ThreadDevice,
@@ -63,6 +64,12 @@ export {
 	Menu,
 	MenuItem,
 
+	ObjectLayout,
+	ObjectType,
+	ObjectTypePerObject,
+	Relation,
+	SelectOption,
+	
 	PageInfo,
 
 	BlockType,
@@ -77,9 +84,8 @@ export {
 	ViewRelation,
 	ViewComponent,
 	ViewType,
-	View,
-	RelationType,
-	Relation,
+	View,  
+	RelationType, 
 	SortType,
 	Sort,
 	FilterOperator,
@@ -122,4 +128,7 @@ export {
 	BookmarkType,
 	ContentBookmark,
 	BlockBookmark,
+
+	ContentRelation, 
+	BlockRelation,
 }

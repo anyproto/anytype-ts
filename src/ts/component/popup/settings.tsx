@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Input, Loader, Smile, Error, Pin } from 'ts/component';
-import { I, C, Storage, Key, Util, DataUtil } from 'ts/lib';
+import { Icon, Button, Title, Label, Cover, Textarea, Loader, Smile, Error, Pin } from 'ts/component';
+import { I, C, Storage, translate, Util, DataUtil } from 'ts/lib';
 import { authStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -70,24 +70,24 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'index':
 				content = (
 					<div>
-						<Title text="Settings" />
+						<Title text={translate('popupSettingsTitle')} />
 
 						<div className="rows">
 							<div className="row" onClick={() => { this.onPage('wallpaper'); }}>
 								<Icon className="wallpaper" />
-								<Label text="Wallpaper" />
+								<Label text={translate('popupSettingsWallpaperTitle')} />
 								<Icon className="arrow" />
 							</div>
 
 							<div className="row" onClick={() => { this.onPage('phrase'); }}>
 								<Icon className="phrase" />
-								<Label text="Keychain phrase" />
+								<Label text={translate('popupSettingsPhraseTitle')} />
 								<Icon className="arrow" />
 							</div>
 
 							<div className="row" onClick={() => { this.onPage('pinIndex'); }}>
 								<Icon className="pin" />
-								<Label text="Pin code" />
+								<Label text={translate('popupSettingsPinTitle')} />
 								<div className="status">
 									{pin ? 'On' : 'Off'}
 								</div>
@@ -96,12 +96,12 @@ class PopupSettings extends React.Component<Props, State> {
 
 							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
 								<Icon className="import" />
-								<Label text="Import" />
+								<Label text={translate('popupSettingsImportTitle')} />
 								<Icon className="arrow" />
 							</div>
 						</div>
 
-						<div className="logout" onClick={this.onLogout}>Log out</div>
+						<div className="logout" onClick={this.onLogout}>{translate('popupSettingsLogout')}</div>
 					</div>
 				);
 				break;
@@ -131,18 +131,18 @@ class PopupSettings extends React.Component<Props, State> {
 
 				content = (
 					<div>
-						<Head id="index" name="Settings" />
-						<Title text="Wallpaper" />
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsWallpaperTitle')} />
 
 						<div className="row first">
-							<Label text="Choose or upload the wallpaper. For best results upload high resolution images." />
+							<Label text={translate('popupSettingsWallpaperText')} />
 							<div className="fileWrap item" onClick={this.onFileClick}>
 								<Cover className="upload" type={I.CoverType.Color} id="white" />
 							</div>
 						</div>
 
 						<div className="row">
-						<Label className="name" text="Pictures" />
+						<Label className="name" text={translate('popupSettingsPicture')} />
 							<div className="covers">
 								{covers1.map((item: any, i: number) => (
 									<Item key={i} {...item} active={item.id == cover.id} />
@@ -151,7 +151,7 @@ class PopupSettings extends React.Component<Props, State> {
 						</div>
 
 						<div className="row last">
-							<Label className="name" text="Colours" />
+							<Label className="name" text={translate('popupSettingsColor')} />
 							<div className="covers">
 								{covers2.map((item: any, i: number) => (
 									<Item key={i} {...item} preview={true} active={item.id == cover.id} />
@@ -165,15 +165,15 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'phrase':
 				content = (
 					<div>
-						<Head id="index" name="Settings" />
-						<Title text="Keychain phrase" />
-						<Label text="Your Keychain phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place." />
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsPhraseTitle')} />
+						<Label text={translate('popupSettingsPhraseText')} />
 						<div className="inputs">
 							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" readOnly={true} />
 						</div>
 						{this.onConfirmPhrase ? (
 							<div className="buttons">
-								<Button text="I've written it down" className="orange" onClick={() => {	this.onConfirmPhrase();	}} />
+								<Button text={translate('popupSettingsPhraseOk')} className="orange" onClick={() => {	this.onConfirmPhrase();	}} />
 							</div>
 						) : ''}
 					</div>
@@ -183,24 +183,24 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'pinIndex':
 				content = (
 					<div>
-						<Head id="index" name="Settings" />
-						<Title text="Pin code" />
-						<Label text="The pin code will protect your keychain phrase. As we do not store your keychain phrase or pin code and do not ask your e-mail or phone number,  id recovery without your pin code or keychain phrase. So, please, remember your pin code" />
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsPinTitle')} />
+						<Label text={translate('popupSettingsPinText')} />
 
 						{pin ? (
 							<div className="buttons">
-								<Button text="Turn pin code off" className="blank" onClick={() => {
+								<Button text={translate('popupSettingsPinOff')} className="blank" onClick={() => {
 									this.onConfirmPin = this.onTurnOffPin;
 									this.onPage('pinConfirm');
 								}} />
-								<Button text="Change pin code" className="blank" onClick={() => {
+								<Button text={translate('popupSettingsPinChange')} className="blank" onClick={() => {
 									this.onConfirmPin = () => { this.onPage('pinSelect'); };
 									this.onPage('pinConfirm');
 								}} />
 							</div>
 						): (
 							<div className="buttons">
-								<Button text="Turn pin code on" className="blank" onClick={() => {
+								<Button text={translate('popupSettingsPinOn')} className="blank" onClick={() => {
 									this.onPage('pinSelect');
 								}} />
 							</div>
@@ -213,9 +213,9 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'pinSelect':
 				content = (
 					<div>
-						<Head id="pinIndex" name="Cancel" />
-						<Title text="Pin code" />
-						<Label text="The pin code will protect your secret phrase. As we do not store your secret phrase or pin code and do not ask your e-mail or phone number, there is no id recovery without your pin code or secret phrase. So, please, remember your pin code." />
+						<Head id="pinIndex" name={translate('commonCancel')} />
+						<Title text={translate('popupSettingsPinTitle')} />
+						<Label text={translate('popupSettingsPinText')} />
 						<Pin onSuccess={this.onSelectPin} />
 					</div>
 				);
@@ -224,15 +224,15 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'pinConfirm':
 				content = (
 					<div>
-						<Head id="pinIndex" name="Cancel" />
-						<Title text="Pin code" />
-						<Label text="To continue, first verify that it’s you. Enter current pin code" />
+						<Head id="pinIndex" name={translate('commonCancel')} />
+						<Title text={translate('popupSettingsPinTitle')} />
+						<Label text={translate('popupSettingsPinVerify')} />
 						<Error text={error} />
 
 						<Pin 
 							value={Storage.get('pin')} 
 							onSuccess={this.onCheckPin} 
-							onError={() => { this.setState({ error: 'Incorrect pin' }) }} 
+							onError={() => { this.setState({ error: translate('popupSettintsSectionPinError') }) }} 
 						/>
 					</div>
 				);
@@ -255,7 +255,7 @@ class PopupSettings extends React.Component<Props, State> {
 							this.onPage(Util.toCamelCase('import-' + item.id));
 						};
 					}}>
-						{item.disabled ? <div className="soon">Soon</div> : ''}
+						{item.disabled ? <div className="soon">{translate('commonSoon')}</div> : ''}
 						<div className="txt">
 							<Icon />
 							<div className="name">{item.name}</div>
@@ -265,9 +265,9 @@ class PopupSettings extends React.Component<Props, State> {
 
 				content = (
 					<div>
-						<Head id="index" name="Settings" />
-						<Title text="Import" />
-						<Label text="Choose application or format, which data you want to import" />
+						<Head id="index" name={translate('popupSettingsTitle')} />
+						<Title text={translate('popupSettingsImportTitle')} />
+						<Label text={translate('popupSettingsImportText')} />
 						<div className="items">
 							{items.map((item: any, i: number) => (
 								<Item key={i} {...item} />
@@ -280,25 +280,24 @@ class PopupSettings extends React.Component<Props, State> {
 			case 'importNotion':
 				content = (
 					<div>
-						<Head id="importIndex" name="Import" />
+						<Head id="importIndex" name={translate('popupSettingsImportTitle')} />
 
-						<Title text="How to import from Notion" />
-						<Label text="First you need to export data." />
+						<Title text={translate('popupSettingsImportHow')} />
+						<Label text={translate('popupSettingsImportFirst')} />
 
 						<div className="path">
-							<b>Get all data:</b><br/>
+							<b>{translate('popupSettingsImportGetTitle')}</b><br/>
 							<Smile icon=":gear:" /> Settings & Members → <Smile icon=":house:" /> Settings → Export all workspace content → <br/>
 							Export format : "Markdown & CSV".
 						</div>
 
 						<div className="path">
-							<b>Get certain pages:</b><br/>
+							<b>{translate('popupSettingsImportPageTitle')}</b><br/>
 							Three dots menu on the top-left corner → <Smile icon=":paperclip:" /> Export →  <br/> Export format : "Markdown & CSV".
 						</div>
 
-						<Label className="last" text="After that you need to select Zip archive and Anytype will do the rest." />
-
-						<Button text="Import data" className="orange" onClick={() => { this.onImport('notion'); }} />
+						<Label className="last" text={translate('popupSettingsImportZip')} />
+						<Button text={translate('popupSettingsImportOk')} className="orange" onClick={() => { this.onImport('notion'); }} />
 					</div>
 				);
 				break;

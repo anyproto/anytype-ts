@@ -114,7 +114,6 @@ class AuthStore {
 
 		this.accountItem = null;
 		this.phraseSet('');
-		ipcRenderer.send('keytarDelete', 'phrase');
 	};
 	
 };

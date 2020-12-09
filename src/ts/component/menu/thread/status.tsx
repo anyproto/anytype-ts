@@ -58,7 +58,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		};
 
 		const fileStatus = [
-			{ key: 'Uploading', value: files.pinning + files.failed },
+			{ key: 'Uploading', value: files.pinning },
 			{ key: 'Waiting for upload', value: files.failed },
 			{ key: 'Stored', value: files.pinned },
 		];
@@ -71,7 +71,7 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		) : (
 			<React.Fragment>
 				<div className="section">
-					<div className="name">My devices direct interaction</div>
+					<div className="name">Direct interaction with my devices</div>
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
 							const fields = [

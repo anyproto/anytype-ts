@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
+import { MenuItemVertical } from 'ts/component';
+import { I, keyboard, Key, Util, DataUtil, translate } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -63,7 +62,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				{!sections.length ? <div className="item empty">No items match filter</div> : ''}
+				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
 				{sections.map((item: any, i: number) => (
 					<Section key={i} {...item} />
 				))}
@@ -206,6 +205,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			{ id: 'text', icon: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
 			{ id: 'list', icon: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
 			{ id: 'file', icon: 'file', name: 'Object', color: 'blue', children: DataUtil.menuGetBlockObject() },
+			{ id: 'relation', icon: 'relation', name: 'Relation', color: 'violet', children: DataUtil.menuGetBlockRelation() },
 			{ id: 'other', icon: 'line', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
 		];
 		
