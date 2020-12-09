@@ -43,7 +43,7 @@
 	}
 }
 
-html.platformWindows, body.platformLinux {
+html.platformWindows, html.platformLinux {
 	.menus {
 		.menu.menuBlockAdd { width: 377px !important; }
 	}
