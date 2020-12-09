@@ -6,8 +6,41 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 20 November, 2020` },
-  { text: `New encryption. We now using AES with stream encryption with CFB mode. Old encryption could increase the RAM consumption to 13,46 GB with 4GB file and could even crash Anytype. Now it takes less than 100 megabytes with any size of the file. For the best performance, you need to be up-to-date in each Desktop app and use the latest Android version. It starts to work with the new files added to Anytype, so, please, re-upload big files. ` },
+	{ style: I.TextStyle.Title, text: `Updates for 8 December, 2020` },
+
+	{ text: `Happy holidays from the Anytypers!` },
+	{ text: `As we near the end of 2020, we want to say thanks for all your support this year.` },
+	{ text: `There are many reasons to be optimistic about 2021. For us, we’re looking forward to databases, templates, and a discussion about how objects work together.` },
+	{ text: `This is a major Anytype update with sync status, security improvements, and bug fixes. Overall, we think this release should provide you a much-improved experience.` },
+
+	{ style: I.TextStyle.Header3, text:  `Sync statuses: ` },
+	{ style: I.TextStyle.Bulleted, text: `On the top-right corner of Anytype, you can find the sync status summary of every page.` },
+	{ style: I.TextStyle.Bulleted, text: `You can now dive into the details by clicking on the status and see the interaction with the backup node and other devices you use.` },
+	{ style: I.TextStyle.Bulleted, text: `For each device, you will see when the last direct (P2P) synchronization took place. Since we live in a distributed world, data can be transferred directly from the device or through a backup node if it was connected this way. ` },
+	{ style: I.TextStyle.Bulleted, text: `The dashboard pages and links to pages have received special states also to help you better understand the sync status.` },
+	{ text: `<span class="${sc}">Updates requested</span> status calculation starts to work from this release.` },
+
+	{ style: I.TextStyle.Header3, text:  `Further Enhancements:` },
+	{ style: I.TextStyle.Bulleted, text: `Your mnemonic passphrase is now stored in your system’s keychain.` },
+	{ style: I.TextStyle.Bulleted, text: `We disabled the noise security protocol and enabled the latest TLS, rewrote initial sync logic, and now we have more successful connections between devices. This means new objects will sync faster. ` },
+	{ text: `We’re currently working on another major update which should increase the sync success rate even more.` },
+
+	{ style: I.TextStyle.Header3, text:  `Bug fixes:` },
+	{ style: I.TextStyle.Bulleted, text: `We fixed a bug that prevented some users from mentioning their pages. Thanks, Mukanzi!` },
+	{ style: I.TextStyle.Bulleted, text: `We’ve fixed the Anytype icon and hover state on Windows. Thanks, Ichimga!` },
+	{ style: I.TextStyle.Bulleted, text: `Page top-rights icons clips over rendered above the scroll bar in modal views in narrow resolutions. Thanks, BGray!` },
+  { style: I.TextStyle.Bulleted, text: `The <span class="${sc}"><</span> or <span class="${sc}">></span> symbols don't disappear anymore. Thanks, George!` },
+  { style: I.TextStyle.Bulleted, text: `The URL doesn't paste in the URL dialog window if you try to create a link in a text by <span class="${sc}">Cmd + K</span> and <span class="${sc}">Cmd + V</span> combination. Thanks, Hayk!` },
+	{ style: I.TextStyle.Bulleted, text: `Holding left click and scrolling at the same time was laggy. Thanks again, Hayk!` },
+	{ style: I.TextStyle.Bulleted, text: `After pasting the URL link the menu could drop the carriage to the beginning of the block and paste it there.` },
+	{ style: I.TextStyle.Bulleted, text: `Carriage drops to the beginning of the line after setting the markup color.` },
+	{ style: I.TextStyle.Bulleted, text: `Dividers have lost the “turn into” option.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 20 November, 2020` },
+
+  { text: `New encryption. We now using AES with stream encryption with CFB mode. Old encryption could increase the RAM consumption to 13,46 GB with 4GB file and could even crash Anytype. Now it takes less than 100 megabytes with any size of the file. For the best performance, you need to be up-to-date in each Desktop app and use the latest Android version. It starts to work with the new files added to Anytype, so, please, re-upload big files.` },
 
 	{ style: I.TextStyle.Header3, text:  `Enhancements:` },
 	{ style: I.TextStyle.Bulleted, text: `Turn into now can turn page links into mentions with other text styles.` },
