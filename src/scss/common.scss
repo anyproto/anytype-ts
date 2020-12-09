@@ -77,15 +77,7 @@ html.platformWindows {
 
 	::-webkit-scrollbar { width: 12px; }
 	::-webkit-scrollbar-thumb { 
-		width: 6px; 
-		max-height: calc(100% - 10px);
-		background: rgba(0,0,0,0.35); 
-		border: 3px solid rgba(0, 0, 0, 0); 
-		border-radius: 6px; 
-		background-clip: padding-box; 
-	}
-	::-webkit-scrollbar-track {
-		background-color: transparent;
+		width: 6px; background: rgba(0,0,0,0.5); border: 3px solid rgba(0, 0, 0, 0); border-radius: 6px; background-clip: padding-box; 
 	}
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
