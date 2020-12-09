@@ -174,7 +174,7 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
-		$('body').attr({ class: this.getClass('body') });
+		$('html').attr({ class: this.getClass('body') });
 	};
 	
 	resize () {
