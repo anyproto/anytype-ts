@@ -119,6 +119,7 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
 		const page = $('.pageMainEdit');
+		const menuIds = [ 'select', 'dataviewText', 'dataviewObjectList', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar' ];
 
 		let menuId = '';
 		let setOn = () => {
@@ -135,6 +136,18 @@ class Cell extends React.Component<Props, {}> {
 				body.addClass('over');
 			};
 		};
+		let setOff = () => {
+			cell.removeClass('isEditing');
+
+			if (this.ref && this.ref.setEditing) {
+				this.ref.setEditing(false);
+			};
+			if (menuId) {
+				body.removeClass('over');
+			};
+		};
+
+
 		let param: I.MenuParam = { 
 			element: element,
 			offsetX: 0,
@@ -144,18 +157,10 @@ class Cell extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			noAnimation: true,
 			noFlip: true,
+			passThrough: true,
 			className: menuClassName,
 			onOpen: setOn,
-			onClose: () => {
-				cell.removeClass('isEditing');
-
-				if (this.ref && this.ref.setEditing) {
-					this.ref.setEditing(false);
-				};
-				if (menuId) {
-					body.removeClass('over');
-				};
-			},
+			onClose: setOff,
 			data: { 
 				rootId: rootId,
 				blockId: block.id,
@@ -203,7 +208,6 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Select:
 				param = Object.assign(param, {
 					width: width,
-					passThrough: true,
 				});
 				param.data = Object.assign(param.data, {
 					filter: '',
@@ -222,8 +226,6 @@ class Cell extends React.Component<Props, {}> {
 					value: value || [],
 					types: relation.objectTypes,
 				});
-
-				console.log(param);
 
 				menuId = 'dataviewObjectList';
 				break;
@@ -247,7 +249,6 @@ class Cell extends React.Component<Props, {}> {
 					type: I.MenuType.Horizontal,
 					horizontal: I.MenuDirection.Center,
 					className: 'button',
-					passThrough: true,
 					width: width,
 					offsetY: 14,
 				});
@@ -299,19 +300,11 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (menuId) {
-			commonStore.menuCloseAll([ 
-				'select', 
-				'dataviewText', 
-				'dataviewObjectList', 
-				'dataviewOptionList', 
-				'dataviewMedia', 
-				'dataviewCalendar',
-			]);
-			commonStore.menuOpen(menuId, param); 
-			
-			page.unbind('click').on('click', () => {
-				commonStore.menuCloseAll();
-			});
+			commonStore.menuCloseAll(menuIds);
+			window.setTimeout(() => {
+				commonStore.menuOpen(menuId, param); 
+				page.unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
+			}, 10);
 		} else {
 			setOn();
 		};
@@ -336,7 +329,9 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	canEdit () {
-		const { relation, readOnly, viewType } = this.props;
+		const { readOnly, viewType } = this.props;
+		const relation = this.getRelation();
+
 		if (!relation || readOnly || relation.isReadOnly) {
 			return false;
 		};

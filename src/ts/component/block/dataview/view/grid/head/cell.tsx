@@ -18,7 +18,7 @@ class HeadCell extends React.Component<Props, {}> {
 
 		const Cell = SortableElement((item: any) => {
 			return (
-				<th id={DataUtil.cellId('head', relationKey, '')} className={'head c-' + DataUtil.relationClass(format)} style={{ width: width }}>
+				<th id={DataUtil.cellId('head', relationKey, '')} className={'cellHead c-' + DataUtil.relationClass(format)} style={{ width: width }}>
 					<div className="cellContent">
 						<Handle {...this.props} />
 						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }}>

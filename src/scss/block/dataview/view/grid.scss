@@ -2,32 +2,35 @@
 
 .blocks {
 	.block.blockDataview {
+		.cellHead { 
+			text-align: left; color: #6c6a5f; padding: 14px; white-space: nowrap; 
+			font-weight: 400; line-height: 20px; position: relative; @include text-overflow-nw; cursor: grab;
+		}
+		.cellHead * { cursor: grab; }
+		.cellHead {
+			.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
+			.name { 
+				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px); 
+				@include text-overflow-nw;
+			}
+			.resize { width: 20px; height: 20px; position: absolute; right: -10px; top: 14px; cursor: col-resize; z-index: 1; }
+			.resize {
+				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 9px; }
+			}
+		}
+		.cellHead:last-child {
+			.name { border: 0px; }
+		}
+		.cellHead.last {
+			.icon.plus { margin: 0px; }
+		}
+		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
+
         .viewItem.viewGrid { border-collapse: collapse; border-bottom: 1px solid #e0ded2; table-layout: fixed; }
 		.viewItem.viewGrid {
 			.icon.checkbox { vertical-align: top; }
 
-			.head { 
-				text-align: left; color: #6c6a5f; padding: 14px; border-bottom: 1px solid #e0ded2; white-space: nowrap; 
-				font-weight: 400; line-height: 20px; position: relative; @include text-overflow-nw; cursor: grab;
-			}
-			.head {
-				.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
-				.name { 
-					display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px); 
-					@include text-overflow-nw;
-				}
-				.resize { width: 20px; height: 20px; position: absolute; right: -10px; top: 14px; cursor: col-resize; z-index: 1; }
-				.resize {
-					.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 9px; }
-				}
-			}
-			.head:last-child {
-				.name { border: 0px; }
-			}
-			.head.last {
-				.icon.plus { margin: 0px; }
-			}
-			.head.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
+			tbody { border-top: 1px solid #e0ded2; }
 
 			.cellContent { width: 100%; @include text-overflow-nw; height: 20px; }
 			.cellContent.isName {

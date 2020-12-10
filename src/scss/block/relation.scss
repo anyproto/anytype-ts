@@ -19,7 +19,7 @@
 
 	.sides { display: flex; }
 
-	.info { width: 200px; margin-right: 20px; padding: 2px 0px; }
+	.info { width: 215px; margin-right: 1px; padding: 2px 0px; }
 	.info {
 		.name { 
 			display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
@@ -27,7 +27,7 @@
 		}
 	}
 
-	.cell { @include text-common; width: calc(100% - 220px); position: relative; padding: 2px 0px; line-height: 20px; }
+	.cell { @include text-common; width: calc(100% - 216px); position: relative; padding: 2px 0px; line-height: 20px; }
 
 	.cell.isEditing {
 		.cellContent { position: static; padding: 5px !important; }
