@@ -323,8 +323,8 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	getRelation () {
-		const { storeId, relation, block, relationKey } = this.props;
-		return relation ? relation : dbStore.getRelation(storeId || block.id, relationKey);
+		const { rootId, storeId, relation, block, relationKey } = this.props;
+		return relation ? relation : dbStore.getRelation(rootId, (storeId || block.id), relationKey);
 	};
 	
 };

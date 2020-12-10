@@ -293,7 +293,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, relationKey } = data;
-		const relations = dbStore.getRelations(rootId);
+		const relations = dbStore.getRelations(rootId, rootId);
 		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
 	};
 

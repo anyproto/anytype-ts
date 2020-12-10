@@ -24,7 +24,7 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block, readOnly, getView } = this.props;
+		const { rootId, block, readOnly, getView } = this.props;
 		const view = getView();
 		const group = view.relations.find((item: I.Relation) => { return item.relationKey == GROUP; });
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
@@ -33,8 +33,8 @@ class ViewBoard extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const data = dbStore.getData(block.id);
-		const { offset, total } = dbStore.getMeta(block.id);
+		const data = dbStore.getData(rootId, block.id);
+		const { offset, total } = dbStore.getMeta(rootId, block.id);
 		const columns = this.getColumns();
 		
 		return (
@@ -104,8 +104,8 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 	
 	getColumns (): any[] {
-		const { block } = this.props;
-		const data = dbStore.getData(block.id);
+		const { rootId, block } = this.props;
+		const data = dbStore.getData(rootId, block.id);
 
 		let columns: any[] = [];
 		for (let i in data) {

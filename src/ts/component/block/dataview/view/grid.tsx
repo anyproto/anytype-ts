@@ -27,11 +27,11 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block, getData, getView, readOnly, onRowAdd, onCellClick, onRef } = this.props;
+		const { rootId, block, getData, getView, readOnly, onRowAdd } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const data = dbStore.getData(block.id);
-		const { offset, total } = dbStore.getMeta(block.id);
+		const data = dbStore.getData(rootId, block.id);
+		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
 		let pager = null;
 		if (total && data.length) {

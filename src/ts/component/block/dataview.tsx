@@ -34,7 +34,7 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const { content } = block;
 		const { views } = content;
 
@@ -42,7 +42,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const { viewId } = dbStore.getMeta(block.id);
+		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const view = views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 		const readOnly = false; // TMP
 
@@ -110,22 +110,22 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 
 		$(window).unbind('resize.dataview');
-		dbStore.relationsRemove(block.id);
+		dbStore.relationsRemove(rootId, block.id);
 	};
 
 	getData (id: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const win = $(window);
-		const { viewId } = dbStore.getMeta(block.id);
+		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const viewChange = id != viewId;
 
 		const cb = (message: any) => {
 			if (viewChange) {
 				const view = this.getView();
-				view.relations = DataUtil.viewGetRelations(block.id, view);
+				view.relations = DataUtil.viewGetRelations(rootId, block.id, view);
 			};
 
 			if (callBack) {
@@ -133,9 +133,9 @@ class BlockDataview extends React.Component<Props, {}> {
 			};
 		};
 
-		dbStore.metaSet(block.id, { viewId: id, offset: offset });
+		dbStore.metaSet(rootId, block.id, { viewId: id, offset: offset });
 		if (viewChange) {
-			dbStore.recordsSet(block.id, []);
+			dbStore.recordsSet(rootId, block.id, []);
 		};
 
 		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, cb);
@@ -145,21 +145,21 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	getRecord (index: number) {
-		const { block } = this.props;
-		const data = dbStore.getData(block.id);
+		const { rootId, block } = this.props;
+		const data = dbStore.getData(rootId, block.id);
 
 		return data[index];
 	};
 
 	getView () {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const { views } = block.content;
 
 		if (!views.length) {
 			return null;
 		};
 
-		const { viewId } = dbStore.getMeta(block.id);
+		const { viewId } = dbStore.getMeta(rootId, block.id);
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
@@ -170,7 +170,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			if (message.error.code) {
 				return;
 			};
-			dbStore.recordAdd(block.id, message.record);
+			dbStore.recordAdd(rootId, block.id, message.record);
 		});
 	};
 
@@ -192,7 +192,7 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	onCellChange (id: string, relationKey: string, value: any) {
 		const { rootId, block } = this.props;
-		const data = dbStore.getData(block.id);
+		const data = dbStore.getData(rootId, block.id);
 		const record = data.find((it: any) => { return it.id == id; });
 
 		if (!record || (JSON.stringify(record[relationKey]) === JSON.stringify(value))) {
@@ -202,7 +202,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
 
-		dbStore.recordUpdate(block.id, obj);
+		dbStore.recordUpdate(rootId, block.id, obj);
 		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, record);
 	};
 

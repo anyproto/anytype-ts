@@ -34,7 +34,7 @@ class CellObject extends React.Component<Props, State> {
 
 	render () {
 		const { rootId, block, readOnly, getRecord, index } = this.props;
-		const relation = dbStore.getRelation(block.id, this.props.relation.relationKey);
+		const relation = dbStore.getRelation(rootId, block.id, this.props.relation.relationKey);
 		const record = getRecord(index);
 
 		if (!relation || !record) {

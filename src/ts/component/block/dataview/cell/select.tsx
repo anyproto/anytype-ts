@@ -34,9 +34,9 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { block, readOnly, getRecord, index, viewType } = this.props;
+		const { rootId, block, readOnly, getRecord, index, viewType } = this.props;
 		const { editing } = this.state;
-		const relation = dbStore.getRelation(block.id, this.props.relation.relationKey);
+		const relation = dbStore.getRelation(rootId, block.id, this.props.relation.relationKey);
 		const record = getRecord(index);
 
 		if (!relation || !record) {

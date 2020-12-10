@@ -28,7 +28,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { content } = block;
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
-		const relations = dbStore.getRelations(rootId);
+		const relations = dbStore.getRelations(rootId, rootId);
 		const relation = relations.find((it: any) => { return it.relationKey == key; });
 		const isNew = (block.fields || {}).isNew;
 		const placeHolder = isNew ? 'New relation' : 'Relation';
@@ -182,7 +182,7 @@ class BlockRelation extends React.Component<Props, {}> {
 	getItems () {
 		const { rootId } = this.props;
 		const filter = new RegExp(Util.filterFix(this.refInput.getValue()), 'gi');
-		const relations = dbStore.getRelations(rootId);
+		const relations = dbStore.getRelations(rootId, rootId);
 		
 		let options: any[] = [];
 		for (let relation of relations) {

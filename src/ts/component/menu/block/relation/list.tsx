@@ -29,7 +29,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 		const idPrefix = 'menuBlockRelationListCell';
 
-		let relations = dbStore.getRelations(rootId).filter((it: I.Relation) => { return !it.isHidden; });
+		let relations = dbStore.getRelations(rootId, rootId).filter((it: I.Relation) => { return !it.isHidden; });
 		if (filter) {
 			relations = relations.filter((it: I.Relation) => { return it.name.match(filter); });
 		};
@@ -95,7 +95,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readOnly } = data;
-		const relation = dbStore.getRelation(rootId, relationKey);
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		if (!relation || readOnly || relation.isReadOnly) {
 			return;

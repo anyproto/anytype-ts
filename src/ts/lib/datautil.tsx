@@ -559,12 +559,12 @@ class DataUtil {
 		return [ prefix, relationKey, id.toString() ].join('-');
 	};
 
-	viewGetRelations (blockId: string, view: I.View): I.ViewRelation[] {
+	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
 		if (!view) {
 			return [];
 		};
 
-		let relations = Util.objectCopy(dbStore.getRelations(blockId));
+		let relations = Util.objectCopy(dbStore.getRelations(rootId, blockId));
 		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
 
 		let order: any = {};

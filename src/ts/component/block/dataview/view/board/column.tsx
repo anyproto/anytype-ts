@@ -27,8 +27,8 @@ class Column extends React.Component<Props, {}> {
 		const { rootId, block, groupId, getView, onAdd, list, columnId, value } = this.props;
 		const view = getView();
 		const group = view.relations.find((item: I.Relation) => { return item.relationKey == groupId; });
-		const data = dbStore.getData(block.id);
-		const { offset, total } = dbStore.getMeta(block.id);
+		const data = dbStore.getData(rootId, block.id);
+		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
 		const Add = (item: any) => (
 			<Draggable draggableId={columnId + '-add'} index={item.index}>

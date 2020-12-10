@@ -325,14 +325,14 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	close (id: string) {
-		const { isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 		if (isPopup || !id) {
 			return;
 		};
 		
 		C.BlockClose(id, (message: any) => {
 			blockStore.blocksClear(id);
-			dbStore.relationsRemove(id);
+			dbStore.relationsRemove(rootId, id);
 			authStore.threadRemove(id);
 		});
 	};

@@ -15,10 +15,10 @@ const Constant = require('json/constant.json');
 class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { block, getData, getView } = this.props;
+		const { rootId, block, getData, getView } = this.props;
 		const view = getView();
-		const data = dbStore.getData(block.id);
-		const { offset, total } = dbStore.getMeta(block.id);
+		const data = dbStore.getData(rootId, block.id);
+		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
 		let pager = null;
 		if (total && data.length) {
