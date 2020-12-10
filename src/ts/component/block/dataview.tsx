@@ -36,14 +36,14 @@ class BlockDataview extends React.Component<Props, {}> {
 	render () {
 		const { block } = this.props;
 		const { content } = block;
-		const { source, views } = content;
+		const { views } = content;
 
 		if (!views.length) {
 			return null;
 		};
 
 		const { viewId } = dbStore.getMeta(block.id);
-		const view = views.find((item: any) => { return item.id == (viewId || views[0].id); });
+		const view = views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 		const readOnly = false; // TMP
 
 		if (!view) {
@@ -160,7 +160,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		};
 
 		const { viewId } = dbStore.getMeta(block.id);
-		return views.find((item: any) => { return item.id == (viewId || views[0].id); });
+		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
 	onRowAdd (e: any) {
