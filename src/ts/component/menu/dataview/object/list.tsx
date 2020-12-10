@@ -198,12 +198,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 				};
 			};
 
-			section.children.push({
-				...item,
-				icon: item.iconEmoji,
-				hash: item.iconImage,
-				withSmile: true,
-			});
+			section.children.push({ ...item, object: item });
 		};
 
 		const sections = DataUtil.menuSectionsMap(Object.values(obj));

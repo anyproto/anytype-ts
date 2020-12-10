@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Title, Smile, Loader } from 'ts/component';
+import { Icon, Title, IconObject, Loader } from 'ts/component';
 import { I, C, Util, translate } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -46,7 +46,7 @@ class PopupArchive extends React.Component<Props, State> {
 			return (
 				<div id={'item-' + content.targetBlockId} className="item" onClick={(e: any) => { this.onSelect(item); }}>
 					<Icon className="checkbox" />
-					<Smile icon={details.iconEmoji} className="c24" size={20} />
+					<IconObject object={details} className="c24" size={20} />
 					<div className="name">{details.name}</div>
 				</div>
 			);

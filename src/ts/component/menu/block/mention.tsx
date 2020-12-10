@@ -165,16 +165,11 @@ class MenuBlockMention extends React.Component<Props, State> {
 					] 
 				};
 				if (type == 'page') {	
-					obj[type].children.push({ id: 'create', name: 'Create new page', icon: '', hash: '', withSmile: true, skipFilter: true });
+					obj[type].children.push({ id: 'create', name: 'Create new page', object: {}, skipFilter: true });
 				};
 			};
 
-			section.children.push({
-				...item,
-				icon: item.iconEmoji,
-				hash: item.iconImage,
-				withSmile: true,
-			});
+			section.children.push({ ...item, object: item });
 		};
 
 		const sections = DataUtil.menuSectionsMap(Object.values(obj));

@@ -32,7 +32,7 @@ export interface Menu {
 export interface MenuItem {
 	id?: string;
 	icon?: string;
-	hash?: string;
+	object?: any;
 	name?: string;
 	description?: string;
 	inner?: any;
@@ -41,7 +41,6 @@ export interface MenuItem {
 	className?: string;
 	isActive?: boolean;
 	menuId?: string;
-	withSmile?: boolean;
 	withDescription?: boolean;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;

@@ -70,9 +70,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							</div>
 							<MenuItemVertical 
 								id="object-type" 
-								icon={objectType ? objectType.iconEmoji : ''} 
 								name={objectType ? objectType.name : 'Select object type'} 
-								withSmile={true}
+								object={objectType} 
 								onClick={this.onObjectType} 
 								arrow={true}
 							/>
@@ -168,14 +167,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const options = objectTypes.map((it: I.ObjectType) => {
-			return {
-				id: DataUtil.schemaField(it.url), 
-				name: it.name, 
-				icon: it.iconEmoji,
-				hash: '',
-				withSmile: true,
-				url: it.url,
-			};
+			return { ...it, object: it, id: DataUtil.schemaField(it.url) };
 		});
 
 		options.sort((c1: any, c2: any) => {

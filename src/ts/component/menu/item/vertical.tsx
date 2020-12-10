@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Smile } from 'ts/component';
+import { Icon, IconObject } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'ts/store';
@@ -10,7 +10,7 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, hash, inner, name, menuId, description, color, arrow, isActive, withSmile, withDescription, className, onClick, onMouseEnter } = this.props;
+		const { id, icon, object, inner, name, menuId, description, color, arrow, isActive, withDescription, className, onClick, onMouseEnter } = this.props;
 		
 		let cn = [ 'item' ];
 		if (className) {
@@ -33,8 +33,8 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		};
 		
 		let element = null;
-		if (withSmile) {
-			element = <Smile icon={icon} hash={hash} />;
+		if (object) {
+			element = <IconObject object={object} />;
 		} else 
 		if (icon) {
 			element = <Icon className={icon} inner={inner} />;
