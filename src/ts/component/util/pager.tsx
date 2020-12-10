@@ -24,8 +24,7 @@ class Pager extends React.Component<Props, {}> {
 		
 		let offset = Number(this.props.offset) || 0;
 		let total = Number(this.props.total) || 0;
-
-		const pages = Math.ceil(total / limit);
+		let pages = Math.ceil(total / limit);
 		let pageCnt = Math.ceil(pageLimit / 2);
 		let page = Math.ceil(offset / limit) + 1;
 
@@ -51,9 +50,25 @@ class Pager extends React.Component<Props, {}> {
 			return (
 				<div className="pager">
 					<Icon className={[ 'arrow', 'left', (page == 1 ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(page - 1); }} />
+					
+					{start > 1 ? (
+						<React.Fragment>
+							<Item id="1" />
+							<div className="dots">...</div>
+						</React.Fragment>
+					) : ''}
+
 					{items.map((item, i) => {
 						return <Item key={i} {...item} />;
 					})}
+
+					{end < pages ? (
+						<React.Fragment>
+							<div className="dots">...</div>
+							<Item id={pages} />
+						</React.Fragment>
+					) : ''}
+
 					<Icon className={[ 'arrow', 'right', (page == pages ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(page + 1); }} />
 				</div>
 			);
