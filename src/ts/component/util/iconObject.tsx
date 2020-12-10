@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Icon, Smile } from 'ts/component';
+import { Icon, IconUser, Smile } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -30,9 +30,10 @@ class IconObject extends React.Component<Props, {}> {
 	
 	render () {
 		const { object, className, size } = this.props;
-		const { id, iconEmoji, iconImage } = object || {};
+		const { id, name, iconEmoji, iconImage } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'icon-object', type ];
+		const objectType: any = dbStore.getObjectType(object.type) || {};
 
 		if (className) {
 			cn.push(className);
@@ -41,7 +42,19 @@ class IconObject extends React.Component<Props, {}> {
 		let icon = null;
 		switch (type) {
 			default:
-				icon = <Smile {...this.props} icon={iconEmoji} hash={iconImage} />;
+				switch (objectType.layout) {
+					default:
+					case I.ObjectLayout.Page:
+						icon = <Smile {...this.props} icon={iconEmoji} hash={iconImage} />;
+						break;
+
+					case I.ObjectLayout.Contact:
+						icon = <IconUser {...this.props} name={name} avatar={iconImage} />;
+						break;
+
+					case I.ObjectLayout.Task:
+						break;
+				};
 				break;
 
 			case 'image':

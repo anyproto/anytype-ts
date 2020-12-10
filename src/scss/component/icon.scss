@@ -73,10 +73,10 @@
 .icon.user.teal { background-color: $colorTeal; }
 .icon.user.green { background-color: $colorLime; }
 
-.icon-object { display: inline-block; vertical-align: middle; position: relative; width: 20px; height: 20px; }
+.icon-object { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; }
 .icon-object {
 	.smile, .icon, .img { width: 100%; height: 100%; margin: 0px !important; transition: none; vertical-align: top; }
-	.img { display: block; object-fit: cover; }
+	.img { border-radius: 2px; display: block; object-fit: cover; }
 	.icon.picture { background-image: url('~img/icon/menu/action/block/picture0.svg'); }
 }
 .icon-object.c24 { width: 24px; height: 24px; }
