@@ -9,10 +9,10 @@
 			.menu { right: 0px; top: 0px; }
 		}
 		
-		.content { height: 100%; }
+		.content { height: 100%; padding-top: 38px; }
 		.content > .wrap { height: 100%; }
 
-		.selection { height: 100%; overflow-x: hidden; overflow-y: scroll; padding-top: 38px; }
+		.selection { height: 100%; overflow-x: hidden; overflow-y: scroll; }
 		.blocks { margin-left: -48px; }
 		.editor { margin-top: 38px; }
 	}	
