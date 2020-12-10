@@ -125,8 +125,7 @@ class Textarea extends React.Component<Props, State> {
 				return;
 			};
 
-			let node = $(ReactDOM.findDOMNode(this));
-			node.focus();	
+			$(ReactDOM.findDOMNode(this)).focus({ preventScroll: true });	
 		});
 	};
 	
