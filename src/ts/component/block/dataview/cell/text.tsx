@@ -36,13 +36,12 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, viewType, getRecord } = this.props;
+		const { index, relation, viewType, getRecord, canEdit } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
 		};
 
-		const canEdit = this.canEdit();
 		const type = DataUtil.schemaField(record.type);
 
 		let Name = null;
@@ -157,7 +156,6 @@ class CellText extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { id, relation, index, getRecord } = this.props;
 		const cell = $('#' + id);
-		const body = $('body');
 		const record = getRecord(index);
 
 		if (editing) {
@@ -180,17 +178,14 @@ class CellText extends React.Component<Props, State> {
 			};
 
 			cell.addClass('isEditing');
-			body.addClass('over');
 		} else {
 			cell.removeClass('isEditing');
-			body.removeClass('over');
 		};
 	};
 
 	setEditing (v: boolean) {
-		const { viewType, readOnly } = this.props;
+		const { canEdit } = this.props;
 		const { editing } = this.state;
-		const canEdit = !readOnly && (viewType == I.ViewType.Grid);
 
 		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });
@@ -273,11 +268,6 @@ class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		DataUtil.pageSetIcon(record.id, '', hash);
-	};
-
-	canEdit () {
-		const { relation, readOnly, viewType } = this.props;
-		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
 
 };

@@ -96,6 +96,7 @@ export interface Cell {
 	index?: number;
 	viewType: I.ViewType;
 	readOnly?: boolean;
+	canEdit?: boolean;
 	getRecord(index: number): any;
 	onChange?(data: any): void;
 	onClick?(e: any): void;

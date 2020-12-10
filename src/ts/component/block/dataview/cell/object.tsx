@@ -33,7 +33,7 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, getRecord, index } = this.props;
+		const { rootId, block, readOnly, getRecord, index, canEdit } = this.props;
 		const relation = dbStore.getRelation(rootId, block.id, this.props.relation.relationKey);
 		const record = getRecord(index);
 
@@ -41,8 +41,6 @@ class CellObject extends React.Component<Props, State> {
 			return null;
 		};
 
-		const canEdit = this.canEdit();
-		
 		let value = this.getValue();
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
 		value = value.filter((it: any) => { return !it._detailsEmpty_; });
@@ -100,24 +98,20 @@ class CellObject extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { id } = this.props;
 		const cell = $('#' + id);
-		const body = $('body');
 
 		if (editing) {
 			cell.addClass('isEditing');
-			body.addClass('over');
 			this.focus();
 		} else {
 			cell.removeClass('isEditing');
-			body.removeClass('over');
 		};
 
 		this.placeHolderCheck();
 	};
 
 	setEditing (v: boolean) {
-		const { viewType, readOnly } = this.props;
+		const { canEdit } = this.props;
 		const { editing } = this.state;
-		const canEdit = !readOnly && (viewType == I.ViewType.Grid);
 
 		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });
@@ -320,11 +314,6 @@ class CellObject extends React.Component<Props, State> {
 		value = Util.arrayUnique(value);
 
 		onChange(value);
-	};
-
-	canEdit () {
-		const { relation, readOnly, viewType } = this.props;
-		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
 
 };

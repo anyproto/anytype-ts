@@ -20,6 +20,7 @@
 .cell.isEditing { border-radius: 2px; }
 .cell.isEditing {
 	.input-text { padding: 0px; height: 20px; }
+	.icon.expand { display: none !important; }
 	.cellContent { 
 		position: absolute; left: 0px; top: -1px; overflow: visible !important; height: auto !important; white-space: normal !important; 
 		box-shadow: 0px 0px 0px 2px $colorOrange inset; background: #fff; z-index: 10; min-height: calc(100% + 2px);
@@ -33,7 +34,7 @@
 	.filter { display: inline-block; }
 }
 
-.cellContent { line-height: 20px; }
+.cellContent { line-height: 20px; cursor: default; }
 .cellContent {
 	.icon-object { margin-right: 4px; vertical-align: top; }
 	.name { display: inline-block; vertical-align: top; }
@@ -94,6 +95,7 @@
 .cellContent.c-link {
 	.icon.user { margin-right: 5px; }
 }
+
 .cellContent.canEdit.c-description, 
 .cellContent.canEdit.c-date, 
 .cellContent.canEdit.c-object, 

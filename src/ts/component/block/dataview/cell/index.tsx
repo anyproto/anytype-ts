@@ -41,16 +41,16 @@ class Cell extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const { format, isReadOnly } = relation;
+		const canEdit = this.canEdit();
 		const cn = [ 
 			'cellContent', 
-			'c-' + DataUtil.relationClass(format), 
-			(!isReadOnly ? 'canEdit' : ''), 
+			'c-' + DataUtil.relationClass(relation.format), 
+			(this.canEdit() ? 'canEdit' : ''), 
 			(relationKey == 'name' ? 'isName' : ''),
 		];
 
 		let CellComponent: React.ReactType<Props>;
-		switch (format) {
+		switch (relation.format) {
 			default:
 			case I.RelationType.Title:
 			case I.RelationType.Number:
@@ -88,6 +88,7 @@ class Cell extends React.Component<Props, {}> {
 					ref={(ref: any) => { this.ref = ref; }} 
 					id={DataUtil.cellId(idPrefix, relation.relationKey, index)} 
 					{...this.props} 
+					canEdit={canEdit}
 					relation={relation}
 					onChange={this.onChange} 
 				/>
@@ -105,21 +106,22 @@ class Cell extends React.Component<Props, {}> {
 			return;
 		};
 
-		if (this.ref && this.ref.canEdit) {
-			if (!this.ref.canEdit()) {
-				return;
-			};
+		if (!this.canEdit()) {
+			return;
 		};
 
+		const body = $('body');
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const cell = $('#' + id);
 		const element = cell.find('.cellContent');
-		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
+		const width = Math.max(element.outerWidth() + 28, Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
 		const page = $('.pageMainEdit');
-		const setOn = () => {
+
+		let menuId = '';
+		let setOn = () => {
 			if (!this.ref) {
 				return;
 			};
@@ -129,9 +131,10 @@ class Cell extends React.Component<Props, {}> {
 			if (this.ref.onClick) {
 				this.ref.onClick();
 			};
+			if (menuId) {
+				body.addClass('over');
+			};
 		};
-
-		let menuId = '';
 		let param: I.MenuParam = { 
 			element: element,
 			offsetX: 0,
@@ -145,8 +148,12 @@ class Cell extends React.Component<Props, {}> {
 			onOpen: setOn,
 			onClose: () => {
 				cell.removeClass('isEditing');
+
 				if (this.ref && this.ref.setEditing) {
 					this.ref.setEditing(false);
+				};
+				if (menuId) {
+					body.removeClass('over');
 				};
 			},
 			data: { 
@@ -195,10 +202,9 @@ class Cell extends React.Component<Props, {}> {
 					
 			case I.RelationType.Select:
 				param = Object.assign(param, {
-					width: Math.max(Constant.size.menuDataviewOptionList, width),
+					width: width,
 					passThrough: true,
 				});
-
 				param.data = Object.assign(param.data, {
 					filter: '',
 					value: value || [],
@@ -216,6 +222,8 @@ class Cell extends React.Component<Props, {}> {
 					value: value || [],
 					types: relation.objectTypes,
 				});
+
+				console.log(param);
 
 				menuId = 'dataviewObjectList';
 				break;
@@ -325,6 +333,17 @@ class Cell extends React.Component<Props, {}> {
 	getRelation () {
 		const { rootId, storeId, relation, block, relationKey } = this.props;
 		return relation ? relation : dbStore.getRelation(rootId, (storeId || block.id), relationKey);
+	};
+
+	canEdit () {
+		const { relation, readOnly, viewType } = this.props;
+		if (readOnly || relation.isReadOnly) {
+			return false;
+		};
+		if (relation.format == I.RelationType.Checkbox) {
+			return true;
+		};
+		return (viewType == I.ViewType.Grid);
 	};
 	
 };

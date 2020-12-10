@@ -17,13 +17,12 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, index, getRecord } = this.props;
+		const { rootId, block, readOnly, index, getRecord, canEdit } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
 		};
 		
-		let canEdit = this.canEdit();
 		let value = this.getValue();
 
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
@@ -109,11 +108,6 @@ class CellFile extends React.Component<Props, {}> {
 		onChange(value);
 	};
 
-	canEdit () {
-		const { relation, readOnly, viewType } = this.props;
-		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
-	};
-	
 };
 
 export default CellFile;
