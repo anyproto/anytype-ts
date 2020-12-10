@@ -655,6 +655,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const platform = Util.getPlatform();
 		const map = blockStore.getMap(rootId);
 		const length = String(text || '').length;
+		const menuOpen = commonStore.menuIsOpen();
 
 		this.uiHide();
 		
@@ -830,7 +831,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
-			if (commonStore.menuIsOpen()) {
+			if (menuOpen) {
 				return;
 			};
 			
@@ -847,7 +848,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Last/first block
 		keyboard.shortcut('ctrl+arrowup, cmd+arrowup, ctrl+arrowdown, cmd+arrowdown', e, (pressed: string) => {
-			if (commonStore.menuIsOpen()) {
+			if (menuOpen) {
 				return;
 			};
 			
@@ -866,7 +867,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Expand selection
 		keyboard.shortcut('shift+arrowup, shift+arrowup, shift+arrowdown, shift+arrowdown', e, (pressed: string) => {
-			if (commonStore.menuIsOpen()) {
+			if (menuOpen) {
 				return;
 			};
 			

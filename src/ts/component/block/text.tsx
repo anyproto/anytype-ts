@@ -398,12 +398,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
 		
-		if (
-			commonStore.menuIsOpen('blockStyle') ||
-			commonStore.menuIsOpen('blockColor') ||
-			commonStore.menuIsOpen('blockBackground') ||
-			commonStore.menuIsOpen('blockMore') 
-		) {
+		if (commonStore.menuIsOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
 			e.preventDefault();
 			return;
 		};
@@ -416,8 +411,13 @@ class BlockText extends React.Component<Props, {}> {
 		const isSpaceBefore = range ? (!range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n')) : false;
 		const symbolBefore = range ? value[range.from - 1] : '';
 		
+		const menuOpen = commonStore.menuIsOpen();
+		const menuOpenAdd = commonStore.menuIsOpen('blockAdd');
+		const menuOpenMention = commonStore.menuIsOpen('blockMention');
+		const menuOpenSmile = commonStore.menuIsOpen('smile');
+		
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isTextCode() || commonStore.menuIsOpen()) {
+			if (block.isTextCode() || menuOpen) {
 				return;
 			};
 
@@ -454,7 +454,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (!commonStore.menuIsOpen('blockAdd') && !commonStore.menuIsOpen('blockMention')) {
+			if (!menuOpenAdd && !menuOpenMention) {
 				if (range.to) {
 					return;
 				};
@@ -466,11 +466,11 @@ class BlockText extends React.Component<Props, {}> {
 				ret = true;
 			};
 
-			if (commonStore.menuIsOpen('blockAdd') && (symbolBefore == '/')) {
+			if (menuOpenAdd && (symbolBefore == '/')) {
 				commonStore.menuClose('blockAdd');
 			};
 
-			if (commonStore.menuIsOpen('blockMention') && (symbolBefore == '@')) {
+			if (menuOpenMention && (symbolBefore == '@')) {
 				commonStore.menuClose('blockMention');
 			};
 		});
@@ -482,7 +482,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
-			if (commonStore.menuIsOpen('smile') || !block.canHaveMarks()) {
+			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};
 
@@ -491,7 +491,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
-			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || !block.canHaveMarks()) {
+			if (!isSpaceBefore || menuOpenMention || !block.canHaveMarks()) {
 				return;
 			};
 
@@ -518,6 +518,9 @@ class BlockText extends React.Component<Props, {}> {
 		const { id } = block;
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
+
+		const menuOpenAdd = commonStore.menuIsOpen('blockAdd');
+		const menuOpenMention = commonStore.menuIsOpen('blockMention');
 		
 		let value = this.getValue();
 		let cmdParsed = false;
@@ -527,7 +530,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		let symbolBefore = range ? value[range.from - 1] : '';
 		
-		if (commonStore.menuIsOpen('blockAdd')) {
+		if (menuOpenAdd) {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
 				commonStore.menuClose('blockAdd');
@@ -541,7 +544,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		if (commonStore.menuIsOpen('blockMention')) {
+		if (menuOpenMention) {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
 				commonStore.menuClose('blockMention');
@@ -556,7 +559,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !commonStore.menuIsOpen('blockAdd')) {
+		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !menuOpenAdd) {
 			value = Util.stringCut(value, range.from - 1, range.from);
 			onMenuAdd(id, value, range);
 		};
