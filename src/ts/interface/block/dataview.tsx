@@ -69,6 +69,8 @@ export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
 	readOnly: boolean;
+	container?: any;
+	isPopup?: boolean;
 	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
 	getRecord(index: number): any;

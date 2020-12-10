@@ -114,15 +114,15 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { getView } = this.props;
+		const { getView, container, isPopup } = this.props;
 		const view = getView();
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
-		const ww = win.width();
-		const mw = ww - 192;
-		
+		const ww = container.width();
+		const mw = ww - (isPopup ? 96 : 192);
+
 		let vw = 0;
 		let margin = 0;
 		let width = 0;

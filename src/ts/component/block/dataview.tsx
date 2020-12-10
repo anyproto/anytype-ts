@@ -85,6 +85,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						ref={(ref: any) => { this.viewRef = ref; }} 
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
+						container={this.getScrollContainer()}
 						readOnly={readOnly} 
 						getData={this.getData} 
 						getRecord={this.getRecord}
@@ -210,6 +211,11 @@ class BlockDataview extends React.Component<Props, {}> {
 		if (this.viewRef && this.viewRef.resize) {
 			this.viewRef.resize();
 		};
+	};
+
+	getScrollContainer () {
+		const { isPopup } = this.props;
+		return isPopup ? $('#popupEditorPage .selection') : $(window);
 	};
 	
 };
