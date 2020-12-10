@@ -631,7 +631,7 @@ class DataUtil {
 		});
 	};
 
-	dataviewRelationOpen (e: any, data: any, type: string) {
+	dataviewOpen (e: any, data: any, type: string) {
 		e.stopPropagation();
 		e.preventDefault();
 

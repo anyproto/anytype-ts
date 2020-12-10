@@ -140,7 +140,7 @@ class CellText extends React.Component<Props, State> {
 						object={record} 
 					/>
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { DataUtil.dataviewRelationOpen(e, record, type); }} />
+					<Icon className="expand" onClick={(e: any) => { DataUtil.dataviewOpen(e, record, type); }} />
 				</React.Fragment>
 			);
 		} else 

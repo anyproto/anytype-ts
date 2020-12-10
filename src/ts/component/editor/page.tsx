@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore, authStore, dbStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import Controls from './controls';
@@ -44,7 +44,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
 		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
-		//this.onMouseMove = this.onMouseMove.bind(this);
+		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
@@ -57,7 +57,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return <Loader />;
 		};
 		
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -134,7 +134,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		this._isMounted = true;
 		const win = $(window);
@@ -154,7 +154,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 		win.on('focus.editor' + namespace, (e: any) => { 
 			focus.apply(); 
-			win.scrollTop(this.scrollTop);
+			this.getScrollContainer().scrollTop(this.scrollTop);
 		});
 		
 		this.resize();
@@ -188,6 +188,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		focus.apply();
+		this.getScrollContainer().scrollTop(this.scrollTop);
 		this.resize();
 
 		if (resizable.length) {
@@ -211,6 +212,11 @@ class EditorPage extends React.Component<Props, {}> {
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 
+	getScrollContainer () {
+		const { isPopup } = this.props;
+		return isPopup ? $('#popupEditorPage .selection') : $(window);
+	};
+
 	checkDetails () {
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
@@ -222,8 +228,6 @@ class EditorPage extends React.Component<Props, {}> {
 	open (skipInit?: boolean) {
 		const { rootId, onOpen, history } = this.props;
 		const { breadcrumbs } = blockStore;
-		const { focused } = focus;
-		const win = $(window);
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
 		if (!breadcrumbs && !skipInit) {
@@ -263,15 +267,12 @@ class EditorPage extends React.Component<Props, {}> {
 				return;
 			};
 			
-			if (!focused) {
-				this.focusTitle();
-			};
-
 			this.loading = false;
+			this.focusTitle();
 			this.forceUpdate();
 			this.resize();
+			this.getScrollContainer().scrollTop(Storage.getScroll('editor', rootId));
 
-			win.scrollTop(Storage.getScroll('editor', rootId));
 			blockStore.setNumbers(rootId);
 
 			if (onOpen) {

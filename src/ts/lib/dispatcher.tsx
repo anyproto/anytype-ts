@@ -614,8 +614,6 @@ class Dispatcher {
 					view.relations = DataUtil.viewGetRelations(rootId, it.id, view);
 					return new M.View(view);
 				});
-
-				console.log(JSON.stringify(it.content.views, null, 5));
 			};
 			return new M.Block(it);
 		});
