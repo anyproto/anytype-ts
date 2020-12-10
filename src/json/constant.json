@@ -42,7 +42,7 @@
 
 	"limit": {
 		"dataview": {
-			"records": 20,
+			"records": 40,
 			"views": 100000,
 			"viewName": 24
 		}

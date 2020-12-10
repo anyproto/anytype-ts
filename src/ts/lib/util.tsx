@@ -424,7 +424,7 @@ class Util {
 
 	fileIcon (obj: any): string {
 		const name = String(obj.name || '');
-		const mime = String(obj.mime || obj.mimeType || '');
+		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
 		const a: string[] = name.split('.');
 		const e = a[a.length - 1];
 

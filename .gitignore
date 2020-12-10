@@ -11,3 +11,4 @@ commands.md
 .idea
 tools
 dist/*.node
+*.txt
