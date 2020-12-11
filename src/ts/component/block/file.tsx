@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InputWithFile, Loader, Icon, Error } from 'ts/component';
+import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
 import { I, C, Util, focus, translate } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -51,7 +51,7 @@ class BlockFile extends React.Component<Props, {}> {
 				element = (
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>
-							<Icon className={[ 'iconFile', Util.fileIcon(content) ].join(' ')} />
+							<IconObject object={{ ...content, type: '/file' }} className="c24" />
 							<span className="name">{name}</span>
 							<span className="size">{Util.fileSize(size)}</span>
 						</span>

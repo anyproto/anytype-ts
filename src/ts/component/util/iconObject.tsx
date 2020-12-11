@@ -39,6 +39,8 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push(className);
 		};
 
+		console.log(type);
+
 		let icon = null;
 		switch (type) {
 			default:
