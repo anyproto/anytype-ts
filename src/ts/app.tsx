@@ -22,6 +22,7 @@ import 'scss/component/button.scss';
 import 'scss/component/icon.scss';
 import 'scss/component/iconEmoji.scss';
 import 'scss/component/iconObject.scss';
+import 'scss/component/iconUser.scss';
 import 'scss/component/textarea.scss';
 import 'scss/component/error.scss';
 import 'scss/component/frame.scss';

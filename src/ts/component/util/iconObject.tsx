@@ -19,6 +19,7 @@ interface Props {
 	menuId?: string;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
+	onClick?(e: any): void;
 };
 
 @observer

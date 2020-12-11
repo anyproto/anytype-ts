@@ -1,0 +1,23 @@
+@import "~scss/_vars";
+
+.iconUser { 
+	width: 64px; height: 64px; border-radius: 100%; font-weight: 500; position: relative; overflow: hidden;
+	text-transform: uppercase; font-size: 22px; color: #fff; text-align: center; line-height: 62px; background-color: $colorIce;
+}
+.iconUser.c20 { width: 20px !important; height: 20px !important; line-height: 20px; font-size: 12px; }
+.iconUser.c40 { width: 40px; height: 40px; line-height: 40px; font-size: 18px; }
+.iconUser.c96 { width: 96px; height: 96px; line-height: 96px; font-size: 44px; font-weight: 500; }
+
+.iconUser {
+	.txt { line-height: inherit; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 1; }
+	.image { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; object-fit: cover; }
+}
+.iconUser.grey { background-color: $colorLightGrey; }
+.iconUser.black { background-color: $colorBlack; }
+.iconUser.brown { background-color: $colorDarkGrey; }
+.iconUser.orange { background-color: $colorOrange; }
+.iconUser.red { background-color: $colorRed; }
+.iconUser.purple { background-color: $colorPurple; }
+.iconUser.blue { background-color: $colorBlue; }
+.iconUser.teal { background-color: $colorTeal; }
+.iconUser.green { background-color: $colorLime; }
