@@ -32,7 +32,7 @@
 
 			tbody { border-top: 1px solid #e0ded2; }
 
-			.cellContent { width: 100%; @include text-overflow-nw; height: 20px; }
+			.cellContent { width: 100%; overflow: hidden; height: 20px; }
 			.cellContent.isName {
 				.icon.expand { 
 					display: block; position: absolute; right: 2px; top: 2px; opacity: 0; width: 38px; height: calc(100% - 4px);

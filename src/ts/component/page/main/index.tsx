@@ -160,7 +160,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 								data: { 
 									type: I.NavigationType.Link, 
 									rootId: root,
-									expanded: true,
 									skipId: root,
 									blockId: '',
 									position: I.BlockPosition.Bottom,
