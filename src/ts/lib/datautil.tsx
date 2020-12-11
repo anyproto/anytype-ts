@@ -657,6 +657,42 @@ class DataUtil {
 		};
 	};
 
+	checkDetails (rootId: string) {
+		const details = blockStore.getDetails(rootId, rootId);
+		const type = this.schemaField(details.type);
+		const objectType: any = dbStore.getObjectType(details.type) || {};
+
+		const ret: any = {
+			withCover: (details.coverType != I.CoverType.None) && details.coverId,
+			withIcon: false,
+		};
+
+		switch (type) {
+			default:
+				switch (objectType.layout) {
+					default:
+					case I.ObjectLayout.Page:
+						ret.withIcon = details.iconEmoji || details.iconImage;
+						break;
+
+					case I.ObjectLayout.Contact:
+						ret.withIcon = true;
+						break;
+
+					case I.ObjectLayout.Task:
+						break;
+				};
+				break;
+
+			case 'image':
+			case 'file':
+				ret.withIcon = true;
+				break;
+		};
+
+		return ret;
+	};
+
 };
 
 export default new DataUtil();

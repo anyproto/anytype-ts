@@ -25,7 +25,12 @@ class BlockIconUser extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<IconUser name={name} icon={iconImage ? commonStore.imageUrl(iconImage, Constant.size.iconPage) : ''} onClick={this.onClick} className="c96" />
+				<IconUser 
+					name={name} 
+					icon={iconImage ? commonStore.imageUrl(iconImage, Constant.size.iconPage) : ''} 
+					onClick={this.onClick} 
+					className="c96" 
+				/>
 			</React.Fragment>
 		);
 	};

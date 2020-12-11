@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
 import { I, C, Util, focus, translate } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -28,12 +28,12 @@ class BlockFile extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
-		const { state, hash, size, name, mime } = content;
+		const details = blockStore.getDetails(rootId, content.hash);
 		
 		let element = null;
 		let cn = [ 'focusable', 'c' + id ];
 
-		switch (state) {
+		switch (content.state) {
 			default:
 			case I.FileState.Empty:
 				element = (
@@ -51,9 +51,9 @@ class BlockFile extends React.Component<Props, {}> {
 				element = (
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>
-							<IconObject object={{ ...content, type: '/file' }} className="c24" />
-							<span className="name">{name}</span>
-							<span className="size">{Util.fileSize(size)}</span>
+							<IconObject object={details} className="c24" />
+							<span className="name">{details.name}</span>
+							<span className="size">{Util.fileSize(details.sizeInBytes)}</span>
 						</span>
 						<span className="download" onMouseDown={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>

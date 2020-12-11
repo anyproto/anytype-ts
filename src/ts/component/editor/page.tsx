@@ -35,8 +35,6 @@ class EditorPage extends React.Component<Props, {}> {
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
-	withIcon: boolean = false;
-	withCover: boolean = false;
 	loading: boolean = false;
 
 	constructor (props: any) {
@@ -67,8 +65,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
-
-		this.checkDetails();
+		const check = DataUtil.checkDetails(rootId);
 
 		let cn = [ 'editorWrapper' ];
 		let header = (
@@ -88,13 +85,13 @@ class EditorPage extends React.Component<Props, {}> {
 			cn.push('isDataview');
 		};
 		
-		if (this.withIcon && this.withCover) {
+		if (check.withIcon && check.withCover) {
 			cn.push('withIconAndCover');
 		} else
-		if (this.withIcon) {
+		if (check.withIcon) {
 			cn.push('withIcon');
 		} else
-		if (this.withCover) {
+		if (check.withCover) {
 			cn.push('withCover');
 		};
 		
@@ -166,21 +163,10 @@ class EditorPage extends React.Component<Props, {}> {
 		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
 	};
 
-	getSnapshotBeforeUpdate () {
-		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-
-		this.withIcon = details.iconEmoji || details.iconImage;
-		this.withCover = (details.coverType != I.CoverType.None) && details.coverId;
-
-		return null;
-	};
-	
 	componentDidUpdate () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
 		
-		this.checkDetails();
 		this.open();
 		
 		if (this.uiHidden) {
@@ -217,14 +203,6 @@ class EditorPage extends React.Component<Props, {}> {
 		return isPopup ? $('#popupEditorPage .selection') : $(window);
 	};
 
-	checkDetails () {
-		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-
-		this.withIcon = details.iconEmoji || details.iconImage;
-		this.withCover = (details.coverType != I.CoverType.None) && details.coverId;
-	};
-	
 	open (skipInit?: boolean) {
 		const { rootId, onOpen, history } = this.props;
 		const { breadcrumbs } = blockStore;
@@ -392,15 +370,16 @@ class EditorPage extends React.Component<Props, {}> {
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
+		const check = DataUtil.checkDetails(rootId);
 
 		let offset = 144;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
 		
-		if (this.withCover && this.withIcon) {
+		if (check.withCover && check.withIcon) {
 			offset = 328;
 		} else
-		if (this.withIcon) {
+		if (check.withIcon) {
 			offset = 194;
 		};
 		

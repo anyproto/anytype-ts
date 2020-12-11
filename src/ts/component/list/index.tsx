@@ -47,7 +47,7 @@ class ListIndex extends React.Component<Props, {}> {
 			if (_detailsEmpty_) {
 				return (
 					<div className="item">
-						<div className="smile c48" />
+						<div className="iconEmoji c48" />
 						<div className="line animatedBackground" />
 					</div>
 				);
@@ -61,7 +61,7 @@ class ListIndex extends React.Component<Props, {}> {
 			} else 
 			if (content.style == I.LinkStyle.Archive) {
 				icon = (
-					<div className="smile c48">
+					<div className="iconEmoji c48">
 						<Icon className="archive" />
 					</div>
 				);
