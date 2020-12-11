@@ -178,6 +178,8 @@ class CommonStore {
 	
 	@action
 	popupCloseAll () {
+		this.menuCloseAll();
+
 		for (let item of this.popupList) {
 			this.popupClose(item.id);
 		};

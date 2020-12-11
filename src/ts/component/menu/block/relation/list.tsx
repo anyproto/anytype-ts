@@ -80,6 +80,10 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		this.props.position();
 	};
 
+	componentWillUnmount () {
+		commonStore.menuCloseAll();
+	};
+
 	onSelect (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
