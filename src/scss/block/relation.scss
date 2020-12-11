@@ -33,8 +33,9 @@
 
 	.cell.c-select { padding: 7px 8px; }
 
+	.cell.isEditing { padding: 0px; }
 	.cell.isEditing {
-		.cellContent { position: static; padding: 5px !important; }
+		.cellContent { position: static; padding: 6px 4px !important; }
 	}
 
 	.cell.isEditing.c-description, .cell.isEditing.c-file { 

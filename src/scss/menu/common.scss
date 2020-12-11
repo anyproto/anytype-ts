@@ -86,14 +86,18 @@
 			.name { line-height: 22px; }
 		}
 
-		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
+		.line { height: 1px; margin: 8px 16px; background: $colorLightGrey; }
+		.input { border-radius: 4px; }
 
-		.sectionName { padding: 5px 16px; @include text-very-small; text-transform: uppercase; }
+		.sectionName { padding: 5px 16px; @include text-very-small; font-weight: 500; }
 		
-		.section { border-bottom: 1px solid $colorLightGrey; padding: 8px 0px; }
-		.section:first-child { padding-top: 0px; }
-		.section:last-child { border: 0px; padding-bottom: 0px; }
-		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; text-transform: uppercase; }
+		.section { padding: 8px 0px 0px 0px; }
+		.section::after {
+			content: ""; height: 1px; margin: 8px 16px 0px 16px; background: $colorLightGrey; display: block;
+		}
+		.section:last-child { border: 0px; }
+		.section:last-child::after { display: none; }
+		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; font-weight: 500; }
 	}
 	
 	.menu.horizontal {

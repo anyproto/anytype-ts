@@ -57,21 +57,14 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 							</div>
 
-							<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
-								<Icon className="settings" />
-								<div className="name">Preferences</div>
-								<Icon className="arrow" />
-							</div>
+							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
 						</React.Fragment>
 					) : ''}
 
 					{isObject ? (
 						<React.Fragment>
 							<div className="line" />
-
 							<div className="sectionName">Object type</div>
-							<div id="item-object-type" className="item" onClick={this.onObjectType}>
-							</div>
 							<MenuItemVertical 
 								id="object-type" 
 								object={objectType} 
@@ -214,7 +207,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 
 		this.menuOpen('dataviewDate', { 
-			element: '#menu-date-settings',
+			element: '#item-date-settings',
 			offsetX: 224,
 			offsetY: -38,
 			type: I.MenuType.Vertical,
