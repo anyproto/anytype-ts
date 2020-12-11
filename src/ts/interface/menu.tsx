@@ -42,6 +42,7 @@ export interface MenuItem {
 	isActive?: boolean;
 	menuId?: string;
 	withDescription?: boolean;
+	style?: any;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 };

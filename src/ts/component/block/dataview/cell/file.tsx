@@ -44,6 +44,7 @@ class CellFile extends React.Component<Props, {}> {
 
 		const File = (item: any) => (
 			<div className="element file" onClick={(e: any) => { DataUtil.dataviewOpen(e, item, item.type); }}>
+				<IconObject object={item} />
 				<div className="name">{item.name}</div>
 			</div>
 		);

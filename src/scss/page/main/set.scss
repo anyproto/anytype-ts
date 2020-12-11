@@ -11,7 +11,7 @@
 			.item { line-height: 32px; transition: $transitionFast; cursor: pointer; }
 			.item {
 				.icon { width: 20px; height: 20px; margin-right: 8px; }
-				.smile { margin-right: 8px; vertical-align: middle; }
+				.iconEmoji { margin-right: 8px; vertical-align: middle; }
 				.name { 
 					display: inline-block; @include text-paragraph; @include text-overflow-nw; width: calc(100% - 28px); line-height: 32px;
 					vertical-align: middle;

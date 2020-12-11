@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
-import { Icon, Smile, Input, IconObject } from 'ts/component';
+import { Icon, Input, IconObject } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 

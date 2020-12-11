@@ -76,10 +76,10 @@
 			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			
-			.icon-object { vertical-align: top; }
+			.iconObject { vertical-align: top; }
 
-			.smile, .icon-object { margin-right: 4px; }
-			.smile {
+			.iconEmoji, .iconObject { margin-right: 4px; }
+			.iconEmoji {
 				.icon.blank { margin: 0px; }
 			}
 		}

@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-.smile { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; }
-.smile {
+.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; }
+.iconEmoji {
 	.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
 	.emoji-mart-emoji {
 		span { height: 100%; display: inline-block; vertical-align: middle; }
@@ -31,46 +31,46 @@
 	}
 }
 
-.smile.withImage { border-radius: 100%; }
+.iconEmoji.withImage { border-radius: 100%; }
 
-.smile.c20 { width: 20px; height: 20px; line-height: 20px; }
-.smile.c20 {
+.iconEmoji.c20 { width: 20px; height: 20px; line-height: 20px; }
+.iconEmoji.c20 {
 	.emoji-mart-emoji { margin: -3px 0px 0px 2px; }
 }
 
-.smile.c24 { width: 24px; height: 24px; line-height: 24px; }
-.smile.c24 {
+.iconEmoji.c24 { width: 24px; height: 24px; line-height: 24px; }
+.iconEmoji.c24 {
 	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
 }
 
-.smile.c26 { width: 26px; height: 26px; line-height: 26px; }
-.smile.c26 {
+.iconEmoji.c26 { width: 26px; height: 26px; line-height: 26px; }
+.iconEmoji.c26 {
 	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
 }
 
-.smile.c28 { width: 28px; height: 28px; line-height: 28px; }
-.smile.c28 {
+.iconEmoji.c28 { width: 28px; height: 28px; line-height: 28px; }
+.iconEmoji.c28 {
 	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
 	.icon.blank { width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
 }
 
-.smile.c32 { width: 32px; height: 32px; line-height: 32px; }
-.smile.c32 {
+.iconEmoji.c32 { width: 32px; height: 32px; line-height: 32px; }
+.iconEmoji.c32 {
 	.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
 }
 
-.smile.c48 { display: block; width: 48px; height: 48px; border-radius: 100%; background-color: #f7f5f0; line-height: 48px; }
-.smile.c48 {
+.iconEmoji.c48 { display: block; width: 48px; height: 48px; border-radius: 100%; background-color: #f7f5f0; line-height: 48px; }
+.iconEmoji.c48 {
 	.emoji-mart-emoji { margin: -3px 0px 0px 1px; font-size: 24px; height: 28px; line-height: 1em; }
 	.emoji-mart-emoji { span { height: 28px; line-height: 32px; } }
 }
 
-.smile.c64 { display: block; width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; }
-.smile.c64 {
+.iconEmoji.c64 { display: block; width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; }
+.iconEmoji.c64 {
 	.emoji-mart-emoji { margin: -1px 0px 0px 0px; font-size: 36px; height: 1em; line-height: 1em; }
 	.emoji-mart-emoji { span { height: 36px; line-height: 36px; } }
 }
 
-.smile.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }
-.smile.canEdit.c48:hover, .smile.canEdit.c64:hover { background-color: #ebe9e0; }
-.smile.canEdit.c48.active, .smile.canEdit.c64.active { background-color: #ebe9e0; }
+.iconEmoji.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }
+.iconEmoji.canEdit.c48:hover, .iconEmoji.canEdit.c64:hover { background-color: #ebe9e0; }
+.iconEmoji.canEdit.c48.active, .iconEmoji.canEdit.c64.active { background-color: #ebe9e0; }

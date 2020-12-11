@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Icon, IconObject, Smile } from 'ts/component';
+import { IconObject } from 'ts/component';
 import { I, C, DataUtil, Util, Key, keyboard } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';

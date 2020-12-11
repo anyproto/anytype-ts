@@ -28,16 +28,4 @@ html.debug {
 	.blockLast { background: rgba(0,0,255,0.1); }
 	
 	.focusable.isFocused { border: 1px solid rgba(255,127,127,0.3); }
-	
-	.popups {
-		.popupNavigation {
-			.path {
-				.item {
-					.icon { background-color: rgba(0,0,255,0.1); }
-					.smile { background-color: rgba(0,0,255,0.1); }
-					.name { background-color: rgba(0,0,255,0.1); }
-				}
-			}
-		}
-	};
 } 

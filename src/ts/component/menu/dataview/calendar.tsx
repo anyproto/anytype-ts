@@ -50,7 +50,7 @@ class MenuCalendar extends React.Component<Props, State> {
 					<div className="sides">
 						<div className="side left">
 							<Select 
-								id="yemonthar" 
+								id="month" 
 								value={String(m || '')} 
 								options={months} 
 								menuWidth={192} 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Input, Textarea, Button, Error, Smile, Loader } from 'ts/component';
+import { Title, Label, Input, Textarea, Button, Error, IconEmoji, Loader } from 'ts/component';
 import { I, Util, translate } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
@@ -95,7 +95,7 @@ class PopupFeedback extends React.Component<Props, State> {
 				{loading ? <Loader /> : ''}
 				{success ? (
 					<React.Fragment>
-						<Smile className="c64" size={32} icon=":relieved:" />
+						<IconEmoji className="c64" size={32} icon=":relieved:" />
 						<Title text={translate('popupFeedbackSuccessTitle')} />
 						<Label text={translate('popupFeedbackSuccessText')} />
 						<Button className="orange" text={translate('popupFeedbackSuccessBack')} onClick={() => { this.props.close(); }} />

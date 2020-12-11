@@ -43,15 +43,14 @@ class MenuSelect extends React.Component<Props, {}> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<div style={param.style}>
-						<MenuItemVertical 
-							{...item} 
-							className={item.isInitial ? 'initial' : ''} 
-							isActive={item.id == value} 
-							onClick={(e: any) => { this.onSelect(e, item); }} 
-							onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-						/>
-					</div>
+					<MenuItemVertical 
+						{...item} 
+						className={item.isInitial ? 'initial' : ''} 
+						isActive={item.id == value} 
+						onClick={(e: any) => { this.onSelect(e, item); }} 
+						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						style={param.style}
+					/>
 				</CellMeasurer>
 			);
 		};
@@ -77,6 +76,8 @@ class MenuSelect extends React.Component<Props, {}> {
 									onRowsRendered={onRowsRendered}
 									overscanRowCount={10}
 									scrollToIndex={scrollTo}
+									style={{ paddingTop: 8, paddingBottom: 8, boxSizing: 'content-box' }}
+  									containerStyle={{ position: 'relative', overflow: 'visible' }}
 								/>
 							)}
 						</AutoSizer>

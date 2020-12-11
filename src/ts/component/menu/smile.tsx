@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input, Smile } from 'ts/component';
+import { Input, IconEmoji } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage, translate } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -57,8 +57,8 @@ class MenuSmile extends React.Component<Props, State> {
 		const Item = (item: any) => {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
-					<div className="smile">
-						<Smile icon={SmileUtil.nativeById(item.smile, item.skin)} size={32} />
+					<div className="iconEmoji">
+						<IconEmoji icon={SmileUtil.nativeById(item.smile, item.skin)} size={32} />
 					</div>
 				</div>
 			);

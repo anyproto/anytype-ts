@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, IconUser, Smile } from 'ts/component';
+import { Icon, IconUser, IconEmoji } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -25,14 +25,14 @@ interface Props {
 class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
-		size: 20,
+		size: 18,
 	};
 	
 	render () {
 		const { object, className, size } = this.props;
 		const { id, name, iconEmoji, iconImage } = object || {};
 		const type = DataUtil.schemaField(object.type);
-		const cn = [ 'icon-object', type ];
+		const cn = [ 'iconObject', type ];
 		const objectType: any = dbStore.getObjectType(object.type) || {};
 
 		if (className) {
@@ -45,7 +45,7 @@ class IconObject extends React.Component<Props, {}> {
 				switch (objectType.layout) {
 					default:
 					case I.ObjectLayout.Page:
-						icon = <Smile {...this.props} icon={iconEmoji} hash={iconImage} />;
+						icon = <IconEmoji {...this.props} icon={iconEmoji} hash={iconImage} />;
 						break;
 
 					case I.ObjectLayout.Contact:
@@ -59,15 +59,15 @@ class IconObject extends React.Component<Props, {}> {
 
 			case 'image':
 				if (id) {
-					icon = <img className="img" src={commonStore.imageUrl(id, size * 2)} />;
+					icon = <div className={[ 'iconImage', 'c' + size ].join(' ')} style={{ backgroundImage: 'url("' + commonStore.imageUrl(id, size * 2) + '")' }} />;
 				} else {
-					icon = <Icon className={[ 'file-type', Util.fileIcon(object) ].join(' ')} />;
+					icon = <Icon className={[ 'iconFile', Util.fileIcon(object), 'c' + size ].join(' ')} />;
 					cn.push('no-br');
 				};
 				break;
 
 			case 'file':
-				icon = <Icon className={[ 'file-type', Util.fileIcon(object) ].join(' ')} />;
+				icon = <Icon className={[ 'iconFile', Util.fileIcon(object), 'c' + size ].join(' ')} />;
 				cn.push('no-br');
 				break;
 		};

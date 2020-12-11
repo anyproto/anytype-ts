@@ -39,16 +39,18 @@ class BlockRelation extends React.Component<Props, {}> {
 			<div className="wrap">
 				{!relation ? 
 				(
-					<React.Fragment>
-						<Icon className="relation default" />
-						<Input 
-							id={'relation-type-' + block.id} 
-							ref={(ref: any) => { this.refInput = ref; }} 
-							placeHolder={placeHolder} 
-							onClick={this.onMenu} 
-							onKeyUp={this.onKeyUp} 
-						/>
-					</React.Fragment>
+					<div className="sides">
+						<div className="info">
+							<Icon className="relation default" />
+							<Input 
+								id={'relation-type-' + block.id} 
+								ref={(ref: any) => { this.refInput = ref; }} 
+								placeHolder={placeHolder} 
+								onClick={this.onMenu} 
+								onKeyUp={this.onKeyUp} 
+							/>
+						</div>
+					</div>
 				) : 
 				(
 					<div className="sides">

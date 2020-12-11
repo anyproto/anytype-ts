@@ -40,7 +40,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 		const File = (item: any) => (
 			<div className="element file">
-				<Icon className={[ 'file-type', Util.fileIcon(item) ].join(' ')} />
+				<Icon className={[ 'iconFile', Util.fileIcon(item) ].join(' ')} />
 				<div className="name">{item.name}</div>
 			</div>
 		);

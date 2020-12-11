@@ -10,7 +10,7 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, object, inner, name, menuId, description, color, arrow, isActive, withDescription, className, onClick, onMouseEnter } = this.props;
+		const { id, icon, object, inner, name, menuId, description, color, arrow, isActive, withDescription, className, onClick, onMouseEnter, style } = this.props;
 		
 		let cn = [ 'item' ];
 		if (className) {
@@ -41,7 +41,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div id={'item-' + id} className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter}>
+			<div id={'item-' + id} className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} style={style}>
 				{withDescription ? (
 					<React.Fragment>
 						{element}

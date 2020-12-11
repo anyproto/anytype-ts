@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Smile, Loader, IconObject } from 'ts/component';
+import { Select, Marker, IconEmoji, Loader, IconObject } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -337,7 +337,7 @@ class BlockText extends React.Component<Props, {}> {
 			
 			item.addClass(param.class);
 			if (smile && smile.length) {
-				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={data.param} />, smile.get(0));
+				ReactDOM.render(<IconEmoji className={param.class} size={param.size} native={false} icon={data.param} />, smile.get(0));
 			};
 		});
 	};

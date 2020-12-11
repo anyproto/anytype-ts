@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Smile } from 'ts/component';
+import { IconEmoji } from 'ts/component';
 import { I, DataUtil } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -23,7 +23,7 @@ class BlockIconPage extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<Smile 
+				<IconEmoji 
 					id={'block-icon-' + rootId} 
 					canEdit={!readOnly} 
 					size={32} 

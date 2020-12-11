@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Smile, IconObject, Loader } from 'ts/component';
+import { IconObject, Loader } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';

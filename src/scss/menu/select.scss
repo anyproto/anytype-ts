@@ -4,7 +4,7 @@
 	.menu.menuSelect {
 		.content { transition: none; padding: 0px; }
 		.items { height: 100%; }
-		
+
 		.item.initial { padding: 2px 16px; line-height: 18px; margin-bottom: 2px; }
 		.item.initial {
 			.name { text-transform: uppercase; @include text-very-small; }
