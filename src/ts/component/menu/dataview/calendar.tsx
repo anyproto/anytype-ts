@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { I, Util, translate } from 'ts/lib';
+import { Select } from 'ts/component';
 import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
@@ -23,24 +24,52 @@ class MenuCalendar extends React.Component<Props, State> {
 		const { value } = data;
 		const items = this.getData();
 
-		let d = Number(Util.date('d', value));
-		let m = Number(Util.date('n', value));
-		let y = Number(Util.date('Y', value));
-		let months = [];
-		let days = [];
+		const d = Number(Util.date('d', value));
+		const m = Number(Util.date('n', value));
+		const y = Number(Util.date('Y', value));
 
-		for (let i = 1; i <= 12; ++i) {
-			months.push({ id: i, name: translate('month' + i) });
-		};
+		const days = [];
+		const months = [];
+		const years = [];
 
 		for (let i = 1; i <= 7; ++i) {
 			days.push({ id: i, name: translate('day' + i) });
 		};
 
+		for (let i = 1; i <= 12; ++i) {
+			months.push({ id: i, name: translate('month' + i) });
+		};
+
+		for (let i = 0; i <= 3000; ++i) {
+			years.push({ id: i, name: i });
+		};
+
 		return (
 			<div className="inner">
 				<div className="head">
-					<div className="date">{Util.date('F, Y', value)}</div>
+					<div className="sides">
+						<div className="side left">
+							<Select 
+								id="yemonthar" 
+								value={String(m || '')} 
+								options={months} 
+								menuWidth={192} 
+								onChange={(m: any) => { this.setValue(Util.timestamp(y, m, 1), false); }} 
+							/>
+						</div>
+						<div className="side right">
+							<Select 
+								id="year" 
+								value={String(y || '')} 
+								options={years} 
+								menuClassName="center" 
+								menuWidth={144} 
+								horizontal={I.MenuDirection.Right} 
+								onChange={(y: any) => { this.setValue(Util.timestamp(y, m, 1), false); }} 
+							/>
+						</div>
+					</div>
+
 					<div className="days">
 						{days.map((item: any, i: number) => {
 							return <div key={i} className="day th">{item.name.substr(0, 2)}</div>;
@@ -51,7 +80,7 @@ class MenuCalendar extends React.Component<Props, State> {
 					{items.map((item, i) => {
 						let cn = [ 'day' ];
 						if (m != item.m) {
-							cn.push('dis');
+							cn.push('other');
 						};
 						if ((d == item.d) && (m == item.m) && (y == item.y)) {
 							cn.push('active');
@@ -59,6 +88,7 @@ class MenuCalendar extends React.Component<Props, State> {
 						return <div key={i} className={cn.join(' ')} onClick={() => { this.set(item.d, item.m, y); }}>{item.d}</div>;
 					})}
 				</div>
+				<div className="line" />
 				<div className="foot">
 					<div className="btn" onClick={() => { this.setValue(Util.time(), true); }}>{translate('menuCalendarToday')}</div>
 					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400, true); }}>{translate('menuCalendarTomorrow')}</div>

@@ -2,7 +2,8 @@
 
 .menus {
 	.menu.menuSelect {
-		.content { max-height: 220px; }
+		.content { transition: none; padding: 0px; }
+		.items { height: 100%; }
 		
 		.item.initial { padding: 2px 16px; line-height: 18px; margin-bottom: 2px; }
 		.item.initial {
@@ -19,5 +20,9 @@
 		.item { white-space: nowrap; display: inline-block; margin-right: 16px; color: $colorDarkGrey; font-weight: 500; }
 		.item:hover { color: $colorBlack; }
 		.item:last-child { margin-right: 0px; }
+	}
+
+	.menu.menuSelect.center {
+		.item { text-align: center; }
 	}
 }

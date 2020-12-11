@@ -15,7 +15,9 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 28;
+const HEIGHT_SECTION = 42;
+const HEIGHT_ITEM = 28;
+const LIMIT = 10;
 
 @observer
 class MenuBlockMention extends React.Component<Props, State> {
@@ -90,7 +92,17 @@ class MenuBlockMention extends React.Component<Props, State> {
 									height={height}
 									deferredMeasurmentCache={this.cache}
 									rowCount={items.length}
-									rowHeight={HEIGHT}
+									rowHeight={({ index }) => {
+										const item = items[index];
+										let height = HEIGHT_ITEM;
+										if (item.isSection) {
+											height = HEIGHT_SECTION;
+											if ((index == 0) || index == (items.length - 1)) {
+												height -= 8;
+											};
+										};
+										return height;
+									}}
 									rowRenderer={rowRenderer}
 									onRowsRendered={onRowsRendered}
 									overscanRowCount={10}
@@ -125,7 +137,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -329,7 +341,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { id, position } = this.props;
 		const items = this.getItems(true);
 		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
-		const height = Math.max(40, Math.min(240, items.length * 28 + 16));
+		const height = Math.max(HEIGHT_ITEM * 3, Math.min(HEIGHT_ITEM * LIMIT, items.length * HEIGHT_ITEM + 16));
 
 		obj.css({ height: height });
 		position();
