@@ -58,6 +58,7 @@ class MenuFilter extends React.Component<Props, {}> {
 
 			const conditionOptions = this.conditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
+			const id = [ 'item', item.id, 'value' ].join('-');
 
 			let value = null;
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
@@ -67,10 +68,11 @@ class MenuFilter extends React.Component<Props, {}> {
 				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
-						id={'item-' + item.id + '-value'}
-						ref={refGet} 
-						value={item.value} 
-						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v, true); }} 
+							id={id}
+							key={id}
+							ref={refGet} 
+							value={item.value} 
+							onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v, true); }} 
 						/>
 					);
 					break;
@@ -78,7 +80,8 @@ class MenuFilter extends React.Component<Props, {}> {
 				case I.RelationType.Date:
 					value = (
 						<Input 
-							id={'item-' + item.id + '-value'}
+							id={id}
+							key={id}
 							ref={refGet} 
 							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 							placeHolder="dd.mm.yyyy hh:mm:ss"
@@ -92,7 +95,8 @@ class MenuFilter extends React.Component<Props, {}> {
 				default:
 					value = (
 						<Input 
-							id={'item-' + item.id + '-value'}
+							id={id}
+							key={id}
 							ref={refGet} 
 							value={item.value} 
 							placeHolder={translate('commonValue')} 

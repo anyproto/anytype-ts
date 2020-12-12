@@ -76,8 +76,6 @@ class MenuSelect extends React.Component<Props, {}> {
 									onRowsRendered={onRowsRendered}
 									overscanRowCount={10}
 									scrollToIndex={scrollTo}
-									style={{ paddingTop: 8, paddingBottom: 8, boxSizing: 'content-box' }}
-  									containerStyle={{ position: 'relative', overflow: 'visible' }}
 								/>
 							)}
 						</AutoSizer>

@@ -2,8 +2,9 @@
 
 .menus {
 	.menu.menuSelect {
-		.content { transition: none; padding: 0px; }
+		.content { transition: none; padding: 0px; overflow: hidden; }
 		.items { height: 100%; }
+		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
 
 		.item.initial { padding: 2px 16px; line-height: 18px; margin-bottom: 2px; }
 		.item.initial {
