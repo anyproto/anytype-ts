@@ -40,7 +40,16 @@ class BlockLink extends React.Component<Props, {}> {
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<IconObject object={details} id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} className="c24" canEdit={!readOnly} onSelect={this.onSelect} onUpload={this.onUpload} />
+				<IconObject 
+					object={details} 
+					id={'block-page-' + id} 
+					offsetX={28} 
+					offsetY={-24} 
+					size={24} 
+					canEdit={!readOnly} 
+					onSelect={this.onSelect} 
+					onUpload={this.onUpload} 
+				/>
 				<div className="name" onClick={this.onClick}>
 					<div className="txt">{name}</div>
 				</div>

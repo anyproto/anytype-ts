@@ -11,6 +11,17 @@
 	.iconImage.c24, .iconFile.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 	.iconImage.c28, .iconFile.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
 	.iconImage.c32, .iconFile.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+
+	.iconFile { background-repeat: no-repeat; background-position: center center; background-size: 100%; }
+	.iconFile.other { background-image: url('~img/icon/file/other.svg') !important; }
+	.iconFile.image { background-image: url('~img/icon/file/image.svg') !important; }
+	.iconFile.video { background-image: url('~img/icon/file/video.svg') !important; }
+	.iconFile.text { background-image: url('~img/icon/file/text.svg') !important; }
+	.iconFile.archive { background-image: url('~img/icon/file/archive.svg') !important; }
+	.iconFile.audio { background-image: url('~img/icon/file/audio.svg') !important; }
+	.iconFile.pdf { background-image: url('~img/icon/file/pdf.svg') !important; }
+	.iconFile.presentation { background-image: url('~img/icon/file/presentation.svg') !important; }
+	.iconFile.table { background-image: url('~img/icon/file/table.svg') !important; }
 }
 .iconObject.c24 { width: 24px; height: 24px; }
 .iconObject.c26 { width: 26px; height: 26px; }

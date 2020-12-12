@@ -107,18 +107,15 @@ class CellText extends React.Component<Props, State> {
 		let content: any = null;
 
 		if (relation.relationKey == 'name') {
-			let cn = 'c20';
-			let size = 18;
-
+			let size = 20;
 			switch (viewType) {
 				case I.ViewType.List:
-					cn = 'c24';
+					size = 24;
 					break;
 
 				case I.ViewType.Gallery:
 				case I.ViewType.Board:
-					cn = 'c48';
-					size = 24;
+					size = 48;
 					break;
 			};
 
@@ -132,7 +129,6 @@ class CellText extends React.Component<Props, State> {
 						id={[ relation.relationKey, record.id ].join('-')} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload}
-						className={cn} 
 						size={size} 
 						canEdit={canEdit} 
 						offsetY={4} 

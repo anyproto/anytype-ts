@@ -21,18 +21,30 @@ interface Props {
 	onClick?(e: any): void;
 };
 
+const Size = {
+	20: 18,
+	24: 20,
+	26: 20,
+	28: 22,
+	32: 28,
+	48: 24,
+	64: 32,
+	96: 96,
+};
+
 class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
-		size: 18,
+		size: 20,
 	};
 	
 	render () {
 		const { object, className, size } = this.props;
 		const { id, name, iconEmoji, iconImage } = object || {};
 		const type = DataUtil.schemaField(object.type);
-		const cn = [ 'iconObject', type ];
-		const objectType: any = dbStore.getObjectType(object.type) || {};
+		const cn = [ 'iconObject', type, 'c' + size ];
+		const objectType: any = type ? (dbStore.getObjectType(object.type) || {}) : {};
+		const iconSize = Size[size];
 
 		if (className) {
 			cn.push(className);
@@ -44,7 +56,7 @@ class IconObject extends React.Component<Props, {}> {
 				switch (objectType.layout) {
 					default:
 					case I.ObjectLayout.Page:
-						icon = <IconEmoji {...this.props} icon={iconEmoji} hash={iconImage} />;
+						icon = <IconEmoji {...this.props} className={'c' + size} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 						break;
 
 					case I.ObjectLayout.Contact:
@@ -58,14 +70,14 @@ class IconObject extends React.Component<Props, {}> {
 
 			case 'image':
 				if (id) {
-					icon = <div className={[ 'iconImage', 'c' + size ].join(' ')} style={{ backgroundImage: 'url("' + commonStore.imageUrl(id, size * 2) + '")' }} />;
+					icon = <div className={[ 'iconImage', 'c' + iconSize ].join(' ')} style={{ backgroundImage: 'url("' + commonStore.imageUrl(id, iconSize * 2) + '")' }} />;
 				} else {
-					icon = <Icon className={[ 'iconFile', Util.fileIcon(object), 'c' + size ].join(' ')} />;
+					icon = <div className={[ 'iconFile', Util.fileIcon(object), 'c' + iconSize ].join(' ')} />;
 				};
 				break;
 
 			case 'file':
-				icon = <Icon className={[ 'iconFile', Util.fileIcon(object), 'c' + size ].join(' ')} />;
+				icon = <div className={[ 'iconFile', Util.fileIcon(object), 'c' + iconSize ].join(' ')} />;
 				break;
 		};
 

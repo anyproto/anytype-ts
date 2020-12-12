@@ -27,7 +27,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 				<IconObject 
 					object={details}
 					onClick={this.onClick} 
-					className="c96" 
+					size={96}
 				/>
 			</React.Fragment>
 		);

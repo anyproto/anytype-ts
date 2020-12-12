@@ -148,7 +148,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
-						{isRoot ? iconHome : <IconObject object={item.details} className="c48" size={24} /> }
+						{isRoot ? iconHome : <IconObject object={item.details} size={48} /> }
 						<div className="info">
 							<div className="name">{name}</div>
 							<div className="descr">{item.snippet}</div>
@@ -202,7 +202,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				};
 				withScale = false;
 			} else {
-				icon = <IconObject object={item.details} className="c48" size={24} />
+				icon = <IconObject object={item.details} size={48} />
 			};
 
 			return (

@@ -51,7 +51,7 @@ class BlockFile extends React.Component<Props, {}> {
 				element = (
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>
-							<IconObject object={{ ...details }} className="c24" />
+							<IconObject object={{ ...details }} size={24} />
 							<span className="name">{details.name}</span>
 							<span className="size">{Util.fileSize(details.sizeInBytes)}</span>
 						</span>

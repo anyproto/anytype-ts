@@ -60,7 +60,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<IconObject object={details} className="c20" />
+							<IconObject object={details} />
 							<div className="name">{Util.shorten(details.name, 32)}</div>
 						</div>
 					</div>

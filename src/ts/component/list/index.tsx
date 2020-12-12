@@ -53,7 +53,7 @@ class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
-			let icon = <IconObject className="c48" object={details} size={24} />;
+			let icon = <IconObject size={48} object={details} />;
 			let showMenu = true;
 
 			if (content.style == I.LinkStyle.Dataview) {

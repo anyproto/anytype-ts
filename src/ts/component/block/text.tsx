@@ -270,7 +270,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		const { rootId, block } = this.props;
-		const param = this.emojiParam(block.content.style);
+		const size = this.emojiParam(block.content.style);
 		
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -282,24 +282,25 @@ class BlockText extends React.Component<Props, {}> {
 			const details = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
 			const { _detailsEmpty_, iconEmoji, iconImage } = details;
+			const cn = [];
 
 			if (smile && smile.length) {
 				let icon = null;
 				if (_detailsEmpty_) {
 					item.addClass('dis');
-					icon = <Loader className={[ param.class, 'inline' ].join(' ')} />;
+					icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
 				} else {
-					icon = <IconObject className={param.class} size={param.size} object={details} />;
+					icon = <IconObject size={size} object={details} />;
 				};
 
 				if (icon) {
 					ReactDOM.render(icon, smile.get(0));
 					smile.after('<img src="./img/space.svg" class="space" />');
-					param.class += ' withImage';
+					cn.push('withImage');
 				};
 			};
 
-			item.addClass(param.class);
+			item.addClass(cn.join(' '));
 		});
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
@@ -321,9 +322,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		const { block } = this.props;
-		const { content } = block;
-		const { style } = content;
-		const param = this.emojiParam(style);
+		const size = this.emojiParam(block.content.style);
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -335,33 +334,29 @@ class BlockText extends React.Component<Props, {}> {
 
 			const smile = item.find('smile');
 			
-			item.addClass(param.class);
 			if (smile && smile.length) {
-				ReactDOM.render(<IconEmoji className={param.class} size={param.size} native={false} icon={data.param} />, smile.get(0));
+				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
 		});
 	};
 
 	emojiParam (style: I.TextStyle) {
-		let cn = 'c24';
-		let size = 18;
+		let size = 24;
 		switch (style) {
 			case I.TextStyle.Header1:
-				cn = 'c32';
-				size = 28;
+				size = 32;
 				break;
 			
 			case I.TextStyle.Header2:
-				cn = 'c28';
-				size = 22;
+				size = 28;
 				break;
 
 			case I.TextStyle.Header3:
 			case I.TextStyle.Quote:
-				cn = 'c26';
+				size = 26;
 				break;
 		};
-		return { class: cn, size: size };
+		return size;
 	};
 
 	getValue (): string {
