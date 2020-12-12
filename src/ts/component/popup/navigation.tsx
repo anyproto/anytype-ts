@@ -57,9 +57,9 @@ class PopupNavigation extends React.Component<Props, State> {
 	disableFirstKey: boolean = false;
 	panel: Panel = Panel.Left;
 	focused: boolean = false;
-	cache: any = null;
-	cacheIn: any = null;
-	cacheOut: any = null;
+	cache: any = {};
+	cacheIn: any = {};
+	cacheOut: any = {};
 	focus: boolean = false;
 	select: boolean = false;
 	
@@ -85,12 +85,21 @@ class PopupNavigation extends React.Component<Props, State> {
 		const isRoot = pageId == root;
 		const pages = this.getItems();
 
+		/*
 		if ((expanded && (!this.cacheIn || !this.cacheOut)) || (!expanded && !this.cache)) {
 			return null;
 		};
+		*/
 
 		let confirm = '';
 		let iconSearch = null;
+		let iconHome = (
+			<div className="iconObject c48">
+				<div className="iconEmoji c48">
+					<Icon className="home big" />
+				</div>
+			</div>
+		);
 
 		if (showIcon) {
 			if (isRoot) {
@@ -139,15 +148,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
-						{isRoot ? (
-							<div className="icon object c48">
-								<div className="smile c48">
-									<Icon className="home big" />
-								</div>
-							</div>
-						) : (
-							<IconObject object={item.details} className="c48" size={24} />
-						)}
+						{isRoot ? iconHome : <IconObject object={item.details} className="c48" size={24} /> }
 						<div className="info">
 							<div className="name">{name}</div>
 							<div className="descr">{item.snippet}</div>
@@ -192,12 +193,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			let withButtons = this.withButtons(item);
 
 			if (isRoot) {
-				icon = (
-					<div className="smile c48">
-						<Icon className="home big" />
-					</div>
-				);
-
+				icon = iconHome;
 				name = 'Home';
 				
 				if (!coverId && !coverType) {
@@ -269,9 +265,11 @@ class PopupNavigation extends React.Component<Props, State> {
 									</React.Fragment>
 								) : ''}
 							</div>
+
 							<div id={'panel-' + Panel.Center} className="items center">
 								{info ? <Selected {...info} /> : ''}
 							</div>
+
 							<div id={'panel-' + Panel.Right} className="items right">
 								<div className="sideName">{translate('popupNavigationLinkTo')}</div>
 								{!pagesOut.length ? (
@@ -312,7 +310,7 @@ class PopupNavigation extends React.Component<Props, State> {
 					<React.Fragment>
 						{head}
 
-						{!pages.length ? (
+						{!pages.length && !loading ? (
 							<div id="empty" key="empty" className="empty">
 								<div 
 									className="txt" 
