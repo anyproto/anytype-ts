@@ -9,6 +9,7 @@ import { observer } from 'mobx-react';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
+	readOnly: boolean;
 };
 
 const { dialog } = window.require('electron').remote;
@@ -34,8 +35,12 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId } = this.props;
+		const { rootId, readOnly } = this.props;
 		const title = blockStore.getLeaf(rootId, 'title') || {};
+
+		if (readOnly) {
+			return null;
+		};
 
 		return (
 			<div 

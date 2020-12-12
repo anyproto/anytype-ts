@@ -118,6 +118,10 @@ class Block implements I.Block {
 	isPageSet (): boolean { 
 		return this.isPage() && (this.pageType == I.PageType.Set);
 	};
+
+	isPageFile (): boolean { 
+		return this.isPage() && (this.pageType == I.PageType.File);
+	};
 	
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;

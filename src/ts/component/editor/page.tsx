@@ -66,6 +66,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
 		const check = DataUtil.checkDetails(rootId);
+		const readOnly = DataUtil.isReadOnly(rootId);
 
 		let cn = [ 'editorWrapper' ];
 		let header = (
@@ -75,6 +76,7 @@ class EditorPage extends React.Component<Props, {}> {
 				onKeyUp={this.onKeyUpBlock}  
 				onMenuAdd={this.onMenuAdd}
 				onPaste={this.onPaste}
+				readOnly={readOnly}
 			/>
 		);
 		
@@ -97,7 +99,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<Controls {...this.props} />
+				<Controls {...this.props} readOnly={readOnly} />
 				
 				<div className="editor">
 					<div className="blocks">
@@ -119,6 +121,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
+									readOnly={readOnly}
 								/>
 							)
 						})}
@@ -348,13 +351,14 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
-		if (!this._isMounted) {
+		const { rootId } = this.props;
+
+		if (!this._isMounted || DataUtil.isReadOnly(rootId)) {
 			return;
 		};
 		
-		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root || root.isPageSet()) {
+		if (!root) {
 			return;
 		};
 		
@@ -1680,7 +1684,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		this.resize();
 	};
-	
+
 };
 
 export default EditorPage;

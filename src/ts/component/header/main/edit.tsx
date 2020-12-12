@@ -41,6 +41,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
+		const readOnly = DataUtil.isReadOnly(rootId);
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
@@ -65,7 +66,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					<Icon className={[ 'plus', 'big', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+					{!readOnly ? (
+						<Icon className={[ 'plus', 'big', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+					) : ''}
 				</div>
 
 				<div className="side right">

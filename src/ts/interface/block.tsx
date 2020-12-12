@@ -93,6 +93,7 @@ export interface Block {
 	isPagePage?(): boolean;
 	isPageProfile?(): boolean;
 	isPageSet?(): boolean;
+	isPageFile?(): boolean;
 
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;

@@ -8,6 +8,7 @@ import { observer } from 'mobx-react';
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
+	readOnly: boolean;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
