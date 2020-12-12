@@ -85,19 +85,11 @@ class PopupNavigation extends React.Component<Props, State> {
 		const isRoot = pageId == root;
 		const pages = this.getItems();
 
-		/*
-		if ((expanded && (!this.cacheIn || !this.cacheOut)) || (!expanded && !this.cache)) {
-			return null;
-		};
-		*/
-
 		let confirm = '';
 		let iconSearch = null;
 		let iconHome = (
 			<div className="iconObject c48">
-				<div className="iconEmoji c48">
-					<Icon className="home big" />
-				</div>
+				<Icon className="home big" />
 			</div>
 		);
 

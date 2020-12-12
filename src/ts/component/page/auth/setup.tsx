@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Button, IconEmoji, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, Storage, translate, C, DataUtil } from 'ts/lib';
+import { Frame, Cover, Title, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Storage, translate, C, DataUtil } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Util } from '../../../lib';
@@ -55,7 +55,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<IconEmoji className="c64" icon={icon} size={32} />
+					<IconObject size={64} object={{ iconEmoji: icon }} />
 					<Title text={title} />
 					<Error text={error} />
 					{error ? <Button className="orange" text={translate('authSetupBack')} onClick={() => { history.goBack(); }} /> : ''}

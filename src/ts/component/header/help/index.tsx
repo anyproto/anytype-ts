@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconEmoji } from 'ts/component';
+import { Icon, IconObject } from 'ts/component';
 import { authStore } from 'ts/store';
 import { DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -38,7 +38,7 @@ class HeaderHelpIndex extends React.Component<Props, {}> {
 		const PathItem = (item: any) => {
 			return (
 				<div className="item" onClick={(e: any) => { this.onPath(e, item); }}>
-					<IconEmoji icon={item.icon} />
+					<IconObject object={{ iconEmoji: item.icon }} />
 					<div className="name">{item.name}</div>
 					<Icon className="arrow" />
 				</div>

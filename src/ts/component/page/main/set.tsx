@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, IconEmoji, HeaderMainSet as Header } from 'ts/component';
+import { Icon, Title, Label, IconObject, HeaderMainSet as Header } from 'ts/component';
 import { I, C, DataUtil, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 
@@ -38,7 +38,7 @@ class PageMainSet extends React.Component<Props, State> {
 			let id = DataUtil.schemaField(item.url);
 			
 			if (item.iconEmoji) {
-				icon = <IconEmoji icon={item.iconEmoji} />;
+				icon = <IconObject object={{ iconEmoji: item.iconEmoji }} />;
 			} else {
 				icon = <Icon className={id} />;
 			};
@@ -54,7 +54,7 @@ class PageMainSet extends React.Component<Props, State> {
 			<div>
 				<Header {...this.props} rootId="" />
 				<div className="wrapper">
-					<IconEmoji className="c64" iconClass="newSet" />
+					<IconObject size={64} object={{ iconClass: 'newSet' }} />
 					<Title text={translate('setTitle')} />
 					<Label text={translate('setText')} />
 					<div className="items">

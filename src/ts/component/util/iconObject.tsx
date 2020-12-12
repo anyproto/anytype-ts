@@ -40,7 +40,7 @@ class IconObject extends React.Component<Props, {}> {
 	
 	render () {
 		const { object, className, size } = this.props;
-		const { id, name, iconEmoji, iconImage } = object || {};
+		const { id, name, iconEmoji, iconImage, iconClass } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'iconObject', type, 'c' + size ];
 		const objectType: any = type ? (dbStore.getObjectType(object.type) || {}) : {};
@@ -56,11 +56,11 @@ class IconObject extends React.Component<Props, {}> {
 				switch (objectType.layout) {
 					default:
 					case I.ObjectLayout.Page:
-						icon = <IconEmoji {...this.props} className={'c' + size} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+						icon = <IconEmoji {...this.props} className={'c' + size} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 						break;
 
 					case I.ObjectLayout.Contact:
-						icon = <IconUser {...this.props} name={name} avatar={iconImage} />;
+						icon = <IconUser className={'c' + size} {...this.props} name={name} avatar={iconImage} />;
 						break;
 
 					case I.ObjectLayout.Task:

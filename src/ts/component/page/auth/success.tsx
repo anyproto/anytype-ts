@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Button, IconEmoji, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, Label, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { translate, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -27,7 +27,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 				<Footer />
 				
 				<Frame>
-					<IconEmoji className="c64" icon="🎉" size={32} />
+					<IconObject size={64} object={{ iconEmoji: '🎉' }} />
 					<Title text={translate('authSuccessTitle')} />
 					<Label text={translate('authSuccessLabel')} />
 					<Button className="orange" text={translate('authSuccessSubmit')} onClick={this.onSubmit} />
