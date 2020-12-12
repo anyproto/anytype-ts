@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Icon, IconUser, IconEmoji } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
@@ -22,7 +21,6 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-@observer
 class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {

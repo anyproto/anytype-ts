@@ -51,10 +51,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		return (
 			<div id="header" className={cn.join(' ')}>
 				<div className="side left">
-					<Icon className="home" tooltip="Home" onClick={this.onHome} />
-					<Icon className="back" tooltip="Back" onClick={this.onBack} />
-					<Icon className="forward" tooltip="Forward" onClick={this.onForward} />
-					<Icon className="nav" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
+					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
+					<Icon className="back big" tooltip="Back" onClick={this.onBack} />
+					<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
+					<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
 				</div>
 
 				<div className="side center">
@@ -65,13 +65,13 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					<Icon className={[ 'plus', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+					<Icon className={[ 'plus', 'big', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 				</div>
 
 				<div className="side right">
 					<Sync id="button-sync" rootId={rootId} onClick={this.onSync} />
-					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation" onClick={this.onRelation} />
-					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
 			</div>
 		);
