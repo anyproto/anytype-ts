@@ -446,8 +446,19 @@ class Dispatcher {
 						break;
 					};
 
-					block.content.views = block.content.views.filter((it: I.View) => { return it.id != data.getViewid(); });
+					viewId = dbStore.getMeta(rootId, id).viewId;
+					
+					const deleteId = data.getViewid();
+
+					block.content.views = block.content.views.filter((it: I.View) => { return it.id != deleteId; });
 					blockStore.blockUpdate(rootId, block);
+
+					const length = block.content.views.length;
+
+					if (deleteId == viewId) {
+						viewId = length ? block.content.views[length - 1] : '';
+						dbStore.metaSet (rootId, id, { viewId: viewId });
+					};
 					break;
 
 				case 'blockDataviewRecordsSet':
