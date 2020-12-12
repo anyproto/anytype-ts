@@ -606,8 +606,15 @@ class DataUtil {
 				return;
 			};
 
-			relation.relationKey = message.relationKey;
-			relation.isVisible = true;
+			let rel = view.relations.find((it: I.ViewRelation) => { return it.relationKey == message.relationKey; });
+			if (rel) {
+				rel.isVisible = true;
+			} else {
+				relation.relationKey = message.relationKey;
+				relation.isVisible = true;
+
+				view.relations.push(relation);
+			};
 
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
