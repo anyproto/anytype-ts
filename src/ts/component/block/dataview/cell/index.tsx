@@ -99,7 +99,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
@@ -118,8 +118,10 @@ class Cell extends React.Component<Props, {}> {
 		const height = cell.outerHeight();
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
-		const page = $('.pageMainEdit');
+		const page = $(pageContainer);
 		const menuIds = [ 'select', 'dataviewText', 'dataviewObjectList', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar' ];
+
+		console.log(page, pageContainer);
 
 		let menuId = '';
 		let setOn = () => {

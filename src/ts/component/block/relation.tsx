@@ -24,7 +24,7 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readOnly, isPopup } = this.props;
 		const { content } = block;
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
@@ -76,6 +76,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
+								pageContainer={Util.getEditorPageContainer(isPopup)}
 							/>
 						</div>
 					</div>

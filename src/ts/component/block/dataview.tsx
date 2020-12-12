@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, dbStore } from 'ts/store';
 
@@ -34,7 +34,7 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block } = this.props;
+		const { rootId, block, isPopup } = this.props;
 		const { content } = block;
 		const { views } = content;
 
@@ -85,7 +85,8 @@ class BlockDataview extends React.Component<Props, {}> {
 						ref={(ref: any) => { this.viewRef = ref; }} 
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
-						container={this.getScrollContainer()}
+						pageContainer={Util.getEditorPageContainer(isPopup)}
+						scrollContainer={Util.getEditorScrollContainer(isPopup)}
 						readOnly={readOnly} 
 						getData={this.getData} 
 						getRecord={this.getRecord}
@@ -213,11 +214,6 @@ class BlockDataview extends React.Component<Props, {}> {
 		};
 	};
 
-	getScrollContainer () {
-		const { isPopup } = this.props;
-		return isPopup ? $('#popupEditorPage .selection') : $(window);
-	};
-	
 };
 
 export default BlockDataview;

@@ -712,6 +712,14 @@ class Util {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
+	getEditorScrollContainer (isPopup: boolean) {
+		return isPopup ? $('#popupEditorPage .selection') : $(window);
+	};
+
+	getEditorPageContainer (isPopup: boolean) {
+		return isPopup ? $('#popupEditorPage') : $('.pageMainEdit');
+	};
+
 };
 
 export default new Util();

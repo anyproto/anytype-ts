@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class MenuBlockRelationList extends React.Component<Props, {}> {
@@ -60,6 +60,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
+							pageContainer={$('#menuBlockRelationList')}
 							readOnly={readOnly}
 						/>
 					</div>
