@@ -15,8 +15,10 @@ interface State {
 class MenuCalendar extends React.Component<Props, State> {
 	
 	state = {
-		value: 0
+		value: 0,
 	};
+	refMonth: any = null;
+	refYear: any = null;
 	
 	render() {
 		const { param } = this.props;
@@ -50,7 +52,8 @@ class MenuCalendar extends React.Component<Props, State> {
 					<div className="sides">
 						<div className="side left">
 							<Select 
-								id="month" 
+								ref={(ref: any) => { this.refMonth = ref; }}
+								id="month"
 								value={String(m || '')} 
 								options={months} 
 								menuWidth={192} 
@@ -59,6 +62,7 @@ class MenuCalendar extends React.Component<Props, State> {
 						</div>
 						<div className="side right">
 							<Select 
+								ref={(ref: any) => { this.refYear = ref; }}
 								id="year" 
 								value={String(y || '')} 
 								options={years} 
@@ -98,6 +102,16 @@ class MenuCalendar extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
+
+		const m = Number(Util.date('n', value));
+		const y = Number(Util.date('Y', value));
+
+		this.refMonth.setValue(m);
+		this.refYear.setValue(y);
+
 		this.props.position();
 	};
 
