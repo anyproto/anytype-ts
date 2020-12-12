@@ -122,6 +122,10 @@ class Block implements I.Block {
 	isPageFile (): boolean { 
 		return this.isPage() && (this.pageType == I.PageType.File);
 	};
+
+	isReadOnly (): boolean {
+		return this.isPageSet() || this.isPageFile();
+	};
 	
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;

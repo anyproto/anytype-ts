@@ -41,7 +41,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const readOnly = DataUtil.isReadOnly(rootId);
+		const readOnly = root.isReadOnly();
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 

@@ -657,20 +657,6 @@ class DataUtil {
 		};
 	};
 
-	isReadOnly (rootId: string): boolean {
-		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root) {
-			return false;
-		};
-		
-		let ret = false;
-		if (root.isPageFile()) {
-			ret = true;
-		};
-
-		return ret;
-	};
-
 	checkDetails (rootId: string) {
 		const details = blockStore.getDetails(rootId, rootId);
 		const type = this.schemaField(details.type);

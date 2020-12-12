@@ -66,7 +66,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
 		const check = DataUtil.checkDetails(rootId);
-		const readOnly = DataUtil.isReadOnly(rootId);
+		const readOnly = root.isReadOnly();
 
 		let cn = [ 'editorWrapper' ];
 		let header = (
@@ -351,14 +351,13 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onMouseMove (e: any) {
-		const { rootId } = this.props;
-
-		if (!this._isMounted || DataUtil.isReadOnly(rootId)) {
+		if (!this._isMounted) {
 			return;
 		};
 		
+		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root) {
+		if (!root || root.isReadOnly()) {
 			return;
 		};
 		
