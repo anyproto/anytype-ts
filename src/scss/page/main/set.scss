@@ -11,12 +11,13 @@
 			.item { line-height: 32px; transition: $transitionFast; cursor: pointer; }
 			.item {
 				.icon { width: 20px; height: 20px; margin-right: 8px; }
-				.iconEmoji { margin-right: 8px; vertical-align: middle; }
+				.iconObject { margin-right: 8px; vertical-align: middle; }
 				.name { 
 					display: inline-block; @include text-paragraph; @include text-overflow-nw; width: calc(100% - 28px); line-height: 32px;
 					vertical-align: middle;
 				}
 			}
+
 			.item:hover { background: #f3f2ec; }
 			.icon.page { background-image: url('~img/icon/menu/action/object/page0.svg'); }
 			.icon.contact { background-image: url('~img/icon/menu/action/object/contact0.svg'); }

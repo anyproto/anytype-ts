@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { keyboard } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import Inputmask from 'inputmask';
 
 interface Props {
@@ -238,6 +238,17 @@ class Input extends React.Component<Props, State> {
 
 		let node = $(ReactDOM.findDOMNode(this));
 		v ? node.addClass('withError') : node.removeClass('withError');
+	};
+
+	setRange (range: I.TextRange) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		this.focus();
+		
+		let node = $(ReactDOM.findDOMNode(this));
+		node.get(0).setSelectionRange(range.from, range.to);
 	};
 	
 	addClass (v: string) {
