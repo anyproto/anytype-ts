@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { set } from 'mobx';
 import { commonStore, dbStore } from 'ts/store';
 
 import Controls from './dataview/controls';
@@ -123,11 +124,14 @@ class BlockDataview extends React.Component<Props, {}> {
 		const win = $(window);
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const viewChange = id != viewId;
+		const meta: any = { offset: offset };
 
 		const cb = (message: any) => {
 			if (viewChange) {
 				const view = this.getView();
-				view.relations = DataUtil.viewGetRelations(rootId, block.id, view);
+				const relations = DataUtil.viewGetRelations(rootId, block.id, view);
+
+				set(view, { relations: relations });
 			};
 
 			if (callBack) {
@@ -135,11 +139,12 @@ class BlockDataview extends React.Component<Props, {}> {
 			};
 		};
 
-		dbStore.metaSet(rootId, block.id, { viewId: id, offset: offset });
 		if (viewChange) {
+			meta.viewId = id;
 			dbStore.recordsSet(rootId, block.id, []);
 		};
 
+		dbStore.metaSet(rootId, block.id, meta);
 		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, cb);
 
 		commonStore.menuCloseAll();

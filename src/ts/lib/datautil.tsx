@@ -565,10 +565,10 @@ class DataUtil {
 		};
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, blockId));
-		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
-
 		let order: any = {};
 		let o = 0;
+
+		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
 
 		for (let i = 0; i < view.relations.length; ++i) {
 			order[view.relations[i].relationKey] = o++;

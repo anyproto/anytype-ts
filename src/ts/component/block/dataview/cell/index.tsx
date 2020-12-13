@@ -121,8 +121,6 @@ class Cell extends React.Component<Props, {}> {
 		const page = $(pageContainer);
 		const menuIds = [ 'select', 'dataviewText', 'dataviewObjectList', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar' ];
 
-		console.log(page, pageContainer);
-
 		let menuId = '';
 		let setOn = () => {
 			if (!this.ref) {
