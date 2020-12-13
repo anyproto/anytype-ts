@@ -13,6 +13,7 @@ body {
 }
 body.over { overflow-y: hidden; }
 body.colResize { cursor: col-resize !important; }
+body.colResize * { cursor: col-resize !important; }
 
 :focus { outline: 0px; }
 
