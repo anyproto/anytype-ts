@@ -28,8 +28,14 @@ class BlockFile extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
-		const details = blockStore.getDetails(rootId, content.hash);
 		
+		let details = blockStore.getDetails(rootId, content.hash);
+		if (details._detailsEmpty_) {
+			details = Util.objectCopy(content);
+			details.type = '/file';
+			details.sizeInBytes = details.size;
+		};
+
 		let element = null;
 		let cn = [ 'focusable', 'c' + id ];
 

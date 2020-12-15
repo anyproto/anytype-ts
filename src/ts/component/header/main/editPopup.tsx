@@ -53,8 +53,8 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation" onClick={this.onRelation} />
-					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
 			</div>
 		);

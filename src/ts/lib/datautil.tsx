@@ -417,7 +417,7 @@ class DataUtil {
 	
 	menuGetBlockOther () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 		].map(this.menuMapperBlock);
@@ -437,7 +437,7 @@ class DataUtil {
 
 	menuGetTurnDiv () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 		].map(this.menuMapperBlock);
 	};
