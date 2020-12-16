@@ -424,9 +424,7 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
 			console.log('[Config]', config);
-			
 			commonStore.configSet(config); 
-			config.debugUI ? html.addClass('debug') : html.removeClass('debug');
 
 			analytics.init();
 		});

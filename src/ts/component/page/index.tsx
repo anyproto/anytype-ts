@@ -176,7 +176,14 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
-		$('html').attr({ class: this.getClass('body') });
+		const { config } = commonStore;
+		const cn = [ this.getClass('body') ];
+		
+		if (config.debugUI) {
+			cn.push('debug');
+		};
+
+		$('html').attr({ class: cn.join(' ') });
 	};
 	
 	resize () {
