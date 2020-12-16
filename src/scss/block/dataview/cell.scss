@@ -19,7 +19,7 @@
 }
 
 .cell.isEditing.c-select, .cell.isEditing.c-object {
-	.filter { display: inline-block; }
+	.filter { display: inline-block !important; }
 }
 
 .cellContent { line-height: 20px; cursor: default; }

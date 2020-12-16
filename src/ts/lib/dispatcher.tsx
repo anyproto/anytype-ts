@@ -427,11 +427,10 @@ class Dispatcher {
 					};
 
 					data.view = Mapper.From.View(data.getView());
-					data.view.relations = DataUtil.viewGetRelations(rootId, block.id, data.view);
 
 					view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
-						set(view, data.view);
+						set(view, { ...data.view, relations: DataUtil.viewGetRelations(rootId, block.id, data.view) });
 					} else {
 						block.content.views.push(new M.View(data.view));
 					};

@@ -706,6 +706,8 @@ class Util {
 	};
 
 	intercept (obj: any, change: any) {
+		console.log(JSON.stringify(change.newValue));
+		console.log(JSON.stringify(obj[change.name]));
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
