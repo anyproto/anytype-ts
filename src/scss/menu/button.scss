@@ -1,0 +1,10 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuButton { white-space: nowrap; }
+	.menu.menuButton {
+		.item { display: inline-block; @include text-common; margin-right: 16px; color: $colorDarkGrey; transition: $transitionFast; }
+		.item:hover { color: $colorBlack; }
+		.item:last-child { margin: 0px; }
+	}	
+}

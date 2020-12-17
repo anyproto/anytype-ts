@@ -6,6 +6,7 @@ import { commonStore } from 'ts/store';
 import MenuHelp from './help';
 import MenuAccount from './account';
 import MenuSelect from './select';
+import MenuButton from './button';
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
 import MenuSearch from './search';
@@ -73,6 +74,7 @@ class Menu extends React.Component<Props, {}> {
 			help:					 MenuHelp,
 			account:				 MenuAccount,
 			select:					 MenuSelect,
+			button:					 MenuButton,
 			smile:					 MenuSmile,
 			smileSkin:				 MenuSmileSkin,
 			search:					 MenuSearch,

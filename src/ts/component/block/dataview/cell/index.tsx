@@ -119,7 +119,7 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
 		const page = $(pageContainer);
-		const menuIds = [ 'select', 'dataviewText', 'dataviewObjectList', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar' ];
+		const menuIds = [ 'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar' ];
 
 		let menuId = '';
 		let setOn = () => {
@@ -238,6 +238,7 @@ class Cell extends React.Component<Props, {}> {
 				});
 				menuId = 'dataviewText';
 				break;
+
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
@@ -250,7 +251,7 @@ class Cell extends React.Component<Props, {}> {
 					horizontal: I.MenuDirection.Center,
 					className: 'button',
 					width: width,
-					offsetY: 14,
+					offsetY: 0,
 				});
 
 				let name = 'Go to';
@@ -262,8 +263,6 @@ class Cell extends React.Component<Props, {}> {
 				};
 
 				param.data = Object.assign(param.data, {
-					value: '',
-					noKeys: true,
 					options: [
 						{ id: 'go', name: name },
 						{ id: 'copy', name: 'Copy' },
@@ -292,7 +291,7 @@ class Cell extends React.Component<Props, {}> {
 					},
 				});
 
-				menuId = 'select';
+				menuId = 'button';
 				break;
 					
 			case I.RelationType.Checkbox:

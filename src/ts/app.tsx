@@ -84,6 +84,7 @@ import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/select.scss';
+import 'scss/menu/button.scss';
 import 'scss/menu/search.scss';
 import 'scss/menu/thread.scss';
 
