@@ -197,7 +197,7 @@ class Dispatcher {
 					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
 
 					let res = Response.BlockShow(data);
-					this.onBlockShow(rootId, res.type, res.blocks, res.details);
+					this.onBlockShow(rootId, res);
 					break;
 
 				case 'blockAdd':
@@ -610,11 +610,18 @@ class Dispatcher {
 		return 0;
 	};
 
-	onBlockShow (rootId: string, type: number, blocks: I.Block[], details: any[]) {
+	onBlockShow (rootId: string, message: any) {
+		let { blocks, details } = message;
+
+		blockStore.detailsSet(rootId, details);
+
+		const object = blockStore.getDetails(rootId, rootId);
+		const objectType: any = dbStore.getObjectType(object.type) || {};
+
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {
 				it.type = I.BlockType.Page;
-				it.pageType = type;
+				it.layout = objectType ? objectType.layout : I.ObjectLayout.Page;
 			};
 
 			if (it.type == I.BlockType.Dataview) {
@@ -628,13 +635,7 @@ class Dispatcher {
 			return new M.Block(it);
 		});
 
-		let root = blocks.find((it: I.Block) => { return it.id == rootId; });
-		if (!root) {
-			return;
-		};
-
 		blockStore.blocksSet(rootId, blocks);
-		blockStore.detailsSet(rootId, details);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

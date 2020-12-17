@@ -2,7 +2,6 @@ import { I } from 'ts/lib';
 
 export interface PageInfo {
 	id: string;
-	pageType: I.PageType;
 	snippet: string;
 	details: any;	
 	text?: string;
@@ -62,7 +61,7 @@ export interface BlockComponent {
 export interface Block {
 	id: string;
 	type: BlockType;
-	pageType?: I.PageType;
+	layout?: I.ObjectLayout;
 	parentId?: string;
 	fields: any;
 	align?: BlockAlign;
@@ -92,7 +91,8 @@ export interface Block {
 
 	isPage?(): boolean;
 	isPagePage?(): boolean;
-	isPageProfile?(): boolean;
+	isPageContact?(): boolean;
+	isPageTask?(): boolean;
 	isPageSet?(): boolean;
 	isPageFile?(): boolean;
 

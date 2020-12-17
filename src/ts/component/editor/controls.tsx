@@ -85,12 +85,7 @@ class Controls extends React.Component<Props, {}> {
 		};
 		
 		focus.clear(true);
-		
-		if (root.isPageProfile()) {
-			this.onAddIconUser();
-		} else {
-			this.onAddIconPage();
-		};
+		root.isPageContact() ? this.onAddIconUser() : this.onAddIconPage();
 	};
 	
 	onAddIconPage () {

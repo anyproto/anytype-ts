@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Button, Input, Cover, Loader, IconObject } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -775,7 +775,8 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: I.PageInfo, config: any) {
-		if (it.details.isArchived || (!config.allowDataview && (it.pageType == I.PageType.Set))) {
+		const objectType: any = dbStore.getObjectType(it.details.type) || {};
+		if (it.details.isArchived || (!config.allowDataview && (objectType.layout == I.ObjectLayout.Set))) {
 			return false;
 		};
 		return true;

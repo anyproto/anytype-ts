@@ -5,9 +5,8 @@ class Block implements I.Block {
 	
 	id: string = '';
 	parentId: string = '';
-	pageType: any = null;
 	type: I.BlockType = I.BlockType.Empty;
-	
+	layout: I.ObjectLayout = I.ObjectLayout.Page;
 	childrenIds: string[] = [];
 	align: I.BlockAlign = I.BlockAlign.Left;
 	bgColor: string = '';
@@ -20,12 +19,12 @@ class Block implements I.Block {
 		self.id = String(props.id || '');
 		self.parentId = String(props.parentId || '');
 		self.type = props.type;
+		self.layout = Number(props.layout) || I.ObjectLayout.Page;
 		self.align = Number(props.align) || I.BlockAlign.Left;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
 		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
-		self.pageType = props.pageType;
 
 		decorate(self, {
 			childrenIds: observable,
@@ -108,19 +107,23 @@ class Block implements I.Block {
 	};
 	
 	isPagePage (): boolean { 
-		return this.isPage() && (this.pageType == I.PageType.Page);
+		return this.isPage() && (this.layout == I.ObjectLayout.Page);
 	};
 
-	isPageProfile (): boolean { 
-		return this.isPage() && (this.pageType == I.PageType.Profile);
+	isPageContact (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Contact);
+	};
+
+	isPageTask (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
 
 	isPageSet (): boolean { 
-		return this.isPage() && (this.pageType == I.PageType.Set);
+		return this.isPage() && (this.layout == I.ObjectLayout.Set);
 	};
 
 	isPageFile (): boolean { 
-		return this.isPage() && (this.pageType == I.PageType.File);
+		return this.isPage() && (this.layout == I.ObjectLayout.File);
 	};
 
 	isReadOnly (): boolean {

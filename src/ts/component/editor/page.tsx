@@ -79,9 +79,9 @@ class EditorPage extends React.Component<Props, {}> {
 				readOnly={readOnly}
 			/>
 		);
-		
-		if (root.isPageProfile()) {
-			cn.push('isProfile');
+
+		if (root.isPageContact()) {
+			cn.push('isContact');
 		} else 
 		if (root.isPageSet()) {
 			cn.push('isDataview');

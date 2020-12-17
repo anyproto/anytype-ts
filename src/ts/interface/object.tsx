@@ -4,6 +4,9 @@ export enum ObjectLayout {
 	Page	 = 0,
 	Contact	 = 1,
 	Task	 = 2,
+	Set		 = 3,
+	ObjectType = 4,
+	File	 = 5,
 };
 
 export interface ObjectType {

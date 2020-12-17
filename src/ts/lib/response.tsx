@@ -113,7 +113,6 @@ const BlockOpen = (response: any) => {
 const BlockShow = (response: any) => {
 	return {
 		rootId: response.getRootid(),
-		type: response.getType(),
 		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
 		details: (response.getDetailsList() || []).map(Mapper.From.Details),
 		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),

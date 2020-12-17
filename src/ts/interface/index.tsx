@@ -23,7 +23,7 @@ import {
 	BlockDataview,
 } from './block/dataview';
 
-import { PageType, BlockPage } from './block/page';
+import { BlockPage } from './block/page';
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
 import { LinkStyle, ContentLink, BlockLink } from './block/link';
@@ -95,7 +95,6 @@ export {
 	ContentDataview,
 	BlockDataview,
 
-	PageType,
 	BlockPage,
 
 	LayoutStyle,

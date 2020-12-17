@@ -23,7 +23,6 @@ const Mapper = {
 				details: Decode.decodeStruct(obj.getDetails()),
 				snippet: obj.getSnippet(),
 				hasInboundLinks: obj.getHasinboundlinks(),
-				pageType: obj.getObjecttype(),
 			};
 		},
 
