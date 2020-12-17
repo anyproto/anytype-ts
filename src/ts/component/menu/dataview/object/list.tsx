@@ -268,7 +268,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!item || item.isSection) {
+		if (!item) {
 			this.props.close();
 			return;
 		};
@@ -278,7 +278,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { onChange } = data;
 
 		let value = Util.objectCopy(data.value || []);
-		value.push(item.key);
+		value.push(item.id);
 		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;

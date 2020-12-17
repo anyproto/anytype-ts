@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconObject, MenuItemVertical } from 'ts/component';
+import { MenuItemVertical } from 'ts/component';
 import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -241,7 +241,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!item || item.isSection) {
+		if (!item) {
 			this.props.close();
 			return;
 		};
@@ -266,7 +266,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 			onChange(name + ' ', marks, from, to);
 		};
 
-		if (item.key == 'create') {
+		if (item.id == 'create') {
 			C.PageCreate({ iconEmoji: SmileUtil.random(), name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;
@@ -275,7 +275,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				cb(message.pageId, (filter.text || Constant.default.name));
 			});
 		} else {
-			cb(item.key, item.name);
+			cb(item.id, item.name);
 		};
 
 		this.props.close();
