@@ -1321,8 +1321,10 @@ class EditorPage extends React.Component<Props, {}> {
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Left,
 				onOpen: () => {
-					focus.set(block.id, { from: currentFrom, to: currentTo });
-					focus.apply();
+					if (block) {
+						focus.set(block.id, { from: currentFrom, to: currentTo });
+						focus.apply();
+					};
 				},
 				data: {
 					value: '',
