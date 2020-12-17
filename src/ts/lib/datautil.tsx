@@ -393,7 +393,6 @@ class DataUtil {
 		const { objectTypes } = dbStore;
 
 		let ret: any[] = [
-			{ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' },
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
@@ -408,7 +407,7 @@ class DataUtil {
 				id: 'object' + i++, 
 				objectTypeUrl: type.url, 
 				iconEmoji: type.iconEmoji, 
-				name: type.name, 
+				name: type.name || Constant.default.name, 
 				//description: type.description,
 				isObject: true,
 			});
