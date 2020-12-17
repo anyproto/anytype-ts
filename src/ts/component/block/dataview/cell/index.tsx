@@ -236,6 +236,7 @@ class Cell extends React.Component<Props, {}> {
 					offsetY: -height,
 					width: width,
 				});
+
 				menuId = 'dataviewText';
 				break;
 
