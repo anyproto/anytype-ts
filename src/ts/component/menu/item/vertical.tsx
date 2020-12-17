@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 
 interface Props extends I.MenuItem {};
 
@@ -10,9 +10,11 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, object, inner, name, menuId, description, color, arrow, isActive, withDescription, className, onClick, onMouseEnter, style, iconSize } = this.props;
+		const { id, icon, object, inner, name, menuId, description, caption, color, arrow, isActive, withDescription, withCaption, className, onClick, onMouseEnter, style, iconSize } = this.props;
 		
 		let cn = [ 'item' ];
+		let objectType: any = null;
+
 		if (className) {
 			cn.push(className);
 		};
@@ -24,6 +26,9 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		};
 		if (withDescription) {
 			cn.push('withDescription');
+		};
+		if (withCaption) {
+			cn.push('withCaption');
 		};
 		if (isActive) {
 			cn.push('active');
@@ -56,6 +61,9 @@ class MenuItemVertical extends React.Component<Props, {}> {
 					<React.Fragment>
 						{element}
 						<div className="name">{name}</div>
+						{withCaption ? (
+							<div className="caption">{caption}</div>
+						) : ''}
 					</React.Fragment>
 				)}
 				{arrow ? <Icon className="arrow" /> : ''}

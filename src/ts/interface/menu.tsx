@@ -35,6 +35,7 @@ export interface MenuItem {
 	object?: any;
 	name?: string;
 	description?: string;
+	caption?: string;
 	inner?: any;
 	color?: string;
 	arrow?: boolean;
@@ -42,6 +43,7 @@ export interface MenuItem {
 	isActive?: boolean;
 	menuId?: string;
 	withDescription?: boolean;
+	withCaption?: boolean;
 	style?: any;
 	iconSize?: number;
 	onClick?(e: any): void;

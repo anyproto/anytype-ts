@@ -93,6 +93,13 @@
 			.name { line-height: 22px; }
 		}
 
+		.item.withCaption {
+			.name { width: calc(100% - 112px); margin-right: 6px; }
+			.caption { 
+				width: 80px; @include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
+			}
+		}
+
 		.line { height: 1px; margin: 8px 16px; background: $colorLightGrey; }
 		.input { border-radius: 4px; }
 
