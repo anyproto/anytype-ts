@@ -3,7 +3,7 @@
 .blocks {
 	.block.blockDataview {
 		.cellHead { 
-			text-align: left; color: #6c6a5f; padding: 14px 0px 14px 4px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
+			text-align: left; color: #6c6a5f; padding: 14px 14px 14px 4px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
 			@include text-overflow-nw; cursor: grab;
 		}
 		.cellHead {
@@ -45,8 +45,8 @@
 				}
 			}
 				
-			.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
-			.cell:last-child { border-right: 0px; }
+			.cell { padding: 14px 14px 14px 4px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
+			.cell:first-child { padding-left: 14px; }
 
 			.cell.isEditing {
 				.cellContent { min-width: 300px; padding: 14px; }
