@@ -1127,7 +1127,13 @@ class EditorPage extends React.Component<Props, {}> {
 										}, 
 									});
 								} else {
-									DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+									const details: any = { iconEmoji: SmileUtil.random() };
+									
+									if (item.isObject) {
+										details.type = item.objectTypeUrl;
+									};
+
+									DataUtil.pageCreate(e, rootId, block.id, details, position, (message: any) => {
 										DataUtil.pageOpenPopup(message.targetId);
 									});
 								};

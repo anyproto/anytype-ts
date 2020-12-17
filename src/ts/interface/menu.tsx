@@ -43,6 +43,7 @@ export interface MenuItem {
 	menuId?: string;
 	withDescription?: boolean;
 	style?: any;
+	iconSize?: number;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 };

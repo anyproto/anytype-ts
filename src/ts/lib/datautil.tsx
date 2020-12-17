@@ -359,8 +359,8 @@ class DataUtil {
 
 	menuMapperBlock (it: any) {
 		it.isBlock = true;
-		it.name = translate('blockName' + it.lang);
-		it.description = translate('blockText' + it.lang);
+		it.name = it.lang ? translate('blockName' + it.lang) : it.name;
+		it.description = it.lang ? translate('blockText' + it.lang) : it.description;
 		return it;
 	};
 	
@@ -390,22 +390,31 @@ class DataUtil {
 	};
 
 	menuGetBlockObject () {
-		return [
+		const { objectTypes } = dbStore;
+
+		let ret: any[] = [
 			{ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' },
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
+		];
 
-			/*
-			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
-			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
-			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
-			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
-			{ id: 'contact', icon: 'contact', name: 'Contact', color: 'blue', isBlock: true },
-			*/
-		].map(this.menuMapperBlock);
+		let i = 0;
+		for (let type of objectTypes) {
+			ret.push({ 
+				type: I.BlockType.Page, 
+				id: 'object' + i++, 
+				objectTypeUrl: type.url, 
+				iconEmoji: type.iconEmoji, 
+				name: type.name, 
+				//description: type.description,
+				isObject: true,
+			});
+		};
+		
+		return ret.map(this.menuMapperBlock);
 	};
 
 	menuGetBlockRelation () {

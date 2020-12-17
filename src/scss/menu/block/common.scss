@@ -12,6 +12,12 @@
 		.content { max-height: 362px; padding: 12px 0px; }
 	}
 	.menu.menuBlockAdd {
+		.item.withColor { border-radius: 8px; }
+		.item.withColor.gray .icon, .item.withColor.gray .iconObject { background-color: #f3f2ec; }
+		.item.withColor.yellow .icon, .item.withColor.yellow .iconObject { background-color: #ffee94; }
+		.item.withColor.green .icon, .item.withColor.green .iconObject { background-color: #b8f1a4; }
+		.item.withColor.purple .icon, .item.withColor.purple .iconObject { background-color: #f1cafb; }
+
 		.item.withColor {
 			.icon.text { background-image: url('~img/icon/menu/action/block/text1.svg'); }
 			.icon.list { background-image: url('~img/icon/menu/action/block/list1.svg'); }
