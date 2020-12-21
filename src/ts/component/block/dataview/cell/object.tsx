@@ -1,10 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, keyboard, Util } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { I, C, Util } from 'ts/lib';
+import { blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
-import { setRange } from 'selection-ranges';
 import { IconObject } from 'ts/component';
 
 interface Props extends I.Cell {};
@@ -12,7 +10,6 @@ interface State {
 	editing: boolean; 
 };
 
-const MENU_ID = 'dataviewObjectList';
 const $ = require('jquery');
 
 @observer
@@ -26,10 +23,6 @@ class CellObject extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 	
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
 	};
 
 	render () {
@@ -56,30 +49,14 @@ class CellObject extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				{canEdit ? (
+				{value.length ? (
 					<React.Fragment>
 						{value.map((item: any, i: number) => {
 							return <Item key={i} {...item} />;
 						})}
-						<div className="filter tagItem">
-							<div 
-								id="filter" 
-								contentEditable={!readOnly} 
-								suppressContentEditableWarning={true} 
-								onKeyDown={this.onKeyDown} 
-								onKeyUp={this.onKeyUp}
-								onFocus={this.onFocus} 
-								onBlur={this.onBlur}
-							/>
-							<div id="placeHolder">Find an object</div>
-						</div>
 					</React.Fragment>
 				) : (
-					<React.Fragment>
-						{value.map((item: any, i: number) => {
-							return <Item key={i} {...item} />;
-						})}
-					</React.Fragment>
+					<div className="empty">Add objects</div>
 				)}
 			</div>
 		);
@@ -87,7 +64,6 @@ class CellObject extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.placeHolderCheck();
 	};
 
 	componentWillUnmount () {
@@ -101,12 +77,9 @@ class CellObject extends React.Component<Props, State> {
 
 		if (editing) {
 			cell.addClass('isEditing');
-			this.focus();
 		} else {
 			cell.removeClass('isEditing');
 		};
-
-		this.placeHolderCheck();
 	};
 
 	setEditing (v: boolean) {
@@ -118,136 +91,16 @@ class CellObject extends React.Component<Props, State> {
 		};
 	};
 
-	onClick () {
-		this.focus();
-	};
-
 	onChange (value: string[]) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const filter = node.find('#filter');
 
 		filter.text('');
-		this.focus();
-		this.updateMenuFilter('');
 	};
 
 	onSort (value: any[]) {
 		const { onChange } = this.props;
 		onChange(value.map((it: any) => { return it.id; }));
-	};
-
-	focus () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const filter = node.find('#filter');
-		if (!filter.length) {
-			return;
-		};
-
-		const length = filter.text().length;
-
-		filter.focus();
-		setRange(filter.get(0), { start: length, end: length });
-	};
-
-	onFocus () {
-		keyboard.setFocus(true);
-	};
-
-	onBlur () {
-		keyboard.setFocus(false);
-	};
-
-	placeHolderCheck () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { readOnly } = this.props;
-		
-		if (readOnly) {
-			this.placeHolderHide();
-			return;
-		};
-
-		const value = this.getValue();
-		const node = $(ReactDOM.findDOMNode(this));
-		const text = node.find('#filter').text();
-
-		text.length || value.length ? this.placeHolderHide() : this.placeHolderShow();			
-	};
-
-	placeHolderHide () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.addClass('noPlaceholder');
-	};
-	
-	placeHolderShow () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.removeClass('noPlaceholder');
-	};
-
-	onKeyDown (e: any) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const filter = node.find('#filter');
-		const value = this.getValue();
-		const length = filter.text().length;
-
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			e.preventDefault();
-
-			this.add(value, filter.text());
-			filter.html('');
-		});
-
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (length || !value.length) {
-				return;
-			};
-
-			this.remove(value[value.length - 1]);
-		});
-	};
-
-	onKeyUp (e: any) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const filter = node.find('#filter');
-		const text = filter.text();
-		const value = this.getValue();
-
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			e.preventDefault();
-
-			this.add(value, text);
-			filter.text('');
-		});
-
-		this.updateMenuFilter(text);
-		this.placeHolderCheck();
-	};
-
-	onRemove (e: any, id: string) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		this.remove(id);
-	};
-
-	updateMenuFilter (text: string) {
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
-
-		if (menu) {
-			menu.param.data.filter = text;
-			commonStore.menuUpdate(MENU_ID, menu.param);
-		};
 	};
 
 	getValue () {
@@ -259,61 +112,6 @@ class CellObject extends React.Component<Props, State> {
 			value = [];
 		};
 		return Util.objectCopy(value);
-	};
-
-	add (value: string[], text: string) {
-		const { rootId, block, relation, onChange } = this.props;
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
-		
-		text = String(text || '').trim();
-		if (!text) {
-			return;
-		};
-
-		let option = relation.selectDict.find((it: I.SelectOption) => { return it.text == text; });
-		let cb = () => {
-			value.push(option.id);
-			value = Util.arrayUnique(value);
-
-			onChange(value);
-	
-			if (menu) {
-				menu.param.data.value = value;
-				menu.param.data.relation = observable.box(relation);
-				commonStore.menuUpdate(MENU_ID, menu.param);
-			};
-		};
-
-		if (option) {
-			cb();
-		} else {
-			option = { 
-				id: '',
-				text: text, 
-				color: '', 
-			};
-	
-			C.BlockDataviewRelationSelectOptionAdd(rootId, block.id, relation.relationKey, option, (message: any) => {
-				if (!message.option) {
-					return;
-				};
-				
-				option.id = message.option.id;
-				relation.selectDict.push(message.option);
-				cb();
-			});
-		};
-	};
-
-	remove (id: string) {
-		const { onChange } = this.props;
-
-		let value = this.getValue();
-		value = value.filter((it: string) => { return it != id; });
-		value = Util.arrayUnique(value);
-
-		onChange(value);
 	};
 
 };

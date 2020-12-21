@@ -2,12 +2,16 @@
 
 .menus {
 	.menu.menuDataviewObjectList {
-		.content { height: 212px; overflow: visible; transition: none; }
-		.items { height: 100%; }
+		.content { overflow: visible; transition: none; }
+		.wrap { height: 100%; display: flex; flex-direction: column; }
+
+		.items { height: calc(100% - 34px); }
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}
 		.label { color: $colorDarkGrey; @include text-common; padding: 0px 16px; }
+
+		.filter { margin-bottom: 8px; }
 
 		.section:first-child, .section:last-child { padding: 8px 0px; }
 
