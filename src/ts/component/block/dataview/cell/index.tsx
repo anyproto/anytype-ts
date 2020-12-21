@@ -112,9 +112,9 @@ class Cell extends React.Component<Props, {}> {
 
 		const body = $('body');
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
-		const cell = $('#' + id);
+		const cell = $('#' + id).addClass('isEditing');
 		const element = cell.find('.cellContent');
-		const width = Math.max(element.outerWidth() + 28, Constant.size.dataview.cell.edit);
+		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
@@ -136,6 +136,7 @@ class Cell extends React.Component<Props, {}> {
 				body.addClass('over');
 			};
 		};
+
 		let setOff = () => {
 			cell.removeClass('isEditing');
 
