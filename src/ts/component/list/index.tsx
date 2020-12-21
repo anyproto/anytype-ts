@@ -47,13 +47,13 @@ class ListIndex extends React.Component<Props, {}> {
 			if (_detailsEmpty_) {
 				return (
 					<div className="item">
-						<div className="smile c48" />
+						<div className="iconObject c48" />
 						<div className="line animatedBackground" />
 					</div>
 				);
 			};
 
-			let icon = <IconObject className="c48" object={details} size={24} />;
+			let icon = <IconObject size={48} object={details} />;
 			let showMenu = true;
 
 			if (content.style == I.LinkStyle.Dataview) {
@@ -61,8 +61,10 @@ class ListIndex extends React.Component<Props, {}> {
 			} else 
 			if (content.style == I.LinkStyle.Archive) {
 				icon = (
-					<div className="smile c48">
-						<Icon className="archive" />
+					<div className="iconObject c48">
+						<div className="iconEmoji c48">
+							<Icon className="archive" />
+						</div>
 					</div>
 				);
 				showMenu = false;

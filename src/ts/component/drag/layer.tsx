@@ -6,7 +6,7 @@ import { I, M, Util } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 const $ = require('jquery');
-const raf = require('raf');
+const Constant = require('json/constant.json');
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -93,7 +93,7 @@ class DragLayer extends React.Component<Props, State> {
 		const comp = $(ReactDOM.findDOMNode(component));
 		const rect = comp.get(0).getBoundingClientRect() as DOMRect;
 		
-		this.setState({ type: type, width: rect.width, ids: ids });
+		this.setState({ type: type, width: rect.width - Constant.size.blockMenu, ids: ids });
 	};
 
 	hide () {

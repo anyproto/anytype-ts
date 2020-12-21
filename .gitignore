@@ -11,4 +11,5 @@ commands.md
 .idea
 tools
 dist/*.node
+*.txt
 src/json/schema

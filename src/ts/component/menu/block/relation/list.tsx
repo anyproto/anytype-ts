@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class MenuBlockRelationList extends React.Component<Props, {}> {
@@ -29,7 +29,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 		const idPrefix = 'menuBlockRelationListCell';
 
-		let relations = dbStore.getRelations(rootId).filter((it: I.Relation) => { return !it.isHidden; });
+		let relations = dbStore.getRelations(rootId, rootId).filter((it: I.Relation) => { return !it.isHidden; });
 		if (filter) {
 			relations = relations.filter((it: I.Relation) => { return it.name.match(filter); });
 		};
@@ -60,6 +60,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
+							pageContainer={$('#menuBlockRelationList')}
 							readOnly={readOnly}
 						/>
 					</div>
@@ -80,6 +81,10 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		this.props.position();
 	};
 
+	componentWillUnmount () {
+		commonStore.menuCloseAll();
+	};
+
 	onSelect (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
@@ -95,7 +100,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readOnly } = data;
-		const relation = dbStore.getRelation(rootId, relationKey);
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		if (!relation || readOnly || relation.isReadOnly) {
 			return;

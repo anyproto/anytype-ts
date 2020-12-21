@@ -24,11 +24,11 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readOnly, isPopup } = this.props;
 		const { content } = block;
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
-		const relations = dbStore.getRelations(rootId);
+		const relations = dbStore.getRelations(rootId, rootId);
 		const relation = relations.find((it: any) => { return it.relationKey == key; });
 		const isNew = (block.fields || {}).isNew;
 		const placeHolder = isNew ? 'New relation' : 'Relation';
@@ -39,16 +39,18 @@ class BlockRelation extends React.Component<Props, {}> {
 			<div className="wrap">
 				{!relation ? 
 				(
-					<React.Fragment>
-						<Icon className="relation default" />
-						<Input 
-							id={'relation-type-' + block.id} 
-							ref={(ref: any) => { this.refInput = ref; }} 
-							placeHolder={placeHolder} 
-							onClick={this.onMenu} 
-							onKeyUp={this.onKeyUp} 
-						/>
-					</React.Fragment>
+					<div className="sides">
+						<div className="info">
+							<Icon className="relation default" />
+							<Input 
+								id={'relation-type-' + block.id} 
+								ref={(ref: any) => { this.refInput = ref; }} 
+								placeHolder={placeHolder} 
+								onClick={this.onMenu} 
+								onKeyUp={this.onKeyUp} 
+							/>
+						</div>
+					</div>
 				) : 
 				(
 					<div className="sides">
@@ -74,6 +76,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
+								pageContainer={Util.getEditorPageContainer(isPopup)}
 							/>
 						</div>
 					</div>
@@ -182,7 +185,7 @@ class BlockRelation extends React.Component<Props, {}> {
 	getItems () {
 		const { rootId } = this.props;
 		const filter = new RegExp(Util.filterFix(this.refInput.getValue()), 'gi');
-		const relations = dbStore.getRelations(rootId);
+		const relations = dbStore.getRelations(rootId, rootId);
 		
 		let options: any[] = [];
 		for (let relation of relations) {

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { I, Util, translate } from 'ts/lib';
+import { Select } from 'ts/component';
 import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
@@ -14,8 +15,10 @@ interface State {
 class MenuCalendar extends React.Component<Props, State> {
 	
 	state = {
-		value: 0
+		value: 0,
 	};
+	refMonth: any = null;
+	refYear: any = null;
 	
 	render() {
 		const { param } = this.props;
@@ -23,24 +26,55 @@ class MenuCalendar extends React.Component<Props, State> {
 		const { value } = data;
 		const items = this.getData();
 
-		let d = Number(Util.date('d', value));
-		let m = Number(Util.date('n', value));
-		let y = Number(Util.date('Y', value));
-		let months = [];
-		let days = [];
+		const d = Number(Util.date('d', value));
+		const m = Number(Util.date('n', value));
+		const y = Number(Util.date('Y', value));
 
-		for (let i = 1; i <= 12; ++i) {
-			months.push({ id: i, name: translate('month' + i) });
-		};
+		const days = [];
+		const months = [];
+		const years = [];
 
 		for (let i = 1; i <= 7; ++i) {
 			days.push({ id: i, name: translate('day' + i) });
 		};
 
+		for (let i = 1; i <= 12; ++i) {
+			months.push({ id: i, name: translate('month' + i) });
+		};
+
+		for (let i = 0; i <= 3000; ++i) {
+			years.push({ id: i, name: i });
+		};
+
 		return (
 			<div className="inner">
 				<div className="head">
-					<div className="date">{Util.date('F, Y', value)}</div>
+					<div className="sides">
+						<div className="side left">
+							<Select 
+								ref={(ref: any) => { this.refMonth = ref; }}
+								id="month"
+								value={String(m || '')} 
+								options={months} 
+								menuClassName="orange" 
+								menuWidth={192} 
+								onChange={(m: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
+							/>
+						</div>
+						<div className="side right">
+							<Select 
+								ref={(ref: any) => { this.refYear = ref; }}
+								id="year" 
+								value={String(y || '')} 
+								options={years} 
+								menuClassName="orange center" 
+								menuWidth={144} 
+								horizontal={I.MenuDirection.Right} 
+								onChange={(y: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
+							/>
+						</div>
+					</div>
+
 					<div className="days">
 						{days.map((item: any, i: number) => {
 							return <div key={i} className="day th">{item.name.substr(0, 2)}</div>;
@@ -51,46 +85,50 @@ class MenuCalendar extends React.Component<Props, State> {
 					{items.map((item, i) => {
 						let cn = [ 'day' ];
 						if (m != item.m) {
-							cn.push('dis');
+							cn.push('other');
 						};
 						if ((d == item.d) && (m == item.m) && (y == item.y)) {
 							cn.push('active');
 						};
-						return <div key={i} className={cn.join(' ')} onClick={() => { this.set(item.d, item.m, y); }}>{item.d}</div>;
+						return <div key={i} className={cn.join(' ')} onClick={() => { this.setValue(Util.timestamp(y, item.m, item.d), true, true); }}>{item.d}</div>;
 					})}
 				</div>
+				<div className="line" />
 				<div className="foot">
-					<div className="btn" onClick={() => { this.setValue(Util.time(), true); }}>{translate('menuCalendarToday')}</div>
-					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400, true); }}>{translate('menuCalendarTomorrow')}</div>
+					<div className="btn" onClick={() => { this.setValue(Util.time(), true, true); }}>{translate('menuCalendarToday')}</div>
+					<div className="btn" onClick={() => { this.setValue(Util.time() + 86400, true, true); }}>{translate('menuCalendarTomorrow')}</div>
 				</div>
 			</div>
 		);
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
+
+		const m = Number(Util.date('n', value));
+		const y = Number(Util.date('Y', value));
+
+		this.refMonth.setValue(m);
+		this.refYear.setValue(y);
+
 		this.props.position();
 	};
 
-	setValue (v: number, save: boolean) {
-		const { param, close } = this.props;
+	setValue (v: number, save: boolean, close: boolean) {
+		const { param } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 
 		data.value = v;
 
 		if (save) {
-			close();
 			onChange(v);
 		};
-	};
-	
-	set (d: number, m: number, y: number) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onChange } = data;
-		
-		close();
-		onChange(Util.timestamp(y, m, d));
+		if (close) {
+			this.props.close();
+		};
 	};
 	
 	getData () {

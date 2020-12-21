@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Smile } from 'ts/component';
+import { Icon } from 'ts/component';
 import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -39,14 +39,13 @@ class HeaderMainSet extends React.Component<Props, {}> {
 		return (
 			<div id="header" className={cn.join(' ')}>
 				<div className="side left">
-					<Icon className="home" tooltip="Home" onClick={this.onHome} />
-					<Icon className="back" tooltip="Back" onClick={this.onBack} />
-					<Icon className="forward" tooltip="Forward" onClick={this.onForward} />
+					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
+					<Icon className="back big" tooltip="Back" onClick={this.onBack} />
+					<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
+					<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
 				</div>
 
 				<div className="side center">
-					<Icon className="nav" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
-
 					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
 							<Icon className="new-set" />
@@ -56,7 +55,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
+					<Icon id="button-header-more" tooltip="Menu big" className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);

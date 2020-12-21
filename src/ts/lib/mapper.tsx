@@ -23,7 +23,6 @@ const Mapper = {
 				details: Decode.decodeStruct(obj.getDetails()),
 				snippet: obj.getSnippet(),
 				hasInboundLinks: obj.getHasinboundlinks(),
-				pageType: obj.getObjecttype(),
 			};
 		},
 
@@ -150,8 +149,8 @@ const Mapper = {
 				item.content = {
 					source: content.getSource(),
 					views: (content.getViewsList() || []).map(Mapper.From.View),
+					relations: (content.getRelationsList() || []).map(Mapper.From.Relation),
 				};
-				dbStore.relationsSet(item.id, (content.getRelationsList() || []).map(Mapper.From.Relation));
 			};
 
 			if (type == I.BlockType.Relation) {

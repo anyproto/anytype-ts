@@ -4,7 +4,8 @@
     .menu.menuDataviewRelationType, 
     .menu.menuDataviewRelationList, 
     .menu.menuDataviewRelationEdit, 
-    .menu.menuDataviewViewList {
+    .menu.menuDataviewViewList,
+	.menu.menuDataviewObjectType {
         .item:hover::before { opacity: 0.15; }
     }
 

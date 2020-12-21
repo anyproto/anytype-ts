@@ -6,6 +6,7 @@ import { commonStore } from 'ts/store';
 import MenuHelp from './help';
 import MenuAccount from './account';
 import MenuSelect from './select';
+import MenuButton from './button';
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
 import MenuSearch from './search';
@@ -73,6 +74,7 @@ class Menu extends React.Component<Props, {}> {
 			help:					 MenuHelp,
 			account:				 MenuAccount,
 			select:					 MenuSelect,
+			button:					 MenuButton,
 			smile:					 MenuSmile,
 			smileSkin:				 MenuSmileSkin,
 			search:					 MenuSearch,
@@ -300,13 +302,13 @@ class Menu extends React.Component<Props, {}> {
 	
 	setActiveItem (item?: any, scroll?: boolean) {
 		const node = $(Util.toCamelCase('#menu-' + this.props.id));
-		node.find('.item.active').removeClass('active');
+		node.find('.item.hover').removeClass('hover');
 
 		if (!item) {
 			return;
 		};
 
-		const el = node.find('#item-' + item.id).addClass('active');
+		const el = node.find('#item-' + item.id).addClass('hover');
 		if (el.length && scroll) {
 			const content = node.find('.content');
 			const st = content.scrollTop();

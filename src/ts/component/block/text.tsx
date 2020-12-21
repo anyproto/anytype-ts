@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Smile, Loader, IconObject } from 'ts/component';
+import { Select, Marker, Loader, IconObject } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -270,7 +270,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		const { rootId, block } = this.props;
-		const param = this.emojiParam(block.content.style);
+		const size = this.emojiParam(block.content.style);
 		
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -282,24 +282,25 @@ class BlockText extends React.Component<Props, {}> {
 			const details = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
 			const { _detailsEmpty_, iconEmoji, iconImage } = details;
+			const cn = [];
 
 			if (smile && smile.length) {
 				let icon = null;
 				if (_detailsEmpty_) {
 					item.addClass('dis');
-					icon = <Loader className={[ param.class, 'inline' ].join(' ')} />;
+					icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
 				} else {
-					icon = <IconObject className={param.class} size={param.size} object={details} />;
+					icon = <IconObject size={size} object={details} />;
 				};
 
 				if (icon) {
 					ReactDOM.render(icon, smile.get(0));
 					smile.after('<img src="./img/space.svg" class="space" />');
-					param.class += ' withImage';
+					cn.push('withImage');
 				};
 			};
 
-			item.addClass(param.class);
+			item.addClass(cn.join(' '));
 		});
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
@@ -321,9 +322,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		const { block } = this.props;
-		const { content } = block;
-		const { style } = content;
-		const param = this.emojiParam(style);
+		const size = this.emojiParam(block.content.style);
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -335,33 +334,29 @@ class BlockText extends React.Component<Props, {}> {
 
 			const smile = item.find('smile');
 			
-			item.addClass(param.class);
 			if (smile && smile.length) {
-				ReactDOM.render(<Smile className={param.class} size={param.size} native={false} icon={data.param} />, smile.get(0));
+				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
 		});
 	};
 
 	emojiParam (style: I.TextStyle) {
-		let cn = 'c24';
-		let size = 18;
+		let size = 24;
 		switch (style) {
 			case I.TextStyle.Header1:
-				cn = 'c32';
-				size = 28;
+				size = 32;
 				break;
 			
 			case I.TextStyle.Header2:
-				cn = 'c28';
-				size = 22;
+				size = 28;
 				break;
 
 			case I.TextStyle.Header3:
 			case I.TextStyle.Quote:
-				cn = 'c26';
+				size = 26;
 				break;
 		};
-		return { class: cn, size: size };
+		return size;
 	};
 
 	getValue (): string {
@@ -398,12 +393,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
 		
-		if (
-			commonStore.menuIsOpen('blockStyle') ||
-			commonStore.menuIsOpen('blockColor') ||
-			commonStore.menuIsOpen('blockBackground') ||
-			commonStore.menuIsOpen('blockMore') 
-		) {
+		if (commonStore.menuIsOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
 			e.preventDefault();
 			return;
 		};
@@ -416,8 +406,13 @@ class BlockText extends React.Component<Props, {}> {
 		const isSpaceBefore = range ? (!range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n')) : false;
 		const symbolBefore = range ? value[range.from - 1] : '';
 		
+		const menuOpen = commonStore.menuIsOpen();
+		const menuOpenAdd = commonStore.menuIsOpen('blockAdd');
+		const menuOpenMention = commonStore.menuIsOpen('blockMention');
+		const menuOpenSmile = commonStore.menuIsOpen('smile');
+		
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isTextCode() || commonStore.menuIsOpen()) {
+			if (block.isTextCode() || menuOpen) {
 				return;
 			};
 
@@ -454,7 +449,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (!commonStore.menuIsOpen('blockAdd') && !commonStore.menuIsOpen('blockMention')) {
+			if (!menuOpenAdd && !menuOpenMention) {
 				if (range.to) {
 					return;
 				};
@@ -466,11 +461,11 @@ class BlockText extends React.Component<Props, {}> {
 				ret = true;
 			};
 
-			if (commonStore.menuIsOpen('blockAdd') && (symbolBefore == '/')) {
+			if (menuOpenAdd && (symbolBefore == '/')) {
 				commonStore.menuClose('blockAdd');
 			};
 
-			if (commonStore.menuIsOpen('blockMention') && (symbolBefore == '@')) {
+			if (menuOpenMention && (symbolBefore == '@')) {
 				commonStore.menuClose('blockMention');
 			};
 		});
@@ -482,7 +477,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
-			if (commonStore.menuIsOpen('smile') || !block.canHaveMarks()) {
+			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};
 
@@ -491,7 +486,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
-			if (!isSpaceBefore || commonStore.menuIsOpen('blockMention') || !block.canHaveMarks()) {
+			if (!isSpaceBefore || menuOpenMention || !block.canHaveMarks()) {
 				return;
 			};
 
@@ -518,6 +513,9 @@ class BlockText extends React.Component<Props, {}> {
 		const { id } = block;
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
+
+		const menuOpenAdd = commonStore.menuIsOpen('blockAdd');
+		const menuOpenMention = commonStore.menuIsOpen('blockMention');
 		
 		let value = this.getValue();
 		let cmdParsed = false;
@@ -527,7 +525,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		let symbolBefore = range ? value[range.from - 1] : '';
 		
-		if (commonStore.menuIsOpen('blockAdd')) {
+		if (menuOpenAdd) {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
 				commonStore.menuClose('blockAdd');
@@ -541,7 +539,7 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		if (commonStore.menuIsOpen('blockMention')) {
+		if (menuOpenMention) {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
 				commonStore.menuClose('blockMention');
@@ -556,7 +554,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !commonStore.menuIsOpen('blockAdd')) {
+		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !menuOpenAdd) {
 			value = Util.stringCut(value, range.from - 1, range.from);
 			onMenuAdd(id, value, range);
 		};

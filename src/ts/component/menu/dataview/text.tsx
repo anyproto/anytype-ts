@@ -59,7 +59,7 @@ class MenuText extends React.Component<Props, {}> {
 			input.get(0).setSelectionRange(length, length);
 		};
 
-		window.setTimeout(() => { this.resize(); });
+		window.setTimeout(() => { this.resize(); }, 15);
 	};
 
 	componentWillUnmount () {

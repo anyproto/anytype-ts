@@ -31,7 +31,7 @@ import Frame from './util/frame';
 import Cover from './util/cover';
 import Title from './util/title';
 import Label from './util/label';
-import Smile from './util/smile';
+import IconEmoji from './util/iconEmoji';
 import Tag from './util/tag';
 import Loader from './util/loader';
 import Progress from './util/progress';
@@ -107,7 +107,7 @@ export {
 	Cover,
 	Title,
 	Label,
-	Smile,
+	IconEmoji,
 	Error,
 	Icon,
 	IconUser,

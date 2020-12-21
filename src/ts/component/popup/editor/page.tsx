@@ -2,6 +2,7 @@ import * as React from 'react';
 import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainEditPopup as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
+import { commonStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 

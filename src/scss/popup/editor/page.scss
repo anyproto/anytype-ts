@@ -4,16 +4,17 @@
 	.popup.popupEditorPage {
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
 
-		.header { position: absolute; padding: 0px; border-radius: 12px 12px 0px 0px; }
+		.header { position: absolute; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
 		.header {
 			.menu { right: 0px; top: 0px; }
 		}
 		
-		.content { height: 100%; }
+		.content { height: 100%; padding-top: 38px; }
 		.content > .wrap { height: 100%; }
 
-		.selection { height: calc(100% - 38px); overflow-y: scroll; margin-top: 38px; }
-		.blocks { margin-left: -48px; }
+		.selection { height: 100%; overflow-x: hidden; overflow-y: scroll; }
 		.editor { margin-top: 38px; }
+
+		.editorWrapper.isDataview { width: calc(100% - 96px); }
 	}	
 }

@@ -34,7 +34,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 
 		const Item = (item: any) => (
 			<div className="item" onClick={(e) => { this.onSelect(item as I.Account); }}>
-				<IconUser {...item} />
+				<IconUser {...item} className="c64" />
 				<div className="name">{item.name}</div>
 			</div>
 		);

@@ -45,31 +45,31 @@ class DbStore {
 	};
 
 	@action
-	relationsSet (blockId: string, list: I.Relation[]) {
-		this.relationMap.set(blockId, observable(list));
+	relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
+		this.relationMap.set(this.getId(rootId, blockId), observable(list));
 	};
 
 	@action
-	relationsRemove (blockId: string) {
-		this.relationMap.delete(blockId);
+	relationsRemove (rootId: string, blockId: string) {
+		this.relationMap.delete(this.getId(rootId, blockId));
 	};
 
 	@action
-	relationAdd (blockId: string, item: any) {
-		const relations = this.getRelations(blockId);
+	relationAdd (rootId: string, blockId: string, item: any) {
+		const relations = this.getRelations(rootId, blockId);
 		const relation = relations.find((it: I.Relation) => { return it.relationKey == item.relationKey; });
 
 		if (relation) {
-			this.relationUpdate(blockId, item);
+			this.relationUpdate(rootId, blockId, item);
 		} else {
 			relations.push(item);
-			this.relationsSet(blockId, relations);
+			this.relationsSet(rootId, blockId, relations);
 		};
 	};
 
 	@action
-	relationUpdate (blockId: string, item: any) {
-		const relations = this.getRelations(blockId);
+	relationUpdate (rootId: string, blockId: string, item: any) {
+		const relations = this.getRelations(rootId, blockId);
 		const relation = relations.find((it: I.Relation) => { return it.relationKey == item.relationKey; });
 		if (!relation) {
 			return;
@@ -80,15 +80,15 @@ class DbStore {
 	};
 
 	@action
-	relationRemove (blockId: string, key: string) {
-		let relations = this.getRelations(blockId);
+	relationRemove (rootId: string, blockId: string, key: string) {
+		let relations = this.getRelations(rootId, blockId);
 		relations = relations.filter((it: I.Relation) => { return it.relationKey != key; });
-		this.relationsSet(blockId, relations);
+		this.relationsSet(rootId, blockId, relations);
 	};
 
 	@action
-	metaSet (blockId: string, meta: any) {
-		const data = this.metaMap.get(blockId);
+	metaSet (rootId: string, blockId: string, meta: any) {
+		const data = this.metaMap.get(this.getId(rootId, blockId));
 
 		if (data) {
 			set(data, meta);
@@ -103,12 +103,12 @@ class DbStore {
 				return change;
 			});
 
-			this.metaMap.set(blockId, meta);
+			this.metaMap.set(this.getId(rootId, blockId), meta);
 		};
 	};
 
 	@action
-	recordsSet (blockId: string, list: any[]) {
+	recordsSet (rootId: string, blockId: string, list: any[]) {
 		list = list.map((obj: any) => {
 			obj = observable(obj);
 			intercept(obj as any, (change: any) => {
@@ -120,12 +120,12 @@ class DbStore {
 			return obj;
 		});
 
-		this.dataMap.set(blockId, observable.array(list));
+		this.dataMap.set(this.getId(rootId, blockId), observable.array(list));
 	};
 
 	@action
-	recordAdd (blockId: string, obj: any) {
-		const data = this.getData(blockId);
+	recordAdd (rootId: string, blockId: string, obj: any) {
+		const data = this.getData(rootId, blockId);
 		obj = observable(obj);
 
 		intercept(obj as any, (change: any) => {
@@ -139,8 +139,8 @@ class DbStore {
 	};
 
 	@action
-	recordUpdate (blockId: string, obj: any) {
-		const data = this.getData(blockId);
+	recordUpdate (rootId: string, blockId: string, obj: any) {
+		const data = this.getData(rootId, blockId);
 		const record = data.find((it: any) => { return it.id == obj.id; });
 		if (!record) {
 			return;
@@ -150,30 +150,34 @@ class DbStore {
 	};
 
 	@action
-	recordDelete (blockId: string, id: string) {
-		let data = this.getData(blockId);
+	recordDelete (rootId: string, blockId: string, id: string) {
+		let data = this.getData(rootId, blockId);
 		data = data.filter((it: any) => { return it.id == id; });
+	};
+
+	getId (rootId: string, blockId: string) {
+		return [ rootId, blockId ].join(':');
 	};
 
 	getObjectType (url: string): I.ObjectType {
 		return this.objectTypeMap.get(DataUtil.schemaField(url));
 	};
 
-	getRelations (blockId: string): I.Relation[] {
-		return this.relationMap.get(blockId) || [];
+	getRelations (rootId: string, blockId: string): I.Relation[] {
+		return this.relationMap.get(this.getId(rootId, blockId)) || [];
 	};
 
-	getRelation (blockId: string, relationKey: string): I.Relation {
-		const relations = this.relationMap.get(blockId) || [];
+	getRelation (rootId: string, blockId: string, relationKey: string): I.Relation {
+		const relations = this.getRelations(rootId, blockId);
 		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
 	};
 
-	getMeta (blockId: string) {
-		return this.metaMap.get(blockId) || {};
+	getMeta (rootId: string, blockId: string) {
+		return this.metaMap.get(this.getId(rootId, blockId)) || {};
 	};
 
-	getData (blockId: string) {
-		return this.dataMap.get(blockId) || [];
+	getData (rootId: string, blockId: string) {
+		return this.dataMap.get(this.getId(rootId, blockId)) || [];
 	};
 
 };

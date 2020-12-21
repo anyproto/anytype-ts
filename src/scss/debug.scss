@@ -18,20 +18,14 @@ html.debug {
 		
 		.block.blockLayout.c2 { border-width: 2px; border-color: rgba(0,255,0,0.3); }
 	}
+
+	.menus .menu.menuBlockRelationList, 
+	.blocks .block.blockRelation {
+		.info { background: rgba(172,169,150,0.1); }
+		.cell { background: rgba(172,169,150,0.1); }
+	}
 	
 	.blockLast { background: rgba(0,0,255,0.1); }
 	
 	.focusable.isFocused { border: 1px solid rgba(255,127,127,0.3); }
-	
-	.popups {
-		.popupNavigation {
-			.path {
-				.item {
-					.icon { background-color: rgba(0,0,255,0.1); }
-					.smile { background-color: rgba(0,0,255,0.1); }
-					.name { background-color: rgba(0,0,255,0.1); }
-				}
-			}
-		}
-	};
 } 

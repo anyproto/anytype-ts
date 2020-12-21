@@ -5,31 +5,34 @@
 	.menu.menuDataviewCalendar {
 		.inner { user-select: none; }
 
-		.head { padding: 8px 16px 0px 16px; border-bottom: 1px solid #eae9e0; }
+		.head { padding: 8px 16px 0px 16px; }
 		.head {
 			.date { color: $colorDarkGrey; margin-bottom: 6px; }
+			.sides { display: flex; margin-bottom: 10px; }
+			.side { width: 50%; }
+			.side.right { text-align: right; }
 		}
 
-		.body { padding: 8px 16px; }
-		.foot { padding: 11px 16px 3px 16px; border-top: 1px solid #eae9e0; }
+		.body { padding: 0px 16px; }
+		.foot { padding: 11px 16px 3px 16px; }
 		.foot {
-			.btn { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; }
+			.btn { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionFast; }
 			.btn:last-child { margin: 0px; }
+			.btn:hover { color: #e89d00; }
 		}
 
 		.day { 
 			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; cursor: pointer; margin-right: 8px; 
-			border-radius: 2px;
+			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: rgba(172,169,150,0.15); }
+		.day:hover { background: #fef3c5; color: #e89d00 !important; }
 
 		.day.th { color: $colorDarkGrey; cursor: default; }
-		.day.th:hover { background: none; font-weight: 400; }
+		.day.th:hover { background: none; font-weight: 400; color: $colorDarkGrey !important; }
 		
-		.day.active { color: #fff; background: $colorOrange; }
-		
-		.day.dis { color: $colorDarkGrey; }
+		.day.active { color: #e89d00; }
+		.day.other { color: $colorDarkGrey; }
 		
 		.month { height: 28px; line-height: 28px; font-size: 12px; letter-spacing: 0.1px; position: relative; margin-bottom: 4px; }
 		.month { 
@@ -47,9 +50,11 @@
 			height: 28px; border-radius: 4px; border: solid 1px #d2d0c2; margin-bottom: 10px; padding: 0px 10px;
 			background: none; width: 100px; vertical-align: top;
 		}
-		.select { border: 0px; padding: 0px; height: 28px; margin-right: 8px; vertical-align: top; }
+
+		.select { border: 0px; padding: 0px; height: 28px; vertical-align: top; @include text-paragraph; font-weight: 500; }
 		.select {
-			.current { padding: 4px 26px 4px 6px; }
+			.current { padding: 4px 20px 4px 6px; }
+			.arrow { background-image: url('~img/arrow/select/big.svg'); }
 		}
 	}
 }

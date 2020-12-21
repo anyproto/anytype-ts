@@ -57,26 +57,18 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 							</div>
 
-							<div id="menu-date-settings" className="item" onClick={this.onDateSettings}>
-								<Icon className="settings" />
-								<div className="name">Preferences</div>
-								<Icon className="arrow" />
-							</div>
+							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
 						</React.Fragment>
 					) : ''}
 
 					{isObject ? (
 						<React.Fragment>
 							<div className="line" />
-
 							<div className="sectionName">Object type</div>
-							<div id="item-object-type" className="item" onClick={this.onObjectType}>
-							</div>
 							<MenuItemVertical 
 								id="object-type" 
-								icon={objectType ? objectType.iconEmoji : ''} 
+								object={objectType} 
 								name={objectType ? objectType.name : 'Select object type'} 
-								withSmile={true}
 								onClick={this.onObjectType} 
 								arrow={true}
 							/>
@@ -89,7 +81,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		return (
 			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
-				<div className="wrap">
+				<div className="inputWrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
 				</div>
 				<div className="sectionName">Relation type</div>
@@ -173,14 +165,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const options = objectTypes.map((it: I.ObjectType) => {
-			return {
-				id: DataUtil.schemaField(it.url), 
-				name: it.name, 
-				icon: it.iconEmoji,
-				hash: '',
-				withSmile: true,
-				url: it.url,
-			};
+			return { ...it, object: it, id: DataUtil.schemaField(it.url) };
 		});
 
 		options.sort((c1: any, c2: any) => {
@@ -209,7 +194,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				},
 			}
 		});
-
 	};
 
 	onChangeTime (v: boolean) {
@@ -222,7 +206,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 
 		this.menuOpen('dataviewDate', { 
-			element: '#menu-date-settings',
+			element: '#item-date-settings',
 			offsetX: 224,
 			offsetY: -38,
 			type: I.MenuType.Vertical,
@@ -293,7 +277,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, relationKey } = data;
-		const relations = dbStore.getRelations(rootId);
+		const relations = dbStore.getRelations(rootId, rootId);
 		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
 	};
 

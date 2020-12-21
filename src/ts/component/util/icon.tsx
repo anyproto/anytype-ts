@@ -14,6 +14,7 @@ interface Props {
 	inner?: any;
 	draggable?: boolean;
 	menuId?: string;
+	style?: any;
 	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -43,8 +44,8 @@ class Icon extends React.Component<Props, {}> {
 	render () {
 		const { id, icon, arrow, draggable, className, inner, menuId, onClick, onDragStart } = this.props;
 		
+		let style = this.props.style || {};
 		let cn = [ 'icon' ];
-		let style: any = {};
 		
 		if (className) {
 			cn.push(className);

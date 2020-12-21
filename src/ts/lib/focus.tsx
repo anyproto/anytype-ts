@@ -59,7 +59,7 @@ class Focus {
 		node.addClass('isFocused');
 		
 		const el = node.get(0);
-		el.focus();
+		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
 			el.setSelectionRange(this.range.from, this.range.to);

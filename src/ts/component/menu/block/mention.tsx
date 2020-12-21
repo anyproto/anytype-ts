@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconObject } from 'ts/component';
+import { MenuItemVertical } from 'ts/component';
 import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -16,6 +16,7 @@ interface State {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
+const LIMIT = 10;
 
 @observer
 class MenuBlockMention extends React.Component<Props, State> {
@@ -39,7 +40,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	
 	render () {
 		const { n } = this.state;
-		const items = this.getItems(true);
+		const items = this.getItems();
 		const { filter } = commonStore;
 		const { text } = filter;
 
@@ -48,7 +49,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		const rowRenderer = (param: any) => {
-			const item = items[param.index];
+			const item: any = items[param.index];
+			const objectType: any = dbStore.getObjectType(item.type) || {};
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -58,18 +60,16 @@ class MenuBlockMention extends React.Component<Props, State> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<div style={param.style}>
-						{item.isSection ? (
-							<div className="section">
-								{item.name ? <div className="name">{item.name}</div> : ''}
-							</div>
-						) : (
-							<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-								<IconObject object={item} />
-								<div className="name">{item.name}</div>
-							</div>
-						)}
-					</div>
+					<MenuItemVertical 
+						id={item.id}
+						object={item}
+						name={item.name}
+						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }}
+						withCaption={true}
+						caption={objectType.name}
+						style={param.style}
+					/>
 				</CellMeasurer>
 			);
 		};
@@ -114,7 +114,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { filter } = commonStore;
 		const { n } = this.state;
-		const items = this.getItems(false);
+		const items = this.getItems();
 
 		if (this.filter != filter.text) {
 			this.load();
@@ -146,63 +146,14 @@ class MenuBlockMention extends React.Component<Props, State> {
 		$(window).unbind('keydown.menu');
 	};
 
-	getSections () {
-		let obj: any = {};
-		for (let item of this.items) {
-			let ot = dbStore.getObjectType(item.type);
-			if (!ot) {
-				continue;
-			};
-
-			let type = DataUtil.schemaField(item.type) || 'page';
-			let section = obj[type];
-
-			if (!section) {
-				 obj[type] = section = { 
-					id: type, 
-					children: [ 
-						{ id: '', name: ot.name, isSection: true },
-					] 
-				};
-				if (type == 'page') {	
-					obj[type].children.push({ id: 'create', name: 'Create new page', icon: '', hash: '', withSmile: true, skipFilter: true });
-				};
-			};
-
-			section.children.push({
-				...item,
-				icon: item.iconEmoji,
-				hash: item.iconImage,
-				withSmile: true,
-			});
-		};
-
-		const sections = DataUtil.menuSectionsMap(Object.values(obj));
-		sections.sort((c1: any, c2: any) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
-		return sections;
-	};
-
-	getItems (withSections: boolean) {
-		const sections = this.getSections();
-		
-		let items: any[] = [];
-		for (let section of sections) {
-			items = items.concat(section.children);
-		};
-
-		if (!withSections) {
-			items = items.filter((it: any) => { return !it.isSection; });
-		};
-
-		return items;
+	getItems () {
+		return [
+			{ id: 'create', name: 'Create new page', object: {}, skipFilter: true }
+		].concat(this.items);
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems(false);
+		const items = this.getItems();
 		const { n } = this.state;
 		this.props.setActiveItem((item ? item : items[n]), scroll);
 	};
@@ -241,7 +192,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		let { n } = this.state;
 		
 		const k = e.key.toLowerCase();
-		const items = this.getItems(false);
+		const items = this.getItems();
 		const l = items.length;
 		const item = items[n];
 
@@ -290,7 +241,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!item || item.isSection) {
+		if (!item) {
 			this.props.close();
 			return;
 		};
@@ -315,7 +266,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 			onChange(name + ' ', marks, from, to);
 		};
 
-		if (item.key == 'create') {
+		if (item.id == 'create') {
 			C.PageCreate({ iconEmoji: SmileUtil.random(), name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;
@@ -324,7 +275,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				cb(message.pageId, (filter.text || Constant.default.name));
 			});
 		} else {
-			cb(item.key, item.name);
+			cb(item.id, item.name);
 		};
 
 		this.props.close();
@@ -332,9 +283,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	resize () {
 		const { id, position } = this.props;
-		const items = this.getItems(true);
+		const items = this.getItems();
 		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
-		const height = Math.max(40, Math.min(240, items.length * 28 + 16));
+		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });
 		position();

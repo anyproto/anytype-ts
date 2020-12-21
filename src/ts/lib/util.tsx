@@ -424,7 +424,7 @@ class Util {
 
 	fileIcon (obj: any): string {
 		const name = String(obj.name || '');
-		const mime = String(obj.mime || obj.mimeType || '');
+		const mime = String(obj.mime || obj.fileMimeType || '');
 		const a: string[] = name.split('.');
 		const e = a[a.length - 1];
 
@@ -710,6 +710,14 @@ class Util {
 			return change;
 		};
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
+	};
+
+	getEditorScrollContainer (isPopup: boolean) {
+		return isPopup ? $('#popupEditorPage .selection') : $(window);
+	};
+
+	getEditorPageContainer (isPopup: boolean) {
+		return isPopup ? $('#popupEditorPage') : $('.pageMainEdit');
 	};
 
 };

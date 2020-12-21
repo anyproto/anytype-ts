@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Icon, Smile } from 'ts/component';
+import { Icon, IconObject } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 
 interface Props extends I.MenuItem {};
 
@@ -10,9 +10,11 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, hash, inner, name, menuId, description, color, arrow, isActive, withSmile, withDescription, className, onClick, onMouseEnter } = this.props;
+		const { id, icon, object, inner, name, menuId, description, caption, color, arrow, isActive, withDescription, withCaption, className, onClick, onMouseEnter, style, iconSize } = this.props;
 		
 		let cn = [ 'item' ];
+		let objectType: any = null;
+
 		if (className) {
 			cn.push(className);
 		};
@@ -25,6 +27,9 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		if (withDescription) {
 			cn.push('withDescription');
 		};
+		if (withCaption) {
+			cn.push('withCaption');
+		};
 		if (isActive) {
 			cn.push('active');
 		};
@@ -33,27 +38,32 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		};
 		
 		let element = null;
-		if (withSmile) {
-			element = <Smile icon={icon} hash={hash} />;
+		if (object) {
+			element = <IconObject object={object} size={iconSize} />;
 		} else 
 		if (icon) {
 			element = <Icon className={icon} inner={inner} />;
 		};
 
 		return (
-			<div id={'item-' + id} className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter}>
+			<div id={'item-' + id} className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} style={style}>
 				{withDescription ? (
 					<React.Fragment>
 						{element}
 						<div className="info">
-							<div className="name">{name}</div>
-							<div className="descr">{description}</div>
+							<div className="txt">
+								<div className="name">{name}</div>
+								<div className="descr">{description}</div>
+							</div>
 						</div>
 					</React.Fragment>
 				) : (
 					<React.Fragment>
 						{element}
 						<div className="name">{name}</div>
+						{withCaption ? (
+							<div className="caption">{caption}</div>
+						) : ''}
 					</React.Fragment>
 				)}
 				{arrow ? <Icon className="arrow" /> : ''}

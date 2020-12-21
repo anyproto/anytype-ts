@@ -34,16 +34,14 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { block, readOnly, getRecord, index, viewType } = this.props;
+		const { rootId, block, readOnly, getRecord, index, canEdit } = this.props;
 		const { editing } = this.state;
-		const relation = dbStore.getRelation(block.id, this.props.relation.relationKey);
+		const relation = dbStore.getRelation(rootId, block.id, this.props.relation.relationKey);
 		const record = getRecord(index);
 
 		if (!relation || !record) {
 			return null;
 		};
-
-		const canEdit = this.canEdit();
 
 		let value: any = this.getValue();
 		value = value.map((id: string, i: number) => { 
@@ -102,24 +100,20 @@ class CellSelect extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { id } = this.props;
 		const cell = $('#' + id);
-		const body = $('body');
 
 		if (editing) {
 			cell.addClass('isEditing');
-			body.addClass('over');
 			this.focus();
 		} else {
 			cell.removeClass('isEditing');
-			body.removeClass('over');
 		};
 
 		this.placeHolderCheck();
 	};
 
 	setEditing (v: boolean) {
-		const { viewType, readOnly } = this.props;
+		const { canEdit } = this.props;
 		const { editing } = this.state;
-		const canEdit = !readOnly && (viewType == I.ViewType.Grid);
 
 		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });
@@ -136,7 +130,7 @@ class CellSelect extends React.Component<Props, State> {
 
 		filter.text('');
 		this.focus();
-		this.updateMenuFilter('');
+		this.updateMenu({ filter: '' });
 	};
 
 	onSort (value: any[]) {
@@ -237,7 +231,7 @@ class CellSelect extends React.Component<Props, State> {
 			filter.text('');
 		});
 
-		this.updateMenuFilter(text);
+		this.updateMenu({ filter: text });
 		this.placeHolderCheck();
 	};
 
@@ -248,12 +242,12 @@ class CellSelect extends React.Component<Props, State> {
 		this.remove(id);
 	};
 
-	updateMenuFilter (text: string) {
+	updateMenu (param: any) {
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 
 		if (menu) {
-			menu.param.data.filter = text;
+			menu.param.data = Object.assign(menu.param.data, param);
 			commonStore.menuUpdate(MENU_ID, menu.param);
 		};
 	};
@@ -271,8 +265,6 @@ class CellSelect extends React.Component<Props, State> {
 
 	add (value: string[], text: string) {
 		const { rootId, block, relation, onChange } = this.props;
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 		
 		text = String(text || '').trim();
 		if (!text) {
@@ -285,12 +277,10 @@ class CellSelect extends React.Component<Props, State> {
 			value = Util.arrayUnique(value);
 
 			onChange(value);
-	
-			if (menu) {
-				menu.param.data.value = value;
-				menu.param.data.relation = observable.box(relation);
-				commonStore.menuUpdate(MENU_ID, menu.param);
-			};
+			this.updateMenu({ 
+				value: value, 
+				relation: observable.box(relation),
+			});
 		};
 
 		if (option) {
@@ -321,12 +311,8 @@ class CellSelect extends React.Component<Props, State> {
 		value = value.filter((it: string) => { return it != id; });
 		value = Util.arrayUnique(value);
 
+		this.updateMenu({ value: value });
 		onChange(value);
-	};
-
-	canEdit () {
-		const { relation, readOnly, viewType } = this.props;
-		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
 
 };

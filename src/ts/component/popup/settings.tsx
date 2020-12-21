@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Loader, Smile, Error, Pin } from 'ts/component';
+import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil } from 'ts/lib';
 import { authStore, blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -287,13 +287,13 @@ class PopupSettings extends React.Component<Props, State> {
 
 						<div className="path">
 							<b>{translate('popupSettingsImportGetTitle')}</b><br/>
-							<Smile icon=":gear:" /> Settings & Members → <Smile icon=":house:" /> Settings → Export all workspace content → <br/>
+							<IconObject object={{ iconEmoji: ':gear:' }} /> Settings & Members → <IconObject object={{ iconEmoji: ':house:' }} /> Settings → Export all workspace content → <br/>
 							Export format : "Markdown & CSV".
 						</div>
 
 						<div className="path">
 							<b>{translate('popupSettingsImportPageTitle')}</b><br/>
-							Three dots menu on the top-left corner → <Smile icon=":paperclip:" /> Export →  <br/> Export format : "Markdown & CSV".
+							Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : "Markdown & CSV".
 						</div>
 
 						<Label className="last" text={translate('popupSettingsImportZip')} />

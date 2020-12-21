@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Smile } from 'ts/component';
+import { IconObject } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {
 	icon?: string;
@@ -21,7 +21,7 @@ class ContentLink extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<Smile icon={icon} />
+				<IconObject object={{ iconEmoji: icon }} />
 				<div className="name" onClick={this.onClick}>{name}</div>
 			</React.Fragment>
 		);

@@ -28,11 +28,11 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { getData, block, getView, readOnly, onRowAdd } = this.props;
+		const { getData, rootId, block, getView, readOnly, onRowAdd } = this.props;
 		const view = getView();
 		const { content } = block;
 		const { views } = content;
-		const { viewId } = dbStore.getMeta(block.id);
+		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const { page } = this.state;
 		const limit = Constant.limit.dataview.views;
 		const filterCnt = view.filters.length;

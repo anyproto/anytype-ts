@@ -359,8 +359,8 @@ class DataUtil {
 
 	menuMapperBlock (it: any) {
 		it.isBlock = true;
-		it.name = translate('blockName' + it.lang);
-		it.description = translate('blockText' + it.lang);
+		it.name = it.lang ? translate('blockName' + it.lang) : it.name;
+		it.description = it.lang ? translate('blockText' + it.lang) : it.description;
 		return it;
 	};
 	
@@ -390,22 +390,30 @@ class DataUtil {
 	};
 
 	menuGetBlockObject () {
-		return [
-			{ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' },
+		const { objectTypes } = dbStore;
+
+		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
+		];
 
-			/*
-			{ type: I.BlockType.Dataview, id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
-			{ id: 'task', icon: 'task', name: 'Task', color: 'blue', isBlock: true },
-			{ id: 'dataview', icon: 'page', name: 'Database', color: 'blue', isBlock: true },
-			{ id: 'set', icon: 'set', name: 'Set', color: 'blue', isBlock: true },
-			{ id: 'contact', icon: 'contact', name: 'Contact', color: 'blue', isBlock: true },
-			*/
-		].map(this.menuMapperBlock);
+		let i = 0;
+		for (let type of objectTypes) {
+			ret.push({ 
+				type: I.BlockType.Page, 
+				id: 'object' + i++, 
+				objectTypeUrl: type.url, 
+				iconEmoji: type.iconEmoji, 
+				name: type.name || Constant.default.name, 
+				//description: type.description,
+				isObject: true,
+			});
+		};
+		
+		return ret.map(this.menuMapperBlock);
 	};
 
 	menuGetBlockRelation () {
@@ -417,7 +425,7 @@ class DataUtil {
 	
 	menuGetBlockOther () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 		].map(this.menuMapperBlock);
@@ -437,7 +445,7 @@ class DataUtil {
 
 	menuGetTurnDiv () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'line', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 		].map(this.menuMapperBlock);
 	};
@@ -559,16 +567,16 @@ class DataUtil {
 		return [ prefix, relationKey, id.toString() ].join('-');
 	};
 
-	viewGetRelations (blockId: string, view: I.View): I.ViewRelation[] {
+	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
 		if (!view) {
 			return [];
 		};
 
-		let relations = Util.objectCopy(dbStore.getRelations(blockId));
-		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
-
+		let relations = Util.objectCopy(dbStore.getRelations(rootId, blockId));
 		let order: any = {};
 		let o = 0;
+
+		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
 
 		for (let i = 0; i < view.relations.length; ++i) {
 			order[view.relations[i].relationKey] = o++;
@@ -606,8 +614,15 @@ class DataUtil {
 				return;
 			};
 
-			relation.relationKey = message.relationKey;
-			relation.isVisible = true;
+			let rel = view.relations.find((it: I.ViewRelation) => { return it.relationKey == message.relationKey; });
+			if (rel) {
+				rel.isVisible = true;
+			} else {
+				relation.relationKey = message.relationKey;
+				relation.isVisible = true;
+
+				view.relations.push(relation);
+			};
 
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
@@ -631,7 +646,7 @@ class DataUtil {
 		});
 	};
 
-	dataviewRelationOpen (e: any, data: any, type: string) {
+	dataviewOpen (e: any, data: any, type: string) {
 		e.stopPropagation();
 		e.preventDefault();
 
@@ -655,6 +670,42 @@ class DataUtil {
 				ipcRenderer.send('urlOpen', commonStore.fileUrl(data.id));
 				break;
 		};
+	};
+
+	checkDetails (rootId: string) {
+		const details = blockStore.getDetails(rootId, rootId);
+		const type = this.schemaField(details.type);
+		const objectType: any = dbStore.getObjectType(details.type) || {};
+
+		const ret: any = {
+			withCover: (details.coverType != I.CoverType.None) && details.coverId,
+			withIcon: false,
+		};
+
+		switch (type) {
+			default:
+				switch (objectType.layout) {
+					default:
+					case I.ObjectLayout.Page:
+						ret.withIcon = details.iconEmoji || details.iconImage;
+						break;
+
+					case I.ObjectLayout.Contact:
+						ret.withIcon = true;
+						break;
+
+					case I.ObjectLayout.Task:
+						break;
+				};
+				break;
+
+			case 'image':
+			case 'file':
+				ret.withIcon = true;
+				break;
+		};
+
+		return ret;
 	};
 
 };

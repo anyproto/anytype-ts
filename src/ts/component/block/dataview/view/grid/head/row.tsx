@@ -32,7 +32,7 @@ class HeadRow extends React.Component<Props, {}> {
 						onResizeStart={onResizeStart} 
 					/>
 				))}
-				<th className="head last">
+				<th className="cellHead last">
 					{!readOnly ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
 				</th>
 			</tr>

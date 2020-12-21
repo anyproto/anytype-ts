@@ -8,6 +8,8 @@ interface Props {
 	initial?: string;
 	className?: string;
 	arrowClassName?: string;
+	menuClassName?: string;
+	menuWidth?: number;
 	value: string;
 	options: I.Option[];
 	horizontal?: I.MenuDirection;
@@ -101,8 +103,8 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	show () {
-		const { id, value, horizontal, onChange } = this.props;
-		const { options } = this.state;
+		const { id, horizontal, menuClassName, onChange, menuWidth } = this.props;
+		const { value, options } = this.state;
 		
 		commonStore.menuOpen('select', { 
 			element: '#select-' + id,
@@ -111,6 +113,8 @@ class Select extends React.Component<Props, State> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: horizontal,
+			className: String(menuClassName || ''),
+			width: menuWidth,
 			onOpen: () => {
 				window.setTimeout(() => {
 					$('#select-' + id).addClass('active');

@@ -39,7 +39,7 @@ class IconUser extends React.Component<Props, {}> {
 	render () {
 		let  { className, avatar, name, color, icon, onClick } = this.props;
 		
-		let cn = [ 'icon', 'user' ];
+		let cn = [ 'iconUser' ];
 		let text = name || '';
 		
 		if (className) {

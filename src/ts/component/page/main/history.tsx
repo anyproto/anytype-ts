@@ -57,8 +57,8 @@ class PageMainHistory extends React.Component<Props, State> {
 		let cn = [ 'editorWrapper' ];
 		let icon: any = { id: rootId + '-icon', childrenIds: [], fields: {}, content: {} };
 		
-		if (root && root.isPageProfile()) {
-			cn.push('isProfile');
+		if (root && root.isPageContact()) {
+			cn.push('isContact');
 			icon.type = I.BlockType.IconUser;
 		} else {
 			icon.type = I.BlockType.IconPage;
@@ -338,9 +338,7 @@ class PageMainHistory extends React.Component<Props, State> {
 
 			this.version = message.version;
 
-			let bs = message.blockShow;
-			dispatcher.onBlockShow(rootId, bs.type, bs.blocks, bs.details);
-			
+			dispatcher.onBlockShow(rootId, message.blockShow);
 			this.forceUpdate();
 		});
 	};

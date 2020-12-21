@@ -1,0 +1,128 @@
+@import "~scss/_vars";
+
+.iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; }
+.iconObject {
+	.iconEmoji, .iconImage, .iconFile, .iconUser { width: 100%; height: 100%; transition: none; vertical-align: top; }
+	.iconImage { border-radius: 3px; background-size: cover; }
+
+	.smileImage.c18, .iconImage.c18, .iconFile.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
+	.smileImage.c20, .iconImage.c20, .iconFile.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+	.smileImage.c22, .iconImage.c22, .iconFile.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
+	.smileImage.c24, .iconImage.c24, .iconFile.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+	.smileImage.c28, .iconImage.c28, .iconFile.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
+	.smileImage.c32, .iconImage.c32, .iconFile.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+
+	.iconFile { background-repeat: no-repeat; background-position: center center; background-size: 100%; }
+	.iconFile.other { background-image: url('~img/icon/file/other.svg') !important; }
+	.iconFile.image { background-image: url('~img/icon/file/image.svg') !important; }
+	.iconFile.video { background-image: url('~img/icon/file/video.svg') !important; }
+	.iconFile.text { background-image: url('~img/icon/file/text.svg') !important; }
+	.iconFile.archive { background-image: url('~img/icon/file/archive.svg') !important; }
+	.iconFile.audio { background-image: url('~img/icon/file/audio.svg') !important; }
+	.iconFile.pdf { background-image: url('~img/icon/file/pdf.svg') !important; }
+	.iconFile.presentation { background-image: url('~img/icon/file/presentation.svg') !important; }
+	.iconFile.table { background-image: url('~img/icon/file/table.svg') !important; }
+
+	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; }
+	.iconEmoji {
+		.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
+		.emoji-mart-emoji {
+			span { height: 100%; display: inline-block; vertical-align: middle; }
+		}
+		
+		.icon.archive { 
+			background-image: url('~img/icon/archive.svg'); position: absolute; left: 50%; top: 50%; 
+			width: 24px; height: 24px; margin: -12px 0px 0px -12px;
+		}
+		.icon.home.big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+
+		.iconImage { width: 100%; height: 100%; border-radius: 100%; object-fit: cover; }
+		.iconBlank { width: 100%; height: 100%; }
+
+		.iconBlank.c18 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+		.iconBlank.c20, .iconBlank.c22 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+		.iconBlank.c24, .iconBlank.c28, .iconBlank.c32 { 
+			@include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; 
+		}
+	}
+
+	.iconEmoji.withImage { border-radius: 100%; }
+
+	.iconEmoji.c20 { width: 20px; height: 20px; line-height: 20px; }
+	.iconEmoji.c20 {
+		.emoji-mart-emoji { margin: -3px 0px 0px 2px; }
+	}
+
+	.iconEmoji.c24 { width: 24px; height: 24px; line-height: 24px; }
+	.iconEmoji.c24 {
+		.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
+	}
+
+	.iconEmoji.c26 { width: 26px; height: 26px; line-height: 26px; }
+	.iconEmoji.c26 {
+		.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
+	}
+
+	.iconEmoji.c28 { width: 28px; height: 28px; line-height: 28px; }
+	.iconEmoji.c28 {
+		.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
+		.icon.blank { width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
+	}
+
+	.iconEmoji.c32 { width: 32px; height: 32px; line-height: 32px; }
+	.iconEmoji.c32 {
+		.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
+	}
+
+	.iconEmoji.c48 { display: block; width: 48px; height: 48px; border-radius: 100%; background-color: #f7f5f0; line-height: 48px; }
+	.iconEmoji.c48 {
+		.emoji-mart-emoji { margin: -3px 0px 0px 1px; font-size: 24px; height: 28px; line-height: 1em; }
+		.emoji-mart-emoji { span { height: 28px; line-height: 32px; } }
+	}
+
+	.iconEmoji.c64 { display: block; width: 64px; height: 64px; border-radius: 100%; background-color: #f7f5f0; line-height: 64px; }
+	.iconEmoji.c64 {
+		.emoji-mart-emoji { margin: -1px 0px 0px 0px; font-size: 36px; height: 1em; line-height: 1em; }
+		.emoji-mart-emoji { span { height: 36px; line-height: 36px; } }
+	}
+
+	.iconEmoji.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }
+	.iconEmoji.canEdit.c48:hover, .iconEmoji.canEdit.c64:hover { background-color: #ebe9e0; }
+	.iconEmoji.canEdit.c48.active, .iconEmoji.canEdit.c64.active { background-color: #ebe9e0; }
+}
+.iconObject.c24 { width: 24px; height: 24px; }
+.iconObject.c26 { width: 26px; height: 26px; }
+.iconObject.c28 { width: 28px; height: 28px; }
+.iconObject.c32 { width: 32px; height: 32px; }
+.iconObject.c40 { width: 40px; height: 40px; }
+.iconObject.c48 { display: block; width: 48px; height: 48px; border-radius: 100%; overflow: hidden; background-color: #f7f5f0; }
+.iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 100%; overflow: hidden; background-color: #f7f5f0; }
+.iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 100%; overflow: hidden; background-color: #f7f5f0; }
+
+.iconObject.c48, .iconObject.c64 {
+	.iconImage { border-radius: 100%; width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
+}
+
+.iconUser { 
+	border-radius: 100%; position: relative; overflow: hidden; text-transform: uppercase; color: #fff; text-align: center; 
+	background-color: $colorIce;
+}
+.iconUser.c20 { width: 20px !important; height: 20px !important; line-height: 20px; font-size: 12px; }
+.iconUser.c40 { width: 40px; height: 40px; line-height: 40px; font-size: 18px; }
+.iconUser.c48 { width: 48px; height: 48px; line-height: 48px; font-size: 18px; }
+.iconUser.c64 { width: 64px; height: 64px; line-height: 62px; font-size: 22px; font-weight: 500; }
+.iconUser.c96 { width: 96px; height: 96px; line-height: 96px; font-size: 44px; font-weight: 500; }
+
+.iconUser {
+	.txt { line-height: inherit; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 1; }
+	.image { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; object-fit: cover; }
+}
+.iconUser.grey { background-color: $colorLightGrey; }
+.iconUser.black { background-color: $colorBlack; }
+.iconUser.brown { background-color: $colorDarkGrey; }
+.iconUser.orange { background-color: $colorOrange; }
+.iconUser.red { background-color: $colorRed; }
+.iconUser.purple { background-color: $colorPurple; }
+.iconUser.blue { background-color: $colorBlue; }
+.iconUser.teal { background-color: $colorTeal; }
+.iconUser.green { background-color: $colorLime; }

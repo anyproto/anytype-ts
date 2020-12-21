@@ -27,11 +27,11 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block, getData, getView, readOnly, onRowAdd, onCellClick, onRef } = this.props;
+		const { rootId, block, getData, getView, readOnly, onRowAdd } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const data = dbStore.getData(block.id);
-		const { offset, total } = dbStore.getMeta(block.id);
+		const data = dbStore.getData(rootId, block.id);
+		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
 		let pager = null;
 		if (total && data.length) {
@@ -114,15 +114,14 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { getView } = this.props;
+		const { getView, scrollContainer, isPopup } = this.props;
 		const view = getView();
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
-		const ww = win.width();
-		const mw = ww - 192;
-		
+		const ww = $(scrollContainer).width();
+		const mw = ww - (isPopup ? 96 : 192);
+
 		let vw = 0;
 		let margin = 0;
 		let width = 0;
@@ -152,14 +151,11 @@ class ViewGrid extends React.Component<Props, {}> {
 		const view = getView();
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const lastHead = node.find('.head.last');
-		const lastCell = node.find('.cell.last');
+		const lastHead = node.find('.cellHead.last');
 		const ww = win.width();
 		const mw = ww - 192;
 		
 		let width = 0;
-		let lw = 48;
-
 		for (let relation of view.relations) {
 			if (!relation.isVisible) {
 				continue;
@@ -167,12 +163,9 @@ class ViewGrid extends React.Component<Props, {}> {
 			width += relation.width;
 		};
 
-		if (width < mw) {
-			lw = Math.max(48, mw - width);
+		if (width > mw) {
+			lastHead.css({ width: 48 });
 		};
-
-		lastHead.css({ width: lw });
-		lastCell.css({ width: lw });
 	};
 
 	onResizeStart (e: any, id: string) {
@@ -201,7 +194,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		let width = e.pageX - offset.left;
 		width = Math.max(Constant.size.dataview.cell.min, width); 
 		width = Math.min(Constant.size.dataview.cell.max, width);
-		
+
 		view.relations[idx].width = width;
 		el.css({ width: width });
 		node.find('.resizable').trigger('resize');

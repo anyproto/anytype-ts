@@ -16,9 +16,9 @@
 		kbd { display: inline; font-family: 'Plex'; border-radius: 2px; background: rgba(172,169,150,0.15); }
 
 		smile {
-			.smile { display: inline; }
-			img { position: static; left: auto; top: auto; margin: 0px; vertical-align: middle; margin-top: -4px; }
+			img { position: static !important; left: auto!important; top: auto !important; margin: 0px !important; vertical-align: middle; margin-top: -4px; }
 		}
+		smile * { display: inline; }
 
 		emoji { display: inline; user-select: all; }
 		emoji * { user-select: all; }

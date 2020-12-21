@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, C, SmileUtil, translate } from 'ts/lib';
-import { Icon, Input, Button } from 'ts/component';
+import { MenuItemVertical, Input, Button } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -34,32 +34,23 @@ class MenuObjectType extends React.Component<Props, State> {
 			item = options.find((it: any) => { return it.id == layout; });
 		};
 
-		let current = null;
-		if (item) {
-			current = (
-				<div id="object-layout" className={'item ' + (commonStore.menuIsOpen('select') ? 'active' : '')} onClick={this.onType}>
-					<Icon className={item.icon} />
-					<div className="name">{item.name}</div>
-					<Icon className="arrow" />
-				</div>
-			);
-		} else {
-			current = (
-				<div id="object-layout" className={'item ' + (commonStore.menuIsOpen('select') ? 'active' : '')} onClick={this.onType}>
-					<div className="name">Select type</div>
-					<Icon className="arrow" />
-				</div>
-			);
-		};
-
 		return (
 			<div>
 				<div className="sectionName">{translate('menuDataviewObjectTypeEditName')}</div>
 				<div className="wrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} />
 				</div>
+
 				<div className="sectionName">{translate('menuDataviewObjectTypeEditLayout')}</div>
-				{current}
+				<MenuItemVertical 
+					id="object-layout" 
+					icon={item ? item.icon : ''} 
+					name={item ? item.name : 'Select type'}
+					menuId="select"
+					onClick={this.onType} 
+					arrow={true}
+				/>
+
 				<div className="buttons">
 					<Button text={translate('commonCreate')} className="orange" onClick={this.onCreate} />
 				</div>
@@ -79,7 +70,7 @@ class MenuObjectType extends React.Component<Props, State> {
 		const { layout } = this.state;
 
 		commonStore.menuOpen('select', { 
-			element: '#object-layout',
+			element: '#item-object-layout',
 			offsetX: 224,
 			offsetY: 4,
 			type: I.MenuType.Vertical,

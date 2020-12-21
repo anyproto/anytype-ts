@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Smile, Loader } from 'ts/component';
+import { IconObject, Loader } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -26,7 +26,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const details = blockStore.getDetails(rootId, content.targetBlockId);
-		const { _detailsEmpty_, iconEmoji, iconImage, name, isArchived } = details;
+		const { _detailsEmpty_, name, isArchived } = details;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 
 		if (_detailsEmpty_) {
@@ -40,7 +40,16 @@ class BlockLink extends React.Component<Props, {}> {
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<Smile id={'block-page-' + id} offsetX={28} offsetY={-24} size={20} icon={iconEmoji} hash={iconImage} className="c24" canEdit={!readOnly} onSelect={this.onSelect} onUpload={this.onUpload} />
+				<IconObject 
+					object={details} 
+					id={'block-page-' + id} 
+					offsetX={28} 
+					offsetY={-24} 
+					size={24} 
+					canEdit={!readOnly} 
+					onSelect={this.onSelect} 
+					onUpload={this.onUpload} 
+				/>
 				<div className="name" onClick={this.onClick}>
 					<div className="txt">{name}</div>
 				</div>

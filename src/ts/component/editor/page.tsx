@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore, authStore, dbStore } from 'ts/store';
-import { I, C, M, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import Controls from './controls';
@@ -35,8 +35,6 @@ class EditorPage extends React.Component<Props, {}> {
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
-	withIcon: boolean = false;
-	withCover: boolean = false;
 	loading: boolean = false;
 
 	constructor (props: any) {
@@ -44,7 +42,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
 		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
-		//this.onMouseMove = this.onMouseMove.bind(this);
+		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
@@ -57,7 +55,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return <Loader />;
 		};
 		
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -67,8 +65,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
-
-		this.checkDetails();
+		const check = DataUtil.checkDetails(rootId);
+		const readOnly = root.isReadOnly();
 
 		let cn = [ 'editorWrapper' ];
 		let header = (
@@ -78,29 +76,30 @@ class EditorPage extends React.Component<Props, {}> {
 				onKeyUp={this.onKeyUpBlock}  
 				onMenuAdd={this.onMenuAdd}
 				onPaste={this.onPaste}
+				readOnly={false}
 			/>
 		);
-		
-		if (root.isPageProfile()) {
-			cn.push('isProfile');
+
+		if (root.isPageContact()) {
+			cn.push('isContact');
 		} else 
 		if (root.isPageSet()) {
 			cn.push('isDataview');
 		};
 		
-		if (this.withIcon && this.withCover) {
+		if (check.withIcon && check.withCover) {
 			cn.push('withIconAndCover');
 		} else
-		if (this.withIcon) {
+		if (check.withIcon) {
 			cn.push('withIcon');
 		} else
-		if (this.withCover) {
+		if (check.withCover) {
 			cn.push('withCover');
 		};
 		
 		return (
 			<div className={cn.join(' ')}>
-				<Controls {...this.props} />
+				<Controls {...this.props} readOnly={readOnly} />
 				
 				<div className="editor">
 					<div className="blocks">
@@ -122,6 +121,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
+									readOnly={readOnly}
 								/>
 							)
 						})}
@@ -134,7 +134,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		this._isMounted = true;
 		const win = $(window);
@@ -154,7 +154,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 		win.on('focus.editor' + namespace, (e: any) => { 
 			focus.apply(); 
-			win.scrollTop(this.scrollTop);
+			this.getScrollContainer().scrollTop(this.scrollTop);
 		});
 		
 		this.resize();
@@ -166,21 +166,10 @@ class EditorPage extends React.Component<Props, {}> {
 		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
 	};
 
-	getSnapshotBeforeUpdate () {
-		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-
-		this.withIcon = details.iconEmoji || details.iconImage;
-		this.withCover = (details.coverType != I.CoverType.None) && details.coverId;
-
-		return null;
-	};
-	
 	componentDidUpdate () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
 		
-		this.checkDetails();
 		this.open();
 		
 		if (this.uiHidden) {
@@ -188,6 +177,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		focus.apply();
+		this.getScrollContainer().scrollTop(this.scrollTop);
 		this.resize();
 
 		if (resizable.length) {
@@ -211,19 +201,14 @@ class EditorPage extends React.Component<Props, {}> {
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 
-	checkDetails () {
-		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-
-		this.withIcon = details.iconEmoji || details.iconImage;
-		this.withCover = (details.coverType != I.CoverType.None) && details.coverId;
+	getScrollContainer () {
+		const { isPopup } = this.props;
+		return isPopup ? $('#popupEditorPage .selection') : $(window);
 	};
-	
+
 	open (skipInit?: boolean) {
 		const { rootId, onOpen, history } = this.props;
 		const { breadcrumbs } = blockStore;
-		const { focused } = focus;
-		const win = $(window);
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
 		if (!breadcrumbs && !skipInit) {
@@ -263,15 +248,12 @@ class EditorPage extends React.Component<Props, {}> {
 				return;
 			};
 			
-			if (!focused) {
-				this.focusTitle();
-			};
-
 			this.loading = false;
+			this.focusTitle();
 			this.forceUpdate();
 			this.resize();
+			this.getScrollContainer().scrollTop(Storage.getScroll('editor', rootId));
 
-			win.scrollTop(Storage.getScroll('editor', rootId));
 			blockStore.setNumbers(rootId);
 
 			if (onOpen) {
@@ -325,14 +307,14 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	close (id: string) {
-		const { isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 		if (isPopup || !id) {
 			return;
 		};
 		
 		C.BlockClose(id, (message: any) => {
 			blockStore.blocksClear(id);
-			dbStore.relationsRemove(id);
+			dbStore.relationsRemove(rootId, id);
 			authStore.threadRemove(id);
 		});
 	};
@@ -375,7 +357,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root || root.isPageSet()) {
+		if (!root || root.isReadOnly()) {
 			return;
 		};
 		
@@ -391,15 +373,16 @@ class EditorPage extends React.Component<Props, {}> {
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
+		const check = DataUtil.checkDetails(rootId);
 
 		let offset = 144;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
 		
-		if (this.withCover && this.withIcon) {
+		if (check.withCover && check.withIcon) {
 			offset = 328;
 		} else
-		if (this.withIcon) {
+		if (check.withIcon) {
 			offset = 194;
 		};
 		
@@ -655,6 +638,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const platform = Util.getPlatform();
 		const map = blockStore.getMap(rootId);
 		const length = String(text || '').length;
+		const menuOpen = commonStore.menuIsOpen();
 
 		this.uiHide();
 		
@@ -830,7 +814,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
-			if (commonStore.menuIsOpen()) {
+			if (menuOpen) {
 				return;
 			};
 			
@@ -847,7 +831,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Last/first block
 		keyboard.shortcut('ctrl+arrowup, cmd+arrowup, ctrl+arrowdown, cmd+arrowdown', e, (pressed: string) => {
-			if (commonStore.menuIsOpen()) {
+			if (menuOpen) {
 				return;
 			};
 			
@@ -866,7 +850,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Expand selection
 		keyboard.shortcut('shift+arrowup, shift+arrowup, shift+arrowdown, shift+arrowdown', e, (pressed: string) => {
-			if (commonStore.menuIsOpen()) {
+			if (menuOpen) {
 				return;
 			};
 			
@@ -1143,7 +1127,13 @@ class EditorPage extends React.Component<Props, {}> {
 										}, 
 									});
 								} else {
-									DataUtil.pageCreate(e, rootId, block.id, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+									const details: any = { iconEmoji: SmileUtil.random() };
+									
+									if (item.isObject) {
+										details.type = item.objectTypeUrl;
+									};
+
+									DataUtil.pageCreate(e, rootId, block.id, details, position, (message: any) => {
 										DataUtil.pageOpenPopup(message.targetId);
 									});
 								};
@@ -1337,8 +1327,10 @@ class EditorPage extends React.Component<Props, {}> {
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Left,
 				onOpen: () => {
-					focus.set(block.id, { from: currentFrom, to: currentTo });
-					focus.apply();
+					if (block) {
+						focus.set(block.id, { from: currentFrom, to: currentTo });
+						focus.apply();
+					};
 				},
 				data: {
 					value: '',
@@ -1699,7 +1691,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		this.resize();
 	};
-	
+
 };
 
 export default EditorPage;

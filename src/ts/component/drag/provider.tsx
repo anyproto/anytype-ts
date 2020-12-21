@@ -300,6 +300,11 @@ class DragProvider extends React.Component<Props, {}> {
 					this.position = I.BlockPosition.None;
 				};
 			};
+
+			// You can't inner drop files
+			if (isFileDrag && (this.position == I.BlockPosition.Inner)) {
+				this.position = I.BlockPosition.Bottom;
+			};
 		};
 
 		window.clearTimeout(this.timeoutHover);

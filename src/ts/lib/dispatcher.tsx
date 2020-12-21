@@ -193,11 +193,11 @@ class Dispatcher {
 					break;
 
 				case 'blockShow':
-					dbStore.relationsSet(rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
+					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
 					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
 
 					let res = Response.BlockShow(data);
-					this.onBlockShow(rootId, res.type, res.blocks, res.details);
+					this.onBlockShow(rootId, res);
 					break;
 
 				case 'blockAdd':
@@ -402,7 +402,7 @@ class Dispatcher {
 						break;
 					};
 
-					dbStore.relationsSet(rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
+					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
 					break;
 
 				case 'blockSetRelation':
@@ -427,11 +427,10 @@ class Dispatcher {
 					};
 
 					data.view = Mapper.From.View(data.getView());
-					data.view.relations = DataUtil.viewGetRelations(block.id, data.view);
 
 					view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
 					if (view) {
-						set(view, data.view);
+						set(view, { ...data.view, relations: DataUtil.viewGetRelations(rootId, block.id, data.view) });
 					} else {
 						block.content.views.push(new M.View(data.view));
 					};
@@ -446,8 +445,19 @@ class Dispatcher {
 						break;
 					};
 
-					block.content.views = block.content.views.filter((it: I.View) => { return it.id != data.getViewid(); });
+					viewId = dbStore.getMeta(rootId, id).viewId;
+					
+					const deleteId = data.getViewid();
+
+					block.content.views = block.content.views.filter((it: I.View) => { return it.id != deleteId; });
 					blockStore.blockUpdate(rootId, block);
+
+					const length = block.content.views.length;
+
+					if (deleteId == viewId) {
+						viewId = length ? block.content.views[length - 1] : '';
+						dbStore.metaSet (rootId, id, { viewId: viewId });
+					};
 					break;
 
 				case 'blockDataviewRecordsSet':
@@ -458,8 +468,8 @@ class Dispatcher {
 					};
 
 					data.records = (data.getRecordsList() || []).map((it: any) => { return Decode.decodeStruct(it) || {}; });
-					dbStore.recordsSet(id, data.records);
-					dbStore.metaSet(id, { viewId: data.getViewid(), total: data.getTotal() });
+					dbStore.recordsSet(rootId, id, data.records);
+					dbStore.metaSet(rootId, id, { viewId: data.getViewid(), total: data.getTotal() });
 					break;
 
 				case 'blockDataviewRecordsInsert':
@@ -472,7 +482,7 @@ class Dispatcher {
 					data.records = data.getRecordsList() || [];
 					for (let item of data.records) {
 						item = Decode.decodeStruct(item) || {};
-						dbStore.recordAdd(block.id, item);
+						dbStore.recordAdd(rootId, block.id, item);
 					};
 					break;
 
@@ -486,7 +496,7 @@ class Dispatcher {
 					data.records = data.getRecordsList() || [];
 					for (let item of data.records) {
 						item = Decode.decodeStruct(item) || {};
-						dbStore.recordUpdate(block.id, item);
+						dbStore.recordUpdate(rootId, block.id, item);
 					};
 					break;
 
@@ -500,7 +510,7 @@ class Dispatcher {
 					data.records = data.getRecordsList() || [];
 					for (let item of data.records) {
 						item = Decode.decodeStruct(item) || {};
-						dbStore.recordDelete(block.id, item.id);
+						dbStore.recordDelete(rootId, block.id, item.id);
 					};
 					break;
 
@@ -512,13 +522,13 @@ class Dispatcher {
 					};
 
 					const relation = Mapper.From.Relation(data.getRelation());
-					const item = dbStore.getRelation(id, relation.relationKey);
+					const item = dbStore.getRelation(rootId, id, relation.relationKey);
 
-					item ? dbStore.relationUpdate(id, relation) : dbStore.relationAdd(id, relation);
+					item ? dbStore.relationUpdate(rootId, id, relation) : dbStore.relationAdd(rootId, id, relation);
 
-					viewId = dbStore.getMeta(id).viewId;
+					viewId = dbStore.getMeta(rootId, id).viewId;
 					view = block.content.views.find((it: any) => { return it.id == viewId; });
-					set(view, { relations: DataUtil.viewGetRelations(id, view) });
+					set(view, { relations: DataUtil.viewGetRelations(rootId, id, view) });
 					break;
 
 				case 'blockDataviewRelationDelete':
@@ -528,11 +538,11 @@ class Dispatcher {
 						break;
 					};
 
-					dbStore.relationRemove(id, data.getRelationkey());
+					dbStore.relationRemove(rootId, id, data.getRelationkey());
 
-					viewId = dbStore.getMeta(id).viewId;
+					viewId = dbStore.getMeta(rootId, id).viewId;
 					view = block.content.views.find((it: any) => { return it.id == viewId; });
-					set(view, { relations: DataUtil.viewGetRelations(id, view) });
+					set(view, { relations: DataUtil.viewGetRelations(rootId, id, view) });
 					break;
 
 				case 'processNew':
@@ -600,28 +610,32 @@ class Dispatcher {
 		return 0;
 	};
 
-	onBlockShow (rootId: string, type: number, blocks: I.Block[], details: any[]) {
+	onBlockShow (rootId: string, message: any) {
+		let { blocks, details } = message;
+
+		blockStore.detailsSet(rootId, details);
+
+		const object = blockStore.getDetails(rootId, rootId);
+		const objectType: any = dbStore.getObjectType(object.type) || {};
+
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {
 				it.type = I.BlockType.Page;
-				it.pageType = type;
+				it.layout = objectType ? objectType.layout : I.ObjectLayout.Page;
 			};
+
 			if (it.type == I.BlockType.Dataview) {
+				dbStore.relationsSet(rootId, it.id, it.content.relations);
+
 				it.content.views = it.content.views.map((view: any) => {
-					view.relations = DataUtil.viewGetRelations(it.id, view);
+					view.relations = DataUtil.viewGetRelations(rootId, it.id, view);
 					return new M.View(view);
 				});
 			};
 			return new M.Block(it);
 		});
 
-		let root = blocks.find((it: I.Block) => { return it.id == rootId; });
-		if (!root) {
-			return;
-		};
-
 		blockStore.blocksSet(rootId, blocks);
-		blockStore.detailsSet(rootId, details);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

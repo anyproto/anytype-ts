@@ -32,17 +32,20 @@ export interface Menu {
 export interface MenuItem {
 	id?: string;
 	icon?: string;
-	hash?: string;
+	object?: any;
 	name?: string;
 	description?: string;
+	caption?: string;
 	inner?: any;
 	color?: string;
 	arrow?: boolean;
 	className?: string;
 	isActive?: boolean;
 	menuId?: string;
-	withSmile?: boolean;
 	withDescription?: boolean;
+	withCaption?: boolean;
+	style?: any;
+	iconSize?: number;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 };

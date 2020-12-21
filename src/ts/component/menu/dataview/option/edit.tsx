@@ -29,7 +29,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<form className="wrap" onSubmit={this.onSubmit}>
+				<form className="inputWrap" onSubmit={this.onSubmit}>
 					<Input ref={(ref: any) => { this.ref = ref; }} value={option.text} placeHolder={translate('menuDataviewOptionEditPlaceholder')}  />
 				</form>
 				<div className="item" onClick={this.onRemove}>

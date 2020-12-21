@@ -20,8 +20,8 @@ import 'scss/component/input.scss';
 import 'scss/component/inputWithFile.scss';
 import 'scss/component/button.scss';
 import 'scss/component/icon.scss';
+import 'scss/component/iconObject.scss';
 import 'scss/component/textarea.scss';
-import 'scss/component/smile.scss';
 import 'scss/component/error.scss';
 import 'scss/component/frame.scss';
 import 'scss/component/switch.scss';
@@ -84,6 +84,7 @@ import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/select.scss';
+import 'scss/menu/button.scss';
 import 'scss/menu/search.scss';
 import 'scss/menu/thread.scss';
 
@@ -319,8 +320,12 @@ class App extends React.Component<Props, State> {
 						Storage.delete('phrase');
 					};
 
-					authStore.phraseSet(value);
-					history.push('/auth/setup/init');
+					if (value) {
+						authStore.phraseSet(value);
+						history.push('/auth/setup/init');
+					} else {
+						Storage.logout();
+					};
 				};
 			});
 		};
@@ -419,10 +424,8 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('command', this.onCommand);
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
-			console.log('Config: ', config);
-			
+			console.log('[Config]', config);
 			commonStore.configSet(config); 
-			config.debugUI ? html.addClass('debug') : html.removeClass('debug');
 
 			analytics.init();
 		});

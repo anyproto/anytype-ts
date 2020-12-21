@@ -178,6 +178,8 @@ class CommonStore {
 	
 	@action
 	popupCloseAll () {
+		this.menuCloseAll();
+
 		for (let item of this.popupList) {
 			this.popupClose(item.id);
 		};
@@ -219,6 +221,15 @@ class CommonStore {
 			return this.menuList.length > 0;
 		};
 		return this.menuList.find((item: I.Menu) => { return item.id == id; }) ? true : false;
+	};
+
+	menuIsOpenList (ids: string[]) {
+		for (let id of ids) {
+			if (this.menuIsOpen(id)) {
+				return true;
+			};
+		};
+		return false;
 	};
 	
 	@action

@@ -1,18 +1,23 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, Key, keyboard } from 'ts/lib';
+import { I, Util, Key, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
+
+const HEIGHT = 28;
+const LIMIT = 10;
 
 @observer
 class MenuSelect extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;	
 	n: number = 0;
+	cache: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -24,15 +29,58 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { options, value } = data;
+		const idx = options.findIndex((it: I.Option) => { return it.id == value; });
+		const scrollTo = Math.min(idx + LIMIT - 1, options.length - 1);
+
+		const rowRenderer = (param: any) => {
+			const item = options[param.index];
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<MenuItemVertical 
+						{...item} 
+						className={item.isInitial ? 'initial' : ''} 
+						isActive={item.id == value} 
+						onClick={(e: any) => { this.onSelect(e, item); }} 
+						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						style={param.style}
+					/>
+				</CellMeasurer>
+			);
+		};
 		
 		return (
 			<div className="items">
-				{options.map((item: any, i: number) => {
-					return <MenuItemVertical key={i} {...item} className={item.isInitial ? 'initial' : ''} isActive={item.id == value} onClick={(e: any) => { this.onSelect(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} />
-				})}
-				{!options.length ? (
-					<div className="item empty">No items found</div>
-				) : ''}
+				<InfiniteLoader
+					rowCount={options.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={({ index }) => index < options.length}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={registerChild}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={options.length}
+									rowHeight={HEIGHT}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={10}
+									scrollToIndex={scrollTo}
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
 			</div>
 		);
 	};
@@ -46,17 +94,23 @@ class MenuSelect extends React.Component<Props, {}> {
 		if (!noKeys) {
 			this.rebind();
 		};
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (options[i] || {}).id; },
+		});
 		
 		const active = options.find((it: any) => { return it.id == value });
 		if (active && !active.isInitial) {
-			window.setTimeout(() => {
-				this.setActive(active, true);
-			}, 210);
+			window.setTimeout(() => { this.setActive(active, true); }, 210);
 		};
+
+		this.resize();
 	};
 
 	componentDidUpdate () {
-		this.props.position();
+		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -175,7 +229,17 @@ class MenuSelect extends React.Component<Props, {}> {
 			onSelect(e, item);
 		};
 	};
-	
+
+	resize () {
+		const { id, position } = this.props;
+		const items = this.getItems();
+		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
+		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+
+		obj.css({ height: height });
+		position();
+	};
+
 };
 
 export default MenuSelect;

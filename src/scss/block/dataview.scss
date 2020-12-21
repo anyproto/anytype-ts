@@ -25,7 +25,7 @@
 		
 		.buttons { display: flex; margin-bottom: 8px; font-weight: 500; color: $colorDarkGrey; }
 		.buttons {
-			.side { width: 50%; }
+			.side { width: 50%; white-space: nowrap; }
 			.side.right { text-align: right; }
 			.item { 
 				display: inline-block; vertical-align: top; cursor: pointer; transition: $transitionFast; margin-right: 14px; 

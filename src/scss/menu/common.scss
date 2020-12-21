@@ -39,10 +39,16 @@
 	.menu.vertical {
 		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; }
 		
-		.filter { border-bottom: 1px solid #eae9e0; padding: 3px 16px 10px 16px; }
+		.filter { padding: 3px 16px 0px 16px; }
 		.filter {
-			.input { padding: 0px; height: 22px; line-height: 22px; vertical-align: top; }
+			.input { padding: 0px; height: 22px; line-height: 22px; vertical-align: top; border: 0px; }
 		}
+		.filter::after {
+			content: ""; height: 1px; margin: 8px 0px 0px 0px; background: $colorLightGrey; display: block;
+		}
+
+		.inputWrap { padding: 0px 16px 8px 16px; }
+		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey; }
 	
@@ -56,10 +62,15 @@
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorDarkGrey; z-index: 1;
 			opacity: 0; transition: $transitionFast; pointer-events: none;
 		}
-		.item.active::before { opacity: 0.15; }
+		.item.hover::before { opacity: 0.15; }
+
+		.item.active::before { opacity: 0.15; z-index: 0; }
+		.item.active {
+			.name { z-index: 1; }
+		}
 		
 		.item {
-			.name { display: inline-block; vertical-align: top; }
+			.name { display: inline-block; vertical-align: top; position: relative; }
 			
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; }
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
@@ -70,32 +81,44 @@
 			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			
-			.icon-object { vertical-align: top; }
+			.iconObject { vertical-align: top; }
 
-			.smile, .icon-object { margin-right: 4px; }
-			.smile {
+			.iconObject { margin-right: 4px; }
+			.iconEmoji {
 				.icon.blank { margin: 0px; }
 			}
 		}
 		
-		.item.withDescription { padding-top: 8px; padding-bottom: 8px; }
+		.item.withDescription { padding: 8px 16px; height: 56px; }
 		.item.withDescription {
-			.icon { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 16px; top: 8px; }
+			.icon, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 16px; top: 8px; }
 			.descr { @include text-small; height: 18px; color: #6c6a5f; }
-			.info { padding-left: 52px; }
+			.descr:empty { display: none; }
+			.info { padding-left: 52px; line-height: 40px; }
 			.name { line-height: 22px; }
 		}
 
-		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
+		.item.withCaption {
+			.name { width: calc(100% - 112px); margin-right: 6px; }
+			.caption { 
+				width: 80px; @include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
+			}
+		}
 
-		.sectionName { padding: 5px 16px; @include text-very-small; text-transform: uppercase; }
+		.line { height: 1px; margin: 8px 16px; background: $colorLightGrey; }
+		.input { border-radius: 4px; }
+
+		.sectionName { padding: 5px 16px; @include text-very-small; font-weight: 500; }
 		
-		.section { border-bottom: 1px solid $colorLightGrey; padding: 8px 0px; }
-		.section:first-child { padding-top: 0px; }
-		.section:last-child { border: 0px; padding-bottom: 0px; }
-		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; text-transform: uppercase; }
+		.section { padding: 8px 0px 0px 0px; }
+		.section::after {
+			content: ""; height: 1px; margin: 8px 16px 0px 16px; background: $colorLightGrey; display: block;
+		}
+		.section:last-child { border: 0px; }
+		.section:last-child::after { display: none; }
+		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; font-weight: 500; }
 	}
-	
+
 	.menu.horizontal {
 		.content { display: flex; }
 		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorLightGrey; white-space: nowrap; position: relative; }
@@ -113,5 +136,10 @@
 		.icon.active {
 			 .arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
 		}
+	}
+
+	.menu.orange {
+		.item.active { color: #e89d00; }
+		.item.active::before { opacity: 1; background: #fef3c5; color: #e89d00; }
 	}
 }

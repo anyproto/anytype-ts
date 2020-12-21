@@ -49,7 +49,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 		
 					<form onSubmit={this.onSubmit}>
 						<div className="fileWrap" onClick={this.onFileClick}>
-							<IconUser icon={preview} color="grey" className={preview ? 'active' : ''} />
+							<IconUser icon={preview} color="grey" className={[ 'c64', (preview ? 'active' : '') ].join(' ')} />
 						</div>
 					
 						<Input ref={(ref: any) => this.nameRef = ref} placeHolder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />

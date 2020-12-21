@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
-import { Icon, Smile, Input, IconObject } from 'ts/component';
+import { Icon, Input, IconObject } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -36,13 +36,12 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, viewType, getRecord } = this.props;
+		const { index, relation, viewType, getRecord, canEdit } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
 		};
 
-		const canEdit = this.canEdit();
 		const type = DataUtil.schemaField(record.type);
 
 		let Name = null;
@@ -108,18 +107,15 @@ class CellText extends React.Component<Props, State> {
 		let content: any = null;
 
 		if (relation.relationKey == 'name') {
-			let cn = 'c20';
-			let size = 18;
-
+			let size = 20;
 			switch (viewType) {
 				case I.ViewType.List:
-					cn = 'c24';
+					size = 24;
 					break;
 
 				case I.ViewType.Gallery:
 				case I.ViewType.Board:
-					cn = 'c48';
-					size = 24;
+					size = 48;
 					break;
 			};
 
@@ -133,14 +129,13 @@ class CellText extends React.Component<Props, State> {
 						id={[ relation.relationKey, record.id ].join('-')} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload}
-						className={cn} 
 						size={size} 
 						canEdit={canEdit} 
 						offsetY={4} 
 						object={record} 
 					/>
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { DataUtil.dataviewRelationOpen(e, record, type); }} />
+					<Icon className="expand" onClick={(e: any) => { DataUtil.dataviewOpen(e, record, type); }} />
 				</React.Fragment>
 			);
 		} else 
@@ -157,7 +152,6 @@ class CellText extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { id, relation, index, getRecord } = this.props;
 		const cell = $('#' + id);
-		const body = $('body');
 		const record = getRecord(index);
 
 		if (editing) {
@@ -180,17 +174,14 @@ class CellText extends React.Component<Props, State> {
 			};
 
 			cell.addClass('isEditing');
-			body.addClass('over');
 		} else {
 			cell.removeClass('isEditing');
-			body.removeClass('over');
 		};
 	};
 
 	setEditing (v: boolean) {
-		const { viewType, readOnly } = this.props;
+		const { canEdit } = this.props;
 		const { editing } = this.state;
-		const canEdit = !readOnly && (viewType == I.ViewType.Grid);
 
 		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });
@@ -273,11 +264,6 @@ class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		DataUtil.pageSetIcon(record.id, '', hash);
-	};
-
-	canEdit () {
-		const { relation, readOnly, viewType } = this.props;
-		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
 	};
 
 };

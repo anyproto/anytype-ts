@@ -57,7 +57,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 						
 						<div className="rightMenu">
 							<Icon id="button-account" menuId="account" className="profile" tooltip="Accounts" onClick={this.onAccount} />
-							<IconUser avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
+							<IconUser className="c64" avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
@@ -160,7 +160,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 								data: { 
 									type: I.NavigationType.Link, 
 									rootId: root,
-									expanded: true,
 									skipId: root,
 									blockId: '',
 									position: I.BlockPosition.Bottom,

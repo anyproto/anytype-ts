@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Icon, IconObject, Smile } from 'ts/component';
-import { I, C, DataUtil, Util, Key, keyboard } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { Input, MenuItemVertical } from 'ts/component';
+import { I, C, Util, Key, keyboard, translate } from 'ts/lib';
+import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -15,8 +15,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT_SECTION = 42;
-const HEIGHT_ITEM = 28;
+const HEIGHT = 28;
 const LIMIT = 20;
 
 @observer
@@ -32,12 +31,14 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	cache: any = null;
 	offset: number = 0;
 	items: any[] = [];
+	ref: any = null;
 
 	constructor (props: any) {
 		super(props);
 		
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
 	render () {
@@ -45,28 +46,15 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { data } = param;
 		const { filter } = data;
 		const { n } = this.state;
-		const items = this.getItems(true);
+		const items = this.getItems();
 
 		if (!this.cache) {
 			return null;
 		};
 
 		const rowRenderer = (param: any) => {
-			const item = items[param.index];
-			if (!item) {
-				return null;
-			};
-
-			let cn = [];
-			if (item.isSection) {
-				cn.push('section');
-				if (param.index == 0) {
-					cn.push('first');
-				};
-				if (param.index == items.length - 1) {
-					cn.push('last');
-				};
-			};
+			const item: any = items[param.index];
+			const objectType: any = dbStore.getObjectType(item.type) || {};
 
 			return (
 				<CellMeasurer
@@ -77,59 +65,53 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<div style={param.style}>
-						{item.isSection ? (
-							<div className={cn.join(' ')}>
-								{item.name ? <div className="name">{item.name}</div> : ''}
-							</div>
-						) : (
-							<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-								<IconObject object={item} />
-								<div className="name">{item.name}</div>
-							</div>
-						)}
-					</div>
+					<MenuItemVertical 
+						id={item.id}
+						object={item}
+						name={item.name}
+						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }}
+						withCaption={true}
+						caption={objectType.name}
+						style={param.style}
+					/>
 				</CellMeasurer>
 			);
 		};
 
 		return (
-			<div className="items">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => { return true; }}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered, registerChild }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={registerChild}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={({ index }) => {
-										const item = items[index];
-										let height = HEIGHT_ITEM;
-										if (item.isSection) {
-											height = HEIGHT_SECTION;
-											if ((index == 0) || index == (items.length - 1)) {
-												height -= 8;
-											};
-										};
-										return height;
-									}}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={LIMIT}
-									scrollToIndex={n}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
+			<div className="wrap">
+				<div className="filter">
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} onChange={this.onFilterChange} />
+				</div>
+
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={() => { return true; }}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={registerChild}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										scrollToIndex={n}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
 			</div>
 		);
 	};
@@ -139,11 +121,15 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		this.rebind();
 		this.resize();
 		this.load();
+
+		window.setTimeout(() => {
+			this.ref.focus();
+		}, 15);
 	};
 
 	componentDidUpdate () {
 		const { n } = this.state;
-		const items = this.getItems(false);
+		const items = this.getItems();
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
@@ -157,12 +143,16 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
 		this.resize();
 		this.setActive(items[n]);
+
+		window.setTimeout(() => {
+			this.ref.focus();
+		}, 15);
 	};
 	
 	componentWillUnmount () {
@@ -178,60 +168,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		$(window).unbind('keydown.menu');
 	};
 
-	getSections () {
-		let obj: any = {};
-		for (let item of this.items) {
-			let ot = dbStore.getObjectType(item.type);
-			if (!ot) {
-				continue;
-			};
-
-			let type = DataUtil.schemaField(item.type) || 'page';
-			let section = obj[type];
-
-			if (!section) {
-				 obj[type] = section = { 
-					id: type, 
-					children: [ 
-						{ id: '', name: ot.name, isSection: true },
-					] 
-				};
-			};
-
-			section.children.push({
-				...item,
-				icon: item.iconEmoji,
-				hash: item.iconImage,
-				withSmile: true,
-			});
-		};
-
-		const sections = DataUtil.menuSectionsMap(Object.values(obj));
-		sections.sort((c1: any, c2: any) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
-		return sections;
-	};
-	
-	getItems (withSections: boolean) {
-		const sections = this.getSections();
-		
-		let items: any[] = [];
-		for (let section of sections) {
-			items = items.concat(section.children);
-		};
-
-		if (!withSections) {
-			items = items.filter((it: any) => { return !it.isSection; });
-		};
-
-		return items;
+	getItems () {
+		return this.items;
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems(false);
+		const items = this.getItems();
 		const { n } = this.state;
 		this.props.setActiveItem((item ? item : items[n]), scroll);
 	};
@@ -283,6 +225,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		return this.items.filter((it: any) => { return it.name.match(reg); });
 	};
 
+	onFilterChange (e: any, v: string) {
+		//this.filter = v;
+		//this.setState({ n: 0 });
+		this.props.param.data.filter = v;
+	};
+
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -294,7 +242,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		let { n } = this.state;
 		
 		const k = e.key.toLowerCase();
-		const items = this.getItems(false);
+		const items = this.getItems();
 		const l = items.length;
 		const item = items[n];
 
@@ -340,33 +288,33 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (!item || item.isSection) {
-			this.props.close();
-			return;
-		};
-
-		const { param } = this.props;
+		const { param, close, position } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (!item) {
+			close();
+			return;
+		};
+
 		let value = Util.objectCopy(data.value || []);
-		value.push(item.key);
+		value.push(item.id);
 		value = Util.arrayUnique(value);
 
-		this.props.param.data.value = value;
+		data.value = value;
 		onChange(value);
 
-		this.props.close();
+		position();
 	};
 
 	resize () {
 		const { id, position } = this.props;
-		const items = this.getItems(true);
+		const items = this.getItems();
 		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
-		const height = Math.max(40, Math.min(240, items.length * 28 + 16));
+		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });
 		position();

@@ -122,6 +122,7 @@ class Popup extends React.Component<Props, {}> {
 	};
 
 	close () {
+		commonStore.menuCloseAll();
 		commonStore.popupClose(this.props.id);
 	};
 

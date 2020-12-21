@@ -20,6 +20,11 @@ class MenuFilter extends React.Component<Props, {}> {
 	
 	refObj: any = {};
 	timeoutChange: number = 0;
+	range: I.TextRange = {
+		from: 0,
+		to: 0,
+	};
+	id: string = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -29,6 +34,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onFocusDate = this.onFocusDate.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 	};
 	
 	render () {
@@ -58,6 +64,7 @@ class MenuFilter extends React.Component<Props, {}> {
 
 			const conditionOptions = this.conditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
+			const id = [ 'item', item.id, 'value' ].join('-');
 
 			let value = null;
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
@@ -67,10 +74,11 @@ class MenuFilter extends React.Component<Props, {}> {
 				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
-						id={'item-' + item.id + '-value'}
-						ref={refGet} 
-						value={item.value} 
-						onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v, true); }} 
+							id={id}
+							key={id}
+							ref={refGet} 
+							value={item.value} 
+							onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v, true); }} 
 						/>
 					);
 					break;
@@ -78,12 +86,15 @@ class MenuFilter extends React.Component<Props, {}> {
 				case I.RelationType.Date:
 					value = (
 						<Input 
-							id={'item-' + item.id + '-value'}
+							id={id}
+							key={id}
 							ref={refGet} 
 							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 							placeHolder="dd.mm.yyyy hh:mm:ss"
 							mask="99.99.9999 99:99:99"
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
+							onBlur={() => { this.id = ''; }}
+							onSelect={(e: any) => { this.onSelect(e, item); }}
 						/>
 					);
 					onSubmit = (e: any) => { this.onSubmitDate(e, item); };
@@ -92,11 +103,14 @@ class MenuFilter extends React.Component<Props, {}> {
 				default:
 					value = (
 						<Input 
-							id={'item-' + item.id + '-value'}
+							id={id}
+							key={id}
 							ref={refGet} 
 							value={item.value} 
 							placeHolder={translate('commonValue')} 
+							onBlur={() => { this.id = ''; }}
 							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v, true); }} 
+							onSelect={(e: any) => { this.onSelect(e, item); }}
 						/>
 					);
 					break;
@@ -176,6 +190,13 @@ class MenuFilter extends React.Component<Props, {}> {
 
 	componentDidUpdate () {
 		this.resize();
+
+		if (this.id) {
+			const ref = this.refObj[this.id];
+			if (ref && ref.setRange) {
+				ref.setRange(this.range);
+			};
+		};
 	};
 
 	conditionsByType (type: I.RelationType): I.Option[] {
@@ -274,6 +295,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const view = getView();
 		const { oldIndex, newIndex } = result;
 
+		this.id = '';
 		view.filters = arrayMove(view.filters, oldIndex, newIndex);
 		this.save();
 	};
@@ -345,6 +367,14 @@ class MenuFilter extends React.Component<Props, {}> {
 			commonStore.menuUpdate('dataviewCalendar', menu.param);
 		} else {
 			this.calendarOpen(item.id, value);
+		};
+	};
+
+	onSelect (e: any, item: any) {
+		this.id = item.id.toString();
+		this.range = {
+			from: e.currentTarget.selectionStart,
+			to: e.currentTarget.selectionEnd,
 		};
 	};
 

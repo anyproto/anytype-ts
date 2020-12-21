@@ -75,14 +75,14 @@
 	.editorControls { display: none; }
 }
 
-.editorWrapper.isProfile.withIcon { padding-top: 56px; }
-.editorWrapper.isProfile.withIcon {
+.editorWrapper.isContact.withIcon { padding-top: 56px; }
+.editorWrapper.isContact.withIcon {
 	.editorControls { height: 112px; }
 	.editorControls { 
 		.side.left { padding-left: 112px; }
 	}
 }
-.editorWrapper.isProfile.withIconAndCover { padding-top: 190px; }
+.editorWrapper.isContact.withIconAndCover { padding-top: 190px; }
 
 .editorWrapper.isDataview { width: calc(100% - 192px); }
 .editorWrapper.isDataview {

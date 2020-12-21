@@ -37,7 +37,7 @@ const IconSrc = {
 };
 
 @observer
-class Smile extends React.Component<Props, State> {
+class IconEmoji extends React.Component<Props, State> {
 	
 	public static defaultProps = {
 		offsetX: 0,
@@ -64,7 +64,7 @@ class Smile extends React.Component<Props, State> {
 		let icon = String(this.state.icon || this.props.icon || '');
 		const hash = String(this.state.hash || this.props.hash || '');
 		
-		let cn = [ 'smile' ];
+		let cn = [ 'iconEmoji' ];
 		if (className) {
 			cn.push(className);
 		};
@@ -158,4 +158,4 @@ class Smile extends React.Component<Props, State> {
 	
 };
 
-export default Smile;
+export default IconEmoji;

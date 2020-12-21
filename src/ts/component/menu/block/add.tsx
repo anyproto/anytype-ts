@@ -53,6 +53,15 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 								<div className={icn.join(' ')} />
 							);
 						};
+
+						if (action.isObject) {
+							action.object = { 
+								url: action.url, 
+								iconEmoji: action.iconEmoji, 
+								decription: action.description 
+							};
+							action.iconSize = 40;
+						};
 						
 						return <MenuItemVertical key={action.id + '-' + i} {...action} withDescription={action.isBlock} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
@@ -202,11 +211,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		let sections: any[] = [
-			{ id: 'text', icon: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
-			{ id: 'list', icon: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
-			{ id: 'file', icon: 'file', name: 'Object', color: 'blue', children: DataUtil.menuGetBlockObject() },
-			{ id: 'relation', icon: 'relation', name: 'Relation', color: 'violet', children: DataUtil.menuGetBlockRelation() },
-			{ id: 'other', icon: 'line', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
+			{ id: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
+			{ id: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
+			{ id: 'object', name: 'Object', color: 'gray', children: DataUtil.menuGetBlockObject() },
+			{ id: 'relation', name: 'Relation', color: 'violet', children: DataUtil.menuGetBlockRelation() },
+			{ id: 'other', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
 		];
 		
 		if (filter && filter.text) {

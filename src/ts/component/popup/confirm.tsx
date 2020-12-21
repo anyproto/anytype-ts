@@ -26,7 +26,7 @@ class PopupConfirm extends React.Component<Props, {}> {
 		return (
 			<React.Fragment>
 				{icon ? (
-					<div className="smile c64">
+					<div className="iconObject c64">
 						<Icon className={icon} />
 					</div>
 				) : ''}

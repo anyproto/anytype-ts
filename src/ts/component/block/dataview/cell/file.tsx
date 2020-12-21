@@ -17,13 +17,12 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, index, getRecord } = this.props;
+		const { rootId, block, readOnly, index, getRecord, canEdit } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
 		};
 		
-		let canEdit = this.canEdit();
 		let value = this.getValue();
 
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
@@ -44,14 +43,14 @@ class CellFile extends React.Component<Props, {}> {
 		};
 
 		const File = (item: any) => (
-			<div className="element file" onClick={(e: any) => { DataUtil.dataviewRelationOpen(e, item, item.type); }}>
+			<div className="element file" onClick={(e: any) => { DataUtil.dataviewOpen(e, item, item.type); }}>
 				<IconObject object={item} />
 				<div className="name">{item.name}</div>
 			</div>
 		);
 
 		const Image = (item: any) => (
-			<div className="element image" onClick={(e: any) => { DataUtil.dataviewRelationOpen(e, item, item.type); }}>
+			<div className="element image" onClick={(e: any) => { DataUtil.dataviewOpen(e, item, item.type); }}>
 				<IconObject object={item} />
 			</div>
 		);
@@ -109,11 +108,6 @@ class CellFile extends React.Component<Props, {}> {
 		onChange(value);
 	};
 
-	canEdit () {
-		const { relation, readOnly, viewType } = this.props;
-		return !readOnly && !relation.isReadOnly && (viewType == I.ViewType.Grid);
-	};
-	
 };
 
 export default CellFile;

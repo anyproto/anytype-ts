@@ -11,7 +11,7 @@
 		background-color: #fff; 
 	}
 	
-	.smile { margin-bottom: 12px; }
+	.iconObject { margin-bottom: 12px; }
 	
 	.button { margin-right: 16px; }
 	.button:last-child { margin: 0px; }
@@ -69,8 +69,8 @@
 
 	.input-text { width: 346px; vertical-align: middle; margin-right: 16px; }
 	.button { vertical-align: middle; width: 134px; padding: 0px; }	
-	.icon.user { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; }
-	.icon.user.active {
+	.iconUser { background-image: url('~img/icon/picture.svg'); background-size: 24px 18px; background-repeat: no-repeat; background-position: center; }
+	.iconUser.active {
 		.image { background-size: cover; }
 	}
 }
