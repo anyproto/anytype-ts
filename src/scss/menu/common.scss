@@ -39,9 +39,12 @@
 	.menu.vertical {
 		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; }
 		
-		.filter { border-bottom: 1px solid #eae9e0; padding: 3px 16px 10px 16px; }
+		.filter { padding: 3px 16px 0px 16px; }
 		.filter {
 			.input { padding: 0px; height: 22px; line-height: 22px; vertical-align: top; }
+		}
+		.filter::after {
+			content: ""; height: 1px; margin: 8px 0px 0px 0px; background: $colorLightGrey; display: block;
 		}
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey; }

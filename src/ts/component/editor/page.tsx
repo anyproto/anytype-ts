@@ -76,7 +76,7 @@ class EditorPage extends React.Component<Props, {}> {
 				onKeyUp={this.onKeyUpBlock}  
 				onMenuAdd={this.onMenuAdd}
 				onPaste={this.onPaste}
-				readOnly={readOnly}
+				readOnly={false}
 			/>
 		);
 
