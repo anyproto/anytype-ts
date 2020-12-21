@@ -71,7 +71,7 @@ class IconObject extends React.Component<Props, {}> {
 
 			case 'image':
 				if (id) {
-					icon = <div className={[ 'iconImage', 'c' + iconSize ].join(' ')} style={{ backgroundImage: 'url("' + commonStore.imageUrl(id, iconSize * 2) + '")' }} />;
+					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={[ 'iconImage', 'c' + iconSize ].join(' ')} />;
 				} else {
 					icon = <div className={[ 'iconFile', Util.fileIcon(object), 'c' + iconSize ].join(' ')} />;
 				};
