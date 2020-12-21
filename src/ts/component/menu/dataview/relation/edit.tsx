@@ -1,12 +1,14 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil } from 'ts/lib';
-import { Icon, Input, Switch, MenuItemVertical } from 'ts/component';
+import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class MenuRelationEdit extends React.Component<Props, {}> {
@@ -25,6 +27,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onChange = this.onChange.bind(this);
 	};
 
 	render () {
@@ -85,7 +88,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
 				<div className="wrap">
-					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
+					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} onChange={this.onChange} />
 				</div>
 				<div className="sectionName">Relation type</div>
 				<MenuItemVertical 
@@ -97,6 +100,10 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				/>
 				
 				{opts}
+
+				<div className="wrap">
+					<Button id="button" text={relation ? 'Save' : 'Create'} className="grey filled c28" onClick={this.onSubmit} />
+				</div>
 				
 				{relation ? (
 					<React.Fragment>
@@ -266,11 +273,22 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		e.preventDefault();
 
 		this.save();
-		this.props.close();
+	};
+
+	onChange () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const name = this.ref.getValue();
+		const button = node.find('#button');
+
+		if (name.length) {
+			button.addClass('orange').removeClass('grey');
+		} else {
+			button.removeClass('orange').addClass('grey');
+		};
 	};
 
 	save () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const name = this.ref.getValue();
@@ -288,6 +306,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 
 		relation ? this.update(newRelation) : this.add(newRelation);
+
+		close();
 	};
 
 	add (newRelation: any) {
