@@ -41,7 +41,7 @@
 		
 		.filter { padding: 3px 16px 0px 16px; }
 		.filter {
-			.input { padding: 0px; height: 22px; line-height: 22px; vertical-align: top; }
+			.input { padding: 0px; height: 22px; line-height: 22px; vertical-align: top; border: 0px; }
 		}
 		.filter::after {
 			content: ""; height: 1px; margin: 8px 0px 0px 0px; background: $colorLightGrey; display: block;
@@ -64,8 +64,7 @@
 		}
 		.item.hover::before { opacity: 0.15; }
 
-		.item.active { color: #e89d00; }
-		.item.active::before { opacity: 1; background: #fef3c5; color: #e89d00; z-index: 0; }
+		.item.active::before { opacity: 0.15; z-index: 0; }
 		.item.active {
 			.name { z-index: 1; }
 		}
@@ -119,7 +118,7 @@
 		.section:last-child::after { display: none; }
 		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; font-weight: 500; }
 	}
-	
+
 	.menu.horizontal {
 		.content { display: flex; }
 		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorLightGrey; white-space: nowrap; position: relative; }
@@ -137,5 +136,10 @@
 		.icon.active {
 			 .arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
 		}
+	}
+
+	.menu.orange {
+		.item.active { color: #e89d00; }
+		.item.active::before { opacity: 1; background: #fef3c5; color: #e89d00; }
 	}
 }
