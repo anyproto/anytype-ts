@@ -656,12 +656,8 @@ class Dispatcher {
 			console.log('[Dispatcher.request]', type, JSON.stringify(data.toObject(), null, 3));
 		};
 
-		console.profile(type);
-
 		try {
 			this.service[type](data, null, (error: any, response: any) => {
-				console.profileEnd(type);
-
 				if (!response) {
 					return;
 				};

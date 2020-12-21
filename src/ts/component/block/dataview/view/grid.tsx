@@ -151,14 +151,11 @@ class ViewGrid extends React.Component<Props, {}> {
 		const view = getView();
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const lastHead = node.find('.head.last');
-		const lastCell = node.find('.cell.last');
+		const lastHead = node.find('.cellHead.last');
 		const ww = win.width();
 		const mw = ww - 192;
 		
 		let width = 0;
-		let lw = 48;
-
 		for (let relation of view.relations) {
 			if (!relation.isVisible) {
 				continue;
@@ -166,12 +163,9 @@ class ViewGrid extends React.Component<Props, {}> {
 			width += relation.width;
 		};
 
-		if (width < mw) {
-			lw = Math.max(48, mw - width);
+		if (width > mw) {
+			lastHead.css({ width: 48 });
 		};
-
-		lastHead.css({ width: lw });
-		lastCell.css({ width: lw });
 	};
 
 	onResizeStart (e: any, id: string) {
@@ -200,7 +194,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		let width = e.pageX - offset.left;
 		width = Math.max(Constant.size.dataview.cell.min, width); 
 		width = Math.min(Constant.size.dataview.cell.max, width);
-		
+
 		view.relations[idx].width = width;
 		el.css({ width: width });
 		node.find('.resizable').trigger('resize');
