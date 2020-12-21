@@ -46,6 +46,9 @@
 		.filter::after {
 			content: ""; height: 1px; margin: 8px 0px 0px 0px; background: $colorLightGrey; display: block;
 		}
+
+		.inputWrap { padding: 0px 16px 8px 16px; }
+		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey; }
 	

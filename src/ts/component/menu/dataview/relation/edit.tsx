@@ -87,7 +87,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		return (
 			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
-				<div className="wrap">
+				<div className="inputWrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} onChange={this.onChange} />
 				</div>
 				<div className="sectionName">Relation type</div>
@@ -101,7 +101,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				
 				{opts}
 
-				<div className="wrap">
+				<div className="inputWrap">
 					<Button id="button" text={relation ? 'Save' : 'Create'} className="grey filled c28" onClick={this.onSubmit} />
 				</div>
 				
@@ -124,10 +124,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 
 		this.focus();
+		this.checkButton();
 	};
 
 	componentDidUpdate () {
 		this.focus();
+		this.checkButton();
 	};
 
 	componentWillUnmount () {
@@ -276,6 +278,10 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onChange () {
+		this.checkButton();
+	};
+
+	checkButton () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const name = this.ref.getValue();
 		const button = node.find('#button');

@@ -81,7 +81,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		return (
 			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
-				<div className="wrap">
+				<div className="inputWrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
 				</div>
 				<div className="sectionName">Relation type</div>
@@ -194,7 +194,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				},
 			}
 		});
-
 	};
 
 	onChangeTime (v: boolean) {

@@ -35,16 +35,19 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<form className="filter" onSubmit={this.onSubmit}>
-					<Input 
-						ref={(ref: any) => { this.ref = ref; }} 
-						value={view.name} 
-						placeHolder={translate('menuDataviewViewEditName')}
-						maxLength={Constant.limit.dataview.viewName} 
-						onKeyUp={this.onKeyUp} 
-						onFocus={this.onNameFocus}
-						onBlur={this.onNameBlur}
-					/>
+				<form onSubmit={this.onSubmit}>
+					<div className="sectionName">View name</div>
+					<div className="inputWrap">
+						<Input 
+							ref={(ref: any) => { this.ref = ref; }} 
+							value={view.name} 
+							placeHolder={translate('menuDataviewViewEditName')}
+							maxLength={Constant.limit.dataview.viewName} 
+							onKeyUp={this.onKeyUp} 
+							onFocus={this.onNameFocus}
+							onBlur={this.onNameBlur}
+						/>
+					</div>
 				</form>
 				<div className="section">
 					{items.map((action: any, i: number) => (
