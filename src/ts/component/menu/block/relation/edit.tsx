@@ -143,7 +143,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		};
 
 		this.menuOpen('dataviewRelationType', { 
-			element: '#relation-type',
+			element: '#item-relation-type',
 			offsetX: 224,
 			offsetY: 4,
 			type: I.MenuType.Vertical,

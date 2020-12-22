@@ -64,6 +64,7 @@ class Menu extends React.Component<Props, {}> {
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
 		this.setHover = this.setHover.bind(this);
+		this.getId = this.getId.bind(this);
 		this.getNode = this.getNode.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
@@ -332,11 +333,11 @@ class Menu extends React.Component<Props, {}> {
 	};
 
 	getId (): string {
-		return Util.toCamelCase('#menu-' + this.props.id);
+		return Util.toCamelCase('menu-' + this.props.id);
 	};
 
 	getNode () {
-		return $(this.getId());
+		return $('#' + this.getId());
 	};
 	
 };
