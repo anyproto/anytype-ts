@@ -320,7 +320,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const { position } = this.props;
+		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
 		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 16));
