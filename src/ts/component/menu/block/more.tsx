@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { MenuItemVertical } from 'ts/component';
+import { I, C, keyboard, Key, DataUtil, focus, crumbs } from 'ts/lib';
+import { blockStore, commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -112,7 +111,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const details = blockStore.getDetails(rootId, content.targetBlockId);
+		const object = blockStore.getDetails(rootId, content.targetBlockId);
+		const type = DataUtil.schemaField(object.type);
 
 		let items = [];
 		if (block.isPageSet()) {
@@ -133,7 +133,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 			
-			if (details.isArchived) {
+			if (object.isArchived) {
 				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
 			} else {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
@@ -142,8 +142,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isLinkPage()) {
 			items = [
 				{ id: 'move', icon: 'move', name: 'Move to' },
-				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' }
 			];
+			if (type != 'profile') {
+				items.push({ id: 'archiveIndex', icon: 'remove', name: 'Archive' });
+			};
 		} else {
 			items = [
 				{ id: 'move', icon: 'move', name: 'Move to' },

@@ -184,6 +184,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 
 	onMore (e: any, item: any) {
+		e.preventDefault();
 		e.stopPropagation();
 
 		const { match } = this.props;
