@@ -163,9 +163,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			width += relation.width;
 		};
 
-		if (width > mw) {
-			lastHead.css({ width: 48 });
-		};
+		lastHead.css({ width: (width > mw ? 48 : 'auto') });
 	};
 
 	onResizeStart (e: any, id: string) {
