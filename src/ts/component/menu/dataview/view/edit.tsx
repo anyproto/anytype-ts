@@ -85,7 +85,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		this.props.setActiveItem(items[this.n], scroll);
+		this.props.setHover(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -141,7 +141,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 	onNameFocus (e: any) {
 		this.focus = true;
-		this.props.setActiveItem();
+		this.props.setHover();
 	};
 	
 	onNameBlur (e: any) {

@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Textarea } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
+import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const raf = require('raf');
 
 @observer
 class MenuText extends React.Component<Props, {}> {

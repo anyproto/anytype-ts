@@ -67,7 +67,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		this.props.setActiveItem(items[this.n], scroll);
+		this.props.setHover(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {

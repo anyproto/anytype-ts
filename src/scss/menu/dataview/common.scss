@@ -5,15 +5,11 @@
     .menu.menuDataviewRelationList, 
     .menu.menuDataviewRelationEdit, 
     .menu.menuDataviewViewList,
-	.menu.menuDataviewObjectType {
+	.menu.menuDataviewObjectType,
+	.menu.menuDataviewObjectValues,
+	.menu.menuDataviewOptionList,
+	{
         .item:hover::before { opacity: 0.15; }
-    }
-
-    .menu.menuDataviewRelationList, 
-    .menu.menuDataviewFilter,
-    .menu.menuDataviewSort {
-		.select > .current > .name { max-width: 102px; }
-
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
 			.icon.dnd { margin-right: 2px; }
@@ -21,14 +17,21 @@
 
 		.item.empty { color: #6c6a5f; padding: 8px 16px 12px 16px; line-height: 22px; cursor: default; }
 
+		.item.empty { color: #6c6a5f; padding: 8px 16px 12px 16px; line-height: 22px; cursor: default; }
+
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
-		.item.add {
-			.icon.dnd { display: none; }
-		}
 		.item.add:hover { color: $colorBlack; }
 		.item.add:hover {
 			.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
 		}
+
+		.label { color: $colorDarkGrey; @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
+    }
+
+    .menu.menuDataviewRelationList, 
+    .menu.menuDataviewFilter,
+    .menu.menuDataviewSort {
+		.select > .current > .name { max-width: 102px; }
     }
 
     .menu.menuDataviewFilter,

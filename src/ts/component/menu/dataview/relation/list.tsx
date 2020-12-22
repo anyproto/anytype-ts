@@ -50,7 +50,6 @@ class MenuRelationList extends React.Component<Props, {}> {
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div id="relation-add" className="item add" onClick={this.onAdd}>
-				<Icon className="dnd" />
 				<Icon className="plus" />
 				<div className="name">New relation</div>
 			</div>

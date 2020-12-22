@@ -119,7 +119,9 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
 		const page = $(pageContainer);
-		const menuIds = [ 'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar' ];
+		const menuIds = [ 
+			'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewObjectValues', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar',
+		];
 
 		let menuId = '';
 		let setOn = () => {
@@ -147,7 +149,6 @@ class Cell extends React.Component<Props, {}> {
 				body.removeClass('over');
 			};
 		};
-
 
 		let param: I.MenuParam = { 
 			element: element,
@@ -228,7 +229,7 @@ class Cell extends React.Component<Props, {}> {
 					types: relation.objectTypes,
 				});
 
-				menuId = 'dataviewObjectList';
+				menuId = value.length ? 'dataviewObjectValues' : 'dataviewObjectList';
 				break;
 
 			case I.RelationType.Description:

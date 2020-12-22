@@ -24,7 +24,9 @@ export interface MenuParam {
 export interface Menu {
 	id: string;
 	param: MenuParam;
-	setActiveItem? (item?: any, scroll?: boolean): void;
+	setHover? (item?: any, scroll?: boolean): void;
+	getId?(): string;
+	getNode?(): any;
 	position? (): void;
 	close? (): void;
 };

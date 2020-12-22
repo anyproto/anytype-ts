@@ -79,8 +79,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { id } = this.props;
-		const menu = $('#' + Util.toCamelCase('menu-' + id));
+		const { getId } = this.props;
+		const menu = $('#' + getId());
 		
 		this._isMounted = true;
 		this.rebind();
@@ -101,7 +101,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const items = this.getItems();
 
 		this.rebind();
-		this.props.setActiveItem(items[this.n]);
+		this.props.setHover(items[this.n]);
 		this.props.position();
 	};
 	
@@ -116,7 +116,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
 		
 		this.focus = true;
-		this.props.setActiveItem();
+		this.props.setHover();
 	};
 	
 	onFilterBlur (e: any) {
@@ -303,7 +303,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
-		this.props.setActiveItem(items[this.n], scroll);
+		this.props.setHover(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {

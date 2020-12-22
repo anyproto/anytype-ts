@@ -34,6 +34,7 @@ import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
 import MenuDataviewObjectType from './dataview/object/type';
 import MenuDataviewObjectList from './dataview/object/list';
+import MenuDataviewObjectValues from './dataview/object/values';
 import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
@@ -62,7 +63,8 @@ class Menu extends React.Component<Props, {}> {
 		
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
-		this.setActiveItem = this.setActiveItem.bind(this);
+		this.setHover = this.setHover.bind(this);
+		this.getNode = this.getNode.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
@@ -102,6 +104,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewRelationType:	 MenuDataviewRelationType,
 			dataviewObjectType:		 MenuDataviewObjectType,
 			dataviewObjectList:		 MenuDataviewObjectList,
+			dataviewObjectValues:	 MenuDataviewObjectValues,
 			dataviewOptionList:		 MenuDataviewOptionList,
 			dataviewOptionEdit:		 MenuDataviewOptionEdit,
 			dataviewFilter:			 MenuDataviewFilter,
@@ -114,7 +117,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewText:			 MenuDataviewText,
 		};
 		
-		const menuId = Util.toCamelCase('menu-' + id);
+		const menuId = this.getId();
 		const Component = Components[id];
 		const cn = [ 
 			'menu', 
@@ -135,7 +138,14 @@ class Menu extends React.Component<Props, {}> {
 		return (
 			<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
 				<div className="content">
-					<Component {...this.props} setActiveItem={this.setActiveItem} position={this.position} close={this.close} />
+					<Component 
+						{...this.props} 
+						setHover={this.setHover} 
+						getId={this.getId} 
+						getNode={this.getNode} 
+						position={this.position} 
+						close={this.close} 
+					/>
 				</div>
 			</div>
 		);
@@ -300,8 +310,8 @@ class Menu extends React.Component<Props, {}> {
 		};
 	};
 	
-	setActiveItem (item?: any, scroll?: boolean) {
-		const node = $(Util.toCamelCase('#menu-' + this.props.id));
+	setHover (item?: any, scroll?: boolean) {
+		const node = this.getNode();
 		node.find('.item.hover').removeClass('hover');
 
 		if (!item) {
@@ -319,6 +329,14 @@ class Menu extends React.Component<Props, {}> {
 			
 			content.stop(true, true).animate({ scrollTop: top }, 100);
 		};
+	};
+
+	getId (): string {
+		return Util.toCamelCase('#menu-' + this.props.id);
+	};
+
+	getNode () {
+		return $(this.getId());
 	};
 	
 };

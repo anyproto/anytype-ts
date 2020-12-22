@@ -646,28 +646,28 @@ class DataUtil {
 		});
 	};
 
-	dataviewOpen (e: any, data: any, type: string) {
+	objectOpen (e: any, object: any) {
 		e.stopPropagation();
 		e.preventDefault();
 
-		type = this.schemaField(type);
+		const type = this.schemaField(object.type);
 
 		switch (type) {
 			default:
-				this.pageOpenPopup(data.id);
+				this.pageOpenPopup(object.id);
 				break;
 
 			case 'image':
 				commonStore.popupOpen('preview', {
 					data: {
 						type: I.FileType.Image,
-						url: commonStore.imageUrl(data.id, Constant.size.image),
+						url: commonStore.imageUrl(object.id, Constant.size.image),
 					}
 				});
 				break;
 
 			case 'file':
-				ipcRenderer.send('urlOpen', commonStore.fileUrl(data.id));
+				ipcRenderer.send('urlOpen', commonStore.fileUrl(object.id));
 				break;
 		};
 	};

@@ -155,7 +155,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
 		const { n } = this.state;
-		this.props.setActiveItem((item ? item : items[n]), scroll);
+		this.props.setHover((item ? item : items[n]), scroll);
 	};
 
 	load (callBack?: (message: any) => void) {
@@ -282,9 +282,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const { id, position } = this.props;
+		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
+		const obj = $('#' + getId() + ' .content');
 		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });

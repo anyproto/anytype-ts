@@ -176,4 +176,4 @@ export {
 	ViewRelation,
 	Filter,
 	Sort,
-}
+};
