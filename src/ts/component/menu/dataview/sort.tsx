@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, Select } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -27,7 +27,7 @@ class MenuSort extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 		
 		const typeOptions = [
@@ -35,10 +35,14 @@ class MenuSort extends React.Component<Props, {}> {
 			{ id: String(I.SortType.Desc), name: 'Descending' },
 		];
 		
-		const relationOptions: any[] = [];
-		for (let relation of view.relations) {
-			relationOptions.push({ id: relation.relationKey, name: relation.name, icon: 'relation c-' + DataUtil.relationClass(relation.format) });
-		};
+		const relationOptions: any[] = view.relations.map((it: I.ViewRelation) => {
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				name: relation.name, 
+				icon: 'relation c-' + DataUtil.relationClass(relation.format),
+			};
+		});
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />

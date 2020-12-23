@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { I, DataUtil } from 'ts/lib';
 import { Cell } from 'ts/component';
+import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
 	block: I.Block;
-	relation: I.ViewRelation;
+	relationKey: string;
 	index: number;
 	readOnly: boolean;
 	getRecord(index: number): any;
@@ -19,7 +20,8 @@ interface Props {
 class BodyCell extends React.Component<Props, {}> {
 
 	render () {
-		const { relation, index, readOnly, onRef, onCellClick, onCellChange } = this.props;
+		const { rootId, block, relationKey, index, readOnly, onRef, onCellClick, onCellChange } = this.props;
+		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 		const cn = [ 'cell', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
 		const idPrefix = 'dataviewCell';
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);

@@ -127,10 +127,9 @@ class ViewGrid extends React.Component<Props, {}> {
 		let width = 0;
 
 		for (let relation of view.relations) {
-			if (!relation.isVisible) {
-				continue;
+			if (relation.isVisible) {
+				width += relation.width;
 			};
-			width += relation.width;
 		};
 
 		if (width < mw) {

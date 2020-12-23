@@ -36,14 +36,15 @@ class MenuRelationList extends React.Component<Props, {}> {
 		));
 
 		const Item = SortableElement((item: any) => {
+			const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 			return (
-				<div id={'relation-' + item.id} className="item">
+				<div id={'relation-' + item.relationKey} className="item">
 					<Handle />
-					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.id); }}>
-						<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
-						<div className="name">{item.name}</div>
+					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
+						<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
+						<div className="name">{relation.name}</div>
 					</span>
-					<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.id, v); }} />
+					<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} />
 				</div>
 			);
 		});
@@ -59,7 +60,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 			return (
 				<div className="items">
 					{relations.map((item: any, i: number) => {
-						return item ? <Item key={item.relationKey} {...item} id={item.relationKey} index={i} /> : null;
+						return item ? <Item key={item.relationKey} {...item} index={i} /> : null;
 					})}
 					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
 				</div>
@@ -138,9 +139,8 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView } = data;
-		const view = getView();
+		const relation = getView().getRelation(id);
 
-		const relation = view.relations.find((it: any) => { return it.relationKey == id; });
 		if (relation) {
 			relation.isVisible = v;
 			this.save();

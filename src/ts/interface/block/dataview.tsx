@@ -57,7 +57,8 @@ export interface Filter {
 	value: any;
 };
 
-export interface ViewRelation extends I.Relation {
+export interface ViewRelation {
+	relationKey: string;
 	isVisible: boolean;
 	width: number;
 	includeTime: boolean;
@@ -88,6 +89,7 @@ export interface View {
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];
+	getRelation?:(relationKey: string) => I.ViewRelation;
 };
 
 export interface Cell {

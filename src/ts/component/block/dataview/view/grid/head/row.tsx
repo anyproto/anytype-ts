@@ -18,7 +18,7 @@ const $ = require('jquery');
 class HeadRow extends React.Component<Props, {}> {
 
 	render () {
-		const { block, readOnly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
+		const { rootId, block, readOnly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 
@@ -27,8 +27,9 @@ class HeadRow extends React.Component<Props, {}> {
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-head-' + relation.relationKey} 
-						index={i} 
+						{...this.props}
 						{...relation}
+						index={i} 
 						onResizeStart={onResizeStart} 
 					/>
 				))}

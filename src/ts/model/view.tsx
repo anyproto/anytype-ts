@@ -35,6 +35,10 @@ class View implements I.View {
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
+	getRelation (relationKey: string) {
+		return this.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+	};
+
 };
 
 class Relation implements I.Relation {
@@ -49,7 +53,7 @@ class Relation implements I.Relation {
 	isMultiple: boolean = false;
 	selectDict: any[] = [] as any[];
 
-	constructor (props: I.ViewRelation) {
+	constructor (props: I.Relation) {
 		let self = this;
 
 		self.relationKey = String(props.relationKey || '');
@@ -61,6 +65,13 @@ class Relation implements I.Relation {
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.isMultiple = Boolean(props.isMultiple);
 		self.selectDict = (props.selectDict || []).map((it: any) => { return new SelectOption(it); });
+
+		decorate(self, {
+			name: observable,
+			format: observable,
+			objectTypes: observable,
+			selectDict: observable,
+		});
 	};
 
 };
@@ -87,8 +98,9 @@ class SelectOption implements I.SelectOption {
 	};
 };
 
-class ViewRelation extends Relation implements I.ViewRelation {
+class ViewRelation implements I.ViewRelation {
 
+	relationKey: string = '';
 	width: number = 0;
 	isVisible: boolean = false;
 	includeTime: boolean = false;
@@ -96,10 +108,9 @@ class ViewRelation extends Relation implements I.ViewRelation {
 	timeFormat: I.TimeFormat = I.TimeFormat.H12;
 
 	constructor (props: I.ViewRelation) {
-		super(props);
-
 		let self = this;
 
+		self.relationKey = String(props.relationKey || '');
 		self.width = Number(props.width) || 0;
 		self.isVisible = Boolean(props.isVisible);
 		self.includeTime = Boolean(props.includeTime);
@@ -107,8 +118,6 @@ class ViewRelation extends Relation implements I.ViewRelation {
 		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
 
 		decorate(self, {
-			name: observable,
-			selectDict: observable,
 			width: observable,
 			isVisible: observable,
 			includeTime: observable, 

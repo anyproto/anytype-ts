@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select, Input, Checkbox } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
@@ -40,7 +40,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 
 		const operatorOptions: I.Option[] = [
@@ -49,7 +49,12 @@ class MenuFilter extends React.Component<Props, {}> {
 		];
 		
 		const relationOptions: I.Option[] = view.relations.map((it: I.ViewRelation) => {
-			return { id: it.relationKey, name: it.name, icon: 'relation c-' + DataUtil.relationClass(it.format) };
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: it.relationKey, 
+				name: relation.name, 
+				icon: 'relation c-' + DataUtil.relationClass(relation.format),
+			};
 		});
 
 		const Handle = SortableHandle(() => (
@@ -57,7 +62,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == item.relationKey; });
+			const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 			if (!relation) {
 				return null;
 			};
