@@ -30,7 +30,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const view = getView();
 
 		view.relations.map((it: I.ViewRelation) => {
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
 			const { format, name } = relation;
 		});
 
@@ -39,7 +39,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		));
 
 		const Item = SortableElement((item: any) => {
-			const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 			return (
 				<div id={'relation-' + item.relationKey} className="item">
 					<Handle />
