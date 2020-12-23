@@ -706,9 +706,6 @@ class Util {
 	};
 
 	intercept (obj: any, change: any) {
-		if (change.name == 'relations') {
-			return change;
-		};
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
