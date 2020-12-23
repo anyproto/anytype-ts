@@ -709,12 +709,33 @@ class Util {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
-	getEditorScrollContainer (isPopup: boolean) {
-		return isPopup ? $('#popupEditorPage .selection') : $(window);
+	getEditorScrollContainer (type: string) {
+		switch (type) {
+			default:
+			case 'page':
+				return window;
+
+			case 'popup':
+				return '#popupEditorPage .selection';
+
+			case 'menu':
+				return '#menuBlockRelationList .content';
+
+		};
 	};
 
-	getEditorPageContainer (isPopup: boolean) {
-		return isPopup ? $('#popupEditorPage') : $('.pageMainEdit');
+	getEditorPageContainer (type: string) {
+		switch (type) {
+			default:
+			case 'page':
+				return '.pageMainEdit';
+
+			case 'popup':
+				return '#popupEditorPage';
+
+			case 'menu':
+				return '#menuBlockRelationList';
+		};
 	};
 
 };

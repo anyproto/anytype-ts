@@ -60,7 +60,8 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
-							pageContainer={$('#menuBlockRelationList')}
+							scrollContainer={Util.getEditorScrollContainer('menu')}
+							pageContainer={Util.getEditorPageContainer('menu')}
 							readOnly={readOnly}
 						/>
 					</div>
@@ -77,12 +78,17 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount () {
+		$('body').addClass('over');
+	};
+
 	componentDidUpdate () {
 		this.props.position();
 	};
 
 	componentWillUnmount () {
 		commonStore.menuCloseAll();
+		$('body').removeClass('over');
 	};
 
 	onSelect (e: any, item: any) {

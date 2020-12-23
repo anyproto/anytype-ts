@@ -102,6 +102,7 @@ export interface Cell {
 	viewType: I.ViewType;
 	readOnly?: boolean;
 	canEdit?: boolean;
+	scrollContainer?: any;
 	pageContainer?: any;
 	getRecord(index: number): any;
 	onChange?(data: any): void;

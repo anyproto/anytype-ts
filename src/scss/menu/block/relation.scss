@@ -15,7 +15,9 @@
 
 	.menu.menuBlockRelationList { width: 640px; }
 	.menu.menuBlockRelationList {
-		.content { max-height: 338px; padding: 12px 0px; }
+		.content { max-height: 338px; padding: 30px 0px; }
+		.input { border: 0px; padding: 0px; }
+		.item { padding: 0px 34px; }
 	}
 	
 	.menu.menuBlockRelationEdit { width: 224px; }

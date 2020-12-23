@@ -99,7 +99,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer, scrollContainer } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
@@ -118,7 +118,6 @@ class Cell extends React.Component<Props, {}> {
 		const height = cell.outerHeight();
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
-		const page = $(pageContainer);
 		const menuIds = [ 
 			'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewObjectValues', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar',
 		];
@@ -135,7 +134,7 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.onClick();
 			};
 			if (menuId) {
-				body.addClass('over');
+				$(scrollContainer).addClass('over');
 			};
 		};
 
@@ -146,7 +145,7 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.setEditing(false);
 			};
 			if (menuId) {
-				body.removeClass('over');
+				$(scrollContainer).removeClass('over');
 			};
 		};
 
@@ -306,7 +305,8 @@ class Cell extends React.Component<Props, {}> {
 			commonStore.menuCloseAll(menuIds);
 			window.setTimeout(() => {
 				commonStore.menuOpen(menuId, param); 
-				page.unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
+				console.log(pageContainer, $(pageContainer));
+				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
 			}, 10);
 		} else {
 			setOn();

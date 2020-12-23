@@ -187,7 +187,7 @@ class Input extends React.Component<Props, State> {
 				return;
 			};
 			
-			$(ReactDOM.findDOMNode(this)).focus(); 
+			$(ReactDOM.findDOMNode(this)).get(0).focus({ preventScroll: true }); 
 		});
 	};
 	
