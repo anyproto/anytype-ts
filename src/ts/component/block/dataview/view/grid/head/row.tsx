@@ -18,7 +18,7 @@ const $ = require('jquery');
 class HeadRow extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readOnly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
+		const { block, readOnly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 

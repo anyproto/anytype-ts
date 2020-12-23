@@ -18,7 +18,8 @@ class HeadCell extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, relationKey, width, index, onResizeStart } = this.props;
-		const relation = dbStore.getRelation(rootId, block.id, relationKey);
+		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
+		const { format, name } = relation;
 
 		const Cell = SortableElement((item: any) => {
 			return (

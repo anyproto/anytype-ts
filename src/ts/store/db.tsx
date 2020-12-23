@@ -1,5 +1,5 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
-import { I, DataUtil } from 'ts/lib';
+import { I, M, DataUtil } from 'ts/lib';
 
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
@@ -46,7 +46,8 @@ class DbStore {
 
 	@action
 	relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
-		this.relationMap.set(this.getId(rootId, blockId), observable(list));
+		list = list.map((it: I.Relation) => { return new M.Relation(it); });
+		this.relationMap.set(this.getId(rootId, blockId), observable.array(list));
 	};
 
 	@action

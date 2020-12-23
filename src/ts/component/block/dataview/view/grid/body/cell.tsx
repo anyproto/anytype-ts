@@ -21,7 +21,7 @@ class BodyCell extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, relationKey, index, readOnly, onRef, onCellClick, onCellChange } = this.props;
-		const relation = dbStore.getRelation(rootId, block.id, relationKey);
+		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
 		const cn = [ 'cell', 'c-' + DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
 		const idPrefix = 'dataviewCell';
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);

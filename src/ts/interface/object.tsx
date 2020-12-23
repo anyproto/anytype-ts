@@ -41,7 +41,7 @@ export interface Relation {
 	relationKey: string;
 	format: RelationType;
 	name: string;
-	dataSource: string;
+	dataSource: number;
 	isHidden: boolean;
 	isReadOnly: boolean;
 	isMultiple: boolean;

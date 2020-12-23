@@ -632,7 +632,7 @@ class DataUtil {
 			if (message.error.code || !view) {
 				return;
 			};
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+			//C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 
@@ -641,6 +641,8 @@ class DataUtil {
 			if (message.error.code || !view) {
 				return;
 			};
+			
+			view.relations = view.relations.filter((it: I.ViewRelation) => { return it.relationKey != relationKey; });
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};

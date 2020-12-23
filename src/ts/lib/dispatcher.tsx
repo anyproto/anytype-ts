@@ -525,10 +525,6 @@ class Dispatcher {
 					const item = dbStore.getRelation(rootId, id, relation.relationKey);
 
 					item ? dbStore.relationUpdate(rootId, id, relation) : dbStore.relationAdd(rootId, id, relation);
-
-					viewId = dbStore.getMeta(rootId, id).viewId;
-					view = block.content.views.find((it: any) => { return it.id == viewId; });
-					set(view, { relations: DataUtil.viewGetRelations(rootId, id, view) });
 					break;
 
 				case 'blockDataviewRelationDelete':
@@ -539,10 +535,6 @@ class Dispatcher {
 					};
 
 					dbStore.relationRemove(rootId, id, data.getRelationkey());
-
-					viewId = dbStore.getMeta(rootId, id).viewId;
-					view = block.content.views.find((it: any) => { return it.id == viewId; });
-					set(view, { relations: DataUtil.viewGetRelations(rootId, id, view) });
 					break;
 
 				case 'processNew':

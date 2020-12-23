@@ -45,7 +45,7 @@ class Relation implements I.Relation {
 
 	relationKey: string = '';
 	name: string = '';
-	dataSource: string = '';
+	dataSource: number = 0;
 	objectTypes: string[] = [];
 	format: I.RelationType = I.RelationType.Description;
 	isHidden: boolean = false;
@@ -58,7 +58,7 @@ class Relation implements I.Relation {
 
 		self.relationKey = String(props.relationKey || '');
 		self.name = String(props.name || '');
-		self.dataSource = String(props.dataSource || '');
+		self.dataSource = Number(props.dataSource) || 0;
 		self.objectTypes = props.objectTypes || [];
 		self.format = props.format || I.RelationType.Description;
 		self.isHidden = Boolean(props.isHidden);
@@ -72,6 +72,8 @@ class Relation implements I.Relation {
 			objectTypes: observable,
 			selectDict: observable,
 		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
@@ -28,8 +28,11 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { data } = param;
 		const { readOnly, rootId, blockId, getView } = data;
 		const view = getView();
-		const { relations } = view;
-		const block = blockStore.getLeaf(rootId, blockId);
+
+		view.relations.map((it: I.ViewRelation) => {
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			const { format, name } = relation;
+		});
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -59,8 +62,8 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{relations.map((item: any, i: number) => {
-						return item ? <Item key={item.relationKey} {...item} index={i} /> : null;
+					{view.relations.map((item: any, i: number) => {
+						return <Item key={item.relationKey} {...item} index={i} />;
 					})}
 					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
 				</div>
