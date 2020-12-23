@@ -12,13 +12,6 @@
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}
 		.label { color: $colorDarkGrey; @include text-common; padding: 0px 16px; }
-
-		.filter { margin-bottom: 8px; }
-
-		.section:first-child, .section:last-child { padding: 8px 0px; }
-
-		.section.first { padding-top: 0px; }
-		.section.last { padding-top: 0px; }
 	}
 
 	.menu.menuDataviewObjectType { width: 224px; }

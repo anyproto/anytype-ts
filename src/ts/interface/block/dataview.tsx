@@ -70,8 +70,8 @@ export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
 	readOnly: boolean;
-	scrollContainer?: any;
-	pageContainer?: any;
+	scrollContainer?: string;
+	pageContainer?: string;
 	isPopup?: boolean;
 	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
@@ -102,8 +102,8 @@ export interface Cell {
 	viewType: I.ViewType;
 	readOnly?: boolean;
 	canEdit?: boolean;
-	scrollContainer?: any;
-	pageContainer?: any;
+	scrollContainer?: string;
+	pageContainer?: string;
 	getRecord(index: number): any;
 	onChange?(data: any): void;
 	onClick?(e: any): void;

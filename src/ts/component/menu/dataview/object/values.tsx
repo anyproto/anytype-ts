@@ -96,14 +96,8 @@ class MenuObjectValues extends React.Component<Props> {
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	unbind () {
@@ -196,6 +190,8 @@ class MenuObjectValues extends React.Component<Props> {
 		if (!this._isMounted) {
 			return;
 		};
+
+		console.log('AAA');
 		
 		e.preventDefault();
 		e.stopPropagation();

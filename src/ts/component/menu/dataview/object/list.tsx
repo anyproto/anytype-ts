@@ -122,7 +122,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		this.rebind();
 		this.resize();
 		this.focus();
-		this.load();
+		this.load(false);
 	};
 
 	componentDidUpdate () {
@@ -135,7 +135,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		if (filter != this.filter) {
 			this.offset = 0;
 			this.filter = filter;
-			this.load();
+			this.load(true);
 			return;
 		};
 
@@ -172,6 +172,8 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	rebind () {
+		this.unbind();
+
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
@@ -189,7 +191,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		this.props.setHover((item ? item : items[n]), scroll);
 	};
 
-	load (callBack?: (message: any) => void) {
+	load (clear: boolean, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
@@ -208,6 +210,10 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 				callBack(message);
 			};
 
+			if (clear) {
+				this.items = [];
+			};
+
 			this.items = this.items.concat(message.records.map((it: any) => {
 				it.name = String(it.name || Constant.default.name);
 				return it;
@@ -220,7 +226,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
 			this.offset += LIMIT;
-			this.load(resolve);
+			this.load(false, resolve);
 		});
 	};
 
@@ -323,7 +329,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 16));
+		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
 
 		obj.css({ height: height });
 		position();
