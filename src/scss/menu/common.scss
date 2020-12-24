@@ -115,6 +115,7 @@
 		.section::after {
 			content: ""; height: 1px; margin: 8px 16px 0px 16px; background: $colorLightGrey; display: block;
 		}
+		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
 		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; font-weight: 500; }
