@@ -312,7 +312,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 
 		relation ? this.update(newRelation) : this.add(newRelation);
-
 		close();
 	};
 
