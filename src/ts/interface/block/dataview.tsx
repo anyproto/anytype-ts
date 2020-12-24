@@ -76,7 +76,7 @@ export interface ViewComponent {
 	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
 	getRecord(index: number): any;
-	getView(): View;
+	getView?(): View;
 	onRowAdd?: (e: any) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onCellChange?: (id: string, key: string, value: any) => void;
@@ -104,6 +104,7 @@ export interface Cell {
 	canEdit?: boolean;
 	scrollContainer?: string;
 	pageContainer?: string;
+	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(data: any): void;
 	onClick?(e: any): void;

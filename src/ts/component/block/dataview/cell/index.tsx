@@ -110,7 +110,6 @@ class Cell extends React.Component<Props, {}> {
 			return;
 		};
 
-		const body = $('body');
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const cell = $('#' + id).addClass('isEditing');
 		const element = cell.find('.cellContent');

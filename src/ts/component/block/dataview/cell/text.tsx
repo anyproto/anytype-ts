@@ -36,13 +36,16 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, viewType, getRecord, canEdit } = this.props;
+		const { index, relation, viewType, getView, getRecord, canEdit } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
 		};
 
-		const type = DataUtil.schemaField(record.type);
+		let viewRelation: any = {};
+		if (getView) {
+			viewRelation = getView().getRelation(relation.relationKey);
+		};
 
 		let Name = null;
 		let EditorComponent = null;
@@ -58,10 +61,12 @@ class CellText extends React.Component<Props, State> {
 			if (relation.format == I.RelationType.Date) {
 				let mask = [ '99.99.9999' ];
 				let placeHolder = [ 'dd.mm.yyyy' ];
-				if (relation.includeTime) {
+				
+				if (viewRelation.includeTime) {
 					mask.push('99:99');
 					placeHolder.push('hh:mm');
 				};
+
 				EditorComponent = (item: any) => (
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
@@ -95,9 +100,10 @@ class CellText extends React.Component<Props, State> {
 			);
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [ DataUtil.dateFormat(relation.dateFormat) ];
-				if (relation.includeTime) {
-					format.push(DataUtil.timeFormat(relation.timeFormat));
+				let format = [ DataUtil.dateFormat(viewRelation.dateFormat) ];
+
+				if (viewRelation.includeTime) {
+					format.push(DataUtil.timeFormat(viewRelation.timeFormat));
 				};
 
 				value = value ? Util.date(format.join(' '), Number(value)) : '';
@@ -108,6 +114,7 @@ class CellText extends React.Component<Props, State> {
 
 		if (relation.relationKey == 'name') {
 			let size = 20;
+
 			switch (viewType) {
 				case I.ViewType.List:
 					size = 24;

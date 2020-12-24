@@ -121,19 +121,10 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	getData (id: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
-		const win = $(window);
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const viewChange = id != viewId;
 		const meta: any = { offset: offset };
-
 		const cb = (message: any) => {
-			if (viewChange) {
-				const view = this.getView();
-				const relations = DataUtil.viewGetRelations(rootId, block.id, view);
-
-				set(view, { relations: relations });
-			};
-
 			if (callBack) {
 				callBack(message);
 			};
@@ -148,7 +139,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, cb);
 
 		commonStore.menuCloseAll();
-		win.trigger('resize.editor');
+		$(window).trigger('resize.editor');
 	};
 
 	getRecord (index: number) {

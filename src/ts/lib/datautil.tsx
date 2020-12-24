@@ -600,6 +600,7 @@ class DataUtil {
 			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
 			return new M.ViewRelation({
 				...vr,
+				relationKey: relation.relationKey,
 				width: Number(vr.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
 			});
 		});
@@ -619,6 +620,7 @@ class DataUtil {
 			} else {
 				relation.relationKey = message.relationKey;
 				relation.isVisible = true;
+				relation.width = Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default;
 
 				view.relations.push(relation);
 			};

@@ -28,10 +28,11 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { data } = param;
 		const { readOnly, rootId, blockId, getView } = data;
 		const view = getView();
+		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 
-		view.relations.map((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
-			const { format, name } = relation;
+		relations.map((it: any) => {
+			it.relation = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
+			const { format, name } = it.relation;
 		});
 
 		const Handle = SortableHandle(() => (
@@ -39,13 +40,12 @@ class MenuRelationList extends React.Component<Props, {}> {
 		));
 
 		const Item = SortableElement((item: any) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 			return (
 				<div id={'relation-' + item.relationKey} className="item">
 					<Handle />
 					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
-						<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
-						<div className="name">{relation.name}</div>
+						<Icon className={'relation c-' + DataUtil.relationClass(item.relation.format)} />
+						<div className="name">{item.relation.name}</div>
 					</span>
 					<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} />
 				</div>
@@ -62,7 +62,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{view.relations.map((item: any, i: number) => {
+					{relations.map((item: any, i: number) => {
 						return <Item key={item.relationKey} {...item} index={i} />;
 					})}
 					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
