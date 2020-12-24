@@ -58,7 +58,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							<div className="item">
 								<Icon className="clock" />
 								<div className="name">Include time</div>
-								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+								<Switch value={viewRelation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 							</div>
 
 							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
@@ -70,8 +70,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							<div className="line" />
 
 							<div className="sectionName">Object type</div>
-							<div id="item-object-type" className="item" onClick={this.onObjectType}>
-							</div>
 							<MenuItemVertical 
 								id="object-type" 
 								name={objectType ? objectType.name : 'Select object type'} 
