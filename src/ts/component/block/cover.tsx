@@ -14,6 +14,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const { dialog } = window.require('electron').remote;
 
 @observer
 class BlockCover extends React.Component<Props, State> {
@@ -35,6 +36,7 @@ class BlockCover extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onAddIcon = this.onAddIcon.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
@@ -89,7 +91,12 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						<div id="button-cover-edit" className={[ 'btn', 'white', 'addCover', (commonStore.menuIsOpen('blockCover') ? 'active' : '') ].join(' ')} onClick={this.onMenu}>
+						<div id="button-add-icon" className="btn white addIcon" onClick={this.onAddIcon}>
+							<Icon />
+							<div className="txt">{translate('editorControlIcon')}</div>
+						</div>
+
+						<div id="button-cover-edit" className="btn white addCover" onClick={this.onMenu}>
 							<Icon />
 							<div className="txt">{translate('blockCoverUpdate')}</div>
 						</div>
@@ -138,6 +145,62 @@ class BlockCover extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		$(window).unbind('resize.cover');
+	};
+
+	onAddIcon (e: any) {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		
+		if (!root) {
+			return;
+		};
+		
+		focus.clear(true);
+		root.isPageContact() ? this.onAddIconUser() : this.onAddIconPage();
+	};
+	
+	onAddIconPage () {
+		const { rootId } = this.props;
+		
+		commonStore.menuOpen('smile', { 
+			element: '#button-add-icon',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				onSelect: (icon: string) => {
+					DataUtil.pageSetIcon(rootId, icon, '');
+				},
+				onUpload (hash: string) {
+					DataUtil.pageSetIcon(rootId, '', hash);
+				},
+			}
+		});
+	};
+	
+	onAddIconUser () {
+		const { rootId } = this.props;
+		const options: any = { 
+			properties: [ 'openFile' ], 
+			filters: [ { name: '', extensions: Constant.extension.image } ]
+		};
+		
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+			
+			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
+				DataUtil.pageSetIcon(rootId, '', message.hash);
+			});
+		});
 	};
 	
 	onMenu (e: any) {

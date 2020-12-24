@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.editorWrapper { padding-top: 100px; width: 704px; margin: 0px auto; }
+.editorWrapper { padding-top: 112px; width: 704px; margin: 0px auto; }
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
@@ -23,27 +23,19 @@
 		.side.right { text-align: right; }
 		
 		.btn { 
-			font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast; opacity: 0;
-			margin-right: 24px;
+			background: #fff; font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast; opacity: 1;
+			margin-right: 10px; height: 28px; line-height: 26px; padding: 0px 10px; border-radius: 6px;
 		}
-		.btn:hover { color: $colorBlack; }
 		.btn:last-child { margin: 0px; }
+		.btn:hover { background: #f3f2ec; }
 		.btn {
 			.icon { width: 16px; height: 16px; margin-right: 6px; }
 		}
-		
 		.btn.addIcon {
 			.icon { background-image: url('~img/icon/add/icon0.svg'); }
 		}
-		.btn.addIcon:hover {
-			.icon { background-image: url('~img/icon/add/icon1.svg'); }
-		}
-		
 		.btn.addCover {
 			.icon { background-image: url('~img/icon/add/cover0.svg'); }
-		}
-		.btn.addCover:hover {
-			.icon { background-image: url('~img/icon/add/cover1.svg'); }
 		}
 	}
 	.editorControls:hover {
@@ -62,15 +54,12 @@
 	}
 }
 
-.editorWrapper.withCover { padding-top: 288px; }
+.editorWrapper.withCover { padding-top: 394px; }
 .editorWrapper.withCover {
-	.editorControls { height: 326px; }
-	.editorControls {
-		.btn.addCover { display: none; }
-	}
+	.editorControls { display: none; }
 }
 
-.editorWrapper.withIconAndCover { padding-top: 224px; }
+.editorWrapper.withIconAndCover { padding-top: 394px; }
 .editorWrapper.withIconAndCover {
 	.editorControls { display: none; }
 }
