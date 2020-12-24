@@ -158,6 +158,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 
+		if (v == view.name) {
+			return;
+		};
+
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, name: v });
