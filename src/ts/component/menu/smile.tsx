@@ -101,7 +101,7 @@ class MenuSmile extends React.Component<Props, State> {
 				) : ''}
 				
 				<form className={[ 'filter', (!noHead ? 'withHead' : '') ].join(' ')} onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilterClick')} value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 				</form>
 				
 				<div className="items">

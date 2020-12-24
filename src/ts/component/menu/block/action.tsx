@@ -67,7 +67,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return (
 			<div>
 				<div className="filter">
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilterClick')} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				</div>
 				
 				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
