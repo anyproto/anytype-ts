@@ -57,9 +57,7 @@ class MenuSmile extends React.Component<Props, State> {
 		const Item = (item: any) => {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
-					<div className="iconObject">
-						<IconObject size={32} object={{ iconEmoji: SmileUtil.nativeById(item.smile, item.skin) }} />
-					</div>
+					<IconObject size={32} object={{ iconEmoji: SmileUtil.nativeById(item.smile, item.skin) }} />
 				</div>
 			);
 		};

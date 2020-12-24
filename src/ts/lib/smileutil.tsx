@@ -83,7 +83,6 @@ class SmileUtil {
 				uni = skinItem.unified;
 			};
 		};
-
 		return this.unifiedToNative(uni);
 	};
 
@@ -100,16 +99,19 @@ class SmileUtil {
 	};
 
 	srcFromColons (colons: string, skin: number) {
-		let parts = colons.split('::');
-		if (parts.length > 1) {
-			parts[1] = parts[1].replace('skin-tone-', 'type-');
-		} else
-		if (skin) {
-			parts.push('type-' + skin);
+		const parts = colons.split('::');
+		const id = parts[0].replace(/:/g, '');
+		const item = EmojiData.emojis[id];
+		const div = '-200d-';
+
+		let code: any = String(item.unified || item.b || '').toLowerCase().replace(/-fe0f$/, '');
+		if (item.skin_variations && (skin > 1)) {
+			code = code.split(div);
+			code[0] = [ code[0], SKINS[(skin - 1)].toLowerCase() ].join('-');
+			code = code.join(div);
 		};
 
-		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
-		return `./img/emoji/${src}.png`;
+		return `./img/emoji/${code}.png`;
 	};
 
 	data (icon: string) {
