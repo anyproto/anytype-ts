@@ -30,7 +30,8 @@ const Size = {
 	40: 24,
 	48: 24,
 	64: 32,
-	96: 96,
+	96: 64,
+	128: 64,
 };
 
 class IconObject extends React.Component<Props, {}> {
@@ -57,10 +58,12 @@ class IconObject extends React.Component<Props, {}> {
 				switch (objectType.layout) {
 					default:
 					case I.ObjectLayout.Page:
+						cn.push('isPage');
 						icon = <IconEmoji {...this.props} className={'c' + size} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 						break;
 
 					case I.ObjectLayout.Contact:
+						cn.push('isUser');
 						icon = <IconUser className={'c' + size} {...this.props} name={name} avatar={iconImage} />;
 						break;
 
@@ -71,21 +74,22 @@ class IconObject extends React.Component<Props, {}> {
 
 			case 'image':
 				if (id) {
+					cn.push('isImage');
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={[ 'iconImage', 'c' + iconSize ].join(' ')} />;
 				} else {
+					cn.push('isFile');
 					icon = <div className={[ 'iconFile', Util.fileIcon(object), 'c' + iconSize ].join(' ')} />;
 				};
 				break;
 
 			case 'file':
+				cn.push('isFile');
 				icon = <div className={[ 'iconFile', Util.fileIcon(object), 'c' + iconSize ].join(' ')} />;
 				break;
 		};
 
 		return (
-			<div className={cn.join(' ')}>
-				{icon}
-			</div>
+			<div className={cn.join(' ')}>{icon}</div>
 		);
 	};
 	

@@ -99,7 +99,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<Controls {...this.props} readOnly={readOnly} />
+				<Controls {...this.props} readOnly={false} />
 				
 				<div className="editor">
 					<div className="blocks">
