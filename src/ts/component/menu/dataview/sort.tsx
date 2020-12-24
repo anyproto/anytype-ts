@@ -29,6 +29,7 @@ class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const sortCnt = view.sorts.length;
 		
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: 'Ascending' },
