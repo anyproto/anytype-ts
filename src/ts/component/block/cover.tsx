@@ -91,12 +91,12 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						<div id="button-add-icon" className="btn white addIcon" onClick={this.onAddIcon}>
+						<div id="cover-button-add-icon" className="btn white addIcon" onClick={this.onAddIcon}>
 							<Icon />
 							<div className="txt">{translate('editorControlIcon')}</div>
 						</div>
 
-						<div id="button-cover-edit" className="btn white addCover" onClick={this.onMenu}>
+						<div id="cover-button-edit-cover" className="btn white addCover" onClick={this.onMenu}>
 							<Icon />
 							<div className="txt">{translate('blockCoverUpdate')}</div>
 						</div>
@@ -163,10 +163,10 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		commonStore.menuOpen('smile', { 
-			element: '#button-add-icon',
+			element: '#cover-button-add-icon',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
-			offsetY: 4,
+			offsetY: 17,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
@@ -208,7 +208,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		focus.clear(true);
 		commonStore.menuOpen('blockCover', {
-			element: '#button-cover-edit',
+			element: '#cover-button-edit-cover',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 17,
