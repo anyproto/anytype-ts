@@ -50,7 +50,7 @@ class MenuObjectValues extends React.Component<Props> {
 		const ItemAdd = SortableElement((item: any) => (
 			<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, { id: 'add' }); }} onClick={this.onAdd}>
 				<Icon className="plus" />
-				<div className="name">Add from featured</div>
+				<div className="name">Add</div>
 			</div>
 		));
 		

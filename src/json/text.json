@@ -9,7 +9,7 @@
 	"commonTitle": { "en": "anytype" },
 	"commonSearch": { "en": "Search..." },
 	"commonSearchButton": { "en": "Search" },
-	"commonFilter": { "en": "Click to filter..." },
+	"commonFilterClick": { "en": "Click to filter" },
 	"commonFilterEmpty": { "en": "No items match filter" },
 	"commonHome": { "en": "Home" },
 	"commonSubmit": { "en": "Submit" },
