@@ -43,7 +43,7 @@ class IconObject extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { object, className, size } = this.props;
+		const { object, className, size, onClick } = this.props;
 		const { id, name, iconEmoji, iconImage, iconClass } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'iconObject', type, 'c' + size ];
@@ -91,7 +91,7 @@ class IconObject extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className={cn.join(' ')}>{icon}</div>
+			<div className={cn.join(' ')} onClick={onClick}>{icon}</div>
 		);
 	};
 	
