@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.block.blockCover { position: absolute; left: 24px; top: 0px; height: 296px; width: calc(100% - 48px); }
+.block.blockCover { position: absolute; left: 24px; top: 38px; height: 312px; width: calc(100% - 48px); border-radius: 4px; overflow: hidden; }
 .block.blockCover {
 	.wrapMenu { display: none; }
 	.wrapContent { position: relative; z-index: 1; width: 100%; height: 100%; }
@@ -78,10 +78,25 @@
 	}
 }
 
+.editorWrapper.withIcon {
+	.block.blockCover {
+		.elements {
+			.btn.addIcon { display: none; }
+		}
+	}
+}
+
 .editorWrapper.withIconAndCover {
+	.block.blockCover {
+		.elements {
+			.btn.addIcon { display: none; }
+		}
+	}
+
 	.block.blockCover.align0 {
 		.elements {
-			.buttons { left: 80px; }
+			.buttons { left: 118px; }
+			.btn.addIcon { display: none; }
 		}
 	}
 }

@@ -18,12 +18,10 @@
 	
 	.editorControls { position: absolute; width: inherit; height: 140px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
-		.sides { display: flex; width: 100%; position: absolute; bottom: 0px; }
-		.side { width: 50%; }
-		.side.right { text-align: right; }
+		.buttons { width: 100%; position: absolute; bottom: 0px; opacity: 0; transition: $transitionFast; }
 		
 		.btn { 
-			background: #fff; font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast; opacity: 1;
+			background: #fff; font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast;
 			margin-right: 10px; height: 28px; line-height: 26px; padding: 0px 10px; border-radius: 6px;
 		}
 		.btn:last-child { margin: 0px; }
@@ -39,27 +37,26 @@
 		}
 	}
 	.editorControls:hover {
-		.btn { opacity: 1; }
+		.buttons { opacity: 1; }
 	}
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
+.editorWrapper.withIcon { padding-top: 122px; }
 .editorWrapper.withIcon {
-	.editorControls { height: 156px; }
+	.editorControls { height: 188px; }
 	.editorControls {
+		.buttons { padding-left: 118px; }
 		.btn.addIcon { display: none; }
-	}
-	.editorControls.align0 {
-		.side.left { padding-left: 80px; }
 	}
 }
 
-.editorWrapper.withCover { padding-top: 394px; }
+.editorWrapper.withCover { padding-top: 356px; }
 .editorWrapper.withCover {
 	.editorControls { display: none; }
 }
 
-.editorWrapper.withIconAndCover { padding-top: 394px; }
+.editorWrapper.withIconAndCover { padding-top: 232px; }
 .editorWrapper.withIconAndCover {
 	.editorControls { display: none; }
 }

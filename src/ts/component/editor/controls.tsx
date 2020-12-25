@@ -51,17 +51,15 @@ class Controls extends React.Component<Props, {}> {
 				onMouseOver={this.onOver}
 				onMouseOut={this.onOut}
 			>
-				<div className="sides">
-					<div className="side left">
-						<div id="button-add-icon" className="btn addIcon" onClick={this.onAddIcon}>
-							<Icon />
-							<div className="txt">{translate('editorControlIcon')}</div>
-						</div>
+				<div className="buttons">
+					<div id="button-add-icon" className="btn addIcon" onClick={this.onAddIcon}>
+						<Icon />
+						<div className="txt">{translate('editorControlIcon')}</div>
+					</div>
 
-						<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
-							<Icon />
-							<div className="txt">{translate('editorControlCover')}</div>
-						</div>
+					<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
+						<Icon />
+						<div className="txt">{translate('editorControlCover')}</div>
 					</div>
 				</div>
 			</div>
