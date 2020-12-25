@@ -16,6 +16,8 @@ interface Props {
 	offsetX?: number;
 	offsetY?: number;
 	menuId?: string;
+	tooltip?: string;
+	tooltipY?: I.MenuDirection;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;

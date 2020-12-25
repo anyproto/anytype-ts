@@ -42,11 +42,13 @@
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
+/* Page */
+
 .editorWrapper.withIcon { padding-top: 122px; }
 .editorWrapper.withIcon {
 	.editorControls { height: 188px; }
 	.editorControls {
-		.buttons { padding-left: 118px; }
+		.buttons { padding-left: 116px; }
 		.btn.addIcon { display: none; }
 	}
 }
@@ -61,17 +63,21 @@
 	.editorControls { display: none; }
 }
 
-.editorWrapper.isContact.withIcon { padding-top: 56px; }
+/* Contact */
+
+.editorWrapper.isContact.withIcon { padding-top: 122px; }
 .editorWrapper.isContact.withIcon {
-	.editorControls { height: 112px; }
+	.editorControls { height: 240px; }
 	.editorControls { 
-		.side.left { padding-left: 112px; }
+		.buttons { padding-left: 148px; }
 	}
 }
 .editorWrapper.isContact.withIconAndCover { padding-top: 190px; }
 
-.editorWrapper.isDataview { width: calc(100% - 192px); }
-.editorWrapper.isDataview {
+/* Set */
+
+.editorWrapper.isSet { width: calc(100% - 192px); }
+.editorWrapper.isSet {
 	.blocks { margin-left: 0px; }
 	.blocks {
 		.block {

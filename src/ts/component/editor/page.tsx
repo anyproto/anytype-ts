@@ -84,7 +84,7 @@ class EditorPage extends React.Component<Props, {}> {
 			cn.push('isContact');
 		} else 
 		if (root.isPageSet()) {
-			cn.push('isDataview');
+			cn.push('isSet');
 		};
 		
 		if (check.withIcon && check.withCover) {

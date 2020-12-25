@@ -65,7 +65,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		};
 
 		if (root && root.isPageSet()) {
-			cn.push('isDataview');
+			cn.push('isSet');
 		};
 		
 		icon = new M.Block(icon);

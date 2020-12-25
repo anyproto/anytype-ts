@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconUser, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
+import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { commonStore, blockStore} from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, SmileUtil, translate, Storage, crumbs } from 'ts/lib';
@@ -57,7 +57,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 						
 						<div className="rightMenu">
 							<Icon id="button-account" menuId="account" className="profile" tooltip="Accounts" onClick={this.onAccount} />
-							<IconUser className="c64" avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
+							<IconObject object={details} size={64} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
