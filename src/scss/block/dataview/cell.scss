@@ -36,7 +36,7 @@
 
 .cell.isEditing.c-object {
 	.empty { display: block; }
-	.cellContent { height: 20px !important; }
+	.cellContent { height: 20px !important; padding-right: 0px !important; }
 	.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 }
 
