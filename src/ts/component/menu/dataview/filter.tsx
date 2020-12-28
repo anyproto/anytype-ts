@@ -44,6 +44,10 @@ class MenuFilter extends React.Component<Props, {}> {
 		const view = getView();
 		const filterCnt = view.filters.length;
 
+		for (let filter of view.filters) {
+			const { relationKey, condition, value } = filter;
+		};
+
 		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
@@ -121,6 +125,8 @@ class MenuFilter extends React.Component<Props, {}> {
 					);
 					break;
 			};
+
+			console.log(item.condition);
 
 			if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
 				value = null;

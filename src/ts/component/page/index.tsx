@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Util, Storage, analytics, keyboard, DataUtil } from 'ts/lib';
+import { Util, Storage, analytics, keyboard } from 'ts/lib';
 import { authStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -54,6 +55,7 @@ class Page extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
+		const { config } = commonStore;
 		
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
