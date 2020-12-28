@@ -30,11 +30,12 @@
 
 	.menu.menuDataviewObjectValues { width: 288px; }
 	.menu.menuDataviewObjectValues {
+		.item { padding: 4px 16px 4px 10px; }
 		.item {
-			.name { width: calc(100% - 132px) !important; }
+			.name { @include text-overflow-nw; width: calc(100% - 132px) !important; }
 
 			.icon.delete { 
-				width: 24px; height: 24px; background-size: 20px; right: 14px; margin-top: -12px; border-radius: 4px; 
+				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
 				opacity: 0; z-index: 1;
 			}
 			.icon.delete:hover { background-color: rgba(172, 169, 150, 0.15); }

@@ -37,7 +37,7 @@
 .cell.isEditing.c-object {
 	.empty { display: block; }
 	.cellContent { height: 20px !important; }
-	.wrap { height: 100%; overflow: hidden; }
+	.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 }
 
 .cellContent { cursor: default; border-radius: 4px; }
