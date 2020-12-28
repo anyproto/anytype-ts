@@ -78,6 +78,8 @@
 	}
 }
 
+/* Page */
+
 .editorWrapper.withIcon {
 	.block.blockCover {
 		.elements {
@@ -95,11 +97,17 @@
 
 	.block.blockCover.align0 {
 		.elements {
-			.buttons { left: 116px; }
-			.btn.addIcon { display: none; }
+			.buttons { padding-left: 116px; }
+		}
+	}
+	.block.blockCover.align1 {
+		.elements {
+			.buttons { left: 50%; padding-left: 68px; }
 		}
 	}
 }
+
+/* Contact */
 
 .editorWrapper.isContact.withIconAndCover {
 	.block.blockCover.align0 {
@@ -107,7 +115,14 @@
 			.buttons { left: 112px; }
 		}
 	}
+	.block.blockCover.align1 {
+		.elements {
+			.buttons { left: 50%; padding-left: 84px; bottom: 30px; }
+		}
+	}
 }
+
+/* Set */
 
 .editorWrapper.isSet {
 	.block.blockCover {

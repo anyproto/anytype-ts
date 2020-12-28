@@ -374,18 +374,28 @@ class EditorPage extends React.Component<Props, {}> {
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
 		const check = DataUtil.checkDetails(rootId);
+		const buttonOffset = 10;
 
-		let offset = 144;
+		let offset = 140;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
-		
-		if (check.withCover && check.withIcon) {
-			offset = 328;
+
+		if (check.withIcon && check.withCover) {
+			offset = 366;
 		} else
 		if (check.withIcon) {
-			offset = 194;
+			offset = 256;
+		} else
+		if (check.withCover) {
+			offset = 394;
 		};
-		
+
+		if (root.isPageContact()) {
+		};
+
+		if (root.isPageTask()) {
+		};
+
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
@@ -423,11 +433,11 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
+		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + buttonOffset) && (pageY <= st + rectContainer.height + offset + buttonOffset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
 			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-			let ay = pageY - rectContainer.y - 10 - st;
+			let ay = pageY - rectContainer.y - buttonOffset - st;
 			
 			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');

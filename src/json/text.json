@@ -99,7 +99,7 @@
 	"indexHi": { "en": "Hi, %s" },
 
 	"editorControlIcon": { "en": "Add icon" },
-	"editorControlCover": { "en": "Add cover image" },
+	"editorControlCover": { "en": "Add cover" },
 
 	"setTitle": { "en": "New set" },
 	"setText": { "en": "Choose an object type for this set" },

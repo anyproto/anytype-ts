@@ -18,7 +18,7 @@
 	
 	.editorControls { position: absolute; width: inherit; height: 140px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
-		.buttons { width: 100%; position: absolute; bottom: 0px; opacity: 0; transition: $transitionFast; }
+		.buttons { position: absolute; bottom: 0px; opacity: 0; transition: $transitionFast; }
 		
 		.btn { 
 			background: #fff; font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast;
@@ -51,6 +51,9 @@
 		.buttons { padding-left: 116px; }
 		.btn.addIcon { display: none; }
 	}
+	.editorControls.align1 {
+		.buttons { left: 50%; padding-left: 68px; }
+	}
 }
 
 .editorWrapper.withCover { padding-top: 356px; }
@@ -71,8 +74,11 @@
 	.editorControls { 
 		.buttons { padding-left: 148px; }
 	}
+	.editorControls.align1 {
+		.buttons { left: 50%; padding-left: 84px; }
+	}
 }
-.editorWrapper.isContact.withIconAndCover { padding-top: 190px; }
+.editorWrapper.isContact.withIconAndCover { padding-top: 208px; }
 
 /* Set */
 
