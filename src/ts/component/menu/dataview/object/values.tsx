@@ -57,10 +57,10 @@ class MenuObjectValues extends React.Component<Props> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
+					<ItemAdd index={0} disabled={true} />
 					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} index={i} />
+						<Item key={i + 1} {...item} index={i + 1} />
 					))}
-					<ItemAdd index={items.length + 1} disabled={true} />
 				</div>
 			);
 		});

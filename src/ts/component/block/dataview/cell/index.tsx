@@ -227,7 +227,7 @@ class Cell extends React.Component<Props, {}> {
 					types: relation.objectTypes,
 				});
 
-				menuId = value.length ? 'dataviewObjectValues' : 'dataviewObjectList';
+				menuId = 'dataviewObjectValues';
 				break;
 
 			case I.RelationType.Description:
