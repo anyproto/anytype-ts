@@ -18,9 +18,6 @@ class MenuButton extends React.Component<Props, {}> {
 	
 	render () {
 		const items = this.getItems();
-
-		console.log(items);
-		
 		return (
 			<div className="items">
 				{items.map((item: any, i: number) => (

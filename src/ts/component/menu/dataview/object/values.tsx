@@ -83,6 +83,11 @@ class MenuObjectValues extends React.Component<Props> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
+
+		const items = this.getItems();
+		if (!items.length) {
+			this.onAdd();
+		};
 	};
 
 	componentDidUpdate () {
@@ -141,7 +146,7 @@ class MenuObjectValues extends React.Component<Props> {
 		};
 	};
 
-	onAdd (e: any) {
+	onAdd () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const { param } = this.props;
 		const { data } = param;
@@ -191,8 +196,6 @@ class MenuObjectValues extends React.Component<Props> {
 			return;
 		};
 
-		console.log('AAA');
-		
 		e.preventDefault();
 		e.stopPropagation();
 		

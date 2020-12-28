@@ -304,7 +304,6 @@ class Cell extends React.Component<Props, {}> {
 			commonStore.menuCloseAll(menuIds);
 			window.setTimeout(() => {
 				commonStore.menuOpen(menuId, param); 
-				console.log(pageContainer, $(pageContainer));
 				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
 			}, 10);
 		} else {

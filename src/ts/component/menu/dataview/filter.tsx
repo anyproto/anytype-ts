@@ -126,8 +126,6 @@ class MenuFilter extends React.Component<Props, {}> {
 					break;
 			};
 
-			console.log(item.condition);
-
 			if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
 				value = null;
 			};
