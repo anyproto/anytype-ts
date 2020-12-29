@@ -38,6 +38,11 @@
 				}
 			}
 
+			.cell.c-object, .cell.c-file { padding-right: 0px; }
+			.cellContent.c-object {
+				.wrap { white-space: nowrap; }
+			}
+
 			tr.active {
 				.cellContent.isName {
 					.icon.expand { opacity: 1; }
