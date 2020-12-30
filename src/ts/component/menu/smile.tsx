@@ -54,13 +54,15 @@ class MenuSmile extends React.Component<Props, State> {
 		const sections = this.getSections();
 		const items = this.getItems();
 
-		const Item = (item: any) => {
-			return (
-				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
-					<IconObject size={32} object={{ iconEmoji: SmileUtil.nativeById(item.smile, item.skin) }} />
-				</div>
-			);
+		if (!this.cache) {
+			return null;
 		};
+
+		const Item = (item: any) => (
+			<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
+				<IconObject size={32} object={{ iconEmoji: SmileUtil.nativeById(item.smile, item.skin) }} />
+			</div>
+		);
 		
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -145,28 +147,27 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const items = this.getItems();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_SECTION,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
-		});
-
 		this.skin = Number(Storage.get('skin')) || 1; 
+
+		if (!this.cache) {
+			const items = this.getItems();
+			this.cache = new CellMeasurerCache({
+				fixedWidth: true,
+				defaultHeight: HEIGHT_SECTION,
+				keyMapper: (i: number) => { return (items[i] || {}).id; },
+			});
+			this.forceUpdate();
+		};
 
 		window.setTimeout(() => {
 			if (this.ref) {
 				this.ref.focus();
-				keyboard.setFocus(true);
 			};
 		}, 15);
 	};
 	
 	componentDidUpdate () {
 		const node = $(ReactDOM.findDOMNode(this));
-		
-		keyboard.setFocus(true);
 		
 		if (this.id) {
 			node.find('#item-' + this.id).addClass('active');
