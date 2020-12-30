@@ -925,7 +925,7 @@ class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutClick);
 
 		this.clicks++;
-		if (this.clicks == 3) {
+		if (selection && (this.clicks == 3)) {
 			e.preventDefault();
 			e.stopPropagation();
 			
