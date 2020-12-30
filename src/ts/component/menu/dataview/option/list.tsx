@@ -103,13 +103,13 @@ class MenuOptionList extends React.Component<Props> {
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 
 		commonStore.menuOpen('dataviewOptionEdit', { 
 			type: I.MenuType.Vertical,
-			element: '#tag-' + item.id,
-			offsetX: param.width,
+			element: '#' + getId() + ' #tag-' + item.id,
+			offsetX: 288,
 			offsetY: 0,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,

@@ -118,7 +118,8 @@ class Cell extends React.Component<Props, {}> {
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
 		const menuIds = [ 
-			'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewObjectValues', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar',
+			'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewObjectValues', 'dataviewOptionValues', 
+			'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar',
 		];
 
 		let menuId = '';
@@ -214,7 +215,7 @@ class Cell extends React.Component<Props, {}> {
 					value: value || [],
 				});
 
-				menuId = 'dataviewOptionList';
+				menuId = 'dataviewOptionValues';
 				break;
 					
 			case I.RelationType.Object:

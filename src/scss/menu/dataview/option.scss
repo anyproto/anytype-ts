@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
+	.menu.menuDataviewOptionList { width: 288px; }
 	.menu.menuDataviewOptionList {
 		.content { max-height: 250px; }
 		.item { padding: 5px 10px; }

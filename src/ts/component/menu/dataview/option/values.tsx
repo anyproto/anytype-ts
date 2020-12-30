@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject } from 'ts/component';
+import { Icon, Tag } from 'ts/component';
 import { I, Util, DataUtil, keyboard, Key, translate } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore, blockStore, dbStore } from 'ts/store';
@@ -12,7 +12,7 @@ interface Props extends I.Menu {};
 const $ = require('jquery');
 
 @observer
-class MenuObjectValues extends React.Component<Props> {
+class MenuOptionValues extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
 	n: number = 0;
@@ -33,15 +33,10 @@ class MenuObjectValues extends React.Component<Props> {
 		));
 
 		const Item = SortableElement((item: any) => {
-			const objectType: any = dbStore.getObjectType(item.type) || {};
 			return (
 				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />
-					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-						<IconObject object={item} />
-						<div className="name">{item.name}</div>
-					</span>
-					<div className="caption">{objectType.name}</div>
+					<Tag {...item} />
 					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 				</div>
 			);
@@ -112,11 +107,13 @@ class MenuObjectValues extends React.Component<Props> {
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const relation = data.relation.get();
 
 		let value = this.getValue();
-		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
-		value = value.filter((it: any) => { return !it._detailsEmpty_; });
+		value = value.map((id: string, i: number) => { 
+			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+		});
+		value = value.filter((it: any) => { return it && it.id; });
 		return value;
 	};
 
@@ -129,10 +126,6 @@ class MenuObjectValues extends React.Component<Props> {
 			value = [];
 		};
 		return Util.objectCopy(value);
-	};
-
-	onClick (e: any, item: any) {
-		DataUtil.objectOpen(e, item);
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {
@@ -150,7 +143,7 @@ class MenuObjectValues extends React.Component<Props> {
 		const { param, getId } = this.props;
 		const { data } = param;
 
-		commonStore.menuOpen('dataviewObjectList', {
+		commonStore.menuOpen('dataviewOptionList', {
 			...param,
 			element: '#' + getId() + ' #item-add',
 			width: 0,
@@ -161,6 +154,9 @@ class MenuObjectValues extends React.Component<Props> {
 				rebind: this.rebind,
 			},
 		});
+	};
+
+	onClick (e: any, item: any) {
 	};
 
 	onRemove (e: any, item: any) {
@@ -244,4 +240,4 @@ class MenuObjectValues extends React.Component<Props> {
 	
 };
 
-export default MenuObjectValues;
+export default MenuOptionValues;
