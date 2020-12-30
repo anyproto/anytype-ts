@@ -172,7 +172,9 @@ class MenuObjectValues extends React.Component<Props> {
 		value = value.filter((it: any) => { return it != item.id; });
 		value = Util.arrayUnique(value);
 
+		this.n = -1;
 		this.props.param.data.value = value;
+
 		onChange(value);
 	};
 	
