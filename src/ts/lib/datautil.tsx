@@ -336,6 +336,14 @@ class DataUtil {
 			{ key: 'coverScale', value: scale },
 		], callBack);
 	};
+
+	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
+		done = Boolean(done);
+		
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'done', value: done },
+		], callBack);
+	};
 	
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		if (!block) {

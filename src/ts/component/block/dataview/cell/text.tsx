@@ -32,6 +32,7 @@ class CellText extends React.Component<Props, State> {
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -136,6 +137,7 @@ class CellText extends React.Component<Props, State> {
 						id={[ relation.relationKey, record.id ].join('-')} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload}
+						onCheckbox={this.onCheckbox}
 						size={size} 
 						canEdit={canEdit} 
 						offsetY={4} 
@@ -271,6 +273,13 @@ class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		DataUtil.pageSetIcon(record.id, '', hash);
+	};
+
+	onCheckbox () {
+		const { index, getRecord } = this.props;
+		const record = getRecord(index);
+
+		DataUtil.pageSetDone(record.id, !record.done);
 	};
 
 };

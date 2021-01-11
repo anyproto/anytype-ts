@@ -51,7 +51,7 @@ class IconObject extends React.Component<Props, {}> {
 	
 	render () {
 		const { object, className, size, canEdit, onClick } = this.props;
-		const { id, name, iconEmoji, iconImage, iconClass } = object || {};
+		const { id, name, iconEmoji, iconImage, iconClass, done } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'iconObject', type, 'c' + size ];
 		const icn = [];
@@ -79,7 +79,7 @@ class IconObject extends React.Component<Props, {}> {
 
 					case I.ObjectLayout.Task:
 						icn.push('iconCheckbox');
-						if (object.done) {	
+						if (done) {	
 							icn.push('isActive');
 						};
 						if (canEdit) {	
