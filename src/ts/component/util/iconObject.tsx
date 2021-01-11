@@ -20,6 +20,7 @@ interface Props {
 	tooltipY?: I.MenuDirection;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
+	onCheckbox?(): void;
 	onClick?(e: any): void;
 };
 
@@ -41,12 +42,19 @@ class IconObject extends React.Component<Props, {}> {
 	public static defaultProps = {
 		size: 20,
 	};
+
+	constructor (props: any) {
+		super(props);
+
+		this.onCheckbox = this.onCheckbox.bind(this);
+	};
 	
 	render () {
-		const { object, className, size, onClick } = this.props;
+		const { object, className, size, canEdit, onClick } = this.props;
 		const { id, name, iconEmoji, iconImage, iconClass } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'iconObject', type, 'c' + size ];
+		const icn = [];
 		const objectType: any = type ? (dbStore.getObjectType(object.type) || {}) : {};
 		const iconSize = Size[size];
 
@@ -70,6 +78,14 @@ class IconObject extends React.Component<Props, {}> {
 						break;
 
 					case I.ObjectLayout.Task:
+						icn.push('iconCheckbox');
+						if (object.done) {	
+							icn.push('isActive');
+						};
+						if (canEdit) {	
+							icn.push('canEdit');
+						};
+						icon = <div className={icn.join(' ')} onClick={this.onCheckbox} />
 						break;
 				};
 				break;
@@ -93,6 +109,13 @@ class IconObject extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')} onClick={onClick}>{icon}</div>
 		);
+	};
+
+	onCheckbox (e: any) {
+		const { canEdit, onCheckbox } = this.props;
+		if (canEdit && onCheckbox) {
+			onCheckbox();
+		};
 	};
 	
 };

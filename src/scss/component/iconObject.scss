@@ -2,16 +2,16 @@
 
 .iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; border-radius: 3px; }
 .iconObject {
-	.iconEmoji, .iconImage, .iconFile, .iconUser { width: 100%; height: 100%; transition: none; vertical-align: top; }
-	.iconImage { border-radius: inherit; background-size: cover; object-fit: cover; }
+	.iconEmoji, .iconImage, .iconFile, .iconUser, .iconCheckbox { width: 100%; height: 100%; transition: none; vertical-align: top; }
+	.iconImage, .iconCheckbox { border-radius: inherit; background-size: cover; object-fit: cover; }
 
-	.smileImage.c18, .iconImage.c18, .iconFile.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
-	.smileImage.c20, .iconImage.c20, .iconFile.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
-	.smileImage.c22, .iconImage.c22, .iconFile.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
-	.smileImage.c24, .iconImage.c24, .iconFile.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
-	.smileImage.c28, .iconImage.c28, .iconFile.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
-	.smileImage.c32, .iconImage.c32, .iconFile.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
-	.smileImage.c64, .iconImage.c64, .iconFile.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
+	.smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
+	.smileImage.c20, .iconImage.c20, .iconFile.c20, .iconCheckbox.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+	.smileImage.c22, .iconImage.c22, .iconFile.c22, .iconCheckbox.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
+	.smileImage.c24, .iconImage.c24, .iconFile.c24, .iconCheckbox.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+	.smileImage.c28, .iconImage.c28, .iconFile.c28, .iconCheckbox.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
+	.smileImage.c32, .iconImage.c32, .iconFile.c32, .iconCheckbox.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+	.smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
 
 	.iconFile { background-repeat: no-repeat; background-position: center center; background-size: 100%; }
 	.iconFile.other { background-image: url('~img/icon/file/other.svg') !important; }
@@ -23,6 +23,9 @@
 	.iconFile.pdf { background-image: url('~img/icon/file/pdf.svg') !important; }
 	.iconFile.presentation { background-image: url('~img/icon/file/presentation.svg') !important; }
 	.iconFile.table { background-image: url('~img/icon/file/table.svg') !important; }
+
+	.iconCheckbox { background-image: url('~img/icon/object/checkbox0.svg'); }
+	.iconCheckbox.isActive { background-image: url('~img/icon/object/checkbox1.svg'); }
 
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
 	.iconEmoji {
@@ -84,6 +87,8 @@
 		.emoji-mart-emoji { margin: -1px 0px 0px 0px; font-size: 36px; height: 1em; line-height: 1em; }
 		.emoji-mart-emoji { span { height: 36px; line-height: 36px; } }
 	}
+
+	.iconEmoji.iconCheckbox.canEdit { cursor: pointer; }
 
 	.iconEmoji.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }
 	.iconEmoji.canEdit.c48:hover, .iconEmoji.canEdit.c64:hover { background-color: #ebe9e0; }
