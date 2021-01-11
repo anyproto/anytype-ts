@@ -53,7 +53,11 @@ class MenuFilter extends React.Component<Props, {}> {
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
 		
-		const relationOptions: I.Option[] = view.relations.map((it: I.ViewRelation) => {
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation.format != I.RelationType.File; 
+		});
+		const relationOptions: I.Option[] = relations.map((it: I.ViewRelation) => {
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return { 
 				id: it.relationKey, 

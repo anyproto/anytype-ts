@@ -36,7 +36,11 @@ class MenuSort extends React.Component<Props, {}> {
 			{ id: String(I.SortType.Desc), name: 'Descending' },
 		];
 		
-		const relationOptions: any[] = view.relations.map((it: I.ViewRelation) => {
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation.format != I.RelationType.File; 
+		});
+		const relationOptions: any[] = relations.map((it: I.ViewRelation) => {
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return { 
 				id: relation.relationKey, 
