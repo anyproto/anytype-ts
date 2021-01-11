@@ -3,8 +3,12 @@
 .menus {
 	.menu.menuDataviewOptionList { width: 288px; }
 	.menu.menuDataviewOptionList {
-		.content { max-height: 250px; }
-		.item { padding: 5px 10px; }
+		.content { transition: none; padding-bottom: 0px; }
+		.content {
+			.wrap { height: 100%; display: flex; flex-direction: column; }
+		}
+
+		.items { height: calc(100% - 34px); }
 		.item:hover::before { opacity: 0.15; }
 		.tagItem { vertical-align: top; margin-top: 1px; }
 		.icon.more { position: absolute; right: 14px; top: 50%; margin-top: -10px; }

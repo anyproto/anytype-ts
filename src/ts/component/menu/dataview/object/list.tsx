@@ -312,7 +312,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		data.value = value;
 
-		this.updateMenu({ value: value });
+		commonStore.menuUpdateData(MENU_ID, { value: value });
 		onChange(value);
 
 		position();
@@ -330,16 +330,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const input = node.find('#filter-input');
 
 		input.attr({ placeHolder: translate('commonFilterClick') });
-	};
-
-	updateMenu (param: any) {
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
-
-		if (menu) {
-			menu.param.data = Object.assign(menu.param.data, param);
-			commonStore.menuUpdate(MENU_ID, menu.param);
-		};
 	};
 
 	resize () {

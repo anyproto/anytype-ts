@@ -169,6 +169,8 @@ class MenuOptionValues extends React.Component<Props> {
 		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;
+		commonStore.menuUpdateData('dataviewOptionList', { value: value });
+
 		onChange(value);
 	};
 	

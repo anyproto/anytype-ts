@@ -720,7 +720,7 @@ const BlockDataviewRelationDelete = (contextId: string, blockId: string, key: st
 	dispatcher.request('blockDataviewRelationDelete', request, callBack);
 };
 
-const BlockDataviewRelationSelectOptionAdd = (contextId: string, blockId: string, key: string, option: I.SelectOption, callBack?: (message: any) => void) => {
+const BlockDataviewRelationSelectOptionAdd = (contextId: string, blockId: string, key: string, option: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RelationSelectOptionAdd.Request();
 	
 	request.setContextid(contextId);

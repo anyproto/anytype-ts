@@ -119,7 +119,7 @@ class Cell extends React.Component<Props, {}> {
 		const value = record[relation.relationKey] || '';
 		const menuIds = [ 
 			'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewObjectValues', 'dataviewOptionValues', 
-			'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar',
+			'dataviewOptionList', 'dataviewOptionEdit', 'dataviewMedia', 'dataviewCalendar',
 		];
 
 		let menuId = '';

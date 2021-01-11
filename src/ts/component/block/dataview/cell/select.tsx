@@ -119,7 +119,7 @@ class CellSelect extends React.Component<Props, State> {
 			filter.text('');
 		});
 
-		this.updateMenu({ filter: text });
+		commonStore.menuUpdateData(MENU_ID, { filter: text });
 	};
 
 	onRemove (e: any, id: string) {
@@ -127,16 +127,6 @@ class CellSelect extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		this.remove(id);
-	};
-
-	updateMenu (param: any) {
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
-
-		if (menu) {
-			menu.param.data = Object.assign(menu.param.data, param);
-			commonStore.menuUpdate(MENU_ID, menu.param);
-		};
 	};
 
 	getValue () {
@@ -164,7 +154,7 @@ class CellSelect extends React.Component<Props, State> {
 			value = Util.arrayUnique(value);
 
 			onChange(value);
-			this.updateMenu({ 
+			commonStore.menuUpdateData(MENU_ID, { 
 				value: value, 
 				relation: observable.box(relation),
 			});
@@ -198,7 +188,7 @@ class CellSelect extends React.Component<Props, State> {
 		value = value.filter((it: string) => { return it != id; });
 		value = Util.arrayUnique(value);
 
-		this.updateMenu({ value: value });
+		commonStore.menuUpdateData(MENU_ID, { value: value });
 		onChange(value);
 	};
 

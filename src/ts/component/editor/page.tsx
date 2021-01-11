@@ -635,7 +635,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 	};
 
-	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
+	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any) {
 		const { dataset, rootId } = this.props;
 		const { focused } = focus;
 		const { selection } = dataset || {};
@@ -649,6 +649,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const map = blockStore.getMap(rootId);
 		const length = String(text || '').length;
 		const menuOpen = commonStore.menuIsOpen();
+
+		range = range || {};
 
 		this.uiHide();
 		
