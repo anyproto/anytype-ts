@@ -10,10 +10,10 @@
 .select {
 	.icon { transition: none; }
 	.icon.arrow {
-		margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px; height: 20px; position: absolute; top: 50%;
-		background-image: url('~img/arrow/select/dark.svg'); 
+		margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px !important; height: 20px !important; position: absolute; top: 50%;
+		background-image: url('~img/arrow/select/dark.svg') !important; 
 	}
-	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg'); }
+	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg') !important; }
 	.current { padding: 3px 26px 3px 6px; width: 100%; line-height: 20px; }
 	.current {
 		.name { @include text-overflow-nw; }

@@ -60,7 +60,6 @@ class MenuSort extends React.Component<Props, {}> {
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div className="item add" onClick={this.onAdd}>
-				<Icon className="dnd" />
 				<Icon className="plus" />
 				<div className="name">New sort</div>
 			</div>

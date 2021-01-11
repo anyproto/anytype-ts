@@ -138,6 +138,7 @@ class MenuFilter extends React.Component<Props, {}> {
 						<Select 
 							id={[ 'filter', 'operator', item.id ].join('-')} 
 							className="operator" 
+							arrowClassName="light"
 							options={operatorOptions} 
 							value={item.operator} 
 							onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} 
@@ -147,8 +148,22 @@ class MenuFilter extends React.Component<Props, {}> {
 					) : (
 						<div className="txt">Where</div>
 					)}
-					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
-					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
+					<Select 
+						id={[ 'filter', 'relation', item.id ].join('-')} 
+						className="relation" 
+						arrowClassName="light"
+						options={relationOptions}
+						value={item.relationKey} 
+						onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
+					/>
+					<Select 
+						id={[ 'filter', 'condition', item.id ].join('-')} 
+						className="condition" 
+						arrowClassName="light"
+						options={conditionOptions} 
+						value={item.condition} 
+						onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} 
+					/>
 					{value}
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
@@ -157,7 +172,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div className="item add" onClick={this.onAdd}>
-				<Icon className="dnd" />
 				<Icon className="plus" />
 				<div className="name">New filter</div>
 			</div>
