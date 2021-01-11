@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Tag, Input } from 'ts/component';
-import { I, C, Util, DataUtil, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, keyboard, Key } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -11,17 +11,24 @@ import { observable } from 'mobx';
 
 interface Props extends I.Menu {};
 
+interface State {
+	n: number;
+};
+
 const $ = require('jquery');
 const MENU_ID = 'dataviewOptionValues';
 const HEIGHT = 28;
 const LIMIT = 20;
 
 @observer
-class MenuOptionList extends React.Component<Props> {
+class MenuOptionList extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	ref: any = null;
 	cache: any = {};
+	state = {
+		n: 0,
+	};
 	
 	constructor (props: any) {
 		super(props);
@@ -36,6 +43,7 @@ class MenuOptionList extends React.Component<Props> {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const { n } = this.state;
 		const value = data.value || [];
 		const items = this.getItems();
 
@@ -51,12 +59,12 @@ class MenuOptionList extends React.Component<Props> {
 					hasFixedWidth={() => {}}
 				>
 						{item.id == 'add' ? (
-							<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+							<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }}>
 								<Icon className="plus" />
 								<div className="name">Create option "{filter}"</div>
 							</div>
 						) : (
-							<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onSelect(e, item); }}>
+							<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
 								<Tag text={item.text} color={item.color} />
 								<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
 							</div>
@@ -91,7 +99,7 @@ class MenuOptionList extends React.Component<Props> {
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
-										scrollToIndex={0}
+										scrollToIndex={n}
 									/>
 								)}
 							</AutoSizer>
@@ -120,8 +128,12 @@ class MenuOptionList extends React.Component<Props> {
 	};
 
 	componentDidUpdate () {
+		const { n } = this.state;
+		const items = this.getItems();
+
 		this.props.position();
 		this.resize();
+		this.setActive(items[n]);
 	};
 
 	componentWillUnmount () {
@@ -147,10 +159,18 @@ class MenuOptionList extends React.Component<Props> {
 
 	rebind () {
 		this.unbind();
+
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	setActive = (item?: any, scroll?: boolean) => {
+		const items = this.getItems();
+		const { n } = this.state;
+		this.props.setHover((item ? item : items[n]), scroll);
 	};
 
 	onFilterChange (e: any, v: string) {
@@ -171,19 +191,23 @@ class MenuOptionList extends React.Component<Props> {
 		input.attr({ placeHolder: translate('commonFilterClick') });
 	};
 
-	onSelect (e: any, item: any) {
+	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onChange } = data;
-		
-		let value = Util.objectCopy(data.value || []);
-		value.push(item.id);
-		value = Util.arrayUnique(value);
 
-		this.props.param.data.value = value;
+		if (item.id == 'add') {
+			this.onAdd(e);
+		} else {
+			let value = Util.objectCopy(data.value || []);
+			value.push(item.id);
+			value = Util.arrayUnique(value);
 
-		commonStore.menuUpdateData(MENU_ID, { value: value });
-		onChange(value);
+			this.props.param.data.value = value;
+
+			commonStore.menuUpdateData(MENU_ID, { value: value });
+			onChange(value);
+		};
 	};
 
 	onAdd (e: any) {
@@ -248,6 +272,56 @@ class MenuOptionList extends React.Component<Props> {
 		};
 
 		return items;
+	};
+
+	onKeyDown (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		e.stopPropagation();
+		keyboard.disableMouse(true);
+
+		let { n } = this.state;
+		
+		const k = e.key.toLowerCase();
+		const items = this.getItems();
+		const l = items.length;
+		const item = items[n];
+
+		switch (k) {
+			case Key.up:
+				e.preventDefault();
+				n--;
+				if (n < 0) {
+					n = l - 1;
+				};
+				this.setState({ n: n });
+				this.setActive(null, true);
+				break;
+				
+			case Key.down:
+				e.preventDefault();
+				n++;
+				if (n > l - 1) {
+					n = 0;
+				};
+				this.setState({ n: n });
+				this.setActive(null, true);
+				break;
+				
+			case Key.tab:
+			case Key.enter:
+				e.preventDefault();
+				if (item) {
+					this.onClick(e, item);
+				};
+				break;
+				
+			case Key.escape:
+				this.props.close();
+				break;
+		};
 	};
 
 	resize () {
