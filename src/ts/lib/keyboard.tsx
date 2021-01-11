@@ -20,6 +20,7 @@ class Keyboard {
 	isBackDisabled: boolean = false;
 	isPinChecked: boolean = false;
 	isShiftPressed: boolean = false;
+	isContextDisabled: boolean = false;
 	
 	init (history: any) {
 		this.history = history;
@@ -242,6 +243,11 @@ class Keyboard {
 	
 	disableMouse (v: boolean) {
 		this.isMouseDisabled = v;
+	};
+
+	// Flag to prevent menuBlockContext from closing
+	disableContext (v: boolean) {
+		this.isContextDisabled = v;
 	};
 	
 	disablePreview (v: boolean) {

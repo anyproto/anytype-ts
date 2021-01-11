@@ -485,8 +485,8 @@ class DataUtil {
 		let items: any[] = [
 			{ id: 'color-black', name: 'Black', value: 'black', className: '', isTextColor: true }
 		];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, className: i, isTextColor: true });
+		for (let color of Constant.textColor) {
+			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
 		};
 		return items;
 	};
@@ -495,8 +495,8 @@ class DataUtil {
 		let items: any[] = [
 			{ id: 'color-default', name: 'Default', value: '', className: 'default', isBgColor: true }
 		];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i], value: i, className: i, isBgColor: true });
+		for (let color of Constant.textColor) {
+			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
 		};
 		return items;
 	};

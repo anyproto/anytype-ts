@@ -19,10 +19,9 @@ const Checkbox0 = require('img/icon/marker/checkbox0.svg');
 const Checkbox1 = require('img/icon/marker/checkbox1.svg');
 const Toggle = require('img/icon/marker/toggle.svg');
 
-for (let c in Constant.textColor) {
+for (let c of Constant.textColor) {
 	Bullets[c] = require(`img/icon/bullet/${c}.svg`);
 };
-
 
 class Marker extends React.Component<Props, {}> {
 

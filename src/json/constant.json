@@ -113,18 +113,18 @@
 		"100": "Object"
 	},
 	
-	"textColor": {
-		"grey": "Grey",
-		"yellow": "Yellow",
-		"orange": "Amber",
-		"red": "Red",
-		"pink": "Pink",
-		"purple": "Purple",
-		"blue": "Blue",
-		"ice": "Sky",
-		"teal": "Teal",
-		"lime": "Green"
-	},
+	"textColor": [
+		"grey",
+		"yellow",
+		"orange",
+		"red",
+		"pink",
+		"purple",
+		"blue",
+		"ice",
+		"teal",
+		"lime"
+	],
 	
 	"monthDays": {
 		"1": 31,
