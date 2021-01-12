@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menuWrap { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 102; }
+	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 102; }
 
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }
 	#menu-polygon { z-index: 1000; position: absolute; }
