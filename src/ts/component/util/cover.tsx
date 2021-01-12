@@ -38,11 +38,11 @@ class Cover extends React.Component<Props, {}> {
 			cn.push(className);
 		};
 
-		if ((type == I.CoverType.Image) && image) {
+		if ((type == I.CoverType.Upload) && image) {
 			style.backgroundImage = `url("${commonStore.imageUrl(image, Constant.size.cover)}")`;
 		};
 
-		if ((type == I.CoverType.BgImage) && id) {
+		if ((type == I.CoverType.Image) && id) {
 			style.backgroundImage = `url("${Util.coverSrc(id, preview)}")`;
 		};
 

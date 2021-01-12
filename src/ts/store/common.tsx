@@ -89,7 +89,7 @@ class CommonStore {
 	};
 
 	coverSetDefault () {
-		this.coverSet('c' + Constant.default.cover, '', I.CoverType.BgImage);
+		this.coverSet('c' + Constant.default.cover, '', I.CoverType.Image);
 	};
 	
 	@action

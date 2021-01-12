@@ -80,11 +80,14 @@ class EditorPage extends React.Component<Props, {}> {
 			/>
 		);
 
-		if (root.isPageContact()) {
+		if (root.isObjectContact()) {
 			cn.push('isContact');
 		} else 
-		if (root.isPageSet()) {
+		if (root.isObjectSet()) {
 			cn.push('isSet');
+		} else
+		if (root.isObjectTask()) {
+			cn.push('isTask');
 		};
 		
 		if (check.withIcon && check.withCover) {
@@ -390,10 +393,10 @@ class EditorPage extends React.Component<Props, {}> {
 			offset = 394;
 		};
 
-		if (root.isPageContact()) {
+		if (root.isObjectContact()) {
 		};
 
-		if (root.isPageTask()) {
+		if (root.isObjectTask()) {
 		};
 
 		// Find hovered block by mouse coords
@@ -1640,7 +1643,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
-		if (!root || root.isPageSet()) {
+		if (!root || root.isObjectSet()) {
 			return;
 		};
 

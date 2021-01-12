@@ -145,3 +145,10 @@
 	.block.blockText.header3 > .wrapContent.bgColor > .selectable > .dropTarget
 	{ padding-left: 8px; padding-right: 8px;  }
 }
+
+.editorWrapper.isTask {
+	.blocks .block.blockText.title { @include text-header1; }
+	.blocks .block.blockText.title {
+		.marker { margin: 3px 12px 0px 0px; }
+	}
+}

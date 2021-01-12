@@ -16,5 +16,25 @@
 		.editor { margin-top: 38px; }
 
 		.editorWrapper.isSet { width: calc(100% - 96px); }
+		.editorWrapper.isSet {
+			.block.blockCover {
+				.elements { width: 100%; left: 0px; }
+				.elements {
+					.buttons { padding-left: 142px; }
+				}
+			}
+		}
+
+		.editorWrapper.withCover { padding-top: 318px; }
+		.editorWrapper.withIconAndCover { padding-top: 194px; }
+		.editorWrapper.withIconAndCover {
+			.block.blockCover {
+				.elements {
+					.buttons { padding-left: 118px; }
+				}
+			}
+		}
+
+		.block.blockCover { top: 0px; }
 	}	
 }

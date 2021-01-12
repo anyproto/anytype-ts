@@ -433,6 +433,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			isSub: true,
+			passThrough: true,
 			data: {
 				blockId: blockId,
 				blockIds: blockIds,

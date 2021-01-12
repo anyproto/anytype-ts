@@ -106,19 +106,19 @@ class Block implements I.Block {
 		return (this.type == I.BlockType.Page);
 	};
 	
-	isPagePage (): boolean { 
+	isObjectPage (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Page);
 	};
 
-	isPageContact (): boolean { 
+	isObjectContact (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Contact);
 	};
 
-	isPageTask (): boolean { 
+	isObjectTask (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
 
-	isPageSet (): boolean { 
+	isObjectSet (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Set);
 	};
 
@@ -127,7 +127,7 @@ class Block implements I.Block {
 	};
 
 	isReadOnly (): boolean {
-		return this.isPageSet() || this.isPageFile();
+		return this.isObjectSet() || this.isPageFile();
 	};
 	
 	isLayout (): boolean {

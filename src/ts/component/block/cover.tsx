@@ -65,7 +65,8 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId, readOnly } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType, coverId,  } = details;
-		const canEdit = !readOnly && coverType && ([ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0);
+		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
+		const root = blockStore.getLeaf(rootId, rootId);
 		
 		let elements = null;
 		if (editing) {
@@ -91,10 +92,12 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						<div id="cover-button-add-icon" className="btn white addIcon" onClick={this.onAddIcon}>
-							<Icon />
-							<div className="txt">{translate('editorControlIcon')}</div>
-						</div>
+						{!root.isObjectTask() ? (
+							<div id="cover-button-add-icon" className="btn white addIcon" onClick={this.onAddIcon}>
+								<Icon />
+								<div className="txt">{translate('editorControlIcon')}</div>
+							</div>
+						) : ''}
 
 						<div id="cover-button-edit-cover" className="btn white addCover" onClick={this.onMenu}>
 							<Icon />
@@ -156,7 +159,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		focus.clear(true);
-		root.isPageContact() ? this.onAddIconUser() : this.onAddIconPage();
+		root.isObjectContact() ? this.onAddIconUser() : this.onAddIconPage();
 	};
 	
 	onAddIconPage () {
@@ -262,7 +265,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverId, coverType } = details;
-		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
+		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!node.hasClass('wrap')) {
@@ -294,11 +297,11 @@ class BlockCover extends React.Component<Props, State> {
 				el.onload = cb;
 			};
 			
-			if (coverType == I.CoverType.Image) {
+			if (coverType == I.CoverType.Upload) {
 				el.src = commonStore.imageUrl(coverId, Constant.size.cover);
 			};
 
-			if (coverType == I.CoverType.BgImage) {
+			if (coverType == I.CoverType.Image) {
 				el.src = Util.coverSrc(coverId);
 			};
 		};
@@ -457,7 +460,7 @@ class BlockCover extends React.Component<Props, State> {
 			};
 			
 			this.loaded = false;
-			DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash);
+			DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
 		});
 	};
 	

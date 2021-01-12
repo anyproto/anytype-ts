@@ -115,7 +115,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const type = DataUtil.schemaField(object.type);
 
 		let items = [];
-		if (block.isPageSet()) {
+		if (block.isObjectSet()) {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },

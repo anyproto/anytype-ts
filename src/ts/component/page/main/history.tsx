@@ -57,14 +57,14 @@ class PageMainHistory extends React.Component<Props, State> {
 		let cn = [ 'editorWrapper' ];
 		let icon: any = { id: rootId + '-icon', childrenIds: [], fields: {}, content: {} };
 		
-		if (root && root.isPageContact()) {
+		if (root && root.isObjectContact()) {
 			cn.push('isContact');
 			icon.type = I.BlockType.IconUser;
 		} else {
 			icon.type = I.BlockType.IconPage;
 		};
 
-		if (root && root.isPageSet()) {
+		if (root && root.isObjectSet()) {
 			cn.push('isSet');
 		};
 		

@@ -90,10 +90,10 @@ export interface Block {
 	isReadOnly?(): boolean;
 
 	isPage?(): boolean;
-	isPagePage?(): boolean;
-	isPageContact?(): boolean;
-	isPageTask?(): boolean;
-	isPageSet?(): boolean;
+	isObjectPage?(): boolean;
+	isObjectContact?(): boolean;
+	isObjectTask?(): boolean;
+	isObjectSet?(): boolean;
 	isPageFile?(): boolean;
 
 	isLayout?(): boolean;

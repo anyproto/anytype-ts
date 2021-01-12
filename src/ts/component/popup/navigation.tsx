@@ -190,7 +190,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
-					coverType = I.CoverType.BgImage;
+					coverType = I.CoverType.Image;
 				};
 				withScale = false;
 			} else {

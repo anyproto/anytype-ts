@@ -1,10 +1,9 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
 
 interface Props {
 	id: string;
-	type: I.TextStyle;
+	type: any;
 	color: string;
 	className?: string;
 	active: boolean;
@@ -17,6 +16,8 @@ const Bullets = {
 };
 const Checkbox0 = require('img/icon/marker/checkbox0.svg');
 const Checkbox1 = require('img/icon/marker/checkbox1.svg');
+const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
+const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 const Toggle = require('img/icon/marker/toggle.svg');
 
 for (let c of Constant.textColor) {
@@ -54,6 +55,10 @@ class Marker extends React.Component<Props, {}> {
 				
 			case I.TextStyle.Checkbox:
 				inner = <img src={active ? Checkbox1 : Checkbox0} />;
+				break;
+
+			case 'checkboxTask':
+				inner = <img src={active ? CheckboxTask1 : CheckboxTask0} />;
 				break;
 			
 			case I.TextStyle.Toggle:

@@ -15,10 +15,10 @@ export enum DragItem {
 
 export enum CoverType {
 	None	 = 0,
-	Image	 = 1,
+	Upload	 = 1,
 	Color	 = 2,
 	Gradient = 3,
-	BgImage  = 4, 
+	Image	 = 4, 
 };
 
 export enum CrumbsType {
