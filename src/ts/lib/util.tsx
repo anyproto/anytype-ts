@@ -61,7 +61,22 @@ class Util {
 	objectLength (o: any) {
 		return o.hasOwnProperty('length') ? o.length : Object.keys(o).length;
 	};
-	
+
+	objectClear (o: any) {
+		for (let k in o) {
+			if ('object' == typeof(o[k])) {
+				o[k] = this.objectClear(o[k]);
+				if (!this.objectLength(o[k])) {
+					delete(o[k]);
+				};
+			} else 
+			if (!o[k]) {
+				delete(o[k]);
+			};
+		};
+		return o;
+	};
+
 	objectCompare (o1: any, o2: any): boolean {
 		o1 = o1 || {};
 		o2 = o2 || {};

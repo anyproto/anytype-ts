@@ -682,7 +682,7 @@ class Dispatcher {
 				};
 
 				if (debug) {
-					console.log('[Dispatcher.callback]', type, JSON.stringify(response.toObject(), null, 3));
+					console.log('[Dispatcher.callback]', type, JSON.stringify(Util.objectClear(response.toObject()), null, 3));
 				};
 
 				if (message.event) {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, keyboard, Util } from 'ts/lib';
+import { Dimmer } from 'ts/component';
 import { commonStore } from 'ts/store';
 
 import MenuHelp from './help';
@@ -72,7 +73,7 @@ class Menu extends React.Component<Props, {}> {
 
 	render () {
 		const { id, param } = this.props;
-		const { type, vertical, horizontal } = param;
+		const { type, vertical, horizontal, passThrough } = param;
 		
 		const Components: any = {
 			help:					 MenuHelp,
@@ -129,6 +130,7 @@ class Menu extends React.Component<Props, {}> {
 			'v' + vertical,
 			'h' + horizontal
 		];
+		const cd = [];
 		
 		if (!Component) {
 			return <div>Component {id} not found</div>
@@ -137,19 +139,26 @@ class Menu extends React.Component<Props, {}> {
 		if (param.className) {
 			cn.push(param.className);
 		};
+
+		if (passThrough) {
+			cd.push('through');
+		};
 		
 		return (
-			<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
-				<div className="content">
-					<Component 
-						{...this.props} 
-						setHover={this.setHover} 
-						getId={this.getId} 
-						getNode={this.getNode} 
-						position={this.position} 
-						close={this.close} 
-					/>
+			<div className="menuWrap">
+				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
+					<div className="content">
+						<Component 
+							{...this.props} 
+							setHover={this.setHover} 
+							getId={this.getId} 
+							getNode={this.getNode} 
+							position={this.position} 
+							close={this.close} 
+						/>
+					</div>
 				</div>
+				<Dimmer onClick={() => { commonStore.menuClose(id); }} className={cd.join(' ')} />
 			</div>
 		);
 	};
@@ -187,8 +196,10 @@ class Menu extends React.Component<Props, {}> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
-			node.addClass('show');
-			window.setTimeout(() => { node.css({ transform: 'none' }); }, 210);
+			const menu = node.find('.menu');
+
+			menu.addClass('show');
+			window.setTimeout(() => { menu.css({ transform: 'none' }); }, 210);
 		});
 	};
 	
@@ -215,11 +226,12 @@ class Menu extends React.Component<Props, {}> {
 
 			const win = $(window);
 			const node = $(ReactDOM.findDOMNode(this));
+			const menu = node.find('.menu');
 			const ww = win.width();
 			const wh = win.scrollTop() + win.height();
 			const offset = el.offset();
-			const width = param.width ? param.width : node.outerWidth();
-			const height = node.outerHeight();
+			const width = param.width ? param.width : menu.outerWidth();
+			const height = menu.outerHeight();
 			const ew = el.outerWidth();
 			const eh = el.outerHeight();
 
@@ -278,7 +290,7 @@ class Menu extends React.Component<Props, {}> {
 				css.width = param.width;
 			};
 
-			node.css(css);
+			menu.css(css);
 			
 			if (isSub) {
 				const coords = keyboard.coords;
@@ -314,14 +326,16 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	setHover (item?: any, scroll?: boolean) {
-		const node = this.getNode();
-		node.find('.item.hover').removeClass('hover');
+		const node = $(ReactDOM.findDOMNode(this));
+		const menu = node.find('.menu');
+
+		menu.find('.item.hover').removeClass('hover');
 
 		if (!item) {
 			return;
 		};
 
-		const el = node.find('#item-' + item.id).addClass('hover');
+		const el = menu.find('#item-' + item.id).addClass('hover');
 		if (el.length && scroll) {
 			const content = node.find('.content');
 			const st = content.scrollTop();

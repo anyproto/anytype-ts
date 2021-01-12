@@ -276,10 +276,10 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onCheckbox () {
-		const { index, getRecord } = this.props;
+		const { index, getRecord, onCellChange } = this.props;
 		const record = getRecord(index);
 
-		DataUtil.pageSetDone(record.id, !record.done);
+		onCellChange(record.id, 'done', !record.done);
 	};
 
 };

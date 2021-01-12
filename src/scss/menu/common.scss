@@ -1,7 +1,9 @@
 @import "~scss/_vars";
 
 .menus {
-	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 102; background: rgba(0,0,0,0); }
+	.menuWrap { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 102; }
+
+	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }
 	#menu-polygon { z-index: 1000; position: absolute; }
 
 	.menu * { user-select: none; }

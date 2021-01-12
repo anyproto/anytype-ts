@@ -30,7 +30,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const idPrefix = 'menuBlockRelationListCell';
 
 		let relations = dbStore.getRelations(rootId, rootId).filter((it: I.Relation) => { return !it.isHidden; });
-		if (filter) {
+		if (data.filter) {
 			relations = relations.filter((it: I.Relation) => { return it.name.match(filter); });
 		};
 

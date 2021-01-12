@@ -54,7 +54,6 @@ class IconObject extends React.Component<Props, {}> {
 		const { id, name, iconEmoji, iconImage, iconClass, done } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'iconObject', type, 'c' + size ];
-		const icn = [];
 		const objectType: any = type ? (dbStore.getObjectType(object.type) || {}) : {};
 		const iconSize = Size[size];
 
@@ -63,22 +62,26 @@ class IconObject extends React.Component<Props, {}> {
 		};
 
 		let icon = null;
+		let icn = [];
+
 		switch (type) {
 			default:
 				switch (objectType.layout) {
 					default:
 					case I.ObjectLayout.Page:
 						cn.push('isPage');
-						icon = <IconEmoji {...this.props} className={'c' + size} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+						icn.push('c' + size);
+						icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 						break;
 
 					case I.ObjectLayout.Contact:
 						cn.push('isUser');
-						icon = <IconUser className={'c' + size} {...this.props} name={name} avatar={iconImage} />;
+						icn.push('c' + size);
+						icon = <IconUser className={icn.join(' ')} {...this.props} name={name} avatar={iconImage} />;
 						break;
 
 					case I.ObjectLayout.Task:
-						icn.push('iconCheckbox');
+						icn = icn.concat([ 'iconCheckbox', Util.fileIcon(object), 'c' + iconSize ]);
 						if (done) {	
 							icn.push('isActive');
 						};
@@ -93,16 +96,19 @@ class IconObject extends React.Component<Props, {}> {
 			case 'image':
 				if (id) {
 					cn.push('isImage');
-					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={[ 'iconImage', 'c' + iconSize ].join(' ')} />;
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					cn.push('isFile');
-					icon = <div className={[ 'iconFile', Util.fileIcon(object), 'c' + iconSize ].join(' ')} />;
+					icn = icn.concat([ 'iconFile', Util.fileIcon(object), 'c' + iconSize ]);
+					icon = <div className={icn.join(' ')} />;
 				};
 				break;
 
 			case 'file':
 				cn.push('isFile');
-				icon = <div className={[ 'iconFile', Util.fileIcon(object), 'c' + iconSize ].join(' ')} />;
+				icn = icn.concat([ 'iconFile', Util.fileIcon(object), 'c' + iconSize ]);
+				icon = <div className={icn.join(' ')} />;
 				break;
 		};
 
