@@ -55,13 +55,13 @@ class Select extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div id={'select-' + id} className={cn.join(' ')}>
+			<div id={'select-' + id} className={cn.join(' ')} onClick={this.show}>
 				{current ? (
-					<div className="current" onClick={this.show}>
+					<React.Fragment>
 						{current.icon ? <Icon className={current.icon} /> : ''}
 						<div className="name">{current.name}</div>
 						<Icon className={acn.join(' ')} />
-					</div>
+					</React.Fragment>
 				) : ''}
 			</div>
 		);

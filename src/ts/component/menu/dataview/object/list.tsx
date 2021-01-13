@@ -199,12 +199,14 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { data } = param;
 		const { types, filter } = data;
 
-		const filters = [
-			{ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types },
-		];
+		const filters = [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+
+		if (types && types.length) {
+			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
+		};
 
 		this.setState({ loading: true });
 

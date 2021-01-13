@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, Input, Checkbox } from 'ts/component';
-import { commonStore, dbStore } from 'ts/store';
+import { Icon, Select, Input, Checkbox, IconObject } from 'ts/component';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
@@ -35,6 +35,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onFocusDate = this.onFocusDate.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onObject = this.onObject.bind(this);
 	};
 	
 	render () {
@@ -85,7 +86,43 @@ class MenuFilter extends React.Component<Props, {}> {
 
 			switch (relation.format) {
 				
-				case I.RelationType.Checkbox:
+				case I.RelationType.Object:
+					const Item = (item: any) => {
+						return (
+							<div className="element">
+								<IconObject object={item} />
+								<div className="name">{item.name}</div>
+							</div>
+						);
+					};
+					const cn = [ 'select', 'isList' ];
+
+					let list = (item.value || []).map((it: string) => { return blockStore.getDetails(rootId, it); });
+					list = list.filter((it: any) => { return !it._detailsEmpty_; });
+
+					if (list.length) {
+						cn.push('withValues');
+					};
+
+					value = (
+						<div id={id} className={cn.join(' ')} onClick={(e: any) => { this.onObject(e, item); }}>
+							{list.length ? (
+								<React.Fragment>
+									{list.map((item: any, i: number) => {
+										return <Item key={i} {...item} />;
+									})}
+								</React.Fragment>
+							) : (
+								<React.Fragment>
+									<div className="name">Add objects</div>
+									<Icon className="arrow light" />
+								</React.Fragment>
+							)}
+						</div>
+					);
+					break;
+
+				case I.RelationType.Object:
 					value = (
 						<Checkbox 
 							id={id}
@@ -382,7 +419,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const value = Util.parseDate(this.refObj[item.id].getValue());
 		
 		this.onChange(item.id, 'value', value);
-		this.calendarOpen(item.id, value);
+		this.onCalendar(item.id, value);
 	};
 
 	onFocusDate (e: any, item: any) {
@@ -394,7 +431,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			menu.param.data.value = value;
 			commonStore.menuUpdate('dataviewCalendar', menu.param);
 		} else {
-			this.calendarOpen(item.id, value);
+			this.onCalendar(item.id, value);
 		};
 	};
 
@@ -406,7 +443,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		};
 	};
 
-	calendarOpen (id: number, value: number) {
+	onCalendar (id: number, value: number) {
 		commonStore.menuOpen('dataviewCalendar', {
 			element: `#menuDataviewFilter #item-${id}-value`,
 			offsetX: 0,
@@ -423,6 +460,34 @@ class MenuFilter extends React.Component<Props, {}> {
 				value: value, 
 				onChange: (value: number) => {
 					this.onChange(id, 'value', value);
+				},
+			},
+		});
+	};
+
+	onObject (e: any, item: any) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const id = [ 'item', item.id, 'value' ].join('-');
+
+		commonStore.menuOpen('dataviewObjectValues', { 
+			element: '#' + getId() + ' #' + id,
+			offsetX: 0,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			className: 'fromFilter',
+			data: { 
+				rootId: rootId,
+				blockId: blockId,
+				value: item.value || [], 
+				types: relation.objectTypes,
+				onChange: (value: any) => {
+					console.log('VALUE', value);
+					this.onChange(item.id, 'value', value);
 				},
 			},
 		});

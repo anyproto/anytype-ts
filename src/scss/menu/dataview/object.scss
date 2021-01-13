@@ -47,4 +47,10 @@
 			.icon.delete { opacity: 1; }
 		}
 	}
+
+	.menu.menuDataviewObjectValues.fromFilter {
+		.item {
+			.icon.dnd { display: none; }
+		}
+	}
 }

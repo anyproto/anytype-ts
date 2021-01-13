@@ -14,9 +14,19 @@
 			.icon.checkbox { width: 24px; height: 24px; margin-top: 3px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 			.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-			.select { flex-shrink: 0; vertical-align: top; }
+			.select { vertical-align: top; max-width: 150px; overflow: hidden; }
 			.select.operator { width: auto; }
 			.select.operator .name { overflow: visible; }
+			.select:last-child { margin: 0px; }
+
+			.select {
+				.element { display: inline-block; margin-right: 6px; }
+				.element {
+					.name { max-width: calc(100% - 24px); }
+				}
+			}
+			.select.isList { margin: 0px; }
+			.select.isList.withValues { padding-right: 0px; }
 
 			.txt { height: 28px; line-height: 28px; margin-right: 8px; display: inline-block; vertical-align: top; }
 		}

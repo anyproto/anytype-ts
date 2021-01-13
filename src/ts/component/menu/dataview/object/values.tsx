@@ -149,12 +149,13 @@ class MenuObjectValues extends React.Component<Props> {
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
+		const node = $('#' + getId());
 
 		commonStore.menuOpen('dataviewObjectList', {
 			...param,
 			element: '#' + getId() + ' #item-add',
 			width: 0,
-			offsetX: param.width,
+			offsetX: node.outerWidth(),
 			vertical: I.MenuDirection.Center,
 			data: {
 				...data,
