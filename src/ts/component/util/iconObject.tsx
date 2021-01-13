@@ -37,6 +37,9 @@ const Size = {
 	128: 64,
 };
 
+const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
+const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
+
 class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
@@ -60,6 +63,9 @@ class IconObject extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
+		if (canEdit) {	
+			cn.push('canEdit');
+		};
 
 		let icon = null;
 		let icn = [];
@@ -81,14 +87,9 @@ class IconObject extends React.Component<Props, {}> {
 						break;
 
 					case I.ObjectLayout.Task:
-						icn = icn.concat([ 'iconCheckbox', Util.fileIcon(object), 'c' + iconSize ]);
-						if (done) {	
-							icn.push('isActive');
-						};
-						if (canEdit) {	
-							icn.push('canEdit');
-						};
-						icon = <div className={icn.join(' ')} onClick={this.onCheckbox} />
+						cn.push('isTask');
+						icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
+						icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} onClick={this.onCheckbox} />;
 						break;
 				};
 				break;

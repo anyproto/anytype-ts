@@ -24,9 +24,6 @@
 	.iconFile.presentation { background-image: url('~img/icon/file/presentation.svg') !important; }
 	.iconFile.table { background-image: url('~img/icon/file/table.svg') !important; }
 
-	.iconCheckbox { background-image: url('~img/icon/object/checkbox0.svg'); }
-	.iconCheckbox.isActive { background-image: url('~img/icon/object/checkbox1.svg'); }
-
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
 	.iconEmoji {
 		.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
@@ -88,8 +85,6 @@
 		.emoji-mart-emoji { span { height: 36px; line-height: 36px; } }
 	}
 
-	.iconCheckbox.canEdit { cursor: pointer; }
-
 	.iconEmoji.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }
 	.iconEmoji.canEdit.c48:hover, .iconEmoji.canEdit.c64:hover { background-color: #ebe9e0; }
 	.iconEmoji.canEdit.c48.active, .iconEmoji.canEdit.c64.active { background-color: #ebe9e0; }
@@ -109,6 +104,10 @@
 }
 
 .iconObject.isUser { border-radius: 100%; }
+
+.iconObject.isTask.canEdit {
+	.iconCheckbox { cursor: pointer; }
+}
 
 .iconUser { 
 	border-radius: inherit; position: relative; overflow: hidden; text-transform: uppercase; color: #fff; text-align: center; 

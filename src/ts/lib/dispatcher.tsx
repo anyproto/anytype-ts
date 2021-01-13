@@ -169,7 +169,7 @@ class Dispatcher {
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
-			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(event.toObject(), null, 3)); };
+			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(Util.objectClear(event.toObject()), null, 3)); };
 
 			if (debugThread && (type == 'threadStatus')) {
 				log();
