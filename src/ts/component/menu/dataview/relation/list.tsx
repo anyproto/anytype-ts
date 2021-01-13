@@ -44,7 +44,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 				<div id={'relation-' + item.relationKey} className="item">
 					<Handle />
 					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
-						<Icon className={'relation c-' + DataUtil.relationClass(item.relation.format)} />
+						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>
 					</span>
 					<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} />

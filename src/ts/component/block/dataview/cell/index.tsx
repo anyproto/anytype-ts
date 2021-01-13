@@ -44,7 +44,7 @@ class Cell extends React.Component<Props, {}> {
 		const canEdit = this.canEdit();
 		const cn = [ 
 			'cellContent', 
-			'c-' + DataUtil.relationClass(relation.format), 
+			DataUtil.relationClass(relation.format), 
 			(this.canEdit() ? 'canEdit' : ''), 
 			(relationKey == 'name' ? 'isName' : ''),
 		];
@@ -58,8 +58,9 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Date:
 				CellComponent = CellText;
 				break;
-				
-			case I.RelationType.Select:
+
+			case I.RelationType.Status:	
+			case I.RelationType.Tag:
 				CellComponent = CellSelect;
 				break;
 				
@@ -205,8 +206,9 @@ class Cell extends React.Component<Props, {}> {
 
 				menuId = 'dataviewMedia';
 				break;
-					
-			case I.RelationType.Select:
+
+			case I.RelationType.Status:		
+			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
 				});

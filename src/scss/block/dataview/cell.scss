@@ -51,9 +51,6 @@
 .cellContent.c-select { line-height: 0px; }
 .cellContent.c-select {
 	.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
-	.DraggableTags { display: inline; vertical-align: top; line-height: 0px; }
-	.DraggableTags::after { display: none; }
-	.DraggableTags-tag { max-width: 100%; }
 }
 
 .cellContent.c-object {

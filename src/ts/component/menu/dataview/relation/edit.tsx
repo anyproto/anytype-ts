@@ -92,7 +92,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				<div className="sectionName">Relation type</div>
 				<MenuItemVertical 
 					id="relation-type" 
-					icon={'relation c-' + DataUtil.relationClass(this.format)} 
+					icon={'relation ' + DataUtil.relationClass(this.format)} 
 					name={Constant.relationName[this.format]} 
 					onClick={this.onRelationType} 
 					arrow={!relation}

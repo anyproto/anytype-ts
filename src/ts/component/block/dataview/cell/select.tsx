@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Tag } from 'ts/component';
-import { I, C, keyboard, Util } from 'ts/lib';
+import { I, C, keyboard, Util, DataUtil } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -48,7 +48,7 @@ class CellSelect extends React.Component<Props, State> {
 			<div className="wrap">
 				<React.Fragment>
 					{value.map((item: any, i: number) => {
-						return <Tag {...item} key={item.id} />;
+						return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
 					})}
 				</React.Fragment>
 			</div>

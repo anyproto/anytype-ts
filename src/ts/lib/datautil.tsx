@@ -99,7 +99,8 @@ class DataUtil {
 			case I.RelationType.Title:		 c = 'title'; break;
 			case I.RelationType.Number:		 c = 'number'; break;
 			case I.RelationType.Date:		 c = 'date'; break;
-			case I.RelationType.Select:		 c = 'select'; break;
+			case I.RelationType.Status:		 c = 'select isStatus'; break;
+			case I.RelationType.Tag:		 c = 'select isTag'; break;
 			case I.RelationType.File:		 c = 'file'; break;
 			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
 			case I.RelationType.Icon:		 c = 'icon'; break;
@@ -107,6 +108,16 @@ class DataUtil {
 			case I.RelationType.Email:		 c = 'email'; break;
 			case I.RelationType.Phone:		 c = 'phone'; break;
 			case I.RelationType.Object:		 c = 'object'; break;
+		};
+		return 'c-' + c;
+	};
+
+	tagClass (v: I.RelationType): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.RelationType.Status:		 c = 'isStatus'; break;
+			case I.RelationType.Tag:		 c = 'isTag'; break;
 		};
 		return c;
 	};

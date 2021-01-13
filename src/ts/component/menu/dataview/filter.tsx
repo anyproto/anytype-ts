@@ -7,6 +7,7 @@ import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 interface Props extends I.Menu {};
 
@@ -63,7 +64,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			return { 
 				id: it.relationKey, 
 				name: relation.name, 
-				icon: 'relation c-' + DataUtil.relationClass(relation.format),
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
 			};
 		});
 
@@ -284,7 +285,8 @@ class MenuFilter extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.Object: 
-			case I.RelationType.Select: 
+			case I.RelationType.Status: 
+			case I.RelationType.Tag: 
 				ret = [ 
 					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
@@ -485,6 +487,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				blockId: blockId,
 				value: item.value || [], 
 				types: relation.objectTypes,
+				relation: observable.box(relation),
 				onChange: (value: any) => {
 					console.log('VALUE', value);
 					this.onChange(item.id, 'value', value);

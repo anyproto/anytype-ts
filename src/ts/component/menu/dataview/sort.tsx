@@ -45,7 +45,7 @@ class MenuSort extends React.Component<Props, {}> {
 			return { 
 				id: relation.relationKey, 
 				name: relation.name, 
-				icon: 'relation c-' + DataUtil.relationClass(relation.format),
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
 			};
 		});
 

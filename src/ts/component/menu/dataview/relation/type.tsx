@@ -25,7 +25,8 @@ class MenuRelationType extends React.Component<Props, {}> {
 			{ format: I.RelationType.Description },
 			{ format: I.RelationType.Title },
 			{ format: I.RelationType.Number },
-			{ format: I.RelationType.Select },
+			{ format: I.RelationType.Status },
+			{ format: I.RelationType.Tag },
 			{ format: I.RelationType.Date },
 			{ format: I.RelationType.File },
 			{ format: I.RelationType.Checkbox },
@@ -40,7 +41,7 @@ class MenuRelationType extends React.Component<Props, {}> {
 		const Item = (item: any) => {
 			return (
 				<div className={[ 'item', (item.format == value ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onSelect(e, item); }}>
-					<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
+					<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
 					<div className="name">{item.name}</div>
 				</div>
 			);

@@ -26,7 +26,7 @@ export enum RelationType {
 	Description	 = 0, 
 	Title		 = 1, 
 	Number		 = 2, 
-	Select		 = 3, 
+	Status		 = 3, 
 	Date		 = 4, 
 	File		 = 5,
 	Checkbox	 = 6, 
@@ -34,6 +34,7 @@ export enum RelationType {
 	Url			 = 8,
 	Email		 = 9,
 	Phone		 = 10,
+	Tag		 = 11,
 	Object		 = 100,
 };
 

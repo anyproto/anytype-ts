@@ -40,12 +40,12 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 			return (
 				<div className="item sides" onClick={(e: any) => { this.onSelect(e, relation); }}>
 					<div className="info">
-						<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
+						<Icon className={'relation ' + DataUtil.relationClass(relation.format)} />
 						{relation.name}
 					</div>
 					<div
 						id={id} 
-						className={[ 'cell', 'c-' + DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
+						className={[ 'cell', DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
 						onClick={(e: any) => { this.onCellClick(e, relation.relationKey, 0); }}
 					>
 						<Cell 

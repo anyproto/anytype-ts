@@ -43,6 +43,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const relation = data.relation.get();
 		const { n } = this.state;
 		const value = data.value || [];
 		const items = this.getItems();
@@ -65,7 +66,7 @@ class MenuOptionList extends React.Component<Props, State> {
 							</div>
 						) : (
 							<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
-								<Tag text={item.text} color={item.color} />
+								<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
 								<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
 							</div>
 						)}
@@ -181,7 +182,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#filter-input');
 
-		input.attr({ placeHolder: 'Filter objects...' });
+		input.attr({ placeHolder: 'Filter options...' });
 	};
 
 	onBlur () {

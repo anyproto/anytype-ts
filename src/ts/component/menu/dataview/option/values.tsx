@@ -26,6 +26,9 @@ class MenuOptionValues extends React.Component<Props> {
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const relation = data.relation.get();
 		const items = this.getItems();
 
 		const Handle = SortableHandle(() => (
@@ -36,7 +39,7 @@ class MenuOptionValues extends React.Component<Props> {
 			return (
 				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />
-					<Tag {...item} />
+					<Tag {...item} className={DataUtil.tagClass(relation.format)} />
 					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 				</div>
 			);

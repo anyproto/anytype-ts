@@ -55,12 +55,12 @@ class BlockRelation extends React.Component<Props, {}> {
 				(
 					<div className="sides">
 						<div className="info">
-							<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
+							<Icon className={'relation ' + DataUtil.relationClass(relation.format)} />
 							<div className="name">{relation.name}</div>
 						</div>
 						<div 
 							id={id} 
-							className={[ 'cell', 'c-' + DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
+							className={[ 'cell', DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
 							onClick={this.onCellClick}
 						>
 							<Cell 
@@ -195,7 +195,7 @@ class BlockRelation extends React.Component<Props, {}> {
 			};
 			options.push({
 				id: relation.relationKey,
-				icon: 'relation c-' + DataUtil.relationClass(relation.format),
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
 				name: relation.name,
 			});
 		};
