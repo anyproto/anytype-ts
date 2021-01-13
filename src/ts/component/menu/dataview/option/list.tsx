@@ -228,7 +228,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		commonStore.menuOpen('dataviewOptionEdit', { 
 			type: I.MenuType.Vertical,
-			element: '#' + getId() + ' #tag-' + item.id,
+			element: '#' + getId() + ' #item-' + item.id,
 			offsetX: 288,
 			offsetY: 0,
 			vertical: I.MenuDirection.Center,

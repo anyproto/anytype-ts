@@ -1,16 +1,6 @@
 @import "~scss/_vars";
 
 .menus {
-
-	.menu.menuDataviewOptionValues {
-		.item {
-			.icon.delete { opacity: 0; }
-		}
-		.item.hover {
-			.icon.delete { opacity: 1; }
-		}
-	}
-
 	.menu.menuDataviewOptionList { width: 288px; }
 	.menu.menuDataviewOptionList {
 		.content { transition: none; padding-bottom: 0px; }
@@ -19,10 +9,7 @@
 		}
 
 		.items { height: calc(100% - 34px); }
-		.item.hover::before { opacity: 0.15; }
-
 		.tagItem { vertical-align: top; margin-top: 1px; }
-		.icon.more { position: absolute; right: 14px; top: 50%; margin-top: -10px; }
 	}
 	
 	.menu.menuDataviewOptionEdit { width: 224px; }

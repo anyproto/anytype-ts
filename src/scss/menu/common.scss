@@ -66,6 +66,9 @@
 			opacity: 0; transition: $transitionFast; pointer-events: none;
 		}
 		.item.hover::before { opacity: 0.15; }
+		.item.hover, .item:hover {
+			.icon.delete, .icon.more { opacity: 1; }
+		}
 
 		.item.active::before { opacity: 0.15; z-index: 0; }
 		.item.active {
@@ -77,11 +80,12 @@
 			
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; }
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
-			.icon.delete { 
-				width: 20px; height: 20px; background-image: url('~img/icon/menu/delete0.svg'); cursor: pointer;
-				position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px;
+			.icon.delete, .icon.more { 
+				width: 24px; height: 24px; background-size: 20px; cursor: pointer; position: absolute; right: 10px; top: 50%; 
+				margin: -12px 0px 0px 0px; border-radius: 4px; opacity: 0; z-index: 1;
 			}
-			.icon.delete:hover { background-image: url('~img/icon/menu/delete1.svg');  }
+			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
+			.icon.delete:hover, .icon.more:hover { background-color: rgba(172, 169, 150, 0.15); }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			
 			.iconObject { vertical-align: top; }
