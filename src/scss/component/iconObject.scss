@@ -3,7 +3,8 @@
 .iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; border-radius: 3px; }
 .iconObject {
 	.iconEmoji, .iconImage, .iconFile, .iconUser, .iconCheckbox { width: 100%; height: 100%; transition: none; vertical-align: top; }
-	.iconImage, .iconCheckbox { border-radius: inherit; background-size: cover; object-fit: cover; }
+	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
+	.iconImage { border-radius: inherit; }
 
 	.smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
 	.smileImage.c20, .iconImage.c20, .iconFile.c20, .iconCheckbox.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }

@@ -613,7 +613,13 @@ class Dispatcher {
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {
 				it.type = I.BlockType.Page;
-				it.layout = object.layout || objectType.layout || I.ObjectLayout.Page;
+				it.layout = I.ObjectLayout.Page;
+				if (undefined !== object.layout) {
+					it.layout = object.layout;
+				} else 
+				if (undefined !== objectType.layout) {
+					it.layout = objectType.layout;
+				};
 			};
 
 			if (it.type == I.BlockType.Dataview) {

@@ -60,6 +60,14 @@ class IconObject extends React.Component<Props, {}> {
 		const objectType: any = type ? (dbStore.getObjectType(object.type) || {}) : {};
 		const iconSize = Size[size];
 
+		let layout = I.ObjectLayout.Page;
+		if (undefined !== object.layout) {
+			layout = object.layout;
+		} else 
+		if (undefined !== objectType.layout) {
+			layout = objectType.layout;
+		};
+
 		if (className) {
 			cn.push(className);
 		};
@@ -72,7 +80,7 @@ class IconObject extends React.Component<Props, {}> {
 
 		switch (type) {
 			default:
-				switch (objectType.layout) {
+				switch (layout) {
 					default:
 					case I.ObjectLayout.Page:
 						cn.push('isPage');
