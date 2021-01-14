@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, DataUtil, focus, crumbs } from 'ts/lib';
-import { blockStore, commonStore, dbStore } from 'ts/store';
+import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -20,16 +20,39 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
 		const items = this.getItems();
+		const layouts = this.getLayouts();
+		const layout = layouts.find((it: any) => { return it.id == block.layout; });
 
 		return (
 			<div>
-				{items.map((action: any, i: number) => (
-					<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
-				))}
+				{block.isPage() ? (
+					<div className="section">
+						<div className="name">Layout</div>
+						<MenuItemVertical 
+							id="object-layout" 
+							icon={layout ? layout.icon : ''} 
+							name={layout ? layout.name : 'Select type'}
+							menuId="select"
+							onClick={this.onLayout} 
+							arrow={true}
+						/>
+					</div>
+				) : ''}
+
+				<div className="section">
+					{items.map((action: any, i: number) => (
+						<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
+					))}
+				</div>
 			</div>
 		);
 	};
@@ -156,6 +179,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		return items;
 	};
+
+	getLayouts () {
+		return [
+			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
+			{ id: I.ObjectLayout.Contact, icon: 'contact', name: 'Contact' },
+			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
+		];
+	};
 	
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
@@ -277,6 +308,29 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (close) {
 			this.props.close();
 		};
+	};
+
+	onLayout (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		commonStore.menuOpen('select', { 
+			element: '#item-object-layout',
+			offsetX: 224,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				options: this.getLayouts(),
+				value: block.layout,
+				onSelect: (e: any, item: any) => {
+					DataUtil.pageSetLayout(rootId, item.id);
+				}
+			}
+		});
 	};
 
 };

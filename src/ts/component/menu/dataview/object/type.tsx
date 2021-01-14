@@ -21,7 +21,7 @@ class MenuObjectType extends React.Component<Props, State> {
 	constructor(props: any) {
 		super(props);
 		
-		this.onType = this.onType.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 		this.onCreate = this.onCreate.bind(this);
 	};
 
@@ -47,7 +47,7 @@ class MenuObjectType extends React.Component<Props, State> {
 					icon={item ? item.icon : ''} 
 					name={item ? item.name : 'Select type'}
 					menuId="select"
-					onClick={this.onType} 
+					onClick={this.onLayout} 
 					arrow={true}
 				/>
 
@@ -60,13 +60,13 @@ class MenuObjectType extends React.Component<Props, State> {
 
 	getItems () {
 		return [
-			{ id: I.ObjectLayout.Page, icon: 'page', emoji: '', name: 'Page' },
-			{ id: I.ObjectLayout.Contact, icon: 'contact', emoji: '', name: 'Contact' },
-			{ id: I.ObjectLayout.Task, icon: 'task', emoji: '', name: 'Task' },
+			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
+			{ id: I.ObjectLayout.Contact, icon: 'contact', name: 'Contact' },
+			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
 		];
 	};
 	
-	onType (e: any) {
+	onLayout (e: any) {
 		const { layout } = this.state;
 
 		commonStore.menuOpen('select', { 

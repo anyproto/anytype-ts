@@ -356,6 +356,14 @@ class DataUtil {
 		], callBack);
 	};
 	
+	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
+		blockStore.blockUpdate(rootId, { id: rootId, layout: layout });
+
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'layout', value: layout },
+		], callBack);
+	};
+
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		if (!block) {
 			return;
@@ -695,10 +703,9 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
+		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const type = this.schemaField(details.type);
-		const objectType: any = dbStore.getObjectType(details.type) || {};
-
 		const ret: any = {
 			withCover: (details.coverType != I.CoverType.None) && details.coverId,
 			withIcon: false,
@@ -706,7 +713,7 @@ class DataUtil {
 
 		switch (type) {
 			default:
-				switch (objectType.layout) {
+				switch (block.layout) {
 					default:
 					case I.ObjectLayout.Page:
 						ret.withIcon = details.iconEmoji || details.iconImage;

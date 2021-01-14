@@ -27,6 +27,7 @@ class Block implements I.Block {
 		self.childrenIds = props.childrenIds || [];
 
 		decorate(self, {
+			layout: observable,
 			childrenIds: observable,
 			align: observable,
 			bgColor: observable,
